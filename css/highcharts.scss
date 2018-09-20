@@ -114,6 +114,16 @@ $scrollbar-track-border: $neutral-color-5 !default;
 .highcharts-button-box {
     fill: inherit;
 }
+.highcharts-tracker-line {
+    stroke-linejoin: round;
+    stroke: rgba(192, 192, 192, 0.0001);
+    stroke-width: 22;
+    fill: none;
+}
+.highcharts-tracker-area {
+    fill: rgba(192, 192, 192, 0.0001);
+    stroke-width: 0;
+}
 
 /* Titles */
 .highcharts-title {
@@ -567,7 +577,7 @@ g.highcharts-series,
     fill: none;
 }
 .highcharts-range-input text {
-    fill: $range-selector-input-text
+    fill: $range-selector-input-text;
 }
 .highcharts-range-input {
     stroke-width:1px;

@@ -1,3 +1,47 @@
+// Highcharts 4.0.1, Issue #3158
+// Pie chart - item width issue
+QUnit.test('Text word wrap #3158', function (assert) {
+
+    var renderer = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        300
+    );
+
+    renderer.rect(100, 80, 100, 100)
+        .attr({
+            stroke: 'silver',
+            'stroke-width': 1
+        })
+        .add();
+
+    var text = renderer
+        .text(
+            '<b>TheQuickBrownFox</b><br>jumps over the lazy dog, the issue' +
+            ' caused the second line to be only one word', 100, 100
+        )
+        .css({
+            width: '100px',
+            color: '#003399'
+        })
+        .add();
+
+    var textLines = text.element.getElementsByTagName('tspan');
+
+    assert.strictEqual(
+        textLines.length,
+        6,
+        'Six text lines should be rendered.'
+    );
+
+    assert.strictEqual(
+        (textLines[1].textContent.indexOf(' ') > 0),
+        true,
+        'There should be more than one word in the second text line. #3158'
+    );
+
+});
+
 QUnit.test('titleSetter', function (assert) {
 
     var chart = Highcharts.chart('container', {
@@ -238,6 +282,57 @@ QUnit.test('HTML', function (assert) {
             10,
             'Top offset should reflect initial position'
         );
+
+        text = renderer.text(
+                'The quick brown fox jumped over the lazy dog', 10, 30, true
+            )
+            .css({
+                textOverflow: 'ellipsis',
+                width: '100px'
+            })
+            .add();
+
+        assert.strictEqual(
+            text.element.style.width,
+            '100px',
+            'The style width should should now 100px'
+        );
+        text.css({
+            fontWeight: 'bold'
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '100px',
+            'The style width should be preserved after running .css with unrelated props (#8994)'
+        );
+
+        text.css({
+            width: null
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '',
+            'The style width should be removed when setting to null'
+        );
+
+        text.css({
+            width: '120px'
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '120px',
+            'The style width should be reset to 120px'
+        );
+
+        text.css({
+            width: undefined
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '',
+            'The style width should be removed when setting to undefined'
+        );
+
 
     } finally {
 

@@ -22,6 +22,7 @@ var seriesType = H.seriesType,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     grep = H.grep,
+    isArray = H.isArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
@@ -527,18 +528,22 @@ seriesType('treemap', 'scatter', {
      * Creates an object map from parent id to childrens index.
      * @param {Array} data List of points set in options.
      * @param {string} data[].parent Parent id of point.
-     * @param {Array} ids List of all point ids.
+     * @param {Array} existingIds List of all point ids.
      * @return {Object} Map from parent id to children index in data.
      */
-    getListOfParents: function (data, ids) {
-        var listOfParents = reduce(data || [], function (prev, curr, i) {
-            var parent = pick(curr.parent, '');
-            if (prev[parent] === undefined) {
-                prev[parent] = [];
-            }
-            prev[parent].push(i);
-            return prev;
-        }, {});
+    getListOfParents: function (data, existingIds) {
+        var arr = isArray(data) ? data : [],
+            ids = isArray(existingIds) ? existingIds : [],
+            listOfParents = reduce(arr, function (prev, curr, i) {
+                var parent = pick(curr.parent, '');
+                if (prev[parent] === undefined) {
+                    prev[parent] = [];
+                }
+                prev[parent].push(i);
+                return prev;
+            }, {
+                '': [] // Root of tree
+            });
 
         // If parent does not exist, hoist parent to root of tree.
         eachObject(listOfParents, function (children, parent, list) {
@@ -1511,8 +1516,8 @@ seriesType('treemap', 'scatter', {
  *  data: [0, 5, 3, 5]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.treemap.turboThreshold),
  * this option is not available.
  *

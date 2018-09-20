@@ -97,7 +97,10 @@ if (!Array.prototype.forEach) {
         var i = 0,
             len = this.length;
         for (; i < len; i++) {
-            if (fn.call(ctx, this[i], i, this) === false) {
+            if (
+                this[i] !== undefined && // added check
+                fn.call(ctx, this[i], i, this) === false
+            ) {
                 return i;
             }
         }
@@ -105,15 +108,16 @@ if (!Array.prototype.forEach) {
 }
 
 if (!Array.prototype.indexOf) {
-    H.indexOfPolyfill = function (arr) {
-        var len,
-            i = 0;
+    H.indexOfPolyfill = function (member, fromIndex) {
+        var arr = this, // #8874
+            len,
+            i = fromIndex || 0; // #8346
 
         if (arr) {
             len = arr.length;
 
             for (; i < len; i++) {
-                if (arr[i] === this) {
+                if (arr[i] === member) {
                     return i;
                 }
             }
@@ -140,15 +144,16 @@ if (!Array.prototype.filter) {
 }
 
 if (!Array.prototype.some) {
-    H.some = function (fn, ctx) { // legacy
+    H.somePolyfill = function (fn, ctx) { // legacy
         var i = 0,
             len = this.length;
 
         for (; i < len; i++) {
             if (fn.call(ctx, this[i], i, this) === true) {
-                return;
+                return true;
             }
         }
+        return false;
     };
 }
 

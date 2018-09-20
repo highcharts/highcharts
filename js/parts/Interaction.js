@@ -173,14 +173,21 @@ TrackerMixin = H.TrackerMixin = {
 
             series.tracker = renderer.path(trackerPath)
             .attr({
+                /*= if (build.classic) { =*/
                 'stroke-linejoin': 'round', // #1225
-                visibility: series.visible ? 'visible' : 'hidden',
                 stroke: TRACKER_FILL,
                 fill: trackByArea ? TRACKER_FILL : 'none',
                 'stroke-width': series.graph.strokeWidth() +
                     (trackByArea ? 0 : 2 * snap),
+                /*= } =*/
+                visibility: series.visible ? 'visible' : 'hidden',
                 zIndex: 2
             })
+            .addClass(
+                trackByArea ?
+                    'highcharts-tracker-area' :
+                    'highcharts-tracker-line'
+            )
             .add(series.group);
 
             // The tracker is added to the series group, which is clipped, but
@@ -298,6 +305,7 @@ extend(Legend.prototype, {
 
         item.checkbox = createElement('input', {
             type: 'checkbox',
+            className: 'highcharts-legend-checkbox',
             checked: item.selected,
             defaultChecked: item.selected // required by IE7
         }, legend.options.itemCheckboxStyle, legend.chart.container);
@@ -369,9 +377,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
     },
 
     /**
-     * Zoom out to 1:1.
-     *
-     * @private
+     * Zoom the chart out after a user has zoomed in. See also
+     * [Axis.setExtremes](/class-reference/Highcharts.Axis#setExtremes).
      */
     zoomOut: function () {
         fireEvent(this, 'selection', { resetSelection: true }, this.zoom);

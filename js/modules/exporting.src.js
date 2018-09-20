@@ -673,9 +673,19 @@ defaultOptions.exporting = {
              * button's title tooltip. When the key is `contextButtonTitle`, it
              * refers to [lang.contextButtonTitle](#lang.contextButtonTitle)
              * that defaults to "Chart context menu".
-             * @type {String}
+             *
+             * @since next
              */
-            _titleKey: 'contextButtonTitle',
+            titleKey: 'contextButtonTitle',
+
+            /**
+             * This option is deprecated, use
+             * [titleKey](#exporting.buttons.contextButton.titleKey) instead.
+             *
+             * @deprecated
+             * @type      {string}
+             * @apioption exporting.buttons.contextButton._titleKey
+             */
 
             /**
              * A collection of strings pointing to config options for the menu
@@ -894,7 +904,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         svg = svg
             .replace(/zIndex="[^"]+"/g, '')
-            .replace(/isShadow="[^"]+"/g, '')
             .replace(/symbolName="[^"]+"/g, '')
             .replace(/jQuery[0-9]+="[^"]+"/g, '')
             .replace(/url\(("|&quot;)(\S+)("|&quot;)\)/g, 'url($2)')
@@ -1195,33 +1204,37 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // pull out the chart
         body.appendChild(container);
 
-        // print
-        win.focus(); // #1510
-        win.print();
-
-        // allow the browser to prepare before reverting
+        // Give the browser time to draw WebGL content, an issue that randomly
+        // appears (at least) in Chrome ~67 on the Mac (#8708).
         setTimeout(function () {
 
-            // put the chart back in
-            origParent.appendChild(container);
+            win.focus(); // #1510
+            win.print();
 
-            // restore all body content
-            each(childNodes, function (node, i) {
-                if (node.nodeType === 1) {
-                    node.style.display = origDisplay[i];
+            // allow the browser to prepare before reverting
+            setTimeout(function () {
+
+                // put the chart back in
+                origParent.appendChild(container);
+
+                // restore all body content
+                each(childNodes, function (node, i) {
+                    if (node.nodeType === 1) {
+                        node.style.display = origDisplay[i];
+                    }
+                });
+
+                chart.isPrinting = false;
+
+                // Reset printMaxWidth
+                if (handleMaxWidth) {
+                    chart.setSize.apply(chart, resetParams);
                 }
-            });
 
-            chart.isPrinting = false;
+                fireEvent(chart, 'afterPrint');
 
-            // Reset printMaxWidth
-            if (handleMaxWidth) {
-                chart.setSize.apply(chart, resetParams);
-            }
-
-            fireEvent(chart, 'afterPrint');
-
-        }, 1000);
+            }, 1000);
+        }, 1);
 
     },
 
@@ -1246,14 +1259,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             menu = chart[cacheName],
             menuPadding = Math.max(width, height), // for mouse leave detection
             innerMenu,
-            hide,
             menuStyle;
 
         // create the menu only the first time
         if (!menu) {
 
             // create a HTML element above the SVG
-            chart[cacheName] = menu = createElement('div', {
+            chart.exportContextMenu = chart[cacheName] = menu =
+            createElement('div', {
                 className: className
             }, {
                 position: 'absolute',
@@ -1279,18 +1292,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             /*= } =*/
 
             // hide on mouse out
-            hide = function () {
+            menu.hideMenu = function () {
                 css(menu, { display: 'none' });
                 if (button) {
                     button.setState(0);
                 }
                 chart.openMenu = false;
+                H.clearTimeout(menu.hideTimer);
             };
 
             // Hide the menu some time after mouse leave (#1357)
             chart.exportEvents.push(
                 addEvent(menu, 'mouseleave', function () {
-                    menu.hideTimer = setTimeout(hide, 500);
+                    menu.hideTimer = setTimeout(menu.hideMenu, 500);
                 }),
                 addEvent(menu, 'mouseenter', function () {
                     H.clearTimeout(menu.hideTimer);
@@ -1300,13 +1314,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // #2335, #2407)
                 addEvent(doc, 'mouseup', function (e) {
                     if (!chart.pointer.inClass(e.target, className)) {
-                        hide();
+                        menu.hideMenu();
                     }
                 }),
 
                 addEvent(menu, 'click', function () {
                     if (chart.openMenu) {
-                        hide();
+                        menu.hideMenu();
                     }
                 })
             );
@@ -1331,7 +1345,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                                 if (e) { // IE7
                                     e.stopPropagation();
                                 }
-                                hide();
+                                menu.hideMenu();
                                 if (item.onclick) {
                                     item.onclick.apply(chart, arguments);
                                 }
@@ -1429,12 +1443,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (onclick) {
             callback = function (e) {
-                e.stopPropagation();
+                if (e) {
+                    e.stopPropagation();
+                }
                 onclick.call(chart, e);
             };
 
         } else if (menuItems) {
-            callback = function () {
+            callback = function (e) {
+                // consistent with onclick call (#3495)
+                if (e) {
+                    e.stopPropagation();
+                }
+
                 chart.contextMenu(
                     button.menuClassName,
                     menuItems,
@@ -1467,7 +1488,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 /*= if (build.classic) { =*/
                 'stroke-linecap': 'round',
                 /*= } =*/
-                title: pick(chart.options.lang[btnOptions._titleKey], '')
+                title: pick(
+                    chart.options.lang[
+                        btnOptions._titleKey || btnOptions.titleKey
+                    ],
+                    ''
+                )
             });
         button.menuClassName = (
             options.menuClassName ||

@@ -45,7 +45,7 @@ function dumpOptions() {
             '  '
         ),
         function () {
-            //console.log('Wrote tree!');
+            //console.info('Wrote tree!');
         }
     );
 }
@@ -56,9 +56,9 @@ function resolveBinaryExpression(node) {
     var rside = '';
 
     if (node.left.type === 'Literal') {
-        lside = node.left.value;    
+        lside = node.left.value;
     } 
-        
+
     if (node.right.type === 'Literal') {
         rside = node.right.value;
     }
@@ -88,7 +88,7 @@ function decorateOptions(parent, target, option, filename) {
     var index;
 
     if (!option) {
-        console.log('WARN: decorateOptions called with no valid AST node');
+        console.error('WARN: decorateOptions called with no valid AST node');
         return;
     }
 
@@ -154,7 +154,7 @@ function decorateOptions(parent, target, option, filename) {
         target[index].meta.default = resolveBinaryExpression(option.value);
     } else {
       // if (option.leadingComments && option.leadingComments[0].value.indexOf('@apioption') >= 0) {
-        // console.log('OPTION:', option, 'COMMENT:', option.leadingComments);
+        // console.info('OPTION:', option, 'COMMENT:', option.leadingComments);
       // }
     }
 
@@ -167,14 +167,14 @@ function decorateOptions(parent, target, option, filename) {
 
 function appendComment(node, lines) {
 
-  if (typeof node.comment !== 'undefined') {
-    node.comment = node.comment.replace(/\/\*/g, '').replace(/\*\//g, '*');
-    node.comment = '/**\n' + node.comment + '\n* ' + lines.join('\n* ') + '\n*/';
-  } else {
-    node.comment = '/**\n* ' + lines.join('\n* ') + '\n*/';
-  }
+    if (typeof node.comment !== 'undefined') {
+        node.comment = node.comment.replace(/\/\*/g, '').replace(/\*\//g, '*');
+        node.comment = '/**\n' + node.comment + '\n* ' + lines.join('\n* ') + '\n*/';
+    } else {
+        node.comment = '/**\n* ' + lines.join('\n* ') + '\n*/';
+    }
 
-  node.event = 'jsdocCommentFound';
+    node.event = 'jsdocCommentFound';
 }
 
 function nodeVisitor(node, e, parser, currentSourceName) {
@@ -192,19 +192,19 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
     if (node.highcharts && node.highcharts.isOption) {
 
-      shouldIgnore = (e.comment || '').indexOf('@ignore-option') > 0;
+        shouldIgnore = (e.comment || '').indexOf('@ignore-option') > 0;
 
-      if (shouldIgnore) {
-        removeOption(node.highcharts.fullname);
-      } else if ((e.comment || '').indexOf('@apioption') < 0) {
-        appendComment(e, [
-          '@optionparent ' + node.highcharts.fullname
-        ]);
-      } else if ((e.comment || '').indexOf('@apioption tooltip') >= 0) {
-        console.log(e.comment);
-      }
+        if (shouldIgnore) {
+            removeOption(node.highcharts.fullname);
+        } else if ((e.comment || '').indexOf('@apioption') < 0) {
+            appendComment(e, [
+            '@optionparent ' + node.highcharts.fullname
+            ]);
+        } else if ((e.comment || '').indexOf('@apioption tooltip') >= 0) {
+            console.error(e.comment);
+        }
 
-      return;
+        return;
     }
 
     if (!node.leadingComments ||
@@ -272,8 +272,8 @@ function nodeVisitor(node, e, parser, currentSourceName) {
 
         if (target) {
             if (node.type === 'CallExpression' && node.callee.name === 'seriesType') {
-                console.log('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
-                // console.log('Found series type:', properties, JSON.stringify(node.arguments[2], false, '  '));
+                console.info('    found series type', node.arguments[0].value, '- inherited from', node.arguments[1].value);
+                // console.info('    found series type:', JSON.stringify(node.arguments[2], undefined, '  '));
                 properties = node.arguments[2].properties;
             } else if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression' && node.callee.property.name === 'setOptions') {
                 properties = node.arguments[0].properties;
@@ -286,18 +286,18 @@ function nodeVisitor(node, e, parser, currentSourceName) {
             } else if (node.operator === '=' && node.right.type === 'ObjectExpression') {
                 properties = node.right.properties;
             } else if (node.right && node.right.type === 'CallExpression' && node.right.callee.property.name === 'seriesType') {
-                console.log('    found series type', node.right.arguments[0].value, '- inherited from', node.right.arguments[1].value);
+                console.info('    found series type', node.right.arguments[0].value, '- inherited from', node.right.arguments[1].value);
                 properties = node.right.arguments[2].properties;
             } else {
                 logger.error('code tagged with @optionparent must be an object:', currentSourceName, node);
             }
 
-            if (properties && properties.length > 0) {
+            if (properties) {
                 properties.forEach(function (child) {
                     decorateOptions(parent, target, child, e.filename || currentSourceName);
                 });
             } else {
-                console.log('INVALID properties for node', node);
+                console.error('INVALID properties for node', node);
             }
         } else {
             logger.error('@optionparent is missing an argument');
@@ -325,6 +325,9 @@ function inferType(node) {
     node.doclet = node.doclet || {};
     node.meta = node.meta || {};
 
+    // remove JSDoc specific flag
+    delete node.doclet.undocumented;
+
     if (typeof node.doclet.type !== 'undefined') {
         // We allready have a type, so no infering is required
         return;
@@ -337,34 +340,34 @@ function inferType(node) {
     }
 
     if (typeof defVal === 'undefined') {
-        // There may still be hope - if this node has children, it's an object.
+        //  If this node has children, it is the any type.
         if (node.children && Object.keys(node.children).length) {
             node.doclet.type = {
-                names: ['Object']
+                names: ['*']
             };
         }
 
-        // We can't infer this type, so abort.
+        // We can not infer this type, so abort.
         return;
     }
     
     node.doclet.type = { names: [] };
     
     if (isBool(defVal)) {
-        node.doclet.type.names.push('Boolean');
+        node.doclet.type.names.push('boolean');
     }
     
     if (isNum(defVal)) {
-        node.doclet.type.names.push('Number');
+        node.doclet.type.names.push('number');
     }
     
     if (isStr(defVal)) {
-        node.doclet.type.names.push('String');
+        node.doclet.type.names.push('string');
     }
 
-    // If we were unable to deduce a type, assume it's an object
+    // If we were unable to deduce a type, it is the any type.
     if (node.doclet.type.names.length === 0) {
-        node.doclet.type.names.push('Object');
+        node.doclet.type.names.push('*');
     }
 
 }
@@ -412,7 +415,7 @@ function augmentOption(path, obj) {
         });
 
     } catch (e) {
-        console.log('ERROR deducing path', path);
+        console.error('ERROR deducing path', path);
     }
 }
 
@@ -420,8 +423,6 @@ function removeOption(path) {
     var current = options,
         p = (path || '').split('.')
     ;
-
-    // console.log('found ignored option: removing', path);
 
     if (!p) {
         return;
@@ -455,7 +456,6 @@ function resolveProductTypes(doclet, tagObj) {
         value = value.replace(reg, '');
         products = match[0].replace('{', '').replace('}', '').split('|');
     }
-
 
     return doclet[tagObj.originalTitle] = {
         value: value.trim(),
@@ -505,7 +505,7 @@ exports.defineTags = function (dictionary) {
 
     dictionary.defineTag('context', {
       onTagged: function (doclet, tagObj) {
-        doclet.context = tagObj.value;
+            doclet.context = tagObj.value;
       }
     });
 
@@ -588,34 +588,14 @@ exports.defineTags = function (dictionary) {
 
     function handleValue(doclet, tagObj) {
         doclet.values = tagObj.value;
-        return;
-
-        var t;
-        doclet.values = doclet.values || [];
-
-        // A lot of these options are defined as json.
-        try {
-            t = JSON.parse(tagObj.value);
-            if (Array.isArray(t)) {
-                doclet.values = doclet.values.concat(t);
-            } else {
-                doclet.values.push(t);
-            }
-        } catch (e) {
-            doclet.values.push(tabObj.value);
-        }
     }
 
     dictionary.defineTag('validvalue', {
-        onTagged: function (doclet, tag) {
-            handleValue(doclet, tag);
-        }
+        onTagged: handleValue
     });
 
     dictionary.defineTag('values', {
-        onTagged: function (doclet, tag) {
-            handleValue(doclet, tag);
-        }
+        onTagged: handleValue
     });
 
     dictionary.defineTag('extends', {
@@ -643,6 +623,7 @@ exports.astNodeVisitor = {
 };
 
 exports.handlers = {
+
     beforeParse: function (e) {
         var palette = getPalette(hcRoot + '/css/highcharts.scss');
 
@@ -655,9 +636,14 @@ exports.handlers = {
             );
         });
 
-        var match = e.source.match(/\s\*\/[\s]+\}/g);
-        if (match) {
-            console.log(
+        var match = e.source.match(
+            /(\s*)\/\*\*(?:\1 \*[^\n]*)+\1 \*\/[\s]+\}/g
+        );
+        if (match && match.some(m =>
+                m.indexOf('@apioption') === -1 &&
+                m.indexOf('@name') === -1
+        )) {
+            console.error(
 `Warning: Detected ${match.length} cases of a comment followed by } in
 ${e.filename}.
 This may lead to loose doclets not being parsed into the API. Move them up
@@ -681,8 +667,6 @@ before functional code for JSDoc to see them.`.yellow
         options._meta.branch = exec('git rev-parse --abbrev-ref HEAD', {cwd: process.cwd()}).toString().trim();
         options._meta.date = (new Date()).toString();
 
-        let files = {};
-
         function inferTypeForTree(obj) {
             inferType(obj);
 
@@ -693,20 +677,20 @@ before functional code for JSDoc to see them.`.yellow
                 );
             }
 
-            files[obj.meta.filename] = 1;
-
             // Infer types
             if (obj.children) {
-                Object.keys(obj.children).forEach(function (child) {
+                Object.keys(obj.children).forEach(name => {
                     // work around #8260:
-                    if (child === '' || child === 'undefined') {
-                        delete obj.children[child];
-                        return;
+                    if (name === '' || name === 'undefined') {
+                        delete obj.children[name];
+                    } else if (name[0] !== '_') {
+                        inferTypeForTree(obj.children[name]);
                     }
-                    inferTypeForTree(obj.children[child]);
                 });
             }
         }
+
+        inferTypeForTree({children: options});
 
         function addSeriesTypeDescription(type) {
             var node = type;
@@ -748,20 +732,7 @@ Highcharts.chart('container', {
             }
         }
 
-        Object.keys(options).forEach(function (name) {
-            // work around #8260:
-            if (name === '' || name === 'undefined') {
-                delete options[name];
-                return;
-            }
-            if (name !== '_meta') {
-                inferTypeForTree(options[name]);
-            }
-        });
-
         Object.keys(options.plotOptions.children).forEach(addSeriesTypeDescription);
-
-        // console.log(Object.keys(files));
 
         dumpOptions();
     }

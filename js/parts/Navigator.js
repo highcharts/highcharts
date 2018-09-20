@@ -1259,7 +1259,7 @@ Navigator.prototype = {
                 left = Math.max(0, left);
             } else if (index === 2 && left + range >= navigatorSize) {
                 left = navigatorSize - range;
-                if (xAxis.reversed) {
+                if (navigator.reversedExtremes) {
                     // #7713
                     left -= range;
                     fixedMin = navigator.getUnionExtremes().dataMin;
@@ -1309,10 +1309,9 @@ Navigator.prototype = {
         var navigator = this,
             chart = navigator.chart,
             baseXAxis = chart.xAxis[0],
-            // For reversed axes, min and max are chagned,
+            // For reversed axes, min and max are changed,
             // so the other extreme should be stored
-            reverse = (chart.inverted && !baseXAxis.reversed) ||
-                (!chart.inverted && baseXAxis.reversed);
+            reverse = navigator.reversedExtremes;
 
         if (index === 0) {
             // Grab the left handle
@@ -1400,7 +1399,13 @@ Navigator.prototype = {
             if (
                 navigator.hasDragged &&
                 navigator.scrollbar &&
-                navigator.scrollbar.options.liveRedraw
+                pick(
+                    navigator.scrollbar.options.liveRedraw,
+
+                    // By default, don't run live redraw on VML, on touch
+                    // devices or if the chart is in boost.
+                    H.svg && !isTouchDevice && !this.chart.isBoosting
+                )
             ) {
                 e.DOMType = e.type; // DOMType is for IE8
                 setTimeout(function () {
@@ -1423,7 +1428,6 @@ Navigator.prototype = {
         var navigator = this,
             chart = navigator.chart,
             xAxis = navigator.xAxis,
-            reversed = xAxis && xAxis.reversed,
             scrollbar = navigator.scrollbar,
             unionExtremes,
             fixedMin,
@@ -1448,13 +1452,13 @@ Navigator.prototype = {
             }
             // Snap to right edge (#4076)
             if (navigator.zoomedMax === navigator.size) {
-                fixedMax = reversed ?
+                fixedMax = navigator.reversedExtremes ?
                     unionExtremes.dataMin : unionExtremes.dataMax;
             }
 
             // Snap to left edge (#7576)
             if (navigator.zoomedMin === 0) {
-                fixedMin = reversed ?
+                fixedMin = navigator.reversedExtremes ?
                     unionExtremes.dataMax : unionExtremes.dataMin;
             }
 
@@ -1589,6 +1593,7 @@ Navigator.prototype = {
                 isX: true,
                 type: 'datetime',
                 index: xAxisIndex,
+                isInternal: true,
                 offset: 0,
                 keepOrdinalPadding: true, // #2436
                 startOnTick: false,
@@ -1609,6 +1614,7 @@ Navigator.prototype = {
                 alignTicks: false,
                 offset: 0,
                 index: yAxisIndex,
+                isInternal: true,
                 zoomEnabled: false
             }, chart.inverted ? {
                 width: height
@@ -1635,6 +1641,12 @@ Navigator.prototype = {
                     }
                 );
             }
+
+            navigator.reversedExtremes = (
+                chart.inverted && !navigator.xAxis.reversed
+            ) || (
+                !chart.inverted && navigator.xAxis.reversed
+            );
 
             // Render items, so we can bind events to them:
             navigator.renderElements();
@@ -1852,8 +1864,11 @@ Navigator.prototype = {
                             );
                             delete base.navigatorSeries;
                         }
-                        // Kill the nav series
-                        navSeries.destroy();
+                        // Kill the nav series. It may already have been
+                        // destroyed (#8715).
+                        if (navSeries.chart) {
+                            navSeries.destroy();
+                        }
                         return false;
                     }
                     return true;
@@ -2131,7 +2146,7 @@ Navigator.prototype = {
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data  comes in.
-        navigator.stickToMax = navigator.xAxis.reversed ?
+        navigator.stickToMax = navigator.reversedExtremes ?
             Math.round(navigator.zoomedMin) === 0 :
             Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
 

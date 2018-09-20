@@ -1,3 +1,6 @@
 
 parserOptions:
     ecmaVersion: 2017
+
+rules:
+    no-undefined: 0

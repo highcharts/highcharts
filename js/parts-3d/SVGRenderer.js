@@ -606,7 +606,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     attribs = merge(attribs);
 
     attribs.alpha = (attribs.alpha || 0) * deg2rad;
-    attribs.beta = (attribs.alpha || 0) * deg2rad;
+    attribs.beta = (attribs.beta || 0) * deg2rad;
 
     // Create the different sub sections of the shape
     wrapper.top = renderer.path();
@@ -725,7 +725,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
             from = this.attribs,
             to,
             anim,
-            randomProp = Math.random().toString(26).substring(2, 9);
+            randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
 
         // Attribute-line properties connected to 3D. These shouldn't have been
         // in the attribs collection in the first place.
