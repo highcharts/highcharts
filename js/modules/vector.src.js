@@ -31,8 +31,8 @@ seriesType('vector', 'scatter'
  * @sample {highcharts|highstock} highcharts/demo/vector-plot/
  *         Vector pot
  *
- * @extends      plotOptions.scatter
  * @since        6.0.0
+ * @extends      plotOptions.scatter
  * @excluding    boostThreshold, marker, connectEnds, connectNulls,
  *               cropThreshold, dashStyle, gapSize, gapUnit, dataGrouping,
  *               linecap, shadow, stacking, step
@@ -90,6 +90,7 @@ seriesType('vector', 'scatter'
     vectorLength: 20
 
 }, {
+
     pointArrayMap: ['y', 'length', 'direction'],
     parallelArrays: ['x', 'y', 'length', 'direction'],
 
@@ -124,13 +125,15 @@ seriesType('vector', 'scatter'
     },
 
     /**
-     * @private
+     * @ignore
+     * @deprecated
      * @function Highcharts.seriesTypes.vector#markerAttribs
      */
     markerAttribs: H.noop,
 
     /**
-     * @private
+     * @ignore
+     * @deprecated
      * @function Highcharts.seriesTypes.vector#getSymbol
      */
     getSymbol: H.noop,
@@ -216,7 +219,8 @@ seriesType('vector', 'scatter'
     },
 
     /**
-     * @private
+     * @ignore
+     * @deprecated
      * @function Highcharts.seriesTypes.vector#drawGraph
      */
     drawGraph: H.noop,
@@ -278,7 +282,7 @@ seriesType('vector', 'scatter'
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.vector
- * @excluding dataParser,dataURL
+ * @excluding dataParser, dataURL
  * @product   highcharts highstock
  * @apioption series.vector
  */
