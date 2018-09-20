@@ -99,6 +99,10 @@ seriesType('sankey', 'column', {
      * Opacity for the links between nodes in the sankey diagram.
      */
     linkOpacity: 0.5,
+    /**
+     * The minimal height for a node in the sankey diagram.
+     */
+    minNodeHeight: 0,
     /*= } =*/
     /**
      * The pixel width of each node in a sankey diagram, or the height in case
@@ -185,9 +189,11 @@ seriesType('sankey', 'column', {
             node.linksFrom = [];
             node.formatPrefix = 'node';
             node.name = node.name || node.id; // for use in formats
+            node.minNodeHeight = this.options.minNodeHeight;
 
             /**
-             * Return the largest sum of either the incoming or outgoing links.
+             * Return the largest sum of either the incoming links,
+             * the outgoing links, or the minimum node height option.
              */
             node.getSum = function () {
                 var sumTo = 0,
@@ -198,7 +204,7 @@ seriesType('sankey', 'column', {
                 each(node.linksFrom, function (link) {
                     sumFrom += link.weight;
                 });
-                return Math.max(sumTo, sumFrom);
+                return Math.max(sumTo, sumFrom, node.minNodeHeight);
             };
             /**
              * Get the offset in weight values of a point/link.
