@@ -692,6 +692,13 @@ seriesType('tilemap', 'heatmap'
     }
 
 }, H.extend({
+
+    /**
+     * @private
+     * @function Highcharts.Point#haloPath
+     *
+     * @return {Highcharts.SVGPathArray}
+     */
     haloPath: function () {
         return this.series.tileShape.haloPath.apply(this,
             Array.prototype.slice.call(arguments)
