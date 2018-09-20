@@ -122,6 +122,7 @@ seriesType('xrange', 'column'
     pointRange: 0
 
 }, {
+
     type: 'xrange',
     parallelArrays: ['x', 'x2', 'y'],
     requireSorting: false,
@@ -457,8 +458,7 @@ seriesType('xrange', 'column'
     }
     //*/
 
-// Point class properties
-}, {
+}, { // Point class properties
 
     /**
      * Extend init so that `colorByPoint` for x-range means that one color is
