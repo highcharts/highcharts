@@ -323,7 +323,7 @@ seriesType('heatmap', 'scatter'
      *
      * @param {number} size
      *
-     * @return {Highcharts.SVGArrayPath}
+     * @return {Highcharts.SVGPathArray}
      */
     haloPath: function (size) {
         if (!size) {
