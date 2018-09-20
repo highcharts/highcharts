@@ -399,8 +399,9 @@
             useUTC: true
         });
 
-        var ticks = time.getTimeTicks({
-            unitRange: 7 * 24 * 36e5,
+        var ticks = time.getTimeTicks(
+            {
+                unitRange: 7 * 24 * 36e5,
                 count: 1,
                 unitName: "week"
             },
@@ -414,15 +415,15 @@
                 return time.dateFormat('%d-%m-%Y', tick);
             }),
             [
-              "03-09-2018",
-              "10-09-2018",
-              "17-09-2018",
-              "24-09-2018",
-              "01-10-2018",
-              "08-10-2018",
-              "15-10-2018"
+                "03-09-2018",
+                "10-09-2018",
+                "17-09-2018",
+                "24-09-2018",
+                "01-10-2018",
+                "08-10-2018",
+                "15-10-2018"
             ],
             'All ticks created (#7051).'
-        )
+        );
     });
 }());

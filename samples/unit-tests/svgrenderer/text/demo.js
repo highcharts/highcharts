@@ -283,6 +283,57 @@ QUnit.test('HTML', function (assert) {
             'Top offset should reflect initial position'
         );
 
+        text = renderer.text(
+                'The quick brown fox jumped over the lazy dog', 10, 30, true
+            )
+            .css({
+                textOverflow: 'ellipsis',
+                width: '100px'
+            })
+            .add();
+
+        assert.strictEqual(
+            text.element.style.width,
+            '100px',
+            'The style width should should now 100px'
+        );
+        text.css({
+            fontWeight: 'bold'
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '100px',
+            'The style width should be preserved after running .css with unrelated props (#8994)'
+        );
+
+        text.css({
+            width: null
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '',
+            'The style width should be removed when setting to null'
+        );
+
+        text.css({
+            width: '120px'
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '120px',
+            'The style width should be reset to 120px'
+        );
+
+        text.css({
+            width: undefined
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '',
+            'The style width should be removed when setting to undefined'
+        );
+
+
     } finally {
 
         renderer.destroy();
