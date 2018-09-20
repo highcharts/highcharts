@@ -33,11 +33,19 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
     htmlCss: function (styles) {
         var wrapper = this,
             element = wrapper.element,
-            textWidth = styles && element.tagName === 'SPAN' && styles.width;
+            // When setting or unsetting the width style, we need to update
+            // transform (#8809)
+            isSettingWidth = (
+                element.tagName === 'SPAN' &&
+                styles &&
+                'width' in styles
+            ),
+            textWidth = pick(
+                isSettingWidth && styles.width,
+                undefined
+            );
 
-        // When setting or unsetting the width style, we need to update
-        // transform (#8809)
-        if (textWidth || (wrapper.textWidth && !textWidth)) {
+        if (isSettingWidth) {
             delete styles.width;
             wrapper.textWidth = textWidth;
             wrapper.htmlUpdateTransform();

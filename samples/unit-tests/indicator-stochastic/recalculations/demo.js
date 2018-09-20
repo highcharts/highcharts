@@ -27,9 +27,9 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
         }]
     });
 
-    function toFastStochasticWithRound(arr) {
+    function toFastStochasticWithRound(arr, index) {
         return Highcharts.map(arr, function (point) {
-            return parseFloat(point[0].toFixed(5));
+            return point[index] ? parseFloat(point[index].toFixed(5)) : point[index];
         });
     }
 
@@ -93,7 +93,7 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        toFastStochasticWithRound(chart.series[1].yData),
+        toFastStochasticWithRound(chart.series[1].yData, 0),
         [
             70.43822,
             67.60891,
@@ -124,7 +124,7 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
     chart.series[0].points[chart.series[0].points.length - 1].remove();
 
     assert.deepEqual(
-        toFastStochasticWithRound(chart.series[1].yData),
+        toFastStochasticWithRound(chart.series[1].yData, 0),
         [
             70.43822,
             67.60891,
@@ -144,5 +144,28 @@ QUnit.test('Test Stochastic calculations on data updates.', function (assert) {
             66.82855
         ],
         'Correct values after point.remove()'
+    );
+
+    assert.deepEqual(
+        toFastStochasticWithRound(chart.series[1].yData, 1),
+        [
+            null,
+            null,
+            75.74975,
+            74.20719,
+            78.92012,
+            70.69402,
+            73.60043,
+            79.21167,
+            81.07192,
+            80.58069,
+            72.1928,
+            69.23506,
+            65.20178,
+            54.19122,
+            47.24283,
+            49.20025
+        ],
+        'Correct %D values.'
     );
 });
