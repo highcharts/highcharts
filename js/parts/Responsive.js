@@ -41,7 +41,6 @@ var Chart = H.Chart,
  * @sample highcharts/responsive/classname/
  *         Class name
  *
- * @type      {*}
  * @since     5.0.0
  * @apioption responsive
  */
@@ -92,7 +91,6 @@ var Chart = H.Chart,
 /**
  * Under which conditions the rule applies.
  *
- * @type      {*}
  * @since     5.0.0
  * @apioption responsive.rules.condition
  */
