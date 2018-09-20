@@ -15,7 +15,8 @@ Highcharts.chart('container', {
     yAxis: {
         title: '',
         categories: ['Prototyping', 'Development', 'Testing'],
-        reversed: true
+        reversed: true,
+        staticScale: 50
     },
     plotOptions: {
         series: {

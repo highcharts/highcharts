@@ -2980,7 +2980,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             axis.oldTransA = transA;
         }
         axis.translationSlope = axis.transA = transA =
-            axis.options.staticScale ||
+            axis.staticScale ||
             axis.len / ((range + pointRangePadding) || 1);
 
         // Translation addend

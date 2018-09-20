@@ -291,8 +291,8 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
 
                 fireEvent(axis, 'afterBreaks');
 
-                if (axis.options.staticScale) {
-                    axis.transA = axis.options.staticScale;
+                if (axis.staticScale) {
+                    axis.transA = axis.staticScale;
                 } else if (axis.unitLength) {
                     axis.transA *= (max - axis.min + pointRangePadding) /
                         axis.unitLength;
