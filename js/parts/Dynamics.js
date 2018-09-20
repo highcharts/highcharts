@@ -746,7 +746,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *
      * @param {number|Array<number>|*} options
      *        The point options. If options is a single number, a point with
-     *        that y value is appended to the series.If it is an array, it will
+     *        that y value is appended to the series. If it is an array, it will
      *        be interpreted as x and y values respectively. If it is an
      *        object, advanced options as outlined under `series.data` are
      *        applied.
