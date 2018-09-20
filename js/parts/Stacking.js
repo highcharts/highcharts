@@ -39,7 +39,7 @@ var Axis = H.Axis,
  *
  * @param {number} x
  *
- * @param {*} stackOption
+ * @param {string|*} stackOption
  */
 H.StackItem = function (axis, options, isNegative, x, stackOption) {
 
@@ -139,9 +139,9 @@ H.StackItem.prototype = {
      * @private
      * @function Highcarts.StackItem#setOffset
      *
-     * @param  {number} xOffset
+     * @param {number} xOffset
      *
-     * @param  {number} xWidth
+     * @param {number} xWidth
      */
     setOffset: function (xOffset, xWidth) {
         var stackItem = this,
