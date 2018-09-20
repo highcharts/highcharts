@@ -673,9 +673,19 @@ defaultOptions.exporting = {
              * button's title tooltip. When the key is `contextButtonTitle`, it
              * refers to [lang.contextButtonTitle](#lang.contextButtonTitle)
              * that defaults to "Chart context menu".
-             * @type {String}
+             *
+             * @since next
              */
-            _titleKey: 'contextButtonTitle',
+            titleKey: 'contextButtonTitle',
+
+            /**
+             * This option is deprecated, use
+             * [titleKey](#exporting.buttons.contextButton.titleKey) instead.
+             *
+             * @deprecated
+             * @type      {string}
+             * @apioption exporting.buttons.contextButton._titleKey
+             */
 
             /**
              * A collection of strings pointing to config options for the menu
@@ -894,7 +904,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         svg = svg
             .replace(/zIndex="[^"]+"/g, '')
-            .replace(/isShadow="[^"]+"/g, '')
             .replace(/symbolName="[^"]+"/g, '')
             .replace(/jQuery[0-9]+="[^"]+"/g, '')
             .replace(/url\(("|&quot;)(\S+)("|&quot;)\)/g, 'url($2)')
@@ -1434,12 +1443,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (onclick) {
             callback = function (e) {
-                e.stopPropagation();
+                if (e) {
+                    e.stopPropagation();
+                }
                 onclick.call(chart, e);
             };
 
         } else if (menuItems) {
-            callback = function () {
+            callback = function (e) {
+                // consistent with onclick call (#3495)
+                if (e) {
+                    e.stopPropagation();
+                }
+
                 chart.contextMenu(
                     button.menuClassName,
                     menuItems,
@@ -1472,7 +1488,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 /*= if (build.classic) { =*/
                 'stroke-linecap': 'round',
                 /*= } =*/
-                title: pick(chart.options.lang[btnOptions._titleKey], '')
+                title: pick(
+                    chart.options.lang[
+                        btnOptions._titleKey || btnOptions.titleKey
+                    ],
+                    ''
+                )
             });
         button.menuClassName = (
             options.menuClassName ||

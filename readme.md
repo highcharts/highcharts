@@ -34,7 +34,7 @@ without any bundling tools, by using `<script type="module">` ([demo](https://js
 
 ```js
 <script type="module">
-  import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.js';
+  import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
 
   Highcharts.chart('container', {
     ...
