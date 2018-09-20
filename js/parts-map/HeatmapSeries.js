@@ -176,6 +176,7 @@ seriesType('heatmap', 'scatter'
     }
 
 }, merge(colorSeriesMixin, {
+
     pointArrayMap: ['y', 'value'],
     hasPointSpecificOptions: true,
     getExtremesFromAll: true,
@@ -273,10 +274,37 @@ seriesType('heatmap', 'scatter'
             /*= } =*/
         }, this);
     },
+
+    /**
+     * @ignore
+     * @deprecated
+     * @function Highcharts.seriesTypes.heatmap#animate
+     */
     animate: noop,
+
+    /**
+     * @ignore
+     * @deprecated
+     * @function Highcharts.seriesTypes.heatmap#getBox
+     */
     getBox: noop,
+
+    /**
+     * @private
+     * @borrows Highcharts.LegendSymbolMixin.drawRectangle as Highcharts.seriesTypes.heatmap#drawLegendSymbol
+     */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+
+    /**
+     * @private
+     * @borrows Highcharts.seriesTypes.column#alignDataLabel as Highcharts.seriesTypes.heatmap#alignDataLabel
+     */
     alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.heatmap#getExtremes
+     */
     getExtremes: function () {
         // Get the extremes from the value data
         Series.prototype.getExtremes.call(this, this.valueData);
