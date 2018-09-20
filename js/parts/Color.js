@@ -28,7 +28,7 @@ var each = H.each,
 /**
  * Handle color operations. The object methods are chainable.
  *
- * @ignore
+ * @private
  * @class
  * @name Highcharts.Color
  *
@@ -288,6 +288,16 @@ H.Color.prototype = {
         return ret;
     }
 };
+
+/**
+ * Creates a color instance out of a color string.
+ *
+ * @private
+ * @function Highcharts.color
+ *
+ * @param {Highcharts.ColorString} input
+ *        The input color in either rbga or hex format
+ */
 H.color = function (input) {
     return new H.Color(input);
 };
