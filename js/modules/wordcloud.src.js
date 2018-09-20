@@ -497,13 +497,6 @@ var wordCloudOptions = {
     },
     borderWidth: 0,
     clip: false, // Something goes wrong with clip. // TODO fix this
-    /**
-     * When using automatic point colors pulled from the `options.colors`
-     * collection, this option determines whether the chart should receive
-     * one color per series or one color per point.
-     *
-     * @see [series colors](#plotOptions.column.colors)
-     */
     colorByPoint: true,
     /**
      * A threshold determining the minimum font size that can be applied to a
@@ -900,8 +893,8 @@ var wordCloudPoint = {
  *     ]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series'
  * [turboThreshold](#series.arearange.turboThreshold), this option is not
  * available.
