@@ -309,10 +309,13 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
      * @function Highcharts.SVGRenderer#html
      *
      * @param {string} str
+     *        The text of (subset) HTML to draw.
      *
      * @param {number} x
+     *        The x position of the text's lower left corner.
      *
      * @param {number} y
+     *        The y position of the text's lower left corner.
      *
      * @return {Highcharts.HTMLDOMElement}
      */
