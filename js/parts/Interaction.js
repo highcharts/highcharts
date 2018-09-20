@@ -173,14 +173,21 @@ TrackerMixin = H.TrackerMixin = {
 
             series.tracker = renderer.path(trackerPath)
             .attr({
+                /*= if (build.classic) { =*/
                 'stroke-linejoin': 'round', // #1225
-                visibility: series.visible ? 'visible' : 'hidden',
                 stroke: TRACKER_FILL,
                 fill: trackByArea ? TRACKER_FILL : 'none',
                 'stroke-width': series.graph.strokeWidth() +
                     (trackByArea ? 0 : 2 * snap),
+                /*= } =*/
+                visibility: series.visible ? 'visible' : 'hidden',
                 zIndex: 2
             })
+            .addClass(
+                trackByArea ?
+                    'highcharts-tracker-area' :
+                    'highcharts-tracker-line'
+            )
             .add(series.group);
 
             // The tracker is added to the series group, which is clipped, but
