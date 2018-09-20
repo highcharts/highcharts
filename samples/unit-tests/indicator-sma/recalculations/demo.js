@@ -2,20 +2,21 @@
 QUnit.test('Test algorithm on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
-        series: [{
-            id: 'main',
-            data: [
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15
-            ]
-        }, {
-            type: 'sma',
-            linkedTo: 'main'
-        }]
-    });
+            series: [{
+                id: 'main',
+                data: [
+                    13, 14, 15, 13, 14, 15,
+                    13, 14, 15, 13, 14, 15,
+                    13, 14, 15, 13, 14, 15,
+                    13, 14, 15, 13, 14, 15,
+                    13, 14, 15, 13, 14, 15
+                ]
+            }, {
+                type: 'sma',
+                linkedTo: 'main'
+            }]
+        }),
+        secondSeries;
 
     assert.strictEqual(
         chart.series[0].points.length,
@@ -65,5 +66,32 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         chart.series[1].points[chart.series[1].points.length - 1].x,
         chart.series[0].points[chart.series[0].points.length - 1].x,
         'Correct last point position after addPoint() with shift parameter (#8572)'
+    );
+
+    secondSeries = chart.addSeries({
+        id: 'second',
+        showInNavigator: true,
+        cropThreshold: 2,
+        pointStart: 1,
+        data: [
+            13, 14, 15, 13, 14, 15,
+            13, 14, 15, 13, 14, 15,
+            13, 14, 15, 13, 14, 15,
+            13, 14, 15, 13, 14, 15,
+            13, 14, 15, 13, 14, 15
+        ]
+    });
+
+    chart.addSeries({
+        type: 'sma',
+        linkedTo: 'second'
+    });
+
+    chart.xAxis[0].setExtremes(25, 30);
+
+    secondSeries.points[secondSeries.points.length - 1].update(100);
+
+    assert.ok(
+        'No errors after updating point in a cropped dataset (#8968)'
     );
 });
