@@ -129,3 +129,194 @@ QUnit.test('TouchPointer events', function (assert) {
         Highcharts.unbindDocumentTouchEnd = Highcharts.unbindDocumentTouchEnd();
     }
 });
+
+QUnit.test('followPointer and followTouchMove', function (assert) {
+
+
+
+    var chart;
+
+
+    function swipe() {
+        var offset = Highcharts.offset(chart.container),
+            points = chart.series[0].points;
+
+        // Swipe across the plot area
+        if (!chart.options.tooltip.shared) {
+            points[0].onMouseOver();
+        }
+        chart.pointer.onContainerTouchStart({
+            type: 'touchstart',
+            touches: [{
+                pageX: offset.left + chart.plotLeft + points[0].shapeArgs.x + points[0].shapeArgs.width / 2,
+                pageY: offset.top + chart.plotTop + chart.plotHeight - 10
+            }],
+            preventDefault: function () {},
+            target: points[0].graphic.element
+        });
+
+        chart.pointer.onContainerTouchMove({
+            type: 'touchmove',
+            touches: [{
+                pageX: offset.left + chart.plotLeft + points[2].shapeArgs.x + points[2].shapeArgs.width / 2,
+                pageY: offset.top + chart.plotTop + chart.plotHeight - 10
+            }],
+            preventDefault: function () {},
+            target: points[2].graphic.element
+        });
+
+        chart.pointer.onDocumentTouchEnd({
+            type: 'touchend',
+            touches: [{
+                pageX: offset.left + chart.plotLeft + points[2].shapeArgs.x + points[2].shapeArgs.width / 2,
+                pageY: offset.top + chart.plotTop + chart.plotHeight - 10
+            }]
+        });
+
+    }
+
+    Array.prototype.item = function (i) { // eslint-disable-line no-extend-native
+        return this[i];
+    };
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        xAxis: {
+            categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
+        },
+        series: [{
+            data: [1, 4, 3, 5],
+            pointPadding: 0,
+            groupPadding: 0,
+            type: 'column'
+        }]
+    });
+    swipe();
+
+    assert.close(
+        chart.tooltip.label.translateY + chart.tooltip.label.getBBox().height,
+        chart.plotTop + chart.series[0].points[2].plotY,
+        10,
+        'followPointer is false, followTouchMove is true by default, the tooltip should stay next to the top of Bananas'
+    );
+    assert.ok(
+        chart.tooltip.label.translateX > chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
+        'The tooltip should be above Bananas'
+    );
+    assert.notEqual(
+        chart.tooltip.label.element.textContent.indexOf('Bananas'),
+        -1,
+        'The tooltip should show Bananas'
+    );
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        xAxis: {
+            categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
+        },
+        tooltip: {
+            followTouchMove: false
+        },
+        series: [{
+            data: [1, 4, 3, 5],
+            pointPadding: 0,
+            groupPadding: 0,
+            type: 'column'
+        }]
+    });
+    swipe();
+
+    assert.close(
+        chart.tooltip.label.translateY + chart.tooltip.label.getBBox().height,
+        chart.plotTop + chart.series[0].points[0].plotY,
+        10,
+        'followPointer is false, followTouchMove is false, the tooltip should stay next to Apples'
+    );
+    assert.ok(
+        chart.tooltip.label.translateX < chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
+        'The tooltip should be above Apples'
+    );
+    assert.notEqual(
+        chart.tooltip.label.element.textContent.indexOf('Apples'),
+        -1,
+        'The tooltip should show Apples'
+    );
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        xAxis: {
+            categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
+        },
+        series: [{
+            data: [1, 4, 3, 5],
+            pointPadding: 0,
+            groupPadding: 0,
+            type: 'column',
+            tooltip: {
+                followPointer: true
+            }
+        }]
+    });
+    swipe();
+
+    assert.close(
+        chart.tooltip.label.translateY + chart.tooltip.label.getBBox().height,
+        chart.plotTop + chart.plotHeight - 10,
+        10,
+        'followPointer is true, followTouchMove is true by default, the tooltip should stay next to the touch'
+    );
+    assert.ok(
+        chart.tooltip.label.translateX > chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
+        'The tooltip should be above Bananas'
+    );
+    assert.notEqual(
+        chart.tooltip.label.element.textContent.indexOf('Bananas'),
+        -1,
+        'The tooltip should show Bananas'
+    );
+
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        xAxis: {
+            categories: ['Apples', 'Pears', 'Bananas', 'Oranges']
+        },
+        tooltip: {
+            followTouchMove: false
+        },
+        series: [{
+            data: [1, 4, 3, 5],
+            pointPadding: 0,
+            groupPadding: 0,
+            type: 'column',
+            tooltip: {
+                followPointer: true
+            }
+        }]
+    });
+    swipe();
+
+    assert.close(
+        chart.tooltip.label.translateY + chart.tooltip.label.getBBox().height,
+        chart.plotTop + chart.plotHeight - 10,
+        10,
+        'followPointer is true, followTouchMove is false, the tooltip should stay next to the touch'
+    );
+    assert.ok(
+        chart.tooltip.label.translateX < chart.plotLeft + chart.series[0].points[2].shapeArgs.x,
+        'The tooltip should be above Apples'
+    );
+    assert.notEqual(
+        chart.tooltip.label.element.textContent.indexOf('Apples'),
+        -1,
+        'The tooltip should show Apples'
+    );
+});

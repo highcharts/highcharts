@@ -444,14 +444,7 @@ H.Tooltip.prototype = {
         points = splat(points);
 
         // When tooltip follows mouse, relate the position to the mouse
-        if (
-            (this.followPointer && mouseEvent) ||
-            (
-                pointer.followTouchMove &&
-                mouseEvent &&
-                mouseEvent.type === 'touchmove'
-            )
-        ) {
+        if (this.followPointer && mouseEvent) {
             if (mouseEvent.chartX === undefined) {
                 mouseEvent = pointer.normalize(mouseEvent);
             }
