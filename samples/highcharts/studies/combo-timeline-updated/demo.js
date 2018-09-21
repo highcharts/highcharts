@@ -283,6 +283,7 @@ var options = {
             fillOpacity: 0.5
         },
         flags: {
+            clip: false,
             tooltip: {
                 xDateFormat: '%B %e, %Y'
             }
