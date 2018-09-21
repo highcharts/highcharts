@@ -2874,7 +2874,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             if (maxIndex === 0) {
                 // Remove ellipsis
                 updateTSpan('');
-            } else {
+
+            // If the new text length is one less than the original, we don't
+            // need the ellipsis
+            } else if (!(text && maxIndex === text.length - 1)) {
                 updateTSpan(str || getString(text || words, currentIndex));
             }
         }
