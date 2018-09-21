@@ -2823,7 +2823,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         // of unknown reason. Desired width is 0, text content
                         // is "5" and end is 1.
                         try {
-                            lengths[end] = tspan.getSubStringLength(0, end);
+                            lengths[end] = tspan.getSubStringLength(0, end + 1);
+
                         } catch (e) {}
 
                     // Legacy
