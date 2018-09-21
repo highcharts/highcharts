@@ -66,6 +66,11 @@ QUnit.test('Option chart.polar update', function (assert) {
         'Grid lines are arced'
     );
 
+    assert.ok(
+        chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].gridLine.element.getAttribute('d').indexOf('A') > -1,
+        'Grid line for threshold value exists (#2366)'
+    );
+
     // Unmake polar
     chart.update({
         chart: {
