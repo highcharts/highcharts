@@ -700,10 +700,22 @@ H.Popup.prototype = {
          *
          */
         addFormFields: function (chart, series, seriesType, rhsColWrapper) {
-            var fields = series.params || series.options.params;
+            var fields = series.params || series.options.params,
+                getNameType = this.indicators.getNameType;
 
             // reset current content
             rhsColWrapper.innerHTML = '';
+
+            // create title (indicator name in the right column)
+            createElement(
+                SPAN,
+                {
+                    className: PREFIX + 'indicator-title',
+                    innerHTML: getNameType(series, seriesType).name
+                },
+                null,
+                rhsColWrapper
+            );
 
             // input type
             createElement(

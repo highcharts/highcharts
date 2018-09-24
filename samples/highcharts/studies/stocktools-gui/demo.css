@@ -426,3 +426,8 @@
   margin-bottom: 15px;
   width: 100%;
 }
+
+.highcharts-indicator-title {
+  float: left;
+  padding-bottom: 15px;
+}
