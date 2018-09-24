@@ -2792,7 +2792,15 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @return {boolean}
      *         True if tspan is too long.
      */
-    truncate: function (wrapper, tspan, text, words, width, getString) {
+    truncate: function (
+        wrapper,
+        tspan,
+        text,
+        words,
+        startAt,
+        width,
+        getString
+    ) {
         var renderer = this,
             rotation = wrapper.rotation,
             str,
@@ -2823,14 +2831,18 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         // of unknown reason. Desired width is 0, text content
                         // is "5" and end is 1.
                         try {
-                            lengths[end] = tspan.getSubStringLength(0, end + 1);
+                            lengths[end] = startAt + tspan.getSubStringLength(
+                                0,
+                                words ? end + 1 : end
+                            );
 
                         } catch (e) {}
 
                     // Legacy
                     } else {
                         updateTSpan(getString(text || words, charEnd));
-                        lengths[end] = renderer.getSpanWidth(wrapper, tspan);
+                        lengths[end] = startAt +
+                            renderer.getSpanWidth(wrapper, tspan);
                     }
                 }
                 return lengths[end];
@@ -2840,7 +2852,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         wrapper.rotation = 0; // discard rotation when computing box
         actualWidth = getSubStringLength(tspan.textContent.length);
-        truncated = actualWidth > width;
+        truncated = startAt + actualWidth > width;
         if (truncated) {
 
             // Do a binary search for the index where to truncate the text
@@ -3066,7 +3078,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             // build the lines
             each(lines, function buildTextLines(line, lineNo) {
                 var spans,
-                    spanNo = 0;
+                    spanNo = 0,
+                    lineLength = 0;
                 line = line
                     // Trim to prevent useless/costly process on the spaces
                     // (#5258)
@@ -3179,7 +3192,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                         wrapper,
                                         tspan,
                                         span,
-                                        null,
+                                        undefined,
+                                        0,
                                         // Target width
                                         Math.max(
                                             0,
@@ -3241,6 +3255,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                             tspan,
                                             null,
                                             words,
+                                            wrapLineNo === 0 ? lineLength : 0,
                                             width,
                                             // Build the text to test for
                                             function (text, currentIndex) {
@@ -3251,6 +3266,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                             }
                                         );
 
+                                        lineLength = wrapper.actualWidth;
                                         wrapLineNo++;
                                     }
                                 }

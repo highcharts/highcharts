@@ -1,14 +1,15 @@
 // Highcharts 4.0.1, Issue #3158
 // Pie chart - item width issue
-QUnit.test('Text word wrap #3158', function (assert) {
+QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
 
     var renderer = new Highcharts.Renderer(
         document.getElementById('container'),
         400,
         300
     );
+    var width = 100;
 
-    renderer.rect(100, 80, 100, 100)
+    renderer.rect(100, 80, width, 100)
         .attr({
             stroke: 'silver',
             'stroke-width': 1
@@ -21,7 +22,7 @@ QUnit.test('Text word wrap #3158', function (assert) {
             ' caused the second line to be only one word', 100, 100
         )
         .css({
-            width: '100px',
+            width: width + 'px',
             color: '#003399'
         })
         .add();
@@ -38,6 +39,39 @@ QUnit.test('Text word wrap #3158', function (assert) {
         (textLines[1].textContent.indexOf(' ') > 0),
         true,
         'There should be more than one word in the second text line. #3158'
+    );
+});
+
+QUnit.test('Text word wrap with markup', function (assert) {
+
+    var renderer = new Highcharts
+        .Renderer(
+            document.getElementById('container'),
+            400,
+            300
+        ),
+        width = 100;
+    renderer.rect(100, 20, width, 100)
+        .attr({
+            stroke: 'silver',
+            'stroke-width': 1
+        })
+        .add();
+
+    var text2 = renderer
+        .text(
+            'The quick <span style="color:brown">brown</span> fox jumps <em>over</em> the lazy dog',
+            100,
+            40
+        )
+        .css({
+            width: width + 'px'
+        })
+        .add();
+
+    assert.ok(
+        text2.getBBox().width <= 100,
+        'The text node width should be less than 100'
     );
 
 });
