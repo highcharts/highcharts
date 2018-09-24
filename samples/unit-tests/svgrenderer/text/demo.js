@@ -58,7 +58,7 @@ QUnit.test('Text word wrap with markup', function (assert) {
         })
         .add();
 
-    var text2 = renderer
+    var text = renderer
         .text(
             'The quick <span style="color:brown">brown</span> fox jumps <em>over</em> the lazy dog',
             100,
@@ -70,8 +70,46 @@ QUnit.test('Text word wrap with markup', function (assert) {
         .add();
 
     assert.ok(
-        text2.getBBox().width <= 100,
+        text.getBBox().width <= 100,
         'The text node width should be less than 100'
+    );
+
+});
+
+QUnit.test('Text word wrap with nowrap and break (#5689)', function (assert) {
+
+    var renderer = new Highcharts
+        .Renderer(
+            document.getElementById('container'),
+            400,
+            300
+        ),
+        width = 100;
+    renderer.rect(100, 20, width, 100)
+        .attr({
+            stroke: 'silver',
+            'stroke-width': 1
+        })
+        .add();
+
+    var text = renderer
+        .text(
+            'Line1.1 line1.2 line1.3 line1.4 line1.5 line1.6 <br> ' +
+            'Line2.1 line2.2 line 2.3 <br> ' +
+            'Line3.1 line3.2 line 3.3 line3.4',
+            100,
+            40
+        )
+        .css({
+            width: width + 'px',
+            whiteSpace: 'nowrap'
+        })
+        .add();
+
+    assert.strictEqual(
+        text.element.getElementsByTagName('tspan').length,
+        3,
+        'The text should be wrapped into 3 lines'
     );
 
 });

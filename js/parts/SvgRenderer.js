@@ -3179,10 +3179,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                         /([^\^])-/g,
                                         '$1- '
                                     ).split(' '), // #1273
-                                    hasWhiteSpace = (
+                                    hasWhiteSpace = !noWrap && (
                                         spans.length > 1 ||
                                         lineNo ||
-                                        (words.length > 1 && !noWrap)
+                                        words.length > 1
                                     ),
                                     wrapLineNo = 0,
                                     dy = getLineHeight(tspan);
