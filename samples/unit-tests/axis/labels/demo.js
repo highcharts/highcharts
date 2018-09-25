@@ -411,7 +411,7 @@ QUnit.test('Long labels and ellipsis', function (assert) {
     );
 });
 
-QUnit.skip('Label ellipsis and expanding', function (assert) {
+QUnit.test('Label ellipsis and expanding', function (assert) {
 
     var chart = new Highcharts.chart('container', {
         chart: {
@@ -511,7 +511,7 @@ QUnit.test('Width set from label style (#7028)', function (assert) {
     });
 
     assert.ok(
-        chart.xAxis[0].ticks[3].label.getBBox().width <= 40,
+        Math.floor(chart.xAxis[0].ticks[3].label.getBBox().width) <= 40,
         'Label width set correctly'
     );
 
