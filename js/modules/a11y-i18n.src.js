@@ -8,6 +8,7 @@
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -16,8 +17,15 @@ var each = H.each,
 
 /**
  * String trim that works for IE6-8 as well.
- * @param  {string} str The input string
- * @return {string} The trimmed string
+ *
+ * @private
+ * @function stringTrim
+ *
+ * @param {string} str
+ *        The input string
+ *
+ * @return {string}
+ *         The trimmed string
  */
 function stringTrim(str) {
     return str.trim && str.trim() || str.replace(/^\s+|\s+$/g, '');
@@ -27,6 +35,16 @@ function stringTrim(str) {
  * i18n utility function. Format a single array or plural statement in a format
  * string. If the statement is not an array or plural statement, returns the
  * statement within brackets. Invalid array statements return an empty string.
+ *
+ * @private
+ * @function formatExtendedStatement
+ *
+ * @param {string} statement
+ *
+ * @param {Highcharts.Dictionary<*>} ctx
+ *        Context to apply to the format string.
+ *
+ * @return {string}
  */
 function formatExtendedStatement(statement, ctx) {
     var eachStart = statement.indexOf('#each('),
@@ -112,51 +130,76 @@ function formatExtendedStatement(statement, ctx) {
 
 
 /**
- * i18n formatting function. Extends H.format() functionality by also handling
- * arrays and plural conditionals. Arrays can be indexed as follows:
+ * i18n formatting function. Extends Highcharts.format() functionality by also
+ * handling arrays and plural conditionals. Arrays can be indexed as follows:
  *
- *  Format: 'This is the first index: {myArray[0]}. The last: {myArray[-1]}.'
- *  Context: { myArray: [0, 1, 2, 3, 4, 5] }
- *  Result: 'This is the first index: 0. The last: 5.'
+ * - Format: 'This is the first index: {myArray[0]}. The last: {myArray[-1]}.'
+ *
+ * - Context: { myArray: [0, 1, 2, 3, 4, 5] }
+ *
+ * - Result: 'This is the first index: 0. The last: 5.'
+ *
  *
  * They can also be iterated using the #each() function. This will repeat the
  * contents of the bracket expression for each element. Example:
  *
- *  Format: 'List contains: {#each(myArray)cm }'
- *  Context: { myArray: [0, 1, 2] }
- *  Result: 'List contains: 0cm 1cm 2cm '
+ * - Format: 'List contains: {#each(myArray)cm }'
+ *
+ * - Context: { myArray: [0, 1, 2] }
+ *
+ * - Result: 'List contains: 0cm 1cm 2cm '
+ *
  *
  * The #each() function optionally takes a length parameter. If positive, this
  * parameter specifies the max number of elements to iterate through. If
  * negative, the function will subtract the number from the length of the array.
  * Use this to stop iterating before the array ends. Example:
  *
- *  Format: 'List contains: {#each(myArray, -1), }and {myArray[-1]}.'
- *  Context: { myArray: [0, 1, 2, 3] }
- *  Result: 'List contains: 0, 1, 2, and 3.'
+ * - Format: 'List contains: {#each(myArray, -1), }and {myArray[-1]}.'
+ *
+ * - Context: { myArray: [0, 1, 2, 3] }
+ *
+ * - Result: 'List contains: 0, 1, 2, and 3.'
+ *
  *
  * Use the #plural() function to pick a string depending on whether or not a
  * context object is 1. Arguments are #plural(obj, plural, singular). Example:
  *
- *  Format: 'Has {numPoints} {#plural(numPoints, points, point}.'
- *  Context: { numPoints: 5 }
- *  Result: 'Has 5 points.'
+ * - Format: 'Has {numPoints} {#plural(numPoints, points, point}.'
  *
- * Optionally there are additional parameters for dual and none:
- *  #plural(obj,plural,singular,dual,none)
- * Example:
+ * - Context: { numPoints: 5 }
  *
- *  Format: 'Has {#plural(numPoints, many points, one point, two points, none}.'
- *  Context: { numPoints: 2 }
- *  Result: 'Has two points.'
+ * - Result: 'Has 5 points.'
+ *
+ *
+ * Optionally there are additional parameters for dual and none: #plural(obj,
+ * plural, singular, dual, none). Example:
+ *
+ * - Format: 'Has {#plural(numPoints, many points, one point, two points,
+ *   none}.'
+ *
+ * - Context: { numPoints: 2 }
+ *
+ * - Result: 'Has two points.'
+ *
  *
  * The dual or none parameters will take precedence if they are supplied.
  *
- * @param   {string} formatString The string to format.
- * @param   {object} context Context to apply to the format string.
- * @param   {Time} time A `Time` instance for date formatting, passed on to
- *                 H.format().
- * @return  {string} The formatted string.
+ *
+ * @function Highcharts.i18nFormat
+ * @requires a11y-i18n
+ *
+ * @param {string} formatString
+ *        The string to format.
+ *
+ * @param {Highcharts.Dictionary<*>} context
+ *        Context to apply to the format string.
+ *
+ * @param {Highcharts.Time} time
+ *        A `Time` instance for date formatting, passed on to H.format().
+ *
+ * @return {string}
+ *         The formatted string.
  */
 H.i18nFormat = function (formatString, context, time) {
     var getFirstBracketStatement = function (sourceStr, offset) {
@@ -222,9 +265,18 @@ H.i18nFormat = function (formatString, context, time) {
 
 /**
  * Apply context to a format string from lang options of the chart.
- * @param  {string} langKey Key (using dot notation) into lang option structure
- * @param  {object} context Context to apply to the format string
- * @return {string} The formatted string
+ *
+ * @function Highcharts.Chart#langFormat
+ * @requires a11y-i18n
+ *
+ * @param {string} langKey
+ *        Key (using dot notation) into lang option structure.
+ *
+ * @param {Highcharts.Dictionary<*>} context
+ *        Context to apply to the format string.
+ *
+ * @return {string}
+ *         The formatted string.
  */
 H.Chart.prototype.langFormat = function (langKey, context, time) {
     var keys = langKey.split('.'),
@@ -238,236 +290,227 @@ H.Chart.prototype.langFormat = function (langKey, context, time) {
     );
 };
 
-H.setOptions({
-    lang: {
+H.setOptions({ lang: {
+
+    /**
+     * Configure the accessibility strings in the chart. Requires the
+     * [accessibility module](//code.highcharts.com/modules/accessibility.js)
+     * to be loaded. For a description of the module and information on its
+     * features, see [Highcharts Accessibility](http://www.highcharts.com
+     * /docs/chart-concepts/accessibility).
+     *
+     * For more dynamic control over the accessibility functionality, see
+     * [accessibility.pointDescriptionFormatter](
+     * accessibility.pointDescriptionFormatter),
+     * [accessibility.seriesDescriptionFormatter](
+     * accessibility.seriesDescriptionFormatter), and
+     * [accessibility.screenReaderSectionFormatter](
+     * accessibility.screenReaderSectionFormatter).
+     *
+     * @since        6.0.6
+     * @optionparent lang.accessibility
+     */
+    accessibility: {
+
+        /* eslint-disable max-len */
+        screenReaderRegionLabel: 'Chart screen reader information.',
+        navigationHint: 'Use regions/landmarks to skip ahead to chart {#plural(numSeries, and navigate between data series,)}',
+        defaultChartTitle: 'Chart',
+        longDescriptionHeading: 'Long description.',
+        noDescription: 'No description available.',
+        structureHeading: 'Structure.',
+        viewAsDataTable: 'View as data table.',
+        chartHeading: 'Chart graphic.',
+        chartContainerLabel: 'Interactive chart. {title}. Use up and down arrows to navigate with most screen readers.',
+        rangeSelectorMinInput: 'Select start date.',
+        rangeSelectorMaxInput: 'Select end date.',
+        tableSummary: 'Table representation of chart.',
+        mapZoomIn: 'Zoom chart',
+        mapZoomOut: 'Zoom out chart',
+        rangeSelectorButton: 'Select range {buttonText}',
+        legendItem: 'Toggle visibility of series {itemName}',
+        /* eslint-enable max-len */
+
         /**
-         * Configure the accessibility strings in the chart. Requires the
-         * [accessibility module](//code.highcharts.com/modules/accessibility.
-         * js) to be loaded. For a description of the module and information
-         * on its features, see [Highcharts Accessibility](http://www.highcharts.
-         * com/docs/chart-concepts/accessibility).
+         * Title element text for the chart SVG element. Leave this
+         * empty to disable adding the title element. Browsers will display
+         * this content when hovering over elements in the chart. Assistive
+         * technology may use this element to label the chart.
          *
-         * For more dynamic control over the accessibility functionality, see
-         * [accessibility.pointDescriptionFormatter](
-         * accessibility.pointDescriptionFormatter),
-         * [accessibility.seriesDescriptionFormatter](
-         * accessibility.seriesDescriptionFormatter), and
-         * [accessibility.screenReaderSectionFormatter](
-         * accessibility.screenReaderSectionFormatter).
+         * @since 6.0.8
+         */
+        svgContainerTitle: '{chartTitle}',
+
+        /**
+         * Descriptions of lesser known series types. The relevant
+         * description is added to the screen reader information region
+         * when these series types are used.
          *
          * @since 6.0.6
-         * @type {Object}
-         * @optionparent lang.accessibility
          */
-        accessibility: {
+        seriesTypeDescriptions: {
+            boxplot: 'Box plot charts are typically used to display ' +
+                'groups of statistical data. Each data point in the ' +
+                'chart can have up to 5 values: minimum, lower quartile, ' +
+                'median, upper quartile, and maximum.',
+            arearange: 'Arearange charts are line charts displaying a ' +
+                'range between a lower and higher value for each point.',
+            areasplinerange: 'These charts are line charts displaying a ' +
+                'range between a lower and higher value for each point.',
+            bubble: 'Bubble charts are scatter charts where each data ' +
+                'point also has a size value.',
+            columnrange: 'Columnrange charts are column charts ' +
+                'displaying a range between a lower and higher value for ' +
+                'each point.',
+            errorbar: 'Errorbar series are used to display the ' +
+                'variability of the data.',
+            funnel: 'Funnel charts are used to display reduction of data ' +
+                'in stages.',
+            pyramid: 'Pyramid charts consist of a single pyramid with ' +
+                'item heights corresponding to each point value.',
+            waterfall: 'A waterfall chart is a column chart where each ' +
+                'column contributes towards a total end value.'
+        },
+
+        /**
+         * Chart type description strings. This is added to the chart
+         * information region.
+         *
+         * If there is only a single series type used in the chart, we use
+         * the format string for the series type, or default if missing.
+         * There is one format string for cases where there is only a single
+         * series in the chart, and one for multiple series of the same
+         * type.
+         *
+         * @since 6.0.6
+         */
+        chartTypes: {
             /* eslint-disable max-len */
+            emptyChart: 'Empty chart',
+            mapTypeDescription: 'Map of {mapTitle} with {numSeries} data series.',
+            unknownMap: 'Map of unspecified region with {numSeries} data series.',
+            combinationChart: 'Combination chart with {numSeries} data series.',
+            defaultSingle: 'Chart with {numPoints} data {#plural(numPoints, points, point)}.',
+            defaultMultiple: 'Chart with {numSeries} data series.',
+            splineSingle: 'Line chart with {numPoints} data {#plural(numPoints, points, point)}.',
+            splineMultiple: 'Line chart with {numSeries} lines.',
+            lineSingle: 'Line chart with {numPoints} data {#plural(numPoints, points, point)}.',
+            lineMultiple: 'Line chart with {numSeries} lines.',
+            columnSingle: 'Bar chart with {numPoints} {#plural(numPoints, bars, bar)}.',
+            columnMultiple: 'Bar chart with {numSeries} data series.',
+            barSingle: 'Bar chart with {numPoints} {#plural(numPoints, bars, bar)}.',
+            barMultiple: 'Bar chart with {numSeries} data series.',
+            pieSingle: 'Pie chart with {numPoints} {#plural(numPoints, slices, slice)}.',
+            pieMultiple: 'Pie chart with {numSeries} pies.',
+            scatterSingle: 'Scatter chart with {numPoints} {#plural(numPoints, points, point)}.',
+            scatterMultiple: 'Scatter chart with {numSeries} data series.',
+            boxplotSingle: 'Boxplot with {numPoints} {#plural(numPoints, boxes, box)}.',
+            boxplotMultiple: 'Boxplot with {numSeries} data series.',
+            bubbleSingle: 'Bubble chart with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
+            bubbleMultiple: 'Bubble chart with {numSeries} data series.'
+        },  /* eslint-enable max-len */
 
-            screenReaderRegionLabel: 'Chart screen reader information.',
-            navigationHint: 'Use regions/landmarks to skip ahead to chart {#plural(numSeries, and navigate between data series,)}',
-            defaultChartTitle: 'Chart',
-            longDescriptionHeading: 'Long description.',
-            noDescription: 'No description available.',
-            structureHeading: 'Structure.',
-            viewAsDataTable: 'View as data table.',
-            chartHeading: 'Chart graphic.',
-            chartContainerLabel: 'Interactive chart. {title}. Use up and down arrows to navigate with most screen readers.',
-            rangeSelectorMinInput: 'Select start date.',
-            rangeSelectorMaxInput: 'Select end date.',
-            tableSummary: 'Table representation of chart.',
-            mapZoomIn: 'Zoom chart',
-            mapZoomOut: 'Zoom out chart',
-            rangeSelectorButton: 'Select range {buttonText}',
-            legendItem: 'Toggle visibility of series {itemName}',
+        /**
+         * Axis description format strings.
+         *
+         * @since 6.0.6
+         */
+        axis: {
+            /* eslint-disable max-len */
+            xAxisDescriptionSingular: 'The chart has 1 X axis displaying {names[0]}.',
+            xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each(names, -1), }and {names[-1]}',
+            yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}.',
+            yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each(names, -1), }and {names[-1]}'
+        },  /* eslint-enable max-len */
 
+        /**
+         * Exporting menu format strings for accessibility module.
+         *
+         * @since 6.0.6
+         */
+        exporting: {
+            chartMenuLabel: 'Chart export',
+            menuButtonLabel: 'View export menu',
+            exportRegionLabel: 'Chart export menu'
+        },
+
+        /**
+         * Lang configuration for different series types. For more dynamic
+         * control over the series element descriptions, see
+         * [accessibility.seriesDescriptionFormatter](
+         * accessibility.seriesDescriptionFormatter).
+         *
+         * @since 6.0.6
+         */
+        series: {
             /**
-             * Title element text for the chart SVG element. Leave this
-             * empty to disable adding the title element. Browsers will display
-             * this content when hovering over elements in the chart. Assistive
-             * technology may use this element to label the chart.
+             * Lang configuration for the series main summary. Each series
+             * type has two modes:
              *
-             * @since 6.0.8
-             */
-            svgContainerTitle: '{chartTitle}',
-
-            /**
-             * Descriptions of lesser known series types. The relevant
-             * description is added to the screen reader information region
-             * when these series types are used.
+             * 1. This series type is the only series type used in the
+             *    chart
+             *
+             * 2. This is a combination chart with multiple series types
+             *
+             * If a definition does not exist for the specific series type
+             * and mode, the 'default' lang definitions are used.
              *
              * @since 6.0.6
-             * @type {Object}
-             * @optionparent lang.accessibility.seriesTypeDescriptions
              */
-            seriesTypeDescriptions: {
-                boxplot: 'Box plot charts are typically used to display ' +
-                    'groups of statistical data. Each data point in the ' +
-                    'chart can have up to 5 values: minimum, lower quartile, ' +
-                    'median, upper quartile, and maximum.',
-                arearange: 'Arearange charts are line charts displaying a ' +
-                    'range between a lower and higher value for each point.',
-                areasplinerange: 'These charts are line charts displaying a ' +
-                    'range between a lower and higher value for each point.',
-                bubble: 'Bubble charts are scatter charts where each data ' +
-                    'point also has a size value.',
-                columnrange: 'Columnrange charts are column charts ' +
-                    'displaying a range between a lower and higher value for ' +
-                    'each point.',
-                errorbar: 'Errorbar series are used to display the ' +
-                    'variability of the data.',
-                funnel: 'Funnel charts are used to display reduction of data ' +
-                    'in stages.',
-                pyramid: 'Pyramid charts consist of a single pyramid with ' +
-                    'item heights corresponding to each point value.',
-                waterfall: 'A waterfall chart is a column chart where each ' +
-                    'column contributes towards a total end value.'
-            },
+            summary: {
+                /* eslint-disable max-len */
+                default: '{name}, series {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
+                defaultCombination: '{name}, series {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
+                line: '{name}, line {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
+                lineCombination: '{name}, series {ix} of {numSeries}. Line with {numPoints} data {#plural(numPoints, points, point)}.',
+                spline: '{name}, line {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
+                splineCombination: '{name}, series {ix} of {numSeries}. Line with {numPoints} data {#plural(numPoints, points, point)}.',
+                column: '{name}, bar series {ix} of {numSeries} with {numPoints} {#plural(numPoints, bars, bar)}.',
+                columnCombination: '{name}, series {ix} of {numSeries}. Bar series with {numPoints} {#plural(numPoints, bars, bar)}.',
+                bar: '{name}, bar series {ix} of {numSeries} with {numPoints} {#plural(numPoints, bars, bar)}.',
+                barCombination: '{name}, series {ix} of {numSeries}. Bar series with {numPoints} {#plural(numPoints, bars, bar)}.',
+                pie: '{name}, pie {ix} of {numSeries} with {numPoints} {#plural(numPoints, slices, slice)}.',
+                pieCombination: '{name}, series {ix} of {numSeries}. Pie with {numPoints} {#plural(numPoints, slices, slice)}.',
+                scatter: '{name}, scatter plot {ix} of {numSeries} with {numPoints} {#plural(numPoints, points, point)}.',
+                scatterCombination: '{name}, series {ix} of {numSeries}, scatter plot with {numPoints} {#plural(numPoints, points, point)}.',
+                boxplot: '{name}, boxplot {ix} of {numSeries} with {numPoints} {#plural(numPoints, boxes, box)}.',
+                boxplotCombination: '{name}, series {ix} of {numSeries}. Boxplot with {numPoints} {#plural(numPoints, boxes, box)}.',
+                bubble: '{name}, bubble series {ix} of {numSeries} with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
+                bubbleCombination: '{name}, series {ix} of {numSeries}. Bubble series with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
+                map: '{name}, map {ix} of {numSeries} with {numPoints} {#plural(numPoints, areas, area)}.',
+                mapCombination: '{name}, series {ix} of {numSeries}. Map with {numPoints} {#plural(numPoints, areas, area)}.',
+                mapline: '{name}, line {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
+                maplineCombination: '{name}, series {ix} of {numSeries}. Line with {numPoints} data {#plural(numPoints, points, point)}.',
+                mapbubble: '{name}, bubble series {ix} of {numSeries} with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
+                mapbubbleCombination: '{name}, series {ix} of {numSeries}. Bubble series with {numPoints} {#plural(numPoints, bubbles, bubble)}.'
+            },  /* eslint-enable max-len */
 
             /**
-             * Chart type description strings. This is added to the chart
-             * information region.
-             *
-             * If there is only a single series type used in the chart, we use
-             * the format string for the series type, or default if missing.
-             * There is one format string for cases where there is only a single
-             * series in the chart, and one for multiple series of the same
-             * type.
+             * User supplied description text. This is added after the main
+             * summary if present.
              *
              * @since 6.0.6
-             * @type {Object}
-             * @optionparent lang.accessibility.chartTypes
              */
-            chartTypes: {
-                emptyChart: 'Empty chart',
-                mapTypeDescription: 'Map of {mapTitle} with {numSeries} data series.',
-                unknownMap: 'Map of unspecified region with {numSeries} data series.',
-                combinationChart: 'Combination chart with {numSeries} data series.',
-                defaultSingle: 'Chart with {numPoints} data {#plural(numPoints, points, point)}.',
-                defaultMultiple: 'Chart with {numSeries} data series.',
-                splineSingle: 'Line chart with {numPoints} data {#plural(numPoints, points, point)}.',
-                splineMultiple: 'Line chart with {numSeries} lines.',
-                lineSingle: 'Line chart with {numPoints} data {#plural(numPoints, points, point)}.',
-                lineMultiple: 'Line chart with {numSeries} lines.',
-                columnSingle: 'Bar chart with {numPoints} {#plural(numPoints, bars, bar)}.',
-                columnMultiple: 'Bar chart with {numSeries} data series.',
-                barSingle: 'Bar chart with {numPoints} {#plural(numPoints, bars, bar)}.',
-                barMultiple: 'Bar chart with {numSeries} data series.',
-                pieSingle: 'Pie chart with {numPoints} {#plural(numPoints, slices, slice)}.',
-                pieMultiple: 'Pie chart with {numSeries} pies.',
-                scatterSingle: 'Scatter chart with {numPoints} {#plural(numPoints, points, point)}.',
-                scatterMultiple: 'Scatter chart with {numSeries} data series.',
-                boxplotSingle: 'Boxplot with {numPoints} {#plural(numPoints, boxes, box)}.',
-                boxplotMultiple: 'Boxplot with {numSeries} data series.',
-                bubbleSingle: 'Bubble chart with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
-                bubbleMultiple: 'Bubble chart with {numSeries} data series.'
-            },
+            description: '{description}',
 
             /**
-             * Axis description format strings.
+             * xAxis description for series if there are multiple xAxes in
+             * the chart.
              *
              * @since 6.0.6
-             * @type {Object}
-             * @optionparent lang.accessibility.axis
              */
-            axis: {
-                xAxisDescriptionSingular: 'The chart has 1 X axis displaying {names[0]}.',
-                xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each(names, -1), }and {names[-1]}',
-                yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}.',
-                yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each(names, -1), }and {names[-1]}'
-            },
+            xAxisDescription: 'X axis, {name}',
 
             /**
-             * Exporting menu format strings for accessibility module.
+             * yAxis description for series if there are multiple yAxes in
+             * the chart.
              *
              * @since 6.0.6
-             * @type {Object}
-             * @optionparent lang.accessibility.exporting
              */
-            exporting: {
-                chartMenuLabel: 'Chart export',
-                menuButtonLabel: 'View export menu',
-                exportRegionLabel: 'Chart export menu'
-            },
+            yAxisDescription: 'Y axis, {name}'
 
-            /**
-             * Lang configuration for different series types. For more dynamic
-             * control over the series element descriptions, see
-             * [accessibility.seriesDescriptionFormatter](
-             * accessibility.seriesDescriptionFormatter).
-             *
-             * @since 6.0.6
-             * @type {Object}
-             * @optionparent lang.accessibility.series
-             */
-            series: {
-                /**
-                 * Lang configuration for the series main summary. Each series
-                 * type has two modes:
-                 *     1. This series type is the only series type used in the
-                 *        chart
-                 *    2. This is a combination chart with multiple series types
-                 *
-                 * If a definition does not exist for the specific series type
-                 * and mode, the 'default' lang definitions are used.
-                 *
-                 * @since 6.0.6
-                 * @type {Object}
-                 * @optionparent lang.accessibility.series.summary
-                 */
-                summary: {
-                    default: '{name}, series {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
-                    defaultCombination: '{name}, series {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
-                    line: '{name}, line {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
-                    lineCombination: '{name}, series {ix} of {numSeries}. Line with {numPoints} data {#plural(numPoints, points, point)}.',
-                    spline: '{name}, line {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
-                    splineCombination: '{name}, series {ix} of {numSeries}. Line with {numPoints} data {#plural(numPoints, points, point)}.',
-                    column: '{name}, bar series {ix} of {numSeries} with {numPoints} {#plural(numPoints, bars, bar)}.',
-                    columnCombination: '{name}, series {ix} of {numSeries}. Bar series with {numPoints} {#plural(numPoints, bars, bar)}.',
-                    bar: '{name}, bar series {ix} of {numSeries} with {numPoints} {#plural(numPoints, bars, bar)}.',
-                    barCombination: '{name}, series {ix} of {numSeries}. Bar series with {numPoints} {#plural(numPoints, bars, bar)}.',
-                    pie: '{name}, pie {ix} of {numSeries} with {numPoints} {#plural(numPoints, slices, slice)}.',
-                    pieCombination: '{name}, series {ix} of {numSeries}. Pie with {numPoints} {#plural(numPoints, slices, slice)}.',
-                    scatter: '{name}, scatter plot {ix} of {numSeries} with {numPoints} {#plural(numPoints, points, point)}.',
-                    scatterCombination: '{name}, series {ix} of {numSeries}, scatter plot with {numPoints} {#plural(numPoints, points, point)}.',
-                    boxplot: '{name}, boxplot {ix} of {numSeries} with {numPoints} {#plural(numPoints, boxes, box)}.',
-                    boxplotCombination: '{name}, series {ix} of {numSeries}. Boxplot with {numPoints} {#plural(numPoints, boxes, box)}.',
-                    bubble: '{name}, bubble series {ix} of {numSeries} with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
-                    bubbleCombination: '{name}, series {ix} of {numSeries}. Bubble series with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
-                    map: '{name}, map {ix} of {numSeries} with {numPoints} {#plural(numPoints, areas, area)}.',
-                    mapCombination: '{name}, series {ix} of {numSeries}. Map with {numPoints} {#plural(numPoints, areas, area)}.',
-                    mapline: '{name}, line {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
-                    maplineCombination: '{name}, series {ix} of {numSeries}. Line with {numPoints} data {#plural(numPoints, points, point)}.',
-                    mapbubble: '{name}, bubble series {ix} of {numSeries} with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
-                    mapbubbleCombination: '{name}, series {ix} of {numSeries}. Bubble series with {numPoints} {#plural(numPoints, bubbles, bubble)}.'
-                },
-                /* eslint-enable max-len */
-
-                /**
-                 * User supplied description text. This is added after the main
-                 * summary if present.
-                 *
-                 * @type {String}
-                 * @since 6.0.6
-                 */
-                description: '{description}',
-
-                /**
-                 * xAxis description for series if there are multiple xAxes in
-                 * the chart.
-                 *
-                 * @type {String}
-                 * @since 6.0.6
-                 */
-                xAxisDescription: 'X axis, {name}',
-
-                /**
-                 * yAxis description for series if there are multiple yAxes in
-                 * the chart.
-                 *
-                 * @type {String}
-                 * @since 6.0.6
-                 */
-                yAxisDescription: 'Y axis, {name}'
-            }
         }
+
     }
-});
+
+} });
