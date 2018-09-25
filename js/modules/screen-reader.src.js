@@ -8,6 +8,7 @@
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
@@ -46,8 +47,15 @@ if (H.seriesTypes.pie) {
 
 /**
  * HTML encode some characters vulnerable for XSS.
- * @param  {string} html The input string
- * @return {string} The excaped string
+ *
+ * @private
+ * @function htmlencode
+ *
+ * @param {string} html
+ *        The input string.
+ *
+ * @return {string}
+ *         The excaped string.
  */
 function htmlencode(html) {
     return html
@@ -63,17 +71,22 @@ function htmlencode(html) {
 /**
  * Strip HTML tags away from a string. Used for aria-label attributes, painting
  * on a canvas will fail if the text contains tags.
- * @param  {String} s The input string
- * @return {String}   The filtered string
+ *
+ * @private
+ * @function stripTags
+ *
+ * @param {string} s
+ *        The input string.
+ *
+ * @return {string}
+ *         The filtered string.
  */
 function stripTags(s) {
     return typeof s === 'string' ? s.replace(/<\/?[^>]+(>|$)/g, '') : s;
 }
 
 
-/**
- * Accessibility options
- */
+// Accessibility options
 H.setOptions({
 
     /**
@@ -83,8 +96,7 @@ H.setOptions({
      * on its features, see [Highcharts Accessibility](http://www.highcharts.
      * com/docs/chart-concepts/accessibility).
      *
-     * @since 5.0.0
-     * @type {Object}
+     * @since        5.0.0
      * @optionparent accessibility
      */
     accessibility: {
@@ -93,9 +105,9 @@ H.setOptions({
          * Whether or not to add series descriptions to charts with a single
          * series.
          *
-         * @type {Boolean}
-         * @default false
-         * @since 5.0.0
+         * @type      {boolean}
+         * @default   false
+         * @since     5.0.0
          * @apioption accessibility.describeSingleSeries
          */
 
@@ -106,8 +118,8 @@ H.setOptions({
          * By default Highcharts will insert and set focus to a data table
          * representation of the chart.
          *
-         * @type {Function}
-         * @since 5.0.0
+         * @type      {Function}
+         * @since     5.0.0
          * @apioption accessibility.onTableAnchorClick
          */
 
@@ -120,9 +132,10 @@ H.setOptions({
          * For an overview of the replacement codes, see
          * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
-         * @type {String}
          * @see [pointDateFormatter](#accessibility.pointDateFormatter)
-         * @since 5.0.0
+         *
+         * @type      {string}
+         * @since     5.0.0
          * @apioption accessibility.pointDateFormat
          */
 
@@ -133,9 +146,10 @@ H.setOptions({
          * Should return a date format string compatible with
          * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
-         * @type {Function}
          * @see [pointDateFormat](#accessibility.pointDateFormat)
-         * @since 5.0.0
+         *
+         * @type      {Function}
+         * @since     5.0.0
          * @apioption accessibility.pointDateFormatter
          */
 
@@ -146,9 +160,10 @@ H.setOptions({
          * Should return a String with the description of the point for a screen
          * reader user.
          *
-         * @type {Function}
          * @see [point.description](#series.line.data.description)
-         * @since 5.0.0
+         *
+         * @type      {Function}
+         * @since     5.0.0
          * @apioption accessibility.pointDescriptionFormatter
          */
 
@@ -158,17 +173,16 @@ H.setOptions({
          * series to describe. Should return a String with the description of
          * the series for a screen reader user.
          *
-         * @type {Function}
          * @see [series.description](#plotOptions.series.description)
-         * @since 5.0.0
+         *
+         * @type      {Function}
+         * @since     5.0.0
          * @apioption accessibility.seriesDescriptionFormatter
          */
 
         /**
          * Enable accessibility features for the chart.
          *
-         * @type {Boolean}
-         * @default true
          * @since 5.0.0
          */
         enabled: true,
@@ -179,7 +193,7 @@ H.setOptions({
          *
          * Set to `false` to disable.
          *
-         * @type {Number|Boolean}
+         * @type  {false|number}
          * @since 5.0.0
          */
         pointDescriptionThreshold: false, // set to false to disable
@@ -193,9 +207,9 @@ H.setOptions({
          * The link to view the chart as a data table will be added
          * automatically after the custom HTML content.
          *
-         * @type {Function}
+         * @type    {Function}
          * @default undefined
-         * @since 5.0.0
+         * @since   5.0.0
          */
         screenReaderSectionFormatter: function (chart) {
             var options = chart.options,
@@ -248,7 +262,9 @@ H.setOptions({
                         '<div>' + axesDesc.yAxis + '</div>'
                     ) : '');
         }
+
     }
+
 });
 
 /**
@@ -258,10 +274,10 @@ H.setOptions({
  * as a long description of the chart and its contents in the hidden
  * screen reader information region.
  *
- * @type {String}
  * @see [typeDescription](#chart.typeDescription)
- * @default undefined
- * @since 5.0.0
+ *
+ * @type      {string}
+ * @since     5.0.0
  * @apioption chart.description
  */
 
@@ -276,14 +292,20 @@ H.setOptions({
  * more complex charts it is recommended to specify this property for
  * clarity.
  *
- * @type {String}
- * @default undefined
- * @since 5.0.0
+ * @type      {string}
+ * @since     5.0.0
  * @apioption chart.typeDescription
  */
 
 
-// Utility function. Reverses child nodes of a DOM element
+/**
+ * Utility function. Reverses child nodes of a DOM element.
+ *
+ * @private
+ * @function reverseChildNodes
+ *
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} node
+ */
 function reverseChildNodes(node) {
     var i = node.childNodes.length;
     while (i--) {
@@ -300,7 +322,12 @@ H.addEvent(H.Series, 'afterRender', function () {
 });
 
 
-// Put accessible info on series and points of a series
+/**
+ * Put accessible info on series and points of a series.
+ *
+ * @private
+ * @function Highcharts.Series#setA11yDescription
+ */
 H.Series.prototype.setA11yDescription = function () {
     var a11yOptions = this.chart.options.accessibility,
         firstPointEl = (
@@ -366,7 +393,14 @@ H.Series.prototype.setA11yDescription = function () {
 };
 
 
-// Return string with information about series
+/**
+ * Return string with information about series.
+ *
+ * @private
+ * @function Highcharts.Series#buildSeriesInfoString
+ *
+ * @return {string}
+ */
 H.Series.prototype.buildSeriesInfoString = function () {
     var chart = this.chart,
         desc = this.description || this.options.description,
@@ -416,7 +450,14 @@ H.Series.prototype.buildSeriesInfoString = function () {
 };
 
 
-// Return string with information about point
+/**
+ * Return string with information about point.
+ *
+ * @private
+ * @function Highcharts.Point#buildPointInfoString
+ *
+ * @return {string}
+ */
 H.Point.prototype.buildPointInfoString = function () {
     var point = this,
         series = point.series,
@@ -475,7 +516,14 @@ H.Point.prototype.buildPointInfoString = function () {
 };
 
 
-// Get descriptive label for axis
+/**
+ * Get descriptive label for axis.
+ *
+ * @private
+ * @function Highcharts.Axis#getDescription
+ *
+ * @return {string}
+ */
 H.Axis.prototype.getDescription = function () {
     return (
         this.userOptions && this.userOptions.description ||
@@ -521,9 +569,16 @@ addEvent(H.Series, 'remove', function () {
 });
 
 
-// Return simplified description of chart type. Some types will not be familiar
-// to most screen reader users, but in those cases we try to add a description
-// of the type.
+/**
+ * Return simplified description of chart type. Some types will not be familiar
+ * to most screen reader users, but in those cases we try to add a description
+ * of the type.
+ *
+ * @private
+ * @function Highcharts.Chart#getTypeDescription
+ *
+ * @return {string}
+ */
 H.Chart.prototype.getTypeDescription = function () {
     var firstType = this.types && this.types[0],
         firstSeries = this.series && this.series[0] || {},
@@ -574,7 +629,14 @@ H.Chart.prototype.getTypeDescription = function () {
 };
 
 
-// Return object with text description of each of the chart's axes
+/**
+ * Return object with text description of each of the chart's axes.
+ *
+ * @private
+ * @function Highcharts.Chart#getAxesDescription
+ *
+ * @return {*}
+ */
 H.Chart.prototype.getAxesDescription = function () {
     var numXAxes = this.xAxis.length,
         numYAxes = this.yAxis.length,
@@ -614,7 +676,12 @@ H.Chart.prototype.getAxesDescription = function () {
 };
 
 
-// Set a11y attribs on exporting menu
+/**
+ * Set a11y attribs on exporting menu.
+ *
+ * @private
+ * @function Highcharts.Chart#addAccessibleContextMenuAttribs
+ */
 H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
     var exportList = this.exportDivElements;
     if (exportList) {
@@ -638,9 +705,17 @@ H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
 };
 
 
-// Add screen reader region to chart.
-// tableId is the HTML id of the table to focus when clicking the table anchor
-// in the screen reader region.
+/**
+ * Add screen reader region to chart. tableId is the HTML id of the table to
+ * focus when clicking the table anchor in the screen reader region.
+ *
+ * @private
+ * @function Highcharts.Chart#addScreenReaderRegion
+ *
+ * @param {string} id
+ *
+ * @param {string} tableId
+ */
 H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
     var chart = this,
         hiddenSection = chart.screenReaderRegion = doc.createElement('div'),
@@ -691,7 +766,7 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 };
 
 
-// Make chart container accessible, and wrap table functionality
+// Make chart container accessible, and wrap table functionality.
 H.Chart.prototype.callbacks.push(function (chart) {
     var options = chart.options,
         a11yOptions = options.accessibility;
