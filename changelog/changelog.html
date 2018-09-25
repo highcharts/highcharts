@@ -13,6 +13,88 @@
             <h2 id="highcharts">Highcharts Basic</h2>
           </div>
           <div class="changelog-container">
+            <p>Highcharts 6.1.4 (2018-09-25)</p>
+            <ul>
+              <li>Better polyfill for <code>forEach</code> in oldIE. See
+                <a href="https://github.com/highcharts/highcharts/issues/8865">#8865</a>.</li>
+            </ul>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+
+                <div id="heading-6-1-4-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#6-1-4-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="6-1-4-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/2165">#2165</a>,
+                        <a href="https://api.highcharts.com/highcharts/legend.labelFormatter">legend.labelFormatter</a> was not called when series&#39; visiblity changed.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/3495">#3495</a>, export menu click was wrongly triggering chart&#39;s click event.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/3739">#3739</a>, changed rounding method to Math.foor for milliseconds dateFormat to match other date and time formats.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/5009">#5009</a>, performance problem with long text strings and word-wrap.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/6405">#6405</a>, Highcharts crashed when using category axis, small <code>labels.step</code> option and a large data range. Re-introduced error 19.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/7484">#7484</a>, <code>followTouchMove</code> didn&#39;t work properly on column series on mobile.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/7815">#7815</a>, data labels were visible even when points were hidden.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8652">#8652</a>, replace max/min safe integer with max/min value in wordcloud to support IE11.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8865">#8865</a>, wrong links in sankey chart if the columns didn&#39;t start from 0.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8874">#8874</a> and
+                        <a href="https://github.com/highcharts/highcharts/issues/8346">#8346</a>, <code>Highcharts.indexOfPolyfill</code> wasn&#39;t supporting all required arguments.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8901">#8901</a>, bubble chart calculated wrong extremes when either
+                        <a href="https://api.highcharts.com/highcharts/xAxis.min">xAxis.min</a> or
+                        <a href="https://api.highcharts.com/highcharts/xAxis.max">xAxis.max</a> was set.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8933">#8933</a>, <code>minPointLength</code> squished all ranges to minimum length when xAxis was reversed.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8960">#8960</a>, animation didn&#39;t run on <code>Series.update()</code> with new data.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8972">#8972</a>, improved a way of assigning data to specific bins in histograms.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8994">#8994</a>, a regression causing cropped legend items to become long after hover when useHTML was true. Regression since
+                        <a href="https://github.com/highcharts/highcharts/issues/8809">#8809</a>.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8995">#8995</a>, added support for duplicated x values for Series.setData.</li>
+                      <li>Fixed issue with tooltip header placement when scrollable plot area was activated.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p>Highcharts 6.1.3 (2018-09-12)</p>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+
+                <div id="heading-6-1-3-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#6-1-3-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="6-1-3-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/1902">#1902</a>, make generated source maps visible to the browser.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
             <p>Highcharts 6.1.2 (2018-09-03)</p>
             <ul>
               <li>Support for loading Highcharts as an
@@ -5877,6 +5959,79 @@
             <h2 id="highstock">Highstock</h2>
           </div>
           <div class="changelog-container">
+            <p>Highstock 6.1.4 (2018-09-25)</p>
+            <ul>
+              <li>Most changes listed under Highcharts 6.1.4 above also apply to Highstock 6.1.4.</li>
+              <li>Added feature to preserve non-data point options inside data-grouped points. The options from the first point are copied over to the group. Closes
+                <a href="https://github.com/highcharts/highcharts/issues/8999">#8999</a>.</li>
+            </ul>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+
+                <div id="hs-heading-6-1-4-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#hs-6-1-4-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hs-6-1-4-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8440">#8440</a>, keyboard navigation in stock charts throwing errors.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/7051">#7051</a>, <code>dataGroupInfo.start</code> was indicating wrong point when points were grouped weekly.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8335">#8335</a>, setting
+                        <a href="https://api.highcharts.com/highstock/xAxis.min">xAxis.min</a> did not change extremes when points were grouped.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8546">#8546</a>, flags were not clipped.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8812">#8812</a>, regression in inverted navigator caused wrong extremes on when navigated to data extremes.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8817">#8817</a>, setting <code>stacking</code> option for OHLC and Candlestick series threw errors.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8847">#8847</a>, MACD used to crash when provided amount of points was insufficient.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8848">#8848</a>, removing empty MACD technical indicator used to throw errors.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8889">#8889</a>, corrected demo for approximation.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8899">#8899</a>, setting <code>chart.style.zIndex</code> prevented RangeSelector&#39;s inputs from receiving focus.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8938">#8938</a>, advanced stock demo threw errors when changing from Demo 2 to Demo 1.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8965">#8965</a>, Stochastic indicator %D value was calculated incorrect.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8968">#8968</a>, SMA technical indicator threw errors on updating last point in the dataset.</li>
+                      <li>Fixed issue with presentational attributes leaking through styled mode in range selector.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p>Highstock 6.1.3 (2018-09-12)</p>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+
+                <div id="hs-heading-6-1-3-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#hs-6-1-3-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hs-6-1-3-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/1902">#1902</a>, make generated source maps visible to the browser.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
             <p>Highstock 6.1.2 (2018-09-03)</p>
             <ul>
               <li>Most changes listed under Highcharts 6.1.2 above also apply to Highstock 6.1.2.</li>
@@ -8336,6 +8491,31 @@
             <h2 id="highmaps">Highmaps</h2>
           </div>
           <div class="changelog-container">
+            <p>Highmaps 6.1.4 (2018-09-25)</p>
+            <ul>
+              <li>Most changes listed under Highcharts 6.1.4 above also apply to Highmaps 6.1.4.</li>
+            </ul>
+            <p>Highmaps 6.1.3 (2018-09-12)</p>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+
+                <div id="hm-heading-6-1-3-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#hm-6-1-3-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hm-6-1-3-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/1902">#1902</a>, make generated source maps visible to the browser.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
             <p>Highmaps 6.1.2 (2018-09-03)</p>
             <ul>
               <li>Most changes listed under Highcharts 6.1.2 above also apply to Highmaps 6.1.2.</li>

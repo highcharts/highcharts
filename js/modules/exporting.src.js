@@ -674,7 +674,7 @@ defaultOptions.exporting = {
              * refers to [lang.contextButtonTitle](#lang.contextButtonTitle)
              * that defaults to "Chart context menu".
              *
-             * @since next
+             * @since 6.1.4
              */
             titleKey: 'contextButtonTitle',
 

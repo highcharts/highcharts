@@ -18,8 +18,8 @@ Highcharts.chart('container', {
         layout: 'vertical',
         align: 'left',
         verticalAlign: 'top',
-        x: 150,
-        y: 100,
+        x: 100,
+        y: 70,
         floating: true,
         borderWidth: 1,
         backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
