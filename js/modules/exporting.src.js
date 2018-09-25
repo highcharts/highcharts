@@ -277,22 +277,27 @@ defaultOptions.navigation = {
 
 // Presentational attributes
 merge(true, defaultOptions.navigation
+
 /**
+ * A collection of options for buttons and menus appearing in the exporting
+ * module.
+ *
  * @optionparent navigation
  */
 , {
 
     /**
-     * CSS styles for the popup menu appearing by default when the export
-     * icon is clicked. This menu is rendered in HTML.
+     * CSS styles for the popup menu appearing by default when the export icon
+     * is clicked. This menu is rendered in HTML.
      *
-     * @see In styled mode, the menu is styled with the `.highcharts-menu` lass.
+     * @see In styled mode, the menu is styled with the `.highcharts-menu`
+     *      class.
      *
      * @sample highcharts/navigation/menustyle/
      *         Light gray menu background
      *
      * @type    {Highcharts.CSSObject}
-     * @default { "border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0" }
+     * @default {"border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0"}
      * @since   2.0
      */
     menuStyle: {
@@ -326,7 +331,7 @@ merge(true, defaultOptions.navigation
      *         Add a grey stripe to the left
      *
      * @type    {Highcharts.CSSObject}
-     * @default { "padding": "0.5em 1em", "color": "#333333", "background": "none", "fontSize": "11px/14px", "transition": "background 250ms, color 250ms" }
+     * @default {"padding": "0.5em 1em", "color": "#333333", "background": "none", "fontSize": "11px/14px", "transition": "background 250ms, color 250ms"}
      * @since   2.0
      */
     menuItemStyle: {
@@ -347,10 +352,7 @@ merge(true, defaultOptions.navigation
         background: 'none',
 
         /**
-         * Defaults to `14px` on touch devices and `11px` on desktop.
-         *
          * @ignore
-         * @type {string}
          */
         fontSize: isTouchDevice ? '14px' : '11px',
 
@@ -372,7 +374,7 @@ merge(true, defaultOptions.navigation
      *         Bold text on hover
      *
      * @type    {Highcharts.CSSObject}
-     * @default { "background": "#335cad", "color": "#ffffff" }
+     * @default {"background": "#335cad", "color": "#ffffff"}
      * @since   2.0
      */
     menuItemHoverStyle: {
@@ -525,8 +527,9 @@ defaultOptions.exporting = {
      * exception is thrown instead. Receives two parameters, the exporting
      * options, and the error from the module.
      *
+     * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
+     *
      * @type      {Highcharts.ExportingErrorCallbackFunction}
-     * @see       [fallbackToExportServer](#exporting.fallbackToExportServer)
      * @since     5.0.0
      * @apioption exporting.error
      */
