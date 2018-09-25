@@ -1,0 +1,23 @@
+.clearfix {
+    clear: both;
+}
+
+.info-span .utilized {
+    font-size: 14px;
+}
+
+.info-span.great {
+    color: #788c6b;
+}
+
+.info-span.good {
+    color: #fbe496;
+}
+
+.info-span.ok {
+    color: #e0b08b;
+}
+
+.info-span.bad {
+    color: #c79495;
+}

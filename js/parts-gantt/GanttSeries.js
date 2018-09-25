@@ -213,14 +213,21 @@ seriesType('gantt', 'xrange', {
     setData: Series.prototype.setData,
 
     setGanttPointAliases: function (options) {
-        // Get value from aliases
-        options.x = pick(options.start, options.x);
-        options.x2 = pick(options.end, options.x2);
+        // Add a value to options if the value exists
+        function addIfExists(prop, val) {
+            if (val !== undefined) {
+                options[prop] = val;
+            }
+        }
+        addIfExists('x', pick(options.start, options.x));
+        addIfExists('x2', pick(options.end, options.x2));
+        addIfExists(
+            'partialFill', pick(options.completed, options.partialFill)
+        );
+        addIfExists('connect', pick(options.dependency, options.connect));
         if (options.milestone) {
             options.x2 = options.x;
         }
-        options.partialFill = pick(options.completed, options.partialFill);
-        options.connect = pick(options.dependency, options.connect);
     }
 }, {
     // pointProps - point member overrides
