@@ -1,3 +1,26 @@
+.outer {
+	width: 600px;
+	height: 200px;
+	margin: 0 auto;
+}
+.container {
+	width: 300px;
+	float: left;
+	height: 200px;
+}
 .highcharts-yaxis-grid .highcharts-grid-line {
 	display: none;
+}
+
+@media (max-width: 600px) {
+	.outer {
+		width: 100%;
+		height: 400px;
+	}
+	.container {
+		width: 300px;
+		float: none;
+		margin: 0 auto;
+	}
+
 }
