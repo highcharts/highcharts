@@ -3,7 +3,22 @@
  *
  * License: www.highcharts.com/license
  */
+
 /**
+ * Containing the position of a box that should be avoided by labels.
+ *
+ * @typedef Highcharts.LabelIntersectBoxObject
+ *
+ * @property {number} bottom
+ *
+ * @property {number} left
+ *
+ * @property {number} right
+ *
+ * @property {number} top
+ */
+
+/*
  * Highcharts module to place labels next to a series in a natural position.
  *
  * TODO:
@@ -18,6 +33,7 @@
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
@@ -34,10 +50,12 @@ var labelDistance = 3,
     Chart = H.Chart;
 
 H.setOptions({
+
     /**
      * @optionparent plotOptions
      */
     plotOptions: {
+
         series: {
             /**
              * Series labels are placed as close to the series as possible in a
@@ -56,14 +74,17 @@ H.setOptions({
              *         Stream graph
              * @sample highcharts/series-label/stock-chart
              *         Stock chart
-             * @since 6.0.0
+             *
+             * @since   6.0.0
              * @product highcharts highstock
              */
             label: {
+
                 /**
                  * Enable the series label per series.
                  */
                 enabled: true,
+
                 /**
                  * Allow labels to be placed distant to the graph if necessary,
                  * and draw a connector line to the graph. Setting this option
@@ -73,58 +94,91 @@ H.setOptions({
                  * cluttered chart, though more of the series will be labeled.
                  */
                 connectorAllowed: false,
+
                 /**
                  * If the label is closer than this to a neighbour graph, draw a
                  * connector.
                  */
                 connectorNeighbourDistance: 24,
+
                 /**
                  * For area-like series, allow the font size to vary so that
                  * small areas get a smaller font size. The default applies this
                  * effect to area-like series but not line-like series.
                  *
-                 * @type {Number}
+                 * @type {number|null}
                  */
                 minFontSize: null,
+
                 /**
                  * For area-like series, allow the font size to vary so that
                  * small areas get a smaller font size. The default applies this
                  * effect to area-like series but not line-like series.
                  *
-                 * @type {Number}
+                 * @type {number|null}
                  */
                 maxFontSize: null,
+
                 /**
                  * Draw the label on the area of an area series. By default it
                  * is drawn on the area. Set it to `false` to draw it next to
                  * the graph instead.
                  *
-                 * @type {Boolean}
+                 * @type {boolean|null}
                  */
                 onArea: null,
 
                 /**
                  * Styles for the series label. The color defaults to the series
                  * color, or a contrast color if `onArea`.
+                 *
+                 * @type    {Highcharts.CSSObject}
+                 * @default {"font-weight": "bold"}
                  */
                 style: {
+
+                    /**
+                     * @ignore
+                     */
                     fontWeight: 'bold'
+
                 },
 
                 /**
                  * An array of boxes to avoid when laying out the labels. Each
                  * item has a `left`, `right`, `top` and `bottom` property.
                  *
-                 * @type {Array<Object>}
+                 * @type {Array<Highcharts.LabelIntersectBoxObject>}
                  */
                 boxesToAvoid: []
+
             }
+
         }
+
     }
+
 });
 
 /**
- * Counter-clockwise, part of the fast line intersection logic
+ * Counter-clockwise, part of the fast line intersection logic.
+ *
+ * @private
+ * @function ccw
+ *
+ * @param {number} x1
+ *
+ * @param {number} y1
+ *
+ * @param {number} x2
+ *
+ * @param {number} y2
+ *
+ * @param {number} x3
+ *
+ * @param {number} y3
+ *
+ * @return {boolean}
  */
 function ccw(x1, y1, x2, y2, x3, y3) {
     var cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
@@ -132,7 +186,28 @@ function ccw(x1, y1, x2, y2, x3, y3) {
 }
 
 /**
- * Detect if two lines intersect
+ * Detect if two lines intersect.
+ *
+ * @private
+ * @function ccw
+ *
+ * @param {number} x1
+ *
+ * @param {number} y1
+ *
+ * @param {number} x2
+ *
+ * @param {number} y2
+ *
+ * @param {number} x3
+ *
+ * @param {number} y3
+ *
+ * @param {number} x4
+ *
+ * @param {number} y4
+ *
+ * @return {boolean}
  */
 function intersectLine(x1, y1, x2, y2, x3, y3, x4, y4) {
     return ccw(x1, y1, x3, y3, x4, y4) !== ccw(x2, y2, x3, y3, x4, y4) &&
@@ -140,7 +215,28 @@ function intersectLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 }
 
 /**
- * Detect if a box intersects with a line
+ * Detect if a box intersects with a line.
+ *
+ * @private
+ * @function boxIntersectLine
+ *
+ * @param {number} x
+ *
+ * @param {number} y
+ *
+ * @param {number} w
+ *
+ * @param {number} h
+ *
+ * @param {number} x1
+ *
+ * @param {number} y1
+ *
+ * @param {number} x2
+ *
+ * @param {number} y2
+ *
+ * @return {boolean}
  */
 function boxIntersectLine(x, y, w, h, x1, y1, x2, y2) {
     return (
@@ -152,7 +248,22 @@ function boxIntersectLine(x, y, w, h, x1, y1, x2, y2) {
 }
 
 /**
- * General symbol definition for labels with connector
+ * General symbol definition for labels with connector.
+ *
+ * @private
+ * @function Highcharts.SVGRenderer#symbols.connector
+ *
+ * @param {number} x
+ *
+ * @param {number} y
+ *
+ * @param {number} w
+ *
+ * @param {number} h
+ *
+ * @param {Highcharts.SymbolOptionsObject} options
+ *
+ * @return {Highcharts.SVGPathArray}
  */
 SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
     var anchorX = options && options.anchorX,
@@ -197,6 +308,11 @@ SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
 /**
  * Points to avoid. In addition to actual data points, the label should avoid
  * interpolated positions.
+ *
+ * @private
+ * @function Highcharts.Series#getPointsOnGraph
+ *
+ * @return {Array<Highcharts.Point>}
  */
 Series.prototype.getPointsOnGraph = function () {
 
@@ -323,6 +439,15 @@ Series.prototype.getPointsOnGraph = function () {
  * Overridable function to return series-specific font sizes for the labels. By
  * default it returns bigger font sizes for series with the greater sum of y
  * values.
+ *
+ * @private
+ * @function Highcharts.Series#labelFontSize
+ *
+ * @param {number} minFontSize
+ *
+ * @param {number} maxFontSize
+ *
+ * @return {string}
  */
 Series.prototype.labelFontSize = function (minFontSize, maxFontSize) {
     return minFontSize + (
@@ -332,7 +457,20 @@ Series.prototype.labelFontSize = function (minFontSize, maxFontSize) {
 };
 
 /**
- * Check whether a proposed label position is clear of other elements
+ * Check whether a proposed label position is clear of other elements.
+ *
+ * @private
+ * @function Highcharts.Series#checkClearPoint
+ *
+ * @param {number} x
+ *
+ * @param {number} y
+ *
+ * @param {Highcharts.BBoxObject}
+ *
+ * @param {boolean} [checkDistance]
+ *
+ * @return {false|*}
  */
 Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
     var distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
@@ -500,6 +638,9 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
  * The main initiator method that runs on chart level after initiation and
  * redraw. It runs in  a timeout to prevent locking, and loops over all series,
  * taking all series and labels into account when placing the labels.
+ *
+ * @private
+ * @function Highcharts.Chart#drawSeriesLabels
  */
 Chart.prototype.drawSeriesLabels = function () {
 
@@ -764,7 +905,10 @@ Chart.prototype.drawSeriesLabels = function () {
 };
 
 /**
- * Prepare drawing series labels
+ * Prepare drawing series labels.
+ *
+ * @private
+ * @function drawLabels
  */
 function drawLabels() {
 
