@@ -2,7 +2,7 @@
 import H from './../../parts/Globals.js';
 import './../../parts/Utilities.js';
 import controllableMixin from './controllableMixin.js';
-import ControllableLabel from './controllableLabel.js';
+import ControllableLabel from './ControllableLabel.js';
 
 /**
  * A controllable image class.
