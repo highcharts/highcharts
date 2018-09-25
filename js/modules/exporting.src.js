@@ -765,7 +765,7 @@ defaultOptions.exporting = {
              */
             titleKey: 'contextButtonTitle',
 
-             /**
+            /**
              * This option is deprecated, use
              * [titleKey](#exporting.buttons.contextButton.titleKey) instead.
              *
