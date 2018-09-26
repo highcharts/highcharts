@@ -5,23 +5,6 @@
  */
 
 /**
- * A label box.
- *
- * @private
- * @typedef Highcharts.DataLabelBoxObject
- *
- * @property {number} align
- *
- * @property {number} pos
- *
- * @property {number} rank
- *
- * @property {number} size
- *
- * @property {number} target
- */
-
-/**
  * Alignment offset for a label.
  *
  * @private
@@ -75,7 +58,7 @@ var addEvent = H.addEvent,
  * @private
  * @function Highcharts.distribute
  *
- * @param {Array<Highcharts.DataLabelBoxObject>} boxes
+ * @param {Array<object>} boxes
  *
  * @param {number} len
  *
