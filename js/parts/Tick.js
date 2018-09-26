@@ -111,10 +111,14 @@ H.Tick.prototype = {
             tick.rotation = 0;
 
         // update
-        } else if (label) {
+        } else if (label && label.textStr !== str) {
             // When resetting text, also reset the width if dynamically set
             // (#8809)
-            if (label.textWidth && !labelOptions.style.width) {
+            if (
+                label.textWidth &&
+                !(labelOptions.style && labelOptions.style.width) &&
+                !label.styles.width
+            ) {
                 label.css({ width: null });
             }
 

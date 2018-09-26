@@ -2714,10 +2714,16 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether the tooltip should follow the finger as it moves on a touch
+         * Whether the tooltip should update as the finger moves on a touch
          * device. If this is `true` and [chart.panning](#chart.panning) is
          * set,`followTouchMove` will take over one-finger touches, so the user
          * needs to use two fingers for zooming and panning.
+         *
+         * Note the difference to [followPointer](#tooltip.followPointer) that
+         * only defines the _position_ of the tooltip. If `followPointer` is
+         * false in for example a column series, the tooltip will show above or
+         * below the column, but as `followTouchMove` is true, the tooltip will
+         * jump from column to column as the user swipes across the plot area.
          *
          * @type      {boolean}
          * @default   {highcharts} true
