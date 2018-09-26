@@ -464,6 +464,7 @@ H.Series = H.seriesType('line', null
      * The line cap used for line ends and line joins on the graph.
      *
      * @type       {string}
+     * @default    round
      * @product    highcharts highstock
      * @validvalue ["round", "square"]
      * @apioption  plotOptions.series.linecap
