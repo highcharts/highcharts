@@ -89,19 +89,18 @@ H.seriesTypes.column.prototype.dragDropProps = {
         },
         handleFormatter: function (point) {
             var shapeArgs = point.shapeArgs,
-                top = shapeArgs.r || 0, // Rounding of bar corners
-                bottom = shapeArgs.height - top,
-                centerY = shapeArgs.height / 2;
+                radius = shapeArgs.r || 0, // Rounding of bar corners
+                centerX = shapeArgs.width / 2;
             return [
-                // Top wick
-                'M', 0, top,
-                'L', 0, centerY - 5,
+                // Left wick
+                'M', radius, 0,
+                'L', centerX - 5, 0,
                 // Circle
-                'A', 1, 1, 0, 0, 0, 0, centerY + 5,
-                'A', 1, 1, 0, 0, 0, 0, centerY - 5,
-                // Bottom wick
-                'M', 0, centerY + 5,
-                'L', 0, bottom
+                'A', 1, 1, 0, 0, 0, centerX + 5, 0,
+                'A', 1, 1, 0, 0, 0, centerX - 5, 0,
+                // Right wick
+                'M', centerX + 5, 0,
+                'L', shapeArgs.width - radius, 0
             ];
         }
     }
@@ -109,10 +108,9 @@ H.seriesTypes.column.prototype.dragDropProps = {
 
 // Xrange - resize/move x/x2, and move y
 if (H.seriesTypes.xrange) {
-    var columnDragDropProps = H.seriesTypes.column.prototype.dragDropProps,
-        // Handle positioner logic is the same for x and x2 apart from the
-        // x value.
-        xrangeHandlePositioner = function (point, xProp) {
+    // Handle positioner logic is the same for x and x2 apart from the
+    // x value.
+    var xrangeHandlePositioner = function (point, xProp) {
             var series = point.series,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
@@ -135,6 +133,24 @@ if (H.seriesTypes.xrange) {
                 x: Math.round(newX),
                 y: Math.round(newY)
             };
+        },
+        // The handle is the same as columns, but turned 90 degrees.
+        xrangeHandleFormatter = function (point) {
+            var shapeArgs = point.shapeArgs,
+                top = shapeArgs.r || 0, // Rounding of bar corners
+                bottom = shapeArgs.height - top,
+                centerY = shapeArgs.height / 2;
+            return [
+                // Top wick
+                'M', 0, top,
+                'L', 0, centerY - 5,
+                // Circle
+                'A', 1, 1, 0, 0, 0, 0, centerY + 5,
+                'A', 1, 1, 0, 0, 0, 0, centerY - 5,
+                // Bottom wick
+                'M', 0, centerY + 5,
+                'L', 0, bottom
+            ];
         };
 
     H.seriesTypes.xrange.prototype.dragDropProps = {
@@ -151,7 +167,7 @@ if (H.seriesTypes.xrange) {
             handlePositioner: function (point) {
                 return xrangeHandlePositioner(point, 'x');
             },
-            handleFormatter: columnDragDropProps.y.handleFormatter,
+            handleFormatter: xrangeHandleFormatter,
             propValidate: function (val, point) {
                 return val < point.x2;
             }
@@ -165,7 +181,7 @@ if (H.seriesTypes.xrange) {
             handlePositioner: function (point) {
                 return xrangeHandlePositioner(point, 'x2');
             },
-            handleFormatter: columnDragDropProps.y.handleFormatter,
+            handleFormatter: xrangeHandleFormatter,
             propValidate: function (val, point) {
                 return val > point.x;
             }
@@ -526,14 +542,24 @@ function isChartDraggable(chart) {
 function isPointMovable(point) {
     var series = point.series,
         seriesDragDropOptions = series.options.dragDrop,
-        pointDragDropOptions = point.options && point.options.dragDrop;
+        pointDragDropOptions = point.options && point.options.dragDrop,
+        updateProps = series.dragDropProps,
+        hasMovableX,
+        hasMovableY;
+
+    objectEach(updateProps, function (p) {
+        if (p.axis === 'x' && p.move) {
+            hasMovableX = true;
+        } else if (p.axis === 'y' && p.move) {
+            hasMovableY = true;
+        }
+    });
 
     // We can only move the point if draggableX/Y is set, even if all the
-    // individual prop options are set. If this turns out to be an issue, let's
-    // revisit the logic.
+    // individual prop options are set.
     return (
-            seriesDragDropOptions.draggableX ||
-            seriesDragDropOptions.draggableY
+            seriesDragDropOptions.draggableX && hasMovableX ||
+            seriesDragDropOptions.draggableY && hasMovableY
         ) &&
         !(
             pointDragDropOptions &&
