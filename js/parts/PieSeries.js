@@ -4,15 +4,6 @@
  * License: www.highcharts.com/license
  */
 
-/**
- * @private
- * @typedef Highcharts.PieTranslationObject
- *
- * @property {number} translateX
- *
- * @property {number} translateY
- */
-
 'use strict';
 
 import H from './Globals.js';
@@ -975,7 +966,7 @@ seriesType('pie', 'line'
      * @private
      * @function Highcharts.seriesTypes.pie#pointClass#getTranslate
      *
-     * @return {Highcharts.PieTranslationObject}
+     * @return {*}
      */
     getTranslate: function () {
         return this.sliced ? this.slicedTranslation : {
