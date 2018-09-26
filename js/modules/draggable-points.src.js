@@ -58,7 +58,11 @@ var addEvent = H.addEvent,
         resize: Whether or not to draw a drag handle and allow only this prop to
             update.
         resizeSide: Which side of the guide box to resize when dragging the
-            handle. Can be "left", "right", "top", "bottom".
+            handle. Can be "left", "right", "top", "bottom". Chart.inverted is
+            handled automatically.
+        propValidate: Function that takes the prop value and the point as
+            arguments, and returns true if the prop value is valid, false if
+            not. It is used to prevent e.g. resizing "low" above "high".
         handlePositioner: For resize props, return 0,0 in SVG coords of where to
             place the dragHandle. Gets point as argument. Should return object
             with x and y properties.
@@ -147,7 +151,10 @@ if (H.seriesTypes.xrange) {
             handlePositioner: function (point) {
                 return xrangeHandlePositioner(point, 'x');
             },
-            handleFormatter: columnDragDropProps.y.handleFormatter
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val < point.x2;
+            }
         },
         x2: {
             optionName: 'draggableX2',
@@ -158,7 +165,10 @@ if (H.seriesTypes.xrange) {
             handlePositioner: function (point) {
                 return xrangeHandlePositioner(point, 'x2');
             },
-            handleFormatter: columnDragDropProps.y.handleFormatter
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val > point.x;
+            }
         }
     };
 }
@@ -596,24 +606,24 @@ function resizeRect(rect, updateSide, origin, update) {
         case 'left':
             resizeAttrs = {
                 x: origin.x + update.x,
-                width: origin.width - update.x
+                width: Math.max(1, origin.width - update.x)
             };
             break;
         case 'right':
             resizeAttrs = {
-                width: origin.width + update.x
+                width: Math.max(1, origin.width + update.x)
             };
             break;
         case 'top':
             resizeAttrs = {
                 y: origin.y + update.y,
-                height: origin.height - update.y
+                height: Math.max(1, origin.height - update.y)
             };
             break;
         case 'bottom':
             resizeAttrs = {
                 y: origin.y - update.y,
-                height: origin.height + update.y
+                height: Math.max(1, origin.height + update.y)
             };
             break;
         default:
@@ -664,7 +674,8 @@ function getNewPoints(dragDropData, newPos) {
         updateProps = {},
         resizeProp = dragDropData.updateProp;
 
-    // Go through the data props that can be updated on this series
+    // Go through the data props that can be updated on this series and find out
+    // which ones we want to update.
     objectEach(point.series.dragDropProps, function (val, key) {
         // Respect draggable options, allowing specific overrides and otherwise
         // using draggableX/Y.
@@ -685,6 +696,7 @@ function getNewPoints(dragDropData, newPos) {
         }
     });
 
+    // Go through the points to be updated and get new options for each of them
     return map(dragDropData.groupedPoints, function (p) {
         return {
             point: p,
@@ -839,7 +851,19 @@ H.Point.prototype.getDropValues = function (oldPos, newPos, updateProps) {
             (yAxis.horiz ? dX : dY),
             true
         ) - point.y,
-        result = {};
+        result = {},
+        updateSingleProp;
+
+    // Find out if we only have one prop to update
+    for (var key in updateProps) {
+        if (updateProps.hasOwnProperty(key)) {
+            if (updateSingleProp !== undefined) {
+                updateSingleProp = false;
+                break;
+            }
+            updateSingleProp = true;
+        }
+    }
 
     // Utility function to apply precision and limit a value within the
     // draggable range
@@ -857,9 +881,18 @@ H.Point.prototype.getDropValues = function (oldPos, newPos, updateProps) {
     // Assign new value to property. Adds dX/YValue to the old value, limiting
     // it within min/max ranges.
     objectEach(updateProps, function (val, key) {
-        var newVal = val.axis === 'x' ? dXValue : dYValue,
-            oldVal = point.options[key];
-        result[key] = limitToRange(oldVal + newVal, val.axis.toUpperCase());
+        var oldVal = point.options[key],
+            newVal = limitToRange(
+                oldVal + (val.axis === 'x' ? dXValue : dYValue),
+                val.axis.toUpperCase()
+            );
+        // If we are updating a single prop, and it has a validation function
+        // for the prop, run it. If it fails, don't update the value.
+        result[key] =
+            updateSingleProp &&
+            val.propValidate &&
+            !val.propValidate(newVal, point) ?
+                oldVal : newVal;
     });
 
     return result;
