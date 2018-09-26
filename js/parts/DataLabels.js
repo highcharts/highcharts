@@ -4,28 +4,6 @@
  * License: www.highcharts.com/license
  */
 
-/**
- * Alignment offset for a label.
- *
- * @private
- * @typedef Highcharts.DataLabelAlignObject
- *
- * @property {number} x
- *
- * @property {number} y
- */
-
-/**
- * Label position for a pie slice.
- *
- * @private
- * @typedef {Array<number|string>} Highcharts.DataLabelPiePosObject
- *
- * @property {number} x
- *
- * @property {number} y
- */
-
 'use strict';
 
 import H from './Globals.js';
@@ -603,7 +581,7 @@ Series.prototype.alignDataLabel = function (
  *
  * @param {Highcharts.PlotSeriesDataLabelsOptions} options
  *
- * @param {Highcharts.DataLabelAlignObject} alignAttr
+ * @param {*} alignAttr
  *
  * @param {Highcharts.BBoxObject} bBox
  *
@@ -1021,7 +999,7 @@ if (seriesTypes.pie) {
      * @private
      * @function Highcharts.seriesTypes.pie#connectorPath
      *
-     * @param {Highcharts.DataLabelPiePosObject} labelPos
+     * @param {*} labelPos
      *
      * @return {Highcharts.PathObject}
      */
