@@ -71,6 +71,7 @@
 	"code/indicators/wma.src.js",
 	"code/indicators/zigzag.src.js",
 	"code/indicators/regressions.src.js",
+	"code/indicators/acceleration-bands.src.js",
 
 	"samples/data/maps/gb-all.js",
 	"samples/data/maps/bn-all.js",
