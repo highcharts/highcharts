@@ -762,12 +762,24 @@ function dragMove(e, point) {
 function dragEnd(point) {
     var series = point.series,
         chart = series.chart,
-        newPoints = chart.dragDropData.newPoints;
+        newPoints = chart.dragDropData.newPoints,
+        animOptions = merge({
+            duration: 400 // 400 is the default in H.animate
+        }, chart.options.animation);
+
+    chart.isDragDropAnimating = true;
 
     // Update the points
     each(newPoints, function (newPoint) {
-        newPoint.point.update(newPoint.newValues, true);
+        newPoint.point.update(newPoint.newValues, true, animOptions);
     });
+
+    // Clear the isAnimating flag after animation duration is complete.
+    // The complete handler for animation seems to have bugs at this time, so
+    // we have to use a timeout instead.
+    setTimeout(function () {
+        delete chart.isDragDropAnimating;
+    }, animOptions.duration);
 
     series.redraw();
 }
@@ -980,6 +992,7 @@ function mouseOver(point) {
         chart = series.chart;
     if (
         !(chart.dragDropData && chart.dragDropData.isDragging) &&
+        !chart.isDragDropAnimating &&
         series.options.dragDrop &&
         !(
             chart.options.chart &&
