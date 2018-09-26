@@ -105,7 +105,34 @@ H.seriesTypes.column.prototype.dragDropProps = {
 
 // Xrange - resize/move x/x2, and move y
 if (H.seriesTypes.xrange) {
-    var columnDragDropProps = H.seriesTypes.column.prototype.dragDropProps;
+    var columnDragDropProps = H.seriesTypes.column.prototype.dragDropProps,
+        // Handle positioner logic is the same for x and x2 apart from the
+        // x value.
+        xrangeHandlePositioner = function (point, xProp) {
+            var series = point.series,
+                xAxis = series.xAxis,
+                yAxis = series.yAxis,
+                inverted = series.chart.inverted,
+                // Using toPixels handles axis.reversed, but doesn't take
+                // chart.inverted into account.
+                newX = xAxis.toPixels(point[xProp], true),
+                newY = yAxis.toPixels(point.y, true);
+
+            // Handle chart inverted
+            if (inverted) {
+                newX = xAxis.len - newX;
+                newY = yAxis.len - newY -
+                    point.shapeArgs.height / 2;
+            } else {
+                newY -= point.shapeArgs.height / 2;
+            }
+
+            return {
+                x: Math.round(newX),
+                y: Math.round(newY)
+            };
+        };
+
     H.seriesTypes.xrange.prototype.dragDropProps = {
         y: {
             axis: 'y',
@@ -118,11 +145,7 @@ if (H.seriesTypes.xrange) {
             resize: true,
             resizeSide: 'left',
             handlePositioner: function (point) {
-                var bBox = point.graphic.getBBox();
-                return {
-                    x: bBox.x,
-                    y: bBox.y
-                };
+                return xrangeHandlePositioner(point, 'x');
             },
             handleFormatter: columnDragDropProps.y.handleFormatter
         },
@@ -133,11 +156,7 @@ if (H.seriesTypes.xrange) {
             resize: true,
             resizeSide: 'right',
             handlePositioner: function (point) {
-                var bBox = point.graphic.getBBox();
-                return {
-                    x: bBox.x + bBox.width,
-                    y: bBox.y
-                };
+                return xrangeHandlePositioner(point, 'x2');
             },
             handleFormatter: columnDragDropProps.y.handleFormatter
         }
@@ -532,11 +551,17 @@ function hasDraggedPastSensitivity(e, chart, sensitivity) {
 }
 
 
-// Get a snapshot of point and mouse position
-function getPositionSnapshot(e, point) {
+// Get a snapshot of point, mouse position, and guide box dimensions
+function getPositionSnapshot(e, point, guideBox) {
     var res = {
         pageX: e.pageX,
-        pageY: e.pageY
+        pageY: e.pageY,
+        guideBox: {
+            x: guideBox.attr('x'),
+            y: guideBox.attr('y'),
+            width: guideBox.attr('width'),
+            height: guideBox.attr('height')
+        }
     };
 
     // Add all of the props defined in the series' dragDropProps to the snapshot
@@ -563,30 +588,32 @@ function getGroupedPoints(point) {
 
 
 // Resize a rect element on one side. Takes the element, which side to update,
-// and the amount to update (x and y directions) as arguments.
-function resizeRect(rect, updateSide, dX, dY) {
+// origin x/y/width/height, and the amount to update (x and y directions) as
+// arguments.
+function resizeRect(rect, updateSide, origin, update) {
     var resizeAttrs;
     switch (updateSide) {
         case 'left':
             resizeAttrs = {
-                x: rect.attr('x') + dX,
-                width: rect.attr('width') - dX
+                x: origin.x + update.x,
+                width: origin.width - update.x
             };
             break;
         case 'right':
             resizeAttrs = {
-                width: rect.attr('width') + dX
+                width: origin.width + update.x
             };
             break;
         case 'top':
             resizeAttrs = {
-                height: rect.attr('height') + dY
+                y: origin.y + update.y,
+                height: origin.height - update.y
             };
             break;
         case 'bottom':
             resizeAttrs = {
-                y: rect.attr('y') + dY,
-                height: rect.attr('height') - dY
+                y: origin.y - update.y,
+                height: origin.height + update.y
             };
             break;
         default:
@@ -609,19 +636,20 @@ function newPointsColliding(points) {
 function initDragDrop(e, point) {
     var groupedPoints = getGroupedPoints(point),
         series = point.series,
-        chart = series.chart;
+        chart = series.chart,
+        guideBox;
+
+    // Show the drag box with the default state
+    chart.dragGuideBox = guideBox = series.getGuideBox(groupedPoints);
+    chart.setGuideBoxState('default', series.options.dragDrop.guideBox)
+        .add(series.group);
 
     // Store some data on the chart to pick up later
     chart.dragDropData = {
-        origin: getPositionSnapshot(e, point),
+        origin: getPositionSnapshot(e, point, guideBox),
         point: point,
         groupedPoints: groupedPoints
     };
-
-    // Show the drag box with the default state
-    chart.dragGuideBox = series.getGuideBox(groupedPoints);
-    chart.setGuideBoxState('default', series.options.dragDrop.guideBox)
-        .add(series.group);
 
     // Set drag state
     chart.isDragging = true;
@@ -665,12 +693,24 @@ function getNewPoints(dragDropData, newPos) {
     });
 }
 
+// If input side is "left", return "right" etc.
+function flipResizeSide(side) {
+    return {
+        left: 'right',
+        right: 'left',
+        top: 'bottom',
+        bottom: 'top'
+    }[side];
+}
 
 // Default mouse move handler while dragging
 function dragMove(e, point) {
-    var chart = point.series.chart,
+    var series = point.series,
+        xAxis = series.xAxis,
+        yAxis = series.yAxis,
+        chart = series.chart,
         data = chart.dragDropData,
-        options = merge(point.series.options.dragDrop, point.options.dragDrop),
+        options = merge(series.options.dragDrop, point.options.dragDrop),
         draggableX = options.draggableX,
         draggableY = options.draggableY,
         origin = data.origin,
@@ -686,9 +726,18 @@ function dragMove(e, point) {
     }
 
     if (updateProp) {
-        // We are resizing, so resize the guide box
-        // updateProp.resizeSide holds info on which side to resize.
-        resizeRect(chart.dragGuideBox, updateProp.resizeSide, dX, dY);
+        // We are resizing, so resize the guide box. The series'
+        // dragDropProp.resizeSide holds info on which side to resize.
+        updateProp = series.dragDropProps[updateProp];
+        resizeRect(
+            chart.dragGuideBox,
+            updateProp.axis === 'x' && xAxis.reversed ||
+            updateProp.axis === 'y' && yAxis.reversed ?
+                flipResizeSide(updateProp.resizeSide) :
+                updateProp.resizeSide,
+            origin.guideBox,
+            { x: dX, y: dY }
+        );
     } else {
         // We are moving, so just move the guide box
         chart.dragGuideBox.translate(dX, dY);
@@ -784,8 +833,8 @@ H.Point.prototype.getDropValues = function (oldPos, newPos, updateProps) {
     // draggable range
     function limitToRange(val, direction) {
         var precision = pick(options['dragPrecision' + direction], 1),
-            min = options['dragMin' + direction] || -Infinity,
-            max = options['dragMax' + direction] || Infinity,
+            min = pick(options['dragMin' + direction], -Infinity),
+            max = pick(options['dragMax' + direction], Infinity),
             res = val;
         if (precision) {
             res = Math.round(res / precision) * precision;
@@ -1016,6 +1065,11 @@ function mouseUp(e, chart) {
         // values during drag, so do it now instead.
         if (!dragDropData.newPoints) {
             chart.dragDropData.newPoints = getNewPoints(dragDropData, e);
+        }
+
+        // Hide the drag handles
+        if (chart.dragHandles) {
+            chart.hideDragHandles();
         }
 
         // Fire the event, with a default handler that updates the point
