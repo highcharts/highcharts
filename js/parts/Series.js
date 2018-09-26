@@ -607,6 +607,10 @@ H.Series = H.seriesType('line', null
      * #plotOptions.series.pointRange) to work. For column series this is
      * computed, but for line-type series it needs to be set.
      *
+     * For the `xrange` series type and gantt charts, if the Y axis is a
+     * category axis, the `pointPlacement` applies to the Y axis rather than
+     * the (typically datetime) X axis.
+     *
      * Defaults to `undefined` in cartesian charts, `"between"` in polar charts.
      *
      * @see [xAxis.tickmarkPlacement](#xAxis.tickmarkPlacement)
