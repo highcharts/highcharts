@@ -1217,10 +1217,7 @@ const jsdocNamespace = () => {
     const jsdoc3 = require('gulp-jsdoc3');
 
     let codeFiles = [
-            'code/highcharts.src.js',
-            'code/modules/highcharts.src.js',
-            'code/modules/highcharts.src.js',
-            'code/modules/highcharts.src.js'
+            'code/highcharts.src.js'
         ],
         productFolders = [
             'gantt',
