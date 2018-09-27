@@ -135,7 +135,7 @@ Highcharts.dataURLtoBlob = function (dataURL) {
  * @private
  * @function Highcharts.downloadURL
  *
- * @param {string|*} dataURL
+ * @param {string|object} dataURL
  *
  * @param {string} filename
  */
@@ -683,7 +683,7 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
  *         Exporting options, the same as in
  *         {@link Highcharts.Chart#exportChart}.
  *
- * @param  {Options} chartOptions
+ * @param  {Highcharts.Options} chartOptions
  *         Additional chart options for the exported chart. For example a
  *         different background color can be added here, or `dataLabels`
  *         for export only.
