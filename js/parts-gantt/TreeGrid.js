@@ -487,11 +487,11 @@ override(GridAxis.prototype, {
         }
     },
     /**
-     * Override to add indentation to axis.maxLabelLength.
+     * Override to add indentation to axis.maxLabelDimensions.
      * @param  {Function}   proceed the original function
      * @returns {undefined}
      */
-    getMaxLabelLength: function (proceed) {
+    getMaxLabelDimensions: function (proceed) {
         var axis = this,
             options = axis.options,
             labelOptions = options && options.labels,
@@ -506,7 +506,7 @@ override(GridAxis.prototype, {
 
         if (isTreeGrid) {
             treeDepth = axis.mapOfPosToGridNode[-1].height;
-            retVal += indentation * (treeDepth - 1);
+            retVal.width += indentation * (treeDepth - 1);
         }
 
         return retVal;

@@ -4402,7 +4402,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             className = options.className,
             axisParent = axis.axisParent, // Used in color axis
             lineHeightCorrection,
-            tickSize = this.tickSize('tick');
+            tickSize;
 
         // For reuse in Axis.render
         hasData = axis.hasData();
@@ -4527,6 +4527,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
+
+        if (axis.getMaxLabelDimensions) {
+            axis.maxLabelDimensions = axis.getMaxLabelDimensions(
+                ticks,
+                tickPositions
+            );
+        }
+
+        // Due to GridAxis.tickSize, tickSize should be calculated after ticks
+        // has rendered.
+        tickSize = this.tickSize('tick');
 
         axisOffset[side] = Math.max(
             axisOffset[side],
