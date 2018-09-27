@@ -85,30 +85,37 @@ Axis.prototype.isOuterAxis = function () {
 };
 
 /**
- * Get the longest label length.
- * This function can be used in states where the axis.maxLabelLength has not
- * been set.
- *
- * @param  {boolean} force - Optional parameter to force a new calculation, even
- *                           if a value has already been set
- * @return {number} maxLabelLength - the maximum label length of the axis
+ * Get the largest label width and height.
+ * @param {object} ticks All the ticks on one axis.
+ * @param {array} tickPositions All the tick positions on one axis.
+ * @return {object} object containing the properties height and width.
  */
-Axis.prototype.getMaxLabelLength = function (force) {
-    var axis = this,
-        tickPositions = axis.tickPositions,
-        ticks = axis.ticks,
-        maxLabelLength = 0;
+Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
+    var dimensions = {
+        width: 0,
+        height: 0
+    };
 
-    if (!axis.maxLabelLength || force) {
-        each(tickPositions, function (tick) {
-            tick = ticks[tick];
-            if (tick && tick.labelLength > maxLabelLength) {
-                maxLabelLength = tick.labelLength;
-            }
-        });
-        axis.maxLabelLength = maxLabelLength;
-    }
-    return axis.maxLabelLength;
+    each(tickPositions, function (pos) {
+        var tick = ticks[pos],
+            tickHeight = 0,
+            tickWidth = 0,
+            label;
+
+        if (isObject(tick)) {
+            label = isObject(tick.label) ? tick.label : {};
+
+            // Find width and height of tick
+            tickHeight = label.getBBox ? label.getBBox().height : 0;
+            tickWidth = isNumber(label.textPxLength) ? label.textPxLength : 0;
+
+            // Update the result if width and/or height are larger
+            dimensions.height = Math.max(tickHeight, dimensions.height);
+            dimensions.width = Math.max(tickWidth, dimensions.width);
+        }
+    });
+
+    return dimensions;
 };
 
 /**
@@ -272,6 +279,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
  */
 wrap(Axis.prototype, 'tickSize', function (proceed) {
     var axis = this,
+        dimensions = axis.maxLabelDimensions,
         options = axis.options,
         gridOptions = (options && isObject(options.grid)) ? options.grid : {},
         retVal = proceed.apply(axis, argsToArray(arguments)),
@@ -280,9 +288,8 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
 
     if (gridOptions.enabled === true) {
         labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
-        distance = labelPadding + (axis.horiz ?
-            axis.labelMetrics().f :
-            axis.getMaxLabelLength());
+        distance = labelPadding +
+            (axis.horiz ? dimensions.height : dimensions.width);
 
         if (isArray(retVal)) {
             retVal[0] = distance;
@@ -682,7 +689,11 @@ wrap(Axis.prototype, 'render', function (proceed) {
         // TODO acutual label padding (top, bottom, left, right)
         // Label padding is needed to figure out where to draw the outer line.
         labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
-        distance = axis.getMaxLabelLength() + labelPadding;
+        axis.maxLabelDimensions = axis.getMaxLabelDimensions(
+            axis.ticks,
+            axis.tickPositions
+        );
+        distance = axis.maxLabelDimensions.width + labelPadding;
         lineWidth = options.lineWidth;
 
         // Remove right wall before rendering if updating
