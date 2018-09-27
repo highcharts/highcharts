@@ -900,7 +900,11 @@ seriesType('ikh', 'sma',
  * @type {Object}
  * @since 6.0.0
  * @extends series,plotOptions.ikh
- * @excluding data,dataParser,dataURL
+ * @excluding
+ *              data,dataParser,dataURL
+ *              allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
+ *              showInNavigator,navigatorOptions,pointInterval,
+ *              pointIntervalUnit,pointPlacement,pointRange,pointStart
  * @product highstock
  * @apioption series.ikh
  */
