@@ -15,7 +15,6 @@ var addEvent = H.addEvent,
     pick = H.pick,
     filter = H.grep,
     map = H.map,
-    find = H.find,
     merge = H.merge,
     defaultDragSensitivity = 2,
     defaultGuideBoxOptions = {
@@ -216,9 +215,8 @@ if (H.seriesTypes.gantt) {
  */
 
 /**
- * Style options for the guide box. The guide box has two possible states,
- * default and error. The error state is displayed when a collision is
- * detected between the guide box and other points in the chart.
+ * Style options for the guide box. The guide box has one state by default,
+ * the "default" state.
  *
  * @type {object}
  * @since 6.2.0
@@ -281,15 +279,6 @@ if (H.seriesTypes.gantt) {
  * @type {number}
  * @since 6.2.0
  * @apioption plotOptions.series.dragDrop.guideBox.default.zIndex
- */
-
-/**
- * Style options for the guide box invalid state.
- *
- * @type {object}
- * @extends plotOptions.series.dragDrop.guideBox.default
- * @since 6.2.0
- * @apioption plotOptions.series.dragDrop.guideBox.error
  */
 
 /**
@@ -433,13 +422,13 @@ if (H.seriesTypes.gantt) {
  */
 
 /**
- * Enable real time collision detection while moving points. Disable this for
- * better drag/drop performance in larger datasets.
+ * Update points as they are dragged. If false, a guide box is drawn to
+ * illustrate the new point size. Defaults to true.
  *
  * @type {boolean}
  * @default true
  * @since 6.2.0
- * @apioption plotOptions.series.dragDrop.realTimeCollisionDetection
+ * @apioption plotOptions.series.dragDrop.liveRedraw
  */
 
 /**
@@ -592,7 +581,7 @@ function getPositionSnapshot(e, point, guideBox) {
     var res = {
         pageX: e.pageX,
         pageY: e.pageY,
-        guideBox: {
+        guideBox: guideBox && {
             x: guideBox.attr('x'),
             y: guideBox.attr('y'),
             width: guideBox.attr('width'),
@@ -658,16 +647,6 @@ function resizeRect(rect, updateSide, origin, update) {
 }
 
 
-// Check if a list of new points is colliding with other points in the chart
-function newPointsColliding(points) {
-    find(points, function () {
-        // Find out if this point collides with any other existing points that
-        // are not in this group.
-        return false;
-    });
-}
-
-
 // Prepare chart.dragDrop data with origin info, and show the guide box
 function initDragDrop(e, point) {
     var groupedPoints = getGroupedPoints(point),
@@ -675,10 +654,15 @@ function initDragDrop(e, point) {
         chart = series.chart,
         guideBox;
 
-    // Show the drag box with the default state
-    chart.dragGuideBox = guideBox = series.getGuideBox(groupedPoints);
-    chart.setGuideBoxState('default', series.options.dragDrop.guideBox)
-        .add(series.group);
+    // If liveRedraw is disabled, show the guide box with the default state
+    if (!pick(
+        series.options.dragDrop && series.options.dragDrop.liveRedraw,
+        true
+    )) {
+        chart.dragGuideBox = guideBox = series.getGuideBox(groupedPoints);
+        chart.setGuideBoxState('default', series.options.dragDrop.guideBox)
+            .add(series.group);
+    }
 
     // Store some data on the chart to pick up later
     chart.dragDropData = {
@@ -741,6 +725,32 @@ function flipResizeSide(side) {
     }[side];
 }
 
+
+// Update the points from dragDropData.newPoints
+function updatePoints(chart, animate) {
+    var newPoints = chart.dragDropData.newPoints,
+        animOptions = animate === false ? false : merge({
+            duration: 400 // 400 is the default in H.animate
+        }, chart.options.animation);
+
+    chart.isDragDropAnimating = true;
+
+    // Update the points
+    each(newPoints, function (newPoint) {
+        newPoint.point.update(newPoint.newValues, false);
+    });
+
+    chart.redraw(animOptions);
+
+    // Clear the isAnimating flag after animation duration is complete.
+    // The complete handler for animation seems to have bugs at this time, so
+    // we have to use a timeout instead.
+    setTimeout(function () {
+        delete chart.isDragDropAnimating;
+    }, animOptions.duration);
+}
+
+
 // Default mouse move handler while dragging
 function dragMove(e, point) {
     var series = point.series,
@@ -763,63 +773,40 @@ function dragMove(e, point) {
         dY = -oldDx;
     }
 
-    if (updateProp) {
-        // We are resizing, so resize the guide box. The series'
-        // dragDropProp.resizeSide holds info on which side to resize.
-        updateProp = series.dragDropProps[updateProp];
-        resizeRect(
-            chart.dragGuideBox,
-            updateProp.axis === 'x' && xAxis.reversed ||
-            updateProp.axis === 'y' && yAxis.reversed ?
-                flipResizeSide(updateProp.resizeSide) :
-                updateProp.resizeSide,
-            origin.guideBox,
-            { x: dX, y: dY }
-        );
+    // Find the new point values from the moving
+    chart.dragDropData.newPoints = getNewPoints(data, e);
+
+    // If we have liveRedraw enabled, update the points immediately. Otherwise
+    // update the guideBox.
+    if (pick(options.liveRedraw, true)) {
+        updatePoints(chart, false);
+
+        // Update drag handles
+        if (chart.dragHandles) {
+            chart.hideDragHandles();
+        }
+        point.showDragHandles();
+
     } else {
-        // We are moving, so just move the guide box
-        chart.dragGuideBox.translate(dX, dY);
-    }
-
-    if (options.realTimeCollisionDetection !== false) {
-        // If collision detection during move is enabled, find the new point
-        // values from the moving.
-        chart.dragDropData.newPoints = getNewPoints(data, e);
-
-        // Update collision status
-        if (newPointsColliding(chart.dragDropData.newPoints)) {
-            chart.setGuideBoxState('error', options.guideBox);
+        // No live redraw, update guide box
+        if (updateProp) {
+            // We are resizing, so resize the guide box. The series'
+            // dragDropProp.resizeSide holds info on which side to resize.
+            updateProp = series.dragDropProps[updateProp];
+            resizeRect(
+                chart.dragGuideBox,
+                updateProp.axis === 'x' && xAxis.reversed ||
+                updateProp.axis === 'y' && yAxis.reversed ?
+                    flipResizeSide(updateProp.resizeSide) :
+                    updateProp.resizeSide,
+                origin.guideBox,
+                { x: dX, y: dY }
+            );
         } else {
-            chart.setGuideBoxState('default', options.guideBox);
+            // We are moving, so just move the guide box
+            chart.dragGuideBox.translate(dX, dY);
         }
     }
-}
-
-
-// Default mouse up handler while dragging
-function dragEnd(point) {
-    var series = point.series,
-        chart = series.chart,
-        newPoints = chart.dragDropData.newPoints,
-        animOptions = merge({
-            duration: 400 // 400 is the default in H.animate
-        }, chart.options.animation);
-
-    chart.isDragDropAnimating = true;
-
-    // Update the points
-    each(newPoints, function (newPoint) {
-        newPoint.point.update(newPoint.newValues, true, animOptions);
-    });
-
-    // Clear the isAnimating flag after animation duration is complete.
-    // The complete handler for animation seems to have bugs at this time, so
-    // we have to use a timeout instead.
-    setTimeout(function () {
-        delete chart.isDragDropAnimating;
-    }, animOptions.duration);
-
-    series.redraw();
 }
 
 
@@ -867,16 +854,18 @@ H.Point.prototype.getDropValues = function (oldPos, newPos, updateProps) {
         xAxis = series.xAxis,
         dX = newPos.pageX - oldPos.pageX,
         dY = newPos.pageY - oldPos.pageY,
+        oldX = pick(oldPos.x, point.x),
+        oldY = pick(oldPos.y, point.y),
         dXValue = xAxis.toValue(
-            xAxis.toPixels(point.x, true) +
+            xAxis.toPixels(oldX, true) +
             (xAxis.horiz ? dX : dY),
             true
-        ) - point.x,
+        ) - oldX,
         dYValue = yAxis.toValue(
-            yAxis.toPixels(point.y, true) +
+            yAxis.toPixels(oldY, true) +
             (yAxis.horiz ? dX : dY),
             true
-        ) - point.y,
+        ) - oldY,
         result = {},
         updateSingleProp;
 
@@ -907,7 +896,7 @@ H.Point.prototype.getDropValues = function (oldPos, newPos, updateProps) {
     // Assign new value to property. Adds dX/YValue to the old value, limiting
     // it within min/max ranges.
     objectEach(updateProps, function (val, key) {
-        var oldVal = point.options[key],
+        var oldVal = oldPos[key],
             newVal = limitToRange(
                 oldVal + (val.axis === 'x' ? dXValue : dYValue),
                 val.axis.toUpperCase()
@@ -1133,25 +1122,19 @@ function mouseUp(e, chart) {
     ) {
         var point = dragDropData.point;
 
-        // If real time collision detection is off, we don't calculate new point
-        // values during drag, so do it now instead.
-        if (!dragDropData.newPoints) {
-            chart.dragDropData.newPoints = getNewPoints(dragDropData, e);
-        }
-
         // Hide the drag handles
         if (chart.dragHandles) {
             chart.hideDragHandles();
         }
 
-        // Fire the event, with a default handler that updates the point
+        // Fire the event, with a default handler that updates the points
         point.firePointEvent('drop', {
             origin: dragDropData.origin,
             pageX: e.pageX,
             pageY: e.pageY,
             newPoints: dragDropData.newPoints
         }, function () {
-            dragEnd(point);
+            updatePoints(chart);
         });
     }
 
