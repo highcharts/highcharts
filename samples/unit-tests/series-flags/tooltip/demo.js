@@ -55,14 +55,20 @@ QUnit.test('Check tooltip position for different axis options (#6327).', functio
         endOnTick: false
     });
 
-    controller.mouseOver(
-        chart.series[1].points[1].plotX + yAxis1.left,
-        chart.series[1].points[1].plotY + yAxis1.top - 20
-    );
+    // Skip this test for IE, where clip-paths are removed
+    if (
+        TestUtilities.browser !== 'Edge' &&
+        TestUtilities.browser !== 'MSIE'
+    ) {
+        controller.mouseOver(
+            chart.series[1].points[1].plotX + yAxis1.left,
+            chart.series[1].points[1].plotY + yAxis1.top - 20
+        );
 
-    assert.strictEqual(
-        chart.tooltip.isHidden,
-        true,
-        'Flag clipped (#8546).'
-    );
+        assert.strictEqual(
+            chart.tooltip.isHidden,
+            true,
+            'Flag clipped (#8546).'
+        );
+    }
 });
