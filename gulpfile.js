@@ -180,7 +180,7 @@ gulp.task('ftp-watch', function () {
 /**
  * Run the test suite.
  */
-gulp.task('test', done => {
+gulp.task('test', ['styles', 'scripts'], done => {
 
     const lastRunFile = __dirname + '/test/last-run.json';
 
