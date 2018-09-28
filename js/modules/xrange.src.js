@@ -38,20 +38,19 @@ seriesType('xrange', 'column'
  * The X-range series displays ranges on the X axis, typically time intervals
  * with a start and end date.
  *
- * @sample {highcharts} highcharts/demo/x-range/
- *         X-range
- * @sample {highcharts} highcharts/css/x-range/
- *         Styled mode X-range
- * @sample {highcharts} highcharts/chart/inverted-xrange/
- *         Inverted X-range
- *
- * @extends      plotOptions.column
+ * @extends      {plotOptions.column}
+ * @excluding    boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
+ *               findNearestPointBy,getExtremesFromAll,negativeColor,
+ *               pointInterval,pointIntervalUnit,pointPlacement,
+ *               pointRange,pointStart,softThreshold,stacking,threshold,data
+ * @product      highcharts highstock
+ * @sample       {highcharts} highcharts/demo/x-range/
+ *               X-range
+ * @sample       {highcharts} highcharts/css/x-range/
+ *               Styled mode X-range
+ * @sample       {highcharts} highcharts/chart/inverted-xrange/
+ *               Inverted X-range
  * @since        6.0.0
- * @excluding    boostThreshold, crisp, cropThreshold, depth, edgeColor,
- *               edgeWidth, findNearestPointBy, getExtremesFromAll, grouping,
- *               groupPadding, negativeColor, pointInterval, pointIntervalUnit,
- *               pointPlacement, pointRange, pointStart, softThreshold,
- *               stacking, threshold, data
  * @product      highcharts highstock
  * @optionparent plotOptions.xrange
  */
@@ -578,10 +577,10 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.xrange
- * @excluding boostThreshold, crisp, cropThreshold, depth, edgeColor, edgeWidth,
- *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
- *            negativeColor, pointInterval, pointIntervalUnit, pointPlacement,
- *            pointRange, pointStart, softThreshold, stacking, threshold
+ * @excluding boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
+ *            findNearestPointBy,getExtremesFromAll,
+ *            negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
+ *            pointRange,pointStart,softThreshold,stacking,threshold
  * @product   highcharts highstock
  * @apioption series.xrange
  */
