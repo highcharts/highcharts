@@ -2839,7 +2839,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         } catch (e) {}
 
                     // Legacy
-                    } else {
+                    } else if (renderer.getSpanWidth) { // #9058 jsdom
                         updateTSpan(getString(text || words, charEnd));
                         lengths[end] = startAt +
                             renderer.getSpanWidth(wrapper, tspan);
