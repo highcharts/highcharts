@@ -119,8 +119,14 @@ var replaceString = require('replace-string');
 
     function featureHTMLStructure() {
         if (changelog.features) {
+            let version = changelog.header.version.split('-').join('.');
+            let id = changelog.header.productName.toLowerCase() + '-v' + version;
             return (
-                `<p>${changelog.header.productName} ${changelog.header.version.split('-').join('.')} ${changelog.header.date}</p>
+                `<p class="release-header" style="position: relative">
+                    <a id="${id}" style="position: absolute; top: -60px"></a>
+                    <a style="color: inherit; font-size: inherit; font-weight: inherit"
+                    href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
+                </p>
                 ${marked.parser(changelog.features)}`
             );
         }

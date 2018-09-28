@@ -105,6 +105,9 @@ var defaultScrollbarOptions = {
      * @type       {boolean}
      * @since      1.3
      * @product    highstock
+     *
+     * @sample     stock/scrollbar/liveredraw Setting live redraw to false
+     *
      * @apioption  scrollbar.liveRedraw
      */
     liveRedraw: undefined,

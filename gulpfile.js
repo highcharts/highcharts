@@ -180,7 +180,7 @@ gulp.task('ftp-watch', function () {
 /**
  * Run the test suite.
  */
-gulp.task('test', done => {
+gulp.task('test', ['styles', 'scripts'], done => {
 
     const lastRunFile = __dirname + '/test/last-run.json';
 
@@ -1216,28 +1216,40 @@ const jsdocNamespace = () => {
 
     const jsdoc3 = require('gulp-jsdoc3');
 
-    const gulpOptions = [[
-            './code/highcharts.src.js'
-        ], {
-            read: false
-        }],
-        jsdoc3Options = {
-            plugins: [
-                './tools/jsdoc/plugins/highcharts.namespace'
-            ]
+    let codeFiles = [
+            'code/highcharts.src.js'
+        ],
+        productFolders = [
+            'gantt',
+            'highcharts',
+            'highstock',
+            'highmaps'
+        ],
+        gulpOptions = [codeFiles, { read: false }],
+        jsdoc3Options = { plugins: ['tools/jsdoc/plugins/highcharts.namespace'] };
+
+
+    let aGulp = (resolve, reject) => {
+
+        let aJson = (error) => {
+
+            if (error) {
+                reject(error);
+            }
+
+            Promise
+                .all(productFolders.map(productFolder => copyFile(
+                    'tree-namespace.json',
+                    `build/api/${productFolder}/tree-namespace.json`
+                )))
+                .then(resolve)
+                .catch(reject);
         };
 
-    const aGulp = (resolve, reject) => {
-        gulp.src(...gulpOptions).pipe(jsdoc3(jsdoc3Options,
-            (error) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve('done');
-                }
-            }
-        ));
+        gulp.src(...gulpOptions)
+            .pipe(jsdoc3(jsdoc3Options, aJson));
     };
+
     return new Promise(aGulp);
 };
 
@@ -1249,7 +1261,7 @@ gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
-gulp.task('jsdoc', jsdoc);
+gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);

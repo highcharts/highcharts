@@ -464,6 +464,7 @@ H.Series = H.seriesType('line', null
      * The line cap used for line ends and line joins on the graph.
      *
      * @type       {string}
+     * @default    round
      * @product    highcharts highstock
      * @validvalue ["round", "square"]
      * @apioption  plotOptions.series.linecap
@@ -605,6 +606,10 @@ H.Series = H.seriesType('line', null
      * Note that pointPlacement needs a [pointRange](
      * #plotOptions.series.pointRange) to work. For column series this is
      * computed, but for line-type series it needs to be set.
+     *
+     * For the `xrange` series type and gantt charts, if the Y axis is a
+     * category axis, the `pointPlacement` applies to the Y axis rather than
+     * the (typically datetime) X axis.
      *
      * Defaults to `undefined` in cartesian charts, `"between"` in polar charts.
      *
