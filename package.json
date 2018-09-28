@@ -30,7 +30,9 @@
     "post-merge": "gulp styles && gulp scripts && npm test",
     "jsdoc": "gulp jsdoc --watch",
     "precommit": "lint-staged && gulp test",
-    "commitmsg": "node tools/validate-commit-msg.js ${GIT_PARAMS}"
+    "commitmsg": "node tools/validate-commit-msg.js ${GIT_PARAMS}",
+    "tsd": "gulp tsd",
+    "tsd-lint": "gulp tsd-lint"
   },
   "devDependencies": {
     "aws-sdk": "^2.94.0",
@@ -39,6 +41,7 @@
     "browserify": "^12.0.2",
     "closurecompiler": "^1.6.1",
     "colors": "~1.1.2",
+    "dtslint": "^0.3.0",
     "eslint": "3.12.2",
     "eslint-plugin-highcharts": "file:tools/eslint-plugin-highcharts",
     "eslint-plugin-security": "^1.4.0",
