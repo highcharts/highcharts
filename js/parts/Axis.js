@@ -3601,9 +3601,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @param {boolean} [old=false]
      *        Use old coordinates (for resizing and rescaling).
      *
-     * @param {boolean} [force=false]
+     * @param {boolean|string} [force=false]
      *        If `false`, the function will return null when it falls outside
-     *        the axis bounds.
+     *        the axis bounds. If `true`, the function will return a path
+     *        aligned to the plot area sides if it falls outside. If `pass`, it
+     *        will return a path outside.
      *
      * @param {number} [translatedValue]
      *        If given, return the plot line path of a pixel position on the
@@ -3630,7 +3632,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * or skip, depending on the force parameter.
              */
             between = function (x, a, b) {
-                if (x < a || x > b) {
+                if (force !== 'pass' && x < a || x > b) {
                     if (force) {
                         x = Math.min(Math.max(a, x), b);
                     } else {

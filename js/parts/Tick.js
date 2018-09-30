@@ -496,7 +496,7 @@ H.Tick.prototype = {
                 attribs.zIndex = 1;
             }
             if (old) {
-                attribs.opacity = 0;
+                opacity = 0;
             }
             tick.gridLine = gridLine = renderer.path()
                 .attr(attribs)
@@ -504,18 +504,21 @@ H.Tick.prototype = {
                     'highcharts-' + (type ? type + '-' : '') + 'grid-line'
                 )
                 .add(axis.gridGroup);
+
         }
 
-        // If the parameter 'old' is set, the current call will be followed
-        // by another call, therefore do not do any animations this time
-        if (!old && gridLine) {
+        if (gridLine) {
             gridLinePath = axis.getPlotLinePath(
                 pos + tickmarkOffset,
                 gridLine.strokeWidth() * reverseCrisp,
-                old, true
+                old,
+                'pass'
             );
+
+            // If the parameter 'old' is set, the current call will be followed
+            // by another call, therefore do not do any animations this time
             if (gridLinePath) {
-                gridLine[tick.isNew ? 'attr' : 'animate']({
+                gridLine[old || tick.isNew ? 'attr' : 'animate']({
                     d: gridLinePath,
                     opacity: opacity
                 });

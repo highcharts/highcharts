@@ -420,7 +420,10 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
                 x1 = x2 = Math.round(transVal + axis.transB);
 
                 // outside plot area
-                if (x1 < axisLeft || x1 > axisLeft + axis.width) {
+                if (
+                    force !== 'pass' &&
+                    (x1 < axisLeft || x1 > axisLeft + axis.width)
+                ) {
                     if (force) {
                         x1 = x2 = Math.min(
                             Math.max(axisLeft, x1),
@@ -443,7 +446,10 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
                 y1 = y2 = Math.round(axisTop + axis.height - transVal);
 
                 // outside plot area
-                if (y1 < axisTop || y1 > axisTop + axis.height) {
+                if (
+                    force !== 'pass' &&
+                    (y1 < axisTop || y1 > axisTop + axis.height)
+                ) {
                     if (force) {
                         y1 = y2 = Math.min(
                             Math.max(axisTop, y1),
