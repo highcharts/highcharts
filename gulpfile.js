@@ -329,10 +329,14 @@ Available arguments for 'gulp test':
             if (err === 0) {
                 done();
 
-                fs.writeFileSync(
-                    lastRunFile,
-                    JSON.stringify({ lastSuccessfulRun: Date.now() })
-                );
+                // Register last successful run (only when running without
+                // arguments)
+                if (Object.keys(argv).length <= 2) {
+                    fs.writeFileSync(
+                        lastRunFile,
+                        JSON.stringify({ lastSuccessfulRun: Date.now() })
+                    );
+                }
             } else {
                 done(new gutils.PluginError('karma', {
                     message: 'Tests failed'
