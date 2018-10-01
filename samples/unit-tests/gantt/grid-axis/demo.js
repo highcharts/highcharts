@@ -952,6 +952,171 @@ QUnit.test('Vertical axis tick labels centered', function (assert) {
     });
 });
 
+QUnit.module('labels alignment', function () {
+    var each = Highcharts.each,
+        map = Highcharts.map,
+        categories = ['Category 1', 'Category 2', 'Category 3'],
+        optionsAxis = {
+            type: 'category',
+            grid: {
+                enabled: true
+            },
+            labels: {
+                useHTML: false
+            },
+            min: 0,
+            max: categories.length - 1,
+            categories: categories
+        },
+        chart,
+        getTestFunction,
+        getCellCenter,
+        getBBox;
+
+
+    getBBox = function (container, element) {
+        var containerRect = container.getBoundingClientRect(),
+            rect = element.getBoundingClientRect();
+        return {
+            x: rect.left - containerRect.left,
+            y: rect.top - containerRect.top,
+            width: rect.width,
+            height: rect.height
+        };
+    };
+
+    getCellCenter = function (coll, bboxLastTickMark, bboxTickMark) {
+        var left, right, top, bottom;
+
+        if (coll === 'xAxis') {
+            left = bboxLastTickMark.x;
+            top = bboxLastTickMark.y;
+            bottom = bboxLastTickMark.y + bboxLastTickMark.height;
+            right = bboxTickMark.x;
+        } else {
+            left = bboxTickMark.x;
+            top = bboxTickMark.y;
+            bottom = bboxLastTickMark.y;
+            right = bboxTickMark.x + bboxTickMark.width;
+        }
+
+        return [
+            left + ((right - left) / 2),
+            top + ((bottom - top) / 2)
+        ];
+    };
+
+    getTestFunction = function (assert) {
+        return function (axis, pos) {
+            var container = axis.chart.container,
+                tick = axis.ticks[pos],
+                leftTick = axis.ticks[pos - 1],
+                center = getCellCenter(
+                    axis.coll,
+                    getBBox(container, leftTick.mark.element),
+                    getBBox(container, tick.mark.element)
+                ),
+                bboxLabel = getBBox(container, tick.label.element);
+
+            assert.close(
+                bboxLabel.x,
+                center[0] - (bboxLabel.width / 2),
+                1.01, // Allow an error of 1px
+                axis.coll + ' label "' + tick.label.textStr + '" is centered horizontally.'
+            );
+
+            assert.close(
+                bboxLabel.y,
+                center[1] - (bboxLabel.height / 2),
+                1.01, // Allow an error of 1px
+                axis.coll + ' label "' + tick.label.textStr + '" is centered vertically.'
+            );
+        };
+    };
+
+    QUnit.test('useHtml: false', function (assert) {
+        var testTickPosition = getTestFunction(assert);
+
+        /**
+         * Test label positions on the x and yAxis with a single line.
+         * NOTE: options and chart must be set again, due to tests running async.
+         */
+        optionsAxis.labels.useHTML = false;
+        optionsAxis.categories = categories;
+        chart = Highcharts.chart('container', {
+            series: [{}],
+            xAxis: optionsAxis,
+            yAxis: optionsAxis
+        });
+
+        each(chart.axes, function (axis) {
+            each(axis.tickPositions, function (pos) {
+                testTickPosition(axis, pos);
+            });
+        });
+
+        /**
+         * Test label positions on the x and yAxis with a second line.
+         */
+        optionsAxis.categories = map(categories, function (str) {
+            return str + '<br/>Second Line';
+        });
+
+        chart.update({
+            xAxis: optionsAxis,
+            yAxis: optionsAxis
+        });
+
+        each(chart.axes, function (axis) {
+            each(axis.tickPositions, function (pos) {
+                testTickPosition(axis, pos);
+            });
+        });
+    });
+
+    QUnit.test('useHtml: true', function (assert) {
+        var testTickPosition = getTestFunction(assert);
+
+        /**
+         * Test label positions on the x and yAxis with a single line.
+         * NOTE: options and chart must be set again, due to tests running async.
+         */
+        optionsAxis.categories = map(categories, function (str) {
+            return '<span>' + str + '<span>';
+        });
+        optionsAxis.labels.useHTML = true;
+
+        chart = Highcharts.chart('container', {
+            series: [{}],
+            xAxis: optionsAxis,
+            yAxis: optionsAxis
+        });
+        each(chart.axes, function (axis) {
+            each(axis.tickPositions, function (pos) {
+                testTickPosition(axis, pos);
+            });
+        });
+
+        /**
+         * Test label positions on the x and yAxis with a second line.
+         */
+        optionsAxis.categories = map(categories, function (str) {
+            return '<span>' + str + '</span><br/><span>Second Line</span>';
+        });
+
+        chart.update({
+            xAxis: optionsAxis,
+            yAxis: optionsAxis
+        });
+
+        each(chart.axes, function (axis) {
+            each(axis.tickPositions, function (pos) {
+                testTickPosition(axis, pos);
+            });
+        });
+    });
+});
+
 /**
  * Checks that the last tick label does not pop out of its cell if there was no
  * room.
