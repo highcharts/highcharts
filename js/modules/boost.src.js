@@ -1837,7 +1837,7 @@ function GLRenderer(postRenderCallback) {
             }
 
             // Cull points outside the extremes
-            if (y === null || !isYInside) {
+            if (y === null || (!isYInside && !nextInside && !prevInside)) {
                 beginSegment();
                 continue;
             }
