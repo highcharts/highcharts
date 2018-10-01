@@ -60,13 +60,20 @@ function isApiOption (doclet) {
     let name = getName(doclet),
         comment = (doclet.comment || ''),
         isApiOption = (
-            comment.indexOf('@apioption') >= 0 ||
-            comment.indexOf('@optionparent') >= 0 ||
-            comment.indexOf('@ignore-option') >= 0 ||
-            (!doclet.undocumented &&
-            doclet.kind === 'member' &&
-            (doclet.children ||
-            doclet.scope === 'global'))
+            name.indexOf('Highcharts') !== 0 &&
+            (
+                comment.indexOf('@apioption') >= 0 ||
+                comment.indexOf('@optionparent') >= 0 ||
+                comment.indexOf('@ignore-option') >= 0 ||
+                (
+                    !doclet.undocumented &&
+                    doclet.kind === 'member' &&
+                    (
+                        doclet.children ||
+                        doclet.scope === 'global'
+                    )
+                )
+            )
         );
 
     if (isApiOption) {
