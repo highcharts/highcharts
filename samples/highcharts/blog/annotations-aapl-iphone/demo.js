@@ -8,7 +8,7 @@ $.getJSON('https://raw.githubusercontent.com/mekhatria/demo_highcharts/master/AA
     // Create the chart
     Highcharts.stockChart('container', {
         chart: {
-            zoomType: 'xy'
+            zoomType: 'x'
         },
         title: {
             text: 'AAPL Stock Price'
