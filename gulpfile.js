@@ -226,7 +226,7 @@ gulp.task('test', ['styles', 'scripts'], done => {
     };
 
     const checkSamplesConsistency = () => {
-        ['highcharts', 'stock', 'maps'].forEach(product => {
+        ['highcharts', 'stock', 'maps', 'gantt'].forEach(product => {
             let index = fs.readFileSync(
                 `./samples/${product}/demo/index.htm`,
                 'utf8'
