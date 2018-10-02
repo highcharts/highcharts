@@ -12,7 +12,7 @@ today.setUTCMilliseconds(0);
 // THE CHART
 Highcharts.ganttChart('container', {
     title: {
-        text: 'Highcharts Gantt Chart With Subtasks'
+        text: 'Highcharts Gantt With Subtasks'
     },
     xAxis: {
         min: today.getTime() - (2 * day),

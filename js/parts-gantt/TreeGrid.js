@@ -216,16 +216,6 @@ var renderLabelIcon = function (tick, params) {
             x: labelBox.x - (width / 2) - options.padding,
             y: labelBox.y - (height / 2)
         },
-        animate = {},
-        css = {
-            cursor: 'pointer',
-            stroke: options.lineColor,
-            strokeWidth: options.lineWidth
-        },
-        attr = {
-            'stroke-width': 1,
-            'fill': pick(params.color, '#666')
-        },
         rotation = params.collapsed ? 90 : 180,
         shouldRender = params.show && H.isNumber(iconCenter.y);
 
@@ -236,24 +226,36 @@ var renderLabelIcon = function (tick, params) {
             width,
             height
         ))
+        .addClass('highcharts-label-icon')
         .add(params.group);
     }
 
-    // Update position and rotation
-    // Animate the change if the icon already exists
-    extend((isNew ? attr : animate), {
+    // Set the new position, and show or hide
+    if (!shouldRender) {
+        icon.attr({ y: -9999 }); // #1338
+    }
+
+    /*= if (build.classic) { =*/
+    // Presentational attributes
+    icon
+        .attr({
+            'stroke-width': 1,
+            'fill': pick(params.color, '${palette.neutralColor60}')
+        })
+        .css({
+            cursor: 'pointer',
+            stroke: options.lineColor,
+            strokeWidth: options.lineWidth
+        });
+    /*= } =*/
+
+    // Update the icon positions
+    icon[isNew ? 'attr' : 'animate']({
         translateX: iconCenter.x,
         translateY: iconCenter.y,
         rotation: rotation
     });
 
-    // Set the new position, and show or hide
-    if (!shouldRender) {
-        attr.y = -9999; // #1338
-    }
-
-    // Update the icon.
-    icon.attr(attr).animate(animate).css(css);
 };
 var onTickHover = function (label) {
     label.addClass('highcharts-treegrid-node-active');
@@ -656,7 +658,9 @@ override(GridAxisTick.prototype, {
             renderLabelIcon(
                 tick,
                 {
+                    /*= if (build.classic) { =*/
                     color: label.styles.color,
+                    /*= } =*/
                     collapsed: collapsed,
                     group: label.parentGroup,
                     options: symbolOptions,
@@ -672,11 +676,15 @@ override(GridAxisTick.prototype, {
             removeClassName = prefixClassName +
                 (collapsed ? 'expanded' : 'collapsed');
 
+            label
+                .addClass(addClassName)
+                .removeClass(removeClassName);
+
+            /*= if (build.classic) { =*/
             label.css({
                 cursor: 'pointer'
-            })
-            .addClass(addClassName)
-            .removeClass(removeClassName);
+            });
+            /*= } =*/
 
             // Add events to both label text and icon
             each([label, tick.labelIcon], function (object) {

@@ -12,7 +12,10 @@ today.setUTCMilliseconds(0);
 // THE CHART
 Highcharts.ganttChart('container', {
     title: {
-        text: 'Gantt Chart'
+        text: 'Highcharts Gantt in Styled Mode'
+    },
+    subtitle: {
+        text: 'Purely CSS-driven design'
     },
     xAxis: {
         min: today.getTime() - (2 * day),
