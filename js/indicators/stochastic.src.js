@@ -35,7 +35,6 @@ H.seriesType('stochastic', 'sma',
      * @optionparent plotOptions.stochastic
      */
     {
-        name: 'Stochastic (14, 3)',
         /**
          * @excluding index,period
          */
