@@ -256,7 +256,7 @@ QUnit.test('Halo sliced point (#3016)', function (assert) {
 
 });
 
-QUnit.test('Update point hwen hovering slice (#9088)', function (assert) {
+QUnit.test('Update point when hovering slice (#9088)', function (assert) {
     TestTemplate.test('highcharts/pie', {
         tooltip: {
             shared: true
