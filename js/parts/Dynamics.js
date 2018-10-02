@@ -528,7 +528,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         each(itemsForRemoval, function (item) {
-            item.remove(false);
+            if (item.remove) {
+                item.remove(false);
+            }
         });
 
         if (updateAllAxes) {
@@ -940,6 +942,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
             // Destroy elements
             series.destroy();
+            series.remove = null; // Prevent from doing again (#9097)
 
             // Redraw
             chart.isDirtyLegend = chart.isDirtyBox = true;
