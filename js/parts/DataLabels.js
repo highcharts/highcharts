@@ -3,10 +3,13 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
+
 var addEvent = H.addEvent,
     arrayMax = H.arrayMax,
     defined = H.defined,
@@ -25,13 +28,21 @@ var addEvent = H.addEvent,
     isArray = H.isArray,
     splat = H.splat;
 
-
 /**
  * General distribution algorithm for distributing labels of differing size
  * along a confined length in two dimensions. The algorithm takes an array of
  * objects containing a size, a target and a rank. It will place the labels as
  * close as possible to their targets, skipping the lowest ranked labels if
  * necessary.
+ *
+ * @private
+ * @function Highcharts.distribute
+ *
+ * @param {Array<object>} boxes
+ *
+ * @param {number} len
+ *
+ * @param {number} maxDistance
  */
 H.distribute = function (boxes, len, maxDistance) {
 
@@ -176,6 +187,11 @@ H.distribute = function (boxes, len, maxDistance) {
 
 /**
  * Draw the data labels
+ *
+ * @private
+ * @function Highcharts.Series#drawDataLabels
+ *
+ * @fires Highcharts.Series#event:afterDrawDataLabels
  */
 Series.prototype.drawDataLabels = function () {
     var series = this,
@@ -480,7 +496,20 @@ Series.prototype.drawDataLabels = function () {
 };
 
 /**
- * Align each individual data label
+ * Align each individual data label.
+ *
+ * @private
+ * @function Highcharts.Series#alignDataLabel
+ *
+ * @param {Highcharts.Point} point
+ *
+ * @param {Highcharts.SVGElement} dataLabel
+ *
+ * @param {Highcharts.PlotSeriesDataLabelsOptions} options
+ *
+ * @param {Highcharts.BBoxObject} alignTo
+ *
+ * @param {boolean} isNew
  */
 Series.prototype.alignDataLabel = function (
     point,
@@ -584,7 +613,7 @@ Series.prototype.alignDataLabel = function (
         }
 
         // Handle justify or crop
-        if (justify) {
+        if (justify && alignTo.height >= 0) { // #8830
             point.isLabelJustified = this.justifyDataLabel(
                 dataLabel,
                 options,
@@ -628,6 +657,21 @@ Series.prototype.alignDataLabel = function (
 /**
  * If data labels fall partly outside the plot area, align them back in, in a
  * way that doesn't hide the point.
+ *
+ * @private
+ * @function Highcharts.Series#justifyDataLabel
+ *
+ * @param {Highcharts.SVGElement} dataLabel
+ *
+ * @param {Highcharts.PlotSeriesDataLabelsOptions} options
+ *
+ * @param {*} alignAttr
+ *
+ * @param {Highcharts.BBoxObject} bBox
+ *
+ * @param {boolean} isNew
+ *
+ * @return {boolean}
  */
 Series.prototype.justifyDataLabel = function (
     dataLabel,
@@ -696,10 +740,13 @@ Series.prototype.justifyDataLabel = function (
     return justified;
 };
 
-/**
- * Override the base drawDataLabels method by pie specific functionality
- */
 if (seriesTypes.pie) {
+    /**
+     * Override the base drawDataLabels method by pie specific functionality
+     *
+     * @private
+     * @function Highcharts.seriesTypes.pie#drawDataLabels
+     */
     seriesTypes.pie.prototype.drawDataLabels = function () {
         var series = this,
             data = series.data,
@@ -1038,6 +1085,13 @@ if (seriesTypes.pie) {
     /**
      * Extendable method for getting the path of the connector between the data
      * label and the pie slice.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.pie#connectorPath
+     *
+     * @param {*} labelPos
+     *
+     * @return {Highcharts.PathObject}
      */
     seriesTypes.pie.prototype.connectorPath = function (labelPos) {
         var x = labelPos.x,
@@ -1066,6 +1120,9 @@ if (seriesTypes.pie) {
     /**
      * Perform the final placement of the data labels after we have verified
      * that they fall within the plot area.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.pie#placeDataLabels
      */
     seriesTypes.pie.prototype.placeDataLabels = function () {
         each(this.points, function (point) {
@@ -1084,7 +1141,8 @@ if (seriesTypes.pie) {
                         dataLabel.css({
                             width: dataLabel._attr.width + 'px',
                             textOverflow: (
-                                this.options.dataLabels.style.textOverflow ||
+                                (this.options.dataLabels.style || {})
+                                    .textOverflow ||
                                 'ellipsis'
                             )
                         });
@@ -1107,6 +1165,13 @@ if (seriesTypes.pie) {
      * Verify whether the data labels are allowed to draw, or we should run more
      * translation and data label positioning to keep them inside the plot area.
      * Returns true when data labels are ready to draw.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.pie#verifyDataLabelOverflow
+     *
+     * @param {boolean} overflow
+     *
+     * @return {boolean}
      */
     seriesTypes.pie.prototype.verifyDataLabelOverflow = function (overflow) {
 
@@ -1180,7 +1245,20 @@ if (seriesTypes.column) {
 
     /**
      * Override the basic data label alignment by adjusting for the position of
-     * the column
+     * the column.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#alignDataLabel
+     *
+     * @param {Highcharts.Point} point
+     *
+     * @param {Highcharts.SVGElement} dataLabel
+     *
+     * @param {Highcharts.PlotSeriesDataLabelsOptions} options
+     *
+     * @param {Highcharts.BBoxObject} alignTo
+     *
+     * @param {boolean} isNew
      */
     seriesTypes.column.prototype.alignDataLabel = function (
         point,

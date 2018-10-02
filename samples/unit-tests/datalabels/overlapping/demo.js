@@ -47,3 +47,48 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'After zooming, dataLabels from hidden points should remain hidden.',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'heatmap',
+                width: 200,
+                height: 400,
+                zoomType: 'xy'
+            },
+            colorAxis: {
+                dataClasses: [{
+                    to: 100
+                }, {
+                    from: 100,
+                    to: 5000
+                }]
+            },
+            series: [{
+                data: [
+                    [0, 0, 67],
+                    [0, 1, 2222],
+                    [1, 0, 48],
+                    [1, 1, 1117]
+                ],
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        fontSize: "26px"
+                    }
+                }
+            }]
+        });
+
+        chart.legend.allItems[1].legendGroup.element.onclick();
+        chart.xAxis[0].setExtremes(0.5);
+
+        assert.strictEqual(
+            chart.series[0].points[3].dataLabel.visibility === 'hidden',
+            true,
+            'The dataLabel after zoom is hidden (#7815).'
+        );
+    }
+);

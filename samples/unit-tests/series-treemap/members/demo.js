@@ -7,6 +7,52 @@ QUnit.test('directTouch', function (assert) {
     );
 });
 
+QUnit.test('getListOfParents', function (assert) {
+    var series = Highcharts.seriesTypes.treemap,
+        getListOfParents = series.prototype.getListOfParents;
+
+    assert.deepEqual(
+        getListOfParents(),
+        {
+            '': []
+        },
+        'should return map with only root node when no parameters are provided.'
+    );
+
+    assert.deepEqual(
+        getListOfParents(true, ['random-id']),
+        {
+            '': []
+        },
+        'should return map with only root node when data is invalid.'
+    );
+
+    assert.deepEqual(
+        getListOfParents([{ parent: 'non-existing' }], true),
+        {
+            '': [0]
+        },
+        'should hoist all points to root node if existingIds is invalid.'
+    );
+
+    assert.deepEqual(
+        getListOfParents([{ parent: 'non-existing' }], ['exists']),
+        {
+            '': [0]
+        },
+        'should hoist point to root node if parent does not exist.'
+    );
+
+    assert.deepEqual(
+        getListOfParents([{ parent: 'exists' }], ['exists']),
+        {
+            '': [],
+            'exists': [0]
+        },
+        'should add point under parent when it exists.'
+    );
+});
+
 QUnit.test('seriesTypes.treemap.pointClass.setState', function (assert) {
     var series = Highcharts.seriesTypes.treemap,
         setState = series.prototype.pointClass.prototype.setState,

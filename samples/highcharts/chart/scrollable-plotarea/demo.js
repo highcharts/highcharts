@@ -28,7 +28,8 @@ Highcharts.chart('container', {
         opposite: true
     },
     tooltip: {
-        valueSuffix: ' m/s'
+        valueSuffix: ' m/s',
+        split: true
     },
 
     plotOptions: {

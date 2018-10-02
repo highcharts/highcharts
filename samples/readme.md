@@ -52,9 +52,7 @@ emulate	a mouse event on a specific target, its position can be found using
 var controller = TestController(chart);
 
 // Simulate panning with the shift key pressed. X and Y are chart coordinates.
-controller.mousedown(200, 100, { shiftKey: true });
-controller.mousemove(150, 100, { shiftKey: true });
-controller.mouseup();
+controller.pan([200, 100], [150, 100], { shiftKey: true });
 ```
 **demo.details** can be used to set some directives for the auto-visual tests.
 * `compareTooltips: true` in auto-visual tests instructs the test runner to open

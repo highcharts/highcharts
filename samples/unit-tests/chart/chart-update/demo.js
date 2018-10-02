@@ -324,4 +324,29 @@
         );
 
     });
+
+    QUnit.test('Update all on 3D chart (#8641)', function (assert) {
+        var chart = Highcharts.chart('container', {});
+
+        assert.expect(0);
+
+        chart.update({
+            chart: {
+                options3d: {
+                    skew3d: false,
+                    enabled: true,
+                    alpha: 15,
+                    beta: 0,
+                    viewDistance: 25,
+                    depth: 100
+                }
+            },
+            xAxis: {
+                categories: ['Ein', 'Zwei', 'Drei', 'Vier']
+            },
+            series: [{
+                data: [1, 3, 2, 4]
+            }]
+        }, true, true);
+    });
 }());

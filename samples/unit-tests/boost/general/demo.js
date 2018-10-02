@@ -24,6 +24,38 @@ QUnit.test('Clipping rectangle after set extremes (#6895)', function (assert) {
     );
 });
 
+QUnit.test(
+    'Boost enabled false and boostThreshold conflict (#9052)',
+    function (assert) {
+        Highcharts.chart('container', {
+            "plotOptions": {
+                "series": {
+                    "boostThreshold": 1
+                }
+            },
+            "series": [{
+                "data": [1, 3, 2, 4]
+            }],
+            "xAxis": {
+                "max": 10,
+                "min": -10
+            },
+            "yAxis": {
+                "max": 10,
+                "min": -10
+            },
+            "boost": {
+                "enabled": false
+            }
+        });
+
+        assert.ok(
+            true,
+            'The chart should not fail'
+        );
+    }
+);
+
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Dynamically removing and adding series (#7499)', function (assert) {
         var chart = Highcharts.chart('container', {

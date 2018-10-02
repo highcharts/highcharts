@@ -165,10 +165,10 @@ var getBoundingBoxFromPolygon = function (points) {
         obj.top = Math.min(y, obj.top);
         return obj;
     }, {
-        left: Number.MAX_SAFE_INTEGER,
-        right: Number.MIN_SAFE_INTEGER,
-        bottom: Number.MIN_SAFE_INTEGER,
-        top: Number.MAX_SAFE_INTEGER
+        left: Number.MAX_VALUE,
+        right: -Number.MAX_VALUE,
+        bottom: -Number.MAX_VALUE,
+        top: Number.MAX_VALUE
     });
 };
 

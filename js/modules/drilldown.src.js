@@ -153,7 +153,7 @@ defaultOptions.drilldown = {
      * <dt>easing</dt>
      *
      * <dd>A string reference to an easing function set on the `Math` object.
-     * See [the easing demo](http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-
+     * See [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-
      * animation-easing/).</dd>
      *
      * </dl>

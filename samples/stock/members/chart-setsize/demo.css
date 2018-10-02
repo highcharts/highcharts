@@ -1,8 +1,13 @@
 @import 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css';
 
 #resizer {
-    border: 1px solid silver;   
+    border: 1px solid silver;
+    min-width: 360px;
+    min-height: 250px;
 }
 #inner-resizer { /* make room for the resize handle */
     padding: 10px;
+}
+#container {
+	height: 400px;
 }

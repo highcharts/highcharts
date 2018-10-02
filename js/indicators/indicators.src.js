@@ -123,6 +123,7 @@ seriesType('sma', 'line',
                 if (
                     oldDataLength &&
                     oldDataLength === processedData.xData.length &&
+                    !indicator.cropped && // #8968
                     !indicator.hasGroupedData &&
                     indicator.visible &&
                     indicator.points

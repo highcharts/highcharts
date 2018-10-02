@@ -19,13 +19,10 @@ QUnit.test('Selection event', function (assert) {
         }]
     });
 
-    var test = new TestController(chart);
+    var controller = new TestController(chart);
 
     // Pan
-    test.mousedown(200, 100, { shiftKey: true });
-    test.mousemove(150, 100, { shiftKey: true });
-    test.mouseup();
-
+    controller.pan([200, 100], [150, 100], { shiftKey: true });
     assert.strictEqual(
         chart.index,
         undefined,
@@ -97,11 +94,9 @@ QUnit.test('Chart select points by drag', function (assert) {
         'No selected points initially'
     );
 
-    var test = new TestController(chart);
+    var controller = new TestController(chart);
 
-    test.mousedown(200, 200, { shiftKey: true });
-    test.mousemove(300, 300, { shiftKey: true });
-    test.mouseup();
+    controller.pan([200, 200], [300, 300], { shiftKey: true });
 
     assert.ok(
         chart.getSelectedPoints().length > 0,

@@ -26,10 +26,7 @@ QUnit.test('Zoom type', function (assert) {
 
 
     // Right-click
-    controller.mousedown(200, 150, { button: 2 });
-    controller.mousemove(250, 150, { button: 2 });
-    controller.mouseup();
-
+    controller.pan([200, 150], [250, 150], { button: 2 });
     assert.strictEqual(
         chart.xAxis[0].min,
         0,
@@ -43,9 +40,7 @@ QUnit.test('Zoom type', function (assert) {
 
 
     // Zoom
-    controller.mousedown(200, 150);
-    controller.mousemove(250, 150);
-    controller.mouseup();
+    controller.pan([200, 150], [250, 150]);
     assert.strictEqual(
         chart.resetZoomButton.zIndex,
         6,

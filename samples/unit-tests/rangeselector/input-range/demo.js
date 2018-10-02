@@ -175,6 +175,29 @@ QUnit.test('Input focus of previously hidden chart (#5231)', function (assert) {
         'Chart has input fields'
     );
 });
+QUnit.test('Focusable inputs after setting chart\'s zIndex (#8899)', function (assert) {
+    var chart = Highcharts.StockChart({
+            chart: {
+                renderTo: 'container'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }),
+        testController = new TestController(chart);
+
+    testController.click(
+        chart.rangeSelector.inputGroup.translateX +
+            chart.rangeSelector.minDateBox.x + 15,
+        20
+    );
+
+    assert.strictEqual(
+        document.activeElement.nodeName.toUpperCase(),
+        'INPUT',
+        'Focused correct elements.'
+    );
+});
 
 QUnit.test('Check input format', function (assert) {
 
