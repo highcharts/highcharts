@@ -186,10 +186,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
         tickSize = axis.tickSize('tick', true),
         tickWidth = isArray(tickSize) ? tickSize[0] : 0,
         crispCorr = tickSize[1] / 2,
-        labelHeight,
         lblMetrics,
-        labelDiff,
-        lines,
         result,
         bottom,
         top,
@@ -226,12 +223,12 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
             right = axis.left + axis.offset;
             left = right - tickWidth;
         } else {
-            left = Math.round(axis.left + axis.translate(
+            left = axis.left + axis.translate(
                 reversed ? nextTickPos : tickPos
-            )) - crispCorr;
-            right = Math.round(axis.left + axis.translate(
+            );
+            right = axis.left + axis.translate(
                 reversed ? tickPos : nextTickPos
-            )) - crispCorr;
+            );
         }
 
         tick.slotWidth = right - left;
@@ -256,35 +253,17 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
             )
         };
 
+        // Align the baseline of the label.
+        // Would be better to have a setter or similar for this.
         lblMetrics = chart.renderer.fontMetrics(
             labelOpts.style.fontSize,
             label.element
         );
-        labelHeight = label.getBBox().height;
+        result.y += (lblMetrics.b / 2) - ((lblMetrics.h - lblMetrics.f) / 2);
 
-        // Adjustment to y position to align the label correctly.
-        // Would be better to have a setter or similar for this.
-        if (!labelOpts.useHTML) {
-            labelDiff = labelHeight % lblMetrics.h;
-            lines = ((labelHeight - labelDiff) / lblMetrics.h);
-
-            result.y += (
-                // Adjust for difference between actual label height and line
-                // height.
-                labelDiff +
-                // Adjust for height of additional lines.
-                -(((lines - 1) * lblMetrics.h) / 2)
-            );
-        } else {
-            result.y += (
-                // Readjust yCorr in htmlUpdateTransform
-                lblMetrics.b +
-                // Adjust for height of html label
-                -(labelHeight / 2)
-            );
-        }
-
-        result.x += (axis.horiz && labelOpts.x || 0);
+        // Adjust for crisping logic and round the resulting number
+        result.x = Math.round(result.x - crispCorr) +
+            (axis.horiz && labelOpts.x || 0);
     } else {
         result = proceed.apply(tick, argsToArray(arguments));
     }

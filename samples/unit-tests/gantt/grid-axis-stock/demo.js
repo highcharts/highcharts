@@ -1165,10 +1165,9 @@ QUnit.test('Leftmost ticklabel appears', function (assert) {
         'First tick gets pos from axis.min'
     );
 
-    assert.close(
+    assert.strictEqual(
         +tickLabel.getAttribute('x'),
         axisCenter,
-        1,
         'First tick label is centered in its grid'
     );
     assert.strictEqual(
