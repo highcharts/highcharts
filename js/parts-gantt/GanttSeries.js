@@ -13,17 +13,6 @@ import 'TreeGrid.js';
 import 'Pathfinder.js';
 import '../modules/xrange.src.js';
 
-/**
- * The ID of this point's parent point for Gantt charts. Aliases
- * {@link series.line.data#connect}. Can also be an object, specifying further
- * connecting options between the points.
- *
- * @type {string|object}
- * @since 7.0.0
- * @product gantt
- * @apioption series.line.data.dependency
- */
-
 
 var dateFormat = H.dateFormat,
     isObject = H.isObject,
@@ -251,8 +240,48 @@ seriesType('gantt', 'xrange', {
  * @type {Boolean}
  * @default false
  * @product gantt
- * @sample {gantt} gantt/treegrid-axis/collapsed/demo.js Start as collapsed
+ * @sample {gantt} gantt/treegrid-axis/collapsed/ Start as collapsed
  * @apioption series.gantt.data.collapsed
+ */
+
+/**
+ * Progress indicator, how much of the task completed. If it is a number, the
+ * `fill` will be applied automatically.
+ *
+ * @type {object|number}
+ * @default undefined
+ * @product gantt
+ * @sample {gantt} gantt/demo/progress-indicator Progress indicator
+ * @apioption series.gantt.data.completed
+ */
+
+/**
+ * The amount of the progress indicator, ranging from 0 (not started) to 1
+ * (finished).
+ *
+ * @type {number}
+ * @default 0
+ * @apioption series.gantt.data.completed.amount
+ */
+
+/**
+ * The fill of the progress indicator. Defaults to a darkened variety of the
+ * main color.
+ *
+ * @type {Highcharts.ColorString}
+ * @default undefined
+ * @apioption series.gantt.data.completed.fill
+ */
+
+/**
+ * The ID of this point's parent point for Gantt charts. Aliases
+ * {@link series.line.data#connect}. Can also be an object, specifying further
+ * connecting options between the points.
+ *
+ * @type {string|object}
+ * @since 7.0.0
+ * @product gantt
+ * @apioption series.gantt.data.dependency
  */
 
 /**
