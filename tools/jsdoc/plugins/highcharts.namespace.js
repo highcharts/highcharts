@@ -315,7 +315,7 @@ function getDescription (doclet) {
         description = description.replace(/\/?\*\/?/gm, '');
     }
 
-    description = description.replace(/\s+/gm, ' ');
+    description = description.replace(/[ \f\r\t\v]+/gm, ' ');
     description = description.trim();
 
     if (description.indexOf('(c)') > -1) {
