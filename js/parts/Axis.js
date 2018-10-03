@@ -3283,7 +3283,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @fires Highcharts.Axis#event:afterSetOptions
      */
     setOptions: function (userOptions) {
-        H.datePropsToTimestamps(userOptions);
         this.options = merge(
             this.defaultOptions,
             this.coll === 'yAxis' && this.defaultYAxisOptions,
