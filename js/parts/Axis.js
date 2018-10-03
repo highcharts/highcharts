@@ -19,45 +19,60 @@
 /**
  * Position of the axis title.
  *
- * @typedef Highcharts.AxisTitlePositionObject
+ * @interface Highcharts.AxisTitlePositionObject
+ *//**
+ * X position.
  *
- * @property {number} x
- *           X position.
+ * @name Highcharts.AxisTitlePositionObject#x
+ * @type {number}
+ *//**
+ * Y position.
  *
- * @property {number} y
- *           Y position.
+ * @name Highcharts.AxisTitlePositionObject#y
+ * @type {number}
  */
 
 /**
  * The returned object literal from the {@link Highcharts.Axis#getExtremes}
  * function.
  *
- * @typedef Highcharts.ExtremesObject
+ * @interface Highcharts.ExtremesObject
+ *//**
+ * The maximum value of the axis' associated series.
  *
- * @property {number} dataMax
- *           The maximum value of the axis' associated series.
+ * @name Highcharts.ExtremesObject#dataMax
+ * @type {number}
+ *//**
+ * The minimum value of the axis' associated series.
  *
- * @property {number} dataMin
- *           The minimum value of the axis' associated series.
+ * @name Highcharts.ExtremesObject#dataMin
+ * @type {number}
+ *//**
+ * The maximum axis value, either automatic or set manually. If the `max` option
+ * is not set, `maxPadding` is 0 and `endOnTick` is false, this value will be
+ * the same as `dataMax`.
  *
- * @property {number} max
- *           The maximum axis value, either automatic or set manually. If
- *           the `max` option is not set, `maxPadding` is 0 and `endOnTick`
- *           is false, this value will be the same as `dataMax`.
+ * @name Highcharts.ExtremesObject#max
+ * @type {number}
+ *//**
+ * The minimum axis value, either automatic or set manually. If the `min` option
+ * is not set, `minPadding` is 0 and `startOnTick` is false, this value will be
+ * the same as `dataMin`.
  *
- * @property {number} min
- *           The minimum axis value, either automatic or set manually. If
- *           the `min` option is not set, `minPadding` is 0 and
- *           `startOnTick` is false, this value will be the same
- *           as `dataMin`.
+ * @name Highcharts.ExtremesObject#min
+ * @type {number}
+ *//**
+ * The user defined maximum, either from the `max` option or from a zoom or
+ * `setExtremes` action.
  *
- * @property {number} userMax
- *           The user defined maximum, either from the `max` option or from
- *           a zoom or `setExtremes` action.
+ * @name Highcharts.ExtremesObject#userMax
+ * @type {number}
+ *//**
+ * The user defined minimum, either from the `min` option or from a zoom or
+ * `setExtremes` action.
  *
- * @property {number} userMin
- *           The user defined minimum, either from the `min` option or from
- *           a zoom or `setExtremes` action.
+ * @name Highcharts.ExtremesObject#userMin
+ * @type {number}
  */
 
 'use strict';
