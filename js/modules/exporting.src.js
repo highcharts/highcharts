@@ -20,37 +20,65 @@
  */
 
 /**
- * @typedef Highcharts.ExportingMenuObject
+ * Definition for a menu item in the context menu.
  *
- * @property {string} [text]
+ * @interface Highcharts.ExportingMenuObject
+ *//**
+ * The text for the menu item.
  *
- * @property {string} [textKey]
+ * @name Highcharts.ExportingMenuObject#text
+ * @type {string|undefined}
+ *//**
+ * If internationalization is required, the key to a language string.
  *
- * @property {Function} [onclick]
+ * @name Highcharts.ExportingMenuObject#textKey
+ * @type {string|undefined}
+ *//**
+ * The click handler for the menu item.
  *
- * @property {boolean} [separator]
+ * @name Highcharts.ExportingMenuObject#onclick
+ * @type {Function|undefined}
+ *//**
+ * Indicates a separator line instead of an item.
+ *
+ * @name Highcharts.ExportingMenuObject#separator
+ * @type {boolean|undefined}
  */
 
 /**
- * @typedef Highcharts.ExportingOptionsObject
+ * Options for exporting tasks.
  *
- * @property {string} [filename]
- *           The file name for the export without extension.
+ * @interface Highcharts.ExportingOptionsObject
+ *//**
+ * The file name for the export without extension.
  *
- * @property {number} [sourceWidth]
- *           The pixel width of the source (in-page) chart.
+ * @name Highcharts.ExportingOptionsObject#filename
+ * @type {string|undefined}
+ *//**
+ * The pixel width of the source (in-page) chart.
  *
- * @property {number} [sourceHeight]
- *           The pixel height of the source (in-page) chart.
+ * @name Highcharts.ExportingOptionsObject#sourceWidth
+ * @type {number|undefined}
+ *//**
+ * The pixel height of the source (in-page) chart.
  *
- * @property {string} [type]
- *           The MIME type of the converted image.
+ * @name Highcharts.ExportingOptionsObject#sourceHeight
+ * @type {number|undefined}
+ *//**
+ * The MIME type of the converted image.
  *
- * @property {string} [url]
- *           The URL for the server module to do the conversion.
+ * @name Highcharts.ExportingOptionsObject#type
+ * @type {string|undefined}
+ *//**
+ * The URL for the server module to do the conversion.
  *
- * @property {number} [width]
- *           The width of the PNG or JPG image generated on the server.
+ * @name Highcharts.ExportingOptionsObject#url
+ * @type {string|undefined}
+ *//**
+ * The width of the PNG or JPG image generated on the server.
+ *
+ * @name Highcharts.ExportingOptionsObject#width
+ * @type {number|undefined}
  */
 
 'use strict';
