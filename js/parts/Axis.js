@@ -1850,7 +1850,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highstock} stock/xaxis/title-text/
              *         Titles for both axes
              *
-             * @type      {string}
+             * @type      {string|null}
              * @apioption xAxis.title.text
              */
 
