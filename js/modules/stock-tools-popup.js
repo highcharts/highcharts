@@ -398,8 +398,8 @@ H.Popup.prototype = {
             this.addButton.call(
                 this,
                 bottomRow,
-                isInit ? 'add' : 'edit',
-                isInit ? 'add' : 'edit',
+                isInit ? 'add' : 'save',
+                isInit ? 'add' : 'save',
                 callback,
                 popupDiv
             );
@@ -518,7 +518,7 @@ H.Popup.prototype = {
             this.addButton.call(
                 this,
                 buttonParentDiv,
-                'update',
+                'save',
                 'edit',
                 callback,
                 buttonParentDiv
