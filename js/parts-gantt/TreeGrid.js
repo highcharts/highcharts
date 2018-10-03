@@ -453,9 +453,32 @@ override(GridAxis.prototype, {
                 },
                 // TODO: add support for align in treegrid.
                 labels: {
-                    align: 'left'
+                    align: 'left',
+                    /**
+                     * The symbol for the collapse and expand icon in a
+                     * treegrid.
+                     *
+                     * @product gantt
+                     * @since next
+                     * @optionparent yAxis.labels.symbol
+                     */
+                    symbol: {
+                        /**
+                         * The symbol type. Points to a definition function in
+                         * the `Highcharts.Renderer.symbols` collection.
+                         *
+                         * @validvalue ['arc', 'circle', 'diamond', 'square', 'triangle', 'triangle-down']
+                         */
+                        type: 'triangle',
+                        x: -5,
+                        y: -5,
+                        height: 10,
+                        width: 10,
+                        padding: 5
+                    }
                 },
                 uniqueNames: false
+
             }, userOptions, { // User options
                 // Forced options
                 reversed: true
