@@ -33,24 +33,24 @@
  *//**
  * The animation duration in milliseconds.
  *
- * @name Highcharts.AnimationOptionsObject.duration
+ * @name Highcharts.AnimationOptionsObject#duration
  * @type {number}
  *//**
  * The name of an easing function as defined on the `Math` object.
  *
- * @name Highcharts.AnimationOptionsObject.easing
+ * @name Highcharts.AnimationOptionsObject#easing
  * @type {string|undefined}
  *//**
  * A callback function to exectute when the animation finishes.
  *
- * @name Highcharts.AnimationOptionsObject.complete
+ * @name Highcharts.AnimationOptionsObject#complete
  * @type {Function|undefined}
  *//**
  * A callback function to execute on each step of each attribute or CSS property
  * that's being animated. The first argument contains information about the
  * animation and progress.
  *
- * @name Highcharts.AnimationOptionsObject.step
+ * @name Highcharts.AnimationOptionsObject#step
  * @type {Function|undefined}
  */
 
@@ -67,126 +67,126 @@
  *
  * @interface Highcharts.CSSObject
  *//**
- * @name Highcharts.CSSObject.[key:string]
+ * @name Highcharts.CSSObject#[key:string]
  * @type {boolean|number|string|undefined}
  *//**
  * Background style for the element.
  *
- * @name Highcharts.CSSObject.background
+ * @name Highcharts.CSSObject#background
  * @type {string|undefined}
  *//**
  * Background color of the element.
  *
- * @name Highcharts.CSSObject.backgroundColor
+ * @name Highcharts.CSSObject#backgroundColor
  * @type {Highcharts.ColorString|undefined}
  *//**
  * Border style for the element.
  *
- * @name Highcharts.CSSObject.border
+ * @name Highcharts.CSSObject#border
  * @type {string|undefined}
  *//**
  * Radius of the element border.
  *
- * @name Highcharts.CSSObject.borderRadius
+ * @name Highcharts.CSSObject#borderRadius
  * @type {number|undefined}
  *//**
  * Color used in the element. The "contrast" option is a Highcharts custom
  * property that results in black or white, depending on the background of the
  * element.
  *
- * @name Highcharts.CSSObject.color
+ * @name Highcharts.CSSObject#color
  * @type {"contrast"|Highcharts.ColorString|undefined}
  *//**
  * Style of the mouse cursor when resting over the element.
  *
- * @name Highcharts.CSSObject.cursor
+ * @name Highcharts.CSSObject#cursor
  * @type {string|undefined}
  *//**
  * Font family of the element text. Multiple values have to be in decreasing
  * preference order and separated by comma.
  *
- * @name Highcharts.CSSObject.fontFamily
+ * @name Highcharts.CSSObject#fontFamily
  * @type {string|undefined}
  *//**
  * Font size of the element text.
  *
- * @name Highcharts.CSSObject.fontSize
+ * @name Highcharts.CSSObject#fontSize
  * @type {string|undefined}
  *//**
  * Font weight of the element text.
  *
- * @name Highcharts.CSSObject.fontWeight
+ * @name Highcharts.CSSObject#fontWeight
  * @type {string|undefined}
  *//**
  * Height of the element.
  *
- * @name Highcharts.CSSObject.height
+ * @name Highcharts.CSSObject#height
  * @type {number|undefined}
  *//**
  * Width of the element border.
  *
- * @name Highcharts.CSSObject.lineWidth
+ * @name Highcharts.CSSObject#lineWidth
  * @type {number|undefined}
  *//**
  * Opacity of the element.
  *
- * @name Highcharts.CSSObject.opacity
+ * @name Highcharts.CSSObject#opacity
  * @type {number|undefined}
  *//**
  * Space around the element content.
  *
- * @name Highcharts.CSSObject.padding
+ * @name Highcharts.CSSObject#padding
  * @type {string|undefined}
  *//**
  * Behaviour of the element when the mouse cursor rests over it.
  *
- * @name Highcharts.CSSObject.pointerEvents
+ * @name Highcharts.CSSObject#pointerEvents
  * @type {string|undefined}
  *//**
  * Positioning of the element.
  *
- * @name Highcharts.CSSObject.position
+ * @name Highcharts.CSSObject#position
  * @type {string|undefined}
  *//**
  * Alignment of the element text.
  *
- * @name Highcharts.CSSObject.textAlign
+ * @name Highcharts.CSSObject#textAlign
  * @type {string|undefined}
  *//**
  * Outline style of the element text.
  *
- * @name Highcharts.CSSObject.textOutline
+ * @name Highcharts.CSSObject#textOutline
  * @type {string|undefined}
  *//**
  * Additional decoration of the element text.
  *
- * @name Highcharts.CSSObject.textDecoration
+ * @name Highcharts.CSSObject#textDecoration
  * @type {string|undefined}
  *//**
  * Line break style of the element text. Highcharts SVG elements support
  * `ellipsis` when a `width` is set.
  *
- * @name Highcharts.CSSObject.textOverflow
+ * @name Highcharts.CSSObject#textOverflow
  * @type {string|undefined}
  *//**
  * Animated transition of selected element properties.
  *
- * @name Highcharts.CSSObject.transition
+ * @name Highcharts.CSSObject#transition
  * @type {string|undefined}
  *//**
  * Top spacing of the element relative to the parent element.
  *
- * @name Highcharts.CSSObject.top
+ * @name Highcharts.CSSObject#top
  * @type {string|undefined}
  *//**
  * Line break style of the element text.
  *
- * @name Highcharts.CSSObject.whiteSpace
+ * @name Highcharts.CSSObject#whiteSpace
  * @type {string|undefined}
  *//**
  * Width of the element.
  *
- * @name Highcharts.CSSObject.width
+ * @name Highcharts.CSSObject#width
  * @type {number|undefined}
  */
 
@@ -195,7 +195,7 @@
  *
  * @interface Highcharts.Dictionary<T>
  *//**
- * @name Highcharts.Dictionary<T>.[key:string]
+ * @name Highcharts.Dictionary<T>#[key:string]
  * @type {T}
  */
 
@@ -271,12 +271,12 @@
  *//**
  * Left distance to the page border.
  *
- * @name Highcharts.OffsetObject.left
+ * @name Highcharts.OffsetObject#left
  * @type {number}
  *//**
  * Top distance to the page border.
  *
- * @name Highcharts.OffsetObject.top
+ * @name Highcharts.OffsetObject#top
  * @type {number}
  */
 
@@ -287,12 +287,12 @@
  *//**
  * X position of the element.
  *
- * @name Highcharts.PositionObject.x
+ * @name Highcharts.PositionObject#x
  * @type {number}
  *//**
  * Y position of the element.
  *
- * @name Highcharts.PositionObject.y
+ * @name Highcharts.PositionObject#y
  * @type {number}
  */
 
@@ -322,43 +322,43 @@
  *
  * @interface Highcharts.SVGAttributes
  *//**
- * @name Highcharts.SVGAttributes.[key:string]
- * @type {boolean|number|string|Array<any>|undefined}
+ * @name Highcharts.SVGAttributes#[key:string]
+ * @type {boolean|number|string|Array<*>|undefined}
  *//**
- * @name Highcharts.SVGAttributes.d
+ * @name Highcharts.SVGAttributes#d
  * @type {string|Highcharts.SVGPathArray|undefined}
  *//**
- * @name Highcharts.SVGAttributes.inverted
+ * @name Highcharts.SVGAttributes#inverted
  * @type {boolean|undefined}
  *//**
- * @name Highcharts.SVGAttributes.matrix
+ * @name Highcharts.SVGAttributes#matrix
  * @type {Array<number>|undefined}
  *//**
- * @name Highcharts.SVGAttributes.stroke
+ * @name Highcharts.SVGAttributes#stroke
  * @type {Highcharts.ColorString|undefined}
  *//**
- * @name Highcharts.SVGAttributes.rotation
+ * @name Highcharts.SVGAttributes#rotation
  * @type {string|undefined}
  *//**
- * @name Highcharts.SVGAttributes.rotationOriginX
+ * @name Highcharts.SVGAttributes#rotationOriginX
  * @type {number|undefined}
  *//**
- * @name Highcharts.SVGAttributes.rotationOriginY
+ * @name Highcharts.SVGAttributes#rotationOriginY
  * @type {number|undefined}
  *//**
- * @name Highcharts.SVGAttributes.scaleX
+ * @name Highcharts.SVGAttributes#scaleX
  * @type {number|undefined}
  *//**
- * @name Highcharts.SVGAttributes.scaleY
+ * @name Highcharts.SVGAttributes#scaleY
  * @type {number|undefined}
  *//**
- * @name Highcharts.SVGAttributes.translateX
+ * @name Highcharts.SVGAttributes#translateX
  * @type {number|undefined}
  *//**
- * @name Highcharts.SVGAttributes.translateY
+ * @name Highcharts.SVGAttributes#translateY
  * @type {number|undefined}
  *//**
- * @name Highcharts.SVGAttributes.zIndex
+ * @name Highcharts.SVGAttributes#zIndex
  * @type {number|undefined}
  */
 
