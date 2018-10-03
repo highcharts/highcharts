@@ -5198,7 +5198,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 options[prefix + 'Width'],
                 prefix === 'tick' && this.isXAxis ? 1 : 0 // X axis default 1
             );
-        if (isNumber(tickWidth) && isNumber(tickLength)) {
+
+        if (tickWidth && tickLength) {
             // Negate the length
             if (options[prefix + 'Position'] === 'inside') {
                 tickLength = -tickLength;
