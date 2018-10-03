@@ -144,7 +144,7 @@
  * given in the rgba format.
  *
  * @name Highcharts.GradientColorObject#stops
- * @type {Array<Array<number|string>>|undefined}
+ * @type {Array<Array<number,Highcharts.ColorString>>|undefined}
  */
 
 /**
