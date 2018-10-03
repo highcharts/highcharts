@@ -5283,7 +5283,7 @@ H.Series = H.seriesType('line', null
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|object|Array<number|string|Date>|null>}
+ * @type      {Array<number|Array<number|string|Date>|*|null>}
  * @apioption series.line.data
  */
 
