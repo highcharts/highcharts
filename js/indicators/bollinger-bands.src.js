@@ -2,9 +2,9 @@
 
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+import multipleLinesMixin from '../mixins/multipe-lines.js';
 
-var each = H.each,
-    merge = H.merge,
+var merge = H.merge,
     isArray = H.isArray,
     SMA = H.seriesTypes.sma;
 
@@ -106,10 +106,11 @@ H.seriesType('bb', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    }, /** @lends Highcharts.Series.prototype */ H.merge(multipleLinesMixin, {
         pointArrayMap: ['top', 'middle', 'bottom'],
         pointValKey: 'middle',
         nameComponents: ['period', 'standardDeviation'],
+        linesApiNames: ['topLine', 'bottomLine'],
         init: function () {
             SMA.prototype.init.apply(this, arguments);
 
@@ -126,78 +127,6 @@ H.seriesType('bb', 'sma',
                     }
                 }
             }, this.options);
-        },
-        toYData: function (point) {
-            return [point.top, point.middle, point.bottom];
-        },
-        translate: function () {
-            var indicator = this,
-                translatedBB = ['plotTop', 'plotMiddle', 'plotBottom'];
-
-            SMA.prototype.translate.apply(indicator, arguments);
-
-            each(indicator.points, function (point) {
-                each(
-                    [point.top, point.middle, point.bottom],
-                    function (value, i) {
-                        if (value !== null) {
-                            point[translatedBB[i]] = indicator.yAxis.toPixels(
-                                value,
-                                true
-                            );
-                        }
-                    }
-                );
-            });
-        },
-        drawGraph: function () {
-            var indicator = this,
-                middleLinePoints = indicator.points,
-                pointsLength = middleLinePoints.length,
-                middleLineOptions = indicator.options,
-                middleLinePath = indicator.graph,
-                gappedExtend = {
-                    options: {
-                        gapSize: middleLineOptions.gapSize
-                    }
-                },
-                deviations = [[], []], // top and bottom point place holders
-                point;
-
-            // Generate points for top and bottom lines:
-            while (pointsLength--) {
-                point = middleLinePoints[pointsLength];
-                deviations[0].push({
-                    plotX: point.plotX,
-                    plotY: point.plotTop,
-                    isNull: point.isNull
-                });
-                deviations[1].push({
-                    plotX: point.plotX,
-                    plotY: point.plotBottom,
-                    isNull: point.isNull
-                });
-            }
-
-            // Modify options and generate lines:
-            each(['topLine', 'bottomLine'], function (lineName, i) {
-                indicator.points = deviations[i];
-                indicator.options = merge(
-                    middleLineOptions[lineName].styles,
-                    gappedExtend
-                );
-                indicator.graph = indicator['graph' + lineName];
-                SMA.prototype.drawGraph.call(indicator);
-
-                // Now save lines:
-                indicator['graph' + lineName] = indicator.graph;
-            });
-
-            // Restore options and draw a middle line:
-            indicator.points = middleLinePoints;
-            indicator.options = middleLineOptions;
-            indicator.graph = middleLinePath;
-            SMA.prototype.drawGraph.call(indicator);
         },
         getValues: function (series, params) {
             var period = params.period,
@@ -258,7 +187,7 @@ H.seriesType('bb', 'sma',
                 yData: yData
             };
         }
-    }
+    })
 );
 
 /**
