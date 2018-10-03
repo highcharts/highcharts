@@ -7,31 +7,40 @@
 /**
  * Normalized interval.
  *
- * @typedef Highcharts.NormalizedIntervalObject
+ * @interface Highcharts.NormalizedIntervalObject
+ *//**
+ * The interval in axis values (ms).
  *
- * @property {number} unitRange
- *           The interval in axis values (ms)
+ * @name Highcharts.NormalizedIntervalObject#unitRange
+ * @type {number}
+ *//**
+ * The count.
  *
- * @property {number} count
- *           The count
+ * @name Highcharts.NormalizedIntervalObject#count
+ * @type {number}
  */
 
 /**
  * Additonal time tick information.
  *
- * @typedef {Highcharts.NormalizedIntervalObject} Highcharts.TimeTicksInfoObject
- *
- * @property {Array<string>} higherRanks
- *
- * @property {number} totalRange
+ * @interface Highcharts.TimeTicksInfoObject
+ * @augments Highcharts.NormalizedIntervalObject
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @type {Array<string>}
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#totalRange
+ * @type {number}
  */
 
 /**
  * Time ticks.
  *
- * @typedef {Array<number>} Highcharts.TimeTicksObject
- *
- * @property {Highcharts.TimeTicksInfoObject} info
+ * @interface Highcharts.TimeTicksObject
+ * @augments Array<number>
+ *//**
+ * @name Highcharts.TimeTicksObject#info
+ * @type {Highcharts.TimeTicksInfoObject}
  */
 
 'use strict';
