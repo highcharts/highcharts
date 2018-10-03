@@ -330,7 +330,7 @@ seriesType('arearange', 'area', {
      */
     drawDataLabels: function () {
 
-        var data = this.data,
+        var data = this.points,
             length = data.length,
             i,
             originalDataLabels = [],

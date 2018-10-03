@@ -24,6 +24,9 @@ QUnit.test('dataGrouping for area range', function (assert) {
                 ],
                 dataGrouping: {
                     approximation: 'averages'
+                },
+                dataLabels: {
+                    enabled: true
                 }
             }, {
                 data: [
@@ -58,5 +61,15 @@ QUnit.test('dataGrouping for area range', function (assert) {
     assert.ok(
         chart.series[0].points.length === chart.series[1].points.length,
         'approximations.averages() returns undefined if needed (#7377)'
+    );
+
+    assert.ok(
+        chart.series[0].points[0].dataLabelUpper !== undefined,
+        'Top label rendered (#9020)'
+    );
+
+    assert.ok(
+        chart.series[0].points[0].dataLabel !== undefined,
+        'Bottom label rendered (#9020)'
     );
 });
