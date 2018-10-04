@@ -3177,7 +3177,8 @@ H.defaultOptions = {
          * objects. The `point.key` variable contains the category name, x
          * value or datetime string depending on the type of axis. For datetime
          * axes, the `point.key` date format can be set using
-         * `tooltip.xDateFormat`.
+         * `tooltip.xDateFormat`. To access the original point use
+         * `point.point`.
          *
          * @sample {highcharts} highcharts/tooltip/footerformat/
          *         An HTML table in the tooltip

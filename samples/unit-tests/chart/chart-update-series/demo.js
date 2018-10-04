@@ -58,3 +58,39 @@ QUnit.test('Test updating series by id', function (assert) {
 
 });
 
+QUnit.test('Updating axes and series', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 2, 3],
+            yAxis: 0
+        }, {
+            data: [3, 2, 1],
+            yAxis: 1
+        }, {
+            data: [2, 2, 2],
+            yAxis: 2
+        }],
+        yAxis: [{}, {}, {}]
+    });
+
+    chart.update({
+        series: [{
+            data: [1, 2, 3],
+            yAxis: 0
+        }],
+        yAxis: [{}]
+
+    }, true, true, true);
+
+    assert.strictEqual(
+        chart.series.length,
+        1,
+        'The updated chart should have one series (#9097)'
+    );
+    assert.strictEqual(
+        chart.yAxis.length,
+        1,
+        'The updated chart should have one Y axis (#9097)'
+    );
+});
+

@@ -255,3 +255,31 @@ QUnit.test('Halo sliced point (#3016)', function (assert) {
     });
 
 });
+
+QUnit.test('Update point when hovering slice (#9088)', function (assert) {
+    TestTemplate.test('highcharts/pie', {
+        tooltip: {
+            shared: true
+        },
+        series: [{
+            type: 'pie',
+            data: [5, 10, 15]
+        }]
+    }, function (template) {
+        var chart = template.chart,
+            controller = TestController(chart),
+            pointBox = chart.series[0].points[1].graphic.getBBox();
+
+        controller.mouseOver(
+            (chart.plotLeft + pointBox.x + (pointBox.width / 2)),
+            (chart.plotTop + pointBox.y + (pointBox.height / 2))
+        );
+
+        chart.series[0].points[0].update(10);
+
+        assert.ok(
+            true,
+            'No errors'
+        );
+    });
+});

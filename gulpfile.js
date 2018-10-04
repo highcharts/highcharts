@@ -180,7 +180,7 @@ gulp.task('ftp-watch', function () {
 /**
  * Run the test suite.
  */
-gulp.task('test', done => {
+gulp.task('test', ['styles', 'scripts'], done => {
 
     const lastRunFile = __dirname + '/test/last-run.json';
 
@@ -329,10 +329,14 @@ Available arguments for 'gulp test':
             if (err === 0) {
                 done();
 
-                fs.writeFileSync(
-                    lastRunFile,
-                    JSON.stringify({ lastSuccessfulRun: Date.now() })
-                );
+                // Register last successful run (only when running without
+                // arguments)
+                if (Object.keys(argv).length <= 2) {
+                    fs.writeFileSync(
+                        lastRunFile,
+                        JSON.stringify({ lastSuccessfulRun: Date.now() })
+                    );
+                }
             } else {
                 done(new gutils.PluginError('karma', {
                     message: 'Tests failed'
@@ -1216,29 +1220,75 @@ const jsdocNamespace = () => {
 
     const jsdoc3 = require('gulp-jsdoc3');
 
-    const gulpOptions = [[
-            './code/highcharts.src.js'
-        ], {
-            read: false
-        }],
-        jsdoc3Options = {
-            plugins: [
-                './tools/jsdoc/plugins/highcharts.namespace'
-            ]
+    let codeFiles = [
+            'code/highcharts.src.js'
+        ],
+        productFolders = [
+            'gantt',
+            'highcharts',
+            'highstock',
+            'highmaps'
+        ],
+        gulpOptions = [codeFiles, { read: false }],
+        jsdoc3Options = { plugins: ['tools/jsdoc/plugins/highcharts.namespace'] };
+
+
+    let aGulp = (resolve, reject) => {
+
+        let aJson = (error) => {
+
+            if (error) {
+                reject(error);
+            }
+
+            Promise
+                .all(productFolders.map(productFolder => copyFile(
+                    'tree-namespace.json',
+                    `build/api/${productFolder}/tree-namespace.json`
+                )))
+                .then(resolve)
+                .catch(reject);
         };
 
-    const aGulp = (resolve, reject) => {
-        gulp.src(...gulpOptions).pipe(jsdoc3(jsdoc3Options,
-            (error) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve('done');
-                }
-            }
-        ));
+        gulp.src(...gulpOptions)
+            .pipe(jsdoc3(jsdoc3Options, aJson));
     };
+
     return new Promise(aGulp);
+};
+
+/**
+ * Add TypeScript declarations to the code folder.
+ */
+const tsd = () => {
+    return require('../highcharts-typescript-generator').task();
+};
+
+/**
+ * Test TypeScript declarations in the code folder using tsconfig.json.
+ */
+const tsdLint = () => {
+
+    const configFiles = [
+        'tslint.json',
+        'tsconfig.json'
+    ];
+
+    const targetPath = 'code';
+
+    return Promise.all(configFiles.map(file => copyFile(
+            file,
+            targetPath + '/' + file
+        )))
+        .then(() => commandLine('npx dtslint --installAll'))
+        .then(() => commandLine('npx dtslint ' + targetPath))
+        .then((result) => {
+            console.info('tsdLint:', result);
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
 };
 
 gulp.task('start-api-server', startServer);
@@ -1249,11 +1299,12 @@ gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
-gulp.task('jsdoc', jsdoc);
+gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
-// gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], require('highcharts-typescript-generator').task);
+gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], tsd);
+gulp.task('tsd-lint', ['tsd'], tsdLint);
 
 /**
  * Gulp task to run the building process of distribution files. By default it

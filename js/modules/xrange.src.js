@@ -38,20 +38,19 @@ seriesType('xrange', 'column'
  * The X-range series displays ranges on the X axis, typically time intervals
  * with a start and end date.
  *
- * @sample {highcharts} highcharts/demo/x-range/
- *         X-range
- * @sample {highcharts} highcharts/css/x-range/
- *         Styled mode X-range
- * @sample {highcharts} highcharts/chart/inverted-xrange/
- *         Inverted X-range
- *
- * @extends      plotOptions.column
+ * @extends      {plotOptions.column}
+ * @excluding    boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
+ *               findNearestPointBy,getExtremesFromAll,negativeColor,
+ *               pointInterval,pointIntervalUnit,pointPlacement,
+ *               pointRange,pointStart,softThreshold,stacking,threshold,data
+ * @product      highcharts highstock
+ * @sample       {highcharts} highcharts/demo/x-range/
+ *               X-range
+ * @sample       {highcharts} highcharts/css/x-range/
+ *               Styled mode X-range
+ * @sample       {highcharts} highcharts/chart/inverted-xrange/
+ *               Inverted X-range
  * @since        6.0.0
- * @excluding    boostThreshold, crisp, cropThreshold, depth, edgeColor,
- *               edgeWidth, findNearestPointBy, getExtremesFromAll, grouping,
- *               groupPadding, negativeColor, pointInterval, pointIntervalUnit,
- *               pointPlacement, pointRange, pointStart, softThreshold,
- *               stacking, threshold, data
  * @product      highcharts highstock
  * @optionparent plotOptions.xrange
  */
@@ -201,7 +200,8 @@ seriesType('xrange', 'column'
         var series = this,
             xAxis = series.xAxis,
             metrics = series.columnMetrics,
-            minPointLength = series.options.minPointLength || 0,
+            options = series.options,
+            minPointLength = options.minPointLength || 0,
             plotX = point.plotX,
             posX = pick(point.x2, point.x + (point.len || 0)),
             plotX2 = xAxis.translate(posX, 0, 0, 0, 1),
@@ -210,7 +210,7 @@ seriesType('xrange', 'column'
             shapeArgs,
             partialFill,
             inverted = this.chart.inverted,
-            borderWidth = pick(series.options.borderWidth, 1),
+            borderWidth = pick(options.borderWidth, 1),
             crisper = borderWidth % 2 / 2,
             dlLeft,
             dlRight,
@@ -227,6 +227,16 @@ seriesType('xrange', 'column'
 
         plotX = Math.max(plotX, -10);
         plotX2 = Math.min(Math.max(plotX2, -10), xAxis.len + 10);
+
+        // Apply pointPlacement to the Y axis
+        if (
+            options.pointPlacement &&
+            isNumber(point.plotY) &&
+            series.yAxis.categories
+        ) {
+            point.plotY = series.yAxis
+                .translate(point.y, 0, 1, 0, 1, options.pointPlacement);
+        }
 
         point.shapeArgs = {
             x: Math.floor(Math.min(plotX, plotX2)) + crisper,
@@ -567,10 +577,10 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.xrange
- * @excluding boostThreshold, crisp, cropThreshold, depth, edgeColor, edgeWidth,
- *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
- *            negativeColor, pointInterval, pointIntervalUnit, pointPlacement,
- *            pointRange, pointStart, softThreshold, stacking, threshold
+ * @excluding boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
+ *            findNearestPointBy,getExtremesFromAll,
+ *            negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
+ *            pointRange,pointStart,softThreshold,stacking,threshold
  * @product   highcharts highstock
  * @apioption series.xrange
  */

@@ -100,7 +100,7 @@ Highcharts.mapChart('container', {
         useHTML: true,
         borderColor: '#aaa',
         headerFormat: '<b>{point.point.name}</b><br>',
-        pointFormat: '<image width="150" height="100" src="{point.options.color.pattern.image}"></image>'
+        pointFormat: '<img style="width: 150px; height: 100px;" src=\'{point.options.color.pattern.image}\'>'
     },
 
     // Define the series
