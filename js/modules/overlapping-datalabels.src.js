@@ -110,7 +110,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                 parent,
                 bBox,
                 // Substract the padding if no background or border (#4333)
-                padding = 2 * (label.box ? 0 : (label.padding || 0)),
+                padding = label.box ? 0 : (label.padding || 0),
                 lineHeightCorrection = 0;
 
             if (
@@ -135,10 +135,11 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                         .fontMetrics(null, label.element).h;
                 }
                 return {
-                    x: pos.x + (parent.translateX || 0),
-                    y: pos.y + (parent.translateY || 0) - lineHeightCorrection,
-                    width: label.width - padding,
-                    height: label.height - padding
+                    x: pos.x + (parent.translateX || 0) + padding,
+                    y: pos.y + (parent.translateY || 0) + padding -
+                        lineHeightCorrection,
+                    width: label.width - 2 * padding,
+                    height: label.height - 2 * padding
                 };
 
             }
