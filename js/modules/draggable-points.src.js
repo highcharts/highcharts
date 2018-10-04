@@ -13,6 +13,7 @@ var addEvent = H.addEvent,
     each = H.each,
     objectEach = H.objectEach,
     pick = H.pick,
+    find = H.find,
     filter = H.grep,
     map = H.map,
     merge = H.merge,
@@ -25,10 +26,6 @@ var addEvent = H.addEvent,
             color: 'rgba(0, 0, 0, 0.1)',
             cursor: 'move',
             zIndex: 900
-        },
-        error: {
-            className: 'highcharts-drag-box-error',
-            color: 'rgba(255, 0, 0, 0.2)'
         }
     },
     defaultDragHandleOptions = {
@@ -56,9 +53,13 @@ var addEvent = H.addEvent,
         move: Whether or not this prop should be updated when moving points.
         resize: Whether or not to draw a drag handle and allow only this prop to
             update.
+        beforeResize: Hook to perform tasks before a resize is made. Gets
+            the guide box, the new points values, and the point as args.
         resizeSide: Which side of the guide box to resize when dragging the
             handle. Can be "left", "right", "top", "bottom". Chart.inverted is
-            handled automatically.
+            handled automatically. Can also be a function, taking the new point
+            values as parameter, as well as the point, and returning a string
+            with the side.
         propValidate: Function that takes the prop value and the point as
             arguments, and returns true if the prop value is valid, false if
             not. It is used to prevent e.g. resizing "low" above "high".
@@ -78,12 +79,39 @@ H.seriesTypes.column.prototype.dragDropProps = {
         axis: 'y',
         move: false,
         resize: true,
-        resizeSide: 'top',
+        beforeResize: function (guideBox, pointVals, point) {
+            // We need to ensure that guideBox always starts at threshold.
+            // We flip whether or not we update the top or bottom of the guide
+            // box at threshold, but if we drag the mouse fast, the top has not
+            // reached threshold before we cross over and update the bottom.
+            var threshold = point.series.translatedThreshold,
+                y = guideBox.attr('y'),
+                height,
+                diff;
+            if (pointVals.y >= point.series.options.threshold || 0) {
+                // Above threshold - always set height to hit the threshold
+                height = guideBox.attr('height');
+                diff = threshold ? threshold - (y + height) : 0;
+                guideBox.attr({
+                    height: Math.max(0, Math.round(height + diff))
+                });
+            } else {
+                // Below - always set y to start at threshold
+                guideBox.attr({
+                    y: Math.round(y + (threshold ? threshold - y : 0))
+                });
+            }
+        },
+        resizeSide: function (pointVals, point) {
+            return pointVals.y >= (point.series.options.threshold || 0) ?
+                'top' : 'bottom';
+        },
         handlePositioner: function (point) {
             var bBox = point.graphic.getBBox();
             return {
                 x: bBox.x,
-                y: bBox.y
+                y: point.y >= (point.series.options.threshold || 0) ?
+                    bBox.y : bBox.y + bBox.height
             };
         },
         handleFormatter: function (point) {
@@ -104,6 +132,47 @@ H.seriesTypes.column.prototype.dragDropProps = {
         }
     }
 };
+
+// Columnrange series - move x/y, resize low/high
+if (H.seriesTypes.columnrange) {
+    var columnDragDropProps = H.seriesTypes.column.prototype.dragDropProps;
+    H.seriesTypes.columnrange.prototype.dragDropProps = {
+        x: {
+            axis: 'x',
+            move: true
+        },
+        low: {
+            optionName: 'draggableLow',
+            axis: 'y',
+            move: true,
+            resize: true,
+            resizeSide: 'bottom',
+            handlePositioner: function (point) {
+                var bBox = point.graphic.getBBox();
+                return {
+                    x: bBox.x,
+                    y: bBox.y + bBox.height
+                };
+            },
+            handleFormatter: columnDragDropProps.y.handleFormatter
+        },
+        high: {
+            optionName: 'draggableHigh',
+            axis: 'y',
+            move: true,
+            resize: true,
+            resizeSide: 'top',
+            handlePositioner: function (point) {
+                var bBox = point.graphic.getBBox();
+                return {
+                    x: bBox.x,
+                    y: bBox.y
+                };
+            },
+            handleFormatter: columnDragDropProps.y.handleFormatter
+        }
+    };
+}
 
 // Xrange - resize/move x/x2, and move y
 if (H.seriesTypes.xrange) {
@@ -613,32 +682,30 @@ function getGroupedPoints(point) {
 
 
 // Resize a rect element on one side. Takes the element, which side to update,
-// origin x/y/width/height, and the amount to update (x and y directions) as
-// arguments.
-function resizeRect(rect, updateSide, origin, update) {
+// and the amount to update (x and y directions) as arguments.
+function resizeRect(rect, updateSide, update) {
     var resizeAttrs;
     switch (updateSide) {
         case 'left':
             resizeAttrs = {
-                x: origin.x + update.x,
-                width: Math.max(1, origin.width - update.x)
+                x: rect.attr('x') + update.x,
+                width: Math.max(1, rect.attr('width') - update.x)
             };
             break;
         case 'right':
             resizeAttrs = {
-                width: Math.max(1, origin.width + update.x)
+                width: Math.max(1, rect.attr('width') + update.x)
             };
             break;
         case 'top':
             resizeAttrs = {
-                y: origin.y + update.y,
-                height: Math.max(1, origin.height - update.y)
+                y: rect.attr('y') + update.y,
+                height: Math.max(1, rect.attr('height') - update.y)
             };
             break;
         case 'bottom':
             resizeAttrs = {
-                y: origin.y - update.y,
-                height: Math.max(1, origin.height + update.y)
+                height: Math.max(1, rect.attr('height') + update.y)
             };
             break;
         default:
@@ -751,19 +818,54 @@ function updatePoints(chart, animate) {
 }
 
 
+// Resize the guide box according to difference in mouse positions.
+function resizeGuideBox(point, dX, dY) {
+    var series = point.series,
+        chart = series.chart,
+        dragDropData = chart.dragDropData,
+        resizeSide,
+        newPoint,
+        resizeProp = series.dragDropProps[dragDropData.updateProp];
+
+    // dragDropProp.resizeSide holds info on which side to resize.
+    newPoint = find(dragDropData.newPoints, function (newP) {
+        return newP.point === point;
+    }).newValues;
+    resizeSide = typeof resizeProp.resizeSide === 'function' ?
+        resizeProp.resizeSide(newPoint, point) : resizeProp.resizeSide;
+
+    // Call resize hook if it is defined
+    if (resizeProp.beforeResize) {
+        resizeProp.beforeResize(chart.dragGuideBox, newPoint, point);
+    }
+
+    // Do the resize
+    resizeRect(
+        chart.dragGuideBox,
+        resizeProp.axis === 'x' && series.xAxis.reversed ||
+        resizeProp.axis === 'y' && series.yAxis.reversed ?
+            flipResizeSide(resizeSide) : resizeSide,
+        {
+            x: resizeProp.axis === 'x' ?
+                dX - (dragDropData.origin.prevdX || 0) : 0,
+            y: resizeProp.axis === 'y' ?
+                dY - (dragDropData.origin.prevdY || 0) : 0
+        }
+    );
+}
+
+
 // Default mouse move handler while dragging
 function dragMove(e, point) {
     var series = point.series,
-        xAxis = series.xAxis,
-        yAxis = series.yAxis,
         chart = series.chart,
         data = chart.dragDropData,
         options = merge(series.options.dragDrop, point.options.dragDrop),
         draggableX = options.draggableX,
         draggableY = options.draggableY,
         origin = data.origin,
-        dX = draggableX ? e.pageX - origin.pageX : 0,
-        dY = draggableY ? e.pageY - origin.pageY : 0,
+        dX = e.pageX - origin.pageX,
+        dY = e.pageY - origin.pageY,
         oldDx = dX,
         updateProp = data.updateProp;
 
@@ -790,23 +892,19 @@ function dragMove(e, point) {
     } else {
         // No live redraw, update guide box
         if (updateProp) {
-            // We are resizing, so resize the guide box. The series'
-            // dragDropProp.resizeSide holds info on which side to resize.
-            updateProp = series.dragDropProps[updateProp];
-            resizeRect(
-                chart.dragGuideBox,
-                updateProp.axis === 'x' && xAxis.reversed ||
-                updateProp.axis === 'y' && yAxis.reversed ?
-                    flipResizeSide(updateProp.resizeSide) :
-                    updateProp.resizeSide,
-                origin.guideBox,
-                { x: dX, y: dY }
-            );
+            // We are resizing, so resize the guide box
+            resizeGuideBox(point, dX, dY);
         } else {
-            // We are moving, so just move the guide box
-            chart.dragGuideBox.translate(dX, dY);
+            // We are moving, so move the guide box
+            chart.dragGuideBox.translate(
+                draggableX ? dX : 0, draggableY ? dY : 0
+            );
         }
     }
+
+    // Update stored previous dX/Y
+    origin.prevdX = dX;
+    origin.prevdY = dY;
 }
 
 
@@ -965,26 +1063,31 @@ H.Point.prototype.showDragHandles = function () {
         series = point.series,
         chart = series.chart,
         renderer = chart.renderer,
-        options = merge(
-            defaultDragHandleOptions,
-            series.options.dragDrop && series.options.dragDrop.dragHandle || {},
-            point.options.dragDrop && point.options.dragDrop.dragHandle
-        ),
+        options = merge(series.options.dragDrop, point.options.dragDrop),
+        handleOptions = merge(defaultDragHandleOptions, options.dragHandle),
         handleAttrs = {
-            className: options.className,
-            'stroke-width': options.lineWidth,
-            fill: options.color,
-            stroke: options.lineColor
+            className: handleOptions.className,
+            'stroke-width': handleOptions.lineWidth,
+            fill: handleOptions.color,
+            stroke: handleOptions.lineColor
         };
 
     // Go through each updateProp and see if we are supposed to create a handle
     // for it.
     objectEach(series.dragDropProps, function (val, key) {
-        var pathFormatter = options.pathFormatter || val.handleFormatter,
+        var pathFormatter = handleOptions.pathFormatter || val.handleFormatter,
             positioner = val.handlePositioner,
             pos,
             handle;
-        if (val.resize && val.resizeSide) {
+        if (
+            val.resize &&
+            val.resizeSide &&
+            (
+                options['draggable' + val.axis.toUpperCase()] ||
+                options[val.optionName]
+            ) &&
+            options[val.optionName] !== false
+        ) {
 
             // Create group if it doesn't exist
             if (!chart.dragHandles) {
@@ -997,12 +1100,15 @@ H.Point.prototype.showDragHandles = function () {
             pos = positioner(point);
 
             // If cursor is not set explicitly, use axis direction
-            handleAttrs.cursor = options.cursor ||
+            handleAttrs.cursor = handleOptions.cursor ||
                 (val.axis === 'x') !== !!chart.inverted ?
                     'ew-resize' : 'ns-resize';
 
             // Create and add the handle element
-            chart.dragHandles[val.resizeSide] = handle = renderer
+            chart.dragHandles[
+                typeof val.resizeSide === 'function' ?
+                    val.resizeSide(point.options, point) : val.resizeSide
+            ] = handle = renderer
                 .path(pathFormatter(point))
                 .translate(pos.x, pos.y)
                 .attr(handleAttrs)
