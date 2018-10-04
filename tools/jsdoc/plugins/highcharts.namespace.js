@@ -1287,6 +1287,26 @@ function processingComplete (e) {
  */
 exports.defineTags = function (dictionary) {
 
+    dictionary.defineTag('apioption', {
+        // mustHaveValue: true,
+        onTagged: (doclet, tag) => {
+            if (!doclet.type &&
+                tag.value
+            ) {
+                doclet.type = { names: [
+                    tag.value
+                        .split('.')
+                        .filter(name => !!name)
+                        .map(name => name[0].toUpperCase() + name.substr(1))
+                        .join('')
+                        .replace('Options', '') +
+                    'Options'
+                ] };
+            }
+        }
+    })
+    .synonym('optionparent');
+
     dictionary.defineTag('private', {
         mustNotHaveValue: true,
         onTagged: (doclet) => doclet.ignore = true
