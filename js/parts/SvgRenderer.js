@@ -285,10 +285,9 @@
 /**
  * An extendable collection of functions for defining symbol paths.
  *
- * @interface Highcharts.SymbolDictionary
- *//**
- * @name Highcharts.SymbolDictionary#[key:Highcharts.SymbolKey]
- * @type {Function|undefined}
+ * @type Highcharts.SymbolDictionary
+ *
+ * @property {Function|undefined} [key:Highcharts.SymbolKey]
  */
 
 /**
