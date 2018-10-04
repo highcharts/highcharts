@@ -21,7 +21,7 @@ H.seriesType('stochastic', 'sma',
      *                     Stochastic oscillator
      * @since 6.0.0
      * @excluding
-     *             allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
+     *             allAreas,colorAxis,joinBy,keys,stacking,
      *             showInNavigator,navigatorOptions,pointInterval,
      *             pointIntervalUnit,pointPlacement,pointRange,pointStart
      * @optionparent plotOptions.stochastic
@@ -178,7 +178,7 @@ H.seriesType('stochastic', 'sma',
  * @since 6.0.0
  * @extends series,plotOptions.stochastic
  * @excluding   data,dataParser,dataURL
- *              allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
+ *              allAreas,colorAxis,joinBy,keys,stacking,
  *              showInNavigator,navigatorOptions,pointInterval,
  *              pointIntervalUnit,pointPlacement,pointRange,pointStart
  * @product highstock
