@@ -17,6 +17,8 @@ var Point,
     isArray = H.isArray,
     isNumber = H.isNumber,
     pick = H.pick,
+    uniqueKey = H.uniqueKey,
+    defined = H.defined,
     removeEvent = H.removeEvent;
 
 /**
@@ -67,6 +69,9 @@ Highcharts.Point.prototype = {
         point.color = series.color; // #3445
         /*= } =*/
         point.applyOptions(options, x);
+
+        // Add a unique ID to the point if none is assigned
+        point.id = defined(point.id) ? point.id : uniqueKey();
 
         if (series.options.colorByPoint) {
             /*= if (build.classic) { =*/
