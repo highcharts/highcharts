@@ -528,7 +528,10 @@ if (H.seriesTypes.gantt) {
 
 /**
  * Callback that fires while dragging a point. The mouse event is passed in as
- * parameter. The original data can be accessed from `e.origin`.
+ * parameter. The original data can be accessed from `e.origin`, and the new
+ * point values can be accessed from e.newPoints. If there is only a single
+ * point being updated, it can be accessed from e.newPoint for simplicity. To
+ * stop the default drag action, return false.
  *
  * Requires the draggable-points module.
  *
@@ -540,7 +543,9 @@ if (H.seriesTypes.gantt) {
 /**
  * Callback that fires when the point is dropped. The mouse event is passed in
  * as parameter. The original data can be accessed from e.origin, and the new
- * point values can be accessed from e.newPoints.
+ * point values can be accessed from e.newPoints. If there is only a single
+ * point being updated, it can be accessed from e.newPoint for simplicity. To
+ * stop the default drop action, return false.
  *
  * Requires the draggable-points module.
  *
@@ -891,9 +896,6 @@ function dragMove(e, point) {
         dY = -oldDx;
     }
 
-    // Find the new point values from the moving
-    chart.dragDropData.newPoints = getNewPoints(data, e);
-
     // If we have liveRedraw enabled, update the points immediately. Otherwise
     // update the guideBox.
     if (pick(options.liveRedraw, true)) {
@@ -1065,6 +1067,9 @@ function onResizeHandleMouseDown(e, point, updateProp) {
         return;
     }
 
+    // Prevent zooming
+    chart.mouseIsDown = false;
+
     initDragDrop(e, point);
     chart.dragDropData.isDragging = true;
     chart.dragDropData.updateProp = e.updateProp = updateProp;
@@ -1159,6 +1164,28 @@ H.Chart.prototype.hideDragHandles = function () {
 };
 
 
+// Count the number of props in an object
+function countProps(object) {
+    var count = 0;
+    for (var p in object) {
+        if (object.hasOwnProperty(p)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+
+// Get the first prop of an object
+function getFirstProp(object) {
+    for (var p in object) {
+        if (object.hasOwnProperty(p)) {
+            return object[p];
+        }
+    }
+}
+
+
 // On point mouse over
 function mouseOver(point) {
     var series = point.series,
@@ -1200,10 +1227,16 @@ function mouseMove(e, chart) {
         return;
     }
 
-    var dragDropData = chart.dragDropData;
+    var dragDropData = chart.dragDropData,
+        point,
+        seriesDragDropOpts,
+        newPoints,
+        numNewPoints = 0,
+        newPoint;
+
     if (dragDropData && dragDropData.isDragging) {
-        var point = dragDropData.point,
-            seriesDragDropOpts = point.series.options.dragDrop;
+        point = dragDropData.point;
+        seriesDragDropOpts = point.series.options.dragDrop;
 
         // No tooltip for dragging
         e.preventDefault();
@@ -1224,10 +1257,22 @@ function mouseMove(e, chart) {
         // If we have dragged past dragSensitiviy, run the mousemove handler
         // for dragging
         if (dragDropData.draggedPastSensitivity) {
+            // Find the new point values from the moving
+            dragDropData.newPoints = getNewPoints(dragDropData, e);
+
+            // If we are only dragging one point, add it to the event
+            newPoints = dragDropData.newPoints;
+            numNewPoints = countProps(newPoints);
+            newPoint = numNewPoints === 1 ?
+                getFirstProp(newPoints).newValues :
+                null;
+
             // Run the handler
             point.firePointEvent('drag', {
                 origin: dragDropData.origin,
                 newPoints: dragDropData.newPoints,
+                newPoint: newPoint,
+                numNewPoints: numNewPoints,
                 pageX: e.pageX,
                 pageY: e.pageY
             }, function () {
@@ -1246,7 +1291,12 @@ function mouseUp(e, chart) {
         dragDropData.isDragging &&
         dragDropData.draggedPastSensitivity
     ) {
-        var point = dragDropData.point;
+        var point = dragDropData.point,
+            newPoints = dragDropData.newPoints,
+            numNewPoints = countProps(newPoints),
+            newPoint = numNewPoints === 1 ?
+                getFirstProp(newPoints).newValues :
+                null;
 
         // Hide the drag handles
         if (chart.dragHandles) {
@@ -1258,7 +1308,9 @@ function mouseUp(e, chart) {
             origin: dragDropData.origin,
             pageX: e.pageX,
             pageY: e.pageY,
-            newPoints: dragDropData.newPoints
+            newPoints: newPoints,
+            numNewPoints: numNewPoints,
+            newPoint: newPoint
         }, function () {
             updatePoints(chart);
         });
@@ -1284,6 +1336,9 @@ function mouseDown(e, chart) {
     if (chart.zoomOrPanKeyPressed(e)) {
         return;
     }
+
+    // Prevent zooming
+    chart.mouseIsDown = false;
 
     // If we somehow get a mousedown event while we are dragging, cancel
     if (chart.dragDropData && chart.dragDropData.isDragging) {
