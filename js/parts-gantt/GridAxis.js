@@ -267,11 +267,10 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
         if (!labelOpts.useHTML) {
             labelDiff = labelHeight % lblMetrics.h;
             lines = ((labelHeight - labelDiff) / lblMetrics.h);
-
             result.y += (
-                // Adjust for difference between actual label height and line
-                // height.
-                labelDiff +
+                // Center the label
+                // TODO: why does this actually center the label?
+                ((lblMetrics.b - (lblMetrics.h - lblMetrics.f)) / 2) +
                 // Adjust for height of additional lines.
                 -(((lines - 1) * lblMetrics.h) / 2)
             );

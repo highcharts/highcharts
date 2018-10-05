@@ -45,7 +45,17 @@ var SVGElement,
     svg = H.svg,
     SVG_NS = H.SVG_NS,
     symbolSizes = H.symbolSizes,
-    win = H.win;
+    win = H.win,
+    mapOfFontSizeToHeight = {
+        '11px': {
+            height: 17,
+            corrected: 14
+        },
+        '13px': {
+            height: 20,
+            corrected: 16
+        }
+    };
 
 /**
  * @typedef {Object} SVGDOMElement - An SVG DOM element.
@@ -1234,6 +1244,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             toggleTextShadowShim,
             cache = renderer.cache,
             cacheKeys = renderer.cacheKeys,
+            isSVG = element.namespaceURI === wrapper.SVG_NS,
+            fontSizeToHeight,
             cacheKey;
 
         rotation = pick(rot, wrapper.rotation);
@@ -1279,7 +1291,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         if (!bBox) {
 
             // SVG elements
-            if (element.namespaceURI === wrapper.SVG_NS || renderer.forExport) {
+            if (isSVG || renderer.forExport) {
                 try { // Fails in Firefox if the container has display: none.
 
                     // When the text shadow shim is used, we need to hide the
@@ -1346,12 +1358,15 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 // Also vertical positioning is affected.
                 // http://jsfiddle.net/highcharts/em37nvuj/
                 // (#1101, #1505, #1669, #2568, #6213).
+                fontSizeToHeight = mapOfFontSizeToHeight[
+                    styles && styles.fontSize
+                ];
                 if (
-                    styles &&
-                    styles.fontSize === '11px' &&
-                    Math.round(height) === 17
+                    isSVG &&
+                    fontSizeToHeight &&
+                    fontSizeToHeight.height === Math.round(height)
                 ) {
-                    bBox.height = height = 14;
+                    bBox.height = height = fontSizeToHeight.corrected;
                 }
 
                 // Adjust for rotated text
