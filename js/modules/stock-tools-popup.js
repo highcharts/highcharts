@@ -17,6 +17,7 @@ var addEvent = H.addEvent,
     isString = H.isString,
     isObject = H.isObject,
     isArray = H.isArray,
+    indexFilter = /\d/g,
     PREFIX = 'highcharts-',
     DIV = 'div',
     INPUT = 'input',
@@ -131,15 +132,17 @@ H.Popup.prototype = {
             lang = this.lang,
             inputName = PREFIX + type + '-' + optionName;
 
-        // add label
-        createElement(
-            LABEL, {
-                innerHTML: lang[optionName] || optionName,
-                htmlFor: inputName
-            },
-            null,
-            parentDiv
-        );
+        if (!inputName.match(indexFilter)) {
+            // add label
+            createElement(
+                LABEL, {
+                    innerHTML: lang[optionName] || optionName,
+                    htmlFor: inputName
+                },
+                null,
+                parentDiv
+            );
+        }
 
         // add input
         createElement(
@@ -434,7 +437,8 @@ H.Popup.prototype = {
                 addFormFields = this.annotations.addFormFields,
                 addInput = this.addInput,
                 lang = chart.stockToolbar.lang,
-                parentFullName;
+                parentFullName,
+                titleName;
 
             objectEach(options, function (value, option) {
 
@@ -449,11 +453,15 @@ H.Popup.prototype = {
                         // array of objects with params. i.e labels in Fibonacci
                         (isArray(value) && isObject(value[0]))
                     ) {
+                        titleName = lang[option] || option;
 
-                        createElement(SPAN, {
-                            className: PREFIX + 'annotation-title',
-                            innerHTML: lang[option] || option
-                        }, null, parentDiv);
+
+                        if (!titleName.match(indexFilter)) {
+                            createElement(SPAN, {
+                                className: PREFIX + 'annotation-title',
+                                innerHTML: titleName
+                            }, null, parentDiv);
+                        }
 
                         addFormFields.call(
                             _self,
