@@ -772,21 +772,31 @@ function getNewPoints(dragDropData, newPos) {
     // Go through the data props that can be updated on this series and find out
     // which ones we want to update.
     objectEach(point.series.dragDropProps, function (val, key) {
-        // Respect draggable options, allowing specific overrides and otherwise
-        // using draggableX/Y.
-        var enabled = pick(
-                val.optionName && options[val.optionName],
-                val.axis === 'x' ?
-                    options.draggableX : options.draggableY
-            );
-
-        // If we are resizing and this is not the prop we are resizing, ignore
-        if (resizeProp && resizeProp !== key) {
+        // If we are resizing, skip if this key is not the correct one or it
+        // is not resizable.
+        if (
+            resizeProp && (
+                resizeProp !== key ||
+                !val.resize ||
+                val.optionName && options[val.optionName] === false
+            )
+        ) {
             return;
         }
 
+        // If we are resizing, we now know it is good. If we are moving, check
+        // that moving along this axis is enabled, and the prop is movable.
         // If this prop is enabled, add it to be updated
-        if (enabled && (resizeProp ? val.resize : val.move)) {
+        if (
+            resizeProp || (
+                val.move &&
+                (
+                    val.axis === 'x' ?
+                        options.draggableX :
+                        options.draggableY
+                )
+            )
+        ) {
             updateProps[key] = val;
         }
     });
