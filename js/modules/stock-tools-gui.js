@@ -306,7 +306,7 @@ H.setOptions({
                     }
                 },
                 fullScreen: {
-                    symbol: 'url(https://cdn.rawgit.com/YR/weather-symbols/6.0.2/dist/svg/40d.svg)'
+                    symbol: 'url(http://utils.highcharts.local/samples/graphics/fullscreen.svg)'
                 },
                 saveChart: {
                     symbol: 'url(http://utils.highcharts.local/samples/graphics/save-chart.svg)'
