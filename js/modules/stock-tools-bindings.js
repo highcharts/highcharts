@@ -432,6 +432,9 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             this.chart.addAnnotation({
+                labelOptions: {
+                    format: '{y:.2f}'
+                },
                 labels: [{
                     point: {
                         x: x,
@@ -439,7 +442,6 @@ var stockToolsBindings = {
                         xAxis: 0,
                         yAxis: 0
                     },
-                    format: '{y:.2f}',
                     controlPoints: [{
                         symbol: 'triangle-down',
                         positioner: function (target) {
@@ -1331,7 +1333,7 @@ H.Toolbar.annotationsEditable = {
     // `typeOptions` are always available
     // Nested and shared options:
     nestedOptions: {
-        labelOptions: ['style'],
+        labelOptions: ['style', 'format'],
         labels: ['style'],
         label: ['style'],
         style: ['fontSize', 'color'],
@@ -1909,7 +1911,12 @@ extend(H.Toolbar.prototype, {
                     });
                 } else {
                     // Leaf:
-                    if (isArray(parent)) {
+                    if (key === 'format') {
+                        parent[key] = [
+                            H.format(option, annotation.labels[0].points[0]),
+                            'text'
+                        ];
+                    } else if (isArray(parent)) {
                         parent.push([option, getFieldType(option)]);
                     } else {
                         parent[key] = [option, getFieldType(option)];

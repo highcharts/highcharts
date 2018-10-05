@@ -86,6 +86,7 @@ H.setOptions({
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
                 fill: 'Fill',
+                format: 'Format',
                 strokeWidth: 'Line width',
                 stroke: 'Line color',
                 title: 'Title',
@@ -148,7 +149,7 @@ H.setOptions({
                     symbol: 'url(http://utils.highcharts.local/samples/graphics/separator.svg)'
                 },
                 simpleShapes: {
-                    items: ['circle', 'rectangle', 'label'],
+                    items: ['label', 'circle', 'rectangle'],
                     circle: {
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/circle.svg)'
                     },
