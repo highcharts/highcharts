@@ -668,7 +668,11 @@ H.extendAnnotation(Measure, null, {
             markerEnd: 'arrow'
         },
         label: {
-            enabled: true
+            enabled: true,
+            style: {
+                fontSize: '11px',
+                color: '#666666'
+            }
             // formatter: function () { }
         }
     },
