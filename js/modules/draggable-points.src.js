@@ -152,7 +152,10 @@ if (H.seriesTypes.columnrange) {
                     y: bBox.y + bBox.height
                 };
             },
-            handleFormatter: columnDragDropProps.y.handleFormatter
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val < point.high;
+            }
         },
         high: {
             optionName: 'draggableHigh',
@@ -167,7 +170,10 @@ if (H.seriesTypes.columnrange) {
                     y: bBox.y
                 };
             },
-            handleFormatter: columnDragDropProps.y.handleFormatter
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val > point.low;
+            }
         }
     };
 }
@@ -643,8 +649,8 @@ function hasDraggedPastSensitivity(e, chart, sensitivity) {
 }
 
 
-// Get a snapshot of point, mouse position, and guide box dimensions
-function getPositionSnapshot(e, point, guideBox) {
+// Get a snapshot of points, mouse position, and guide box dimensions
+function getPositionSnapshot(e, points, guideBox) {
     var res = {
         pageX: e.pageX,
         pageY: e.pageY,
@@ -653,12 +659,20 @@ function getPositionSnapshot(e, point, guideBox) {
             y: guideBox.attr('y'),
             width: guideBox.attr('width'),
             height: guideBox.attr('height')
-        }
+        },
+        points: {}
     };
 
-    // Add all of the props defined in the series' dragDropProps to the snapshot
-    objectEach(point.series.dragDropProps, function (val, key) {
-        res[key] = point[key];
+    // Loop over the points and add their props
+    each(points, function (point) {
+        var pointProps = {};
+        // Add all of the props defined in the series' dragDropProps to the
+        // snapshot
+        objectEach(point.series.dragDropProps, function (val, key) {
+            pointProps[key] = point[key];
+        });
+        pointProps.point = point; // Store reference to point
+        res.points[point.id] = pointProps;
     });
 
     return res;
@@ -731,7 +745,7 @@ function initDragDrop(e, point) {
 
     // Store some data on the chart to pick up later
     chart.dragDropData = {
-        origin: getPositionSnapshot(e, point, guideBox),
+        origin: getPositionSnapshot(e, groupedPoints, guideBox),
         point: point,
         groupedPoints: groupedPoints
     };
@@ -773,7 +787,11 @@ function getNewPoints(dragDropData, newPos) {
     });
 
     // Go through the points to be updated and get new options for each of them
-    each(dragDropData.groupedPoints, function (p) {
+    each(
+        resizeProp ? // If resizing, only update the point we are resizing
+        [point] :
+        dragDropData.groupedPoints,
+    function (p) {
         hashmap[p.id] = {
             point: p,
             newValues: p.getDropValues(dragDropData.origin, newPos, updateProps)
@@ -926,8 +944,8 @@ H.Chart.prototype.setGuideBoxState = function (state, options) {
 /**
  * Get updated point values when dragging a point.
  *
- * @param {object} oldPos Mouse position (pageX/Y) and point props at current
- *  data values.
+ * @param {object} origin Mouse position (pageX/Y) and point props at current
+ *  data values. Point props should be organized per point.id in a hashmap.
  * @param {object} newPos New mouse position (pageX/Y).
  * @param {object} updateProps Point props to modify. Map of prop objects where
  *  each key refers to the prop, and the value is an object with an axis
@@ -942,16 +960,16 @@ H.Chart.prototype.setGuideBoxState = function (state, options) {
  *  }
  * @returns {object} An object with updated data values.
  */
-H.Point.prototype.getDropValues = function (oldPos, newPos, updateProps) {
+H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
     var point = this,
         series = point.series,
         options = merge(series.options.dragDrop, point.options.dragDrop),
         yAxis = series.yAxis,
         xAxis = series.xAxis,
-        dX = newPos.pageX - oldPos.pageX,
-        dY = newPos.pageY - oldPos.pageY,
-        oldX = pick(oldPos.x, point.x),
-        oldY = pick(oldPos.y, point.y),
+        dX = newPos.pageX - origin.pageX,
+        dY = newPos.pageY - origin.pageY,
+        oldX = pick(origin.x, point.x),
+        oldY = pick(origin.y, point.y),
         dXValue = xAxis.toValue(
             xAxis.toPixels(oldX, true) +
             (xAxis.horiz ? dX : dY),
@@ -963,7 +981,8 @@ H.Point.prototype.getDropValues = function (oldPos, newPos, updateProps) {
             true
         ) - oldY,
         result = {},
-        updateSingleProp;
+        updateSingleProp,
+        pointOrigin = origin.points[point.id];
 
     // Find out if we only have one prop to update
     for (var key in updateProps) {
@@ -992,18 +1011,20 @@ H.Point.prototype.getDropValues = function (oldPos, newPos, updateProps) {
     // Assign new value to property. Adds dX/YValue to the old value, limiting
     // it within min/max ranges.
     objectEach(updateProps, function (val, key) {
-        var oldVal = oldPos[key],
+        var oldVal = pointOrigin[key],
             newVal = limitToRange(
                 oldVal + (val.axis === 'x' ? dXValue : dYValue),
                 val.axis.toUpperCase()
             );
         // If we are updating a single prop, and it has a validation function
         // for the prop, run it. If it fails, don't update the value.
-        result[key] =
+        if (!(
             updateSingleProp &&
             val.propValidate &&
-            !val.propValidate(newVal, point) ?
-                oldVal : newVal;
+            !val.propValidate(newVal, point)
+        )) {
+            result[key] = newVal;
+        }
     });
 
     return result;
@@ -1206,6 +1227,7 @@ function mouseMove(e, chart) {
             // Run the handler
             point.firePointEvent('drag', {
                 origin: dragDropData.origin,
+                newPoints: dragDropData.newPoints,
                 pageX: e.pageX,
                 pageY: e.pageY
             }, function () {
