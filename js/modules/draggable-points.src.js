@@ -69,8 +69,27 @@ var addEvent = H.addEvent,
         handleOptions: Options to merge with the default handle options.
 */
 
+// 90deg rotated column handle, used in multiple series types
+var horizHandleFormatter = function (point) {
+    var shapeArgs = point.shapeArgs || point.graphic.getBBox(),
+        top = shapeArgs.r || 0, // Rounding of bar corners
+        bottom = shapeArgs.height - top,
+        centerY = shapeArgs.height / 2;
+    return [
+        // Top wick
+        'M', 0, top,
+        'L', 0, centerY - 5,
+        // Circle
+        'A', 1, 1, 0, 0, 0, 0, centerY + 5,
+        'A', 1, 1, 0, 0, 0, 0, centerY - 5,
+        // Bottom wick
+        'M', 0, centerY + 5,
+        'L', 0, bottom
+    ];
+};
+
 // Line series - only draggableX/Y
-seriesTypes.line.prototype.dragDropProps = {
+var lineDragDropProps = seriesTypes.line.prototype.dragDropProps = {
     x: {
         axis: 'x',
         move: true
@@ -81,9 +100,13 @@ seriesTypes.line.prototype.dragDropProps = {
     }
 };
 
+// Flag series - only draggableX/Y
+if (seriesTypes.flags) {
+    seriesTypes.flags.prototype.dragDropProps = lineDragDropProps;
+}
 
 // Column series - only draggableX/Y
-seriesTypes.column.prototype.dragDropProps = {
+var columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
     x: {
         axis: 'x',
         move: true
@@ -120,7 +143,7 @@ seriesTypes.column.prototype.dragDropProps = {
                 'top' : 'bottom';
         },
         handlePositioner: function (point) {
-            var bBox = point.graphic.getBBox();
+            var bBox = point.shapeArgs || point.graphic.getBBox();
             return {
                 x: bBox.x,
                 y: point.y >= (point.series.options.threshold || 0) ?
@@ -146,9 +169,31 @@ seriesTypes.column.prototype.dragDropProps = {
     }
 };
 
+// Bullet graph
+if (seriesTypes.bullet) {
+    seriesTypes.bullet.prototype.dragDropProps = {
+        x: columnDragDropProps.x,
+        y: columnDragDropProps.y,
+        target: {
+            optionName: 'draggableTarget',
+            axis: 'y',
+            move: true,
+            resize: true,
+            resizeSide: 'top',
+            handlePositioner: function (point) {
+                var bBox = point.targetGraphic.getBBox();
+                return {
+                    x: point.barX,
+                    y: bBox.y + bBox.height / 2
+                };
+            },
+            handleFormatter: columnDragDropProps.y.handleFormatter
+        }
+    };
+}
+
 // Columnrange series - move x/y, resize low/high
 if (seriesTypes.columnrange) {
-    var columnDragDropProps = seriesTypes.column.prototype.dragDropProps;
     seriesTypes.columnrange.prototype.dragDropProps = {
         x: {
             axis: 'x',
@@ -161,7 +206,7 @@ if (seriesTypes.columnrange) {
             resize: true,
             resizeSide: 'bottom',
             handlePositioner: function (point) {
-                var bBox = point.graphic.getBBox();
+                var bBox = point.shapeArgs || point.graphic.getBBox();
                 return {
                     x: bBox.x,
                     y: bBox.y + bBox.height
@@ -169,7 +214,7 @@ if (seriesTypes.columnrange) {
             },
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (val, point) {
-                return val < point.high;
+                return val <= point.high;
             }
         },
         high: {
@@ -179,7 +224,7 @@ if (seriesTypes.columnrange) {
             resize: true,
             resizeSide: 'top',
             handlePositioner: function (point) {
-                var bBox = point.graphic.getBBox();
+                var bBox = point.shapeArgs || point.graphic.getBBox();
                 return {
                     x: bBox.x,
                     y: bBox.y
@@ -187,7 +232,166 @@ if (seriesTypes.columnrange) {
             },
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (val, point) {
-                return val > point.low;
+                return val >= point.low;
+            }
+        }
+    };
+}
+
+// Boxplot series - move x/y, resize low/q1/q3/high
+if (seriesTypes.boxplot) {
+    seriesTypes.boxplot.prototype.dragDropProps = {
+        x: columnDragDropProps.x,
+        low: {
+            optionName: 'draggableLow',
+            axis: 'y',
+            move: true,
+            resize: true,
+            resizeSide: 'bottom',
+            handlePositioner: function (point) {
+                return {
+                    x: point.shapeArgs.x,
+                    y: point.lowPlot
+                };
+            },
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val <= point.q1;
+            }
+        },
+        q1: {
+            optionName: 'draggableQ1',
+            axis: 'y',
+            move: true,
+            resize: true,
+            resizeSide: 'bottom',
+            handlePositioner: function (point) {
+                return {
+                    x: point.shapeArgs.x,
+                    y: point.q1Plot
+                };
+            },
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val <= point.median && val >= point.low;
+            }
+        },
+        median: {
+            axis: 'y',
+            move: true
+        },
+        q3: {
+            optionName: 'draggableQ3',
+            axis: 'y',
+            move: true,
+            resize: true,
+            resizeSide: 'top',
+            handlePositioner: function (point) {
+                return {
+                    x: point.shapeArgs.x,
+                    y: point.q3Plot
+                };
+            },
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val <= point.high && val >= point.median;
+            }
+        },
+        high: {
+            optionName: 'draggableHigh',
+            axis: 'y',
+            move: true,
+            resize: true,
+            resizeSide: 'top',
+            handlePositioner: function (point) {
+                return {
+                    x: point.shapeArgs.x,
+                    y: point.highPlot
+                };
+            },
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val >= point.q3;
+            }
+        }
+    };
+}
+
+
+// OHLC series - move x/y, resize open/high/low/close
+if (seriesTypes.ohlc) {
+    seriesTypes.ohlc.prototype.dragDropProps = {
+        x: columnDragDropProps.x,
+        low: {
+            optionName: 'draggableLow',
+            axis: 'y',
+            move: true,
+            resize: true,
+            resizeSide: 'bottom',
+            handlePositioner: function (point) {
+                return {
+                    x: point.shapeArgs.x,
+                    y: point.plotLow
+                };
+            },
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val <= point.open && val <= point.close;
+            }
+        },
+        high: {
+            optionName: 'draggableHigh',
+            axis: 'y',
+            move: true,
+            resize: true,
+            resizeSide: 'top',
+            handlePositioner: function (point) {
+                return {
+                    x: point.shapeArgs.x,
+                    y: point.plotHigh
+                };
+            },
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val >= point.open && val >= point.close;
+            }
+        },
+        open: {
+            optionName: 'draggableOpen',
+            axis: 'y',
+            move: true,
+            resize: true,
+            resizeSide: function (point) {
+                return point.open >= point.close ? 'top' : 'bottom';
+            },
+            handlePositioner: function (point) {
+                return {
+                    x: point.shapeArgs.x,
+                    y: point.plotOpen
+                };
+            },
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val <= point.high && val >= point.low;
+            }
+        },
+        close: {
+            optionName: 'draggableClose',
+            axis: 'y',
+            move: true,
+            resize: true,
+            resizeSide: function (point) {
+                return point.open >= point.close ? 'bottom' : 'top';
+            },
+            handlePositioner: function (point) {
+                return {
+                    x: point.shapeArgs.x,
+                    y: point.plotClose
+                };
+            },
+            handleFormatter: columnDragDropProps.y.handleFormatter,
+            propValidate: function (val, point) {
+                return val <= point.high && val >= point.low;
             }
         }
     };
@@ -244,6 +448,19 @@ if (seriesTypes.arearange) {
     };
 }
 
+// Waterfall - mostly as column
+if (seriesTypes.waterfall) {
+    seriesTypes.waterfall.prototype.dragDropProps = {
+        x: columnDragDropProps.x,
+        y: merge(columnDragDropProps.y, {
+            handleFormatter: function (point) {
+                return point.isSum || point.isIntermediateSum ? null :
+                    columnDragDropProps.y.handleFormatter(point);
+            }
+        })
+    };
+}
+
 // Xrange - resize/move x/x2, and move y
 if (seriesTypes.xrange) {
     // Handle positioner logic is the same for x and x2 apart from the
@@ -272,64 +489,44 @@ if (seriesTypes.xrange) {
                 y: Math.round(newY)
             };
         },
-        // The handle is the same as columns, but turned 90 degrees.
-        xrangeHandleFormatter = function (point) {
-            var shapeArgs = point.shapeArgs,
-                top = shapeArgs.r || 0, // Rounding of bar corners
-                bottom = shapeArgs.height - top,
-                centerY = shapeArgs.height / 2;
-            return [
-                // Top wick
-                'M', 0, top,
-                'L', 0, centerY - 5,
-                // Circle
-                'A', 1, 1, 0, 0, 0, 0, centerY + 5,
-                'A', 1, 1, 0, 0, 0, 0, centerY - 5,
-                // Bottom wick
-                'M', 0, centerY + 5,
-                'L', 0, bottom
-            ];
+        xrangeDragDropProps = seriesTypes.xrange.prototype.dragDropProps = {
+            y: {
+                axis: 'y',
+                move: true
+            },
+            x: {
+                optionName: 'draggableX1',
+                axis: 'x',
+                move: true,
+                resize: true,
+                resizeSide: 'left',
+                handlePositioner: function (point) {
+                    return xrangeHandlePositioner(point, 'x');
+                },
+                handleFormatter: horizHandleFormatter,
+                propValidate: function (val, point) {
+                    return val <= point.x2;
+                }
+            },
+            x2: {
+                optionName: 'draggableX2',
+                axis: 'x',
+                move: true,
+                resize: true,
+                resizeSide: 'right',
+                handlePositioner: function (point) {
+                    return xrangeHandlePositioner(point, 'x2');
+                },
+                handleFormatter: horizHandleFormatter,
+                propValidate: function (val, point) {
+                    return val >= point.x;
+                }
+            }
         };
-
-    seriesTypes.xrange.prototype.dragDropProps = {
-        y: {
-            axis: 'y',
-            move: true
-        },
-        x: {
-            optionName: 'draggableX1',
-            axis: 'x',
-            move: true,
-            resize: true,
-            resizeSide: 'left',
-            handlePositioner: function (point) {
-                return xrangeHandlePositioner(point, 'x');
-            },
-            handleFormatter: xrangeHandleFormatter,
-            propValidate: function (val, point) {
-                return val < point.x2;
-            }
-        },
-        x2: {
-            optionName: 'draggableX2',
-            axis: 'x',
-            move: true,
-            resize: true,
-            resizeSide: 'right',
-            handlePositioner: function (point) {
-                return xrangeHandlePositioner(point, 'x2');
-            },
-            handleFormatter: xrangeHandleFormatter,
-            propValidate: function (val, point) {
-                return val > point.x;
-            }
-        }
-    };
 }
 
 // Gantt - xrange with aliases
 if (seriesTypes.gantt) {
-    var xrangeDragDropProps = seriesTypes.xrange.prototype.dragDropProps;
     seriesTypes.gantt.prototype.dragDropProps = {
         y: xrangeDragDropProps.y,
         start: merge(xrangeDragDropProps.x, {
@@ -341,6 +538,16 @@ if (seriesTypes.gantt) {
     };
 }
 
+// Don't support certain series types
+each(
+    ['gauge', 'pie', 'sunburst', 'wordcloud', 'sankey', 'histogram', 'pareto',
+        'vector', 'windbarb', 'treemap', 'bellcurve', 'sma'],
+    function (type) {
+        if (seriesTypes[type]) {
+            seriesTypes[type].prototype.dragDropProps = null;
+        }
+    }
+);
 
 /**
  * The draggable-points module allows points to be moved around or modified
@@ -1160,7 +1367,10 @@ function mouseOut(point) {
 // Mouseout on resize handle
 function onResizeHandleMouseOut(point) {
     var chart = point.series.chart;
-    if (point.id === chart.dragDropData.isHoveringHandle) {
+    if (
+        chart.dragDropData &&
+        point.id === chart.dragDropData.isHoveringHandle
+    ) {
         delete chart.dragDropData.isHoveringHandle;
     }
     if (!chart.hoverPoint) {
@@ -1217,7 +1427,8 @@ H.Point.prototype.showDragHandles = function () {
             pathFormatter = handleOptions.pathFormatter || val.handleFormatter,
             positioner = val.handlePositioner,
             pos,
-            handle;
+            handle,
+            path;
         if (
             val.resize &&
             val.resizeSide &&
@@ -1240,6 +1451,12 @@ H.Point.prototype.showDragHandles = function () {
             // Find position of handle
             pos = positioner(point);
 
+            // Find handle path
+            path = pathFormatter(point);
+            if (!path) {
+                return;
+            }
+
             // If cursor is not set explicitly, use axis direction
             handleAttrs.cursor = handleOptions.cursor ||
                 (val.axis === 'x') !== !!chart.inverted ?
@@ -1250,7 +1467,7 @@ H.Point.prototype.showDragHandles = function () {
                 typeof val.resizeSide === 'function' ?
                     val.resizeSide(point.options, point) : val.resizeSide
             ] = handle = renderer
-                .path(pathFormatter(point))
+                .path(path)
                 .translate(pos.x, pos.y)
                 .attr(handleAttrs)
                 .add(chart.dragHandles.group);
