@@ -13,9 +13,7 @@ var addEvent = H.addEvent,
     each = H.each,
     objectEach = H.objectEach,
     pick = H.pick,
-    find = H.find,
     filter = H.grep,
-    map = H.map,
     merge = H.merge,
     defaultDragSensitivity = 2,
     defaultGuideBoxOptions = {
@@ -749,7 +747,8 @@ function getNewPoints(dragDropData, newPos) {
         series = point.series,
         options = merge(series.options.dragDrop, point.options.dragDrop),
         updateProps = {},
-        resizeProp = dragDropData.updateProp;
+        resizeProp = dragDropData.updateProp,
+        hashmap = {};
 
     // Go through the data props that can be updated on this series and find out
     // which ones we want to update.
@@ -774,12 +773,13 @@ function getNewPoints(dragDropData, newPos) {
     });
 
     // Go through the points to be updated and get new options for each of them
-    return map(dragDropData.groupedPoints, function (p) {
-        return {
+    each(dragDropData.groupedPoints, function (p) {
+        hashmap[p.id] = {
             point: p,
             newValues: p.getDropValues(dragDropData.origin, newPos, updateProps)
         };
     });
+    return hashmap;
 }
 
 // If input side is "left", return "right" etc.
@@ -803,7 +803,7 @@ function updatePoints(chart, animate) {
     chart.isDragDropAnimating = true;
 
     // Update the points
-    each(newPoints, function (newPoint) {
+    objectEach(newPoints, function (newPoint) {
         newPoint.point.update(newPoint.newValues, false);
     });
 
@@ -828,9 +828,7 @@ function resizeGuideBox(point, dX, dY) {
         resizeProp = series.dragDropProps[dragDropData.updateProp];
 
     // dragDropProp.resizeSide holds info on which side to resize.
-    newPoint = find(dragDropData.newPoints, function (newP) {
-        return newP.point === point;
-    }).newValues;
+    newPoint = dragDropData.newPoints[point.id].newValues;
     resizeSide = typeof resizeProp.resizeSide === 'function' ?
         resizeProp.resizeSide(newPoint, point) : resizeProp.resizeSide;
 
