@@ -110,7 +110,11 @@ H.setOptions({
                 crosshairX: 'Crosshair X',
                 crosshairY: 'Crosshair Y',
                 tunnel: 'Tunnel',
-                background: 'Background'
+                background: 'Background',
+                addButton: 'add',
+                saveButton: 'save',
+                editButton: 'edit',
+                removeButton: 'remove'
             }
         }
     },

@@ -297,6 +297,18 @@ H.Popup.prototype = {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }
     },
+     /*
+     * Return lang definitions for popup.
+     *
+     * @return {Object} - elements translations.
+     */
+    getLangpack: function () {
+        var defaultOptions = H.getOptions();
+
+        return defaultOptions &&
+                defaultOptions.lang &&
+                defaultOptions.lang.stockTools.gui;
+    },
     annotations: {
         /*
          * Create annotation simple form. It contains two buttons
@@ -309,6 +321,7 @@ H.Popup.prototype = {
          */
         addToolbar: function (chart, options, callback) {
             var _self = this,
+                lang = this.getLangpack(),
                 popupDiv = this.popup.container,
                 showForm = this.showForm,
                 toolbarClass = PREFIX + 'annotation-toolbar',
@@ -336,7 +349,7 @@ H.Popup.prototype = {
             button = this.addButton.call(
                 this,
                 popupDiv,
-                'remove',
+                lang.removeButton || 'remove',
                 'remove',
                 callback,
                 popupDiv
@@ -347,7 +360,7 @@ H.Popup.prototype = {
             button = this.addButton.call(
                 this,
                 popupDiv,
-                'edit',
+                lang.editButton || 'edit',
                 'edit',
                 function () {
                     showForm.call(
@@ -375,6 +388,7 @@ H.Popup.prototype = {
          */
         addForm: function (chart, options, callback, isInit) {
             var popupDiv = this.popup.container,
+                lang = this.getLangpack(),
                 bottomRow,
                 lhsCol;
 
@@ -398,7 +412,9 @@ H.Popup.prototype = {
             this.addButton.call(
                 this,
                 bottomRow,
-                isInit ? 'add' : 'save',
+                isInit ?
+                    (lang.addButton || 'add') :
+                    (lang.saveButton || 'save'),
                 isInit ? 'add' : 'save',
                 callback,
                 popupDiv
@@ -473,6 +489,7 @@ H.Popup.prototype = {
 
             var tabsContainers,
                 indicators = this.indicators,
+                lang = this.getLangpack(),
                 buttonParentDiv;
 
             // add tabs
@@ -497,7 +514,7 @@ H.Popup.prototype = {
             this.addButton.call(
                 this,
                 buttonParentDiv,
-                'add',
+                lang.addButton || 'add',
                 'add',
                 callback,
                 buttonParentDiv
@@ -518,7 +535,7 @@ H.Popup.prototype = {
             this.addButton.call(
                 this,
                 buttonParentDiv,
-                'save',
+                lang.saveButton || 'save',
                 'edit',
                 callback,
                 buttonParentDiv
@@ -526,7 +543,7 @@ H.Popup.prototype = {
             this.addButton.call(
                 this,
                 buttonParentDiv,
-                'remove',
+                lang.removeButton || 'remove',
                 'remove',
                 callback,
                 buttonParentDiv
@@ -843,6 +860,7 @@ H.Popup.prototype = {
         addMenuItem: function (tabName, disableTab) {
             var popupDiv = this.popup.container,
                 className = PREFIX + 'tab-item',
+                lang = this.getLangpack(),
                 menuItem;
 
             if (disableTab === 0) {
@@ -853,7 +871,7 @@ H.Popup.prototype = {
             menuItem = createElement(
                 SPAN,
                 {
-                    innerHTML: tabName,
+                    innerHTML: lang[tabName + 'Button'] || tabName,
                     className: className
                 },
                 null,
