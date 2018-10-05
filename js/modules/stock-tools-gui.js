@@ -75,7 +75,7 @@ H.setOptions({
                 verticalDoubleArrow: 'Vertical double arrow',
                 fibonacci: 'Fibonacci',
                 pitchfork: 'Pitchfork',
-                'parallel-channel': 'Parallel channel',
+                parallelChannel: 'Parallel channel',
                 measureXY: 'Measure XY',
                 measureX: 'Measure X',
                 measureY: 'Measure Y',
@@ -249,14 +249,14 @@ H.setOptions({
                     }
                 },
                 advanced: {
-                    items: ['fibonacci', 'pitchfork', 'parallel-channel'],
+                    items: ['fibonacci', 'pitchfork', 'parallelChannel'],
                     pitchfork: {
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/pitchfork.svg)'
                     },
                     fibonacci: {
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/fibonacci.svg)'
                     },
-                    'parallel-channel': {
+                    'parallelChannel': {
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/parallel-channel.svg)'
                     }
                 },
@@ -900,7 +900,7 @@ H.Toolbar.prototype = {
         elliott5: PREFIX + 'elliott5',
         pitchfork: PREFIX + 'pitchfork',
         fibonacci: PREFIX + 'fibonacci',
-        'parallel-channel': PREFIX + 'parallel-channel',
+        parallelChannel: PREFIX + 'parallel-channel',
         measureX: PREFIX + 'measureX',
         measureY: PREFIX + 'measureY',
         measureXY: PREFIX + 'measureXY',

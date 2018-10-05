@@ -971,7 +971,7 @@ var stockToolsBindings = {
             bindingsUtils.updateHeight
         ]
     },
-    'parallel-channel': {
+    parallelChannel: {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
