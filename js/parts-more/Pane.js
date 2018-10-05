@@ -256,11 +256,10 @@ extend(Pane.prototype, {
          * is circular. When `arc`, the background extends only from the min
          * to the max of the value axis.
          *
-         * @validvalue ["solid", "arc"]
-         * @type    {string}
-         * @default solid
-         * @since   2.3.0
-         * @product highcharts
+         * @type       {string}
+         * @since      2.3.0
+         * @validvalue ["arc", "circle", "solid"]
+         * @product    highcharts
          */
         shape: 'circle',
 
