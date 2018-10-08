@@ -20,11 +20,13 @@ import ControlPoint from './ControlPoint.js';
 var merge = H.merge,
     addEvent = H.addEvent,
     each = H.each,
+    map = H.map,
     defined = H.defined,
     erase = H.erase,
     find = H.find,
     isString = H.isString,
     pick = H.pick,
+    splat = H.splat,
     destroyObjectProperties = H.destroyObjectProperties;
 
 /* *********************************************************************
@@ -60,7 +62,7 @@ var merge = H.merge,
  * @param {AnnotationOptions} options the options object
  */
 var Annotation = H.Annotation = function (chart, options) {
-
+    var labelsAndShapes;
     /**
      * The chart that the annotation belongs to.
      *
@@ -112,6 +114,15 @@ var Annotation = H.Annotation = function (chart, options) {
      * @type {AnnotationOptions}
      */
     this.userOptions = merge(true, {}, options);
+
+    // Handle labels and shapes - those are arrays
+    // Merging does not work with arrays (stores reference)
+    labelsAndShapes = this.getLabelsAndShapesOptions(
+        this.userOptions,
+        options
+    );
+    this.userOptions.labels = labelsAndShapes.labels;
+    this.userOptions.shapes = labelsAndShapes.shapes;
 
     /**
      * The callback that reports to the overlapping-labels module which
@@ -667,6 +678,23 @@ merge(
             this.setLabelCollector();
         },
 
+        getLabelsAndShapesOptions: function (baseOptions, newOptions) {
+            var mergedOptions = {};
+
+            each(['labels', 'shapes'], function (name) {
+                if (baseOptions[name]) {
+                    mergedOptions[name] = map(
+                        splat(newOptions[name]),
+                        function (basicOptions, i) {
+                            return merge(baseOptions[name][i], basicOptions);
+                        }
+                    );
+                }
+            }, this);
+
+            return mergedOptions;
+        },
+
         addShapes: function () {
             each(this.options.shapes || [], function (shapeOptions, i) {
                 var shape = this.initShape(shapeOptions);
@@ -676,7 +704,7 @@ merge(
         },
 
         addLabels: function () {
-            each(this.options.labels || [], function (labelOptions, i) {
+            each(this.userOptions.labels || [], function (labelOptions, i) {
                 var label = this.initLabel(labelOptions);
 
                 this.options.labels[i] = label.options;
@@ -842,7 +870,14 @@ merge(
 
         update: function (userOptions) {
             var chart = this.chart,
-                options = H.merge(true, this.options, userOptions);
+                labelsAndShapes = this.getLabelsAndShapesOptions(
+                    this.userOptions,
+                    userOptions
+                ),
+                options = H.merge(true, this.userOptions, userOptions);
+
+            options.labels = labelsAndShapes.labels;
+            options.shapes = labelsAndShapes.shapes;
 
             this.destroy();
             this.constructor(chart, options);
