@@ -190,6 +190,21 @@
   position: relative;
   background-color: #f7f7f7;
 }
+.highcharts-stocktools-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn {
+  cursor: default;
+}
+
+.highcharts-stocktools-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn > .highcharts-menu-item-btn {
+  opacity: 0.5;
+}
+
+.highcharts-stocktools-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn.highcharts-active {
+  background: #f7f7f7;
+}
+
+.highcharts-stocktools-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn .highcharts-menu-item-btn:hover {
+  background-color: transparent;
+}
 
 .highcharts-stocktools-wrapper li>span.highcharts-menu-item-btn {
   display: block;
