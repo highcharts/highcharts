@@ -342,7 +342,7 @@ H.Popup.prototype = {
             createElement(SPAN, {
                 innerHTML: pick(
                     // Advanced annotations:
-                    options.type,
+                    lang[options.type] || options.type,
                     // Basic shapes:
                     options.shapes && options.shapes[0].type
                 )
