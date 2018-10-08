@@ -444,7 +444,9 @@
 }
 
 .highcharts-popup .highcharts-popup-main-title {
-  padding-left:20px;
+  border-bottom: 1px solid #e6e6e6;
+  margin: 0px 0px 20px 0px;
+  padding: 8px 0px 6px 20px;
 }
 
 .highcharts-indicator-title {
