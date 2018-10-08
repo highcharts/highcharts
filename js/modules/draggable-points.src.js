@@ -697,6 +697,14 @@ each(
  */
 
 /**
+ * The class name of the drag handles.
+ *
+ * @type {String}
+ * @since 6.2.0
+ * @apioption plotOptions.series.dragDrop.dragHandle.className
+ */
+
+/**
  * Function to define the SVG path to use for the drag handles. Takes the
  * point as argument. Should return an SVG path in array format. The SVG path is
  * automatically positioned on the point.
