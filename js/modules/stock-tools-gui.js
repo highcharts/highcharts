@@ -410,12 +410,20 @@ H.Toolbar.prototype = {
             addSubmenu = _self.addSubmenu,
             buttons = guiOptions.buttons,
             defs = guiOptions.definitions,
+            allButtons = toolbar.childNodes,
             button;
 
         // create buttons
         each(buttons, function (btnName) {
 
             button = addButton(toolbar, defs, btnName, lang);
+
+            addEvent(button.buttonWrapper, 'click', function (e) {
+                _self.eraseActiveButtons(
+                    allButtons,
+                    button.buttonWrapper
+                );
+            });
 
             if (isArray(defs[btnName].items)) {
                 // create submenu buttons
@@ -454,10 +462,11 @@ H.Toolbar.prototype = {
         this.addSubmenuItems.call(this, buttonWrapper, button);
 
         // show / hide submenu
-        addEvent(submenuArrow, 'click', function () {
+        addEvent(submenuArrow, 'click', function (e) {
 
+            e.stopPropagation();
             // Erase active class on all other buttons
-            _self.eraseActiveButtons(allButtons, buttonWrapper, submenuItems);
+            _self.eraseActiveButtons(allButtons, buttonWrapper);
 
             // hide menu
             if (buttonWrapper.className.indexOf(PREFIX + 'current') >= 0) {
@@ -535,10 +544,11 @@ H.Toolbar.prototype = {
      *
      * @param {Array} - Array of HTML buttons
      * @param {HTMLDOMElement} - Current HTML button
-     * @param {Array} - List of HTML submenus
      *
      */
-    eraseActiveButtons: function (buttons, currentButton, submenuItems) {
+    eraseActiveButtons: function (buttons, currentButton) {
+        var submenuItems;
+
         each(buttons, function (btn) {
             if (btn !== currentButton) {
                 btn.classList.remove(PREFIX + 'current');
