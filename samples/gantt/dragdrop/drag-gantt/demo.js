@@ -7,23 +7,40 @@ Highcharts.ganttChart('container', {
         text: 'Highcharts draggable gantt demo'
     },
 
+    xAxis: {
+        minPadding: 0.2,
+        maxPadding: 0.2
+    //    reversed: true
+    },
+
+    yAxis: {
+        type: 'category',
+        categories: ['A', 'B', 'C']
+        //reversed: true
+    },
+
     series: [{
         name: 'Project 1',
         dragDrop: {
             draggableX: true,
-            //draggableY: true,
-            enableResize: true
+            liveRedraw: false,
+            draggableY: true,
+            dragMinY: 0
+            //groupBy: 'groupId'
         },
         data: [{
             start: Date.UTC(2014, 11, 1),
             end: Date.UTC(2014, 11, 2),
             completed: 0.95,
-            id: 'One'
+            id: 'One',
+            groupId: 'bob',
+            y: 0
         }, {
             start: Date.UTC(2014, 11, 2),
             end: Date.UTC(2014, 11, 5),
-            id: 'Two'
+            id: 'Two',
+            groupId: 'bob',
+            y: 1
         }]
     }]
 });
-
