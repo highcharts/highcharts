@@ -977,7 +977,7 @@ var stockToolsBindings = {
             bindingsUtils.updateHeight
         ]
     },
-    parallelChannel: {
+    'parallel-channel': {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -1405,28 +1405,19 @@ extend(H.Toolbar.prototype, {
     bindingsButtonClick: function (button, events, clickEvent) {
         var toolbar = this;
 
-        // If submenu button is clicked, don't fire bubbled event in the parent
-        // Or if arrow is clicked, don't fire it too.
-        if (
-            clickEvent.target &&
-            clickEvent.target.parentNode === button &&
-            !clickEvent.target.classList.contains(PREFIX + 'submenu-item-arrow')
-        ) {
+        toolbar.selectedButton = events;
+        toolbar.selectedButtonElement = button;
 
-            toolbar.selectedButton = events;
-            toolbar.selectedButtonElement = button;
+        fireEvent(toolbar, 'selectButton', { button: button });
 
-            fireEvent(toolbar, 'selectButton', { button: button });
-
-            // Call "init" event, for example to open modal window
-            if (events.init) {
-                events.init.call(toolbar, button, clickEvent);
-            }
+        // Call "init" event, for example to open modal window
+        if (events.init) {
+            events.init.call(toolbar, button, clickEvent);
         }
     },
     /**
      * Hook for click on a chart, first click on a chart calls `start` event,
-     * then on all subsequent clicks iterates over `steps` array.
+     * then on all subsequent clicks iterate over `steps` array.
      * When finished, calls `end` event.
      *
      * @param {Chart} Chart that click was performed on
@@ -1960,6 +1951,64 @@ extend(H.Toolbar.prototype, {
 
         return visualOptions;
     },
+
+    /**
+     * Get all class names for all parents in the element. Iterates until finds
+     * main container.
+     *
+     * @param {Highcharts.HTMLDOMElement} - container that event is bound to
+     * @param {Event} event - browser's event
+     *
+     * @return {Array} Array of class names with corresponding elements
+     */
+    getClickedClassNames: function (container, event) {
+        var element = event.target,
+            classNames = [],
+            elemClassName;
+
+        while (element) {
+            elemClassName = H.attr(element, 'class');
+            if (elemClassName) {
+                classNames.push([
+                    elemClassName.replace('highcharts-', ''),
+                    element
+                ]);
+            }
+            element = element.parentNode;
+
+            if (element === container) {
+                return classNames;
+            }
+        }
+
+        return classNames;
+
+    },
+    /**
+     * Get events bound to a button. It's a custom event delegation to find
+     * all events connected to the element.
+     *
+     * @param {Highcharts.HTMLDOMElement} - container that event is bound to
+     * @param {Event} event - browser's event
+     *
+     * @return {*} object with events (init, start, steps and end)
+     */
+    getButtonEvents: function (container, event) {
+        var options = this.chart.options.stockTools.bindings,
+            classNames = this.getClickedClassNames(container, event),
+            bindings;
+
+        each(classNames, function (className) {
+            if (options[className[0]]) {
+                bindings = {
+                    events: options[className[0]],
+                    element: className[1]
+                };
+            }
+        });
+
+        return bindings;
+    },
     /**
      * General utils for bindings
      */
@@ -1968,25 +2017,32 @@ extend(H.Toolbar.prototype, {
 
 addEvent(H.Toolbar, 'afterInit', function () {
     var toolbar = this,
-        elements;
+        options = toolbar.chart.options.stockTools,
+        toolbarContainer = doc.getElementsByClassName(
+            options.gui.toolbarClassName
+        );
 
-    objectEach(
-        toolbar.chart.options.stockTools.bindings,
-        function (events, className) {
-            elements = doc.getElementsByClassName(PREFIX + className);
-            if (elements) {
-                each(elements, function (element) {
-                    addEvent(
-                        element,
-                        'click',
-                        function (e) {
-                            toolbar.bindingsButtonClick(this, events, e);
-                        }
+    // Handle multiple containers with the same class names:
+    each(toolbarContainer, function (subContainer) {
+        addEvent(
+            subContainer,
+            'click',
+            function (event) {
+                var bindings = toolbar.getButtonEvents(
+                    toolbarContainer,
+                    event
+                );
+
+                if (bindings) {
+                    toolbar.bindingsButtonClick(
+                        bindings.element,
+                        bindings.events,
+                        event
                     );
-                });
+                }
             }
-        }
-    );
+        );
+    });
 });
 
 addEvent(H.Chart, 'load', function () {

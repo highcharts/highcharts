@@ -83,7 +83,7 @@ QUnit.test('Bindings general tests', function (assert) {
             'elliott5',
             'pitchfork',
             'fibonacci',
-            'parallelChannel',
+            'parallel-channel',
             'measureXY',
             'measureY',
             'measureX'
