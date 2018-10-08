@@ -26,7 +26,7 @@ var multipleLinesMixin = {
     /**
      * Lines ids. Required to plot appropriate amount of lines.
      * Notice that pointArrayMap should have more elements than
-     * linesApiNames, because it containes main line and additional lines ids.
+     * linesApiNames, because it contains main line and additional lines ids.
      * Also it should be consistent with amount of lines calculated in
      * getValues method from your implementation.
      * @type {Array}
@@ -85,12 +85,13 @@ var multipleLinesMixin = {
      */
     translate: function () {
         var indicator = this,
-            obj = Object.getPrototypeOf(indicator),
-            pointArrayMap = obj.pointArrayMap,
+            // self - multipleLinesMixin reference
+            self = Object.getPrototypeOf(indicator),
+            pointArrayMap = self.pointArrayMap,
             LinesNames = [],
             value;
 
-        LinesNames = obj.getTranslatedLinesNames();
+        LinesNames = self.getTranslatedLinesNames();
 
         SMA.prototype.translate.apply(indicator, arguments);
 
@@ -112,9 +113,10 @@ var multipleLinesMixin = {
      */
     drawGraph: function () {
         var indicator = this,
-            obj = Object.getPrototypeOf(indicator),
-            pointValKey = obj.pointValKey,
-            linesApiNames = obj.linesApiNames,
+            // self - multipleLinesMixin reference
+            self = Object.getPrototypeOf(indicator),
+            pointValKey = self.pointValKey,
+            linesApiNames = self.linesApiNames,
             mainLinePoints = indicator.points,
             pointsLength = mainLinePoints.length,
             mainLineOptions = indicator.options,
@@ -125,20 +127,18 @@ var multipleLinesMixin = {
                 }
             },
             secondaryLines = [], // additional lines point place holders
-            secondaryLinesNames = obj.getTranslatedLinesNames(
+            secondaryLinesNames = self.getTranslatedLinesNames(
                 pointValKey
             ),
             point;
 
 
-        // create additional lines point place holders
-        each(secondaryLinesNames, function (plotLine, index) {
-            secondaryLines[index] = [];
-        });
-
-
         // Generate points for additional lines:
         each(secondaryLinesNames, function (plotLine, index) {
+
+            // create additional lines point place holders
+            secondaryLines[index] = [];
+
             while (pointsLength--) {
                 point = mainLinePoints[pointsLength];
                 secondaryLines[index].push({
