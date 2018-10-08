@@ -1603,14 +1603,15 @@ function mouseMove(e, chart) {
             newPoints = dragDropData.newPoints;
             numNewPoints = countProps(newPoints);
             newPoint = numNewPoints === 1 ?
-                getFirstProp(newPoints).newValues :
+                getFirstProp(newPoints) :
                 null;
 
             // Run the handler
             point.firePointEvent('drag', {
                 origin: dragDropData.origin,
                 newPoints: dragDropData.newPoints,
-                newPoint: newPoint,
+                newPoint: newPoint && newPoint.newValues,
+                newPointId: newPoint && newPoint.point.id,
                 numNewPoints: numNewPoints,
                 pageX: e.pageX,
                 pageY: e.pageY
@@ -1634,7 +1635,7 @@ function mouseUp(e, chart) {
             newPoints = dragDropData.newPoints,
             numNewPoints = countProps(newPoints),
             newPoint = numNewPoints === 1 ?
-                getFirstProp(newPoints).newValues :
+                getFirstProp(newPoints) :
                 null;
 
         // Hide the drag handles
@@ -1649,7 +1650,8 @@ function mouseUp(e, chart) {
             pageY: e.pageY,
             newPoints: newPoints,
             numNewPoints: numNewPoints,
-            newPoint: newPoint
+            newPoint: newPoint && newPoint.newValues,
+            newPointId: newPoint && newPoint.point.id
         }, function () {
             updatePoints(chart);
         });
