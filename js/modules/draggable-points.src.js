@@ -920,7 +920,7 @@ function isPointMovable(point) {
 
 
 // In mousemove events, check that we have dragged mouse further than the
-// dragSensitiviy before we call mouseMove handler.
+// dragSensitivity before we call mouseMove handler.
 function hasDraggedPastSensitivity(e, chart, sensitivity) {
     var orig = chart.dragDropData.origin,
         oldX = orig.pageX,
@@ -1585,15 +1585,15 @@ function mouseMove(e, chart) {
             dragDropData.draggedPastSensitivity = hasDraggedPastSensitivity(
                 e, chart, pick(
                     point.options.dragDrop &&
-                        point.options.dragDrop.dragSensitiviy,
+                        point.options.dragDrop.dragSensitivity,
                     seriesDragDropOpts &&
-                        seriesDragDropOpts.dragSensitiviy,
+                        seriesDragDropOpts.dragSensitivity,
                     defaultDragSensitivity
                 )
             );
         }
 
-        // If we have dragged past dragSensitiviy, run the mousemove handler
+        // If we have dragged past dragSensitivity, run the mousemove handler
         // for dragging
         if (dragDropData.draggedPastSensitivity) {
             // Find the new point values from the moving
