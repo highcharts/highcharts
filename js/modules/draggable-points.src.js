@@ -1335,7 +1335,7 @@ H.Series.prototype.getGuideBox = function (points) {
     // Find bounding box of all points
     each(points, function (point) {
         var bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
-        if (bBox) {
+        if (bBox && (bBox.width || bBox.height || bBox.x || bBox.y)) {
             changed = true;
             minX = Math.min(bBox.x, minX);
             maxX = Math.max(bBox.x + bBox.width, maxX);
