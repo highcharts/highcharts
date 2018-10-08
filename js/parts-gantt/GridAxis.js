@@ -188,7 +188,6 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
         crispCorr = tickSize[1] / 2,
         labelHeight,
         lblMetrics,
-        labelDiff,
         lines,
         result,
         bottom,
@@ -265,8 +264,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
         // Adjustment to y position to align the label correctly.
         // Would be better to have a setter or similar for this.
         if (!labelOpts.useHTML) {
-            labelDiff = labelHeight % lblMetrics.h;
-            lines = ((labelHeight - labelDiff) / lblMetrics.h);
+            lines = Math.round(labelHeight / lblMetrics.h);
             result.y += (
                 // Center the label
                 // TODO: why does this actually center the label?
