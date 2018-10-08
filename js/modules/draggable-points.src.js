@@ -541,7 +541,7 @@ if (seriesTypes.gantt) {
 // Don't support certain series types
 each(
     ['gauge', 'pie', 'sunburst', 'wordcloud', 'sankey', 'histogram', 'pareto',
-        'vector', 'windbarb', 'treemap', 'bellcurve', 'sma'],
+        'vector', 'windbarb', 'treemap', 'bellcurve', 'sma', 'map', 'mapline'],
     function (type) {
         if (seriesTypes[type]) {
             seriesTypes[type].prototype.dragDropProps = null;
