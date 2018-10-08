@@ -384,8 +384,12 @@ var stockToolsBindings = {
                     );
 
                 // TO DO: Is update broken?
-                annotation.options.shapes[0].r = distance;
-                annotation.update({});
+                // annotation.options.shapes[0].r = distance;
+                annotation.update({
+                    shapes: [{
+                        r: distance
+                    }]
+                });
             }
         ]
     },
@@ -1333,7 +1337,7 @@ H.Toolbar.annotationsEditable = {
     // `typeOptions` are always available
     // Nested and shared options:
     nestedOptions: {
-        labelOptions: ['style', 'format'],
+        labelOptions: ['style', 'format', 'backgroundColor'],
         labels: ['style'],
         label: ['style'],
         style: ['fontSize', 'color'],
@@ -1357,7 +1361,7 @@ H.Toolbar.annotationsEditable = {
     // Others:
     fibonacci: [],
     tunnel: ['background', 'line', 'height'],
-    pitchfork: ['shapeOptions', 'innerBackground', 'outerBackground', 'line'],
+    pitchfork: ['innerBackground', 'outerBackground'],
     // Crooked lines, elliots, arrows etc:
     'crooked-line': []
 };
@@ -1556,20 +1560,29 @@ extend(H.Toolbar.prototype, {
                 parent = config,
                 pathLength = path.length - 1;
 
-            // If it's a number, parse it:
-            if (isNumber(parsedValue) && !value.match(/px/g)) {
+            // If it's a number (not "forma" options), parse it:
+            if (
+                isNumber(parsedValue) &&
+                !value.match(/px/g) &&
+                !field.match(/format/g)
+            ) {
                 value = parsedValue;
             }
 
             // Remove empty strings or values like 0
             if (value !== '') {
                 each(path, function (name, index) {
+                    var nextName = pick(
+                        path[index + 1],
+                        ''
+                    );
+
                     if (pathLength === index) {
                         // Last index, put value:
                         parent[name] = value;
                     } else if (!parent[name]) {
                         // Create middle property:
-                        parent[name] = {};
+                        parent[name] = nextName.match(/\d/g) ? [] : {};
                         parent = parent[name];
                     } else {
                         // Jump into next property
@@ -1855,7 +1868,7 @@ extend(H.Toolbar.prototype, {
          */
         function traverse(option, key, parentEditables, parent) {
             var nextParent;
-
+            // debugger;
             if (
                 parentEditables &&
                 (
@@ -1867,8 +1880,7 @@ extend(H.Toolbar.prototype, {
                 // Roots:
                 if (isArray(option)) {
                     parent[key] = [];
-
-                    each(option, function (arrayOption) {
+                    each(option, function (arrayOption, i) {
                         if (!isObject(arrayOption)) {
                             // Simple arrays, e.g. [String, Number, Boolean]
                             traverse(
@@ -1879,6 +1891,7 @@ extend(H.Toolbar.prototype, {
                             );
                         } else {
                             // Advanced arrays, e.g. [Object, Object]
+                            parent[key][i] = {};
                             objectEach(
                                 arrayOption,
                                 function (nestedOption, nestedKey) {
@@ -1886,7 +1899,7 @@ extend(H.Toolbar.prototype, {
                                         nestedOption,
                                         nestedKey,
                                         nestedEditables[key],
-                                        parent[key]
+                                        parent[key][i]
                                     );
                                 }
                             );
@@ -1913,7 +1926,10 @@ extend(H.Toolbar.prototype, {
                     // Leaf:
                     if (key === 'format') {
                         parent[key] = [
-                            H.format(option, annotation.labels[0].points[0]),
+                            H.format(
+                                option,
+                                annotation.labels[0].points[0]
+                            ).toString(),
                             'text'
                         ];
                     } else if (isArray(parent)) {
@@ -1958,7 +1974,6 @@ addEvent(H.Toolbar, 'afterInit', function () {
         toolbar.chart.options.stockTools.bindings,
         function (events, className) {
             elements = doc.getElementsByClassName(PREFIX + className);
-
             if (elements) {
                 each(elements, function (element) {
                     addEvent(
@@ -2017,7 +2032,7 @@ function selectableAnnotation(annotationType) {
                     options: toolbar.annotationToFields(annotation),
                     onSubmit: function (data) {
 
-                        var config = annotation.options,
+                        var config = {},
                             typeOptions;
 
                         if (data.actionType === 'remove') {
@@ -2029,7 +2044,7 @@ function selectableAnnotation(annotationType) {
 
                             typeOptions = config.typeOptions;
 
-                            if (config.type === 'measure') {
+                            if (annotation.options.type === 'measure') {
                                 // Manually disable crooshars according to
                                 // stroke width of the shape:
                                 typeOptions.crosshairY.enabled =
