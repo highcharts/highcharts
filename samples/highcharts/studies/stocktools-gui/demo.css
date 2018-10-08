@@ -352,11 +352,12 @@
   width: 100%;
   height: auto;
   overflow: hidden;
+  word-break: break-all;
 }
-/* CHROME BUG
-.highcharts-stocktools-wrapper .highcharts-indicator-list li:hover {
-  background-color: #ffffff;
-}*/
+
+.highcharts-indicator-list li:hover {
+  background-color: #e6ebf5;
+}
 
 .highcharts-tab-item {
   background-color: #f7f7f7;
