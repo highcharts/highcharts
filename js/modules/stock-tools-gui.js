@@ -17,6 +17,7 @@ var addEvent = H.addEvent,
     getStyle = H.getStyle,
     merge = H.merge,
     css = H.css,
+    win = H.win,
     DIV = 'div',
     SPAN = 'span',
     UL = 'ul',
@@ -411,12 +412,17 @@ H.Toolbar.prototype = {
             buttons = guiOptions.buttons,
             defs = guiOptions.definitions,
             allButtons = toolbar.childNodes,
+            inIframe = this.inIframe(),
             button;
 
         // create buttons
         each(buttons, function (btnName) {
 
             button = addButton(toolbar, defs, btnName, lang);
+
+            if (inIframe && btnName === 'fullScreen') {
+                button.buttonWrapper.className += ' ' + PREFIX + 'disabled-btn';
+            }
 
             addEvent(button.buttonWrapper, 'click', function () {
                 _self.eraseActiveButtons(
@@ -851,6 +857,18 @@ H.Toolbar.prototype = {
         }
 
         this.chart.isDirtyBox = true;
+    },
+    /*
+     * Verify if chart is in iframe.
+     *
+     * @return {Object} - elements translations.
+     */
+    inIframe: function () {
+        try {
+            return win.self !== win.top;
+        } catch (e) {
+            return true;
+        }
     },
     /*
      * Destroy all HTML GUI elements.
