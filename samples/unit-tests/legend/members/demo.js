@@ -117,7 +117,7 @@ QUnit.test('Color axis', function (assert) {
 
     var controller = new TestController(chart);
 
-    controller.mouseover(
+    controller.mouseOver(
         chart.legend.group.translateX + 10,
         chart.legend.group.translateY + 10
     );

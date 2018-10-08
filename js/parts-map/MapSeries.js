@@ -88,7 +88,7 @@ seriesType('map', 'scatter', {
      * @type {Color}
      * @sample {highmaps} maps/plotoptions/series-border/ Borders demo
      * @default #cccccc
-     * @product highmaps
+     * @product highmaps highcharts
      * @apioption plotOptions.series.borderColor
      */
     borderColor: '${palette.neutralColor20}',
@@ -100,7 +100,7 @@ seriesType('map', 'scatter', {
      * `.highcharts-point` class.
      *
      * @sample    {highmaps} maps/plotoptions/series-border/ Borders demo
-     * @product   highmaps
+     * @product   highmaps highcharts
      * @apioption plotOptions.series.borderWidth
      */
     borderWidth: 1,
@@ -1132,8 +1132,8 @@ seriesType('map', 'scatter', {
  *     ]
  *  ```
  *
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 3.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.map.turboThreshold),
  * this option is not available.
  *

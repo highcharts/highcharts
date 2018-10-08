@@ -3,14 +3,18 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
-/**
+
+/*
  * Highcharts module to hide overlapping data labels. This module is included in
  * Highcharts.
  */
+
 var Chart = H.Chart,
     each = H.each,
     isArray = H.isArray,
@@ -23,7 +27,6 @@ var Chart = H.Chart,
 // inside the columns.
 addEvent(Chart, 'render', function collectAndHide() {
     var labels = [];
-
     // Consider external label collectors
     each(this.labelCollectors || [], function (collector) {
         labels = labels.concat(collector());
@@ -50,23 +53,25 @@ addEvent(Chart, 'render', function collectAndHide() {
             !(dlOptions.enabled === false && !series._hasPointLabels)
         ) { // #3866
             each(series.points, function (point) {
-                var dataLabels = (
-                    isArray(point.dataLabels) ?
-                    point.dataLabels :
-                    (point.dataLabel ? [point.dataLabel] : [])
-                );
-                each(dataLabels, function (label) {
-                    var options = label.options;
-                    label.labelrank = pick(
-                        options.labelrank,
-                        point.labelrank,
-                        point.shapeArgs && point.shapeArgs.height
-                    ); // #4118
+                if (point.visible) {
+                    var dataLabels = (
+                        isArray(point.dataLabels) ?
+                        point.dataLabels :
+                        (point.dataLabel ? [point.dataLabel] : [])
+                    );
+                    each(dataLabels, function (label) {
+                        var options = label.options;
+                        label.labelrank = pick(
+                            options.labelrank,
+                            point.labelrank,
+                            point.shapeArgs && point.shapeArgs.height
+                        ); // #4118
 
-                    if (!options.allowOverlap) {
-                        labels.push(label);
-                    }
-                });
+                        if (!options.allowOverlap) {
+                            labels.push(label);
+                        }
+                    });
+                }
             });
         }
     });
@@ -77,10 +82,16 @@ addEvent(Chart, 'render', function collectAndHide() {
 /**
  * Hide overlapping labels. Labels are moved and faded in and out on zoom to
  * provide a smooth visual imression.
+ *
+ * @private
+ * @function Highcharts.Chart#hideOverlappingLabels
+ *
+ * @param {Array<Highcharts.SVGElement>} labels
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
 
     var len = labels.length,
+        ren = this.renderer,
         label,
         i,
         j,
@@ -107,7 +118,8 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                 parent,
                 bBox,
                 // Substract the padding if no background or border (#4333)
-                padding = 2 * (label.box ? 0 : (label.padding || 0));
+                padding = 2 * (label.box ? 0 : (label.padding || 0)),
+                lineHeightCorrection = 0;
 
             if (
                 label &&
@@ -124,10 +136,15 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                     bBox = label.getBBox();
                     label.width = bBox.width;
                     label.height = bBox.height;
+
+                    // Labels positions are computed from top left corner, so
+                    // we need to substract the text height from text nodes too.
+                    lineHeightCorrection = ren
+                        .fontMetrics(null, label.element).h;
                 }
                 return {
                     x: pos.x + (parent.translateX || 0),
-                    y: pos.y + (parent.translateY || 0),
+                    y: pos.y + (parent.translateY || 0) - lineHeightCorrection,
                     width: label.width - padding,
                     height: label.height - padding
                 };

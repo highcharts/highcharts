@@ -180,7 +180,7 @@ gulp.task('ftp-watch', function () {
 /**
  * Run the test suite.
  */
-gulp.task('test', done => {
+gulp.task('test', ['styles', 'scripts'], done => {
 
     const lastRunFile = __dirname + '/test/last-run.json';
 
@@ -225,6 +225,61 @@ gulp.task('test', done => {
         return true;
     };
 
+    const checkSamplesConsistency = () => {
+        ['highcharts', 'stock', 'maps', 'gantt'].forEach(product => {
+            let index = fs.readFileSync(
+                `./samples/${product}/demo/index.htm`,
+                'utf8'
+            );
+            let regex = /href="examples\/([a-z\-0-9]+)\/index.htm"/g;
+            let toc = [];
+            let matches;
+
+            while ((matches = regex.exec(index)) !== null) {
+                toc.push(matches[1]);
+            }
+
+            let folders = [];
+            fs.readdirSync(`./samples/${product}/demo`).forEach(dir => {
+                if (dir.indexOf('.') !== 0 && dir !== 'index.htm') {
+                    folders.push(dir);
+                }
+            });
+
+            let missingFolders = [];
+            let missingTOC = [];
+            folders.forEach(sample => {
+                if (toc.indexOf(sample) === -1) {
+                    missingTOC.push(sample);
+                }
+            });
+            toc.forEach(sample => {
+                if (folders.indexOf(sample) === -1) {
+                    missingFolders.push(sample);
+                }
+            });
+
+            if (missingTOC.length) {
+                console.log(`Found demos that were not added to ./samples/${product}/demo/index.htm`.red);
+                missingTOC.forEach(sample => {
+                    console.log(` - ./samples/${product}/demo/${sample}`.red);
+                });
+
+                throw 'Missing sample in index.htm';
+            }
+
+            if (missingFolders.length) {
+                console.log(`Found demos in ./samples/${product}/demo/index.htm that were not present in demo folder`.red);
+                missingFolders.forEach(sample => {
+                    console.log(` - ./samples/${product}/demo/${sample}`.red);
+                });
+
+                throw 'Missing demo';
+            }
+        });
+
+    };
+
 
     if (argv.help) {
         console.log(
@@ -259,6 +314,8 @@ Available arguments for 'gulp test':
         return;
     }
 
+    checkSamplesConsistency();
+
     if (shouldRun()) {
 
         console.log('Run ' + 'gulp test --help'.cyan + ' for available options');
@@ -272,10 +329,14 @@ Available arguments for 'gulp test':
             if (err === 0) {
                 done();
 
-                fs.writeFileSync(
-                    lastRunFile,
-                    JSON.stringify({ lastSuccessfulRun: Date.now() })
-                );
+                // Register last successful run (only when running without
+                // arguments)
+                if (Object.keys(argv).length <= 2) {
+                    fs.writeFileSync(
+                        lastRunFile,
+                        JSON.stringify({ lastSuccessfulRun: Date.now() })
+                    );
+                }
             } else {
                 done(new gutils.PluginError('karma', {
                     message: 'Tests failed'
@@ -417,9 +478,13 @@ const cleanCode = () => {
 };
 
 const cleanDist = () => {
-    return removeDirectory('./build/dist').then(() => {
-        console.log('Successfully removed dist directory.');
-    });
+    return removeDirectory('./build/dist')
+        .then(() => {
+            console.log('Successfully removed dist directory.');
+        })
+        .catch(() => {
+            console.log('Tried to remove ./build/dist but it was never there. Moving on...');
+        });
 };
 
 const cleanApi = () => {
@@ -633,7 +698,7 @@ const timeDifference = (d1, d2) => {
 /**
  * Mirrors the same feedback which gulp gives when executing its tasks.
  * Says when a task started, when it finished, and how long it took.
- * @param  {string} name Name of task which is beeing executed.
+ * @param  {string} name Name of task which is being executed.
  * @param  {string} task A function to execute
  * @return {*}      Returns whatever the task function returns when it is finished.
  */
@@ -1106,7 +1171,7 @@ const startServer = () => {
 let apiServerRunning = false;
 
 /**
- * Create Highcharts API and class refrences from JSDOC
+ * Create Highcharts API and class references from JSDOC
  */
 const jsdoc = () => {
     const optionsClassReference = {
@@ -1122,8 +1187,8 @@ const jsdoc = () => {
     const dir = optionsClassReference.templateDir;
     const watchFiles = [
         './js/!(adapters|builds)/*.js',
-        './node_modules/highcharts-api-docs-gen/include/*.*',
-        './node_modules/highcharts-api-docs-gen/templates/*.handlebars',
+        './node_modules/highcharts-api-docs/include/*.*',
+        './node_modules/highcharts-api-docs/templates/*.handlebars',
         dir + '/template/tmpl/*.tmpl',
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'
@@ -1162,29 +1227,75 @@ const jsdocNamespace = () => {
 
     const jsdoc3 = require('gulp-jsdoc3');
 
-    const gulpOptions = [[
-            './code/highcharts.src.js'
-        ], {
-            read: false
-        }],
-        jsdoc3Options = {
-            plugins: [
-                './tools/jsdoc/plugins/highcharts.namespace'
-            ]
+    let codeFiles = [
+            'code/highcharts.src.js'
+        ],
+        productFolders = [
+            'gantt',
+            'highcharts',
+            'highstock',
+            'highmaps'
+        ],
+        gulpOptions = [codeFiles, { read: false }],
+        jsdoc3Options = { plugins: ['tools/jsdoc/plugins/highcharts.namespace'] };
+
+
+    let aGulp = (resolve, reject) => {
+
+        let aJson = (error) => {
+
+            if (error) {
+                reject(error);
+            }
+
+            Promise
+                .all(productFolders.map(productFolder => copyFile(
+                    'tree-namespace.json',
+                    `build/api/${productFolder}/tree-namespace.json`
+                )))
+                .then(resolve)
+                .catch(reject);
         };
 
-    const aGulp = (resolve, reject) => {
-        gulp.src(...gulpOptions).pipe(jsdoc3(jsdoc3Options,
-            (error) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve('done');
-                }
-            }
-        ));
+        gulp.src(...gulpOptions)
+            .pipe(jsdoc3(jsdoc3Options, aJson));
     };
+
     return new Promise(aGulp);
+};
+
+/**
+ * Add TypeScript declarations to the code folder.
+ */
+const tsd = () => {
+    return require('../highcharts-typescript-generator').task();
+};
+
+/**
+ * Test TypeScript declarations in the code folder using tsconfig.json.
+ */
+const tsdLint = () => {
+
+    const configFiles = [
+        'tslint.json',
+        'tsconfig.json'
+    ];
+
+    const targetPath = 'code';
+
+    return Promise.all(configFiles.map(file => copyFile(
+            file,
+            targetPath + '/' + file
+        )))
+        .then(() => commandLine('npx dtslint --installAll'))
+        .then(() => commandLine('npx dtslint ' + targetPath))
+        .then((result) => {
+            console.info('tsdLint:', result);
+        })
+        .catch((error) => {
+            console.error(error);
+            throw error;
+        });
 };
 
 gulp.task('start-api-server', startServer);
@@ -1195,11 +1306,12 @@ gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
-gulp.task('jsdoc', jsdoc);
+gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
-// gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], require('highcharts-typescript-generator').task);
+gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], tsd);
+gulp.task('tsd-lint', ['tsd'], tsdLint);
 
 /**
  * Gulp task to run the building process of distribution files. By default it

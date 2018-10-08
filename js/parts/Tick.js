@@ -3,9 +3,12 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
+
 var correctFloat = H.correctFloat,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
@@ -17,17 +20,25 @@ var correctFloat = H.correctFloat,
     deg2rad = H.deg2rad;
 
 /**
- * Create a new tick object. Called internally when instanciating new axes.
+ * The Tick class.
  *
- * @class Highcharts.Tick
- * @memberOf Highcharts
- * @param {Axis} axis The axis which the tick is displayed on.
+ * @private
+ * @class
+ * @name Highcharts.Tick
+ *
+ * @param {Highcharts.Axis} axis
+ *
  * @param {number} pos The position of the tick on the axis.
+ *
  * @param {string} [type] The type of tick.
- * @param {boolean} [noLabel] Wether to disable the label or not. Defaults to
+ *
+ * @param {boolean} [noLabel=false] Wether to disable the label or not. Defaults to
  * false.
+ *
  * @param {object} [parameters] Optional parameters for the tick.
+ *
  * @param {object} [parameters.tickmarkOffset] Set tickmarkOffset for the tick.
+ *
  * @param {object} [parameters.category] Set category for the tick.
  */
 H.Tick = function (axis, pos, type, noLabel, parameters) {
@@ -52,11 +63,12 @@ H.Tick = function (axis, pos, type, noLabel, parameters) {
 
 /** @lends Highcharts.Tick.prototype */
 H.Tick.prototype = {
+
     /**
-     * Write the tick label
+     * Write the tick label.
      *
      * @private
-     *
+     * @function Highcharts.Tick#addLabel
      */
     addLabel: function () {
         var tick = this,
@@ -107,7 +119,7 @@ H.Tick.prototype = {
             value: axis.isLog ? correctFloat(axis.lin2log(value)) : value,
             pos: pos
         };
-        str = axis.labelFormatter.call(tick.formatCtx);
+        str = axis.labelFormatter.call(tick.formatCtx, this.formatCtx);
 
         // Set up conditional formatting based on the format list if existing.
         list = dateTimeLabelFormats && dateTimeLabelFormats.list;
@@ -163,7 +175,17 @@ H.Tick.prototype = {
             tick.rotation = 0;
 
         // update
-        } else if (label) {
+        } else if (label && label.textStr !== str) {
+            // When resetting text, also reset the width if dynamically set
+            // (#8809)
+            if (
+                label.textWidth &&
+                !(labelOptions.style && labelOptions.style.width) &&
+                !label.styles.width
+            ) {
+                label.css({ width: null });
+            }
+
             label.attr({ text: str });
         }
     },
@@ -172,7 +194,9 @@ H.Tick.prototype = {
      * Get the offset height or width of the label
      *
      * @private
+     * @function Highcharts.Tick#getLabelSize
      *
+     * @return {number}
      */
     getLabelSize: function () {
         return this.label ?
@@ -185,7 +209,9 @@ H.Tick.prototype = {
      * edge, or hide them if they collide into the neighbour label.
      *
      * @private
+     * @function Highcharts.Tick#handleOverflow
      *
+     * @param {Highcharts.PositionObject} xy
      */
     handleOverflow: function (xy) {
         var tick = this,
@@ -219,7 +245,7 @@ H.Tick.prototype = {
 
         // Check if the label overshoots the chart spacing box. If it does, move
         // it. If it now overshoots the slotWidth, add ellipsis.
-        if (!rotation && labelOptions.overflow !== false) {
+        if (!rotation && pick(labelOptions.overflow, 'justify') === 'justify') {
             leftPos = pxPos - factor * labelWidth;
             rightPos = pxPos + (1 - factor) * labelWidth;
 
@@ -285,7 +311,19 @@ H.Tick.prototype = {
      * Get the x and y position for ticks and labels
      *
      * @private
+     * @function Highcharts.Tick#getPosition
      *
+     * @param {boolean} horiz
+     *
+     * @param {number} tickPos
+     *
+     * @param {number} tickmarkOffset
+     *
+     * @param {boolean} [old]
+     *
+     * @return {number}
+     *
+     * @fires Highcharts.Tick#event:afterGetPosition
      */
     getPosition: function (horiz, tickPos, tickmarkOffset, old) {
         var axis = this.axis,
@@ -469,7 +507,7 @@ H.Tick.prototype = {
                 attribs.zIndex = 1;
             }
             if (old) {
-                attribs.opacity = 0;
+                opacity = 0;
             }
             tick.gridLine = gridLine = renderer.path()
                 .attr(attribs)
@@ -477,18 +515,21 @@ H.Tick.prototype = {
                     'highcharts-' + (type ? type + '-' : '') + 'grid-line'
                 )
                 .add(axis.gridGroup);
+
         }
 
-        // If the parameter 'old' is set, the current call will be followed
-        // by another call, therefore do not do any animations this time
-        if (!old && gridLine) {
+        if (gridLine) {
             gridLinePath = axis.getPlotLinePath(
                 pos + tickmarkOffset,
                 gridLine.strokeWidth() * reverseCrisp,
-                old, true
+                old,
+                'pass'
             );
+
+            // If the parameter 'old' is set, the current call will be followed
+            // by another call, therefore do not do any animations this time
             if (gridLinePath) {
-                gridLine[tick.isNew ? 'attr' : 'animate']({
+                gridLine[old || tick.isNew ? 'attr' : 'animate']({
                     d: gridLinePath,
                     opacity: opacity
                 });
@@ -688,6 +729,9 @@ H.Tick.prototype = {
 
     /**
      * Destructor for the tick prototype
+     *
+     * @private
+     * @function Highcharts.Tick#destroy
      */
     destroy: function () {
         destroyObjectProperties(this, this.axis);

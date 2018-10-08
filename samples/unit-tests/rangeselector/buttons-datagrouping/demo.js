@@ -142,4 +142,31 @@ QUnit.test('getUnionExtremes', function (assert) {
         2,
         'Two xAxis ticks rendered (#7827).'
     );
+
+    chart.update({
+        rangeSelector: {
+            selected: 0,
+            buttons: [{
+                type: 'month',
+                count: 3,
+                text: '3M',
+                preserveDataGrouping: true,
+                dataGrouping: {
+                    forced: true,
+                    units: [
+                        ['month', [1]]
+                    ]
+                }
+            }]
+        }
+    });
+
+    chart.xAxis[0].setExtremes(1507507200000, 1507766400000);
+
+    assert.strictEqual(
+        chart.series[0].currentDataGrouping &&
+            chart.series[0].currentDataGrouping.totalRange,
+        2419200000,
+        'Correct button selected when preserveDataGrouping=true (#8433).'
+    );
 });

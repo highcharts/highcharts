@@ -322,6 +322,33 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.ok(
         true,
-        'No error when periods are greater than data length (#8376).'
+        'No error when longPeriod is greater than data length (#8376).'
+    );
+
+    Highcharts.seriesTypes.macd.prototype.getValues(
+        {
+            xData: [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            yData: [
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            ]
+        },
+        Highcharts.getOptions().plotOptions.macd.params
+    );
+
+    assert.ok(
+        true,
+        'No error when periods are greater than data length (#8847).'
+    );
+
+
+    // Last test: destroy MACD:
+    chart.series[1].remove();
+    assert.ok(
+        true,
+        'No error when removing MACD without lines (#8848).'
     );
 });

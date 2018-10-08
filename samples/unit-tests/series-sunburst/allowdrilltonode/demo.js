@@ -22,8 +22,8 @@ QUnit.test('Drill to node by click events', function (assert) {
         click = function (point) {
             var x = chart.plotLeft + point.plotX,
                 y = chart.plotTop + point.plotY;
-            testController.triggerOnChart('mouseover', x, y);
-            testController.triggerOnChart('click', x, y);
+            testController.triggerEvent('mouseover', x, y);
+            testController.triggerEvent('click', x, y);
         },
         findPointById = function (id) {
             return Highcharts.find(series.points, function (point) {

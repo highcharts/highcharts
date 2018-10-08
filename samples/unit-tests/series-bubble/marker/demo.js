@@ -71,7 +71,7 @@ QUnit.test('Clicking marker (#6705)', function (assert) {
 
     var controller = new TestController(chart);
 
-    controller.mouseover(
+    controller.mouseOver(
         chart.plotLeft + chart.series[0].points[0].plotX,
         chart.plotTop + chart.series[0].points[0].plotY
     );

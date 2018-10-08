@@ -580,7 +580,8 @@ wrap(Axis.prototype, 'getSlotWidth', function (proceed, tick) {
     if (this.chart.is3d() &&
         tick &&
         tick.label &&
-        this.categories
+        this.categories &&
+        this.chart.frameShapes
     ) {
         var chart = this.chart,
             ticks = this.ticks,
@@ -604,7 +605,7 @@ wrap(Axis.prototype, 'getSlotWidth', function (proceed, tick) {
 
         // Check whether the tick is not the first one and previous tick exists,
         // then calculate position of previous label.
-        if (tickId !== 0 && prevTick) {
+        if (tickId !== 0 && prevTick && prevTick.label.xy) { // #8621
             prevLabelPos = perspective3D({
                 x: prevTick.label.xy.x,
                 y: prevTick.label.xy.y,

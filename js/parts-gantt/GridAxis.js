@@ -380,6 +380,9 @@ H.addEvent(Axis, 'afterSetOptions', function (e) {
         // Merge the user options into default grid axis options so that when a
         // user option is set, it takes presedence.
         gridAxisOptions = merge(true, {
+
+            className: 'highcharts-grid-axis ' + (userOptions.className || ''),
+
             dateTimeLabelFormats: {
                 hour: {
                     list: ['%H:%M', '%H']
@@ -733,10 +736,13 @@ wrap(Axis.prototype, 'render', function (proceed) {
                 if (!axis.axisLineExtra) {
                     axis.axisLineExtra = renderer.path(linePath)
                         .attr({
+                            /*= if (build.classic) { =*/
                             stroke: options.lineColor,
                             'stroke-width': lineWidth,
+                            /*= } =*/
                             zIndex: 7
                         })
+                        .addClass('highcharts-axis-line')
                         .add(axis.axisGroup);
                 } else {
                     axis.axisLineExtra.animate({
@@ -748,6 +754,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
                 axis.axisLine[axis.showAxis ? 'show' : 'hide'](true);
             }
         }
+
     } else {
         proceed.apply(axis);
     }

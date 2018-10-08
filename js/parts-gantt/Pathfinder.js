@@ -479,26 +479,22 @@ Connection.prototype = {
         // Create path if does not exist
         if (!(pathGraphic && pathGraphic.renderer)) {
             pathGraphic = chart.renderer.path()
-                .addClass('highcharts-point-connecting-path')
+                /*= if (build.classic) { =*/
                 .attr({
                     opacity: chart.options.chart.forExport ? 1 : 0
                 })
+                /*= } =*/
                 .add(pathfinder.group);
         }
 
         // Set path attribs and animate to the new path
-        if (animate) {
-            pathGraphic.attr(attribs);
-            pathGraphic.animate({
-                d: path,
-                opacity: 1
-            }, null, complete);
-        } else {
-            pathGraphic.attr(extend(attribs, {
-                d: path,
-                opacity: 1
-            }), null, complete);
-        }
+        pathGraphic.attr(attribs);
+        pathGraphic[animate ? 'animate' : 'attr']({
+            /*= if (build.classic) { =*/
+            opacity: 1,
+            /*= } =*/
+            d: path
+        }, null, complete);
 
         // Store reference on connection
         this.graphics = this.graphics || {};
@@ -607,11 +603,14 @@ Connection.prototype = {
                     'highcharts-point-connecting-path-' + type + '-marker'
                 )
                 .attr(box)
+
+                /*= if (build.classic) { =*/
                 .attr({
                     fill: options.color || connection.fromPoint.color,
                     stroke: options.lineColor,
                     'stroke-width': options.lineWidth
                 })
+                /*= } =*/
                 .add(pathfinder.group);
         } else {
             connection.graphics[type].animate(box);
@@ -701,15 +700,19 @@ Connection.prototype = {
                 chart.options.pathfinder, series.options.pathfinder,
                 fromPoint.options.pathfinder, connection.options
             ),
-            attribs = {
-                stroke: options.lineColor || fromPoint.color,
-                'stroke-width': options.lineWidth
-            };
+            attribs = {};
 
         // Set path attribs
+        /*= if (build.classic) { =*/
+        attribs.stroke = options.lineColor || fromPoint.color;
+        attribs['stroke-width'] = options.lineWidth;
         if (options.dashStyle) {
             attribs.dashstyle = options.dashStyle;
         }
+        /*= } =*/
+
+        attribs.class = 'highcharts-point-connecting-path ' +
+            'highcharts-color-' + fromPoint.colorIndex;
         options = merge(attribs, options);
 
         // Set common marker options

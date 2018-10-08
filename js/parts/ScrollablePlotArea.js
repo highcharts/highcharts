@@ -6,7 +6,9 @@
  * Highcharts feature to make the Y axis stay fixed when scrolling the chart
  * horizontally on mobile devices. Supports left and right side axes.
  */
+
 'use strict';
+
 import H from './Globals.js';
 
 var addEvent = H.addEvent,
@@ -20,11 +22,11 @@ var addEvent = H.addEvent,
  * This scrollbar provides smooth scrolling for the contents of the plot area,
  * whereas the title, legend and axes are fixed.
  *
- * @type    {Object}
- * @sample  {highcharts} highcharts/chart/scrollable-plotarea
- *          Scrollable plot area
- * @since   6.1.0
- * @product highcharts
+ * @sample {highcharts} highcharts/chart/scrollable-plotarea
+ *         Scrollable plot area
+ *
+ * @since     6.1.0
+ * @product   highcharts
  * @apioption chart.scrollablePlotArea
  */
 
@@ -32,7 +34,7 @@ var addEvent = H.addEvent,
  * The minimum width for the plot area. If it gets smaller than this, the plot
  * area will become scrollable.
  *
- * @type    {Number}
+ * @type      {number}
  * @apioption chart.scrollablePlotArea.minWidth
  */
 
@@ -41,7 +43,7 @@ var addEvent = H.addEvent,
  * 1, where 0 aligns the plot area to the left and 1 aligns it to the right.
  * Typically we would use 1 if the chart has right aligned Y axes.
  *
- * @type    {Number}
+ * @type      {number}
  * @apioption chart.scrollablePlotArea.scrollPositionX
  */
 
@@ -105,6 +107,10 @@ addEvent(Chart, 'render', function () {
     }
 });
 
+/**
+ * @private
+ * @function Highcharts.Chart#setUpScrolling
+ */
 Chart.prototype.setUpScrolling = function () {
 
     // Add the necessary divs to provide scrolling
@@ -126,6 +132,10 @@ Chart.prototype.setUpScrolling = function () {
     this.setUpScrolling = null;
 };
 
+/**
+ * @private
+ * @function Highcharts.Chart#applyFixed
+ */
 Chart.prototype.applyFixed = function () {
     var container = this.container,
         fixedRenderer,
@@ -171,6 +181,8 @@ Chart.prototype.applyFixed = function () {
             .addClass('highcharts-scrollable-mask')
             .add();
 
+        // These elements are moved over to the fixed renderer and stay fixed
+        // when the user scrolls the chart.
         H.each([
             this.inverted ?
                 '.highcharts-xaxis' :
@@ -182,27 +194,36 @@ Chart.prototype.applyFixed = function () {
             '.highcharts-credits',
             '.highcharts-legend',
             '.highcharts-subtitle',
-            '.highcharts-title'
+            '.highcharts-title',
+            '.highcharts-legend-checkbox'
         ], function (className) {
             H.each(container.querySelectorAll(className), function (elem) {
-                fixedRenderer.box.appendChild(elem);
+                (
+                    elem.namespaceURI === fixedRenderer.SVG_NS ?
+                        fixedRenderer.box :
+                        fixedRenderer.box.parentNode
+                ).appendChild(elem);
                 elem.style.pointerEvents = 'auto';
             });
         });
     }
 
+    // Set the size of the fixed renderer to the visible width
     this.fixedRenderer.setSize(
         this.chartWidth,
         this.chartHeight
     );
 
+    // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + this.scrollablePixels;
+    H.stop(this.container);
     this.container.style.width = scrollableWidth + 'px';
     this.renderer.boxWrapper.attr({
         width: scrollableWidth,
         height: this.chartHeight,
         viewBox: [0, 0, scrollableWidth, this.chartHeight].join(' ')
     });
+    this.chartBackground.attr({ width: scrollableWidth });
 
     // Set scroll position
     if (firstTime) {

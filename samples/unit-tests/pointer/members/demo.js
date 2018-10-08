@@ -59,13 +59,11 @@ QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', fun
 
     events = []; // Destruction of previous chart, does a mouse out on its hoverPoint.
     // Move starting position of cursor to 50px below series[0].points[0].
-    controller.setPositionToElement(
-        chart.container,
+    controller.setPosition(
         chart.plotLeft + chart.series[0].points[0].plotX,
         chart.plotTop + chart.series[0].points[0].plotY + 50
     );
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + chart.series[0].points[0].plotX,
         chart.plotTop + chart.series[0].points[0].plotY
     );
@@ -88,13 +86,11 @@ QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', fun
     // New point, and new series.
     // NOTICE Qunit has added new content to the page,
     // so we have to move the cursor again.
-    controller.setPositionToElement(
-        chart.container,
+    controller.setPosition(
         chart.plotLeft + chart.series[1].points[0].plotX,
         chart.plotTop + chart.series[1].points[0].plotY
     );
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + chart.series[1].points[0].plotX,
         chart.plotTop + chart.series[1].points[0].plotY + 30
     );
@@ -127,13 +123,11 @@ QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', fun
     // New point, same series
     // NOTICE Qunit has added new content to the page,
     // so we have to move the cursor again.
-    controller.setPositionToElement(
-        chart.container,
+    controller.setPosition(
         chart.plotLeft + chart.series[1].points[0].plotX,
         chart.plotTop + chart.series[1].points[0].plotY
     );
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + chart.series[1].points[2].plotX,
         chart.plotTop + chart.series[1].points[2].plotY
     );
@@ -163,13 +157,11 @@ QUnit.test('Pointer.runPointActions. stickyTracking: true (default). #5914', fun
         'mousemove to 1.2: no unexpected events'
     );
     // Same point, same series.
-    controller.setPositionToElement(
-        chart.container,
+    controller.setPosition(
         chart.plotLeft + chart.series[1].points[2].plotX,
         chart.plotTop + chart.series[1].points[2].plotY
     );
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + chart.series[1].points[2].plotX,
         chart.plotTop + chart.series[1].points[2].plotY + 30
     );
@@ -244,13 +236,11 @@ QUnit.test('Pointer.runPointActions. stickyTracking: false. #5914', function (as
         controller = new TestController(chart);
 
     events = []; // Destruction of previous chart, does a mouse out on its hoverPoint.
-    controller.setPositionToElement(
-        chart.container,
+    controller.setPosition(
         chart.plotLeft + chart.series[1].points[0].plotX,
         chart.plotTop + chart.series[1].points[0].plotY + snap + 25
     );
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + chart.series[1].points[0].plotX,
         chart.plotTop + chart.series[1].points[0].plotY + snap + 15
     );
@@ -260,20 +250,17 @@ QUnit.test('Pointer.runPointActions. stickyTracking: false. #5914', function (as
         'stickyTracking: false. moveTo 15px below 1.0: no unexpected events'
     );
 
-    controller.setPositionToElement(
-        chart.container,
+    controller.setPosition(
         chart.plotLeft + chart.series[1].points[0].plotX,
         chart.plotTop + chart.series[1].points[0].plotY + snap + 15
     );
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + chart.series[1].points[0].plotX,
         chart.plotTop + chart.series[1].points[0].plotY + snap - 5
     );
 
     // With Edge the Series.onMouseOver executed after all mousemoves are complete.
-    controller.triggerOnElement(
-        chart.container,
+    controller.triggerEvent(
         'mousemove',
         chart.plotLeft + chart.series[1].points[0].plotX,
         chart.plotTop + chart.series[1].points[0].plotY + snap - 5
@@ -363,13 +350,11 @@ QUnit.test('Pointer.runPointActions. shared: true. stickyTracking: false. #6476'
         controller = new TestController(chart);
 
     events = []; // Destruction of previous chart, does a mouse out on its hoverPoint.
-    controller.setPositionToElement(
-        chart.container,
+    controller.setPosition(
         chart.plotLeft + point.plotX,
         chart.plotTop + point.plotY - 50
     );
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + point.plotX,
         chart.plotTop + point.plotY
     );
@@ -400,8 +385,7 @@ QUnit.test('Pointer.runPointActions. shared: true. stickyTracking: false. #6476'
     );
 
     point = series.points[1];
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + point.plotX,
         chart.plotTop + point.plotY - 40
     );
@@ -431,8 +415,7 @@ QUnit.test('Pointer.runPointActions. shared: true. stickyTracking: false. #6476'
         'No unexpected events.'
     );
 
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + point.plotX,
         chart.plotTop + point.plotY
     );
@@ -530,8 +513,7 @@ QUnit.test('Pointer.runPointActions. isDirectTouch: true && shared: true. #6517,
 
     events = []; // Destruction of previous chart, does a mouse out on its hoverPoint.
     // Move starting position of cursor to 50px below series[0].points[0].
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + series2.points[0].plotX + 10,
         chart.plotTop + series2.points[0].plotY - 50
     );
@@ -557,8 +539,7 @@ QUnit.test('Pointer.runPointActions. isDirectTouch: true && shared: true. #6517,
     );
 
     // Move inside point 0.1
-    controller.moveToElement(
-        chart.container,
+    controller.moveTo(
         chart.plotLeft + series2.points[0].plotX + 10,
         chart.plotTop + series2.points[0].plotY + 10
     );
@@ -578,7 +559,7 @@ QUnit.test('Pointer.runPointActions. isDirectTouch: true && shared: true. #6517,
     // el = series1.points[1].graphic.element;
     // console.log(el);
     // chart.pointer.debug = true;
-    // controller.moveToElement(el, 0, -10);
+    // controller.moveTo(0, -10);
     // assert.strictEqual(
     //     events.shift(),
     //     'mouseOut.1.0',

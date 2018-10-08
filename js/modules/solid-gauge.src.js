@@ -339,8 +339,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
                     shapeArgs.d = d; // animate alters it
                 }
             } else {
-                point.graphic = renderer.arc(shapeArgs)
-                    .addClass(point.getClassName(), true)
+                point.graphic = graphic = renderer.arc(shapeArgs)
                     .attr({
                         fill: toColor,
                         'sweep-flag': 0
@@ -349,16 +348,20 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
 
                 /*= if (build.classic) { =*/
                 if (options.linecap !== 'square') {
-                    point.graphic.attr({
+                    graphic.attr({
                         'stroke-linecap': 'round',
                         'stroke-linejoin': 'round'
                     });
                 }
-                point.graphic.attr({
+                graphic.attr({
                     stroke: options.borderColor || 'none',
                     'stroke-width': options.borderWidth || 0
                 });
                 /*= } =*/
+            }
+
+            if (graphic) {
+                graphic.addClass(point.getClassName(), true);
             }
         });
     },
@@ -402,8 +405,8 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  *  data: [0, 5, 3, 5]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](
  * #series.solidgauge.turboThreshold), this option is not available.
  *

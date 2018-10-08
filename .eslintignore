@@ -1,4 +1,4 @@
-vendor/**
+vendor/**/*
 samples/data/**/*.js
 samples/highcharts/common-js/**/*.js
 samples/static/*.js
