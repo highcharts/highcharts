@@ -418,7 +418,7 @@ H.Toolbar.prototype = {
 
             button = addButton(toolbar, defs, btnName, lang);
 
-            addEvent(button.buttonWrapper, 'click', function (e) {
+            addEvent(button.buttonWrapper, 'click', function () {
                 _self.eraseActiveButtons(
                     allButtons,
                     button.buttonWrapper
@@ -450,8 +450,7 @@ H.Toolbar.prototype = {
             menuWrapper = this.listWrapper,
             allButtons = this.toolbar.childNodes,
             topMargin = 0,
-            submenuWrapper,
-            submenuItems;
+            submenuWrapper;
 
         // create submenu container
         this.submenu = submenuWrapper = createElement(UL, {
