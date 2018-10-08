@@ -298,9 +298,8 @@
   width: calc(100% - 52px);
   overflow-y: scroll;
   overflow-x: hidden;
-  height: calc(100% - 120px);
+  height: calc(100% - 140px);
   border: none;
-  margin-top:40px;
   padding: 0px 20px 20px 20px;
 }
 
@@ -438,10 +437,14 @@
 .highcharts-popup .highcharts-annotation-title {
   display: block;
   float: left;
-  font-size: 1.3em;
+  font-size: 1.2em;
   font-weight: bold;
   margin-bottom: 15px;
   width: 100%;
+}
+
+.highcharts-popup .highcharts-popup-main-title {
+  padding-left:20px;
 }
 
 .highcharts-indicator-title {

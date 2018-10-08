@@ -381,7 +381,7 @@ H.Popup.prototype = {
         },
         /*
          * Create annotation simple form.
-         * It contains two buttons (edit / remove).
+         * It contains fields with param names.
          *
          * @param {Chart} - chart
          * @param {Object} - options
@@ -392,10 +392,17 @@ H.Popup.prototype = {
         addForm: function (chart, options, callback, isInit) {
             var popupDiv = this.popup.container,
                 lang = this.getLangpack(),
+                type = options.type,
                 bottomRow,
                 lhsCol;
 
-             // left column
+            // create title of annotations
+            lhsCol = createElement('h2', {
+                innerHTML: lang[type] || type,
+                className: PREFIX + 'popup-main-title'
+            }, null, popupDiv);
+
+            // left column
             lhsCol = createElement(DIV, {
                 className: PREFIX + 'popup-lhs-col ' + PREFIX + 'popup-lhs-full'
             }, null, popupDiv);
