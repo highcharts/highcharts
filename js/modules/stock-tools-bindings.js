@@ -326,8 +326,8 @@ var stockToolsBindings = {
                 annotation;
 
             annotation = this.chart.addAnnotation({
+                langKey: 'circle',
                 shapes: [{
-                    langKey: 'circle',
                     type: 'circle',
                     point: {
                         xAxis: 0,

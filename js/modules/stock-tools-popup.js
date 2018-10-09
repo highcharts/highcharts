@@ -342,7 +342,7 @@ H.Popup.prototype = {
             createElement(SPAN, {
                 innerHTML: pick(
                     // Advanced annotations:
-                    lang[options.type] || options.type,
+                    lang[options.langKey] || options.langKey,
                     // Basic shapes:
                     options.shapes && options.shapes[0].type
                 )
@@ -392,13 +392,12 @@ H.Popup.prototype = {
         addForm: function (chart, options, callback, isInit) {
             var popupDiv = this.popup.container,
                 lang = this.getLangpack(),
-                type = options.type,
                 bottomRow,
                 lhsCol;
 
             // create title of annotations
             lhsCol = createElement('h2', {
-                innerHTML: lang[type] || type,
+                innerHTML: lang[options.langKey] || options.langKey,
                 className: PREFIX + 'popup-main-title'
             }, null, popupDiv);
 
@@ -461,7 +460,6 @@ H.Popup.prototype = {
                         (isArray(value) && isObject(value[0]))
                     ) {
                         titleName = lang[option] || option;
-
 
                         if (!titleName.match(indexFilter)) {
                             createElement(SPAN, {
