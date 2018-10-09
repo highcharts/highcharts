@@ -589,7 +589,10 @@ var getPoint = function (params) {
         endLocation: voyage && voyage.endLocation,
         name: tripName,
         trip: tripName,
-        enableResize: type === 'voyage'
+        dragDrop: {
+            draggableStart: type === 'voyage',
+            draggableEnd: type === 'voyage'
+        }
     };
 };
 
@@ -678,6 +681,168 @@ var getCategoryFromIdleTime = function (utilized, idle) {
     ].join('\n');
 };
 
+// Modify event to handle modifying other points in group when resizing
+var customResize = function (e, chart) {
+    var newPoints = e.newPoints,
+        defined = Highcharts.defined,
+        objectEach = Highcharts.objectEach,
+        start,
+        end,
+        diff,
+        resizePoint;
+
+    if (e.newPoint && defined(e.newPoint.start) !== defined(e.newPoint.end)) {
+        start = e.newPoint.start;
+        end = e.newPoint.end;
+        resizePoint = chart.get(e.newPointId);
+
+        diff = defined(start) && start - resizePoint.options.start ||
+                defined(end) && end - resizePoint.options.end;
+
+        objectEach(e.origin.points, function (pointOrigin) {
+            var point = pointOrigin.point;
+            if (
+                point.id !== e.newPointId && (
+                    defined(start) && point.end <= resizePoint.options.start ||
+                    defined(end) && point.start >= resizePoint.options.end
+                )
+            ) {
+                newPoints[point.id] = {
+                    point: point,
+                    newValues: {
+                        start: point.start + diff,
+                        end: point.end + diff
+                    }
+                };
+            }
+        });
+    }
+};
+
+// Check if new points collide with existing ones
+var newPointsColliding = function (newPoints, chart) {
+    var reduce = Highcharts.reduce,
+        keys = Highcharts.keys,
+        pick = Highcharts.pick,
+        inArray = Highcharts.inArray,
+        groupedPoints = chart.dragDropData && chart.dragDropData.groupedPoints,
+        y,
+        minX = reduce(keys(newPoints), function (acc, id) {
+            y = pick(newPoints[id].newValues.y, newPoints[id].point.y);
+            return Math.min(
+                acc, pick(
+                    newPoints[id].newValues.start, newPoints[id].point.start
+                )
+            );
+        }, Infinity),
+        maxX = reduce(keys(newPoints), function (acc, id) {
+            return Math.max(
+                acc, pick(newPoints[id].newValues.end, newPoints[id].point.end)
+            );
+        }, -Infinity),
+        newSeries = chart.get(y),
+        i,
+        collidePoint,
+        pointOverlaps = function (point) {
+            return point.end >= minX && point.start <= minX ||
+                point.start <= maxX && point.end >= maxX ||
+                point.start <= minX && point.end >= maxX ||
+                point.start >= minX && point.end <= maxX;
+        };
+
+    if (newSeries) {
+        i = newSeries.points ? newSeries.points.length : 0;
+        while (i--) {
+            collidePoint = newSeries.points[i];
+            if (
+                inArray(collidePoint, groupedPoints) < 0 &&
+                pointOverlaps(collidePoint)
+            ) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
+// Add collision detection on move/resize
+var customDrag = function (e) {
+    var series = this.series,
+        chart = series.chart;
+
+    // Handle the resize
+    customResize(e, chart);
+
+    // Check collision
+    if (newPointsColliding(e.newPoints, chart)) {
+        chart.dragDropData.isColliding = true;
+        chart.setGuideBoxState('collide', series.options.dragDrop.guideBox);
+    } else if (chart.dragDropData) {
+        delete chart.dragDropData.isColliding;
+        chart.setGuideBoxState('default', series.options.dragDrop.guideBox);
+    }
+};
+
+// Implement custom drop. Do normal update, but move points between series when
+// changing their y value.
+var customDrop = function (e) {
+    var newPoints = e.newPoints,
+        chart = this.series.chart,
+        defined = Highcharts.defined,
+        objectEach = Highcharts.objectEach;
+
+    // Just return if we are colliding.
+    if (chart.dragDropData.isColliding) {
+        return false;
+    }
+
+    // Stop further dragdrops while we update
+    chart.isDragDropAnimating = true;
+
+    // Update the points
+    objectEach(newPoints, function (update) {
+        var newValues = update.newValues,
+            oldPoint = update.point,
+            newSeries = defined(newValues.y) ?
+                chart.get(newValues.y) : oldPoint.series;
+
+        // Destroy any old heat indicator objects
+        if (oldPoint.heatIndicator) {
+            oldPoint.heatIndicator =
+                oldPoint.heatIndicator.destroy();
+        }
+        if (oldPoint.indicatorObj) {
+            oldPoint.indicatorObj =
+                oldPoint.indicatorObj.destroy();
+        }
+
+        // Update the point
+        if (newSeries !== oldPoint.series) {
+            newValues = Highcharts.merge(
+                oldPoint.options, newValues
+            );
+            update.point = oldPoint = oldPoint.remove(false);
+            newSeries.addPoint(newValues, false);
+        } else {
+            oldPoint.update(newValues, false);
+        }
+    });
+
+    // Redraw with specific animation
+    chart.redraw({
+        duration: 400
+    });
+    setTimeout(function () {
+        delete chart.isDragDropAnimating;
+        if (chart.hoverPoint && !chart.dragHandles) {
+            chart.hoverPoint.showDragHandles();
+        }
+    }, 400);
+
+    // Don't do the default drop
+    return false;
+};
+
 var leftLabelFormat = function () {
     if (this.point.type === 'voyage') {
         return this.point.startLocation;
@@ -731,8 +896,15 @@ Highcharts.ganttChart('container', {
             dragDrop: {
                 draggableX: true,
                 draggableY: true,
-                enableResize: true,
-                groupBy: 'trip'
+                dragMinY: 0,
+                dragMaxY: information.vessels.length - 1,
+                liveRedraw: false,
+                groupBy: 'trip',
+                guideBox: {
+                    collide: {
+                        color: 'rgba(200, 0, 0, 0.4)'
+                    }
+                }
             },
             heatIndicator: {
                 enabled: true,
@@ -777,18 +949,8 @@ Highcharts.ganttChart('container', {
             }],
             point: {
                 events: {
-                    drop: function (e) {
-                        // We want to move a point to a new series on drop,
-                        // since we have one series per y value.
-                        var newSeries = this.series.chart.get(e.newY);
-                        if (
-                            newSeries &&
-                            e.newX !== undefined &&
-                            e.newY !== undefined
-                        ) {
-                            this.series = newSeries;
-                        }
-                    }
+                    drag: customDrag,
+                    drop: customDrop
                 }
             }
         }
@@ -819,7 +981,8 @@ Highcharts.ganttChart('container', {
         tickInterval: undefined
     }],
     yAxis: [{
-        type: 'grid',
+        type: 'category',
+        reversed: true,
         maxPadding: 0,
         staticScale: 100,
         labels: {
