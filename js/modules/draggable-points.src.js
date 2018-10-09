@@ -1127,6 +1127,9 @@ function updatePoints(chart, animate) {
     // we have to use a timeout instead.
     setTimeout(function () {
         delete chart.isDragDropAnimating;
+        if (chart.hoverPoint && !chart.dragHandles) {
+            chart.hoverPoint.showDragHandles();
+        }
     }, animOptions.duration);
 }
 
