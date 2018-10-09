@@ -150,6 +150,7 @@ var bindingsUtils = {
                     formType: 'flag',
                     // Enabled options:
                     options: {
+                        type: 'flags',
                         title: ['A', getFieldType('A')],
                         name: ['Flag A', getFieldType('Flag A')]
                     },
@@ -191,7 +192,7 @@ var bindingsUtils = {
                                                             options.name
                                                         )
                                                     ],
-                                                    type: 'Flag'
+                                                    type: 'flags'
                                                 },
                                                 onSubmit: function () {
                                                     point.update(
@@ -326,6 +327,7 @@ var stockToolsBindings = {
 
             annotation = this.chart.addAnnotation({
                 shapes: [{
+                    langKey: 'circle',
                     type: 'circle',
                     point: {
                         xAxis: 0,
@@ -398,6 +400,7 @@ var stockToolsBindings = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY),
                 options = {
+                    langKey: 'rectangle',
                     type: 'measure',
                     typeOptions: {
                         point: {
@@ -436,6 +439,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             this.chart.addAnnotation({
+                langKey: 'label',
                 labelOptions: {
                     format: '{y:.2f}'
                 },
@@ -517,6 +521,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'segment',
                 type: 'crooked-line',
                 typeOptions: {
                     points: [{
@@ -539,6 +544,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'arrowSegment',
                 type: 'crooked-line',
                 typeOptions: {
                     line: {
@@ -564,6 +570,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'ray',
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'ray',
@@ -587,6 +594,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'arrowRay',
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'ray',
@@ -613,6 +621,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'infinityLine',
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'line',
@@ -636,6 +645,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'arrowInfinityLine',
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'line',
@@ -662,6 +672,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             this.chart.addAnnotation({
+                langKey: 'horizontalLine',
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'horizontal-line',
@@ -679,6 +690,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             this.chart.addAnnotation({
+                langKey: 'verticalLine',
                 type: 'infinity-line',
                 typeOptions: {
                     type: 'vertical-line',
@@ -697,6 +709,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'crookedLine',
                 type: 'crooked-line',
                 typeOptions: {
                     points: [{
@@ -723,6 +736,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'crookedLine',
                 type: 'crooked-line',
                 typeOptions: {
                     points: [{
@@ -757,6 +771,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'elliottWave',
                 type: 'elliott-wave',
                 typeOptions: {
                     points: [{
@@ -788,6 +803,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'elliottWave',
                 type: 'elliott-wave',
                 typeOptions: {
                     points: [{
@@ -826,6 +842,7 @@ var stockToolsBindings = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY),
                 options = {
+                    langKey: 'measure',
                     type: 'measure',
                     typeOptions: {
                         selectType: 'x',
@@ -869,6 +886,7 @@ var stockToolsBindings = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY),
                 options = {
+                    langKey: 'measure',
                     type: 'measure',
                     typeOptions: {
                         selectType: 'y',
@@ -912,6 +930,7 @@ var stockToolsBindings = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY),
                 options = {
+                    langKey: 'measure',
                     type: 'measure',
                     typeOptions: {
                         selectType: 'xy',
@@ -955,6 +974,7 @@ var stockToolsBindings = {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
             return this.chart.addAnnotation({
+                langKey: 'fibonacci',
                 type: 'fibonacci',
                 typeOptions: {
                     points: [{
@@ -983,6 +1003,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'parallelChannel',
                 type: 'tunnel',
                 typeOptions: {
                     points: [{
@@ -1006,6 +1027,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
+                langKey: 'pitchfork',
                 type: 'pitchfork',
                 typeOptions: {
                     points: [{
@@ -1048,6 +1070,7 @@ var stockToolsBindings = {
             }
 
             annotation = this.chart.addAnnotation({
+                langKey: 'verticalCounter',
                 type: 'vertical-line',
                 typeOptions: {
                     point: {
@@ -1084,6 +1107,7 @@ var stockToolsBindings = {
                 annotation;
 
             annotation = this.chart.addAnnotation({
+                langKey: 'verticalLabel',
                 type: 'vertical-line',
                 typeOptions: {
                     point: {
@@ -1117,6 +1141,7 @@ var stockToolsBindings = {
                 annotation;
 
             annotation = this.chart.addAnnotation({
+                langKey: 'verticalArrow',
                 type: 'vertical-line',
                 typeOptions: {
                     point: {
@@ -1844,6 +1869,7 @@ extend(H.Toolbar.prototype, {
                 'label'
             ),
             visualOptions = {
+                langKey: options.langKey,
                 type: type
             };
 
