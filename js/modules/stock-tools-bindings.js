@@ -194,10 +194,10 @@ var bindingsUtils = {
                                                     ],
                                                     type: 'flags'
                                                 },
-                                                onSubmit: function () {
+                                                onSubmit: function (updated) {
                                                     point.update(
                                                         toolbar.fieldsToOptions(
-                                                            data.fields,
+                                                            updated.fields,
                                                             {}
                                                         )
                                                     );
