@@ -85,13 +85,11 @@ var multipleLinesMixin = {
      */
     translate: function () {
         var indicator = this,
-            // self - multipleLinesMixin reference
-            self = Object.getPrototypeOf(indicator),
-            pointArrayMap = self.pointArrayMap,
+            pointArrayMap = indicator.pointArrayMap,
             LinesNames = [],
             value;
 
-        LinesNames = self.getTranslatedLinesNames();
+        LinesNames = indicator.getTranslatedLinesNames();
 
         SMA.prototype.translate.apply(indicator, arguments);
 
@@ -113,10 +111,8 @@ var multipleLinesMixin = {
      */
     drawGraph: function () {
         var indicator = this,
-            // self - multipleLinesMixin reference
-            self = Object.getPrototypeOf(indicator),
-            pointValKey = self.pointValKey,
-            linesApiNames = self.linesApiNames,
+            pointValKey = indicator.pointValKey,
+            linesApiNames = indicator.linesApiNames,
             mainLinePoints = indicator.points,
             pointsLength = mainLinePoints.length,
             mainLineOptions = indicator.options,
@@ -127,7 +123,7 @@ var multipleLinesMixin = {
                 }
             },
             secondaryLines = [], // additional lines point place holders
-            secondaryLinesNames = self.getTranslatedLinesNames(
+            secondaryLinesNames = indicator.getTranslatedLinesNames(
                 pointValKey
             ),
             point;
