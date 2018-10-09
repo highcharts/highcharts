@@ -294,7 +294,7 @@ extend(H.defaultOptions, {
  */
 function getPointBB(point) {
     var shapeArgs = point.shapeArgs,
-        bb = point.graphic.getBBox();
+        bb;
 
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
@@ -307,12 +307,13 @@ function getPointBB(point) {
     }
 
     // Otherwise use plotX/plotY and bb
-    return {
+    bb = point.graphic && point.graphic.getBBox();
+    return bb ? {
         xMin: point.plotX - bb.width / 2,
         xMax: point.plotX + bb.width / 2,
         yMin: point.plotY - bb.height / 2,
         yMax: point.plotY + bb.height / 2
-    };
+    } : null;
 }
 
 
@@ -825,7 +826,7 @@ Pathfinder.prototype = {
                             point.options.connect &&
                             H.splat(point.options.connect)
                         );
-                    if (point.visible && connects) {
+                    if (point.visible && point.isInside !== false && connects) {
                         each(connects, function (connect) {
                             to = chart.get(typeof connect === 'string' ?
                                 connect : connect.to
@@ -833,7 +834,8 @@ Pathfinder.prototype = {
                             if (
                                 to instanceof H.Point &&
                                 to.series.visible &&
-                                to.visible
+                                to.visible &&
+                                to.isInside !== false
                             ) {
                                 // Add new connection
                                 pathfinder.connections.push(new Connection(
@@ -925,12 +927,14 @@ Pathfinder.prototype = {
                     point = series[i].points[j];
                     if (point.visible) {
                         bb = getPointBB(point);
-                        obstacles.push({
-                            xMin: bb.xMin - margin,
-                            xMax: bb.xMax + margin,
-                            yMin: bb.yMin - margin,
-                            yMax: bb.yMax + margin
-                        });
+                        if (bb) {
+                            obstacles.push({
+                                xMin: bb.xMin - margin,
+                                xMax: bb.xMax + margin,
+                                yMin: bb.yMin - margin,
+                                yMax: bb.yMax + margin
+                            });
+                        }
                     }
                 }
             }
