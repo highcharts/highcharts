@@ -1049,9 +1049,8 @@ if (!H.ColorAxis) {
     });
 
 
-    /* Add the color axis. This also removes the axis' own series to prevent
-     * them from showing up individually.
-     */
+    // Add the color axis. This also removes the axis' own series to prevent
+    // them from showing up individually.
     addEvent(Legend, 'afterGetAllItems', function (e) {
         var colorAxisItems = [],
             colorAxis = this.chart.colorAxis[0],
