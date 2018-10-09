@@ -150,6 +150,7 @@ var bindingsUtils = {
                     formType: 'flag',
                     // Enabled options:
                     options: {
+                        langKey: 'flags',
                         type: 'flags',
                         title: ['A', getFieldType('A')],
                         name: ['Flag A', getFieldType('Flag A')]
@@ -180,6 +181,8 @@ var bindingsUtils = {
                                             {
                                                 formType: 'annotation-toolbar',
                                                 options: {
+                                                    langKey: 'flags',
+                                                    type: 'flags',
                                                     title: [
                                                         options.title,
                                                         getFieldType(
@@ -191,8 +194,7 @@ var bindingsUtils = {
                                                         getFieldType(
                                                             options.name
                                                         )
-                                                    ],
-                                                    type: 'flags'
+                                                    ]
                                                 },
                                                 onSubmit: function (updated) {
                                                     point.update(
