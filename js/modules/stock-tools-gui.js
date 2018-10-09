@@ -729,6 +729,10 @@ H.Toolbar.prototype = {
         ) {
             this.arrowWrapper.style.display = 'block';
         } else {
+            // reset margin if whole toolbar is visible
+            this.toolbar.style.marginTop = '0px';
+
+            // hide arrows
             this.arrowWrapper.style.display = 'none';
         }
     },
