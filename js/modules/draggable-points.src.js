@@ -1456,12 +1456,10 @@ H.Point.prototype.showDragHandles = function () {
                 };
             }
 
-            // Find position of handle
+            // Find position and path of handle
             pos = positioner(point);
-
-            // Find handle path
             path = pathFormatter(point);
-            if (!path) {
+            if (!path || pos.x < 0 || pos.y < 0) {
                 return;
             }
 
