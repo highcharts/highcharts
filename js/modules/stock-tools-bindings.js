@@ -220,12 +220,23 @@ var bindingsUtils = {
                 linkedTo: data.linkedTo,
                 type: data.type
             },
+            indicatorsWithVolume = [
+                'ad',
+                'cmf',
+                'mfi',
+                'vbp',
+                'vwap'
+            ],
             indicatorsWithAxes = [
+                'ad',
                 'atr',
                 'cci',
+                'cmf',
                 'macd',
+                'mfi',
                 'roc',
-                'rsi'
+                'rsi',
+                'vwap'
             ],
             yAxis,
             series;
@@ -277,6 +288,16 @@ var bindingsUtils = {
                 seriesConfig.yAxis = yAxis.options.id;
                 toolbar.resizeYAxes();
             }
+
+            if (inArray(data.type, indicatorsWithVolume) >= 0) {
+                seriesConfig.params.volumeSeriesID = grep(
+                    chart.series,
+                    function (series) {
+                        return series.options.type === 'column';
+                    }
+                )[0].options.id;
+            }
+
             chart.addSeries(seriesConfig, false);
         }
 
