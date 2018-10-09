@@ -77,12 +77,14 @@ H.setOptions({
                 fibonacci: 'Fibonacci',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel',
+                infinityLine: 'Infinity line',
                 measureXY: 'Measure XY',
                 measureX: 'Measure X',
                 measureY: 'Measure Y',
                 zoomX: 'Zoom X',
                 zoomY: 'Zoom Y',
                 zoomXY: 'Zooom XY',
+                fullScreen: 'Fullscreen',
                 typeOHLC: 'OHLC',
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
@@ -262,7 +264,7 @@ H.setOptions({
                     fibonacci: {
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/fibonacci.svg)'
                     },
-                    'parallelChannel': {
+                    parallelChannel: {
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/parallel-channel.svg)'
                     }
                 },
@@ -591,7 +593,7 @@ H.Toolbar.prototype = {
         // main button wrapper
         buttonWrapper = createElement(LI, {
             className: classMapping[btnName] + ' ' + userClassName,
-            title: lang[btnName]
+            title: lang[btnName] || btnName
         }, null, target);
 
         // single button
