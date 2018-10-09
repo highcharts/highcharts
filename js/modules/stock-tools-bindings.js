@@ -1430,6 +1430,12 @@ H.Toolbar.annotationsEditable = {
     'crooked-line': []
 };
 
+// Define non editable fields per annotation, for example Rectangle inherits
+// options from Measure, but crosshairs are not available
+H.Toolbar.annotationsNonEditable = {
+    rectangle: ['crosshairX', 'crosshairY', 'label']
+};
+
 extend(H.Toolbar.prototype, {
     // Private properties added by bindings:
 
@@ -1907,6 +1913,8 @@ extend(H.Toolbar.prototype, {
                     options.labels[0].itemType,
                 'label'
             ),
+            nonEditables = H.Toolbar
+                .annotationsNonEditable[options.langKey] || [],
             visualOptions = {
                 langKey: options.langKey,
                 type: type
@@ -1924,9 +1932,10 @@ extend(H.Toolbar.prototype, {
          */
         function traverse(option, key, parentEditables, parent) {
             var nextParent;
-            // debugger;
+
             if (
                 parentEditables &&
+                inArray(key, nonEditables) === -1 &&
                 (
                     inArray(key, parentEditables) >= 0 ||
                     parentEditables[key] || // nested array
