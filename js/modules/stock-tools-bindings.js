@@ -1190,58 +1190,72 @@ var stockToolsBindings = {
     },
     // Other tools:
     'zoom-x': {
-        init: function () {
+        init: function (button) {
             this.chart.update({
                 chart: {
                     zoomType: 'xy'
                 }
             });
+
+            fireEvent(this, 'deselectButton', { button: button });
         }
     },
     'zoom-y': {
-        init: function () {
+        init: function (button) {
             this.chart.update({
                 chart: {
                     zoomType: 'y'
                 }
             });
+
+            fireEvent(this, 'deselectButton', { button: button });
         }
     },
     'zoom-xy': {
-        init: function () {
+        init: function (button) {
             this.chart.update({
                 chart: {
                     zoomType: 'x'
                 }
             });
+
+            fireEvent(this, 'deselectButton', { button: button });
         }
     },
     'series-type-line': {
-        init: function () {
+        init: function (button) {
             this.chart.series[0].update({
                 type: 'line'
             });
+
+            fireEvent(this, 'deselectButton', { button: button });
         }
     },
     'series-type-ohlc': {
-        init: function () {
+        init: function (button) {
             this.chart.series[0].update({
                 type: 'ohlc'
             });
+
+            fireEvent(this, 'deselectButton', { button: button });
         }
     },
     'series-type-candlestick': {
-        init: function () {
+        init: function (button) {
             this.chart.series[0].update({
                 type: 'candlestick'
             });
+
+            fireEvent(this, 'deselectButton', { button: button });
         }
     },
     'full-screen': {
-        init: function () {
+        init: function (button) {
             var chart = this.chart;
 
             chart.fullScreen = new H.FullScreen(chart.container);
+
+            fireEvent(this, 'deselectButton', { button: button });
         }
     },
     'current-price-indicator': {
@@ -1318,7 +1332,7 @@ var stockToolsBindings = {
         }
     },
     'save-chart': {
-        init: function () {
+        init: function (button) {
             var toolbar = this,
                 chart = toolbar.chart,
                 annotations = [],
@@ -1353,6 +1367,8 @@ var stockToolsBindings = {
                     yAxes: yAxes
                 })
             );
+
+            fireEvent(this, 'deselectButton', { button: button });
         }
     }
 };
