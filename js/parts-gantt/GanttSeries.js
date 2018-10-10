@@ -218,8 +218,8 @@ seriesType('gantt', 'xrange', {
             options.x2 = options.x;
         }
     }
-}, {
-    // pointProps - point member overrides
+}, H.extend(parent.prototype.pointClass.prototype, {
+    // pointProps - point member overrides. We inherit from parent as well.
     /**
      * Applies the options containing the x and y data and possible some extra
      * properties. This is called on point init or from point.update.
@@ -238,7 +238,7 @@ seriesType('gantt', 'xrange', {
         retVal = Point.prototype.applyOptions.call(point, retVal, x);
         return retVal;
     }
-});
+}));
 
 /**
  * Whether the grid node belonging to this point should start as collapsed. Used
