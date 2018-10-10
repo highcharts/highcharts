@@ -39,6 +39,36 @@ var argsToArray = function (args) {
     GridAxis = H.Axis,
     GridAxisTick = H.Tick;
 
+
+merge(
+    true,
+    GridAxis.defaultOptions,
+    {
+        labels: {
+            /**
+            * Set options on specific levels. Takes precedence over labels
+            * options.
+            *
+            * @optionparent xAxis.labels
+            * @product gantt
+            * @sample {gantt} gantt/treegrid-axis/labels-levels/demo.js
+            * @since next
+            * @type {Array<Object>}
+            */
+            levels: [{
+                /**
+                * Specify the level which the options within this object applies
+                * to.
+                *
+                * @sample {gantt} gantt/treegrid-axis/labels-levels/demo.js
+                * @since next
+                */
+                level: undefined
+            }]
+        }
+    }
+);
+
 /**
  * some - Equivalent of Array.prototype.some
  *
