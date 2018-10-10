@@ -1484,6 +1484,10 @@ extend(H.Toolbar.prototype, {
         if (events.init) {
             events.init.call(toolbar, button, clickEvent);
         }
+
+        if (events.start || events.steps) {
+            toolbar.chart.renderer.boxWrapper.addClass(PREFIX + 'draw-mode');
+        }
     },
     /**
      * Hook for click on a chart, first click on a chart calls `start` event,
@@ -1497,7 +1501,8 @@ extend(H.Toolbar.prototype, {
      */
     bindingsChartClick: function (chart, clickEvent) {
         var toolbar = this,
-            selectedButton = toolbar.selectedButton;
+            selectedButton = toolbar.selectedButton,
+            svgContainer = toolbar.chart.renderer.boxWrapper;
 
         if (
             toolbar.activeAnnotation &&
@@ -1505,7 +1510,7 @@ extend(H.Toolbar.prototype, {
             // Element could be removed in the child action, e.g. button
             clickEvent.target.parentNode &&
             // TO DO: Polyfill for IE11?
-            !clickEvent.target.closest('.highcharts-popup')
+            !clickEvent.target.closest('.' + PREFIX + 'popup')
         ) {
             fireEvent(toolbar, 'closePopUp');
             toolbar.deselectAnnotation();
@@ -1536,6 +1541,7 @@ extend(H.Toolbar.prototype, {
                         button: toolbar.selectedButtonElement
                     }
                 );
+                svgContainer.removeClass(PREFIX + 'draw-mode');
                 toolbar.steps = false;
                 toolbar.selectedButton = null;
                 // First click is also the last one:
@@ -1572,6 +1578,7 @@ extend(H.Toolbar.prototype, {
                             button: toolbar.selectedButtonElement
                         }
                     );
+                    svgContainer.removeClass(PREFIX + 'draw-mode');
                     // That was the last step, call end():
                     if (selectedButton.end) {
                         selectedButton.end.call(
@@ -2044,7 +2051,7 @@ extend(H.Toolbar.prototype, {
             elemClassName = H.attr(element, 'class');
             if (elemClassName) {
                 classNames.push([
-                    elemClassName.replace('highcharts-', ''),
+                    elemClassName.replace(PREFIX, ''),
                     element
                 ]);
             }
