@@ -39,6 +39,14 @@ H.extendAnnotation(Measure, null, {
     },
 
     /**
+     * Overrides default setter to get axes from typeOptions.
+     */
+    setClipAxes: function () {
+        this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis];
+        this.clipYAxis = this.chart.yAxis[this.options.typeOptions.yAxis];
+    },
+
+    /**
      * Get measure points configuration objects.
      *
      * @return {Array<Highcharts.MockPointOptions>}

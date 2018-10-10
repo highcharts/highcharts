@@ -26,6 +26,7 @@ var merge = H.merge,
     find = H.find,
     isString = H.isString,
     pick = H.pick,
+    reduce = H.reduce,
     splat = H.splat,
     destroyObjectProperties = H.destroyObjectProperties;
 
@@ -675,6 +676,7 @@ merge(
             this.addControlPoints();
             this.addShapes();
             this.addLabels();
+            this.addClipPaths();
             this.setLabelCollector();
         },
 
@@ -709,6 +711,52 @@ merge(
 
                 this.options.labels[i] = label.options;
             }, this);
+        },
+
+        addClipPaths: function () {
+            this.setClipAxes();
+
+            if (this.clipXAxis && this.clipYAxis) {
+                this.clipRect = this.chart.renderer.clipRect(
+                    this.getClipBox()
+                );
+            }
+        },
+
+        setClipAxes: function () {
+            var xAxes = this.chart.xAxis,
+                yAxes = this.chart.yAxis,
+                linkedAxes = reduce(
+                    (this.options.labels || [])
+                        .concat(this.options.shapes || []),
+                    function (axes, labelOrShape) {
+                        return [
+                            xAxes[
+                                labelOrShape &&
+                                labelOrShape.point &&
+                                labelOrShape.point.xAxis
+                            ] || axes[0],
+                            yAxes[
+                                labelOrShape &&
+                                labelOrShape.point &&
+                                labelOrShape.point.yAxis
+                            ] || axes[1]
+                        ];
+                    },
+                    []
+                );
+
+            this.clipXAxis = linkedAxes[0];
+            this.clipYAxis = linkedAxes[1];
+        },
+
+        getClipBox: function () {
+            return {
+                x: this.clipXAxis.left,
+                y: this.clipYAxis.top,
+                width: this.clipXAxis.width,
+                height: this.clipYAxis.height
+            };
         },
 
         setLabelCollector: function () {
@@ -749,8 +797,13 @@ merge(
                 this.render();
             }
 
+            if (this.clipRect) {
+                this.clipRect.animate(this.getClipBox());
+            }
+
             this.redrawItems(this.shapes, animation);
             this.redrawItems(this.labels, animation);
+
 
             controllableMixin.redraw.call(this, animation);
         },
@@ -796,6 +849,10 @@ merge(
                     translateY: 0
                 })
                 .add(this.graphic);
+
+            if (this.clipRect) {
+                this.graphic.clip(this.clipRect);
+            }
 
             this.addEvents();
 
@@ -852,6 +909,9 @@ merge(
 
             each(this.labels, destroyItem);
             each(this.shapes, destroyItem);
+
+            this.clipXAxis = null;
+            this.clipYAxis = null;
 
             erase(chart.labelCollectors, this.labelCollector);
 
