@@ -268,11 +268,12 @@ var onTickHover = function (label) {
     });
     /*= } =*/
 };
-var onTickHoverExit = function (label) {
+var onTickHoverExit = function (label, options) {
+    var css = defined(options.style) ? options.style : {};
     label.removeClass('highcharts-treegrid-node-active');
     /*= if (build.classic) { =*/
     label.css({
-        textDecoration: 'none'
+        textDecoration: css.textDecoration
     });
     /*= } =*/
 };
@@ -684,7 +685,10 @@ override(GridAxisTick.prototype, {
             label = tick.label,
             mapOfPosToGridNode = axis.mapOfPosToGridNode,
             options = axis.options,
-            labelOptions = options && options.labels,
+            labelOptions = pick(
+                tick.options && tick.options.labels,
+                options && options.labels
+            ),
             symbolOptions = (
                 labelOptions && isObject(labelOptions.symbol) ?
                 labelOptions.symbol :
@@ -753,7 +757,7 @@ override(GridAxisTick.prototype, {
 
                     // On hover out
                     H.addEvent(object.element, 'mouseout', function () {
-                        onTickHoverExit(label);
+                        onTickHoverExit(label, labelOptions);
                     });
 
                     H.addEvent(object.element, 'click', function () {
