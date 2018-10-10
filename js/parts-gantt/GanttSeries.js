@@ -218,7 +218,8 @@ seriesType('gantt', 'xrange', {
             options.x2 = options.x;
         }
     }
-}, H.extend(parent.prototype.pointClass.prototype, {
+
+}, merge(parent.prototype.pointClass.prototype, {
     // pointProps - point member overrides. We inherit from parent as well.
     /**
      * Applies the options containing the x and y data and possible some extra
