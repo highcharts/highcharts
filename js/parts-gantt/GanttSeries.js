@@ -124,6 +124,9 @@ seriesType('gantt', 'xrange', {
 }, {
     // props - series member overrides
 
+    // Keyboard navigation, don't use nearest vertical mode
+    keyboardMoveVertical: false,
+
     // Handle milestones, as they have no x2
     translatePoint: function (point) {
         var series = this,
