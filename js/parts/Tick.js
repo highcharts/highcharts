@@ -55,7 +55,7 @@ H.Tick = function (axis, pos, type, noLabel, parameters) {
         isArray(axis.categories) ? axis.categories[pos] : undefined,
         isArray(axis.names) ? axis.names[pos] : undefined
     );
-
+    this.options = params.options;
     if (!type && !noLabel) {
         this.addLabel();
     }
@@ -76,7 +76,10 @@ H.Tick.prototype = {
             options = axis.options,
             chart = axis.chart,
             pos = tick.pos,
-            labelOptions = options.labels,
+            labelOptions = pick(
+                tick.options && tick.options.labels,
+                options.labels
+            ),
             str,
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
