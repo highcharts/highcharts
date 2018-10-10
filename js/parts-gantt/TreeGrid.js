@@ -10,14 +10,17 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import './GridAxis.js';
 import Tree from './Tree.js';
+import mixinTreeSeries from '../mixins/tree-series.js';
 import '../modules/broken-axis.src.js';
 var argsToArray = function (args) {
         return Array.prototype.slice.call(args, 1);
     },
+    defined = H.defined,
     each = H.each,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
+    getLevelOptions = mixinTreeSeries.getLevelOptions,
     merge = H.merge,
     inArray = H.inArray,
     isBoolean = function (x) {
@@ -490,9 +493,19 @@ override(GridAxis.prototype, {
         proceed.apply(axis, [chart, userOptions]);
         if (isTreeGrid) {
             H.addEvent(axis.chart, 'beforeRender', function () {
+                var labelOptions = axis.options && axis.options.labels;
+
                 // beforeRender is fired after all the series is initialized,
                 // which is an ideal time to update the axis.categories.
                 axis.updateYNames();
+
+                // Calculate the label options for each level in the tree.
+                axis.mapOptionsToLevel = getLevelOptions({
+                    defaults: labelOptions,
+                    from: 1,
+                    levels: labelOptions.levels,
+                    to: axis.tree.height
+                });
 
                 // Collapse all the nodes belonging to a point where collapsed
                 // equals true.
@@ -545,20 +558,37 @@ override(GridAxis.prototype, {
      */
     generateTick: function (proceed, pos) {
         var axis = this,
+            mapOptionsToLevel = (
+                isObject(axis.mapOptionsToLevel) ? axis.mapOptionsToLevel : {}
+            ),
             isTreeGrid = axis.options.type === 'treegrid',
             ticks = axis.ticks,
+            tick = ticks[pos],
+            levelOptions,
+            options,
             gridNode;
 
         if (isTreeGrid) {
             gridNode = axis.mapOfPosToGridNode[pos];
-            if (!ticks[pos]) {
-                ticks[pos] = new GridAxisTick(axis, pos, null, undefined, {
-                    category: gridNode.name,
-                    tickmarkOffset: gridNode.tickmarkOffset
-                });
+            levelOptions = mapOptionsToLevel[gridNode.depth];
+
+            if (levelOptions) {
+                options = {
+                    labels: levelOptions
+                };
+            }
+
+            if (!tick) {
+                ticks[pos] = tick =
+                    new GridAxisTick(axis, pos, null, undefined, {
+                        category: gridNode.name,
+                        tickmarkOffset: gridNode.tickmarkOffset,
+                        options: options
+                    });
             } else {
                 // update labels depending on tick interval
-                ticks[pos].addLabel();
+                tick.options = options;
+                tick.addLabel();
             }
         } else {
             proceed.apply(axis, argsToArray(arguments));
@@ -605,13 +635,17 @@ override(GridAxisTick.prototype, {
         step
     ) {
         var tick = this,
+            lbOptions = pick(
+                tick.options && tick.options.labels,
+                labelOptions
+            ),
             pos = tick.pos,
             axis = tick.axis,
             options = axis.options,
             isTreeGrid = options.type === 'treegrid',
             result = proceed.apply(
                 tick,
-                [x, y, label, horiz, labelOptions, tickmarkOffset, index, step]
+                [x, y, label, horiz, lbOptions, tickmarkOffset, index, step]
             ),
             symbolOptions,
             indentation,
@@ -621,13 +655,13 @@ override(GridAxisTick.prototype, {
 
         if (isTreeGrid) {
             symbolOptions = (
-                labelOptions && isObject(labelOptions.symbol) ?
-                labelOptions.symbol :
+                lbOptions && isObject(lbOptions.symbol) ?
+                lbOptions.symbol :
                 {}
             );
             indentation = (
-                labelOptions && isNumber(labelOptions.indentation) ?
-                options.labels.indentation :
+                lbOptions && isNumber(lbOptions.indentation) ?
+                lbOptions.indentation :
                 0
             );
             mapOfPosToGridNode = axis.mapOfPosToGridNode;
@@ -828,6 +862,7 @@ GridAxis.prototype.updateYNames = function () {
         // Used on init to start a node as collapsed
         axis.collapsedNodes = treeGrid.collapsedNodes;
         axis.hasNames = true;
+        axis.tree = treeGrid.tree;
 
         // We have to set the series data again to correct the y-values
         // which was set too early.
