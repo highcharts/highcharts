@@ -16,6 +16,7 @@ var defined = H.defined,
     extend = H.extend,
     each = H.each,
     addEvent = H.addEvent,
+    isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
     max = Math.max,
@@ -392,6 +393,166 @@ function calculateObstacleMargin(obstacles) {
 
 
 /**
+ * Find the coordinates a path starts on.
+ *
+ * @param   {Array} path
+ *          SVG path in array form.
+ *
+ * @return  {object}
+ *          Object with x/y coordinates.
+ */
+function getStartCoords(path) {
+    return path.length > 3 && path[0] === 'M' || path[0] === 'm' ?
+        { x: path[1], y: path[2] } :
+        { x: 0, y: 0 };
+}
+
+
+/**
+ * Find the coordinates a path ends on.
+ *
+ * @param   {Array} path
+ *          SVG path in array form.
+ *
+ * @return  {object}
+ *          Object with x/y coordinates.
+ */
+function getEndCoords(path) {
+    var lastOperator,
+        segment = [],
+        i = path.length,
+        xAcc = 0,
+        yAcc = 0,
+        x,
+        y;
+
+    // Go over all the path elements and parse them
+    while (i--) {
+        if (isNumber(path[i])) {
+            // Just a number, so store it for later
+            segment.push(path[i]);
+        } else {
+            // We have an operator
+            lastOperator = path[i];
+
+            // If we end up at a Z, just return the start position
+            if (lastOperator === 'z' || lastOperator === 'Z') {
+                return getStartCoords(path);
+            }
+
+            // Test upper vs lowercase operator. Lowercase is relative.
+            if (lastOperator === lastOperator.toUpperCase() && segment.length) {
+                // Solid point for at least one dimension
+                if (lastOperator === 'V' && y === undefined) {
+                    y = segment[0] + yAcc;
+                } else if (lastOperator === 'H' && x === undefined) {
+                    x = segment[0] + xAcc;
+                } else {
+                    // We have a solid point for both dimensions
+                    if (x === undefined) {
+                        x = segment[segment.length - 1] + xAcc;
+                    }
+                    if (y === undefined) {
+                        y = segment[segment.length - 2] + yAcc;
+                    }
+                    break;
+                }
+            } else if (segment.length) {
+                // Add to accumulator for at least one dimension
+                if (lastOperator === 'v') {
+                    yAcc += segment[0];
+                } else if (lastOperator === 'h') {
+                    xAcc += segment[0];
+                } else {
+                    // Update both dimensions
+                    yAcc += segment[segment.length - 2];
+                    xAcc += segment[segment.length - 1];
+                }
+            }
+            segment = [];
+        }
+    }
+
+    return { x: x, y: y };
+}
+
+
+/**
+ * Find a starting point for a path for animation purposes. Returns a path with
+ * the same number and type of segments as the original, but with all segments
+ * going from and to the starting point of the original path.
+ *
+ * @param   {Array} path
+ *          SVG path in array form.
+ *
+ * @param   {object} animation
+ *          Animation options for the path, which determines how to start the
+ *              path.
+ *
+ * @return  {Array}
+ *          The calculated starting path.
+ */
+function getStartingPath(path, animation) {
+    var newPath = [],
+        reversed = animation && animation.reversed,
+        operatorMap = {
+            M: ['x', 'y'],
+            H: ['x'],
+            V: ['y'],
+            L: ['x', 'y'],
+            Z: [],
+            C: ['x', 'y', 'x', 'y', 'x', 'y'],
+            Q: ['x', 'y', 'x', 'y'],
+            S: ['x', 'y', 'x', 'y'],
+            T: ['x', 'y'],
+            A: [0, 0, 0, 0, 0, 'x', 'y']
+        },
+        pos = {},
+        lowerCasePos = {
+            x: 0,
+            y: 0
+        },
+        firstOperator = path && path[0],
+        len = path.length,
+        positionMap;
+
+    if (len < 3) {
+        return path;
+    }
+
+    // Find the position we operate with
+    if (!firstOperator) {
+        return path;
+    }
+    pos = reversed ? getEndCoords(path) : getStartCoords(path);
+
+    // Loop over the path and find the new one
+    for (
+        var i = 0, curOperator, curOperatorIndex, placeholder;
+        i < len;
+        ++i
+    ) {
+        if (!isNumber(path[i])) {
+            // We have new operator, reset, and handle lower/upper case
+            newPath.push(path[i]);
+            positionMap = !operatorMap[path[i]] ? lowerCasePos : pos;
+            curOperator = path[i].toUpperCase();
+            curOperatorIndex = 0;
+        } else {
+            // We have a value. Find placeholder from operatorMap
+            placeholder = operatorMap[curOperator][curOperatorIndex];
+            newPath.push(
+                isNumber(placeholder) ? placeholder : positionMap[placeholder]
+            );
+            curOperatorIndex++;
+        }
+    }
+
+    return newPath;
+}
+
+
+/**
  * The Connection class. Used internally to represent a connection between two
  * points.
  *
@@ -448,21 +609,22 @@ Connection.prototype = {
      * @param   {object} [attribs]
      *          SVG attributes for the path.
      *
+     * @param   {object} [animation]
+     *          Animation options for the rendering.
+     *
      * @param   {Function} [complete]
      *          Callback function when the path has been rendered and animation
      *          is complete.
      *
      * @return  {void}
      */
-    renderPath: function (path, attribs, complete) {
+    renderPath: function (path, attribs, animation, complete) {
         var connection = this,
             chart = this.chart,
             pathfinder = chart.pathfinder,
-            animate = !(
-                chart.options.pathfinder &&
-                chart.options.pathfinder.animation === false
-            ),
-            pathGraphic = connection.graphics && connection.graphics.path;
+            animate = !chart.options.chart.forExport && animation !== false,
+            pathGraphic = connection.graphics && connection.graphics.path,
+            pathStartingPoint = getStartingPath(path, animation);
 
         // Add the SVG element of the pathfinder group if it doesn't exist
         if (!pathfinder.group) {
@@ -479,10 +641,10 @@ Connection.prototype = {
 
         // Create path if does not exist
         if (!(pathGraphic && pathGraphic.renderer)) {
-            pathGraphic = chart.renderer.path()
+            pathGraphic = chart.renderer.path(pathStartingPoint, animation)
                 /*= if (build.classic) { =*/
                 .attr({
-                    opacity: chart.options.chart.forExport ? 1 : 0
+                    opacity: 0
                 })
                 /*= } =*/
                 .add(pathfinder.group);
@@ -495,7 +657,7 @@ Connection.prototype = {
             opacity: 1,
             /*= } =*/
             d: path
-        }, null, complete);
+        }, animate ? animation : null, complete);
 
         // Store reference on connection
         this.graphics = this.graphics || {};
@@ -735,19 +897,19 @@ Connection.prototype = {
         }
 
         // Add the calculated path to the pathfinder group
-        connection.renderPath(path, attribs);
-
-        // Render the markers
-        connection.addMarker(
-            'start',
-            merge(options.marker, options.startMarker),
-            path
-        );
-        connection.addMarker(
-            'end',
-            merge(options.marker, options.endMarker),
-            path
-        );
+        connection.renderPath(path, attribs, options.animation, function () {
+            // Render the markers on complete
+            connection.addMarker(
+                'start',
+                merge(options.marker, options.startMarker),
+                path
+            );
+            connection.addMarker(
+                'end',
+                merge(options.marker, options.endMarker),
+                path
+            );
+        });
     },
 
     /**
@@ -893,8 +1055,39 @@ Pathfinder.prototype = {
      * @function Highcharts.Pathfinder#renderConnections
      */
     renderConnections: function () {
+        // Go through connections and render them. If they have not been
+        // rendered before, add them to a queue rendering after animate.
         each(this.connections, function (connection) {
-            connection.render();
+            var series = connection.fromPoint.series;
+            if (connection.graphics || series.options.animation === false) {
+                connection.render();
+            } else {
+                (
+                    series.pathfinderConnectionsToRender =
+                        series.pathfinderConnectionsToRender || []
+                ).push(connection);
+            }
+        });
+        each(this.chart.series, function (series) {
+            var render = function () {
+                each(series.pathfinderConnectionsToRender,
+                    function (connection) {
+                        connection.render();
+                    }
+                );
+                if (series.pathfinderRemoveRenderEvent) {
+                    series.pathfinderRemoveRenderEvent();
+                }
+                delete series.pathfinderConnectionsToRender;
+                delete series.pathfinderRemoveRenderEvent;
+            };
+            if (series.pathfinderConnectionsToRender) {
+                series.pathfinderRemoveRenderEvent = addEvent(
+                    series,
+                    'afterAnimate',
+                    render
+                );
+            }
         });
     },
 
