@@ -109,6 +109,9 @@ seriesType('gantt', 'xrange', {
     },
     pathfinder: {
         type: 'simpleConnect',
+        animation: {
+            reversed: true // Dependencies go from child to parent
+        },
         startMarker: {
             enabled: true,
             symbol: 'arrow-filled',
