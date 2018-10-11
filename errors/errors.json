@@ -77,7 +77,6 @@
 	},
 	"meta": {
 		"branch": "hc7/debugger",
-		"commit": "4801e5301",
 		"files": [
 			{
 				"path": "js/modules/debugger.src.js",

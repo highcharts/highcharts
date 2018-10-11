@@ -79,11 +79,14 @@ function parseBegin (e) {
             .execSync('git rev-parse --abbrev-ref HEAD', {cwd: rootPath})
             .toString()
             .trim(),
+        // results in minimal changes of errors/errors.json:
+        /*
         commit: childProcess
             .execSync('git rev-parse --short HEAD', {cwd: rootPath})
             .toString()
             .trim(),
-        // date: (new Date()).toString(), <-- results in minimal changes of errors/errors.json
+        date: (new Date()).toString(),
+        */
         files: [],
         version: require(rootPath  + '/package.json').version
     };
