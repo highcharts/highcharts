@@ -75,12 +75,12 @@ function matchAll(str, regexp) {
 function parseBegin (e) {
 
     errorsDictionary.meta = {
+        // results in minimal changes of errors/errors.json:
+        /*
         branch: childProcess
             .execSync('git rev-parse --abbrev-ref HEAD', {cwd: rootPath})
             .toString()
             .trim(),
-        // results in minimal changes of errors/errors.json:
-        /*
         commit: childProcess
             .execSync('git rev-parse --short HEAD', {cwd: rootPath})
             .toString()
