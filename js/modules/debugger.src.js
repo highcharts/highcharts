@@ -6,6 +6,8 @@
 
 'use strict';
 
+import H from '../parts/Globals.js';
+
 /**
  * **Can't plot zero or subzero values on a logarithmic axis**
  *
@@ -276,3 +278,9 @@
  * @private
  * @event Highcharts.Chart#event:error28
  */
+
+import errors from '../../errors/errors.json';
+
+H.Debugger = function () {
+    console.log(errors); // eslint-disable-line
+};
