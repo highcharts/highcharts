@@ -1213,11 +1213,13 @@ const jsdocErrors = () => {
     let codeFiles = [
             'js/modules/debugger.src.js'
         ],
-        productFolders = [
-            'gantt',
-            'highcharts',
-            'highstock',
-            'highmaps'
+        copyTargets = [
+            'build/api/gantt',
+            'build/api/highcharts',
+            'build/api/highstock',
+            'build/api/highmaps',
+            'code/errors',
+            'code/js/errors'
         ],
         gulpOptions = [codeFiles, { read: false }],
         jsdoc3Options = { plugins: ['tools/jsdoc/plugins/highcharts.errors'] };
@@ -1231,9 +1233,9 @@ const jsdocErrors = () => {
             }
 
             Promise
-                .all(productFolders.map(productFolder => copyFile(
+                .all(copyTargets.map(copyTarget => copyFile(
                     'errors/errors.json',
-                    `build/api/${productFolder}/errors.json`
+                    `${copyTarget}/errors.json`
                 )))
                 .then(resolve)
                 .catch(reject);
@@ -1361,7 +1363,7 @@ gulp.task('tsd-lint', ['tsd'], tsdLint);
  * TODO add --help command to inform about usage.
  * @return undefined
  */
-gulp.task('scripts', () => {
+gulp.task('scripts', ['jsdoc-errors'], () => {
     const options = {
         debug: argv.d || false,
         files: (
