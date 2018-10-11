@@ -1203,18 +1203,51 @@ const jsdoc = () => {
         .then(() => generateAPIDocs(optionsAPI));
 };
 
-const jsdocOptions = () => {
+/**
+ * Creates additional JSON-based error references from JSDoc.
+ */
+const jsdocErrors = () => {
 
-    return generateAPIDocs({
-        version: getBuildProperties().version,
-        treeFile: './tree.json',
-        output: './build/api',
-        onlyBuildCurrent: true
-    });
+    const jsdoc3 = require('gulp-jsdoc3');
+
+    let codeFiles = [
+            'js/modules/debugger.src.js'
+        ],
+        productFolders = [
+            'gantt',
+            'highcharts',
+            'highstock',
+            'highmaps'
+        ],
+        gulpOptions = [codeFiles, { read: false }],
+        jsdoc3Options = { plugins: ['tools/jsdoc/plugins/highcharts.errors'] };
+
+    let aGulp = (resolve, reject) => {
+
+        let aJson = (error) => {
+
+            if (error) {
+                reject(error);
+            }
+
+            Promise
+                .all(productFolders.map(productFolder => copyFile(
+                    'errors/errors.json',
+                    `build/api/${productFolder}/errors.json`
+                )))
+                .then(resolve)
+                .catch(reject);
+        };
+
+        gulp.src(...gulpOptions)
+            .pipe(jsdoc3(jsdoc3Options, aJson));
+    };
+
+    return new Promise(aGulp);
 };
 
 /**
- * Create additional JSON-based class references from JSDOC
+ * Creates additional JSON-based class references from JSDoc.
  */
 const jsdocNamespace = () => {
 
@@ -1255,6 +1288,19 @@ const jsdocNamespace = () => {
     };
 
     return new Promise(aGulp);
+};
+
+/**
+ * Creates JSON-based option references from JSDoc.
+ */
+const jsdocOptions = () => {
+
+    return generateAPIDocs({
+        version: getBuildProperties().version,
+        treeFile: './tree.json',
+        output: './build/api',
+        onlyBuildCurrent: true
+    });
 };
 
 /**
@@ -1301,6 +1347,7 @@ gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
 gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
+gulp.task('jsdoc-errors', jsdocErrors);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
 gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], tsd);
