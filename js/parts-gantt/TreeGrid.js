@@ -898,7 +898,7 @@ GridAxis.prototype.updateYNames = function () {
         // We have to set the series data again to correct the y-values
         // which was set too early.
         each(axis.series, function (series) {
-            series.setData(series.options.data, false, false, false);
+            series.setData(series.options.data, false, false, true);
         });
     }
 };
