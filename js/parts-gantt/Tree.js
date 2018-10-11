@@ -112,8 +112,8 @@ var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
 
     // Calculate start and end for point if it is not already explicitly set.
     if (data) {
-        data.start = isNumber(data.start) ? data.start : start;
-        data.end = isNumber(data.end) ? data.end : end;
+        data.start = data.x = isNumber(data.start) ? data.start : start;
+        data.end = data.x2 = isNumber(data.end) ? data.end : end;
     }
 
     extend(node, {
