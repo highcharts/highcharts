@@ -83,7 +83,7 @@ function parseBegin (e) {
             .execSync('git rev-parse --short HEAD', {cwd: rootPath})
             .toString()
             .trim(),
-        date: (new Date()).toString(),
+        // date: (new Date()).toString(), <-- results in minimal changes of errors/errors.json
         files: [],
         version: require(rootPath  + '/package.json').version
     };
@@ -142,7 +142,7 @@ function newDoclet (e) {
     const codeBlocks = [];
     const title = (sections[0][1] || 'Untitled Error');
 
-    body = (sections[0][2] || '')
+    let body = (sections[0][2] || '')
         .trim()
         .replace(
             new RegExp(parseMarkdownBlockCode),
