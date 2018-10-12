@@ -3273,9 +3273,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
     /**
      * The default label formatter. The context is a special config object for
-     * the label. In apps, use the {@link
-     * https://api.highcharts.com/highcharts/xAxis.labels.formatter|
-     * labels.formatter} instead except when a modification is needed.
+     * the label. In apps, use the
+     * [labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter)
+     * instead except when a modification is needed.
      *
      * @private
      * @function Highcharts.Axis#defaultLabelFormatter
