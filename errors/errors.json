@@ -17,7 +17,7 @@
 	},
 	"14": {
 		"title": "String value sent to series.data, expected Number",
-		"text": "<p>This happens if you pass in a string as a data point, for example in a setup like this: <pre>series: [{\n    data: [&quot;3&quot;, &quot;5&quot;, &quot;1&quot;, &quot;6&quot;]\n}]</pre></p><p>Highcharts expects the data values to be numbers. The most common reason for this is that data is parsed from CSV or from a XML source, and the implementer forgot to run<code>parseFloat</code> on the parsed value.</p><p>Note: For performance reasons internal type casting is not performed, and only the first value is checked (since 2.3).</p>"
+		"text": "<p>This happens if you pass in a string as a data point, for example in a setup like this: <pre>series: [{\n    data: [&quot;3&quot;, &quot;5&quot;, &quot;1&quot;, &quot;6&quot;]\n}]</pre></p><p>Highcharts expects the data values to be numbers. The most common reason for this is that data is parsed from CSV or from a XML source, and the implementer forgot to run <code>parseFloat</code> on the parsed value.</p><p>Note: For performance reasons internal type casting is not performed, and only the first value is checked (since 2.3).</p>"
 	},
 	"15": {
 		"title": "Highcharts expects data to be sorted",
@@ -25,19 +25,19 @@
 	},
 	"16": {
 		"title": "Highcharts already defined in the page",
-		"text": "<p>This error happens the second time Highcharts or Highstock is loaded in the same page, so the<code>Highcharts</code> namespace is already defined. Keep in mind that the<code>Highcharts.Chart</code> constructor and all features of Highcharts are included in Highstock, so if you are running<code>Chart</code> and<code>StockChart</code> in combination, you only need to load the highstock.js file.</p>"
+		"text": "<p>This error happens the second time Highcharts or Highstock is loaded in the same page, so the <code>Highcharts</code> namespace is already defined. Keep in mind that the <code>Highcharts.Chart</code> constructor and all features of Highcharts are included in Highstock, so if you are running <code>Chart</code> and <code>StockChart</code> in combination, you only need to load the highstock.js file.</p>"
 	},
 	"17": {
 		"title": "The requested series type does not exist",
-		"text": "<p>This error happens when you are setting<code>chart.type</code> or<code>series.type</code> to a series type that isn't defined in Highcharts. A typical reason may be that your are missing the extension file where the series type is defined, for example in order to run an<code>arearange</code> series you need to load the<code>highcharts-more.js</code> file.</p>"
+		"text": "<p>This error happens when you are setting <code>chart.type</code> or <code>series.type</code> to a series type that isn't defined in Highcharts. A typical reason may be that your are missing the extension file where the series type is defined, for example in order to run an <code>arearange</code> series you need to load the <code>highcharts-more.js</code> file.</p>"
 	},
 	"18": {
 		"title": "The requested axis does not exist",
-		"text": "<p>This error happens when you set a series'<code>xAxis</code> or<code>yAxis</code> property to point to an axis that does not exist.</p>"
+		"text": "<p>This error happens when you set a series' <code>xAxis</code> or <code>yAxis</code> property to point to an axis that does not exist.</p>"
 	},
 	"19": {
 		"title": "Too many ticks",
-		"text": "<p>This error happens when you try to apply too many ticks to an axis, specifically when you add more ticks than the axis pixel length.</p><p>With default value this will not happen, but there are edge cases, for example when setting axis categories and<code>xAxis.labels.step</code> in combination with a long data range, when the axis is instructed to create a great number of ticks.</p>"
+		"text": "<p>This error happens when you try to apply too many ticks to an axis, specifically when you add more ticks than the axis pixel length.</p><p>With default value this will not happen, but there are edge cases, for example when setting axis categories and <code>xAxis.labels.step</code> in combination with a long data range, when the axis is instructed to create a great number of ticks.</p>"
 	},
 	"20": {
 		"title": "Can't add object point configuration to a long data series",
@@ -65,11 +65,11 @@
 	},
 	"26": {
 		"title": "WebGL not supported, and no fallback module included",
-		"text": "<p>This happens when your browser does not support WebGL,<b>and</b> the canvas fallback module (`boost-canvas.js`) has not been included OR if the fallback module was included<b>after</b> the boost module.</p><p>Make sure you include<code>boost-canvas.js</code>, and that it's included before<code>boost.js</code>.</p>"
+		"text": "<p>This happens when your browser does not support WebGL,<b>and</b> the canvas fallback module (`boost-canvas.js`) has not been included OR if the fallback module was included<b>after</b> the boost module.</p><p>Make sure you include <code>boost-canvas.js</code>, and that it's included before <code>boost.js</code>.</p>"
 	},
 	"27": {
 		"title": "This browser does not support SVG.",
-		"text": "<p>This happens in old IE when the<code>oldie.js</code> module is not loaded.</p><p>If you need to target IE versions 6, 7 and 8, add the module after loading<code>highcharts.js</code>. In a website context, it is a good idea to load it in a conditional comment to avoid traffic overhead in modern browsers: <pre>&lt;!--[if lt IE 9]&gt;\n    &lt;script src='https://code.highcharts.com/modules/oldie.js'&gt;&lt;/script&gt;\n&lt;![endif]--&gt;</pre></p>"
+		"text": "<p>This happens in old IE when the <code>oldie.js</code> module is not loaded.</p><p>If you need to target IE versions 6, 7 and 8, add the module after loading <code>highcharts.js</code>. In a website context, it is a good idea to load it in a conditional comment to avoid traffic overhead in modern browsers: <pre>&lt;!--[if lt IE 9]&gt;\n    &lt;script src='https://code.highcharts.com/modules/oldie.js'&gt;&lt;/script&gt;\n&lt;![endif]--&gt;</pre></p>"
 	},
 	"28": {
 		"title": "Fallback to export server disabled",

@@ -40,7 +40,7 @@ const htmlEscapeTable = {
     }
 };
 const parseMarkdownBlockCode = /(?:^|\n)```(\w*?)([\s\S]+?)\n```/;
-const parseMarkdownCode = /(?:^|\s)`(\w(?:[^`]|\s)*?)`/;
+const parseMarkdownCode = /(^|\s)`(\w(?:[^`]|\s)*?)`/;
 const parseMarkdownFormat = /(?:^|\s)(\*{1,3})(\w(?:[^\*]|\s)*?)\1/;
 const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
 const parseMarkdownList = /(?:^|\n)[\-\+\*] ([\s\S]*?)(?=\n\n|$)/;
@@ -184,7 +184,7 @@ function newDoclet (e) {
                 return blockCodePlaceholder;
             }
         )
-        .replace(new RegExp(parseMarkdownCode, 'g'), '<code>$1</code>')
+        .replace(new RegExp(parseMarkdownCode, 'g'), '$1<code>$2</code>')
         .replace(new RegExp(parseMarkdownLink, 'g'), (match, text, url) => {
             return (
                 '<a href="' +
