@@ -57,7 +57,7 @@ var addEvent = H.addEvent,
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
- * {@link https://api.highcharts.com/highcharts/series|series}
+ * [series](https://api.highcharts.com/highcharts/series)
  * option structure, or after the chart is initialized, through
  * {@link Highcharts.Chart#addSeries}.
  *
@@ -73,8 +73,8 @@ var addEvent = H.addEvent,
  *
  * Configuration options for the series are given in three levels. Options for
  * all series in a chart are given in the
- * {@link https://api.highcharts.com/highcharts/plotOptions.series|
- * plotOptions.series} object. Then options for all series of a specific type
+ * [plotOptions.series](https://api.highcharts.com/highcharts/plotOptions.series)
+ * object. Then options for all series of a specific type
  * are given in the plotOptions of that type, for example `plotOptions.line`.
  * Next, options for one single series are given in the series array, or as
  * arguements to `chart.addSeries`.

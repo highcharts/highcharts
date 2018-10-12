@@ -460,8 +460,9 @@ if (Renderer === VMLRenderer) {
 
 
 /**
- * The factory function for creating new map charts. Creates a new {@link Chart|
- * Chart} object with different default options than the basic Chart.
+ * The factory function for creating new map charts. Creates a new {@link
+ * Highcharts.Chart|Chart} object with different default options than the basic
+ * Chart.
  *
  * @function Highcharts.mapChart
  *
@@ -469,8 +470,8 @@ if (Renderer === VMLRenderer) {
  *         The DOM element to render to, or its id.
  *
  * @param  {Highcharts.Options} options
- *         The chart options structure as described in the {@link
- *         https://api.highcharts.com/highstock|options reference}.
+ *         The chart options structure as described in the
+ *         [options reference](https://api.highcharts.com/highstock).
  *
  * @param  {Function} callback
  *         A function to execute when the chart object is finished loading and
@@ -480,8 +481,8 @@ if (Renderer === VMLRenderer) {
  *         chart object will not be finished synchronously. As a consequence,
  *         code that relies on the newly built Chart object should always run in
  *         the callback. Defining a
- *         {@link https://api.highcharts.com/highstock/chart.events.load|
- *         chart.event.load} handler is equivalent.
+ *         [chart.event.load](https://api.highcharts.com/highstock/chart.events.load)
+ *         handler is equivalent.
  *
  * @return {Highcharts.Chart}
  *         The chart object.

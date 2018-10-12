@@ -3464,14 +3464,13 @@ H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
  * human readable date string. The format is a subset of the formats for PHP's
- * [strftime]{@link
- * http://www.php.net/manual/en/function.strftime.php} function. Additional
- * formats can be given in the {@link Highcharts.dateFormats} hook.
+ * [strftime](http://www.php.net/manual/en/function.strftime.php) function.
+ * Additional formats can be given in the {@link Highcharts.dateFormats} hook.
  *
  * Since v6.0.5, all internal dates are formatted through the
- * [Chart.time](Chart#time) instance to respect chart-level time settings. The
- * `Highcharts.dateFormat` function only reflects global time settings set with
- * `setOptions`.
+ * {@link Highcharts.Chart#time} instance to respect chart-level time settings.
+ * The `Highcharts.dateFormat` function only reflects global time settings set
+ * with `setOptions`.
  *
  * @function Highcharts.dateFormat
  *
