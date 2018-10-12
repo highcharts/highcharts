@@ -640,7 +640,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     /**
      * Apply a text outline through a custom CSS property, by copying the text
      * element and apply stroke to the copy. Used internally. Contrast checks at
-     * {@link https://jsfiddle.net/highcharts/43soe9m1/2/}.
+     * [example](https://jsfiddle.net/highcharts/43soe9m1/2/).
      *
      * @example
      * // Specific color
@@ -2663,7 +2663,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * for gradients, fills, filters etc. Styled mode only. A hook for adding
      * general definitions to the SVG's defs tag. Definitions can be referenced
      * from the CSS by its `id`. Read more in
-     * {@link https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns|gradients, shadows and patterns}.
+     * [gradients, shadows and patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
      * Styled mode only.
      *
      * @function Highcharts.SVGRenderer#definition
