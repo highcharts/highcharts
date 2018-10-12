@@ -19,8 +19,26 @@ const path = require('path');
  *
  * */
 
-const rootPath = process.cwd();
+const blockCodePlaceholder = '<<<>>>';
 const docletNamePrefix = 'Highcharts.Chart#event:error';
+const htmlEscapeTable = {
+    '&': {
+        regExp: /&/,
+        replacement: '&amp;'
+    },
+    '"': {
+        regExp: /"/,
+        replacement: '&quot;'
+    },
+    '<': {
+        regExp: /</,
+        replacement: '&lt;'
+    },
+    '>': {
+        regExp: />/,
+        replacement: '&gt;'
+    }
+};
 const parseMarkdownBlockCode = /(?:^|\n)```(\w*?)([\s\S]+?)\n```/;
 const parseMarkdownCode = /(?:^|\s)`(\w(?:[^`]|\s)*?)`/;
 const parseMarkdownFormat = /(?:^|\s)(\*{1,3})(\w(?:[^\*]|\s)*?)\1/;
@@ -32,6 +50,7 @@ const parseListSpaces = /<\/li><\/ul><p>\s*?<\/p><ul><li>/;
 const parseParagraphSpaces = /<p><\/p>/;
 const parseSpaces = /\s+/;
 const parseSections = /^\*\*(\w[^\*]*?\n?[^\*]*?)\*\*([\s\S]+)$/;
+const rootPath = process.cwd();
 
 /* *
  *
@@ -46,6 +65,17 @@ let errorsDictionary = {};
  *  Private Functions
  *
  * */
+
+function escapeHTML(str) {
+    Object
+        .keys(htmlEscapeTable)
+        .filter(key => str.indexOf(key) > -1)
+        .forEach(key => str = str.replace(
+            new RegExp(htmlEscapeTable[key].regExp, 'g'),
+            htmlEscapeTable[key].replacement)
+        )
+    return str;
+}
 
 function matchAll(str, regexp) {
     const matches = [];
@@ -149,9 +179,9 @@ function newDoclet (e) {
         .trim()
         .replace(
             new RegExp(parseMarkdownBlockCode),
-            (language, content) => {
+            (match, language, content) => {
                 codeBlocks.push(content);
-                return parseBlockCodePlaceholder.toString();
+                return blockCodePlaceholder;
             }
         )
         .replace(new RegExp(parseMarkdownCode, 'g'), '<code>$1</code>')
@@ -187,7 +217,11 @@ function newDoclet (e) {
         .replace(new RegExp(parseSpaces, 'g'), ' ')
         .replace(
             new RegExp(parseBlockCodePlaceholder, 'g'),
-            (match) => (codeBlocks.shift() || '')
+            (match) => (
+                '<pre>' +
+                escapeHTML((codeBlocks.shift() || '').trim()) +
+                '</pre>'
+            )
         );
 
     body = ('<p>' + body + '</p>');

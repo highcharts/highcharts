@@ -17,7 +17,7 @@
 	},
 	"14": {
 		"title": "String value sent to series.data, expected Number",
-		"text": "<p>This happens if you pass in a string as a data point, for example in a setup like this: //</p><p>Highcharts expects the data values to be numbers. The most common reason for this is that data is parsed from CSV or from a XML source, and the implementer forgot to run<code>parseFloat</code> on the parsed value.</p><p>Note: For performance reasons internal type casting is not performed, and only the first value is checked (since 2.3).</p>"
+		"text": "<p>This happens if you pass in a string as a data point, for example in a setup like this: <pre>series: [{\n    data: [&quot;3&quot;, &quot;5&quot;, &quot;1&quot;, &quot;6&quot;]\n}]</pre></p><p>Highcharts expects the data values to be numbers. The most common reason for this is that data is parsed from CSV or from a XML source, and the implementer forgot to run<code>parseFloat</code> on the parsed value.</p><p>Note: For performance reasons internal type casting is not performed, and only the first value is checked (since 2.3).</p>"
 	},
 	"15": {
 		"title": "Highcharts expects data to be sorted",
@@ -69,7 +69,7 @@
 	},
 	"27": {
 		"title": "This browser does not support SVG.",
-		"text": "<p>This happens in old IE when the<code>oldie.js</code> module is not loaded.</p><p>If you need to target IE versions 6, 7 and 8, add the module after loading<code>highcharts.js</code>. In a website context, it is a good idea to load it in a conditional comment to avoid traffic overhead in modern browsers: //</p>"
+		"text": "<p>This happens in old IE when the<code>oldie.js</code> module is not loaded.</p><p>If you need to target IE versions 6, 7 and 8, add the module after loading<code>highcharts.js</code>. In a website context, it is a good idea to load it in a conditional comment to avoid traffic overhead in modern browsers: <pre>&lt;!--[if lt IE 9]&gt;\n    &lt;script src='https://code.highcharts.com/modules/oldie.js'&gt;&lt;/script&gt;\n&lt;![endif]--&gt;</pre></p>"
 	},
 	"28": {
 		"title": "Fallback to export server disabled",
