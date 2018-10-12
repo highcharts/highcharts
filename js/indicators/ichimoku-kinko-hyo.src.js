@@ -89,44 +89,16 @@ function checkLineIntersection(a1, a2, b1, b2) {
     return false;
 }
 
-function insertIntersection(pointsArr, pointIndex, intersect) {
-    pointsArr.splice(pointIndex, 0, {
-        plotX: intersect.plotX,
-        plotY: intersect.plotY,
-        isNull: false,
-        intersectPoint: true
-    });
-}
+// Parameter opt (indicator options object) include indicator, points,
+// nextPoints, color, options, gappedExtend and graph properties
+function drawSenkouSpan(opt) {
+    var indicator = opt.indicator;
 
-function concatPointsArr(
-    statement, pointsArr, nextPointsArr, sectionPoints, sectionNextPoints
-) {
-    if (statement) {
-        pointsArr[0] = pointsArr[0].concat(sectionPoints);
-        nextPointsArr[0] = nextPointsArr[0].concat(sectionNextPoints);
-    } else {
-        pointsArr[1] = pointsArr[1].concat(sectionPoints);
-        nextPointsArr[1] = nextPointsArr[1].concat(sectionNextPoints);
-    }
-}
-
-function drawSenkouSpan(
-    indicator,
-    pointsArr,
-    nextPointsArr,
-    color,
-    mainLineOptions,
-    gappedExtend,
-    senkouSpanGraph
-) {
-    indicator.points = pointsArr;
-    indicator.nextPoints = nextPointsArr;
-    indicator.color = color;
-    indicator.options = merge(
-        mainLineOptions.senkouSpan.styles,
-        gappedExtend
-    );
-    indicator.graph = senkouSpanGraph;
+    indicator.points = opt.points;
+    indicator.nextPoints = opt.nextPoints;
+    indicator.color = opt.color;
+    indicator.options = merge(opt.options.senkouSpan.styles, opt.gap);
+    indicator.graph = opt.graph;
     indicator.fillGraph = true;
     SMA.prototype.drawGraph.call(indicator);
 }
@@ -519,6 +491,7 @@ seriesType('ikh', 'sma',
                 pointsPlotYSum,
                 nextPointsPlotYSum,
                 senkouSpanTempColor,
+                concatArrIndex,
                 j,
                 k;
 
@@ -548,19 +521,19 @@ seriesType('ikh', 'sma',
                           ikhMap.senkouSpanA[index],
                           ikhMap.senkouSpanB[index - 1],
                           ikhMap.senkouSpanB[index]
-                        );
+                        ),
+                        intersectPointObj = {
+                            plotX: intersect.plotX,
+                            plotY: intersect.plotY,
+                            isNull: false,
+                            intersectPoint: true
+                        };
 
                     if (intersect) {
                         // Add intersect point to ichimoku points collection
                         // Create senkouSpan sections
-                        insertIntersection(
-                            ikhMap.senkouSpanA, index, intersect
-                        );
-
-                        insertIntersection(
-                            ikhMap.senkouSpanB, index, intersect
-                        );
-
+                        ikhMap.senkouSpanA.splice(index, 0, intersectPointObj);
+                        ikhMap.senkouSpanB.splice(index, 0, intersectPointObj);
                         intersectIndexColl.push(index);
                     }
                 }
@@ -647,35 +620,46 @@ seriesType('ikh', 'sma',
                                 sectionNextPoints[k].plotY;
                             }
 
-                            concatPointsArr(
-                                pointsPlotYSum > nextPointsPlotYSum,
-                                points,
-                                nextPoints,
-                                sectionPoints,
-                                sectionNextPoints
-                            );
+                            concatArrIndex =
+                                pointsPlotYSum > nextPointsPlotYSum ? 0 : 1;
+
+                            points[concatArrIndex] =
+                                points[concatArrIndex].concat(sectionPoints);
+
+                            nextPoints[concatArrIndex] =
+                                nextPoints[concatArrIndex].concat(
+                                    sectionNextPoints
+                                );
 
                         } else {
                             // Compare middle point of the section
-                            concatPointsArr(
+                            concatArrIndex =
                                 sectionPoints[x].plotY >
-                                sectionNextPoints[x].plotY,
-                                points,
-                                nextPoints,
-                                sectionPoints,
-                                sectionNextPoints
-                            );
+                                sectionNextPoints[x].plotY ?
+                                0 : 1;
+
+                            points[concatArrIndex] =
+                                points[concatArrIndex].concat(sectionPoints);
+
+                            nextPoints[concatArrIndex] =
+                                nextPoints[concatArrIndex].concat(
+                                    sectionNextPoints
+                                );
                         }
                     } else {
                         // Compare first point of the section
-                        concatPointsArr(
-                            sectionPoints[0].plotY >
-                            sectionNextPoints[0].plotY,
-                            points,
-                            nextPoints,
-                            sectionPoints,
-                            sectionNextPoints
-                        );
+                        concatArrIndex =
+                                sectionPoints[0].plotY >
+                                sectionNextPoints[0].plotY ?
+                                0 : 1;
+
+                        points[concatArrIndex] =
+                            points[concatArrIndex].concat(sectionPoints);
+
+                        nextPoints[concatArrIndex] =
+                            nextPoints[concatArrIndex].concat(
+                                sectionNextPoints
+                            );
                     }
                 }
 
@@ -687,15 +671,15 @@ seriesType('ikh', 'sma',
                             senkouSpanTempColor = (i === 0) ?
                                 color : negativeColor;
 
-                            drawSenkouSpan(
-                                indicator,
-                                points[i],
-                                nextPoints[i],
-                                senkouSpanTempColor,
-                                mainLineOptions,
-                                gappedExtend,
-                                indicator[areaName]
-                            );
+                            drawSenkouSpan({
+                                indicator: indicator,
+                                points: points[i],
+                                nextPoints: nextPoints[i],
+                                color: senkouSpanTempColor,
+                                options: mainLineOptions,
+                                gap: gappedExtend,
+                                graph: indicator[areaName]
+                            });
 
                             // Now save line
                             indicator[areaName] = indicator.graph;
@@ -705,15 +689,15 @@ seriesType('ikh', 'sma',
 
             } else {
                 // When user set only senkouSpan style.fill property
-                drawSenkouSpan(
-                    indicator,
-                    ikhMap.senkouSpanB,
-                    ikhMap.senkouSpanA,
-                    color,
-                    mainLineOptions,
-                    gappedExtend,
-                    indicator.graphsenkouSpan
-                );
+                drawSenkouSpan({
+                    indicator: indicator,
+                    points: ikhMap.senkouSpanB,
+                    nextPoints: ikhMap.senkouSpanA,
+                    color: color,
+                    options: mainLineOptions,
+                    gap: gappedExtend,
+                    graph: indicator.graphsenkouSpan
+                });
 
                 // Now save line
                 indicator.graphsenkouSpan = indicator.graph;
@@ -900,11 +884,7 @@ seriesType('ikh', 'sma',
  * @type {Object}
  * @since 6.0.0
  * @extends series,plotOptions.ikh
- * @excluding
- *              data,dataParser,dataURL
- *              allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
- *              showInNavigator,navigatorOptions,pointInterval,
- *              pointIntervalUnit,pointPlacement,pointRange,pointStart
+ * @excluding   data,dataParser,dataURL
  * @product highstock
  * @apioption series.ikh
  */
