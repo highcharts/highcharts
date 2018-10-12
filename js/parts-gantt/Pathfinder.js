@@ -450,10 +450,10 @@ function getEndCoords(path) {
                 } else {
                     // We have a solid point for both dimensions
                     if (x === undefined) {
-                        x = segment[segment.length - 1] + xAcc;
+                        x = segment[1] + xAcc;
                     }
                     if (y === undefined) {
-                        y = segment[segment.length - 2] + yAcc;
+                        y = segment[0] + yAcc;
                     }
                     break;
                 }
@@ -465,8 +465,8 @@ function getEndCoords(path) {
                     xAcc += segment[0];
                 } else {
                     // Update both dimensions
-                    yAcc += segment[segment.length - 2];
-                    xAcc += segment[segment.length - 1];
+                    yAcc += segment[0];
+                    xAcc += segment[1];
                 }
             }
             segment = [];
