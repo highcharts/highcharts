@@ -1260,7 +1260,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @param {Highcharts.ExportingOptionsObject} exportingOptions
      *        Exporting options in addition to those defined in
-     *        {@link https://api.highcharts.com/highcharts/exporting|exporting}.
+     *        [exporting](https://api.highcharts.com/highcharts/exporting).
      *
      * @param {Highcharts.Options} chartOptions
      *        Additional chart options for the exported chart. For example a
