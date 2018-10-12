@@ -397,7 +397,13 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
             each(nodes, function (node) {
                 var data = node.data;
                 if (isObject(data)) {
-                    data.y = start + data.seriesIndex;
+                    // Update point
+                    data.update(
+                        {
+                            y: start + data.seriesIndex
+                        },
+                        false
+                    );
                     // Remove the property once used
                     delete data.seriesIndex;
                 }
@@ -863,8 +869,14 @@ GridAxis.prototype.updateYNames = function () {
         // Concatenate data from all series assigned to this axis.
         data = reduce(series, function (arr, s) {
             if (s.visible) {
+                // If we do not have points, then generate them.
+                if (!s.points) {
+                    s.processData();
+                    s.generatePoints();
+                }
+
                 // Push all data to array
-                each(s.options.data, function (data) {
+                each(s.points, function (data) {
                     if (isObject(data)) {
                         // Set series index on data. Removed again after use.
                         data.seriesIndex = numberOfSeries;
@@ -894,12 +906,6 @@ GridAxis.prototype.updateYNames = function () {
         axis.collapsedNodes = treeGrid.collapsedNodes;
         axis.hasNames = true;
         axis.tree = treeGrid.tree;
-
-        // We have to set the series data again to correct the y-values
-        // which was set too early.
-        each(axis.series, function (series) {
-            series.setData(series.options.data, false, false, true);
-        });
     }
 };
 
