@@ -24,6 +24,11 @@ const path = require('path');
  * */
 
 const rootPath = process.cwd();
+const parseCommentBlock = /\/?\*\/?/;
+const parseBreak = /[\n\r]+/;
+const parseJsdocLink = /\{@link\s+((?:[^\|]|\s)+?)(?:\|([^\}]|\s+?))?\}/;
+const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
+const parseSpace = /[ \f\r\t\v]+/;
 
 /* *
  *
@@ -312,11 +317,26 @@ function getDescription (doclet) {
             description = description.substr(0, tagPosition + 1);
         }
 
-        description = description.replace(/\/?\*\/?/gm, '');
+        description = description.replace(new RegExp(parseCommentBlock, 'g'), '');
     }
 
-    description = description.replace(/[ \f\r\t\v]+/gm, ' ');
-    description = description.trim();
+    description = description
+        .replace(new RegExp(parseSpace, 'g'), ' ')
+        .trim()
+        .replace(
+            new RegExp(parseJsdocLink, 'g'),
+            (match, url, text) => (
+                '{@link ' + url.replace(new RegExp(parseBreak, 'g'), '') +
+                (text ? '|' + text.trim() : '') + '}'
+            )
+        )
+        .replace(
+            new RegExp(parseMarkdownLink, 'g'),
+            (match, text, url) => (
+                '[' + text.trim() + '](' +
+                url.replace(new RegExp(parseBreak, 'g'), '') + ')'
+            )
+        );
 
     if (description.indexOf('(c)') > -1) {
         // found only a file header with the copyright line
