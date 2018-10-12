@@ -290,7 +290,7 @@ seriesType('gantt', 'xrange', {
  * connecting options between the points.
  *
  * @type {string|object}
- * @since 7.0.0
+ * @since 6.2.0
  * @product gantt
  * @apioption series.gantt.data.dependency
  */

@@ -52,7 +52,7 @@ extend(H.defaultOptions, {
          *
          * @type {boolean}
          * @default true
-         * @since 7.0.0
+         * @since 6.2.0
          * @apioption pathfinder.enabled
          */
 
@@ -62,7 +62,7 @@ extend(H.defaultOptions, {
          *
          * @type {string}
          * @default solid
-         * @since 7.0.0
+         * @since 6.2.0
          * @apioption pathfinder.dashStyle
          */
 
@@ -72,7 +72,7 @@ extend(H.defaultOptions, {
          *
          * @type {Color}
          * @default null
-         * @since 7.0.0
+         * @since 6.2.0
          * @apioption pathfinder.lineColor
          */
 
@@ -89,7 +89,7 @@ extend(H.defaultOptions, {
          *
          * @type {number}
          * @default null
-         * @since 7.0.0
+         * @since 6.2.0
          * @apioption pathfinder.algorithmMargin
          */
 
@@ -115,7 +115,7 @@ extend(H.defaultOptions, {
          *
          * @type {string}
          * @default straight
-         * @since 7.0.0
+         * @since 6.2.0
          * @apioption pathfinder.type
          */
         type: 'straight',
@@ -126,7 +126,7 @@ extend(H.defaultOptions, {
          *
          * @type {number}
          * @default 1
-         * @since 7.0.0
+         * @since 6.2.0
          * @apioption pathfinder.lineWidth
          */
         lineWidth: 1,
@@ -135,7 +135,7 @@ extend(H.defaultOptions, {
          * Marker options for this chart's Pathfinder connectors.
          *
          * @type {object}
-         * @since 7.0.0
+         * @since 6.2.0
          * @apioption pathfinder.marker
          */
         marker: {
@@ -148,7 +148,7 @@ extend(H.defaultOptions, {
              *
              * @type {number}
              * @default null
-             * @since 7.0.0
+             * @since 6.2.0
              * @apioption pathfinder.marker.radius
              */
 
@@ -158,7 +158,7 @@ extend(H.defaultOptions, {
              *
              * @type {number}
              * @default null
-             * @since 7.0.0
+             * @since 6.2.0
              * @apioption pathfinder.marker.width
              */
 
@@ -168,7 +168,7 @@ extend(H.defaultOptions, {
              *
              * @type {number}
              * @default null
-             * @since 7.0.0
+             * @since 6.2.0
              * @apioption pathfinder.marker.height
              */
 
@@ -178,7 +178,7 @@ extend(H.defaultOptions, {
              *
              * @type {Color}
              * @default null
-             * @since 7.0.0
+             * @since 6.2.0
              * @apioption pathfinder.marker.color
              */
 
@@ -188,7 +188,7 @@ extend(H.defaultOptions, {
              *
              * @type {Color}
              * @default null
-             * @since 7.0.0
+             * @since 6.2.0
              * @apioption pathfinder.marker.lineColor
              */
 
@@ -223,7 +223,7 @@ extend(H.defaultOptions, {
          * Pathfinder connectors. Overrides the generic marker options.
          *
          * @type {object}
-         * @since 7.0.0
+         * @since 6.2.0
          * @extends pathfinder.marker
          * @apioption pathfinder.startMarker
          */
@@ -239,7 +239,7 @@ extend(H.defaultOptions, {
          * Pathfinder connectors. Overrides the generic marker options.
          *
          * @type {object}
-         * @since 7.0.0
+         * @since 6.2.0
          * @extends pathfinder.marker
          * @apioption pathfinder.endMarker
          */
@@ -256,7 +256,7 @@ extend(H.defaultOptions, {
  * Override Pathfinder options for a series. Requires Highcharts Gantt or the
  * Pathfinder module.
  *
- * @since 7.0.0
+ * @since 6.2.0
  * @extends pathfinder
  * @apioption plotOptions.series.pathfinder
  * @excluding enabled,algorithmMargin
@@ -268,7 +268,7 @@ extend(H.defaultOptions, {
  * point, or an object.
  *
  * @type {string|object}
- * @since 7.0.0
+ * @since 6.2.0
  * @extends plotOptions.series.pathfinder
  * @apioption series.line.data.connect
  */
@@ -277,7 +277,7 @@ extend(H.defaultOptions, {
  * The ID of the point to connect to.
  *
  * @type {string}
- * @since 7.0.0
+ * @since 6.2.0
  * @apioption series.line.data.connect.to
  */
 
