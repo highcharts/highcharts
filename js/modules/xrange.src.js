@@ -26,6 +26,26 @@ var addEvent = H.addEvent,
     Series = H.Series;
 
 /**
+ * Return color of a point based on its category.
+ *
+ * @param {object} series The series which the point belongs to.
+ * @param {object} point The point to calculate its color for.
+ * @returns {object} Returns an object containing the properties color and
+ * colorIndex.
+ */
+var getColorByCategory = function getColorByCategory(series, point) {
+    var colors = series.options.colors || series.chart.options.colors,
+        colorCount = colors.length,
+        colorIndex = point.y % colorCount,
+        color = colors[colorIndex];
+
+    return {
+        colorIndex: colorIndex,
+        color: color
+    };
+};
+
+/**
  * @private
  * @class
  * @name Highcharts.seriesTypes.xrange
@@ -490,10 +510,32 @@ seriesType('xrange', 'column'
     //*/
 
 }, { // Point class properties
-
+    /*= if (build.classic) { =*/
     /**
-     * Extend init so that `colorByPoint` for x-range means that one color is
-     * applied per Y axis category.
+     * Extend applyOptions so that `colorByPoint` for x-range means that one
+     * color is applied per Y axis category.
+     *
+     * @private
+     * @function Highcharts.Point#applyOptions
+     *
+     * @return {Highcharts.Series}
+     */
+    applyOptions: function () {
+        var point = Point.prototype.applyOptions.apply(this, arguments),
+            series = point.series,
+            colorByPoint;
+
+        if (series.options.colorByPoint && !point.options.color) {
+            colorByPoint = getColorByCategory(series, point);
+            point.color = colorByPoint.color;
+            point.colorIndex = colorByPoint.colorIndex;
+        }
+
+        return point;
+    },
+    /*= } =*/
+    /**
+     * Extend init to have y default to 0.
      *
      * @private
      * @function Highcharts.Point#init
@@ -501,28 +543,11 @@ seriesType('xrange', 'column'
      * @return {Highcharts.Series}
      */
     init: function () {
-
         Point.prototype.init.apply(this, arguments);
-
-        var colors,
-            series = this.series,
-            colorCount = series.chart.options.chart.colorCount;
 
         if (!this.y) {
             this.y = 0;
         }
-
-        /*= if (build.classic) { =*/
-        if (series.options.colorByPoint) {
-            colors = series.options.colors || series.chart.options.colors;
-            colorCount = colors.length;
-
-            if (!this.options.color && colors[this.y % colorCount]) {
-                this.color = colors[this.y % colorCount];
-            }
-        }
-        /*= } =*/
-        this.colorIndex = pick(this.options.colorIndex, this.y % colorCount);
 
         return this;
     },
