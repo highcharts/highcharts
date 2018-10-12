@@ -61,8 +61,7 @@ var H = Highcharts,
  * `Highcharts.setOptions`, or individually for each Chart item through the
  * [time](https://api.highcharts.com/highcharts/time) options set.
  *
- * The Time object is available from
- * [Chart.time](http://api.highcharts.com/class-reference/Highcharts.Chart#.time),
+ * The Time object is available from {@link Highcharts.Chart#time},
  * which refers to  `Highcharts.time` if no individual time settings are
  * applied.
  *
