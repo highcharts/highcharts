@@ -18,6 +18,53 @@
  * @property {number} scaleY
  */
 
+/**
+ * The object contains common information for a click event on a series.
+ *
+ * @interface Highcharts.SeriesClickObject
+ *
+ * @implements {global.ClickEvent}
+ *//**
+ * The nearest point on the graph.
+ *
+ * @name Highcharts.SeriesClickObject#point
+ * @type {Highcharts.Point}
+ */
+
+/**
+ * The function callback to execute when a series is clicked.
+ *
+ * @callback Highcharts.SeriesClickCallbackFunction
+ *
+ * @param {Highcharts.SeriesClickObject} e
+ *        Event arguments.
+ *
+ * @return {boolean|undefined}
+ *         Returning false cancels toogle actions.
+ */
+
+/**
+ * The object contains common information for a click event on a series point.
+ *
+ * @interface Highcharts.SeriesPointClickObject
+ *
+ * @implements {global.ClickEvent}
+ *//**
+ * The clicked point.
+ *
+ * @name Highcharts.SeriesPointClickObject#point
+ * @type {Highcharts.Point}
+ */
+
+/**
+ * The function callback to execute when a series is clicked.
+ *
+ * @callback Highcharts.SeriesPointClickCallbackFunction
+ *
+ * @param {Highcharts.SeriesPointClickObject} e
+ *        Event arguments.
+ */
+
 'use strict';
 
 import H from './Globals.js';
@@ -818,7 +865,7 @@ H.Series = H.seriesType('line', null
      * @type      {Function}
      * @since     4.0
      * @product   highcharts highstock
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.afterAnimate
      */
 
@@ -834,7 +881,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {Function}
      * @since     1.2.0
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.checkboxClick
      */
 
@@ -850,8 +897,8 @@ H.Series = H.seriesType('line', null
      * @sample {highmaps} maps/plotoptions/series-events-click/
      *         Display click info in subtitle
      *
-     * @type      {Function}
-     * @context   Series
+     * @type      {Highcharts.SeriesClickCallbackFunction}
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.click
      */
 
@@ -864,7 +911,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {Function}
      * @since     1.2.0
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.hide
      */
 
@@ -878,7 +925,7 @@ H.Series = H.seriesType('line', null
      *         Confirm hiding and showing
      *
      * @type      {Function}
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.legendItemClick
      */
 
@@ -895,7 +942,7 @@ H.Series = H.seriesType('line', null
      *         Without sticky tracking
      *
      * @type      {Function}
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.mouseOut
      */
 
@@ -909,7 +956,7 @@ H.Series = H.seriesType('line', null
      *         Without sticky tracking
      *
      * @type      {Function}
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.mouseOver
      */
 
@@ -922,7 +969,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {Function}
      * @since     1.2.0
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.show
      */
 
@@ -1269,8 +1316,8 @@ H.Series = H.seriesType('line', null
          * @sample {highmaps} maps/plotoptions/series-point-events-click-url/
          *         Go to URL
          *
-         * @type      {Function}
-         * @context   Point
+         * @type      {Highcharts.SeriesPointClickCallbackFunction}
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.click
          */
 
@@ -1283,7 +1330,7 @@ H.Series = H.seriesType('line', null
          *         Show values in the chart's corner on mouse over
          *
          * @type      {Function}
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.mouseOut
          */
 
@@ -1296,7 +1343,7 @@ H.Series = H.seriesType('line', null
          *         Show values in the chart's corner on mouse over
          *
          * @type      {Function}
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.mouseOver
          */
 
@@ -1310,7 +1357,7 @@ H.Series = H.seriesType('line', null
          *
          * @type      {Function}
          * @since     1.2.0
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.remove
          */
 
@@ -1326,7 +1373,7 @@ H.Series = H.seriesType('line', null
          *
          * @type      {Function}
          * @since     1.2.0
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.select
          */
 
@@ -1343,7 +1390,7 @@ H.Series = H.seriesType('line', null
          *
          * @type      {Function}
          * @since     1.2.0
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.unselect
          */
 
@@ -1358,7 +1405,7 @@ H.Series = H.seriesType('line', null
          *
          * @type      {Function}
          * @since     1.2.0
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.update
          */
 
