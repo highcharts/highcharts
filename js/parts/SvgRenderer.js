@@ -293,17 +293,7 @@ var SVGElement,
     svg = H.svg,
     SVG_NS = H.SVG_NS,
     symbolSizes = H.symbolSizes,
-    win = H.win,
-    mapOfFontSizeToHeight = {
-        '11px': {
-            height: 17,
-            corrected: 14
-        },
-        '13px': {
-            height: 20,
-            corrected: 16
-        }
-    };
+    win = H.win;
 
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
@@ -1539,7 +1529,6 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             cache = renderer.cache,
             cacheKeys = renderer.cacheKeys,
             isSVG = element.namespaceURI === wrapper.SVG_NS,
-            fontSizeToHeight,
             cacheKey;
 
         rotation = pick(rot, wrapper.rotation);
@@ -1652,15 +1641,16 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 // Also vertical positioning is affected.
                 // https://jsfiddle.net/highcharts/em37nvuj/
                 // (#1101, #1505, #1669, #2568, #6213).
-                fontSizeToHeight = mapOfFontSizeToHeight[
-                    styles && styles.fontSize
-                ];
-                if (
-                    isSVG &&
-                    fontSizeToHeight &&
-                    fontSizeToHeight.height === Math.round(height)
-                ) {
-                    bBox.height = height = fontSizeToHeight.corrected;
+                if (isSVG) {
+                    bBox.height = height = (
+                        {
+                            '11px,17': 14,
+                            '13px,20': 16
+                        }[
+                            styles && styles.fontSize + ',' + Math.round(height)
+                        ] ||
+                        height
+                    );
                 }
 
                 // Adjust for rotated text
