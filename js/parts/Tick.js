@@ -49,7 +49,9 @@ H.Tick = function (axis, pos, type, noLabel, parameters) {
     this.type = type || '';
     this.isNew = true;
     this.isNewLabel = true;
-    this.tickmarkOffset = pick(params.tickmarkOffset, axis.tickmarkOffset);
+    // Usually undefined, numeric for grid axes
+    this.tickmarkOffset = params.tickmarkOffset;
+
     this.category = pick(
         params.category,
         isArray(axis.categories) ? axis.categories[pos] : undefined,
@@ -488,7 +490,7 @@ H.Tick.prototype = {
             attribs = {},
             pos = tick.pos,
             type = tick.type,
-            tickmarkOffset = tick.tickmarkOffset,
+            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
             renderer = axis.chart.renderer;
 
         /*= if (build.classic) { =*/
@@ -630,7 +632,7 @@ H.Tick.prototype = {
             label = tick.label,
             labelOptions = options.labels,
             step = labelOptions.step,
-            tickmarkOffset = tick.tickmarkOffset,
+            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
             show = true,
             x = xy.x,
             y = xy.y;
@@ -706,7 +708,7 @@ H.Tick.prototype = {
             axis = tick.axis,
             horiz = axis.horiz,
             pos = tick.pos,
-            tickmarkOffset = tick.tickmarkOffset,
+            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
             xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,
