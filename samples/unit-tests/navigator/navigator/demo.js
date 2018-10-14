@@ -660,3 +660,63 @@ QUnit.test(
 
     }
 );
+
+
+QUnit.test('stickToMin and stickToMax', function (assert) {
+    var chart = new Highcharts.stockChart('container', {
+            xAxis: {
+                min: 5,
+                minRange: 1
+            },
+            plotOptions: {
+                series: {
+                    showInNavigator: true
+                }
+            },
+            rangeSelector: {
+                buttons: [{
+                    count: 2,
+                    type: 'millisecond',
+                    text: '2ms'
+                }]
+            },
+            series: [{
+                pointStart: 0,
+                data: [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
+            }, {
+                pointStart: 5,
+                data: [3, 2, 1, 1, 2]
+            }]
+        }),
+        extremes;
+
+    chart.series[0].addPoint(5, false, false);
+    chart.series[1].addPoint(5, false, false);
+    chart.redraw();
+
+    extremes = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        extremes.min,
+        5,
+        'stickToMin, multiple series with different ranges: ' +
+            'Correct extremes after adding points(#9075)'
+    );
+
+    chart.series[0].update({
+        pointStart: extremes.max,
+        data: [4]
+    });
+
+    chart.rangeSelector.clickButton(0, true);
+    chart.series[0].addPoint(5);
+    chart.series[1].addPoint(5);
+    extremes = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        extremes.min,
+        extremes.max - chart.fixedRange,
+        'stickToMax, multiple series with different ranges: ' +
+            'Correct extremes after rangeSelector use and adding points(#9075)'
+    );
+});
