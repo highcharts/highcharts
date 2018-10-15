@@ -514,7 +514,11 @@ override(GridAxis.prototype, {
 
             }, userOptions, { // User options
                 // Forced options
-                reversed: true
+                reversed: true,
+                // grid.columns is not supported in treegrid
+                grid: {
+                    columns: undefined
+                }
             });
         }
 
