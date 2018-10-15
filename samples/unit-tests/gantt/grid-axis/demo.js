@@ -1021,14 +1021,14 @@ QUnit.module('labels alignment', function () {
             assert.close(
                 bboxLabel.x,
                 center[0] - (bboxLabel.width / 2),
-                1.01, // Allow an error of 1px
+                1.5, // Allow an error of 1px
                 axis.coll + ' label "' + tick.label.textStr + '" is centered horizontally.'
             );
 
             assert.close(
                 bboxLabel.y,
                 center[1] - (bboxLabel.height / 2),
-                1.01, // Allow an error of 1px
+                1.5, // Allow an error of 1px
                 axis.coll + ' label "' + tick.label.textStr + '" is centered vertically.'
             );
         };

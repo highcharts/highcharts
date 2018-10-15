@@ -119,9 +119,10 @@
     });
 
     /**
-     * Checks that the extra shape is rendered correctly.
+     * Checks that the extra shape is rendered correctly. Skip MS because it
+     * finds clip paths differently.
      */
-    QUnit.test('drawPoints()', function (assert) {
+    QUnit[Highcharts.isMS ? 'skip' : 'test']('drawPoints()', function (assert) {
         var chart,
             i,
             points,
