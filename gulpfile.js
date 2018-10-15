@@ -119,64 +119,6 @@ const lintSamples = () => {
     console.log(formatter(report.results));
 };
 
-gulp.task('ftp', function () {
-    const ftp = require('vinyl-ftp');
-    const paths = {
-        buildsDir: './js/builds',
-        distributions: [
-            './js/highcharts.src.js',
-            './js/highmaps.src.js',
-            './js/highstock.src.js',
-            './js/highcharts-3d.src.js',
-            './js/highcharts-more.src.js'
-        ],
-        assemblies: [
-            './js/highcharts.src.js',
-            './js/highstock.src.js',
-            './js/highcharts-3d.src.js',
-            './js/highcharts-more.src.js',
-            './js/highmaps.src.js',
-            './js/modules/map.src.js',
-            './js/modules/heatmap.src.js'
-        ],
-        modules: ['./js/modules/*.js'],
-        parts: ['./js/parts/*.js'],
-        parts3D: ['./js/parts-3d/*.js'],
-        partsMap: ['./js/parts-map/*.js'],
-        partsMore: ['./js/parts-more/*.js'],
-        partsGantt: ['./js/parts-gantt/*.js'],
-        themes: ['./js/themes/*.js']
-    };
-    fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
-        if (err) {
-            throw err;
-        }
-        let config = {};
-        lines.split('\n').forEach(function (line) {
-            line = line.split('=');
-            if (line[0]) {
-                config[line[0]] = line[1];
-            }
-        });
-
-        let conn = ftp.create({
-            host: config['ftp.host'],
-            user: config['ftp.user'],
-            password: config['ftp.password']
-        });
-
-        let globs = paths.distributions.concat(paths.modules);
-
-        return gulp.src(globs, { base: './js', buffer: false })
-            .pipe(conn.newer(config['ftp.dest']))
-            .pipe(conn.dest(config['ftp.dest']));
-    });
-});
-
-gulp.task('ftp-watch', function () {
-    gulp.watch('./js/*/*.js', ['scripts', 'ftp']);
-});
-
 /**
  * Run the test suite.
  */
@@ -535,6 +477,7 @@ const copyToDist = () => {
     // Files that should not be distributed with certain products
     const filter = {
         highcharts: [
+            'highcharts-gantt.js',
             'highmaps.js',
             'highstock.js',
             'indicators/',
@@ -544,16 +487,33 @@ const copyToDist = () => {
         ].map(str => new RegExp(str)),
         highstock: [
             'highcharts.js',
+            'highcharts-gantt.js',
             'highmaps.js',
             'modules/broken-axis.js',
             'modules/canvasrenderer.experimental.js',
+            'modules/gantt.js',
             'modules/map.js',
             'modules/map-parser.js'
         ].map(str => new RegExp(str)),
         highmaps: [
+            'highcharts-gantt.js',
             'highstock.js',
             'indicators/',
             'modules/broken-axis.js',
+            'modules/canvasrenderer.experimental.js',
+            'modules/gantt.js',
+            'modules/map-parser.js',
+            'modules/series-label.js',
+            'modules/solid-gauge.js'
+        ].map(str => new RegExp(str)),
+        gantt: [
+            'highcharts-3d.js',
+            'highcharts-more.js',
+            'highmaps.js',
+            'highstock.js',
+            'indicators/',
+            'modules/map.js',
+            'modules/stock.js',
             'modules/canvasrenderer.experimental.js',
             'modules/map-parser.js',
             'modules/series-label.js',
@@ -572,7 +532,7 @@ const copyToDist = () => {
         .reduce((obj, path) => {
             const source = sourceFolder + path;
             const filename = path.replace('.src.js', '.js').replace('js/', '');
-            ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+            ['highcharts', 'highstock', 'highmaps', 'gantt'].forEach((lib) => {
                 const filters = filter[lib];
                 const include = !filters.find((regex) => {
                     return regex.test(filename);
@@ -586,7 +546,7 @@ const copyToDist = () => {
         }, {});
 
     const additionalFiles = Object.keys(additionals).reduce((obj, file) => {
-        ['highcharts', 'highstock', 'highmaps'].forEach((lib) => {
+        ['highcharts', 'highstock', 'highmaps', 'gantt'].forEach((lib) => {
             const source = additionals[file];
             const target = `${distFolder}${lib}/${file}`;
             obj[target] = source;
@@ -622,10 +582,6 @@ const createProductJS = () => {
     const version = buildProperties.version || '';
     const content = `var products = {
     "Highcharts": {
-    "date": "${date}",
-    "nr": "${version}"
-    },
-    "Highcharts Gantt": {
         "date": "${date}",
         "nr": "${version}"
     },
@@ -634,6 +590,10 @@ const createProductJS = () => {
         "nr": "${version}"
     },
     "Highmaps": {
+        "date": "${date}",
+        "nr": "${version}"
+    },
+    "Highcharts Gantt": {
         "date": "${date}",
         "nr": "${version}"
     }
@@ -892,7 +852,7 @@ const copyFolder = (input, output) => {
 
 const copyGraphicsToDist = () => {
     const dist = 'build/dist/';
-    const promises = ['highcharts', 'highstock', 'highmaps'].map((lib) => {
+    const promises = ['highcharts', 'highstock', 'highmaps', 'gantt'].map((lib) => {
         return copyFolder('samples/graphics/', dist + lib + '/graphics/');
     });
     return Promise.all(promises)
@@ -912,6 +872,10 @@ const createAllExamples = () => new Promise((resolve) => {
         'Highmaps': {
             samplesFolder: 'samples/maps/demo/',
             output: 'build/dist/highmaps/examples/'
+        },
+        'Highcharts Gantt': {
+            samplesFolder: 'samples/gantt/demo/',
+            output: 'build/dist/gantt/examples/'
         }
     };
     Object.keys(config).forEach(lib => {
