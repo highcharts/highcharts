@@ -528,7 +528,9 @@ seriesType('xrange', 'column'
         if (series.options.colorByPoint && !point.options.color) {
             colorByPoint = getColorByCategory(series, point);
             point.color = colorByPoint.color;
-            point.colorIndex = colorByPoint.colorIndex;
+            if (!point.options.colorIndex) {
+                point.colorIndex = colorByPoint.colorIndex;
+            }
         }
 
         return point;
