@@ -898,7 +898,7 @@ var defaultDragHandleOptions = {
  * The X precision value to drag to for this series. Set to 0 to disable.
  *
  * @type {number}
- * @default 1
+ * @default 0
  * @since 6.2.0
  * @apioption plotOptions.series.dragDrop.dragPrecisionX
  */
@@ -907,7 +907,7 @@ var defaultDragHandleOptions = {
  * The Y precision value to drag to for this series. Set to 0 to disable.
  *
  * @type {number}
- * @default 1
+ * @default 0
  * @since 6.2.0
  * @apioption plotOptions.series.dragDrop.dragPrecisionY
  */
@@ -1627,7 +1627,7 @@ H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
     // Utility function to apply precision and limit a value within the
     // draggable range
     function limitToRange(val, direction) {
-        var precision = pick(options['dragPrecision' + direction], 1),
+        var precision = pick(options['dragPrecision' + direction], 0),
             min = pick(options['dragMin' + direction], -Infinity),
             max = pick(options['dragMax' + direction], Infinity),
             res = val;
