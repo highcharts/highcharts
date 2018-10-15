@@ -21,6 +21,7 @@ var argsToArray = function (args) {
     find = H.find,
     fireEvent = H.fireEvent,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
+    map = H.map,
     merge = H.merge,
     inArray = H.inArray,
     isBoolean = function (x) {
@@ -398,12 +399,7 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
                 var data = node.data;
                 if (isObject(data)) {
                     // Update point
-                    data.update(
-                        {
-                            y: start + data.seriesIndex
-                        },
-                        false
-                    );
+                    data.y = start + data.seriesIndex;
                     // Remove the property once used
                     delete data.seriesIndex;
                 }
@@ -533,6 +529,15 @@ override(GridAxis.prototype, {
                 // which is an ideal time to update the axis.categories.
                 axis.updateYNames();
 
+                // Update yData now that we have calculated the y values
+                // TODO: it would be better to be able to calculate y values
+                // before Series.setData
+                each(axis.series, function (series) {
+                    series.yData = map(series.options.data, function (data) {
+                        return data.y;
+                    });
+                });
+
                 // Calculate the label options for each level in the tree.
                 axis.mapOptionsToLevel = getLevelOptions({
                     defaults: labelOptions,
@@ -621,6 +626,7 @@ override(GridAxis.prototype, {
                     });
             } else {
                 // update labels depending on tick interval
+                tick.category = gridNode.name;
                 tick.options = options;
                 tick.addLabel();
             }
@@ -869,14 +875,8 @@ GridAxis.prototype.updateYNames = function () {
         // Concatenate data from all series assigned to this axis.
         data = reduce(series, function (arr, s) {
             if (s.visible) {
-                // If we do not have points, then generate them.
-                if (!s.points) {
-                    s.processData();
-                    s.generatePoints();
-                }
-
                 // Push all data to array
-                each(s.points, function (data) {
+                each(s.options.data, function (data) {
                     if (isObject(data)) {
                         // Set series index on data. Removed again after use.
                         data.seriesIndex = numberOfSeries;
