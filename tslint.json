@@ -1,7 +1,8 @@
 {
     "extends": "dtslint/dtslint.json",
     "rules": {
-        "file-name-casing": false
+        "array-type": false,
+        "file-name-casing": false,
+        "max-line-length": false
     }
 }
-

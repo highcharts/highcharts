@@ -701,14 +701,14 @@ const commandLine = (command) => {
     return new Promise((resolve, reject) => {
         const cli = exec(command, (error, stdout) => {
             if (error) {
-                console.log(error);
+                console.error(error);
                 reject(error);
             } else {
-                console.log('Command finished: ' + command);
+                console.info('Command finished: ' + command);
                 resolve(stdout);
             }
         });
-        cli.stdout.on('data', (data) => console.log(data.toString()));
+        cli.stdout.on('data', (data) => console.info(data.toString()));
     });
 };
 
@@ -1199,9 +1199,13 @@ const jsdocNamespace = () => {
 
     const jsdoc3 = require('gulp-jsdoc3');
 
-    let codeFiles = [
-            'code/highcharts.src.js'
-        ],
+    let codeFiles = JSON.parse(fs.readFileSync('tsconfig.json')).files
+            .filter(file => (
+                file.indexOf('test') !== 0 &&
+                !file.indexOf('global.d.ts') >= 0 &&
+                !file.indexOf('.src.d.ts') >= 0
+            ))
+            .map(file => file.replace(/.d.ts$/, '.src.js')),
         productFolders = [
             'gantt',
             'highcharts',
@@ -1211,6 +1215,10 @@ const jsdocNamespace = () => {
         gulpOptions = [codeFiles, { read: false }],
         jsdoc3Options = { plugins: ['tools/jsdoc/plugins/highcharts.namespace'] };
 
+    if (codeFiles.length === 0) {
+        console.error('No files in tsconfig.json found.');
+        return Promise.resolve([]);
+    }
 
     let aGulp = (resolve, reject) => {
 
@@ -1248,26 +1256,7 @@ const tsd = () => {
  */
 const tsdLint = () => {
 
-    const configFiles = [
-        'tslint.json',
-        'tsconfig.json'
-    ];
-
-    const targetPath = 'code';
-
-    return Promise.all(configFiles.map(file => copyFile(
-            file,
-            targetPath + '/' + file
-        )))
-        .then(() => commandLine('npx dtslint --installAll'))
-        .then(() => commandLine('npx dtslint ' + targetPath))
-        .then((result) => {
-            console.info('tsdLint:', result);
-        })
-        .catch((error) => {
-            console.error(error);
-            throw error;
-        });
+    return commandLine('npx dtslint --onlyTestTsNext');
 };
 
 gulp.task('start-api-server', startServer);
