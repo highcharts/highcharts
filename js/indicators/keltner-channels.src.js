@@ -36,34 +36,29 @@ H.seriesType('keltnerchannels', 'sma',
              * The ATR period.
              *
              * @type {Number}
-             * @product highstock
              */
             periodATR: 10,
             /**
              * The ATR multiplier.
              *
              * @type {Number}
-             * @product highstock
              */
             multiplierATR: 2
         },
         /**
          * Bottom line options.
          *
-         * @product highstock
          */
         bottomLine: {
             /**
              * Styles for a bottom line.
              *
-             * @product highstock
              */
             styles: {
                 /**
                  * Pixel width of the line.
                  *
                  * @type {Number}
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
@@ -71,7 +66,6 @@ H.seriesType('keltnerchannels', 'sma',
                  * `plotOptions.keltnerchannels.color`
                  *
                  * @type {String}
-                 * @product highstock
                  */
                 lineColor: undefined
             }
@@ -80,7 +74,6 @@ H.seriesType('keltnerchannels', 'sma',
          * Top line options.
          *
          * @extends plotOptions.keltnerchannels.bottomLine
-         * @product highstock
          */
         topLine: {
             styles: {
@@ -179,7 +172,10 @@ H.seriesType('keltnerchannels', 'sma',
  * @type {Object}
  * @since 7.0.0
  * @extends series,plotOptions.keltnerchannels
- * @excluding data,dataParser,dataURL
+ * @excluding
+ *          allAreas,colorAxis,compare,compareBase,data,dataParser,dataURL,
+ *          joinBy,keys,stacking,showInNavigator,navigatorOptions,pointInterval,
+ *          pointIntervalUnit,pointPlacement,pointRange,pointStart
  * @product highstock
  * @optionparent series.keltnerchannels
  */
