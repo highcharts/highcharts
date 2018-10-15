@@ -697,7 +697,7 @@ override(GridAxisTick.prototype, {
             );
             mapOfPosToGridNode = axis.mapOfPosToGridNode;
             node = mapOfPosToGridNode && mapOfPosToGridNode[pos];
-            level = node && node.depth;
+            level = (node && node.depth) || 1;
             result.x += (
                 // Add space for symbols
                 ((symbolOptions.width) + (symbolOptions.padding * 2)) +
