@@ -39,36 +39,6 @@ var argsToArray = function (args) {
     GridAxis = H.Axis,
     GridAxisTick = H.Tick;
 
-
-merge(
-    true,
-    GridAxis.defaultOptions,
-    {
-        labels: {
-            /**
-            * Set options on specific levels. Takes precedence over labels
-            * options.
-            *
-            * @optionparent xAxis.labels
-            * @product gantt
-            * @sample {gantt} gantt/treegrid-axis/labels-levels/demo.js
-            * @since next
-            * @type {Array<Object>}
-            */
-            levels: [{
-                /**
-                * Specify the level which the options within this object applies
-                * to.
-                *
-                * @sample {gantt} gantt/treegrid-axis/labels-levels/demo.js
-                * @since next
-                */
-                level: undefined
-            }]
-        }
-    }
-);
-
 /**
  * some - Equivalent of Array.prototype.some
  *
@@ -488,6 +458,33 @@ override(GridAxis.prototype, {
                 // TODO: add support for align in treegrid.
                 labels: {
                     align: 'left',
+
+                    /**
+                    * Set options on specific levels in a tree grid axis. Takes
+                    * precedence over labels options.
+                    *
+                    * @apioption yAxis.labels.levels
+                    * @product gantt
+                    * @sample {gantt} gantt/treegrid-axis/labels-levels
+                    * @since next
+                    * @type {Array<Object>}
+                    */
+                    levels: [{
+                        /**
+                        * Specify the level which the options within this object
+                        * applies to.
+                        *
+                        * @sample {gantt} gantt/treegrid-axis/labels-levels
+                        * @since next
+                        */
+                        level: undefined
+                    }, {
+                        level: 1,
+                        style: {
+                            fontWeight: 'bold'
+                        }
+                    }],
+
                     /**
                      * The symbol for the collapse and expand icon in a
                      * treegrid.
