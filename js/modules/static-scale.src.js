@@ -21,7 +21,7 @@ var Chart = H.Chart,
  * @type {number}
  * @sample gantt/xrange-series/demo/ X-range series with static scale
  * @since 6.2.0
- * @product highgantt
+ * @product gantt
  * @default 50
  * @apioption yAxis.staticScale
  */

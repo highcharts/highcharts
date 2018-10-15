@@ -33,7 +33,7 @@ var colorPointMixin = H.colorPointMixin,
  * The map series is used for basic choropleth maps, where each map area has a
  * color based on its value.
  *
- * @sample maps/demo/base/ Choropleth map
+ * @sample maps/demo/all-maps/ Choropleth map
  * @extends plotOptions.scatter
  * @excluding marker
  * @product highmaps

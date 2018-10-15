@@ -908,8 +908,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * axis.
              *
              * @product gantt
-             * @sample gantt/treegrid-axis/demo Indentation 10px by default.
-             * @sample gantt/treegrid-axis/indentation Indentation set to 0px.
+             * @sample  gantt/treegrid-axis/demo
+             *          Indentation 10px by default.
+             * @sample  gantt/treegrid-axis/indentation-0px
+             *          Indentation set to 0px.
              * @since next
              */
             indentation: 10,
