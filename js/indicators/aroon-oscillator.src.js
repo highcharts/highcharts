@@ -37,19 +37,15 @@ H.seriesType('aroon-oscillator', 'aroon',
         params: {
             /**
              * Period for Aroon Oscillator
-             *
-             * @default 14
-             * @type {Array}
              * @since 7.0.0
              * @product highstock
              */
-            period: 14
+            period: 25
         },
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
         }
     }, /** @lends Highcharts.Series.prototype */ H.merge(multipleLinesMixin, {
-        nameComponents: ['period'],
         nameBase: 'Aroon Oscillator',
         pointArrayMap: ['y'],
         pointValKey: 'y',
@@ -106,8 +102,8 @@ H.seriesType('aroon-oscillator', 'aroon',
  * @since 7.0.0
  * @extends series,plotOptions.aroonoscillator
  * @excluding   data,dataParser,dataURL
- *              allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
- *              showInNavigator,navigatorOptions,pointInterval,
+ *              allAreas,aroonDown,colorAxis,compare,compareBase,joinBy,
+ *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
  *              pointIntervalUnit,pointPlacement,pointRange,pointStart
  * @product highstock
  * @apioption series.aroonoscillator

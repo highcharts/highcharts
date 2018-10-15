@@ -4,18 +4,24 @@ import multipleLinesMixin from '../mixins/multipe-lines.js';
 
 // Utils
 
-// Index of element with minimal value from array
-function minIndexInArray(arr) {
-    var minValue = Math.min.apply(null, arr);
-    return arr.lastIndexOf(minValue);
-}
+// Index of element with extreme value from array (min or max)
+function getExtremeIndexInArray(arr, extreme) {
+    var extremeValue = arr[0],
+        valueIndex = 0,
+        i;
 
-// Index of element with maximal value from array
-function maxIndexInArray(arr) {
-    var maxValue = Math.max.apply(null, arr);
-    return arr.lastIndexOf(maxValue);
-}
+    for (i = 1; i < arr.length; i++) {
+        if (
+            extreme === 'max' && arr[i] >= extremeValue ||
+            extreme === 'min' && arr[i] <= extremeValue
+        ) {
+            extremeValue = arr[i];
+            valueIndex = i;
+        }
+    }
 
+    return valueIndex;
+}
 
 H.seriesType('aroon', 'sma',
     /**
@@ -41,13 +47,10 @@ H.seriesType('aroon', 'sma',
         params: {
             /**
              * Period for Aroon indicator
-             *
-             * @default 14
-             * @type {number}
              * @since 7.0.0
              * @product highstock
              */
-            period: 14
+            period: 25
         },
         marker: {
             enabled: false
@@ -57,23 +60,16 @@ H.seriesType('aroon', 'sma',
         },
         /**
          * aroonDown line options.
-         *
-         * @since 7.0.0
          * @product highstock
          */
         aroonDown: {
             /**
              * Styles for an aroonDown line.
-             *
-             * @since 7.0.0
              * @product highstock
              */
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
-                 * @since 7.0.0
                  * @product highstock
                  */
                 lineWidth: 1,
@@ -83,7 +79,6 @@ H.seriesType('aroon', 'sma',
                  * #plotOptions.aroon.color).
                  *
                  * @type {Highcharts.ColorString}
-                 * @since 7.0.0
                  * @product highstock
                  */
                 lineColor: undefined
@@ -93,7 +88,6 @@ H.seriesType('aroon', 'sma',
             approximation: 'averages'
         }
     }, /** @lends Highcharts.Series.prototype */ H.merge(multipleLinesMixin, {
-        nameComponents: ['period'],
         nameBase: 'Aroon',
         pointArrayMap: ['y', 'aroonDown'],
         pointValKey: 'y',
@@ -121,19 +115,13 @@ H.seriesType('aroon', 'sma',
             for (i = period - 1; i < yValLen; i++) {
                 slicedY = yVal.slice(i - period + 1, i + 2);
 
-                xLow = minIndexInArray(slicedY.map(function (elem) {
-                    if (elem[low]) {
-                        return elem[low];
-                    }
-                    return elem;
-                }));
+                xLow = getExtremeIndexInArray(slicedY.map(function (elem) {
+                    return H.pick(elem[low], elem);
+                }), 'min');
 
-                xHigh = maxIndexInArray(slicedY.map(function (elem) {
-                    if (elem[high]) {
-                        return elem[high];
-                    }
-                    return elem;
-                }));
+                xHigh = getExtremeIndexInArray(slicedY.map(function (elem) {
+                    return H.pick(elem[high], elem);
+                }), 'max');
 
                 aroonUp = (xHigh / period) * 100;
                 aroonDown = (xLow / period) * 100;
@@ -161,9 +149,9 @@ H.seriesType('aroon', 'sma',
  * @type {Object}
  * @since 7.0.0
  * @extends series,plotOptions.aroon
- * @excluding
- *              allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
- *              showInNavigator,navigatorOptions,pointInterval,
+ * @excluding   data,dataParser,dataURL
+ *              allAreas,aroonDown,colorAxis,compare,compareBase,joinBy,
+ *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
  *              pointIntervalUnit,pointPlacement,pointRange,pointStart
  * @product highstock
  * @apioption series.aroon
