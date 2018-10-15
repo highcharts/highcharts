@@ -1627,7 +1627,11 @@ H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
     // Utility function to apply precision and limit a value within the
     // draggable range
     function limitToRange(val, direction) {
-        var precision = pick(options['dragPrecision' + direction], 0),
+        var defaultPrecision = series[direction.toLowerCase() + 'Axis']
+                .categories ? 1 : 0,
+            precision = pick(
+                options['dragPrecision' + direction], defaultPrecision
+            ),
             min = pick(options['dragMin' + direction], -Infinity),
             max = pick(options['dragMax' + direction], Infinity),
             res = val;
