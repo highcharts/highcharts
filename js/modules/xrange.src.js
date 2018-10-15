@@ -35,9 +35,11 @@ var addEvent = H.addEvent,
  */
 var getColorByCategory = function getColorByCategory(series, point) {
     var colors = series.options.colors || series.chart.options.colors,
-        colorCount = colors.length,
+        colorCount = colors ?
+            colors.length :
+            series.chart.options.chart.colorCount,
         colorIndex = point.y % colorCount,
-        color = colors[colorIndex];
+        color = colors && colors[colorIndex];
 
     return {
         colorIndex: colorIndex,
@@ -510,7 +512,6 @@ seriesType('xrange', 'column'
     //*/
 
 }, { // Point class properties
-    /*= if (build.classic) { =*/
     /**
      * Extend applyOptions so that `colorByPoint` for x-range means that one
      * color is applied per Y axis category.
@@ -527,7 +528,9 @@ seriesType('xrange', 'column'
 
         if (series.options.colorByPoint && !point.options.color) {
             colorByPoint = getColorByCategory(series, point);
+            /*= if (build.classic) { =*/
             point.color = colorByPoint.color;
+            /*= } =*/
             if (!point.options.colorIndex) {
                 point.colorIndex = colorByPoint.colorIndex;
             }
@@ -535,7 +538,6 @@ seriesType('xrange', 'column'
 
         return point;
     },
-    /*= } =*/
     /**
      * Extend init to have y default to 0.
      *
