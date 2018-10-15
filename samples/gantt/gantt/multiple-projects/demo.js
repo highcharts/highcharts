@@ -1,13 +1,20 @@
 
-// THE CHART
+
 Highcharts.ganttChart('container', {
     title: {
         text: 'Gantt Chart with Multiple Projects'
     },
+
     xAxis: {
         min: Date.UTC(2014, 10, 17),
         max: Date.UTC(2014, 10, 30),
         currentDateIndicator: true
+    },
+
+    plotOptions: {
+        series: {
+            colorByPoint: false
+        }
     },
 
     series: [{
