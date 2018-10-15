@@ -161,7 +161,7 @@ seriesType('xrange', 'column'
     animate: seriesTypes.line.prototype.animate,
     cropShoulder: 1,
     getExtremesFromAll: true,
-
+    autoIncrement: H.noop,
     /**
      * Borrow the column series metrics, but with swapped axes. This gives free
      * access to features like groupPadding, grouping, pointWidth etc.
