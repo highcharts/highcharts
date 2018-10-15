@@ -1265,21 +1265,6 @@ const jsdocNamespace = () => {
     return new Promise(aGulp);
 };
 
-/**
- * Add TypeScript declarations to the code folder.
- */
-const tsd = () => {
-    return require('../highcharts-typescript-generator').task();
-};
-
-/**
- * Test TypeScript declarations in the code folder using tsconfig.json.
- */
-const tsdLint = () => {
-
-    return commandLine('npx dtslint --onlyTestTsNext');
-};
-
 gulp.task('start-api-server', startServer);
 gulp.task('upload-api', uploadAPIDocs);
 gulp.task('create-productjs', createProductJS);
@@ -1292,8 +1277,24 @@ gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
-gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], tsd);
-gulp.task('tsd-lint', ['tsd'], tsdLint);
+
+/**
+ * Add TypeScript declarations to the code folder.
+ */
+const dts = () => {
+    return require('../highcharts-typescript-generator').task();
+};
+
+/**
+ * Test TypeScript declarations in the code folder using tsconfig.json.
+ */
+const dtslint = () => {
+
+    return commandLine('npx dtslint --onlyTestTsNext');
+};
+
+gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], dts);
+gulp.task('dtslint', ['dts'], dtslint);
 
 /**
  * Gulp task to run the building process of distribution files. By default it
