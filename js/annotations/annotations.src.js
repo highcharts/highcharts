@@ -618,7 +618,13 @@ merge(
                  * @sample highcharts/annotations/shape/
                  *         Basic shape annotation
                  */
-                r: 0
+                r: 0,
+
+                /**
+                 * Defines additional snapping area around an annotation
+                 * making this annotation to focus. Defined in pixels.
+                 */
+                snap: 2
             },
 
             /**
