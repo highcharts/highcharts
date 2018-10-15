@@ -286,7 +286,7 @@ seriesType('xrange', 'column'
 
         // Tooltip position
         point.tooltipPos[0] += inverted ? 0 : length / 2;
-        point.tooltipPos[1] -= inverted ? length / 2 : metrics.width / 2;
+        point.tooltipPos[1] -= inverted ? -length / 2 : metrics.width / 2;
 
         // Add a partShapeArgs to the point, based on the shapeArgs property
         partialFill = point.partialFill;
