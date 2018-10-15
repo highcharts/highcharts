@@ -2723,7 +2723,7 @@ if (win.jQuery) {
      * @param {"Chart"|"Map"|"StockChart"|string} [className]
      *        Name of the factory class in the Highcharts namespace.
      *
-     * @param {Highcharts.Options} options
+     * @param {Highcharts.Options} [options]
      *        The chart options structure.
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
