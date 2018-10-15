@@ -17,6 +17,10 @@ Highcharts.ganttChart('container', {
         }
     },
 
+    legend: {
+        enabled: true
+    },
+
     series: [{
         name: 'Project 1',
         data: [{

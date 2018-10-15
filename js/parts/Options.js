@@ -1830,6 +1830,7 @@ H.defaultOptions = {
          *
          * @default {highstock} false
          * @default {highmaps} true
+         * @default {gantt} false
          */
         enabled: true,
 
