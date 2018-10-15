@@ -457,7 +457,7 @@ Connection.prototype = {
      *
      * @return  {void}
      */
-    renderPath: function (path, attribs, animation, complete) {
+    renderPath: function (path, attribs, animation) {
         var connection = this,
             chart = this.chart,
             pathfinder = chart.pathfinder,
@@ -495,7 +495,7 @@ Connection.prototype = {
             opacity: 1,
             /*= } =*/
             d: path
-        }, animate ? animation : null, complete);
+        }, animation);
 
         // Store reference on connection
         this.graphics = this.graphics || {};
@@ -609,8 +609,12 @@ Connection.prototype = {
                 .attr({
                     fill: options.color || connection.fromPoint.color,
                     stroke: options.lineColor,
-                    'stroke-width': options.lineWidth
+                    'stroke-width': options.lineWidth,
+                    opacity: 0
                 })
+                .animate({
+                    opacity: 1
+                }, point.series.options.animation)
                 /*= } =*/
                 .add(pathfinder.group);
         } else {
@@ -735,7 +739,7 @@ Connection.prototype = {
         }
 
         // Add the calculated path to the pathfinder group
-        connection.renderPath(path, attribs, options.animation);
+        connection.renderPath(path, attribs, series.options.animation);
 
         // Render the markers
         connection.addMarker(
