@@ -240,31 +240,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             isOrdinal = axis.options.ordinal,
             overscrollPointsRange = Number.MAX_VALUE,
             ignoreHiddenSeries = axis.chart.options.chart.ignoreHiddenSeries,
-            isNavigatorAxis = axis.options.className === 'highcharts-navigator-xaxis',
             i,
             hasBoostedSeries;
-
-        if (
-            axis.options.overscroll &&
-            axis.max === axis.dataMax &&
-            (
-                // Panning is an execption,
-                // We don't want to apply overscroll when panning over the dataMax
-                !axis.chart.mouseIsDown ||
-                isNavigatorAxis
-            ) && (
-                // Scrollbar buttons are the other execption:
-                !axis.eventArgs ||
-                axis.eventArgs && axis.eventArgs.trigger !== 'navigator'
-            )
-        ) {
-            axis.max += axis.options.overscroll;
-
-            // Live data and buttons require translation for the min:
-            if (!isNavigatorAxis && defined(axis.userMin)) {
-                axis.min += axis.options.overscroll;
-            }
-        }
 
         // Apply the ordinal logic
         if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
@@ -809,6 +786,33 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
         }
         // call the original function
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    }
+});
+
+addEvent(Axis, 'foundExtremes', function () {
+    var axis = this;
+
+    if (
+        axis.isXAxis &&
+        defined(axis.options.overscroll) &&
+        axis.max === axis.dataMax &&
+        (
+            // Panning is an execption,
+            // We don't want to apply overscroll when panning over the dataMax
+            !axis.chart.mouseIsDown ||
+            axis.isInternal
+        ) && (
+            // Scrollbar buttons are the other execption:
+            !axis.eventArgs ||
+            axis.eventArgs && axis.eventArgs.trigger !== 'navigator'
+        )
+    ) {
+        axis.max += axis.options.overscroll;
+
+        // Live data and buttons require translation for the min:
+        if (!axis.isInternal && defined(axis.userMin)) {
+            axis.min += axis.options.overscroll;
+        }
     }
 });
 
