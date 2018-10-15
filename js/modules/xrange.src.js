@@ -86,7 +86,7 @@ seriesType('xrange', 'column'
      * @sample {highcharts} highcharts/demo/x-range
      *         X-range with partial fill
      *
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.xrange.partialFill
      */
 
@@ -95,7 +95,7 @@ seriesType('xrange', 'column'
      * of the point color.
      *
      * @type      {Highcharts.ColorString}
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.xrange.partialFill.fill
      */
 
@@ -671,8 +671,19 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *
  * @type      {Array<number|Array<number>|*>}
  * @extends   series.line.data
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange.data
+ */
+
+/**
+ * The starting X value of the range point.
+ *
+ * @sample {highcharts} highcharts/demo/x-range
+ *         X-range
+ *
+ * @type      {number}
+ * @product   highcharts highstock gantt
+ * @apioption series.xrange.data.x
  */
 
 /**
@@ -682,8 +693,19 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *         X-range
  *
  * @type      {number}
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange.data.x2
+ */
+
+/**
+ * The Y value of the range point.
+ *
+ * @sample {highcharts} highcharts/demo/x-range
+ *         X-range
+ *
+ * @type      {number}
+ * @product   highcharts highstock gantt
+ * @apioption series.xrange.data.y
  */
 
 /**
@@ -694,7 +716,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * @sample {highcharts} highcharts/demo/x-range
  *         X-range with partial fill
  *
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange.data.partialFill
  */
 
@@ -703,7 +725,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * converted to percentages in the default data label formatter.
  *
  * @type      {number}
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange.data.partialFill.amount
  */
 
@@ -712,6 +734,6 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * of the point color.
  *
  * @type      {Highcharts.ColorString}
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange.data.partialFill.fill
  */

@@ -72,7 +72,7 @@ seriesType('column', 'line'
      * @sample {highcharts} highcharts/plotoptions/column-borderradius/
      *         Rounded columns
      *
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     borderRadius: 0,
 
@@ -96,7 +96,7 @@ seriesType('column', 'line'
      * @type      {boolean}
      * @default   false
      * @since     2.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.colorByPoint
      */
 
@@ -107,7 +107,7 @@ seriesType('column', 'line'
      *
      * @type      {Array<Highcharts.ColorString>}
      * @since     3.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.colors
      */
 
@@ -123,7 +123,7 @@ seriesType('column', 'line'
      *         Crisp is false
      *
      * @since   5.0.10
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     crisp: true,
 
@@ -135,7 +135,7 @@ seriesType('column', 'line'
      * @sample {highcharts} highcharts/plotoptions/column-grouppadding-none/
      *         No group padding - all columns are evenly spaced
      *
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     groupPadding: 0.2,
 
@@ -152,7 +152,7 @@ seriesType('column', 'line'
      * @type      {boolean}
      * @default   true
      * @since     2.3.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.grouping
      */
 
@@ -175,7 +175,7 @@ seriesType('column', 'line'
      *
      * @type      {number}
      * @since     4.1.8
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.maxPointWidth
      */
 
@@ -189,7 +189,7 @@ seriesType('column', 'line'
      * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/
      *         0 for tightly packed columns
      *
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     pointPadding: 0.1,
 
@@ -206,7 +206,7 @@ seriesType('column', 'line'
      *
      * @type      {number}
      * @since     1.2.5
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.pointWidth
      */
 
@@ -234,7 +234,7 @@ seriesType('column', 'line'
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength-pos-and-neg/
      *         Positive and negative close to zero values
      *
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     minPointLength: 0,
 
@@ -246,9 +246,9 @@ seriesType('column', 'line'
      * On the other hand, when the series contains more points than the
      * crop threshold, the series data is cropped to only contain points
      * that fall within the plot area. The advantage of cropping away invisible
-     * points is to increase performance on large series. .
+     * points is to increase performance on large series.
      *
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     cropThreshold: 50,
 
@@ -268,7 +268,7 @@ seriesType('column', 'line'
      *
      * @type    {number|null}
      * @since   2.3
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     pointRange: null,
 
@@ -280,7 +280,7 @@ seriesType('column', 'line'
          *
          * @extends   plotOptions.series.states.hover
          * @excluding halo, lineWidth, lineWidthPlus, marker
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          */
         hover: {
 
@@ -294,7 +294,7 @@ seriesType('column', 'line'
              * inherit the normal state border color.
              *
              * @type      {Highcharts.ColorString}
-             * @product   highcharts
+             * @product   highcharts gantt
              * @apioption plotOptions.column.states.hover.borderColor
              */
 
@@ -302,7 +302,7 @@ seriesType('column', 'line'
              * A specific color for the hovered point.
              *
              * @type      {Highcharts.ColorString}
-             * @product   highcharts
+             * @product   highcharts gantt
              * @apioption plotOptions.column.states.hover.color
              */
 
@@ -318,7 +318,7 @@ seriesType('column', 'line'
              * @sample {highcharts} highcharts/plotoptions/column-states-hover-brightness/
              *         Brighten by 0.5
              *
-             * @product highcharts highstock
+             * @product highcharts highstock gantt
              */
             brightness: 0.1
 
@@ -333,7 +333,7 @@ seriesType('column', 'line'
          *
          * @extends   plotOptions.series.states.select
          * @excluding halo, lineWidth, lineWidthPlus, marker
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          */
         select: {
 
@@ -342,7 +342,7 @@ seriesType('column', 'line'
              *
              * @type    {Highcharts.ColorString}
              * @default #cccccc
-             * @product highcharts highstock
+             * @product highcharts highstock gantt
              */
             color: '${palette.neutralColor20}',
 
@@ -351,7 +351,7 @@ seriesType('column', 'line'
              *
              * @type    {Highcharts.ColorString}
              * @default #000000
-             * @product highcharts highstock
+             * @product highcharts highstock gantt
              */
             borderColor: '${palette.neutralColor100}'
         }
@@ -427,7 +427,7 @@ seriesType('column', 'line'
      *
      * @type      {number}
      * @default   1
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.borderWidth
      */
 
@@ -442,7 +442,7 @@ seriesType('column', 'line'
      *
      * @type      {Highcharts.ColorString}
      * @default   #ffffff
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      */
     borderColor: '${palette.backgroundColor}'
 

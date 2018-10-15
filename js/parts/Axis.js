@@ -168,7 +168,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {boolean}
          * @default   true
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.alignTicks
          */
 
@@ -219,7 +219,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Array<*>}
          * @since     4.1.0
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.breaks
          */
 
@@ -232,7 +232,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @type      {number}
          * @default   0
          * @since     4.1.0
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.breaks.breakSize
          */
 
@@ -241,7 +241,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {number}
          * @since     4.1.0
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.breaks.from
          */
 
@@ -252,7 +252,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @type      {number}
          * @default   0
          * @since     4.1.0
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.breaks.repeat
          */
 
@@ -261,7 +261,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {number}
          * @since     4.1.0
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.breaks.to
          */
 
@@ -296,7 +296,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type       {number}
          * @since      4.0
-         * @product    highcharts highstock
+         * @product    highcharts highstock gantt
          * @apioption  xAxis.ceiling
          */
 
@@ -561,7 +561,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/datetimelabelformats/
          *         More information in x axis labels
          *
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
             millisecond: {
@@ -642,7 +642,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Function}
          * @since     4.1.0
-         * @product   highcharts
+         * @product   highcharts gantt
          * @apioption xAxis.events.afterBreaks
          */
 
@@ -677,7 +677,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {Function}
          * @since     4.1.0
-         * @product   highcharts
+         * @product   highcharts gantt
          * @context   Axis
          * @apioption xAxis.events.pointBreak
          */
@@ -686,7 +686,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * An event fired when a point falls inside a break from this axis.
          *
          * @type      {Function}
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @context   Axis
          * @apioption xAxis.events.pointInBreak
          */
@@ -724,7 +724,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {number}
          * @since     4.0
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.floor
          */
 
@@ -756,7 +756,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {number}
          * @default   1
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.gridZIndex
          */
 
@@ -822,7 +822,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @type      {Array<number>}
              * @default   [-45]
              * @since     4.1.0
-             * @product   highcharts highstock
+             * @product   highcharts highstock gantt
              * @apioption xAxis.labels.autoRotation
              */
 
@@ -839,7 +839,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @type      {number}
              * @default   80
              * @since     4.1.5
-             * @product   highcharts
+             * @product   highcharts gantt
              * @apioption xAxis.labels.autoRotationLimit
              */
 
@@ -849,7 +849,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              *
              * @type      {number}
              * @default   15
-             * @product   highcharts
+             * @product   highcharts gantt
              * @apioption xAxis.labels.distance
              */
 
@@ -861,7 +861,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highstock} stock/xaxis/labels-enabled/
              *         X axis labels disabled
              *
-             * @default {highcharts|highstock} true
+             * @default {highcharts|highstock|gantt} true
              * @default {highmaps} false
              */
             enabled: true,
@@ -948,7 +948,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              *
              * @type      {number}
              * @default   5
-             * @product   highcharts
+             * @product   highcharts gantt
              * @apioption xAxis.labels.padding
              */
 
@@ -973,7 +973,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              *
              * @type      {boolean}
              * @since     4.1.10
-             * @product   highcharts
+             * @product   highcharts gantt
              * @apioption xAxis.labels.reserveSpace
              */
 
@@ -1112,7 +1112,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {number}
          * @since     2.0.2
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.linkedTo
          */
 
@@ -1327,7 +1327,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @default    {highcharts} 0.01
          * @default    {highstock|highmaps} 0
          * @since      1.2.0
-         * @product    highcharts highstock
+         * @product    highcharts highstock gantt
          */
         minPadding: 0.01,
 
@@ -1565,7 +1565,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {boolean}
          * @default   true
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.showLastLabel
          */
 
@@ -1579,7 +1579,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {number}
          * @since     5.0.1
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.softMax
          */
 
@@ -1593,7 +1593,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {number}
          * @since     5.0.1
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.softMin
          */
 
@@ -1610,7 +1610,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/startofweek-0
          *         Sunday
          *
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         startOfWeek: 1,
 
@@ -1649,7 +1649,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {number}
          * @since     4.1.0
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.tickAmount
          */
 
@@ -1728,7 +1728,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/xaxis/tickmarkplacement-on/
          *         "on"
          *
-         * @product    highcharts
+         * @product    highcharts gantt
          * @validvalue [null, "on", "between"]
          */
         tickmarkPlacement: 'between',
@@ -1857,7 +1857,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @type      {boolean}
              * @default   true
              * @since     5.0.11
-             * @product   highcharts highstock
+             * @product   highcharts highstock gantt
              * @apioption xAxis.title.reserveSpace
              */
 
@@ -1918,7 +1918,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              *
              * @type      {boolean}
              * @default   false
-             * @product   highcharts highstock
+             * @product   highcharts highstock gantt
              * @apioption xAxis.title.useHTML
              */
 
@@ -1928,7 +1928,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @type      {number}
              * @default   0
              * @since     4.1.6
-             * @product   highcharts highstock
+             * @product   highcharts highstock gantt
              * @apioption xAxis.title.x
              */
 
@@ -1936,7 +1936,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * Vertical pixel offset of the title position.
              *
              * @type      {number}
-             * @product   highcharts highstock
+             * @product   highcharts highstock gantt
              * @apioption xAxis.title.y
              */
 
@@ -2009,7 +2009,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/type-log-negative/
          *         Logarithmic with extension to emulate negative values
          *
-         * @product    highcharts
+         * @product    highcharts gantt
          * @validvalue ["linear", "logarithmic", "datetime", "category"]
          */
         type: 'linear',
@@ -2068,7 +2068,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * ]]</pre>
          *
          * @type      {Array<Array<string|Array<number>>>}
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption xAxis.units
          */
 
@@ -2341,6 +2341,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @default   {highcharts} false
          * @default   {highstock} false
          * @default   {highmaps} true
+         * @default   {gantt} true
          * @apioption yAxis.reversed
          */
 
@@ -2392,7 +2393,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {number}
          * @default   0
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption yAxis.tickWidth
          */
 
@@ -2440,7 +2441,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         Greater min- and maxPadding
          *
          * @since   1.2.0
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         maxPadding: 0.05,
 
@@ -2457,7 +2458,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         Greater min- and maxPadding
          *
          * @since   1.2.0
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         minPadding: 0.05,
 
@@ -2473,7 +2474,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @type      {boolean}
          * @default   {highstock} true
          * @default   {highcharts} false
-         * @product   highstock highcharts
+         * @product   highstock highcharts gantt
          * @apioption yAxis.opposite
          */
 
@@ -2643,7 +2644,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {number}
          * @since     5.0.1
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption yAxis.softMax
          */
 
@@ -2661,7 +2662,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @type      {number}
          * @since     5.0.1
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption yAxis.softMin
          */
 
@@ -2798,7 +2799,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *          False for Y axis
          *
          * @since   1.2.0
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         startOnTick: true,
 
@@ -2836,7 +2837,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              *
              * @default {highcharts} Values
              * @default {highstock} undefined
-             * @product highcharts highstock
+             * @product highcharts highstock gantt
              */
             text: 'Values'
         },

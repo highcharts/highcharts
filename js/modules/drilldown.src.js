@@ -59,6 +59,7 @@ extend(defaultOptions.lang, {
  * ](code.highcharts.com/modules/drilldown.js).
  *
  * @type {Object}
+ * @product highcharts highstock highmaps
  * @optionparent drilldown
  */
 defaultOptions.drilldown = {

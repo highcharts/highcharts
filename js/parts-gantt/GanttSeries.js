@@ -248,6 +248,16 @@ seriesType('gantt', 'xrange', {
 }));
 
 /**
+ * Data for a Gantt series.
+ *
+ * @type {Object}
+ * @extends {series.xrange.data}
+ * @excluding connect,x,x2,partialFill
+ * @product gantt
+ * @apioption series.gantt.data
+ */
+
+/**
  * Whether the grid node belonging to this point should start as collapsed. Used
  * in axes of type treegrid.
  *
@@ -259,11 +269,45 @@ seriesType('gantt', 'xrange', {
  */
 
 /**
+ * The start time of a task.
+ *
+ * @type {number}
+ * @product gantt
+ * @apioption series.gantt.data.start
+ */
+
+/**
+ * The end time of a task.
+ *
+ * @type {number}
+ * @product gantt
+ * @apioption series.gantt.data.end
+ */
+
+/**
+ * The Y value of a task.
+ *
+ * @type {number}
+ * @product gantt
+ * @apioption series.gantt.data.y
+ */
+
+/**
+ * The name of a task. If a `treegrid` y-axis is used (default in Gantt charts),
+ * this will be picked up automatically, and used to calculate the y-value.
+ *
+ * @type {string}
+ * @product gantt
+ * @apioption series.gantt.data.name
+ */
+
+/**
  * Progress indicator, how much of the task completed. If it is a number, the
  * `fill` will be applied automatically.
  *
  * @type {object|number}
  * @default undefined
+ * @extends {series.xrange.data.partialFill}
  * @product gantt
  * @sample {gantt} gantt/demo/progress-indicator Progress indicator
  * @apioption series.gantt.data.completed
@@ -289,10 +333,11 @@ seriesType('gantt', 'xrange', {
 
 /**
  * The ID of this point's parent point for Gantt charts. Aliases
- * {@link series.line.data#connect}. Can also be an object, specifying further
- * connecting options between the points.
+ * [connect](series.xrange.data#connect). Can also be an object, specifying
+ * further connecting [options](series.gantt.pathfinder) between the points.
  *
  * @type {string|object}
+ * @extends {series.xrange.data.connect}
  * @since 6.2.0
  * @product gantt
  * @apioption series.gantt.data.dependency

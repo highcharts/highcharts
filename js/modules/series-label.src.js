@@ -57,7 +57,7 @@ H.setOptions({
              * @sample highcharts/series-label/stock-chart
              *         Stock chart
              * @since 6.0.0
-             * @product highcharts highstock
+             * @product highcharts highstock gantt
              */
             label: {
                 /**

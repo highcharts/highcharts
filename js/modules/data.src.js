@@ -166,7 +166,7 @@ var addEvent = Highcharts.addEvent,
  * @sample {highstock} highcharts/data/start-end/ Don't get series names from the CSV
  * @default true
  * @since 4.1.0
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption data.firstRowAsNames
  */
 

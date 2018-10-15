@@ -726,7 +726,8 @@ var defaultGuideBoxOptions = {
      */
     default: {
         /**
-         * CSS class name of the guide box in this state.
+         * CSS class name of the guide box in this state. Defaults to
+         * `highcharts-drag-box-default`.
          *
          * @type {String}
          * @since 6.2.0
@@ -749,6 +750,7 @@ var defaultGuideBoxOptions = {
          *
          * @type {Color}
          * @since 6.2.0
+         * @default #888
          * @apioption plotOptions.series.dragDrop.guideBox.default.lineColor
          */
         lineColor: '#888',
@@ -758,6 +760,7 @@ var defaultGuideBoxOptions = {
          *
          * @type {Color}
          * @since 6.2.0
+         * @default rgba(0, 0, 0, 0.1)
          * @apioption plotOptions.series.dragDrop.guideBox.default.color
          */
         color: 'rgba(0, 0, 0, 0.1)',
@@ -777,6 +780,7 @@ var defaultGuideBoxOptions = {
          *
          * @type {number}
          * @since 6.2.0
+         * @default 900
          * @apioption plotOptions.series.dragDrop.guideBox.default.zIndex
          */
         zIndex: 900
@@ -816,7 +820,7 @@ var defaultDragHandleOptions = {
     // cursor: null,
 
     /**
-     * The class name of the drag handles.
+     * The class name of the drag handles. Defaults to `highcharts-drag-handle`.
      *
      * @type {String}
      * @since 6.2.0
@@ -829,6 +833,7 @@ var defaultDragHandleOptions = {
      *
      * @type {Color}
      * @since 6.2.0
+     * @default #fff
      * @apioption plotOptions.series.dragDrop.dragHandle.color
      */
     color: '#fff',
@@ -838,6 +843,7 @@ var defaultDragHandleOptions = {
      *
      * @type {Color}
      * @since 6.2.0
+     * @default rgba(0, 0, 0, 0.6)
      * @apioption plotOptions.series.dragDrop.dragHandle.lineColor
      */
     lineColor: 'rgba(0, 0, 0, 0.6)',
@@ -857,6 +863,7 @@ var defaultDragHandleOptions = {
      *
      * @type {number}
      * @since 6.2.0
+     * @default 901
      * @apioption plotOptions.series.dragDrop.dragHandle.zIndex
      */
     zIndex: 901
@@ -895,7 +902,8 @@ var defaultDragHandleOptions = {
  */
 
 /**
- * The X precision value to drag to for this series. Set to 0 to disable.
+ * The X precision value to drag to for this series. Set to 0 to disable. By
+ * default this is disabled, except for category axes, where the default is 1.
  *
  * @type {number}
  * @default 0
@@ -904,7 +912,8 @@ var defaultDragHandleOptions = {
  */
 
 /**
- * The Y precision value to drag to for this series. Set to 0 to disable.
+ * The Y precision value to drag to for this series. Set to 0 to disable. By
+ * default this is disabled, except for category axes, where the default is 1.
  *
  * @type {number}
  * @default 0
@@ -940,7 +949,7 @@ var defaultDragHandleOptions = {
 
 /**
  * Update points as they are dragged. If false, a guide box is drawn to
- * illustrate the new point size. Defaults to true.
+ * illustrate the new point size.
  *
  * @type {boolean}
  * @default true

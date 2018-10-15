@@ -131,6 +131,7 @@ extend(Pane.prototype, {
      * The pane serves as a container for axes and backgrounds for circular
      * gauges and polar charts.
      * @since 2.3.0
+     * @product highcharts
      * @optionparent pane
      */
     defaultOptions: {

@@ -172,7 +172,7 @@ Highcharts.Time.prototype = {
      *
      * @type      {*}
      * @since     4.0.4
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.Date
      */
 
@@ -190,7 +190,7 @@ Highcharts.Time.prototype = {
      *
      * @type      {Function}
      * @since     4.1.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.getTimezoneOffset
      */
 
@@ -209,7 +209,7 @@ Highcharts.Time.prototype = {
      *
      * @type      {string}
      * @since     5.0.7
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.timezone
      */
 
@@ -227,7 +227,7 @@ Highcharts.Time.prototype = {
      * @type      {number}
      * @default   0
      * @since     3.0.8
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.timezoneOffset
      */
 

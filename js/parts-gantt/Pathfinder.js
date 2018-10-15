@@ -35,20 +35,21 @@ var defined = H.defined,
 // Set default Pathfinder options
 extend(H.defaultOptions, {
     /**
-     * The Pathfinder module allows you to define connections between points,
-     * represented as lines - optionally with markers for the start and end
-     * points. Multiple algorithms are available for selecting how the
+     * The Pathfinder allows you to define connections between any two points,
+     * represented as lines - optionally with markers for the start and/or end
+     * points. Multiple algorithms are available for calculating how the
      * connecting lines are drawn.
      *
-     * Pathfinder functionality requires Highcharts Gantt or the Pathfinder
-     * module to be loaded.
+     * Pathfinder functionality requires Highcharts Gantt to be loaded. In Gantt
+     * charts, the Pathfinder is used to draw dependencies between tasks.
      *
+     * @product gantt
+     * @see [dependency](series.gantt.data.dependency)
      * @optionparent pathfinder
      */
     pathfinder: {
         /**
-         * Enable the pathfinder for this chart. Requires the pathfinder.js
-         * module, or Highcharts Gantt.
+         * Enable the pathfinder for this chart. Requires Highcharts Gantt.
          *
          * @type {boolean}
          * @default true
@@ -258,19 +259,20 @@ extend(H.defaultOptions, {
  *
  * @since 6.2.0
  * @extends pathfinder
+ * @product gantt
  * @apioption plotOptions.series.pathfinder
  * @excluding enabled,algorithmMargin
  */
 
 /**
- * Connect to a point. Requires the Pathfinder module or Highcharts Gantt to be
- * loaded. This option can be either a string, referring to the ID of another
- * point, or an object.
+ * Connect to a point. Requires Highcharts Gantt to be loaded. This option can
+ * be either a string, referring to the ID of another point, or an object.
  *
  * @type {string|object}
  * @since 6.2.0
  * @extends plotOptions.series.pathfinder
- * @apioption series.line.data.connect
+ * @product gantt
+ * @apioption series.xrange.data.connect
  */
 
 /**
@@ -278,7 +280,8 @@ extend(H.defaultOptions, {
  *
  * @type {string}
  * @since 6.2.0
- * @apioption series.line.data.connect.to
+ * @product gantt
+ * @apioption series.xrange.data.connect.to
  */
 
 
@@ -813,6 +816,10 @@ Pathfinder.prototype = {
      * Update Pathfinder connections from scratch.
      *
      * @function Highcharts.Pathfinder#update
+     *
+     * @param {boolean} deferRender Whether or not to defer rendering of
+     *      connections until series.afterAnimate event has fired. Used on first
+     *      render.
      */
     update: function (deferRender) {
         var chart = this.chart,
