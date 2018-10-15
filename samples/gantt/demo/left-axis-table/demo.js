@@ -116,5 +116,9 @@ Highcharts.chart('container', {
             assignee: 'Halliburton',
             y: 4
         }]
-    }]
+    }],
+
+    exporting: {
+        sourceWidth: 1000
+    }
 });
