@@ -24,10 +24,10 @@ var addEvent = H.addEvent,
     merge = H.merge,
     defaultConfig = {
         currentDateIndicator: true,
-        color: '#FF0000',
+        color: '${palette.highlightColor20}',
         width: 2,
         label: {
-            format: '%a, %b %d %Y, %H:%M:%S',
+            format: '%a, %b %d %Y, %H:%M',
             formatter: undefined,
             rotation: 0,
             style: {
