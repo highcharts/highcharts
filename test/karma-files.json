@@ -57,6 +57,7 @@
 	"code/indicators/cmf.src.js",
 	"code/indicators/ema.src.js",
 	"code/indicators/ichimoku-kinko-hyo.src.js",
+	"code/indicators/keltner-channels.src.js",
 	"code/indicators/macd.src.js",
 	"code/indicators/mfi.src.js",
 	"code/indicators/momentum.src.js",
