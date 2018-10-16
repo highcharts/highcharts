@@ -893,6 +893,14 @@ const createAllExamples = () => new Promise((resolve) => {
     resolve();
 });
 
+
+
+/* *
+ *
+ *  API Documentation
+ *
+ * */
+
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
     const generate = require('highcharts-api-docs');
     const message = {
@@ -1245,7 +1253,6 @@ const jsdocNamespace = () => {
 };
 
 gulp.task('start-api-server', startServer);
-gulp.task('upload-api', uploadAPIDocs);
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-api', cleanApi);
 gulp.task('clean-dist', cleanDist);
@@ -1256,24 +1263,37 @@ gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
+gulp.task('upload-api', uploadAPIDocs);
+
+
+
+/* *
+ *
+ *  TypeScript Declarations
+ *
+ * */
 
 /**
  * Add TypeScript declarations to the code folder.
  */
-const dts = () => {
+gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], () => {
     return require('../highcharts-typescript-generator').task();
-};
+});
 
 /**
  * Test TypeScript declarations in the code folder using tsconfig.json.
  */
-const dtslint = () => {
-
+gulp.task('dtslint', ['dts'], () => {
     return commandLine('npx dtslint --onlyTestTsNext');
-};
+});
 
-gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], dts);
-gulp.task('dtslint', ['dts'], dtslint);
+
+
+/* *
+ *
+ *  Building Scripts
+ *
+ * */
 
 /**
  * Gulp task to run the building process of distribution files. By default it

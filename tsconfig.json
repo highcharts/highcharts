@@ -1,40 +1,50 @@
 {
     "compilerOptions": {
-        "forceConsistentCasingInFileNames": true,
+        "allowSyntheticDefaultImports": false,
+        "esModuleInterop": false,
         "noEmit": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strictFunctionTypes": true,
         "strictNullChecks": true,
         "module": "umd",
+        "moduleResolution": "node",
         "baseUrl": ".",
         "lib": ["es6", "dom"],
-        "paths": { "highcharts": ["."] },
-        "typeRoots": ["."],
+        "paths": {
+            "highcharts": ["code/highcharts"],
+            "highcharts/modules/*": ["code/modules/*"]
+        },
         "types": []
     },
     "files": [
-        "code/global.d.ts",
+        "code/globals.d.ts",
         "code/highcharts.d.ts",
         "code/highcharts.src.d.ts",
+        "test/typescript/highcharts.ts",
+
         "code/modules/accessibility.d.ts",
         "code/modules/accessibility.src.d.ts",
+        "test/typescript/modules/accessibility.ts",
+
         "code/modules/export-data.d.ts",
         "code/modules/export-data.src.d.ts",
+        "test/typescript/modules/export-data.ts",
+
         "code/modules/exporting.d.ts",
         "code/modules/exporting.src.d.ts",
+        "test/typescript/modules/exporting.ts",
+
         "code/modules/offline-exporting.d.ts",
         "code/modules/offline-exporting.src.d.ts",
+        "test/typescript/modules/offline-exporting.ts",
+
         "code/modules/series-label.d.ts",
         "code/modules/series-label.src.d.ts",
+        "test/typescript/modules/series-label.ts",
+
         "code/modules/vector.d.ts",
         "code/modules/vector.src.d.ts",
-        "test/typescript/highcharts.ts",
-        "test/typescript/modules/accessibility.ts",
-        "test/typescript/modules/export-data.ts",
-        "test/typescript/modules/exporting.ts",
-        "test/typescript/modules/offline-exporting.ts",
-        "test/typescript/modules/series-label.ts",
         "test/typescript/modules/vector.ts"
     ]
 }
