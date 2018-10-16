@@ -1,5 +1,4 @@
 
-// THE CHART
 Highcharts.ganttChart('container', {
 
     title: {

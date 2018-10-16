@@ -1,5 +1,5 @@
 /**
- * (c) 2017 Torstein Honsi, Lars Cabrera
+ * (c) 2018 Torstein Honsi, Lars Cabrera
  *
  * License: www.highcharts.com/license
  */

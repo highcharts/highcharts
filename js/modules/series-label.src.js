@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2017 Torstein Honsi
+ * (c) 2009-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
