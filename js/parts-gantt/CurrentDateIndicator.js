@@ -14,6 +14,10 @@ import H from '../parts/Globals.js';
  * @type {Object}
  * @extends {xAxis.plotLines}
  * @excluding value
+ * @sample  gantt/current-date-indicator/demo
+ *          Current date indicator enabled
+ * @sample  gantt/current-date-indicator/object-config
+ *          Current date indicator with custom options
  * @product gantt
  * @apioption xAxis.currentDateIndicator
  */

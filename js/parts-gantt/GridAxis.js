@@ -50,6 +50,8 @@ var argsToArray = function (args) {
  * here.
  *
  * @type      {Array<object>}
+ * @sample    gantt/demo/left-axis-table
+ *            Left axis as a table
  * @apioption xAxis.grid.columns
  */
 

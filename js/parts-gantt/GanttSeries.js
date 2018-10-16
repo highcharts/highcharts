@@ -329,15 +329,41 @@ seriesType('gantt', 'xrange', {
  */
 
 /**
- * The ID of this point's parent point for Gantt charts. Aliases
- * [connect](series.xrange.data#connect). Can also be an object, specifying
- * further connecting [options](series.gantt.pathfinder) between the points.
+ * The ID of the point (task) that this point depends on in Gantt charts.
+ * Aliases [connect](series.xrange.data#connect). Can also be an object,
+ * specifying further connecting [options](series.gantt.pathfinder) between the
+ * points.
  *
  * @type {string|object}
  * @extends {series.xrange.data.connect}
  * @since 6.2.0
+ * @sample  gantt/demo/project-management
+ *          Dependencies
  * @product gantt
  * @apioption series.gantt.data.dependency
+ */
+
+/**
+ * Whether this point is a milestone. If so, only the `start` option is handled,
+ * while `end` is ignored.
+ *
+ * @type {boolean}
+ * @since 6.2.0
+ * @sample  gantt/gantt/milestones
+ *          Milestones
+ * @product gantt
+ * @apioption series.gantt.data.milestone
+ */
+
+/**
+ * The ID of the parent point (task) of this point in Gantt charts.
+ *
+ * @type {string}
+ * @since 6.2.0
+ * @sample  gantt/demo/subtasks
+ *          Gantt chart with subtasks
+ * @product gantt
+ * @apioption series.gantt.data.parent
  */
 
 /**
