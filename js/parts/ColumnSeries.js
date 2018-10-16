@@ -7,13 +7,18 @@
 /**
  * Adjusted width and x offset of the columns for grouping.
  *
- * @typedef Highcharts.ColumnMetricsObject
+ * @private
+ * @interface Highcharts.ColumnMetricsObject
+ *//**
+ * Width of the columns.
  *
- * @property {number} width
- *           Width of the columns.
+ * @name Highcharts.ColumnMetricsObject#width
+ * @type {number}
+ *//**
+ * Offset of the columns.
  *
- * @property {number} offset
- *           Offset of the columns.
+ * @name Highcharts.ColumnMetricsObject#offset
+ * @type {number}
  */
 
 'use strict';
