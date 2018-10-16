@@ -1,7 +1,7 @@
 /**
  * Sankey diagram module
  *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2017 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -195,16 +195,17 @@ seriesType('sankey', 'column', {
              * Return the largest sum of either the incoming links,
              * the outgoing links, or the minimum node height option.
              */
-            node.getSum = function () {
+            node.getSum = function (factor) {
                 var sumTo = 0,
-                    sumFrom = 0;
+                    sumFrom = 0,
+                    minHeight = node.minNodeHeight / factor || 0;
                 each(node.linksTo, function (link) {
                     sumTo += link.weight;
                 });
                 each(node.linksFrom, function (link) {
                     sumFrom += link.weight;
                 });
-                return Math.max(sumTo, sumFrom, node.minNodeHeight);
+                return Math.max(sumTo, sumFrom, minHeight);
             };
             /**
              * Get the offset in weight values of a point/link.
@@ -246,10 +247,10 @@ seriesType('sankey', 'column', {
             column = [],
             nodePadding = this.options.nodePadding;
 
-        column.sum = function () {
+        column.sum = function (factor) {
             var sum = 0;
             each(this, function (node) {
-                sum += node.getSum();
+                sum += node.getSum(factor);
             });
             return sum;
         };
@@ -262,7 +263,7 @@ seriesType('sankey', 'column', {
                 if (column[i] === node) {
                     return offset + (node.options.offset || 0);
                 }
-                offset += column[i].getSum() * factor + nodePadding;
+                offset += column[i].getSum(factor) * factor + nodePadding;
             }
         };
 
@@ -275,7 +276,7 @@ seriesType('sankey', 'column', {
                 if (i > 0) {
                     height += nodePadding;
                 }
-                height += column[i].getSum() * factor;
+                height += column[i].getSum(factor) * factor;
             }
             return (chart.plotSizeY - height) / 2;
         };
@@ -439,12 +440,12 @@ seriesType('sankey', 'column', {
             var height = chart.plotSizeY -
                 (column.length - 1) * options.nodePadding;
 
-            factor = Math.min(factor, height / column.sum());
+            factor = Math.min(factor, height / column.sum(factor));
         });
 
         each(this.nodeColumns, function (column) {
             each(column, function (node) {
-                var sum = node.getSum(),
+                var sum = node.getSum(factor),
                     height = sum * factor,
                     fromNodeTop = (
                         column.top(factor) +
