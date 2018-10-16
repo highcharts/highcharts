@@ -2092,6 +2092,10 @@ function mouseUp(e, chart) {
             chart.hideDragHandles();
         }
 
+        // Prevent default action
+        e.preventDefault();
+        chart.cancelClick = true;
+
         // Fire the event, with a default handler that updates the points
         point.firePointEvent('drop', {
             origin: dragDropData.origin,
@@ -2130,6 +2134,9 @@ function mouseUp(e, chart) {
  */
 function mouseDown(e, chart) {
     var dragPoint = chart.hoverPoint;
+
+    // Reset cancel click
+    chart.cancelClick = false;
 
     // Ignore if zoom/pan key is pressed
     if (chart.zoomOrPanKeyPressed(e)) {
