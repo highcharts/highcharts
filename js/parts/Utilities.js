@@ -2690,6 +2690,14 @@ if (win.jQuery) {
      */
 
     /**
+     * Helper function to return the chart of the current JQuery selector
+     * element.
+     *
+     * @function external:JQuery#highcharts
+     *
+     * @return {Highcharts.Chart}
+     *         The chart that is linked to the JQuery selector element.
+     *//**
      * Factory function to create a chart in the current JQuery selector
      * element.
      *
