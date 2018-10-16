@@ -1,8 +1,20 @@
+/**
+ * An advanced example of how to use a gantt chart to plan and visualize
+ * resources in logistics, in this case shipping.
+ * The chart displays a set of vessels and its scheduled journeys.
+ * The journeys can consist of one or more laps, which in itself contains
+ * loading, voyage, and unloading, these can be moved or resized.
+ * The chart also includes custom indicators like the Heat Indicator which
+ * displays when the vessels idle time goes above a threshold, and the
+ * Earliest Possible Return Indicator which displays when the vessel can return
+ * if it travels by maximum speed.
+ */
 
-// Logistics module start ---------------
-// This module adds heat indicators, idle time, and earliest possible return
-// indicators.
-
+/**
+ * --- Logistics module start
+ * This module adds heat indicators, idle time, and earliest possible return
+ * indicators.
+ */
 (function (Highcharts) {
     var draw = (function () {
         var isFn = function (x) {
@@ -398,9 +410,13 @@
 
 }(Highcharts));
 
-// ---- Logistics module end
+/**
+ * --- Logistics module end
+ */
 
-
+/**
+ * Variables
+ */
 var today = +Date.now(),
     minutes = 60 * 1000,
     hours = 60 * minutes,
@@ -408,9 +424,17 @@ var today = +Date.now(),
     dateFormat = function (date) {
         var format = '%e. %b';
         return Highcharts.dateFormat(format, date);
-    };
+    },
+    find = Highcharts.find,
+    xAxisMin = today - (10 * days),
+    xAxisMax = xAxisMin + 90 * days,
+    data;
 
-var information = {
+/**
+ * The data used in this visualization.
+ */
+data = {
+    // The different events in a lap of a journey.
     events: {
         loading: {
             color: '#395627',
@@ -447,14 +471,13 @@ var information = {
             }
         }
     },
+    // All the vessels and its sceduled journeys
     vessels: [{
         name: 'Vessel 1',
-        utilized: 95,
-        idle: 10,
-        trips: [{
+        journeys: [{
             name: 'Contract 1',
             start: today + days,
-            voyages: [{
+            laps: [{
                 duration: 21 * days,
                 startLocation: 'USGLS',
                 endLocation: 'BEZEE',
@@ -471,7 +494,7 @@ var information = {
         }, {
             name: 'Contract 5',
             start: today + 50 * days,
-            voyages: [{
+            laps: [{
                 duration: 7 * days,
                 startLocation: 'USGLS',
                 endLocation: 'BEZEE',
@@ -494,12 +517,10 @@ var information = {
         }]
     }, {
         name: 'Vessel 2',
-        utilized: 75,
-        idle: 23,
-        trips: [{
+        journeys: [{
             name: 'Contract 2',
             start: today - 5 * days,
-            voyages: [{
+            laps: [{
                 duration: 13 * days,
                 startLocation: 'USGLS',
                 endLocation: 'BEZEE',
@@ -517,7 +538,7 @@ var information = {
         }, {
             name: 'Contract 3',
             start: today + 23 * days,
-            voyages: [{
+            laps: [{
                 duration: 5 * days,
                 startLocation: 'USGLS',
                 endLocation: 'BEZEE',
@@ -534,7 +555,7 @@ var information = {
         }, {
             name: 'Contract 4',
             start: today + 60 * days,
-            voyages: [{
+            laps: [{
                 duration: 11 * days,
                 startLocation: 'USGLS',
                 endLocation: 'BEZEE',
@@ -551,8 +572,10 @@ var information = {
         }]
     }]
 };
-var find = Highcharts.find;
 
+/**
+ * Creates a point in a lap.
+ */
 var getPoint = function (params) {
     var start = params.start,
         tripName = params.tripName,
@@ -580,7 +603,7 @@ var getPoint = function (params) {
     return {
         start: start,
         end: end,
-        color: voyage && voyage.color || information.events[type].color,
+        color: voyage && voyage.color || data.events[type].color,
         vessel: vessel.name,
         indicator: indicator,
         y: params.y,
@@ -596,8 +619,11 @@ var getPoint = function (params) {
     };
 };
 
+/**
+ * Creates a set of points based on a lap. These points are grouped together.
+ */
 var getGroupFromTrip = function (trip, vessel, y) {
-    return trip.voyages.reduce(function (group, voyage) {
+    return trip.laps.reduce(function (group, voyage) {
         var points = [];
 
         if (voyage.loadDuration) {
@@ -645,10 +671,13 @@ var getGroupFromTrip = function (trip, vessel, y) {
     });
 };
 
+/**
+ * Parses the data and creates all the series of the chart.
+ */
 var getSeriesFromInformation = function (info) {
     var vessels = info.vessels;
     return vessels.map(function (vessel, i) {
-        var data = vessel.trips.reduce(function (result, trip) {
+        var data = vessel.journeys.reduce(function (result, trip) {
             var group = getGroupFromTrip(trip, vessel, i);
             return result.concat(group.points);
         }, []);
@@ -662,26 +691,9 @@ var getSeriesFromInformation = function (info) {
     });
 };
 
-var getCategoryFromIdleTime = function (utilized, idle) {
-    var thresholds = {
-            25: 'bad',
-            50: 'ok',
-            75: 'good',
-            100: 'great'
-        },
-        threshold = find(Object.keys(thresholds), function (threshold) {
-            return utilized < +threshold;
-        }),
-        className = thresholds[threshold];
-    return [
-        '<span class="info-span ' + className + '">',
-        '    <span class="utilized">' + utilized + '%</span><br/>',
-        '    <span>t: ' + idle + ' days</span>',
-        '</span>'
-    ].join('\n');
-};
-
-// Modify event to handle modifying other points in group when resizing
+/**
+ * Modify event to handle modifying other points in group when resizing
+ */
 var customResize = function (e, chart) {
     var newPoints = e.newPoints,
         defined = Highcharts.defined,
@@ -719,7 +731,9 @@ var customResize = function (e, chart) {
     }
 };
 
-// Check if new points collide with existing ones
+/**
+ * Check if new points collide with existing ones
+ */
 var newPointsColliding = function (newPoints, chart) {
     var reduce = Highcharts.reduce,
         keys = Highcharts.keys,
@@ -765,7 +779,9 @@ var newPointsColliding = function (newPoints, chart) {
     return false;
 };
 
-// Add collision detection on move/resize
+/**
+ * Add collision detection on move/resize
+ */
 var customDrag = function (e) {
     var series = this.series,
         chart = series.chart;
@@ -783,8 +799,10 @@ var customDrag = function (e) {
     }
 };
 
-// Implement custom drop. Do normal update, but move points between series when
-// changing their y value.
+/**
+ * Implement custom drop. Do normal update, but move points between series when
+ * changing their y value.
+ */
 var customDrop = function (e) {
     var newPoints = e.newPoints,
         chart = this.series.chart,
@@ -843,30 +861,68 @@ var customDrop = function (e) {
     return false;
 };
 
-var leftLabelFormat = function () {
+/**
+ * Custom formatter for data labels which are left aligned.
+ */
+var leftLabelFormatter = function () {
     if (this.point.type === 'voyage') {
         return this.point.startLocation;
     }
 };
 
-var centerLabelFormat = function () {
+/**
+ * Custom formatter for data labels which are center aligned.
+ */
+var centerLabelFormatter = function () {
     if (this.point.type === 'voyage') {
         return ' ' + this.point.name + ' ';
     }
 };
 
-var rightLabelFormat = function () {
+/**
+ * Custom formatter for data labels which are right aligned.
+ */
+var rightLabelFormatter = function () {
     if (this.point.type === 'voyage') {
         return this.point.endLocation;
     }
 };
 
+/**
+ * Custom formatter for axis labels displaying the series name.
+ */
 var gridColumnFormatterSeriesName = function () {
     var chart = this.chart,
         series = chart.get(this.value);
     return series.name;
 };
 
+/**
+ * Creates a category label and formats it based on the value.
+ */
+var getCategoryFromIdleTime = function (utilized, idle) {
+    var thresholds = {
+            25: 'bad',
+            50: 'ok',
+            75: 'good',
+            100: 'great'
+        },
+        threshold = find(Object.keys(thresholds), function (threshold) {
+            return utilized < +threshold;
+        }),
+        className = thresholds[threshold];
+    return [
+        '<span class="info-span ' + className + '">',
+        '    <span class="utilized">' + utilized + '%</span><br/>',
+        '    <span>t: ' + idle + ' days</span>',
+        '</span>'
+    ].join('\n');
+};
+
+/**
+ * Custom formatter for axis labels displaying the vessels number of idle days,
+ * and its percentage of utilized time.
+ */
 var gridColumnFormatterSeriesIdle = function () {
     var chart = this.chart,
         series = chart.get(this.value),
@@ -879,17 +935,20 @@ var gridColumnFormatterSeriesIdle = function () {
     return getCategoryFromIdleTime(percentage, idleDays);
 };
 
+/**
+ * Custom formatter for the tooltip.
+ */
 var tooltipFormatter = function () {
     var point = this.point,
         trip = point.trip,
         series = point.series,
-        formatter = information.events[point.type].tooltipFormatter;
+        formatter = data.events[point.type].tooltipFormatter;
     return '<b>' + trip + ' - ' + series.name + '</b><br/>' + formatter(point);
 };
 
-var xAxisMin = today - (10 * days),
-    xAxisMax = xAxisMin + 90 * days;
-
+/**
+ * Set the options and create the gantt chart.
+ */
 Highcharts.ganttChart('container', {
     plotOptions: {
         series: {
@@ -897,7 +956,7 @@ Highcharts.ganttChart('container', {
                 draggableX: true,
                 draggableY: true,
                 dragMinY: 0,
-                dragMaxY: information.vessels.length - 1,
+                dragMaxY: data.vessels.length - 1,
                 liveRedraw: false,
                 groupBy: 'trip',
                 guideBox: {
@@ -923,7 +982,7 @@ Highcharts.ganttChart('container', {
             dataLabels: [{
                 enabled: true,
                 labelrank: 1,
-                formatter: leftLabelFormat,
+                formatter: leftLabelFormatter,
                 align: 'left',
                 style: {
                     fontSize: '8px'
@@ -931,7 +990,7 @@ Highcharts.ganttChart('container', {
             }, {
                 enabled: true,
                 labelrank: 2,
-                formatter: centerLabelFormat,
+                formatter: centerLabelFormatter,
                 align: 'center',
                 borderWidth: 1,
                 padding: 3,
@@ -941,7 +1000,7 @@ Highcharts.ganttChart('container', {
             }, {
                 enabled: true,
                 labelrank: 1,
-                formatter: rightLabelFormat,
+                formatter: rightLabelFormatter,
                 align: 'right',
                 style: {
                     fontSize: '8px'
@@ -965,7 +1024,7 @@ Highcharts.ganttChart('container', {
     scrollbar: {
         enabled: true
     },
-    series: getSeriesFromInformation(information),
+    series: getSeriesFromInformation(data),
     tooltip: {
         formatter: tooltipFormatter
     },

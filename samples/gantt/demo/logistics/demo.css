@@ -21,3 +21,8 @@
 .info-span.bad {
     color: #c79495;
 }
+
+#description {
+    max-width: 800px;
+    margin: 0 auto;
+}
