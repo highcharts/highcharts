@@ -18,6 +18,9 @@ Highcharts.ganttChart('container', {
             columns: [{
                 title: {
                     text: 'Project'
+                },
+                labels: {
+                    format: '{point.name}'
                 }
             }, {
                 title: {

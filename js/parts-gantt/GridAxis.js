@@ -862,11 +862,6 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
             i = gridOptions.columns.length;
             while (i--) {
                 columnOptions = merge(
-                    {
-                        labels: {
-                            format: '{point.name}'
-                        }
-                    },
                     userOptions,
                     gridOptions.columns[i],
                     {
