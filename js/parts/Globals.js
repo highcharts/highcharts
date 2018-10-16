@@ -3,7 +3,19 @@
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * Reference to the global SVGElement class as a workaround for a name conflict
+ * in the Highcharts namespace.
+ *
+ * @global
+ * @typedef {global.SVGElement} GlobalSVGElement
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
+ */
+
 'use strict';
+
 /* global win, window */
 
 // glob is a temporary fix to allow our es-modules to work.

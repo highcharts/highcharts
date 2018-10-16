@@ -5,16 +5,6 @@
  */
 
 /**
- * Reference to the global HTMLElement class as a workaround for a name conflict
- * in the Highcharts namespace.
- *
- * @global
- * @typedef {global.HTMLElement} GlobalHTMLElement
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
- */
-
-/**
  * Reference to the global SVGElement class as a workaround for a name conflict
  * in the Highcharts namespace.
  *
@@ -366,7 +356,7 @@
  * An SVG DOM element. The type is a reference to the regular SVGElement in the
  * global scope.
  *
- * @typedef {global.GlobalSVGElement} Highcharts.SVGDOMElement
+ * @typedef {globals.GlobalSVGElement} Highcharts.SVGDOMElement
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
  */
