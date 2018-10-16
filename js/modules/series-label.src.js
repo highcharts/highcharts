@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2017 Torstein Honsi
+ * (c) 2009-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -57,7 +57,7 @@ H.setOptions({
              * @sample highcharts/series-label/stock-chart
              *         Stock chart
              * @since 6.0.0
-             * @product highcharts highstock
+             * @product highcharts highstock gantt
              */
             label: {
                 /**

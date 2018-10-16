@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -439,7 +439,7 @@ H.Series = H.seriesType('line', null
      * @type      {boolean}
      * @default   false
      * @since     4.1.6
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.series.getExtremesFromAll
      */
 
@@ -481,7 +481,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {string}
      * @since     3.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.series.linkedTo
      */
 
@@ -560,7 +560,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {number}
      * @default   1
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.series.pointInterval
      */
 
@@ -582,7 +582,7 @@ H.Series = H.seriesType('line', null
      *
      * @type       {string}
      * @since      4.1.0
-     * @product    highcharts highstock
+     * @product    highcharts highstock gantt
      * @validvalue ["day", "month", "year"]
      * @apioption  plotOptions.series.pointIntervalUnit
      */
@@ -622,7 +622,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {string|number}
      * @since     2.3.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.series.pointPlacement
      */
 
@@ -640,7 +640,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {number}
      * @default   0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.series.pointStart
      */
 
@@ -1497,7 +1497,7 @@ H.Series = H.seriesType('line', null
          * @type      {boolean}
          * @default   true
          * @since     4.0
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption plotOptions.series.dataLabels.defer
          */
 
@@ -2134,7 +2134,7 @@ H.Series = H.seriesType('line', null
      * data checking and indexing in long series. Set it to `0` disable.
      *
      * @since   2.2
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     turboThreshold: 1000,
 

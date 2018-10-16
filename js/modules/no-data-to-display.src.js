@@ -55,7 +55,7 @@ defaultOptions.noData = {
      *
      * @type {Object}
      * @since 3.0.8
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      * @apioption noData.attr
      */
 
@@ -66,7 +66,7 @@ defaultOptions.noData = {
      * @type {Boolean}
      * @default false
      * @since 4.1.10
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      * @apioption noData.useHTML
      */
 
@@ -84,7 +84,7 @@ defaultOptions.noData = {
          *
          * @type {Number}
          * @default 0
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         x: 0,
 
@@ -93,7 +93,7 @@ defaultOptions.noData = {
          *
          * @type {Number}
          * @default 0
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         y: 0,
 
@@ -112,7 +112,7 @@ defaultOptions.noData = {
          * @validvalue ["top", "middle", "bottom"]
          * @type {String}
          * @default middle
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         verticalAlign: 'middle'
     }

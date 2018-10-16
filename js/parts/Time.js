@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -172,7 +172,7 @@ Highcharts.Time.prototype = {
      *
      * @type      {*}
      * @since     4.0.4
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.Date
      */
 
@@ -190,7 +190,7 @@ Highcharts.Time.prototype = {
      *
      * @type      {Function}
      * @since     4.1.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.getTimezoneOffset
      */
 
@@ -209,7 +209,7 @@ Highcharts.Time.prototype = {
      *
      * @type      {string}
      * @since     5.0.7
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.timezone
      */
 
@@ -227,7 +227,7 @@ Highcharts.Time.prototype = {
      * @type      {number}
      * @default   0
      * @since     3.0.8
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.timezoneOffset
      */
 
@@ -598,6 +598,24 @@ Highcharts.Time.prototype = {
         return capitalize ?
             format.substr(0, 1).toUpperCase() + format.substr(1) :
             format;
+    },
+
+    /**
+     * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
+     * an object.
+     * @param  {String|Array|Object} f General format description
+     * @return {Object}   The object definition
+     */
+    resolveDTLFormat: function (f) {
+        if (!H.isObject(f, true)) {
+            f = H.splat(f);
+            return {
+                main: f[0],
+                from: f[1],
+                to: f[2]
+            };
+        }
+        return f;
     },
 
     /**

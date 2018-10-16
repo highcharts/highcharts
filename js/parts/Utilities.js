@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -1316,6 +1316,21 @@ H.wrap = function (obj, method, func) {
 };
 
 
+
+/**
+ * Recursively converts all Date properties to timestamps.
+ *
+ * @param  {Object} object - any object to convert properties of
+ */
+H.datePropsToTimestamps = function (object) {
+    H.objectEach(object, function (val, key) {
+        if (H.isObject(val) && typeof val.getTime === 'function') {
+            object[key] = val.getTime();
+        } else if (H.isObject(val) || H.isArray(val)) {
+            H.datePropsToTimestamps(val);
+        }
+    });
+};
 
 /**
  * Format a single variable. Similar to sprintf, without the % prefix.

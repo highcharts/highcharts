@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -48,7 +48,6 @@ import './Utilities.js';
 
 var Point,
     H = Highcharts,
-
     each = H.each,
     extend = H.extend,
     erase = H.erase,
@@ -57,6 +56,8 @@ var Point,
     isArray = H.isArray,
     isNumber = H.isNumber,
     pick = H.pick,
+    uniqueKey = H.uniqueKey,
+    defined = H.defined,
     removeEvent = H.removeEvent;
 
 /**
@@ -119,6 +120,9 @@ Highcharts.Point.prototype = {
         /*= } =*/
 
         point.applyOptions(options, x);
+
+        // Add a unique ID to the point if none is assigned
+        point.id = defined(point.id) ? point.id : uniqueKey();
 
         if (series.options.colorByPoint) {
 
@@ -196,6 +200,9 @@ Highcharts.Point.prototype = {
         // options must be shielded (#5681)
         if (options.group) {
             delete point.group;
+        }
+        if (options.dataLabels) {
+            delete point.dataLabels;
         }
 
         /**
@@ -436,8 +443,8 @@ Highcharts.Point.prototype = {
             point.onMouseOut();
         }
 
-        // Remove all events
-        if (point.graphic || point.dataLabel) {
+        // Remove all events and elements
+        if (point.graphic || point.dataLabel || point.dataLabels) {
             removeEvent(point);
             point.destroyElements();
         }
@@ -473,6 +480,23 @@ Highcharts.Point.prototype = {
             if (point[prop]) {
                 point[prop] = point[prop].destroy();
             }
+        }
+        // Handle point.dataLabels and point.connectors
+        if (point.dataLabels) {
+            each(point.dataLabels, function (label) {
+                if (label.element) {
+                    label.destroy();
+                }
+            });
+            delete point.dataLabels;
+        }
+        if (point.connectors) {
+            each(point.connectors, function (connector) {
+                if (connector.element) {
+                    connector.destroy();
+                }
+            });
+            delete point.connectors;
         }
     },
 

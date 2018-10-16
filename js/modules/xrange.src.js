@@ -1,7 +1,7 @@
 /**
  * X-range series module
  *
- * (c) 2010-2017 Torstein Honsi, Lars A. V. Cabrera
+ * (c) 2010-2018 Torstein Honsi, Lars A. V. Cabrera
  *
  * License: www.highcharts.com/license
  */
@@ -26,6 +26,28 @@ var addEvent = H.addEvent,
     Series = H.Series;
 
 /**
+ * Return color of a point based on its category.
+ *
+ * @param {object} series The series which the point belongs to.
+ * @param {object} point The point to calculate its color for.
+ * @returns {object} Returns an object containing the properties color and
+ * colorIndex.
+ */
+var getColorByCategory = function getColorByCategory(series, point) {
+    var colors = series.options.colors || series.chart.options.colors,
+        colorCount = colors ?
+            colors.length :
+            series.chart.options.chart.colorCount,
+        colorIndex = point.y % colorCount,
+        color = colors && colors[colorIndex];
+
+    return {
+        colorIndex: colorIndex,
+        color: color
+    };
+};
+
+/**
  * @private
  * @class
  * @name Highcharts.seriesTypes.xrange
@@ -43,7 +65,7 @@ seriesType('xrange', 'column'
  *               findNearestPointBy,getExtremesFromAll,negativeColor,
  *               pointInterval,pointIntervalUnit,pointPlacement,
  *               pointRange,pointStart,softThreshold,stacking,threshold,data
- * @product      highcharts highstock
+ * @product      highcharts highstock gantt
  * @sample       {highcharts} highcharts/demo/x-range/
  *               X-range
  * @sample       {highcharts} highcharts/css/x-range/
@@ -64,7 +86,7 @@ seriesType('xrange', 'column'
      * @sample {highcharts} highcharts/demo/x-range
      *         X-range with partial fill
      *
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.xrange.partialFill
      */
 
@@ -73,9 +95,22 @@ seriesType('xrange', 'column'
      * of the point color.
      *
      * @type      {Highcharts.ColorString}
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.xrange.partialFill.fill
      */
+
+    /**
+     * A partial fill for each point, typically used to visualize how much of
+     * a task is performed. The partial fill object can be set either on series
+     * or point level.
+     *
+     * @sample    {highcharts} highcharts/demo/x-range
+     *            X-range with partial fill
+     * @type      {Object}
+     * @extends   plotOptions.xrange.partialFill
+     * @apioption series.xrange.data.partialFill
+     */
+
 
     /**
      * In an X-range series, this option makes all points of the same Y-axis
@@ -128,7 +163,7 @@ seriesType('xrange', 'column'
     animate: seriesTypes.line.prototype.animate,
     cropShoulder: 1,
     getExtremesFromAll: true,
-
+    autoIncrement: H.noop,
     /**
      * Borrow the column series metrics, but with swapped axes. This gives free
      * access to features like groupPadding, grouping, pointWidth etc.
@@ -199,6 +234,7 @@ seriesType('xrange', 'column'
     translatePoint: function (point) {
         var series = this,
             xAxis = series.xAxis,
+            yAxis = series.yAxis,
             metrics = series.columnMetrics,
             options = series.options,
             minPointLength = options.minPointLength || 0,
@@ -212,6 +248,8 @@ seriesType('xrange', 'column'
             inverted = this.chart.inverted,
             borderWidth = pick(options.borderWidth, 1),
             crisper = borderWidth % 2 / 2,
+            yOffset = metrics.offset,
+            pointHeight = Math.round(metrics.width),
             dlLeft,
             dlRight,
             dlWidth;
@@ -228,21 +266,27 @@ seriesType('xrange', 'column'
         plotX = Math.max(plotX, -10);
         plotX2 = Math.min(Math.max(plotX2, -10), xAxis.len + 10);
 
+        // Handle individual pointWidth
+        if (defined(point.options.pointWidth)) {
+            yOffset -= (Math.ceil(point.options.pointWidth) - pointHeight) / 2;
+            pointHeight = Math.ceil(point.options.pointWidth);
+        }
+
         // Apply pointPlacement to the Y axis
         if (
             options.pointPlacement &&
             isNumber(point.plotY) &&
-            series.yAxis.categories
+            yAxis.categories
         ) {
-            point.plotY = series.yAxis
+            point.plotY = yAxis
                 .translate(point.y, 0, 1, 0, 1, options.pointPlacement);
         }
 
         point.shapeArgs = {
             x: Math.floor(Math.min(plotX, plotX2)) + crisper,
-            y: Math.floor(point.plotY + metrics.offset) + crisper,
+            y: Math.floor(point.plotY + yOffset) + crisper,
             width: Math.round(Math.abs(plotX2 - plotX)),
-            height: Math.round(metrics.width),
+            height: pointHeight,
             r: series.options.borderRadius
         };
 
@@ -265,7 +309,7 @@ seriesType('xrange', 'column'
 
         // Tooltip position
         point.tooltipPos[0] += inverted ? 0 : length / 2;
-        point.tooltipPos[1] -= inverted ? length / 2 : metrics.width / 2;
+        point.tooltipPos[1] -= inverted ? -length / 2 : metrics.width / 2;
 
         // Add a partShapeArgs to the point, based on the shapeArgs property
         partialFill = point.partialFill;
@@ -298,6 +342,11 @@ seriesType('xrange', 'column'
                 ),
                 height: shapeArgs.height
             };
+        }
+
+        // Category from Y axis
+        if (yAxis.categories) {
+            point.category = yAxis.categories[point.y];
         }
     },
 
@@ -469,10 +518,34 @@ seriesType('xrange', 'column'
     //*/
 
 }, { // Point class properties
-
     /**
-     * Extend init so that `colorByPoint` for x-range means that one color is
-     * applied per Y axis category.
+     * Extend applyOptions so that `colorByPoint` for x-range means that one
+     * color is applied per Y axis category.
+     *
+     * @private
+     * @function Highcharts.Point#applyOptions
+     *
+     * @return {Highcharts.Series}
+     */
+    applyOptions: function () {
+        var point = Point.prototype.applyOptions.apply(this, arguments),
+            series = point.series,
+            colorByPoint;
+
+        if (series.options.colorByPoint && !point.options.color) {
+            colorByPoint = getColorByCategory(series, point);
+            /*= if (build.classic) { =*/
+            point.color = colorByPoint.color;
+            /*= } =*/
+            if (!point.options.colorIndex) {
+                point.colorIndex = colorByPoint.colorIndex;
+            }
+        }
+
+        return point;
+    },
+    /**
+     * Extend init to have y default to 0.
      *
      * @private
      * @function Highcharts.Point#init
@@ -480,28 +553,11 @@ seriesType('xrange', 'column'
      * @return {Highcharts.Series}
      */
     init: function () {
-
         Point.prototype.init.apply(this, arguments);
-
-        var colors,
-            series = this.series,
-            colorCount = series.chart.options.chart.colorCount;
 
         if (!this.y) {
             this.y = 0;
         }
-
-        /*= if (build.classic) { =*/
-        if (series.options.colorByPoint) {
-            colors = series.options.colors || series.chart.options.colors;
-            colorCount = colors.length;
-
-            if (!this.options.color && colors[this.y % colorCount]) {
-                this.color = colors[this.y % colorCount];
-            }
-        }
-        /*= } =*/
-        this.colorIndex = pick(this.options.colorIndex, this.y % colorCount);
 
         return this;
     },
@@ -581,7 +637,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *            findNearestPointBy,getExtremesFromAll,
  *            negativeColor,pointInterval,pointIntervalUnit,pointPlacement,
  *            pointRange,pointStart,softThreshold,stacking,threshold
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange
  */
 
@@ -621,8 +677,19 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *
  * @type      {Array<number|Array<number>|*>}
  * @extends   series.line.data
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange.data
+ */
+
+/**
+ * The starting X value of the range point.
+ *
+ * @sample {highcharts} highcharts/demo/x-range
+ *         X-range
+ *
+ * @type      {number}
+ * @product   highcharts highstock gantt
+ * @apioption series.xrange.data.x
  */
 
 /**
@@ -632,8 +699,19 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *         X-range
  *
  * @type      {number}
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange.data.x2
+ */
+
+/**
+ * The Y value of the range point.
+ *
+ * @sample {highcharts} highcharts/demo/x-range
+ *         X-range
+ *
+ * @type      {number}
+ * @product   highcharts highstock gantt
+ * @apioption series.xrange.data.y
  */
 
 /**
@@ -644,7 +722,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * @sample {highcharts} highcharts/demo/x-range
  *         X-range with partial fill
  *
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange.data.partialFill
  */
 
@@ -653,7 +731,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * converted to percentages in the default data label formatter.
  *
  * @type      {number}
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange.data.partialFill.amount
  */
 
@@ -662,6 +740,6 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * of the point color.
  *
  * @type      {Highcharts.ColorString}
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.xrange.data.partialFill.fill
  */
