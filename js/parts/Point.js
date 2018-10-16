@@ -7,38 +7,55 @@
 /**
  * Configuration hash for the data label and tooltip formatters.
  *
- * @typedef Highcharts.PointLabelObject
+ * @interface Highcharts.PointLabelObject
+ *//**
+ * For categorized axes this property holds the category name for the point. For
+ * other axes it holds the X value.
  *
- * @property {number|string} x
- *           For categorized axes this property holds the category name for the
- *           point. For other axes it holds the X value.
+ * @name Highcharts.PointLabelObject#x
+ * @type {number|string}
+ *//**
+ * The y value of the point.
  *
- * @property {number} [y]
- *           The y value of the point.
+ * @name Highcharts.PointLabelObject#y
+ * @type {number|undefined}
+ *//**
+ * The point's current color.
  *
- * @property {Highcharts.ColorString} color
- *           The point's current color.
+ * @name Highcharts.PointLabelObject#color
+ * @type {Highcharts.ColorString}
+ *//**
+ * The point's current color index, used in styled mode instead of `color`. The
+ * color index is inserted in class names used for styling.
  *
- * @property {number} colorIndex
- *           The point's current color index, used in styled mode instead of
- *           `color`. The color index is inserted in class names used for
- *           styling.
+ * @name Highcharts.PointLabelObject#colorIndex
+ * @type {number}
+ *//**
+ * The name of the related point.
  *
- * @property {number|string} key
- *           The name of the related point.
+ * @name Highcharts.PointLabelObject#key
+ * @type {number|string}
+ *//**
+ * The related series.
  *
- * @property {Highcharts.Series} series
- *           The related series.
+ * @name Highcharts.PointLabelObject#series
+ * @type {Highcharts.Series}
+ *//**
+ * The related point.
  *
- * @property {Highcharts.Point} point
- *           The related point.
+ * @name Highcharts.PointLabelObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * The percentage for related points in a stacked series or pies.
  *
- * @property {number} percentage
- *           The percentage for related points in a stacked series or pies.
+ * @name Highcharts.PointLabelObject#percentage
+ * @type {number}
+ *//**
+ * The total of values in either a stack for stacked series, or a pie in a pie
+ * series.
  *
- * @property {number} total
- *           The total of values in either a stack for stacked series, or a pie
- *           in a pie series.
+ * @name Highcharts.PointLabelObject#total
+ * @type {number}
  */
 
 'use strict';
