@@ -816,15 +816,12 @@ const createExamples = (title, samplesFolder, output) => {
     const template = getFile('samples/template-example.htm');
     const samples = getDirectories(samplesFolder);
     const convertURLToLocal = str => {
-        const stock = 'src="https://code.highcharts.com/stock/';
-        const maps = 'src="https://code.highcharts.com/maps/';
-        const chart = 'src="https://code.highcharts.com/';
-        const mapdata = 'src="https://code.highcharts.com/mapdata';
         const localPath = 'src="../../code/';
-        str = replaceAll(str, stock, localPath);
-        str = replaceAll(str, maps, localPath);
-        str = replaceAll(str, chart, localPath);
-        str = replaceAll(str, '../../js/mapdata', mapdata);
+        str = replaceAll(str, 'src="https://code.highcharts.com/stock/', localPath);
+        str = replaceAll(str, 'src="https://code.highcharts.com/maps/', localPath);
+        str = replaceAll(str, 'src="https://code.highcharts.com/gantt/', localPath);
+        str = replaceAll(str, 'src="https://code.highcharts.com/', localPath);
+        str = replaceAll(str, '../../js/mapdata', 'src="https://code.highcharts.com/mapdata');
         return str;
     };
     samples.forEach((name) => {
