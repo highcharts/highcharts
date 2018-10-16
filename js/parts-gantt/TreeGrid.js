@@ -468,7 +468,6 @@ override(GridAxis.prototype, {
                     * @product gantt
                     * @sample {gantt} gantt/treegrid-axis/labels-levels
                     *           Levels on TreeGrid Labels
-                    * @since next
                     * @type {Array<Object>}
                     * @apioption yAxis.labels.levels
                     */
@@ -478,7 +477,6 @@ override(GridAxis.prototype, {
                         * applies to.
                         *
                         * @sample {gantt} gantt/treegrid-axis/labels-levels
-                        * @since next
                         */
                         level: undefined
                     }, {
@@ -493,7 +491,6 @@ override(GridAxis.prototype, {
                      * treegrid.
                      *
                      * @product gantt
-                     * @since next
                      * @optionparent yAxis.labels.symbol
                      */
                     symbol: {
