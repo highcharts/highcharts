@@ -2015,6 +2015,29 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         type: 'linear',
 
         /**
+         * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
+         * `category` or `treegrid`. Defaults to `treegrid` for Gantt charts,
+         * `linear` for other chart types.
+         *
+         * In a datetime axis, the numbers are given in milliseconds, and tick
+         * marks are placed on appropriate values, like full hours or days. In a
+         * category or treegrid axis, the [point names](#series.line.data.name)
+         * of the chart's series are used for categories, if a
+         * [categories](#xAxis.categories) array is not defined.
+         *
+         * @sample {highcharts} highcharts/yaxis/type-log-minorgrid/
+         *         Logarithmic with minor grid lines
+         * @sample {highcharts} highcharts/yaxis/type-log-negative/
+         *         Logarithmic with extension to emulate negative values
+         *
+         * @product    highcharts gantt
+         * @validvalue ["linear", "logarithmic", "datetime", "category", "treegrid"]
+         * @default {highcharts} linear
+         * @default {gantt} treegrid
+         * @apioption yAxis.type
+         */
+
+        /**
          * Applies only when the axis `type` is `category`. When `uniqueNames`
          * is true, points are placed on the X axis according to their names.
          * If the same point name is repeated in the same or another series,

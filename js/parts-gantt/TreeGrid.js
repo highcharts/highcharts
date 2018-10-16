@@ -465,11 +465,12 @@ override(GridAxis.prototype, {
                     * Set options on specific levels in a tree grid axis. Takes
                     * precedence over labels options.
                     *
-                    * @apioption yAxis.labels.levels
                     * @product gantt
                     * @sample {gantt} gantt/treegrid-axis/labels-levels
+                    *           Levels on TreeGrid Labels
                     * @since next
                     * @type {Array<Object>}
+                    * @apioption yAxis.labels.levels
                     */
                     levels: [{
                         /**

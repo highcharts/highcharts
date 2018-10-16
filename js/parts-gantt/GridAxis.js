@@ -25,6 +25,59 @@ var argsToArray = function (args) {
     Axis = H.Axis,
     Tick = H.Tick;
 
+/**
+ * Set grid options for the axis labels. Requires Highcharts Gantt.
+ *
+ * @type      {object}
+ * @since     6.2.0
+ * @product   gantt
+ * @apioption xAxis.grid
+ */
+
+/**
+ * Enable grid on the axis labels. Defaults to true for Gantt charts.
+ *
+ * @type      {boolean}
+ * @since     6.2.0
+ * @default   true
+ * @product   gantt
+ * @apioption xAxis.grid.enabled
+ */
+
+/**
+ * Set specific options for each column (or row for horizontal axes) in the
+ * grid. Each extra column/row is its own axis, and the axis options can be set
+ * here.
+ *
+ * @type      {Array<object>}
+ * @apioption xAxis.grid.columns
+ */
+
+/**
+ * Set border color for the label grid lines.
+ *
+ * @type      {Highcharts.ColorString}
+ * @apioption xAxis.grid.borderColor
+ */
+
+/**
+ * Set border width of the label grid lines.
+ *
+ * @type      {number}
+ * @default 1
+ * @apioption xAxis.grid.borderWidth
+ */
+
+/**
+ * Set cell height for grid axis labels. By default this is calculated from font
+ * size.
+ *
+ * @type      {number}
+ * @default null
+ * @apioption xAxis.grid.cellHeight
+ */
+
+
 // Enum for which side the axis is on.
 // Maps to axis.side
 var axisSide = {
@@ -838,7 +891,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
          * Use cellHeight axis option if set
          */
         if (axis.horiz) {
-            options.tickLength = options.cellHeight ||
+            options.tickLength = gridOptions.cellHeight ||
                     fontMetrics.h * fontSizeToCellHeightRatio;
         }
 
