@@ -401,7 +401,7 @@
         <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts"/>
         <zip destfile="${dist.dir}/${highstock.product.name}-${highstock.product.version}.zip" basedir="${dist.dir}/highstock"/>
         <zip destfile="${dist.dir}/${highmaps.product.name}-${highmaps.product.version}.zip" basedir="${dist.dir}/highmaps"/>
-        <zip destfile="${dist.dir}/${gantt.product.name}-${gantt.product.version}.zip" basedir="${dist.dir}/gantt"/>
+        <zip destfile="${dist.dir}/Highcharts-Gantt-${gantt.product.version}.zip" basedir="${dist.dir}/gantt"/>
         
 
     </target>
@@ -816,9 +816,12 @@
     <!-- Deploy Gantt to S3 -->
     <target name="deploy-gantt" depends="set.properties" description="Deploy Gantt distribution to Amazon S3">
         <property file="git-ignore-me.properties"/>
-        <copy file="${basedir}/build/dist/Gantt-${gantt.product.version}.zip" tofile="${basedir}/build/dist/Gantt-${gantt.product.version}.zip"/>
+        <copy
+            file="${basedir}/build/dist/Highcharts-Gantt-${gantt.product.version}.zip"
+            tofile="${basedir}/build/dist/Highcharts-Gantt-${gantt.product.version}.zip"
+        />
         <antcall target="put-file-to-S3">
-            <param name="local" value="${basedir}/build/dist/Gantt-${gantt.product.version}.zip"/>
+            <param name="local" value="${basedir}/build/dist/Highcharts-Gantt-${gantt.product.version}.zip"/>
             <param name="remote" value="${amazon.s3.bucketname}/zips"/>
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
