@@ -219,9 +219,6 @@ seriesType('gantt', 'xrange', {
             'partialFill', pick(options.completed, options.partialFill)
         );
         addIfExists('connect', pick(options.dependency, options.connect));
-        if (options.milestone) {
-            options.x2 = options.x;
-        }
     }
 
 }, merge(parent.prototype.pointClass.prototype, {

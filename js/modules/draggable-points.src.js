@@ -1660,11 +1660,14 @@ H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
             );
         // If we are updating a single prop, and it has a validation function
         // for the prop, run it. If it fails, don't update the value.
-        if (!(
-            updateSingleProp &&
-            val.propValidate &&
-            !val.propValidate(newVal, point)
-        )) {
+        if (
+            !(
+                updateSingleProp &&
+                val.propValidate &&
+                !val.propValidate(newVal, point)
+            ) &&
+            oldVal !== undefined
+        ) {
             result[key] = newVal;
         }
     });
