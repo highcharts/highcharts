@@ -13,7 +13,6 @@ var correctFloat = H.correctFloat,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     fireEvent = H.fireEvent,
-    isArray = H.isArray,
     isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
@@ -42,22 +41,16 @@ var correctFloat = H.correctFloat,
  * @param {object} [parameters.category] Set category for the tick.
  */
 H.Tick = function (axis, pos, type, noLabel, parameters) {
-    var params = parameters ? parameters : {};
-
     this.axis = axis;
     this.pos = pos;
     this.type = type || '';
     this.isNew = true;
     this.isNewLabel = true;
+    this.parameters = parameters || {};
     // Usually undefined, numeric for grid axes
-    this.tickmarkOffset = params.tickmarkOffset;
+    this.tickmarkOffset = this.parameters.tickmarkOffset;
 
-    this.category = pick(
-        params.category,
-        isArray(axis.categories) ? axis.categories[pos] : undefined,
-        isArray(axis.names) ? axis.names[pos] : undefined
-    );
-    this.options = params.options;
+    this.options = this.parameters.options;
     if (!type && !noLabel) {
         this.addLabel();
     }
@@ -77,6 +70,8 @@ H.Tick.prototype = {
             axis = tick.axis,
             options = axis.options,
             chart = axis.chart,
+            categories = axis.categories,
+            names = axis.names,
             pos = tick.pos,
             labelOptions = pick(
                 tick.options && tick.options.labels,
@@ -86,7 +81,11 @@ H.Tick.prototype = {
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
-            value = defined(tick.category) ? tick.category : pos,
+            value = this.parameters.category || (
+                categories ?
+                    pick(categories[pos], names[pos], pos) :
+                    pos
+            ),
             label = tick.label,
             tickPositionInfo = tickPositions.info,
             dateTimeLabelFormat,

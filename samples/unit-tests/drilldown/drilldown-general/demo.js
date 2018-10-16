@@ -74,7 +74,15 @@ QUnit.test('Drilldown methods', function (assert) {
     assert.deepEqual(
         chart.xAxis[0].names,
         ['The quick brown fox jumps over the lazy dog', 'Dogs', 'Cows', 'Sheep', 'Pigs'],
-        'First drilldown'
+        'xAxis.names after first drilldown'
+    );
+    assert.deepEqual(
+        chart.xAxis[0].tickPositions.map(function (pos) {
+            return chart.xAxis[0].ticks[pos].label.element.textContent
+                .replace(/ /g, '');
+        }),
+        ['Thequickbrownfoxjumpsoverthelazydog', 'Dogs', 'Cows', 'Sheep', 'Pigs'],
+        'xAxis.names after first drilldown'
     );
     assert.ok(
         chart.xAxis[0].ticks[0].label.element.getBBox().width < 120,

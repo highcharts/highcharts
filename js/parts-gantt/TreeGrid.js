@@ -631,7 +631,7 @@ override(GridAxis.prototype, {
                     });
             } else {
                 // update labels depending on tick interval
-                tick.category = gridNode.name;
+                tick.parameters.category = gridNode.name;
                 tick.options = options;
                 tick.addLabel();
             }
