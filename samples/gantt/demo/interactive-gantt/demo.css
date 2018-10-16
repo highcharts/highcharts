@@ -1,0 +1,52 @@
+#container {
+    max-width: 1200px;
+    min-width: 600px;
+    margin: 1em auto;
+}
+
+.hidden {
+    display: none;
+}
+
+#buttonGroup {
+    width: 400px;
+    margin: 0 auto;
+}
+
+#buttonGroup button {
+    width: 195px;
+    font-size: 16px;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.3);
+    transition: opacity 500ms;
+}
+
+.popup {
+    margin: 70px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    width: 300px;
+    position: relative;
+    transition: all 5s ease-in-out;
+}
+
+.popup input, .popup select {
+    width: 100%;
+    margin: 5px 0 15px;
+}
+
+.popup button {
+    float: right;
+}
+
+.popup .clear {
+    height: 50px;
+}

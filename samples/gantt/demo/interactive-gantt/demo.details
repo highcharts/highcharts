@@ -1,0 +1,6 @@
+---
+ name: Gantt Chart with Interactive Editing
+ js_wrap: b
+ authors:
+   - Øystein Moseng
+...
