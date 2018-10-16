@@ -7,15 +7,19 @@
 /**
  * Containing the position of a box that should be avoided by labels.
  *
- * @typedef Highcharts.LabelIntersectBoxObject
- *
- * @property {number} bottom
- *
- * @property {number} left
- *
- * @property {number} right
- *
- * @property {number} top
+ * @interface Highcharts.LabelIntersectBoxObject
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#bottom
+ * @type {number}
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#left
+ * @type {number}
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#right
+ * @type {number}
+ *//**
+ * @name Highcharts.LabelIntersectBoxObject#top
+ * @type {number}
  */
 
 /*
