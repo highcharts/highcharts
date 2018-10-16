@@ -1,6 +1,6 @@
 #container {
     max-width: 1200px;
-    min-width: 600px;
+    min-width: 360px;
     margin: 1em auto;
 }
 
@@ -13,9 +13,17 @@
     margin: 0 auto;
 }
 
+.demo button {
+    font-size: 16px;
+    border-radius: 3px;
+    background-color: #efefef;
+}
+
 #buttonGroup button {
     width: 195px;
-    font-size: 16px;
+}
+#buttonGroup button[disabled] {
+    color: silver;
 }
 
 .overlay {
@@ -45,8 +53,13 @@
 
 .popup button {
     float: right;
+    margin-left: 0.2em;
 }
 
 .popup .clear {
     height: 50px;
+}
+
+.popup input[type=text], .popup select {
+    height: 2em;
 }

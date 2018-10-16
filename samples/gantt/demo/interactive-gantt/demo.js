@@ -12,6 +12,7 @@ var today = new Date(),
     btnShowDialog = document.getElementById('btnShowDialog'),
     btnRemoveTask = document.getElementById('btnRemoveSelected'),
     btnAddTask = document.getElementById('btnAddTask'),
+    btnCancelAddTask = document.getElementById('btnCancelAddTask'),
     addTaskDialog = document.getElementById('addTaskDialog'),
     inputName = document.getElementById('inputName'),
     selectDepartment = document.getElementById('selectDepartment'),
@@ -61,7 +62,8 @@ var chart = Highcharts.ganttChart('container', {
                 enabled: true,
                 format: '{point.name}',
                 style: {
-                    cursor: 'default'
+                    cursor: 'default',
+                    pointerEvents: 'none'
                 }
             },
             allowPointSelect: true,
@@ -178,6 +180,11 @@ btnAddTask.onclick = function () {
         }, 0),
         milestone = chkMilestone.checked || undef;
 
+    // Empty category
+    if (maxEnd === 0) {
+        maxEnd = today;
+    }
+
     // Add the point
     series.addPoint({
         start: maxEnd + (milestone ? day : 0),
@@ -188,6 +195,12 @@ btnAddTask.onclick = function () {
         milestone: milestone
     });
 
+    // Hide dialog
+    addTaskDialog.className += ' hidden';
+    isAddingTask = false;
+};
+
+btnCancelAddTask.onclick = function () {
     // Hide dialog
     addTaskDialog.className += ' hidden';
     isAddingTask = false;
