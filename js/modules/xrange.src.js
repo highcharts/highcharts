@@ -234,6 +234,7 @@ seriesType('xrange', 'column'
     translatePoint: function (point) {
         var series = this,
             xAxis = series.xAxis,
+            yAxis = series.yAxis,
             metrics = series.columnMetrics,
             options = series.options,
             minPointLength = options.minPointLength || 0,
@@ -275,9 +276,9 @@ seriesType('xrange', 'column'
         if (
             options.pointPlacement &&
             isNumber(point.plotY) &&
-            series.yAxis.categories
+            yAxis.categories
         ) {
-            point.plotY = series.yAxis
+            point.plotY = yAxis
                 .translate(point.y, 0, 1, 0, 1, options.pointPlacement);
         }
 
@@ -341,6 +342,11 @@ seriesType('xrange', 'column'
                 ),
                 height: shapeArgs.height
             };
+        }
+
+        // Category from Y axis
+        if (yAxis.categories) {
+            point.category = yAxis.categories[point.y];
         }
     },
 

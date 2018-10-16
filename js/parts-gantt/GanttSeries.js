@@ -22,7 +22,6 @@ var dateFormat = H.dateFormat,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     stop = H.stop,
-    Point = H.Point,
     Series = H.Series,
     parent = seriesTypes.xrange;
 
@@ -75,7 +74,7 @@ seriesType('gantt', 'xrange', {
                 milestone = point.options.milestone,
                 dateRowStart = '<span style="font-size: 0.8em">',
                 dateRowEnd = '</span><br/>',
-                retVal = '<b>' + point.name + '</b>';
+                retVal = '<b>' + (point.name || point.category) + '</b>';
 
             if (ttOptions.pointFormat) {
                 return point.tooltipFormatter(ttOptions.pointFormat);
@@ -242,7 +241,8 @@ seriesType('gantt', 'xrange', {
 
         series.setGanttPointAliases(retVal);
 
-        retVal = Point.prototype.applyOptions.call(point, retVal, x);
+        retVal = parent.prototype.pointClass.prototype.applyOptions
+            .call(point, retVal, x);
         return retVal;
     }
 }));
