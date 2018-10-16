@@ -658,7 +658,12 @@ if (seriesTypes.gantt) {
              * @default  true
              * @apioption plotOptions.gantt.dragDrop.draggableStart
              */
-            optionName: 'draggableStart'
+            optionName: 'draggableStart',
+
+            // Do not allow individual drag handles for milestones
+            validateIndividualDrag: function (point) {
+                return !point.milestone;
+            }
         }),
         end: merge(xrangeDragDropProps.x2, {
             /**
@@ -669,7 +674,12 @@ if (seriesTypes.gantt) {
              * @default  true
              * @apioption plotOptions.gantt.dragDrop.draggableEnd
              */
-            optionName: 'draggableEnd'
+            optionName: 'draggableEnd',
+
+            // Do not allow individual drag handles for milestones
+            validateIndividualDrag: function (point) {
+                return !point.milestone;
+            }
         })
     };
 }
@@ -1826,9 +1836,14 @@ H.Point.prototype.showDragHandles = function () {
             positioner = val.handlePositioner,
             pos,
             handle,
-            path;
+            path,
+            // Run validation function on whether or not we allow individual
+            // updating of this prop.
+            validate = val.validateIndividualDrag ?
+                val.validateIndividualDrag(point) : true;
         if (
             val.resize &&
+            validate &&
             val.resizeSide &&
             pathFormatter &&
             (
