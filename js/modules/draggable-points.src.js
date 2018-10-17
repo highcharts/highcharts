@@ -1003,9 +1003,9 @@ var defaultDragHandleOptions = {
 /**
  * Callback that fires while dragging a point. The mouse event is passed in as
  * parameter. The original data can be accessed from `e.origin`, and the new
- * point values can be accessed from e.newPoints. If there is only a single
- * point being updated, it can be accessed from e.newPoint for simplicity. To
- * stop the default drag action, return false. See
+ * point values can be accessed from `e.newPoints`. If there is only a single
+ * point being updated, it can be accessed from `e.newPoint` for simplicity. To
+ * stop the default drag action, return `false`. See
  * [drag and drop options](series.line.dragDrop).
  *
  * Requires the draggable-points module.
@@ -1017,10 +1017,10 @@ var defaultDragHandleOptions = {
 
 /**
  * Callback that fires when the point is dropped. The mouse event is passed in
- * as parameter. The original data can be accessed from e.origin, and the new
- * point values can be accessed from e.newPoints. If there is only a single
- * point being updated, it can be accessed from e.newPoint for simplicity. To
- * stop the default drop action, return false. See
+ * as parameter. The original data can be accessed from `e.origin`, and the new
+ * point values can be accessed from `e.newPoints`. If there is only a single
+ * point being updated, it can be accessed from `e.newPoint` for simplicity. To
+ * stop the default drop action, return `false`. See
  * [drag and drop options](series.line.dragDrop).
  *
  * Requires the draggable-points module.

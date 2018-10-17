@@ -11,6 +11,7 @@
 .demo button {
     font-size: 16px;
     border-radius: 3px;
+    border-width: 1px;
     background-color: #efefef;
 }
 

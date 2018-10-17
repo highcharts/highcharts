@@ -1373,9 +1373,17 @@ H.Series = H.seriesType('line', null
     /**
      * Options for the series data labels, appearing next to each data point.
      *
+     * Since v6.2.0, multiple data labels can be applied to each single point by
+     * defining them as an array of configs.
+     *
      * In styled mode, the data labels can be styled with the
      * `.highcharts-data-label-box` and `.highcharts-data-label` class names
      * ([see example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels)).
+     *
+     * @sample highcharts/plotoptions/series-datalabels-enabled
+     *         Data labels enabled
+     * @sample highcharts/plotoptions/series-datalabels-multiple
+     *         Multiple data labels on a bar series
      */
     dataLabels: {
 
