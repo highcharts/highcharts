@@ -5,24 +5,6 @@
  */
 
 /**
- * Translation and scale for the plot area of a series.
- *
- * @interface Highcharts.SeriesPlotBoxObject
- *//**
- * @name Highcharts.SeriesPlotBoxObject#translateX
- * @type {number}
- *//**
- * @name Highcharts.SeriesPlotBoxObject#translateY
- * @type {number}
- *//**
- * @name Highcharts.SeriesPlotBoxObject#scaleX
- * @type {number}
- *//**
- * @name Highcharts.SeriesPlotBoxObject#scaleY
- * @type {number}
- */
-
-/**
  * The object contains common information for a click event on a series.
  *
  * @interface Highcharts.SeriesClickObject
@@ -45,6 +27,24 @@
  *
  * @return {boolean|undefined}
  *         Returning false cancels toogle actions.
+ */
+
+/**
+ * Translation and scale for the plot area of a series.
+ *
+ * @interface Highcharts.SeriesPlotBoxObject
+ *//**
+ * @name Highcharts.SeriesPlotBoxObject#translateX
+ * @type {number}
+ *//**
+ * @name Highcharts.SeriesPlotBoxObject#translateY
+ * @type {number}
+ *//**
+ * @name Highcharts.SeriesPlotBoxObject#scaleX
+ * @type {number}
+ *//**
+ * @name Highcharts.SeriesPlotBoxObject#scaleY
+ * @type {number}
  */
 
 /**
@@ -548,7 +548,7 @@ H.Series = H.seriesType('line', null
      *
      * @see [navigator.series](#navigator.series)
      *
-     * @type      {*}
+     * @type      {Highcharts.PlotSeriesOptions}
      * @since     5.0.0
      * @product   highstock
      * @apioption plotOptions.series.navigatorOptions
@@ -1815,7 +1815,7 @@ H.Series = H.seriesType('line', null
          * @sample {highcharts|highstock} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
          *
-         * @type      {boolean|*}
+         * @type      {boolean|Highcharts.ShadowOptionsObject}
          * @default   false
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.shadow
@@ -2367,7 +2367,7 @@ H.Series = H.seriesType('line', null
      * @sample {highcharts} highcharts/series/stack/
      *         Stacked and grouped columns
      *
-     * @type      {string|*}
+     * @type      {string|object}
      * @since     2.1
      * @product   highcharts highstock
      * @apioption series.stack
