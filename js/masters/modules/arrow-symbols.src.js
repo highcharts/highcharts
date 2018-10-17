@@ -4,8 +4,6 @@
  *
  * (c) 2017 Lars A. V. Cabrera
  *
- * --- WORK IN PROGRESS ---
- *
  * License: www.highcharts.com/license
  */
 'use strict';

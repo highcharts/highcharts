@@ -4,8 +4,6 @@
  *
  * (c) 2016 Øystein Moseng
  *
- * --- WORK IN PROGRESS ---
- *
  * License: www.highcharts.com/license
  */
 'use strict';

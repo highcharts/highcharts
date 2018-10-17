@@ -13,6 +13,7 @@
     border-radius: 3px;
     border-width: 1px;
     background-color: #efefef;
+    padding: 0.5em 1em;
 }
 
 .demo button[disabled] {

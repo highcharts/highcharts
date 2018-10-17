@@ -6,7 +6,8 @@
         <p style="text-align: center;">View changelog for
           <a href="#highcharts">Highcharts</a>,
           <a href="#highstock">Highstock</a>,
-          <a href="#highmaps">Highmaps</a>. Go to the
+          <a href="#highmaps">Highmaps</a>,
+          <a href="#highcharts-gantt">Highcharts Gantt</a>. Go to the
           <a href="download">Download</a> page to get the latest version.</p>
         <div id="hc-changelog">
           <div class="changelog-header">
@@ -14,8 +15,62 @@
           </div>
           <div class="changelog-container">
             <p class="release-header" style="position: relative">
+              <a id="highcharts-v6.2.0" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.2.0">Highcharts Basic v6.2.0 (2018-10-17)</a>
+            </p>
+            <ul>
+              <li>Added support for
+                <a href="http://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-multiple/">multiple data labels</a> on each single point.</li>
+              <li>Added
+                <a href="httpd://api.highcharts.com/highcharts/series.line.dragDrop">draggable points plugin</a> as module.</li>
+              <li>Added support for <code>pointPlacement</code> in X range charts, affecting the category Y axis. Closed
+                <a href="https://github.com/highcharts/highcharts/issues/7419">#7419</a>.</li>
+            </ul>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+
+                <div id="heading-6-2-0-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#6-2-0-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="6-2-0-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/2366">#2366</a>, improved polar chart yAxis <code>plotLines</code> resize and animation.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/4281">#4281</a>, added information about point in tooltip&#39;s <code>headerFormat</code>.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/6169">#6169</a>. <code>cropShoulder</code> was inherited by column series, which set it to 0. Fixed by overriding to 1.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/6370">#6370</a>, category axis with breaks was rendered incorrectly.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9049">#9049</a>, issue with lines to culled points in boost.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9052">#9052</a>, conflict between settings
+                        <a href="https://api.highcharts.com/highcharts/boost.enabled">boost.enabled</a> and <code>seriesThreshold</code>.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9058">#9058</a>, error when running chart tests in jsdom.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9088">#9088</a>, updating a point in a pie chart threw errors when another slice was hovered.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9091">#9091</a>, <code>showCheckbox</code> didn&#39;t work with layout proximate.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9097">#9097</a>, <code>chart.update</code> error when removing axes and series.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9119">#9119</a>, dataLabels sometimes overlapped stackLabels.</li>
+                      <li>Fixed animation of grid lines when changing axis extremes. Follow tick marks.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header" style="position: relative">
               <a id="highcharts-v6.1.4" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.1.4">Highcharts v6.1.4 (2018-09-25)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.1.4">Highcharts Basic v6.1.4 (2018-09-25)</a>
             </p>
             <ul>
               <li>Better polyfill for <code>forEach</code> in oldIE. See
@@ -79,7 +134,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.1.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.1.3">Highcharts v6.1.3 (2018-09-12)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.1.3">Highcharts Basic v6.1.3 (2018-09-12)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -103,7 +158,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.1.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.1.2">Highcharts v6.1.2 (2018-09-03)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.1.2">Highcharts Basic v6.1.2 (2018-09-03)</a>
             </p>
             <ul>
               <li>Support for loading Highcharts as an
@@ -220,7 +275,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.1.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.1.1">Highcharts v6.1.1 (2018-06-27)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.1.1">Highcharts Basic v6.1.1 (2018-06-27)</a>
             </p>
             <ul>
               <li>Added new feature,
@@ -356,7 +411,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.1.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.1.0">Highcharts v6.1.0 (2018-04-13)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.1.0">Highcharts Basic v6.1.0 (2018-04-13)</a>
             </p>
             <ul>
               <li>Added feature for loading data directly from a
@@ -497,7 +552,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.0.7" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.7">Highcharts v6.0.7 (2018-02-16)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.7">Highcharts Basic v6.0.7 (2018-02-16)</a>
             </p>
             <ul>
               <li>Added internationalization support for the accessibility module. See
@@ -551,7 +606,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.0.6" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.6">Highcharts v6.0.6 (2018-02-05)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.6">Highcharts Basic v6.0.6 (2018-02-05)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -583,7 +638,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.0.5" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.5">Highcharts v6.0.5 (2018-01-31)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.5">Highcharts Basic v6.0.5 (2018-01-31)</a>
             </p>
             <ul>
               <li>Added <code>states.normal</code> to allow disabling animation after point or series hover.</li>
@@ -697,7 +752,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.0.4" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.4">Highcharts v6.0.4 (2017-12-15)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.4">Highcharts Basic v6.0.4 (2017-12-15)</a>
             </p>
             <ul>
               <li>Added feature,
@@ -841,7 +896,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.0.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.3">Highcharts v6.0.3 (2017-11-14)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.3">Highcharts Basic v6.0.3 (2017-11-14)</a>
             </p>
             <ul>
               <li>Added new option, <code>dataLabels.filter</code>, for a declarative way of filtering data labels without using the formatter.</li>
@@ -912,7 +967,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.0.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.2">Highcharts v6.0.2 (2017-10-20)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.2">Highcharts Basic v6.0.2 (2017-10-20)</a>
             </p>
             <ul>
               <li>Added <code>nodeFormatter</code> property to data labels and tooltips in the sankey diagram. Closes
@@ -959,7 +1014,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.0.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.1">Highcharts v6.0.1 (2017-10-05)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.1">Highcharts Basic v6.0.1 (2017-10-05)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -985,7 +1040,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v6.0.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.0">Highcharts v6.0.0 (2017-10-04)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.0.0">Highcharts Basic v6.0.0 (2017-10-04)</a>
             </p>
             <ul>
               <li>Added
@@ -1115,7 +1170,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.14" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.14">Highcharts v5.0.14 (2017-07-28)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.14">Highcharts Basic v5.0.14 (2017-07-28)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -1140,7 +1195,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.13" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.13">Highcharts v5.0.13 (2017-07-27)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.13">Highcharts Basic v5.0.13 (2017-07-27)</a>
             </p>
             <ul>
               <li>Added <code>pos</code>, axis <code>pos</code>ition, to axis label formats. Closes
@@ -1272,7 +1327,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.12" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.12">Highcharts v5.0.12 (2017-05-24)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.12">Highcharts Basic v5.0.12 (2017-05-24)</a>
             </p>
             <ul>
               <li>Added core support for color animation.</li>
@@ -1343,7 +1398,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.11" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.11">Highcharts v5.0.11 (2017-05-04)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.11">Highcharts Basic v5.0.11 (2017-05-04)</a>
             </p>
             <ul>
               <li>Added
@@ -1453,7 +1508,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.10" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.10">Highcharts v5.0.10 (2017-03-31)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.10">Highcharts Basic v5.0.10 (2017-03-31)</a>
             </p>
             <ul>
               <li>Added <code>!default</code> statement to SASS variables for easier configuration. Closes
@@ -1567,14 +1622,14 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.9" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.9">Highcharts v5.0.9 (2017-03-08)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.9">Highcharts Basic v5.0.9 (2017-03-08)</a>
             </p>
             <ul>
               <li>Worked around a Closure Compiler error that made 3D charts fail.</li>
             </ul>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.8" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.8">Highcharts v5.0.8 (2017-03-08)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.8">Highcharts Basic v5.0.8 (2017-03-08)</a>
             </p>
             <ul>
               <li>Added a refactored Boost module based on WebGL. Details and API to be announced.</li>
@@ -1669,7 +1724,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.7" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.7">Highcharts v5.0.7 (2017-01-17)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.7">Highcharts Basic v5.0.7 (2017-01-17)</a>
             </p>
             <ul>
               <li>Added Legend keyboard navigation to accessibility module.</li>
@@ -1786,7 +1841,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.6" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.6">Highcharts v5.0.6 (2016-12-07)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.6">Highcharts Basic v5.0.6 (2016-12-07)</a>
             </p>
             <ul>
               <li>Added a common hook,
@@ -1853,7 +1908,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.5" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.5">Highcharts v5.0.5 (2016-11-29)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.5">Highcharts Basic v5.0.5 (2016-11-29)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -1897,7 +1952,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.4" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.4">Highcharts v5.0.4 (2016-11-22)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.4">Highcharts Basic v5.0.4 (2016-11-22)</a>
             </p>
             <ul>
               <li>Refactored animation and attr logic to always stop the single property being set. This prevents an animation from continuing after the same property has been set either through .attr or .animate.</li>
@@ -1932,7 +1987,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.3">Highcharts v5.0.3 (2016-11-18)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.3">Highcharts Basic v5.0.3 (2016-11-18)</a>
             </p>
             <ul>
               <li>Added new option,
@@ -2034,7 +2089,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.2">Highcharts v5.0.2 (2016-10-26)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.2">Highcharts Basic v5.0.2 (2016-10-26)</a>
             </p>
             <ul>
               <li>Fixed two regressions.</li>
@@ -2062,7 +2117,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.1">Highcharts v5.0.1 (2016-10-26)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.1">Highcharts Basic v5.0.1 (2016-10-26)</a>
             </p>
             <ul>
               <li>Added new options, axis.softMin and axis.softMax. Closes
@@ -2165,7 +2220,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v5.0.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.0">Highcharts v5.0.0 (2016-09-29)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v5.0.0">Highcharts Basic v5.0.0 (2016-09-29)</a>
             </p>
             <ul>
               <li>Added
@@ -2230,7 +2285,7 @@
             </ul>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.2.7" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.7">Highcharts v4.2.7 (2016-09-21)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.7">Highcharts Basic v4.2.7 (2016-09-21)</a>
             </p>
             <ul>
               <li>Added new feature,
@@ -2337,7 +2392,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.2.6" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.6">Highcharts v4.2.6 (2016-08-02)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.6">Highcharts Basic v4.2.6 (2016-08-02)</a>
             </p>
             <ul>
               <li>Added crisp correction for crisper treemap points.</li>
@@ -2443,7 +2498,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.2.5" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.5">Highcharts v4.2.5 (2016-05-06)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.5">Highcharts Basic v4.2.5 (2016-05-06)</a>
             </p>
             <ul>
               <li>Added new option,
@@ -2514,7 +2569,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.2.4" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.4">Highcharts v4.2.4 (2016-04-14)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.4">Highcharts Basic v4.2.4 (2016-04-14)</a>
             </p>
             <ul>
               <li>Added support for polar columnrange series.</li>
@@ -2645,7 +2700,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.2.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.3">Highcharts v4.2.3 (2016-02-08)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.3">Highcharts Basic v4.2.3 (2016-02-08)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -2679,7 +2734,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.2.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.2">Highcharts v4.2.2 (2016-02-04)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.2">Highcharts Basic v4.2.2 (2016-02-04)</a>
             </p>
             <ul>
               <li>Added new option,
@@ -2769,7 +2824,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.2.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.0">Highcharts v4.2.0 (2015-12-15)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.2.0">Highcharts Basic v4.2.0 (2015-12-15)</a>
             </p>
             <ul>
               <li>Included the Standalone Framework in Highcharts and removed the concept of adapters.</li>
@@ -2813,7 +2868,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.1.10" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.10">Highcharts v4.1.10 (2015-12-07)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.10">Highcharts Basic v4.1.10 (2015-12-07)</a>
             </p>
             <ul>
               <li>Added new feature, <code>borderColor: null</code> for pies, which inherits the slice color. This allows a simple workaround for antialiasing gaps between slices when not using a real border (
@@ -2940,7 +2995,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.1.9" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.9">Highcharts v4.1.9 (2015-10-07)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.9">Highcharts Basic v4.1.9 (2015-10-07)</a>
             </p>
             <ul>
               <li>Added new option,
@@ -3057,7 +3112,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.1.8" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.8">Highcharts v4.1.8 (2015-08-20)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.8">Highcharts Basic v4.1.8 (2015-08-20)</a>
             </p>
             <ul>
               <li>Added experimental support for using HTML in exported charts through the
@@ -3182,7 +3237,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.1.7" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.7">Highcharts v4.1.7 (2015-06-26)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.7">Highcharts Basic v4.1.7 (2015-06-26)</a>
             </p>
             <ul>
               <li>Added new option, drilldown.allowPointDrilldown, that can be set to false to allow only drilling to categories. Closes
@@ -3251,7 +3306,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.1.6" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.6">Highcharts v4.1.6 (2015-06-12)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.6">Highcharts Basic v4.1.6 (2015-06-12)</a>
             </p>
             <ul>
               <li>Added new option,
@@ -3355,7 +3410,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.1.5" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.5">Highcharts v4.1.5 (2015-04-13)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.5">Highcharts Basic v4.1.5 (2015-04-13)</a>
             </p>
             <ul>
               <li>Added new option,
@@ -3462,7 +3517,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.1.4" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.4">Highcharts v4.1.4 (2015-03-10)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.4">Highcharts Basic v4.1.4 (2015-03-10)</a>
             </p>
             <ul>
               <li>Added <code>originalEvent</code> to wrapped event argument for point and series click. Closed
@@ -3520,7 +3575,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.1.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.3">Highcharts v4.1.3 (2015-02-27)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.3">Highcharts Basic v4.1.3 (2015-02-27)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -3548,7 +3603,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.1.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.2">Highcharts v4.1.2 (2015-02-27)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.2">Highcharts Basic v4.1.2 (2015-02-27)</a>
             </p>
             <ul>
               <li>Added new option to tree maps: interactByLeaf.</li>
@@ -3633,7 +3688,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.1.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.1">Highcharts v4.1.1 (2015-02-17)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.1">Highcharts Basic v4.1.1 (2015-02-17)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -3657,7 +3712,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.1.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.0">Highcharts v4.1.0 (2015-02-16)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.1.0">Highcharts Basic v4.1.0 (2015-02-16)</a>
             </p>
             <ul>
               <li>Added
@@ -3851,7 +3906,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.0.4" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.0.4">Highcharts v4.0.4 (2014-09-02)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.0.4">Highcharts Basic v4.0.4 (2014-09-02)</a>
             </p>
             <ul>
               <li>Added more date parsing logic to the data module. Now integrates with Date.js, and uses Date.parse. Tries to parse all dates, but falls back to categories if dates are not sorted (which may be a sign that parsing went wrong).</li>
@@ -3934,7 +3989,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.0.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.0.3">Highcharts v4.0.3 (2014-07-03)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.0.3">Highcharts Basic v4.0.3 (2014-07-03)</a>
             </p>
             <ul>
               <li>Added 3d options
@@ -4070,7 +4125,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v4.0.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.0.0">Highcharts v4.0.0 (2014-04-22)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v4.0.0">Highcharts Basic v4.0.0 (2014-04-22)</a>
             </p>
             <ul>
               <li>For news, see the
@@ -4080,7 +4135,7 @@
             </ul>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v3.0.10" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.10">Highcharts v3.0.10 (2014-03-10)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.10">Highcharts Basic v3.0.10 (2014-03-10)</a>
             </p>
             <ul>
               <li>Improved performance by 35% in our benchmark suite.</li>
@@ -4223,7 +4278,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v3.0.9" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.9">Highcharts v3.0.9 (2014-01-15)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.9">Highcharts Basic v3.0.9 (2014-01-15)</a>
             </p>
             <ul>
               <li>Added bower.json file. Closes
@@ -4274,7 +4329,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v3.0.8" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.8">Highcharts v3.0.8 (2014-01-09)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.8">Highcharts Basic v3.0.8 (2014-01-09)</a>
             </p>
             <ul>
               <li>Export: Streamlined and removed unnecessary properties in maven pom.xml.</li>
@@ -4387,7 +4442,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v3.0.7" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.7">Highcharts v3.0.7 (2013-10-24)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.7">Highcharts Basic v3.0.7 (2013-10-24)</a>
             </p>
             <ul>
               <li>Performance improvement by moving color parsing regexes out of the Color class to a global definition in order to be instanciated only once.</li>
@@ -4455,7 +4510,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v3.0.6" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.6">Highcharts v3.0.6 (2013-10-04)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.6">Highcharts Basic v3.0.6 (2013-10-04)</a>
             </p>
             <ul>
               <li>Added new option, chart.spacing, to set spacing as an array.</li>
@@ -4579,7 +4634,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v3.0.5" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.5">Highcharts v3.0.5 (2013-08-23)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.5">Highcharts Basic v3.0.5 (2013-08-23)</a>
             </p>
             <ul>
               <li>Added Standalone Framework for using Highcharts without jQuery, MooTools or Prototype.</li>
@@ -4641,7 +4696,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v3.0.4" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.4">Highcharts v3.0.4 (2013-08-02)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.4">Highcharts Basic v3.0.4 (2013-08-02)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -4673,7 +4728,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v3.0.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.3">Highcharts v3.0.3 (2013-07-31)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.3">Highcharts Basic v3.0.3 (2013-07-31)</a>
             </p>
             <ul>
               <li>Added automatic stagger lines for colliding labels on horizontal axis.</li>
@@ -4835,7 +4890,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v3.0.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.2">Highcharts v3.0.2 (2013-06-05)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.2">Highcharts Basic v3.0.2 (2013-06-05)</a>
             </p>
             <ul>
               <li>Added stackLabels.format option analogous to dataLabels.format. Closes
@@ -4944,7 +4999,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v3.0.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.1">Highcharts v3.0.1 (2013-04-09)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.1">Highcharts Basic v3.0.1 (2013-04-09)</a>
             </p>
             <ul>
               <li>Added new option,
@@ -5017,7 +5072,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v3.0.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.0">Highcharts v3.0.0 (2013-03-22)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v3.0.0">Highcharts Basic v3.0.0 (2013-03-22)</a>
             </p>
             <ul>
               <li>See the
@@ -5025,7 +5080,7 @@
             </ul>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.3.5" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.3.5">Highcharts v2.3.5 (2012-12-19)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.3.5">Highcharts Basic v2.3.5 (2012-12-19)</a>
             </p>
             <ul>
               <li>Added
@@ -5135,7 +5190,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.3.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.3.3">Highcharts v2.3.3 (2012-10-04)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.3.3">Highcharts Basic v2.3.3 (2012-10-04)</a>
             </p>
             <ul>
               <li>Refactored data label alignment logic for better maintainabilit.
@@ -5200,7 +5255,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.3.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.3.2">Highcharts v2.3.2 (2012-08-31)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.3.2">Highcharts Basic v2.3.2 (2012-08-31)</a>
             </p>
             <ul>
               <li>Added support for rotation of text when useHTML = true in modern browsers.
@@ -5250,7 +5305,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.3.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.3.1">Highcharts v2.3.1 (2012-08-29)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.3.1">Highcharts Basic v2.3.1 (2012-08-29)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -5273,7 +5328,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.3.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.3.0">Highcharts v2.3.0 (2012-08-24)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.3.0">Highcharts Basic v2.3.0 (2012-08-24)</a>
             </p>
             <ul>
               <li>Added radial gauges.</li>
@@ -5284,7 +5339,7 @@
             </ul>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.2.5" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.5">Highcharts v2.2.5 (2012-06-08)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.5">Highcharts Basic v2.2.5 (2012-06-08)</a>
             </p>
             <ul>
               <li>Removed double clipping assignment in development branch, and subsequent JS error on Series.remove in legacy IE. 1027.</li>
@@ -5327,7 +5382,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.2.4" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.4">Highcharts v2.2.4 (2012-05-31)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.4">Highcharts Basic v2.2.4 (2012-05-31)</a>
             </p>
             <ul>
               <li>Added paging for the legend. Added
@@ -5383,7 +5438,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.2.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.3">Highcharts v2.2.3 (2012-05-07)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.3">Highcharts Basic v2.2.3 (2012-05-07)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -5406,7 +5461,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.2.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.2">Highcharts v2.2.2 (2012-04-26)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.2">Highcharts Basic v2.2.2 (2012-04-26)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -5429,7 +5484,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.2.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.1">Highcharts v2.2.1 (2012-03-15)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.1">Highcharts Basic v2.2.1 (2012-03-15)</a>
             </p>
             <ul>
               <li>Added box options like <code>borderWidth</code>, <code>backgroundColor</code> and more for data labels.</li>
@@ -5455,7 +5510,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.2.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.0">Highcharts v2.2.0 (2012-02-16)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.2.0">Highcharts Basic v2.2.0 (2012-02-16)</a>
             </p>
             <ul>
               <li>Better performance with thousands of points.</li>
@@ -5468,7 +5523,7 @@
             </ul>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.1.9" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.9">Highcharts v2.1.9 (2011-11-11)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.9">Highcharts Basic v2.1.9 (2011-11-11)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -5491,7 +5546,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.1.8" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.8">Highcharts v2.1.8 (2011-11-05)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.8">Highcharts Basic v2.1.8 (2011-11-05)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -5514,7 +5569,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.1.7" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.7">Highcharts v2.1.7 (2011-10-19)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.7">Highcharts Basic v2.1.7 (2011-10-19)</a>
             </p>
             <ul>
               <li>Added <code>useHTML</code> option for most text related configuration objects.</li>
@@ -5547,7 +5602,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.1.6" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.6">Highcharts v2.1.6 (2011-07-08)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.6">Highcharts Basic v2.1.6 (2011-07-08)</a>
             </p>
             <ul>
               <li>Rewrote data label positioning for pies.</li>
@@ -5574,7 +5629,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.1.5" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.5">Highcharts v2.1.5 (2011-06-22)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.5">Highcharts Basic v2.1.5 (2011-06-22)</a>
             </p>
             <ul>
               <li>Added shadows for pies.</li>
@@ -5605,7 +5660,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.1.4" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.4">Highcharts v2.1.4 (2011-03-02)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.4">Highcharts Basic v2.1.4 (2011-03-02)</a>
             </p>
             <ul>
               <li>Updated MooTools adapter to work with MooTools 1.3.</li>
@@ -5634,7 +5689,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.1.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.3">Highcharts v2.1.3 (2011-02-07)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.3">Highcharts Basic v2.1.3 (2011-02-07)</a>
             </p>
             <ul>
               <li>Added soft line breaks for long category labels.</li>
@@ -5661,7 +5716,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.1.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.2">Highcharts v2.1.2 (2011-01-12)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.2">Highcharts Basic v2.1.2 (2011-01-12)</a>
             </p>
             <ul>
               <li>Added adapter for the Prototype JavaScript framework.</li>
@@ -5689,7 +5744,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.1.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.1">Highcharts v2.1.1 (2010-12-03)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.1">Highcharts Basic v2.1.1 (2010-12-03)</a>
             </p>
             <ul>
               <li>Added Highcharts.version property.</li>
@@ -5716,7 +5771,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.1.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.0">Highcharts v2.1.0 (2010-11-23)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.1.0">Highcharts Basic v2.1.0 (2010-11-23)</a>
             </p>
             <ul>
               <li>Implemented resizing and reflowing of charts.</li>
@@ -5768,7 +5823,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.0.5" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.5">Highcharts v2.0.5 (2010-09-17)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.5">Highcharts Basic v2.0.5 (2010-09-17)</a>
             </p>
             <ul>
               <li>Optimized for IE9 Beta 1. Highcharts is now running beautifully under IE9 Standards mode, but quirks mode is slower than IE8.</li>
@@ -5797,7 +5852,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.0.4" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.4">Highcharts v2.0.4 (2010-09-07)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.4">Highcharts Basic v2.0.4 (2010-09-07)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -5821,7 +5876,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.0.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.3">Highcharts v2.0.3 (2010-08-07)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.3">Highcharts Basic v2.0.3 (2010-08-07)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -5844,7 +5899,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.0.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.2">Highcharts v2.0.2 (2010-08-06)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.2">Highcharts Basic v2.0.2 (2010-08-06)</a>
             </p>
             <ul>
               <li>Added linked axes.</li>
@@ -5871,7 +5926,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.0.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.1">Highcharts v2.0.1 (2010-07-18)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.1">Highcharts Basic v2.0.1 (2010-07-18)</a>
             </p>
             <ul>
               <li>Removed chart.updatePosition method. Recalculating the position after moving the container is no longer necessary.</li>
@@ -5900,7 +5955,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v2.0.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.0">Highcharts v2.0.0 (2010-07-13)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v2.0.0">Highcharts Basic v2.0.0 (2010-07-13)</a>
             </p>
             <ul>
               <li>Completely rewritten rendering layer based on SVG and VML.</li>
@@ -5935,7 +5990,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.2.5" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.5">Highcharts v1.2.5 (2010-04-13)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.5">Highcharts Basic v1.2.5 (2010-04-13)</a>
             </p>
             <ul>
               <li>Added chart.updatePosition and chart.container.</li>
@@ -5974,7 +6029,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.2.4" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.4">Highcharts v1.2.4 (2010-03-10)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.4">Highcharts Basic v1.2.4 (2010-03-10)</a>
             </p>
             <ul>
               <li>Added resetZoom and resetZoomTitle to the lang object.</li>
@@ -6002,7 +6057,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.2.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.3">Highcharts v1.2.3 (2010-03-08)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.3">Highcharts Basic v1.2.3 (2010-03-08)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -6026,7 +6081,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.2.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.2">Highcharts v1.2.2 (2010-03-05)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.2">Highcharts Basic v1.2.2 (2010-03-05)</a>
             </p>
             <ul>
               <li>Added lang.decimalPoint and lang.thousandsSep options.</li>
@@ -6059,7 +6114,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.2.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.1">Highcharts v1.2.1 (2010-02-25)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.1">Highcharts Basic v1.2.1 (2010-02-25)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -6084,14 +6139,14 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.2.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.0">Highcharts v1.2.0 (2010-02-23)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.2.0">Highcharts Basic v1.2.0 (2010-02-23)</a>
             </p>
             <ul>
               <li>Added methods and properties for working with charts, axes, series and points dynamically after render time.</li>
             </ul>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.1.3" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.1.3">Highcharts v1.1.3 (2010-02-03)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.1.3">Highcharts Basic v1.1.3 (2010-02-03)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -6114,7 +6169,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.1.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.1.2">Highcharts v1.1.2 (2010-01-22)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.1.2">Highcharts Basic v1.1.2 (2010-01-22)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -6137,7 +6192,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.1.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.1.1">Highcharts v1.1.1 (2010-01-06)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.1.1">Highcharts Basic v1.1.1 (2010-01-06)</a>
             </p>
             <ul>
               <li>Added individual color for column and bar plots.</li>
@@ -6166,7 +6221,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.1.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.1.0">Highcharts v1.1.0 (2009-12-18)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.1.0">Highcharts Basic v1.1.0 (2009-12-18)</a>
             </p>
             <ul>
               <li>Added support for multiple axes with options to place the axis on opposite side and offset from the plot area.</li>
@@ -6195,7 +6250,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.0.2" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.0.2">Highcharts v1.0.2 (2009-12-09)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.0.2">Highcharts Basic v1.0.2 (2009-12-09)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -6219,7 +6274,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.0.1" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.0.1">Highcharts v1.0.1 (2009-12-06)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.0.1">Highcharts Basic v1.0.1 (2009-12-06)</a>
             </p>
             <div id="accordion" class="panel-group">
               <div class="panel panel-default">
@@ -6247,7 +6302,7 @@
             </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-v1.0.0" style="position: absolute; top: -60px"></a>
-              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.0.0">Highcharts v1.0.0 (2009-11-27)</a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v1.0.0">Highcharts Basic v1.0.0 (2009-11-27)</a>
             </p>
             <ul>
               <li>First release.</li>
@@ -6259,6 +6314,37 @@
             <h2 id="highstock">Highstock</h2>
           </div>
           <div class="changelog-container">
+            <p class="release-header" style="position: relative">
+              <a id="highstock-v6.2.0" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highstock-v6.2.0">Highstock v6.2.0 (2018-10-17)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 6.2.0 above also apply to Highstock 6.2.0.</li>
+            </ul>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+
+                <div id="hs-heading-6-2-0-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#hs-6-2-0-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hs-6-2-0-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9020">#9020</a>, columnrange bottom dataLabels were not rendered when dataGrouping was enabled.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9075">#9075</a>, adding a point used to reset zoom when series had different ranges.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9077">#9077</a>, a regression causing disappearing points in some cases related to data grouping.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
             <p class="release-header" style="position: relative">
               <a id="highstock-v6.1.4" style="position: absolute; top: -60px"></a>
               <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highstock-v6.1.4">Highstock v6.1.4 (2018-09-25)</a>
@@ -9020,6 +9106,13 @@
           </div>
           <div class="changelog-container">
             <p class="release-header" style="position: relative">
+              <a id="highmaps-v6.2.0" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highmaps-v6.2.0">Highmaps v6.2.0 (2018-10-17)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 6.2.0 above also apply to Highmaps 6.2.0.</li>
+            </ul>
+            <p class="release-header" style="position: relative">
               <a id="highmaps-v6.1.4" style="position: absolute; top: -60px"></a>
               <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highmaps-v6.1.4">Highmaps v6.1.4 (2018-09-25)</a>
             </p>
@@ -9976,6 +10069,20 @@
             </p>
             <ul>
               <li>First release of Highmaps.</li>
+            </ul>
+          </div>
+        </div>
+        <div id="hg-changelog">
+          <div class="changelog-header">
+            <h2 id="highcharts-gantt">Highcharts Gantt</h2>
+          </div>
+          <div class="changelog-container">
+            <p class="release-header" style="position: relative">
+              <a id="highcharts-gantt-v6.2.0" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-gantt-v6.2.0">Highcharts Gantt v6.2.0 (2018-10-17)</a>
+            </p>
+            <ul>
+              <li>First release of Highcharts Gantt.</li>
             </ul>
           </div>
         </div>
