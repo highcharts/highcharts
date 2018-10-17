@@ -81,7 +81,7 @@ Highcharts.Point.prototype = {
      * @param {Highcharts.Series} series
      *        The series object containing this point.
      *
-     * @param {number|object|Array<number|string>|null} options
+     * @param {number|Array<number>|*} options
      *        The data in either number, array or object format.
      *
      * @param {number} x
@@ -136,12 +136,10 @@ Highcharts.Point.prototype = {
 
             colorIndex = series.colorCounter;
             series.colorCounter++;
-
             // loop back to zero
             if (series.colorCounter === colorCount) {
                 series.colorCounter = 0;
             }
-
         } else {
             colorIndex = series.colorIndex;
         }
@@ -298,10 +296,10 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#optionsToObject
      *
-     * @param {number|object|Array<number|string>|null} options
+     * @param {number|Array<number>|*} options
      *        The input option.
      *
-     * @return {object}
+     * @return {*}
      *         Transformed options.
      */
     optionsToObject: function (options) {
