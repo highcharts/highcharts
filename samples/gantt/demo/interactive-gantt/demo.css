@@ -1,16 +1,11 @@
-#container {
+#container, #buttonGroup {
     max-width: 1200px;
-    min-width: 360px;
+    min-width: 320px;
     margin: 1em auto;
 }
 
 .hidden {
     display: none;
-}
-
-#buttonGroup {
-    width: 400px;
-    margin: 0 auto;
 }
 
 .demo button {
@@ -19,11 +14,13 @@
     background-color: #efefef;
 }
 
-#buttonGroup button {
-    width: 195px;
-}
-#buttonGroup button[disabled] {
+.demo button[disabled] {
     color: silver;
+}
+
+.button-row button {
+    display: inline-block;
+    margin: 0;
 }
 
 .overlay {
@@ -43,7 +40,6 @@
     border-radius: 5px;
     width: 300px;
     position: relative;
-    transition: all 5s ease-in-out;
 }
 
 .popup input, .popup select {
@@ -62,4 +58,5 @@
 
 .popup input[type=text], .popup select {
     height: 2em;
+    font-size: 16px;
 }

@@ -42,6 +42,11 @@ function updateRemoveButtonStatus() {
 
 // Create the chart
 var chart = Highcharts.ganttChart('container', {
+
+    chart: {
+        spacingLeft: 1
+    },
+
     title: {
         text: 'Interactive Gantt Chart'
     },
@@ -56,7 +61,7 @@ var chart = Highcharts.ganttChart('container', {
             dragDrop: {
                 draggableX: true,
                 draggableY: true,
-                dragPrecisionX: day / 2 // Snap to half day
+                dragPrecisionX: day / 3 // Snap to eight hours
             },
             dataLabels: {
                 enabled: true,
@@ -86,6 +91,10 @@ var chart = Highcharts.ganttChart('container', {
 
     xAxis: {
         currentDateIndicator: true
+    },
+
+    tooltip: {
+        xDateFormat: '%a %b %d, %H:%M'
     },
 
     series: [{
