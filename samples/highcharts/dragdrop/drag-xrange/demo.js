@@ -38,13 +38,12 @@ Highcharts.chart('container', {
             point: {
                 events: {
                     dragStart: function (e) {
-                        var status = 'Drag started at page coordinates ' +
-                                e.pageX + '/' + e.pageY;
-                        if (e.updateProp) {
-                            status += '. Updating ' + e.updateProp;
-                        }
-                        status += '. ';
-                        setDragStatus(status);
+                        setDragStatus('Drag started at page coordinates ' +
+                                e.pageX + '/' + e.pageY + (
+                                    e.updateProp ?
+                                        '. Updating ' + e.updateProp :
+                                        ''
+                                ) + '. ');
                     },
                     drag: function (e) {
                         // Returning false stops the drag and drops. Example:
