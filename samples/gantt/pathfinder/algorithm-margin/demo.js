@@ -1,7 +1,7 @@
 
 Highcharts.ganttChart('container', {
     title: {
-        text: 'Small algorithMargin'
+        text: 'Small algorithmMargin'
     },
 
     xAxis: {
