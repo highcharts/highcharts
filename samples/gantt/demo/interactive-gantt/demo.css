@@ -8,15 +8,15 @@
     display: none;
 }
 
-.demo button {
-    font-size: 16px;
-    border-radius: 3px;
-    border-width: 1px;
-    background-color: #efefef;
-    padding: 0.5em 1em;
+.main-container button {
+    font-size: 12px;
+    border-radius: 2px;
+    border: 0;
+    background-color: #ddd;
+    padding: 13px 18px;
 }
 
-.demo button[disabled] {
+.main-container button[disabled] {
     color: silver;
 }
 
