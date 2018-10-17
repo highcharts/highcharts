@@ -190,12 +190,6 @@
  */
 
 /**
- * An object of key-value pairs for HTML attributes.
- *
- * @typedef {Highcharts.Dictionary<boolean|number|string>} Highcharts.HTMLAttributes
- */
-
-/**
  * The iterator callback.
  *
  * @callback Highcharts.EachCallbackFunction<T>
@@ -230,10 +224,16 @@
  */
 
 /**
+ * An object of key-value pairs for HTML attributes.
+ *
+ * @typedef {Highcharts.Dictionary<boolean|number|string>} Highcharts.HTMLAttributes
+ */
+
+/**
  * An HTML DOM element. The type is a reference to the regular HTMLElement in
  * the global scope.
  *
- * @typedef {global.GlobalHTMLElement} Highcharts.HTMLDOMElement
+ * @typedef {global.HTMLElement} Highcharts.HTMLDOMElement
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
  */
@@ -313,7 +313,7 @@
  * @interface Highcharts.SVGAttributes
  *//**
  * @name Highcharts.SVGAttributes#[key:string]
- * @type {boolean|number|string|Array<*>|undefined}
+ * @type {boolean|number|string|Array<number|string>|undefined}
  *//**
  * @name Highcharts.SVGAttributes#d
  * @type {string|Highcharts.SVGPathArray|undefined}
