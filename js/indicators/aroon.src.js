@@ -150,7 +150,7 @@ H.seriesType('aroon', 'sma',
  * @since 7.0.0
  * @extends series,plotOptions.aroon
  * @excluding   data,dataParser,dataURL
- *              allAreas,aroonDown,colorAxis,compare,compareBase,joinBy,
+ *              allAreas,colorAxis,compare,compareBase,joinBy,
  *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
  *              pointIntervalUnit,pointPlacement,pointRange,pointStart
  * @product highstock

@@ -9,10 +9,10 @@ var AROON = H.seriesTypes.aroon,
 /**
  * The Aroon Oscillator series type.
  *
- * @constructor seriesTypes.aroon-oscillator
+ * @constructor seriesTypes.aroonoscillator
  * @augments seriesTypes.aroon
  */
-H.seriesType('aroon-oscillator', 'aroon',
+H.seriesType('aroonoscillator', 'aroon',
     /**
      * Aroon Oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`
