@@ -598,7 +598,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#update
      *
-     * @param {*} options
+     * @param {number|object|Array<number|string>} options
      *        The point options. Point options are handled as described under
      *        the `series.type.data` item for each series type. For example
      *        for a line series, if options is a single number, the point will
@@ -746,7 +746,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *
      * @function Highcharts.Series#addPoint
      *
-     * @param {number|Array<number>|*} options
+     * @param {number|object|Array<number|string>} options
      *        The point options. If options is a single number, a point with
      *        that y value is appended to the series. If it is an array, it will
      *        be interpreted as x and y values respectively. If it is an
