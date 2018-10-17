@@ -67,7 +67,7 @@ seriesType('gantt', 'xrange', {
                 formats = options.dateTimeLabelFormats,
                 startOfWeek = xAxis.options.startOfWeek,
                 ttOptions = series.tooltipOptions,
-                format = ttOptions.dateTimeLabelFormat,
+                format = ttOptions.xDateFormat,
                 range = point.end ? point.end - point.start : 0,
                 start,
                 end,
@@ -81,7 +81,7 @@ seriesType('gantt', 'xrange', {
             }
 
             if (!format) {
-                ttOptions.dateTimeLabelFormat = format = H.splat(
+                format = H.splat(
                     tooltip.getDateFormat(
                         range,
                         point.start,

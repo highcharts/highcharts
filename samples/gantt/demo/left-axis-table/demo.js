@@ -61,7 +61,7 @@ Highcharts.ganttChart('container', {
     },
 
     tooltip: {
-        dateTimeLabelFormat: '%e %b %Y, %H:%M'
+        xDateFormat: '%e %b %Y, %H:%M'
     },
 
     series: [{
