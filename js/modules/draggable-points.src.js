@@ -697,12 +697,23 @@ each(
 
 /**
  * The draggable-points module allows points to be moved around or modified
- * in the chart.
+ * in the chart. In addition to the options mentioned under the `dragDrop`
+ * API structure, the module fires three events,
+ * [point.dragStart](series.line.point.events.dragStart),
+ * [point.drag](series.line.point.events.drag) and
+ * [point.drop](series.line.point.events.drop).
  *
  * It requires the `modules/draggable-points.js` file to be loaded.
  *
  * @type {object}
  * @since 6.2.0
+ *
+ * @sample  highcharts/dragdrop/resize-column Draggable column and line series
+ *
+ * @sample  highcharts/dragdrop/drag-bubble Draggable bubbles
+ *
+ * @sample  highcharts/dragdrop/drag-xrang Draggable X range series
+ *
  * @apioption plotOptions.series.dragDrop
  */
 
@@ -980,7 +991,7 @@ var defaultDragHandleOptions = {
 
 /**
  * Callback that fires when starting to drag a point. The mouse event object is
- * passed in as an argument.
+ * passed in as an argument. See [drag and drop options](series.line.dragDrop).
  *
  * Requires the draggable-points module.
  *
@@ -994,7 +1005,8 @@ var defaultDragHandleOptions = {
  * parameter. The original data can be accessed from `e.origin`, and the new
  * point values can be accessed from e.newPoints. If there is only a single
  * point being updated, it can be accessed from e.newPoint for simplicity. To
- * stop the default drag action, return false.
+ * stop the default drag action, return false. See
+ * [drag and drop options](series.line.dragDrop).
  *
  * Requires the draggable-points module.
  *
@@ -1008,7 +1020,8 @@ var defaultDragHandleOptions = {
  * as parameter. The original data can be accessed from e.origin, and the new
  * point values can be accessed from e.newPoints. If there is only a single
  * point being updated, it can be accessed from e.newPoint for simplicity. To
- * stop the default drop action, return false.
+ * stop the default drop action, return false. See
+ * [drag and drop options](series.line.dragDrop).
  *
  * Requires the draggable-points module.
  *
