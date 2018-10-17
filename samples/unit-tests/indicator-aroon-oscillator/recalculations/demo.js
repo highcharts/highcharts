@@ -26,7 +26,7 @@ QUnit.test('Test Aroon Oscillator calculations on data updates.', function (asse
             ]
         }, {
             yAxis: 1,
-            type: 'aroon-oscillator',
+            type: 'aroonoscillator',
             linkedTo: 'main',
             color: 'green',
             lineWidth: 1,

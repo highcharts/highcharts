@@ -35,7 +35,7 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
             name: 'AAPL Stock Price',
             data: data
         }, {
-            type: 'aroon-oscillator',
+            type: 'aroonoscillator',
             linkedTo: 'aapl',
             yAxis: 1,
             color: 'turquoise',
