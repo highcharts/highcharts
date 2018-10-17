@@ -23,9 +23,6 @@ var defined = H.defined,
 
 /*
  TODO:
-     - Test dynamics, hiding/adding/removing/updating chart/series/points/axes
-     - Test connecting to multiple points
-     - Add demos/samples
      - Document how to write your own algorithms
      - Consider adding a Point.pathTo method that wraps creating a connection
        and rendering it
@@ -45,6 +42,9 @@ extend(H.defaultOptions, {
      *
      * @product gantt
      * @see [dependency](series.gantt.data.dependency)
+     *
+     * @sample  gantt/pathfinder/demo Pathfinder connections
+     *
      * @optionparent pathfinder
      */
     pathfinder: {
@@ -91,6 +91,7 @@ extend(H.defaultOptions, {
          * @type {number}
          * @default null
          * @since 6.2.0
+         * @sample gantt/pathfinder/algorithm-margin Small algorithmMargin
          * @apioption pathfinder.algorithmMargin
          */
 
@@ -102,21 +103,26 @@ extend(H.defaultOptions, {
          *
          * The default algorithms are as follows:
          *
-         * straight:        Draws a straight line between the connecting points.
-         *                  Does not avoid other points when drawing.
+         * `straight`:      Draws a straight line between the connecting
+         *                  points. Does not avoid other points when drawing.
          *
-         * simpleConnect:   Finds a path between the points using right angles
+         * `simpleConnect`: Finds a path between the points using right angles
          *                  only. Takes only starting/ending points into
          *                  account, and will not avoid other points.
          *
-         * fastAvoid:       Finds a path between the points using right angles
+         * `fastAvoid`:     Finds a path between the points using right angles
          *                  only. Will attempt to avoid other points, but its
          *                  focus is performance over accuracy. Works well with
          *                  less dense datasets.
          *
+         * `straight` is used as default for most series types, while
+         * `simpleConnect` is used as default for Gantt series, to show
+         * dependencies between points.
+         *
          * @type {string}
-         * @default straight
+         * @default straight|simpleConnect
          * @since 6.2.0
+         * @sample gantt/pathfinder/demo Different types used
          * @apioption pathfinder.type
          */
         type: 'straight',
@@ -133,7 +139,9 @@ extend(H.defaultOptions, {
         lineWidth: 1,
 
         /**
-         * Marker options for this chart's Pathfinder connectors.
+         * Marker options for this chart's Pathfinder connectors. Note that
+         * this option is overridden by the `startMarker` and `endMarker`
+         * options.
          *
          * @type {object}
          * @since 6.2.0
@@ -266,12 +274,16 @@ extend(H.defaultOptions, {
 
 /**
  * Connect to a point. Requires Highcharts Gantt to be loaded. This option can
- * be either a string, referring to the ID of another point, or an object.
+ * be either a string, referring to the ID of another point, or an object, or an
+ * array of either. If the option is an array, each element defines a
+ * connection.
  *
- * @type {string|object}
+ * @type {Array<string|*>|string|*}
  * @since 6.2.0
  * @extends plotOptions.series.pathfinder
+ * @excluding enabled
  * @product gantt
+ * @sample gantt/pathfinder/demo Different connection types
  * @apioption series.xrange.data.connect
  */
 
