@@ -699,9 +699,9 @@ each(
  * The draggable-points module allows points to be moved around or modified
  * in the chart. In addition to the options mentioned under the `dragDrop`
  * API structure, the module fires three events,
- * [point.dragStart](series.line.point.events.dragStart),
- * [point.drag](series.line.point.events.drag) and
- * [point.drop](series.line.point.events.drop).
+ * [point.dragStart](plotOptions.series.point.events.dragStart),
+ * [point.drag](plotOptions.series.point.events.drag) and
+ * [point.drop](plotOptions.series.point.events.drop).
  *
  * It requires the `modules/draggable-points.js` file to be loaded.
  *
@@ -712,7 +712,7 @@ each(
  *
  * @sample  highcharts/dragdrop/drag-bubble Draggable bubbles
  *
- * @sample  highcharts/dragdrop/drag-xrang Draggable X range series
+ * @sample  highcharts/dragdrop/drag-xrange Draggable X range series
  *
  * @apioption plotOptions.series.dragDrop
  */
@@ -895,6 +895,8 @@ var defaultDragHandleOptions = {
  *
  * @type {number}
  * @since 6.2.0
+ * @sample {gantt} gantt/dragdrop/drag-gantt Limit dragging
+ * @sample {highcharts} highcharts/dragdrop/drag-xrange Limit dragging
  * @apioption plotOptions.series.dragDrop.dragMinX
  */
 
@@ -903,6 +905,8 @@ var defaultDragHandleOptions = {
  *
  * @type {number}
  * @since 6.2.0
+ * @sample {gantt} gantt/dragdrop/drag-gantt Limit dragging
+ * @sample {highcharts} highcharts/dragdrop/drag-xrange Limit dragging
  * @apioption plotOptions.series.dragDrop.dragMaxX
  */
 
@@ -911,6 +915,8 @@ var defaultDragHandleOptions = {
  *
  * @type {number}
  * @since 6.2.0
+ * @sample {gantt} gantt/dragdrop/drag-gantt Limit dragging
+ * @sample {highcharts} highcharts/dragdrop/drag-xrange Limit dragging
  * @apioption plotOptions.series.dragDrop.dragMinY
  */
 
@@ -919,6 +925,8 @@ var defaultDragHandleOptions = {
  *
  * @type {number}
  * @since 6.2.0
+ * @sample {gantt} gantt/dragdrop/drag-gantt Limit dragging
+ * @sample {highcharts} highcharts/dragdrop/drag-xrange Limit dragging
  * @apioption plotOptions.series.dragDrop.dragMaxY
  */
 
@@ -965,6 +973,8 @@ var defaultDragHandleOptions = {
  *
  * @type {String}
  * @since 6.2.0
+ * @sample {gantt} gantt/dragdrop/drag-gantt Drag grouped points
+ * @sample {highcharts} highcharts/dragdrop/drag-xrange Drag grouped points
  * @apioption plotOptions.series.dragDrop.groupBy
  */
 
@@ -975,6 +985,8 @@ var defaultDragHandleOptions = {
  * @type {boolean}
  * @default true
  * @since 6.2.0
+ * @sample {gantt} gantt/dragdrop/drag-gantt liveRedraw disabled
+ * @sample {highcharts} highcharts/dragdrop/drag-xrange liveRedraw disabled
  * @apioption plotOptions.series.dragDrop.liveRedraw
  */
 
@@ -991,12 +1003,15 @@ var defaultDragHandleOptions = {
 
 /**
  * Callback that fires when starting to drag a point. The mouse event object is
- * passed in as an argument. See [drag and drop options](series.line.dragDrop).
+ * passed in as an argument. If a drag handle is used, `e.updateProp` is set to
+ * the data property being dragged. The `this` context is the point. See
+ * [drag and drop options](plotOptions.series.dragDrop).
  *
- * Requires the draggable-points module.
+ * Requires the `draggable-points` module.
  *
  * @type {Function}
  * @since 6.2.0
+ * @sample {highcharts} highcharts/dragdrop/drag-xrange Drag events
  * @apioption plotOptions.series.point.events.dragStart
  */
 
@@ -1004,29 +1019,30 @@ var defaultDragHandleOptions = {
  * Callback that fires while dragging a point. The mouse event is passed in as
  * parameter. The original data can be accessed from `e.origin`, and the new
  * point values can be accessed from `e.newPoints`. If there is only a single
- * point being updated, it can be accessed from `e.newPoint` for simplicity. To
- * stop the default drag action, return `false`. See
- * [drag and drop options](series.line.dragDrop).
+ * point being updated, it can be accessed from `e.newPoint` for simplicity, and
+ * its ID can be accessed from `e.newPointId`. The `this` context is the point
+ * being dragged. To stop the default drag action, return false.
+ * See [drag and drop options](plotOptions.series.dragDrop).
  *
- * Requires the draggable-points module.
+ * Requires the `draggable-points` module.
  *
  * @type {Function}
  * @since 6.2.0
+ * @sample {highcharts} highcharts/dragdrop/drag-xrange Drag events
  * @apioption plotOptions.series.point.events.drag
  */
 
 /**
- * Callback that fires when the point is dropped. The mouse event is passed in
- * as parameter. The original data can be accessed from `e.origin`, and the new
- * point values can be accessed from `e.newPoints`. If there is only a single
- * point being updated, it can be accessed from `e.newPoint` for simplicity. To
- * stop the default drop action, return `false`. See
- * [drag and drop options](series.line.dragDrop).
+ * Callback that fires when the point is dropped. The parameters passed are the
+ * same as for [drag](#plotOptions.series.point.events.drag). To stop the
+ * default drop action, return false. See
+ * [drag and drop options](plotOptions.series.dragDrop).
  *
- * Requires the draggable-points module.
+ * Requires the `draggable-points` module.
  *
  * @type {Function}
  * @since 6.2.0
+ * @sample {highcharts} highcharts/dragdrop/drag-xrange Drag events
  * @apioption plotOptions.series.point.events.drop
  */
 
@@ -1034,7 +1050,7 @@ var defaultDragHandleOptions = {
  * Point specific options for the draggable-points module. Overrides options on
  * `series.dragDrop`.
  *
- * Requires the draggable-points module.
+ * Requires the `draggable-points` module.
  *
  * @extends plotOptions.series.dragDrop
  * @since 6.2.0

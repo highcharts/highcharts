@@ -2028,6 +2028,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         Logarithmic with minor grid lines
          * @sample {highcharts} highcharts/yaxis/type-log-negative/
          *         Logarithmic with extension to emulate negative values
+         * @sample {gantt} gantt/treegrid-axis/demo
+         *         Treegrid axis
          *
          * @product    highcharts gantt
          * @validvalue ["linear", "logarithmic", "datetime", "category", "treegrid"]

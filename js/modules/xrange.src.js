@@ -111,6 +111,16 @@ seriesType('xrange', 'column'
      * @apioption series.xrange.data.partialFill
      */
 
+    /**
+     * A partial fill for each point, typically used to visualize how much of
+     * a task is performed. See [completed](series.gantt.data.completed).
+     *
+     * @sample  gantt/demo/progress-indicator
+     *          Gantt with progress indicator
+     *
+     * @product   gantt
+     * @apioption plotOptions.gantt.partialFill
+     */
 
     /**
      * In an X-range series, this option makes all points of the same Y-axis

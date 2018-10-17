@@ -330,15 +330,17 @@ seriesType('gantt', 'xrange', {
 
 /**
  * The ID of the point (task) that this point depends on in Gantt charts.
- * Aliases [connect](series.xrange.data#connect). Can also be an object,
+ * Aliases [connect](series.xrange.data.connect). Can also be an object,
  * specifying further connecting [options](series.gantt.pathfinder) between the
- * points.
+ * points. Multiple connections can be specified by providing an array.
  *
- * @type {string|object}
+ * @type {Array<string|*>|string|*}
  * @extends {series.xrange.data.connect}
  * @since 6.2.0
  * @sample  gantt/demo/project-management
  *          Dependencies
+ * @sample gantt/pathfinder/demo
+ *          Different connection types
  * @product gantt
  * @apioption series.gantt.data.dependency
  */
