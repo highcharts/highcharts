@@ -207,7 +207,7 @@ Highcharts.Point.prototype = {
          * extended through `Point.update`.
          *
          * @name Highcharts.Point#options
-         * @type {*}
+         * @type {object}
          */
         point.options = point.options ?
             extend(point.options, options) :
