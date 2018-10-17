@@ -156,13 +156,23 @@ seriesType('columnrange', 'arearange', merge(
     trackerGroups: ['group', 'dataLabelsGroup'],
     drawGraph: noop,
     getSymbol: noop,
-    crispCol: colProto.crispCol,
-    drawPoints: colProto.drawPoints,
-    drawTracker: colProto.drawTracker,
-    getColumnMetrics: colProto.getColumnMetrics,
-    pointAttribs: colProto.pointAttribs,
 
     // Overrides from modules that may be loaded after this module
+    crispCol: function () {
+        return colProto.crispCol.apply(this, arguments);
+    },
+    drawPoints: function () {
+        return colProto.drawPoints.apply(this, arguments);
+    },
+    drawTracker: function () {
+        return colProto.drawTracker.apply(this, arguments);
+    },
+    getColumnMetrics: function () {
+        return colProto.getColumnMetrics.apply(this, arguments);
+    },
+    pointAttribs: function () {
+        return colProto.pointAttribs.apply(this, arguments);
+    },
     animate: function () {
         return colProto.animate.apply(this, arguments);
     },
