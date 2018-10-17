@@ -98,10 +98,10 @@ Highcharts.Point.prototype = {
      * @param {Highcharts.Series} series
      *        The series object containing this point.
      *
-     * @param {number|Array<number>|*} options
+     * @param {number|object|Array<number|string>|null} options
      *        The data in either number, array or object format.
      *
-     * @param {number} x
+     * @param {number} [x]
      *        Optionally, the X value of the point.
      *
      * @return {Highcharts.Point}
@@ -183,10 +183,10 @@ Highcharts.Point.prototype = {
      * @private
      * @function Highcharts.Point#applyOptions
      *
-     * @param {*} options
+     * @param {number|object|Array<number|string>|null} options
      *        The point options as defined in series.data.
      *
-     * @param {number} x
+     * @param {number} [x]
      *        Optionally, the x value.
      *
      * @return {Highcharts.Point}
@@ -313,10 +313,10 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#optionsToObject
      *
-     * @param {number|Array<number>|*} options
+     * @param {number|object|Array<number|string>|null} options
      *        The input option.
      *
-     * @return {*}
+     * @return {object}
      *         Transformed options.
      */
     optionsToObject: function (options) {
@@ -591,7 +591,7 @@ Highcharts.Point.prototype = {
      * @param {string} eventType
      *        Type of the event.
      *
-     * @param {*} eventArgs
+     * @param {object} eventArgs
      *        Additional event arguments.
      *
      * @param {Function} defaultFunction
