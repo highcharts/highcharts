@@ -76,6 +76,20 @@
 .highcharts-current-price-indicator .highcharts-menu-item-btn { background-image: url('http://utils.highcharts.local/samples/graphics/current-price-show.svg'); } 
 .highcharts-save-chart .highcharts-menu-item-btn { background-image: url('http://utils.highcharts.local/samples/graphics/save-chart.svg'); } 
 
+/* Popup */
+.chart-wrapper { float:left; position: relative; width: 100%; }
+.highcharts-popup { background: #fff; display: none; height:190px; left:calc(50% - 120px); top:calc(50% - 105px); padding:20px; position: absolute; width: 200px; z-index: 10; 
+-webkit-box-shadow: 0px 0px 11px 0px rgba(133,133,133,0.3);
+-moz-box-shadow: 0px 0px 11px 0px rgba(133,133,133,0.3);
+box-shadow: 0px 0px 11px 0px rgba(133,133,133,0.3);}
+
+.highcharts-popup input, .highcharts-popup label, .highcharts-popup select { color:#666; float:left; font-size:0.876em; margin-left:0px; margin-bottom: 5px; padding:5px; width: calc(100% - 14px); }
+.highcharts-popup select { width: 100%; }
+.highcharts-popup label { padding-left:0px; }
+.highcharts-popup .highcharts-close-popup { cursor: pointer; display:block; padding:5px; position: absolute; right:0px; top:0px; }
+.highcharts-popup .highcharts-close-popup:hover { background-color:#e6ebf5; }
+.highcharts-popup button { font-size:0.876em; float:right; margin-top:20px; padding:5px 10px; }
+
 /* Responsive design */
 @media screen and (max-width: 1024px) {
   .highcharts-stocktools-toolbar li > .highcharts-menu-item-title { display:none; }
