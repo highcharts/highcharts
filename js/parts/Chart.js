@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -542,6 +542,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // set axes scales
             each(axes, function (axis) {
                 axis.updateNames();
+                // Update categories in a Gantt chart
+                if (axis.updateYNames) {
+                    axis.updateYNames();
+                }
                 axis.setScale();
             });
         }

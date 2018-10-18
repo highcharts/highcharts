@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -36,6 +36,30 @@ var addEvent = H.addEvent,
     seriesTypes = H.seriesTypes,
     setAnimation = H.setAnimation,
     splat = H.splat;
+
+// Remove settings that have not changed, to avoid unnecessary rendering or
+// computing (#9197)
+H.cleanRecursively = function (newer, older) {
+    var total = 0,
+        removed = 0;
+    objectEach(newer, function (val, key) {
+        if (isObject(newer[key], true) && older[key]) {
+            if (H.cleanRecursively(newer[key], older[key])) {
+                delete newer[key];
+            }
+        } else if (
+            !isObject(newer[key]) &&
+            newer[key] === older[key]
+        ) {
+            delete newer[key];
+            removed++;
+        }
+        total++;
+    });
+
+    // Return true if all sub nodes are removed
+    return total === removed;
+};
 
 // Extend the Chart prototype for dynamic methods
 extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
@@ -359,7 +383,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 title: 'setTitle',
                 subtitle: 'setSubtitle'
             },
-            optionsChart = options.chart,
+            optionsChart,
             updateAllAxes,
             updateAllSeries,
             newWidth,
@@ -368,9 +392,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         fireEvent(chart, 'update', { options: options });
 
+        H.cleanRecursively(options, chart.options);
+
         // If the top-level chart option is present, some special updates are
         // required
+        optionsChart = options.chart;
         if (optionsChart) {
+
             merge(true, chart.options.chart, optionsChart);
 
             // Setter function
@@ -986,6 +1014,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * @fires Highcharts.Series#event:afterUpdate
      */
     update: function (newOptions, redraw) {
+
+        H.cleanRecursively(newOptions, this.userOptions);
+
         var series = this,
             chart = series.chart,
             // must use user options when changing type because series.options

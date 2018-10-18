@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -404,7 +404,7 @@ H.defaultOptions = {
          *
          * @type      {boolean}
          * @default   true
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption chart.alignTicks
          */
 
@@ -713,7 +713,7 @@ H.defaultOptions = {
          *
          * @type       {string}
          * @since      4.0.3
-         * @product    highcharts
+         * @product    highcharts gantt
          * @validvalue ["alt", "ctrl", "meta", "shift"]
          * @apioption  chart.panKey
          */
@@ -733,7 +733,7 @@ H.defaultOptions = {
          * @default   {highcharts} false
          * @default   {highstock} true
          * @since     4.0.3
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption chart.panning
          */
 
@@ -751,7 +751,7 @@ H.defaultOptions = {
          * @default    {highcharts} undefined
          * @default    {highstock} x
          * @since      3.0
-         * @product    highcharts highstock
+         * @product    highcharts highstock gantt
          * @validvalue ["x", "y", "xy"]
          * @apioption  chart.pinchType
          */
@@ -815,7 +815,7 @@ H.defaultOptions = {
          *         False
          *
          * @since   1.2.0
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         ignoreHiddenSeries: true,
 
@@ -838,7 +838,7 @@ H.defaultOptions = {
          *
          * @type      {boolean}
          * @default   false
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption chart.inverted
          */
 
@@ -1083,7 +1083,7 @@ H.defaultOptions = {
          *
          * @type      {boolean}
          * @since     1.2.5
-         * @product   highcharts
+         * @product   highcharts gantt
          * @apioption chart.showAxes
          */
 
@@ -1233,7 +1233,7 @@ H.defaultOptions = {
          *         Xy
          *
          * @type       {string}
-         * @product    highcharts highstock
+         * @product    highcharts highstock gantt
          * @validvalue ["x", "y", "xy"]
          * @apioption  chart.zoomType
          */
@@ -1830,6 +1830,7 @@ H.defaultOptions = {
          *
          * @default {highstock} false
          * @default {highmaps} true
+         * @default {gantt} false
          */
         enabled: true,
 
@@ -2011,7 +2012,7 @@ H.defaultOptions = {
          * @type      {number}
          * @default   16
          * @since     2.0
-         * @product   highcharts
+         * @product   highcharts gantt
          * @apioption legend.lineHeight
          */
 
@@ -3001,7 +3002,7 @@ H.defaultOptions = {
          *         A different format
          *
          * @type      {string}
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption tooltip.xDateFormat
          */
 
@@ -3057,7 +3058,7 @@ H.defaultOptions = {
          * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
          *
          * @type    {Highcharts.Dictionary<string>}
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
             millisecond: '%A, %b %e, %H:%M:%S.%L',

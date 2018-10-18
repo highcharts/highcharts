@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,50 +7,75 @@
 /**
  * Options to align the element relative to the chart or another box.
  *
- * @typedef Highcharts.AlignObject
+ * @interface Highcharts.AlignObject
+ *//**
+ * Horizontal alignment. Can be one of `left`, `center` and `right`.
  *
- * @property {string} [align='left']
- *           Horizontal alignment. Can be one of `left`, `center` and
- *           `right`.
+ * @name Highcharts.AlignObject#align
+ * @type {string|undefined}
  *
- * @property {string} [verticalAlign='top']
- *           Vertical alignment. Can be one of `top`, `middle` and `bottom`.
+ * @default left
+ *//**
+ * Vertical alignment. Can be one of `top`, `middle` and `bottom`.
  *
- * @property {number} [x=0]
- *           Horizontal pixel offset from alignment.
+ * @name Highcharts.AlignObject#verticalAlign
+ * @type {string|undefined}
  *
- * @property {number} [y=0]
- *           Vertical pixel offset from alignment.
+ * @default top
+ *//**
+ * Horizontal pixel offset from alignment.
  *
- * @property {boolean} [alignByTranslate=false]
- *           Use the `transform` attribute with translateX and translateY
- *           custom attributes to align this elements rather than `x` and
- *           `y` attributes.
+ * @name Highcharts.AlignObject#x
+ * @type {number|undefined}
+ *
+ * @default 0
+ *//**
+ * Vertical pixel offset from alignment.
+ *
+ * @name Highcharts.AlignObject#y
+ * @type {number|undefined}
+ *
+ * @default 0
+ *//**
+ * Use the `transform` attribute with translateX and translateY custom
+ * attributes to align this elements rather than `x` and `y` attributes.
+ *
+ * @name Highcharts.AlignObject#alignByTranslate
+ * @type {boolean|undefined}
+ *
+ * @default false
  */
 
 /**
  * Bounding box of an element.
  *
- * @typedef Highcharts.BBoxObject
+ * @interface Highcharts.BBoxObject
+ *//**
+ * Height of the bounding box.
  *
- * @property {number} height
- *           Height of the bounding box.
+ * @name Highcharts.BBoxObject#height
+ * @type {number}
+ *//**
+ * Width of the bounding box.
  *
- * @property {number} width
- *           Width of the bounding box.
+ * @name Highcharts.BBoxObject#width
+ * @type {number}
+ *//**
+ * Horizontal position of the bounding box.
  *
- * @property {number} x
- *           Horizontal position of the bounding box.
+ * @name Highcharts.BBoxObject#x
+ * @type {number}
+ *//**
+ * Vertical position of the bounding box.
  *
- * @property {number} y
- *           Vertical position of the bounding box.
+ * @name Highcharts.BBoxObject#y
+ * @type {number}
  */
 
 /**
- * A clipping rectangle that can be applied to one or more
- * {@link SVGElement} instances. It is instanciated with the
- * {@link SVGRenderer#clipRect} function and applied with the
- * {@link SVGElement#clip} function.
+ * A clipping rectangle that can be applied to one or more {@link SVGElement}
+ * instances. It is instanciated with the {@link SVGRenderer#clipRect} function
+ * and applied with the {@link SVGElement#clip} function.
  *
  * @example
  * var circle = renderer.circle(100, 100, 100)
@@ -67,16 +92,22 @@
 /**
  * The font metrics.
  *
- * @typedef Highcharts.FontMetricsObject
+ * @interface Highcharts.FontMetricsObject
+ *//**
+ * The baseline relative to the top of the box.
  *
- * @property {number} b
- *           The baseline relative to the top of the box.
+ * @name Highcharts.FontMetricsObject#b
+ * @type {number}
+ *//**
+ * The line height.
  *
- * @property {number} h
- *           The line height.
+ * @name Highcharts.FontMetricsObject#h
+ * @type {number}
+ *//**
+ * The font size.
  *
- * @property {number} f
- *           The font size.
+ * @name Highcharts.FontMetricsObject#f
+ * @type {number}
  */
 
 /**
@@ -94,113 +125,161 @@
  *     }
  * }
  *
- * @private
- * @typedef Highcharts.GradientColorObject
+ * @interface Highcharts.GradientColorObject
+ *//**
+ * Holds an object that defines the start position and the end position relative
+ * to the shape.
  *
- * @property {Highcharts.LinearGradientColorObject} linearGradient
- *           Holds an object that defines the start position and the end
- *           position relative to the shape.
+ * @name Highcharts.GradientColorObject#linearGradient
+ * @type {Highcharts.LinearGradientColorObject|undefined}
+ *//**
+ * Holds an object that defines the center position and the radius.
  *
- * @property {Highcharts.RadialGradientColorObject} radialGradient
- *           Holds an object that defines the center position and the
- *           radius.
+ * @name Highcharts.GradientColorObject#radialGradient
+ * @type {Highcharts.RadialGradientColorObject|undefined}
+ *//**
+ * The first item in each tuple is the position in the gradient, where 0 is the
+ * start of the gradient and 1 is the end of the gradient. Multiple stops can be
+ * applied. The second item is the color for each stop. This color can also be
+ * given in the rgba format.
  *
- * @property {Array<Array<number|string>>} stops
- *           The first item in each tuple is the position in the gradient,
- *           where 0 is the start of the gradient and 1 is the end of the
- *           gradient. Multiple stops can be applied. The second item is the
- *           color for each stop. This color can also be given in the rgba
- *           format.
+ * @name Highcharts.GradientColorObject#stops
+ * @type {Array<Array<number,Highcharts.ColorString>>|undefined}
  */
 
 /**
  * Defines the start position and the end position for a gradient relative
- * to the shape.
+ * to the shape. Start position (x1, y1) and end position (x2, y2) are relative
+ * to the shape, where 0 means top/left and 1 is bottom/right.
  *
- * @private
- * @typedef Highcharts.LinearGradientColorObject
+ * @interface Highcharts.LinearGradientColorObject
+ *//**
+ * Start horizontal position of the gradient. Float ranges 0-1.
  *
- * @property {number} x1
- *           Start horizontal position of the gradient. Ranges 0-1.
+ * @name Highcharts.LinearGradientColorObject#x1
+ * @type {number}
+ *//**
+ * End horizontal position of the gradient. Float ranges 0-1.
  *
- * @property {number} x2
- *           End horizontal position of the gradient. Ranges 0-1.
+ * @name Highcharts.LinearGradientColorObject#x2
+ * @type {number}
+ *//**
+ * Start vertical position of the gradient. Float ranges 0-1.
  *
- * @property {number} y1
- *           Start vertical position of the gradient. Ranges 0-1.
+ * @name Highcharts.LinearGradientColorObject#y1
+ * @type {number}
+ *//**
+ * End vertical position of the gradient. Float ranges 0-1.
  *
- * @property {number} y2
- *           End vertical position of the gradient. Ranges 0-1.
+ * @name Highcharts.LinearGradientColorObject#y2
+ * @type {number}
  */
 
 /**
  * Defines the center position and the radius for a gradient.
  *
- * @private
- * @typedef Highcharts.RadialGradientColorObject
+ * @interface Highcharts.RadialGradientColorObject
+ *//**
+ * Center horizontal position relative to the shape. Float ranges 0-1.
  *
- * @property {number} cx
- *           Center horizontal position relative to the shape. Ranges 0-1.
+ * @name Highcharts.RadialGradientColorObject#cx
+ * @type {number}
+ *//**
+ * Center vertical position relative to the shape. Float ranges 0-1.
  *
- * @property {number} cy
- *           Center vertical position relative to the shape. Ranges 0-1.
+ * @name Highcharts.RadialGradientColorObject#cy
+ * @type {number}
+ *//**
+ * Radius relative to the shape. Float ranges 0-1.
  *
- * @property {number} r
- *           Radius relative to the shape. Ranges 0-1.
+ * @name Highcharts.RadialGradientColorObject#r
+ * @type {number}
  */
 
 /**
  * A rectangle.
  *
- * @typedef Highcharts.RectangleObject
+ * @interface Highcharts.RectangleObject
+ *//**
+ * Height of the rectangle.
  *
- * @property {number} height
- *           Height of the rectangle.
+ * @name Highcharts.RectangleObject#height
+ * @type {number}
+ *//**
+ * Width of the rectangle.
  *
- * @property {number} width
- *           Width of the rectangle.
+ * @name Highcharts.RectangleObject#width
+ * @type {number}
+ *//**
+ * Horizontal position of the rectangle.
  *
- * @property {number} x
- *           Horizontal position of the rectangle.
+ * @name Highcharts.RectangleObject#x
+ * @type {number}
+ *//**
+ * Vertical position of the rectangle.
  *
- * @property {number} y
- *           Vertical position of the rectangle.
+ * @name Highcharts.RectangleObject#y
+ * @type {number}
  */
 
 /**
  * The shadow options.
  *
- * @typedef Highcharts.ShadowOptionsObject
+ * @interface Highcharts.ShadowOptionsObject
+ *//**
+ * The shadow color.
  *
- * @property {string} [color=${palette.neutralColor100}]
- *           The shadow color.
+ * @name Highcharts.ShadowOptionsObject#color
+ * @type {string|undefined}
  *
- * @property {number} [offsetX=1]
- *           The horizontal offset from the element.
+ * @default ${palette.neutralColor100}
+ *//**
+ * The horizontal offset from the element.
  *
- * @property {number} [offsetY=1]
- *           The vertical offset from the element.
+ * @name Highcharts.ShadowOptionsObject#offsetX
+ * @type {number|undefined}
  *
- * @property {number} [opacity=0.15]
- *           The shadow opacity.
+ * @default 1
+ *//**
+ * The vertical offset from the element.
  *
- * @property {number} [width=3]
- *           The shadow width or distance from the element.
+ * @name Highcharts.ShadowOptionsObject#offsetY
+ * @type {number|undefined}
+ *
+ * @default 1
+ *//**
+ * The shadow opacity.
+ *
+ * @name Highcharts.ShadowOptionsObject#opacity
+ * @type {number|undefined}
+ *
+ * @default 0.15
+ *//**
+ * The shadow width or distance from the element.
+ *
+ * @name Highcharts.ShadowOptionsObject#width
+ * @type {number|undefined}
+ *
+ * @default 3
  */
 
 /**
  * Serialized form of an SVG definition, including children. Some key
  * property names are reserved: tagName, textContent, and children.
  *
- * @typedef Highcharts.SVGDefinitionObject
- *
- * @property {number|string|Array<Highcharts.SVGDefinitionObject>|undefined} [key:string]
- *
- * @property {Array<Highcharts.SVGDefinitionObject>} [children]
- *
- * @property {string} [tagName]
- *
- * @property {string} [textContent]
+ * @interface Highcharts.SVGDefinitionObject
+ *//**
+ * @name Highcharts.SVGDefinitionObject#[key:string]
+ * @type {number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
+ *//**
+ * @name Highcharts.SVGDefinitionObject#children
+ * @type {Array<Highcharts.SVGDefinitionObject>|undefined}
+ *//**
+ * @name Highcharts.SVGDefinitionObject#tagName
+ * @type {string|undefined}
+ *//**
+ * @name Highcharts.SVGDefinitionObject#textContent
+ * @type {string|undefined}
  */
 
 /**
@@ -208,7 +287,7 @@
  *
  * @typedef Highcharts.SymbolDictionary
  *
- * @property {Function} [key:Highcharts.SymbolKey]
+ * @property {Function|undefined} [key:Highcharts.SymbolKey]
  */
 
 /**
@@ -218,7 +297,6 @@
  * Extendable by adding to {@link SVGRenderer#symbols}.
  *
  * @typedef {string} Highcharts.SymbolKey
- *
  * @validvalue ["arc", "callout", "circle", "diamond", "square", "triangle",
  *             "triangle-down"]
  */
@@ -226,28 +304,39 @@
 /**
  * Additional options, depending on the actual symbol drawn.
  *
- * @typedef Highcharts.SymbolOptionsObject
+ * @interface Highcharts.SymbolOptionsObject
+ *//**
+ * The anchor X position for the `callout` symbol. This is where the chevron
+ * points to.
  *
- * @property {number} anchorX
- *           The anchor X position for the `callout` symbol. This is where
- *           the chevron points to.
+ * @name Highcharts.SymbolOptionsObject#anchorX
+ * @type {number}
+ *//**
+ * The anchor Y position for the `callout` symbol. This is where the chevron
+ * points to.
  *
- * @property {number} anchorY
- *           The anchor Y position for the `callout` symbol. This is where
- *           the chevron points to.
+ * @name Highcharts.SymbolOptionsObject#anchorY
+ * @type {number}
+ *//**
+ * The end angle of an `arc` symbol.
  *
- * @property {number} end
- *           The end angle of an `arc` symbol.
+ * @name Highcharts.SymbolOptionsObject#end
+ * @type {number}
+ *//**
+ * Whether to draw `arc` symbol open or closed.
  *
- * @property {boolean} open
- *           Whether to draw `arc` symbol open or closed.
+ * @name Highcharts.SymbolOptionsObject#open
+ * @type {boolean}
+ *//**
+ * The radius of an `arc` symbol, or the border radius for the `callout` symbol.
  *
- * @property {number} r
- *           The radius of an `arc` symbol, or the border radius for the
- *           `callout` symbol.
+ * @name Highcharts.SymbolOptionsObject#r
+ * @type {number}
+ *//**
+ * The start angle of an `arc` symbol.
  *
- * @property {number} start
- *           The start angle of an `arc` symbol.
+ * @name Highcharts.SymbolOptionsObject#start
+ * @type {number}
  */
 
 'use strict';
@@ -1527,6 +1616,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             toggleTextShadowShim,
             cache = renderer.cache,
             cacheKeys = renderer.cacheKeys,
+            isSVG = element.namespaceURI === wrapper.SVG_NS,
             cacheKey;
 
         rotation = pick(rot, wrapper.rotation);
@@ -1572,7 +1662,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         if (!bBox) {
 
             // SVG elements
-            if (element.namespaceURI === wrapper.SVG_NS || renderer.forExport) {
+            if (isSVG || renderer.forExport) {
                 try { // Fails in Firefox if the container has display: none.
 
                     // When the text shadow shim is used, we need to hide the
@@ -1639,12 +1729,16 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 // Also vertical positioning is affected.
                 // https://jsfiddle.net/highcharts/em37nvuj/
                 // (#1101, #1505, #1669, #2568, #6213).
-                if (
-                    styles &&
-                    styles.fontSize === '11px' &&
-                    Math.round(height) === 17
-                ) {
-                    bBox.height = height = 14;
+                if (isSVG) {
+                    bBox.height = height = (
+                        {
+                            '11px,17': 14,
+                            '13px,20': 16
+                        }[
+                            styles && styles.fontSize + ',' + Math.round(height)
+                        ] ||
+                        height
+                    );
                 }
 
                 // Adjust for rotated text
@@ -4409,7 +4503,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         if (y) {
             attribs.y = Math.round(y);
         }
-        if (str || str === 0) {
+        if (defined(str)) {
             attribs.text = str;
         }
 

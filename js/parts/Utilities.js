@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -8,6 +8,7 @@
  * Reference to the global SVGElement class as a workaround for a name conflict
  * in the Highcharts namespace.
  *
+ * @global
  * @typedef {global.SVGElement} GlobalSVGElement
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
@@ -18,21 +19,29 @@
  * booleans, where `false` turns off animation and `true` defaults to a duration
  * of 500ms.
  *
- * @typedef Highcharts.AnimationOptionsObject
+ * @interface Highcharts.AnimationOptionsObject
+ *//**
+ * The animation duration in milliseconds.
  *
- * @property {number} duration
- *           The animation duration in milliseconds.
+ * @name Highcharts.AnimationOptionsObject#duration
+ * @type {number}
+ *//**
+ * The name of an easing function as defined on the `Math` object.
  *
- * @property {string} [easing]
- *           The name of an easing function as defined on the `Math` object.
+ * @name Highcharts.AnimationOptionsObject#easing
+ * @type {string|undefined}
+ *//**
+ * A callback function to exectute when the animation finishes.
  *
- * @property {Function} [complete]
- *           A callback function to exectute when the animation finishes.
+ * @name Highcharts.AnimationOptionsObject#complete
+ * @type {Function|undefined}
+ *//**
+ * A callback function to execute on each step of each attribute or CSS property
+ * that's being animated. The first argument contains information about the
+ * animation and progress.
  *
- * @property {Function} [step]
- *           A callback function to execute on each step of each attribute or
- *           CSS property that's being animated. The first argument contains
- *           information about the animation and progress.
+ * @name Highcharts.AnimationOptionsObject#step
+ * @type {Function|undefined}
  */
 
 /**
@@ -46,96 +55,138 @@
  *    fontSize: '1.2em'
  * }
  *
- * @typedef Highcharts.CSSObject
+ * @interface Highcharts.CSSObject
+ *//**
+ * @name Highcharts.CSSObject#[key:string]
+ * @type {boolean|number|string|undefined}
+ *//**
+ * Background style for the element.
  *
- * @property {boolean|number|string|undefined} [key:string]
+ * @name Highcharts.CSSObject#background
+ * @type {string|undefined}
+ *//**
+ * Background color of the element.
  *
- * @property {string} [background]
- *           Background style for the element.
+ * @name Highcharts.CSSObject#backgroundColor
+ * @type {Highcharts.ColorString|undefined}
+ *//**
+ * Border style for the element.
  *
- * @property {Highcharts.ColorString} [backgroundColor]
- *           Background color of the element.
+ * @name Highcharts.CSSObject#border
+ * @type {string|undefined}
+ *//**
+ * Radius of the element border.
  *
- * @property {string} [border]
- *           Border style for the element.
+ * @name Highcharts.CSSObject#borderRadius
+ * @type {number|undefined}
+ *//**
+ * Color used in the element. The "contrast" option is a Highcharts custom
+ * property that results in black or white, depending on the background of the
+ * element.
  *
- * @property {number} [borderRadius]
- *           Radius of the element border.
+ * @name Highcharts.CSSObject#color
+ * @type {"contrast"|Highcharts.ColorString|undefined}
+ *//**
+ * Style of the mouse cursor when resting over the element.
  *
- * @property {"contrast"|Highcharts.ColorString} [color]
- *           Color used in the element. The "contrast" option is a Highcharts
- *           custom property that results in black or white, depending on the
- *           background of the element.
+ * @name Highcharts.CSSObject#cursor
+ * @type {string|undefined}
+ *//**
+ * Font family of the element text. Multiple values have to be in decreasing
+ * preference order and separated by comma.
  *
- * @property {string} [cursor]
- *           Style of the mouse cursor when resting over the element.
+ * @name Highcharts.CSSObject#fontFamily
+ * @type {string|undefined}
+ *//**
+ * Font size of the element text.
  *
- * @property {string} [fontFamily]
- *           Font family of the element text. Multiple values have to be in
- *           decreasing preference order and separated by comma.
+ * @name Highcharts.CSSObject#fontSize
+ * @type {string|undefined}
+ *//**
+ * Font weight of the element text.
  *
- * @property {string} [fontSize]
- *           Font size of the element text.
+ * @name Highcharts.CSSObject#fontWeight
+ * @type {string|undefined}
+ *//**
+ * Height of the element.
  *
- * @property {string} [fontWeight]
- *           Font weight of the element text.
+ * @name Highcharts.CSSObject#height
+ * @type {number|undefined}
+ *//**
+ * Width of the element border.
  *
- * @property {number} [height]
- *           Height of the element.
+ * @name Highcharts.CSSObject#lineWidth
+ * @type {number|undefined}
+ *//**
+ * Opacity of the element.
  *
- * @property {number} [lineWidth]
- *           Width of the element border.
+ * @name Highcharts.CSSObject#opacity
+ * @type {number|undefined}
+ *//**
+ * Space around the element content.
  *
- * @property {number} [opacity]
- *           Opacity of the element.
+ * @name Highcharts.CSSObject#padding
+ * @type {string|undefined}
+ *//**
+ * Behaviour of the element when the mouse cursor rests over it.
  *
- * @property {string} [padding]
- *           Space around the element content.
+ * @name Highcharts.CSSObject#pointerEvents
+ * @type {string|undefined}
+ *//**
+ * Positioning of the element.
  *
- * @property {string} [pointerEvents]
- *           Behaviour of the element when the mouse cursor rests over it.
+ * @name Highcharts.CSSObject#position
+ * @type {string|undefined}
+ *//**
+ * Alignment of the element text.
  *
- * @property {string} [position]
- *           Positioning of the element.
+ * @name Highcharts.CSSObject#textAlign
+ * @type {string|undefined}
+ *//**
+ * Outline style of the element text.
  *
- * @property {string} [textAlign]
- *           Alignment of the element text.
+ * @name Highcharts.CSSObject#textOutline
+ * @type {string|undefined}
+ *//**
+ * Additional decoration of the element text.
  *
- * @property {string} [textOutline]
- *           Outline style of the element text.
+ * @name Highcharts.CSSObject#textDecoration
+ * @type {string|undefined}
+ *//**
+ * Line break style of the element text. Highcharts SVG elements support
+ * `ellipsis` when a `width` is set.
  *
- * @property {string} [textDecoration]
- *           Additional decoration of the element text.
+ * @name Highcharts.CSSObject#textOverflow
+ * @type {string|undefined}
+ *//**
+ * Animated transition of selected element properties.
  *
- * @property {string} [textOverflow]
- *           Line break style of the element text. Highcharts SVG elements
- *           support `ellipsis` when a `width` is set.
+ * @name Highcharts.CSSObject#transition
+ * @type {string|undefined}
+ *//**
+ * Top spacing of the element relative to the parent element.
  *
- * @property {string} [transition]
- *           Animated transition of selected element properties.
+ * @name Highcharts.CSSObject#top
+ * @type {string|undefined}
+ *//**
+ * Line break style of the element text.
  *
- * @property {string} [top]
- *           Top spacing of the element relative to the parent element.
+ * @name Highcharts.CSSObject#whiteSpace
+ * @type {string|undefined}
+ *//**
+ * Width of the element.
  *
- * @property {string} [whiteSpace]
- *           Line break style of the element text.
- *
- * @property {number} [width]
- *           Width of the element.
+ * @name Highcharts.CSSObject#width
+ * @type {number|undefined}
  */
 
 /**
  * Generic dictionary in TypeScript notation.
  *
- * @typedef Highcharts.Dictionary<T>
- *
- * @property {T} [key:string]
- */
-
-/**
- * An object of key-value pairs for HTML attributes.
- *
- * @typedef {Highcharts.Dictionary<boolean|number|string>} Highcharts.HTMLAttributes
+ * @interface Highcharts.Dictionary<T>
+ *//**
+ * @name Highcharts.Dictionary<T>#[key:string]
+ * @type {T}
  */
 
 /**
@@ -173,8 +224,14 @@
  */
 
 /**
- * An HTML DOM element. The type is a reference to the regular SVGElement in the
- * global scope.
+ * An object of key-value pairs for HTML attributes.
+ *
+ * @typedef {Highcharts.Dictionary<boolean|number|string>} Highcharts.HTMLAttributes
+ */
+
+/**
+ * An HTML DOM element. The type is a reference to the regular HTMLElement in
+ * the global scope.
  *
  * @typedef {global.HTMLElement} Highcharts.HTMLDOMElement
  *
@@ -200,25 +257,33 @@
  * An object containing `left` and `top` properties for the position in the
  * page.
  *
- * @typedef Highcharts.OffsetObject
+ * @interface Highcharts.OffsetObject
+ *//**
+ * Left distance to the page border.
  *
- * @property {number} left
- *           Left distance to the page border.
+ * @name Highcharts.OffsetObject#left
+ * @type {number}
+ *//**
+ * Top distance to the page border.
  *
- * @property {number} top
- *           Top distance to the page border.
+ * @name Highcharts.OffsetObject#top
+ * @type {number}
  */
 
 /**
  * An object containing `x` and `y` properties for the position of an element.
  *
- * @typedef Highcharts.PositionObject
+ * @interface Highcharts.PositionObject
+ *//**
+ * X position of the element.
  *
- * @property {number} x
- *           X position of the element.
+ * @name Highcharts.PositionObject#x
+ * @type {number}
+ *//**
+ * Y position of the element.
  *
- * @property {number} y
- *           Y position of the element.
+ * @name Highcharts.PositionObject#y
+ * @type {number}
  */
 
 /**
@@ -245,40 +310,53 @@
  *     'd': ['M', 10, 10, 'L', 30, 30, 'z'] // path definition, note format
  * }
  *
- * @typedef Highcharts.SVGAttributes
- *
- * @property {boolean|number|string|Array<any>|undefined} [key:string]
- *
- * @property {string|Highcharts.SVGPathArray} [d]
- *
- * @property {boolean} [inverted]
- *
- * @property {Array<number>} [matrix]
- *
- * @property {Highcharts.ColorString} [stroke]
- *
- * @property {string} [rotation]
- *
- * @property {number} [rotationOriginX]
- *
- * @property {number} [rotationOriginY]
- *
- * @property {number} [scaleX]
- *
- * @property {number} [scaleY]
- *
- * @property {number} [translateX]
- *
- * @property {number} [translateY]
- *
- * @property {number} [zIndex]
+ * @interface Highcharts.SVGAttributes
+ *//**
+ * @name Highcharts.SVGAttributes#[key:string]
+ * @type {boolean|number|string|Array<number|string>|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#d
+ * @type {string|Highcharts.SVGPathArray|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#inverted
+ * @type {boolean|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#matrix
+ * @type {Array<number>|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#stroke
+ * @type {Highcharts.ColorString|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#rotation
+ * @type {string|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#rotationOriginX
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#rotationOriginY
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#scaleX
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#scaleY
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#translateX
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#translateY
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#zIndex
+ * @type {number|undefined}
  */
 
 /**
  * An SVG DOM element. The type is a reference to the regular SVGElement in the
  * global scope.
  *
- * @typedef {global.GlobalSVGElement} Highcharts.SVGDOMElement
+ * @typedef {globals.GlobalSVGElement} Highcharts.SVGDOMElement
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
  */
@@ -1316,6 +1394,21 @@ H.wrap = function (obj, method, func) {
 };
 
 
+
+/**
+ * Recursively converts all Date properties to timestamps.
+ *
+ * @param  {Object} object - any object to convert properties of
+ */
+H.datePropsToTimestamps = function (object) {
+    H.objectEach(object, function (val, key) {
+        if (H.isObject(val) && typeof val.getTime === 'function') {
+            object[key] = val.getTime();
+        } else if (H.isObject(val) || H.isArray(val)) {
+            H.datePropsToTimestamps(val);
+        }
+    });
+};
 
 /**
  * Format a single variable. Similar to sprintf, without the % prefix.
@@ -2612,6 +2705,14 @@ if (win.jQuery) {
      */
 
     /**
+     * Helper function to return the chart of the current JQuery selector
+     * element.
+     *
+     * @function external:JQuery#highcharts
+     *
+     * @return {Highcharts.Chart}
+     *         The chart that is linked to the JQuery selector element.
+     *//**
      * Factory function to create a chart in the current JQuery selector
      * element.
      *
@@ -2620,14 +2721,14 @@ if (win.jQuery) {
      * @param {"Chart"|"Map"|"StockChart"|string} [className]
      *        Name of the factory class in the Highcharts namespace.
      *
-     * @param {Highcharts.Options} options
+     * @param {Highcharts.Options} [options]
      *        The chart options structure.
      *
      * @param {Highcharts.ChartCallbackFunction} [callback]
      *        Function to run when the chart has loaded and and all external
-     *        images are loaded. Defining a [chart.event.load
-     *        ](https://api.highcharts.com/highcharts/chart.events.load) handler
-     *        is equivalent.
+     *        images are loaded. Defining a
+     *        [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
+     *        handler is equivalent.
      *
      * @return {JQuery}
      *         The current JQuery selector.

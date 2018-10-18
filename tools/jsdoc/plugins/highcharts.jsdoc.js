@@ -567,7 +567,8 @@ exports.defineTags = function (dictionary) {
 
             if (tagObj.value.indexOf('highcharts') < 0 &&
                 tagObj.value.indexOf('highmaps') < 0 &&
-                tagObj.value.indexOf('highstock') < 0) {
+                tagObj.value.indexOf('highstock') < 0 &&
+                tagObj.value.indexOf('gantt') < 0) {
 
                 doclet.defaultvalue = tagObj.text;
                 return;

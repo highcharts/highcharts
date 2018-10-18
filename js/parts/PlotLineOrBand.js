@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -74,6 +74,9 @@ H.PlotLineOrBand.prototype = {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     render: function () {
+
+        H.fireEvent(this, 'render');
+
         var plotLine = this,
             axis = plotLine.axis,
             horiz = axis.horiz,
@@ -319,7 +322,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * perimeter of the gauge.
      *
      * @type      {Array<*>}
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption xAxis.plotBands
      */
 
@@ -327,7 +330,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * Border color for the plot band. Also requires `borderWidth` to be set.
      *
      * @type      {Highcharts.ColorString}
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.borderColor
      */
 
@@ -336,7 +338,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {number}
      * @default   0
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.borderWidth
      */
 
@@ -358,7 +359,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Plot band on Y axis
      *
      * @type      {Highcharts.ColorString}
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.color
      */
 
@@ -370,7 +370,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Mouse events demonstrated
      *
      * @since     1.2
-     * @product   highcharts highstock
      * @context   PlotLineOrBand
      * @apioption xAxis.plotBands.events
      */
@@ -386,7 +385,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Plot band on Y axis
      *
      * @type      {number}
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.from
      */
 
@@ -399,7 +397,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Remove plot band by id
      *
      * @type      {string}
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.id
      */
 
@@ -414,7 +411,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Plot band on Y axis
      *
      * @type      {number}
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.to
      */
 
@@ -433,14 +429,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {number}
      * @since     1.2
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.zIndex
      */
 
     /**
      * Text labels for the plot bands
      *
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption xAxis.plotBands.label
      */
 
@@ -456,7 +451,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @type      {string}
      * @default   center
      * @since     2.1
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.label.align
      */
 
@@ -469,7 +463,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @type      {number}
      * @default   0
      * @since     2.1
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.label.rotation
      */
 
@@ -484,7 +477,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {Highcharts.CSSObject}
      * @since     2.1
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.label.style
      */
 
@@ -493,7 +485,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {string}
      * @since     2.1
-     * @product   highcharts
      * @apioption xAxis.plotBands.label.text
      */
 
@@ -508,7 +499,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type       {string}
      * @since      2.1
-     * @product    highcharts highstock
      * @validvalue ["center", "left", "right"]
      * @apioption  xAxis.plotBands.label.textAlign
      */
@@ -520,7 +510,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @type      {boolean}
      * @default   false
      * @since     3.0.3
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.label.useHTML
      */
 
@@ -536,7 +525,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @type       {string}
      * @default    top
      * @since      2.1
-     * @product    highcharts highstock
      * @validvalue ["bottom", "middle",  "top"]
      * @apioption  xAxis.plotBands.label.verticalAlign
      */
@@ -552,7 +540,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {number}
      * @since     2.1
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.label.x
      */
 
@@ -567,7 +554,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {number}
      * @since     2.1
-     * @product   highcharts highstock
      * @apioption xAxis.plotBands.label.y
      */
 
@@ -579,7 +565,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * `.highcharts-plot-line` class in addition to the `className` option.
      *
      * @type      {Array<*>}
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption xAxis.plotLines
      */
 
@@ -601,7 +587,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Plot line on Y axis
      *
      * @type      {Highcharts.ColorString}
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.color
      */
 
@@ -619,7 +604,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @type       {string}
      * @default    Solid
      * @since      1.2
-     * @product    highcharts highstock
      * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
      *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
      *             "LongDashDot", "LongDashDotDot"]
@@ -635,7 +619,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {*}
      * @since     1.2
-     * @product   highcharts highstock
      * @context   PlotLineOrBand
      * @apioption xAxis.plotLines.events
      */
@@ -647,7 +630,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Remove plot line by id
      *
      * @type      {string}
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.id
      */
 
@@ -660,7 +642,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Plot line on Y axis
      *
      * @type      {number}
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.value
      */
 
@@ -673,7 +654,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Plot line on Y axis
      *
      * @type      {number}
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.width
      */
 
@@ -689,14 +669,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {number}
      * @since     1.2
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.zIndex
      */
 
     /**
      * Text labels for the plot bands
      *
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.label
      */
 
@@ -712,7 +690,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @type       {string}
      * @default    left
      * @since      2.1
-     * @product    highcharts highstock
      * @validvalue ["center", "left", "right"]
      * @apioption  xAxis.plotLines.label.align
      */
@@ -726,7 +703,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {number}
      * @since     2.1
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.label.rotation
      */
 
@@ -741,7 +717,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {Highcharts.CSSObject}
      * @since     2.1
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.label.style
      */
 
@@ -750,7 +725,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {string}
      * @since     2.1
-     * @product   highcharts
      * @apioption xAxis.plotLines.label.text
      */
 
@@ -765,7 +739,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {string}
      * @since     2.1
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.label.textAlign
      */
 
@@ -776,7 +749,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @type      {boolean}
      * @default   false
      * @since     3.0.3
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.label.useHTML
      */
 
@@ -791,7 +763,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @default    {highcharts} top
      * @default    {highstock} top
      * @since      2.1
-     * @product    highcharts highstock
      * @validvalue ["top", "middle", "bottom"]
      * @apioption  xAxis.plotLines.label.verticalAlign
      */
@@ -807,7 +778,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {number}
      * @since     2.1
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.label.x
      */
 
@@ -822,7 +792,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {number}
      * @since     2.1
-     * @product   highcharts highstock
      * @apioption xAxis.plotLines.label.y
      */
 
@@ -831,7 +800,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {Array<*>}
      * @extends   xAxis.plotBands
-     * @product   highcharts highstock
      * @apioption yAxis.plotBands
      */
 
@@ -888,7 +856,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {Array<*>}
      * @extends   xAxis.plotLines
-     * @product   highcharts highstock
      * @apioption yAxis.plotLines
      */
 

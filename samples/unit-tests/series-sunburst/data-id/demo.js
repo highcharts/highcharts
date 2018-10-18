@@ -1,4 +1,4 @@
-QUnit.test('series.data.id: default to undefined', function (assert) {
+QUnit.test('series.data.id: default to string', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
             series: [{
@@ -9,12 +9,12 @@ QUnit.test('series.data.id: default to undefined', function (assert) {
         series = chart.series[0],
         result;
     result = !H.find(series.points, function (p) {
-        return p.id !== undefined;
+        return typeof p.id !== 'string';
     });
     assert.strictEqual(
         result,
         true,
-        'All points has a property id with value undefined'
+        'All points have a property id of type String'
     );
 });
 
