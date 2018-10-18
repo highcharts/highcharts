@@ -1,0 +1,64 @@
+#container, #buttonGroup {
+    max-width: 1200px;
+    min-width: 320px;
+    margin: 1em auto;
+}
+
+.hidden {
+    display: none;
+}
+
+.demo button {
+    font-size: 16px;
+    border-radius: 3px;
+    border-width: 1px;
+    background-color: #efefef;
+    padding: 0.5em 1em;
+}
+
+.demo button[disabled] {
+    color: silver;
+}
+
+.button-row button {
+    display: inline-block;
+    margin: 0;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.3);
+    transition: opacity 500ms;
+}
+
+.popup {
+    margin: 70px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    width: 300px;
+    position: relative;
+}
+
+.popup input, .popup select {
+    width: 100%;
+    margin: 5px 0 15px;
+}
+
+.popup button {
+    float: right;
+    margin-left: 0.2em;
+}
+
+.popup .clear {
+    height: 50px;
+}
+
+.popup input[type=text], .popup select {
+    height: 2em;
+    font-size: 16px;
+}

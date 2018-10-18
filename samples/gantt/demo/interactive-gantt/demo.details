@@ -1,0 +1,8 @@
+---
+ name: Gantt Chart with Interactive Editing
+ js_wrap: b
+ authors:
+   - Øystein Moseng
+ resources: 
+  - https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css
+...

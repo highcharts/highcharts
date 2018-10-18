@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -105,6 +105,9 @@ var defaultScrollbarOptions = {
      * @type       {boolean}
      * @since      1.3
      * @product    highstock
+     *
+     * @sample     stock/scrollbar/liveredraw Setting live redraw to false
+     *
      * @apioption  scrollbar.liveRedraw
      */
     liveRedraw: undefined,
@@ -1041,7 +1044,11 @@ Scrollbar.prototype = {
 addEvent(Axis, 'afterInit', function () {
     var axis = this;
 
-    if (axis.options.scrollbar && axis.options.scrollbar.enabled) {
+    if (
+        axis.options &&
+        axis.options.scrollbar &&
+        axis.options.scrollbar.enabled
+    ) {
         // Predefined options:
         axis.options.scrollbar.vertical = !axis.horiz;
         axis.options.startOnTick = axis.options.endOnTick = false;

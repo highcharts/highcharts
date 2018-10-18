@@ -11,6 +11,7 @@
 
 	"code/modules/stock.src.js",
 	"code/modules/map.src.js",
+	"code/modules/gantt.src.js",
 	
 	"code/modules/exporting.src.js",
 	"code/modules/export-data.src.js",
@@ -20,6 +21,7 @@
 	"code/modules/boost-canvas.src.js",
 	"code/modules/boost.src.js",
 	"code/modules/data.src.js",
+    "code/modules/draggable-points.src.js",
 	"code/modules/static-scale.src.js",
 	"code/modules/broken-axis.src.js",
 	"code/modules/heatmap.src.js",

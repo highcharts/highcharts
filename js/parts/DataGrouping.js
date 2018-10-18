@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -536,11 +536,14 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
             // write custom options to `this.dataGroupInfo.options`.
             if (!defined(series.dataGroupInfo.options)) {
                 // Convert numbers and arrays into objects
-                series.dataGroupInfo.options = series.pointClass.prototype
-                    .optionsToObject.call(
-                        { series: series },
-                        series.options.data[start]
-                    );
+                series.dataGroupInfo.options = merge(
+                    series.pointClass.prototype
+                        .optionsToObject.call(
+                            { series: series },
+                            series.options.data[start]
+                        )
+                );
+
                 // Make sure the raw data (x, y, open, high etc) is not copied
                 // over and overwriting approximated data.
                 each(extendedPointArrayMap, function (key) {

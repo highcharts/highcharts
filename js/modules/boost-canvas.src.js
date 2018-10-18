@@ -35,7 +35,9 @@ var win = H.win,
 H.initCanvasBoost = function () {
     if (H.seriesTypes.heatmap) {
         H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
-            var ctx = this.getContext();
+            var ctx = this.getContext(),
+                plotLeft = this.chart.plotLeft,
+                plotTop = this.chart.plotTop;
             if (ctx) {
 
                 // draw the columns
@@ -59,8 +61,8 @@ H.initCanvasBoost = function () {
 
                         ctx.fillStyle = pointAttr.fill;
                         ctx.fillRect(
-                            shapeArgs.x,
-                            shapeArgs.y,
+                            shapeArgs.x + plotLeft,
+                            shapeArgs.y + plotTop,
                             shapeArgs.width,
                             shapeArgs.height
                         );

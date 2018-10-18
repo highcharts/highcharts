@@ -1,7 +1,7 @@
 /**
  * Exporting module
  *
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -674,7 +674,7 @@ defaultOptions.exporting = {
              * refers to [lang.contextButtonTitle](#lang.contextButtonTitle)
              * that defaults to "Chart context menu".
              *
-             * @since next
+             * @since 6.1.4
              */
             titleKey: 'contextButtonTitle',
 
