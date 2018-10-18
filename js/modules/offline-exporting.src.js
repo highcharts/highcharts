@@ -9,42 +9,22 @@
 /**
  * Download options for offline exporting.
  *
- * @typedef Highcharts.OfflineExportingDownloadOptionsObject
+ * @interface Highcharts.OfflineExportingOptionsObject
+ * @extends {Highcharts.ExportingOptionsObject}
+ *//**
+ * URL pointing to location of dependency scripts to download on demand. By
+ * default, the module will load these file from our server. Internet Explorer
+ * requires the canvg library in order to export to PNG and to export charts
+ * with embedded images. PDF export also requires the jsPDF and svg2pdf for all
+ * browsers.
  *
- * @property {string} [filename]
- *           Name of resulting downloaded file without extension.
+ * @name Highcharts.OfflineExportingOptionsObject#libURL
+ * @type {string|undefined}
+ *//**
+ * Scaling factor of downloaded image compared to source.
  *
- * @property {string} [libURL]
- *           URL pointing to location of dependency scripts to download on
- *           demand. By default, the module will load these file from our
- *           server. Internet Explorer requires the canvg library in order to
- *           export to PNG and to export charts with embedded images. PDF export
- *           also requires the jsPDF and svg2pdf for all browsers.
- *
- * @property {number} [scale]
- *           Scaling factor of downloaded image compared to source
- *
- * @property {string} [type]
- *           File type of resulting download
- */
-
-/**
- * @typedef Highcharts.OfflineExportingOptionsObject
- *
- * @property {string} [filename]
- *           The file name for the export without extension.
- *
- * @property {number} [sourceWidth]
- *           The pixel width of the source (in-page) chart.
- *
- * @property {number} [sourceHeight]
- *           The pixel height of the source (in-page) chart.
- *
- * @property {string} [type]
- *           The MIME type of the converted image.
- *
- * @property {number} [width]
- *           The width of the PNG or JPG image generated on the server.
+ * @name Highcharts.OfflineExportingOptionsObject#scale
+ * @type {number|undefined}
  */
 
 'use strict';
@@ -354,7 +334,7 @@ Highcharts.imageToDataUrl = function (
  *
  * @param {string} svg
  *
- * @param {Highcharts.OfflineExportingDownloadOptionsObject} options
+ * @param {Highcharts.OfflineExportingOptionsObject} options
  *
  * @param {Function} failCallback
  *
@@ -587,7 +567,7 @@ Highcharts.downloadSVGLocal = function (
  * @private
  * @function Highcharts.Chart#getSVGForLocalExport
  *
- * @param {Highcharts.OfflineExportingDownloadOptionsObject} options
+ * @param {Highcharts.OfflineExportingOptionsObject} options
  *
  * @param {Highcharts.Options} chartOptions
  *
