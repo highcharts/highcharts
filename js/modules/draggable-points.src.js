@@ -1103,7 +1103,7 @@ function isSeriesDraggable(series) {
  *        True if the chart is drag/droppable.
  */
 function isChartDraggable(chart) {
-    var i = chart.series.length;
+    var i = chart.series ? chart.series.length : 0;
     if (chart.hasCartesianSeries && !chart.polar) {
         while (i--) {
             if (
@@ -2231,8 +2231,14 @@ H.Chart.prototype.zoomOrPanKeyPressed = function (e) {
 };
 
 
-// Add events to document and chart after chart has been created
-H.Chart.prototype.callbacks.push(function (chart) {
+/**
+ * Add events to document and chart if the chart is draggable.
+ *
+ * @private
+ * @param {Highcharts.Chart} chart
+ *      The chart to add events to.
+ */
+function addDragDropEvents(chart) {
     var container = chart.container,
         doc = H.doc;
 
@@ -2260,6 +2266,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
             mouseUp(e, chart);
         });
 
+        // Add flag to avoid doing this again
+        chart.hasAddedDragDropEvents = true;
+
         // Add cleanup to make sure we don't pollute document
         addEvent(chart, 'destroy', function () {
             if (chart.unbindDragDropMouseUp) {
@@ -2269,5 +2278,15 @@ H.Chart.prototype.callbacks.push(function (chart) {
                 chart.unbindDragDropTouchEnd();
             }
         });
+    }
+}
+
+
+// Add event listener to Chart.render that checks whether or not we should add
+// dragdrop.
+addEvent(H.Chart, 'render', function () {
+    // If we don't have dragDrop events, see if we should add them
+    if (!this.hasAddedDragDropEvents) {
+        addDragDropEvents(this);
     }
 });
