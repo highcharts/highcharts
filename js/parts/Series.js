@@ -125,10 +125,10 @@ var addEvent = H.addEvent,
  * Configuration options for the series are given in three levels. Options for
  * all series in a chart are given in the
  * [plotOptions.series](https://api.highcharts.com/highcharts/plotOptions.series)
- * object. Then options for all series of a specific type are given in the
- * plotOptions of that type, for example `plotOptions.line`. Next, options for
- * one single series are given in the series array, or as arguements to
- * `chart.addSeries`.
+ * object. Then options for all series of a specific type
+ * are given in the plotOptions of that type, for example `plotOptions.line`.
+ * Next, options for one single series are given in the series array, or as
+ * arguments to `chart.addSeries`.
  *
  * The data in the series is stored in various arrays.
  *

@@ -392,12 +392,11 @@ var SVGElement,
  * SVGElement can also wrap HTML labels, when `text` or `label` elements are
  * created with the `useHTML` parameter.
  *
- * The SVGElement instances are created through factory functions on the
- * {@link Highcharts.SVGRenderer} object, like
- * [rect]{@link Highcharts.SVGRenderer#rect}, [path]{@link
- * Highcharts.SVGRenderer#path}, [text]{@link Highcharts.SVGRenderer#text},
- * [label]{@link Highcharts.SVGRenderer#label}, [g]{@link
- * Highcharts.SVGRenderer#g} and more.
+ * The SVGElement instances are created through factory functions on the {@link
+ * Highcharts.SVGRenderer} object, like {@link Highcharts.SVGRenderer#rect|
+ * rect}, {@link Highcharts.SVGRenderer#path|path}, {@link
+ * Highcharts.SVGRenderer#text|text}, {@link Highcharts.SVGRenderer#label|
+ * label}, {@link Highcharts.SVGRenderer#g|g} and more.
  *
  * @class
  * @name Highcharts.SVGElement

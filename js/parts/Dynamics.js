@@ -184,7 +184,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {string} str
      *        An optional text to show in the loading label instead of the
      *        default one. The default text is set in
-     *        {@link http://api.highcharts.com/highcharts/lang.loading|lang.loading}.
+     *        [lang.loading](http://api.highcharts.com/highcharts/lang.loading).
      */
     showLoading: function (str) {
         var chart = this,
@@ -329,9 +329,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * enabled and disabled, moved, re-styled, re-formatted etc.
      *
      * A special case is configuration objects that take arrays, for example
-     * {@link https://api.highcharts.com/highcharts/xAxis|xAxis},
-     * {@link https://api.highcharts.com/highcharts/yAxis|yAxis} or
-     * {@link https://api.highcharts.com/highcharts/series|series}. For these
+     * [xAxis](https://api.highcharts.com/highcharts/xAxis),
+     * [yAxis](https://api.highcharts.com/highcharts/yAxis) or
+     * [series](https://api.highcharts.com/highcharts/series). For these
      * collections, an `id` option is used to map the new option set to an
      * existing object. If an existing object of the same id is not found, the
      * corresponding item is updated. So for example, running `chart.update`
@@ -342,7 +342,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * parameter description below.
      *
      * See also the
-     * {@link https://api.highcharts.com/highcharts/responsive|responsive option set}.
+     * [responsive option set](https://api.highcharts.com/highcharts/responsive).
      * Switching between `responsive.rules` basically runs `chart.update` under
      * the hood.
      *

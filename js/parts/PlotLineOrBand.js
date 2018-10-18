@@ -939,7 +939,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @param {Highcharts.AxisPlotBandsOptions} options
      *        A configuration object for the plot band, as defined in
-     *        {@link  https://api.highcharts.com/highcharts/xAxis.plotBands|xAxis.plotBands}.
+     *        [xAxis.plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
      *         The added plot band.
@@ -958,7 +958,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @param {Highcharts.AxisPlotLinesOptions} options
      *        A configuration object for the plot line, as defined in
-     *        {@link https://api.highcharts.com/highcharts/xAxis.plotLines|xAxis.plotLines}.
+     *        [xAxis.plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines).
      *
      * @return {Highcharts.PlotLineOrBand|undefined}
      *         The added plot line.
