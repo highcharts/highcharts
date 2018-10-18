@@ -1,4 +1,59 @@
 /* global TestController */
+
+QUnit.test('Dynamic point states', function (assert) {
+    var chart = new Highcharts.chart('container', {
+            chart: {
+                zoomType: 'xy'
+            },
+            tooltip: {
+                shared: true
+            },
+            series: [{
+                type: 'line',
+                data: [1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54, 4, 3, 3, 2, 2, 2, 3, 4, 4, 5, 56, 7, 7],
+                marker: {
+                    enabled: false
+                }
+            }, {
+                type: 'line',
+                data: [1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54, 4, 3, 3, 2, 2, 2, 3, 4, 4, 5, 56, 7, 7].reverse(),
+                marker: {
+                    enabled: false
+                }
+            }]
+        }),
+        topX = chart.xAxis[0].toPixels(8.9, true),
+        topY = chart.yAxis[0].toPixels(0),
+        bottomX = chart.xAxis[0].toPixels(9.1, true),
+        bottomY = chart.yAxis[0].toPixels(10),
+        haloBox;
+
+    var test = new TestController(chart);
+
+    // Zoom in
+    test.pan([topX, topY], [bottomX, bottomY]);
+
+    Highcharts.each(chart.hoverPoints, function (point, index) {
+        haloBox = point.series.halo.getBBox(true);
+
+        assert.close(
+            haloBox.x + haloBox.width / 2,
+            point.plotX,
+            1,
+            'Point index: ' + index +
+                ' - correct x-position for halo after zoom (#8284).'
+        );
+
+        assert.close(
+            haloBox.y + haloBox.height / 2,
+            point.plotY,
+            1,
+            'Point index: ' + index +
+                ' - correct y-position for halo after zoom (#8284).'
+        );
+    });
+});
+
 QUnit.test('Custom point.group option (#5681)', function (assert) {
 
     assert.expect(0);
@@ -241,56 +296,3 @@ QUnit.test('Point className on other elements', function (assert) {
     );
 });
 
-QUnit.test('Dynamic point states', function (assert) {
-    var chart = new Highcharts.chart('container', {
-            chart: {
-                zoomType: 'xy'
-            },
-            tooltip: {
-                shared: true
-            },
-            series: [{
-                type: 'line',
-                data: [1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54, 4, 3, 3, 2, 2, 2, 3, 4, 4, 5, 56, 7, 7],
-                marker: {
-                    enabled: false
-                }
-            }, {
-                type: 'line',
-                data: [1, 2, 1, 2, 1, 3, 3, 5, 6, 6, 54, 4, 3, 3, 2, 2, 2, 3, 4, 4, 5, 56, 7, 7].reverse(),
-                marker: {
-                    enabled: false
-                }
-            }]
-        }),
-        topX = chart.xAxis[0].toPixels(8.9, true),
-        topY = chart.yAxis[0].toPixels(0),
-        bottomX = chart.xAxis[0].toPixels(9.1, true),
-        bottomY = chart.yAxis[0].toPixels(10),
-        haloBox;
-
-    var test = new TestController(chart);
-
-    // Zoom in
-    test.pan([topX, topY], [bottomX, bottomY]);
-
-    Highcharts.each(chart.hoverPoints, function (point, index) {
-        haloBox = point.series.halo.getBBox(true);
-
-        assert.close(
-            haloBox.x + haloBox.width / 2,
-            point.plotX,
-            1,
-            'Point index: ' + index +
-                ' - correct x-position for halo after zoom (#8284).'
-        );
-
-        assert.close(
-            haloBox.y + haloBox.height / 2,
-            point.plotY,
-            1,
-            'Point index: ' + index +
-                ' - correct y-position for halo after zoom (#8284).'
-        );
-    });
-});

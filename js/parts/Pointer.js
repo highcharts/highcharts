@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -647,11 +647,13 @@ Highcharts.Pointer.prototype = {
                 if (tooltip.shared && hoverPoints) { // #8284
                     each(hoverPoints, function (point) {
                         point.setState(point.state, true);
-                        if (point.series.xAxis.crosshair) {
-                            point.series.xAxis.drawCrosshair(null, point);
-                        }
-                        if (point.series.yAxis.crosshair) {
-                            point.series.yAxis.drawCrosshair(null, point);
+                        if (point.series.isCartesian) {
+                            if (point.series.xAxis.crosshair) {
+                                point.series.xAxis.drawCrosshair(null, point);
+                            }
+                            if (point.series.yAxis.crosshair) {
+                                point.series.yAxis.drawCrosshair(null, point);
+                            }
                         }
                     });
                 } else if (hoverPoint) { // #2500

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -2065,6 +2065,24 @@ Navigator.prototype = {
     },
 
     /**
+     * Get minimum from all base series connected to the navigator
+     *
+     * @param  {number} currentSeriesMin
+     *         Minium from the current series
+     *
+     * @return {number} Minimum from all series
+     */
+    getBaseSeriesMin: function (currentSeriesMin) {
+        return H.reduce(
+            this.baseSeries,
+            function (min, series) {
+                return Math.min(min, series.xData[0]);
+            },
+            currentSeriesMin
+        );
+    },
+
+    /**
      * Set the navigator x axis extremes to reflect the total. The navigator
      * extremes should always be the extremes of the union of all series in the
      * chart as well as the navigator series.
@@ -2140,8 +2158,11 @@ Navigator.prototype = {
                 if (!stickToMin) {
                     newMin = Math.max(
                         newMax - range,
-                        navigatorSeries && navigatorSeries.xData ?
-                            navigatorSeries.xData[0] : -Number.MAX_VALUE
+                        navigator.getBaseSeriesMin(
+                            navigatorSeries && navigatorSeries.xData ?
+                                navigatorSeries.xData[0] :
+                                -Number.MAX_VALUE
+                        )
                     );
                 }
             }
@@ -2171,7 +2192,8 @@ Navigator.prototype = {
     updatedDataHandler: function () {
         var navigator = this.chart.navigator,
             baseSeries = this,
-            navigatorSeries = this.navigatorSeries;
+            navigatorSeries = this.navigatorSeries,
+            xDataMin = navigator.getBaseSeriesMin(baseSeries.xData[0]);
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data  comes in.
@@ -2183,7 +2205,7 @@ Navigator.prototype = {
         // maximum. If the current axis minimum falls outside the new updated
         // dataset, we must adjust.
         navigator.stickToMin = isNumber(baseSeries.xAxis.min) &&
-            (baseSeries.xAxis.min <= baseSeries.xData[0]) &&
+            (baseSeries.xAxis.min <= xDataMin) &&
             (!this.chart.fixedRange || !navigator.stickToMax);
 
         // Set the navigator series data to the new data of the base series

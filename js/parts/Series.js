@@ -1,21 +1,72 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
 /**
+ * The object contains common information for a click event on a series.
+ *
+ * @interface Highcharts.SeriesClickObject
+ *
+ * @implements {global.ClickEvent}
+ *//**
+ * The nearest point on the graph.
+ *
+ * @name Highcharts.SeriesClickObject#point
+ * @type {Highcharts.Point}
+ */
+
+/**
+ * The function callback to execute when a series is clicked.
+ *
+ * @callback Highcharts.SeriesClickCallbackFunction
+ *
+ * @param {Highcharts.SeriesClickObject} e
+ *        Event arguments.
+ *
+ * @return {boolean|undefined}
+ *         Returning false cancels toogle actions.
+ */
+
+/**
  * Translation and scale for the plot area of a series.
  *
- * @typedef Highcharts.SeriesPlotBoxObject
+ * @interface Highcharts.SeriesPlotBoxObject
+ *//**
+ * @name Highcharts.SeriesPlotBoxObject#translateX
+ * @type {number}
+ *//**
+ * @name Highcharts.SeriesPlotBoxObject#translateY
+ * @type {number}
+ *//**
+ * @name Highcharts.SeriesPlotBoxObject#scaleX
+ * @type {number}
+ *//**
+ * @name Highcharts.SeriesPlotBoxObject#scaleY
+ * @type {number}
+ */
+
+/**
+ * The object contains common information for a click event on a series point.
  *
- * @property {number} translateX
+ * @interface Highcharts.SeriesPointClickObject
  *
- * @property {number} translateY
+ * @implements {global.ClickEvent}
+ *//**
+ * The clicked point.
  *
- * @property {number} scaleX
+ * @name Highcharts.SeriesPointClickObject#point
+ * @type {Highcharts.Point}
+ */
+
+/**
+ * The function callback to execute when a series is clicked.
  *
- * @property {number} scaleY
+ * @callback Highcharts.SeriesPointClickCallbackFunction
+ *
+ * @param {Highcharts.SeriesPointClickObject} e
+ *        Event arguments.
  */
 
 'use strict';
@@ -57,13 +108,13 @@ var addEvent = H.addEvent,
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
- * {@link https://api.highcharts.com/highcharts/series|series}
+ * [series](https://api.highcharts.com/highcharts/series)
  * option structure, or after the chart is initialized, through
  * {@link Highcharts.Chart#addSeries}.
  *
  * The object can be accessed in a number of ways. All series and point event
  * handlers give a reference to the `series` object. The chart object has a
- * {@link Highcharts.Chart.series|series} property that is a collection of all
+ * {@link Highcharts.Chart#series|series} property that is a collection of all
  * the chart's series. The point objects and axis objects also have the same
  * reference.
  *
@@ -73,11 +124,11 @@ var addEvent = H.addEvent,
  *
  * Configuration options for the series are given in three levels. Options for
  * all series in a chart are given in the
- * {@link https://api.highcharts.com/highcharts/plotOptions.series|
- * plotOptions.series} object. Then options for all series of a specific type
+ * [plotOptions.series](https://api.highcharts.com/highcharts/plotOptions.series)
+ * object. Then options for all series of a specific type
  * are given in the plotOptions of that type, for example `plotOptions.line`.
  * Next, options for one single series are given in the series array, or as
- * arguements to `chart.addSeries`.
+ * arguments to `chart.addSeries`.
  *
  * The data in the series is stored in various arrays.
  *
@@ -439,7 +490,7 @@ H.Series = H.seriesType('line', null
      * @type      {boolean}
      * @default   false
      * @since     4.1.6
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.series.getExtremesFromAll
      */
 
@@ -464,6 +515,7 @@ H.Series = H.seriesType('line', null
      * The line cap used for line ends and line joins on the graph.
      *
      * @type       {string}
+     * @default    round
      * @product    highcharts highstock
      * @validvalue ["round", "square"]
      * @apioption  plotOptions.series.linecap
@@ -480,7 +532,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {string}
      * @since     3.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.series.linkedTo
      */
 
@@ -496,7 +548,7 @@ H.Series = H.seriesType('line', null
      *
      * @see [navigator.series](#navigator.series)
      *
-     * @type      {*}
+     * @type      {Highcharts.PlotSeriesOptions}
      * @since     5.0.0
      * @product   highstock
      * @apioption plotOptions.series.navigatorOptions
@@ -559,7 +611,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {number}
      * @default   1
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.series.pointInterval
      */
 
@@ -581,7 +633,7 @@ H.Series = H.seriesType('line', null
      *
      * @type       {string}
      * @since      4.1.0
-     * @product    highcharts highstock
+     * @product    highcharts highstock gantt
      * @validvalue ["day", "month", "year"]
      * @apioption  plotOptions.series.pointIntervalUnit
      */
@@ -606,6 +658,10 @@ H.Series = H.seriesType('line', null
      * #plotOptions.series.pointRange) to work. For column series this is
      * computed, but for line-type series it needs to be set.
      *
+     * For the `xrange` series type and gantt charts, if the Y axis is a
+     * category axis, the `pointPlacement` applies to the Y axis rather than
+     * the (typically datetime) X axis.
+     *
      * Defaults to `undefined` in cartesian charts, `"between"` in polar charts.
      *
      * @see [xAxis.tickmarkPlacement](#xAxis.tickmarkPlacement)
@@ -617,7 +673,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {string|number}
      * @since     2.3.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.series.pointPlacement
      */
 
@@ -635,7 +691,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {number}
      * @default   0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.series.pointStart
      */
 
@@ -813,7 +869,7 @@ H.Series = H.seriesType('line', null
      * @type      {Function}
      * @since     4.0
      * @product   highcharts highstock
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.afterAnimate
      */
 
@@ -829,7 +885,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {Function}
      * @since     1.2.0
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.checkboxClick
      */
 
@@ -845,8 +901,8 @@ H.Series = H.seriesType('line', null
      * @sample {highmaps} maps/plotoptions/series-events-click/
      *         Display click info in subtitle
      *
-     * @type      {Function}
-     * @context   Series
+     * @type      {Highcharts.SeriesClickCallbackFunction}
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.click
      */
 
@@ -859,7 +915,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {Function}
      * @since     1.2.0
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.hide
      */
 
@@ -873,7 +929,7 @@ H.Series = H.seriesType('line', null
      *         Confirm hiding and showing
      *
      * @type      {Function}
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.legendItemClick
      */
 
@@ -890,7 +946,7 @@ H.Series = H.seriesType('line', null
      *         Without sticky tracking
      *
      * @type      {Function}
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.mouseOut
      */
 
@@ -904,7 +960,7 @@ H.Series = H.seriesType('line', null
      *         Without sticky tracking
      *
      * @type      {Function}
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.mouseOver
      */
 
@@ -917,7 +973,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {Function}
      * @since     1.2.0
-     * @context   Series
+     * @context   Highcharts.Series
      * @apioption plotOptions.series.events.show
      */
 
@@ -1264,8 +1320,8 @@ H.Series = H.seriesType('line', null
          * @sample {highmaps} maps/plotoptions/series-point-events-click-url/
          *         Go to URL
          *
-         * @type      {Function}
-         * @context   Point
+         * @type      {Highcharts.SeriesPointClickCallbackFunction}
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.click
          */
 
@@ -1278,7 +1334,7 @@ H.Series = H.seriesType('line', null
          *         Show values in the chart's corner on mouse over
          *
          * @type      {Function}
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.mouseOut
          */
 
@@ -1291,7 +1347,7 @@ H.Series = H.seriesType('line', null
          *         Show values in the chart's corner on mouse over
          *
          * @type      {Function}
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.mouseOver
          */
 
@@ -1305,7 +1361,7 @@ H.Series = H.seriesType('line', null
          *
          * @type      {Function}
          * @since     1.2.0
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.remove
          */
 
@@ -1321,7 +1377,7 @@ H.Series = H.seriesType('line', null
          *
          * @type      {Function}
          * @since     1.2.0
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.select
          */
 
@@ -1338,7 +1394,7 @@ H.Series = H.seriesType('line', null
          *
          * @type      {Function}
          * @since     1.2.0
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.unselect
          */
 
@@ -1353,7 +1409,7 @@ H.Series = H.seriesType('line', null
          *
          * @type      {Function}
          * @since     1.2.0
-         * @context   Point
+         * @context   Highcharts.Point
          * @apioption plotOptions.series.point.events.update
          */
 
@@ -1368,9 +1424,17 @@ H.Series = H.seriesType('line', null
     /**
      * Options for the series data labels, appearing next to each data point.
      *
+     * Since v6.2.0, multiple data labels can be applied to each single point by
+     * defining them as an array of configs.
+     *
      * In styled mode, the data labels can be styled with the
      * `.highcharts-data-label-box` and `.highcharts-data-label` class names
      * ([see example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels)).
+     *
+     * @sample highcharts/plotoptions/series-datalabels-enabled
+     *         Data labels enabled
+     * @sample highcharts/plotoptions/series-datalabels-multiple
+     *         Multiple data labels on a bar series
      */
     dataLabels: {
 
@@ -1492,7 +1556,7 @@ H.Series = H.seriesType('line', null
          * @type      {boolean}
          * @default   true
          * @since     4.0
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption plotOptions.series.dataLabels.defer
          */
 
@@ -1759,7 +1823,7 @@ H.Series = H.seriesType('line', null
          * @sample {highcharts|highstock} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
          *
-         * @type      {boolean|*}
+         * @type      {boolean|Highcharts.ShadowOptionsObject}
          * @default   false
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.shadow
@@ -2129,7 +2193,7 @@ H.Series = H.seriesType('line', null
      * data checking and indexing in long series. Set it to `0` disable.
      *
      * @since   2.2
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     turboThreshold: 1000,
 
@@ -2311,7 +2375,7 @@ H.Series = H.seriesType('line', null
      * @sample {highcharts} highcharts/series/stack/
      *         Stacked and grouped columns
      *
-     * @type      {string|*}
+     * @type      {string|object}
      * @since     2.1
      * @product   highcharts highstock
      * @apioption series.stack
@@ -5278,7 +5342,7 @@ H.Series = H.seriesType('line', null
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<number|string|Date>|*>}
+ * @type      {Array<number|Array<number|string|Date>|*|null>}
  * @apioption series.line.data
  */
 

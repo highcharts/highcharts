@@ -6,8 +6,21 @@ Highcharts.chart('container', {
     title: {
         text: 'Restaurants Complaints'
     },
+    tooltip: {
+        shared: true
+    },
     xAxis: {
-        categories: ['Overpriced', 'Small portions', 'Wait time', 'Food is tasteless', 'No atmosphere', 'Not clean', 'Too noisy', 'Unfriendly staff']
+        categories: [
+            'Overpriced',
+            'Small portions',
+            'Wait time',
+            'Food is tasteless',
+            'No atmosphere',
+            'Not clean',
+            'Too noisy',
+            'Unfriendly staff'
+        ],
+        crosshair: true
     },
     yAxis: [{
         title: {

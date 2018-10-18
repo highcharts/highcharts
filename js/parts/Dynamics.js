@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -36,6 +36,30 @@ var addEvent = H.addEvent,
     seriesTypes = H.seriesTypes,
     setAnimation = H.setAnimation,
     splat = H.splat;
+
+// Remove settings that have not changed, to avoid unnecessary rendering or
+// computing (#9197)
+H.cleanRecursively = function (newer, older) {
+    var total = 0,
+        removed = 0;
+    objectEach(newer, function (val, key) {
+        if (isObject(newer[key], true) && older[key]) {
+            if (H.cleanRecursively(newer[key], older[key])) {
+                delete newer[key];
+            }
+        } else if (
+            !isObject(newer[key]) &&
+            newer[key] === older[key]
+        ) {
+            delete newer[key];
+            removed++;
+        }
+        total++;
+    });
+
+    // Return true if all sub nodes are removed
+    return total === removed;
+};
 
 // Extend the Chart prototype for dynamic methods
 extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
@@ -160,7 +184,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {string} str
      *        An optional text to show in the loading label instead of the
      *        default one. The default text is set in
-     *        {@link http://api.highcharts.com/highcharts/lang.loading|lang.loading}.
+     *        [lang.loading](http://api.highcharts.com/highcharts/lang.loading).
      */
     showLoading: function (str) {
         var chart = this,
@@ -305,9 +329,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * enabled and disabled, moved, re-styled, re-formatted etc.
      *
      * A special case is configuration objects that take arrays, for example
-     * {@link https://api.highcharts.com/highcharts/xAxis|xAxis},
-     * {@link https://api.highcharts.com/highcharts/yAxis|yAxis} or
-     * {@link https://api.highcharts.com/highcharts/series|series}. For these
+     * [xAxis](https://api.highcharts.com/highcharts/xAxis),
+     * [yAxis](https://api.highcharts.com/highcharts/yAxis) or
+     * [series](https://api.highcharts.com/highcharts/series). For these
      * collections, an `id` option is used to map the new option set to an
      * existing object. If an existing object of the same id is not found, the
      * corresponding item is updated. So for example, running `chart.update`
@@ -318,7 +342,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * parameter description below.
      *
      * See also the
-     * {@link https://api.highcharts.com/highcharts/responsive|responsive option set}.
+     * [responsive option set](https://api.highcharts.com/highcharts/responsive).
      * Switching between `responsive.rules` basically runs `chart.update` under
      * the hood.
      *
@@ -359,7 +383,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 title: 'setTitle',
                 subtitle: 'setSubtitle'
             },
-            optionsChart = options.chart,
+            optionsChart,
             updateAllAxes,
             updateAllSeries,
             newWidth,
@@ -368,9 +392,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         fireEvent(chart, 'update', { options: options });
 
+        H.cleanRecursively(options, chart.options);
+
         // If the top-level chart option is present, some special updates are
         // required
+        optionsChart = options.chart;
         if (optionsChart) {
+
             merge(true, chart.options.chart, optionsChart);
 
             // Setter function
@@ -528,7 +556,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         each(itemsForRemoval, function (item) {
-            item.remove(false);
+            if (item.remove) {
+                item.remove(false);
+            }
         });
 
         if (updateAllAxes) {
@@ -940,6 +970,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
             // Destroy elements
             series.destroy();
+            series.remove = null; // Prevent from doing again (#9097)
 
             // Redraw
             chart.isDirtyLegend = chart.isDirtyBox = true;
@@ -983,6 +1014,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * @fires Highcharts.Series#event:afterUpdate
      */
     update: function (newOptions, redraw) {
+
+        H.cleanRecursively(newOptions, this.userOptions);
+
         var series = this,
             chart = series.chart,
             // must use user options when changing type because series.options

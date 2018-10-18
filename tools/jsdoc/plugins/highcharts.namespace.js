@@ -24,6 +24,11 @@ const path = require('path');
  * */
 
 const rootPath = process.cwd();
+const parseCommentBlock = /\/?\*\/?/;
+const parseBreak = /[\n\r]+/;
+const parseJsdocLink = /\{@link\s+((?:[^\|]|\s)+?)(?:\|([^\}]|\s+?))?\}/;
+const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
+const parseSpace = /[ \f\r\t\v]+/;
 
 /* *
  *
@@ -60,13 +65,20 @@ function isApiOption (doclet) {
     let name = getName(doclet),
         comment = (doclet.comment || ''),
         isApiOption = (
-            comment.indexOf('@apioption') >= 0 ||
-            comment.indexOf('@optionparent') >= 0 ||
-            comment.indexOf('@ignore-option') >= 0 ||
-            (!doclet.undocumented &&
-            doclet.kind === 'member' &&
-            (doclet.children ||
-            doclet.scope === 'global'))
+            name.indexOf('Highcharts') !== 0 &&
+            (
+                comment.indexOf('@apioption') >= 0 ||
+                comment.indexOf('@optionparent') >= 0 ||
+                comment.indexOf('@ignore-option') >= 0 ||
+                (
+                    !doclet.undocumented &&
+                    doclet.kind === 'member' &&
+                    (
+                        doclet.children ||
+                        doclet.scope === 'global'
+                    )
+                )
+            )
         );
 
     if (isApiOption) {
@@ -305,11 +317,26 @@ function getDescription (doclet) {
             description = description.substr(0, tagPosition + 1);
         }
 
-        description = description.replace(/\/?\*\/?/gm, '');
+        description = description.replace(new RegExp(parseCommentBlock, 'g'), '');
     }
 
-    description = description.replace(/\s+/gm, ' ');
-    description = description.trim();
+    description = description
+        .replace(new RegExp(parseSpace, 'g'), ' ')
+        .trim()
+        .replace(
+            new RegExp(parseJsdocLink, 'g'),
+            (match, url, text) => (
+                '{@link ' + url.replace(new RegExp(parseBreak, 'g'), '') +
+                (text ? '|' + text.trim() : '') + '}'
+            )
+        )
+        .replace(
+            new RegExp(parseMarkdownLink, 'g'),
+            (match, text, url) => (
+                '[' + text.trim() + '](' +
+                url.replace(new RegExp(parseBreak, 'g'), '') + ')'
+            )
+        );
 
     if (description.indexOf('(c)') > -1) {
         // found only a file header with the copyright line
@@ -1279,6 +1306,26 @@ function processingComplete (e) {
  * @return {void}
  */
 exports.defineTags = function (dictionary) {
+
+    dictionary.defineTag('apioption', {
+        // mustHaveValue: true,
+        onTagged: (doclet, tag) => {
+            if (!doclet.type &&
+                tag.value
+            ) {
+                doclet.type = { names: [
+                    tag.value
+                        .split('.')
+                        .filter(name => !!name)
+                        .map(name => name[0].toUpperCase() + name.substr(1))
+                        .join('')
+                        .replace('Options', '') +
+                    'Options'
+                ] };
+            }
+        }
+    })
+    .synonym('optionparent');
 
     dictionary.defineTag('private', {
         mustNotHaveValue: true,
