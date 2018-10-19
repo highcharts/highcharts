@@ -52,7 +52,7 @@ import H from '../parts/Globals.js';
  *
  * @function Highcharts.ajax
  *
- * @param {AjaxSettings} attr
+ * @param {Highcharts.AjaxSettings} attr
  *        The Ajax settings to use.
  */
 H.ajax = function (attr) {
