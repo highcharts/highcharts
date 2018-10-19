@@ -297,7 +297,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         Without
          *
          * @type      {Array<string>}
-         * @product   highcharts
+         * @product   highcharts gantt
          * @apioption xAxis.categories
          */
 
