@@ -4676,7 +4676,8 @@ H.Series = H.seriesType('line', null
 
                 translatedFrom = reversed ?
                     (horiz ? chart.plotWidth : 0) :
-                    (horiz ? 0 : axis.toPixels(extremes.min));
+                    (horiz ? 0 : (axis.toPixels(extremes.min) || 0));
+
                 translatedFrom = Math.min(
                     Math.max(
                         pick(translatedTo, translatedFrom), 0
@@ -4689,7 +4690,7 @@ H.Series = H.seriesType('line', null
                             axis.toPixels(
                                 pick(threshold.value, extremes.max),
                                 true
-                            )
+                            ) || 0
                         ),
                         0
                     ),

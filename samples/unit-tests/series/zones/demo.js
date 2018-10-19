@@ -40,3 +40,28 @@ QUnit.test('Spline zones out of range', function (assert) {
     );
 
 });
+
+QUnit.test('Negative color with crushed chart (#9200)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            height: 75
+        },
+
+        legend: {
+            enabled: false
+        },
+
+        series: [{
+            type: 'area',
+            data: [],
+            negativeColor: '#FF0000'
+        }]
+
+    });
+
+    assert.strictEqual(
+        chart.container.innerHTML.indexOf('NaN'),
+        -1,
+        'There should be no NaNs in the SVG'
+    );
+});
