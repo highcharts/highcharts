@@ -56,6 +56,7 @@
 	"code/indicators/cci.src.js",
 	"code/indicators/cmf.src.js",
 	"code/indicators/ema.src.js",
+	"code/indicators/apo.src.js",
 	"code/indicators/ichimoku-kinko-hyo.src.js",
 	"code/indicators/keltner-channels.src.js",
 	"code/indicators/macd.src.js",
