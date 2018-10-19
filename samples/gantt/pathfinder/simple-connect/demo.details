@@ -1,5 +1,5 @@
 ---
- name: Pathfinder Demo
+ name: Connectors Demo
  js_wrap: b
  authors:
    - Øystein Moseng
