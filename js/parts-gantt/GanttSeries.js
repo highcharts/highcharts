@@ -106,7 +106,7 @@ seriesType('gantt', 'xrange', {
             return retVal;
         }
     },
-    pathfinder: {
+    connectors: {
         type: 'simpleConnect',
         animation: {
             reversed: true // Dependencies go from child to parent
@@ -331,7 +331,7 @@ seriesType('gantt', 'xrange', {
 /**
  * The ID of the point (task) that this point depends on in Gantt charts.
  * Aliases [connect](series.xrange.data.connect). Can also be an object,
- * specifying further connecting [options](series.gantt.pathfinder) between the
+ * specifying further connecting [options](series.gantt.connectors) between the
  * points. Multiple connections can be specified by providing an array.
  *
  * @type {Array<string|*>|string|*}

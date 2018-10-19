@@ -37,7 +37,7 @@
                 height: 400,
                 spacing: [15, 15, 15, 15]
             },
-            pathfinder: {
+            connectors: {
                 animation: false
             },
 
@@ -45,7 +45,7 @@
             // bottom, left, right and all cordners, and connect them to the
             // center
             series: [{
-                pathfinder: {
+                connectors: {
                     marker: {
                         enabled: true
                     }
@@ -252,7 +252,7 @@
         var error = 0.1,
             chart,
             series = squareChartConfig.series[0],
-            opts = series.pathfinder,
+            opts = series.connectors,
             aligns = ['left', 'center', 'right'],
             verticalAligns = ['top', 'middle', 'bottom'];
 
@@ -366,7 +366,7 @@
         var pathWithoutMarkers,
             pathWithMarkers,
             chart = Highcharts.chart('container', {
-                pathfinder: {
+                connectors: {
                     animation: false
                 },
                 series: [{
@@ -381,7 +381,7 @@
                         connect: 'one-one'
                     }]
                 }, {
-                    pathfinder: {
+                    connectors: {
                         marker: {
                             enabled: true
                         }
