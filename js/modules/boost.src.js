@@ -236,6 +236,11 @@
  * To disable boosting on the series, set the `boostThreshold` to 0. Setting it
  * to 1 will force boosting.
  *
+ * Note that the [cropThreshold](plotOptions.series.cropThreshold) also affects
+ * this setting. When zooming in on a series that has fewer points than the
+ * `cropThreshold`, all points are rendered although outside the visible plot
+ * area, and the `boostThreshold` won't take effect.
+ *
  * Requires `modules/boost.js`.
  *
  * @type {Number}
