@@ -23,7 +23,7 @@
 /**
  * Function of an additional date format specifier.
  *
- * @callback TimeFormatCallbackFunction
+ * @callback Highcharts.TimeFormatCallbackFunction
  *
  * @param {number} timestamp
  *        The time to format.
