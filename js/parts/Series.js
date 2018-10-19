@@ -1007,7 +1007,7 @@ null
      *
      * @type      {Function}
      * @since     4.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @context   Highcharts.Series
      * @apioption plotOptions.series.events.afterAnimate
      */
@@ -5354,7 +5354,7 @@ null
  *
  * @type      {string}
  * @since     5.0.0
- * @product   highcharts
+ * @product   highcharts gantt
  * @apioption series.line.data.className
  */
 
@@ -5369,7 +5369,7 @@ null
  *         Mark the highest point
  *
  * @type      {Highcharts.ColorString}
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.line.data.color
  */
 
@@ -5382,7 +5382,7 @@ null
  *
  * @type      {number}
  * @since     5.0.0
- * @product   highcharts
+ * @product   highcharts gantt
  * @apioption series.line.data.colorIndex
  */
 
@@ -5395,7 +5395,7 @@ null
  *         Show a label for the last value
  *
  * @type      {Highcharts.PlotSeriesDataLabelsOptions}
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.line.data.dataLabels
  */
 
@@ -5417,7 +5417,7 @@ null
  *
  * @type      {string}
  * @since     1.2.0
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.line.data.id
  */
 
@@ -5448,7 +5448,7 @@ null
  *
  * @type      {boolean}
  * @default   false
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.line.data.selected
  */
 
@@ -5473,7 +5473,7 @@ null
  * Individual point events
  *
  * @extends   plotOptions.series.point.events
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.line.data.events
  */
 
