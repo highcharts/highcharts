@@ -465,6 +465,9 @@ const copyToDist = () => {
     const additionals = {
         'gfx/vml-radial-gradient.png': 'gfx/vml-radial-gradient.png',
         'code/css/highcharts.scss': 'css/highcharts.scss',
+        'code/css/themes/dark-unica.scss': 'css/themes/dark-unica.scss',
+        'code/css/themes/grid-light.scss': 'css/themes/grid-light.scss',
+        'code/css/themes/sand-signika.scss': 'css/themes/sand-signika.scss',
         'code/lib/canvg.js': 'vendor/canvg.js',
         'code/lib/canvg.src.js': 'vendor/canvg.src.js',
         'code/lib/jspdf.js': 'vendor/jspdf.js',
