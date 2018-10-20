@@ -3,8 +3,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var each = H.each,
-    merge = H.merge,
+var merge = H.merge,
     isArray = H.isArray,
     defined = H.defined,
     SMA = H.seriesTypes.sma;
@@ -118,7 +117,7 @@ H.seriesType('stochastic', 'sma',
 
             SMA.prototype.translate.apply(indicator);
 
-            each(indicator.points, function (point) {
+            indicator.points.forEach(function (point) {
                 if (point.smoothed !== null) {
                     point.plotSmoothed = indicator.yAxis.toPixels(
                         point.smoothed,

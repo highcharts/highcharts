@@ -16,7 +16,6 @@ var addEvent = H.addEvent,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     discardElement = H.discardElement,
-    each = H.each,
     extend = H.extend,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
@@ -730,7 +729,7 @@ RangeSelector.prototype = {
                 if (dataMax === undefined) {
                     dataMin = Number.MAX_VALUE;
                     dataMax = Number.MIN_VALUE;
-                    each(chart.series, function (series) {
+                    chart.series.forEach(function (series) {
                         // reassign it to the last item
                         var xData = series.xData;
                         dataMin = Math.min(xData[0], dataMin);
@@ -873,7 +872,7 @@ RangeSelector.prototype = {
         this.unResize = addEvent(chart, 'resize', blurInputs);
 
         // Extend the buttonOptions with actual range
-        each(buttonOptions, rangeSelector.computeButtonRange);
+        buttonOptions.forEach(rangeSelector.computeButtonRange);
 
         // zoomed range based on a pre-selected button index
         if (selectedOption !== undefined && buttonOptions[selectedOption]) {
@@ -933,7 +932,7 @@ RangeSelector.prototype = {
             allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
             buttons = rangeSelector.buttons;
 
-        each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+        rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
             var range = rangeOptions._range,
                 type = rangeOptions.type,
                 count = rangeOptions.count || 1,
@@ -1430,7 +1429,7 @@ RangeSelector.prototype = {
                 .css(options.labelStyle)
                 .add(buttonGroup);
 
-            each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+            rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
 
                 buttons[i] = renderer.button(
                         rangeOptions.text,
@@ -1495,7 +1494,7 @@ RangeSelector.prototype = {
         // button start position
         buttonLeft = pick(plotLeft + buttonPosition.x, plotLeft) +
             rangeSelector.zoomText.getBBox().width + 5;
-        each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+        rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
 
             buttons[i][verb]({ x: buttonLeft });
 
@@ -1935,7 +1934,7 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
 
     if (rangeSelector) {
 
-        each(axes, function (axis) {
+        axes.forEach(function (axis) {
             axis.updateNames();
             axis.setScale();
         });

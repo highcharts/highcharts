@@ -48,7 +48,6 @@ import './Utilities.js';
 
 var Point,
     H = Highcharts,
-    each = H.each,
     extend = H.extend,
     erase = H.erase,
     fireEvent = H.fireEvent,
@@ -483,7 +482,7 @@ Highcharts.Point.prototype = {
         }
         // Handle point.dataLabels and point.connectors
         if (point.dataLabels) {
-            each(point.dataLabels, function (label) {
+            point.dataLabels.forEach(function (label) {
                 if (label.element) {
                     label.destroy();
                 }
@@ -491,7 +490,7 @@ Highcharts.Point.prototype = {
             delete point.dataLabels;
         }
         if (point.connectors) {
-            each(point.connectors, function (connector) {
+            point.connectors.forEach(function (connector) {
                 if (connector.element) {
                     connector.destroy();
                 }
@@ -545,7 +544,7 @@ Highcharts.Point.prototype = {
 
         // Loop over the point array map and replace unformatted values with
         // sprintf formatting markup
-        each(series.pointArrayMap || ['y'], function (key) {
+        (series.pointArrayMap || ['y']).forEach(function (key) {
             key = '{point.' + key; // without the closing bracket
             if (valuePrefix || valueSuffix) {
                 pointFormat = pointFormat.replace(

@@ -15,7 +15,6 @@ import '../parts/Series.js';
 import './treemap.src.js';
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
     Series = H.Series,
-    each = H.each,
     extend = H.extend,
     getCenter = CenteredSeriesMixin.getCenter,
     getColor = mixinTreeSeries.getColor,
@@ -83,7 +82,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
          * Calculate the remaining size to divide between "weight" levels.
          * Calculate total weight to use in convertion from weight to pixels.
          */
-        each(levels, function (level) {
+        levels.forEach(function (level) {
             var options = result[level],
                 unit = options.levelSize.unit,
                 value = options.levelSize.value;
@@ -101,7 +100,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
         });
 
         // Convert weight to pixels.
-        each(levels, function (level) {
+        levels.forEach(function (level) {
             var options = result[level],
                 weight;
             if (options.levelSize.unit === 'weight') {
@@ -113,7 +112,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
             }
         });
         // Set all levels not included in interval [from,to] to have 0 pixels.
-        each(levelsNotIncluded, function (level) {
+        levelsNotIncluded.forEach(function (level) {
             result[level].levelSize = {
                 value: 0,
                 unit: 'pixels'
@@ -637,7 +636,7 @@ var sunburstSeries = {
                 }
             };
         }
-        each(points, function (point) {
+        points.forEach(function (point) {
             var node = point.node,
                 level = mapOptionsToLevel[node.level],
                 shapeExisting = point.shapeExisting || {},
@@ -738,7 +737,7 @@ var sunburstSeries = {
             }),
             twoPi = 6.28; // Two times Pi.
         childrenValues = this.layoutAlgorithm(parentValues, children, options);
-        each(children, function (child, index) {
+        children.forEach(function (child, index) {
             var values = childrenValues[index],
                 angle = values.start + ((values.end - values.start) / 2),
                 radius = values.innerR + ((values.r - values.innerR) / 2),

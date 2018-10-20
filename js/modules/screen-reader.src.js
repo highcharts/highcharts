@@ -17,7 +17,6 @@ import '../parts/Point.js';
 
 var win = H.win,
     doc = win.document,
-    each = H.each,
     map = H.map,
     erase = H.erase,
     addEvent = H.addEvent,
@@ -359,7 +358,7 @@ H.Series.prototype.setA11yDescription = function () {
                 a11yOptions.pointDescriptionThreshold === false
             )
         ) {
-            each(this.points, function (point) {
+            this.points.forEach(function (point) {
                 if (point.graphic) {
                     point.graphic.element.setAttribute('role', 'img');
                     point.graphic.element.setAttribute('tabindex', '-1');
@@ -491,7 +490,7 @@ H.Point.prototype.buildPointInfoString = function () {
         if (dateTimePoint) {
             infoString = timeDesc;
         }
-        each(series.commonKeys.concat(series.specialKeys), function (key) {
+        series.commonKeys.concat(series.specialKeys).forEach(function (key) {
             if (point[key] !== undefined && !(dateTimePoint && key === 'x')) {
                 infoString += (infoString ? '. ' : '') +
                     key + ', ' +
@@ -555,7 +554,7 @@ addEvent(H.Series, 'remove', function () {
 
     // Check if any of the other series have the same type as this one.
     // Otherwise remove it from the list.
-    each(chart.series, function (s) {
+    chart.series.forEach(function (s) {
         if (
             s !== removedSeries &&
             chart.types.indexOf(removedSeries.type) < 0
@@ -687,7 +686,7 @@ H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
     if (exportList) {
         // Set tabindex on the menu items to allow focusing by script
         // Set role to give screen readers a chance to pick up the contents
-        each(exportList, function (item) {
+        exportList.forEach(function (item) {
             if (item.tagName === 'DIV' &&
                 !(item.children && item.children.length)) {
                 item.setAttribute('role', 'menuitem');
@@ -853,7 +852,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
     // to do this regardless of whether or not these are visible, as they are
     // by default part of the page's tabindex unless we set them to -1.
     if (chart.rangeSelector) {
-        each(['minInput', 'maxInput'], function (key, i) {
+        ['minInput', 'maxInput'].forEach(function (key, i) {
             if (chart.rangeSelector[key]) {
                 chart.rangeSelector[key].setAttribute('tabindex', '-1');
                 chart.rangeSelector[key].setAttribute('role', 'textbox');
@@ -869,7 +868,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
     }
 
     // Hide text elements from screen readers
-    each(textElements, function (el) {
+    [].forEach.call(textElements, function (el) {
         el.setAttribute('aria-hidden', 'true');
     });
 

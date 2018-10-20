@@ -1,6 +1,5 @@
 import H from '../parts/Globals.js';
-var each = H.each,
-    extend = H.extend,
+var extend = H.extend,
     isArray = H.isArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
@@ -43,7 +42,7 @@ var setTreeValues = function setTreeValues(tree, options) {
         tree = before(tree, options);
     }
     // First give the children some values
-    each(tree.children, function (child, i) {
+    tree.children.forEach(function (child, i) {
         var newOptions = extend({}, options);
         extend(newOptions, {
             index: i,

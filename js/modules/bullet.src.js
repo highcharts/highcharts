@@ -8,8 +8,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var each = H.each,
-    pick = H.pick,
+var pick = H.pick,
     isNumber = H.isNumber,
     relativeLength = H.relativeLength,
     seriesType = H.seriesType,
@@ -140,7 +139,7 @@ seriesType('bullet', 'column',
 
             columnProto.drawPoints.apply(this);
 
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 var pointOptions = point.options,
                     shapeArgs,
                     targetGraphic = point.targetGraphic,

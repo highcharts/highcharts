@@ -38,7 +38,6 @@ var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
-    each = H.each,
     erase = H.erase,
     merge = H.merge,
     pick = H.pick;
@@ -1016,12 +1015,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 plotLinesAndBands[i].destroy();
             }
         }
-        each([
+        ([
             options.plotLines || [],
             userOptions.plotLines || [],
             options.plotBands || [],
             userOptions.plotBands || []
-        ], function (arr) {
+        ]).forEach(function (arr) {
             i = arr.length;
             while (i--) {
                 if (arr[i].id === id) {

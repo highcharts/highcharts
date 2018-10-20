@@ -20,7 +20,6 @@ var addEvent = H.addEvent,
     createElement = H.createElement,
     css = H.css,
     defined = H.defined,
-    each = H.each,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
@@ -489,14 +488,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // update the first series in the chart. Setting two series without
         // an id will update the first and the second respectively (#6019)
         // chart.update and responsive.
-        each([
+        [
             'xAxis',
             'yAxis',
             'zAxis',
             'series',
             'colorAxis',
             'pane'
-        ], function (coll) {
+        ].forEach(function (coll) {
             var indexMap;
 
             if (options[coll]) {
@@ -506,7 +505,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // here (#8196).
                 if (coll === 'series') {
                     indexMap = [];
-                    each(chart[coll], function (s, i) {
+                    chart[coll].forEach(function (s, i) {
                         if (!s.options.isInternal) {
                             indexMap.push(i);
                         }
@@ -514,7 +513,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
 
 
-                each(splat(options[coll]), function (newOptions, i) {
+                splat(options[coll]).forEach(function (newOptions, i) {
                     var item = (
                         defined(newOptions.id) &&
                         chart.get(newOptions.id)
@@ -542,7 +541,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
                 // Add items for removal
                 if (oneToOne) {
-                    each(chart[coll], function (item) {
+                    chart[coll].forEach(function (item) {
                         if (!item.touched && !item.options.isInternal) {
                             itemsForRemoval.push(item);
                         } else {
@@ -555,14 +554,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }
         });
 
-        each(itemsForRemoval, function (item) {
+        itemsForRemoval.forEach(function (item) {
             if (item.remove) {
                 item.remove(false);
             }
         });
 
         if (updateAllAxes) {
-            each(chart.axes, function (axis) {
+            chart.axes.forEach(function (axis) {
                 axis.update({}, false);
             });
         }
@@ -570,7 +569,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Certain options require the whole series structure to be thrown away
         // and rebuilt
         if (updateAllSeries) {
-            each(chart.series, function (series) {
+            chart.series.forEach(function (series) {
                 series.update({}, false);
             });
         }
@@ -1060,7 +1059,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // adding points to the data set. The `name` should also support soft
         // update because the data module sets name and data when setting new
         // data by `chart.update`.
-        each(keys, function (key) {
+        keys.forEach(function (key) {
             if (inArray(key, allowSoftUpdate) === -1) {
                 doSoftUpdate = false;
             }
@@ -1076,7 +1075,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
             // Make sure preserved properties are not destroyed (#3094)
             preserve = groups.concat(preserve);
-            each(preserve, function (prop) {
+            preserve.forEach(function (prop) {
                 preserve[prop] = series[prop];
                 delete series[prop];
             });
@@ -1104,7 +1103,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             }
 
             // Re-register groups (#3094) and other preserved properties
-            each(preserve, function (prop) {
+            preserve.forEach(function (prop) {
                 series[prop] = preserve[prop];
             });
 
@@ -1112,7 +1111,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
             // Update the Z index of groups (#3380, #7397)
             if (newOptions.zIndex !== oldOptions.zIndex) {
-                each(groups, function (groupName) {
+                groups.forEach(function (groupName) {
                     if (series[groupName]) {
                         series[groupName].attr({
                             zIndex: newOptions.zIndex
@@ -1230,7 +1229,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             delete chart.options[key];
         }
 
-        each(chart[key], function (axis, i) { // Re-index, #1706, #8075
+        chart[key].forEach(function (axis, i) { // Re-index, #1706, #8075
             axis.options.index = axis.userOptions.index = i;
         });
         this.destroy();

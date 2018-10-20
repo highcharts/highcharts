@@ -16,7 +16,6 @@ var addEvent = Highcharts.addEvent,
     Chart = Highcharts.Chart,
     win = Highcharts.win,
     doc = win.document,
-    each = Highcharts.each,
     objectEach = Highcharts.objectEach,
     pick = Highcharts.pick,
     inArray = Highcharts.inArray,
@@ -499,12 +498,14 @@ Highcharts.extend(Data.prototype, {
             ),
             i;
 
-        each((chartOptions && chartOptions.series) || [], function (series) {
-            individualCounts.push(getValueCount(series.type || globalType));
-        });
+        ((chartOptions && chartOptions.series) || []).forEach(
+            function (series) {
+                individualCounts.push(getValueCount(series.type || globalType));
+            }
+        );
 
         // Collect the x-column indexes from seriesMapping
-        each(seriesMapping, function (mapping) {
+        seriesMapping.forEach(function (mapping) {
             xColumns.push(mapping.x || 0);
         });
 
@@ -516,7 +517,7 @@ Highcharts.extend(Data.prototype, {
 
         // Loop all seriesMappings and constructs SeriesBuilders from
         // the mapping options.
-        each(seriesMapping, function (mapping) {
+        seriesMapping.forEach(function (mapping) {
             var builder = new SeriesBuilder(),
                 numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
                     getValueCount(globalType),
@@ -1046,7 +1047,7 @@ Highcharts.extend(Data.prototype, {
             }
 
             // //Make sure that there's header columns for everything
-            // each(columns, function (col) {
+            // columns.forEach(function (col) {
 
             // });
 
@@ -1061,7 +1062,7 @@ Highcharts.extend(Data.prototype, {
             }
 
 
-            // each(lines, function (line, rowNo) {
+            // lines.forEach(function (line, rowNo) {
             //    var trimmed = self.trim(line),
             //        isComment = trimmed.indexOf('#') === 0,
             //        isBlank = trimmed === '',
@@ -1073,7 +1074,7 @@ Highcharts.extend(Data.prototype, {
             //        !isComment && !isBlank
             //    ) {
             //        items = line.split(itemDelimiter);
-            //        each(items, function (item, colNo) {
+            //        items.forEach(function (item, colNo) {
             //            if (colNo >= startColumn && colNo <= endColumn) {
             //                if (!columns[colNo - startColumn]) {
             //                    columns[colNo - startColumn] = [];
@@ -1111,9 +1112,9 @@ Highcharts.extend(Data.prototype, {
                 table = doc.getElementById(table);
             }
 
-            each(table.getElementsByTagName('tr'), function (tr, rowNo) {
+            table.getElementsByTagName('tr').forEach(function (tr, rowNo) {
                 if (rowNo >= startRow && rowNo <= endRow) {
-                    each(tr.children, function (item, colNo) {
+                    tr.children.forEach(function (item, colNo) {
                         if (
                             (item.tagName === 'TD' || item.tagName === 'TH') &&
                             colNo >= startColumn &&
@@ -1370,7 +1371,7 @@ Highcharts.extend(Data.prototype, {
                 }
 
                 // Insert null for empty spreadsheet cells (#5298)
-                each(columns, function (column) {
+                columns.forEach(function (column) {
                     for (i = 0; i < column.length; i++) {
                         if (column[i] === undefined) {
                             column[i] = null;
@@ -2015,7 +2016,7 @@ SeriesBuilder.prototype.populateColumns = function (freeIndexes) {
     // Loop each reader and give it an index if its missing.
     // The freeIndexes.shift() will return undefined if there
     // are no more columns.
-    each(builder.readers, function (reader) {
+    builder.readers.forEach(function (reader) {
         if (reader.columnIndex === undefined) {
             reader.columnIndex = freeIndexes.shift();
         }
@@ -2024,7 +2025,7 @@ SeriesBuilder.prototype.populateColumns = function (freeIndexes) {
     // Now, all readers should have columns mapped. If not
     // then return false to signal that this series should
     // not be added.
-    each(builder.readers, function (reader) {
+    builder.readers.forEach(function (reader) {
         if (reader.columnIndex === undefined) {
             enoughColumns = false;
         }
@@ -2048,7 +2049,7 @@ SeriesBuilder.prototype.read = function (columns, rowIndex) {
 
     // Loop each reader and ask it to read its value.
     // Then, build an array or point based on the readers names.
-    each(builder.readers, function (reader) {
+    builder.readers.forEach(function (reader) {
         var value = columns[reader.columnIndex][rowIndex];
         if (pointIsArray) {
             point.push(value);

@@ -14,7 +14,6 @@ var attr = H.attr,
     createElement = H.createElement,
     css = H.css,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
@@ -139,7 +138,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
         /*= if (build.classic) { =*/
         if (wrapper.shadows) { // used in labels/tooltip
-            each(wrapper.shadows, function (shadow) {
+            wrapper.shadows.forEach(function (shadow) {
                 css(shadow, {
                     marginLeft: translateX + 1,
                     marginTop: translateY + 1
@@ -150,7 +149,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
         // apply inversion
         if (wrapper.inverted) { // wrapper is a group
-            each(elem.childNodes, function (child) {
+            elem.childNodes.forEach(function (child) {
                 renderer.invertChild(child, elem);
             });
         }
@@ -327,7 +326,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
             addSetters = function (element, style) {
                 // These properties are set as attributes on the SVG group, and
                 // as identical CSS properties on the div. (#3542)
-                each(['opacity', 'visibility'], function (prop) {
+                ['opacity', 'visibility'].forEach(function (prop) {
                     wrap(element, prop + 'Setter', function (
                         proceed,
                         value,
@@ -430,7 +429,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
                         // Ensure dynamically updating position when any parent
                         // is translated
-                        each(parents.reverse(), function (parentGroup) {
+                        parents.reverse().forEach(function (parentGroup) {
                             var htmlGroupStyle,
                                 cls = attr(parentGroup.element, 'class');
 

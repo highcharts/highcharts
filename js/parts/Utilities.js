@@ -2432,7 +2432,7 @@ H.removeEvent = function (el, type, fn) {
         });
     }
 
-    H.each(['protoEvents', 'hcEvents'], function (coll) {
+    ['protoEvents', 'hcEvents'].forEach(function (coll) {
         var eventCollection = el[coll];
         if (eventCollection) {
             if (type) {
@@ -2500,7 +2500,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 
     } else {
 
-        H.each(['protoEvents', 'hcEvents'], function (coll) {
+        ['protoEvents', 'hcEvents'].forEach(function (coll) {
 
             if (el[coll]) {
                 events = el[coll][type] || [];

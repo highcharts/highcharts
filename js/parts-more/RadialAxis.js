@@ -11,7 +11,6 @@ import '../parts/Tick.js';
 import './Pane.js';
 var addEvent = H.addEvent,
     Axis = H.Axis,
-    each = H.each,
     extend = H.extend,
     map = H.map,
     merge = H.merge,
@@ -425,7 +424,7 @@ if (!H.radialAxisExtended) {
             // Concentric polygons
             } else {
                 // Find the X axis in the same pane
-                each(chart.xAxis, function (a) {
+                chart.xAxis.forEach(function (a) {
                     if (a.pane === axis.pane) {
                         xAxis = a;
                     }
@@ -442,7 +441,7 @@ if (!H.radialAxisExtended) {
                     tickPositions = [].concat(tickPositions).reverse();
                 }
 
-                each(tickPositions, function (pos, i) {
+                tickPositions.forEach(function (pos, i) {
                     xy = xAxis.getPosition(pos, value);
                     ret.push(i ? 'L' : 'M', xy.x, xy.y);
                 });

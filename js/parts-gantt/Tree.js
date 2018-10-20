@@ -8,8 +8,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-var each = H.each,
-    extend = H.extend,
+var extend = H.extend,
     isNumber = H.isNumber,
     keys = H.keys,
     map = H.map,
@@ -38,10 +37,10 @@ var getListOfParents = function (data, ids) {
         parents = keys(listOfParents);
 
     // If parent does not exist, hoist parent to root of tree.
-    each(parents, function (parent, list) {
+    parents.forEach(function (parent, list) {
         var children = listOfParents[parent];
         if ((parent !== '') && (H.inArray(parent, ids) === -1)) {
-            each(children, function (child) {
+            children.forEach(function (child) {
                 list[''].push(child);
             });
             delete list[parent];

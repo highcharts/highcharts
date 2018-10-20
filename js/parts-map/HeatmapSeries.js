@@ -16,7 +16,6 @@ import './ColorSeriesMixin.js';
 
 var colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
-    each = H.each,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
@@ -214,7 +213,7 @@ seriesType('heatmap', 'scatter'
 
         series.generatePoints();
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var xPad = (options.colsize || 1) / 2,
                 yPad = (options.rowsize || 1) / 2,
                 x1 = between(
@@ -264,7 +263,7 @@ seriesType('heatmap', 'scatter'
     drawPoints: function () {
         seriesTypes.column.prototype.drawPoints.call(this);
 
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             /*= if (build.classic) { =*/
             point.graphic.attr(this.colorAttribs(point));
             /*= } else { =*/

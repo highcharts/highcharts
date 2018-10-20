@@ -8,8 +8,7 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import './BoxPlotSeries.js';
-var each = H.each,
-    noop = H.noop,
+var noop = H.noop,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
@@ -87,7 +86,7 @@ seriesType('errorbar', 'boxplot', {
             seriesTypes.arearange.prototype.drawDataLabels.call(this);
             // Arearange drawDataLabels does not reset point.y to high,
             // but to low after drawing (#4133)
-            each(this.data, function (point) {
+            this.data.forEach(function (point) {
                 point.y = point[valKey];
             });
         } :

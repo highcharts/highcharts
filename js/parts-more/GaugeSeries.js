@@ -10,8 +10,7 @@ import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
-var each = H.each,
-    isNumber = H.isNumber,
+var isNumber = H.isNumber,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -370,7 +369,7 @@ seriesType('gauge', 'line', {
 
         series.generatePoints();
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
 
             var dialOptions = merge(options.dial, point.dial),
                 radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) /
@@ -438,7 +437,7 @@ seriesType('gauge', 'line', {
             pivotOptions = options.pivot,
             renderer = series.chart.renderer;
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
 
             var graphic = point.graphic,
                 shapeArgs = point.shapeArgs,
@@ -505,7 +504,7 @@ seriesType('gauge', 'line', {
         var series = this;
 
         if (!init) {
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 var graphic = point.graphic;
 
                 if (graphic) {

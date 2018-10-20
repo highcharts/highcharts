@@ -13,7 +13,6 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 
 var pick = H.pick,
-    each = H.each,
     grep = H.grep,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax,
@@ -162,7 +161,7 @@ seriesType('variablepie', 'pie',
                 // dataLabels, then series.center is changing.
                 positions = series.center || series.getCenter();
 
-            each(['minPointSize', 'maxPointSize'], function (prop) {
+            ['minPointSize', 'maxPointSize'].forEach(function (prop) {
                 var length = seriesOptions[prop],
                     isPercent = /%$/.test(length);
                 length = parseInt(length, 10);

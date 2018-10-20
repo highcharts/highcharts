@@ -17,7 +17,6 @@ var addEvent = Highcharts.addEvent,
     win = Highcharts.win,
     nav = win.navigator,
     doc = win.document,
-    each = Highcharts.each,
     domurl = win.URL || win.webkitURL || win,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
     isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
@@ -278,8 +277,7 @@ Highcharts.downloadSVGLocal = function (
         // Workaround for #7090, hidden elements were drawn anyway. It comes
         // down to https://github.com/yWorks/svg2pdf.js/issues/28. Check this
         // later.
-        each(
-            svgElement.querySelectorAll('*[visibility="hidden"]'),
+        svgElement.querySelectorAll('*[visibility="hidden"]').forEach(
             function (node) {
                 node.parentNode.removeChild(node);
             }
@@ -310,10 +308,10 @@ Highcharts.downloadSVGLocal = function (
 
         // Workaround for the text styling. Making sure it does pick up settings
         // for parent elements.
-        each(textElements, function (el) {
+        textElements.forEach(function (el) {
             // Workaround for the text styling. making sure it does pick up the
             // root element
-            each(['font-family', 'font-size'], function (property) {
+            ['font-family', 'font-size'].forEach(function (property) {
                 setStylePropertyFromParents(el, property);
             });
             el.style['font-family'] = (
@@ -324,7 +322,7 @@ Highcharts.downloadSVGLocal = function (
             // Workaround for plotband with width, removing title from text
             // nodes
             titleElements = el.getElementsByTagName('title');
-            each(titleElements, function (titleElement) {
+            titleElements.forEach(function (titleElement) {
                 el.removeChild(titleElement);
             });
         });

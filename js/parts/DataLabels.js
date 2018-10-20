@@ -13,7 +13,6 @@ import './Series.js';
 var addEvent = H.addEvent,
     arrayMax = H.arrayMax,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     format = H.format,
     map = H.map,
@@ -154,7 +153,7 @@ H.distribute = function (boxes, len, maxDistance) {
                 maxDistance
             ) {
                 // Reset the positions that are already set
-                each(origBoxes.slice(0, i + 1), function (box) {
+                origBoxes.slice(0, i + 1).forEach(function (box) {
                     delete box.pos;
                 });
 
@@ -302,7 +301,7 @@ Series.prototype.drawDataLabels = function () {
         }
 
         // Make the labels for each point
-        each(points, function (point) {
+        points.forEach(function (point) {
 
             // Merge in series options for the point.
             // @note dataLabelAttribs (like pointAttribs) would eradicate
@@ -316,7 +315,7 @@ Series.prototype.drawDataLabels = function () {
             );
 
             // Handle each individual data label for this point
-            each(pointOptions, function (labelOptions, i) {
+            pointOptions.forEach(function (labelOptions, i) {
                 // Options for one datalabel
                 var labelEnabled = labelOptions.enabled &&
                         !point.isNull && // #2282, #4641, #7112
@@ -783,7 +782,7 @@ if (seriesTypes.pie) {
         }
 
         // Reset all labels that have been shortened
-        each(data, function (point) {
+        data.forEach(function (point) {
             if (point.dataLabel && point.visible && point.dataLabel.shortened) {
                 point.dataLabel
                     .attr({
@@ -800,7 +799,7 @@ if (seriesTypes.pie) {
         // run parent method
         Series.prototype.drawDataLabels.apply(series);
 
-        each(data, function (point) {
+        data.forEach(function (point) {
             if (point.dataLabel) {
 
                 if (point.visible) { // #407, #2510
@@ -848,7 +847,7 @@ if (seriesTypes.pie) {
         /* Loop over the points in each half, starting from the top and bottom
          * of the pie to detect overlapping labels.
          */
-        each(halves, function (points, i) {
+        halves.forEach(function (points, i) {
 
             var top,
                 bottom,
@@ -876,7 +875,7 @@ if (seriesTypes.pie) {
                     centerY + radius + series.maxLabelDistance,
                     chart.plotHeight
                 );
-                each(points, function (point) {
+                points.forEach(function (point) {
                     // check if specific points' label is outside the pie
                     if (point.labelDistance > 0 && point.dataLabel) {
                         // point.top depends on point.labelDistance value
@@ -1030,7 +1029,7 @@ if (seriesTypes.pie) {
 
             // Draw the connectors
             if (connectorWidth) {
-                each(this.points, function (point) {
+                this.points.forEach(function (point) {
                     var isNew;
 
                     connector = point.connector;
@@ -1125,7 +1124,7 @@ if (seriesTypes.pie) {
      * @function Highcharts.seriesTypes.pie#placeDataLabels
      */
     seriesTypes.pie.prototype.placeDataLabels = function () {
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var dataLabel = point.dataLabel,
                 _pos;
             if (dataLabel && point.visible) {

@@ -21,7 +21,6 @@ var win = H.win,
     Color = H.Color,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    each = H.each,
     extend = H.extend,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
@@ -41,7 +40,7 @@ H.initCanvasBoost = function () {
             if (ctx) {
 
                 // draw the columns
-                each(this.points, function (point) {
+                this.points.forEach(function (point) {
                     var plotY = point.plotY,
                         shapeArgs,
                         pointAttr;
@@ -125,7 +124,7 @@ H.initCanvasBoost = function () {
                 target.ctx = ctx = target.canvas.getContext('2d');
 
                 if (chart.inverted) {
-                    each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
+                    ['moveTo', 'lineTo', 'rect', 'arc'].forEach(function (fn) {
                         wrap(ctx, fn, swapXY);
                     });
                 }

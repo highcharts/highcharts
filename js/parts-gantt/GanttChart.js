@@ -8,8 +8,7 @@
 import H from '../parts/Globals.js';
 import 'GanttSeries.js';
 
-var each = H.each,
-    map = H.map,
+var map = H.map,
     merge = H.merge,
     splat = H.splat,
     Chart = H.Chart;
@@ -99,8 +98,8 @@ H.ganttChart = function (renderTo, options, callback) {
 
     options.series = seriesOptions;
 
-    each(options.series, function (series) {
-        each(series.data, function (point) {
+    options.series.forEach(function (series) {
+        series.data.forEach(function (point) {
             H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
         });
     });

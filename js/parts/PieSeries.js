@@ -18,7 +18,6 @@ import './Series.js';
 var addEvent = H.addEvent,
     CenteredSeriesMixin = H.CenteredSeriesMixin,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
     inArray = H.inArray,
@@ -455,7 +454,7 @@ seriesType('pie', 'line'
             startAngleRad = series.startAngleRad;
 
         if (!init) {
-            each(points, function (point) {
+            points.forEach(function (point) {
                 var graphic = point.graphic,
                     args = point.shapeArgs;
 
@@ -711,7 +710,7 @@ seriesType('pie', 'line'
         /*= } =*/
 
         // draw the slices
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             graphic = point.graphic;
             if (!point.isNull) {
                 shapeArgs = point.shapeArgs;
@@ -896,8 +895,7 @@ seriesType('pie', 'line'
 
             // Show and hide associated elements. This is performed regardless
             // of redraw or not, because chart.redraw only handles full series.
-            each(
-                ['graphic', 'dataLabel', 'connector', 'shadowGroup'],
+            ['graphic', 'dataLabel', 'connector', 'shadowGroup'].forEach(
                 function (key) {
                     if (point[key]) {
                         point[key][vis ? 'show' : 'hide'](true);

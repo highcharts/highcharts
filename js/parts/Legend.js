@@ -15,7 +15,6 @@ var H = Highcharts,
     css = H.css,
     discardElement = H.discardElement,
     defined = H.defined,
-    each = H.each,
     fireEvent = H.fireEvent,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
@@ -226,7 +225,7 @@ Highcharts.Legend.prototype = {
 
         // Now that the legend width and height are established, put the items
         // in the final position
-        each(this.allItems, this.positionItem, this);
+        this.allItems.forEach(this.positionItem, this);
 
         if (!this.chart.isResizing) {
             this.positionCheckboxes();
@@ -281,8 +280,7 @@ Highcharts.Legend.prototype = {
         var checkbox = item.checkbox;
 
         // destroy SVG elements
-        each(
-            ['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'],
+        ['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'].forEach(
             function (key) {
                 if (item[key]) {
                     item[key] = item[key].destroy();
@@ -310,12 +308,12 @@ Highcharts.Legend.prototype = {
         }
 
         // Destroy items
-        each(this.getAllItems(), function (item) {
-            each(['legendItem', 'legendGroup'], destroyItems, item);
+        this.getAllItems().forEach(function (item) {
+            ['legendItem', 'legendGroup'].forEach(destroyItems, item);
         });
 
         // Destroy legend elements
-        each([
+        [
             'clipRect',
             'up',
             'down',
@@ -324,7 +322,7 @@ Highcharts.Legend.prototype = {
             'box',
             'title',
             'group'
-        ], destroyItems, this);
+        ].forEach(destroyItems, this);
         this.display = null; // Reset in .render on update.
     },
 
@@ -342,7 +340,7 @@ Highcharts.Legend.prototype = {
 
         if (alignAttr) {
             translateY = alignAttr.translateY;
-            each(this.allItems, function (item) {
+            this.allItems.forEach(function (item) {
                 var checkbox = item.checkbox,
                     top;
 
@@ -654,7 +652,7 @@ Highcharts.Legend.prototype = {
      */
     getAllItems: function () {
         var allItems = [];
-        each(this.chart.series, function (series) {
+        this.chart.series.forEach(function (series) {
             var seriesOptions = series && series.options;
 
             // Handle showInLegend. If the series is linked to another series,
@@ -725,12 +723,12 @@ Highcharts.Legend.prototype = {
 
         if (alignment) {
 
-            each([
+            ([
                 /(lth|ct|rth)/,
                 /(rtv|rm|rbv)/,
                 /(rbh|cb|lbh)/,
                 /(lbv|lm|ltv)/
-            ], function (alignments, side) {
+            ]).forEach(function (alignments, side) {
                 if (alignments.test(alignment) && !defined(margin[side])) {
 
                     // Now we have detected on which side of the chart we should
@@ -769,7 +767,7 @@ Highcharts.Legend.prototype = {
             boxes = [],
             alignLeft = this.options.align === 'left';
 
-        each(this.allItems, function (item) {
+        this.allItems.forEach(function (item) {
             var lastPoint,
                 height,
                 useFirstPoint = alignLeft;
@@ -799,7 +797,7 @@ Highcharts.Legend.prototype = {
             }
         }, this);
         H.distribute(boxes, chart.plotHeight);
-        each(boxes, function (box) {
+        boxes.forEach(function (box) {
             box.item._legendItemPos[1] =
                 chart.plotTop - chart.spacing[0] + box.pos;
         });
@@ -886,8 +884,8 @@ Highcharts.Legend.prototype = {
         legend.maxItemWidth = 0;
         legend.totalItemWidth = 0;
         legend.itemHeight = 0;
-        each(allItems, legend.renderItem, legend);
-        each(allItems, legend.layoutItem, legend);
+        allItems.forEach(legend.renderItem, legend);
+        allItems.forEach(legend.layoutItem, legend);
 
         // Get the box
         legendWidth = (options.width || legend.offsetWidth) + padding;
@@ -1047,7 +1045,7 @@ Highcharts.Legend.prototype = {
 
             // Fill pages with Y positions so that the top of each a legend item
             // defines the scroll top for each page (#2098)
-            each(allItems, function (item, i) {
+            allItems.forEach(function (item, i) {
                 var y = item._legendItemPos[1],
                     h = Math.round(item.legendItem.getBBox().height),
                     len = pages.length;

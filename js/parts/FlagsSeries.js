@@ -10,7 +10,6 @@ import './Series.js';
 import './SvgRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
 var addEvent = H.addEvent,
-    each = H.each,
     merge = H.merge,
     noop = H.noop,
     Renderer = H.Renderer,
@@ -437,7 +436,7 @@ seriesType('flags', 'column', {
 
             H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
 
-            each(points, function (point) {
+            points.forEach(function (point) {
                 var box = point.graphic && boxesMap[point.plotX];
                 if (box) {
                     point.graphic[point.graphic.isNew ? 'attr' : 'animate']({
@@ -485,7 +484,7 @@ seriesType('flags', 'column', {
          * of vertically stacked elements as well as tight points on
          * the x axis. #1924.
          */
-        each(points, function (point) {
+        points.forEach(function (point) {
             var graphic = point.graphic;
             if (graphic) {
                 addEvent(graphic.element, 'mouseover', function () {
@@ -500,7 +499,7 @@ seriesType('flags', 'column', {
                     }
 
                     // Revert other raised points
-                    each(points, function (otherPoint) {
+                    points.forEach(function (otherPoint) {
                         if (
                             otherPoint !== point &&
                             otherPoint.raised &&
@@ -610,7 +609,7 @@ createPinSymbol('square');
  * them with the VMLRenderer.
  */
 if (Renderer === VMLRenderer) {
-    each(['flag', 'circlepin', 'squarepin'], function (shape) {
+    ['flag', 'circlepin', 'squarepin'].forEach(function (shape) {
         VMLRenderer.prototype.symbols[shape] = symbols[shape];
     });
 }

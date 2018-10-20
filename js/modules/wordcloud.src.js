@@ -12,8 +12,7 @@ import H from '../parts/Globals.js';
 import drawPoint from '../mixins/draw-point.js';
 import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
-var each = H.each,
-    extend = H.extend,
+var extend = H.extend,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
@@ -640,7 +639,7 @@ var wordCloudSeries = {
 
         // Get the dimensions for each word.
         // Used in calculating the playing field.
-        each(data, function (point) {
+        data.forEach(function (point) {
             var relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -670,7 +669,7 @@ var wordCloudSeries = {
             field: field
         });
         // Draw all the points.
-        each(data, function (point) {
+        data.forEach(function (point) {
             var relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,

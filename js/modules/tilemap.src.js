@@ -13,7 +13,6 @@ import H from '../parts/Globals.js';
 import '../parts-map/HeatmapSeries.js';
 
 var seriesType = H.seriesType,
-    each = H.each,
     reduce = H.reduce,
     pick = H.pick,
     // Utility func to get the middle number of 3
@@ -77,7 +76,7 @@ H.tileShapeTypes = {
 
             series.generatePoints();
 
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 var x1 = between(
                         Math.floor(
                             xAxis.len -
@@ -213,7 +212,7 @@ H.tileShapeTypes = {
 
             series.generatePoints();
 
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 var x1 = between(
                         Math.round(
                             xAxis.len -
@@ -333,7 +332,7 @@ H.tileShapeTypes = {
 
             series.generatePoints();
 
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 var x = between(
                         Math.round(
                             xAxis.len -

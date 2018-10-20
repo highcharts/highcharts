@@ -3,7 +3,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var pick = H.pick,
-    each = H.each,
     error = H.error,
     Series = H.Series,
     isArray = H.isArray,
@@ -185,8 +184,7 @@ seriesType('sma', 'line',
 
             if (!name) {
 
-                each(
-                    this.nameComponents,
+                (this.nameComponents || []).forEach(
                     function (component, index) {
                         params.push(
                             this.options.params[component] +
@@ -250,7 +248,7 @@ seriesType('sma', 'line',
             };
         },
         destroy: function () {
-            each(this.dataEventsToUnbind, function (unbinder) {
+            this.dataEventsToUnbind.forEach(function (unbinder) {
                 unbinder();
             });
             Series.prototype.destroy.call(this);

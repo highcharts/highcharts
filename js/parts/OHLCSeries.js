@@ -7,8 +7,7 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Point.js';
-var each = H.each,
-    Point = H.Point,
+var Point = H.Point,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
@@ -183,9 +182,8 @@ seriesType('ohlc', 'column', {
         seriesTypes.column.prototype.translate.apply(series);
 
         // Do the translation
-        each(series.points, function (point) {
-            each(
-                [point.open, point.high, point.low, point.close, point.low],
+        series.points.forEach(function (point) {
+            [point.open, point.high, point.low, point.close, point.low].forEach(
                 function (value, i) {
                     if (value !== null) {
                         if (hasModifyValue) {
@@ -211,7 +209,7 @@ seriesType('ohlc', 'column', {
             chart = series.chart;
 
 
-        each(points, function (point) {
+        points.forEach(function (point) {
             var plotOpen,
                 plotClose,
                 crispCorr,

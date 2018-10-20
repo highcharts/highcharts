@@ -13,7 +13,6 @@ import '../parts/AreaSeries.js';
 var addEvent = H.addEvent,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    each = H.each,
     pick = H.pick;
 
 /**
@@ -51,10 +50,9 @@ seriesType('variwide', 'column', {
         this.relZ = [];
         seriesTypes.column.prototype.processData.call(this);
 
-        each(
-            this.xAxis.reversed ?
+        (this.xAxis.reversed ?
                 this.zData.slice().reverse() :
-                this.zData,
+                this.zData).forEach(
             function (z, i) {
                 this.relZ[i] = this.totalZ;
                 this.totalZ += z;
@@ -121,7 +119,7 @@ seriesType('variwide', 'column', {
             crisp = this.borderWidth % 2 / 2;
 
         // Distort the points to reflect z dimension
-        each(this.points, function (point, i) {
+        this.points.forEach(function (point, i) {
             var left, right;
 
             if (xAxis.variwide) {

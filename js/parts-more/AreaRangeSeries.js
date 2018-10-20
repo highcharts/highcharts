@@ -8,8 +8,7 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
-var each = H.each,
-    noop = H.noop,
+var noop = H.noop,
     pick = H.pick,
     extend = H.extend,
     isArray = H.isArray,
@@ -179,7 +178,7 @@ seriesType('arearange', 'area', {
         seriesTypes.area.prototype.translate.apply(series);
 
         // Set plotLow and plotHigh
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
 
             var low = point.low,
                 high = point.high,
@@ -205,7 +204,7 @@ seriesType('arearange', 'area', {
 
         // Postprocess plotHigh
         if (this.chart.polar) {
-            each(this.points, function (point) {
+            this.points.forEach(function (point) {
                 series.highToXY(point);
                 point.tooltipPos = [
                     (point.plotHighX + point.plotLowX) / 2,
@@ -626,7 +625,7 @@ seriesType('arearange', 'area', {
     destroyElements: function () {
         var graphics = ['lowerGraphic', 'upperGraphic'];
 
-        each(graphics, function (graphicName) {
+        graphics.forEach(function (graphicName) {
             if (this[graphicName]) {
                 this[graphicName] = this[graphicName].destroy();
             }

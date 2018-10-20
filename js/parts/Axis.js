@@ -93,7 +93,6 @@ var addEvent = H.addEvent,
     defined = H.defined,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
-    each = H.each,
     extend = H.extend,
     fireEvent = H.fireEvent,
     format = H.format,
@@ -3444,7 +3443,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             }
 
             // loop through this axis' series
-            each(axis.series, function (series) {
+            axis.series.forEach(function (series) {
 
                 if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
@@ -3874,7 +3873,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             if (axis.isLog) {
                 // For each interval in the major ticks, compute the minor ticks
                 // separately.
-                each(this.paddedTicks, function (pos, i, paddedTicks) {
+                this.paddedTicks.forEach(function (pos, i, paddedTicks) {
                     if (i) {
                         minorTickPositions.push.apply(
                             minorTickPositions,
@@ -3958,7 +3957,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 // Find the closest distance between raw data points, as opposed
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
-                each(axis.series, function (series) {
+                axis.series.forEach(function (series) {
                     xData = series.xData;
                     loopLength = series.xIncrement ? 1 : xData.length - 1;
                     for (i = loopLength; i > 0; i--) {
@@ -4032,7 +4031,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         if (this.categories) {
             ret = 1;
         } else {
-            each(this.series, function (series) {
+            this.series.forEach(function (series) {
                 var seriesClosest = series.closestPointRange,
                     visible = series.visible ||
                         !series.chart.options.chart.ignoreHiddenSeries;
@@ -4113,13 +4112,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             i = names.length;
 
         if (i > 0) {
-            each(H.keys(names.keys), function (key) {
+            H.keys(names.keys).forEach(function (key) {
                 delete names.keys[key];
             });
             names.length = 0;
 
             this.minRange = this.userMinRange; // Reset
-            each(this.series || [], function (series) {
+            (this.series || []).forEach(function (series) {
 
                 // Reset incrementer (#5928)
                 series.xIncrement = null;
@@ -4130,7 +4129,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     series.generatePoints();
                 }
 
-                each(series.points, function (point, i) {
+                series.points.forEach(function (point, i) {
                     var x;
                     if (point.options) {
                         x = axis.nameToX(point);
@@ -4178,7 +4177,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 minPointOffset = linkedParent.minPointOffset;
                 pointRangePadding = linkedParent.pointRangePadding;
             } else {
-                each(axis.series, function (series) {
+                axis.series.forEach(function (series) {
                     var seriesPointRange = hasCategories ?
                         1 :
                         (
@@ -4474,7 +4473,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * ordinal axes.
          */
         if (isXAxis && !secondPass) {
-            each(axis.series, function (series) {
+            axis.series.forEach(function (series) {
                 series.processData(
                     axis.min !== axis.oldMin || axis.max !== axis.oldMax
                 );
@@ -4750,7 +4749,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // spaced (#6021)
             !this.isLog
         ) {
-            each(this.chart[this.coll], function (axis) {
+            this.chart[this.coll].forEach(function (axis) {
                 var otherOptions = axis.options,
                     horiz = axis.horiz,
                     key = [
@@ -4902,7 +4901,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
         // is there new data?
-        each(axis.series, function (series) {
+        axis.series.forEach(function (series) {
             if (
                 series.isDirtyData ||
                 series.isDirty ||
@@ -5001,7 +5000,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         redraw = pick(redraw, true); // defaults to true
 
-        each(axis.series, function (serie) {
+        axis.series.forEach(function (serie) {
             delete serie.kdTree;
         });
 
@@ -5315,7 +5314,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 // which gives the best score. The best score is that with
                 // the lowest number of steps and a rotation closest
                 // to horizontal.
-                each(autoRotation, function (rot) {
+                autoRotation.forEach(function (rot) {
                     var score;
 
                     if (
@@ -5437,7 +5436,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Get the longest label length
-        each(tickPositions, function (tick) {
+        tickPositions.forEach(function (tick) {
             tick = ticks[tick];
             if (
                 tick &&
@@ -5527,7 +5526,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Apply general and specific CSS
-        each(tickPositions, function (pos) {
+        tickPositions.forEach(function (pos) {
             var tick = ticks[pos],
                 label = tick && tick.label,
                 widthOption = labelStyleOptions.width,
@@ -5766,7 +5765,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         if (hasData || axis.isLinked) {
 
             // Generate ticks
-            each(tickPositions, function (pos, i) {
+            tickPositions.forEach(function (pos, i) {
                 // i is not used here, but may be used in overrides
                 axis.generateTick(pos, i);
             });
@@ -5786,7 +5785,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 axis.labelAlign === 'center' ? true : null,
                 axis.reserveSpaceDefault)
             ) {
-                each(tickPositions, function (pos) {
+                tickPositions.forEach(function (pos) {
                     // get the highest offset
                     labelOffset = Math.max(
                         ticks[pos].getLabelSize(),
@@ -6110,7 +6109,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         axis.overlap = false;
 
         // Mark all elements inActive before we go over and mark the active ones
-        each([ticks, minorTicks, alternateBands], function (coll) {
+        [ticks, minorTicks, alternateBands].forEach(function (coll) {
             objectEach(coll, function (tick) {
                 tick.isActive = false;
             });
@@ -6121,7 +6120,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // minor ticks
             if (axis.minorTickInterval && !axis.categories) {
-                each(axis.getMinorTickPositions(), function (pos) {
+                axis.getMinorTickPositions().forEach(function (pos) {
                     axis.renderMinorTick(pos);
                 });
             }
@@ -6129,7 +6128,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // Major ticks. Pull out the first item and render it last so that
             // we can get the position of the neighbour label. #808.
             if (tickPositions.length) { // #1300
-                each(tickPositions, function (pos, i) {
+                tickPositions.forEach(function (pos, i) {
                     axis.renderTick(pos, i);
                 });
                 // In a categorized axis, the tick marks are displayed
@@ -6146,7 +6145,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // alternate grid color
             if (alternateGridColor) {
-                each(tickPositions, function (pos, i) {
+                tickPositions.forEach(function (pos, i) {
                     to = tickPositions[i + 1] !== undefined ?
                         tickPositions[i + 1] + tickmarkOffset :
                         axis.max - tickmarkOffset;
@@ -6177,8 +6176,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // custom plot lines and bands
             if (!axis._addedPlotLB) { // only first time
-                each(
-                    (options.plotLines || []).concat(options.plotBands || []),
+                (
+                    (options.plotLines || []).concat(options.plotBands || [])
+                ).forEach(
                     function (plotLineOptions) {
                         axis.addPlotBandOrLine(plotLineOptions);
                     }
@@ -6189,7 +6189,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         } // end if hasData
 
         // Remove inactive ticks
-        each([ticks, minorTicks, alternateBands], function (coll) {
+        [ticks, minorTicks, alternateBands].forEach(function (coll) {
             var i,
                 forDestruction = [],
                 delay = animation.duration,
@@ -6277,13 +6277,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             this.render();
 
             // move plot lines and bands
-            each(this.plotLinesAndBands, function (plotLine) {
+            this.plotLinesAndBands.forEach(function (plotLine) {
                 plotLine.render();
             });
         }
 
         // mark associated series as dirty and ready for redraw
-        each(this.series, function (series) {
+        this.series.forEach(function (series) {
             series.isDirty = true;
         });
 
@@ -6325,8 +6325,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         });
 
         // Destroy collections
-        each(
-            [axis.ticks, axis.minorTicks, axis.alternateBands],
+        [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
             function (coll) {
                 destroyObjectProperties(coll);
             }
@@ -6339,9 +6338,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Destroy elements
-        each(
-            ['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
-                'gridGroup', 'labelGroup', 'cross', 'scrollbar'],
+        ['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
+            'gridGroup', 'labelGroup', 'cross', 'scrollbar'].forEach(
             function (prop) {
                 if (axis[prop]) {
                     axis[prop] = axis[prop].destroy();

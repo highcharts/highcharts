@@ -9,7 +9,6 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 var deg2rad = H.deg2rad,
-    each = H.each,
     pick = H.pick,
     seriesTypes = H.seriesTypes,
     svg = H.svg,
@@ -50,7 +49,7 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
         z = 0;
     }
 
-    each(series.data, function (point) {
+    series.data.forEach(function (point) {
 
         var shapeArgs = point.shapeArgs,
             angle;
@@ -111,7 +110,7 @@ wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
     proceed.apply(this, [].slice.call(arguments, 1));
 
     if (this.chart.is3d()) {
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var graphic = point.graphic;
 
             // #4584 Check if has graphic - null points don't have it
@@ -128,7 +127,7 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
         var series = this,
             chart = series.chart,
             options3d = chart.options.chart.options3d;
-        each(series.data, function (point) {
+        series.data.forEach(function (point) {
             var shapeArgs = point.shapeArgs,
                 r = shapeArgs.r,
                 // #3240 issue with datalabels for 0 and null values
@@ -141,7 +140,7 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
                 xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
 
             // Apply perspective on label positions
-            each(labelIndexes, function (index) {
+            labelIndexes.forEach(function (index) {
                 labelPos[index] += xOffset;
                 labelPos[index + 1] += yOffset;
             });

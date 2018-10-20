@@ -14,7 +14,6 @@ import './Series.js';
 import './Options.js';
 
 var color = H.color,
-    each = H.each,
     LegendSymbolMixin = H.LegendSymbolMixin,
     map = H.map,
     pick = H.pick,
@@ -227,7 +226,7 @@ seriesType('area', 'line'
                 return this.visible;
             });
 
-            each(keys, function (x, idx) {
+            keys.forEach(function (x, idx) {
                 var y = 0,
                     stackPoint,
                     stackedValues;
@@ -236,7 +235,7 @@ seriesType('area', 'line'
                     segment.push(pointMap[x]);
 
                     // Find left and right cliff. -1 goes left, 1 goes right.
-                    each([-1, 1], function (direction) {
+                    [-1, 1].forEach(function (direction) {
                         var nullName = direction === 1 ?
                                 'rightNull' :
                                 'leftNull',
@@ -476,7 +475,7 @@ seriesType('area', 'line'
                 /*= } =*/
             ]]; // area name, main color, fill color
 
-        each(zones, function (zone, i) {
+        zones.forEach(function (zone, i) {
             props.push([
                 'zone-area-' + i,
                 'highcharts-area highcharts-zone-area-' + i + ' ' +
@@ -488,7 +487,7 @@ seriesType('area', 'line'
             ]);
         });
 
-        each(props, function (prop) {
+        props.forEach(function (prop) {
             var areaKey = prop[0],
                 area = series[areaKey];
 

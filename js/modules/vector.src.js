@@ -10,8 +10,7 @@
 
 import H from '../parts/Globals.js';
 
-var each = H.each,
-    seriesType = H.seriesType;
+var seriesType = H.seriesType;
 
 /**
  * The vector series class.
@@ -191,7 +190,7 @@ seriesType('vector', 'scatter'
 
         var chart = this.chart;
 
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var plotX = point.plotX,
                 plotY = point.plotY;
 

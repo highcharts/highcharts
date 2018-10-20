@@ -11,7 +11,6 @@ import '../parts/Utilities.js';
 import '../parts/Chart.js';
 var addEvent = H.addEvent,
     Chart = H.Chart,
-    each = H.each,
     merge = H.merge,
     perspective = H.perspective,
     pick = H.pick,
@@ -34,7 +33,7 @@ addEvent(Chart, 'afterInit', function () {
     var options = this.options;
 
     if (this.is3d()) {
-        each(options.series || [], function (s) {
+        (options.series || []).forEach(function (s) {
             var type = s.type ||
                 options.chart.type ||
                 options.chart.defaultSeriesType;
@@ -96,7 +95,7 @@ function getScale(chart, depth) {
     }];
 
     // Top right corners:
-    each([0, 1], function (i) {
+    [0, 1].forEach(function (i) {
         corners.push({
             x: plotRight,
             y: corners[i].y,
@@ -105,7 +104,7 @@ function getScale(chart, depth) {
     });
 
     // All bottom corners:
-    each([0, 1, 2, 3], function (i) {
+    [0, 1, 2, 3].forEach(function (i) {
         corners.push({
             x: corners[i].x,
             y: plotBottom,
@@ -117,7 +116,7 @@ function getScale(chart, depth) {
     corners = perspective(corners, chart, false);
 
     // Get bounding box of 3D element:
-    each(corners, function (corner) {
+    corners.forEach(function (corner) {
         bbox3d.minX = Math.min(bbox3d.minX, corner.x);
         bbox3d.maxX = Math.max(bbox3d.maxX, corner.x);
         bbox3d.minY = Math.min(bbox3d.minY, corner.y);
@@ -1281,7 +1280,7 @@ Chart.prototype.retrieveStacks = function (stacking) {
         stackNumber,
         i = 1;
 
-    each(this.series, function (s) {
+    this.series.forEach(function (s) {
         stackNumber = pick(
             s.options.stack,
             (stacking ? 0 : series.length - 1 - s.index)
@@ -1365,7 +1364,7 @@ Chart.prototype.get3dFrame = function () {
     // The 'default' criteria to visible faces of the frame is looking up every
     // axis to decide whenever the left/right//top/bottom sides of the frame
     // will be shown
-    each([].concat(chart.xAxis, chart.yAxis, chart.zAxis), function (axis) {
+    [].concat(chart.xAxis, chart.yAxis, chart.zAxis).forEach(function (axis) {
         if (axis) {
             if (axis.horiz) {
                 if (axis.opposite) {

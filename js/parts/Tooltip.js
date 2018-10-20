@@ -10,7 +10,6 @@ import H from './Globals.js';
 import './Utilities.js';
 
 var doc = H.doc,
-    each = H.each,
     extend = H.extend,
     format = H.format,
     isNumber = H.isNumber,
@@ -147,7 +146,7 @@ H.Tooltip.prototype = {
      *        Force destroy all tooltips.
      */
     cleanSplit: function (force) {
-        each(this.chart.series, function (series) {
+        this.chart.series.forEach(function (series) {
             var tt = series && series.tt;
             if (tt) {
                 if (!tt.isActive || force) {
@@ -457,7 +456,7 @@ H.Tooltip.prototype = {
             ret = points[0].tooltipPos;
         // When shared, use the average position
         } else {
-            each(points, function (point) {
+            points.forEach(function (point) {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
                 plotX += point.plotX +
@@ -721,7 +720,7 @@ H.Tooltip.prototype = {
 
         // shared tooltip, array is sent over
         if (shared && !(point.series && point.series.noSharedTooltip)) {
-            each(point, function (item) {
+            point.forEach(function (item) {
                 item.setState('hover');
 
                 pointConfig.push(item.getLabelConfig());
@@ -839,7 +838,7 @@ H.Tooltip.prototype = {
             labels = [false, labels];
         }
         // Create the individual labels for header and points, ignore footer
-        each(labels.slice(0, points.length + 1), function (str, i) {
+        labels.slice(0, points.length + 1).forEach(function (str, i) {
             if (str !== false) {
                 var point = points[i - 1] ||
                         // Item 0 is the header. Instead of this, we could also
@@ -961,7 +960,7 @@ H.Tooltip.prototype = {
 
         // Distribute and put in place
         H.distribute(boxes, chart.plotHeight + headerHeight);
-        each(boxes, function (box) {
+        boxes.forEach(function (box) {
             var point = box.point,
                 series = point.series;
 
@@ -1173,9 +1172,8 @@ H.Tooltip.prototype = {
 
         // Insert the footer date format if any
         if (isDateTime && xDateFormat) {
-            each(
-                (labelConfig.point && labelConfig.point.tooltipDateKeys) ||
-                    ['key'],
+            ((labelConfig.point && labelConfig.point.tooltipDateKeys) ||
+                    ['key']).forEach(
                 function (key) {
                     formatString = formatString.replace(
                         '{point.' + key + '}',

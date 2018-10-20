@@ -21,7 +21,6 @@ import './Chart.js';
 import './Utilities.js';
 
 var Chart = H.Chart,
-    each = H.each,
     inArray = H.inArray,
     isArray = H.isArray,
     isObject = H.isObject,
@@ -160,7 +159,7 @@ Chart.prototype.setResponsive = function (redraw) {
         currentRuleIds;
 
     if (options && options.rules) {
-        each(options.rules, function (rule) {
+        options.rules.forEach(function (rule) {
             if (rule._id === undefined) {
                 rule._id = H.uniqueKey();
             }

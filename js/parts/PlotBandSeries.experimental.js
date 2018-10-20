@@ -18,7 +18,6 @@ import './Utilities.js';
 import './Series.js';
 import './Options.js';
 var seriesType = H.seriesType,
-    each = H.each,
     Series = H.Series;
 
 seriesType('plotband', 'column', {
@@ -42,7 +41,7 @@ seriesType('plotband', 'column', {
 
         Series.prototype.translate.apply(series);
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var onXAxis = point.onXAxis,
                 ownAxis = onXAxis ? xAxis : yAxis,
                 otherAxis = onXAxis ? yAxis : xAxis,

@@ -19,7 +19,6 @@ import '../parts/SvgRenderer.js';
 
 var win = H.win,
     doc = win.document,
-    each = H.each,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     merge = H.merge,
@@ -86,7 +85,7 @@ H.extend(H.SVGElement.prototype, {
  * up/down arrows, and which series types should just move to next series.
  */
 H.Series.prototype.keyboardMoveVertical = true;
-each(['column', 'pie'], function (type) {
+['column', 'pie'].forEach(function (type) {
     if (H.seriesTypes[type]) {
         H.seriesTypes[type].prototype.keyboardMoveVertical = false;
     }
@@ -336,7 +335,7 @@ KeyboardNavigationModule.prototype = {
             keyCode = e.which || e.keyCode,
             found = false,
             handled = false;
-        each(this.keyCodeMap, function (codeSet) {
+        this.keyCodeMap.forEach(function (codeSet) {
             if (codeSet[0].indexOf(keyCode) > -1) {
                 found = true;
                 handled = codeSet[1].call(navModule, keyCode, e) === false ?
@@ -797,11 +796,11 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
     if (curPoint.plotX === undefined || curPoint.plotY === undefined) {
         return false;
     }
-    each(this.series, function (series) {
+    this.series.forEach(function (series) {
         if (isSkipSeries(series)) {
             return;
         }
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             if (point.plotY === undefined || point.plotX === undefined ||
                 point === curPoint) {
                 return;
@@ -860,7 +859,7 @@ H.Chart.prototype.hideExportMenu = function () {
         exportList = chart.exportDivElements;
     if (exportList && chart.exportContextMenu) {
         // Reset hover states etc.
-        each(exportList, function (el) {
+        exportList.forEach(function (el) {
             if (el.className === 'highcharts-menu-item' && el.onmouseout) {
                 el.onmouseout();
             }
@@ -1239,7 +1238,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
                     zoomOut = chart.mapNavButtons[1],
                     initialButton = direction > 0 ? zoomIn : zoomOut;
 
-                each(chart.mapNavButtons, function (button, i) {
+                chart.mapNavButtons.forEach(function (button, i) {
                     button.element.setAttribute('tabindex', -1);
                     button.element.setAttribute('role', 'button');
                     button.element.setAttribute(
@@ -1294,7 +1293,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 
             // Make elements focusable and accessible
             init: function (direction) {
-                each(chart.rangeSelector.buttons, function (button) {
+                chart.rangeSelector.buttons.forEach(function (button) {
                     button.element.setAttribute('tabindex', '-1');
                     button.element.setAttribute('role', 'button');
                     button.element.setAttribute(
@@ -1395,7 +1394,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 
             // Make elements focusable and accessible
             init: function (direction) {
-                each(chart.legend.allItems, function (item) {
+                chart.legend.allItems.forEach(function (item) {
                     item.legendGroup.element.setAttribute('tabindex', '-1');
                     item.legendGroup.element.setAttribute('role', 'button');
                     item.legendGroup.element.setAttribute(

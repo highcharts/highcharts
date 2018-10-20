@@ -11,8 +11,7 @@
 import H from '../parts/Globals.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
-var each = H.each,
-    objectEach = H.objectEach,
+var objectEach = H.objectEach,
     seriesType = H.seriesType,
     correctFloat = H.correctFloat,
     isNumber = H.isNumber,
@@ -157,7 +156,7 @@ seriesType('histogram', 'column', {
                 return parseFloat(elem);
             }));
 
-        each(baseData, function (y) {
+        baseData.forEach(function (y) {
             var x = correctFloat(fitToBin(y));
             bins[x]++;
         });

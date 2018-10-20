@@ -13,7 +13,6 @@ import '../parts/Tooltip.js';
 var merge = H.merge,
     addEvent = H.addEvent,
     extend = H.extend,
-    each = H.each,
     isString = H.isString,
     isNumber = H.isNumber,
     defined = H.defined,
@@ -112,7 +111,7 @@ H.SVGRenderer.prototype.definition = function (def) {
 
     function recurse(config, parent) {
         var ret;
-        each(splat(config), function (item) {
+        splat(config).forEach(function (item) {
             var node = ren.createElement(item.tagName),
                 attr = {};
 
@@ -974,8 +973,8 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
      */
     init: function () {
         var anno = this;
-        each(this.options.labels || [], this.initLabel, this);
-        each(this.options.shapes || [], this.initShape, this);
+        (this.options.labels || []).forEach(this.initLabel, this);
+        (this.options.shapes || []).forEach(this.initShape, this);
 
         this.labelCollector = function () {
             return grep(anno.labels, function (label) {
@@ -1068,8 +1067,8 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
 
         erase(this.chart.labelCollectors, this.labelCollector);
 
-        each(this.labels, destroyItem);
-        each(this.shapes, destroyItem);
+        this.labels.forEach(destroyItem);
+        this.shapes.forEach(destroyItem);
 
         destroyObjectProperties(this, chart);
     },
@@ -1428,7 +1427,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
                 }
             };
 
-        each(['markerStart', 'markerEnd'], setMarker);
+        ['markerStart', 'markerEnd'].forEach(setMarker);
     },
 
     /**
@@ -1771,7 +1770,7 @@ H.extend(chartPrototype, /** @lends Chart# */ {
             this.plotBoxClip = this.renderer.clipRect(plotBox);
         }
 
-        each(this.annotations, function (annotation) {
+        this.annotations.forEach(function (annotation) {
             annotation.redraw();
         });
     }
@@ -1781,7 +1780,7 @@ H.extend(chartPrototype, /** @lends Chart# */ {
 chartPrototype.callbacks.push(function (chart) {
     chart.annotations = [];
 
-    each(chart.options.annotations, function (annotationOptions) {
+    chart.options.annotations.forEach(function (annotationOptions) {
         chart.annotations.push(
             new Annotation(chart, annotationOptions)
         );

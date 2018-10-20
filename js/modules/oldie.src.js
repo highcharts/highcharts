@@ -21,7 +21,6 @@ var VMLRenderer,
     deg2rad = H.deg2rad,
     discardElement = H.discardElement,
     doc = H.doc,
-    each = H.each,
     erase = H.erase,
     extend = H.extend,
     extendClass = H.extendClass,
@@ -824,7 +823,7 @@ if (!svg) {
 
             // Let the shadow follow the main element
             if (this.shadows) {
-                each(this.shadows, function (shadow) {
+                this.shadows.forEach(function (shadow) {
                     shadow.style[key] = value;
                 });
             }
@@ -1013,7 +1012,7 @@ if (!svg) {
                 // used in attr and animation to update the clipping of all
                 // members
                 updateClipping: function () {
-                    each(clipRect.members, function (member) {
+                    clipRect.members.forEach(function (member) {
                         // Member.element is falsy on deleted series, like in
                         // stock/members/series-remove demo. Should be removed
                         // from members, but this will do.
@@ -1099,7 +1098,7 @@ if (!svg) {
                 }
 
                 // Compute the stops
-                each(stops, function (stop, i) {
+                stops.forEach(function (stop, i) {
                     if (regexRgba.test(stop[1])) {
                         colorObject = H.color(stop[1]);
                         stopColor = colorObject.get('rgb');
@@ -1375,7 +1374,7 @@ if (!svg) {
 
             // Recursively invert child elements, needed for nested composite
             // shapes like box plots and error bars. #1680, #1806.
-            each(element.childNodes, function (child) {
+            element.childNodes.forEach(function (child) {
                 ren.invertChild(child, element);
             });
         },

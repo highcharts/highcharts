@@ -14,7 +14,6 @@ import 'ArrowSymbols.js';
 var defined = H.defined,
     deg2rad = H.deg2rad,
     extend = H.extend,
-    each = H.each,
     addEvent = H.addEvent,
     merge = H.merge,
     pick = H.pick,
@@ -840,9 +839,9 @@ Pathfinder.prototype = {
 
         // Rebuild pathfinder connections from options
         pathfinder.connections = [];
-        each(chart.series, function (series) {
+        chart.series.forEach(function (series) {
             if (series.visible) {
-                each(series.points, function (point) {
+                series.points.forEach(function (point) {
                     var to,
                         connects = (
                             point.options &&
@@ -850,7 +849,7 @@ Pathfinder.prototype = {
                             H.splat(point.options.connect)
                         );
                     if (point.visible && point.isInside !== false && connects) {
-                        each(connects, function (connect) {
+                        connects.forEach(function (connect) {
                             to = chart.get(typeof connect === 'string' ?
                                 connect : connect.to
                             );
@@ -921,13 +920,13 @@ Pathfinder.prototype = {
     renderConnections: function (deferRender) {
         if (deferRender) {
             // Render after series are done animating
-            each(this.chart.series, function (series) {
+            this.chart.series.forEach(function (series) {
                 var render = function () {
                     // Find pathfinder connections belonging to this series
                     // that haven't rendered, and render them now.
                     var pathfinder = series.chart.pathfinder,
                         conns = pathfinder && pathfinder.connections || [];
-                    each(conns, function (connection) {
+                    conns.forEach(function (connection) {
                         if (
                             connection.fromPoint &&
                             connection.fromPoint.series === series
@@ -950,7 +949,7 @@ Pathfinder.prototype = {
             });
         } else {
             // Go through connections and render them
-            each(this.connections, function (connection) {
+            this.connections.forEach(function (connection) {
                 connection.render();
             });
         }
@@ -1008,7 +1007,7 @@ Pathfinder.prototype = {
             calculatedMargin =
                 options.algorithmMargin =
                 calculateObstacleMargin(obstacles);
-            each(obstacles, function (obstacle) {
+            obstacles.forEach(function (obstacle) {
                 obstacle.xMin -= calculatedMargin;
                 obstacle.xMax += calculatedMargin;
                 obstacle.yMin -= calculatedMargin;
