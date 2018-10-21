@@ -110,7 +110,7 @@ H.approximations['ichimoku-averages'] = function () {
     var ret = [],
         isEmptyRange;
 
-    arguments.forEach(function (arr, i) {
+    [].forEach.call(arguments, function (arr, i) {
         ret.push(H.approximations.average(arr));
         isEmptyRange = !isEmptyRange && ret[i] === undefined;
     });
