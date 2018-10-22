@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -155,7 +155,7 @@ extend(defaultOptions, {
          */
 
         /**
-         * When buttons apply dataGrouping on a series, by deafault zooming
+         * When buttons apply dataGrouping on a series, by default zooming
          * in/out will deselect buttons and unset dataGrouping. Enable this
          * option to keep buttons selected when extremes change.
          *
@@ -262,7 +262,9 @@ extend(defaultOptions, {
          * @apioption  rangeSelector.buttonTheme
          */
         buttonTheme: {
+            /*= if (build.classic) { =*/
             'stroke-width': 0,
+            /*= } =*/
             width: 28,
             height: 18,
             padding: 2,
@@ -1221,10 +1223,12 @@ RangeSelector.prototype = {
                 padding: 2,
                 width: options.inputBoxWidth || 90,
                 height: options.inputBoxHeight || 17,
+                'text-align': 'center',
+                /*= if (build.classic) { =*/
                 stroke:
                     options.inputBoxBorderColor || '${palette.neutralColor20}',
-                'stroke-width': 1,
-                'text-align': 'center'
+                'stroke-width': 1
+                /*= } =*/
             })
             .on('click', function () {
                 // If it is already focused, the onfocus event doesn't fire
@@ -1368,6 +1372,12 @@ RangeSelector.prototype = {
             lang = defaultOptions.lang,
             div = rangeSelector.div,
             options = chartOptions.rangeSelector,
+            // Place inputs above the container
+            inputsZIndex = pick(
+                chartOptions.chart.style &&
+                chartOptions.chart.style.zIndex,
+                0
+            ) + 1,
             floating = options.floating,
             buttons = rangeSelector.buttons,
             inputGroup = rangeSelector.inputGroup,
@@ -1463,7 +1473,7 @@ RangeSelector.prototype = {
                 rangeSelector.div = div = createElement('div', null, {
                     position: 'relative',
                     height: 0,
-                    zIndex: 1 // above container
+                    zIndex: inputsZIndex
                 });
 
                 container.parentNode.insertBefore(div, container);

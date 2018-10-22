@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -34,6 +34,8 @@ H.colorPointMixin = {
     setVisible: function (vis) {
         var point = this,
             method = vis ? 'show' : 'hide';
+
+        point.visible = Boolean(vis);
 
         // Show and hide associated elements
         each(['graphic', 'dataLabel'], function (key) {

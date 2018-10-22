@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -1277,7 +1277,7 @@ Navigator.prototype = {
                 left = Math.max(0, left);
             } else if (index === 2 && left + range >= navigatorSize) {
                 left = navigatorSize - range;
-                if (xAxis.reversed) {
+                if (navigator.reversedExtremes) {
                     // #7713
                     left -= range;
                     fixedMin = navigator.getUnionExtremes().dataMin;
@@ -1328,10 +1328,9 @@ Navigator.prototype = {
         var navigator = this,
             chart = navigator.chart,
             baseXAxis = chart.xAxis[0],
-            // For reversed axes, min and max are chagned,
+            // For reversed axes, min and max are changed,
             // so the other extreme should be stored
-            reverse = (chart.inverted && !baseXAxis.reversed) ||
-                (!chart.inverted && baseXAxis.reversed);
+            reverse = navigator.reversedExtremes;
 
         if (index === 0) {
             // Grab the left handle
@@ -1450,7 +1449,6 @@ Navigator.prototype = {
         var navigator = this,
             chart = navigator.chart,
             xAxis = navigator.xAxis,
-            reversed = xAxis && xAxis.reversed,
             scrollbar = navigator.scrollbar,
             unionExtremes,
             fixedMin,
@@ -1475,13 +1473,13 @@ Navigator.prototype = {
             }
             // Snap to right edge (#4076)
             if (navigator.zoomedMax === navigator.size) {
-                fixedMax = reversed ?
+                fixedMax = navigator.reversedExtremes ?
                     unionExtremes.dataMin : unionExtremes.dataMax;
             }
 
             // Snap to left edge (#7576)
             if (navigator.zoomedMin === 0) {
-                fixedMin = reversed ?
+                fixedMin = navigator.reversedExtremes ?
                     unionExtremes.dataMax : unionExtremes.dataMin;
             }
 
@@ -1667,6 +1665,12 @@ Navigator.prototype = {
                     }
                 );
             }
+
+            navigator.reversedExtremes = (
+                chart.inverted && !navigator.xAxis.reversed
+            ) || (
+                !chart.inverted && navigator.xAxis.reversed
+            );
 
             // Render items, so we can bind events to them:
             navigator.renderElements();
@@ -2061,6 +2065,24 @@ Navigator.prototype = {
     },
 
     /**
+     * Get minimum from all base series connected to the navigator
+     *
+     * @param  {number} currentSeriesMin
+     *         Minium from the current series
+     *
+     * @return {number} Minimum from all series
+     */
+    getBaseSeriesMin: function (currentSeriesMin) {
+        return H.reduce(
+            this.baseSeries,
+            function (min, series) {
+                return Math.min(min, series.xData[0]);
+            },
+            currentSeriesMin
+        );
+    },
+
+    /**
      * Set the navigator x axis extremes to reflect the total. The navigator
      * extremes should always be the extremes of the union of all series in the
      * chart as well as the navigator series.
@@ -2136,8 +2158,11 @@ Navigator.prototype = {
                 if (!stickToMin) {
                     newMin = Math.max(
                         newMax - range,
-                        navigatorSeries && navigatorSeries.xData ?
-                            navigatorSeries.xData[0] : -Number.MAX_VALUE
+                        navigator.getBaseSeriesMin(
+                            navigatorSeries && navigatorSeries.xData ?
+                                navigatorSeries.xData[0] :
+                                -Number.MAX_VALUE
+                        )
                     );
                 }
             }
@@ -2167,11 +2192,12 @@ Navigator.prototype = {
     updatedDataHandler: function () {
         var navigator = this.chart.navigator,
             baseSeries = this,
-            navigatorSeries = this.navigatorSeries;
+            navigatorSeries = this.navigatorSeries,
+            xDataMin = navigator.getBaseSeriesMin(baseSeries.xData[0]);
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data  comes in.
-        navigator.stickToMax = navigator.xAxis.reversed ?
+        navigator.stickToMax = navigator.reversedExtremes ?
             Math.round(navigator.zoomedMin) === 0 :
             Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
 
@@ -2179,7 +2205,7 @@ Navigator.prototype = {
         // maximum. If the current axis minimum falls outside the new updated
         // dataset, we must adjust.
         navigator.stickToMin = isNumber(baseSeries.xAxis.min) &&
-            (baseSeries.xAxis.min <= baseSeries.xData[0]) &&
+            (baseSeries.xAxis.min <= xDataMin) &&
             (!this.chart.fixedRange || !navigator.stickToMax);
 
         // Set the navigator series data to the new data of the base series

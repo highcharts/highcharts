@@ -1,14 +1,89 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
+/**
+ * One position in relation to an axis.
+ *
+ * @typedef Highcharts.PointerAxisCoordinateObject
+ *
+ * @property {Highcharts.Axis} axis
+ *           Related axis.
+ *
+ * @property {number} value
+ *           Axis value.
+ */
+
+/**
+ * Positions in terms of axis values.
+ *
+ * @typedef Highcharts.PointerAxisCoordinatesObject
+ *
+ * @property {Array<Highcharts.PointerAxisCoordinateObject>} xAxis
+ *           Positions on the x-axis.
+ *
+ * @property {Array<Highcharts.PointerAxisCoordinateObject>} yAxis
+ *           Positions on the y-axis.
+ */
+
+/**
+ * Pointer coordinates.
+ *
+ * @typedef Highcharts.PointerCoordinatesObject
+ *
+ * @property {number} chartX
+ *
+ * @property {number} chartY
+ */
+
+/**
+ * A native browser mouse or touch event, extended with position information
+ * relative to the {@link Chart.container}.
+ *
+ * @typedef {global.PointerEvent} Highcharts.PointerEventObject
+ *
+ * @property {number} chartX
+ *           The X coordinate of the pointer interaction relative to the
+ *           chart.
+ *
+ * @property {number} chartY
+ *           The Y coordinate of the pointer interaction relative to the
+ *           chart.
+ */
+
+/**
+ * Axis-specific data of a selection.
+ *
+ * @typedef Highcharts.SelectDataObject
+ *
+ * @property {Highcharts.Axis} axis
+ *
+ * @property {number} min
+ *
+ * @property {number} max
+ */
+
+/**
+ * Object for select events.
+ *
+ * @typedef Highcharts.SelectEventObject
+ *
+ * @property {global.Event} originalEvent
+ *
+ * @property {Array<Highcharts.SelectDataObject>} xAxis
+ *
+ * @property {Array<Highcharts.SelectDataObject>} yAxis
+ */
+
 'use strict';
+
 import Highcharts from './Globals.js';
 import './Utilities.js';
 import './Tooltip.js';
 import './Color.js';
+
 var H = Highcharts,
     addEvent = H.addEvent,
     attr = H.attr,
@@ -18,6 +93,7 @@ var H = Highcharts,
     defined = H.defined,
     each = H.each,
     extend = H.extend,
+    find = H.find,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
     isObject = H.isObject,
@@ -32,11 +108,14 @@ var H = Highcharts,
  * property.
  *
  * @class
- * @param  {Chart} chart
- *         The Chart instance.
- * @param  {Options} options
- *         The root options object. The pointer uses options from the chart and
- *         tooltip structures.
+ * @name Highcharts.Pointer
+ *
+ * @param {Highcharts.Chart} chart
+ *        The Chart instance.
+ *
+ * @param {Highcharts.Options} options
+ *        The root options object. The pointer uses options from the chart and
+ *        tooltip structures.
  */
 Highcharts.Pointer = function (chart, options) {
     this.init(chart, options);
@@ -47,6 +126,14 @@ Highcharts.Pointer.prototype = {
      * Initialize the Pointer.
      *
      * @private
+     * @function Highcharts.Pointer#init
+     *
+     * @param {Highcharts.Chart} chart
+     *        The Chart instance.
+     *
+     * @param {Highcharts.Options} options
+     *        The root options object. The pointer uses options from the chart
+     *        and tooltip structures.
      */
     init: function (chart, options) {
 
@@ -62,6 +149,12 @@ Highcharts.Pointer.prototype = {
         this.lastValidTouch = {};
 
         if (Tooltip) {
+            /**
+             * Tooltip object for points of series.
+             *
+             * @name Highcharts.Chart#tooltip
+             * @type {Highcharts.Tooltip}
+             */
             chart.tooltip = new Tooltip(chart, options.tooltip);
             this.followTouchMove = pick(options.tooltip.followTouchMove, true);
         }
@@ -74,6 +167,10 @@ Highcharts.Pointer.prototype = {
      * down events.
      *
      * @private
+     * @function Highcharts.Pointer#zoomOption
+     *
+     * @param {global.Event} e
+     *        Event object.
      */
     zoomOption: function (e) {
         var chart = this.chart,
@@ -96,26 +193,16 @@ Highcharts.Pointer.prototype = {
     },
 
     /**
-     * @typedef  {Object} PointerEvent
-     *           A native browser mouse or touch event, extended with position
-     *           information relative to the {@link Chart.container}.
-     * @property {Number} chartX
-     *           The X coordinate of the pointer interaction relative to the
-     *           chart.
-     * @property {Number} chartY
-     *           The Y coordinate of the pointer interaction relative to the
-     *           chart.
-     *
-     */
-    /**
      * Takes a browser event object and extends it with custom Highcharts
      * properties `chartX` and `chartY` in order to work on the internal
      * coordinate system.
      *
-     * @param  {Object} e
-     *         The event object in standard browsers.
+     * @function Highcharts.Pointer#normalize
      *
-     * @return {PointerEvent}
+     * @param {global.Event} e
+     *        Event object in standard browsers.
+     *
+     * @return {Highcharts.PointerEventObject}
      *         A browser event with extended properties `chartX` and `chartY`.
      */
     normalize: function (e, chartPosition) {
@@ -140,11 +227,15 @@ Highcharts.Pointer.prototype = {
     /**
      * Get the click position in terms of axis values.
      *
-     * @param  {PointerEvent} e
-     *         A pointer event, extended with `chartX` and `chartY`
-     *         properties.
+     * @function Highcharts.Pointer#getCoordinates
+     *
+     * @param {Highcharts.PointerEventObject} e
+     *        Pointer event, extended with `chartX` and `chartY` properties.
+     *
+     * @return {Highcharts.PointerAxisCoordinatesObject}
      */
     getCoordinates: function (e) {
+
         var coordinates = {
             xAxis: [],
             yAxis: []
@@ -156,24 +247,29 @@ Highcharts.Pointer.prototype = {
                 value: axis.toValue(e[axis.horiz ? 'chartX' : 'chartY'])
             });
         });
+
         return coordinates;
     },
+
     /**
      * Finds the closest point to a set of coordinates, using the k-d-tree
      * algorithm.
      *
-     * @param  {Array<Series>} series
-     *         All the series to search in.
-     * @param  {boolean} shared
-     *         Whether it is a shared tooltip or not.
-     * @param  {object} coordinates
-     *         Chart coordinates of the pointer.
-     * @param  {number} coordinates.chartX
-     * @param  {number} coordinates.chartY
+     * @function Highcharts.Pointer#findNearestKDPoints
      *
-     * @return {Array<Point>} The points closest to given coordinates.
+     * @param {Array<Highcharts.Series>} series
+     *        All the series to search in.
+     *
+     * @param {boolean} shared
+     *        Whether it is a shared tooltip or not.
+     *
+     * @param {Highcharts.PointerCoordinatesObject} coordinates
+     *        Chart coordinates of the pointer.
+     *
+     * @return {Point|undefined}
+     *         The point closest to given coordinates.
      */
-    findNearestKDPoints: function (series, shared, coordinates) {
+    findNearestKDPoint: function (series, shared, coordinates) {
         var closest,
             sort = function (p1, p2) {
                 var isCloserX = p1.distX - p2.distX,
@@ -198,12 +294,10 @@ Highcharts.Pointer.prototype = {
                     result = p1.series.index > p2.series.index ? -1 : 1;
                 }
                 return result;
-            },
-            kdpoints = [];
-
+            };
         each(series, function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared,
-                compareX = shared || (
+                compareX = (
                     !noSharedTooltip &&
                     s.options.findNearestPointBy.indexOf('y') < 0
                 ),
@@ -211,19 +305,26 @@ Highcharts.Pointer.prototype = {
                     coordinates,
                     compareX
                 );
-
-            // Check that we actually found a point on the series.
-            if (isObject(point, true) && point.series) {
-                kdpoints.push(point);
+            if (
+                // Check that we actually found a point on the series.
+                isObject(point, true) &&
                 // Use the new point if it is closer.
-                if (!isObject(closest, true) || (sort(closest, point) > 0)) {
-                    closest = point;
-                }
+                (!isObject(closest, true) || (sort(closest, point) > 0))
+            ) {
+                closest = point;
             }
         });
-        kdpoints.closest = closest;
-        return kdpoints;
+        return closest;
     },
+
+    /**
+     * @private
+     * @function Highcharts.Pointer#getPointFromEvent
+     *
+     * @param {global.Event} e
+     *
+     * @return {Highcharts.Point|undefined}
+     */
     getPointFromEvent: function (e) {
         var target = e.target,
             point;
@@ -235,6 +336,16 @@ Highcharts.Pointer.prototype = {
         return point;
     },
 
+    /**
+     * @private
+     * @function Highcharts.Pointer#getChartCoordinatesFromPoint
+     *
+     * @param {Highcharts.Point} point
+     *
+     * @param {boolean} inverted
+     *
+     * @return {Highcharts.PointerCoordinatesObject}
+     */
     getChartCoordinatesFromPoint: function (point, inverted) {
         var series = point.series,
             xAxis = series.xAxis,
@@ -263,24 +374,29 @@ Highcharts.Pointer.prototype = {
      * Calculates what is the current hovered point/points and series.
      *
      * @private
+     * @function Highcharts.Pointer#getHoverData
      *
-     * @param  {undefined|Point} existingHoverPoint
-     *         The point currrently beeing hovered.
-     * @param  {undefined|Series} existingHoverSeries
-     *         The series currently beeing hovered.
-     * @param  {Array<Series>} series
-     *         All the series in the chart.
-     * @param  {boolean} isDirectTouch
-     *         Is the pointer directly hovering the point.
-     * @param  {boolean} shared
-     *         Whether it is a shared tooltip or not.
-     * @param  {object} coordinates
-     *         Chart coordinates of the pointer.
-     * @param  {number} coordinates.chartX
-     * @param  {number} coordinates.chartY
+     * @param {Highcharts.Point|undefined} existingHoverPoint
+     *        The point currrently beeing hovered.
      *
-     * @return {object}
-     *         Object containing resulting hover data.
+     * @param {Highcharts.Series|undefined} existingHoverSeries
+     *        The series currently beeing hovered.
+     *
+     * @param {Array<Highcharts.Series>} series
+     *        All the series in the chart.
+     *
+     * @param {boolean} isDirectTouch
+     *        Is the pointer directly hovering the point.
+     *
+     * @param {boolean} shared
+     *        Whether it is a shared tooltip or not.
+     *
+     * @param {Highcharts.PointerCoordinatesObject} coordinates
+     *        Chart coordinates of the pointer.
+     *
+     * @return {*}
+     *         Object containing resulting hover data: hoverPoint, hoverSeries,
+     *         and hoverPoints.
      */
     getHoverData: function (
         existingHoverPoint,
@@ -288,13 +404,13 @@ Highcharts.Pointer.prototype = {
         series,
         isDirectTouch,
         shared,
-        coordinates
+        coordinates,
+        params
     ) {
         var hoverPoint,
             hoverPoints = [],
             hoverSeries = existingHoverSeries,
-            kdpoints = [],
-            isBoosting = this.chart.isBoosting,
+            isBoosting = params && params.isBoosting,
             useExisting = !!(isDirectTouch && existingHoverPoint),
             notSticky = hoverSeries && !hoverSeries.stickyTracking,
             filter = function (s) {
@@ -306,73 +422,69 @@ Highcharts.Pointer.prototype = {
             },
             // Which series to look in for the hover point
             searchSeries = notSticky ?
-                // If it has stickyTracking false, only search when a series is
-                // actually hovered
-                H.grep(series, filter) :
+                // Only search on hovered series if it has stickyTracking false
+                [hoverSeries] :
                 // Filter what series to look in.
                 H.grep(series, function (s) {
                     return filter(s) && s.stickyTracking;
                 });
 
         // Use existing hovered point or find the one closest to coordinates.
-        if (useExisting) {
-            kdpoints = this.findNearestKDPoints(
-                searchSeries,
-                shared,
-                {
-                    chartX: existingHoverPoint.plotX + this.chart.plotLeft,
-                    chartY: existingHoverPoint.plotY + this.chart.plotTop
-                }
-            );
-            hoverPoint = existingHoverPoint;
-        } else {
-
-            kdpoints = this.findNearestKDPoints(
-                searchSeries,
-                shared,
-                coordinates
-            );
-            hoverPoint = kdpoints.closest;
-        }
-
+        hoverPoint = useExisting ?
+            existingHoverPoint :
+            this.findNearestKDPoint(searchSeries, shared, coordinates);
 
         // Assign hover series
         hoverSeries = hoverPoint && hoverPoint.series;
 
-        // Filter the hoverPoints.
-        if (kdpoints.length && shared && !hoverSeries.noSharedTooltip) {
+        // If we have a hoverPoint, assign hoverPoints.
+        if (hoverPoint) {
+            // When tooltip is shared, it displays more than one point
+            if (shared && !hoverSeries.noSharedTooltip) {
+                searchSeries = H.grep(series, function (s) {
+                    return filter(s) && !s.noSharedTooltip;
+                });
 
-            // Get all points with the same x value as the hoverPoint
-            each(kdpoints, function (p) {
-
-                if (isBoosting) {
-                    p = p.series.getPoint(p);
-                }
-
-                if (
-                    filter(p.series) &&
-                    !p.series.noSharedTooltip &&
-                    !p.isNull &&
-                    p.x === hoverPoint.x
-                ) {
-                    hoverPoints.push(p);
-                }
-            });
-        } else if (hoverPoint) {
-            hoverPoints.push(hoverPoint);
+                // Get all points with the same x value as the hoverPoint
+                each(searchSeries, function (s) {
+                    var point = find(s.points, function (p) {
+                        return p.x === hoverPoint.x && !p.isNull;
+                    });
+                    if (isObject(point)) {
+                        /*
+                        * Boost returns a minimal point. Convert it to a usable
+                        * point for tooltip and states.
+                        */
+                        if (isBoosting) {
+                            point = s.getPoint(point);
+                        }
+                        hoverPoints.push(point);
+                    }
+                });
+            } else {
+                hoverPoints.push(hoverPoint);
+            }
         }
-
         return {
             hoverPoint: hoverPoint,
             hoverSeries: hoverSeries,
             hoverPoints: hoverPoints
         };
     },
+
     /**
      * With line type charts with a single tracker, get the point closest to the
      * mouse. Run Point.onMouseOver and display tooltip for the point or points.
      *
      * @private
+     * @function Highcharts.Pointer#runPointActions
+     *
+     * @param {global.Event} e
+     *
+     * @param {Highcharts.Point} p
+     *
+     * @fires Highcharts.Point#event:mouseOut
+     * @fires Highcharts.Point#event:mouseOver
      */
     runPointActions: function (e, p) {
         var pointer = this,
@@ -385,9 +497,11 @@ Highcharts.Pointer.prototype = {
             hoverPoint = p || chart.hoverPoint,
             hoverSeries = hoverPoint && hoverPoint.series || chart.hoverSeries,
             // onMouseOver or already hovering a series with directTouch
-            isDirectTouch = !!p || (
-                (hoverSeries && hoverSeries.directTouch) &&
-                pointer.isDirectTouch
+            isDirectTouch = e.type !== 'touchmove' && (
+                !!p || (
+                    (hoverSeries && hoverSeries.directTouch) &&
+                    pointer.isDirectTouch
+                )
             ),
             hoverData = this.getHoverData(
                 hoverPoint,
@@ -395,7 +509,8 @@ Highcharts.Pointer.prototype = {
                 series,
                 isDirectTouch,
                 shared,
-                e
+                e,
+                { isBoosting: chart.isBoosting }
             ),
             useSharedTooltip,
             followPointer,
@@ -406,11 +521,7 @@ Highcharts.Pointer.prototype = {
         hoverPoint = hoverData.hoverPoint;
         points = hoverData.hoverPoints;
         hoverSeries = hoverData.hoverSeries;
-        followPointer = (
-            e && e.type === 'touchmove' ?
-            pointer.followTouchMove === true :
-            hoverSeries && hoverSeries.tooltipOptions.followPointer
-        );
+        followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
         useSharedTooltip = (
             shared &&
             hoverSeries &&
@@ -500,9 +611,13 @@ Highcharts.Pointer.prototype = {
      * Reset the tracking by hiding the tooltip, the hover series state and the
      * hover point
      *
-     * @param allowMove {Boolean}
+     * @function Highcharts.Pointer#reset
+     *
+     * @param {boolean} allowMove
      *        Instead of destroying the tooltip altogether, allow moving it if
      *        possible.
+     *
+     * @param {number} delay
      */
     reset: function (allowMove, delay) {
         var pointer = this,
@@ -532,11 +647,13 @@ Highcharts.Pointer.prototype = {
                 if (tooltip.shared && hoverPoints) { // #8284
                     each(hoverPoints, function (point) {
                         point.setState(point.state, true);
-                        if (point.series.xAxis.crosshair) {
-                            point.series.xAxis.drawCrosshair(null, point);
-                        }
-                        if (point.series.yAxis.crosshair) {
-                            point.series.yAxis.drawCrosshair(null, point);
+                        if (point.series.isCartesian) {
+                            if (point.series.xAxis.crosshair) {
+                                point.series.xAxis.drawCrosshair(null, point);
+                            }
+                            if (point.series.yAxis.crosshair) {
+                                point.series.yAxis.drawCrosshair(null, point);
+                            }
                         }
                     });
                 } else if (hoverPoint) { // #2500
@@ -587,6 +704,11 @@ Highcharts.Pointer.prototype = {
      * Scale series groups to a certain scale and translation.
      *
      * @private
+     * @function Highcharts.Pointer#scaleGroups
+     *
+     * @param {Highcharts.SeriesPlotBoxObject} attribs
+     *
+     * @param {boolean} clip
      */
     scaleGroups: function (attribs, clip) {
 
@@ -616,6 +738,9 @@ Highcharts.Pointer.prototype = {
      * Start a drag operation.
      *
      * @private
+     * @function Highcharts.Pointer#dragStart
+     *
+     * @param {Highcharts.PointerEventObject} e
      */
     dragStart: function (e) {
         var chart = this.chart;
@@ -632,6 +757,9 @@ Highcharts.Pointer.prototype = {
      * is down.
      *
      * @private
+     * @function Highcharts.Pointer#drag
+     *
+     * @param {Highcharts.PointerEventObject} e
      */
     drag: function (e) {
 
@@ -744,6 +872,9 @@ Highcharts.Pointer.prototype = {
      * On mouse up or touch end across the entire document, drop the selection.
      *
      * @private
+     * @function Highcharts.Pointer#drop
+     *
+     * @param {global.Event} e
      */
     drop: function (e) {
         var pointer = this,
@@ -850,6 +981,12 @@ Highcharts.Pointer.prototype = {
         }
     },
 
+    /**
+     * @private
+     * @function Highcharts.Pointer#onContainerMouseDown
+     *
+     * @param {global.Event} e
+     */
     onContainerMouseDown: function (e) {
         // Normalize before the 'if' for the legacy IE (#7850)
         e = this.normalize(e);
@@ -867,8 +1004,12 @@ Highcharts.Pointer.prototype = {
         }
     },
 
-
-
+    /**
+     * @private
+     * @function Highcharts.Pointer#onDocumentMouseUp
+     *
+     * @param {global.Event} e
+     */
     onDocumentMouseUp: function (e) {
         if (charts[H.hoverChartIndex]) {
             charts[H.hoverChartIndex].pointer.drop(e);
@@ -881,6 +1022,9 @@ Highcharts.Pointer.prototype = {
      * always fire.
      *
      * @private
+     * @function Highcharts.Pointer#onDocumentMouseMove
+     *
+     * @param {Highcharts.PointerEventObject} e
      */
     onDocumentMouseMove: function (e) {
         var chart = this.chart,
@@ -905,6 +1049,9 @@ Highcharts.Pointer.prototype = {
      * When mouse leaves the container, hide the tooltip.
      *
      * @private
+     * @function Highcharts.Pointer#onContainerMouseLeave
+     *
+     * @param {global.Event} e
      */
     onContainerMouseLeave: function (e) {
         var chart = charts[H.hoverChartIndex];
@@ -916,7 +1063,14 @@ Highcharts.Pointer.prototype = {
         }
     },
 
-    // The mousemove, touchmove and touchstart event handler
+    /**
+     * The mousemove, touchmove and touchstart event handler
+     *
+     * @private
+     * @function Highcharts.Pointer#onContainerMouseMove
+     *
+     * @param {Highcharts.PointerEventObject} e
+     */
     onContainerMouseMove: function (e) {
 
         var chart = this.chart;
@@ -956,12 +1110,15 @@ Highcharts.Pointer.prototype = {
      * specificclass name. Used on detection of tracker objects and on deciding
      * whether hovering the tooltip should cause the active series to mouse out.
      *
-     * @param  {SVGDOMElement|HTMLDOMElement} element
-     *         The element to investigate.
-     * @param  {String} className
-     *         The class name to look for.
+     * @function Highcharts.Pointer#inClass
      *
-     * @return {Boolean}
+     * @param {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} element
+     *        The element to investigate.
+     *
+     * @param {string} className
+     *        The class name to look for.
+     *
+     * @return {boolean}
      *         True if either the element or one of its parents has the given
      *         class name.
      */
@@ -981,6 +1138,12 @@ Highcharts.Pointer.prototype = {
         }
     },
 
+    /**
+     * @private
+     * @function Highcharts.Pointer#onTrackerMouseOut
+     *
+     * @param {global.Event} e
+     */
     onTrackerMouseOut: function (e) {
         var series = this.chart.hoverSeries,
             relatedTarget = e.relatedTarget || e.toElement;
@@ -1004,6 +1167,12 @@ Highcharts.Pointer.prototype = {
         }
     },
 
+    /**
+     * @private
+     * @function Highcharts.Pointer#onContainerClick
+     *
+     * @param {Highcharts.PointerEventObject} e
+     */
     onContainerClick: function (e) {
         var chart = this.chart,
             hoverPoint = chart.hoverPoint,
@@ -1050,6 +1219,7 @@ Highcharts.Pointer.prototype = {
      * name.
      *
      * @private
+     * @function Highcharts.Pointer#setDOMEvents
      */
     setDOMEvents: function () {
 
@@ -1098,6 +1268,8 @@ Highcharts.Pointer.prototype = {
 
     /**
      * Destroys the Pointer object and disconnects DOM events.
+     *
+     * @function Highcharts.Pointer#destroy
      */
     destroy: function () {
         var pointer = this;

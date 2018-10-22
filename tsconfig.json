@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+        "forceConsistentCasingInFileNames": true,
+        "noEmit": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "module": "umd",
+        "baseUrl": ".",
+        "lib": ["es6", "dom"],
+        "paths": { "highcharts": ["."] },
+        "typeRoots": ["."],
+        "types": []
+    },
+    "files": [
+        "index.d.ts",
+        "highcharts.d.ts",
+        "highcharts.src.d.ts",
+        "modules/accessibility.d.ts",
+        "modules/accessibility.src.d.ts",
+        "modules/export-data.d.ts",
+        "modules/export-data.src.d.ts",
+        "modules/exporting.d.ts",
+        "modules/exporting.src.d.ts",
+        "modules/offline-exporting.d.ts",
+        "modules/offline-exporting.src.d.ts",
+        "modules/series-label.d.ts",
+        "modules/series-label.src.d.ts",
+        "modules/vector.d.ts",
+        "modules/vector.src.d.ts",
+        "../test/typescript/highcharts.ts",
+        "../test/typescript/modules/accessibility.ts",
+        "../test/typescript/modules/export-data.ts",
+        "../test/typescript/modules/exporting.ts",
+        "../test/typescript/modules/offline-exporting.ts",
+        "../test/typescript/modules/series-label.ts",
+        "../test/typescript/modules/vector.ts"
+    ]
+}

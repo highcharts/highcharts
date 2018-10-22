@@ -142,6 +142,7 @@ H.seriesType('pivotpoints', 'sma',
 
             return path;
         },
+        // TODO: Rewrite this logic to use multiple datalabels
         drawDataLabels: function () {
             var indicator = this,
                 pointMapping = indicator.pointArrayMap,
@@ -177,7 +178,11 @@ H.seriesType('pivotpoints', 'sma',
                                     point.dataLabel;
                             }
 
-                            point.dataLabel = currentLabel =
+                            if (!point.dataLabels) {
+                                point.dataLabels = [];
+                            }
+                            point.dataLabels[0] = point.dataLabel =
+                                currentLabel =
                                 currentLabel && currentLabel.element ?
                                     currentLabel :
                                     null;

@@ -125,7 +125,7 @@ H.seriesType('stochastic', 'sma',
 
             // Stochastic requires close value
             if (
-                xVal.length < periodK ||
+                yValLen < periodK ||
                 !isArray(yVal[0]) ||
                 yVal[0].length !== 4
             ) {
@@ -145,11 +145,14 @@ H.seriesType('stochastic', 'sma',
                 HL = extremes[1] - LL;
                 K = CL / HL * 100;
 
+                xData.push(xVal[i]);
+                yData.push([K, null]);
+
                 // Calculate smoothed %D, which is SMA of %K
-                if (i >= periodK + periodD) {
+                if (i >= (periodK - 1) + (periodD - 1)) {
                     points = SMA.prototype.getValues.call(this, {
-                        xData: xData.slice(i - periodD - periodK, i - periodD),
-                        yData: yData.slice(i - periodD - periodK, i - periodD)
+                        xData: xData.slice(-periodD),
+                        yData: yData.slice(-periodD)
                     }, {
                         period: periodD
                     });
@@ -157,8 +160,7 @@ H.seriesType('stochastic', 'sma',
                 }
 
                 SO.push([xVal[i], K, D]);
-                xData.push(xVal[i]);
-                yData.push([K, D]);
+                yData[yData.length - 1][1] = D;
             }
 
             return {

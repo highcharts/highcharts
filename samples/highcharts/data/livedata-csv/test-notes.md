@@ -1,0 +1,1 @@
+Verify that the data is updated and moves sideways with a smooth animation.

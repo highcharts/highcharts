@@ -154,3 +154,38 @@ QUnit.test('Legend checkbox position with title (#4811)', function (assert) {
     );
 
 });
+
+QUnit.test('Legend layout proximate with check boxes (#9091)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        plotOptions: {
+            series: {
+                showCheckbox: true
+            }
+        },
+        legend: {
+            layout: 'proximate',
+            align: 'right'
+        },
+        yAxis: {
+            min: 100
+        },
+        series: [{
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+            selected: true
+        }, {
+            data: [144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 29.9, 71.5, 106.4, 129.2]
+        }]
+    });
+
+    assert.notEqual(
+        chart.series[0].checkbox.style.display,
+        'none',
+        'The checkbox should be visible'
+    );
+
+    assert.notEqual(
+        chart.series[1].checkbox.style.display,
+        'none',
+        'The checkbox should be visible'
+    );
+});

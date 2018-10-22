@@ -1,24 +1,39 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
+
 var Axis = H.Axis,
     getMagnitude = H.getMagnitude,
     map = H.map,
     normalizeTickInterval = H.normalizeTickInterval,
     pick = H.pick;
-/**
+
+/*
  * Methods defined on the Axis prototype
  */
 
 /**
- * Set the tick positions of a logarithmic axis
+ * Set the tick positions of a logarithmic axis.
  *
- * @ignore
+ * @private
+ * @function Highcharts.Axis#getLogTickPositions
+ *
+ * @param {number} interval
+ *
+ * @param {number} min
+ *
+ * @param {number} max
+ *
+ * @param {number} minor
+ *
+ * @return {Array<number>}
  */
 Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
     var axis = this,
@@ -129,10 +144,26 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
     return positions;
 };
 
+/**
+ * @private
+ * @function Highcharts.Axis#log2lin
+ *
+ * @param {number} num
+ *
+ * @return {number}
+ */
 Axis.prototype.log2lin = function (num) {
     return Math.log(num) / Math.LN10;
 };
 
+/**
+ * @private
+ * @function Highcharts.Axis#lin2log
+ *
+ * @param {number} num
+ *
+ * @return {number}
+ */
 Axis.prototype.lin2log = function (num) {
     return Math.pow(10, num);
 };

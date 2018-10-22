@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -548,9 +548,14 @@ Axis.prototype.beforePadding = function () {
         }
     });
 
+    // Apply the padding to the min and max properties
     if (activeSeries.length && range > 0 && !this.isLog) {
         pxMax -= axisLength;
-        transA *= (axisLength + pxMin - pxMax) / axisLength;
+        transA *= (
+            axisLength +
+            Math.max(0, pxMin) - // #8901
+            Math.min(pxMax, axisLength)
+        ) / axisLength;
         each(
             [['min', 'userMin', pxMin], ['max', 'userMax', pxMax]],
             function (keys) {
@@ -594,8 +599,8 @@ Axis.prototype.beforePadding = function () {
  *     ]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.bubble.turboThreshold),
  * this option is not available.
  *

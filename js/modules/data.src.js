@@ -1,7 +1,7 @@
 /**
  * Data module
  *
- * (c) 2012-2017 Torstein Honsi
+ * (c) 2012-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -166,7 +166,7 @@ var addEvent = Highcharts.addEvent,
  * @sample {highstock} highcharts/data/start-end/ Don't get series names from the CSV
  * @default true
  * @since 4.1.0
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption data.firstRowAsNames
  */
 

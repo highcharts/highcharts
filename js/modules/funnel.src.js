@@ -1,7 +1,7 @@
 /**
  * Highcharts funnel module
  *
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -427,8 +427,8 @@ seriesType('funnel', 'pie',
  *  data: [0, 5, 3, 5]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.funnel.turboThreshold),
  * this option is not available.
  *
@@ -527,8 +527,8 @@ seriesType('pyramid', 'funnel',
  *  data: [0, 5, 3, 5]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.pyramid.turboThreshold),
  * this option is not available.
  *

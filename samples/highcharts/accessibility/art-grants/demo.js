@@ -131,6 +131,9 @@ Highcharts.chart('container', {
         seriesDescriptionFormatter: function (series) {
             return series.type !== 'line' ? series.buildSeriesInfoString() :
                 series.name + ', ' + dollarFormat(series.points[0].y);
+        },
+        keyboardNavigation: {
+            mode: 'serialize'
         }
     },
 

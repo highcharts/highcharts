@@ -78,3 +78,45 @@ QUnit.test('Extremes - edge cases', function (assert) {
         'Min with reversed xAxis and handles, correct range (#7576)'
     );
 });
+
+QUnit.test('Extremes - inverted chart', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+            chart: {
+                inverted: true
+            },
+            xAxis: {
+                min: 0,
+                max: 3
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6, 3, 8, 9, 1]
+            }]
+        }),
+        controller = new TestController(chart),
+        newExtremes;
+
+    controller.mouseDown(
+        chart.navigator.left + 10,
+        chart.plotTop + chart.navigator.size
+    );
+
+    newExtremes = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        newExtremes.max,
+        newExtremes.dataMax,
+        'Inverted chart and reversed xAxis: Correct max ' +
+            'extremes after click on navigator (#8812)'
+    );
+
+    chart.series[0].addPoint(5, true, true, true);
+
+    newExtremes = chart.xAxis[0].getExtremes();
+
+    assert.strictEqual(
+        newExtremes.max,
+        newExtremes.dataMax,
+        'Inverted chart and reversed xAxis: Correct max ' +
+            'when adding points (#8812)'
+    );
+});

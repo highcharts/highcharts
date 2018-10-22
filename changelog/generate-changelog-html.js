@@ -15,11 +15,27 @@ var replaceString = require('replace-string');
         pretty = require('pretty'),
         semverSort = require('semver-sort');
 
-    var products = [
-        { header: 'Highcharts Basic', name: 'highcharts', changelogId: 'hc-changelog', offset: '' },
-        { header: 'Highstock', name: 'highstock', changelogId: 'hs-changelog', offset: 'hs-' },
-        { header: 'Highmaps', name: 'highmaps', changelogId: 'hm-changelog', offset: 'hm-' }
-    ];
+    var products = [{
+        header: 'Highcharts Basic',
+        name: 'highcharts',
+        changelogId: 'hc-changelog',
+        offset: ''
+    }, {
+        header: 'Highstock',
+        name: 'highstock',
+        changelogId: 'hs-changelog',
+        offset: 'hs-'
+    }, {
+        header: 'Highmaps',
+        name: 'highmaps',
+        changelogId: 'hm-changelog',
+        offset: 'hm-'
+    }, {
+        header: 'Highcharts Gantt',
+        name: 'highcharts-gantt',
+        changelogId: 'hg-changelog',
+        offset: 'hg-'
+    }];
 
     var changelog = {
         header: {
@@ -53,6 +69,7 @@ var replaceString = require('replace-string');
 
     function sortMarkdownFileContent(mdContent) {
         let write = 'New features';
+        let changelogTitle;
 
         changelog.features = marked.lexer('');
         changelog.upgradeNotes = marked.lexer('');
@@ -60,17 +77,22 @@ var replaceString = require('replace-string');
 
         marked.lexer(mdContent).forEach((token, index) => {
             if (index === 0) {
-                var changelogTitle = token.text.split(' '),
-                    date = changelogTitle[changelogTitle.length - 1];
+                changelogTitle = token.text.split(' ');
+
+                let date = changelogTitle[changelogTitle.length - 1];
                 if (date !== '()') {
                     changelog.header.date = date;
                 }
                 return;
             }
-            if (token.type === 'heading' &&
-               (token.type === 'Upgrade notes' ||
-               token.type === 'Bug fixes')) {
-                write = token.type;
+            if (
+                token.type === 'heading' &&
+                (
+                    token.text === 'Upgrade notes' ||
+                    token.text === 'Bug fixes'
+                )
+            ) {
+                write = token.text;
                 return;
             }
             switch (write) {
@@ -99,7 +121,12 @@ var replaceString = require('replace-string');
             <div class="row">
             <div class="col-md-1 hidden-sm"> </div>
             <div class="col-md-10 col-sm-12">
-            <p style="text-align: center;">View changelog for <a href="#highcharts">Highcharts</a>, <a href="#highstock">Highstock</a>, <a href="#highmaps">Highmaps</a>. Go to the <a href="download">Download</a> page to get the latest version.</p>`
+            <p style="text-align: center;">View changelog for
+            <a href="#highcharts">Highcharts</a>,
+            <a href="#highstock">Highstock</a>,
+            <a href="#highmaps">Highmaps</a>,
+            <a href="#highcharts-gantt">Highcharts Gantt</a>. Go to the
+            <a href="download">Download</a> page to get the latest version.</p>`
         );
     }
     function productHeaderHTMLStructure(product) {
@@ -113,8 +140,14 @@ var replaceString = require('replace-string');
 
     function featureHTMLStructure() {
         if (changelog.features) {
+            let version = changelog.header.version.split('-').join('.');
+            let id = changelog.header.name + '-v' + version;
             return (
-                `<p>${changelog.header.productName} ${changelog.header.version.split('-').join('.')} ${changelog.header.date}</p>
+                `<p class="release-header" style="position: relative">
+                    <a id="${id}" style="position: absolute; top: -60px"></a>
+                    <a style="color: inherit; font-size: inherit; font-weight: inherit"
+                    href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
+                </p>
                 ${marked.parser(changelog.features)}`
             );
         }
@@ -140,7 +173,9 @@ var replaceString = require('replace-string');
     function bugFixesHTMLStructure() {
         if (changelog.bugFixes.length > 0) {
             return (
-                `<div id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes" class="panel-heading">
+                `<div
+                    id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"
+                    class="panel-heading">
                 <h4 class="panel-title">
                 <a href="#${changelog.header.offset}${changelog.header.version}-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
                 </h4>
@@ -206,11 +241,12 @@ var replaceString = require('replace-string');
      * Goes synchronous through each markdown file in each directory and captures it's content
      */
     products.forEach(product => {
-        changelog.header.productName = capitalizeFirstLetter(product.name);
+        changelog.header.productName = product.header;
+        changelog.header.name = product.name;
         changelog.header.offset = product.offset;
         htmlContent += productHeaderHTMLStructure(product);
         var sortedDir = getSortedDirFiles(fs.readdirSync('./' + product.name));
-        sortedDir.forEach(file => {
+        sortedDir.forEach((file) => {
             var content = fs.readFileSync('./' + product.name + '/' + file, 'utf8');
             sortMarkdownFileContent(content);
             changelog.header.version = formatVersionNumber(file);

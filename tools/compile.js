@@ -10,6 +10,8 @@ const {
 const colors = require('colors');
 
 const compileSingleFile = (path, sourceFolder, createSourceMap) => {
+    const filenameIn = path.split('/').pop();
+    const filenameOut = filenameIn.replace('.src.js', '.js');
     const sourcePath = sourceFolder + path;
     const outputPath = sourcePath.replace('.src.js', '.js');
     const src = getFile(sourcePath);
@@ -26,6 +28,7 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
         const out = closureCompiler.compile({
             compilationLevel: 'SIMPLE_OPTIMIZATIONS',
             jsCode: [{
+                path: filenameIn,
                 src: src
             }],
             languageIn: 'ES5',
@@ -37,7 +40,24 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
             const msg = errors.map(getErrorMessage).join('\n');
             reject(msg);
         } else {
-            writeFile(outputPath, out.compiledCode);
+            let compiledCode = out.compiledCode;
+            if (createSourceMap) {
+                /**
+                 * Hack to insert the file property in sourcemap, and the
+                 * sourceMappingURL in the out file.
+                 * TODO: the closure-compiler should likely be able to handle
+                 * this if the configuration is correct.
+                 */
+                const sourceMappingURL = filenameOut + '.map';
+                const mapJSON = JSON.parse(out.sourceMap);
+                mapJSON.file = sourceMappingURL;
+                compiledCode = `${compiledCode}\n//# sourceMappingURL=${sourceMappingURL}`;
+
+                // Write the source map to file.
+                writeFile(outputPath + '.map', JSON.stringify(mapJSON));
+            }
+
+            writeFile(outputPath, compiledCode);
             const filesize = statSync(outputPath).size;
             const filesizeKb = (filesize / 1000).toFixed(2) + ' kB';
 
@@ -49,9 +69,6 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
                 return;
             }
 
-            if (createSourceMap) {
-                writeFile(outputPath + '.map', out.sourceMap);
-            }
             console.log(
                 colors.green('Compiled ' + sourcePath + ' => ' + outputPath) +
                 colors.gray(' (' + filesizeKb + ')')
