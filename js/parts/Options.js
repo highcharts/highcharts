@@ -3181,6 +3181,8 @@ H.defaultOptions = {
          * `tooltip.xDateFormat`. To access the original point use
          * `point.point`.
          *
+         * Set an empty string to avoid header on a shared or split tooltip.
+         *
          * @sample {highcharts} highcharts/tooltip/footerformat/
          *         An HTML table in the tooltip
          * @sample {highstock} highcharts/tooltip/footerformat/
@@ -3197,6 +3199,9 @@ H.defaultOptions = {
          * Furthermore, `point.y` can be extended by the `tooltip.valuePrefix`
          * and `tooltip.valueSuffix` variables. This can also be overridden for
          * each series, which makes it a good hook for displaying units.
+         *
+         * Set an empty string to leave out a series from a shared or split
+         * tooltip.
          *
          * In styled mode, the dot is colored by a class name rather
          * than the point color.

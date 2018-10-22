@@ -840,7 +840,7 @@ H.Tooltip.prototype = {
         }
         // Create the individual labels for header and points, ignore footer
         each(labels.slice(0, points.length + 1), function (str, i) {
-            if (str !== false) {
+            if (str !== false && str !== '') {
                 var point = points[i - 1] ||
                         // Item 0 is the header. Instead of this, we could also
                         // use the crosshair label
@@ -1213,7 +1213,9 @@ H.Tooltip.prototype = {
                 item.point.tooltipFormatter
             ).call(
                 item.point,
-                tooltipOptions[(item.point.formatPrefix || 'point') + 'Format']
+                tooltipOptions[
+                    (item.point.formatPrefix || 'point') + 'Format'
+                ] || ''
             );
         });
     }
