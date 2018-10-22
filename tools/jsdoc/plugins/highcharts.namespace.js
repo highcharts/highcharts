@@ -807,6 +807,34 @@ function filterNodes (node) {
 }
 
 /**
+ * Sorts all children of a node in alphabetical ascending order.
+ *
+ * @param {Node} node
+ *        Root node.
+ */
+function sortNodes (node) {
+
+    if (!node.children) {
+        return;
+    }
+
+    let childrenReferences;
+
+    if (node.doclet && node.meta) {
+        childrenReferences = node.children;
+        delete node.children;
+        node.children = childrenReferences;
+    }
+ 
+    childrenReferences = node.children.splice();
+    node.children.push(...childrenReferences.sort((a, b) => (
+        a.doclet.name < b.doclet.name ? -1 :
+        a.doclet.name > b.doclet.name ? 1 :
+        0
+    )));
+ }
+ 
+/**
  * Updates corresponding node in the tree with information from the doclet.
  *
  * @private
@@ -1287,6 +1315,7 @@ function fileComplete (e) {
 function processingComplete (e) {
 
     filterNodes(globalNamespace);
+    sortNodes(globalNamespace);
 
     fs.writeFileSync(
         path.join(rootPath, 'tree-namespace.json'),
