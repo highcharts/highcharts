@@ -118,7 +118,9 @@ H.setOptions({
                 addButton: 'add',
                 saveButton: 'save',
                 editButton: 'edit',
-                removeButton: 'remove'
+                removeButton: 'remove',
+                series: 'Series',
+                volume: 'Volume'
             }
         }
     },
