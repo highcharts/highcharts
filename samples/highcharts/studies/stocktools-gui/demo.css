@@ -349,6 +349,11 @@
   overflow-x: hidden;
 }
 
+.highcharts-popup-rhs-col-wrapper h3 {
+  margin-top:0px;
+  padding-bottom:0px;
+}
+
 .highcharts-stocktools-wrapper ul.highcharts-indicator-list,
 .highcharts-indicator-list {
   float: left;
