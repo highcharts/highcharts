@@ -496,6 +496,40 @@ function resolveProductTypes(doclet, tagObj) {
     };
 }
 
+/**
+ * Sorts all children of a node in alphabetical ascending order.
+ */
+function sortNodes (node) {
+
+    if (!node.children) {
+        return;
+    }
+
+    let childrenReferences;
+
+    if (node.doclet && node.meta) {
+        childrenReferences = node.children;
+        delete node.children;
+        node.children = childrenReferences;
+    }
+
+    childrenReferences = {};
+
+    Object
+        .keys(node.children)
+        .forEach(key => {
+            childrenReferences[key] = node.children[key];
+            delete node.children[key];
+        });
+    Object
+        .keys(childrenReferences)
+        .sort()
+        .forEach(key => {
+            node.children[key] = childrenReferences[key];
+            sortNodes(node.children[key]);
+        });
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 exports.defineTags = function (dictionary) {
@@ -769,6 +803,7 @@ Highcharts.chart('container', {
 
         Object.keys(options.plotOptions.children).forEach(addSeriesTypeDescription);
 
+        sortNodes({ children: options });
         dumpOptions();
     }
 };
