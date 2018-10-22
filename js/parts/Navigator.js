@@ -98,10 +98,10 @@ extend(defaultOptions, {
          * @sample {highstock} stock/demo/lazy-loading/
          *         Set to false with async data loading
          *
-         * @type       {boolean}
-         * @default    true
-         * @product    highstock
-         * @apioption  navigator.adaptToUpdatedData
+         * @type      {boolean}
+         * @default   true
+         * @product   highstock
+         * @apioption navigator.adaptToUpdatedData
          */
 
         /**
@@ -114,10 +114,10 @@ extend(defaultOptions, {
          * @see [series.showInNavigator](#plotOptions.series.showInNavigator)
          *
          * @deprecated
-         * @type       {*}
-         * @default    0
-         * @product    highstock
-         * @apioption  navigator.baseSeries
+         * @type      {*}
+         * @default   0
+         * @product   highstock
+         * @apioption navigator.baseSeries
          */
 
         /**
@@ -126,21 +126,21 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/enabled/
          *         Disable the navigator
          *
-         * @type       {boolean}
-         * @default    true
-         * @product    highstock
-         * @apioption  navigator.enabled
+         * @type      {boolean}
+         * @default   true
+         * @product   highstock
+         * @apioption navigator.enabled
          */
 
         /**
          * When the chart is inverted, whether to draw the navigator on the
          * opposite side.
          *
-         * @type       {boolean}
-         * @default    false
-         * @since      5.0.8
-         * @product    highstock
-         * @apioption  navigator.opposite
+         * @type      {boolean}
+         * @default   false
+         * @since     5.0.8
+         * @product   highstock
+         * @apioption navigator.opposite
          */
 
         /**
@@ -170,7 +170,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/maskinside-false/
          *         False, mask outside
          *
-         * @since 2.0
+         * @since   2.0
          * @product highstock
          */
         maskInside: true,
@@ -222,10 +222,10 @@ extend(defaultOptions, {
              * @sample {highstock} stock/navigator/styled-handles/
              *         Styled handles
              *
-             * @type       {Array<string>}
-             * @default    ["navigator-handle", "navigator-handle"]
-             * @since      6.0.0
-             * @product    highstock
+             * @type    {Array<string>}
+             * @default ["navigator-handle", "navigator-handle"]
+             * @since   6.0.0
+             * @product highstock
              */
             symbols: ['navigator-handle', 'navigator-handle'],
 
@@ -312,8 +312,8 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/outline/
          *         2px blue outline
          *
-         * @type       {number}
-         * @product    highstock
+         * @type    {number}
+         * @product highstock
          */
         outlineWidth: 1,
 
@@ -357,8 +357,8 @@ extend(defaultOptions, {
              * The type of the navigator series. Defaults to `areaspline` if
              * defined, otherwise `line`.
              *
-             * @type       {string}
-             * @default    areaspline
+             * @type    {string}
+             * @default areaspline
              */
             type: defaultSeriesType,
 
@@ -573,8 +573,8 @@ extend(defaultOptions, {
  *
  * @function Highcharts.Renderer#symbols.navigator-handle
  *
- * @param  {boolean} inverted
- *         flag for chart.inverted
+ * @param {boolean} inverted
+ *        flag for chart.inverted
  *
  * @return {Highcharts.SVGPathArray}
  *         Path to be used in a handle
