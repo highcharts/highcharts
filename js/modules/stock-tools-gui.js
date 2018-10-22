@@ -336,7 +336,7 @@ addEvent(H.Chart, 'destroy', function () {
 });
 
 addEvent(H.Chart, 'redraw', function () {
-    if (this.stockToolbar) {
+    if (this.stockToolbar && this.stockToolbar.guiEnabled) {
         this.stockToolbar.redraw();
     }
 });
@@ -362,15 +362,25 @@ H.Toolbar = function (options, langOptions, chart) {
     this.options = options;
     this.lang = langOptions;
 
+    this.guiEnabled = options.enabled;
     this.visible = pick(options.visible, true);
     this.placed = pick(options.placed, false);
-    this.createHTML();
+
+    // General events collection which should be removed upon destroy/update:
+    this.eventsToUnbind = [];
 
     // add popup to main container
     this.popup = new H.Popup(chart.container);
-    this.init();
 
-    this.showHideNavigatorion();
+    if (this.guiEnabled) {
+        this.createHTML();
+
+        this.init();
+
+        this.showHideNavigatorion();
+    }
+
+    fireEvent(this, 'afterInit');
 };
 
 H.extend(H.Chart.prototype, {
@@ -391,8 +401,9 @@ H.extend(H.Chart.prototype, {
             ),
             langOptions = lang.stockTools && lang.stockTools.gui;
 
-        if (guiOptions.enabled) {
-            this.stockToolbar = new H.Toolbar(guiOptions, langOptions, this);
+        this.stockToolbar = new H.Toolbar(guiOptions, langOptions, this);
+
+        if (this.stockToolbar.guiEnabled) {
             this.stockToolbar.setToolbarSpace();
         }
     }
@@ -438,8 +449,6 @@ H.Toolbar.prototype = {
                 addSubmenu.call(_self, button, defs[btnName]);
             }
         });
-
-        fireEvent(this, 'afterInit');
     },
     /*
      * Create submenu (list of buttons) for the option. In example main button
@@ -882,24 +891,30 @@ H.Toolbar.prototype = {
      */
     destroy: function () {
         var stockToolsDiv = this.wrapper,
-            parent = stockToolsDiv.parentNode,
+            parent = stockToolsDiv && stockToolsDiv.parentNode,
             chartOptions = this.chart.options,
             visible = this.chart.stockToolbar.visible,
             placed = this.chart.stockToolbar.placed,
             spacingLeft = this.chart.spacing[3] || 0,
             marginLeft = chartOptions.chart.marginLeft || 0;
 
+        each(this.eventsToUnbind, function (unbinder) {
+            unbinder();
+        });
+
         // Remove the empty element
         if (parent) {
             parent.removeChild(stockToolsDiv);
         }
 
-        // remove extra space if toolbar was added
-        if (visible) {
-            // 50 - width of toolbar
-            this.chart.options.chart.marginLeft = marginLeft - 50;
-        } else if (placed) {
-            this.chart.options.chart.marginLeft = marginLeft - spacingLeft;
+        if (this.guiEnabled) {
+            // remove extra space if toolbar was added
+            if (visible) {
+                // 50 - width of toolbar
+                this.chart.options.chart.marginLeft = marginLeft - 50;
+            } else if (placed) {
+                this.chart.options.chart.marginLeft = marginLeft - spacingLeft;
+            }
         }
 
         // delete stockToolbar reference
@@ -967,21 +982,29 @@ H.Toolbar.prototype = {
 
 // Comunication with bindings:
 addEvent(H.Toolbar, 'selectButton', function (event) {
-    // Unslect other active buttons
-    this.unselectAllButtons(event.button);
+    if (this.guiEnabled) {
+        // Unslect other active buttons
+        this.unselectAllButtons(event.button);
 
-    // Set active class on the current button
-    this.selectButton(event.button);
+        // Set active class on the current button
+        this.selectButton(event.button);
+    }
 });
 
 addEvent(H.Toolbar, 'deselectButton', function (event) {
-    this.selectButton(event.button);
+    if (this.guiEnabled) {
+        this.selectButton(event.button);
+    }
 });
 
-addEvent(H.Toolbar, 'showForm', function (config) {
-    this.showForm(config.formType, config.options, config.onSubmit);
+addEvent(H.Toolbar, 'showPopup', function (config) {
+    if (this.guiEnabled) {
+        this.showForm(config.formType, config.options, config.onSubmit);
+    }
 });
 
-addEvent(H.Toolbar, 'closePopUp', function () {
-    this.popup.closePopup();
+addEvent(H.Toolbar, 'closePopup', function () {
+    if (this.guiEnabled) {
+        this.popup.closePopup();
+    }
 });

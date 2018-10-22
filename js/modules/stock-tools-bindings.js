@@ -126,7 +126,7 @@ var bindingsUtils = {
     },
     /**
      * Generates function which will add a flag series using modal in GUI.
-     * Method fires an event "showForm" with config:
+     * Method fires an event "showPopup" with config:
      * `{type, options, callback}`.
      *
      * Example: Toolbar.utils.addFlagFromForm('url(...)') - will generate
@@ -141,11 +141,66 @@ var bindingsUtils = {
             var toolbar = this,
                 chart = toolbar.chart,
                 getFieldType = toolbar.utils.getFieldType,
-                point = bindingsUtils.attractToPoint(e, chart);
+                point = bindingsUtils.attractToPoint(e, chart),
+                pointConfig = {
+                    x: point.x,
+                    y: point.y
+                },
+                seriesOptions = {
+                    type: 'flags',
+                    onSeries: point.series.id,
+                    shape: type,
+                    data: [pointConfig],
+                    point: {
+                        events: {
+                            click: function () {
+                                var point = this,
+                                    options = point.options;
+
+                                fireEvent(
+                                    toolbar,
+                                    'showPopup',
+                                    {
+                                        point: point,
+                                        formType: 'annotation-toolbar',
+                                        options: {
+                                            langKey: 'flags',
+                                            type: 'flags',
+                                            title: [
+                                                options.title,
+                                                getFieldType(
+                                                    options.title
+                                                )
+                                            ],
+                                            name: [
+                                                options.name,
+                                                getFieldType(
+                                                    options.name
+                                                )
+                                            ]
+                                        },
+                                        onSubmit: function (updated) {
+                                            point.update(
+                                                toolbar.fieldsToOptions(
+                                                    updated.fields,
+                                                    {}
+                                                )
+                                            );
+                                        }
+                                    }
+                                );
+                            }
+                        }
+                    }
+                };
+
+            if (!toolbar.guiEnabled) {
+                chart.addSeries(seriesOptions);
+            }
 
             fireEvent(
                 toolbar,
-                'showForm',
+                'showPopup',
                 {
                     formType: 'flag',
                     // Enabled options:
@@ -157,59 +212,11 @@ var bindingsUtils = {
                     },
                     // Callback on submit:
                     onSubmit: function (data) {
-                        var pointConfig = {
-                            x: point.x,
-                            y: point.y
-                        };
-
-                        toolbar.fieldsToOptions(data.fields, pointConfig);
-
-                        chart.addSeries({
-                            type: 'flags',
-                            onSeries: point.series.id,
-                            shape: type,
-                            data: [pointConfig],
-                            point: {
-                                events: {
-                                    click: function () {
-                                        var point = this,
-                                            options = point.options;
-
-                                        fireEvent(
-                                            toolbar,
-                                            'showForm',
-                                            {
-                                                formType: 'annotation-toolbar',
-                                                options: {
-                                                    langKey: 'flags',
-                                                    type: 'flags',
-                                                    title: [
-                                                        options.title,
-                                                        getFieldType(
-                                                            options.title
-                                                        )
-                                                    ],
-                                                    name: [
-                                                        options.name,
-                                                        getFieldType(
-                                                            options.name
-                                                        )
-                                                    ]
-                                                },
-                                                onSubmit: function (updated) {
-                                                    point.update(
-                                                        toolbar.fieldsToOptions(
-                                                            updated.fields,
-                                                            {}
-                                                        )
-                                                    );
-                                                }
-                                            }
-                                        );
-                                    }
-                                }
-                            }
-                        });
+                        toolbar.fieldsToOptions(
+                            data.fields,
+                            seriesOptions.data[0]
+                        );
+                        chart.addSeries(seriesOptions);
                     }
                 }
             );
@@ -1216,11 +1223,15 @@ var stockToolsBindings = {
         init: function (button) {
             this.chart.update({
                 chart: {
-                    zoomType: 'xy'
+                    zoomType: 'x'
                 }
             });
 
-            fireEvent(this, 'deselectButton', { button: button });
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
         }
     },
     'zoom-y': {
@@ -1230,19 +1241,26 @@ var stockToolsBindings = {
                     zoomType: 'y'
                 }
             });
-
-            fireEvent(this, 'deselectButton', { button: button });
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
         }
     },
     'zoom-xy': {
         init: function (button) {
             this.chart.update({
                 chart: {
-                    zoomType: 'x'
+                    zoomType: 'xy'
                 }
             });
 
-            fireEvent(this, 'deselectButton', { button: button });
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
         }
     },
     'series-type-line': {
@@ -1251,7 +1269,11 @@ var stockToolsBindings = {
                 type: 'line'
             });
 
-            fireEvent(this, 'deselectButton', { button: button });
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
         }
     },
     'series-type-ohlc': {
@@ -1260,7 +1282,11 @@ var stockToolsBindings = {
                 type: 'ohlc'
             });
 
-            fireEvent(this, 'deselectButton', { button: button });
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
         }
     },
     'series-type-candlestick': {
@@ -1269,7 +1295,11 @@ var stockToolsBindings = {
                 type: 'candlestick'
             });
 
-            fireEvent(this, 'deselectButton', { button: button });
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
         }
     },
     'full-screen': {
@@ -1278,7 +1308,11 @@ var stockToolsBindings = {
 
             chart.fullScreen = new H.FullScreen(chart.container);
 
-            fireEvent(this, 'deselectButton', { button: button });
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
         }
     },
     'current-price-indicator': {
@@ -1289,17 +1323,15 @@ var stockToolsBindings = {
                                 options.lastVisiblePrice.enabled,
                 lastPrice = options.lastPrice && options.lastPrice.enabled;
 
-
-
-            if (lastPrice) {
-                button.firstChild.style['background-image'] =
-                    'url("http://utils.highcharts.local/samples/graphics/current-price-show.svg")';
-            } else {
-                button.firstChild.style['background-image'] =
-                    'url("http://utils.highcharts.local/samples/graphics/current-price-hide.svg")';
+            if (this.guiEnabled) {
+                if (lastPrice) {
+                    button.firstChild.style['background-image'] =
+                        'url("http://utils.highcharts.local/samples/graphics/current-price-show.svg")';
+                } else {
+                    button.firstChild.style['background-image'] =
+                        'url("http://utils.highcharts.local/samples/graphics/current-price-hide.svg")';
+                }
             }
-
-            fireEvent(this, 'deselectButton', { button: button });
 
             series.update({
                 // line
@@ -1315,6 +1347,12 @@ var stockToolsBindings = {
                     }
                 }
             });
+
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
         }
     },
     'indicators': {
@@ -1323,7 +1361,7 @@ var stockToolsBindings = {
 
             fireEvent(
                 toolbar,
-                'showForm',
+                'showPopup',
                 {
                     formType: 'indicators',
                     options: {},
@@ -1343,15 +1381,21 @@ var stockToolsBindings = {
                 annotation.setVisibility(!this.toggledAnnotations);
             }, this);
 
-            if (this.toggledAnnotations) {
-                button.firstChild.style['background-image'] =
-                    'url("http://utils.highcharts.local/samples/graphics/annotations-hidden.svg")';
-            } else {
-                button.firstChild.style['background-image'] =
-                    'url("http://utils.highcharts.local/samples/graphics/annotations-visible.svg")';
+            if (this.guiEnabled) {
+                if (this.toggledAnnotations) {
+                    button.firstChild.style['background-image'] =
+                        'url("http://utils.highcharts.local/samples/graphics/annotations-hidden.svg")';
+                } else {
+                    button.firstChild.style['background-image'] =
+                        'url("http://utils.highcharts.local/samples/graphics/annotations-visible.svg")';
+                }
             }
 
-            fireEvent(this, 'deselectButton', { button: button });
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
         }
     },
     'save-chart': {
@@ -1391,7 +1435,11 @@ var stockToolsBindings = {
                 })
             );
 
-            fireEvent(this, 'deselectButton', { button: button });
+            fireEvent(
+                this,
+                'deselectButton',
+                { button: button }
+            );
         }
     }
 };
@@ -1475,6 +1523,14 @@ extend(H.Toolbar.prototype, {
     bindingsButtonClick: function (button, events, clickEvent) {
         var toolbar = this;
 
+        if (toolbar.selectedButtonElement) {
+            fireEvent(
+                toolbar,
+                'deselectButton',
+                { button: toolbar.selectedButtonElement }
+            );
+        }
+
         toolbar.selectedButton = events;
         toolbar.selectedButtonElement = button;
 
@@ -1512,7 +1568,7 @@ extend(H.Toolbar.prototype, {
             // TO DO: Polyfill for IE11?
             !clickEvent.target.closest('.' + PREFIX + 'popup')
         ) {
-            fireEvent(toolbar, 'closePopUp');
+            fireEvent(toolbar, 'closePopup');
             toolbar.deselectAnnotation();
         }
 
@@ -1534,12 +1590,11 @@ extend(H.Toolbar.prototype, {
                 toolbar.mouseMoveEvent = toolbar.nextEvent =
                     selectedButton.steps[toolbar.stepIndex];
             } else {
+
                 fireEvent(
                     toolbar,
                     'deselectButton',
-                    {
-                        button: toolbar.selectedButtonElement
-                    }
+                    { button: toolbar.selectedButtonElement }
                 );
                 svgContainer.removeClass(PREFIX + 'draw-mode');
                 toolbar.steps = false;
@@ -1574,9 +1629,7 @@ extend(H.Toolbar.prototype, {
                     fireEvent(
                         toolbar,
                         'deselectButton',
-                        {
-                            button: toolbar.selectedButtonElement
-                        }
+                        { button: toolbar.selectedButtonElement }
                     );
                     svgContainer.removeClass(PREFIX + 'draw-mode');
                     // That was the last step, call end():
@@ -2043,17 +2096,30 @@ extend(H.Toolbar.prototype, {
      * @return {Array} Array of class names with corresponding elements
      */
     getClickedClassNames: function (container, event) {
-        var element = event.target,
+        var multipleClassNameRegExp = new RegExp(PREFIX, 'g'), // eslint-disable-line security/detect-non-literal-regexp
+            element = event.target,
             classNames = [],
             elemClassName;
 
         while (element) {
             elemClassName = H.attr(element, 'class');
             if (elemClassName) {
-                classNames.push([
-                    elemClassName.replace(PREFIX, ''),
-                    element
-                ]);
+                // Multiple classnames:
+                elemClassName = elemClassName.replace(
+                    multipleClassNameRegExp,
+                    ''
+                );
+                classNames = classNames.concat(
+                    map(
+                        elemClassName.split(' '),
+                        function (name) { // eslint-disable-line no-loop-func
+                            return [
+                                name,
+                                element
+                            ];
+                        }
+                    )
+                );
             }
             element = element.parentNode;
 
@@ -2080,10 +2146,10 @@ extend(H.Toolbar.prototype, {
             bindings;
 
         each(classNames, function (className) {
-            if (options[className[0]]) {
+            if (options[className[0]] && !bindings) {
                 bindings = {
                     events: options[className[0]],
-                    element: className[1]
+                    button: className[1]
                 };
             }
         });
@@ -2105,23 +2171,35 @@ addEvent(H.Toolbar, 'afterInit', function () {
 
     // Handle multiple containers with the same class names:
     each(toolbarContainer, function (subContainer) {
-        addEvent(
-            subContainer,
-            'click',
-            function (event) {
-                var bindings = toolbar.getButtonEvents(
-                    toolbarContainer,
-                    event
-                );
-
-                if (bindings) {
-                    toolbar.bindingsButtonClick(
-                        bindings.element,
-                        bindings.events,
+        toolbar.eventsToUnbind.push(
+            addEvent(
+                subContainer,
+                'click',
+                function (event) {
+                    var bindings = toolbar.getButtonEvents(
+                        toolbarContainer,
                         event
                     );
+
+                    if (bindings) {
+                        toolbar.bindingsButtonClick(
+                            bindings.button,
+                            bindings.events,
+                            event
+                        );
+                    }
                 }
-            }
+            )
+        );
+    });
+
+    objectEach(options.events || {}, function (callback, eventName) {
+        toolbar.eventsToUnbind.push(
+            addEvent(
+                toolbar,
+                eventName,
+                callback
+            )
         );
     });
 });
@@ -2131,12 +2209,16 @@ addEvent(H.Chart, 'load', function () {
         toolbar = chart.stockToolbar;
 
     if (toolbar) {
-        addEvent(chart, 'click', function (e) {
-            toolbar.bindingsChartClick(this, e);
-        });
-        addEvent(chart.container, 'mousemove', function (e) {
-            toolbar.bindingsContainerMouseMove(this, e);
-        });
+        toolbar.eventsToUnbind.push(
+            addEvent(chart, 'click', function (e) {
+                toolbar.bindingsChartClick(this, e);
+            })
+        );
+        toolbar.eventsToUnbind.push(
+            addEvent(chart.container, 'mousemove', function (e) {
+                toolbar.bindingsContainerMouseMove(this, e);
+            })
+        );
     }
 });
 
@@ -2145,7 +2227,7 @@ function selectableAnnotation(annotationType) {
     var originalClick = annotationType.prototype.defaultOptions.events &&
             annotationType.prototype.defaultOptions.events.click;
 
-    function selectAndShowForm(event) {
+    function selectAndshowPopup(event) {
         var annotation = this,
             toolbar = annotation.chart.stockToolbar,
             prevAnnotation = toolbar.activeAnnotation;
@@ -2163,8 +2245,9 @@ function selectableAnnotation(annotationType) {
 
             fireEvent(
                 toolbar,
-                'showForm',
+                'showPopup',
                 {
+                    annotation: annotation,
                     formType: 'annotation-toolbar',
                     options: toolbar.annotationToFields(annotation),
                     onSubmit: function (data) {
@@ -2198,7 +2281,7 @@ function selectableAnnotation(annotationType) {
         } else {
             // Deselect current:
             toolbar.deselectAnnotation();
-            fireEvent(toolbar, 'closePopUp');
+            fireEvent(toolbar, 'closePopup');
         }
         // Let bubble event to chart.click:
         event.activeAnnotation = true;
@@ -2208,7 +2291,7 @@ function selectableAnnotation(annotationType) {
         true,
         annotationType.prototype.defaultOptions.events,
         {
-            click: selectAndShowForm
+            click: selectAndshowPopup
         }
     );
 }
