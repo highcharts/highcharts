@@ -1249,15 +1249,28 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 });
 
 
-// Warn if using legacy options
+// Warn if using legacy options. Copy the options over. Note that this will
+// still break if using the legacy options in chart.update, addSeries etc.
 function warnLegacy(chart) {
     if (
         chart.options.pathfinder ||
         H.reduce(chart.series, function (acc, series) {
+            if (series.options) {
+                merge(true,
+                    (
+                        series.options.connectors = series.options.connectors ||
+                        {}
+                    ), series.options.pathfinder
+                );
+            }
             return acc || series.options && series.options.pathfinder;
         }, false)
     ) {
-        H.error('Pathfinder options have been renamed. ' +
+        merge(true,
+            (chart.options.connectors = chart.options.connectors || {}),
+            chart.options.pathfinder
+        );
+        H.error('WARNING: Pathfinder options have been renamed. ' +
             'Use "chart.connectors" or "series.connectors" instead.');
     }
 }
