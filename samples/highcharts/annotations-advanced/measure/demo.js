@@ -16,31 +16,15 @@ function getOptions() {
             typeOptions: {
                 point: {
                     x: 0,
-                    y: 8,
+                    y: 6,
                     controlPoint: { /* control point options */ }
                 },
-                crosshair: {
-                    /* EXAMPLE
-                    markerEnd: 'arrow',
-                    dashStyle: 'solid',
-                    color: 'red'
-                    */
-                },
                 label: {
-                    /* EXAMPLE
-                    backgroundColor: 'yellow',
-                    borderWidth: 2,
-                    borderColor: 'red'
-                    */
-                    /*
-                    formatter: function (target) {
-                        return 'custom min: ' + target.annotation.min + '<br>custom max: ' + target.annotation.max;
-                    }
-                    */
+                    enabled: true
                 },
                 background: {
-                    width: 250,
-                    height: 150
+                    width: 300 + 'px',
+                    height: 150 + 'px'
                 }
             }
         }],
@@ -57,10 +41,4 @@ function getOptions() {
 }
 
 Highcharts.chart('container1', getOptions());
-Highcharts.chart(
-    'container2',
-    Highcharts.merge(
-        { xAxis: { tickInterval: 4 }, chart: { inverted: true } },
-        getOptions()
-    )
-);
+
