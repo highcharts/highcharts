@@ -124,6 +124,16 @@ H.setOptions({
             }
         }
     },
+    /**
+     * Configure the stockTools gui strings in the chart. Requires the
+     * [stockTools module]() to be loaded. For a description of the module
+     * and information on its features, see [Highcharts StockTools]().
+     *
+     * @product highstock
+     * @since 7.0.0
+     * @type {Object}
+     * @optionparent stockTools
+     */
     stockTools: {
         gui: {
             enabled: true,
@@ -209,8 +219,6 @@ H.setOptions({
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-ray.svg)'
                     },
                     line: {
-                        type: 'aaa',
-                        label: 'bbb',
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/line.svg)'
                     },
                     arrowLine: {
@@ -956,9 +964,9 @@ H.Toolbar.prototype = {
         pitchfork: PREFIX + 'pitchfork',
         fibonacci: PREFIX + 'fibonacci',
         parallelChannel: PREFIX + 'parallel-channel',
-        measureX: PREFIX + 'measureX',
-        measureY: PREFIX + 'measureY',
-        measureXY: PREFIX + 'measureXY',
+        measureX: PREFIX + 'measure-x',
+        measureY: PREFIX + 'measure-y',
+        measureXY: PREFIX + 'measure-xy',
         verticalCounter: PREFIX + 'vertical-counter',
         verticalLabel: PREFIX + 'vertical-label',
         verticalArrow: PREFIX + 'vertical-arrow',
