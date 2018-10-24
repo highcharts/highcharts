@@ -170,7 +170,6 @@ QUnit.test('Bindings general tests', function (assert) {
     // Individual button events:
 
     // Current Price Indicator
-    /*
     selectButton('current-price-indicator');
     assert.strictEqual(
         chart.series[0].lastVisiblePrice &&
@@ -198,7 +197,6 @@ QUnit.test('Bindings general tests', function (assert) {
         Highcharts.UNDEFINED,
         'Last price in the dataset hidden.'
     );
-    */
 
     // Annotations:
     var visibleAnnotations = false;
