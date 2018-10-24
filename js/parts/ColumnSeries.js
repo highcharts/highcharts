@@ -641,7 +641,8 @@ seriesType('column', 'line', {
             [barX + barW / 2, plotY + yAxis.pos - chart.plotTop, barH];
 
             // Register shape type and arguments to be used in drawPoints
-            point.shapeType = 'rect';
+            // Allow shapeType defined on pointClass level
+            point.shapeType = point.shapeType || 'rect';
             point.shapeArgs = series.crispCol.apply(
                 series,
                 point.isNull ?
