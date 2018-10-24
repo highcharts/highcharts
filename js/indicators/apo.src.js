@@ -71,7 +71,7 @@ H.seriesType('apo', 'ema',
             if (periods.length !== 2 || periods[1] <= periods[0]) {
                 error(
                     'Error: "APO requires two periods. Notice, first period ' +
-                    'should be lower then the second one."'
+                    'should be lower than the second one."'
                 );
                 return false;
             }
