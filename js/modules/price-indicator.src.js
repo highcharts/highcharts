@@ -13,6 +13,62 @@ var addEvent = H.addEvent,
     merge = H.merge,
     isArray = H.isArray;
 
+/**
+ * The line marks the last price from visible range of points.
+ *
+ * @product   highstock
+ * @sample {highstock} stock/indicators/last-visible-price
+ *         Last visible price
+ * @apioption   plotOptions.series.lastVisiblePrice
+ */
+
+/**
+ * Enable or disable the indicator.
+ *
+ * @type      {boolean}
+ * @product   highstock
+ * @default true
+ * @apioption   plotOptions.series.lastVisiblePrice.enabled
+ */
+
+/**
+ * Enable or disable the label.
+ *
+ * @type      {boolean}
+ * @product   highstock
+ * @default true
+ * @apioption   plotOptions.series.lastVisiblePrice.label.enabled
+ *
+ */
+
+/**
+ * The line marks the last price from all points.
+ *
+ * @product   highstock
+ * @sample {highstock} stock/indicators/last-price
+ *         Last price
+ * @apioption   plotOptions.series.lastPrice
+ */
+
+/**
+ * Enable or disable the indicator.
+ *
+ * @type      {boolean}
+ * @product   highstock
+ * @default true
+ * @apioption   plotOptions.series.lastPrice.enabled
+ */
+
+/**
+ * The color of the line of last price.
+ *
+ * @type      {string}
+ * @product   highstock
+ * @default red
+ * @apioption   plotOptions.series.lastPrice.color
+ *
+ */
+
 addEvent(H.Series, 'afterRender', function () {
     var serie = this,
         seriesOptions = serie.options,
@@ -32,7 +88,7 @@ addEvent(H.Series, 'afterRender', function () {
             y = serie.yData[serie.yData.length - 1],
             crop;
 
-        if (lastPrice.enabled) {
+        if (lastPrice && lastPrice.enabled) {
 
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
 
@@ -50,7 +106,7 @@ addEvent(H.Series, 'afterRender', function () {
 
         }
 
-        if (lastVisiblePrice.enabled) {
+        if (lastVisiblePrice && lastVisiblePrice.enabled) {
 
             crop = points[points.length - 1].x === x ? 1 : 2;
 
