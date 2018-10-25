@@ -41,6 +41,7 @@ seriesType('area', 'line'
  *         Area chart
  *
  * @extends      plotOptions.line
+ * @excluding    useOhlcData
  * @product      highcharts highstock
  * @optionparent plotOptions.area
  */
@@ -526,7 +527,7 @@ seriesType('area', 'line'
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.area
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, useOhlcData
  * @product   highcharts highstock
  * @apioption series.area
  */

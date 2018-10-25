@@ -16,11 +16,10 @@ var pick = H.pick,
  * The parameter allows setting line series type and use OHLC indicators.
  * Data in OHLC format is required.
  *
- * @-type {Boolean}
- * @-extends plotOptions.line
- * @-product highstock
- * @-sample {highstock} stock/indicators/useOHLCdata Plot line on Y axis
- * @-apioption plotOptions.line.useOHLCdata
+ * @type {Boolean}
+ * @product highstock
+ * @sample {highstock} stock/indicators/useOhlcData Plot line on Y axis
+ * @apioption plotOptions.line.useOhlcData
  */
 
 addEvent(H.Series, 'init', function (eventOptions) {
@@ -29,7 +28,7 @@ addEvent(H.Series, 'init', function (eventOptions) {
         dataGrouping = options.dataGrouping;
 
     if (
-        options.useOHLCdata &&
+        options.useOhlcData &&
         options.id !== 'highcharts-navigator-series'
         ) {
 
@@ -62,8 +61,8 @@ seriesType('sma', 'line',
      * @sample {highstock} stock/indicators/sma Simple moving average indicator
      * @since 6.0.0
      * @excluding
-     *             allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
-     *             showInNavigator,navigatorOptions,pointInterval,
+     *             useOhlcData,allAreas,colorAxis,compare,compareBase,joinBy,
+     *             showInNavigator,navigatorOptions,pointInterval,stacking,keys,
      *             pointIntervalUnit,pointPlacement,pointRange,pointStart,joinBy
      * @optionparent plotOptions.sma
      */
@@ -307,7 +306,7 @@ seriesType('sma', 'line',
  * @type {Object}
  * @since 6.0.0
  * @extends series,plotOptions.sma
- * @excluding data,dataParser,dataURL
+ * @excluding data,dataParser,dataURL, useOhlcData
  * @product highstock
  * @apioption series.sma
  */

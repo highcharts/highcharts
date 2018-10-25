@@ -23,7 +23,7 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
 
         series: [{
             type: 'line',
-            useOHLCdata: true,
+            useOhlcData: true,
             id: 'aapl',
             name: 'AAPL Stock Price',
             data: data

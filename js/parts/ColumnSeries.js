@@ -60,7 +60,7 @@ seriesType('column', 'line'
  *
  * @extends      plotOptions.line
  * @excluding    connectNulls, dashStyle, gapSize, gapUnit, linecap,
- *               lineWidth, marker, connectEnds, step
+ *               lineWidth, marker, connectEnds, step, useOhlcData
  * @product      highcharts highstock
  * @optionparent plotOptions.column
  */

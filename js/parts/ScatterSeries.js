@@ -33,7 +33,7 @@ seriesType('scatter', 'line'
  *         Scatter plot
  *
  * @extends      plotOptions.line
- * @excluding    pointPlacement, shadow
+ * @excluding    pointPlacement, shadow, useOhlcData
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */
@@ -135,7 +135,7 @@ seriesType('scatter', 'line'
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.scatter
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, useOhlcData
  * @product   highcharts highstock
  * @apioption series.scatter
  */
