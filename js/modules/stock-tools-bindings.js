@@ -2195,6 +2195,17 @@ extend(H.Toolbar.prototype, {
                 'deselectButton',
                 { button: toolbar.selectedButtonElement }
             );
+
+            if (toolbar.nextEvent) {
+                // Remove in-progress annotations adders:
+                if (
+                    toolbar.currentUserDetails &&
+                    toolbar.currentUserDetails.coll === 'annotations'
+                ) {
+                    toolbar.chart.removeAnnotation(toolbar.currentUserDetails);
+                }
+                toolbar.mouseMoveEvent = toolbar.nextEvent = false;
+            }
         }
 
         toolbar.selectedButton = events;
