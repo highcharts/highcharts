@@ -71,7 +71,9 @@ const styles = () => {
         'highcharts',
         'themes/dark-unica',
         'themes/sand-signika',
-        'themes/grid-light'
+        'themes/grid-light',
+        'stocktools/gui',
+        'stocktools/popup'
     ];
     const promises = files.map(file => compileSingleStyle(file));
     return Promise.all(promises).then(() => {
