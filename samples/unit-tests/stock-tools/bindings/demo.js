@@ -257,6 +257,8 @@ QUnit.test('Bindings general tests', function (assert) {
 
     // Test yAxis resizers and adding indicators:
     for (i = 0; i < 9; i++) {
+        chart.stockToolbar.selectedButtonElement = document
+            .getElementsByClassName('highcharts-indicators')[0];
         chart.stockToolbar.utils.manageIndicators.call(
             chart.stockToolbar,
             {
@@ -288,6 +290,8 @@ QUnit.test('Bindings general tests', function (assert) {
     }
 
     for (i = 9; i > 0; i--) {
+        chart.stockToolbar.selectedButtonElement = document
+            .getElementsByClassName('highcharts-indicators')[0];
         chart.stockToolbar.utils.manageIndicators.call(
             chart.stockToolbar,
             {

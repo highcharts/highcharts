@@ -2901,6 +2901,10 @@ addEvent(H.Chart, 'load', function () {
     }
 });
 
+addEvent(H.Toolbar, 'deselectButton', function () {
+    this.selectedButtonElement = null;
+});
+
 // Show edit-annotation form:
 function selectableAnnotation(annotationType) {
     var originalClick = annotationType.prototype.defaultOptions.events &&
