@@ -36,11 +36,8 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
             type: 'ppo',
             linkedTo: 'aapl',
             yAxis: 1,
-            color: 'tomato',
-            lineWidth: 2,
-            params: {
-                periods: [12, 26]
-            }
+            color: '#001e84',
+            lineWidth: 2
         }]
 
     });
