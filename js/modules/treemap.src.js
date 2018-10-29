@@ -170,9 +170,7 @@ seriesType('treemap', 'scatter', {
         enabled: true,
         defer: false,
         verticalAlign: 'middle',
-        formatter: function () { // #2945
-            return this.point.name || this.point.id;
-        },
+        format: '{point.name}',
         inside: true
     },
 
