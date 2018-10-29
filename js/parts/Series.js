@@ -1235,6 +1235,8 @@ null
          *
          * @sample {highcharts} highcharts/plotoptions/series-marker-radius/
          *         Bigger markers
+         *
+         * @default  {highstock} 2
          */
         radius: 4,
 
