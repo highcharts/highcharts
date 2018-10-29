@@ -32,39 +32,38 @@ var defined = H.defined,
 // Set default Pathfinder options
 extend(H.defaultOptions, {
     /**
-     * The Pathfinder allows you to define connections between any two points,
-     * represented as lines - optionally with markers for the start and/or end
-     * points. Multiple algorithms are available for calculating how the
-     * connecting lines are drawn.
+     * The Pathfinder module allows you to define connections between any two
+     * points, represented as lines - optionally with markers for the start
+     * and/or end points. Multiple algorithms are available for calculating how
+     * the connecting lines are drawn.
      *
-     * Pathfinder functionality requires Highcharts Gantt to be loaded. In Gantt
-     * charts, the Pathfinder is used to draw dependencies between tasks.
+     * Connector functionality requires Highcharts Gantt to be loaded. In Gantt
+     * charts, the connectors are used to draw dependencies between tasks.
      *
      * @product gantt
      * @see [dependency](series.gantt.data.dependency)
      *
      * @sample  gantt/pathfinder/demo Pathfinder connections
      *
-     * @optionparent pathfinder
+     * @optionparent connectors
      */
-    pathfinder: {
+    connectors: {
         /**
-         * Enable the pathfinder for this chart. Requires Highcharts Gantt.
+         * Enable connectors for this chart. Requires Highcharts Gantt.
          *
          * @type {boolean}
          * @default true
          * @since 6.2.0
-         * @apioption pathfinder.enabled
+         * @apioption connectors.enabled
          */
 
         /**
-         * Set the default dash style for this chart's Pathfinder connecting
-         * lines.
+         * Set the default dash style for this chart's connecting lines.
          *
          * @type {string}
          * @default solid
          * @since 6.2.0
-         * @apioption pathfinder.dashStyle
+         * @apioption connectors.dashStyle
          */
 
         /**
@@ -74,7 +73,7 @@ extend(H.defaultOptions, {
          * @type {Color}
          * @default null
          * @since 6.2.0
-         * @apioption pathfinder.lineColor
+         * @apioption connectors.lineColor
          */
 
         /**
@@ -92,13 +91,13 @@ extend(H.defaultOptions, {
          * @default null
          * @since 6.2.0
          * @sample gantt/pathfinder/algorithm-margin Small algorithmMargin
-         * @apioption pathfinder.algorithmMargin
+         * @apioption connectors.algorithmMargin
          */
 
         /**
          * Set the default pathfinder algorithm to use for this chart. It is
          * possible to define your own algorithms by adding them to the
-         * Highcharts.Pathfinder.prototype.algorithms object after the chart
+         * Highcharts.Pathfinder.prototype.algorithms object before the chart
          * has been created.
          *
          * The default algorithms are as follows:
@@ -123,7 +122,7 @@ extend(H.defaultOptions, {
          * @default straight|simpleConnect
          * @since 6.2.0
          * @sample gantt/pathfinder/demo Different types used
-         * @apioption pathfinder.type
+         * @apioption connectors.type
          */
         type: 'straight',
 
@@ -134,7 +133,7 @@ extend(H.defaultOptions, {
          * @type {number}
          * @default 1
          * @since 6.2.0
-         * @apioption pathfinder.lineWidth
+         * @apioption connectors.lineWidth
          */
         lineWidth: 1,
 
@@ -145,11 +144,11 @@ extend(H.defaultOptions, {
          *
          * @type {object}
          * @since 6.2.0
-         * @apioption pathfinder.marker
+         * @apioption connectors.marker
          */
         marker: {
             /**
-             * Set the radius of the pathfinder markers. The default is
+             * Set the radius of the connector markers. The default is
              * automatically computed based on the algorithmMargin setting.
              *
              * Setting marker.width and marker.height will override this
@@ -158,47 +157,47 @@ extend(H.defaultOptions, {
              * @type {number}
              * @default null
              * @since 6.2.0
-             * @apioption pathfinder.marker.radius
+             * @apioption connectors.marker.radius
              */
 
             /**
-             * Set the width of the pathfinder markers. If not supplied, this
+             * Set the width of the connector markers. If not supplied, this
              * is inferred from the marker radius.
              *
              * @type {number}
              * @default null
              * @since 6.2.0
-             * @apioption pathfinder.marker.width
+             * @apioption connectors.marker.width
              */
 
             /**
-             * Set the height of the pathfinder markers. If not supplied, this
+             * Set the height of the connector markers. If not supplied, this
              * is inferred from the marker radius.
              *
              * @type {number}
              * @default null
              * @since 6.2.0
-             * @apioption pathfinder.marker.height
+             * @apioption connectors.marker.height
              */
 
             /**
-             * Set the color of the pathfinder markers. By default this is the
+             * Set the color of the connector markers. By default this is the
              * same as the connector color.
              *
              * @type {Color}
              * @default null
              * @since 6.2.0
-             * @apioption pathfinder.marker.color
+             * @apioption connectors.marker.color
              */
 
             /**
-             * Set the line/border color of the pathfinder markers. By default
+             * Set the line/border color of the connector markers. By default
              * this is the same as the marker color.
              *
              * @type {Color}
              * @default null
              * @since 6.2.0
-             * @apioption pathfinder.marker.lineColor
+             * @apioption connectors.marker.lineColor
              */
 
             /**
@@ -233,12 +232,12 @@ extend(H.defaultOptions, {
          *
          * @type {object}
          * @since 6.2.0
-         * @extends pathfinder.marker
-         * @apioption pathfinder.startMarker
+         * @extends connectors.marker
+         * @apioption connectors.startMarker
          */
         startMarker: {
             /**
-             * Set the symbol of the pathfinder start markers.
+             * Set the symbol of the connector start markers.
              */
             symbol: 'diamond'
         },
@@ -249,12 +248,12 @@ extend(H.defaultOptions, {
          *
          * @type {object}
          * @since 6.2.0
-         * @extends pathfinder.marker
-         * @apioption pathfinder.endMarker
+         * @extends connectors.marker
+         * @apioption connectors.endMarker
          */
         endMarker: {
             /**
-             * Set the symbol of the pathfinder end markers.
+             * Set the symbol of the connector end markers.
              */
             symbol: 'arrow-filled'
         }
@@ -262,13 +261,13 @@ extend(H.defaultOptions, {
 });
 
 /**
- * Override Pathfinder options for a series. Requires Highcharts Gantt or the
- * Pathfinder module.
+ * Override Pathfinder connector options for a series. Requires Highcharts Gantt
+ * to be loaded.
  *
  * @since 6.2.0
- * @extends pathfinder
+ * @extends connectors
  * @product gantt
- * @apioption plotOptions.series.pathfinder
+ * @apioption plotOptions.series.connectors
  * @excluding enabled,algorithmMargin
  */
 
@@ -280,7 +279,7 @@ extend(H.defaultOptions, {
  *
  * @type {Array<string|*>|string|*}
  * @since 6.2.0
- * @extends plotOptions.series.pathfinder
+ * @extends plotOptions.series.connectors
  * @excluding enabled
  * @product gantt
  * @sample gantt/pathfinder/demo Different connection types
@@ -644,7 +643,7 @@ Connection.prototype = {
      * @function Highcharts.Connection#getPath
      *
      * @param   {object} options
-     *          Pathfinder options. Not calculated or merged with other options.
+     *          Connector options. Not calculated or merged with other options.
      *
      * @return  {Array}
      *          Calculated SVG path data in array format.
@@ -670,7 +669,7 @@ Connection.prototype = {
 
             // If the algorithmMargin was computed, store the result in default
             // options.
-            chart.options.pathfinder.algorithmMargin = options.algorithmMargin;
+            chart.options.connectors.algorithmMargin = options.algorithmMargin;
 
             // Cache some metrics too
             pathfinder.chartObstacleMetrics =
@@ -717,8 +716,8 @@ Connection.prototype = {
             pathResult,
             path,
             options = merge(
-                chart.options.pathfinder, series.options.pathfinder,
-                fromPoint.options.pathfinder, connection.options
+                chart.options.connectors, series.options.connectors,
+                fromPoint.options.connectors, connection.options
             ),
             attribs = {};
 
@@ -1249,10 +1248,39 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
     }
 });
 
+
+// Warn if using legacy options. Copy the options over. Note that this will
+// still break if using the legacy options in chart.update, addSeries etc.
+function warnLegacy(chart) {
+    if (
+        chart.options.pathfinder ||
+        H.reduce(chart.series, function (acc, series) {
+            if (series.options) {
+                merge(true,
+                    (
+                        series.options.connectors = series.options.connectors ||
+                        {}
+                    ), series.options.pathfinder
+                );
+            }
+            return acc || series.options && series.options.pathfinder;
+        }, false)
+    ) {
+        merge(true,
+            (chart.options.connectors = chart.options.connectors || {}),
+            chart.options.pathfinder
+        );
+        H.error('WARNING: Pathfinder options have been renamed. ' +
+            'Use "chart.connectors" or "series.connectors" instead.');
+    }
+}
+
+
 // Initialize Pathfinder for charts
 H.Chart.prototype.callbacks.push(function (chart) {
     var options = chart.options;
-    if (options.pathfinder.enabled !== false) {
+    if (options.connectors.enabled !== false) {
+        warnLegacy(chart);
         this.pathfinder = new Pathfinder(this);
         this.pathfinder.update(true); // First draw, defer render
     }

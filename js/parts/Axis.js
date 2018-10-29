@@ -297,7 +297,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         Without
          *
          * @type      {Array<string>}
-         * @product   highcharts
+         * @product   highcharts gantt
          * @apioption xAxis.categories
          */
 
@@ -2408,9 +2408,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * item is a float between 0 and 1 assigning the relative position in
          * the gradient, and the second item is the color.
          *
-         * For solid gauges, the Y axis also inherits the concept of [data classes](http://api.
-         * highcharts.com/highmaps#colorAxis.dataClasses) from the Highmaps
-         * color axis.
+         * For solid gauges, the Y axis also inherits the concept of
+         * [data classes](http://api.highcharts.com/highmaps#colorAxis.dataClasses)
+         * from the Highmaps color axis.
          *
          * @see [minColor](#yAxis.minColor)
          * @see [maxColor](#yAxis.maxColor)
