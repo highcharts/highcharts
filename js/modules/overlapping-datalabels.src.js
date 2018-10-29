@@ -17,7 +17,8 @@ var Chart = H.Chart,
     each = H.each,
     objectEach = H.objectEach,
     pick = H.pick,
-    addEvent = H.addEvent;
+    addEvent = H.addEvent,
+    fireEvent = H.fireEvent;
 
 // Collect potensial overlapping data labels. Stack labels probably don't need
 // to be considered because they are usually accompanied by data labels that lie
@@ -76,8 +77,9 @@ addEvent(Chart, 'render', function collectAndHide() {
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
 
-    var len = labels.length,
-        ren = this.renderer,
+    var chart = this,
+        len = labels.length,
+        ren = chart.renderer,
         label,
         i,
         j,
@@ -221,6 +223,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                         null,
                         complete
                     );
+                    fireEvent(chart, 'afterHideOverlappingLabels');
                 } else { // other labels, tick labels
                     label.attr({
                         opacity: newOpacity

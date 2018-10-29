@@ -216,6 +216,8 @@ Series.prototype.drawDataLabels = function () {
         return true;
     }
 
+    H.fireEvent(this, 'beforeDrawDataLabels');
+
     if (options.enabled || series._hasPointLabels) {
 
         // Process default alignment of data labels for columns
