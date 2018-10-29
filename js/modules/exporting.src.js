@@ -628,8 +628,9 @@ defaultOptions.exporting = {
 
     /**
      * The width of the original chart when exported, unless an explicit
-     * [chart.width](#chart.width) is set. The width exported raster image
-     * is then multiplied by [scale](#exporting.scale).
+     * [chart.width](#chart.width) is set, or a pixel width is set on the
+     * container. The width exported raster image is then multiplied by
+     * [scale](#exporting.scale).
      *
      * @sample {highcharts} highcharts/exporting/sourcewidth/
      *         Source size demo
@@ -1121,7 +1122,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         sourceWidth = options.exporting.sourceWidth ||
             options.chart.width ||
             (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
-            600;
+            (options.isGantt ? 800 : 600);
         sourceHeight = options.exporting.sourceHeight ||
             options.chart.height ||
             (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||

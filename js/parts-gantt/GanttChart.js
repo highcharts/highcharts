@@ -115,7 +115,12 @@ H.ganttChart = function (renderTo, options, callback) {
             }
         },
 
-        options // user's options
+        options, // user's options
+
+        // forced options
+        {
+            isGantt: true
+        }
     );
 
     options.series = seriesOptions;
