@@ -170,7 +170,11 @@ seriesType('treemap', 'scatter', {
         enabled: true,
         defer: false,
         verticalAlign: 'middle',
-        format: '{point.name}',
+        formatter: function () {
+            var point = this && this.point ? this.point : {},
+                name = isString(point.name) ? point.name : '';
+            return name;
+        },
         inside: true
     },
 
