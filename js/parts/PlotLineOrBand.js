@@ -504,8 +504,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
 
     /**
-     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts
-     * /labels-and-string-formatting#html) to render the labels.
+     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+     * to render the labels.
      *
      * @type      {boolean}
      * @default   false
@@ -741,8 +741,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
 
     /**
-     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts
-     * /labels-and-string-formatting#html) to render the labels.
+     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+     * to render the labels.
      *
      * @type      {boolean}
      * @default   false

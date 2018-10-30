@@ -1967,10 +1967,9 @@ H.defaultOptions = {
          */
 
         /**
-         * A [format string](https://www.highcharts.com/docs/chart-concepts/
-         * labels-and-string-formatting) for each legend label. Available
-         * variables relates to properties on the series, or the point in case
-         * of pies.
+         * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * for each legend label. Available variables relates to properties on
+         * the series, or the point in case of pies.
          *
          * @type      {string}
          * @default   {name}
@@ -2425,8 +2424,8 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/
-         * labels-and-string-formatting#html) to render the legend item texts.
+         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the legend item texts.
          *
          * Prior to 4.1.7, when using HTML, [legend.navigation](
          * #legend.navigation) was disabled.
