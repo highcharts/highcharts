@@ -10,6 +10,7 @@
 import Highcharts from '../parts/Globals.js';
 import '../parts/Chart.js';
 import '../parts/Options.js';
+import '../mixins/download-url.js';
 /* global MSBlobBuilder */
 
 var addEvent = Highcharts.addEvent,
@@ -20,7 +21,6 @@ var addEvent = Highcharts.addEvent,
     each = Highcharts.each,
     domurl = win.URL || win.webkitURL || win,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
-    isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
     // Milliseconds to defer image load event handlers to offset IE bug
     loadEventDeferDelay = isMSBrowser ? 150 : 0;
 
@@ -46,77 +46,6 @@ function getScript(scriptLocation, callback) {
 
     head.appendChild(script);
 }
-
-// Convert dataURL to Blob if supported, otherwise returns undefined
-Highcharts.dataURLtoBlob = function (dataURL) {
-    if (
-        win.atob &&
-        win.ArrayBuffer &&
-        win.Uint8Array &&
-        win.Blob &&
-        domurl.createObjectURL
-    ) {
-        // Try to convert data URL to Blob
-        var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/),
-            binStr = win.atob(parts[3]), // Assume base64 encoding
-            buf = new win.ArrayBuffer(binStr.length),
-            binary = new win.Uint8Array(buf),
-            blob;
-
-        for (var i = 0; i < binary.length; ++i) {
-            binary[i] = binStr.charCodeAt(i);
-        }
-
-        blob = new win.Blob([binary], { 'type': parts[1] });
-        return domurl.createObjectURL(blob);
-    }
-};
-
-// Download contents by dataURL/blob
-Highcharts.downloadURL = function (dataURL, filename) {
-    var a = doc.createElement('a'),
-        windowRef;
-
-    // IE specific blob implementation
-    // Don't use for normal dataURLs
-    if (
-        typeof dataURL !== 'string' &&
-        !(dataURL instanceof String) &&
-        nav.msSaveOrOpenBlob
-    ) {
-        nav.msSaveOrOpenBlob(dataURL, filename);
-        return;
-    }
-
-    // Some browsers have limitations for data URL lengths. Try to convert to
-    // Blob or fall back. Edge always needs that blob.
-    if (isEdgeBrowser || dataURL.length > 2000000) {
-        dataURL = Highcharts.dataURLtoBlob(dataURL);
-        if (!dataURL) {
-            throw 'Data URL length limit reached';
-        }
-    }
-
-    // Try HTML5 download attr if supported
-    if (a.download !== undefined) {
-        a.href = dataURL;
-        a.download = filename; // HTML5 download attribute
-        doc.body.appendChild(a);
-        a.click();
-        doc.body.removeChild(a);
-    } else {
-        // No download attr, just opening data URI
-        try {
-            windowRef = win.open(dataURL, 'chart');
-            if (windowRef === undefined || windowRef === null) {
-                throw 'Failed to open window';
-            }
-        } catch (e) {
-            // window.open failed, trying location.href
-            win.location.href = dataURL;
-        }
-    }
-};
 
 // Get blob URL from SVG code. Falls back to normal data URI.
 Highcharts.svgToDataUrl = function (svg) {
