@@ -25,7 +25,7 @@ var addEvent = H.addEvent,
  * Utils
  */
 
-// Utility to check, whether the SVGElement is visible
+// Utility to check, whether the SVGElement is visible.
 extend(SVGElement.prototype, {
     isVisible: function () {
         return this.visibility !== 'hidden' ? true : false;
@@ -41,11 +41,28 @@ wrap(H.SVGElement.prototype, 'animate', function (proceed, params) {
     }
     return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
-
 /**
- * Timeline Series definition.
+ * The timeline series type.
+ *
+ * @constructor seriesTypes.timeline
+ * @augments Series
  */
 
+/**
+ * The timeline series presents given events along a drawn line.
+ *
+ * @sample highcharts/series-timeline/alternate-labels Timeline series
+ *
+ * @extends plotOptions.line
+ * @excluding animationLimit,boostThreshold,connectEnds,connectNulls,
+ *          cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,
+ *          lineWidth,marker,negativeColor,pointInterval,pointIntervalUnit,
+ *          pointPlacement,pointStart,softThreshold,stacking,step,threshold,
+ *          turboThreshold,zoneAxis,zones
+ * @product highcharts
+ * @since 7.0.0
+ * @optionparent plotOptions.timeline
+ */
 seriesType('timeline', 'line', {
     showInLegend: false,
     colorByPoint: true,
@@ -73,7 +90,25 @@ seriesType('timeline', 'line', {
             '{point.label}',
         borderWidth: 1,
         borderColor: 'gray',
+        /**
+         * A distance between the data label and the point's edge.
+         * Negative numbers puts the data label on top of the point.
+         *
+         * @type {Number}
+         * @default 100
+         */
         distance: 100,
+        /**
+         * Whether to position data labels alternately. For example, if
+         * [distance](#plotOptions.timeline.dataLabels.distance) is set
+         * equal to `100`, then the first data label 's distance will be
+         * set equal to `100`, the second one equal to `-100`, and so on.
+         *
+         * @type {Boolean}
+         * @default true
+         * @sample {highcharts} highcharts/series-timeline/alternate-disabled
+         *         Alternate disabled
+         */
         alternate: true,
         verticalAlign: 'middle',
         color: '#000'
@@ -248,6 +283,7 @@ seriesType('timeline', 'line', {
         if (points) {
             xMap = series.mappedXData = this.getMappedXData();
 
+            // Apply new calculated point values.
             each(points, function (point, i) {
                 point.applyOptions({
                     x: xMap[i]
@@ -331,6 +367,8 @@ seriesType('timeline', 'line', {
     }
 });
 
+// Hide/show connector related with a specific data label, after
+// overlapping detected.
 addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
     var series = this.series;
 
@@ -350,6 +388,7 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
     });
 });
 
+// Hide/show connector related with a specific data label on every render.
 addEvent(H.seriesTypes.timeline, 'render', function () {
     var series = this.series || [],
         isDLVisible;
@@ -362,12 +401,15 @@ addEvent(H.seriesTypes.timeline, 'render', function () {
     });
 });
 
+// Calculate x values for all points.
 addEvent(H.seriesTypes.timeline, 'afterInit', function () {
     var series = this;
 
     series.mappedXData = this.getMappedXData();
 });
 
+// Distribute data labels before rendering them. Distribution is based on
+// the 'dataLabels.distance' and 'dataLabels.alternate' property.
 addEvent(H.seriesTypes.timeline, 'beforeDrawDataLabels', function () {
     var series = this,
         hasRendered = series.hasRendered;
@@ -385,6 +427,7 @@ addEvent(H.seriesTypes.timeline, 'afterDrawDataLabels', function () {
         defer = pick(options.defer, !!seriesOptions.animation),
         connectorsGroup = series.dataLabelsConnectorsGroup;
 
+    // Create (or redraw) the group for all connectors.
     connectorsGroup = series.plotGroup(
         'dataLabelsConnectorsGroup',
         'data-labels-connectors',
@@ -429,3 +472,69 @@ addEvent(H.seriesTypes.timeline, 'afterDrawDataLabels', function () {
         }
     }
 });
+/**
+ * The `timeline` series. If the [type](#series.timeline.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @type {Object}
+ * @extends series,plotOptions.timeline
+ * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
+ *            cropThreshold, dashStyle, dataParser, dataURL, findNearestPointBy,
+ *            getExtremesFromAll, lineWidth, marker, negativeColor,
+ *            pointInterval, pointIntervalUnit, pointPlacement, pointStart,
+ *            softThreshold, stacking, stack, step, threshold, turboThreshold,
+ *            zoneAxis, zones
+ * @product highcharts
+ * @apioption series.timeline
+ */
+
+/**
+ * An array of data points for the series. For the `timeline` series type,
+ * points can be given with three general parameters, `date`, `label`,
+ * and `description`:
+ *
+ * Example:
+ *
+ * ```js
+ * series: [{
+ *    type: 'timeline',
+ *    data: [{
+ *        date: 'Jan 2018',
+ *        label: 'Some event label',
+ *        description: 'Description to show in tooltip'
+ *    }]
+ * }]
+ * ```
+ *
+ * @type {Array<Object|Number>}
+ * @extends series.line.data
+ * @excluding marker,x,y
+ * @sample {highcharts} highcharts/series-timeline/alternate-labels
+ *         Alternate labels
+ * @product highcharts
+ * @apioption series.timeline.data
+ */
+
+/**
+ * The date of event.
+ *
+ * @type {String}
+ * @product highcharts
+ * @apioption series.timeline.data.date
+ */
+
+/**
+ * The label of event.
+ *
+ * @type {String}
+ * @product highcharts
+ * @apioption series.timeline.data.label
+ */
+
+/**
+ * The description of event. This description will be shown in tooltip.
+ *
+ * @type {String}
+ * @product highcharts
+ * @apioption series.timeline.data.description
+ */
