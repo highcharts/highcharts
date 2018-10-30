@@ -6,27 +6,6 @@
  * License: www.highcharts.com/license
  */
 
-/**
- * Download options for offline exporting.
- *
- * @interface Highcharts.OfflineExportingOptionsObject
- * @extends {Highcharts.ExportingOptionsObject}
- *//**
- * URL pointing to location of dependency scripts to download on demand. By
- * default, the module will load these file from our server. Internet Explorer
- * requires the canvg library in order to export to PNG and to export charts
- * with embedded images. PDF export also requires the jsPDF and svg2pdf for all
- * browsers.
- *
- * @name Highcharts.OfflineExportingOptionsObject#libURL
- * @type {string|undefined}
- *//**
- * Scaling factor of downloaded image compared to source.
- *
- * @name Highcharts.OfflineExportingOptionsObject#scale
- * @type {number|undefined}
- */
-
 'use strict';
 
 /* global MSBlobBuilder */
@@ -334,7 +313,7 @@ Highcharts.imageToDataUrl = function (
  *
  * @param {string} svg
  *
- * @param {Highcharts.OfflineExportingOptionsObject} options
+ * @param {Highcharts.ExportingOptions} options
  *
  * @param {Function} failCallback
  *
@@ -567,7 +546,7 @@ Highcharts.downloadSVGLocal = function (
  * @private
  * @function Highcharts.Chart#getSVGForLocalExport
  *
- * @param {Highcharts.OfflineExportingOptionsObject} options
+ * @param {Highcharts.ExportingOptions} options
  *
  * @param {Highcharts.Options} chartOptions
  *
@@ -659,7 +638,7 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
  *
  * @function Highcharts.Chart#exportChartLocal
  *
- * @param  {Highcharts.OfflineExportingOptionsObject} exportingOptions
+ * @param  {Highcharts.ExportingOptions} exportingOptions
  *         Exporting options, the same as in
  *         {@link Highcharts.Chart#exportChart}.
  *

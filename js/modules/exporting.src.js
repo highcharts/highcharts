@@ -45,42 +45,6 @@
  * @type {boolean|undefined}
  */
 
-/**
- * Options for exporting tasks.
- *
- * @interface Highcharts.ExportingOptionsObject
- *//**
- * The file name for the export without extension.
- *
- * @name Highcharts.ExportingOptionsObject#filename
- * @type {string|undefined}
- *//**
- * The pixel width of the source (in-page) chart.
- *
- * @name Highcharts.ExportingOptionsObject#sourceWidth
- * @type {number|undefined}
- *//**
- * The pixel height of the source (in-page) chart.
- *
- * @name Highcharts.ExportingOptionsObject#sourceHeight
- * @type {number|undefined}
- *//**
- * The MIME type of the converted image.
- *
- * @name Highcharts.ExportingOptionsObject#type
- * @type {string|undefined}
- *//**
- * The URL for the server module to do the conversion.
- *
- * @name Highcharts.ExportingOptionsObject#url
- * @type {string|undefined}
- *//**
- * The width of the PNG or JPG image generated on the server.
- *
- * @name Highcharts.ExportingOptionsObject#width
- * @type {number|undefined}
- */
-
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -1215,7 +1179,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#getSVGForExport
      *
-     * @param {Highcharts.ExportingOptionsObject} options
+     * @param {Highcharts.ExportingOptions} options
      *
      * @param {Highcharts.Options} chartOptions
      *
@@ -1258,7 +1222,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#exportChart
      *
-     * @param {Highcharts.ExportingOptionsObject} exportingOptions
+     * @param {Highcharts.ExportingOptions} exportingOptions
      *        Exporting options in addition to those defined in
      *        [exporting](https://api.highcharts.com/highcharts/exporting).
      *
