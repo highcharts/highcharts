@@ -20,7 +20,6 @@ import H from './Globals.js';
 import './Utilities.js';
 
 var isNumber = H.isNumber,
-    map = H.map,
     merge = H.merge,
     pInt = H.pInt;
 
@@ -97,7 +96,7 @@ H.Color.prototype = {
 
         // Gradients
         if (input && input.stops) {
-            this.stops = map(input.stops, function (stop) {
+            this.stops = input.stops.map(function (stop) {
                 return new H.Color(stop[1]);
             });
 

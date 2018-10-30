@@ -17,7 +17,6 @@ import '../parts/Point.js';
 
 var win = H.win,
     doc = win.document,
-    map = H.map,
     erase = H.erase,
     addEvent = H.addEvent,
     merge = H.merge,
@@ -648,7 +647,7 @@ H.Chart.prototype.getAxesDescription = function () {
             ),
             {
                 chart: this,
-                names: map(this.xAxis, function (axis) {
+                names: this.xAxis.map(function (axis) {
                     return axis.getDescription();
                 }),
                 numAxes: numXAxes
@@ -663,7 +662,7 @@ H.Chart.prototype.getAxesDescription = function () {
             ),
             {
                 chart: this,
-                names: map(this.yAxis, function (axis) {
+                names: this.yAxis.map(function (axis) {
                     return axis.getDescription();
                 }),
                 numAxes: numYAxes

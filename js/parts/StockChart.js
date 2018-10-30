@@ -24,7 +24,6 @@ var addEvent = H.addEvent,
     inArray = H.inArray,
     isNumber = H.isNumber,
     isString = H.isString,
-    map = H.map,
     merge = H.merge,
     pick = H.pick,
     Point = H.Point,
@@ -158,7 +157,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
         };
 
     // apply X axis options to both single and multi y axes
-    options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions, i) {
+    options.xAxis = splat(options.xAxis || {}).map(function (xAxisOptions, i) {
         return merge(
             { // defaults
                 minPadding: 0,
@@ -185,7 +184,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
     });
 
     // apply Y axis options to both single and multi y axes
-    options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions, i) {
+    options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions, i) {
         opposite = pick(yAxisOptions.opposite, true);
         return merge({ // defaults
             labels: {
@@ -356,7 +355,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
         }
 
         // Auto detect based on existing series
-        return map(series, function (s) {
+        return series.map(function (s) {
             return s[otherColl];
         });
     }

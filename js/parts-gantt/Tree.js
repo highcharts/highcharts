@@ -11,7 +11,6 @@ import '../parts/Utilities.js';
 var extend = H.extend,
     isNumber = H.isNumber,
     keys = H.keys,
-    map = H.map,
     pick = H.pick,
     reduce = H.reduce,
     isFunction = function (x) {
@@ -73,7 +72,7 @@ var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
      * Call getNode recursively on the children. Calulate the height of the
      * node, and the number of descendants.
      */
-    children = map((mapOfIdToChildren[id] || []), function (child) {
+    children = ((mapOfIdToChildren[id] || [])).map(function (child) {
         var node = getNode(
                 child.id,
                 id,
@@ -129,7 +128,7 @@ var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
     return node;
 };
 var getTree = function (data, options) {
-    var ids = map(data, function (d) {
+    var ids = data.map(function (d) {
             return d.id;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);

@@ -14,7 +14,6 @@ import '../parts/Color.js';
 
 var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    map = H.map,
     merge = H.merge,
     extend = H.extend,
     noop = H.noop,
@@ -560,7 +559,7 @@ seriesType('treemap', 'scatter', {
     */
     getTree: function () {
         var series = this,
-            allIds = map(this.data, function (d) {
+            allIds = this.data.map(function (d) {
                 return d.id;
             }),
             parentList = series.getListOfParents(this.data, allIds);

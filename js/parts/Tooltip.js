@@ -13,7 +13,6 @@ var doc = H.doc,
     extend = H.extend,
     format = H.format,
     isNumber = H.isNumber,
-    map = H.map,
     merge = H.merge,
     pick = H.pick,
     splat = H.splat,
@@ -482,7 +481,7 @@ H.Tooltip.prototype = {
             ];
         }
 
-        return map(ret, Math.round);
+        return ret.map(Math.round);
     },
 
     /**
@@ -1202,7 +1201,7 @@ H.Tooltip.prototype = {
      * @return {string}
      */
     bodyFormatter: function (items) {
-        return map(items, function (item) {
+        return items.map(function (item) {
             var tooltipOptions = item.series.tooltipOptions;
             return (
                 tooltipOptions[

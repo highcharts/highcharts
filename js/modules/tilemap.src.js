@@ -463,7 +463,7 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
 
     var axis = this,
         // Find which series' padding to use
-        seriesPadding = reduce(H.map(axis.series, function (series) {
+        seriesPadding = reduce(axis.series.map(function (series) {
             return series.getSeriesPixelPadding &&
                 series.getSeriesPixelPadding(axis);
         }), function (a, b) {

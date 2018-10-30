@@ -4,7 +4,6 @@ var deg2rad = H.deg2rad,
     find = H.find,
     isArray = H.isArray,
     isNumber = H.isNumber,
-    map = H.map,
     reduce = H.reduce;
 
 /**
@@ -52,7 +51,7 @@ var dotProduct = function dotProduct(a, b) {
  * @param {Array} target The coordinate of pr
  */
 var project = function project(polygon, target) {
-    var products = map(polygon, function (point) {
+    var products = polygon.map(function (point) {
         return dotProduct(point, target);
     });
     return {
@@ -150,7 +149,7 @@ var getPolygon = function (x, y, width, height, rotation) {
             [right, bottom],
             [left, bottom]
         ];
-    return map(polygon, function (point) {
+    return polygon.map(function (point) {
         return rotate2DToPoint(point, origin, -rotation);
     });
 };
@@ -198,7 +197,7 @@ var isPolygonsColliding = function isPolygonsColliding(polygon1, polygon2) {
 };
 
 var movePolygon = function (deltaX, deltaY, polygon) {
-    return map(polygon, function (point) {
+    return polygon.map(function (point) {
         return [
             point[0] + deltaX,
             point[1] + deltaY

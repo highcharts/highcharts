@@ -20,7 +20,6 @@ var argsToArray = function (args) {
     find = H.find,
     fireEvent = H.fireEvent,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
-    map = H.map,
     merge = H.merge,
     inArray = H.inArray,
     isBoolean = function (x) {
@@ -534,7 +533,7 @@ override(GridAxis.prototype, {
                 // TODO: it would be better to be able to calculate y values
                 // before Series.setData
                 axis.series.forEach(function (series) {
-                    series.yData = map(series.options.data, function (data) {
+                    series.yData = series.options.data.map(function (data) {
                         return data.y;
                     });
                 });

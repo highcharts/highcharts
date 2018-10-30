@@ -15,7 +15,6 @@ var addEvent = H.addEvent,
     defined = H.defined,
     extend = H.extend,
     format = H.format,
-    map = H.map,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -85,7 +84,7 @@ H.distribute = function (boxes, len, maxDistance) {
 
     // So far we have been mutating the original array. Now
     // create a copy with target arrays
-    boxes = map(boxes, function (box) {
+    boxes = boxes.map(function (box) {
         return {
             size: box.size,
             targets: [box.target],
@@ -240,11 +239,11 @@ Series.prototype.drawDataLabels = function () {
         var res = [],
             i;
         if (isArray(one) && !isArray(two)) {
-            res = map(one, function (el) {
+            res = one.map(function (el) {
                 return merge(el, two);
             });
         } else if (isArray(two) && !isArray(one)) {
-            res = map(two, function (el) {
+            res = two.map(function (el) {
                 return merge(one, el);
             });
         } else if (!isArray(one) && !isArray(two)) {

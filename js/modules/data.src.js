@@ -490,7 +490,7 @@ Highcharts.extend(Data.prototype, {
                 (
                     chartOptions &&
                     chartOptions.series &&
-                    Highcharts.map(chartOptions.series, function () {
+                    chartOptions.series.map(function () {
                         return { x: 0 };
                     })
                 ) ||

@@ -169,7 +169,7 @@ Chart.prototype.setResponsive = function (redraw) {
     }
 
     // Merge matching rules
-    var mergedOptions = H.merge.apply(0, H.map(ruleIds, function (ruleId) {
+    var mergedOptions = H.merge.apply(0, ruleIds.map(function (ruleId) {
         return H.find(options.rules, function (rule) {
             return rule._id === ruleId;
         }).chartOptions;

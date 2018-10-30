@@ -15,7 +15,6 @@ import './Options.js';
 
 var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    map = H.map,
     pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType;
@@ -222,8 +221,8 @@ seriesType('area', 'line'
                 return a - b;
             });
 
-            visibleSeries = map(yAxisSeries, function () {
-                return this.visible;
+            visibleSeries = yAxisSeries.map(function (s) {
+                return s.visible;
             });
 
             keys.forEach(function (x, idx) {

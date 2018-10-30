@@ -12,7 +12,6 @@ import './Pane.js';
 var addEvent = H.addEvent,
     Axis = H.Axis,
     extend = H.extend,
-    map = H.map,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -352,7 +351,7 @@ if (!H.radialAxisExtended) {
                 }
 
                 // Convert percentages to pixel values
-                radii = map(radii, function (radius) {
+                radii = radii.map(function (radius) {
                     if (percentRegex.test(radius)) {
                         radius = (pInt(radius, 10) * fullRadius) / 100;
                     }

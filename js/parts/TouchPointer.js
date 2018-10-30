@@ -11,7 +11,6 @@ import './Utilities.js';
 
 var charts = H.charts,
     extend = H.extend,
-    map = H.map,
     noop = H.noop,
     pick = H.pick,
     Pointer = H.Pointer;
@@ -220,7 +219,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
         }
 
         // Normalize each touch
-        map(touches, function (e) {
+        touches.map(function (e) {
             return self.normalize(e);
         });
 

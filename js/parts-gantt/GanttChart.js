@@ -8,8 +8,7 @@
 import H from '../parts/Globals.js';
 import 'GanttSeries.js';
 
-var map = H.map,
-    merge = H.merge,
+var merge = H.merge,
     splat = H.splat,
     Chart = H.Chart;
 
@@ -37,7 +36,7 @@ H.ganttChart = function (renderTo, options, callback) {
     }
 
     // apply X axis options to both single and multi x axes
-    options.xAxis = map(options.xAxis, function (xAxisOptions, i) {
+    options.xAxis = options.xAxis.map(function (xAxisOptions, i) {
         if (i === 1) { // Second xAxis
             defaultLinkedTo = 0;
         }
@@ -58,7 +57,7 @@ H.ganttChart = function (renderTo, options, callback) {
     });
 
     // apply Y axis options to both single and multi y axes
-    options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
+    options.yAxis = (splat(options.yAxis || {})).map(function (yAxisOptions) {
         return merge(
             defaultOptions.yAxis, // #3802
             { // defaults

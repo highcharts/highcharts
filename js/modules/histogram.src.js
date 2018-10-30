@@ -17,8 +17,7 @@ var objectEach = H.objectEach,
     isNumber = H.isNumber,
     arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
-    merge = H.merge,
-    map = H.map;
+    merge = H.merge;
 
 /* ***************************************************************************
  *
@@ -152,7 +151,7 @@ seriesType('histogram', 'column', {
         }
 
         fitToBin = fitToBinLeftClosed(
-            map(frequencies, function (elem) {
+            frequencies.map(function (elem) {
                 return parseFloat(elem);
             }));
 

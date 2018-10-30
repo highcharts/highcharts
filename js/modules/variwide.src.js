@@ -203,7 +203,7 @@ addEvent(H.Axis, 'afterRender', function () {
     var axis = this;
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(function () {
-            return H.map(axis.tickPositions, function (pos, i) {
+            return axis.tickPositions.map(function (pos, i) {
                 var label = axis.ticks[pos].label;
                 label.labelrank = axis.zData[i];
                 return label;

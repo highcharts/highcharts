@@ -16,7 +16,6 @@ var extend = H.extend,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
-    map = H.map,
     merge = H.merge,
     find = H.find,
     reduce = H.reduce,
@@ -314,9 +313,13 @@ var getRotation = function getRotation(orientations, index, from, to) {
  */
 var getSpiral = function (fn, params) {
     var length = 10000,
-        arr = map(new Array(length), function (_, i) {
-            return fn(i + 1, params);
-        });
+        i,
+        arr = [];
+
+    for (i = 1; i < length; i++) {
+        arr.push(fn(i, params));
+    }
+
     return function (attempt) {
         return attempt <= length ? arr[attempt - 1] : false;
     };

@@ -17,7 +17,6 @@ var colorPointMixin = H.colorPointMixin,
     extend = H.extend,
     isNumber = H.isNumber,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    map = H.map,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -569,7 +568,7 @@ seriesType('map', 'scatter', {
 
                 // Add those map points that don't correspond to data, which
                 // will be drawn as null points
-                dataUsed = '|' + map(dataUsed, function (point) {
+                dataUsed = '|' + dataUsed.map(function (point) {
                     return point && point[joinBy[0]];
                 }).join('|') + '|'; // Faster than array.indexOf
 

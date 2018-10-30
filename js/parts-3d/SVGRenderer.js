@@ -20,7 +20,6 @@ var animObject = H.animObject,
     deg2rad = H.deg2rad,
     extend = H.extend,
     inArray = H.inArray,
-    map = H.map,
     merge = H.merge,
     perspective = H.perspective,
     pick = H.pick,
@@ -503,8 +502,8 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         var ret = [
                 [], -1
         ];
-        path1 = map(path1, mapPath);
-        path2 = map(path2, mapPath);
+        path1 = path1.map(mapPath);
+        path2 = path2.map(mapPath);
         if (H.shapeArea(path1) < 0) {
             ret = [path1, 0];
         } else if (H.shapeArea(path2) < 0) {

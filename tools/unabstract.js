@@ -2,6 +2,10 @@
 /* eslint-disable */
 
 /*
+This file exists for the one-time job of converting array abstractions
+like H.each, H.map etc to their native counterparts. After that, this file can
+be deleted. See https://github.com/highcharts/highcharts/issues/9225.
+
 Usage:
 node tools/unabstract
 */
@@ -17,8 +21,8 @@ glob('js/**/**.js', null, (err, files) => {
         if (i < 30000) {
             let file = fs.readFileSync(fileName, 'utf-8');
 
-            file = file.replace(/each = H\.each,\s+/g, '');
-            let regex = /(H\.)?each\(/g;
+            file = file.replace(/map = (H\.|Highcharts\.)map,\s+/g, '');
+            let regex = /(H\.|Highcharts\.)?map\(/g;
             let arr;
 
 
@@ -53,7 +57,7 @@ glob('js/**/**.js', null, (err, files) => {
                     }
                     console.log(
                         arr[0],
-                        file.substr(regex.lastIndex, i - regex.lastIndex)
+                        file.substr(regex.lastIndex, i - regex.lastIndex).cyan
                     );
                     file = file.replace(
                         arr[0] +
@@ -62,12 +66,14 @@ glob('js/**/**.js', null, (err, files) => {
                         (requiresParen ? '(' : '') +
                         file.substr(regex.lastIndex, i - regex.lastIndex).trim() +
                         (requiresParen ? ')' : '') + 
-                        '.forEach('
+                        '._map_('
                     );
                     
                 }
 
-                file = file.replace(/\.forEach\( /g, '.forEach(');
+                file = file
+                    .replace(/_map_/g, 'map')
+                    .replace(/\.map\( /g, '.map(');
 
             
             /*
