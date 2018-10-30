@@ -3319,7 +3319,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/credits/customized/
          *         Custom URL and text
          */
-        href: 'https://www.highcharts.com',
+        href: 'https://www.highcharts.com?credits',
 
         /**
          * Position configuration for the credits label.
