@@ -256,7 +256,7 @@ H.i18nFormat = function (formatString, context, time) {
 
     // Join string back together and pass to H.format to pick up non-array
     // statements.
-    return H.format(H.reduce(tokens, function (acc, cur) {
+    return H.format(tokens.reduce(function (acc, cur) {
         return acc + cur.value;
     }, ''), context, time);
 };

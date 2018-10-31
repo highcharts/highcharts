@@ -13,7 +13,6 @@ import H from '../parts/Globals.js';
 import '../parts-map/HeatmapSeries.js';
 
 var seriesType = H.seriesType,
-    reduce = H.reduce,
     pick = H.pick,
     // Utility func to get the middle number of 3
     between = function (x, a, b) {
@@ -463,15 +462,18 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
 
     var axis = this,
         // Find which series' padding to use
-        seriesPadding = reduce(axis.series.map(function (series) {
-            return series.getSeriesPixelPadding &&
-                series.getSeriesPixelPadding(axis);
-        }), function (a, b) {
-            return (a && a.padding) > (b && b.padding) ? a : b;
-        }, undefined) || {
-            padding: 0,
-            axisLengthFactor: 1
-        },
+        seriesPadding = axis.series
+            .map(function (series) {
+                return series.getSeriesPixelPadding &&
+                    series.getSeriesPixelPadding(axis);
+            })
+            .reduce(function (a, b) {
+                return (a && a.padding) > (b && b.padding) ? a : b;
+            }, undefined) ||
+            {
+                padding: 0,
+                axisLengthFactor: 1
+            },
         lengthPadding = Math.round(
             seriesPadding.padding * seriesPadding.axisLengthFactor
         );

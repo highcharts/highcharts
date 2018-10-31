@@ -12,7 +12,6 @@ var extend = H.extend,
     isNumber = H.isNumber,
     keys = H.keys,
     pick = H.pick,
-    reduce = H.reduce,
     isFunction = function (x) {
         return typeof x === 'function';
     };
@@ -25,7 +24,7 @@ var extend = H.extend,
  * @returns {Object}               Map from parent id to children index in data
  */
 var getListOfParents = function (data, ids) {
-    var listOfParents = reduce(data, function (prev, curr) {
+    var listOfParents = data.reduce(function (prev, curr) {
             var parent = pick(curr.parent, '');
             if (prev[parent] === undefined) {
                 prev[parent] = [];

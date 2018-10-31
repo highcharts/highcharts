@@ -33,7 +33,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     setTreeValues = mixinTreeSeries.setTreeValues,
-    reduce = H.reduce,
     updateRootId = mixinTreeSeries.updateRootId;
 
 // TODO introduce step, which should default to 1.
@@ -158,7 +157,7 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
             options.slicedOffset :
             0;
 
-    return reduce(children || [], function (arr, child) {
+    return (children || []).reduce(function (arr, child) {
         var percentage = (1 / total) * child.val,
             radians = percentage * range,
             radiansCenter = startAngle + (radians / 2),

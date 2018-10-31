@@ -36,7 +36,6 @@ var seriesType = H.seriesType,
             func.call(context, val, key, list);
         });
     },
-    reduce = H.reduce,
     // @todo find correct name for this function.
     // @todo Similar to reduce, this function is likely redundant
     recursive = function (item, func, context) {
@@ -531,7 +530,7 @@ seriesType('treemap', 'scatter', {
     getListOfParents: function (data, existingIds) {
         var arr = isArray(data) ? data : [],
             ids = isArray(existingIds) ? existingIds : [],
-            listOfParents = reduce(arr, function (prev, curr, i) {
+            listOfParents = arr.reduce(function (prev, curr, i) {
                 var parent = pick(curr.parent, '');
                 if (prev[parent] === undefined) {
                     prev[parent] = [];
@@ -1443,8 +1442,7 @@ seriesType('treemap', 'scatter', {
         H.extend(this.xAxis.options, treeAxis);
     },
     utils: {
-        recursive: recursive,
-        reduce: reduce
+        recursive: recursive
     }
 
 // Point class

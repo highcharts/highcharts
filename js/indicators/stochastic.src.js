@@ -10,13 +10,13 @@ var merge = H.merge,
 
 // Utils:
 function minInArray(arr, index) {
-    return H.reduce(arr, function (min, target) {
+    return arr.reduce(function (min, target) {
         return Math.min(min, target[index]);
     }, Infinity);
 }
 
 function maxInArray(arr, index) {
-    return H.reduce(arr, function (min, target) {
+    return arr.reduce(function (min, target) {
         return Math.max(min, target[index]);
     }, 0);
 }

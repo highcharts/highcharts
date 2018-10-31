@@ -10,8 +10,8 @@ var extend = H.extend,
     isObject = H.isObject,
     isNumber = H.isNumber,
     merge = H.merge,
-    pick = H.pick,
-    reduce = H.reduce;
+    pick = H.pick;
+
 // TODO Combine buildTree and buildNode with setTreeValues
 // TODO Remove logic from Treemap and make it utilize this mixin.
 var setTreeValues = function setTreeValues(tree, options) {
@@ -160,7 +160,7 @@ var getLevelOptions = function getLevelOptions(params) {
         converted = {};
         defaults = isObject(params.defaults) ? params.defaults : {};
         if (isArray(levels)) {
-            converted = reduce(levels, function (obj, item) {
+            converted = levels.reduce(function (obj, item) {
                 var level,
                     levelIsConstant,
                     options;

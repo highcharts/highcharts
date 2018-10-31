@@ -942,7 +942,7 @@ function drawLabels() {
             chart.labelSeries.push(series);
 
             if (options.minFontSize && options.maxFontSize) {
-                series.sum = H.reduce(series.yData, function (pv, cv) {
+                series.sum = series.yData.reduce(function (pv, cv) {
                     return (pv || 0) + (cv || 0);
                 }, 0);
                 chart.labelSeriesMaxSum = Math.max(

@@ -21,8 +21,8 @@ glob('js/**/**.js', null, (err, files) => {
         if (i < 30000) {
             let file = fs.readFileSync(fileName, 'utf-8');
 
-            file = file.replace(/inArray = (H\.|Highcharts\.)inArray,\s+/g, '');
-            let regex = /(H\.|Highcharts\.)?inArray\(/g;
+            file = file.replace(/reduce = (H\.|Highcharts\.)reduce,\s+/g, '');
+            let regex = /(H\.|Highcharts\.)?reduce\(/g;
             let arr;
 
 
@@ -58,7 +58,7 @@ glob('js/**/**.js', null, (err, files) => {
                                 file.charAt(i) === ',' ||
                                 file.charAt(i) === ')'
                             ) &&
-                            inParen < 1 &&
+                            inParen === 0 &&
                             inBrackets === 0
                         ) {
                             args.push(file.substr(lastIndex, i - lastIndex));
@@ -71,31 +71,24 @@ glob('js/**/**.js', null, (err, files) => {
                         i++;
                     }
                     console.log(
-                        arr[0] + args[0] + ',' + args[1] + ','
+                        arr[0],
+                        args[0].trim().cyan
                     );
-                    /*
                     file = file.replace(
                         arr[0] + args[0] + ',',
                         (
                             (requiresParen ? '(' : '') +
                             args[0].trim() +
                             (requiresParen ? ')' : '') + 
-                            '.indexOf('
-                        )
-                    );
-                    */
-                    file = file.replace(
-                        arr[0] + args[0] + ',' + args[1],
-                        (
-                            args[1].trim() + '.indexOf(' + args[0]
+                            '._reduce_('
                         )
                     );
                     
                 }
 
                 file = file
-                    //.replace(/_map_/g, 'map')
-                    .replace(/\.indexOf\( /g, '.indexOf(');
+                    .replace(/_reduce_/g, 'reduce')
+                    .replace(/\.reduce\( /g, '.reduce(');
 
             
             /*

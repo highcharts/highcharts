@@ -18,7 +18,6 @@ var extend = H.extend,
     isObject = H.isObject,
     merge = H.merge,
     find = H.find,
-    reduce = H.reduce,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
     getPolygon = polygon.getPolygon,
     isPolygonsColliding = polygon.isPolygonsColliding,
@@ -233,7 +232,7 @@ var getPlayingField = function getPlayingField(
     targetHeight,
     data
 ) {
-    var info = reduce(data, function (obj, point) {
+    var info = data.reduce(function (obj, point) {
             var dimensions = point.dimensions,
                 x = Math.max(dimensions.width, dimensions.height);
             // Find largest height.

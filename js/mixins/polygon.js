@@ -3,8 +3,7 @@ import '../parts/Utilities.js';
 var deg2rad = H.deg2rad,
     find = H.find,
     isArray = H.isArray,
-    isNumber = H.isNumber,
-    reduce = H.reduce;
+    isNumber = H.isNumber;
 
 /**
  * Alternative solution to correctFloat.
@@ -108,8 +107,7 @@ var getAxesFromPolygon = function (polygon) {
     if (!isArray(axes)) {
         axes = [];
         points = points = polygon.concat([polygon[0]]);
-        reduce(
-            points,
+        points.reduce(
             function findAxis(p1, p2) {
                 var normals = getNormals(p1, p2),
                     axis = normals[0]; // Use the left normal as axis.
@@ -155,7 +153,7 @@ var getPolygon = function (x, y, width, height, rotation) {
 };
 
 var getBoundingBoxFromPolygon = function (points) {
-    return reduce(points, function (obj, point) {
+    return points.reduce(function (obj, point) {
         var x = point[0],
             y = point[1];
         obj.left = Math.min(x, obj.left);

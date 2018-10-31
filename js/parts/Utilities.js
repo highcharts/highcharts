@@ -2131,33 +2131,6 @@ H.keys = function (obj) {
 };
 
 /**
- * Reduce an array to a single value.
- *
- * @function Highcharts.reduce
- *
- * @param {Array<*>} arr
- *        The array to reduce.
- *
- * @param {Function} fn
- *        The callback function. Return the reduced value. Receives 4
- *        arguments: Accumulated/reduced value, current value, current array
- *        index, and the array.
- *
- * @param {*} initialValue
- *        The initial value of the accumulator.
- *
- * @return {*}
- *         The reduced value.
- */
-H.reduce = function (arr, func, initialValue) {
-    var fn = (H.reducePolyfill || Array.prototype.reduce);
-    return fn.apply(
-        arr,
-        (arguments.length > 2 ? [func, initialValue] : [func])
-    );
-};
-
-/**
  * Get the element's offset position, corrected for `overflow: auto`.
  *
  * @function Highcharts.offset
@@ -2293,13 +2266,38 @@ H.objectEach = function (obj, fn, ctx) {
  * @return {Array}
  *         A new array item with modified items.
  */
+
+/**
+ * Reduce an array to a single value.
+ *
+ * @function Highcharts.reduce
+ * @deprecated
+ *
+ * @param {Array<*>} arr
+ *        The array to reduce.
+ *
+ * @param {Function} fn
+ *        The callback function. Return the reduced value. Receives 4
+ *        arguments: Accumulated/reduced value, current value, current array
+ *        index, and the array.
+ *
+ * @param {*} initialValue
+ *        The initial value of the accumulator.
+ *
+ * @return {*}
+ *         The reduced value.
+ */
 H.objectEach({
     map: 'map',
     each: 'forEach',
-    grep: 'filter'
+    grep: 'filter',
+    reduce: 'reduce'
 }, function (val, key) {
-    H[key] = function (arr, fn, ctx) {
-        return Array.prototype[val].call(arr, fn, ctx);
+    H[key] = function (arr) {
+        return Array.prototype[val].apply(
+            arr,
+            [].slice.call(arguments, 1)
+        );
     };
 });
 

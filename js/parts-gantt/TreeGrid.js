@@ -32,7 +32,6 @@ var argsToArray = function (args) {
     isString = H.isString,
     keys = H.keys,
     pick = H.pick,
-    reduce = H.reduce,
     wrap = H.wrap,
     GridAxis = H.Axis,
     GridAxisTick = H.Tick;
@@ -125,8 +124,7 @@ var getBreakFromNode = function (node, max) {
  * @returns {number[]} List of positions.
  */
 var getTickPositions = function (axis) {
-    return reduce(
-        keys(axis.mapOfPosToGridNode),
+    return keys(axis.mapOfPosToGridNode).reduce(
         function (arr, key) {
             var pos = +key;
             if (
@@ -181,7 +179,7 @@ var expand = function (axis, node) {
     var breaks = (axis.options.breaks || []),
         obj = getBreakFromNode(node, axis.max);
     // Remove the break from the axis breaks array.
-    return reduce(breaks, function (arr, b) {
+    return breaks.reduce(function (arr, b) {
         if (b.to !== obj.to || b.from !== obj.from) {
             arr.push(b);
         }
@@ -872,7 +870,7 @@ GridAxis.prototype.updateYNames = function () {
 
     if (isTreeGrid && isYAxis) {
         // Concatenate data from all series assigned to this axis.
-        data = reduce(series, function (arr, s) {
+        data = series.reduce(function (arr, s) {
             if (s.visible) {
                 // Push all data to array
                 s.options.data.forEach(function (data) {

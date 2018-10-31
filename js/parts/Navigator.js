@@ -2076,8 +2076,7 @@ Navigator.prototype = {
      * @return {number} Minimum from all series
      */
     getBaseSeriesMin: function (currentSeriesMin) {
-        return H.reduce(
-            this.baseSeries,
+        return this.baseSeries.reduce(
             function (min, series) {
                 return Math.min(min, series.xData[0]);
             },
