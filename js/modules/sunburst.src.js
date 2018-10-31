@@ -20,7 +20,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
-    grep = H.grep,
     inArray = H.inArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
@@ -73,7 +72,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
         from = isNumber(p.from) ? p.from : 0;
         to = isNumber(p.to) ? p.to : 0;
         levels = range(from, to);
-        levelsNotIncluded = grep(keys(result), function (k) {
+        levelsNotIncluded = keys(result).filter(function (k) {
             return inArray(+k, levels) === -1;
         });
         diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;
@@ -732,7 +731,7 @@ var sunburstSeries = {
             level = parent.level + 1,
             options = mapOptionsToLevel[level],
             // Collect all children which should be included
-            children = grep(parent.children, function (n) {
+            children = parent.children.filter(function (n) {
                 return n.visible;
             }),
             twoPi = 6.28; // Two times Pi.

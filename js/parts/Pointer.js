@@ -424,7 +424,7 @@ Highcharts.Pointer.prototype = {
                 // Only search on hovered series if it has stickyTracking false
                 [hoverSeries] :
                 // Filter what series to look in.
-                H.grep(series, function (s) {
+                series.filter(function (s) {
                     return filter(s) && s.stickyTracking;
                 });
 
@@ -440,7 +440,7 @@ Highcharts.Pointer.prototype = {
         if (hoverPoint) {
             // When tooltip is shared, it displays more than one point
             if (shared && !hoverSeries.noSharedTooltip) {
-                searchSeries = H.grep(series, function (s) {
+                searchSeries = series.filter(function (s) {
                     return filter(s) && !s.noSharedTooltip;
                 });
 

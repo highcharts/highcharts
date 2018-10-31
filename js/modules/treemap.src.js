@@ -19,7 +19,6 @@ var seriesType = H.seriesType,
     noop = H.noop,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
-    grep = H.grep,
     isArray = H.isArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
@@ -687,7 +686,7 @@ seriesType('treemap', 'scatter', {
             children;
 
         // Collect all children which should be included
-        children = grep(parent.children, function (n) {
+        children = parent.children.filter(function (n) {
             return !n.ignore;
         });
 
@@ -1127,7 +1126,7 @@ seriesType('treemap', 'scatter', {
     drawDataLabels: function () {
         var series = this,
             mapOptionsToLevel = series.mapOptionsToLevel,
-            points = grep(series.points, function (n) {
+            points = series.points.filter(function (n) {
                 return n.node.visible;
             }),
             options,
@@ -1246,7 +1245,7 @@ seriesType('treemap', 'scatter', {
     */
     drawPoints: function () {
         var series = this,
-            points = grep(series.points, function (n) {
+            points = series.points.filter(function (n) {
                 return n.node.visible;
             });
 

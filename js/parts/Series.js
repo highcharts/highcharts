@@ -89,7 +89,6 @@ var addEvent = H.addEvent,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    grep = H.grep,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isString = H.isString,
@@ -3875,16 +3874,18 @@ H.Series = H.seriesType('line', null
     getValidPoints: function (points, insideOnly) {
         var chart = this.chart;
         // #3916, #5029, #5085
-        return grep(points || this.points || [], function isValidPoint(point) {
-            if (insideOnly && !chart.isInsidePlot(
-                point.plotX,
-                point.plotY,
-                chart.inverted
-            )) {
-                return false;
+        return (points || this.points || []).filter(
+            function isValidPoint(point) {
+                if (insideOnly && !chart.isInsidePlot(
+                    point.plotX,
+                    point.plotY,
+                    chart.inverted
+                )) {
+                    return false;
+                }
+                return !point.isNull;
             }
-            return !point.isNull;
-        });
+        );
     },
 
     /**

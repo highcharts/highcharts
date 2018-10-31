@@ -279,7 +279,6 @@ var win = H.win,
     extend = H.extend,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
-    grep = H.grep,
     isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
@@ -2923,7 +2922,7 @@ addEvent(Series, 'destroy', function () {
     }
 
     if (chart.hoverPoints) {
-        chart.hoverPoints = grep(chart.hoverPoints, function (point) {
+        chart.hoverPoints = chart.hoverPoints.filter(function (point) {
             return point.series === series;
         });
     }

@@ -496,7 +496,7 @@ Axis.prototype.beforePadding = function () {
                 series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
 
                 // Find the min and max Z
-                zData = H.grep(series.zData, H.isNumber);
+                zData = series.zData.filter(H.isNumber);
                 if (zData.length) { // #1735
                     zMin = pick(seriesOptions.zMin, Math.min(
                         zMin,

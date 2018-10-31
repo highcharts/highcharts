@@ -456,7 +456,7 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (args) {
  */
 H.addEvent(H.Chart, 'endResize', function () {
     if (
-        H.grep(this.renderer.defIds || [], function (id) {
+        (this.renderer.defIds || []).filter(function (id) {
             return id && id.indexOf && id.indexOf('highcharts-pattern-') === 0;
         }).length
     ) {
@@ -485,7 +485,7 @@ H.addEvent(H.Chart, 'redraw', function () {
     var usedIds = [],
         renderer = this.renderer,
         // Get the autocomputed patterns - these are the ones we might delete
-        patterns = H.grep(renderer.defIds || [], function (pattern) {
+        patterns = (renderer.defIds || []).filter(function (pattern) {
             return pattern.indexOf &&
                 pattern.indexOf('highcharts-pattern-') === 0;
         });

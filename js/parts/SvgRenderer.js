@@ -361,7 +361,6 @@ var SVGElement,
     doc = H.doc,
     extend = H.extend,
     erase = H.erase,
-    grep = H.grep,
     hasTouch = H.hasTouch,
     inArray = H.inArray,
     isArray = H.isArray,
@@ -3160,7 +3159,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 
             // Trim empty lines (#5261)
-            lines = grep(lines, function (line) {
+            lines = lines.filter(function (line) {
                 return line !== '';
             });
 

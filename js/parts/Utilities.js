@@ -1602,7 +1602,7 @@ H.normalizeTickInterval = function (interval, multiples, magnitude,
         // the allowDecimals option
         if (allowDecimals === false) {
             if (magnitude === 1) {
-                multiples = H.grep(multiples, function (num) {
+                multiples = multiples.filter(function (num) {
                     return num % 1 === 0;
                 });
             } else if (magnitude <= 0.1) {
@@ -2063,25 +2063,6 @@ H.inArray = function (item, arr, fromIndex) {
 };
 
 /**
- * Filter an array by a callback.
- *
- * @function Highcharts.grep
- *
- * @param {Array} arr
- *        The array to filter.
- *
- * @param {Function} callback
- *        The callback function. The function receives the item as the first
- *        argument. Return `true` if the item is to be preserved.
- *
- * @return {Array}
- *         A new, filtered array.
- */
-H.grep = function (arr, callback) {
-    return (H.filterPolyfill || Array.prototype.filter).call(arr, callback);
-};
-
-/**
  * Return the value of the first element in the array that satisfies the
  * provided testing function.
  *
@@ -2278,6 +2259,25 @@ H.objectEach = function (obj, fn, ctx) {
  * @param {*} [ctx]
  *        The context.
  */
+
+/**
+ * Filter an array by a callback.
+ *
+ * @function Highcharts.grep
+ *
+ * @deprecated
+ *
+ * @param {Array} arr
+ *        The array to filter.
+ *
+ * @param {Function} callback
+ *        The callback function. The function receives the item as the first
+ *        argument. Return `true` if the item is to be preserved.
+ *
+ * @return {Array}
+ *         A new, filtered array.
+ */
+
 /**
  * Map an array by a callback.
  *
@@ -2296,7 +2296,8 @@ H.objectEach = function (obj, fn, ctx) {
  */
 H.objectEach({
     map: 'map',
-    each: 'forEach'
+    each: 'forEach',
+    grep: 'filter'
 }, function (val, key) {
     H[key] = function (arr, fn, ctx) {
         return Array.prototype[val].call(arr, fn, ctx);

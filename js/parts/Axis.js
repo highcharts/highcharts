@@ -97,7 +97,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
-    grep = H.grep,
     inArray = H.inArray,
     isArray = H.isArray,
     isNumber = H.isNumber,
@@ -3476,7 +3475,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                                 !isNumber(seriesDataMin) &&
                                 !(seriesDataMin instanceof Date) // #5010
                             ) {
-                                xData = grep(xData, isNumber);
+                                xData = xData.filter(isNumber);
                                 // Do it again with valid data
                                 seriesDataMin = arrayMin(xData);
                                 seriesDataMax = arrayMax(xData);

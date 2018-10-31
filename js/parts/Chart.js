@@ -68,7 +68,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
-    grep = H.grep,
     isNumber = H.isNumber,
     isObject = H.isObject,
     isString = H.isString,
@@ -721,7 +720,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var points = [];
         this.series.forEach(function (serie) {
             // series.data - for points outside of viewed range (#6445)
-            points = points.concat(grep(serie.data || [], function (point) {
+            points = points.concat((serie.data || []).filter(function (point) {
                 return point.selected;
             }));
         });
@@ -745,7 +744,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         The currently selected series.
      */
     getSelectedSeries: function () {
-        return grep(this.series, function (serie) {
+        return this.series.filter(function (serie) {
             return serie.selected;
         });
     },

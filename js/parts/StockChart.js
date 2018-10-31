@@ -20,7 +20,6 @@ var addEvent = H.addEvent,
     defined = H.defined,
     extend = H.extend,
     format = H.format,
-    grep = H.grep,
     inArray = H.inArray,
     isNumber = H.isNumber,
     isString = H.isString,
@@ -917,9 +916,11 @@ wrap(Chart.prototype, 'getSelectedPoints', function (proceed) {
     this.series.forEach(function (serie) {
         // series.points - for grouped points (#6445)
         if (serie.hasGroupedData) {
-            points = points.concat(grep(serie.points || [], function (point) {
-                return point.selected;
-            }));
+            points = points.concat((serie.points || []).filter(
+                function (point) {
+                    return point.selected;
+                }
+            ));
         }
     });
     return points;

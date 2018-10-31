@@ -27,8 +27,6 @@ var merge = H.merge,
     doc = H.doc,
     splat = H.splat,
     destroyObjectProperties = H.destroyObjectProperties,
-    grep = H.grep,
-
     tooltipPrototype = H.Tooltip.prototype,
     seriesPrototype = H.Series.prototype,
     chartPrototype = H.Chart.prototype;
@@ -977,7 +975,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
         (this.options.shapes || []).forEach(this.initShape, this);
 
         this.labelCollector = function () {
-            return grep(anno.labels, function (label) {
+            return anno.labels.filter(function (label) {
                 return !label.options.allowOverlap;
             });
         };

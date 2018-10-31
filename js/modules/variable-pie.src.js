@@ -13,7 +13,6 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 
 var pick = H.pick,
-    grep = H.grep,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax,
     seriesType = H.seriesType,
@@ -179,11 +178,11 @@ seriesType('variablepie', 'pie',
             if (zData.length) {
                 zMin = pick(
                     seriesOptions.zMin,
-                    arrayMin(grep(zData, series.zValEval))
+                    arrayMin(zData.filter(series.zValEval))
                 );
                 zMax = pick(
                     seriesOptions.zMax,
-                    arrayMax(grep(zData, series.zValEval))
+                    arrayMax(zData.filter(series.zValEval))
                 );
                 this.getRadii(zMin, zMax, series.minPxSize, series.maxPxSize);
             }

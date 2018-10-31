@@ -25,7 +25,6 @@ var addEvent = H.addEvent,
     erase = H.erase,
     error = H.error,
     extend = H.extend,
-    grep = H.grep,
     hasTouch = H.hasTouch,
     isArray = H.isArray,
     isNumber = H.isNumber,
@@ -46,7 +45,7 @@ var addEvent = H.addEvent,
     // are defined, is a pattern that is repeated several places in Highcharts.
     // Consider making this a global utility method.
     numExt = function (extreme) {
-        var numbers = grep(arguments, isNumber);
+        var numbers = [].filter.call(arguments, isNumber);
         if (numbers.length) {
             return Math[extreme].apply(0, numbers);
         }
@@ -1878,8 +1877,8 @@ Navigator.prototype = {
                 isInternal: true
             },
             // Remove navigator series that are no longer in the baseSeries
-            navigatorSeries = navigator.series = H.grep(
-                navigator.series || [], function (navSeries) {
+            navigatorSeries = navigator.series =
+                (navigator.series || []).filter(function (navSeries) {
                     var base = navSeries.baseSeries;
                     if (H.inArray(base, baseSeries) < 0) { // Not in array
                         // If there is still a base series connected to this
