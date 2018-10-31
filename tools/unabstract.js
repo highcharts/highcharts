@@ -21,8 +21,8 @@ glob('js/**/**.js', null, (err, files) => {
         if (i < 30000) {
             let file = fs.readFileSync(fileName, 'utf-8');
 
-            file = file.replace(/reduce = (H\.|Highcharts\.)reduce,\s+/g, '');
-            let regex = /(H\.|Highcharts\.)?reduce\(/g;
+            file = file.replace(/some = (H\.|Highcharts\.)some,\s+/g, '');
+            let regex = /(H\.|Highcharts\.)?some\(/g;
             let arr;
 
 
@@ -80,15 +80,15 @@ glob('js/**/**.js', null, (err, files) => {
                             (requiresParen ? '(' : '') +
                             args[0].trim() +
                             (requiresParen ? ')' : '') + 
-                            '._reduce_('
+                            '._some_('
                         )
                     );
                     
                 }
 
                 file = file
-                    .replace(/_reduce_/g, 'reduce')
-                    .replace(/\.reduce\( /g, '.reduce(');
+                    .replace(/_some_/g, 'some')
+                    .replace(/\.some\( /g, '.some(');
 
             
             /*

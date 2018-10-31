@@ -22,7 +22,6 @@ var addEvent = Highcharts.addEvent,
     merge = Highcharts.merge,
     splat = Highcharts.splat,
     fireEvent = Highcharts.fireEvent,
-    some = Highcharts.some,
     SeriesBuilder;
 
 
@@ -777,7 +776,7 @@ Highcharts.extend(Data.prototype, {
                 commas = 0,
                 guessed = false;
 
-            some(lines, function (columnStr, i) {
+            lines.some(function (columnStr, i) {
                 var inStr = false,
                     c,
                     cn,

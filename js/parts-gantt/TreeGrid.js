@@ -36,23 +36,6 @@ var argsToArray = function (args) {
     GridAxis = H.Axis,
     GridAxisTick = H.Tick;
 
-/**
- * some - Equivalent of Array.prototype.some
- *
- * @param  {Array}    arr       Array to look for matching elements in.
- * @param  {function} condition The condition to check against.
- * @return {boolean}            Whether some elements pass the condition.
- */
-var some = function (arr, condition) {
-    var result = false;
-    arr.forEach(function (element, index, array) {
-        if (!result) {
-            result = condition(element, index, array);
-        }
-    });
-    return result;
-};
-
 var override = function (obj, methods) {
     var method,
         func;
@@ -149,7 +132,7 @@ var getTickPositions = function (axis) {
 var isCollapsed = function (axis, node) {
     var breaks = (axis.options.breaks || []),
         obj = getBreakFromNode(node, axis.max);
-    return some(breaks, function (b) {
+    return breaks.some(function (b) {
         return b.from === obj.from && b.to === obj.to;
     });
 };

@@ -21,7 +21,6 @@ var addEvent = H.addEvent,
     relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    some = H.some,
     stableSort = H.stableSort,
     isArray = H.isArray,
     splat = H.splat;
@@ -138,9 +137,9 @@ H.distribute = function (boxes, len, maxDistance) {
     // Now the composite boxes are placed, we need to put the original boxes
     // within them
     i = 0;
-    some(boxes, function (box) {
+    boxes.some(function (box) {
         var posInCompositeBox = 0;
-        if (some(box.targets, function () {
+        if (box.targets.some(function () {
             origBoxes[i].pos = box.pos + posInCompositeBox;
 
             // If the distance between the position and the target exceeds
