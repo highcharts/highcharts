@@ -2094,28 +2094,6 @@ H.find = Array.prototype.find ?
     };
 
 /**
- * Test whether at least one element in the array passes the test implemented by
- * the provided function.
- *
- * @function Highcharts.some
- *
- * @param {Array} arr
- *        The array to test
- *
- * @param {Function} fn
- *        The function to run on each item. Return truty to pass the test.
- *        Receives arguments `currentValue`, `index` and `array`.
- *
- * @param {*} ctx
- *        The context.
- *
- * @return {boolean}
- */
-H.some = function (arr, fn, ctx) {
-    return (H.somePolyfill || Array.prototype.some).call(arr, fn, ctx);
-};
-
-/**
  * Returns an array of a given object's own properties.
  *
  * @function Highcharts.keys
@@ -2287,11 +2265,32 @@ H.objectEach = function (obj, fn, ctx) {
  * @return {*}
  *         The reduced value.
  */
+
+/**
+ * Test whether at least one element in the array passes the test implemented by
+ * the provided function.
+ *
+ * @function Highcharts.some
+ * @deprecated
+ *
+ * @param {Array} arr
+ *        The array to test
+ *
+ * @param {Function} fn
+ *        The function to run on each item. Return truty to pass the test.
+ *        Receives arguments `currentValue`, `index` and `array`.
+ *
+ * @param {*} ctx
+ *        The context.
+ *
+ * @return {boolean}
+ */
 H.objectEach({
     map: 'map',
     each: 'forEach',
     grep: 'filter',
-    reduce: 'reduce'
+    reduce: 'reduce',
+    some: 'some'
 }, function (val, key) {
     H[key] = function (arr) {
         return Array.prototype[val].apply(
