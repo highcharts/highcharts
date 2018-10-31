@@ -61,6 +61,8 @@ var chart = Highcharts.ganttChart('container', {
             dragDrop: {
                 draggableX: true,
                 draggableY: true,
+                dragMinY: 0,
+                dragMaxY: 2,
                 dragPrecisionX: day / 3 // Snap to eight hours
             },
             dataLabels: {
