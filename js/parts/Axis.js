@@ -4110,7 +4110,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             i = names.length;
 
         if (i > 0) {
-            H.keys(names.keys).forEach(function (key) {
+            Object.keys(names.keys).forEach(function (key) {
                 delete names.keys[key];
             });
             names.length = 0;

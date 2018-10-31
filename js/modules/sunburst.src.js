@@ -26,7 +26,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     isNumber = H.isNumber,
     isObject = H.isObject,
     isString = H.isString,
-    keys = H.keys,
     merge = H.merge,
     noop = H.noop,
     rad2deg = 180 / Math.PI,
@@ -70,7 +69,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
         from = isNumber(p.from) ? p.from : 0;
         to = isNumber(p.to) ? p.to : 0;
         levels = range(from, to);
-        levelsNotIncluded = keys(result).filter(function (k) {
+        levelsNotIncluded = Object.keys(result).filter(function (k) {
             return levels.indexOf(+k) === -1;
         });
         diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;

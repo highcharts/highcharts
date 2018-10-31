@@ -288,7 +288,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @type {Highcharts.Time}
              */
             this.time =
-                userOptions.time && H.keys(userOptions.time).length ?
+                userOptions.time && Object.keys(userOptions.time).length ?
                     new H.Time(userOptions.time) :
                     H.time;
 

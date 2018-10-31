@@ -10,7 +10,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 var extend = H.extend,
     isNumber = H.isNumber,
-    keys = H.keys,
     pick = H.pick,
     isFunction = function (x) {
         return typeof x === 'function';
@@ -32,7 +31,7 @@ var getListOfParents = function (data, ids) {
             prev[parent].push(curr);
             return prev;
         }, {}),
-        parents = keys(listOfParents);
+        parents = Object.keys(listOfParents);
 
     // If parent does not exist, hoist parent to root of tree.
     parents.forEach(function (parent, list) {

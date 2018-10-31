@@ -1048,7 +1048,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 'name',
                 'turboThreshold'
             ],
-            keys = H.keys(newOptions),
+            keys = Object.keys(newOptions),
             doSoftUpdate = keys.length > 0;
 
         // Running Series.update to update the data only is an intuitive usage,

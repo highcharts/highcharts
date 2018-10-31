@@ -559,7 +559,7 @@ H.Fx.prototype = {
 
         if (from === to && !this.elem['forceAnimate:' + this.prop]) {
             delete options.curAnim[this.prop];
-            if (options.complete && H.keys(options.curAnim).length === 0) {
+            if (options.complete && Object.keys(options.curAnim).length === 0) {
                 options.complete.call(this.elem);
             }
         } else { // #7166
@@ -2097,6 +2097,7 @@ H.find = Array.prototype.find ?
  * Returns an array of a given object's own properties.
  *
  * @function Highcharts.keys
+ * @deprecated
  *
  * @param {*} obj
  *        The object of which the properties are to be returned.
@@ -2104,9 +2105,7 @@ H.find = Array.prototype.find ?
  * @return {Array<string>}
  *         An array of strings that represents all the properties.
  */
-H.keys = function (obj) {
-    return (H.keysPolyfill || Object.keys).call(undefined, obj);
-};
+H.keys = Object.keys;
 
 /**
  * Get the element's offset position, corrected for `overflow: auto`.

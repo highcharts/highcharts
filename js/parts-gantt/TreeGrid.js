@@ -30,7 +30,6 @@ var argsToArray = function (args) {
         return H.isObject(x, true);
     },
     isString = H.isString,
-    keys = H.keys,
     pick = H.pick,
     wrap = H.wrap,
     GridAxis = H.Axis,
@@ -107,7 +106,7 @@ var getBreakFromNode = function (node, max) {
  * @returns {number[]} List of positions.
  */
 var getTickPositions = function (axis) {
-    return keys(axis.mapOfPosToGridNode).reduce(
+    return Object.keys(axis.mapOfPosToGridNode).reduce(
         function (arr, key) {
             var pos = +key;
             if (
