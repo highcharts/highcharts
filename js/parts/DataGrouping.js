@@ -796,7 +796,7 @@ seriesProto.generatePoints = function () {
  */
 addEvent(Point, 'update', function () {
     if (this.dataGroup) {
-        H.error(24);
+        H.error(24, false, this.series.chart);
         return false;
     }
 });

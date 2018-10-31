@@ -364,7 +364,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // No such series type
         if (!Constr) {
-            H.error(17, true);
+            H.error(17, true, chart);
         }
 
         series = new Constr();
@@ -1093,7 +1093,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Display an error if the renderTo is wrong
         if (!renderTo) {
-            H.error(13, true);
+            H.error(13, true, chart);
         }
 
         // If the container already holds a chart, destroy it. The check for

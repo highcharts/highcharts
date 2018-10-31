@@ -69,7 +69,8 @@ seriesType('vwap', 'sma',
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
-                    true
+                    true,
+                    chart
                 );
             }
 

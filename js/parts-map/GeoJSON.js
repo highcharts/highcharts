@@ -71,7 +71,7 @@ function pointInPolygon(point, polygon) {
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
     if (win.proj4 === undefined) {
-        H.error(21);
+        H.error(21, false, this);
         return {
             x: 0,
             y: null
@@ -125,7 +125,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
     if (win.proj4 === undefined) {
-        H.error(21);
+        H.error(21, false, this);
         return;
     }
 
@@ -180,7 +180,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
         transform;
 
     if (!transforms) {
-        H.error(22);
+        H.error(22, false, this);
         return;
     }
 
@@ -229,7 +229,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
         coords;
 
     if (!transforms) {
-        H.error(22);
+        H.error(22, false, this);
         return {
             x: 0,
             y: null

@@ -113,7 +113,8 @@ H.seriesType('mfi', 'sma',
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
-                    true
+                    true,
+                    series.chart
                 );
             }
 
