@@ -221,7 +221,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
 
     // Do nothing if ID already exists
     this.defIds = this.defIds || [];
-    if (H.inArray(id, this.defIds) > -1) {
+    if (this.defIds.indexOf(id) > -1) {
         return;
     }
 
@@ -509,7 +509,7 @@ H.addEvent(H.Chart, 'redraw', function () {
 
         // Loop through the patterns that exist and see if they are used
         patterns.forEach(function (id) {
-            if (H.inArray(id, usedIds) === -1) {
+            if (usedIds.indexOf(id) === -1) {
                 // Remove id from used id list
                 H.erase(renderer.defIds, id);
                 // Remove pattern element

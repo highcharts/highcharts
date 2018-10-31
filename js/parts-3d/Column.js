@@ -12,7 +12,6 @@ var addEvent = H.addEvent,
     pick = H.pick,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    inArray = H.inArray,
     svg = H.svg,
     wrap = H.wrap;
 
@@ -269,7 +268,7 @@ wrap(
                 point.visible = point.options.visible = vis =
                     vis === undefined ? !point.visible : vis;
                 pointVis = vis ? 'visible' : 'hidden';
-                series.options.data[inArray(point, series.data)] =
+                series.options.data[series.data.indexOf(point)] =
                     point.options;
                 if (point.graphic) {
                     point.graphic.attr({

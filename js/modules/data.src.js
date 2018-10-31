@@ -18,7 +18,6 @@ var addEvent = Highcharts.addEvent,
     doc = win.document,
     objectEach = Highcharts.objectEach,
     pick = Highcharts.pick,
-    inArray = Highcharts.inArray,
     isNumber = Highcharts.isNumber,
     merge = Highcharts.merge,
     splat = Highcharts.splat,
@@ -1440,7 +1439,7 @@ Highcharts.extend(Data.prototype, {
             trimVal,
             trimInsideVal,
             firstRowAsNames = this.firstRowAsNames,
-            isXColumn = inArray(col, this.valueCount.xColumns) !== -1,
+            isXColumn = this.valueCount.xColumns.indexOf(col) !== -1,
             dateVal,
             backup = [],
             diff,
@@ -1796,7 +1795,7 @@ Highcharts.extend(Data.prototype, {
                 builder.addColumnReader(0, 'x');
 
                 // Mark index as used (not free)
-                index = inArray(0, freeIndexes);
+                index = freeIndexes.indexOf(0);
                 if (index !== -1) {
                     freeIndexes.splice(index, 1);
                 }

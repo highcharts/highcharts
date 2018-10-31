@@ -20,7 +20,6 @@ var addEvent = H.addEvent,
     defined = H.defined,
     extend = H.extend,
     format = H.format,
-    inArray = H.inArray,
     isNumber = H.isNumber,
     isString = H.isString,
     merge = H.merge,
@@ -397,7 +396,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
         [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
     axes.forEach(function (axis2) {
         if (
-            inArray(axis2, uniqueAxes) === -1 &&
+            uniqueAxes.indexOf(axis2) === -1 &&
             // Do not draw on axis which overlap completely. #5424
             !H.find(uniqueAxes, function (unique) {
                 return unique.pos === axis2.pos && unique.len === axis2.len;
@@ -773,12 +772,10 @@ seriesProto.processData = function () {
         // against close or the pointValKey (#4922, #3112)
         if (series.pointArrayMap) {
             // Use close if present (#3112)
-            keyIndex = inArray('close', series.pointArrayMap);
+            keyIndex = series.pointArrayMap.indexOf('close');
             if (keyIndex === -1) {
-                keyIndex = inArray(
-                    series.pointValKey || 'y',
-                    series.pointArrayMap
-                );
+                keyIndex = series.pointArrayMap.indexOf(
+                    series.pointValKey || 'y');
             }
         }
 

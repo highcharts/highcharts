@@ -29,7 +29,6 @@ var animObject = H.animObject,
     ColumnSeries = seriesTypes.column,
     Tick = H.Tick,
     fireEvent = H.fireEvent,
-    inArray = H.inArray,
     ddSeriesId = 1;
 
 // Add language
@@ -406,7 +405,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
     ddOptions = extend(extend({
         _ddSeriesId: ddSeriesId++
     }, colorProp), ddOptions);
-    pointIndex = inArray(point, oldSeries.points);
+    pointIndex = oldSeries.points.indexOf(point);
 
     // Record options for all current series
     oldSeries.chart.series.forEach(function (series) {
@@ -965,7 +964,7 @@ H.Point.prototype.doDrilldown = function (
     while (i-- && !seriesOptions) {
         if (
             drilldown.series[i].id === this.drilldown &&
-            inArray(this.drilldown, chart.ddDupes) === -1
+            chart.ddDupes.indexOf(this.drilldown) === -1
         ) {
             seriesOptions = drilldown.series[i];
             chart.ddDupes.push(this.drilldown);

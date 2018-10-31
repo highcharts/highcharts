@@ -21,7 +21,6 @@ var argsToArray = function (args) {
     fireEvent = H.fireEvent,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     merge = H.merge,
-    inArray = H.inArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
@@ -86,7 +85,7 @@ var getCategoriesFromTree = function (tree) {
 var mapTickPosToNode = function (node, categories) {
     var map = {},
         name = node.data && node.data.name,
-        pos = inArray(name, categories);
+        pos = categories.indexOf(name);
     map[pos] = node;
     node.children.forEach(function (child) {
         extend(map, mapTickPosToNode(child, categories));
@@ -737,7 +736,7 @@ override(GridAxisTick.prototype, {
             level = node && node.depth,
             isTreeGrid = options.type === 'treegrid',
             hasLabel = !!(label && label.element),
-            shouldRender = inArray(pos, axis.tickPositions) > -1,
+            shouldRender = axis.tickPositions.indexOf(pos) > -1,
             prefixClassName = 'highcharts-treegrid-node-',
             collapsed,
             addClassName,

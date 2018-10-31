@@ -38,7 +38,7 @@ var getListOfParents = function (data, ids) {
     // If parent does not exist, hoist parent to root of tree.
     parents.forEach(function (parent, list) {
         var children = listOfParents[parent];
-        if ((parent !== '') && (H.inArray(parent, ids) === -1)) {
+        if ((parent !== '') && (ids.indexOf(parent) === -1)) {
             children.forEach(function (child) {
                 list[''].push(child);
             });

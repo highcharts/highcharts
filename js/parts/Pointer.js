@@ -535,7 +535,7 @@ Highcharts.Pointer.prototype = {
             (hoverPoint !== chart.hoverPoint || (tooltip && tooltip.isHidden))
         ) {
             (chart.hoverPoints || []).forEach(function (p) {
-                if (H.inArray(p, points) === -1) {
+                if (points.indexOf(p) === -1) {
                     p.setState();
                 }
             });

@@ -23,7 +23,6 @@ var addEvent = H.addEvent,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    inArray = H.inArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
     isArray = H.isArray,
@@ -426,13 +425,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             objectEach(optionsChart, function (val, key) {
                 if (
-                    inArray('chart.' + key, chart.propsRequireUpdateSeries) !==
+                    chart.propsRequireUpdateSeries.indexOf('chart.' + key) !==
                     -1
                 ) {
                     updateAllSeries = true;
                 }
                 // Only dirty box
-                if (inArray(key, chart.propsRequireDirtyBox) !== -1) {
+                if (chart.propsRequireDirtyBox.indexOf(key) !== -1) {
                     chart.isDirtyBox = true;
                 }
             });
@@ -476,7 +475,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             if (
                 key !== 'chart' &&
-                inArray(key, chart.propsRequireUpdateSeries) !== -1
+                chart.propsRequireUpdateSeries.indexOf(key) !== -1
             ) {
                 updateAllSeries = true;
             }
@@ -742,7 +741,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     remove: function (redraw, animation) {
         this.series.removePoint(
-            inArray(this, this.series.data),
+            this.series.data.indexOf(this),
             redraw,
             animation
         );
@@ -1060,7 +1059,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // update because the data module sets name and data when setting new
         // data by `chart.update`.
         keys.forEach(function (key) {
-            if (inArray(key, allowSoftUpdate) === -1) {
+            if (allowSoftUpdate.indexOf(key) === -1) {
                 doSoftUpdate = false;
             }
         });

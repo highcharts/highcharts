@@ -20,7 +20,6 @@ var addEvent = H.addEvent,
     defined = H.defined,
     extend = H.extend,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
-    inArray = H.inArray,
     LegendSymbolMixin = H.LegendSymbolMixin,
     noop = H.noop,
     pick = H.pick,
@@ -891,7 +890,7 @@ seriesType('pie', 'line'
             point.visible = point.options.visible = vis =
                 vis === undefined ? !point.visible : vis;
             // update userOptions.data
-            series.options.data[inArray(point, series.data)] = point.options;
+            series.options.data[series.data.indexOf(point)] = point.options;
 
             // Show and hide associated elements. This is performed regardless
             // of redraw or not, because chart.redraw only handles full series.
@@ -949,7 +948,7 @@ seriesType('pie', 'line'
         point.sliced = point.options.sliced = sliced =
             defined(sliced) ? sliced : !point.sliced;
         // update userOptions.data
-        series.options.data[inArray(point, series.data)] = point.options;
+        series.options.data[series.data.indexOf(point)] = point.options;
 
         point.graphic.animate(this.getTranslate());
 

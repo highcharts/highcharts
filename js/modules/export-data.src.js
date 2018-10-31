@@ -316,7 +316,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             xTaken = !series.requireSorting && {},
             categoryMap = {},
             datetimeValueAxisMap = {},
-            xAxisIndex = Highcharts.inArray(series.xAxis, xAxes),
+            xAxisIndex = xAxes.indexOf(series.xAxis),
             mockSeries,
             j;
 

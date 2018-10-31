@@ -362,7 +362,6 @@ var SVGElement,
     extend = H.extend,
     erase = H.erase,
     hasTouch = H.hasTouch,
-    inArray = H.inArray,
     isArray = H.isArray,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
@@ -968,10 +967,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         Whether the class name is found.
      */
     hasClass: function (className) {
-        return inArray(
-            className,
-            (this.attr('class') || '').split(' ')
-        ) !== -1;
+        return (this.attr('class') || '').split(' ').indexOf(className) !== -1;
     },
 
     /**
@@ -1174,7 +1170,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     return '-' + b.toLowerCase();
                 };
                 objectEach(styles, function (style, n) {
-                    if (inArray(n, svgPseudoProps) === -1) {
+                    if (svgPseudoProps.indexOf(n) === -1) {
                         serializedCss +=
                         n.replace(/([A-Z])/g, hyphenate) + ':' +
                         style + ';';
@@ -3067,7 +3063,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             },
             unescapeEntities = function (inputStr, except) {
                 objectEach(renderer.escapes, function (value, key) {
-                    if (!except || inArray(value, except) === -1) {
+                    if (!except || except.indexOf(value) === -1) {
                         inputStr = inputStr.toString().replace(
                             new RegExp(value, 'g'), // eslint-disable-line security/detect-non-literal-regexp
                             key

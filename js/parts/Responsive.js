@@ -21,7 +21,6 @@ import './Chart.js';
 import './Utilities.js';
 
 var Chart = H.Chart,
-    inArray = H.inArray,
     isArray = H.isArray,
     isObject = H.isObject,
     pick = H.pick,
@@ -256,7 +255,7 @@ Chart.prototype.currentOptions = function (options) {
     function getCurrent(options, curr, ret, depth) {
         var i;
         H.objectEach(options, function (val, key) {
-            if (!depth && inArray(key, ['series', 'xAxis', 'yAxis']) > -1) {
+            if (!depth && ['series', 'xAxis', 'yAxis'].indexOf(key) > -1) {
                 val = splat(val);
 
                 ret[key] = [];

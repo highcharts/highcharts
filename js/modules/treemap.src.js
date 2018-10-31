@@ -544,7 +544,7 @@ seriesType('treemap', 'scatter', {
 
         // If parent does not exist, hoist parent to root of tree.
         eachObject(listOfParents, function (children, parent, list) {
-            if ((parent !== '') && (H.inArray(parent, ids) === -1)) {
+            if ((parent !== '') && (ids.indexOf(parent) === -1)) {
                 children.forEach(function (child) {
                     list[''].push(child);
                 });

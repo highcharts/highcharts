@@ -17,7 +17,6 @@ var merge = H.merge,
     isNumber = H.isNumber,
     defined = H.defined,
     isObject = H.isObject,
-    inArray = H.inArray,
     erase = H.erase,
     find = H.find,
     format = H.format,
@@ -1150,7 +1149,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
         var style = options.style;
         if (style.color === 'contrast') {
             style.color = this.chart.renderer.getContrast(
-                inArray(options.shape, this.shapesWithoutBackground) > -1 ?
+                this.shapesWithoutBackground.indexOf(options.shape) > -1 ?
                 '#FFFFFF' :
                 options.backgroundColor
             );

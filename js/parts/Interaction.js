@@ -23,7 +23,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
-    inArray = H.inArray,
     isObject = H.isObject,
     Legend = H.Legend,
     merge = H.merge,
@@ -654,7 +653,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                  * @type {boolean}
                  */
                 point.selected = point.options.selected = selected;
-                series.options.data[inArray(point, series.data)] =
+                series.options.data[series.data.indexOf(point)] =
                     point.options;
 
                 point.setState(selected && 'select');
@@ -666,7 +665,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                             loopPoint.selected = loopPoint.options.selected =
                                 false;
                             series.options.data[
-                                inArray(loopPoint, series.data)
+                                series.data.indexOf(loopPoint)
                             ] = loopPoint.options;
                             loopPoint.setState('');
                             loopPoint.firePointEvent('unselect');

@@ -1880,7 +1880,7 @@ Navigator.prototype = {
             navigatorSeries = navigator.series =
                 (navigator.series || []).filter(function (navSeries) {
                     var base = navSeries.baseSeries;
-                    if (H.inArray(base, baseSeries) < 0) { // Not in array
+                    if (baseSeries.indexOf(base) < 0) { // Not in array
                         // If there is still a base series connected to this
                         // series, remove event handler and reference.
                         if (base) {

@@ -97,7 +97,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
-    inArray = H.inArray,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isString = H.isString,
@@ -3269,7 +3268,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         var events = axis.options.events;
 
         // Register. Don't add it again on Axis.update().
-        if (inArray(axis, chart.axes) === -1) { //
+        if (chart.axes.indexOf(axis) === -1) { //
             if (isXAxis) { // #2713
                 chart.axes.splice(chart.xAxis.length, 0, axis);
             } else {
@@ -4076,7 +4075,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 point.series.autoIncrement() :
                 (
                     explicitCategories ?
-                        inArray(point.name, names) :
+                        names.indexOf(point.name) :
                         pick(names.keys[point.name], -1)
 
                 );
@@ -6354,7 +6353,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         // Delete all properties and fall back to the prototype.
         objectEach(axis, function (val, key) {
-            if (inArray(key, axis.keepProps) === -1) {
+            if (axis.keepProps.indexOf(key) === -1) {
                 delete axis[key];
             }
         });

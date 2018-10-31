@@ -2043,6 +2043,8 @@ H.getStyle = function (el, prop, toInt) {
  *
  * @function Highcharts.inArray
  *
+ * @deprecated
+ *
  * @param {*} item
  *        The item to search for.
  *
@@ -2056,10 +2058,7 @@ H.getStyle = function (el, prop, toInt) {
  *         The index within the array, or -1 if not found.
  */
 H.inArray = function (item, arr, fromIndex) {
-    return (
-        H.indexOfPolyfill ||
-        Array.prototype.indexOf
-    ).call(arr, item, fromIndex);
+    return arr.indexOf(item, fromIndex);
 };
 
 /**
@@ -2436,7 +2435,7 @@ H.removeEvent = function (el, type, fn) {
             if (type) {
                 events = eventCollection[type] || [];
                 if (fn) {
-                    index = H.inArray(fn, events);
+                    index = events.indexOf(fn);
                     if (index > -1) {
                         events.splice(index, 1);
                         eventCollection[type] = events;

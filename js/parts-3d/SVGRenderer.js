@@ -19,7 +19,6 @@ var animObject = H.animObject,
     defined = H.defined,
     deg2rad = H.deg2rad,
     extend = H.extend,
-    inArray = H.inArray,
     merge = H.merge,
     perspective = H.perspective,
     pick = H.pick,
@@ -592,7 +591,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         params = merge(params); // Don't mutate the original object
 
         for (var key in params) {
-            if (inArray(key, customAttribs) !== -1) {
+            if (customAttribs.indexOf(key) !== -1) {
                 ca[key] = params[key];
                 delete params[key];
                 hasCA = true;

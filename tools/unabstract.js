@@ -21,17 +21,20 @@ glob('js/**/**.js', null, (err, files) => {
         if (i < 30000) {
             let file = fs.readFileSync(fileName, 'utf-8');
 
-            file = file.replace(/grep = (H\.|Highcharts\.)grep,\s+/g, '');
-            let regex = /(H\.|Highcharts\.)?grep\(/g;
+            file = file.replace(/inArray = (H\.|Highcharts\.)inArray,\s+/g, '');
+            let regex = /(H\.|Highcharts\.)?inArray\(/g;
             let arr;
 
 
                 console.log(`- ${fileName}`.yellow);
                 while ((arr = regex.exec(file)) !== null) {
                     let i = regex.lastIndex;
+                    let lastIndex = regex.lastIndex;
                     let inParen = 0;
                     let inBrackets = 0;
                     let requiresParen = false;
+
+                    let args = [];
 
                     while (i < file.length) {
                         if (file.charAt(i) === '(') {
@@ -50,30 +53,49 @@ glob('js/**/**.js', null, (err, files) => {
                             requiresParen = true;
                         }
 
-                        if (file.charAt(i) === ',' && inParen === 0 && inBrackets === 0) {
+                        if (
+                            (
+                                file.charAt(i) === ',' ||
+                                file.charAt(i) === ')'
+                            ) &&
+                            inParen < 1 &&
+                            inBrackets === 0
+                        ) {
+                            args.push(file.substr(lastIndex, i - lastIndex));
+                            lastIndex = i + 1;
+                        }
+
+                        if (file.charAt(i) === ')' && inParen === 0 && inBrackets === 0) {
                             break;
                         }
                         i++;
                     }
                     console.log(
-                        arr[0],
-                        file.substr(regex.lastIndex, i - regex.lastIndex).cyan
+                        arr[0] + args[0] + ',' + args[1] + ','
                     );
+                    /*
                     file = file.replace(
-                        arr[0] +
-                        file.substr(regex.lastIndex, i - regex.lastIndex) +
-                        ',',
-                        (requiresParen ? '(' : '') +
-                        file.substr(regex.lastIndex, i - regex.lastIndex).trim() +
-                        (requiresParen ? ')' : '') + 
-                        '.filter('
+                        arr[0] + args[0] + ',',
+                        (
+                            (requiresParen ? '(' : '') +
+                            args[0].trim() +
+                            (requiresParen ? ')' : '') + 
+                            '.indexOf('
+                        )
+                    );
+                    */
+                    file = file.replace(
+                        arr[0] + args[0] + ',' + args[1],
+                        (
+                            args[1].trim() + '.indexOf(' + args[0]
+                        )
                     );
                     
                 }
 
                 file = file
                     //.replace(/_map_/g, 'map')
-                    .replace(/\.filter\( /g, '.filter(');
+                    .replace(/\.indexOf\( /g, '.indexOf(');
 
             
             /*

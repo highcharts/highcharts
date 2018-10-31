@@ -3021,7 +3021,7 @@ H.Series = H.seriesType('line', null
 
             if (isNumber(x)) {
                 // Search for the same X in the existing data set
-                pointIndex = H.inArray(x, this.xData, lastIndex);
+                pointIndex = this.xData.indexOf(x, lastIndex);
 
                 // Matching X not found
                 // or used already due to ununique x values (#8995),

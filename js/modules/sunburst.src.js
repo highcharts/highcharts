@@ -20,7 +20,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
-    inArray = H.inArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
@@ -73,7 +72,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
         to = isNumber(p.to) ? p.to : 0;
         levels = range(from, to);
         levelsNotIncluded = keys(result).filter(function (k) {
-            return inArray(+k, levels) === -1;
+            return levels.indexOf(+k) === -1;
         });
         diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;
         /**
