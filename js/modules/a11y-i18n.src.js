@@ -296,8 +296,8 @@ H.setOptions({ lang: {
      * Configure the accessibility strings in the chart. Requires the
      * [accessibility module](//code.highcharts.com/modules/accessibility.js)
      * to be loaded. For a description of the module and information on its
-     * features, see [Highcharts Accessibility](http://www.highcharts.com
-     * /docs/chart-concepts/accessibility).
+     * features, see [Highcharts Accessibility](
+     * http://www.highcharts.com/docs/chart-concepts/accessibility).
      *
      * For more dynamic control over the accessibility functionality, see
      * [accessibility.pointDescriptionFormatter](

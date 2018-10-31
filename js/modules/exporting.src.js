@@ -572,9 +572,10 @@ defaultOptions.exporting = {
      * Path where Highcharts will look for export module dependencies to
      * load on demand if they don't already exist on `window`. Should currently
      * point to location of [CanVG](https://github.com/canvg/canvg) library,
-     * [RGBColor.js](https://github.com/canvg/canvg), [jsPDF](https://github.
-     * com/yWorks/jsPDF) and [svg2pdf.js](https://github.com/yWorks/svg2pdf.
-     * js), required for client side export in certain browsers.
+     * [RGBColor.js](https://github.com/canvg/canvg),
+     * [jsPDF](https://github.com/yWorks/jsPDF) and
+     * [svg2pdf.js](https://github.com/yWorks/svg2pdf.js), required for client
+     * side export in certain browsers.
      *
      * @type      {string}
      * @default   https://code.highcharts.com/{version}/lib
@@ -592,8 +593,9 @@ defaultOptions.exporting = {
 
     /**
      * The width of the original chart when exported, unless an explicit
-     * [chart.width](#chart.width) is set. The width exported raster image
-     * is then multiplied by [scale](#exporting.scale).
+     * [chart.width](#chart.width) is set, or a pixel width is set on the
+     * container. The width exported raster image is then multiplied by
+     * [scale](#exporting.scale).
      *
      * @sample {highcharts} highcharts/exporting/sourcewidth/
      *         Source size demo
@@ -1085,7 +1087,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         sourceWidth = options.exporting.sourceWidth ||
             options.chart.width ||
             (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
-            600;
+            (options.isGantt ? 800 : 600);
         sourceHeight = options.exporting.sourceHeight ||
             options.chart.height ||
             (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||

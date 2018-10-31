@@ -31,8 +31,8 @@ var addEvent = Highcharts.addEvent,
 /**
  * The Data module provides a simplified interface for adding data to
  * a chart from sources like CVS, HTML tables or grid views. See also
- * the [tutorial article on the Data module](https://www.highcharts.com/docs/working-
- * with-data/data-module).
+ * the [tutorial article on the Data module](
+ * https://www.highcharts.com/docs/working-with-data/data-module).
  *
  * It requires the `modules/data.js` file to be loaded.
  *

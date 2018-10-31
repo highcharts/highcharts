@@ -57,10 +57,10 @@ seriesType('sankey', 'column', {
         backgroundColor: 'none', // enable padding
         crop: false,
         /**
-         * The [format string](https://www.highcharts.com/docs/chart-
-         * concepts/labels-and-string-formatting) specifying what to show
-         * for _nodes_ in the sankey diagram. By default the
-         * `nodeFormatter` returns `{point.name}`.
+         * The [format string](
+         * https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _nodes_ in the sankey diagram. By default
+         * the `nodeFormatter` returns `{point.name}`.
          *
          * @type {String}
          */
@@ -77,10 +77,11 @@ seriesType('sankey', 'column', {
             return this.point.name;
         },
         /**
-         * The [format string](https://www.highcharts.com/docs/chart-
-         * concepts/labels-and-string-formatting) specifying what to show for
-         * _links_ in the sankey diagram. Defaults to an empty string returned
-         * from the `formatter`, in effect disabling the labels.
+         * The [format string](
+         * https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _links_ in the sankey diagram. Defaults
+         * to an empty string returned from the `formatter`, in effect disabling
+         * the labels.
          */
         format: undefined,
         /**
@@ -144,10 +145,10 @@ seriesType('sankey', 'column', {
         /*= } =*/
         pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>{point.weight}</b><br/>',
         /**
-         * The [format string](https://www.highcharts.com/docs/chart-
-         * concepts/labels-and-string-formatting) specifying what to
-         * show for _nodes_ in tooltip
-         * of a sankey diagram series, as opposed to links.
+         * The [format string](
+         * https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _nodes_ in tooltip of a sankey diagram
+         * series, as opposed to links.
          */
         nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
     }

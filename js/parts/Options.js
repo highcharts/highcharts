@@ -1967,10 +1967,9 @@ H.defaultOptions = {
          */
 
         /**
-         * A [format string](https://www.highcharts.com/docs/chart-concepts/
-         * labels-and-string-formatting) for each legend label. Available
-         * variables relates to properties on the series, or the point in case
-         * of pies.
+         * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * for each legend label. Available variables relates to properties on
+         * the series, or the point in case of pies.
          *
          * @type      {string}
          * @default   {name}
@@ -2425,8 +2424,8 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/
-         * labels-and-string-formatting#html) to render the legend item texts.
+         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the legend item texts.
          *
          * Prior to 4.1.7, when using HTML, [legend.navigation](
          * #legend.navigation) was disabled.
@@ -3181,6 +3180,8 @@ H.defaultOptions = {
          * `tooltip.xDateFormat`. To access the original point use
          * `point.point`.
          *
+         * Set an empty string to avoid header on a shared or split tooltip.
+         *
          * @sample {highcharts} highcharts/tooltip/footerformat/
          *         An HTML table in the tooltip
          * @sample {highstock} highcharts/tooltip/footerformat/
@@ -3197,6 +3198,9 @@ H.defaultOptions = {
          * Furthermore, `point.y` can be extended by the `tooltip.valuePrefix`
          * and `tooltip.valueSuffix` variables. This can also be overridden for
          * each series, which makes it a good hook for displaying units.
+         *
+         * Set an empty string to leave out a series from a shared or split
+         * tooltip.
          *
          * In styled mode, the dot is colored by a class name rather
          * than the point color.
@@ -3315,7 +3319,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/credits/customized/
          *         Custom URL and text
          */
-        href: 'https://www.highcharts.com',
+        href: 'https://www.highcharts.com?credits',
 
         /**
          * Position configuration for the credits label.

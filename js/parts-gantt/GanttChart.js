@@ -15,20 +15,42 @@ var each = H.each,
     Chart = H.Chart;
 
 /**
- * The GanttChart class.
- * @class Highcharts.ganttChart
- * @memberOf Highcharts
- * @param {String|HTMLDOMElement} renderTo The DOM element to render to, or
- *                                         its id.
- * @param {ChartOptions}          options  The chart options structure.
- * @param {Function}              callback Function to run when the chart has
- *                                         loaded.
+ * Factory function for Gantt charts.
+ *
+ * @example
+ * // Render a chart in to div#container
+ * var chart = Highcharts.ganttChart('container', {
+ *     title: {
+ *         text: 'My chart'
+ *     },
+ *     series: [{
+ *         data: ...
+ *     }]
+ * });
+ *
+ * @function Highcharts.ganttChart
+ *
+ * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+ *        The DOM element to render to, or its id.
+ *
+ * @param {Highcharts.Options} options
+ *        The chart options structure.
+ *
+ * @param {Highcharts.ChartCallbackFunction} [callback]
+ *        Function to run when the chart has loaded and and all external images
+ *        are loaded. Defining a
+ *        [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
+ *        handler is equivalent.
+ *
+ * @return {Highcharts.Chart}
+ *         Returns the Chart object.
  */
 H.ganttChart = function (renderTo, options, callback) {
     var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
-        defaultLinkedTo;
+        defaultLinkedTo,
+        userOptions = options;
     options = arguments[hasRenderToArg ? 1 : 0];
 
     // If user hasn't defined axes as array, make it into an array and add a
@@ -82,6 +104,7 @@ H.ganttChart = function (renderTo, options, callback) {
     options.series = null;
 
     options = merge(
+        true,
         {
             chart: {
                 type: 'gantt'
@@ -94,10 +117,15 @@ H.ganttChart = function (renderTo, options, callback) {
             }
         },
 
-        options // user's options
+        options, // user's options
+
+        // forced options
+        {
+            isGantt: true
+        }
     );
 
-    options.series = seriesOptions;
+    options.series = userOptions.series = seriesOptions;
 
     each(options.series, function (series) {
         each(series.data, function (point) {
