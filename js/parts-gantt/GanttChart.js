@@ -49,7 +49,8 @@ H.ganttChart = function (renderTo, options, callback) {
     var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
-        defaultLinkedTo;
+        defaultLinkedTo,
+        userOptions = options;
     options = arguments[hasRenderToArg ? 1 : 0];
 
     // If user hasn't defined axes as array, make it into an array and add a
@@ -103,6 +104,7 @@ H.ganttChart = function (renderTo, options, callback) {
     options.series = null;
 
     options = merge(
+        true,
         {
             chart: {
                 type: 'gantt'
@@ -123,7 +125,7 @@ H.ganttChart = function (renderTo, options, callback) {
         }
     );
 
-    options.series = seriesOptions;
+    options.series = userOptions.series = seriesOptions;
 
     each(options.series, function (series) {
         each(series.data, function (point) {

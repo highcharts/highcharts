@@ -491,6 +491,7 @@ H.Map = H.mapChart = function (a, b, c) {
 
     var hasRenderToArg = typeof a === 'string' || a.nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],
+        userOptions = options,
         hiddenAxis = {
             endOnTick: false,
             visible: false,
@@ -544,7 +545,7 @@ H.Map = H.mapChart = function (a, b, c) {
         }
     );
 
-    options.series = seriesOptions;
+    options.series = userOptions.series = seriesOptions;
 
 
     return hasRenderToArg ?
