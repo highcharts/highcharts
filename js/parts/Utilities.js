@@ -2136,32 +2136,6 @@ H.some = function (arr, fn, ctx) {
 };
 
 /**
- * Map an array by a callback.
- *
- * @function Highcharts.map
- *
- * @param {Array} arr
- *        The array to map.
- *
- * @param {Function} fn
- *        The callback function. Return the new value for the new array.
- *
- * @return {Array}
- *         A new array item with modified items.
- */
-H.map = function (arr, fn) {
-    var results = [],
-        i = 0,
-        len = arr.length;
-
-    for (; i < len; i++) {
-        results[i] = fn.call(arr[i], arr[i], i, arr);
-    }
-
-    return results;
-};
-
-/**
  * Returns an array of a given object's own properties.
  *
  * @function Highcharts.keys
@@ -2261,27 +2235,6 @@ H.stop = function (el, prop) {
 };
 
 /**
- * Iterate over an array.
- *
- * @function Highcharts.each<T>
- *
- * @param {Array<T>} arr
- *        The array to iterate over.
- *
- * @param {Highcharts.EachCallbackFunction<T>} fn
- *        The iterator callback. It passes three arguments:
- *        * item - The array item.
- *        * index - The item's index in the array.
- *        * arr - The array that each is being applied to.
- *
- * @param {*} [ctx]
- *        The context.
- */
-H.each = function (arr, fn, ctx) { // modern browsers
-    return (H.forEachPolyfill || Array.prototype.forEach).call(arr, fn, ctx);
-};
-
-/**
  * Iterate over object key pairs in an object.
  *
  * @function Highcharts.objectEach
@@ -2305,6 +2258,50 @@ H.objectEach = function (obj, fn, ctx) {
         }
     }
 };
+
+/**
+ * Iterate over an array.
+ *
+ * @function Highcharts.each<T>
+ *
+ * @deprecated
+ *
+ * @param {Array<T>} arr
+ *        The array to iterate over.
+ *
+ * @param {Highcharts.EachCallbackFunction<T>} fn
+ *        The iterator callback. It passes three arguments:
+ *        * item - The array item.
+ *        * index - The item's index in the array.
+ *        * arr - The array that each is being applied to.
+ *
+ * @param {*} [ctx]
+ *        The context.
+ */
+/**
+ * Map an array by a callback.
+ *
+ * @function Highcharts.map
+ *
+ * @deprecated
+ *
+ * @param {Array} arr
+ *        The array to map.
+ *
+ * @param {Function} fn
+ *        The callback function. Return the new value for the new array.
+ *
+ * @return {Array}
+ *         A new array item with modified items.
+ */
+H.objectEach({
+    map: 'map',
+    each: 'forEach'
+}, function (val, key) {
+    H[key] = function (arr, fn, ctx) {
+        return Array.prototype[val].call(arr, fn, ctx);
+    };
+});
 
 /**
  * Add an event listener.
