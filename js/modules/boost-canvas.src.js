@@ -35,7 +35,11 @@ var win = H.win,
 H.initCanvasBoost = function () {
     if (H.seriesTypes.heatmap) {
         H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
-            var ctx = this.getContext();
+            var ctx = this.getContext(),
+                inverted = this.chart.inverted,
+                xAxis = this.xAxis,
+                yAxis = this.yAxis;
+
             if (ctx) {
 
                 // draw the columns
@@ -58,12 +62,22 @@ H.initCanvasBoost = function () {
                         /*= } =*/
 
                         ctx.fillStyle = pointAttr.fill;
-                        ctx.fillRect(
-                            shapeArgs.x,
-                            shapeArgs.y,
-                            shapeArgs.width,
-                            shapeArgs.height
-                        );
+
+                        if (inverted) {
+                            ctx.fillRect(
+                                yAxis.len - shapeArgs.y + xAxis.left,
+                                xAxis.len - shapeArgs.x + yAxis.top,
+                                -shapeArgs.height,
+                                -shapeArgs.width
+                            );
+                        } else {
+                            ctx.fillRect(
+                                shapeArgs.x + xAxis.left,
+                                shapeArgs.y + yAxis.top,
+                                shapeArgs.width,
+                                shapeArgs.height
+                            );
+                        }
                     }
                 });
 

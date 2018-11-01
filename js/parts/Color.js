@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -15,8 +15,10 @@
  */
 
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
+
 var each = H.each,
     isNumber = H.isNumber,
     map = H.map,
@@ -26,8 +28,9 @@ var each = H.each,
 /**
  * Handle color operations. The object methods are chainable.
  *
- * @ignore
- * @class Highcharts.Color
+ * @private
+ * @class
+ * @name Highcharts.Color
  *
  * @param {Highcharts.ColorString} input
  *        The input color in either rbga or hex format
@@ -77,10 +80,8 @@ H.Color.prototype = {
      * @private
      * @function Highcharts.Color#init
      *
-     * @param  {Highcharts.ColorString} input
-     *         The input color in either rbga or hex format
-     *
-     * @return {void}
+     * @param {Highcharts.ColorString} input
+     *        The input color in either rbga or hex format
      */
     init: function (input) {
         var result,
@@ -154,8 +155,8 @@ H.Color.prototype = {
      *
      * @function Highcharts.Color#get
      *
-     * @param  {string} format
-     *         Possible values are 'a', 'rgb', undefined
+     * @param {string} format
+     *        Possible values are 'a', 'rgb', undefined
      *
      * @return {Highcharts.ColorString}
      *         This color as a string.
@@ -192,8 +193,8 @@ H.Color.prototype = {
      *
      * @function Highcharts.Color#brighten
      *
-     * @param  {number} alpha
-     *         The alpha value.
+     * @param {number} alpha
+     *        The alpha value.
      *
      * @return {Highcharts.ColorString}
      *         This color with modifications.
@@ -227,8 +228,8 @@ H.Color.prototype = {
      *
      * @function Highcharts.Color#setOpacity
      *
-     * @param  {number} alpha
-     *         Opacity between 0 and 1.
+     * @param {number} alpha
+     *        Opacity between 0 and 1.
      *
      * @return {Highcharts.ColorString}
      *         Color with modifications.
@@ -243,12 +244,12 @@ H.Color.prototype = {
      *
      * @function Highcharts.Color#tweenTo
      *
-     * @param  {Highcharts.Color} to
-     *         The color object to tween to.
+     * @param {Highcharts.Color} to
+     *        The color object to tween to.
      *
-     * @param  {number} pos
-     *         The intermediate position, where 0 is the from color (current
-     *         color item), and 1 is the `to` color.
+     * @param {number} pos
+     *        The intermediate position, where 0 is the from color (current
+     *        color item), and 1 is the `to` color.
      *
      * @return {Highcharts.ColorString}
      *         The intermediate color in rgba notation.
@@ -287,6 +288,16 @@ H.Color.prototype = {
         return ret;
     }
 };
+
+/**
+ * Creates a color instance out of a color string.
+ *
+ * @private
+ * @function Highcharts.color
+ *
+ * @param {Highcharts.ColorString} input
+ *        The input color in either rbga or hex format
+ */
 H.color = function (input) {
     return new H.Color(input);
 };

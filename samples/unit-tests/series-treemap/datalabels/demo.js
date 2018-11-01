@@ -1,6 +1,6 @@
 // Highcharts 4.1.1, Issue 3844
 // treemap - colorByPoint is not working
-QUnit.test('Treemap: useHTML causes that data label is misplaced (#8159)', function(assert) {
+QUnit.test('Treemap: useHTML causes that data label is misplaced (#8159)', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
                 width: 400,
@@ -18,7 +18,7 @@ QUnit.test('Treemap: useHTML causes that data label is misplaced (#8159)', funct
                 data: [{
                     name: 'A',
                     value: 6,
-                    colorValue: 1,
+                    colorValue: 1
                 }, {
                     name: 'Bbbbbbbbbbbbb bbbbbbbbbbbbb',
                     value: 6,

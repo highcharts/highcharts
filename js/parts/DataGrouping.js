@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -40,7 +40,11 @@ var addEvent = H.addEvent,
  *
  * If data grouping is applied, the grouping information of grouped
  * points can be read from the [Point.dataGroup](
- * /class-reference/Highcharts.Point#.dataGroup).
+ * /class-reference/Highcharts.Point#.dataGroup). If point options other than
+ * the data itself are set, for example `name` or `color` or custom properties,
+ * the grouping logic doesn't know how to group it. In this case the options of
+ * the first point instance are copied over to the group point. This can be
+ * altered through a custom `approximation` callback function.
  *
  * @product highstock
  * @apioption plotOptions.series.dataGrouping
@@ -488,6 +492,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
                 ) || approximations[commonOptions.approximation],
         pointArrayMap = series.pointArrayMap,
         pointArrayMapLength = pointArrayMap && pointArrayMap.length,
+        extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
         pos = 0,
         start = 0,
         valuesLen,
@@ -523,6 +528,28 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
             pointX = groupPositions[pos];
             series.dataGroupInfo = { start: start, length: values[0].length };
             groupedY = approximationFn.apply(series, values);
+
+            // By default, let options of the first grouped point be passed over
+            // to the grouped point. This allows preserving properties like
+            // `name` and `color` or custom properties. Implementers can
+            // override this from the approximation function, where they can
+            // write custom options to `this.dataGroupInfo.options`.
+            if (!defined(series.dataGroupInfo.options)) {
+                // Convert numbers and arrays into objects
+                series.dataGroupInfo.options = merge(
+                    series.pointClass.prototype
+                        .optionsToObject.call(
+                            { series: series },
+                            series.options.data[start]
+                        )
+                );
+
+                // Make sure the raw data (x, y, open, high etc) is not copied
+                // over and overwriting approximated data.
+                each(extendedPointArrayMap, function (key) {
+                    delete series.dataGroupInfo.options[key];
+                });
+            }
 
             // push the grouped data
             if (groupedY !== undefined) {
@@ -694,7 +721,13 @@ seriesProto.processData = function () {
                 groupedXData[0] < xAxis.dataMin &&
                 visible
             ) {
-                if (xAxis.min <= xAxis.dataMin) {
+                if (
+                    (
+                        !defined(xAxis.options.min) &&
+                        xAxis.min <= xAxis.dataMin
+                    ) ||
+                    xAxis.min === xAxis.dataMin
+                ) {
                     xAxis.min = groupedXData[0];
                 }
                 xAxis.dataMin = groupedXData[0];

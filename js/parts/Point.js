@@ -1,15 +1,53 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
+/**
+ * Configuration hash for the data label and tooltip formatters.
+ *
+ * @typedef Highcharts.PointLabelObject
+ *
+ * @property {number|string} x
+ *           For categorized axes this property holds the category name for the
+ *           point. For other axes it holds the X value.
+ *
+ * @property {number} [y]
+ *           The y value of the point.
+ *
+ * @property {Highcharts.ColorString} color
+ *           The point's current color.
+ *
+ * @property {number} colorIndex
+ *           The point's current color index, used in styled mode instead of
+ *           `color`. The color index is inserted in class names used for
+ *           styling.
+ *
+ * @property {number|string} key
+ *           The name of the related point.
+ *
+ * @property {Highcharts.Series} series
+ *           The related series.
+ *
+ * @property {Highcharts.Point} point
+ *           The related point.
+ *
+ * @property {number} percentage
+ *           The percentage for related points in a stacked series or pies.
+ *
+ * @property {number} total
+ *           The total of values in either a stack for stacked series, or a pie
+ *           in a pie series.
+ */
+
 'use strict';
+
 import Highcharts from './Globals.js';
 import './Utilities.js';
+
 var Point,
     H = Highcharts,
-
     each = H.each,
     extend = H.extend,
     erase = H.erase,
@@ -18,6 +56,8 @@ var Point,
     isArray = H.isArray,
     isNumber = H.isNumber,
     pick = H.pick,
+    uniqueKey = H.uniqueKey,
+    defined = H.defined,
     removeEvent = H.removeEvent;
 
 /**
@@ -27,20 +67,30 @@ var Point,
  * Highcharts.Series#addPoint} or {@link Highcharts.Series#setData}.
  *
  * @class
+ * @name Highcharts.Point
  */
-
 Highcharts.Point = Point = function () {};
 Highcharts.Point.prototype = {
 
     /**
      * Initialize the point. Called internally based on the `series.data`
      * option.
-     * @param  {Series} series
-     *         The series object containing this point.
-     * @param  {Number|Array|Object} options
-     *         The data in either number, array or object format.
-     * @param  {Number} x Optionally, the X value of the point.
-     * @return {Point} The Point instance.
+     *
+     * @function Highcharts.Point#init
+     *
+     * @param {Highcharts.Series} series
+     *        The series object containing this point.
+     *
+     * @param {number|Array<number>|*} options
+     *        The data in either number, array or object format.
+     *
+     * @param {number} x
+     *        Optionally, the X value of the point.
+     *
+     * @return {Highcharts.Point}
+     *         The Point instance.
+     *
+     * @fires Highcharts.Point#event:afterInit
      */
     init: function (series, options, x) {
 
@@ -52,29 +102,38 @@ Highcharts.Point.prototype = {
         /**
          * The series object associated with the point.
          *
-         * @name series
-         * @memberof Highcharts.Point
-         * @type Highcharts.Series
+         * @name Highcharts.Point#series
+         * @type {Highcharts.Series}
          */
         point.series = series;
 
         /*= if (build.classic) { =*/
+
         /**
          * The point's current color.
-         * @name color
-         * @memberof Highcharts.Point
-         * @type {Color}
+         *
+         * @name Highcharts.Point#color
+         * @type {Highcharts.ColorString}
          */
         point.color = series.color; // #3445
+
         /*= } =*/
+
         point.applyOptions(options, x);
 
+        // Add a unique ID to the point if none is assigned
+        point.id = defined(point.id) ? point.id : uniqueKey();
+
         if (series.options.colorByPoint) {
+
             /*= if (build.classic) { =*/
+
             colors = series.options.colors || series.chart.options.colors;
             point.color = point.color || colors[series.colorCounter];
             colorCount = colors.length;
+
             /*= } =*/
+
             colorIndex = series.colorCounter;
             series.colorCounter++;
             // loop back to zero
@@ -88,9 +147,9 @@ Highcharts.Point.prototype = {
         /**
          * The point's current color index, used in styled mode instead of
          * `color`. The color index is inserted in class names used for styling.
-         * @name colorIndex
-         * @memberof Highcharts.Point
-         * @type {Number}
+         *
+         * @name Highcharts.Point#colorIndex
+         * @type {number}
          */
         point.colorIndex = pick(point.colorIndex, colorIndex);
 
@@ -105,9 +164,16 @@ Highcharts.Point.prototype = {
      * properties. Called on point init or from point.update.
      *
      * @private
-     * @param {Object} options The point options as defined in series.data.
-     * @param {Number} x Optionally, the X value.
-     * @returns {Object} The Point instance.
+     * @function Highcharts.Point#applyOptions
+     *
+     * @param {*} options
+     *        The point options as defined in series.data.
+     *
+     * @param {number} x
+     *        Optionally, the x value.
+     *
+     * @return {Highcharts.Point}
+     *         The Point instance.
      */
     applyOptions: function (options, x) {
         var point = this,
@@ -122,9 +188,9 @@ Highcharts.Point.prototype = {
         /**
          * The point's options as applied in the initial configuration, or
          * extended through `Point.update`.
-         * @name options
-         * @memberof Highcharts.Point
-         * @type {Object}
+         *
+         * @name Highcharts.Point#options
+         * @type {*}
          */
         point.options = point.options ?
             extend(point.options, options) :
@@ -135,7 +201,16 @@ Highcharts.Point.prototype = {
         if (options.group) {
             delete point.group;
         }
+        if (options.dataLabels) {
+            delete point.dataLabels;
+        }
 
+        /**
+         * The y value of the point.
+         *
+         * @name Highcharts.Point#y
+         * @type {number|undefined}
+         */
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
@@ -151,6 +226,12 @@ Highcharts.Point.prototype = {
             point.state = 'select';
         }
 
+        /**
+         * The x value of the point.
+         *
+         * @name Highcharts.Point#x
+         * @type {number}
+         */
         // If no x is set by now, get auto incremented value. All points must
         // have an x value, however the y value can be null to create a gap in
         // the series
@@ -178,11 +259,19 @@ Highcharts.Point.prototype = {
      * supports nested properties using dot notation. The function modifies the
      * input object and does not make a copy.
      *
-     * @param  {Object} object The object to set the value on.
-     * @param  {Mixed} value The value to set.
-     * @param  {String} key Key to the property to set.
+     * @function Highcharts.Point#setNestedProperty
      *
-     * @return {Object} The modified object.
+     * @param {*} object
+     *        The object to set the value on.
+     *
+     * @param {*} value
+     *        The value to set.
+     *
+     * @param {string} key
+     *        Key to the property to set.
+     *
+     * @return {*}
+     *         The modified object.
      */
     setNestedProperty: function (object, value, key) {
         var nestedKeys = key.split('.');
@@ -205,9 +294,13 @@ Highcharts.Point.prototype = {
      * array config like `[1, 10]` in a scatter series will be transformed to
      * `{ x: 1, y: 10 }`.
      *
-     * @param  {Number|Array|Object} options
-     *         The input options
-     * @return {Object} Transformed options.
+     * @function Highcharts.Point#optionsToObject
+     *
+     * @param {number|Array<number>|*} options
+     *        The input option.
+     *
+     * @return {*}
+     *         Transformed options.
      */
     optionsToObject: function (options) {
         var ret = {},
@@ -271,7 +364,10 @@ Highcharts.Point.prototype = {
      * Get the CSS class names for individual points. Used internally where the
      * returned value is set on every point.
      *
-     * @returns {String} The class names.
+     * @function Highcharts.Point#getClassName
+     *
+     * @return {string}
+     *         The class names.
      */
     getClassName: function () {
         return 'highcharts-point' +
@@ -288,7 +384,9 @@ Highcharts.Point.prototype = {
     /**
      * In a series with `zones`, return the zone that the point belongs to.
      *
-     * @return {Object}
+     * @function Highcharts.Point#getZone
+     *
+     * @return {Highcharts.PlotSeriesZonesOptions}
      *         The zone item.
      */
     getZone: function () {
@@ -322,6 +420,7 @@ Highcharts.Point.prototype = {
      * `series.data`.
      *
      * @private
+     * @function Highcharts.Point#destroy
      */
     destroy: function () {
         var point = this,
@@ -344,8 +443,8 @@ Highcharts.Point.prototype = {
             point.onMouseOut();
         }
 
-        // Remove all events
-        if (point.graphic || point.dataLabel) {
+        // Remove all events and elements
+        if (point.graphic || point.dataLabel || point.dataLabels) {
             removeEvent(point);
             point.destroyElements();
         }
@@ -357,14 +456,13 @@ Highcharts.Point.prototype = {
         for (prop in point) {
             point[prop] = null;
         }
-
-
     },
 
     /**
      * Destroy SVG elements associated with the point.
      *
      * @private
+     * @function Highcharts.Point#destroyElements
      */
     destroyElements: function () {
         var point = this,
@@ -383,14 +481,33 @@ Highcharts.Point.prototype = {
                 point[prop] = point[prop].destroy();
             }
         }
+        // Handle point.dataLabels and point.connectors
+        if (point.dataLabels) {
+            each(point.dataLabels, function (label) {
+                if (label.element) {
+                    label.destroy();
+                }
+            });
+            delete point.dataLabels;
+        }
+        if (point.connectors) {
+            each(point.connectors, function (connector) {
+                if (connector.element) {
+                    connector.destroy();
+                }
+            });
+            delete point.connectors;
+        }
     },
 
     /**
      * Return the configuration hash needed for the data label and tooltip
      * formatters.
      *
-     * @returns {Object}
-     *          Abstract object used in formatters and formats.
+     * @function Highcharts.Point#getLabelConfig
+     *
+     * @return {Highcharts.PointLabelObject}
+     *         Abstract object used in formatters and formats.
      */
     getLabelConfig: function () {
         return {
@@ -409,9 +526,12 @@ Highcharts.Point.prototype = {
     /**
      * Extendable method for formatting each point's tooltip line.
      *
-     * @param  {String} pointFormat
-     *         The point format.
-     * @return {String}
+     * @function Highcharts.Point#tooltipFormatter
+     *
+     * @param {string} pointFormat
+     *        The point format.
+     *
+     * @return {string}
      *         A string to be concatenated in to the common tooltip text.
      */
     tooltipFormatter: function (pointFormat) {
@@ -449,9 +569,18 @@ Highcharts.Point.prototype = {
      * Fire an event on the Point object.
      *
      * @private
-     * @param {String} eventType
-     * @param {Object} eventArgs Additional event arguments
-     * @param {Function} defaultFunction Default event handler
+     * @function Highcharts.Point#firePointEvent
+     *
+     * @param {string} eventType
+     *        Type of the event.
+     *
+     * @param {*} eventArgs
+     *        Additional event arguments.
+     *
+     * @param {Function} defaultFunction
+     *        Default event handler.
+     *
+     * @fires Highcharts.Point#event:*
      */
     firePointEvent: function (eventType, eventArgs, defaultFunction) {
         var point = this,
@@ -491,9 +620,8 @@ Highcharts.Point.prototype = {
      * For certain series types, like pie charts, where individual points can
      * be shown or hidden.
      *
-     * @name visible
-     * @memberof Highcharts.Point
-     * @type {Boolean}
+     * @name Highcharts.Point#visible
+     * @type {boolean}
      */
     visible: true
 };
@@ -502,9 +630,8 @@ Highcharts.Point.prototype = {
  * For categorized axes this property holds the category name for the
  * point. For other axes it holds the X value.
  *
- * @name category
- * @memberof Highcharts.Point
- * @type {String|Number}
+ * @name Highcharts.Point#category
+ * @type {number|string}
  */
 
 /**
@@ -527,41 +654,22 @@ Highcharts.Point.prototype = {
  *     y: 2
  * }]
  *
- * @name name
- * @memberof Highcharts.Point
- * @type {String}
+ * @name Highcharts.Point#name
+ * @type {string}
  */
 
 
 /**
  * The percentage for points in a stacked series or pies.
  *
- * @name percentage
- * @memberof Highcharts.Point
- * @type {Number}
+ * @name Highcharts.Point#percentage
+ * @type {number}
  */
 
 /**
  * The total of values in either a stack for stacked series, or a pie in a pie
  * series.
  *
- * @name total
- * @memberof Highcharts.Point
- * @type {Number}
- */
-
-/**
- * The x value of the point.
- *
- * @name x
- * @memberof Highcharts.Point
- * @type {Number}
- */
-
-/**
- * The y value of the point.
- *
- * @name y
- * @memberof Highcharts.Point
- * @type {Number}
+ * @name Highcharts.Point#total
+ * @type {number}
  */

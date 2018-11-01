@@ -1,32 +1,45 @@
 /**
  * Vector plot series module
  *
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 
 var each = H.each,
     seriesType = H.seriesType;
 
 /**
+ * The vector series class.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.vector
+ *
+ * @augments Highcharts.seriesTypes.scatter
+ */
+seriesType('vector', 'scatter'
+
+/**
  * A vector plot is a type of cartesian chart where each point has an X and Y
  * position, a length and a direction. Vectors are drawn as arrows.
  *
- * @extends plotOptions.scatter
- * @excluding boostThreshold,marker,connectEnds,connectNulls,cropThreshold,
- *            dashStyle,gapSize,gapUnit,dataGrouping,linecap,shadow,stacking,
- *            step
- * @product highcharts highstock
  * @sample {highcharts|highstock} highcharts/demo/vector-plot/
  *         Vector pot
- * @since 6.0.0
+ *
+ * @since        6.0.0
+ * @extends      plotOptions.scatter
+ * @excluding    boostThreshold, marker, connectEnds, connectNulls,
+ *               cropThreshold, dashStyle, gapSize, gapUnit, dataGrouping,
+ *               linecap, shadow, stacking, step
+ * @product      highcharts highstock
  * @optionparent plotOptions.vector
  */
-seriesType('vector', 'scatter', {
+, {
 
     /**
      * The line width for each vector arrow.
@@ -37,28 +50,39 @@ seriesType('vector', 'scatter', {
      * @ignore
      */
     marker: null,
+
     /**
      * What part of the vector it should be rotated around. Can be one of
      * `start`, `center` and `end`. When `start`, the vectors will start from
      * the given [x, y] position, and when `end` the vectors will end in the
      * [x, y] position.
      *
-     * @sample  highcharts/plotoptions/vector-rotationorigin-start/
-     *          Rotate from start
+     * @sample highcharts/plotoptions/vector-rotationorigin-start/
+     *         Rotate from start
+     *
      * @validvalue ["start", "center", "end"]
      */
     rotationOrigin: 'center',
+
     states: {
+
         hover: {
+
             /**
              * Additonal line width for the vector errors when they are hovered.
              */
             lineWidthPlus: 1
         }
     },
+
     tooltip: {
+
+        /**
+         * @default [{point.x}, {point.y}] Length: {point.length} Direction: {point.direction}°
+         */
         pointFormat: '<b>[{point.x}, {point.y}]</b><br/>Length: <b>{point.length}</b><br/>Direction: <b>{point.direction}\u00B0</b><br/>'
     },
+
     /**
      * Maximum length of the arrows in the vector plot. The individual arrow
      * length is computed between 0 and this value.
@@ -66,11 +90,21 @@ seriesType('vector', 'scatter', {
     vectorLength: 20
 
 }, {
+
     pointArrayMap: ['y', 'length', 'direction'],
     parallelArrays: ['x', 'y', 'length', 'direction'],
 
     /**
      * Get presentational attributes.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.vector#pointAttribs
+     *
+     * @param {Highcharts.Point} point
+     *
+     * @param {string} state
+     *
+     * @return {*}
      */
     pointAttribs: function (point, state) {
         var options = this.options,
@@ -89,12 +123,31 @@ seriesType('vector', 'scatter', {
             'stroke-width': strokeWidth
         };
     },
+
+    /**
+     * @ignore
+     * @deprecated
+     * @function Highcharts.seriesTypes.vector#markerAttribs
+     */
     markerAttribs: H.noop,
+
+    /**
+     * @ignore
+     * @deprecated
+     * @function Highcharts.seriesTypes.vector#getSymbol
+     */
     getSymbol: H.noop,
 
     /**
      * Create a single arrow. It is later rotated around the zero
      * centerpoint.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.vector#arrow
+     *
+     * @param {Highcharts.Point} point
+     *
+     * @return {Highcharts.SVGPathArray}
      */
     arrow: function (point) {
         var path,
@@ -120,13 +173,20 @@ seriesType('vector', 'scatter', {
         return path;
     },
 
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.vector#translate
+     */
     translate: function () {
         H.Series.prototype.translate.call(this);
 
         this.lengthMax = H.arrayMax(this.lengthData);
     },
 
-
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.vector#drawPoints
+     */
     drawPoints: function () {
 
         var chart = this.chart;
@@ -158,6 +218,11 @@ seriesType('vector', 'scatter', {
         }, this);
     },
 
+    /**
+     * @ignore
+     * @deprecated
+     * @function Highcharts.seriesTypes.vector#drawGraph
+     */
     drawGraph: H.noop,
 
     /*
@@ -190,6 +255,11 @@ seriesType('vector', 'scatter', {
 
     /**
      * Fade in the arrows on initiating series.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.vector#animate
+     *
+     * @param {boolean} [init]
      */
     animate: function (init) {
         if (init) {
@@ -211,10 +281,9 @@ seriesType('vector', 'scatter', {
  * A `vector` series. If the [type](#series.vector.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @extends series,plotOptions.vector
- * @excluding dataParser,dataURL
- * @product highcharts highstock
+ * @extends   series,plotOptions.vector
+ * @excluding dataParser, dataURL
+ * @product   highcharts highstock
  * @apioption series.vector
  */
 
@@ -234,8 +303,8 @@ seriesType('vector', 'scatter', {
  *     ]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
  * this option is not available.
  *
@@ -254,8 +323,6 @@ seriesType('vector', 'scatter', {
  *     }]
  *  ```
  *
- * @type {Array<Object|Array|Number>}
- * @extends series.line.data
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
@@ -266,7 +333,10 @@ seriesType('vector', 'scatter', {
  *         Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
- * @product highcharts highstock
+ *
+ * @type      {Array<number|Array<number>|*>}
+ * @extends   series.line.data
+ * @product   highcharts highstock
  * @apioption series.vector.data
  */
 
@@ -274,15 +344,15 @@ seriesType('vector', 'scatter', {
  * The length of the vector. The rendered length will relate to the
  * `vectorLength` setting.
  *
- * @type {Number}
- * @product highcharts highstock
+ * @type      {number}
+ * @product   highcharts highstock
  * @apioption series.vector.data.length
  */
 
 /**
  * The vector direction in degrees, where 0 is north (pointing towards south).
  *
- * @type {Number}
- * @product highcharts highstock
+ * @type      {number}
+ * @product   highcharts highstock
  * @apioption series.vector.data.direction
  */

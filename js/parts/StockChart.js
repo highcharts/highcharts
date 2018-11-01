@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -101,8 +101,8 @@ var addEvent = H.addEvent,
  * @param  {String|HTMLDOMElement} renderTo
  *         The DOM element to render to, or its id.
  * @param  {Options} options
- *         The chart options structure as described in the {@link
- *         https://api.highcharts.com/highstock|options reference}.
+ *         The chart options structure as described in the
+ *         [options reference](https://api.highcharts.com/highstock).
  * @param  {Function} callback
  *         A function to execute when the chart object is finished loading and
  *         rendering. In most cases the chart is built in one thread, but in
@@ -110,8 +110,9 @@ var addEvent = H.addEvent,
  *         initialized before the document is ready, and in these cases the
  *         chart object will not be finished synchronously. As a consequence,
  *         code that relies on the newly built Chart object should always run in
- *         the callback. Defining a {@link https://api.highcharts.com/highstock/chart.events.load|
- *         chart.event.load} handler is equivalent.
+ *         the callback. Defining a
+ *         [chart.event.load](https://api.highcharts.com/highstock/chart.events.load)
+ *         handler is equivalent.
  *
  * @return {Chart}
  *         The chart object.
@@ -127,6 +128,7 @@ var addEvent = H.addEvent,
 H.StockChart = H.stockChart = function (a, b, c) {
     var hasRenderToArg = isString(a) || a.nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],
+        userOptions = options,
         // to increase performance, don't merge the data
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
@@ -266,7 +268,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
         }
     );
 
-    options.series = seriesOptions;
+    options.series = userOptions.series = seriesOptions;
 
     return hasRenderToArg ?
         new Chart(a, options, c) :
@@ -420,7 +422,10 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
                 x1 = x2 = Math.round(transVal + axis.transB);
 
                 // outside plot area
-                if (x1 < axisLeft || x1 > axisLeft + axis.width) {
+                if (
+                    force !== 'pass' &&
+                    (x1 < axisLeft || x1 > axisLeft + axis.width)
+                ) {
                     if (force) {
                         x1 = x2 = Math.min(
                             Math.max(axisLeft, x1),
@@ -443,7 +448,10 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
                 y1 = y2 = Math.round(axisTop + axis.height - transVal);
 
                 // outside plot area
-                if (y1 < axisTop || y1 > axisTop + axis.height) {
+                if (
+                    force !== 'pass' &&
+                    (y1 < axisTop || y1 > axisTop + axis.height)
+                ) {
                     if (force) {
                         y1 = y2 = Math.min(
                             Math.max(axisTop, y1),
@@ -826,8 +834,7 @@ wrap(seriesProto, 'getExtremes', function (proceed) {
  * @function setCompare
  * @memberof Axis.prototype
  *
- * @see    {@link https://api.highcharts.com/highstock/series.plotOptions.compare|
- *         series.plotOptions.compare}
+ * @see    [series.plotOptions.compare](https://api.highcharts.com/highstock/series.plotOptions.compare)
  *
  * @sample stock/members/axis-setcompare/
  *         Set compoare

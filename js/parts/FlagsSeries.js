@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -517,9 +517,21 @@ seriesType('flags', 'column', {
         });
     },
 
-    animate: noop, // Disable animation
+    // Disable animation, but keep clipping (#8546):
+    animate: function (init) {
+        if (init) {
+            this.setClip();
+        } else {
+            this.animate = null;
+        }
+    },
+    setClip: function () {
+        Series.prototype.setClip.apply(this, arguments);
+        if (this.options.clip !== false && this.sharedClipKey) {
+            this.markerGroup.clip(this.chart[this.sharedClipKey]);
+        }
+    },
     buildKDTree: noop,
-    setClip: noop,
     /**
      * Don't invert the flag marker group (#4960)
      */
@@ -619,8 +631,8 @@ if (Renderer === VMLRenderer) {
  * An array of data points for the series. For the `flags` series type,
  * points can be given in the following ways:
  *
- * 1.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 1.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.flags.turboThreshold),
  * this option is not available.
  *

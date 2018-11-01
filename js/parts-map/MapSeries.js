@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -33,7 +33,7 @@ var colorPointMixin = H.colorPointMixin,
  * The map series is used for basic choropleth maps, where each map area has a
  * color based on its value.
  *
- * @sample maps/demo/base/ Choropleth map
+ * @sample maps/demo/all-maps/ Choropleth map
  * @extends plotOptions.scatter
  * @excluding marker
  * @product highmaps
@@ -1132,8 +1132,8 @@ seriesType('map', 'scatter', {
  *     ]
  *  ```
  *
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 3.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.map.turboThreshold),
  * this option is not available.
  *

@@ -1,42 +1,60 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Options.js';
 import './Series.js';
+
 var Series = H.Series,
     seriesType = H.seriesType;
 
 /**
- * A scatter plot uses cartesian coordinates to display values for two variables
- * for a set of data.
+ * Scatter series type.
  *
- * @sample       {highcharts} highcharts/demo/scatter/
- *               Scatter plot
- * @extends      {plotOptions.line}
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.scatter
+ *
+ * @augments Highcharts.Series
+ */
+seriesType('scatter', 'line'
+
+/**
+ * A scatter plot uses cartesian coordinates to display values for two
+ * variables for a set of data.
+ *
+ * @sample {highcharts} highcharts/demo/scatter/
+ *         Scatter plot
+ *
+ * @extends      plotOptions.line
  * @excluding    pointPlacement, shadow
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */
-seriesType('scatter', 'line', {
+, {
 
     /**
      * The width of the line connecting the data points.
      *
-     * @sample  {highcharts} highcharts/plotoptions/scatter-linewidth-none/
-     *          0 by default
-     * @sample  {highcharts} highcharts/plotoptions/scatter-linewidth-1/
-     *          1px
+     * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/
+     *         0 by default
+     * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/
+     *         1px
+     *
      * @product highcharts highstock
      */
     lineWidth: 0,
 
     findNearestPointBy: 'xy',
+
     marker: {
+
         enabled: true // Overrides auto-enabling in line series (#3647)
     },
 
@@ -49,7 +67,7 @@ seriesType('scatter', 'line', {
      * is false and `tooltip.shared` is false, the tooltip will be hidden
      * when moving the mouse between series.
      *
-     * @type      {Boolean}
+     * @type      {boolean}
      * @default   false
      * @product   highcharts highstock
      * @apioption plotOptions.scatter.stickyTracking
@@ -66,17 +84,30 @@ seriesType('scatter', 'line', {
      * @product highcharts highstock
      */
     tooltip: {
+
         /*= if (build.classic) { =*/
+
+        /**
+         * @default ● {series.name}
+         */
         headerFormat:
             '<span style="color:{point.color}">\u25CF</span> ' +
             '<span style="font-size: 0.85em"> {series.name}</span><br/>',
+
         /*= } else { =*/
 
+        /**
+         * @default ● {series.name}
+         */
         headerFormat:
             '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> ' +
             '<span class="highcharts-header"> {series.name}</span><br/>',
+
         /*= } =*/
 
+        /**
+         * @default x: {point.x} y: {point.y}
+         */
         pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
     }
 
@@ -87,6 +118,11 @@ seriesType('scatter', 'line', {
     noSharedTooltip: true,
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     takeOrdinalPosition: false, // #2342
+
+    /**
+     * @private
+     * @function Highcharts.seriesTypes.scatter#drawGraph
+     */
     drawGraph: function () {
         if (this.options.lineWidth) {
             Series.prototype.drawGraph.call(this);
@@ -98,9 +134,8 @@ seriesType('scatter', 'line', {
  * A `scatter` series. If the [type](#series.scatter.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type      {Object}
  * @extends   series,plotOptions.scatter
- * @excluding dataParser,dataURL
+ * @excluding dataParser, dataURL
  * @product   highcharts highstock
  * @apioption series.scatter
  */
@@ -131,8 +166,8 @@ seriesType('scatter', 'line', {
  *     ]
  *  ```
  *
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 3.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.scatter.turboThreshold),
  * this option is not available.
  *
@@ -150,18 +185,19 @@ seriesType('scatter', 'line', {
  *     }]
  *  ```
  *
- * @type      {Array<Object|Array|Number>}
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type      {Array<number|Array<number>|*>}
  * @extends   series.line.data
- * @sample    {highcharts} highcharts/chart/reflow-true/
- *            Numerical values
- * @sample    {highcharts} highcharts/series/data-array-of-arrays/
- *            Arrays of numeric x and y
- * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *            Arrays of datetime x and y
- * @sample    {highcharts} highcharts/series/data-array-of-name-value/
- *            Arrays of point.name and y
- * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
  * @product   highcharts highstock
  * @apioption series.scatter.data
  */

@@ -539,6 +539,14 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
      * @optionparent annotations
      */
     defaultOptions: {
+        /**
+         * Sets an ID for an annotation. Can be user later when removing an
+         * annotation in [Chart#removeAnnotation(id)](
+         * /class-reference/Highcharts.Chart#removeAnnotation) method.
+         *
+         * @apioption annotations.id
+         * @default undefined
+         */
 
         /**
          * Whether the annotation is visible.
@@ -681,7 +689,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
              * How to handle the annotation's label that flow outside the plot
              * area. The justify option aligns the label inside the plot area.
              *
-             * @validvalue ["none", "justify"]
+             * @validvalue ["allow", "justify"]
              * @sample highcharts/annotations/label-crop-overflow/
              *         Crop or justify labels
              **/

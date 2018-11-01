@@ -236,6 +236,11 @@
  * To disable boosting on the series, set the `boostThreshold` to 0. Setting it
  * to 1 will force boosting.
  *
+ * Note that the [cropThreshold](plotOptions.series.cropThreshold) also affects
+ * this setting. When zooming in on a series that has fewer points than the
+ * `cropThreshold`, all points are rendered although outside the visible plot
+ * area, and the `boostThreshold` won't take effect.
+ *
  * Requires `modules/boost.js`.
  *
  * @type {Number}
@@ -271,6 +276,7 @@ var win = H.win,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     each = H.each,
+    objEach = H.objectEach,
     extend = H.extend,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
@@ -502,6 +508,12 @@ function shouldForceChartSeriesBoosting(chart) {
 
             series = chart.series[i];
 
+            // Don't count series with boostThreshold set to 0
+            // See #8950
+            if (series.options.boostThreshold === 0) {
+                continue;
+            }
+
             if (boostableMap[series.type]) {
                 ++canBoostCount;
             }
@@ -517,20 +529,37 @@ function shouldForceChartSeriesBoosting(chart) {
         }
     }
 
-    chart.boostForceChartBoost =
+    chart.boostForceChartBoost = allowBoostForce && (
         (
-            allowBoostForce &&
             canBoostCount === chart.series.length &&
             sboostCount > 0
         ) ||
-        sboostCount > 5;
+        sboostCount > 5
+    );
 
     return chart.boostForceChartBoost;
 }
 
+/**
+ * Return true if ths boost.enabled option is true
+ * @param  {Highcharts.Chart} chart The chart
+ * @return {boolean}
+ */
+function boostEnabled(chart) {
+    return pick(
+        (
+            chart &&
+            chart.options &&
+            chart.options.boost &&
+            chart.options.boost.enabled
+        ),
+        true
+    );
+}
+
 /*
  * Returns true if the chart is in series boost mode
- * @param chart {Highchart.Chart} - the chart to check
+ * @param chart {Highcharts.Chart} - the chart to check
  * @returns {Boolean} - true if the chart is in series boost mode
  */
 Chart.prototype.isChartSeriesBoosting = function () {
@@ -801,8 +830,19 @@ function GLShader(gl) {
         // Uniform for invertion
         isInverted,
         plotHeightUniform,
+        // Error stack
+        errors = [],
         // Texture uniform
         uSamplerUniform;
+
+    /*
+     * Handle errors accumulated in errors stack
+     */
+    function handleErrors() {
+        if (errors.length) {
+            H.error('[highcharts boost] shader error - ' + errors.join('\n'));
+        }
+    }
 
     /* String to shader program
      * @param {string} str - the program source
@@ -818,7 +858,13 @@ function GLShader(gl) {
         gl.compileShader(shader);
 
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            // console.error('shader error:', gl.getShaderInfoLog(shader));
+            errors.push(
+                'when compiling ' +
+                type +
+                ' shader:\n' +
+                gl.getShaderInfoLog(shader)
+            );
+
             return false;
         }
         return shader;
@@ -835,7 +881,7 @@ function GLShader(gl) {
 
         if (!v || !f) {
             shaderProgram = false;
-            // console.error('error creating shader program');
+            handleErrors();
             return false;
         }
 
@@ -847,7 +893,15 @@ function GLShader(gl) {
 
         gl.attachShader(shaderProgram, v);
         gl.attachShader(shaderProgram, f);
+
         gl.linkProgram(shaderProgram);
+
+        if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+            errors.push(gl.getProgramInfoLog(shaderProgram));
+            handleErrors();
+            shaderProgram = false;
+            return false;
+        }
 
         gl.useProgram(shaderProgram);
 
@@ -864,6 +918,7 @@ function GLShader(gl) {
         isCircleUniform = uloc('isCircle');
         isInverted = uloc('isInverted');
         plotHeightUniform = uloc('plotHeight');
+
         return true;
     }
 
@@ -871,11 +926,9 @@ function GLShader(gl) {
      * Destroy the shader
      */
     function destroy() {
-        if (gl) {
-            if (shaderProgram) {
-                gl.deleteProgram(shaderProgram);
-                shaderProgram = false;
-            }
+        if (gl && shaderProgram) {
+            gl.deleteProgram(shaderProgram);
+            shaderProgram = false;
         }
     }
 
@@ -885,7 +938,9 @@ function GLShader(gl) {
      * or until 0 is bound.
      */
     function bind() {
-        gl.useProgram(shaderProgram);
+        if (gl && shaderProgram) {
+            gl.useProgram(shaderProgram);
+        }
     }
 
     /*
@@ -895,17 +950,24 @@ function GLShader(gl) {
      * @param val {float} - the value to set
      */
     function setUniform(name, val) {
-        var u = uLocations[name] = uLocations[name] ||
-                                    gl.getUniformLocation(shaderProgram, name);
-        gl.uniform1f(u, val);
+        if (gl && shaderProgram) {
+            var u = uLocations[name] = uLocations[name] ||
+                                       gl.getUniformLocation(
+                                          shaderProgram,
+                                          name
+                                       );
+            gl.uniform1f(u, val);
+        }
     }
 
     /*
      * Set the active texture
      * @param texture - the texture
      */
-    function setTexture() {
-        gl.uniform1i(uSamplerUniform, 0);
+    function setTexture(texture) {
+        if (gl && shaderProgram) {
+            gl.uniform1i(uSamplerUniform, texture);
+        }
     }
 
     /*
@@ -913,26 +975,34 @@ function GLShader(gl) {
      * @flag is the state
      */
     function setInverted(flag) {
-        gl.uniform1i(isInverted, flag);
+        if (gl && shaderProgram) {
+            gl.uniform1i(isInverted, flag);
+        }
     }
 
     /*
      * Enable/disable circle drawing
      */
     function setDrawAsCircle(flag) {
-        gl.uniform1i(isCircleUniform, flag ? 1 : 0);
+        if (gl && shaderProgram) {
+            gl.uniform1i(isCircleUniform, flag ? 1 : 0);
+        }
     }
 
     function setPlotHeight(n) {
-        gl.uniform1f(plotHeightUniform, n);
+        if (gl && shaderProgram) {
+            gl.uniform1f(plotHeightUniform, n);
+        }
     }
 
     /*
      * Flush
      */
     function reset() {
-        gl.uniform1i(isBubbleUniform, 0);
-        gl.uniform1i(isCircleUniform, 0);
+        if (gl && shaderProgram) {
+            gl.uniform1i(isBubbleUniform, 0);
+            gl.uniform1i(isCircleUniform, 0);
+        }
     }
 
     /*
@@ -944,7 +1014,7 @@ function GLShader(gl) {
             zMin = Number.MAX_VALUE,
             zMax = -Number.MAX_VALUE;
 
-        if (series.type === 'bubble') {
+        if (gl && shaderProgram && series.type === 'bubble') {
             zMin = pick(seriesOptions.zMin, Math.min(
                 zMin,
                 Math.max(
@@ -980,20 +1050,24 @@ function GLShader(gl) {
      * @param color {Array<float>} - an array with RGBA values
      */
     function setColor(color) {
-        gl.uniform4f(
-            fillColorUniform,
-            color[0] / 255.0,
-            color[1] / 255.0,
-            color[2] / 255.0,
-            color[3]
-        );
+        if (gl && shaderProgram) {
+            gl.uniform4f(
+                fillColorUniform,
+                color[0] / 255.0,
+                color[1] / 255.0,
+                color[2] / 255.0,
+                color[3]
+            );
+        }
     }
 
     /*
      * Set skip translation
      */
     function setSkipTranslation(flag) {
-        gl.uniform1i(skipTranslationUniform, flag === true ? 1 : 0);
+        if (gl && shaderProgram) {
+            gl.uniform1i(skipTranslationUniform, flag === true ? 1 : 0);
+        }
     }
 
     /*
@@ -1001,7 +1075,9 @@ function GLShader(gl) {
      * @param m {Matrix4x4} - the matrix
      */
     function setPMatrix(m) {
-        gl.uniformMatrix4fv(pUniform, false, m);
+        if (gl && shaderProgram) {
+            gl.uniformMatrix4fv(pUniform, false, m);
+        }
     }
 
     /*
@@ -1009,7 +1085,9 @@ function GLShader(gl) {
      * @param p {float} - point size
      */
     function setPointSize(p) {
-        gl.uniform1f(psUniform, p);
+        if (gl && shaderProgram) {
+            gl.uniform1f(psUniform, p);
+        }
     }
 
     /*
@@ -1021,7 +1099,9 @@ function GLShader(gl) {
     }
 
     if (gl) {
-        createShader();
+        if (!createShader()) {
+            return false;
+        }
     }
 
     return {
@@ -1233,20 +1313,16 @@ function GLRenderer(postRenderCallback) {
         data = false,
         // The marker data
         markerData = false,
-        // Is the texture ready?
-        textureIsReady = false,
         // Exports
         exports = {},
         // Is it inited?
         isInited = false,
         // The series stack
         series = [],
-        // Texture for circles
-        circleTexture = doc.createElement('canvas'),
-        // Context for circle texture
-        circleCtx = circleTexture.getContext('2d'),
-        // Handle for the circle texture
-        circleTextureHandle,
+
+        // Texture handles
+        textureHandles = {},
+
         // Things to draw as "rectangles" (i.e lines)
         asBar = {
             'column': true,
@@ -1445,7 +1521,8 @@ function GLRenderer(postRenderCallback) {
             pcolor = false,
             drawAsBar = asBar[series.type],
             isXInside = false,
-            isYInside = true;
+            isYInside = true,
+            threshold = options.threshold;
 
         if (options.boostData && options.boostData.length > 0) {
             return;
@@ -1765,7 +1842,7 @@ function GLRenderer(postRenderCallback) {
             }
 
             // Cull points outside the extremes
-            if (y === null || !isYInside) {
+            if (y === null || (!isYInside && !nextInside && !prevInside)) {
                 beginSegment();
                 continue;
             }
@@ -1791,6 +1868,13 @@ function GLRenderer(postRenderCallback) {
                 }
 
                 if (x > plotWidth) {
+                    // If this is  rendered as a point, just skip drawing it
+                    // entirely, as we're not dependandt on lineTo'ing to it.
+                    // See #8197
+                    if (inst.drawMode === 'points') {
+                        continue;
+                    }
+
                     x = plotWidth;
                 }
 
@@ -1809,6 +1893,9 @@ function GLRenderer(postRenderCallback) {
                     }
                 }
 
+                if (!isRange && !isStacked) {
+                    minVal = Math.max(threshold, yMin); // #8731
+                }
                 if (!settings.useGPUTranslations) {
                     minVal = yAxis.toPixels(minVal, true);
                 }
@@ -1846,7 +1933,7 @@ function GLRenderer(postRenderCallback) {
 
             if (!settings.useGPUTranslations &&
                 !settings.usePreallocated &&
-                (lastX && x - lastX < cullXThreshold) &&
+                (lastX && Math.abs(x - lastX) < cullXThreshold) &&
                 (lastY && Math.abs(y - lastY) < cullYThreshold)
             ) {
                 if (settings.debug.showSkipSummary) {
@@ -2072,7 +2159,7 @@ function GLRenderer(postRenderCallback) {
             return false;
         }
 
-        if (!gl || !width || !height) {
+        if (!gl || !width || !height || !shader) {
             return false;
         }
 
@@ -2085,7 +2172,6 @@ function GLRenderer(postRenderCallback) {
 
         shader.bind();
 
-
         gl.viewport(0, 0, width, height);
         shader.setPMatrix(orthoMatrix(width, height));
         shader.setPlotHeight(chart.plotHeight);
@@ -2097,17 +2183,12 @@ function GLRenderer(postRenderCallback) {
         vbuffer.build(exports.data, 'aVertexPosition', 4);
         vbuffer.bind();
 
-        if (textureIsReady) {
-            gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
-            shader.setTexture(circleTextureHandle);
-        }
-
         shader.setInverted(chart.inverted);
-
 
         // Render the series
         each(series, function (s, si) {
             var options = s.series.options,
+                shapeOptions = options.marker,
                 sindex,
                 lineWidth = typeof options.lineWidth !== 'undefined' ?
                     options.lineWidth :
@@ -2128,14 +2209,21 @@ function GLRenderer(postRenderCallback) {
                             ) || 10)
                 ),
                 fillColor,
+                shapeTexture = textureHandles[
+                    (shapeOptions && shapeOptions.symbol) || s.series.symbol
+                ] || textureHandles.circle,
                 color;
-
 
             if (
                 s.segments.length === 0 ||
-                s.segments[0].from === s.segments[0].to
+                (s.segmentslength && s.segments[0].from === s.segments[0].to)
             ) {
                 return;
+            }
+
+            if (shapeTexture.isReady) {
+                gl.bindTexture(gl.TEXTURE_2D, shapeTexture.handle);
+                shader.setTexture(shapeTexture.handle);
             }
 
             /*= if (build.classic) { =*/
@@ -2226,7 +2314,7 @@ function GLRenderer(postRenderCallback) {
             }
 
             shader.setDrawAsCircle(
-                (asCircle[s.series.type] && textureIsReady) || false
+                asCircle[s.series.type] || false
             );
 
             // Do the actual rendering
@@ -2299,8 +2387,8 @@ function GLRenderer(postRenderCallback) {
      * @param h {Integer} - the height of the viewport
      */
     function setSize(w, h) {
-        // Skip if there's no change
-        if (width === w && h === h) {
+        // Skip if there's no change, or if we have no valid shader
+        if ((width === w && h === h) || !shader) {
             return;
         }
 
@@ -2359,71 +2447,127 @@ function GLRenderer(postRenderCallback) {
         gl.depthFunc(gl.LESS);
 
         shader = GLShader(gl); // eslint-disable-line new-cap
+
+        if (!shader) {
+            // We need to abort, there's no shader context
+            return false;
+        }
+
         vbuffer = GLVertexBuffer(gl, shader); // eslint-disable-line new-cap
 
-        textureIsReady = false;
+        function createTexture(name, fn) {
+            var props = {
+                    isReady: false,
+                    texture: doc.createElement('canvas'),
+                    handle: gl.createTexture()
+                },
+                ctx = props.texture.getContext('2d');
 
-        // Set up the circle texture used for bubbles
-        circleTextureHandle = gl.createTexture();
+            textureHandles[name] = props;
 
-        // Draw the circle
-        circleTexture.width = 512;
-        circleTexture.height = 512;
+            props.texture.width = 512;
+            props.texture.height = 512;
 
-        circleCtx.mozImageSmoothingEnabled = false;
-        circleCtx.webkitImageSmoothingEnabled = false;
-        circleCtx.msImageSmoothingEnabled = false;
-        circleCtx.imageSmoothingEnabled = false;
+            ctx.mozImageSmoothingEnabled = false;
+            ctx.webkitImageSmoothingEnabled = false;
+            ctx.msImageSmoothingEnabled = false;
+            ctx.imageSmoothingEnabled = false;
 
-        circleCtx.strokeStyle = 'rgba(255, 255, 255, 0)';
-        circleCtx.fillStyle = '#FFF';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0)';
+            ctx.fillStyle = '#FFF';
 
-        circleCtx.beginPath();
-        circleCtx.arc(256, 256, 256, 0, 2 * Math.PI);
-        circleCtx.stroke();
-        circleCtx.fill();
+            fn(ctx);
 
-        try {
+            try {
 
-            gl.bindTexture(gl.TEXTURE_2D, circleTextureHandle);
-            // gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, props.handle);
+                // gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
-            gl.texImage2D(
-                gl.TEXTURE_2D,
-                0,
-                gl.RGBA,
-                gl.RGBA,
-                gl.UNSIGNED_BYTE,
-                circleTexture
-            );
+                gl.texImage2D(
+                    gl.TEXTURE_2D,
+                    0,
+                    gl.RGBA,
+                    gl.RGBA,
+                    gl.UNSIGNED_BYTE,
+                    props.texture
+                );
 
-            gl.texParameteri(
-                gl.TEXTURE_2D,
-                gl.TEXTURE_WRAP_S,
-                gl.CLAMP_TO_EDGE
-            );
-            gl.texParameteri(
-                gl.TEXTURE_2D,
-                gl.TEXTURE_WRAP_T,
-                gl.CLAMP_TO_EDGE
-            );
-            gl.texParameteri(
-                gl.TEXTURE_2D,
-                gl.TEXTURE_MAG_FILTER,
-                gl.LINEAR
-            );
-            gl.texParameteri(
-                gl.TEXTURE_2D,
-                gl.TEXTURE_MIN_FILTER,
-                gl.LINEAR
-            );
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_WRAP_S,
+                    gl.CLAMP_TO_EDGE
+                );
 
-            // gl.generateMipmap(gl.TEXTURE_2D);
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_WRAP_T,
+                    gl.CLAMP_TO_EDGE
+                );
 
-            gl.bindTexture(gl.TEXTURE_2D, null);
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_MAG_FILTER,
+                    gl.LINEAR
+                );
 
-            textureIsReady = true;
-        } catch (e) {}
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_MIN_FILTER,
+                    gl.LINEAR
+                );
+
+                // gl.generateMipmap(gl.TEXTURE_2D);
+
+                gl.bindTexture(gl.TEXTURE_2D, null);
+
+                props.isReady = true;
+            } catch (e) {}
+        }
+
+        // Circle shape
+        createTexture('circle', function (ctx) {
+            ctx.beginPath();
+            ctx.arc(256, 256, 256, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fill();
+        });
+
+        // Square shape
+        createTexture('square', function (ctx) {
+            ctx.fillRect(0, 0, 512, 512);
+        });
+
+        // Diamond shape
+        createTexture('diamond', function (ctx) {
+            ctx.beginPath();
+            ctx.moveTo(256, 0);
+            ctx.lineTo(512, 256);
+            ctx.lineTo(256, 512);
+            ctx.lineTo(0, 256);
+            ctx.lineTo(256, 0);
+            ctx.fill();
+        });
+
+        // Triangle shape
+        createTexture('triangle', function (ctx) {
+            ctx.beginPath();
+            ctx.moveTo(0, 512);
+            ctx.lineTo(256, 0);
+            ctx.lineTo(512, 512);
+            ctx.lineTo(0, 512);
+            ctx.fill();
+        });
+
+        // Triangle shape (rotated)
+        createTexture('triangle-down', function (ctx) {
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(256, 512);
+            ctx.lineTo(512, 0);
+            ctx.lineTo(0, 0);
+            ctx.fill();
+        });
 
         isInited = true;
 
@@ -2455,9 +2599,13 @@ function GLRenderer(postRenderCallback) {
         vbuffer.destroy();
         shader.destroy();
         if (gl) {
-            if (circleTextureHandle) {
-                gl.deleteTexture(circleTextureHandle);
-            }
+
+            objEach(textureHandles, function (key) {
+                if (textureHandles[key].handle) {
+                    gl.deleteTexture(textureHandles[key].handle);
+                }
+            });
+
             gl.canvas.width = 1;
             gl.canvas.height = 1;
         }
@@ -2629,7 +2777,13 @@ function createAndAttachRenderer(chart, series) {
 
         }); // eslint-disable-line new-cap
 
-        target.ogl.init(target.canvas);
+        if (!target.ogl.init(target.canvas)) {
+            // The OGL renderer couldn't be inited.
+            // This likely means a shader error as we wouldn't get to this point
+            // if there was no WebGL support.
+            H.error('[highcharts boost] - unable to init WebGL renderer');
+        }
+
         // target.ogl.clear();
         target.ogl.setOptions(chart.options.boost || {});
 
@@ -2819,24 +2973,16 @@ each([
 ], function (method) {
     function branch(proceed) {
         var letItPass = this.options.stacking &&
-                        (method === 'translate' || method === 'generatePoints'),
-            enabled = pick(
-                (
-                    this.chart &&
-                    this.chart.options &&
-                    this.chart.options.boost &&
-                    this.chart.options.boost.enabled
-                ),
-                true
-            );
+            (method === 'translate' || method === 'generatePoints');
 
         if (
             !this.isSeriesBoosting ||
             letItPass ||
-            !enabled ||
+            !boostEnabled(this.chart) ||
             this.type === 'heatmap' ||
             this.type === 'treemap' ||
-            !boostableMap[this.type]
+            !boostableMap[this.type] ||
+            this.options.boostThreshold === 0
         ) {
 
             proceed.call(this);
@@ -2881,7 +3027,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
         );
     }
 
-    if (boostableMap[this.type]) {
+    if (boostEnabled(this.chart) && boostableMap[this.type]) {
 
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap, do
@@ -3208,7 +3354,6 @@ if (!H.hasWebGLSupport()) {
                 renderer.pushSeries(series);
                 // Perform the actual renderer if we're on series level
                 renderIfNotSeriesBoosting(renderer, this, chart);
-                // console.log(series, chart);
             }
 
             /* This builds the KD-tree */

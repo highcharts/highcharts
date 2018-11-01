@@ -1,7 +1,7 @@
 /**
  * Sankey diagram module
  *
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -57,10 +57,10 @@ seriesType('sankey', 'column', {
         backgroundColor: 'none', // enable padding
         crop: false,
         /**
-         * The [format string](https://www.highcharts.com/docs/chart-
-         * concepts/labels-and-string-formatting) specifying what to show
-         * for _nodes_ in the sankey diagram. By default the
-         * `nodeFormatter` returns `{point.name}`.
+         * The [format string](
+         * https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _nodes_ in the sankey diagram. By default
+         * the `nodeFormatter` returns `{point.name}`.
          *
          * @type {String}
          */
@@ -77,10 +77,11 @@ seriesType('sankey', 'column', {
             return this.point.name;
         },
         /**
-         * The [format string](https://www.highcharts.com/docs/chart-
-         * concepts/labels-and-string-formatting) specifying what to show for
-         * _links_ in the sankey diagram. Defaults to an empty string returned
-         * from the `formatter`, in effect disabling the labels.
+         * The [format string](
+         * https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _links_ in the sankey diagram. Defaults
+         * to an empty string returned from the `formatter`, in effect disabling
+         * the labels.
          */
         format: undefined,
         /**
@@ -144,10 +145,10 @@ seriesType('sankey', 'column', {
         /*= } =*/
         pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>{point.weight}</b><br/>',
         /**
-         * The [format string](https://www.highcharts.com/docs/chart-
-         * concepts/labels-and-string-formatting) specifying what to
-         * show for _nodes_ in tooltip
-         * of a sankey diagram series, as opposed to links.
+         * The [format string](
+         * https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _nodes_ in tooltip of a sankey diagram
+         * series, as opposed to links.
          */
         nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
     }
@@ -313,6 +314,14 @@ seriesType('sankey', 'column', {
             columns[node.column].push(node);
 
         }, this);
+
+        // Fill in empty columns (#8865)
+        for (var i = 0; i < columns.length; i++) {
+            if (columns[i] === undefined) {
+                columns[i] = this.createNodeColumn();
+            }
+        }
+
         return columns;
     },
 
@@ -715,8 +724,8 @@ seriesType('sankey', 'column', {
  * An array of data points for the series. For the `sankey` series type,
  * points can be given in the following way:
  *
- * An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
  * this option is not available.
  *

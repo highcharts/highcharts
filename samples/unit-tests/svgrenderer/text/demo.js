@@ -1,12 +1,20 @@
 // Highcharts 4.0.1, Issue #3158
 // Pie chart - item width issue
-QUnit.test('Text word wrap #3158', function (assert) {
+QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
 
     var renderer = new Highcharts.Renderer(
         document.getElementById('container'),
         400,
         300
     );
+    var width = 100;
+
+    renderer.rect(100, 80, width, 100)
+        .attr({
+            stroke: 'silver',
+            'stroke-width': 1
+        })
+        .add();
 
     var text = renderer
         .text(
@@ -14,7 +22,7 @@ QUnit.test('Text word wrap #3158', function (assert) {
             ' caused the second line to be only one word', 100, 100
         )
         .css({
-            width: '100px',
+            width: width + 'px',
             color: '#003399'
         })
         .add();
@@ -31,6 +39,87 @@ QUnit.test('Text word wrap #3158', function (assert) {
         (textLines[1].textContent.indexOf(' ') > 0),
         true,
         'There should be more than one word in the second text line. #3158'
+    );
+});
+
+QUnit.test('Text word wrap with markup', function (assert) {
+
+    var renderer = new Highcharts
+        .Renderer(
+            document.getElementById('container'),
+            400,
+            300
+        ),
+        width = 100;
+    renderer.rect(100, 20, width, 100)
+        .attr({
+            stroke: 'silver',
+            'stroke-width': 1
+        })
+        .add();
+
+    var text = renderer
+        .text(
+            'The quick <span style="color:brown">brown</span> fox jumps <em>over</em> the lazy dog',
+            100,
+            40
+        )
+        .css({
+            width: width + 'px'
+        })
+        .add();
+
+    assert.strictEqual(
+        text.element.getElementsByTagName('tspan').length,
+        7,
+        'Seven spans should be rendered.'
+    );
+
+    // For some reason Edge gets the BBox width wrong, but the text looks
+    // correct
+    if (navigator.userAgent.indexOf('Edge') === -1) {
+        assert.ok(
+            text.getBBox().width <= 100,
+            'The text node width should be less than 100'
+        );
+    }
+
+});
+
+QUnit.test('Text word wrap with nowrap and break (#5689)', function (assert) {
+
+    var renderer = new Highcharts
+        .Renderer(
+            document.getElementById('container'),
+            400,
+            300
+        ),
+        width = 100;
+    renderer.rect(100, 20, width, 100)
+        .attr({
+            stroke: 'silver',
+            'stroke-width': 1
+        })
+        .add();
+
+    var text = renderer
+        .text(
+            'Line1.1 line1.2 line1.3 line1.4 line1.5 line1.6 <br> ' +
+            'Line2.1 line2.2 line 2.3 <br> ' +
+            'Line3.1 line3.2 line 3.3 line3.4',
+            100,
+            40
+        )
+        .css({
+            width: width + 'px',
+            whiteSpace: 'nowrap'
+        })
+        .add();
+
+    assert.strictEqual(
+        text.element.getElementsByTagName('tspan').length,
+        3,
+        'The text should be wrapped into 3 lines'
     );
 
 });
@@ -126,11 +215,13 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         },
         text1 = ren.text('01234567', 0, 100).css(style).add(),
         text2 = ren.text('012345678', 0, 120).css(style).add();
+
     assert.strictEqual(
-        text1.getBBox().width < width,
+        text1.getBBox().width < width + 2,
         true,
         'Width of text is lower than style.width'
     );
+
     assert.strictEqual(
         text1.element.childNodes[0].textContent.slice(-1),
         '\u2026',
@@ -167,7 +258,7 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         'Ellipsis was added to text node which has rotation.'
     );
     assert.strictEqual(
-        text1.getBBox().height < width,
+        text1.getBBox().height < width + 2,
         true,
         'Height of text is lower than style.width'
     );
@@ -275,6 +366,57 @@ QUnit.test('HTML', function (assert) {
             10,
             'Top offset should reflect initial position'
         );
+
+        text = renderer.text(
+                'The quick brown fox jumped over the lazy dog', 10, 30, true
+            )
+            .css({
+                textOverflow: 'ellipsis',
+                width: '100px'
+            })
+            .add();
+
+        assert.strictEqual(
+            text.element.style.width,
+            '100px',
+            'The style width should should now 100px'
+        );
+        text.css({
+            fontWeight: 'bold'
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '100px',
+            'The style width should be preserved after running .css with unrelated props (#8994)'
+        );
+
+        text.css({
+            width: null
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '',
+            'The style width should be removed when setting to null'
+        );
+
+        text.css({
+            width: '120px'
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '120px',
+            'The style width should be reset to 120px'
+        );
+
+        text.css({
+            width: undefined
+        });
+        assert.strictEqual(
+            text.element.style.width,
+            '',
+            'The style width should be removed when setting to undefined'
+        );
+
 
     } finally {
 

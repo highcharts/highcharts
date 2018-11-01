@@ -1,12 +1,15 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Pointer.js';
+
 var addEvent = H.addEvent,
     charts = H.charts,
     css = H.css,
@@ -57,10 +60,15 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
             }
         };
 
-    /**
-     * Extend the Pointer prototype with methods for each event handler and more
-     */
+    // Extend the Pointer prototype with methods for each event handler and more
     extend(Pointer.prototype, /** @lends Pointer.prototype */ {
+
+        /**
+         * @private
+         * @function Highcharts.Pointer#onContainerPointerDown
+         *
+         * @param {Highcharts.PointerEventObject} e
+         */
         onContainerPointerDown: function (e) {
             translateMSPointer(
                 e,
@@ -75,6 +83,13 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
                 }
             );
         },
+
+        /**
+         * @private
+         * @function Highcharts.Pointer#onContainerPointerMove
+         *
+         * @param {Highcharts.PointerEventObject} e
+         */
         onContainerPointerMove: function (e) {
             translateMSPointer(
                 e,
@@ -88,6 +103,13 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
                 }
             );
         },
+
+        /**
+         * @private
+         * @function Highcharts.Pointer#onDocumentPointerUp
+         *
+         * @param {Highcharts.PointerEventObject} e
+         */
         onDocumentPointerUp: function (e) {
             translateMSPointer(
                 e,
@@ -101,6 +123,11 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
 
         /**
          * Add or remove the MS Pointer specific events
+         *
+         * @private
+         * @function Highcharts.Pointer#batchMSEvents
+         *
+         * @param {Function} fn
          */
         batchMSEvents: function (fn) {
             fn(

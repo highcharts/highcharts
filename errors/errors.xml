@@ -95,11 +95,15 @@
 	<error id="19">
 		<title>Too many ticks</title>
 		<description>
-			<p>This error happens when you try to apply too many ticks to an axis, specifically when you add more ticks than the axis
-				pixel length. In practice, it doesn't make sense to add ticks so densely that they can't be distinguished from each other. One cause of
-				the error may be that you set a <code>tickInterval</code> that is too small for the data value range. In general, <code>tickPixelInterval</code>
-				is a better option, as it will handle this automatically. Another case is if you try to set categories on a datetime axis, which will result
-				in Highcharts trying to add one tick on every millisecond since 1970.</p> 
+			<p>This error happens when you try to apply too many ticks to an
+				axis, specifically when you add more ticks than the axis pixel
+				length. 
+
+				With default value this will not happen, but there are edge
+				cases, for example when setting axis categories and <code>xAxis.labels.step</code>
+				in combination with a long data range, when the axis is instructed 
+				to create a great number of ticks.
+			</p> 
 		</description>
 	</error>
 	
