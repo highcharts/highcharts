@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -8,7 +8,6 @@ import H from '../parts/Globals.js';
 import '../mixins/centered-series.js';
 import '../parts/Utilities.js';
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
-    each = H.each,
     extend = H.extend,
     merge = H.merge,
     splat = H.splat;
@@ -136,6 +135,7 @@ extend(Pane.prototype, {
      * The pane serves as a container for axes and backgrounds for circular
      * gauges and polar charts.
      * @since 2.3.0
+     * @product highcharts
      * @optionparent pane
      */
     defaultOptions: {
@@ -317,7 +317,7 @@ extend(Pane.prototype, {
      * /
     destroy: function () {
         H.erase(this.chart.pane, this);
-        each(this.background, function (background) {
+        this.background.forEach(function (background) {
             background.destroy();
         });
         this.background.length = 0;
@@ -334,7 +334,7 @@ extend(Pane.prototype, {
         merge(true, this.options, options);
         this.setOptions(this.options);
         this.render();
-        each(this.chart.axes, function (axis) {
+        this.chart.axes.forEach(function (axis) {
             if (axis.pane === this) {
                 axis.pane = null;
                 axis.update({}, redraw);

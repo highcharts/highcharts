@@ -1,6 +1,5 @@
 import H from '../parts/Globals.js';
-var each = H.each,
-    extend = H.extend,
+var extend = H.extend,
     isArray = H.isArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
@@ -11,8 +10,8 @@ var each = H.each,
     isObject = H.isObject,
     isNumber = H.isNumber,
     merge = H.merge,
-    pick = H.pick,
-    reduce = H.reduce;
+    pick = H.pick;
+
 // TODO Combine buildTree and buildNode with setTreeValues
 // TODO Remove logic from Treemap and make it utilize this mixin.
 var setTreeValues = function setTreeValues(tree, options) {
@@ -43,7 +42,7 @@ var setTreeValues = function setTreeValues(tree, options) {
         tree = before(tree, options);
     }
     // First give the children some values
-    each(tree.children, function (child, i) {
+    tree.children.forEach(function (child, i) {
         var newOptions = extend({}, options);
         extend(newOptions, {
             index: i,
@@ -163,7 +162,7 @@ var getLevelOptions = function getLevelOptions(params) {
         converted = {};
         defaults = isObject(params.defaults) ? params.defaults : {};
         if (isArray(levels)) {
-            converted = reduce(levels, function (obj, item) {
+            converted = levels.reduce(function (obj, item) {
                 var level,
                     levelIsConstant,
                     options;

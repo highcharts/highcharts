@@ -1,19 +1,20 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
+
 var color = H.color,
-    each = H.each,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    map = H.map,
     pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType;
@@ -21,25 +22,27 @@ var color = H.color,
 /**
  * Area series type.
  *
- * @ignore
- * @constructor Highcharts.seriesTypes.area
- * @implements  {Highcharts.Series}
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.area
+ *
+ * @augments Highcharts.Series
  */
-seriesType('area', 'line', {
+seriesType('area', 'line'
 
-    /**
-     * The area series type.
-     *
-     * @sample {highcharts} highcharts/demo/area-basic/
-     *         Area chart
-     * @sample {highstock} stock/demo/area/
-     *         Area chart
-     *
-     * @type          {*}
-     * @extends       plotOptions.line
-     * @product       highcharts highstock
-     * @optionparent  plotOptions.area
-     */
+/**
+ * The area series type.
+ *
+ * @sample {highcharts} highcharts/demo/area-basic/
+ *         Area chart
+ * @sample {highstock} stock/demo/area/
+ *         Area chart
+ *
+ * @extends      plotOptions.line
+ * @product      highcharts highstock
+ * @optionparent plotOptions.area
+ */
+, {
 
     /**
      * Fill color or gradient for the area. When `null`, the series' `color`
@@ -53,9 +56,9 @@ seriesType('area', 'line', {
      * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
      *         Gradient
      *
-     * @type       {Highcharts.ColorString}
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.fillColor
+     * @type      {Highcharts.ColorString}
+     * @product   highcharts highstock
+     * @apioption plotOptions.area.fillColor
      */
 
     /**
@@ -71,11 +74,11 @@ seriesType('area', 'line', {
      * @sample {highcharts} highcharts/plotoptions/area-fillopacity/
      *         Automatic fill color and fill opacity of 0.1
      *
-     * @type       {number}
-     * @default    {highcharts} 0.75
-     * @default    {highstock} .75
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.fillOpacity
+     * @type      {number}
+     * @default   {highcharts} 0.75
+     * @default   {highstock} 0.75
+     * @product   highcharts highstock
+     * @apioption plotOptions.area.fillOpacity
      */
 
     /**
@@ -89,9 +92,9 @@ seriesType('area', 'line', {
      * @sample {highcharts} highcharts/plotoptions/area-linecolor/
      *         Dark gray line
      *
-     * @type       {Highcharts.ColorString}
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.lineColor
+     * @type      {Highcharts.ColorString}
+     * @product   highcharts highstock
+     * @apioption plotOptions.area.lineColor
      */
 
     /**
@@ -105,10 +108,10 @@ seriesType('area', 'line', {
      * @sample {highcharts} highcharts/css/series-negative-color/
      *         Negative color in styled mode
      *
-     * @type       {Highcharts.ColorString}
-     * @since      3.0
-     * @product    highcharts
-     * @apioption  plotOptions.area.negativeFillColor
+     * @type      {Highcharts.ColorString}
+     * @since     3.0
+     * @product   highcharts
+     * @apioption plotOptions.area.negativeFillColor
      */
 
     /**
@@ -118,11 +121,11 @@ seriesType('area', 'line', {
      * @sample {highcharts|highstock} highcharts/plotoptions/area-trackbyarea/
      *         Display the tooltip when the area is hovered
      *
-     * @type       {boolean}
-     * @default    false
-     * @since      1.1.6
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.trackByArea
+     * @type      {boolean}
+     * @default   false
+     * @since     1.1.6
+     * @product   highcharts highstock
+     * @apioption plotOptions.area.trackByArea
      */
 
     /**
@@ -134,10 +137,8 @@ seriesType('area', 'line', {
      * 3 will make the Y axis show negative values according to the `minPadding`
      * option. If `softThreshold` is `true`, the Y axis starts at 0.
      *
-     * @type       {boolean}
-     * @since      4.1.9
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.softThreshold
+     * @since   4.1.9
+     * @product highcharts highstock
      */
     softThreshold: false,
 
@@ -152,30 +153,30 @@ seriesType('area', 'line', {
      * * If `Infinity` or `-Infinity`, the area between the graph and the
      *   corresponing Y axis extreme is filled (since v6.1.0).
      *
-     * @sample  {highcharts} highcharts/plotoptions/area-threshold/
-     *          A threshold of 100
-     * @sample  {highcharts} highcharts/plotoptions/area-threshold-infinity/
-     *          A threshold of Infinity
+     * @sample {highcharts} highcharts/plotoptions/area-threshold/
+     *         A threshold of 100
+     * @sample {highcharts} highcharts/plotoptions/area-threshold-infinity/
+     *         A threshold of Infinity
      *
-     * @type       {number}
-     * @since      2.0
-     * @product    highcharts highstock
-     * @apioption  plotOptions.area.threshold
+     * @since   2.0
+     * @product highcharts highstock
      */
     threshold: 0
 
 
 }, /** @lends seriesTypes.area.prototype */ {
+
     singleStacks: false,
+
     /**
      * Return an array of stacked points, where null and missing points are
      * replaced by dummy points in order for gaps to be drawn correctly
      * in stacks.
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.area#getStackPoints
      *
-     * @param  {Array<Highcharts.Point>} points
+     * @param {Array<Highcharts.Point>} points
      *
      * @return {Array<*>}
      */
@@ -220,11 +221,11 @@ seriesType('area', 'line', {
                 return a - b;
             });
 
-            visibleSeries = map(yAxisSeries, function () {
-                return this.visible;
+            visibleSeries = yAxisSeries.map(function (s) {
+                return s.visible;
             });
 
-            each(keys, function (x, idx) {
+            keys.forEach(function (x, idx) {
                 var y = 0,
                     stackPoint,
                     stackedValues;
@@ -233,7 +234,7 @@ seriesType('area', 'line', {
                     segment.push(pointMap[x]);
 
                     // Find left and right cliff. -1 goes left, 1 goes right.
-                    each([-1, 1], function (direction) {
+                    [-1, 1].forEach(function (direction) {
                         var nullName = direction === 1 ?
                                 'rightNull' :
                                 'leftNull',
@@ -315,12 +316,12 @@ seriesType('area', 'line', {
     },
 
     /**
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.area#getGraphPath
      *
-     * @param  {Array<Highcharts.Points>} points
+     * @param {Array<Highcharts.Point>} points
      *
-     * @return {Array<number|string>}
+     * @return {Highcharts.SVGPathArray}
      */
     getGraphPath: function (points) {
         var getGraphPath = Series.prototype.getGraphPath,
@@ -448,10 +449,8 @@ seriesType('area', 'line', {
      * function and adds the area. The areaPath is calculated in the
      * getSegmentPath method called from Series.prototype.drawGraph.
      *
-     * @ignore
+     * @private
      * @function Highcharts.seriesTypes.area#drawGraph
-     *
-     * @return {void}
      */
     drawGraph: function () {
 
@@ -473,7 +472,7 @@ seriesType('area', 'line', {
                 options.fillColor
             ]]; // area name, main color, fill color
 
-        each(zones, function (zone, i) {
+        zones.forEach(function (zone, i) {
             props.push([
                 'zone-area-' + i,
                 'highcharts-area highcharts-zone-area-' + i + ' ' +
@@ -483,7 +482,7 @@ seriesType('area', 'line', {
             ]);
         });
 
-        each(props, function (prop) {
+        props.forEach(function (prop) {
             var areaKey = prop[0],
                 area = series[areaKey],
                 attribs;
@@ -526,11 +525,10 @@ seriesType('area', 'line', {
  * A `area` series. If the [type](#series.area.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type       {*}
- * @extends    series,plotOptions.area
- * @excluding  dataParser,dataURL
- * @product    highcharts highstock
- * @apioption  series.area
+ * @extends   series,plotOptions.area
+ * @excluding dataParser, dataURL
+ * @product   highcharts highstock
+ * @apioption series.area
  */
 
 /**
@@ -559,8 +557,8 @@ seriesType('area', 'line', {
  *     ]
  *  ```
  *
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 3.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
  * this option is not available.
  *
@@ -578,19 +576,19 @@ seriesType('area', 'line', {
  *     }]
  *  ```
  *
- * @sample    {highcharts} highcharts/chart/reflow-true/
- *            Numerical values
- * @sample    {highcharts} highcharts/series/data-array-of-arrays/
- *            Arrays of numeric x and y
- * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *            Arrays of datetime x and y
- * @sample    {highcharts} highcharts/series/data-array-of-name-value/
- *            Arrays of point.name and y
- * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
  *
- * @type       {Array<number|Array<number>|*>}
- * @extends    series.line.data
- * @product    highcharts highstock
- * @apioption  series.area.data
+ * @type      {Array<number|Array<number>|*>}
+ * @extends   series.line.data
+ * @product   highcharts highstock
+ * @apioption series.area.data
  */

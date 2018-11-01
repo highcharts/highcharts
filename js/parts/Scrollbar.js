@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -14,7 +14,6 @@ var addEvent = H.addEvent,
     defaultOptions = H.defaultOptions,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
-    each = H.each,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
@@ -105,6 +104,9 @@ var defaultScrollbarOptions = {
      * @type       {boolean}
      * @since      1.3
      * @product    highstock
+     *
+     * @sample     stock/scrollbar/liveredraw Setting live redraw to false
+     *
      * @apioption  scrollbar.liveRedraw
      */
     liveRedraw: undefined,
@@ -974,7 +976,7 @@ Scrollbar.prototype = {
         }
 
         // Add them all
-        each(_events, function (args) {
+        _events.forEach(function (args) {
             addEvent.apply(null, args);
         });
         this._events = _events;
@@ -988,7 +990,7 @@ Scrollbar.prototype = {
      * @return {void}
      */
     removeEvents: function () {
-        each(this._events, function (args) {
+        this._events.forEach(function (args) {
             removeEvent.apply(null, args);
         });
         this._events.length = 0;
@@ -1009,14 +1011,13 @@ Scrollbar.prototype = {
         this.removeEvents();
 
         // Destroy properties
-        each(
-            [
-                'track',
-                'scrollbarRifles',
-                'scrollbar',
-                'scrollbarGroup',
-                'group'
-            ],
+        [
+            'track',
+            'scrollbarRifles',
+            'scrollbar',
+            'scrollbarGroup',
+            'group'
+        ].forEach(
             function (prop) {
                 if (this[prop] && this[prop].destroy) {
                     this[prop] = this[prop].destroy();
@@ -1041,7 +1042,11 @@ Scrollbar.prototype = {
 addEvent(Axis, 'afterInit', function () {
     var axis = this;
 
-    if (axis.options.scrollbar && axis.options.scrollbar.enabled) {
+    if (
+        axis.options &&
+        axis.options.scrollbar &&
+        axis.options.scrollbar.enabled
+    ) {
         // Predefined options:
         axis.options.scrollbar.vertical = !axis.horiz;
         axis.options.startOnTick = axis.options.endOnTick = false;

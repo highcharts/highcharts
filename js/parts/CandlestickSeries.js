@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,7 +7,6 @@
 import H from './Globals.js';
 import './Utilities.js';
 var defaultPlotOptions = H.defaultPlotOptions,
-    each = H.each,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
@@ -169,7 +168,7 @@ seriesType('candlestick', 'ohlc', merge(
             reversedYAxis = series.yAxis.reversed;
 
 
-        each(points, function (point) {
+        points.forEach(function (point) {
 
             var graphic = point.graphic,
                 plotOpen,
@@ -298,8 +297,8 @@ seriesType('candlestick', 'ohlc', merge(
  *     ]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](
  * #series.candlestick.turboThreshold), this option is not available.
  *

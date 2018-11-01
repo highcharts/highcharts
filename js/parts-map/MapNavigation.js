@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -10,7 +10,6 @@ import '../parts/Chart.js';
 var addEvent = H.addEvent,
     Chart = H.Chart,
     doc = H.doc,
-    each = H.each,
     extend = H.extend,
     merge = H.merge,
     pick = H.pick;
@@ -220,7 +219,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      *         The inner box
      */
     fitToBox: function (inner, outer) {
-        each([['x', 'width'], ['y', 'height']], function (dim) {
+        [['x', 'width'], ['y', 'height']].forEach(function (dim) {
             var pos = dim[0],
                 size = dim[1];
 

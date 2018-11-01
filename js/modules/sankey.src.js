@@ -1,7 +1,7 @@
 /**
  * Sankey diagram module
  *
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -12,7 +12,6 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 
 var defined = H.defined,
-    each = H.each,
     extend = H.extend,
     seriesType = H.seriesType,
     pick = H.pick,
@@ -57,10 +56,10 @@ seriesType('sankey', 'column', {
         backgroundColor: 'none', // enable padding
         crop: false,
         /**
-         * The [format string](https://www.highcharts.com/docs/chart-
-         * concepts/labels-and-string-formatting) specifying what to show
-         * for _nodes_ in the sankey diagram. By default the
-         * `nodeFormatter` returns `{point.name}`.
+         * The [format string](
+         * https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _nodes_ in the sankey diagram. By default
+         * the `nodeFormatter` returns `{point.name}`.
          *
          * @type {String}
          */
@@ -77,10 +76,11 @@ seriesType('sankey', 'column', {
             return this.point.name;
         },
         /**
-         * The [format string](https://www.highcharts.com/docs/chart-
-         * concepts/labels-and-string-formatting) specifying what to show for
-         * _links_ in the sankey diagram. Defaults to an empty string returned
-         * from the `formatter`, in effect disabling the labels.
+         * The [format string](
+         * https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _links_ in the sankey diagram. Defaults
+         * to an empty string returned from the `formatter`, in effect disabling
+         * the labels.
          */
         format: undefined,
         /**
@@ -137,10 +137,10 @@ seriesType('sankey', 'column', {
             '<span style="font-size: 10px">{series.name}</span><br/>',
         pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>{point.weight}</b><br/>',
         /**
-         * The [format string](https://www.highcharts.com/docs/chart-
-         * concepts/labels-and-string-formatting) specifying what to
-         * show for _nodes_ in tooltip
-         * of a sankey diagram series, as opposed to links.
+         * The [format string](
+         * https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _nodes_ in tooltip of a sankey diagram
+         * series, as opposed to links.
          */
         nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
     }
@@ -185,10 +185,10 @@ seriesType('sankey', 'column', {
             node.getSum = function () {
                 var sumTo = 0,
                     sumFrom = 0;
-                each(node.linksTo, function (link) {
+                node.linksTo.forEach(function (link) {
                     sumTo += link.weight;
                 });
-                each(node.linksFrom, function (link) {
+                node.linksFrom.forEach(function (link) {
                     sumFrom += link.weight;
                 });
                 return Math.max(sumTo, sumFrom);
@@ -212,7 +212,7 @@ seriesType('sankey', 'column', {
              */
             node.hasShape = function () {
                 var outgoing = 0;
-                each(node.linksTo, function (link) {
+                node.linksTo.forEach(function (link) {
                     if (link.outgoing) {
                         outgoing++;
                     }
@@ -235,7 +235,7 @@ seriesType('sankey', 'column', {
 
         column.sum = function () {
             var sum = 0;
-            each(this, function (node) {
+            this.forEach(function (node) {
                 sum += node.getSum();
             });
             return sum;
@@ -276,7 +276,7 @@ seriesType('sankey', 'column', {
      */
     createNodeColumns: function () {
         var columns = [];
-        each(this.nodes, function (node) {
+        this.nodes.forEach(function (node) {
             var fromColumn = -1,
                 i,
                 point;
@@ -355,13 +355,13 @@ seriesType('sankey', 'column', {
         this.colorCounter = 0;
 
         // Reset links from previous run
-        each(this.nodes, function (node) {
+        this.nodes.forEach(function (node) {
             node.linksFrom.length = 0;
             node.linksTo.length = 0;
         });
 
         // Create the node list and set up links
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             if (defined(point.from)) {
                 if (!nodeLookup[point.from]) {
                     nodeLookup[point.from] = this.createNode(point.from);
@@ -421,15 +421,15 @@ seriesType('sankey', 'column', {
 
         // Find out how much space is needed. Base it on the translation
         // factor of the most spaceous column.
-        each(this.nodeColumns, function (column) {
+        this.nodeColumns.forEach(function (column) {
             var height = chart.plotSizeY -
                 (column.length - 1) * options.nodePadding;
 
             factor = Math.min(factor, height / column.sum());
         });
 
-        each(this.nodeColumns, function (column) {
-            each(column, function (node) {
+        this.nodeColumns.forEach(function (column) {
+            column.forEach(function (node) {
                 var sum = node.getSum(),
                     height = sum * factor,
                     fromNodeTop = (
@@ -465,7 +465,7 @@ seriesType('sankey', 'column', {
                 node.plotY = 1;
 
                 // Draw the links from this node
-                each(node.linksFrom, function (point) {
+                node.linksFrom.forEach(function (point) {
                     var linkHeight = point.weight * factor,
                         fromLinkTop = node.offset(point, 'linksFrom') *
                             factor,
@@ -715,8 +715,8 @@ seriesType('sankey', 'column', {
  * An array of data points for the series. For the `sankey` series type,
  * points can be given in the following way:
  *
- * An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
  * this option is not available.
  *

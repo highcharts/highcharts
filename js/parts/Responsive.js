@@ -1,30 +1,45 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * A callback function to gain complete control on when the responsive rule
+ * applies.
+ *
+ * @callback Highcharts.ResponsiveCallbackFunction
+ *
+ * @return {boolean}
+ *         Return `true` if it applies.
+ */
+
 'use strict';
+
 import H from './Globals.js';
 import './Chart.js';
 import './Utilities.js';
+
 var Chart = H.Chart,
-    each = H.each,
-    inArray = H.inArray,
     isArray = H.isArray,
     isObject = H.isObject,
     pick = H.pick,
     splat = H.splat;
 
-
 /**
  * Allows setting a set of rules to apply for different screen or chart
  * sizes. Each rule specifies additional chart options.
  *
- * @sample {highstock} stock/demo/responsive/ Stock chart
- * @sample highcharts/responsive/axis/ Axis
- * @sample highcharts/responsive/legend/ Legend
- * @sample highcharts/responsive/classname/ Class name
- * @since 5.0.0
+ * @sample {highstock} stock/demo/responsive/
+ *         Stock chart
+ * @sample highcharts/responsive/axis/
+ *         Axis
+ * @sample highcharts/responsive/legend/
+ *         Legend
+ * @sample highcharts/responsive/classname/
+ *         Class name
+ *
+ * @since     5.0.0
  * @apioption responsive
  */
 
@@ -32,11 +47,15 @@ var Chart = H.Chart,
  * A set of rules for responsive settings. The rules are executed from
  * the top down.
  *
- * @type {Array<Object>}
- * @sample {highcharts} highcharts/responsive/axis/ Axis changes
- * @sample {highstock} highcharts/responsive/axis/ Axis changes
- * @sample {highmaps} highcharts/responsive/axis/ Axis changes
- * @since 5.0.0
+ * @sample {highcharts} highcharts/responsive/axis/
+ *         Axis changes
+ * @sample {highstock} highcharts/responsive/axis/
+ *         Axis changes
+ * @sample {highmaps} highcharts/responsive/axis/
+ *         Axis changes
+ *
+ * @type      {Array<*>}
+ * @since     5.0.0
  * @apioption responsive.rules
  */
 
@@ -53,20 +72,24 @@ var Chart = H.Chart,
  * with two series items without an `id`, will cause the existing chart's
  * two series to be updated with respective options.
  *
- * @type {Object}
- * @sample {highstock} stock/demo/responsive/ Stock chart
- * @sample highcharts/responsive/axis/ Axis
- * @sample highcharts/responsive/legend/ Legend
- * @sample highcharts/responsive/classname/ Class name
- * @since 5.0.0
+ * @sample {highstock} stock/demo/responsive/
+ *         Stock chart
+ * @sample highcharts/responsive/axis/
+ *         Axis
+ * @sample highcharts/responsive/legend/
+ *         Legend
+ * @sample highcharts/responsive/classname/
+ *         Class name
+ *
+ * @type      {Highcharts.Options}
+ * @since     5.0.0
  * @apioption responsive.rules.chartOptions
  */
 
 /**
  * Under which conditions the rule applies.
  *
- * @type {Object}
- * @since 5.0.0
+ * @since     5.0.0
  * @apioption responsive.rules.condition
  */
 
@@ -76,50 +99,57 @@ var Chart = H.Chart,
  * against other metrics than the chart size, or example the document
  * size or other elements.
  *
- * @type {Function}
- * @context Chart
- * @since 5.0.0
+ * @type      {Highcharts.ResponsiveCallbackFunction}
+ * @since     5.0.0
+ * @context   Highcharts.Chart
  * @apioption responsive.rules.condition.callback
  */
 
 /**
  * The responsive rule applies if the chart height is less than this.
  *
- * @type {Number}
- * @since 5.0.0
+ * @type      {number}
+ * @since     5.0.0
  * @apioption responsive.rules.condition.maxHeight
  */
 
 /**
  * The responsive rule applies if the chart width is less than this.
  *
- * @type {Number}
- * @sample highcharts/responsive/axis/ Max width is 500
- * @since 5.0.0
+ * @sample highcharts/responsive/axis/
+ *         Max width is 500
+ *
+ * @type      {number}
+ * @since     5.0.0
  * @apioption responsive.rules.condition.maxWidth
  */
 
 /**
  * The responsive rule applies if the chart height is greater than this.
  *
- * @type {Number}
- * @default 0
- * @since 5.0.0
+ * @type      {number}
+ * @default   0
+ * @since     5.0.0
  * @apioption responsive.rules.condition.minHeight
  */
 
 /**
  * The responsive rule applies if the chart width is greater than this.
  *
- * @type {Number}
- * @default 0
- * @since 5.0.0
+ * @type      {number}
+ * @default   0
+ * @since     5.0.0
  * @apioption responsive.rules.condition.minWidth
  */
 
 /**
  * Update the chart based on the current chart/document size and options for
  * responsiveness.
+ *
+ * @private
+ * @function Highcharts.Chart#setResponsive
+ *
+ * @param {boolean} [redraw=true]
  */
 Chart.prototype.setResponsive = function (redraw) {
     var options = this.options.responsive,
@@ -128,7 +158,7 @@ Chart.prototype.setResponsive = function (redraw) {
         currentRuleIds;
 
     if (options && options.rules) {
-        each(options.rules, function (rule) {
+        options.rules.forEach(function (rule) {
             if (rule._id === undefined) {
                 rule._id = H.uniqueKey();
             }
@@ -138,7 +168,7 @@ Chart.prototype.setResponsive = function (redraw) {
     }
 
     // Merge matching rules
-    var mergedOptions = H.merge.apply(0, H.map(ruleIds, function (ruleId) {
+    var mergedOptions = H.merge.apply(0, ruleIds.map(function (ruleId) {
         return H.find(options.rules, function (rule) {
             return rule._id === ruleId;
         }).chartOptions;
@@ -175,9 +205,17 @@ Chart.prototype.setResponsive = function (redraw) {
 };
 
 /**
- * Handle a single responsiveness rule
+ * Handle a single responsiveness rule.
+ *
+ * @private
+ * @function Highcharts.Chart#matchResponsiveRule
+ *
+ * @param {Highcharts.ResponsiveRulesConditionOptions} rule
+ *
+ * @param {Array<number>} matches
  */
 Chart.prototype.matchResponsiveRule = function (rule, matches) {
+
     var condition = rule.condition,
         fn = condition.callback || function () {
             return (
@@ -192,13 +230,19 @@ Chart.prototype.matchResponsiveRule = function (rule, matches) {
     if (fn.call(this)) {
         matches.push(rule._id);
     }
-
 };
 
 /**
  * Get the current values for a given set of options. Used before we update
  * the chart with a new responsiveness rule.
  * TODO: Restore axis options (by id?)
+ *
+ * @private
+ * @function Highcharts.Chart#currentOptions
+ *
+ * @param {Highcharts.Options} options
+ *
+ * @return {Highcharts.Options}
  */
 Chart.prototype.currentOptions = function (options) {
 
@@ -211,7 +255,7 @@ Chart.prototype.currentOptions = function (options) {
     function getCurrent(options, curr, ret, depth) {
         var i;
         H.objectEach(options, function (val, key) {
-            if (!depth && inArray(key, ['series', 'xAxis', 'yAxis']) > -1) {
+            if (!depth && ['series', 'xAxis', 'yAxis'].indexOf(key) > -1) {
                 val = splat(val);
 
                 ret[key] = [];

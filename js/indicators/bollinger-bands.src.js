@@ -3,8 +3,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var each = H.each,
-    merge = H.merge,
+var merge = H.merge,
     isArray = H.isArray,
     SMA = H.seriesTypes.sma;
 
@@ -137,9 +136,8 @@ H.seriesType('bb', 'sma',
 
             SMA.prototype.translate.apply(indicator, arguments);
 
-            each(indicator.points, function (point) {
-                each(
-                    [point.top, point.middle, point.bottom],
+            indicator.points.forEach(function (point) {
+                [point.top, point.middle, point.bottom].forEach(
                     function (value, i) {
                         if (value !== null) {
                             point[translatedBB[i]] = indicator.yAxis.toPixels(
@@ -181,7 +179,7 @@ H.seriesType('bb', 'sma',
             }
 
             // Modify options and generate lines:
-            each(['topLine', 'bottomLine'], function (lineName, i) {
+            ['topLine', 'bottomLine'].forEach(function (lineName, i) {
                 indicator.points = deviations[i];
                 indicator.options = merge(
                     middleLineOptions[lineName].styles,

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -22,11 +22,9 @@ var addEvent = H.addEvent,
     defaultOptions = H.defaultOptions,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
-    each = H.each,
     erase = H.erase,
     error = H.error,
     extend = H.extend,
-    grep = H.grep,
     hasTouch = H.hasTouch,
     isArray = H.isArray,
     isNumber = H.isNumber,
@@ -47,7 +45,7 @@ var addEvent = H.addEvent,
     // are defined, is a pattern that is repeated several places in Highcharts.
     // Consider making this a global utility method.
     numExt = function (extreme) {
-        var numbers = grep(arguments, isNumber);
+        var numbers = [].filter.call(arguments, isNumber);
         if (numbers.length) {
             return Math[extreme].apply(0, numbers);
         }
@@ -249,8 +247,6 @@ extend(defaultOptions, {
              * @sample {highstock} stock/navigator/styled-handles/
              *         Styled handles
              *
-             * @type       {number}
-             * @default    7
              * @since      6.0.0
              * @product    highstock
              * @apioption  navigator.handles.lineWidth
@@ -808,7 +804,7 @@ Navigator.prototype = {
             ];
             height = [navigatorHeight, navigatorHeight, navigatorHeight];
         }
-        each(navigator.shades, function (shade, i) {
+        navigator.shades.forEach(function (shade, i) {
             shade[verb]({
                 x: x[i],
                 y: y[i],
@@ -850,7 +846,11 @@ Navigator.prototype = {
             .add();
 
         // Create masks, each mask will get events and fill:
-        each([!maskInside, maskInside, !maskInside], function (hasMask, index) {
+        [
+            !maskInside,
+            maskInside,
+            !maskInside
+        ].forEach(function (hasMask, index) {
             navigator.shades[index] = renderer.rect()
                 .addClass('highcharts-navigator-mask' +
                     (index === 1 ? '-inside' : '-outside'))
@@ -881,7 +881,7 @@ Navigator.prototype = {
 
         // Create the handlers:
         if (navigatorOptions.handles.enabled) {
-            each([0, 1], function (index) {
+            [0, 1].forEach(function (index) {
                 navigatorOptions.handles.inverted = chart.inverted;
                 navigator.handles[index] = renderer.symbol(
                     navigatorOptions.handles.symbols[index],
@@ -926,7 +926,7 @@ Navigator.prototype = {
      */
     update: function (options) {
         // Remove references to old navigator series in base series
-        each(this.series || [], function (series) {
+        (this.series || []).forEach(function (series) {
             if (series.baseSeries) {
                 delete series.baseSeries.navigatorSeries;
             }
@@ -1197,8 +1197,8 @@ Navigator.prototype = {
     getPartsEvents: function (eventName) {
         var navigator = this,
             events = [];
-        each(['shades', 'handles'], function (name) {
-            each(navigator[name], function (navigatorItem, index) {
+        ['shades', 'handles'].forEach(function (name) {
+            navigator[name].forEach(function (navigatorItem, index) {
                 events.push(
                     addEvent(
                         navigatorItem.element,
@@ -1509,7 +1509,7 @@ Navigator.prototype = {
      */
     removeEvents: function () {
         if (this.eventsToUnbind) {
-            each(this.eventsToUnbind, function (unbind) {
+            this.eventsToUnbind.forEach(function (unbind) {
                 unbind();
             });
             this.eventsToUnbind = undefined;
@@ -1528,7 +1528,7 @@ Navigator.prototype = {
         var baseSeries = this.baseSeries || [];
         if (this.navigatorEnabled && baseSeries[0]) {
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
-                each(baseSeries, function (series) {
+                baseSeries.forEach(function (series) {
                     removeEvent(series, 'updatedData', this.updatedDataHandler);
                 }, this);
             }
@@ -1804,7 +1804,7 @@ Navigator.prototype = {
 
         // Iterate through series and add the ones that should be shown in
         // navigator.
-        each(chart.series || [], function (series, i) {
+        (chart.series || []).forEach(function (series, i) {
             if (
                 // Don't include existing nav series
                 !series.options.isInternal &&
@@ -1860,10 +1860,10 @@ Navigator.prototype = {
                 isInternal: true
             },
             // Remove navigator series that are no longer in the baseSeries
-            navigatorSeries = navigator.series = H.grep(
-                navigator.series || [], function (navSeries) {
+            navigatorSeries = navigator.series =
+                (navigator.series || []).filter(function (navSeries) {
                     var base = navSeries.baseSeries;
-                    if (H.inArray(base, baseSeries) < 0) { // Not in array
+                    if (baseSeries.indexOf(base) < 0) { // Not in array
                         // If there is still a base series connected to this
                         // series, remove event handler and reference.
                         if (base) {
@@ -1888,7 +1888,7 @@ Navigator.prototype = {
         // Go through each base series and merge the options to create new
         // series
         if (baseSeries && baseSeries.length) {
-            each(baseSeries, function eachBaseSeries(base) {
+            baseSeries.forEach(function eachBaseSeries(base) {
                 var linkedNavSeries = base.navigatorSeries,
                     userNavOptions = extend(
                         // Grab color and visibility from base as default
@@ -1955,7 +1955,8 @@ Navigator.prototype = {
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions = H.splat(chartNavigatorSeriesOptions);
-            each(chartNavigatorSeriesOptions, function (userSeriesOptions, i) {
+            chartNavigatorSeriesOptions
+            .forEach(function (userSeriesOptions, i) {
                 navSeriesMixin.name =
                     'Navigator ' + (navigatorSeries.length + 1);
                 mergedNavSeriesOptions = merge(
@@ -2015,7 +2016,7 @@ Navigator.prototype = {
             );
         }
 
-        each(baseSeries, function (base) {
+        baseSeries.forEach(function (base) {
             // Link base series show/hide to navigator series visibility
             addEvent(base, 'show', function () {
                 if (this.navigatorSeries) {
@@ -2047,6 +2048,23 @@ Navigator.prototype = {
                 }
             });
         }, this);
+    },
+
+    /**
+     * Get minimum from all base series connected to the navigator
+     *
+     * @param  {number} currentSeriesMin
+     *         Minium from the current series
+     *
+     * @return {number} Minimum from all series
+     */
+    getBaseSeriesMin: function (currentSeriesMin) {
+        return this.baseSeries.reduce(
+            function (min, series) {
+                return Math.min(min, series.xData[0]);
+            },
+            currentSeriesMin
+        );
     },
 
     /**
@@ -2125,8 +2143,11 @@ Navigator.prototype = {
                 if (!stickToMin) {
                     newMin = Math.max(
                         newMax - range,
-                        navigatorSeries && navigatorSeries.xData ?
-                            navigatorSeries.xData[0] : -Number.MAX_VALUE
+                        navigator.getBaseSeriesMin(
+                            navigatorSeries && navigatorSeries.xData ?
+                                navigatorSeries.xData[0] :
+                                -Number.MAX_VALUE
+                        )
                     );
                 }
             }
@@ -2156,7 +2177,8 @@ Navigator.prototype = {
     updatedDataHandler: function () {
         var navigator = this.chart.navigator,
             baseSeries = this,
-            navigatorSeries = this.navigatorSeries;
+            navigatorSeries = this.navigatorSeries,
+            xDataMin = navigator.getBaseSeriesMin(baseSeries.xData[0]);
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data  comes in.
@@ -2168,7 +2190,7 @@ Navigator.prototype = {
         // maximum. If the current axis minimum falls outside the new updated
         // dataset, we must adjust.
         navigator.stickToMin = isNumber(baseSeries.xAxis.min) &&
-            (baseSeries.xAxis.min <= baseSeries.xData[0]) &&
+            (baseSeries.xAxis.min <= xDataMin) &&
             (!this.chart.fixedRange || !navigator.stickToMax);
 
         // Set the navigator series data to the new data of the base series
@@ -2260,18 +2282,18 @@ Navigator.prototype = {
             erase(this.chart.axes, this.yAxis);
         }
         // Destroy series
-        each(this.series || [], function (s) {
+        (this.series || []).forEach(function (s) {
             if (s.destroy) {
                 s.destroy();
             }
         });
 
         // Destroy properties
-        each([
+        [
             'series', 'xAxis', 'yAxis', 'shades', 'outline', 'scrollbarTrack',
             'scrollbarRifles', 'scrollbarGroup', 'scrollbar', 'navigatorGroup',
             'rendered'
-        ], function (prop) {
+        ].forEach(function (prop) {
             if (this[prop] && this[prop].destroy) {
                 this[prop].destroy();
             }
@@ -2279,7 +2301,7 @@ Navigator.prototype = {
         }, this);
 
         // Destroy elements in collection
-        each([this.handles], function (coll) {
+        [this.handles].forEach(function (coll) {
             destroyObjectProperties(coll);
         }, this);
     }

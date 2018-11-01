@@ -35,7 +35,6 @@ function arrayExtremesOHLC(data) {
 }
 
 var abs = Math.abs,
-    each = H.each,
     noop = H.noop,
     addEvent = H.addEvent,
     correctFloat = H.correctFloat,
@@ -382,7 +381,7 @@ seriesType('vbp', 'sma',
                     barHeight = abs(barHeightP);
                 }
 
-                each(indicatorPoints, function (point, index) {
+                indicatorPoints.forEach(function (point, index) {
                     barX = point.barX = point.plotX = 0;
                     barY = point.plotY = (
                         yAxis.toPixels(priceZones[index].start) -
@@ -474,7 +473,7 @@ seriesType('vbp', 'sma',
                 volumeSeries
             );
 
-            each(priceZones, function (zone, index) {
+            priceZones.forEach(function (zone, index) {
                 VBP.push([zone.x, zone.end]);
                 xData.push(VBP[index][0]);
                 yData.push(VBP[index][1]);
@@ -587,7 +586,7 @@ seriesType('vbp', 'sma',
 
             indicator.volumeDataArray = [];
 
-            each(priceZones, function (zone) {
+            priceZones.forEach(function (zone) {
                 zone.wholeVolumeData = 0;
                 zone.positiveVolumeData = 0;
                 zone.negativeVolumeData = 0;
@@ -641,7 +640,7 @@ seriesType('vbp', 'sma',
                 verticalOffset = chart.plotTop,
                 verticalLinePos;
 
-            each(zonesValues, function (value) {
+            zonesValues.forEach(function (value) {
                 verticalLinePos = yAxis.toPixels(value) - verticalOffset;
                 zoneLinesPath = zoneLinesPath.concat(chart.renderer.crispLine([
                     'M',

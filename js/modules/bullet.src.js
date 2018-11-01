@@ -8,8 +8,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var each = H.each,
-    pick = H.pick,
+var pick = H.pick,
     isNumber = H.isNumber,
     relativeLength = H.relativeLength,
     seriesType = H.seriesType,
@@ -126,7 +125,7 @@ seriesType('bullet', 'column',
 
             columnProto.drawPoints.apply(this);
 
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 var pointOptions = point.options,
                     shapeArgs,
                     targetGraphic = point.targetGraphic,
@@ -294,8 +293,8 @@ seriesType('bullet', 'column',
  *     ]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.bullet.turboThreshold),
  * this option is not available.
  *

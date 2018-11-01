@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -10,8 +10,7 @@ import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
-var each = H.each,
-    isNumber = H.isNumber,
+var isNumber = H.isNumber,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -360,7 +359,7 @@ seriesType('gauge', 'line', {
 
         series.generatePoints();
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
 
             var dialOptions = merge(options.dial, point.dial),
                 radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) /
@@ -429,7 +428,7 @@ seriesType('gauge', 'line', {
             pivotOptions = options.pivot,
             renderer = chart.renderer;
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
 
             var graphic = point.graphic,
                 shapeArgs = point.shapeArgs,
@@ -496,7 +495,7 @@ seriesType('gauge', 'line', {
         var series = this;
 
         if (!init) {
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 var graphic = point.graphic;
 
                 if (graphic) {
@@ -583,8 +582,8 @@ seriesType('gauge', 'line', {
  *  data: [0, 5, 3, 5]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.gauge.turboThreshold),
  * this option is not available.
  *

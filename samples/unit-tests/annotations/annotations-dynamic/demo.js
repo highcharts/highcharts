@@ -59,7 +59,7 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         }]
     };
 
-    chart.addAnnotation(secondAnnotationOptions, false);
+    var secondAnnotation = chart.addAnnotation(secondAnnotationOptions, false);
 
     var thirdAnnotationOptions = {
         id: '3',
@@ -73,11 +73,11 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         }]
     };
 
-    chart.addAnnotation(thirdAnnotationOptions, false);
+    var thirdAnnotation = chart.addAnnotation(thirdAnnotationOptions, false);
 
     assert.ok(
-        chart.options.annotations[0] === secondAnnotationOptions &&
-        chart.options.annotations[1] === thirdAnnotationOptions &&
+        chart.options.annotations[0] === secondAnnotation.options &&
+        chart.options.annotations[1] === thirdAnnotation.options &&
         chart.options.annotations.length === 2,
         'Annotation options from the chart options are added when the annotations are added (#8393).'
     );

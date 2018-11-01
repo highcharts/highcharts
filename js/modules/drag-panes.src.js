@@ -16,7 +16,6 @@ import '../parts/Pointer.js';
 var hasTouch = H.hasTouch,
     merge = H.merge,
     wrap = H.wrap,
-    each = H.each,
     isNumber = H.isNumber,
     addEvent = H.addEvent,
     relativeLength = H.relativeLength,
@@ -369,7 +368,7 @@ H.AxisResizer.prototype = {
             chart = resizer.axis.chart,
             axes = resizer.options.controlledAxis,
             nextAxes = axes.next.length === 0 ?
-                [H.inArray(resizer.axis, chart.yAxis) + 1] : axes.next,
+                [chart.yAxis.indexOf(resizer.axis) + 1] : axes.next,
             // Main axis is included in the prev array by default
             prevAxes = [resizer.axis].concat(axes.prev),
             axesConfigs = [], // prev and next configs
@@ -393,8 +392,8 @@ H.AxisResizer.prototype = {
         }
 
         // First gather info how axes should behave
-        each([prevAxes, nextAxes], function (axesGroup, isNext) {
-            each(axesGroup, function (axisInfo, i) {
+        [prevAxes, nextAxes].forEach(function (axesGroup, isNext) {
+            axesGroup.forEach(function (axisInfo, i) {
                 // Axes given as array index, axis object or axis id
                 var axis = isNumber(axisInfo) ?
                         // If it's a number - it's an index
@@ -500,7 +499,7 @@ H.AxisResizer.prototype = {
         // If we hit the min/maxLength with dragging, don't do anything:
         if (!stopDrag) {
             // Now update axes:
-            each(axesConfigs, function (config) {
+            axesConfigs.forEach(function (config) {
                 config.axis.update(config.options, false);
             });
 
@@ -521,7 +520,7 @@ H.AxisResizer.prototype = {
 
         // Clear control line events
         if (this.eventsToUnbind) {
-            each(this.eventsToUnbind, function (unbind) {
+            this.eventsToUnbind.forEach(function (unbind) {
                 unbind();
             });
         }

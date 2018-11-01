@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -94,7 +94,7 @@ H.perspective = function (points, chart, insidePlotArea) {
     }
 
     // Transform each point
-    return H.map(points, function (point) {
+    return points.map(function (point) {
         var rotated = rotate3D(
                 (inverted ? point.y : point.x) - origin.x,
                 (inverted ? point.x : point.y) - origin.y,

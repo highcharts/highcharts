@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -9,7 +9,6 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Chart.js';
 var Chart = H.Chart,
-    each = H.each,
     extend = H.extend,
     format = H.format,
     merge = H.merge,
@@ -304,7 +303,7 @@ H.geojson = function (geojson, hType, series) {
 
     hType = hType || 'map';
 
-    each(geojson.features, function (feature) {
+    geojson.features.forEach(function (feature) {
 
         var geometry = feature.geometry,
             type = geometry.type,
@@ -316,12 +315,12 @@ H.geojson = function (geojson, hType, series) {
 
         if (hType === 'map' || hType === 'mapbubble') {
             if (type === 'Polygon') {
-                each(coordinates, polygonToPath);
+                coordinates.forEach(polygonToPath);
                 path.push('Z');
 
             } else if (type === 'MultiPolygon') {
-                each(coordinates, function (items) {
-                    each(items, polygonToPath);
+                coordinates.forEach(function (items) {
+                    items.forEach(polygonToPath);
                 });
                 path.push('Z');
             }
@@ -334,7 +333,7 @@ H.geojson = function (geojson, hType, series) {
             if (type === 'LineString') {
                 polygonToPath(coordinates);
             } else if (type === 'MultiLineString') {
-                each(coordinates, polygonToPath);
+                coordinates.forEach(polygonToPath);
             }
 
             if (path.length) {

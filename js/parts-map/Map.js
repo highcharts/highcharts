@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -11,7 +11,6 @@ import '../parts/Chart.js';
 import '../parts/SvgRenderer.js';
 var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
-    each = H.each,
     extend = H.extend,
     merge = H.merge,
     pick = H.pick,
@@ -449,7 +448,7 @@ SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 // Even VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
 if (Renderer === VMLRenderer) {
-    each(['topbutton', 'bottombutton'], function (shape) {
+    ['topbutton', 'bottombutton'].forEach(function (shape) {
         VMLRenderer.prototype.symbols[shape] =
             SVGRenderer.prototype.symbols[shape];
     });
@@ -457,8 +456,9 @@ if (Renderer === VMLRenderer) {
 
 
 /**
- * The factory function for creating new map charts. Creates a new {@link Chart|
- * Chart} object with different default options than the basic Chart.
+ * The factory function for creating new map charts. Creates a new {@link
+ * Highcharts.Chart|Chart} object with different default options than the basic
+ * Chart.
  *
  * @function Highcharts.mapChart
  *
@@ -466,8 +466,8 @@ if (Renderer === VMLRenderer) {
  *         The DOM element to render to, or its id.
  *
  * @param  {Highcharts.Options} options
- *         The chart options structure as described in the {@link
- *         https://api.highcharts.com/highstock|options reference}.
+ *         The chart options structure as described in the
+ *         [options reference](https://api.highcharts.com/highstock).
  *
  * @param  {Function} callback
  *         A function to execute when the chart object is finished loading and
@@ -477,8 +477,8 @@ if (Renderer === VMLRenderer) {
  *         chart object will not be finished synchronously. As a consequence,
  *         code that relies on the newly built Chart object should always run in
  *         the callback. Defining a
- *         {@link https://api.highcharts.com/highstock/chart.events.load|
- *         chart.event.load} handler is equivalent.
+ *         [chart.event.load](https://api.highcharts.com/highstock/chart.events.load)
+ *         handler is equivalent.
  *
  * @return {Highcharts.Chart}
  *         The chart object.
@@ -487,6 +487,7 @@ H.Map = H.mapChart = function (a, b, c) {
 
     var hasRenderToArg = typeof a === 'string' || a.nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],
+        userOptions = options,
         hiddenAxis = {
             endOnTick: false,
             visible: false,
@@ -540,7 +541,7 @@ H.Map = H.mapChart = function (a, b, c) {
         }
     );
 
-    options.series = seriesOptions;
+    options.series = userOptions.series = seriesOptions;
 
 
     return hasRenderToArg ?

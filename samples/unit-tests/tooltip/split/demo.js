@@ -83,10 +83,13 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
     el = chart.tooltip.tt.element;
     value = window.getComputedStyle(el);
 
-    assert.strictEqual(
-        document.getElementsByClassName('highcharts-label-box')[4].getAttribute('isShadow'),
-        'true',
-        'shadow is applied.'
+
+    assert.notEqual(
+        document.getElementsByClassName('highcharts-label-box')[4]
+            .getAttribute('class')
+            .indexOf('highcharts-shadow'),
+        -1,
+        'Shadow should be applied'
     );
 
     chart.update({
@@ -143,6 +146,51 @@ QUnit.test('Split tooltip returning false. #6115', function (assert) {
         chart.tooltip.label.element.childNodes.length,
         2,
         'Two tooltips'
+    );
+});
+
+QUnit.test('Split tooltip with empty formats (#8105)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        tooltip: {
+            split: true,
+            headerFormat: ''
+        },
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            data: [2, 1, 2],
+            tooltip: {
+                pointFormat: ''
+            }
+        }]
+    });
+
+    chart.tooltip.refresh([
+        chart.series[0].points[0],
+        chart.series[1].points[0]
+    ]);
+
+    assert.strictEqual(
+        chart.tooltip.label.element.childNodes.length,
+        1,
+        'Only one label should be added'
+    );
+
+    chart.series[1].update({
+        tooltip: {
+            pointFormat: null
+        }
+    });
+
+    chart.tooltip.refresh([
+        chart.series[0].points[0],
+        chart.series[1].points[0]
+    ]);
+
+    assert.strictEqual(
+        chart.tooltip.label.element.childNodes.length,
+        1,
+        'Only one label should be added'
     );
 });
 

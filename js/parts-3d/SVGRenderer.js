@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -18,22 +18,22 @@ var animObject = H.animObject,
     color = H.color,
     defined = H.defined,
     deg2rad = H.deg2rad,
-    each = H.each,
     extend = H.extend,
-    inArray = H.inArray,
-    map = H.map,
     merge = H.merge,
     perspective = H.perspective,
     pick = H.pick,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
-    wrap = H.wrap;
+    wrap = H.wrap,
+
+    dFactor,
+    element3dMethods,
+    cuboidMethods;
 /*
     EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 */
-// HELPER METHODS //
-
-var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
+// HELPER METHODS
+dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
 /** Method to construct a curved path
   * Can 'wrap' around more then 180 degrees
@@ -80,7 +80,7 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
 
     // Put "L x y" for each point
-    each(points, function (point) {
+    points.forEach(function (point) {
         result.push('L', point.x, point.y);
     });
 
@@ -98,10 +98,10 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 };
 
 SVGRenderer.prototype.toLineSegments = function (points) {
-    var result = [];
+    var result = [],
+        m = true;
 
-    var m = true;
-    each(points, function (point) {
+    points.forEach(function (point) {
         result.push(m ? 'M' : 'L', point.x, point.y);
         m = !m;
     });
@@ -270,60 +270,92 @@ SVGRenderer.prototype.polyhedron = function (args) {
     return result.attr(args);
 };
 
-// CUBOIDS //
-SVGRenderer.prototype.cuboid = function (shapeArgs) {
+// Base, abstract prototype member for 3D elements
+element3dMethods = {
+    // The init is used by base - renderer.Element
+    initArgs: function (args) {
+        var elem3d = this,
+            renderer = elem3d.renderer,
+            paths = renderer[elem3d.pathType + 'Path'](args),
+            zIndexes = paths.zIndexes;
 
-    var result = this.g(),
-        destroy = result.destroy,
-        paths = this.cuboidPath(shapeArgs);
-
-    if (!this.styledMode) {
-        result.attr({
-            'stroke-linejoin': 'round'
+        // build parts
+        H.each(elem3d.parts, function (part) {
+            elem3d[part] = renderer.path(paths[part]).attr({
+                'class': 'highcharts-3d-' + part,
+                zIndex: zIndexes[part] || 0
+            }).add(elem3d);
         });
+
+        elem3d.attr({
+            'stroke-linejoin': 'round',
+            zIndex: zIndexes.group
+        });
+
+        // store original destroy
+        elem3d.originalDestroy = elem3d.destroy;
+        elem3d.destroy = elem3d.destroyParts;
+    },
+
+    // Single property setter that applies options to each part
+    singleSetterForParts: function (
+        prop, val, values, verb, duration, complete
+    ) {
+        var elem3d = this,
+            newAttr = {},
+            optionsToApply = [null, null, (verb || 'attr'), duration, complete],
+            hasZIndexes = values && values.zIndexes;
+
+        if (!values) {
+            newAttr[prop] = val;
+            optionsToApply[0] = newAttr;
+        } else {
+            H.objectEach(values, function (partVal, part) {
+                newAttr[part] = {};
+                newAttr[part][prop] = partVal;
+
+                // include zIndexes if provided
+                if (hasZIndexes) {
+                    newAttr[part].zIndex = values.zIndexes[part] || 0;
+                }
+            });
+            optionsToApply[1] = newAttr;
+        }
+
+        return elem3d.processParts.apply(elem3d, optionsToApply);
+    },
+
+    // Calls function for each part. Used for attr, animate and destroy.
+    processParts: function (props, partsProps, verb, duration, complete) {
+        var elem3d = this;
+
+        H.each(elem3d.parts, function (part) {
+            // if different props for different parts
+            if (partsProps) {
+                props = H.pick(partsProps[part], false);
+            }
+
+            // only if something to set, but allow undefined
+            if (props !== false) {
+                elem3d[part][verb](props, duration, complete);
+            }
+        });
+        return elem3d;
+    },
+
+    // Destroy all parts
+    destroyParts: function () {
+        this.processParts(null, null, 'destroy');
+        return this.originalDestroy.call(this);
     }
+};
 
-    // Create the 3 sides. // Front, top and side are never overlapping in our
-    // case so it is redundant to set zIndex of every element.
-    result.front = this.path(paths[0]).attr({
-        'class': 'highcharts-3d-front'
-    }).add(result);
-    result.top = this.path(paths[1]).attr({
-        'class': 'highcharts-3d-top'
-    }).add(result);
-    result.side = this.path(paths[2]).attr({
-        'class': 'highcharts-3d-side'
-    }).add(result);
+// CUBOID
+cuboidMethods = H.merge(element3dMethods, {
+    parts: ['front', 'top', 'side'],
+    pathType: 'cuboid',
 
-    // apply the fill everywhere, the top a bit brighter, the side a bit darker
-    result.fillSetter = function (fill) {
-        this.front.attr({
-            fill: fill
-        });
-        this.top.attr({
-            fill: color(fill).brighten(0.1).get()
-        });
-        this.side.attr({
-            fill: color(fill).brighten(-0.1).get()
-        });
-        this.color = fill;
-
-        // for animation getter (#6776)
-        result.fill = fill;
-
-        return this;
-    };
-
-    // apply opacaity everywhere
-    result.opacitySetter = function (opacity) {
-        this.front.attr({ opacity: opacity });
-        this.top.attr({ opacity: opacity });
-        this.side.attr({ opacity: opacity });
-        return this;
-    };
-
-    result.attr = function (args, val, complete, continueAnimation) {
-
+    attr: function (args, val, complete, continueAnimation) {
         // Resolve setting attributes by string name
         if (typeof args === 'string' && typeof val !== 'undefined') {
             var key = args;
@@ -332,58 +364,79 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
         }
 
         if (args.shapeArgs || defined(args.x)) {
-            var shapeArgs = args.shapeArgs || args;
-            var paths = this.renderer.cuboidPath(shapeArgs);
-            this.front.attr({ d: paths[0] });
-            this.top.attr({ d: paths[1] });
-            this.side.attr({ d: paths[2] });
-        } else {
-            // getter returns value
-            return SVGElement.prototype.attr.call(
-                this, args, undefined, complete, continueAnimation
+            return this.singleSetterForParts(
+                'd',
+                null,
+                this.renderer[this.pathType + 'Path'](args.shapeArgs || args)
             );
         }
 
-        return this;
-    };
-
-    result.animate = function (args, duration, complete) {
+        return SVGElement.prototype.attr.call(
+            this, args, undefined, complete, continueAnimation
+        );
+    },
+    animate: function (args, duration, complete) {
         if (defined(args.x) && defined(args.y)) {
-            var paths = this.renderer.cuboidPath(args);
-            this.front.animate({ d: paths[0] }, duration, complete);
-            this.top.animate({ d: paths[1] }, duration, complete);
-            this.side.animate({ d: paths[2] }, duration, complete);
+            var paths = this.renderer[this.pathType + 'Path'](args);
+
+            this.singleSetterForParts(
+                'd', null, paths, 'animate', duration, complete
+            );
+
             this.attr({
-                zIndex: -paths[3] // #4774
+                zIndex: paths.zIndexes.group
             });
         } else if (args.opacity) {
-            this.front.animate(args, duration, complete);
-            this.top.animate(args, duration, complete);
-            this.side.animate(args, duration, complete);
+            this.processParts(args, null, 'animate', duration, complete);
         } else {
             SVGElement.prototype.animate.call(this, args, duration, complete);
         }
         return this;
-    };
+    },
+    fillSetter: function (fill) {
+        this.singleSetterForParts('fill', null, {
+            front: fill,
+            top: color(fill).brighten(0.1).get(),
+            side: color(fill).brighten(-0.1).get()
+        });
 
-    // destroy all children
-    result.destroy = function () {
-        this.front.destroy();
-        this.top.destroy();
-        this.side.destroy();
+        // fill for animation getter (#6776)
+        this.color = this.fill = fill;
 
-        return destroy.call(this);
-    };
+        return this;
+    },
+    opacitySetter: function (opacity) {
+        return this.singleSetterForParts('opacity', opacity);
+    }
+});
 
-    // Apply the Z index to the cuboid group
-    result.attr({ zIndex: -paths[3] });
-
-    return result;
+// set them up
+SVGRenderer.prototype.elements3d = {
+    base: element3dMethods,
+    cuboid: cuboidMethods
 };
 
-/**
- *    Generates a cuboid
- */
+// return result, generalization
+SVGRenderer.prototype.element3d = function (type, shapeArgs) {
+    // base
+    var ret = this.g();
+
+    // extend
+    H.extend(ret, this.elements3d[type]);
+
+    // init
+    ret.initArgs(shapeArgs);
+
+    // return
+    return ret;
+};
+
+// generelized, so now use simply
+SVGRenderer.prototype.cuboid = function (shapeArgs) {
+    return this.element3d('cuboid', shapeArgs);
+};
+
+// Generates a cuboid path and zIndexes
 H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     var x = shapeArgs.x,
         y = shapeArgs.y,
@@ -414,42 +467,44 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         // (needs to be set because of stacking)
         incrementY = 10,
         incrementZ = 100,
-        zIndex = 0;
+        zIndex = 0,
 
-    // The 8 corners of the cube
-    var pArr = [{
-        x: x,
-        y: y,
-        z: z
-    }, {
-        x: x + w,
-        y: y,
-        z: z
-    }, {
-        x: x + w,
-        y: y + h,
-        z: z
-    }, {
-        x: x,
-        y: y + h,
-        z: z
-    }, {
-        x: x,
-        y: y + h,
-        z: z + d
-    }, {
-        x: x + w,
-        y: y + h,
-        z: z + d
-    }, {
-        x: x + w,
-        y: y,
-        z: z + d
-    }, {
-        x: x,
-        y: y,
-        z: z + d
-    }];
+        // The 8 corners of the cube
+        pArr = [{
+            x: x,
+            y: y,
+            z: z
+        }, {
+            x: x + w,
+            y: y,
+            z: z
+        }, {
+            x: x + w,
+            y: y + h,
+            z: z
+        }, {
+            x: x,
+            y: y + h,
+            z: z
+        }, {
+            x: x,
+            y: y + h,
+            z: z + d
+        }, {
+            x: x + w,
+            y: y + h,
+            z: z + d
+        }, {
+            x: x + w,
+            y: y,
+            z: z + d
+        }, {
+            x: x,
+            y: y,
+            z: z + d
+        }],
+
+        pickShape;
 
     // apply perspective
     pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
@@ -465,12 +520,12 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
      * Possible second values are 0 for path1, 1 for path2 and -1 for no path
      * chosen.
      */
-    var pickShape = function (path1, path2) {
+    pickShape = function (path1, path2) {
         var ret = [
                 [], -1
         ];
-        path1 = map(path1, mapPath);
-        path2 = map(path2, mapPath);
+        path1 = path1.map(mapPath);
+        path2 = path2.map(mapPath);
         if (H.shapeArea(path1) < 0) {
             ret = [path1, 0];
         } else if (H.shapeArea(path2) < 0) {
@@ -531,14 +586,18 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         zIndex += incrementZ * (1000 - z);
     }
 
-    zIndex = -Math.round(zIndex);
+    return {
+        front: this.toLinePath(path1, true),
+        top: this.toLinePath(path2, true),
+        side: this.toLinePath(path3, true),
+        zIndexes: {
+            group: Math.round(zIndex)
+        },
 
-    return [
-        this.toLinePath(path1, true),
-        this.toLinePath(path2, true),
-        this.toLinePath(path3, true),
-        zIndex
-    ]; // #4774
+        // additional info about zIndexes
+        isFront: isFront,
+        isTop: isTop
+    }; // #4774
 };
 
 // SECTORS //
@@ -554,12 +613,13 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
      */
     function suckOutCustom(params) {
         var hasCA = false,
-            ca = {};
+            ca = {},
+            key;
 
         params = merge(params); // Don't mutate the original object
 
-        for (var key in params) {
-            if (inArray(key, customAttribs) !== -1) {
+        for (key in params) {
+            if (customAttribs.indexOf(key) !== -1) {
                 ca[key] = params[key];
                 delete params[key];
                 hasCA = true;
@@ -590,7 +650,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 
         // These faces are added outside the wrapper group because the z index
         // relates to neighbour elements as well
-        each(['out', 'inn', 'side1', 'side2'], function (face) {
+        ['out', 'inn', 'side1', 'side2'].forEach(function (face) {
             wrapper[face]
                 .attr({
                     'class': className + ' highcharts-3d-side'
@@ -600,10 +660,10 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     };
 
     // Cascade to faces
-    each(['addClass', 'removeClass'], function (fn) {
+    ['addClass', 'removeClass'].forEach(function (fn) {
         wrapper[fn] = function () {
             var args = arguments;
-            each(['top', 'out', 'inn', 'side1', 'side2'], function (face) {
+            ['top', 'out', 'inn', 'side1', 'side2'].forEach(function (face) {
                 wrapper[face][fn].apply(wrapper[face], args);
             });
         };
@@ -654,12 +714,11 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 
     // Apply the same value to all. These properties cascade down to the
     // children when set to the composite arc3d.
-    each(
-        ['opacity', 'translateX', 'translateY', 'visibility'],
+    ['opacity', 'translateX', 'translateY', 'visibility'].forEach(
         function (setter) {
             wrapper[setter + 'Setter'] = function (value, key) {
                 wrapper[key] = value;
-                each(['out', 'inn', 'side1', 'side2', 'top'], function (el) {
+                ['out', 'inn', 'side1', 'side2', 'top'].forEach(function (el) {
                     wrapper[el].attr(key, value);
                 });
             };

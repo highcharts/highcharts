@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -8,8 +8,7 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import './BoxPlotSeries.js';
-var each = H.each,
-    noop = H.noop,
+var noop = H.noop,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
@@ -85,7 +84,7 @@ seriesType('errorbar', 'boxplot', {
             seriesTypes.arearange.prototype.drawDataLabels.call(this);
             // Arearange drawDataLabels does not reset point.y to high,
             // but to low after drawing (#4133)
-            each(this.data, function (point) {
+            this.data.forEach(function (point) {
                 point.y = point[valKey];
             });
         } :
@@ -132,8 +131,8 @@ seriesType('errorbar', 'boxplot', {
  *     ]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.errorbar.turboThreshold),
  * this option is not available.
  *

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -16,7 +16,6 @@ var addEvent = H.addEvent,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     discardElement = H.discardElement,
-    each = H.each,
     extend = H.extend,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
@@ -155,7 +154,7 @@ extend(defaultOptions, {
          */
 
         /**
-         * When buttons apply dataGrouping on a series, by deafault zooming
+         * When buttons apply dataGrouping on a series, by default zooming
          * in/out will deselect buttons and unset dataGrouping. Enable this
          * option to keep buttons selected when extremes change.
          *
@@ -724,7 +723,7 @@ RangeSelector.prototype = {
                 if (dataMax === undefined) {
                     dataMin = Number.MAX_VALUE;
                     dataMax = Number.MIN_VALUE;
-                    each(chart.series, function (series) {
+                    chart.series.forEach(function (series) {
                         // reassign it to the last item
                         var xData = series.xData;
                         dataMin = Math.min(xData[0], dataMin);
@@ -867,7 +866,7 @@ RangeSelector.prototype = {
         this.unResize = addEvent(chart, 'resize', blurInputs);
 
         // Extend the buttonOptions with actual range
-        each(buttonOptions, rangeSelector.computeButtonRange);
+        buttonOptions.forEach(rangeSelector.computeButtonRange);
 
         // zoomed range based on a pre-selected button index
         if (selectedOption !== undefined && buttonOptions[selectedOption]) {
@@ -927,7 +926,7 @@ RangeSelector.prototype = {
             allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
             buttons = rangeSelector.buttons;
 
-        each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+        rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
             var range = rangeOptions._range,
                 type = rangeOptions.type,
                 count = rangeOptions.count || 1,
@@ -1370,6 +1369,12 @@ RangeSelector.prototype = {
             lang = defaultOptions.lang,
             div = rangeSelector.div,
             options = chartOptions.rangeSelector,
+            // Place inputs above the container
+            inputsZIndex = pick(
+                chartOptions.chart.style &&
+                chartOptions.chart.style.zIndex,
+                0
+            ) + 1,
             floating = options.floating,
             buttons = rangeSelector.buttons,
             inputGroup = rangeSelector.inputGroup,
@@ -1429,7 +1434,7 @@ RangeSelector.prototype = {
                     pick(buttonTheme['stroke-width'], 0);
             }
 
-            each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+            rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
 
                 buttons[i] = renderer.button(
                         rangeOptions.text,
@@ -1472,7 +1477,7 @@ RangeSelector.prototype = {
                 rangeSelector.div = div = createElement('div', null, {
                     position: 'relative',
                     height: 0,
-                    zIndex: 1 // above container
+                    zIndex: inputsZIndex
                 });
 
                 container.parentNode.insertBefore(div, container);
@@ -1494,7 +1499,7 @@ RangeSelector.prototype = {
         // button start position
         buttonLeft = pick(plotLeft + buttonPosition.x, plotLeft) +
             rangeSelector.zoomText.getBBox().width + 5;
-        each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+        rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
 
             buttons[i][verb]({ x: buttonLeft });
 
@@ -1934,7 +1939,7 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
 
     if (rangeSelector) {
 
-        each(axes, function (axis) {
+        axes.forEach(function (axis) {
             axis.updateNames();
             axis.setScale();
         });

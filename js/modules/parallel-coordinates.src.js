@@ -23,7 +23,6 @@ var Axis = H.Axis,
 
 var addEvent = H.addEvent,
     pick = H.pick,
-    each = H.each,
     wrap = H.wrap,
     merge = H.merge,
     erase = H.erase,
@@ -194,7 +193,7 @@ addEvent(Chart, 'update', function (e) {
                 this.options.chart.parallelAxes,
                 options.chart.parallelAxes
             );
-            each(this.yAxis, function (axis) {
+            this.yAxis.forEach(function (axis) {
                 axis.update({}, false);
             });
         }
@@ -221,7 +220,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
             counter: 0
         };
 
-        each(seriesOptions, function (series) {
+        seriesOptions.forEach(function (series) {
             if (series.data) {
                 chart.parallelInfo.counter = Math.max(
                     chart.parallelInfo.counter,
@@ -284,7 +283,7 @@ addEvent(Axis, 'getSeriesExtremes', function (e) {
     if (this.chart && this.chart.hasParallelCoordinates && !this.isXAxis) {
         var index = this.parallelPosition,
             currentPoints = [];
-        each(this.series, function (series) {
+        this.series.forEach(function (series) {
             if (defined(series.yData[index])) {
                 // We need to use push() beacause of null points
                 currentPoints.push(series.yData[index]);
@@ -332,7 +331,7 @@ extend(AxisProto, /** @lends Highcharts.Axis.prototype */ {
 wrap(SeriesProto, 'bindAxes', function (proceed) {
     if (this.chart.hasParallelCoordinates) {
         var series = this;
-        each(this.chart.axes, function (axis) {
+        this.chart.axes.forEach(function (axis) {
             series.insert(axis.series);
             axis.isDirty = true;
         });
@@ -402,7 +401,7 @@ addEvent(H.Series, 'afterTranslate', function () {
  */
 H.addEvent(H.Series, 'destroy', function () {
     if (this.chart.hasParallelCoordinates) {
-        each(this.chart.axes || [], function (axis) {
+        (this.chart.axes || []).forEach(function (axis) {
             if (axis && axis.series) {
                 erase(axis.series, this);
                 axis.isDirty = axis.forceRedraw = true;
@@ -455,6 +454,7 @@ function addFormattedValue(proceed) {
             yAxisOptions.tooltipValueFormat,
             yAxisOptions.labels.format
         );
+
         if (labelFormat) {
             formattedValue = H.format(
                 labelFormat,
@@ -466,9 +466,9 @@ function addFormattedValue(proceed) {
             );
         } else if (yAxis.isDatetimeAxis) {
             formattedValue = chart.time.dateFormat(
-                yAxisOptions.dateTimeLabelFormats[
+                chart.time.resolveDTLFormat(yAxisOptions.dateTimeLabelFormats[
                     yAxis.tickPositions.info.unitName
-                ],
+                ]).main,
                 this.y
             );
         } else if (yAxisOptions.categories) {
@@ -483,7 +483,7 @@ function addFormattedValue(proceed) {
     return config;
 }
 
-each(['line', 'spline'], function (seriesName) {
+['line', 'spline'].forEach(function (seriesName) {
     wrap(
         H.seriesTypes[seriesName].prototype.pointClass.prototype,
         'getLabelConfig',

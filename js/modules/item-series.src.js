@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2017 Torstein Honsi
+ * (c) 2009-2018 Torstein Honsi
  *
  * Item series type for Highcharts
  *
@@ -16,8 +16,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
-var each = H.each,
-    extend = H.extend,
+var extend = H.extend,
     pick = H.pick,
     seriesType = H.seriesType;
 
@@ -40,7 +39,7 @@ seriesType('item', 'column', {
             borderWidth = this.borderWidth,
             crisp = borderWidth % 2 ? 0.5 : 1;
 
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var yPos,
                 attr,
                 graphics,
