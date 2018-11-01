@@ -7,10 +7,13 @@
  */
 
 'use strict';
+
+/* global MSBlobBuilder */
+
 import Highcharts from '../parts/Globals.js';
 import '../parts/Chart.js';
 import '../parts/Options.js';
-/* global MSBlobBuilder */
+import '../mixins/download-url.js';
 
 var addEvent = Highcharts.addEvent,
     merge = Highcharts.merge,
@@ -19,7 +22,6 @@ var addEvent = Highcharts.addEvent,
     doc = win.document,
     domurl = win.URL || win.webkitURL || win,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
-    isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent),
     // Milliseconds to defer image load event handlers to offset IE bug
     loadEventDeferDelay = isMSBrowser ? 150 : 0;
 
@@ -29,7 +31,12 @@ Highcharts.CanVGRenderer = {};
 
 /**
  * Downloads a script and executes a callback when done.
- * @param {String} scriptLocation
+ *
+ * @private
+ * @function getScript
+ *
+ * @param {string} scriptLocation
+ *
  * @param {Function} callback
  */
 function getScript(scriptLocation, callback) {
@@ -46,78 +53,16 @@ function getScript(scriptLocation, callback) {
     head.appendChild(script);
 }
 
-// Convert dataURL to Blob if supported, otherwise returns undefined
-Highcharts.dataURLtoBlob = function (dataURL) {
-    if (
-        win.atob &&
-        win.ArrayBuffer &&
-        win.Uint8Array &&
-        win.Blob &&
-        domurl.createObjectURL
-    ) {
-        // Try to convert data URL to Blob
-        var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/),
-            binStr = win.atob(parts[3]), // Assume base64 encoding
-            buf = new win.ArrayBuffer(binStr.length),
-            binary = new win.Uint8Array(buf),
-            blob;
-
-        for (var i = 0; i < binary.length; ++i) {
-            binary[i] = binStr.charCodeAt(i);
-        }
-
-        blob = new win.Blob([binary], { 'type': parts[1] });
-        return domurl.createObjectURL(blob);
-    }
-};
-
-// Download contents by dataURL/blob
-Highcharts.downloadURL = function (dataURL, filename) {
-    var a = doc.createElement('a'),
-        windowRef;
-
-    // IE specific blob implementation
-    // Don't use for normal dataURLs
-    if (
-        typeof dataURL !== 'string' &&
-        !(dataURL instanceof String) &&
-        nav.msSaveOrOpenBlob
-    ) {
-        nav.msSaveOrOpenBlob(dataURL, filename);
-        return;
-    }
-
-    // Some browsers have limitations for data URL lengths. Try to convert to
-    // Blob or fall back. Edge always needs that blob.
-    if (isEdgeBrowser || dataURL.length > 2000000) {
-        dataURL = Highcharts.dataURLtoBlob(dataURL);
-        if (!dataURL) {
-            throw 'Data URL length limit reached';
-        }
-    }
-
-    // Try HTML5 download attr if supported
-    if (a.download !== undefined) {
-        a.href = dataURL;
-        a.download = filename; // HTML5 download attribute
-        doc.body.appendChild(a);
-        a.click();
-        doc.body.removeChild(a);
-    } else {
-        // No download attr, just opening data URI
-        try {
-            windowRef = win.open(dataURL, 'chart');
-            if (windowRef === undefined || windowRef === null) {
-                throw 'Failed to open window';
-            }
-        } catch (e) {
-            // window.open failed, trying location.href
-            win.location.href = dataURL;
-        }
-    }
-};
-
-// Get blob URL from SVG code. Falls back to normal data URI.
+/**
+ * Get blob URL from SVG code. Falls back to normal data URI.
+ *
+ * @private
+ * @function Highcharts.svgToDataURL
+ *
+ * @param {string} svg
+ *
+ * @return {string}
+ */
 Highcharts.svgToDataUrl = function (svg) {
     // Webkit and not chrome
     var webKit = (
@@ -139,11 +84,38 @@ Highcharts.svgToDataUrl = function (svg) {
     return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
 };
 
-// Get data:URL from image URL
-// Pass in callbacks to handle results. finallyCallback is always called at the
-// end of the process. Supplying this callback is optional. All callbacks
-// receive four arguments: imageURL, imageType, callbackArgs and scale.
-// callbackArgs is used only by callbacks and can contain whatever.
+/**
+ * Get data:URL from image URL. Pass in callbacks to handle results.
+ *
+ * @private
+ * @function Highcharts.imageToDataUrl
+ *
+ * @param {string} imageURL
+ *
+ * @param {string} imageType
+ *
+ * @param {*} callbackArgs
+ *        callbackArgs is used only by callbacks.
+ *
+ * @param {number} scale
+ *
+ * @param {Function} successCallback
+ *        Receives four arguments: imageURL, imageType, callbackArgs, and scale.
+ *
+ * @param {Function} taintedCallback
+ *        Receives four arguments: imageURL, imageType, callbackArgs, and scale.
+ *
+ * @param {Function} noCanvasSupportCallback
+ *        Receives four arguments: imageURL, imageType, callbackArgs, and scale.
+ *
+ * @param {Function} failedLoadCallback
+ *        Receives four arguments: imageURL, imageType, callbackArgs, and scale.
+ *
+ * @param {Function} [finallyCallback]
+ *        finallyCallback is always called at the end of the process. All
+ *        callbacks receive four arguments: imageURL, imageType, callbackArgs,
+ *        and scale.
+ */
 Highcharts.imageToDataUrl = function (
     imageURL,
     imageType,
@@ -233,14 +205,29 @@ Highcharts.imageToDataUrl = function (
 };
 
 /**
- * Get data URL to an image of an SVG and call download on it
+ * Get data URL to an image of an SVG and call download on it options object:
  *
- * options object:
- * - filename: Name of resulting downloaded file without extension
- * - type: File type of resulting download
- * - scale: Scaling factor of downloaded image compared to source
- * - libURL: URL pointing to location of dependency scripts to download on
- *   demand
+ * - **filename:** Name of resulting downloaded file without extension. Default
+ *   is `chart`.
+ *
+ * - **type:** File type of resulting download. Default is `image/png`.
+ *
+ * - **scale:** Scaling factor of downloaded image compared to source. Default
+ *   is `1`.
+ *
+ * - **libURL:** URL pointing to location of dependency scripts to download on
+ *   demand. Default is the exporting.libURL option of the global Highcharts
+ *   options pointing to our server.
+ *
+ * @function Highcharts.downloadSVGLocal
+ *
+ * @param {string} svg
+ *
+ * @param {Highcharts.ExportingOptions} options
+ *
+ * @param {Function} failCallback
+ *
+ * @param {Function} successCallback
  */
 Highcharts.downloadSVGLocal = function (
     svg,
@@ -459,9 +446,23 @@ Highcharts.downloadSVGLocal = function (
     }
 };
 
-// Get SVG of chart prepared for client side export. This converts embedded
-// images in the SVG to data URIs. The options and chartOptions arguments are
-// passed to the getSVGForExport function.
+/**
+ * Get SVG of chart prepared for client side export. This converts embedded
+ * images in the SVG to data URIs. It requires the regular exporting module. The
+ * options and chartOptions arguments are passed to the getSVGForExport
+ * function.
+ *
+ * @private
+ * @function Highcharts.Chart#getSVGForLocalExport
+ *
+ * @param {Highcharts.ExportingOptions} options
+ *
+ * @param {Highcharts.Options} chartOptions
+ *
+ * @param {Function} failCallback
+ *
+ * @param {Function} successCallback
+ */
 Highcharts.Chart.prototype.getSVGForLocalExport = function (
     options,
     chartOptions,
@@ -542,12 +543,15 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
 
 /**
  * Exporting and offline-exporting modules required. Export a chart to an image
- * locally in the user's browser.
+ * locally in the user's browser. Requires the regular exporting module.
  *
- * @param  {Object} exportingOptions
- *         Exporting options, the same as in {@link
- *         Highcharts.Chart#exportChart}.
- * @param  {Options} chartOptions
+ * @function Highcharts.Chart#exportChartLocal
+ *
+ * @param  {Highcharts.ExportingOptions} exportingOptions
+ *         Exporting options, the same as in
+ *         {@link Highcharts.Chart#exportChart}.
+ *
+ * @param  {Highcharts.Options} chartOptions
  *         Additional chart options for the exported chart. For example a
  *         different background color can be added here, or `dataLabels`
  *         for export only.
@@ -588,10 +592,11 @@ Highcharts.Chart.prototype.exportChartLocal = function (
             }
         };
 
+    /*= if (!build.classic) { =*/
+
     // If we are on IE and in styled mode, add a whitelist to the renderer for
     // inline styles that we want to pass through. There are so many styles by
     // default in IE that we don't want to blacklist them all.
-    /*= if (!build.classic) { =*/
     if (isMSBrowser) {
         Highcharts.SVGRenderer.prototype.inlineWhitelist = [
             /^blockSize/,
@@ -624,6 +629,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (
             /^y$/
         ];
     }
+
     /*= } =*/
 
     // Always fall back on:

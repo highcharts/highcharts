@@ -192,7 +192,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
             // Do the calculations and DOM access only if properties changed
             if (currentTextTransform !== wrapper.cTT) {
-                baseline = renderer.fontMetrics(elem.style.fontSize).b;
+                baseline = renderer.fontMetrics(elem.style.fontSize, elem).b;
 
                 // Renderer specific handling of span rotation, but only if we
                 // have something to update.

@@ -167,7 +167,146 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-H.Series = H.seriesType('line', null
+H.Series = H.seriesType('line',
+
+/**
+ * Series options for specific data and the data itself. In TypeScript you
+ * have to cast the series options to specific series types, to get all
+ * possible options for a series.
+ *
+ * @example
+ * // TypeScript example
+ * Highcharts.chart('container', {
+ *     series: [{
+ *         color: '#06C',
+ *         data: [[0, 1], [2, 3]]
+ *     } as Highcharts.SeriesLineOptions ]
+ * });
+ *
+ * @type      {Array<*>}
+ * @apioption series
+ */
+
+/**
+ * An id for the series. This can be used after render time to get a pointer
+ * to the series object through `chart.get()`.
+ *
+ * @sample {highcharts} highcharts/plotoptions/series-id/
+ *         Get series by id
+ *
+ * @type      {string}
+ * @since     1.2.0
+ * @apioption series.id
+ */
+
+/**
+ * The index of the series in the chart, affecting the internal index in the
+ * `chart.series` array, the visible Z index as well as the order in the
+ * legend.
+ *
+ * @type      {number}
+ * @since     2.3.0
+ * @apioption series.index
+ */
+
+/**
+ * The sequential index of the series in the legend.
+ *
+ * @see [legend.reversed](#legend.reversed),
+ *      [yAxis.reversedStacks](#yAxis.reversedStacks)
+ *
+ * @sample {highcharts|highstock} highcharts/series/legendindex/
+ *         Legend in opposite order
+ *
+ * @type      {number}
+ * @apioption series.legendIndex
+ */
+/**
+ * The name of the series as shown in the legend, tooltip etc.
+ *
+ * @sample {highcharts} highcharts/series/name/
+ *         Series name
+ * @sample {highmaps} maps/demo/category-map/
+ *         Series name
+ *
+ * @type      {string}
+ * @apioption series.name
+ */
+
+/**
+ * This option allows grouping series in a stacked chart. The stack option
+ * can be a string or anything else, as long as the grouped series' stack
+ * options match each other after conversion into a string.
+ *
+ * @sample {highcharts} highcharts/series/stack/
+ *         Stacked and grouped columns
+ *
+ * @type      {string|object}
+ * @since     2.1
+ * @product   highcharts highstock
+ * @apioption series.stack
+ */
+
+/**
+ * The type of series, for example `line` or `column`. By default, the
+ * series type is inherited from [chart.type](#chart.type), so unless the
+ * chart is a combination of series types, there is no need to set it on the
+ * series level.
+ *
+ * @sample {highcharts} highcharts/series/type/
+ *         Line and column in the same chart
+ * @sample {highmaps} maps/demo/mapline-mappoint/
+ *         Multiple types in the same map
+ *
+ * @type      {string}
+ * @apioption series.type
+ */
+
+/**
+ * When using dual or multiple x axes, this number defines which xAxis the
+ * particular series is connected to. It refers to either the
+ * {@link #xAxis.id|axis id}
+ * or the index of the axis in the xAxis array, with 0 being the first.
+ *
+ * @type      {number|string}
+ * @default   0
+ * @product   highcharts highstock
+ * @apioption series.xAxis
+ */
+
+/**
+ * When using dual or multiple y axes, this number defines which yAxis the
+ * particular series is connected to. It refers to either the
+ * {@link #yAxis.id|axis id}
+ * or the index of the axis in the yAxis array, with 0 being the first.
+ *
+ * @sample {highcharts} highcharts/series/yaxis/
+ *         Apply the column series to the secondary Y axis
+ *
+ * @type      {number|string}
+ * @default   0
+ * @product   highcharts highstock
+ * @apioption series.yAxis
+ */
+
+/**
+ * Define the visual z index of the series.
+ *
+ * @sample {highcharts} highcharts/plotoptions/series-zindex-default/
+ *         With no z index, the series defined last are on top
+ * @sample {highcharts} highcharts/plotoptions/series-zindex/
+ *         With a z index, the series with the highest z index is on top
+ * @sample {highstock} highcharts/plotoptions/series-zindex-default/
+ *         With no z index, the series defined last are on top
+ * @sample {highstock} highcharts/plotoptions/series-zindex/
+ *         With a z index, the series with the highest z index is on top
+ *
+ * @type      {number}
+ * @product   highcharts highstock
+ * @apioption series.zIndex
+ */
+
+null
 
 /**
  * General options for all series types.
@@ -866,7 +1005,7 @@ H.Series = H.seriesType('line', null
      *
      * @type      {Function}
      * @since     4.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @context   Highcharts.Series
      * @apioption plotOptions.series.events.afterAnimate
      */
@@ -1094,6 +1233,8 @@ H.Series = H.seriesType('line', null
          *
          * @sample {highcharts} highcharts/plotoptions/series-marker-radius/
          *         Bigger markers
+         *
+         * @default  {highstock} 2
          */
         radius: 4,
 
@@ -2300,144 +2441,6 @@ H.Series = H.seriesType('line', null
 
 }, /** @lends Highcharts.Series.prototype */ {
 
-    /**
-     * Series options for specific data and the data itself. In TypeScript you
-     * have to cast the series options to specific series types, to get all
-     * possible options for a series.
-     *
-     * @example
-     * // TypeScript example
-     * Highcharts.chart('container', {
-     *     series: [{
-     *         color: '#06C',
-     *         data: [[0, 1], [2, 3]]
-     *     } as Highcharts.SeriesLineOptions ]
-     * });
-     *
-     *
-     * @type      {Array<*>}
-     * @apioption series
-     */
-
-    /**
-     * An id for the series. This can be used after render time to get a pointer
-     * to the series object through `chart.get()`.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-id/
-     *         Get series by id
-     *
-     * @type      {string}
-     * @since     1.2.0
-     * @apioption series.id
-     */
-
-    /**
-     * The index of the series in the chart, affecting the internal index in the
-     * `chart.series` array, the visible Z index as well as the order in the
-     * legend.
-     *
-     * @type      {number}
-     * @since     2.3.0
-     * @apioption series.index
-     */
-
-    /**
-     * The sequential index of the series in the legend.
-     *
-     * @see [legend.reversed](#legend.reversed),
-     *      [yAxis.reversedStacks](#yAxis.reversedStacks)
-     *
-     * @sample {highcharts|highstock} highcharts/series/legendindex/
-     *         Legend in opposite order
-     *
-     * @type      {number}
-     * @apioption series.legendIndex
-     */
-    /**
-     * The name of the series as shown in the legend, tooltip etc.
-     *
-     * @sample {highcharts} highcharts/series/name/
-     *         Series name
-     * @sample {highmaps} maps/demo/category-map/
-     *         Series name
-     *
-     * @type      {string}
-     * @apioption series.name
-     */
-
-    /**
-     * This option allows grouping series in a stacked chart. The stack option
-     * can be a string or anything else, as long as the grouped series' stack
-     * options match each other after conversion into a string.
-     *
-     * @sample {highcharts} highcharts/series/stack/
-     *         Stacked and grouped columns
-     *
-     * @type      {string|object}
-     * @since     2.1
-     * @product   highcharts highstock
-     * @apioption series.stack
-     */
-
-    /**
-     * The type of series, for example `line` or `column`. By default, the
-     * series type is inherited from [chart.type](#chart.type), so unless the
-     * chart is a combination of series types, there is no need to set it on the
-     * series level.
-     *
-     * @sample {highcharts} highcharts/series/type/
-     *         Line and column in the same chart
-     * @sample {highmaps} maps/demo/mapline-mappoint/
-     *         Multiple types in the same map
-     *
-     * @type      {string}
-     * @apioption series.type
-     */
-
-    /**
-     * When using dual or multiple x axes, this number defines which xAxis the
-     * particular series is connected to. It refers to either the
-     * {@link #xAxis.id|axis id}
-     * or the index of the axis in the xAxis array, with 0 being the first.
-     *
-     * @type      {number|string}
-     * @default   0
-     * @product   highcharts highstock
-     * @apioption series.xAxis
-     */
-
-    /**
-     * When using dual or multiple y axes, this number defines which yAxis the
-     * particular series is connected to. It refers to either the
-     * {@link #yAxis.id|axis id}
-     * or the index of the axis in the yAxis array, with 0 being the first.
-     *
-     * @sample {highcharts} highcharts/series/yaxis/
-     *         Apply the column series to the secondary Y axis
-     *
-     * @type      {number|string}
-     * @default   0
-     * @product   highcharts highstock
-     * @apioption series.yAxis
-     */
-
-    /**
-     * Define the visual z index of the series.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-zindex-default/
-     *         With no z index, the series defined last are on top
-     * @sample {highcharts} highcharts/plotoptions/series-zindex/
-     *         With a z index, the series with the highest z index is on top
-     * @sample {highstock} highcharts/plotoptions/series-zindex-default/
-     *         With no z index, the series defined last are on top
-     * @sample {highstock} highcharts/plotoptions/series-zindex/
-     *         With a z index, the series with the highest z index is on top
-     *
-     * @type      {number}
-     * @product   highcharts highstock
-     * @apioption series.zIndex
-     */
-
     isCartesian: true,
     pointClass: Point,
     sorted: true, // requires the data to be sorted
@@ -2449,6 +2452,9 @@ H.Series = H.seriesType('line', null
     parallelArrays: ['x', 'y'],
     coll: 'series',
     init: function (chart, options) {
+
+        fireEvent(this, 'init', { options: options });
+
         var series = this,
             events,
             chartSeries = chart.series,
@@ -2480,7 +2486,6 @@ H.Series = H.seriesType('line', null
          */
         series.options = options = series.setOptions(options);
         series.linkedSeries = [];
-
         // bind the axes
         series.bindAxes();
 
@@ -5353,7 +5358,7 @@ H.Series = H.seriesType('line', null
  *
  * @type      {string}
  * @since     5.0.0
- * @product   highcharts
+ * @product   highcharts gantt
  * @apioption series.line.data.className
  */
 
@@ -5368,7 +5373,7 @@ H.Series = H.seriesType('line', null
  *         Mark the highest point
  *
  * @type      {Highcharts.ColorString}
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.line.data.color
  */
 
@@ -5381,7 +5386,7 @@ H.Series = H.seriesType('line', null
  *
  * @type      {number}
  * @since     5.0.0
- * @product   highcharts
+ * @product   highcharts gantt
  * @apioption series.line.data.colorIndex
  */
 
@@ -5394,7 +5399,7 @@ H.Series = H.seriesType('line', null
  *         Show a label for the last value
  *
  * @type      {Highcharts.PlotSeriesDataLabelsOptions}
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.line.data.dataLabels
  */
 
@@ -5416,7 +5421,7 @@ H.Series = H.seriesType('line', null
  *
  * @type      {string}
  * @since     1.2.0
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.line.data.id
  */
 
@@ -5447,7 +5452,7 @@ H.Series = H.seriesType('line', null
  *
  * @type      {boolean}
  * @default   false
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.line.data.selected
  */
 
@@ -5472,7 +5477,7 @@ H.Series = H.seriesType('line', null
  * Individual point events
  *
  * @extends   plotOptions.series.point.events
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.line.data.events
  */
 

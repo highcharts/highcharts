@@ -328,18 +328,36 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/parts/SVGRenderer.js',
         './js/parts/Tick.js',
         './js/parts/Time.js',
+        './js/parts-gantt/GanttChart.js',
         './js/parts-gantt/TreeGrid.js',
         './js/parts-map/GeoJSON.js',
         './js/parts-map/Map.js',
         './js/parts-map/MapNavigation.js',
         './js/parts-map/MapSeries.js',
-        './js/modules/annotations.src.js',
         './js/modules/drilldown.src.js',
         './js/modules/exporting.src.js',
         './js/modules/export-data.src.js',
         './js/modules/data.src.js',
         './js/modules/offline-exporting.src.js',
-        './js/modules/pattern-fill.src.js'
+        './js/modules/pattern-fill.src.js',
+        './js/annotations/eventEmitterMixin.js',
+        './js/annotations/MockPoint.js',
+        './js/annotations/ControlPoint.js',
+        './js/annotations/controllable/controllableMixin.js',
+        './js/annotations/controllable/ControllableCircle.js',
+        './js/annotations/controllable/ControllableImage.js',
+        './js/annotations/controllable/ControllableLabel.js',
+        './js/annotations/controllable/ControllablePath.js',
+        './js/annotations/controllable/ControllableRect.js',
+        './js/annotations/annotations.src.js',
+        './js/annotations/types/CrookedLine.js',
+        './js/annotations/types/ElliottWave.js',
+        './js/annotations/types/Tunnel.js',
+        './js/annotations/types/Fibonacci.js',
+        './js/annotations/types/InfinityLine.js',
+        './js/annotations/types/Measure.js',
+        './js/annotations/types/Pitchfork.js',
+        './js/annotations/types/VerticalLine.js'
     ];
     const optionsJSDoc = {
         navOptions: {
@@ -465,6 +483,9 @@ const copyToDist = () => {
     const additionals = {
         'gfx/vml-radial-gradient.png': 'gfx/vml-radial-gradient.png',
         'code/css/highcharts.scss': 'css/highcharts.scss',
+        'code/css/themes/dark-unica.scss': 'css/themes/dark-unica.scss',
+        'code/css/themes/grid-light.scss': 'css/themes/grid-light.scss',
+        'code/css/themes/sand-signika.scss': 'css/themes/sand-signika.scss',
         'code/lib/canvg.js': 'vendor/canvg.js',
         'code/lib/canvg.src.js': 'vendor/canvg.src.js',
         'code/lib/jspdf.js': 'vendor/jspdf.js',
@@ -941,6 +962,8 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         'successJSDoc': colors.green('Created tree.json')
     };
     const sourceFiles = [
+        './js/annotations',
+        './js/annotations/types',
         './js/indicators',
         './js/modules',
         './js/parts',

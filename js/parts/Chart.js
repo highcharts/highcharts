@@ -1589,6 +1589,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#resetMargins
      */
     resetMargins: function () {
+
+        fireEvent(this, 'resetMargins');
+
         var chart = this,
             chartOptions = chart.options.chart;
 

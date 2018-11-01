@@ -89,10 +89,10 @@ H.setOptions({
 
     /**
      * Options for configuring accessibility for the chart. Requires the
-     * [accessibility module](//code.highcharts.com/modules/accessibility.
-     * js) to be loaded. For a description of the module and information
-     * on its features, see [Highcharts Accessibility](http://www.highcharts.
-     * com/docs/chart-concepts/accessibility).
+     * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
+     * to be loaded. For a description of the module and information
+     * on its features, see
+     * [Highcharts Accessibility](http://www.highcharts.com/docs/chart-concepts/accessibility).
      *
      * @since        5.0.0
      * @optionparent accessibility

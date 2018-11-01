@@ -294,7 +294,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         Without
          *
          * @type      {Array<string>}
-         * @product   highcharts
+         * @product   highcharts gantt
          * @apioption xAxis.categories
          */
 
@@ -742,9 +742,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         /**
          * The dash or dot style of the grid lines. For possible values, see
-         * [this demonstration](https://jsfiddle.net/gh/get/library/pure/
-         * highcharts/highcharts/tree/master/samples/highcharts/plotoptions/
-         * series-dashstyle-all/).
+         * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
          *
          * @sample {highcharts} highcharts/yaxis/gridlinedashstyle/
          *         Long dashes
@@ -879,8 +877,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             enabled: true,
 
             /**
-             * A [format string](https://www.highcharts.com/docs/chart-
-             * concepts/labels-and-string-formatting) for the axis label.
+             * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * for the axis label.
              *
              * @sample {highcharts|highstock} highcharts/yaxis/labels-format/
              *         Add units to Y axis label
@@ -1038,8 +1036,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              */
 
             /**
-             * Whether to [use HTML](https://www.highcharts.com/docs/chart-
-             * concepts/labels-and-string-formatting#html) to render the labels.
+             * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+             * to render the labels.
              *
              * @type      {boolean}
              * @default   false
@@ -1209,9 +1207,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         /**
          * The dash or dot style of the minor grid lines. For possible values,
-         * see [this demonstration](https://jsfiddle.net/gh/get/library/pure/
-         * highcharts/highcharts/tree/master/samples/highcharts/plotoptions/
-         * series-dashstyle-all/).
+         * see [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
          *
          * @sample {highcharts} highcharts/yaxis/minorgridlinedashstyle/
          *         Long dashes on minor grid lines
@@ -1923,9 +1919,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              */
 
             /**
-             * Whether to [use HTML](https://www.highcharts.com/docs/
-             * chart-concepts/labels-and-string-formatting#html) to render the
-             * axis title.
+             * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+             * to render the axis title.
              *
              * @type      {boolean}
              * @default   false
@@ -2405,9 +2400,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * item is a float between 0 and 1 assigning the relative position in
          * the gradient, and the second item is the color.
          *
-         * For solid gauges, the Y axis also inherits the concept of [data classes](http://api.
-         * highcharts.com/highmaps#colorAxis.dataClasses) from the Highmaps
-         * color axis.
+         * For solid gauges, the Y axis also inherits the concept of
+         * [data classes](http://api.highcharts.com/highmaps#colorAxis.dataClasses)
+         * from the Highmaps color axis.
          *
          * @see [minColor](#yAxis.minColor)
          * @see [maxColor](#yAxis.maxColor)
@@ -2765,8 +2760,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
-         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/
-         * labels-and-string-formatting#html) to render the labels.
+         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the labels.
          *
          * @type      {boolean}
          * @default   false

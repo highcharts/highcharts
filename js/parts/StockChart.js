@@ -124,6 +124,7 @@ var addEvent = H.addEvent,
 H.StockChart = H.stockChart = function (a, b, c) {
     var hasRenderToArg = isString(a) || a.nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],
+        userOptions = options,
         // to increase performance, don't merge the data
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
@@ -263,7 +264,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
         }
     );
 
-    options.series = seriesOptions;
+    options.series = userOptions.series = seriesOptions;
 
     return hasRenderToArg ?
         new Chart(a, options, c) :

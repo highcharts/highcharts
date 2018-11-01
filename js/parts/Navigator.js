@@ -248,8 +248,6 @@ extend(defaultOptions, {
              * @sample {highstock} stock/navigator/styled-handles/
              *         Styled handles
              *
-             * @type       {number}
-             * @default    7
              * @since      6.0.0
              * @product    highstock
              * @apioption  navigator.handles.lineWidth

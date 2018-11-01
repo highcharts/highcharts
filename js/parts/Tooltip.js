@@ -838,11 +838,15 @@ H.Tooltip.prototype = {
         }
         // Create the individual labels for header and points, ignore footer
         labels.slice(0, points.length + 1).forEach(function (str, i) {
-            if (str !== false) {
+            if (str !== false && str !== '') {
                 var point = points[i - 1] ||
+                    {
                         // Item 0 is the header. Instead of this, we could also
                         // use the crosshair label
-                        { isHeader: true, plotX: points[0].plotX },
+                        isHeader: true,
+                        plotX: points[0].plotX,
+                        plotY: chart.plotHeight
+                    },
                     owner = point.series || tooltip,
                     tt = owner.tt,
                     series = point.series || {},
@@ -862,7 +866,10 @@ H.Tooltip.prototype = {
                             null,
                             null,
                             null,
-                            'callout',
+                            (
+                                point.isHeader ? options.headerShape :
+                                    options.shape
+                            ) || 'callout',
                             null,
                             null,
                             options.useHTML
@@ -957,6 +964,21 @@ H.Tooltip.prototype = {
         // Clean previous run (for missing points)
         this.cleanSplit();
 
+        if (options.positioner) {
+            boxes.forEach(function (box) {
+                var boxPosition = options.positioner.call(
+                    tooltip,
+                    box.tt.getBBox().width,
+                    box.size,
+                    box.point
+                );
+                box.x = boxPosition.x;
+                box.align = 0; // 0-align to the top, 1-align to the bottom
+                box.target = boxPosition.y;
+                box.rank = pick(boxPosition.rank, box.rank);
+            });
+        }
+
         // Distribute and put in place
         H.distribute(boxes, chart.plotHeight + headerHeight);
         boxes.forEach(function (box) {
@@ -966,7 +988,7 @@ H.Tooltip.prototype = {
             // Put the label in place
             box.tt.attr({
                 visibility: box.pos === undefined ? 'hidden' : 'inherit',
-                x: (rightAligned || point.isHeader ?
+                x: (rightAligned || point.isHeader || options.positioner ?
                     box.x :
                     point.plotX + chart.plotLeft + pick(options.distance, 16)),
                 y: box.pos + distributionBoxTop,
@@ -1210,7 +1232,9 @@ H.Tooltip.prototype = {
                 item.point.tooltipFormatter
             ).call(
                 item.point,
-                tooltipOptions[(item.point.formatPrefix || 'point') + 'Format']
+                tooltipOptions[
+                    (item.point.formatPrefix || 'point') + 'Format'
+                ] || ''
             );
         });
     }

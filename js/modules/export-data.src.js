@@ -16,13 +16,14 @@ import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
+import '../mixins/download-url.js';
 
 var defined = Highcharts.defined,
     pick = Highcharts.pick,
     win = Highcharts.win,
     doc = win.document,
     seriesTypes = Highcharts.seriesTypes,
-    downloadAttrSupported = doc.createElement('a').download !== undefined;
+    downloadURL = Highcharts.downloadURL;
 
 // Can we add this to utils? Also used in screen-reader.js
 /**
@@ -752,53 +753,41 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
     return html;
 };
 
+
 /**
- * File download using download attribute if supported.
+ * Get the filename for a chart that is being downloaded
  *
  * @private
- * @function Highcharts.Chart#fileDownload
- *
- * @param {string} href
- *
- * @param {string} extension
- *
- * @param {string} content
+ * @return {String} The filename.
  */
-Highcharts.Chart.prototype.fileDownload = function (href, extension, content) {
-    var a,
-        blobObject,
-        name;
-
+Highcharts.Chart.prototype.getFilename = function () {
     if (this.options.exporting.filename) {
-        name = this.options.exporting.filename;
-    } else if (this.title && this.title.textStr) {
-        name = this.title.textStr.replace(/ /g, '-').toLowerCase();
-    } else {
-        name = 'chart';
+        return this.options.exporting.filename;
     }
-
-    // MS specific. Check this first because of bug with Edge (#76)
-    if (win.Blob && win.navigator.msSaveOrOpenBlob) {
-        // Falls to msSaveOrOpenBlob if download attribute is not supported
-        blobObject = new win.Blob(
-            ['\uFEFF' + content], // #7084
-            { type: 'text/csv' }
-        );
-        win.navigator.msSaveOrOpenBlob(blobObject, name + '.' + extension);
-
-    // Download attribute supported
-    } else if (downloadAttrSupported) {
-        a = doc.createElement('a');
-        a.href = href;
-        a.download = name + '.' + extension;
-        this.container.appendChild(a); // #111
-        a.click();
-        a.remove();
-
-    } else {
-        Highcharts.error('The browser doesn\'t support downloading files');
-    }
+    return this.title && this.title.textStr ?
+        this.title.textStr.replace(/ /g, '-').toLowerCase() :
+        'chart';
 };
+
+
+/**
+ * Get a blob object from content, if blob is supported
+ *
+ * @private
+ *
+ * @param {String} content The content to create the blob from.
+ * @param {String} type The type of the content.
+ * @return {object} The blob object, or undefined if not supported.
+ */
+function getBlobFromContent(content, type) {
+    if (win.Blob && win.navigator.msSaveOrOpenBlob) {
+        return new win.Blob(
+            ['\uFEFF' + content], // #7084
+            { type: type }
+        );
+    }
+}
+
 
 /**
  * Call this on click of 'Download CSV' button
@@ -808,11 +797,10 @@ Highcharts.Chart.prototype.fileDownload = function (href, extension, content) {
  */
 Highcharts.Chart.prototype.downloadCSV = function () {
     var csv = this.getCSV(true);
-    this.fileDownload(
-        'data:text/csv,\uFEFF' + encodeURIComponent(csv),
-        'csv',
-        csv,
-        'text/csv'
+    downloadURL(
+        getBlobFromContent(csv, 'text/csv') ||
+            'data:text/csv,\uFEFF' + encodeURIComponent(csv),
+        this.getFilename() + '.csv'
     );
 };
 
@@ -844,11 +832,11 @@ Highcharts.Chart.prototype.downloadXLS = function () {
         base64 = function (s) {
             return win.btoa(unescape(encodeURIComponent(s))); // #50
         };
-    this.fileDownload(
-        uri + base64(template),
-        'xls',
-        template,
-        'application/vnd.ms-excel'
+
+    downloadURL(
+        getBlobFromContent(template, 'application/vnd.ms-excel') ||
+            uri + base64(template),
+        this.getFilename() + '.xls'
     );
 };
 

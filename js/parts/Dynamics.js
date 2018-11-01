@@ -323,6 +323,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     ],
 
     /**
+     * These collections (arrays) implement update() methods with support for
+     * one-to-one option.
+     */
+    collectionsWithUpdate: [
+        'xAxis',
+        'yAxis',
+        'zAxis',
+        'series',
+        'colorAxis',
+        'pane'
+    ],
+
+    /**
      * A generic function to update any element of the chart. Elements can be
      * enabled and disabled, moved, re-styled, re-formatted etc.
      *
@@ -487,14 +500,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // update the first series in the chart. Setting two series without
         // an id will update the first and the second respectively (#6019)
         // chart.update and responsive.
-        [
-            'xAxis',
-            'yAxis',
-            'zAxis',
-            'series',
-            'colorAxis',
-            'pane'
-        ].forEach(function (coll) {
+        this.collectionsWithUpdate.forEach(function (coll) {
             var indexMap;
 
             if (options[coll]) {

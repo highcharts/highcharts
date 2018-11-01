@@ -45,42 +45,6 @@
  * @type {boolean|undefined}
  */
 
-/**
- * Options for exporting tasks.
- *
- * @interface Highcharts.ExportingOptionsObject
- *//**
- * The file name for the export without extension.
- *
- * @name Highcharts.ExportingOptionsObject#filename
- * @type {string|undefined}
- *//**
- * The pixel width of the source (in-page) chart.
- *
- * @name Highcharts.ExportingOptionsObject#sourceWidth
- * @type {number|undefined}
- *//**
- * The pixel height of the source (in-page) chart.
- *
- * @name Highcharts.ExportingOptionsObject#sourceHeight
- * @type {number|undefined}
- *//**
- * The MIME type of the converted image.
- *
- * @name Highcharts.ExportingOptionsObject#type
- * @type {string|undefined}
- *//**
- * The URL for the server module to do the conversion.
- *
- * @name Highcharts.ExportingOptionsObject#url
- * @type {string|undefined}
- *//**
- * The width of the PNG or JPG image generated on the server.
- *
- * @name Highcharts.ExportingOptionsObject#width
- * @type {number|undefined}
- */
-
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -607,9 +571,10 @@ defaultOptions.exporting = {
      * Path where Highcharts will look for export module dependencies to
      * load on demand if they don't already exist on `window`. Should currently
      * point to location of [CanVG](https://github.com/canvg/canvg) library,
-     * [RGBColor.js](https://github.com/canvg/canvg), [jsPDF](https://github.
-     * com/yWorks/jsPDF) and [svg2pdf.js](https://github.com/yWorks/svg2pdf.
-     * js), required for client side export in certain browsers.
+     * [RGBColor.js](https://github.com/canvg/canvg),
+     * [jsPDF](https://github.com/yWorks/jsPDF) and
+     * [svg2pdf.js](https://github.com/yWorks/svg2pdf.js), required for client
+     * side export in certain browsers.
      *
      * @type      {string}
      * @default   https://code.highcharts.com/{version}/lib
@@ -627,8 +592,9 @@ defaultOptions.exporting = {
 
     /**
      * The width of the original chart when exported, unless an explicit
-     * [chart.width](#chart.width) is set. The width exported raster image
-     * is then multiplied by [scale](#exporting.scale).
+     * [chart.width](#chart.width) is set, or a pixel width is set on the
+     * container. The width exported raster image is then multiplied by
+     * [scale](#exporting.scale).
      *
      * @sample {highcharts} highcharts/exporting/sourcewidth/
      *         Source size demo
@@ -770,7 +736,9 @@ defaultOptions.exporting = {
             /**
              * The symbol for the button. Points to a definition function in
              * the `Highcharts.Renderer.symbols` collection. The default
-             * `exportIcon` function is part of the exporting module.
+             * `exportIcon` function is part of the exporting module. Possible
+             * values are "circle", "square", "diamond", "triangle",
+             * "triangle-down", "menu", "menuball" or custom shape.
              *
              * @sample highcharts/exporting/buttons-contextbutton-symbol/
              *         Use a circle for symbol
@@ -778,7 +746,7 @@ defaultOptions.exporting = {
              *         Custom shape as symbol
              *
              * @since      2.0
-             * @validvalue ["exportIcon", "circle", "square", "diamond", "triangle", "triangle-down", "menu"]
+             * @validvalue ["menu", "menuball", "exportIcon", "circle", "square", "diamond", "triangle", "triangle-down"]
              */
             symbol: 'menu',
 
@@ -1120,7 +1088,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         sourceWidth = options.exporting.sourceWidth ||
             options.chart.width ||
             (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
-            600;
+            (options.isGantt ? 800 : 600);
         sourceHeight = options.exporting.sourceHeight ||
             options.chart.height ||
             (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
@@ -1214,7 +1182,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#getSVGForExport
      *
-     * @param {Highcharts.ExportingOptionsObject} options
+     * @param {Highcharts.ExportingOptions} options
      *
      * @param {Highcharts.Options} chartOptions
      *
@@ -1257,7 +1225,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#exportChart
      *
-     * @param {Highcharts.ExportingOptionsObject} exportingOptions
+     * @param {Highcharts.ExportingOptions} exportingOptions
      *        Exporting options in addition to those defined in
      *        [exporting](https://api.highcharts.com/highcharts/exporting).
      *
@@ -2003,6 +1971,18 @@ symbols.menu = function (x, y, width, height) {
         'L', x + width, y + height - 1.5
     ];
     return arr;
+};
+
+symbols.menuball = function (x, y, width, height) {
+    var path = [],
+        h = (height / 3) - 2;
+
+    path = path.concat(
+                this.circle(width - h, y, h, h),
+                this.circle(width - h, y + h + 4, h, h),
+                this.circle(width - h, y + 2 * (h + 4), h, h)
+            );
+    return path;
 };
 
 /**

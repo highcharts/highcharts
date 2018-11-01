@@ -1967,10 +1967,9 @@ H.defaultOptions = {
          */
 
         /**
-         * A [format string](https://www.highcharts.com/docs/chart-concepts/
-         * labels-and-string-formatting) for each legend label. Available
-         * variables relates to properties on the series, or the point in case
-         * of pies.
+         * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * for each legend label. Available variables relates to properties on
+         * the series, or the point in case of pies.
          *
          * @type      {string}
          * @default   {name}
@@ -2425,8 +2424,8 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/
-         * labels-and-string-formatting#html) to render the legend item texts.
+         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the legend item texts.
          *
          * Prior to 4.1.7, when using HTML, [legend.navigation](
          * #legend.navigation) was disabled.
@@ -2852,6 +2851,13 @@ H.defaultOptions = {
          * where the reference point is in the plot area. Add `chart.plotLeft`
          * and `chart.plotTop` to get the full coordinates.
          *
+         * Since v7, when [tooltip.split](#tooltip.split) option is enabled,
+         * positioner is called for each of the boxes separately, including
+         * xAxis header. xAxis header is not a point, instead `point` argument
+         * contains info:
+         * `{ plotX: Number, plotY: Number, isHeader: Boolean }`
+         *
+         *
          * The return should be an object containing x and y values, for example
          * `{ x: 100, y: 100 }`.
          *
@@ -2861,6 +2867,8 @@ H.defaultOptions = {
          *         A fixed tooltip position on top of the chart
          * @sample {highmaps} maps/tooltip/positioner/
          *         A fixed tooltip position
+         * @sample {highstock} stock/tooltip/split-positioner/
+         *         Split tooltip with fixed positions
          *
          * @type      {Function}
          * @since     2.2.4
@@ -2869,7 +2877,10 @@ H.defaultOptions = {
 
         /**
          * The name of a symbol to use for the border around the tooltip. Can
-         * be one of: `"callout"`, `"circle"` or `"square"`.
+         * be one of: `"callout"`, `"circle"` or `"square"`. When
+         * [tooltip.split](#tooltip.split) option is enabled, shape is applied
+         * to all boxes except header, which is controlled by
+         * [tooltip.headerShape](#tooltip.headerShape).
          *
          * Custom callbacks for symbol path generation can also be added to
          * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
@@ -2880,6 +2891,25 @@ H.defaultOptions = {
          * @since      4.0
          * @validvalue ["callout", "square"]
          * @apioption  tooltip.shape
+         */
+
+         /**
+         * The name of a symbol to use for the border around the tooltip
+         * header. Applies only when [tooltip.split](#tooltip.split) is
+         * enabled.
+         *
+         * Custom callbacks for symbol path generation can also be added to
+         * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
+         * [series.marker.symbol](plotOptions.line.marker.symbol).
+         *
+         * @see [tooltip.shape](#tooltip.shape)
+         * @type {String}
+         * @default callout
+         * @sample {highstock} stock/tooltip/split-positioner/
+         *         Different shapes for header and split boxes
+         * @validvalue ["callout", "square"]
+         * @since 7.0
+         * @apioption tooltip.headerShape
          */
 
         /**
@@ -3181,6 +3211,8 @@ H.defaultOptions = {
          * `tooltip.xDateFormat`. To access the original point use
          * `point.point`.
          *
+         * Set an empty string to avoid header on a shared or split tooltip.
+         *
          * @sample {highcharts} highcharts/tooltip/footerformat/
          *         An HTML table in the tooltip
          * @sample {highstock} highcharts/tooltip/footerformat/
@@ -3197,6 +3229,9 @@ H.defaultOptions = {
          * Furthermore, `point.y` can be extended by the `tooltip.valuePrefix`
          * and `tooltip.valueSuffix` variables. This can also be overridden for
          * each series, which makes it a good hook for displaying units.
+         *
+         * Set an empty string to leave out a series from a shared or split
+         * tooltip.
          *
          * In styled mode, the dot is colored by a class name rather
          * than the point color.
@@ -3315,7 +3350,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/credits/customized/
          *         Custom URL and text
          */
-        href: 'https://www.highcharts.com',
+        href: 'https://www.highcharts.com?credits',
 
         /**
          * Position configuration for the credits label.
