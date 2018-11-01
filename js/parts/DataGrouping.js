@@ -16,7 +16,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     defaultPlotOptions = H.defaultPlotOptions,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     format = H.format,
     isNumber = H.isNumber,
@@ -405,7 +404,7 @@ var seriesProto = Series.prototype,
         averages: function () { // #5479
             var ret = [];
 
-            each(arguments, function (arr) {
+            [].forEach.call(arguments, function (arr) {
                 ret.push(approximations.average(arr));
             });
 
@@ -500,7 +499,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
     // Calculate values array size from pointArrayMap length
     if (pointArrayMapLength) {
-        each(pointArrayMap, function () {
+        pointArrayMap.forEach(function () {
             values.push([]);
         });
     } else {
@@ -546,7 +545,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
                 // Make sure the raw data (x, y, open, high etc) is not copied
                 // over and overwriting approximated data.
-                each(extendedPointArrayMap, function (key) {
+                extendedPointArrayMap.forEach(function (key) {
                     delete series.dataGroupInfo.options[key];
                 });
             }
@@ -769,7 +768,7 @@ seriesProto.destroyGroupedData = function () {
     var groupedData = this.groupedData;
 
     // clear previous groups
-    each(groupedData || [], function (point, i) {
+    (groupedData || []).forEach(function (point, i) {
         if (point) {
             groupedData[i] = point.destroy ? point.destroy() : null;
         }
@@ -925,7 +924,7 @@ addEvent(Series, 'afterSetOptions', function (e) {
  * group pixel width (#2692).
  */
 addEvent(Axis, 'afterSetScale', function () {
-    each(this.series, function (series) {
+    this.series.forEach(function (series) {
         series.hasProcessed = false;
     });
 });
@@ -1019,7 +1018,7 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 
     // Axis not yet instanciated, alter series options
     } else {
-        each(this.chart.options.series, function (seriesOptions) {
+        this.chart.options.series.forEach(function (seriesOptions) {
             seriesOptions.dataGrouping = dataGrouping;
         }, false);
     }

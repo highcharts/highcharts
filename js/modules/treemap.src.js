@@ -14,14 +14,11 @@ import '../parts/Color.js';
 
 var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    map = H.map,
     merge = H.merge,
     extend = H.extend,
     noop = H.noop,
-    each = H.each,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
-    grep = H.grep,
     isArray = H.isArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
@@ -39,7 +36,6 @@ var seriesType = H.seriesType,
             func.call(context, val, key, list);
         });
     },
-    reduce = H.reduce,
     // @todo find correct name for this function.
     // @todo Similar to reduce, this function is likely redundant
     recursive = function (item, func, context) {
@@ -536,7 +532,7 @@ seriesType('treemap', 'scatter', {
     getListOfParents: function (data, existingIds) {
         var arr = isArray(data) ? data : [],
             ids = isArray(existingIds) ? existingIds : [],
-            listOfParents = reduce(arr, function (prev, curr, i) {
+            listOfParents = arr.reduce(function (prev, curr, i) {
                 var parent = pick(curr.parent, '');
                 if (prev[parent] === undefined) {
                     prev[parent] = [];
@@ -549,8 +545,8 @@ seriesType('treemap', 'scatter', {
 
         // If parent does not exist, hoist parent to root of tree.
         eachObject(listOfParents, function (children, parent, list) {
-            if ((parent !== '') && (H.inArray(parent, ids) === -1)) {
-                each(children, function (child) {
+            if ((parent !== '') && (ids.indexOf(parent) === -1)) {
+                children.forEach(function (child) {
                     list[''].push(child);
                 });
                 delete list[parent];
@@ -563,7 +559,7 @@ seriesType('treemap', 'scatter', {
     */
     getTree: function () {
         var series = this,
-            allIds = map(this.data, function (d) {
+            allIds = this.data.map(function (d) {
                 return d.id;
             }),
             parentList = series.getListOfParents(this.data, allIds);
@@ -596,7 +592,7 @@ seriesType('treemap', 'scatter', {
             child;
 
         // Actions
-        each((list[id] || []), function (i) {
+        ((list[id] || [])).forEach(function (i) {
             child = series.buildNode(
                 series.points[i].id,
                 i,
@@ -639,7 +635,7 @@ seriesType('treemap', 'scatter', {
             point = series.points[tree.i];
 
         // First give the children some values
-        each(tree.children, function (child) {
+        tree.children.forEach(function (child) {
             child = series.setTreeValues(child);
             children.push(child);
             if (!child.ignore) {
@@ -691,7 +687,7 @@ seriesType('treemap', 'scatter', {
             children;
 
         // Collect all children which should be included
-        children = grep(parent.children, function (n) {
+        children = parent.children.filter(function (n) {
             return !n.ignore;
         });
 
@@ -701,7 +697,7 @@ seriesType('treemap', 'scatter', {
                 1;
         }
         childrenValues = series[algorithm](area, children);
-        each(children, function (child, index) {
+        children.forEach(function (child, index) {
             var values = childrenValues[index];
             child.values = merge(values, {
                 val: child.childrenTotal,
@@ -721,7 +717,7 @@ seriesType('treemap', 'scatter', {
         var series = this,
             xAxis = series.xAxis,
             yAxis = series.yAxis;
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var node = point.node,
                 values = node.pointValues,
                 x1,
@@ -808,7 +804,7 @@ seriesType('treemap', 'scatter', {
             }
 
             // Do it all again with the children
-            each(node.children || [], function (child, i) {
+            (node.children || []).forEach(function (child, i) {
                 series.setColorRecursive(
                     child,
                     colorInfo.color,
@@ -891,7 +887,7 @@ seriesType('treemap', 'scatter', {
         } else {
             keep = group.elArr[group.elArr.length - 1];
         }
-        each(group.elArr, function (p) {
+        group.elArr.forEach(function (p) {
             if (last || (i < end)) {
                 if (group.direction === 0) {
                     pX = plot.x;
@@ -954,7 +950,7 @@ seriesType('treemap', 'scatter', {
                 plot
             );
         // Loop through and calculate all areas
-        each(children, function (child) {
+        children.forEach(function (child) {
             pTot = (parent.width * parent.height) * (child.val / parent.val);
             group.addElement(pTot);
             if (group.lP.nR > group.lP.lR) {
@@ -992,7 +988,7 @@ seriesType('treemap', 'scatter', {
             pY,
             pW,
             pH;
-        each(children, function (child) {
+        children.forEach(function (child) {
             pTot = (parent.width * parent.height) * (child.val / parent.val);
             pX = x;
             pY = y;
@@ -1080,7 +1076,7 @@ seriesType('treemap', 'scatter', {
             series.nodeMap[series.rootNode].children,
             function (children) {
                 var next = false;
-                each(children, function (child) {
+                children.forEach(function (child) {
                     child.visible = true;
                     if (child.children.length) {
                         next = (next || []).concat(child.children);
@@ -1131,12 +1127,12 @@ seriesType('treemap', 'scatter', {
     drawDataLabels: function () {
         var series = this,
             mapOptionsToLevel = series.mapOptionsToLevel,
-            points = grep(series.points, function (n) {
+            points = series.points.filter(function (n) {
                 return n.node.visible;
             }),
             options,
             level;
-        each(points, function (point) {
+        points.forEach(function (point) {
             level = mapOptionsToLevel[point.node.level];
             // Set options to new object to avoid problems with scope
             options = { style: {} };
@@ -1250,11 +1246,11 @@ seriesType('treemap', 'scatter', {
     */
     drawPoints: function () {
         var series = this,
-            points = grep(series.points, function (n) {
+            points = series.points.filter(function (n) {
                 return n.node.visible;
             });
 
-        each(points, function (point) {
+        points.forEach(function (point) {
             var groupKey = 'level-group-' + point.node.levelDynamic;
             if (!series[groupKey]) {
                 series[groupKey] = series.chart.renderer.g(groupKey)
@@ -1276,7 +1272,7 @@ seriesType('treemap', 'scatter', {
         // used in the style sheet will take precedence over the fill
         // attribute.
         if (this.colorAttribs) { // Heatmap is loaded
-            each(this.points, function (point) {
+            this.points.forEach(function (point) {
                 if (point.graphic) {
                     point.graphic.css(this.colorAttribs(point));
                 }
@@ -1287,7 +1283,7 @@ seriesType('treemap', 'scatter', {
         // If drillToNode is allowed, set a point cursor on clickables & add
         // drillId to point
         if (series.options.allowDrillToNode) {
-            each(points, function (point) {
+            points.forEach(function (point) {
                 if (point.graphic) {
                     point.drillId = series.options.interactByLeaf ?
                         series.drillToByLeaf(point) :
@@ -1448,8 +1444,7 @@ seriesType('treemap', 'scatter', {
         H.extend(this.xAxis.options, treeAxis);
     },
     utils: {
-        recursive: recursive,
-        reduce: reduce
+        recursive: recursive
     }
 
 // Point class

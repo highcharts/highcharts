@@ -9,7 +9,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var addEvent = H.addEvent,
-    each = H.each,
     objectEach = H.objectEach,
     pick = H.pick,
     filter = H.grep,
@@ -685,9 +684,22 @@ if (seriesTypes.gantt) {
 }
 
 // Don't support certain series types
-each(
-    ['gauge', 'pie', 'sunburst', 'wordcloud', 'sankey', 'histogram', 'pareto',
-        'vector', 'windbarb', 'treemap', 'bellcurve', 'sma', 'map', 'mapline'],
+[
+    'gauge',
+    'pie',
+    'sunburst',
+    'wordcloud',
+    'sankey',
+    'histogram',
+    'pareto',
+    'vector',
+    'windbarb',
+    'treemap',
+    'bellcurve',
+    'sma',
+    'map',
+    'mapline'
+].forEach(
     function (type) {
         if (seriesTypes[type]) {
             seriesTypes[type].prototype.dragDropProps = null;
@@ -1224,7 +1236,7 @@ function getPositionSnapshot(e, points, guideBox) {
     };
 
     // Loop over the points and add their props
-    each(points, function (point) {
+    points.forEach(function (point) {
         var pointProps = {};
         // Add all of the props defined in the series' dragDropProps to the
         // snapshot
@@ -1426,10 +1438,9 @@ function getNewPoints(dragDropData, newPos) {
     });
 
     // Go through the points to be updated and get new options for each of them
-    each(
-        resizeProp ? // If resizing, only update the point we are resizing
+    (resizeProp ? // If resizing).forEach(only update the point we are resizing
         [point] :
-        dragDropData.groupedPoints,
+        dragDropData.groupedPoints).forEach(
     function (p) {
         hashmap[p.id] = {
             point: p,
@@ -1734,7 +1745,7 @@ H.Series.prototype.getGuideBox = function (points) {
         changed;
 
     // Find bounding box of all points
-    each(points, function (point) {
+    points.forEach(function (point) {
         var bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
         if (bBox && (bBox.width || bBox.height || bBox.x || bBox.y)) {
             changed = true;

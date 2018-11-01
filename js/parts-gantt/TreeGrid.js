@@ -16,14 +16,11 @@ var argsToArray = function (args) {
         return Array.prototype.slice.call(args, 1);
     },
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
-    map = H.map,
     merge = H.merge,
-    inArray = H.inArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
@@ -33,29 +30,10 @@ var argsToArray = function (args) {
         return H.isObject(x, true);
     },
     isString = H.isString,
-    keys = H.keys,
     pick = H.pick,
-    reduce = H.reduce,
     wrap = H.wrap,
     GridAxis = H.Axis,
     GridAxisTick = H.Tick;
-
-/**
- * some - Equivalent of Array.prototype.some
- *
- * @param  {Array}    arr       Array to look for matching elements in.
- * @param  {function} condition The condition to check against.
- * @return {boolean}            Whether some elements pass the condition.
- */
-var some = function (arr, condition) {
-    var result = false;
-    each(arr, function (element, index, array) {
-        if (!result) {
-            result = condition(element, index, array);
-        }
-    });
-    return result;
-};
 
 var override = function (obj, methods) {
     var method,
@@ -79,7 +57,7 @@ var getCategoriesFromTree = function (tree) {
     if (tree.data) {
         categories.push(tree.data.name);
     }
-    each(tree.children, function (child) {
+    tree.children.forEach(function (child) {
         categories = categories.concat(getCategoriesFromTree(child));
     });
     return categories;
@@ -88,9 +66,9 @@ var getCategoriesFromTree = function (tree) {
 var mapTickPosToNode = function (node, categories) {
     var map = {},
         name = node.data && node.data.name,
-        pos = inArray(name, categories);
+        pos = categories.indexOf(name);
     map[pos] = node;
-    each(node.children, function (child) {
+    node.children.forEach(function (child) {
         extend(map, mapTickPosToNode(child, categories));
     });
     return map;
@@ -128,8 +106,7 @@ var getBreakFromNode = function (node, max) {
  * @returns {number[]} List of positions.
  */
 var getTickPositions = function (axis) {
-    return reduce(
-        keys(axis.mapOfPosToGridNode),
+    return Object.keys(axis.mapOfPosToGridNode).reduce(
         function (arr, key) {
             var pos = +key;
             if (
@@ -154,7 +131,7 @@ var getTickPositions = function (axis) {
 var isCollapsed = function (axis, node) {
     var breaks = (axis.options.breaks || []),
         obj = getBreakFromNode(node, axis.max);
-    return some(breaks, function (b) {
+    return breaks.some(function (b) {
         return b.from === obj.from && b.to === obj.to;
     });
 };
@@ -184,7 +161,7 @@ var expand = function (axis, node) {
     var breaks = (axis.options.breaks || []),
         obj = getBreakFromNode(node, axis.max);
     // Remove the break from the axis breaks array.
-    return reduce(breaks, function (arr, b) {
+    return breaks.reduce(function (arr, b) {
         if (b.to !== obj.to || b.from !== obj.from) {
             arr.push(b);
         }
@@ -309,7 +286,7 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
             var gridNode = mapOfPosToGridNode[node.pos],
                 height = 0,
                 descendants = 0;
-            each(gridNode.children, function (child) {
+            gridNode.children.forEach(function (child) {
                 descendants += child.descendants + 1;
                 height = Math.max(child.height + 1, height);
             });
@@ -395,7 +372,7 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
                 padding = 0.5,
                 pos = start + diff;
 
-            each(nodes, function (node) {
+            nodes.forEach(function (node) {
                 var data = node.data;
                 if (isObject(data)) {
                     // Update point
@@ -413,7 +390,7 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
             gridNode.collapseStart = end + padding;
 
 
-            each(gridNode.children, function (child) {
+            gridNode.children.forEach(function (child) {
                 setValues(child, end + 1, result);
                 end = child.collapseEnd - padding;
             });
@@ -534,8 +511,8 @@ override(GridAxis.prototype, {
                 // Update yData now that we have calculated the y values
                 // TODO: it would be better to be able to calculate y values
                 // before Series.setData
-                each(axis.series, function (series) {
-                    series.yData = map(series.options.data, function (data) {
+                axis.series.forEach(function (series) {
+                    series.yData = series.options.data.map(function (data) {
                         return data.y;
                     });
                 });
@@ -554,7 +531,7 @@ override(GridAxis.prototype, {
                 // its dependency on axis.max.
                 removeFoundExtremesEvent =
                     H.addEvent(axis, 'foundExtremes', function () {
-                        each(axis.collapsedNodes, function (node) {
+                        axis.collapsedNodes.forEach(function (node) {
                             var breaks = collapse(axis, node);
                             axis.setBreaks(breaks, false);
                         });
@@ -739,7 +716,7 @@ override(GridAxisTick.prototype, {
             level = node && node.depth,
             isTreeGrid = options.type === 'treegrid',
             hasLabel = !!(label && label.element),
-            shouldRender = inArray(pos, axis.tickPositions) > -1,
+            shouldRender = axis.tickPositions.indexOf(pos) > -1,
             prefixClassName = 'highcharts-treegrid-node-',
             collapsed,
             addClassName,
@@ -789,7 +766,7 @@ override(GridAxisTick.prototype, {
             /*= } =*/
 
             // Add events to both label text and icon
-            each([label, tick.labelIcon], function (object) {
+            [label, tick.labelIcon].forEach(function (object) {
                 if (!object.attachedTreeGridEvents) {
                     // On hover
                     H.addEvent(object.element, 'mouseover', function () {
@@ -875,10 +852,10 @@ GridAxis.prototype.updateYNames = function () {
 
     if (isTreeGrid && isYAxis) {
         // Concatenate data from all series assigned to this axis.
-        data = reduce(series, function (arr, s) {
+        data = series.reduce(function (arr, s) {
             if (s.visible) {
                 // Push all data to array
-                each(s.options.data, function (data) {
+                s.options.data.forEach(function (data) {
                     if (isObject(data)) {
                         // Set series index on data. Removed again after use.
                         data.seriesIndex = numberOfSeries;

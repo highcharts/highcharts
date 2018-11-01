@@ -3,21 +3,20 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var each = H.each,
-    merge = H.merge,
+var merge = H.merge,
     isArray = H.isArray,
     defined = H.defined,
     SMA = H.seriesTypes.sma;
 
 // Utils:
 function minInArray(arr, index) {
-    return H.reduce(arr, function (min, target) {
+    return arr.reduce(function (min, target) {
         return Math.min(min, target[index]);
     }, Infinity);
 }
 
 function maxInArray(arr, index) {
-    return H.reduce(arr, function (min, target) {
+    return arr.reduce(function (min, target) {
         return Math.max(min, target[index]);
     }, 0);
 }
@@ -118,7 +117,7 @@ H.seriesType('stochastic', 'sma',
 
             SMA.prototype.translate.apply(indicator);
 
-            each(indicator.points, function (point) {
+            indicator.points.forEach(function (point) {
                 if (point.smoothed !== null) {
                     point.plotSmoothed = indicator.yAxis.toPixels(
                         point.smoothed,

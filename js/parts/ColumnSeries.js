@@ -27,7 +27,6 @@ import './Options.js';
 
 var animObject = H.animObject,
     color = H.color,
-    each = H.each,
     extend = H.extend,
     defined = H.defined,
     isNumber = H.isNumber,
@@ -474,7 +473,7 @@ seriesType('column', 'line'
         // if the series is added dynamically, force redraw of other
         // series affected by a new column
         if (chart.hasRendered) {
-            each(chart.series, function (otherSeries) {
+            chart.series.forEach(function (otherSeries) {
                 if (otherSeries.type === series.type) {
                     otherSeries.isDirty = true;
                 }
@@ -511,7 +510,7 @@ seriesType('column', 'line'
         if (options.grouping === false) {
             columnCount = 1;
         } else {
-            each(series.chart.series, function (otherSeries) {
+            series.chart.series.forEach(function (otherSeries) {
                 var otherOptions = otherSeries.options,
                     otherYAxis = otherSeries.yAxis,
                     columnIndex;
@@ -678,7 +677,7 @@ seriesType('column', 'line'
         Series.prototype.translate.apply(series);
 
         // Record the new values
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var yBottom = pick(point.yBottom, translatedThreshold),
                 safeDistance = 999 + Math.abs(yBottom),
                 pointWidth = seriesPointWidth,
@@ -867,7 +866,7 @@ seriesType('column', 'line'
             shapeArgs;
 
         // draw the columns
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var plotY = point.plotY,
                 graphic = point.graphic,
                 verb = graphic && chart.pointCount < animationLimit ?
@@ -985,7 +984,7 @@ seriesType('column', 'line'
         // column and bar series affects other series of the same type
         // as they are either stacked or grouped
         if (chart.hasRendered) {
-            each(chart.series, function (otherSeries) {
+            chart.series.forEach(function (otherSeries) {
                 if (otherSeries.type === series.type) {
                     otherSeries.isDirty = true;
                 }

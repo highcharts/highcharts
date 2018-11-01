@@ -8,9 +8,7 @@
 import H from '../parts/Globals.js';
 import 'GanttSeries.js';
 
-var each = H.each,
-    map = H.map,
-    merge = H.merge,
+var merge = H.merge,
     splat = H.splat,
     Chart = H.Chart;
 
@@ -60,7 +58,7 @@ H.ganttChart = function (renderTo, options, callback) {
     }
 
     // apply X axis options to both single and multi x axes
-    options.xAxis = map(options.xAxis, function (xAxisOptions, i) {
+    options.xAxis = options.xAxis.map(function (xAxisOptions, i) {
         if (i === 1) { // Second xAxis
             defaultLinkedTo = 0;
         }
@@ -81,7 +79,7 @@ H.ganttChart = function (renderTo, options, callback) {
     });
 
     // apply Y axis options to both single and multi y axes
-    options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
+    options.yAxis = (splat(options.yAxis || {})).map(function (yAxisOptions) {
         return merge(
             defaultOptions.yAxis, // #3802
             { // defaults
@@ -127,8 +125,8 @@ H.ganttChart = function (renderTo, options, callback) {
 
     options.series = userOptions.series = seriesOptions;
 
-    each(options.series, function (series) {
-        each(series.data, function (point) {
+    options.series.forEach(function (series) {
+        series.data.forEach(function (point) {
             H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
         });
     });

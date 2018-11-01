@@ -14,7 +14,6 @@ var addEvent = H.addEvent,
     defined = H.defined,
     color = H.Color,
     columnType = H.seriesTypes.column,
-    each = H.each,
     isNumber = H.isNumber,
     isObject = H.isObject,
     merge = H.merge,
@@ -188,7 +187,7 @@ seriesType('xrange', 'column'
             chart = this.chart;
 
         function swapAxes() {
-            each(chart.series, function (s) {
+            chart.series.forEach(function (s) {
                 var xAxis = s.xAxis;
                 s.xAxis = s.yAxis;
                 s.yAxis = xAxis;
@@ -366,7 +365,7 @@ seriesType('xrange', 'column'
      */
     translate: function () {
         columnType.prototype.translate.apply(this, arguments);
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             this.translatePoint(point);
         }, this);
     },
@@ -488,7 +487,7 @@ seriesType('xrange', 'column'
             verb = series.getAnimationVerb();
 
         // Draw the columns
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             series.drawPoint(point, verb);
         });
     },
@@ -621,9 +620,9 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
 
     if (axis.isXAxis) {
         dataMax = pick(axis.dataMax, -Number.MAX_VALUE);
-        each(axisSeries, function (series) {
+        axisSeries.forEach(function (series) {
             if (series.x2Data) {
-                each(series.x2Data, function (val) {
+                series.x2Data.forEach(function (val) {
                     if (val > dataMax) {
                         dataMax = val;
                         modMax = true;

@@ -64,7 +64,6 @@ var defaultOptions = H.defaultOptions,
     css = H.css,
     merge = H.merge,
     pick = H.pick,
-    each = H.each,
     objectEach = H.objectEach,
     extend = H.extend,
     isTouchDevice = H.isTouchDevice,
@@ -1109,7 +1108,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // prepare for replicating the chart
         options.series = [];
-        each(chart.series, function (serie) {
+        chart.series.forEach(function (serie) {
             seriesOptions = merge(serie.userOptions, { // #4912
                 animation: false, // turn off animation
                 enableMouseTracking: false,
@@ -1124,7 +1123,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         // Assign an internal key to ensure a one-to-one mapping (#5924)
-        each(chart.axes, function (axis) {
+        chart.axes.forEach(function (axis) {
             if (!axis.userOptions.internalKey) { // #6444
                 axis.userOptions.internalKey = H.uniqueKey();
             }
@@ -1135,7 +1134,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
-            each(['xAxis', 'yAxis', 'series'], function (coll) {
+            ['xAxis', 'yAxis', 'series'].forEach(function (coll) {
                 var collOptions = {};
                 if (chartOptions[coll]) {
                     collOptions[coll] = chartOptions[coll];
@@ -1145,7 +1144,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // Reflect axis extremes in the export (#5924)
-        each(chart.axes, function (axis) {
+        chart.axes.forEach(function (axis) {
             var axisCopy = H.find(chartCopy.axes, function (copy) {
                     return copy.options.internalKey ===
                         axis.userOptions.internalKey;
@@ -1297,7 +1296,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // hide all body content
-        each(childNodes, function (node, i) {
+        childNodes.forEach(function (node, i) {
             if (node.nodeType === 1) {
                 origDisplay[i] = node.style.display;
                 node.style.display = 'none';
@@ -1321,7 +1320,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 origParent.appendChild(container);
 
                 // restore all body content
-                each(childNodes, function (node, i) {
+                childNodes.forEach(function (node, i) {
                     if (node.nodeType === 1) {
                         node.style.display = origDisplay[i];
                     }
@@ -1443,7 +1442,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             );
 
             // create the items
-            each(items, function (item) {
+            items.forEach(function (item) {
 
                 if (typeof item === 'string') {
                     item = chart.options.exporting.menuItemDefinitions[item];
@@ -1683,7 +1682,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Destroy the extra buttons added
         if (exportSVGElements) {
-            each(exportSVGElements, function (elem, i) {
+            exportSVGElements.forEach(function (elem, i) {
 
                 // Destroy and null the svg elements
                 if (elem) { // #1822
@@ -1708,7 +1707,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Destroy the divs for the menu
         if (exportDivElements) {
-            each(exportDivElements, function (elem, i) {
+            exportDivElements.forEach(function (elem, i) {
 
                 // Remove the event handler
                 H.clearTimeout(elem.hideTimer); // #5427
@@ -1728,7 +1727,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         if (exportEvents) {
-            each(exportEvents, function (unbind) {
+            exportEvents.forEach(function (unbind) {
                 unbind();
             });
             exportEvents.length = 0;
@@ -1943,7 +1942,7 @@ Chart.prototype.inlineStyles = function () {
             }
 
             // Recurse
-            each(node.children || node.childNodes, recurse);
+            (node.children || node.childNodes).forEach(recurse);
         }
     }
 
@@ -2035,7 +2034,7 @@ addEvent(Chart, 'init', function () {
             chart.redraw();
         }
     }
-    each(['exporting', 'navigation'], function (prop) {
+    ['exporting', 'navigation'].forEach(function (prop) {
         chart[prop] = {
             update: function (options, redraw) {
                 update(prop, options, redraw);

@@ -13,8 +13,6 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 
 var pick = H.pick,
-    each = H.each,
-    grep = H.grep,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax,
     seriesType = H.seriesType,
@@ -162,7 +160,7 @@ seriesType('variablepie', 'pie',
                 // dataLabels, then series.center is changing.
                 positions = series.center || series.getCenter();
 
-            each(['minPointSize', 'maxPointSize'], function (prop) {
+            ['minPointSize', 'maxPointSize'].forEach(function (prop) {
                 var length = seriesOptions[prop],
                     isPercent = /%$/.test(length);
                 length = parseInt(length, 10);
@@ -180,11 +178,11 @@ seriesType('variablepie', 'pie',
             if (zData.length) {
                 zMin = pick(
                     seriesOptions.zMin,
-                    arrayMin(grep(zData, series.zValEval))
+                    arrayMin(zData.filter(series.zValEval))
                 );
                 zMax = pick(
                     seriesOptions.zMax,
-                    arrayMax(grep(zData, series.zValEval))
+                    arrayMax(zData.filter(series.zValEval))
                 );
                 this.getRadii(zMin, zMax, series.minPxSize, series.maxPxSize);
             }

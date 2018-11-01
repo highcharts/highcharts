@@ -86,11 +86,9 @@ var addEvent = H.addEvent,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     defined = H.defined,
-    each = H.each,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    grep = H.grep,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isString = H.isString,
@@ -2543,7 +2541,7 @@ null
         series.getSymbol();
 
         // Set the data
-        each(series.parallelArrays, function (key) {
+        series.parallelArrays.forEach(function (key) {
             series[key + 'Data'] = [];
         });
         series.setData(options.data, false);
@@ -2623,10 +2621,10 @@ null
             axisOptions;
 
         // repeat for xAxis and yAxis
-        each(series.axisTypes || [], function (AXIS) {
+        (series.axisTypes || []).forEach(function (AXIS) {
 
             // loop through the chart's axis objects
-            each(chart[AXIS], function (axis) {
+            chart[AXIS].forEach(function (axis) {
                 axisOptions = axis.options;
 
                 // apply if the series xAxis or yAxis option mathches the number
@@ -2710,7 +2708,7 @@ null
                     );
                 };
 
-        each(series.parallelArrays, fn);
+        series.parallelArrays.forEach(fn);
     },
 
     /**
@@ -3013,7 +3011,7 @@ null
             requireSorting = this.requireSorting;
 
         // Iterate the new data
-        each(data, function (pointOptions) {
+        data.forEach(function (pointOptions) {
             var x,
                 pointIndex;
 
@@ -3028,7 +3026,7 @@ null
 
             if (isNumber(x)) {
                 // Search for the same X in the existing data set
-                pointIndex = H.inArray(x, this.xData, lastIndex);
+                pointIndex = this.xData.indexOf(x, lastIndex);
 
                 // Matching X not found
                 // or used already due to ununique x values (#8995),
@@ -3076,7 +3074,7 @@ null
         // If we did not find keys (x-values), and the length is the same,
         // update one-to-one
         } else if (data.length === oldData.length) {
-            each(data, function (point, i) {
+            data.forEach(function (point, i) {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 if (oldData[i].update && point !== options.data[i]) {
                     oldData[i].update(point, false, null, false);
@@ -3089,7 +3087,7 @@ null
         }
 
         // Add new points
-        each(pointsToAdd, function (point) {
+        pointsToAdd.forEach(function (point) {
             this.addPoint(point, false);
         }, this);
 
@@ -3186,7 +3184,7 @@ null
             series.colorCounter = 0; // for series with colorByPoint (#1547)
 
             // Update parallel arrays
-            each(this.parallelArrays, function (key) {
+            this.parallelArrays.forEach(function (key) {
                 series[key + 'Data'].length = 0;
             });
 
@@ -3881,16 +3879,18 @@ null
     getValidPoints: function (points, insideOnly) {
         var chart = this.chart;
         // #3916, #5029, #5085
-        return grep(points || this.points || [], function isValidPoint(point) {
-            if (insideOnly && !chart.isInsidePlot(
-                point.plotX,
-                point.plotY,
-                chart.inverted
-            )) {
-                return false;
+        return (points || this.points || []).filter(
+            function isValidPoint(point) {
+                if (insideOnly && !chart.isInsidePlot(
+                    point.plotX,
+                    point.plotY,
+                    chart.inverted
+                )) {
+                    return false;
+                }
+                return !point.isNull;
             }
-            return !point.isNull;
-        });
+        );
     },
 
     /**
@@ -4345,7 +4345,7 @@ null
         removeEvent(series);
 
         // erase from axes
-        each(series.axisTypes || [], function (AXIS) {
+        (series.axisTypes || []).forEach(function (AXIS) {
             axis = series[AXIS];
             if (axis && axis.series) {
                 erase(axis.series, series);
@@ -4441,7 +4441,7 @@ null
         }
 
         // Build the line
-        each(points, function (point, i) {
+        points.forEach(function (point, i) {
 
             var plotX = point.plotX,
                 plotY = point.plotY,
@@ -4556,7 +4556,7 @@ null
         props = series.getZonesGraphs(props);
 
         // Draw the graph
-        each(props, function (prop, i) {
+        props.forEach(function (prop, i) {
             var graphKey = prop[0],
                 graph = series[graphKey],
                 attribs;
@@ -4618,7 +4618,7 @@ null
      */
     getZonesGraphs: function (props) {
         // Add the zone properties if any
-        each(this.zones, function (zone, i) {
+        this.zones.forEach(function (zone, i) {
             props.push([
                 'zone-graph-' + i,
                 'highcharts-graph highcharts-zone-graph-' + i + ' ' +
@@ -4677,7 +4677,7 @@ null
 
             // Create the clips
             extremes = axis.getExtremes();
-            each(zones, function (threshold, i) {
+            zones.forEach(function (threshold, i) {
 
                 translatedFrom = reversed ?
                     (horiz ? chart.plotWidth : 0) :
@@ -4793,7 +4793,7 @@ null
             remover;
 
         function setInvert() {
-            each(['group', 'markerGroup'], function (groupName) {
+            ['group', 'markerGroup'].forEach(function (groupName) {
                 if (series[groupName]) {
 
                     // VML/HTML needs explicit attributes for flipping
@@ -4975,7 +4975,7 @@ null
             series.applyZones();
         }
 
-/*        each(series.points, function (point) {
+/*        series.points.forEach(function (point) {
             if (point.redraw) {
                 point.redraw();
             }

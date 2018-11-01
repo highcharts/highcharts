@@ -16,7 +16,6 @@ var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     Axis = H.Axis,
     color = H.color,
-    each = H.each,
     isNumber = H.isNumber,
     noop = H.noop,
     pick = H.pick,
@@ -362,7 +361,7 @@ seriesType('bubble', 'scatter', {
             !init &&
             this.points.length < this.options.animationLimit // #8099
         ) {
-            each(this.points, function (point) {
+            this.points.forEach(function (point) {
                 var graphic = point.graphic,
                     animationTarget;
 
@@ -473,7 +472,7 @@ Axis.prototype.beforePadding = function () {
         activeSeries = [];
 
     // Handle padding on the second pass, or on redraw
-    each(this.series, function (series) {
+    this.series.forEach(function (series) {
 
         var seriesOptions = series.options,
             zData;
@@ -492,7 +491,7 @@ Axis.prototype.beforePadding = function () {
             if (isXAxis) { // because X axis is evaluated first
 
                 // For each series, translate the size extremes to pixel values
-                each(['minSize', 'maxSize'], function (prop) {
+                ['minSize', 'maxSize'].forEach(function (prop) {
                     var length = seriesOptions[prop],
                         isPercent = /%$/.test(length);
 
@@ -508,7 +507,7 @@ Axis.prototype.beforePadding = function () {
                 series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
 
                 // Find the min and max Z
-                zData = H.grep(series.zData, H.isNumber);
+                zData = series.zData.filter(H.isNumber);
                 if (zData.length) { // #1735
                     zMin = pick(seriesOptions.zMin, Math.min(
                         zMin,
@@ -528,7 +527,7 @@ Axis.prototype.beforePadding = function () {
         }
     });
 
-    each(activeSeries, function (series) {
+    activeSeries.forEach(function (series) {
 
         var data = series[dataKey],
             i = data.length,
@@ -567,8 +566,7 @@ Axis.prototype.beforePadding = function () {
             Math.max(0, pxMin) - // #8901
             Math.min(pxMax, axisLength)
         ) / axisLength;
-        each(
-            [['min', 'userMin', pxMin], ['max', 'userMax', pxMax]],
+        [['min', 'userMin', pxMin], ['max', 'userMax', pxMax]].forEach(
             function (keys) {
                 if (pick(axis.options[keys[0]], axis[keys[1]]) === undefined) {
                     axis[keys[0]] += keys[2] / transA;

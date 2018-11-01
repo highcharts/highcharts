@@ -13,7 +13,6 @@ import '../parts-more/GaugeSeries.js';
 
 var pInt = H.pInt,
     pick = H.pick,
-    each = H.each,
     isNumber = H.isNumber,
     wrap = H.wrap,
     Renderer = H.Renderer,
@@ -68,7 +67,7 @@ colorAxisMethods = {
             options = this.options;
         this.dataClasses = dataClasses = [];
 
-        each(userOptions.dataClasses, function (dataClass, i) {
+        userOptions.dataClasses.forEach(function (dataClass, i) {
             var colors;
 
             dataClass = H.merge(dataClass);
@@ -96,7 +95,7 @@ colorAxisMethods = {
             [0, this.options.minColor],
             [1, this.options.maxColor]
         ];
-        each(this.stops, function (stop) {
+        this.stops.forEach(function (stop) {
             stop.color = H.color(stop[1]);
         });
     },
@@ -271,7 +270,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
         this.thresholdAngleRad = pick(thresholdAngleRad, yAxis.startAngleRad);
 
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var graphic = point.graphic,
                 rotation = yAxis.startAngleRad +
                     yAxis.translate(point.y, null, null, null, true),

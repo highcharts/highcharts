@@ -8,13 +8,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-var each = H.each,
-    extend = H.extend,
+var extend = H.extend,
     isNumber = H.isNumber,
-    keys = H.keys,
-    map = H.map,
     pick = H.pick,
-    reduce = H.reduce,
     isFunction = function (x) {
         return typeof x === 'function';
     };
@@ -27,7 +23,7 @@ var each = H.each,
  * @returns {Object}               Map from parent id to children index in data
  */
 var getListOfParents = function (data, ids) {
-    var listOfParents = reduce(data, function (prev, curr) {
+    var listOfParents = data.reduce(function (prev, curr) {
             var parent = pick(curr.parent, '');
             if (prev[parent] === undefined) {
                 prev[parent] = [];
@@ -35,13 +31,13 @@ var getListOfParents = function (data, ids) {
             prev[parent].push(curr);
             return prev;
         }, {}),
-        parents = keys(listOfParents);
+        parents = Object.keys(listOfParents);
 
     // If parent does not exist, hoist parent to root of tree.
-    each(parents, function (parent, list) {
+    parents.forEach(function (parent, list) {
         var children = listOfParents[parent];
-        if ((parent !== '') && (H.inArray(parent, ids) === -1)) {
-            each(children, function (child) {
+        if ((parent !== '') && (ids.indexOf(parent) === -1)) {
+            children.forEach(function (child) {
                 list[''].push(child);
             });
             delete list[parent];
@@ -74,7 +70,7 @@ var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
      * Call getNode recursively on the children. Calulate the height of the
      * node, and the number of descendants.
      */
-    children = map((mapOfIdToChildren[id] || []), function (child) {
+    children = ((mapOfIdToChildren[id] || [])).map(function (child) {
         var node = getNode(
                 child.id,
                 id,
@@ -130,7 +126,7 @@ var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
     return node;
 };
 var getTree = function (data, options) {
-    var ids = map(data, function (d) {
+    var ids = data.map(function (d) {
             return d.id;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);

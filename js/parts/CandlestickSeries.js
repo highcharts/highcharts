@@ -7,7 +7,6 @@
 import H from './Globals.js';
 import './Utilities.js';
 var defaultPlotOptions = H.defaultPlotOptions,
-    each = H.each,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
@@ -172,7 +171,7 @@ seriesType('candlestick', 'ohlc', merge(
             reversedYAxis = series.yAxis.reversed;
 
 
-        each(points, function (point) {
+        points.forEach(function (point) {
 
             var graphic = point.graphic,
                 plotOpen,

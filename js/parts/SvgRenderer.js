@@ -359,12 +359,9 @@ var SVGElement,
     deg2rad = H.deg2rad,
     destroyObjectProperties = H.destroyObjectProperties,
     doc = H.doc,
-    each = H.each,
     extend = H.extend,
     erase = H.erase,
-    grep = H.grep,
     hasTouch = H.hasTouch,
-    inArray = H.inArray,
     isArray = H.isArray,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
@@ -601,7 +598,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     // The gradient needs to keep a list of stops to be able to
                     // destroy them
                     gradientObject.stops = [];
-                    each(stops, function (stop) {
+                    stops.forEach(function (stop) {
                         var stopObject;
                         if (stop[1].indexOf('rgba') === 0) {
                             colorObject = H.color(stop[1]);
@@ -716,7 +713,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
             // For each of the tspans, create a stroked copy behind it.
             firstRealChild = elem.firstChild;
-            each(tspans, function (tspan, y) {
+            tspans.forEach(function (tspan, y) {
                 var clone;
 
                 // Let the first line start at the correct X position
@@ -970,10 +967,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         Whether the class name is found.
      */
     hasClass: function (className) {
-        return inArray(
-            className,
-            (this.attr('class') || '').split(' ')
-        ) !== -1;
+        return (this.attr('class') || '').split(' ').indexOf(className) !== -1;
     },
 
     /**
@@ -1007,7 +1001,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     symbolAttr: function (hash) {
         var wrapper = this;
 
-        each([
+        [
             'x',
             'y',
             'r',
@@ -1018,7 +1012,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             'innerR',
             'anchorX',
             'anchorY'
-        ], function (key) {
+        ].forEach(function (key) {
             wrapper[key] = pick(hash[key], wrapper[key]);
         });
 
@@ -1176,7 +1170,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     return '-' + b.toLowerCase();
                 };
                 objectEach(styles, function (style, n) {
-                    if (inArray(n, svgPseudoProps) === -1) {
+                    if (svgPseudoProps.indexOf(n) === -1) {
                         serializedCss +=
                         n.replace(/([A-Z])/g, hyphenate) + ':' +
                         style + ';';
@@ -1668,10 +1662,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     // When the text shadow shim is used, we need to hide the
                     // fake shadows to get the correct bounding box (#3872)
                     toggleTextShadowShim = this.fakeTS && function (display) {
-                        each(
-                            element.querySelectorAll(
+                        element.querySelectorAll(
                                 '.highcharts-text-outline'
-                            ),
+                            ).forEach(
                             function (tspan) {
                                 tspan.style.display = display;
                             }
@@ -1917,9 +1910,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         if (clipPath && ownerSVGElement) {
             // Look for existing references to this clipPath and remove them
             // before destroying the element (#6196).
-            each(
-                // The upper case version is for Edge
-                ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
+            // The upper case version is for Edge
+            ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]').forEach(
                 function (el) {
                     var clipPathAttr = el.getAttribute('clip-path'),
                         clipPathId = clipPath.element.id;
@@ -2076,7 +2068,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @function Highcharts.SVGElement#destroyShadows
      */
     destroyShadows: function () {
-        each(this.shadows || [], function (shadow) {
+        (this.shadows || []).forEach(function (shadow) {
             this.safeRemoveChild(shadow);
         }, this);
         this.shadows = undefined;
@@ -2683,7 +2675,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         function recurse(config, parent) {
             var ret;
-            each(splat(config), function (item) {
+            splat(config).forEach(function (item) {
                 var node = ren.createElement(item.tagName),
                     attr = {};
 
@@ -3071,7 +3063,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             },
             unescapeEntities = function (inputStr, except) {
                 objectEach(renderer.escapes, function (value, key) {
-                    if (!except || inArray(value, except) === -1) {
+                    if (!except || except.indexOf(value) === -1) {
                         inputStr = inputStr.toString().replace(
                             new RegExp(value, 'g'), // eslint-disable-line security/detect-non-literal-regexp
                             key
@@ -3163,13 +3155,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 
             // Trim empty lines (#5261)
-            lines = grep(lines, function (line) {
+            lines = lines.filter(function (line) {
                 return line !== '';
             });
 
 
             // build the lines
-            each(lines, function buildTextLines(line, lineNo) {
+            lines.forEach(function buildTextLines(line, lineNo) {
                 var spans,
                     spanNo = 0,
                     lineLength = 0;
@@ -3181,7 +3173,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     .replace(/<\/span>/g, '</span>|||');
                 spans = line.split('|||');
 
-                each(spans, function buildTextSpans(span) {
+                spans.forEach(function buildTextSpans(span) {
                     if (span !== '' || spans.length === 1) {
                         var attributes = {},
                             tspan = doc.createElementNS(
@@ -4112,7 +4104,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
              * and the label size into consideration, and translates the image
              * to center within the label.
              */
-            each(['width', 'height'], function (key) {
+            ['width', 'height'].forEach(function (key) {
                 obj[key + 'Setter'] = function (value, key) {
                     var attribs = {},
                         imgSize = this['img' + key],
@@ -4967,7 +4959,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     // Create a copy to avoid altering the original object
                     // (#537)
                     styles = merge(styles);
-                    each(wrapper.textProps, function (prop) {
+                    wrapper.textProps.forEach(function (prop) {
                         if (styles[prop] !== undefined) {
                             textStyles[prop] = styles[prop];
                             delete styles[prop];

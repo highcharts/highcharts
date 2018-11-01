@@ -65,11 +65,9 @@ var addEvent = H.addEvent,
     charts = H.charts,
     css = H.css,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
-    grep = H.grep,
     isNumber = H.isNumber,
     isObject = H.isObject,
     isString = H.isString,
@@ -290,7 +288,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @type {Highcharts.Time}
              */
             this.time =
-                userOptions.time && H.keys(userOptions.time).length ?
+                userOptions.time && Object.keys(userOptions.time).length ?
                     new H.Time(userOptions.time) :
                     H.time;
 
@@ -502,7 +500,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // Handle updated data in the series
-        each(series, function (serie) {
+        series.forEach(function (serie) {
             if (serie.isDirty) {
                 if (serie.options.legendType === 'point') {
                     if (serie.updateTotals) {
@@ -540,7 +538,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (hasCartesianSeries) {
             // set axes scales
-            each(axes, function (axis) {
+            axes.forEach(function (axis) {
                 axis.updateNames();
                 // Update categories in a Gantt chart
                 if (axis.updateYNames) {
@@ -554,14 +552,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (hasCartesianSeries) {
             // If one axis is dirty, all axes must be redrawn (#792, #2169)
-            each(axes, function (axis) {
+            axes.forEach(function (axis) {
                 if (axis.isDirty) {
                     isDirtyBox = true;
                 }
             });
 
             // redraw axes
-            each(axes, function (axis) {
+            axes.forEach(function (axis) {
 
                 // Fire 'afterSetExtremes' only if extremes are set
                 var key = axis.min + ',' + axis.max;
@@ -594,7 +592,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         fireEvent(chart, 'predraw');
 
         // redraw affected series
-        each(series, function (serie) {
+        series.forEach(function (serie) {
             if ((isDirtyBox || serie.isDirty) && serie.visible) {
                 serie.redraw();
             }
@@ -620,7 +618,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // Fire callbacks that are put on hold until after the redraw
-        each(afterRedraw, function (callback) {
+        afterRedraw.forEach(function (callback) {
             callback.call();
         });
     },
@@ -684,19 +682,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         fireEvent(this, 'getAxes');
 
         // make sure the options are arrays and add some members
-        each(xAxisOptions, function (axis, i) {
+        xAxisOptions.forEach(function (axis, i) {
             axis.index = i;
             axis.isX = true;
         });
 
-        each(yAxisOptions, function (axis, i) {
+        yAxisOptions.forEach(function (axis, i) {
             axis.index = i;
         });
 
         // concatenate all axis options into one array
         optionsArray = xAxisOptions.concat(yAxisOptions);
 
-        each(optionsArray, function (axisOptions) {
+        optionsArray.forEach(function (axisOptions) {
             new Axis(chart, axisOptions); // eslint-disable-line no-new
         });
 
@@ -720,9 +718,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     getSelectedPoints: function () {
         var points = [];
-        each(this.series, function (serie) {
+        this.series.forEach(function (serie) {
             // series.data - for points outside of viewed range (#6445)
-            points = points.concat(grep(serie.data || [], function (point) {
+            points = points.concat((serie.data || []).filter(function (point) {
                 return point.selected;
             }));
         });
@@ -746,7 +744,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         The currently selected series.
      */
     getSelectedSeries: function () {
-        return grep(this.series, function (serie) {
+        return this.series.filter(function (serie) {
             return serie.selected;
         });
     },
@@ -827,10 +825,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @type {Highcharts.SubtitleObject}
          */
 
-        each([
+        [
             ['title', titleOptions, chartTitleOptions],
             ['subtitle', subtitleOptions, chartSubtitleOptions]
-        ], function (arr, i) {
+        ].forEach(function (arr, i) {
             var name = arr[0],
                 title = chart[name],
                 titleOptions = arr[1],
@@ -886,7 +884,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             spacingBox = this.spacingBox;
 
         // Lay out the title and the subtitle respectively
-        each(['title', 'subtitle'], function (key) {
+        ['title', 'subtitle'].forEach(function (key) {
             var title = this[key],
                 titleOptions = this.options[key],
                 offset = key === 'title' ? -3 :
@@ -1259,7 +1257,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // pre-render axes to get labels offset width
         if (chart.hasCartesianSeries) {
-            each(chart.axes, function (axis) {
+            chart.axes.forEach(function (axis) {
                 if (axis.visible) {
                     axis.getOffset();
                 }
@@ -1267,7 +1265,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // Add the axis offsets
-        each(marginNames, function (m, side) {
+        marginNames.forEach(function (m, side) {
             if (!defined(margin[side])) {
                 chart[m] += axisOffset[side];
             }
@@ -1440,7 +1438,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         renderer.setSize(chart.chartWidth, chart.chartHeight, animation);
 
         // handle axes
-        each(chart.axes, function (axis) {
+        chart.axes.forEach(function (axis) {
             axis.isDirty = true;
             axis.setScale();
         });
@@ -1575,7 +1573,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         };
 
         if (!skipAxes) {
-            each(chart.axes, function (axis) {
+            chart.axes.forEach(function (axis) {
                 axis.setAxisSize();
                 axis.setAxisTranslation();
             });
@@ -1598,11 +1596,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chartOptions = chart.options.chart;
 
         // Create margin and spacing array
-        each(['margin', 'spacing'], function splashArrays(target) {
+        ['margin', 'spacing'].forEach(function splashArrays(target) {
             var value = chartOptions[target],
                 values = isObject(value) ? value : [value, value, value, value];
 
-            each(['Top', 'Right', 'Bottom', 'Left'], function (sideName, side) {
+            [
+                'Top',
+                'Right',
+                'Bottom',
+                'Left'
+            ].forEach(function (sideName, side) {
                 chart[target][side] = pick(
                     chartOptions[target + sideName],
                     values[side]
@@ -1612,7 +1615,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Set margin names like chart.plotTop, chart.plotLeft,
         // chart.marginRight, chart.marginBottom.
-        each(marginNames, function (m, side) {
+        marginNames.forEach(function (m, side) {
             chart[m] = pick(chart.margin[side], chart.spacing[side]);
         });
         chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
@@ -1785,7 +1788,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             value;
 
 
-        each(['inverted', 'angular', 'polar'], function (key) {
+        ['inverted', 'angular', 'polar'].forEach(function (key) {
 
             // The default series type's class
             klass = seriesTypes[optionsChart.type ||
@@ -1827,12 +1830,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chartSeries = chart.series;
 
         // Reset links
-        each(chartSeries, function (series) {
+        chartSeries.forEach(function (series) {
             series.linkedSeries.length = 0;
         });
 
         // Apply new links
-        each(chartSeries, function (series) {
+        chartSeries.forEach(function (series) {
             var linkedTo = series.options.linkedTo;
             if (isString(linkedTo)) {
                 if (linkedTo === ':previous') {
@@ -1863,7 +1866,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#renderSeries
      */
     renderSeries: function () {
-        each(this.series, function (serie) {
+        this.series.forEach(function (serie) {
             serie.translate();
             serie.render();
         });
@@ -1879,7 +1882,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var chart = this,
             labels = chart.options.labels;
         if (labels.items) {
-            each(labels.items, function (label) {
+            labels.items.forEach(function (label) {
                 var style = extend(labels.style, label.style),
                     x = pInt(style.left) + chart.plotLeft,
                     y = pInt(style.top) + chart.plotTop + 12;
@@ -1944,7 +1947,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         tempHeight = chart.plotHeight = Math.max(chart.plotHeight - 21, 0);
 
         // Get margins by pre-rendering axes
-        each(axes, function (axis) {
+        axes.forEach(function (axis) {
             axis.setScale();
         });
         chart.getAxisMargins();
@@ -1957,7 +1960,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (redoHorizontal || redoVertical) {
 
-            each(axes, function (axis) {
+            axes.forEach(function (axis) {
                 if (
                     (axis.horiz && redoHorizontal) ||
                     (!axis.horiz && redoVertical)
@@ -1975,7 +1978,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Axes
         if (chart.hasCartesianSeries) {
-            each(axes, function (axis) {
+            axes.forEach(function (axis) {
                 if (axis.visible) {
                     axis.render();
                 }
@@ -2116,12 +2119,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // ==== Destroy chart properties:
-        each([
+        [
             'title', 'subtitle', 'chartBackground', 'plotBackground',
             'plotBGImage', 'plotBorder', 'seriesGroup', 'clipRect', 'credits',
             'pointer', 'rangeSelector', 'legend', 'resetZoomButton', 'tooltip',
             'renderer'
-        ], function (name) {
+        ].forEach(function (name) {
             var prop = chart[name];
 
             if (prop && prop.destroy) {
@@ -2177,7 +2180,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.getAxes();
 
         // Initialize the series
-        each(options.series || [], function (serieOptions) {
+        (options.series || []).forEach(function (serieOptions) {
             chart.initSeries(serieOptions);
         });
 
@@ -2230,7 +2233,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     onload: function () {
 
         // Run callbacks
-        each([this.callback].concat(this.callbacks), function (fn) {
+        [this.callback].concat(this.callbacks).forEach(function (fn) {
             // Chart destroyed in its own callback (#3600)
             if (fn && this.index !== undefined) {
                 fn.apply(this, [this]);

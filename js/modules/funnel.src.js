@@ -16,8 +16,7 @@ import '../parts/Series.js';
 var seriesType = Highcharts.seriesType,
     seriesTypes = Highcharts.seriesTypes,
     noop = Highcharts.noop,
-    pick = Highcharts.pick,
-    each = Highcharts.each;
+    pick = Highcharts.pick;
 
 
 seriesType('funnel', 'pie',
@@ -247,13 +246,13 @@ seriesType('funnel', 'pie',
 
 
         // get the total sum
-        each(data, function (point) {
+        data.forEach(function (point) {
             if (!ignoreHiddenPoint || point.visible !== false) {
                 sum += point.y;
             }
         });
 
-        each(data, function (point) {
+        data.forEach(function (point) {
             // set start and end positions
             y5 = null;
             fraction = sum ? point.y / sum : 0;

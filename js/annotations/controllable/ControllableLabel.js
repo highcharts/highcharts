@@ -207,9 +207,8 @@ H.merge(
 
             if (style.color === 'contrast') {
                 style.color = this.annotation.chart.renderer.getContrast(
-                    H.inArray(
-                        options.shape,
-                        ControllableLabel.shapesWithoutBackground
+                    ControllableLabel.shapesWithoutBackground.indexOf(
+                        options.shape
                     ) > -1 ? '#FFFFFF' : options.backgroundColor
                 );
             }

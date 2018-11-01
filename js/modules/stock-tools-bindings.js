@@ -16,7 +16,6 @@ var addEvent = H.addEvent,
     extend = H.extend,
     fireEvent = H.fireEvent,
     grep = H.grep,
-    inArray = H.inArray,
     isNumber = H.isNumber,
     isArray = H.isArray,
     isObject = H.isObject,
@@ -249,7 +248,7 @@ var bindingsUtils = {
 
                 series.remove(false);
 
-                if (inArray(series.type, indicatorsWithAxes) >= 0) {
+                if (indicatorsWithAxes.indexOf(series.type) >= 0) {
                     yAxis.remove(false);
                     toolbar.resizeYAxes();
                 }
@@ -258,7 +257,7 @@ var bindingsUtils = {
             seriesConfig.id = H.uniqueKey();
             toolbar.fieldsToOptions(data.fields, seriesConfig);
 
-            if (inArray(data.type, indicatorsWithAxes) >= 0) {
+            if (indicatorsWithAxes.indexOf(data.type) >= 0) {
                 yAxis = chart.addAxis({
                     id: H.uniqueKey(),
                     offset: 0,
@@ -1857,7 +1856,10 @@ extend(H.Toolbar.prototype, {
             if (
                 parentEditables &&
                 (
-                    inArray(key, parentEditables) >= 0 ||
+                    (
+                        parentEditables.indexOf &&
+                        parentEditables.indexOf(key)
+                    ) >= 0 ||
                     parentEditables[key] || // nested array
                     parentEditables === true // simple array
                 )

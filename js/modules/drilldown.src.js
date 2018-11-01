@@ -19,7 +19,6 @@ var animObject = H.animObject,
     noop = H.noop,
     color = H.color,
     defaultOptions = H.defaultOptions,
-    each = H.each,
     extend = H.extend,
     format = H.format,
     objectEach = H.objectEach,
@@ -30,7 +29,6 @@ var animObject = H.animObject,
     ColumnSeries = seriesTypes.column,
     Tick = H.Tick,
     fireEvent = H.fireEvent,
-    inArray = H.inArray,
     ddSeriesId = 1;
 
 // Add language
@@ -408,10 +406,10 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
     ddOptions = extend(extend({
         _ddSeriesId: ddSeriesId++
     }, colorProp), ddOptions);
-    pointIndex = inArray(point, oldSeries.points);
+    pointIndex = oldSeries.points.indexOf(point);
 
     // Record options for all current series
-    each(oldSeries.chart.series, function (series) {
+    oldSeries.chart.series.forEach(function (series) {
         if (series.xAxis === xAxis && !series.isDrilling) {
             series.options._ddSeriesId =
                 series.options._ddSeriesId || ddSeriesId++;
@@ -480,9 +478,9 @@ Chart.prototype.applyDrilldown = function () {
 
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
         levelToRemove = drilldownLevels[drilldownLevels.length - 1].levelNumber;
-        each(this.drilldownLevels, function (level) {
+        this.drilldownLevels.forEach(function (level) {
             if (level.levelNumber === levelToRemove) {
-                each(level.levelSeries, function (series) {
+                level.levelSeries.forEach(function (series) {
                     // Not removed, not added as part of a multi-series
                     // drilldown
                     if (
@@ -585,7 +583,7 @@ Chart.prototype.drillUp = function () {
         oldExtremes,
         addSeries = function (seriesOptions) {
             var addedSeries;
-            each(chartSeries, function (series) {
+            chartSeries.forEach(function (series) {
                 if (series.options._ddSeriesId === seriesOptions._ddSeriesId) {
                     addedSeries = series;
                 }
@@ -627,7 +625,7 @@ Chart.prototype.drillUp = function () {
             }
             oldSeries.xData = []; // Overcome problems with minRange (#2898)
 
-            each(level.levelSeriesOptions, addSeries);
+            level.levelSeriesOptions.forEach(addSeries);
 
             fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
 
@@ -704,9 +702,9 @@ H.addEvent(Chart, 'beforeShowResetZoom', function () {
     }
 });
 H.addEvent(Chart, 'render', function setDDPoints() {
-    each(this.xAxis || [], function (axis) {
+    (this.xAxis || []).forEach(function (axis) {
         axis.ddPoints = {};
-        each(axis.series, function (series) {
+        axis.series.forEach(function (series) {
             var i,
                 xData = series.xData || [],
                 points = series.points,
@@ -750,7 +748,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
             level = newSeries.drilldownLevel;
 
         // First hide all items before animating in again
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var dataLabel = point.dataLabel;
 
             if (point.graphic) { // #3407
@@ -775,7 +773,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
         // Do dummy animation on first point to get to complete
         H.syncTimeout(function () {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
-                each(newSeries.points, function (point, i) {
+                newSeries.points.forEach(function (point, i) {
                     // Fade in other points
                     var verb =
                         i === (level && level.pointIndex) ? 'show' : 'fadeIn',
@@ -811,7 +809,7 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
         xAxis = this.xAxis;
 
     if (!init) {
-        each(drilldownLevels, function (level) {
+        drilldownLevels.forEach(function (level) {
             if (
                 series.options._ddSeriesId ===
                     level.lowerSeriesOptions._ddSeriesId
@@ -826,7 +824,7 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
 
         animateFrom.x += (pick(xAxis.oldPos, xAxis.pos) - xAxis.pos);
 
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var animateTo = point.shapeArgs;
 
             /*= if (build.classic) { =*/
@@ -867,7 +865,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (level) {
         series = this;
 
     // Cancel mouse events on the series group (#2787)
-    each(series.trackerGroups, function (key) {
+    series.trackerGroups.forEach(function (key) {
         if (series[key]) { // we don't always have dataLabelsGroup
             series[key].on('mouseover');
         }
@@ -877,7 +875,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (level) {
         delete this.group;
     }
 
-    each(this.points, function (point) {
+    this.points.forEach(function (point) {
         var graphic = point.graphic,
             animateTo = level.shapeArgs,
             complete = function () {
@@ -924,7 +922,7 @@ if (PieSeries) {
                 startAngle = angle / this.points.length;
 
             if (!init) {
-                each(this.points, function (point, i) {
+                this.points.forEach(function (point, i) {
                     var animateTo = point.shapeArgs;
 
                     /*= if (build.classic) { =*/
@@ -967,7 +965,7 @@ H.Point.prototype.doDrilldown = function (
     while (i-- && !seriesOptions) {
         if (
             drilldown.series[i].id === this.drilldown &&
-            inArray(this.drilldown, chart.ddDupes) === -1
+            chart.ddDupes.indexOf(this.drilldown) === -1
         ) {
             seriesOptions = drilldown.series[i];
             chart.ddDupes.push(this.drilldown);
@@ -1100,7 +1098,7 @@ H.addEvent(H.Series, 'afterDrawDataLabels', function () {
     var css = this.chart.options.drilldown.activeDataLabelStyle,
         renderer = this.chart.renderer;
 
-    each(this.points, function (point) {
+    this.points.forEach(function (point) {
         var dataLabelsOptions = point.options.dataLabels,
             pointCSS = pick(
                 point.dlOptions,
@@ -1144,7 +1142,7 @@ var applyCursorCSS = function (element, cursor, addClass) {
 
 // Mark the trackers with a pointer
 H.addEvent(H.Series, 'afterDrawTracker', function () {
-    each(this.points, function (point) {
+    this.points.forEach(function (point) {
         if (point.drilldown && point.graphic) {
             applyCursorCSS(point.graphic, 'pointer', true);
         }

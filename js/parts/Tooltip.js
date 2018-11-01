@@ -10,11 +10,9 @@ import H from './Globals.js';
 import './Utilities.js';
 
 var doc = H.doc,
-    each = H.each,
     extend = H.extend,
     format = H.format,
     isNumber = H.isNumber,
-    map = H.map,
     merge = H.merge,
     pick = H.pick,
     splat = H.splat,
@@ -147,7 +145,7 @@ H.Tooltip.prototype = {
      *        Force destroy all tooltips.
      */
     cleanSplit: function (force) {
-        each(this.chart.series, function (series) {
+        this.chart.series.forEach(function (series) {
             var tt = series && series.tt;
             if (tt) {
                 if (!tt.isActive || force) {
@@ -457,7 +455,7 @@ H.Tooltip.prototype = {
             ret = points[0].tooltipPos;
         // When shared, use the average position
         } else {
-            each(points, function (point) {
+            points.forEach(function (point) {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
                 plotX += point.plotX +
@@ -483,7 +481,7 @@ H.Tooltip.prototype = {
             ];
         }
 
-        return map(ret, Math.round);
+        return ret.map(Math.round);
     },
 
     /**
@@ -721,7 +719,7 @@ H.Tooltip.prototype = {
 
         // shared tooltip, array is sent over
         if (shared && !(point.series && point.series.noSharedTooltip)) {
-            each(point, function (item) {
+            point.forEach(function (item) {
                 item.setState('hover');
 
                 pointConfig.push(item.getLabelConfig());
@@ -832,15 +830,14 @@ H.Tooltip.prototype = {
             headerHeight = 0,
             headerTop,
             tooltipLabel = this.getLabel(),
-            distributionBoxTop = chart.plotTop,
-            boxPosition;
+            distributionBoxTop = chart.plotTop;
 
         // Graceful degradation for legacy formatters
         if (H.isString(labels)) {
             labels = [false, labels];
         }
         // Create the individual labels for header and points, ignore footer
-        each(labels.slice(0, points.length + 1), function (str, i) {
+        labels.slice(0, points.length + 1).forEach(function (str, i) {
             if (str !== false && str !== '') {
                 var point = points[i - 1] ||
                     {
@@ -968,8 +965,8 @@ H.Tooltip.prototype = {
         this.cleanSplit();
 
         if (options.positioner) {
-            each(boxes, function (box) {
-                boxPosition = options.positioner.call(
+            boxes.forEach(function (box) {
+                var boxPosition = options.positioner.call(
                     tooltip,
                     box.tt.getBBox().width,
                     box.size,
@@ -984,7 +981,7 @@ H.Tooltip.prototype = {
 
         // Distribute and put in place
         H.distribute(boxes, chart.plotHeight + headerHeight);
-        each(boxes, function (box) {
+        boxes.forEach(function (box) {
             var point = box.point,
                 series = point.series;
 
@@ -1196,9 +1193,8 @@ H.Tooltip.prototype = {
 
         // Insert the footer date format if any
         if (isDateTime && xDateFormat) {
-            each(
-                (labelConfig.point && labelConfig.point.tooltipDateKeys) ||
-                    ['key'],
+            ((labelConfig.point && labelConfig.point.tooltipDateKeys) ||
+                    ['key']).forEach(
                 function (key) {
                     formatString = formatString.replace(
                         '{point.' + key + '}',
@@ -1227,7 +1223,7 @@ H.Tooltip.prototype = {
      * @return {string}
      */
     bodyFormatter: function (items) {
-        return map(items, function (item) {
+        return items.map(function (item) {
             var tooltipOptions = item.series.tooltipOptions;
             return (
                 tooltipOptions[

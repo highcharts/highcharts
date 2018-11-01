@@ -12,8 +12,7 @@
 import H from './Globals.js';
 
 var addEvent = H.addEvent,
-    Chart = H.Chart,
-    each = H.each;
+    Chart = H.Chart;
 
 /**
  * Options for a scrollable plot area. This feature provides a minimum width for
@@ -68,7 +67,7 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
             this.clipBox.width += scrollablePixels;
 
             if (!e.skipAxes) {
-                each(this.axes, function (axis) {
+                this.axes.forEach(function (axis) {
                     if (axis.side === 1) {
                         // Get the plot lines right in getPlotLinePath,
                         // temporarily set it to the adjusted plot width.
@@ -183,7 +182,7 @@ Chart.prototype.applyFixed = function () {
 
         // These elements are moved over to the fixed renderer and stay fixed
         // when the user scrolls the chart.
-        H.each([
+        ([
             this.inverted ?
                 '.highcharts-xaxis' :
                 '.highcharts-yaxis',
@@ -196,8 +195,8 @@ Chart.prototype.applyFixed = function () {
             '.highcharts-subtitle',
             '.highcharts-title',
             '.highcharts-legend-checkbox'
-        ], function (className) {
-            H.each(container.querySelectorAll(className), function (elem) {
+        ]).forEach(function (className) {
+            container.querySelectorAll(className).forEach(function (elem) {
                 (
                     elem.namespaceURI === fixedRenderer.SVG_NS ?
                         fixedRenderer.box :

@@ -4,7 +4,6 @@ import '../parts/Utilities.js';
 
 var UNDEFINED,
     seriesType = H.seriesType,
-    each = H.each,
     merge = H.merge,
     color = H.color,
     isArray = H.isArray,
@@ -38,7 +37,7 @@ function getClosestPointRange(axis) {
         xData,
         i;
 
-    each(axis.series, function (series) {
+    axis.series.forEach(function (series) {
 
         if (series.xData) {
             xData = series.xData;
@@ -111,7 +110,7 @@ H.approximations['ichimoku-averages'] = function () {
     var ret = [],
         isEmptyRange;
 
-    each(arguments, function (arr, i) {
+    [].forEach.call(arguments, function (arr, i) {
         ret.push(H.approximations.average(arr));
         isEmptyRange = !isEmptyRange && ret[i] === undefined;
     });
@@ -419,8 +418,8 @@ seriesType('ikh', 'sma',
 
             SMA.prototype.translate.apply(indicator);
 
-            each(indicator.points, function (point) {
-                each(indicator.pointArrayMap, function (value) {
+            indicator.points.forEach(function (point) {
+                indicator.pointArrayMap.forEach(function (value) {
                     if (defined(point[value])) {
                         point['plot' + value] = indicator.yAxis.toPixels(
                             point[value],
@@ -566,7 +565,7 @@ seriesType('ikh', 'sma',
             // If graphColection exist then remove svg
             // element and indicator property
             if (indicator.graphCollection) {
-                each(indicator.graphCollection, function (graphName) {
+                indicator.graphCollection.forEach(function (graphName) {
                     indicator[graphName].element.remove();
                     delete indicator[graphName];
                 });
@@ -664,7 +663,9 @@ seriesType('ikh', 'sma',
                 }
 
                 // Render color and negativeColor paths
-                each(['graphsenkouSpanColor', 'graphsenkouSpanNegativeColor'],
+                [
+                    'graphsenkouSpanColor', 'graphsenkouSpanNegativeColor'
+                ].forEach(
                     function (areaName, i) {
                         if (points[i].length && nextPoints[i].length) {
 

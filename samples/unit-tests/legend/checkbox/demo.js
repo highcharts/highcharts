@@ -101,7 +101,7 @@ QUnit.test(
             },
 
             series: [{
-                data: Highcharts.map(new Array(50), Math.random),
+                data: new Array(50).fill(undefined).map(Math.random),
                 dataLabels: {
                     enabled: false
                 },

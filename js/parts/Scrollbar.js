@@ -14,7 +14,6 @@ var addEvent = H.addEvent,
     defaultOptions = H.defaultOptions,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
-    each = H.each,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
@@ -977,7 +976,7 @@ Scrollbar.prototype = {
         }
 
         // Add them all
-        each(_events, function (args) {
+        _events.forEach(function (args) {
             addEvent.apply(null, args);
         });
         this._events = _events;
@@ -991,7 +990,7 @@ Scrollbar.prototype = {
      * @return {void}
      */
     removeEvents: function () {
-        each(this._events, function (args) {
+        this._events.forEach(function (args) {
             removeEvent.apply(null, args);
         });
         this._events.length = 0;
@@ -1012,14 +1011,13 @@ Scrollbar.prototype = {
         this.removeEvents();
 
         // Destroy properties
-        each(
-            [
-                'track',
-                'scrollbarRifles',
-                'scrollbar',
-                'scrollbarGroup',
-                'group'
-            ],
+        [
+            'track',
+            'scrollbarRifles',
+            'scrollbar',
+            'scrollbarGroup',
+            'group'
+        ].forEach(
             function (prop) {
                 if (this[prop] && this[prop].destroy) {
                     this[prop] = this[prop].destroy();

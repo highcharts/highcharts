@@ -15,8 +15,7 @@ import '../parts/Options.js';
 var seriesTypes = H.seriesTypes,
     chartPrototype = H.Chart.prototype,
     defaultOptions = H.getOptions(),
-    extend = H.extend,
-    each = H.each;
+    extend = H.extend;
 
 // Add language option
 extend(defaultOptions.lang, {
@@ -137,7 +136,7 @@ defaultOptions.noData.style = {
 
 // Define hasData function for non-cartesian seris. Returns true if the series
 // has points at all.
-each([
+[
     'bubble',
     'gauge',
     'heatmap',
@@ -145,7 +144,7 @@ each([
     'sankey',
     'treemap',
     'waterfall'
-], function (type) {
+].forEach(function (type) {
     if (seriesTypes[type]) {
         seriesTypes[type].prototype.hasData = function () {
             return !!this.points.length; // != 0

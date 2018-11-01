@@ -18,10 +18,7 @@ var animObject = H.animObject,
     color = H.color,
     defined = H.defined,
     deg2rad = H.deg2rad,
-    each = H.each,
     extend = H.extend,
-    inArray = H.inArray,
-    map = H.map,
     merge = H.merge,
     perspective = H.perspective,
     pick = H.pick,
@@ -86,13 +83,13 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 wrap(SVGRenderer.prototype, 'init', function (proceed) {
     proceed.apply(this, [].slice.call(arguments, 1));
 
-    each([{
+    [{
         name: 'darker',
         slope: 0.6
     }, {
         name: 'brighter',
         slope: 1.4
-    }], function (cfg) {
+    }].forEach(function (cfg) {
         this.definition({
             tagName: 'filter',
             id: 'highcharts-' + cfg.name,
@@ -121,7 +118,7 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
 
     // Put "L x y" for each point
-    each(points, function (point) {
+    points.forEach(function (point) {
         result.push('L', point.x, point.y);
     });
 
@@ -142,7 +139,7 @@ SVGRenderer.prototype.toLineSegments = function (points) {
     var result = [],
         m = true;
 
-    each(points, function (point) {
+    points.forEach(function (point) {
         result.push(m ? 'M' : 'L', point.x, point.y);
         m = !m;
     });
@@ -562,8 +559,8 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         var ret = [
                 [], -1
         ];
-        path1 = map(path1, mapPath);
-        path2 = map(path2, mapPath);
+        path1 = path1.map(mapPath);
+        path2 = path2.map(mapPath);
         if (H.shapeArea(path1) < 0) {
             ret = [path1, 0];
         } else if (H.shapeArea(path2) < 0) {
@@ -657,7 +654,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         params = merge(params); // Don't mutate the original object
 
         for (key in params) {
-            if (inArray(key, customAttribs) !== -1) {
+            if (customAttribs.indexOf(key) !== -1) {
                 ca[key] = params[key];
                 delete params[key];
                 hasCA = true;
@@ -688,7 +685,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 
         // These faces are added outside the wrapper group because the z index
         // relates to neighbour elements as well
-        each(['out', 'inn', 'side1', 'side2'], function (face) {
+        ['out', 'inn', 'side1', 'side2'].forEach(function (face) {
             wrapper[face]
                 .attr({
                     'class': className + ' highcharts-3d-side'
@@ -698,10 +695,10 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     };
 
     // Cascade to faces
-    each(['addClass', 'removeClass'], function (fn) {
+    ['addClass', 'removeClass'].forEach(function (fn) {
         wrapper[fn] = function () {
             var args = arguments;
-            each(['top', 'out', 'inn', 'side1', 'side2'], function (face) {
+            ['top', 'out', 'inn', 'side1', 'side2'].forEach(function (face) {
                 wrapper[face][fn].apply(wrapper[face], args);
             });
         };
@@ -752,12 +749,11 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 
     // Apply the same value to all. These properties cascade down to the
     // children when set to the composite arc3d.
-    each(
-        ['opacity', 'translateX', 'translateY', 'visibility'],
+    ['opacity', 'translateX', 'translateY', 'visibility'].forEach(
         function (setter) {
             wrapper[setter + 'Setter'] = function (value, key) {
                 wrapper[key] = value;
-                each(['out', 'inn', 'side1', 'side2', 'top'], function (el) {
+                ['out', 'inn', 'side1', 'side2', 'top'].forEach(function (el) {
                     wrapper[el].attr(key, value);
                 });
             };

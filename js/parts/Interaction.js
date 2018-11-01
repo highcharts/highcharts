@@ -20,11 +20,9 @@ var addEvent = H.addEvent,
     css = H.css,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    each = H.each,
     extend = H.extend,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
-    inArray = H.inArray,
     isObject = H.isObject,
     Legend = H.Legend,
     merge = H.merge,
@@ -65,7 +63,7 @@ TrackerMixin = H.TrackerMixin = {
             };
 
         // Add reference to the point
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             if (point.graphic) {
                 point.graphic.element.point = point;
             }
@@ -80,7 +78,7 @@ TrackerMixin = H.TrackerMixin = {
 
         // Add the event listeners, we need to do this only once
         if (!series._hasTracking) {
-            each(series.trackerGroups, function (key) {
+            series.trackerGroups.forEach(function (key) {
                 if (series[key]) { // we don't always have dataLabelsGroup
                     series[key]
                         .addClass('highcharts-tracker')
@@ -207,7 +205,7 @@ TrackerMixin = H.TrackerMixin = {
             // The tracker is added to the series group, which is clipped, but
             // is covered by the marker group. So the marker group also needs to
             // capture events.
-            each([series.tracker, series.markerGroup], function (tracker) {
+            [series.tracker, series.markerGroup].forEach(function (tracker) {
                 tracker.addClass('highcharts-tracker')
                     .on('mouseover', onMouseOver)
                     .on('mouseout', function (e) {
@@ -455,13 +453,13 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
         // If zoom is called with no arguments, reset the axes
         if (!event || event.resetSelection) {
-            each(chart.axes, function (axis) {
+            chart.axes.forEach(function (axis) {
                 hasZoomed = axis.zoom();
             });
             pointer.initiated = false; // #6804
 
         } else { // else, zoom in on all axes
-            each(event.xAxis.concat(event.yAxis), function (axisData) {
+            event.xAxis.concat(event.yAxis).forEach(function (axisData) {
                 var axis = axisData.axis,
                     isXAxis = axis.isXAxis;
 
@@ -516,13 +514,13 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
         // remove active points for shared tooltip
         if (hoverPoints) {
-            each(hoverPoints, function (point) {
+            hoverPoints.forEach(function (point) {
                 point.setState();
             });
         }
 
         // xy is used in maps
-        each(panning === 'xy' ? [1, 0] : [1], function (isX) {
+        (panning === 'xy' ? [1, 0] : [1]).forEach(function (isX) {
             var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
                 horiz = axis.horiz,
                 mousePos = e[horiz ? 'chartX' : 'chartY'],
@@ -655,19 +653,19 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                  * @type {boolean}
                  */
                 point.selected = point.options.selected = selected;
-                series.options.data[inArray(point, series.data)] =
+                series.options.data[series.data.indexOf(point)] =
                     point.options;
 
                 point.setState(selected && 'select');
 
                 // unselect all other points unless Ctrl or Cmd + click
                 if (!accumulate) {
-                    each(chart.getSelectedPoints(), function (loopPoint) {
+                    chart.getSelectedPoints().forEach(function (loopPoint) {
                         if (loopPoint.selected && loopPoint !== point) {
                             loopPoint.selected = loopPoint.options.selected =
                                 false;
                             series.options.data[
-                                inArray(loopPoint, series.data)
+                                series.data.indexOf(loopPoint)
                             ] = loopPoint.options;
                             loopPoint.setState('');
                             loopPoint.firePointEvent('unselect');
@@ -711,7 +709,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         var point = this,
             chart = point.series.chart;
         point.firePointEvent('mouseOut');
-        each(chart.hoverPoints || [], function (p) {
+        (chart.hoverPoints || []).forEach(function (p) {
             p.setState();
         });
         chart.hoverPoints = chart.hoverPoint = null;
@@ -1065,11 +1063,11 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         if (series.state !== state) {
 
             // Toggle class names
-            each([
+            [
                 series.group,
                 series.markerGroup,
                 series.dataLabelsGroup
-            ], function (group) {
+            ].forEach(function (group) {
                 if (group) {
                     // Old state
                     if (series.state) {
@@ -1159,13 +1157,13 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         showOrHide = vis ? 'show' : 'hide';
 
         // show or hide elements
-        each([
+        [
             'group',
             'dataLabelsGroup',
             'markerGroup',
             'tracker',
             'tt'
-        ], function (key) {
+        ].forEach(function (key) {
             if (series[key]) {
                 series[key][showOrHide]();
             }
@@ -1190,7 +1188,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         series.isDirty = true;
         // in a stack, all other series are affected
         if (series.options.stacking) {
-            each(chart.series, function (otherSeries) {
+            chart.series.forEach(function (otherSeries) {
                 if (otherSeries.options.stacking && otherSeries.visible) {
                     otherSeries.isDirty = true;
                 }
@@ -1198,7 +1196,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         }
 
         // show or hide linked series
-        each(series.linkedSeries, function (otherSeries) {
+        series.linkedSeries.forEach(function (otherSeries) {
             otherSeries.setVisible(vis, false);
         });
 

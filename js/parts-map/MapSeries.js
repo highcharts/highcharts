@@ -14,11 +14,9 @@ import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 var colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
-    each = H.each,
     extend = H.extend,
     isNumber = H.isNumber,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    map = H.map,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -287,7 +285,7 @@ seriesType('map', 'scatter', {
             hasBox;
 
         // Find the bounding box
-        each(paths || [], function (point) {
+        (paths || []).forEach(function (point) {
 
             if (point.path) {
                 if (typeof point.path === 'string') {
@@ -470,7 +468,7 @@ seriesType('map', 'scatter', {
         // Pick up numeric values, add index
         // Convert Array point definitions to objects using pointArrayMap
         if (data) {
-            each(data, function (val, i) {
+            data.forEach(function (val, i) {
                 var ix = 0;
                 if (isNumber(val)) {
                     data[i] = {
@@ -550,7 +548,7 @@ seriesType('map', 'scatter', {
 
             // Registered the point codes that actually hold data
             if (data && joinBy[1]) {
-                each(data, function (point) {
+                data.forEach(function (point) {
                     if (mapMap[point[joinBy[1]]]) {
                         dataUsed.push(mapMap[point[joinBy[1]]]);
                     }
@@ -563,18 +561,18 @@ seriesType('map', 'scatter', {
 
                 // Registered the point codes that actually hold data
                 if (joinBy[1]) {
-                    each(data, function (point) {
+                    data.forEach(function (point) {
                         dataUsed.push(point[joinBy[1]]);
                     });
                 }
 
                 // Add those map points that don't correspond to data, which
                 // will be drawn as null points
-                dataUsed = '|' + map(dataUsed, function (point) {
+                dataUsed = '|' + dataUsed.map(function (point) {
                     return point && point[joinBy[0]];
                 }).join('|') + '|'; // Faster than array.indexOf
 
-                each(mapData, function (mapPoint) {
+                mapData.forEach(function (mapPoint) {
                     if (
                         !joinBy[0] ||
                         dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1
@@ -636,7 +634,7 @@ seriesType('map', 'scatter', {
 
         series.generatePoints();
 
-        each(series.data, function (point) {
+        series.data.forEach(function (point) {
 
             // Record the middle point (loosely based on centroid), determined
             // by the middleX and middleY options.
@@ -726,7 +724,7 @@ seriesType('map', 'scatter', {
             // Individual point actions. TODO: Check unstyled.
             /*= if (build.classic) { =*/
             if (chart.hasRendered) {
-                each(series.points, function (point) {
+                series.points.forEach(function (point) {
 
                     // Restore state color on update/redraw (#3529)
                     if (point.shapeArgs) {
@@ -745,7 +743,7 @@ seriesType('map', 'scatter', {
             series.group = group; // Reset
 
             // Add class names
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 if (point.graphic) {
                     if (point.name) {
                         point.graphic.addClass(
@@ -983,7 +981,7 @@ seriesType('map', 'scatter', {
                 translateY: fromBox.y
             };
 
-            each(this.points, function (point) {
+            this.points.forEach(function (point) {
                 if (point.graphic) {
                     point.graphic
                         .attr(level.shapeArgs)

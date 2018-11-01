@@ -11,7 +11,6 @@ import '../parts/Chart.js';
 import '../parts/SvgRenderer.js';
 var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
-    each = H.each,
     extend = H.extend,
     merge = H.merge,
     pick = H.pick,
@@ -452,7 +451,7 @@ SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 // Even VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
 if (Renderer === VMLRenderer) {
-    each(['topbutton', 'bottombutton'], function (shape) {
+    ['topbutton', 'bottombutton'].forEach(function (shape) {
         VMLRenderer.prototype.symbols[shape] =
             SVGRenderer.prototype.symbols[shape];
     });

@@ -8,8 +8,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-var each = H.each,
-    noop = H.noop,
+var noop = H.noop,
     pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
@@ -284,8 +283,8 @@ seriesType('boxplot', 'column', {
         seriesTypes.column.prototype.translate.apply(series);
 
         // do the translation on each point dimension
-        each(series.points, function (point) {
-            each(pointArrayMap, function (key) {
+        series.points.forEach(function (point) {
+            pointArrayMap.forEach(function (key) {
                 if (point[key] !== null) {
                     point[key + 'Plot'] = yAxis.translate(
                         point[key], 0, 1, 0, 1
@@ -323,7 +322,7 @@ seriesType('boxplot', 'column', {
             whiskerLength = series.options.whiskerLength;
 
 
-        each(points, function (point) {
+        points.forEach(function (point) {
 
             var graphic = point.graphic,
                 verb = graphic ? 'animate' : 'attr',

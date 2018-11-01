@@ -19,7 +19,6 @@ import '../mixins/ajax.js';
 import '../mixins/download-url.js';
 
 var defined = Highcharts.defined,
-    each = Highcharts.each,
     pick = Highcharts.pick,
     win = Highcharts.win,
     doc = win.document,
@@ -311,19 +310,19 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 
     this.setUpKeyToAxis();
 
-    each(this.series, function (series) {
+    this.series.forEach(function (series) {
         var keys = series.options.keys,
             pointArrayMap = keys || series.pointArrayMap || ['y'],
             valueCount = pointArrayMap.length,
             xTaken = !series.requireSorting && {},
             categoryMap = {},
             datetimeValueAxisMap = {},
-            xAxisIndex = Highcharts.inArray(series.xAxis, xAxes),
+            xAxisIndex = xAxes.indexOf(series.xAxis),
             mockSeries,
             j;
 
         // Map the categories for value axes
-        each(pointArrayMap, function (prop) {
+        pointArrayMap.forEach(function (prop) {
             var axisName = (
                 (series.keyToAxis && series.keyToAxis[prop]) ||
                 prop
@@ -383,7 +382,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
-            each(series.options.data, function eachData(options, pIdx) {
+            series.options.data.forEach(function eachData(options, pIdx) {
                 var key,
                     prop,
                     val,
@@ -475,7 +474,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
         }
 
         // Add the category column
-        each(rowArr, function (row) { // eslint-disable-line no-loop-func
+        rowArr.forEach(function (row) { // eslint-disable-line no-loop-func
             var category = row.name;
             if (xAxis && !defined(category)) {
                 if (xAxis.isDatetimeAxis) {
@@ -540,7 +539,7 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
         lineDelimiter = csvOptions.lineDelimiter;
 
     // Transform the rows to CSV
-    each(rows, function (row, i) {
+    rows.forEach(function (row, i) {
         var val = '',
             j = row.length;
         while (j--) {
@@ -734,7 +733,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 
     // Transform the rows to HTML
     html += '<tbody>';
-    each(rows, function (row) {
+    rows.forEach(function (row) {
         html += '<tr>';
         for (var j = 0; j < rowLength; j++) {
             // Make first column a header too. Especially important for
