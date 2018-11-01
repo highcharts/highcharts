@@ -77,6 +77,7 @@ var getColor = function getColor(node, options) {
         siblings = options.siblings,
         points = series.points,
         getColorByPoint,
+        chartOptionsChart = series.chart.options.chart,
         point,
         level,
         colorByPoint,
@@ -104,21 +105,22 @@ var getColor = function getColor(node, options) {
         if (getColorByPoint) {
             colorIndexByPoint = point.index % (colors ?
                 colors.length :
-                series.chart.options.chart.colorCount
+                chartOptionsChart.colorCount
             );
             colorByPoint = colors && colors[colorIndexByPoint];
         }
 
-        /*= if (build.classic) { =*/
         // Select either point color, level color or inherited color.
-        color = pick(
-            point && point.options.color,
-            level && level.color,
-            colorByPoint,
-            parentColor && variation(parentColor),
-            series.color
-        );
-        /*= } =*/
+        if (!series.chart.styledMode) {
+            color = pick(
+                point && point.options.color,
+                level && level.color,
+                colorByPoint,
+                parentColor && variation(parentColor),
+                series.color
+            );
+        }
+
         colorIndex = pick(
             point && point.options.colorIndex,
             level && level.colorIndex,

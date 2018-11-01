@@ -136,8 +136,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             marginTop: translateY
         });
 
-        /*= if (build.classic) { =*/
-        if (wrapper.shadows) { // used in labels/tooltip
+        if (!renderer.styledMode && wrapper.shadows) { // used in labels/tooltip
             wrapper.shadows.forEach(function (shadow) {
                 css(shadow, {
                     marginLeft: translateX + 1,
@@ -145,7 +144,6 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
                 });
             });
         }
-        /*= } =*/
 
         // apply inversion
         if (wrapper.inverted) { // wrapper is a group
@@ -338,7 +336,9 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                     });
                 });
                 element.addedSetters = true;
-            };
+            },
+            chart = H.charts[renderer.chartIndex],
+            styledMode = chart && chart.styledMode;
 
         // Text setter
         wrapper.textSetter = function (value) {
@@ -387,12 +387,15 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 y: Math.round(y)
             })
             .css({
-                /*= if (build.classic) { =*/
-                fontFamily: this.style.fontFamily,
-                fontSize: this.style.fontSize,
-                /*= } =*/
                 position: 'absolute'
             });
+
+        if (!styledMode) {
+            wrapper.css({
+                fontFamily: this.style.fontFamily,
+                fontSize: this.style.fontSize
+            });
+        }
 
         // Keep the whiteSpace style outside the wrapper.styles collection
         element.style.whiteSpace = 'nowrap';

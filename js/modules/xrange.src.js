@@ -445,33 +445,33 @@ seriesType('xrange', 'column'
             }
 
 
-            /*= if (build.classic) { =*/
             // Presentational
-            point.graphicOriginal
-                .attr(series.pointAttribs(point, state))
-                .shadow(seriesOpts.shadow, null, cutOff);
-            if (partShapeArgs) {
-                // Ensure pfOptions is an object
-                if (!isObject(pfOptions)) {
-                    pfOptions = {};
-                }
-                if (isObject(seriesOpts.partialFill)) {
-                    pfOptions = merge(pfOptions, seriesOpts.partialFill);
-                }
-
-                fill = (
-                    pfOptions.fill ||
-                    color(point.color || series.color).brighten(-0.3).get()
-                );
-
-                point.graphicOverlay
+            if (!series.chart.styledMode) {
+                point.graphicOriginal
                     .attr(series.pointAttribs(point, state))
-                    .attr({
-                        'fill': fill
-                    })
                     .shadow(seriesOpts.shadow, null, cutOff);
+                if (partShapeArgs) {
+                    // Ensure pfOptions is an object
+                    if (!isObject(pfOptions)) {
+                        pfOptions = {};
+                    }
+                    if (isObject(seriesOpts.partialFill)) {
+                        pfOptions = merge(pfOptions, seriesOpts.partialFill);
+                    }
+
+                    fill = (
+                        pfOptions.fill ||
+                        color(point.color || series.color).brighten(-0.3).get()
+                    );
+
+                    point.graphicOverlay
+                        .attr(series.pointAttribs(point, state))
+                        .attr({
+                            'fill': fill
+                        })
+                        .shadow(seriesOpts.shadow, null, cutOff);
+                }
             }
-            /*= } =*/
 
         } else if (graphic) {
             point.graphic = graphic.destroy(); // #1269
@@ -543,9 +543,11 @@ seriesType('xrange', 'column'
 
         if (series.options.colorByPoint && !point.options.color) {
             colorByPoint = getColorByCategory(series, point);
-            /*= if (build.classic) { =*/
-            point.color = colorByPoint.color;
-            /*= } =*/
+
+            if (!series.chart.styledMode) {
+                point.color = colorByPoint.color;
+            }
+
             if (!point.options.colorIndex) {
                 point.colorIndex = colorByPoint.colorIndex;
             }

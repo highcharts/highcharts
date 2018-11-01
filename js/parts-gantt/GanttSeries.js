@@ -190,12 +190,13 @@ seriesType('gantt', 'xrange', {
                     .addClass(point.getClassName(), true)
                     .add(point.group || series.group);
                 }
-                /*= if (build.classic) { =*/
+
                 // Presentational
-                point.graphic
-                    .attr(series.pointAttribs(point, state))
-                    .shadow(seriesOpts.shadow, null, cutOff);
-                /*= } =*/
+                if (!series.chart.styledMode) {
+                    point.graphic
+                        .attr(series.pointAttribs(point, state))
+                        .shadow(seriesOpts.shadow, null, cutOff);
+                }
             } else if (graphic) {
                 point.graphic = graphic.destroy(); // #1269
             }

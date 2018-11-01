@@ -88,7 +88,6 @@ wrap(
     }
 );
 
-/*= if (build.classic) { =*/
 wrap(
     seriesTypes.pie.prototype,
     'pointAttribs',
@@ -96,7 +95,7 @@ wrap(
         var attr = proceed.call(this, point, state),
             options = this.options;
 
-        if (this.chart.is3d()) {
+        if (this.chart.is3d() && !this.chart.styledMode) {
             attr.stroke = options.edgeColor || point.color || this.color;
             attr['stroke-width'] = pick(options.edgeWidth, 1);
         }
@@ -104,7 +103,6 @@ wrap(
         return attr;
     }
 );
-/*= } =*/
 
 wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
     proceed.apply(this, [].slice.call(arguments, 1));

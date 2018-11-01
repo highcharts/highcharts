@@ -264,8 +264,6 @@ defaultOptions.navigation = {
 
 };
 
-/*= if (build.classic) { =*/
-
 // Presentational attributes
 merge(true, defaultOptions.navigation
 
@@ -436,13 +434,19 @@ merge(true, defaultOptions.navigation
 
             /**
              * The default fill exists only to capture hover events.
-             *
              * @type {Highcharts.ColorString}
              */
             fill: '${palette.backgroundColor}',
 
+            /**
+             * Default stroke for the buttons.
+             * @type {Highcharts.ColorString}
+             */
             stroke: 'none',
 
+            /**
+             * Padding for the button.
+             */
             padding: 5
 
         }
@@ -450,8 +454,6 @@ merge(true, defaultOptions.navigation
     }
 
 });
-
-/*= } =*/
 
 
 // Add the export related options
@@ -1013,12 +1015,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             .replace(/&nbsp;/g, '\u00A0') // no-break space
             .replace(/&shy;/g, '\u00AD'); // soft hyphen
 
-        /*= if (build.classic) { =*/
         // Further sanitize for oldIE
         if (this.ieSanitizeSVG) {
             svg = this.ieSanitizeSVG(svg);
         }
-        /*= } =*/
 
         return svg;
     },
@@ -1035,9 +1035,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *          The unfiltered SVG of the chart.
      */
     getChartHTML: function () {
-        /*= if (!build.classic) { =*/
-        this.inlineStyles();
-        /*= } =*/
+        if (this.styledMode) {
+            this.inlineStyles();
+        }
+
         return this.container.innerHTML;
     },
 
@@ -1396,16 +1397,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 menu
             );
 
-            /*= if (build.classic) { =*/
-
             // Presentational CSS
-            css(innerMenu, extend({
-                MozBoxShadow: '3px 3px 10px #888',
-                WebkitBoxShadow: '3px 3px 10px #888',
-                boxShadow: '3px 3px 10px #888'
-            }, navOptions.menuStyle));
-
-            /*= } =*/
+            if (!chart.styledMode) {
+                css(innerMenu, extend({
+                    MozBoxShadow: '3px 3px 10px #888',
+                    WebkitBoxShadow: '3px 3px 10px #888',
+                    boxShadow: '3px 3px 10px #888'
+                }, navOptions.menuStyle));
+            }
 
             // hide on mouse out
             menu.hideMenu = function () {
@@ -1472,17 +1471,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                             )
                         }, null, innerMenu);
 
-                        /*= if (build.classic) { =*/
-                        element.onmouseover = function () {
-                            css(this, navOptions.menuItemHoverStyle);
-                        };
-                        element.onmouseout = function () {
-                            css(this, navOptions.menuItemStyle);
-                        };
-                        css(element, extend({
-                            cursor: 'pointer'
-                        }, navOptions.menuItemStyle));
-                        /*= } =*/
+                        if (!chart.styledMode) {
+                            element.onmouseover = function () {
+                                css(this, navOptions.menuItemHoverStyle);
+                            };
+                            element.onmouseout = function () {
+                                css(this, navOptions.menuItemStyle);
+                            };
+                            css(element, extend({
+                                cursor: 'pointer'
+                            }, navOptions.menuItemStyle));
+                        }
                     }
 
                     // Keep references to menu divs to be able to destroy them
@@ -1599,20 +1598,22 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             });
         }
 
+
+        if (!chart.styledMode) {
+            attr['stroke-linecap'] = 'round';
+            attr.fill = pick(attr.fill, '${palette.backgroundColor}');
+            attr.stroke = pick(attr.stroke, 'none');
+        }
+
         button = renderer
             .button(btnOptions.text, 0, 0, callback, attr, hover, select)
             .addClass(options.className)
             .attr({
-                /*= if (build.classic) { =*/
-                'stroke-linecap': 'round',
-                /*= } =*/
-                title: pick(
-                    chart.options.lang[
-                        btnOptions._titleKey || btnOptions.titleKey
-                    ],
-                    ''
-                )
+                title: pick(chart.options.lang[
+                    btnOptions._titleKey || btnOptions.titleKey
+                ], '')
             });
+
         button.menuClassName = (
             options.menuClassName ||
             'highcharts-menu-' + chart.btnCount++
@@ -1638,16 +1639,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 })
                 .add(button);
 
-            /*= if (build.classic) { =*/
-
-            symbol.attr({
-                stroke: btnOptions.symbolStroke,
-                fill: btnOptions.symbolFill,
-                'stroke-width': btnOptions.symbolStrokeWidth || 1
-            });
-
-            /*= } =*/
-
+            if (!chart.styledMode) {
+                symbol.attr({
+                    stroke: btnOptions.symbolStroke,
+                    fill: btnOptions.symbolFill,
+                    'stroke-width': btnOptions.symbolStrokeWidth || 1
+                });
+            }
         }
 
         button.add(chart.exportingGroup)
@@ -1734,8 +1732,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
     }
 });
-
-/*= if (!build.classic) { =*/
 
 // These ones are translated to attributes rather than styles
 SVGRenderer.prototype.inlineToAttributes = [
@@ -1957,8 +1953,6 @@ Chart.prototype.inlineStyles = function () {
     tearDown();
 
 };
-
-/*= } =*/
 
 
 symbols.menu = function (x, y, width, height) {

@@ -473,9 +473,11 @@ Connection.prototype = {
     renderPath: function (path, attribs, animation) {
         var connection = this,
             chart = this.chart,
+            styledMode = chart.styledMode,
             pathfinder = chart.pathfinder,
             animate = !chart.options.chart.forExport && animation !== false,
-            pathGraphic = connection.graphics && connection.graphics.path;
+            pathGraphic = connection.graphics && connection.graphics.path,
+            anim;
 
         // Add the SVG element of the pathfinder group if it doesn't exist
         if (!pathfinder.group) {
@@ -493,22 +495,21 @@ Connection.prototype = {
         // Create path if does not exist
         if (!(pathGraphic && pathGraphic.renderer)) {
             pathGraphic = chart.renderer.path()
-                /*= if (build.classic) { =*/
-                .attr({
-                    opacity: 0
-                })
-                /*= } =*/
                 .add(pathfinder.group);
+            if (!styledMode) {
+                pathGraphic.attr({
+                    opacity: 0
+                });
+            }
         }
 
         // Set path attribs and animate to the new path
         pathGraphic.attr(attribs);
-        pathGraphic[animate ? 'animate' : 'attr']({
-            /*= if (build.classic) { =*/
-            opacity: 1,
-            /*= } =*/
-            d: path
-        }, animation);
+        anim = { d: path };
+        if (!styledMode) {
+            anim.opacity = 1;
+        }
+        pathGraphic[animate ? 'animate' : 'attr'](anim, animation);
 
         // Store reference on connection
         this.graphics = this.graphics || {};
@@ -617,9 +618,10 @@ Connection.prototype = {
                     'highcharts-point-connecting-path-' + type + '-marker'
                 )
                 .attr(box)
+                .add(pathfinder.group);
 
-                /*= if (build.classic) { =*/
-                .attr({
+            if (!renderer.styledMode) {
+                connection.graphics[type].attr({
                     fill: options.color || connection.fromPoint.color,
                     stroke: options.lineColor,
                     'stroke-width': options.lineWidth,
@@ -627,9 +629,9 @@ Connection.prototype = {
                 })
                 .animate({
                     opacity: 1
-                }, point.series.options.animation)
-                /*= } =*/
-                .add(pathfinder.group);
+                }, point.series.options.animation);
+            }
+
         } else {
             connection.graphics[type].animate(box);
         }
@@ -721,13 +723,13 @@ Connection.prototype = {
             attribs = {};
 
         // Set path attribs
-        /*= if (build.classic) { =*/
-        attribs.stroke = options.lineColor || fromPoint.color;
-        attribs['stroke-width'] = options.lineWidth;
-        if (options.dashStyle) {
-            attribs.dashstyle = options.dashStyle;
+        if (!chart.styledMode) {
+            attribs.stroke = options.lineColor || fromPoint.color;
+            attribs['stroke-width'] = options.lineWidth;
+            if (options.dashStyle) {
+                attribs.dashstyle = options.dashStyle;
+            }
         }
-        /*= } =*/
 
         attribs.class = 'highcharts-point-connecting-path ' +
             'highcharts-color-' + fromPoint.colorIndex;

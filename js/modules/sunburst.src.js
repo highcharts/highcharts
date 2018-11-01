@@ -712,9 +712,8 @@ var sunburstSeries = {
             Series.prototype.drawDataLabels.call(series);
         }
     },
-    /*= if (build.classic) { =*/
+
     pointAttribs: seriesTypes.column.prototype.pointAttribs,
-    /*= } =*/
 
     /*
      * The layout algorithm for the levels

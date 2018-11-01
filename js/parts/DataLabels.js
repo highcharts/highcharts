@@ -348,43 +348,46 @@ Series.prototype.drawDataLabels = function () {
 
                     style = labelOptions.style;
                     rotation = labelOptions.rotation;
-                    /*= if (build.classic) { =*/
-                    // Determine the color
-                    style.color = pick(
-                        labelOptions.color,
-                        style.color,
-                        series.color,
-                        '${palette.neutralColor100}'
-                    );
-                    // Get automated contrast color
-                    if (style.color === 'contrast') {
-                        point.contrastColor =
-                            renderer.getContrast(point.color || series.color);
-                        style.color = labelOptions.inside ||
-                            pick(
-                                labelOptions.distance,
-                                point.labelDistance
-                            ) < 0 ||
-                            !!seriesOptions.stacking ?
-                                point.contrastColor :
-                                '${palette.neutralColor100}';
+
+                    if (!chart.styledMode) {
+                        // Determine the color
+                        style.color = pick(
+                            labelOptions.color,
+                            style.color,
+                            series.color,
+                            '${palette.neutralColor100}'
+                        );
+                        // Get automated contrast color
+                        if (style.color === 'contrast') {
+                            point.contrastColor = renderer.getContrast(
+                                point.color || series.color
+                            );
+                            style.color = labelOptions.inside ||
+                                pick(
+                                    labelOptions.distance,
+                                    point.labelDistance
+                                ) < 0 ||
+                                !!seriesOptions.stacking ?
+                                    point.contrastColor :
+                                    '${palette.neutralColor100}';
+                        }
+                        if (seriesOptions.cursor) {
+                            style.cursor = seriesOptions.cursor;
+                        }
                     }
-                    if (seriesOptions.cursor) {
-                        style.cursor = seriesOptions.cursor;
-                    }
-                    /*= } =*/
 
                     attr = {
-                        /*= if (build.classic) { =*/
-                        fill: labelOptions.backgroundColor,
-                        stroke: labelOptions.borderColor,
-                        'stroke-width': labelOptions.borderWidth,
-                        /*= } =*/
                         r: labelOptions.borderRadius || 0,
                         rotation: rotation,
                         padding: labelOptions.padding,
                         zIndex: 1
                     };
+
+                    if (!chart.styledMode) {
+                        attr.fill = labelOptions.backgroundColor;
+                        attr.stroke = labelOptions.borderColor;
+                        attr['stroke-width'] = labelOptions.borderWidth;
+                    }
 
                     // Remove unused attributes (#947)
                     H.objectEach(attr, function (val, name) {
@@ -469,11 +472,12 @@ Series.prototype.drawDataLabels = function () {
                     dataLabel.options = labelOptions;
 
                     dataLabel.attr(attr);
-                    /*= if (build.classic) { =*/
-                    // Styles must be applied before add in order to read text
-                    // bounding box
-                    dataLabel.css(style).shadow(labelOptions.shadow);
-                    /*= } =*/
+
+                    if (!chart.styledMode) {
+                        // Styles must be applied before add in order to read
+                        // text bounding box
+                        dataLabel.css(style).shadow(labelOptions.shadow);
+                    }
 
                     if (!dataLabel.added) {
                         dataLabel.add(dataLabelsGroup);
@@ -520,7 +524,6 @@ Series.prototype.alignDataLabel = function (
         plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX, -9999),
         plotY = pick(point.plotY, -9999),
         bBox = dataLabel.getBBox(),
-        fontSize,
         baseline,
         rotation = options.rotation,
         normRotation,
@@ -549,11 +552,10 @@ Series.prototype.alignDataLabel = function (
 
     if (visible) {
 
-        /*= if (build.classic) { =*/
-        fontSize = options.style.fontSize;
-        /*= } =*/
-
-        baseline = chart.renderer.fontMetrics(fontSize, dataLabel).b;
+        baseline = chart.renderer.fontMetrics(
+            chart.styledMode ? undefined : options.style.fontSize,
+            dataLabel
+        ).b;
 
         // The alignment box is a singular point
         alignTo = extend({
@@ -870,7 +872,6 @@ if (seriesTypes.pie) {
                     point.dataLabel._pos = null;
 
                     // Avoid long labels squeezing the pie size too far down
-                    /*= if (build.classic) { =*/
                     if (
                         !defined(options.style.width) &&
                         !defined(
@@ -879,7 +880,6 @@ if (seriesTypes.pie) {
                             point.options.dataLabels.style.width
                         )
                     ) {
-                    /*= } =*/
                         if (point.dataLabel.getBBox().width > maxWidth) {
                             point.dataLabel.css({
                                 // Use a fraction of the maxWidth to avoid
@@ -888,9 +888,7 @@ if (seriesTypes.pie) {
                             });
                             point.dataLabel.shortened = true;
                         }
-                    /*= if (build.classic) { =*/
                     }
-                    /*= } =*/
                 } else {
                     point.dataLabel = point.dataLabel.destroy();
                     // Workaround to make pies destroy multiple datalabels
@@ -1124,16 +1122,16 @@ if (seriesTypes.pie) {
                                 )
                                 .add(series.dataLabelsGroup);
 
-                            /*= if (build.classic) { =*/
-                            connector.attr({
-                                'stroke-width': connectorWidth,
-                                'stroke': (
-                                    options.connectorColor ||
-                                    point.color ||
-                                    '${palette.neutralColor60}'
-                                )
-                            });
-                            /*= } =*/
+                            if (!chart.styledMode) {
+                                connector.attr({
+                                    'stroke-width': connectorWidth,
+                                    'stroke': (
+                                        options.connectorColor ||
+                                        point.color ||
+                                        '${palette.neutralColor60}'
+                                    )
+                                });
+                            }
                         }
                         connector[isNew ? 'attr' : 'animate']({
                             d: point.getConnectorPath()

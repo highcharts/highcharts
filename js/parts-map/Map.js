@@ -124,8 +124,6 @@ defaultOptions.mapNavigation = {
          */
         padding: 5,
 
-        /*= if (build.classic) { =*/
-
         /**
          * Text styles for the map navigation buttons. Defaults to
          *
@@ -162,7 +160,6 @@ defaultOptions.mapNavigation = {
             'text-align': 'center'
         }
 
-        /*= } =*/
     },
 
     /**

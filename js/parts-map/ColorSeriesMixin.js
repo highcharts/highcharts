@@ -62,9 +62,7 @@ H.colorSeriesMixin = {
     parallelArrays: ['x', 'y', 'value'],
     colorKey: 'value',
 
-    /*= if (build.classic) { =*/
     pointAttribs: seriesTypes.column.prototype.pointAttribs,
-    /*= } =*/
 
     /**
      * In choropleth maps, the color is a result of the value, so this needs

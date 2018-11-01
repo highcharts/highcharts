@@ -216,19 +216,19 @@ var renderLabelIcon = function (tick, params) {
         icon.attr({ y: -9999 }); // #1338
     }
 
-    /*= if (build.classic) { =*/
     // Presentational attributes
-    icon
-        .attr({
-            'stroke-width': 1,
-            'fill': pick(params.color, '${palette.neutralColor60}')
-        })
-        .css({
-            cursor: 'pointer',
-            stroke: options.lineColor,
-            strokeWidth: options.lineWidth
-        });
-    /*= } =*/
+    if (!renderer.styledMode) {
+        icon
+            .attr({
+                'stroke-width': 1,
+                'fill': pick(params.color, '${palette.neutralColor60}')
+            })
+            .css({
+                cursor: 'pointer',
+                stroke: options.lineColor,
+                strokeWidth: options.lineWidth
+            });
+    }
 
     // Update the icon positions
     icon[isNew ? 'attr' : 'animate']({
@@ -240,20 +240,22 @@ var renderLabelIcon = function (tick, params) {
 };
 var onTickHover = function (label) {
     label.addClass('highcharts-treegrid-node-active');
-    /*= if (build.classic) { =*/
-    label.css({
-        textDecoration: 'underline'
-    });
-    /*= } =*/
+
+    if (!label.renderer.styledMode) {
+        label.css({
+            textDecoration: 'underline'
+        });
+    }
 };
 var onTickHoverExit = function (label, options) {
     var css = defined(options.style) ? options.style : {};
     label.removeClass('highcharts-treegrid-node-active');
-    /*= if (build.classic) { =*/
-    label.css({
-        textDecoration: css.textDecoration
-    });
-    /*= } =*/
+
+    if (!label.renderer.styledMode) {
+        label.css({
+            textDecoration: css.textDecoration
+        });
+    }
 };
 
 /**
@@ -720,7 +722,8 @@ override(GridAxisTick.prototype, {
             prefixClassName = 'highcharts-treegrid-node-',
             collapsed,
             addClassName,
-            removeClassName;
+            removeClassName,
+            styledMode = axis.chart.styledMode;
 
         if (isTreeGrid && node) {
             // Add class name for hierarchical styling.
@@ -737,9 +740,7 @@ override(GridAxisTick.prototype, {
             renderLabelIcon(
                 tick,
                 {
-                    /*= if (build.classic) { =*/
-                    color: label.styles.color,
-                    /*= } =*/
+                    color: !styledMode && label.styles.color,
                     collapsed: collapsed,
                     group: label.parentGroup,
                     options: symbolOptions,
@@ -759,11 +760,11 @@ override(GridAxisTick.prototype, {
                 .addClass(addClassName)
                 .removeClass(removeClassName);
 
-            /*= if (build.classic) { =*/
-            label.css({
-                cursor: 'pointer'
-            });
-            /*= } =*/
+            if (!styledMode) {
+                label.css({
+                    cursor: 'pointer'
+                });
+            }
 
             // Add events to both label text and icon
             [label, tick.labelIcon].forEach(function (object) {

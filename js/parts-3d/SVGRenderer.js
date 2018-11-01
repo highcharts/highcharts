@@ -75,44 +75,6 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
     ];
 }
 
-/*= if (!build.classic) { =*/
-/**
- * Override the SVGRenderer initiator to add definitions used by brighter and
- * darker faces of the cuboids.
- */
-wrap(SVGRenderer.prototype, 'init', function (proceed) {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    [{
-        name: 'darker',
-        slope: 0.6
-    }, {
-        name: 'brighter',
-        slope: 1.4
-    }].forEach(function (cfg) {
-        this.definition({
-            tagName: 'filter',
-            id: 'highcharts-' + cfg.name,
-            children: [{
-                tagName: 'feComponentTransfer',
-                children: [{
-                    tagName: 'feFuncR',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncG',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncB',
-                    type: 'linear',
-                    slope: cfg.slope
-                }]
-            }]
-        });
-    }, this);
-});
-/*= } =*/
 
 SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
@@ -243,11 +205,11 @@ SVGRenderer.prototype.polyhedron = function (args) {
         result = this.g(),
         destroy = result.destroy;
 
-    /*= if (build.classic) { =*/
-    result.attr({
-        'stroke-linejoin': 'round'
-    });
-    /*= } =*/
+    if (!this.styledMode) {
+        result.attr({
+            'stroke-linejoin': 'round'
+        });
+    }
 
     result.faces = [];
 
@@ -272,6 +234,9 @@ SVGRenderer.prototype.polyhedron = function (args) {
                     result.faces.push(renderer.face3d().add(result));
                 }
                 for (var i = 0; i < hash.faces.length; i++) {
+                    if (renderer.styledMode) {
+                        delete hash.faces[i].fill;
+                    }
                     result.faces[i].attr(
                         hash.faces[i],
                         null,

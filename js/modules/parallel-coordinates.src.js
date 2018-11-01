@@ -33,10 +33,8 @@ var addEvent = H.addEvent,
     arrayMax = H.arrayMax;
 
 var defaultXAxisOptions = {
-    /*= if (build.classic) { =*/
     lineWidth: 0,
     tickLength: 0,
-    /*= } =*/
     opposite: true,
     type: 'category'
 };
@@ -94,9 +92,7 @@ var defaultParallelOptions = {
      * @since 6.0.0
      */
     parallelAxes: {
-        /*= if (build.classic) { =*/
         lineWidth: 1,
-        /*= } =*/
         /**
          * Titles for yAxes are taken from
          * [xAxis.categories](#xAxis.categories). All options for

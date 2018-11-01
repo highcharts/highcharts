@@ -241,7 +241,6 @@ extend(defaultOptions, {
              */
             enabled: true,
 
-            /*= if (build.classic) { =*/
             /**
              * The width for the handle border and the stripes inside.
              *
@@ -271,11 +270,7 @@ extend(defaultOptions, {
              * @apioption  navigator.handles.borderColor
              */
             borderColor: '${palette.neutralColor40}'
-
-            /*= } =*/
         },
-
-        /*= if (build.classic) { =*/
 
         /**
          * The color of the mask covering the areas of the navigator series
@@ -326,7 +321,6 @@ extend(defaultOptions, {
          * @apioption  navigator.outlineWidth
          */
         outlineWidth: 1,
-        /*= } =*/
 
         /**
          * Options for the navigator series. Available options are the same
@@ -373,8 +367,6 @@ extend(defaultOptions, {
              * @apioption  navigator.series.type
              */
             type: defaultSeriesType,
-            /*= if (build.classic) { =*/
-
 
             /**
              * The fill opacity of the navigator series.
@@ -393,7 +385,6 @@ extend(defaultOptions, {
              * @apioption  navigator.series.lineWidth
              */
             lineWidth: 1,
-            /*= } =*/
 
             /**
              * @ignore-option
@@ -500,22 +491,18 @@ extend(defaultOptions, {
             className: 'highcharts-navigator-xaxis',
             tickLength: 0,
 
-            /*= if (build.classic) { =*/
             lineWidth: 0,
             gridLineColor: '${palette.neutralColor10}',
             gridLineWidth: 1,
-            /*= } =*/
 
             tickPixelInterval: 200,
 
             labels: {
                 align: 'left',
 
-                /*= if (build.classic) { =*/
                 style: {
                     color: '${palette.neutralColor40}'
                 },
-                /*= } =*/
 
                 x: 3,
                 y: -4
@@ -553,10 +540,7 @@ extend(defaultOptions, {
         yAxis: {
 
             className: 'highcharts-navigator-yaxis',
-
-            /*= if (build.classic) { =*/
             gridLineWidth: 0,
-            /*= } =*/
 
             startOnTick: false,
             endOnTick: false,
@@ -848,7 +832,10 @@ Navigator.prototype = {
             chart = navigator.chart,
             inverted = chart.inverted,
             renderer = chart.renderer,
-            navigatorGroup;
+            navigatorGroup,
+            mouseCursor = {
+                cursor: inverted ? 'ns-resize' : 'ew-resize'
+            };
 
         // Create the main navigator group
         navigator.navigatorGroup = navigatorGroup = renderer.g('navigator')
@@ -857,13 +844,6 @@ Navigator.prototype = {
                 visibility: 'hidden'
             })
             .add();
-
-
-        /*= if (build.classic) { =*/
-        var mouseCursor = {
-            cursor: inverted ? 'ns-resize' : 'ew-resize'
-        };
-        /*= } =*/
 
         // Create masks, each mask will get events and fill:
         [
@@ -874,25 +854,30 @@ Navigator.prototype = {
             navigator.shades[index] = renderer.rect()
                 .addClass('highcharts-navigator-mask' +
                     (index === 1 ? '-inside' : '-outside'))
-                /*= if (build.classic) { =*/
-                .attr({
-                    fill: hasMask ? navigatorOptions.maskFill : 'rgba(0,0,0,0)'
-                })
-                .css(index === 1 && mouseCursor)
-                /*= } =*/
                 .add(navigatorGroup);
+
+            if (!chart.styledMode) {
+                navigator.shades[index]
+                    .attr({
+                        fill: hasMask ?
+                            navigatorOptions.maskFill :
+                            'rgba(0,0,0,0)'
+                    })
+                    .css(index === 1 && mouseCursor);
+            }
         });
 
         // Create the outline:
         navigator.outline = renderer.path()
             .addClass('highcharts-navigator-outline')
-            /*= if (build.classic) { =*/
-            .attr({
+            .add(navigatorGroup);
+
+        if (!chart.styledMode) {
+            navigator.outline.attr({
                 'stroke-width': navigatorOptions.outlineWidth,
                 stroke: navigatorOptions.outlineColor
-            })
-            /*= } =*/
-            .add(navigatorGroup);
+            });
+        }
 
         // Create the handlers:
         if (navigatorOptions.handles.enabled) {
@@ -915,16 +900,16 @@ Navigator.prototype = {
                         ['left', 'right'][index]
                     ).add(navigatorGroup);
 
-                /*= if (build.classic) { =*/
-                var handlesOptions = navigatorOptions.handles;
-                navigator.handles[index]
-                    .attr({
-                        fill: handlesOptions.backgroundColor,
-                        stroke: handlesOptions.borderColor,
-                        'stroke-width': handlesOptions.lineWidth
-                    })
-                    .css(mouseCursor);
-                /*= } =*/
+                if (!chart.styledMode) {
+                    var handlesOptions = navigatorOptions.handles;
+                    navigator.handles[index]
+                        .attr({
+                            fill: handlesOptions.backgroundColor,
+                            stroke: handlesOptions.borderColor,
+                            'stroke-width': handlesOptions.lineWidth
+                        })
+                        .css(mouseCursor);
+                }
             });
         }
     },

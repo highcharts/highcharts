@@ -314,8 +314,17 @@ null
  * @optionparent plotOptions.series
  */
 , { // base series options
-
-    /*= if (build.classic) { =*/
+    /**
+     * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
+     * of a line graph. Round means that lines are rounded in the ends and
+     * bends.
+     *
+     * @type       {string}
+     * @validvalue ["round", "butt", "square"]
+     * @default    round
+     * @since      3.0.7
+     * @apioption  plotOptions.line.linecap
+     */
 
     /**
      * Pixel width of the graph line.
@@ -331,8 +340,6 @@ null
      * @product highcharts highstock
      */
     lineWidth: 2,
-
-    /*= } =*/
 
     /**
      * For some series, there is a limit that shuts down initial animation
@@ -1126,8 +1133,6 @@ null
      */
     marker: {
 
-        /*= if (build.classic) { =*/
-
         /**
          * The width of the point marker's outline.
          *
@@ -1157,8 +1162,6 @@ null
          * @type      {Highcharts.ColorString}
          * @apioption plotOptions.series.marker.fillColor
          */
-
-        /*= } =*/
 
         /**
          * Enable or disable the point marker. If `undefined`, the markers are
@@ -1351,8 +1354,6 @@ null
                  */
                 radiusPlus: 2,
 
-                /*= if (build.classic) { =*/
-
                 /**
                  * The additional line width for a hovered point.
                  *
@@ -1364,12 +1365,7 @@ null
                  * @since 4.0.3
                  */
                 lineWidthPlus: 1
-
-                /*= } =*/
-
             },
-
-            /*= if (build.classic) { =*/
 
             /**
              * The appearance of the point marker when selected. In order to
@@ -1429,9 +1425,6 @@ null
                  */
                 lineWidth: 2
             }
-
-            /*= } =*/
-
         }
     },
 
@@ -1805,8 +1798,6 @@ null
             return this.y === null ? '' : H.numberFormat(this.y, -1);
         },
 
-        /*= if (build.classic) { =*/
-
         /**
          * Styles for the label. The default `color` setting is `"contrast"`,
          * which is a pseudo color that Highcharts picks up and applies the
@@ -1967,8 +1958,6 @@ null
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.shadow
          */
-
-        /*= } =*/
 
         /**
          * For points with an extent, like columns or map areas, whether to
@@ -2252,8 +2241,6 @@ null
                  */
                 size: 10,
 
-                /*= if (build.classic) { =*/
-
                 /**
                  * Opacity for the halo unless a specific fill is overridden
                  * using the `attributes` setting. Note that Highcharts is only
@@ -2263,9 +2250,6 @@ null
                  * @product highcharts highstock
                  */
                 opacity: 0.25
-
-                /*= } =*/
-
             }
         },
 
@@ -2792,7 +2776,9 @@ null
             userPlotOptions = userOptions.plotOptions || {},
             typeOptions = plotOptions[this.type],
             options,
-            zones;
+            zones,
+            zone,
+            styledMode = chart.styledMode;
 
         this.userOptions = itemOptions;
 
@@ -2849,25 +2835,24 @@ null
             (options.negativeColor || options.negativeFillColor) &&
             !options.zones
         ) {
-            zones.push({
+            zone = {
                 value:
                     options[this.zoneAxis + 'Threshold'] ||
                     options.threshold ||
                     0,
-                className: 'highcharts-negative',
-                /*= if (build.classic) { =*/
-                color: options.negativeColor,
-                fillColor: options.negativeFillColor
-                /*= } =*/
-            });
+                className: 'highcharts-negative'
+            };
+            if (!styledMode) {
+                zone.color = options.negativeColor;
+                zone.fillColor = options.negativeFillColor;
+            }
+            zones.push(zone);
         }
         if (zones.length) { // Push one extra zone for the rest
             if (defined(zones[zones.length - 1].value)) {
-                zones.push({
-                    /*= if (build.classic) { =*/
+                zones.push(styledMode ? {} : {
                     color: this.color,
                     fillColor: this.fillColor
-                    /*= } =*/
                 });
             }
         }
@@ -2947,13 +2932,11 @@ null
      *
      * @function Highcharts.Series#getColor
      */
-    /*= if (!build.classic) { =*/
     getColor: function () {
-        this.getCyclic('color');
-    },
-    /*= } else { =*/
-    getColor: function () {
-        if (this.options.colorByPoint) {
+        if (this.chart.styledMode) {
+            this.getCyclic('color');
+
+        } else if (this.options.colorByPoint) {
             // #4359, selected slice got series.color even when colorByPoint was
             // set.
             this.options.color = null;
@@ -2965,7 +2948,7 @@ null
             );
         }
     },
-    /*= } =*/
+
     /**
      * Get the series' symbol based on either the options or pulled from global
      * options.
@@ -4144,9 +4127,8 @@ null
                         .add(markerGroup);
                     }
 
-                    /*= if (build.classic) { =*/
                     // Presentational attributes
-                    if (graphic) {
+                    if (graphic && !chart.styledMode) {
                         graphic.attr(
                             series.pointAttribs(
                                 point,
@@ -4154,7 +4136,6 @@ null
                             )
                         );
                     }
-                    /*= } =*/
 
                     if (graphic) {
                         graphic.addClass(point.getClassName(), true);
@@ -4230,8 +4211,6 @@ null
         return attribs;
 
     },
-
-    /*= if (build.classic) { =*/
 
     /**
      * Internal function to get presentational attributes for each point. Unlike
@@ -4316,8 +4295,6 @@ null
             'fill': fill
         };
     },
-
-    /*= } =*/
 
     /**
      * Clear DOM objects and free up memory.
@@ -4544,14 +4521,19 @@ null
         var series = this,
             options = this.options,
             graphPath = (this.gappedPath || this.getGraphPath).call(this),
+            styledMode = this.chart.styledMode,
             props = [[
                 'graph',
-                'highcharts-graph',
-                /*= if (build.classic) { =*/
+                'highcharts-graph'
+            ]];
+
+        // Presentational properties
+        if (!styledMode) {
+            props[0].push(
                 options.lineColor || this.color,
                 options.dashStyle
-                /*= } =*/
-            ]];
+            );
+        }
 
         props = series.getZonesGraphs(props);
 
@@ -4574,27 +4556,28 @@ null
                     .attr({ zIndex: 1 }) // #1069
                     .add(series.group);
 
-                /*= if (build.classic) { =*/
-                attribs = {
-                    'stroke': prop[2],
-                    'stroke-width': options.lineWidth,
-                    // Polygon series use filled graph
-                    'fill': (series.fillGraph && series.color) || 'none'
-                };
 
-                if (prop[3]) {
-                    attribs.dashstyle = prop[3];
-                } else if (options.linecap !== 'square') {
-                    attribs['stroke-linecap'] = attribs['stroke-linejoin'] =
-                        'round';
+                if (!styledMode) {
+                    attribs = {
+                        'stroke': prop[2],
+                        'stroke-width': options.lineWidth,
+                        // Polygon series use filled graph
+                        'fill': (series.fillGraph && series.color) || 'none'
+                    };
+
+                    if (prop[3]) {
+                        attribs.dashstyle = prop[3];
+                    } else if (options.linecap !== 'square') {
+                        attribs['stroke-linecap'] = attribs['stroke-linejoin'] =
+                            'round';
+                    }
+
+                    graph = series[graphKey]
+                        .attr(attribs)
+                        // Add shadow to normal series (0) or to first zone (1)
+                        // #3932
+                        .shadow((i < 2) && options.shadow);
                 }
-
-                graph = series[graphKey]
-                    .attr(attribs)
-                    // Add shadow to normal series (0) or to first zone (1)
-                    // #3932
-                    .shadow((i < 2) && options.shadow);
-                /*= } =*/
             }
 
             // Helpers for animation
@@ -4619,15 +4602,18 @@ null
     getZonesGraphs: function (props) {
         // Add the zone properties if any
         this.zones.forEach(function (zone, i) {
-            props.push([
+            var propset = [
                 'zone-graph-' + i,
                 'highcharts-graph highcharts-zone-graph-' + i + ' ' +
-                    (zone.className || ''),
-                /*= if (build.classic) { =*/
-                zone.color || this.color,
-                zone.dashStyle || this.options.dashStyle
-                /*= } =*/
-            ]);
+                    (zone.className || '')
+            ];
+            if (!this.chart.styledMode) {
+                propset.push(
+                    zone.color || this.color,
+                    zone.dashStyle || this.options.dashStyle
+                );
+            }
+            props.push(propset);
         }, this);
 
         return props;
@@ -4731,7 +4717,6 @@ null
                     }
                 }
 
-                /*= if (build.classic) { =*/
                 // VML SUPPPORT
                 if (inverted && renderer.isVML) {
                     if (axis.isXAxis) {
@@ -4751,7 +4736,6 @@ null
                     }
                 }
                 // END OF VML SUPPORT
-                /*= } =*/
 
                 if (clips[i]) {
                     clips[i].animate(clipAttr);
@@ -5266,8 +5250,6 @@ null
  * @apioption plotOptions.line
  */
 
-/*= if (build.classic) { =*/
-
 /**
  * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
  * of a line graph. Round means that lines are rounded in the ends and
@@ -5279,8 +5261,6 @@ null
  * @since      3.0.7
  * @apioption  plotOptions.line.linecap
  */
-
-/*= } =*/
 
 /**
  * A `line` series. If the [type](#series.line.type) option is not

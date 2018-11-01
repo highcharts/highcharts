@@ -163,12 +163,9 @@ ControllableLabel.justifiedOptions = function (
  * @type {Annotation.ControllableLabel.AttrsMap}
  */
 ControllableLabel.attrsMap = {
-    /*= if (build.classic) { =*/
     backgroundColor: 'fill',
     borderColor: 'stroke',
     borderWidth: 'stroke-width',
-    /*= } =*/
-
     zIndex: 'zIndex',
     borderRadius: 'r',
     padding: 'padding'
@@ -227,10 +224,11 @@ H.merge(
                 )
                 .attr(attrs)
                 .css(options.style)
-                /*= if (build.classic) { =*/
-                .shadow(options.shadow)
-                /*= } =*/
                 .add(parent);
+
+            if (!this.annotation.chart.styledMode) {
+                this.graphic.shadow(options.shadow);
+            }
 
             if (options.className) {
                 this.graphic.addClass(options.className);

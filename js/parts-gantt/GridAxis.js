@@ -819,14 +819,16 @@ wrap(Axis.prototype, 'render', function (proceed) {
                 if (!axis.axisLineExtra) {
                     axis.axisLineExtra = renderer.path(linePath)
                         .attr({
-                            /*= if (build.classic) { =*/
-                            stroke: options.lineColor,
-                            'stroke-width': lineWidth,
-                            /*= } =*/
                             zIndex: 7
                         })
                         .addClass('highcharts-axis-line')
                         .add(axis.axisGroup);
+                    if (!renderer.styledMode) {
+                        axis.axisLineExtra.attr({
+                            stroke: options.lineColor,
+                            'stroke-width': lineWidth
+                        });
+                    }
                 } else {
                     axis.axisLineExtra.animate({
                         d: linePath

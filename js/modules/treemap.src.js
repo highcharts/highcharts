@@ -430,7 +430,6 @@ seriesType('treemap', 'scatter', {
      */
 
 
-    /*= if (build.classic) { =*/
     // Presentational options
 
     /**
@@ -509,7 +508,6 @@ seriesType('treemap', 'scatter', {
             shadow: false
         }
     }
-    /*= } =*/
 
 
 
@@ -726,17 +724,17 @@ seriesType('treemap', 'scatter', {
                 y2,
                 crispCorr = 0;
 
-            /*= if (build.classic) { =*/
             // Get the crisp correction in classic mode. For this to work in
             // styled mode, we would need to first add the shape (without x, y,
             // width and height), then read the rendered stroke width using
             // point.graphic.strokeWidth(), then modify and apply the shapeArgs.
             // This applies also to column series, but the downside is
             // performance and code complexity.
-            crispCorr = (
-                (series.pointAttribs(point)['stroke-width'] || 0) % 2
-            ) / 2;
-            /*= } =*/
+            if (!series.chart.styledMode) {
+                crispCorr = (
+                    (series.pointAttribs(point)['stroke-width'] || 0) % 2
+                ) / 2;
+            }
 
             // Points which is ignored, have no values.
             if (values && node.visible) {
@@ -1175,7 +1173,6 @@ seriesType('treemap', 'scatter', {
         }
     },
 
-    /*= if (build.classic) { =*/
     /**
      * Get presentational attributes
      */
@@ -1239,7 +1236,6 @@ seriesType('treemap', 'scatter', {
         }
         return attr;
     },
-    /*= } =*/
 
     /**
     * Extending ColumnSeries drawPoints
@@ -1267,18 +1263,16 @@ seriesType('treemap', 'scatter', {
         // Call standard drawPoints
         seriesTypes.column.prototype.drawPoints.call(this);
 
-        /*= if (!build.classic) { =*/
         // In styled mode apply point.color. Use CSS, otherwise the fill
         // used in the style sheet will take precedence over the fill
         // attribute.
-        if (this.colorAttribs) { // Heatmap is loaded
+        if (this.colorAttribs && series.chart.styledMode) { // Heatmap is loaded
             this.points.forEach(function (point) {
                 if (point.graphic) {
                     point.graphic.css(this.colorAttribs(point));
                 }
             }, this);
         }
-        /*= } =*/
 
         // If drillToNode is allowed, set a point cursor on clickables & add
         // drillId to point

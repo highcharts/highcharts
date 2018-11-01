@@ -46,6 +46,7 @@ H.extend(H.SVGElement.prototype, {
         // Add the border rect
         var bb = this.getBBox(),
             pad = pick(margin, 3);
+
         this.focusBorder = this.renderer.rect(
             bb.x - pad,
             bb.y - pad,
@@ -54,16 +55,17 @@ H.extend(H.SVGElement.prototype, {
             style && style.borderRadius
         )
         .addClass('highcharts-focus-border')
-        /*= if (build.classic) { =*/
-        .attr({
-            stroke: style && style.stroke,
-            'stroke-width': style && style.strokeWidth
-        })
-        /*= } =*/
         .attr({
             zIndex: 99
         })
         .add(this.parentGroup);
+
+        if (!this.renderer.styledMode) {
+            this.focusBorder.attr({
+                stroke: style && style.stroke,
+                'stroke-width': style && style.strokeWidth
+            });
+        }
     },
 
     /**

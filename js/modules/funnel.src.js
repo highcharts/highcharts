@@ -107,9 +107,6 @@ seriesType('funnel', 'pie',
      */
     size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 
-    /*= if (build.classic) { =*/
-    // Presentational
-
     dataLabels: {
         connectorWidth: 1
     },
@@ -151,7 +148,6 @@ seriesType('funnel', 'pie',
             borderColor: '${palette.neutralColor100}'
         }
     }
-    /*= } =*/
 },
 
 // Properties

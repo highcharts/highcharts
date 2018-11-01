@@ -34,7 +34,6 @@ var noop = H.noop,
  * @optionparent plotOptions.arearange
  */
 seriesType('arearange', 'area', {
-    /*= if (build.classic) { =*/
 
     /**
      * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
@@ -53,17 +52,12 @@ seriesType('arearange', 'area', {
      * @product highcharts highstock
      */
     lineWidth: 1,
-    /*= } =*/
 
     threshold: null,
 
     tooltip: {
-        /*= if (!build.classic) { =*/
-        pointFormat: '<span class="highcharts-color-{series.colorIndex}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>',
-        /*= } else { =*/
-
-        pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // eslint-disable-line no-dupe-keys
-        /*= } =*/
+        pointFormat: '<span style="color:{series.color}">\u25CF</span> ' +
+            '{series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
     },
 
     /**

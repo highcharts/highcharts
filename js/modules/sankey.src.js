@@ -94,12 +94,10 @@ seriesType('sankey', 'column', {
         },
         inside: true
     },
-    /*= if (build.classic) { =*/
     /**
      * Opacity for the links between nodes in the sankey diagram.
      */
     linkOpacity: 0.5,
-    /*= } =*/
     /**
      * The pixel width of each node in a sankey diagram, or the height in case
      * the chart is inverted.
@@ -135,13 +133,8 @@ seriesType('sankey', 'column', {
          */
         followPointer: true,
 
-        /*= if (build.classic) { =*/
         headerFormat:
-            '<span style="font-size: 0.85em">{series.name}</span><br/>',
-        /*= } else { =*/
-        headerFormat: // eslint-disable-line no-dupe-keys
-            '<span class="highcharts-header">{series.name}</span><br/>',
-        /*= } =*/
+            '<span style="font-size: 10px">{series.name}</span><br/>',
         pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>{point.weight}</b><br/>',
         /**
          * The [format string](
@@ -325,7 +318,6 @@ seriesType('sankey', 'column', {
     },
 
 
-    /*= if (build.classic) { =*/
     /**
      * Return the presentational attributes.
      */
@@ -345,7 +337,6 @@ seriesType('sankey', 'column', {
                 H.color(color).setOpacity(opacity).get()
         };
     },
-    /*= } =*/
 
     /**
      * Extend generatePoints by adding the nodes, which are Point objects
@@ -353,7 +344,8 @@ seriesType('sankey', 'column', {
      */
     generatePoints: function () {
 
-        var nodeLookup = {};
+        var nodeLookup = {},
+            chart = this.chart;
 
         H.Series.prototype.generatePoints.call(this);
 
@@ -378,15 +370,15 @@ seriesType('sankey', 'column', {
                 point.fromNode = nodeLookup[point.from];
 
                 // Point color defaults to the fromNode's color
-                /*= if (build.classic) { =*/
-                point.color =
-                    point.options.color || nodeLookup[point.from].color;
-                /*= } else { =*/
-                point.colorIndex = pick(
-                    point.options.colorIndex,
-                    nodeLookup[point.from].colorIndex
-                );
-                /*= } =*/
+                if (chart.styledMode) {
+                    point.colorIndex = pick(
+                        point.options.colorIndex,
+                        nodeLookup[point.from].colorIndex
+                    );
+                } else {
+                    point.color =
+                        point.options.color || nodeLookup[point.from].color;
+                }
 
             }
             if (defined(point.to)) {

@@ -315,7 +315,6 @@ addEvent(Series, 'afterInit', function () {
     }
 });
 
-/*= if (build.classic) { =*/
 function pointAttribs(proceed) {
     var attr = proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -336,7 +335,6 @@ if (seriesTypes.columnrange) {
     seriesTypes.columnrange.prototype.setVisible =
         seriesTypes.column.prototype.setVisible;
 }
-/*= } =*/
 
 wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 

@@ -292,7 +292,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     new H.Time(userOptions.time) :
                     H.time;
 
-
+            /**
+             * Whether the chart is in styled mode, meaning all presentatinoal
+             * attributes are avoided.
+             *
+             * @name Highcharts.Chart#styledMode
+             * @type {boolean}
+             */
+            this.styledMode = optionsChart.styledMode;
             this.hasCartesianSeries = optionsChart.showAxes;
 
             var chart = this;
@@ -772,31 +779,28 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     setTitle: function (titleOptions, subtitleOptions, redraw) {
         var chart = this,
             options = chart.options,
+            styledMode = chart.styledMode,
             chartTitleOptions,
             chartSubtitleOptions;
 
         chartTitleOptions = options.title = merge(
-            /*= if (build.classic) { =*/
             // Default styles
-            {
+            !styledMode && {
                 style: {
                     color: '${palette.neutralColor80}',
                     fontSize: options.isStock ? '16px' : '18px' // #2944
                 }
             },
-            /*= } =*/
             options.title,
             titleOptions
         );
         chartSubtitleOptions = options.subtitle = merge(
-            /*= if (build.classic) { =*/
             // Default styles
-            {
+            !styledMode && {
                 style: {
                     color: '${palette.neutralColor60}'
                 }
             },
-            /*= } =*/
             options.subtitle,
             subtitleOptions
         );
@@ -857,10 +861,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     chart.setTitle(!i && o, i && o);
                 };
 
-                /*= if (build.classic) { =*/
                 // Presentational
-                chart[name].css(chartTitleOptions.style);
-                /*= } =*/
+                if (!styledMode) {
+                    chart[name].css(chartTitleOptions.style);
+                }
 
             }
         });
@@ -893,9 +897,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 titleSize;
 
             if (title) {
-                /*= if (build.classic) { =*/
-                titleSize = titleOptions.style.fontSize;
-                /*= } =*/
+
+                if (!this.styledMode) {
+                    titleSize = titleOptions.style.fontSize;
+                }
                 titleSize = renderer.fontMetrics(titleSize, title).b;
                 title
                     .css({
@@ -1133,19 +1138,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chartHeight = chart.chartHeight;
 
         // Create the inner container
-        /*= if (build.classic) { =*/
-        containerStyle = extend({
-            position: 'relative',
-            overflow: 'hidden', // needed for context menu (avoid scrollbars)
-                // and content overflow in IE
-            width: chartWidth + 'px',
-            height: chartHeight + 'px',
-            textAlign: 'left',
-            lineHeight: 'normal', // #427
-            zIndex: 0, // #1072
-            '-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
-        }, optionsChart.style);
-        /*= } =*/
+        if (!chart.styledMode) {
+            containerStyle = extend({
+                position: 'relative',
+                // needed for context menu (avoidscrollbars) and content
+                // overflow in IE
+                overflow: 'hidden',
+                width: chartWidth + 'px',
+                height: chartHeight + 'px',
+                textAlign: 'left',
+                lineHeight: 'normal', // #427
+                zIndex: 0, // #1072
+                '-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
+            }, optionsChart.style);
+        }
 
         /**
          * The containing HTML element of the chart. The container is
@@ -1184,19 +1190,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chartHeight,
             null,
             optionsChart.forExport,
-            options.exporting && options.exporting.allowHTML
+            options.exporting && options.exporting.allowHTML,
+            chart.styledMode
         );
 
 
         chart.setClassName(optionsChart.className);
-        /*= if (build.classic) { =*/
-        chart.renderer.setStyle(optionsChart.style);
-        /*= } else { =*/
-        // Initialize definitions
-        for (key in options.defs) {
-            this.renderer.definition(options.defs[key]);
+        if (!chart.styledMode) {
+            chart.renderer.setStyle(optionsChart.style);
+        } else {
+            // Initialize definitions
+            for (key in options.defs) {
+                this.renderer.definition(options.defs[key]);
+            }
         }
-        /*= } =*/
 
         // Add a reference to the charts index
         chart.renderer.chartIndex = chart.index;
@@ -1426,13 +1433,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Resize the container with the global animation applied if enabled
         // (#2503)
-        /*= if (build.classic) { =*/
-        globalAnimation = renderer.globalAnimation;
-        (globalAnimation ? animate : css)(chart.container, {
-            width: chart.chartWidth + 'px',
-            height: chart.chartHeight + 'px'
-        }, globalAnimation);
-        /*= } =*/
+        if (!chart.styledMode) {
+            globalAnimation = renderer.globalAnimation;
+            (globalAnimation ? animate : css)(chart.container, {
+                width: chart.chartWidth + 'px',
+                height: chart.chartHeight + 'px'
+            }, globalAnimation);
+        }
 
         chart.setChartSize(true);
         renderer.setSize(chart.chartWidth, chart.chartHeight, animation);
@@ -1641,12 +1648,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             plotBackground = chart.plotBackground,
             plotBorder = chart.plotBorder,
             chartBorderWidth,
-            /*= if (build.classic) { =*/
+            styledMode = chart.styledMode,
             plotBGImage = chart.plotBGImage,
             chartBackgroundColor = optionsChart.backgroundColor,
             plotBackgroundColor = optionsChart.plotBackgroundColor,
             plotBackgroundImage = optionsChart.plotBackgroundImage,
-            /*= } =*/
             mgn,
             bgAttr,
             plotLeft = chart.plotLeft,
@@ -1666,25 +1672,27 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             verb = 'attr';
         }
 
-        /*= if (build.classic) { =*/
-        // Presentational
-        chartBorderWidth = optionsChart.borderWidth || 0;
-        mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
+        if (!styledMode) {
+            // Presentational
+            chartBorderWidth = optionsChart.borderWidth || 0;
+            mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
 
-        bgAttr = {
-            fill: chartBackgroundColor || 'none'
-        };
+            bgAttr = {
+                fill: chartBackgroundColor || 'none'
+            };
 
-        if (chartBorderWidth || chartBackground['stroke-width']) { // #980
-            bgAttr.stroke = optionsChart.borderColor;
-            bgAttr['stroke-width'] = chartBorderWidth;
+            if (chartBorderWidth || chartBackground['stroke-width']) { // #980
+                bgAttr.stroke = optionsChart.borderColor;
+                bgAttr['stroke-width'] = chartBorderWidth;
+            }
+            chartBackground
+                .attr(bgAttr)
+                .shadow(optionsChart.shadow);
+        } else {
+            chartBorderWidth = mgn = chartBackground.strokeWidth();
         }
-        chartBackground
-            .attr(bgAttr)
-            .shadow(optionsChart.shadow);
-        /*= } else { =*/
-        chartBorderWidth = mgn = chartBackground.strokeWidth();
-        /*= } =*/
+
+
         chartBackground[verb]({
             x: mgn / 2,
             y: mgn / 2,
@@ -1703,29 +1711,29 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         plotBackground[verb](plotBox);
 
-        /*= if (build.classic) { =*/
-        // Presentational attributes for the background
-        plotBackground
-            .attr({
-                fill: plotBackgroundColor || 'none'
-            })
-            .shadow(optionsChart.plotShadow);
+        if (!styledMode) {
+            // Presentational attributes for the background
+            plotBackground
+                .attr({
+                    fill: plotBackgroundColor || 'none'
+                })
+                .shadow(optionsChart.plotShadow);
 
-        // Create the background image
-        if (plotBackgroundImage) {
-            if (!plotBGImage) {
-                chart.plotBGImage = renderer.image(
-                    plotBackgroundImage,
-                    plotLeft,
-                    plotTop,
-                    plotWidth,
-                    plotHeight
-                ).add();
-            } else {
-                plotBGImage.animate(plotBox);
+            // Create the background image
+            if (plotBackgroundImage) {
+                if (!plotBGImage) {
+                    chart.plotBGImage = renderer.image(
+                        plotBackgroundImage,
+                        plotLeft,
+                        plotTop,
+                        plotWidth,
+                        plotHeight
+                    ).add();
+                } else {
+                    plotBGImage.animate(plotBox);
+                }
             }
         }
-        /*= } =*/
 
         // Plot clip
         if (!clipRect) {
@@ -1749,14 +1757,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 .add();
         }
 
-        /*= if (build.classic) { =*/
-        // Presentational
-        plotBorder.attr({
-            stroke: optionsChart.plotBorderColor,
-            'stroke-width': optionsChart.plotBorderWidth || 0,
-            fill: 'none'
-        });
-        /*= } =*/
+        if (!styledMode) {
+            // Presentational
+            plotBorder.attr({
+                stroke: optionsChart.plotBorderColor,
+                'stroke-width': optionsChart.plotBorderWidth || 0,
+                fill: 'none'
+            });
+        }
 
         plotBorder[verb](plotBorder.crisp({
             x: plotLeft,
@@ -2048,12 +2056,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             .attr({
                 align: credits.position.align,
                 zIndex: 8
-            })
-            /*= if (build.classic) { =*/
-            .css(credits.style)
-            /*= } =*/
-            .add()
-            .align(credits.position);
+            });
+
+
+            if (!chart.styledMode) {
+                this.credits.css(credits.style);
+            }
+
+            this.credits
+                .add()
+                .align(credits.position);
 
             // Dynamically update
             this.credits.update = function (options) {

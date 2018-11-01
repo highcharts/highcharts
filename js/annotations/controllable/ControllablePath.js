@@ -34,12 +34,10 @@ function ControllablePath(annotation, options) {
  * @type {Annotation.ControllablePath.AttrsMap}
  */
 ControllablePath.attrsMap = {
-    /*= if (build.classic) { =*/
     dashStyle: 'dashstyle',
     strokeWidth: 'stroke-width',
     stroke: 'stroke',
     fill: 'fill',
-    /*= } =*/
     zIndex: 'zIndex'
 };
 

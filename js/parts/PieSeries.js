@@ -433,8 +433,6 @@ seriesType('pie', 'line'
         followPointer: true
     },
 
-    /*= if (build.classic) { =*/
-
     /**
      * The color of the border surrounding each slice. When `null`, the
      * border takes the same color as the slice fill. This can be used
@@ -493,11 +491,8 @@ seriesType('pie', 'line'
              * @product highcharts
              */
             brightness: 0.1
-
         }
     }
-
-    /*= } =*/
 
 }, /** @lends seriesTypes.pie.prototype */ {
 
@@ -784,15 +779,13 @@ seriesType('pie', 'line'
             groupTranslation,
             graphic,
             pointAttr,
-            shapeArgs;
+            shapeArgs,
+            shadow = series.options.shadow;
 
-        /*= if (build.classic) { =*/
-        var shadow = series.options.shadow;
-        if (shadow && !series.shadowGroup) {
+        if (shadow && !series.shadowGroup && !chart.styledMode) {
             series.shadowGroup = renderer.g('shadow')
                 .add(series.group);
         }
-        /*= } =*/
 
         // draw the slices
         series.points.forEach(function (point) {
@@ -805,31 +798,32 @@ seriesType('pie', 'line'
                 // plot area traslation
                 groupTranslation = point.getTranslate();
 
-                /*= if (build.classic) { =*/
-                // Put the shadow behind all points
-                var shadowGroup = point.shadowGroup;
-                if (shadow && !shadowGroup) {
-                    shadowGroup = point.shadowGroup = renderer.g('shadow')
-                        .add(series.shadowGroup);
-                }
+                if (!chart.styledMode) {
+                    // Put the shadow behind all points
+                    var shadowGroup = point.shadowGroup;
+                    if (shadow && !shadowGroup) {
+                        shadowGroup = point.shadowGroup = renderer.g('shadow')
+                            .add(series.shadowGroup);
+                    }
 
-                if (shadowGroup) {
-                    shadowGroup.attr(groupTranslation);
+                    if (shadowGroup) {
+                        shadowGroup.attr(groupTranslation);
+                    }
+                    pointAttr = series.pointAttribs(
+                        point,
+                        point.selected && 'select'
+                    );
                 }
-                pointAttr = series.pointAttribs(
-                    point,
-                    point.selected && 'select'
-                );
-                /*= } =*/
 
                 // Draw the slice
                 if (graphic) {
                     graphic
-                        .setRadialReference(series.center)
-                        /*= if (build.classic) { =*/
-                        .attr(pointAttr)
-                        /*= } =*/
-                        .animate(extend(shapeArgs, groupTranslation));
+                        .setRadialReference(series.center);
+
+                    if (!chart.styledMode) {
+                        graphic.attr(pointAttr);
+                    }
+                    graphic.animate(extend(shapeArgs, groupTranslation));
                 } else {
 
                     point.graphic = graphic = renderer[point.shapeType](
@@ -839,12 +833,12 @@ seriesType('pie', 'line'
                         .attr(groupTranslation)
                         .add(series.group);
 
-                    /*= if (build.classic) { =*/
-                    graphic
-                        .attr(pointAttr)
-                        .attr({ 'stroke-linejoin': 'round' })
-                        .shadow(shadow, shadowGroup);
-                    /*= } =*/
+                    if (!chart.styledMode) {
+                        graphic
+                            .attr(pointAttr)
+                            .attr({ 'stroke-linejoin': 'round' })
+                            .shadow(shadow, shadowGroup);
+                    }
                 }
 
                 graphic.attr({
@@ -1038,11 +1032,9 @@ seriesType('pie', 'line'
 
         point.graphic.animate(this.getTranslate());
 
-        /*= if (build.classic) { =*/
         if (point.shadowGroup) {
             point.shadowGroup.animate(this.getTranslate());
         }
-        /*= } =*/
     },
 
     /**

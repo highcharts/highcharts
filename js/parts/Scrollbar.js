@@ -158,8 +158,6 @@ var defaultScrollbarOptions = {
      */
     zIndex: 3,
 
-    /*= if (build.classic) { =*/
-
     /**
      * The background color of the scrollbar itself.
      *
@@ -308,7 +306,6 @@ var defaultScrollbarOptions = {
      * @apioption  scrollbar.trackBorderWidth
      */
     trackBorderWidth: 1
-    /*= } =*/
 };
 
 defaultOptions.scrollbar = merge(
@@ -410,6 +407,7 @@ Scrollbar.prototype = {
             renderer = scroller.renderer,
             options = scroller.options,
             size = scroller.size,
+            styledMode = this.chart.styledMode,
             group;
 
         // Draw the scrollbar group
@@ -428,13 +426,14 @@ Scrollbar.prototype = {
                 width: size
             }).add(group);
 
-        /*= if (build.classic) { =*/
-        scroller.track.attr({
-            fill: options.trackBackgroundColor,
-            stroke: options.trackBorderColor,
-            'stroke-width': options.trackBorderWidth
-        });
-        /*= } =*/
+        if (!styledMode) {
+            scroller.track.attr({
+                fill: options.trackBackgroundColor,
+                stroke: options.trackBorderColor,
+                'stroke-width': options.trackBorderWidth
+            });
+        }
+
         this.trackBorderWidth = scroller.track.strokeWidth();
         scroller.track.attr({
             y: -this.trackBorderWidth % 2 / 2
@@ -470,17 +469,18 @@ Scrollbar.prototype = {
             .addClass('highcharts-scrollbar-rifles')
             .add(scroller.scrollbarGroup);
 
-        /*= if (build.classic) { =*/
-        scroller.scrollbar.attr({
-            fill: options.barBackgroundColor,
-            stroke: options.barBorderColor,
-            'stroke-width': options.barBorderWidth
-        });
-        scroller.scrollbarRifles.attr({
-            stroke: options.rifleColor,
-            'stroke-width': 1
-        });
-        /*= } =*/
+        if (!styledMode) {
+            scroller.scrollbar.attr({
+                fill: options.barBackgroundColor,
+                stroke: options.barBorderColor,
+                'stroke-width': options.barBorderWidth
+            });
+            scroller.scrollbarRifles.attr({
+                stroke: options.rifleColor,
+                'stroke-width': 1
+            });
+        }
+
         scroller.scrollbarStrokeWidth = scroller.scrollbar.strokeWidth();
         scroller.scrollbarGroup.translate(
             -scroller.scrollbarStrokeWidth % 2 / 2,
@@ -586,14 +586,14 @@ Scrollbar.prototype = {
             .addClass('highcharts-scrollbar-button')
             .add(group);
 
-        /*= if (build.classic) { =*/
         // Presentational attributes
-        tempElem.attr({
-            stroke: options.buttonBorderColor,
-            'stroke-width': options.buttonBorderWidth,
-            fill: options.buttonBackgroundColor
-        });
-        /*= } =*/
+        if (!this.chart.styledMode) {
+            tempElem.attr({
+                stroke: options.buttonBorderColor,
+                'stroke-width': options.buttonBorderWidth,
+                fill: options.buttonBackgroundColor
+            });
+        }
 
         // Place the rectangle based on the rendered stroke width
         tempElem.attr(tempElem.crisp({
@@ -620,11 +620,11 @@ Scrollbar.prototype = {
             .addClass('highcharts-scrollbar-arrow')
             .add(scrollbarButtons[index]);
 
-        /*= if (build.classic) { =*/
-        tempElem.attr({
-            fill: options.buttonArrowColor
-        });
-        /*= } =*/
+        if (!this.chart.styledMode) {
+            tempElem.attr({
+                fill: options.buttonArrowColor
+            });
+        }
     },
 
     /**

@@ -114,24 +114,21 @@ defaultOptions.noData = {
          * @product highcharts highstock gantt
          */
         verticalAlign: 'middle'
+    },
+
+    /**
+     * CSS styles for the no-data label.
+     *
+     * @sample highcharts/no-data-to-display/no-data-line
+     *         Styled no-data text
+     * @optionparent noData.style
+     */
+    style: {
+        fontWeight: 'bold',
+        fontSize: '12px',
+        color: '${palette.neutralColor60}'
     }
 };
-
-/*= if (build.classic) { =*/
-// Presentational
-/**
- * CSS styles for the no-data label.
- *
- * @sample highcharts/no-data-to-display/no-data-line
- *         Styled no-data text
- * @optionparent noData.style
- */
-defaultOptions.noData.style = {
-    fontWeight: 'bold',
-    fontSize: '12px',
-    color: '${palette.neutralColor60}'
-};
-/*= } =*/
 
 
 // Define hasData function for non-cartesian seris. Returns true if the series
@@ -189,11 +186,11 @@ chartPrototype.showNoData = function (str) {
                 'no-data'
             );
 
-        /*= if (build.classic) { =*/
-        chart.noDataLabel
-            .attr(noDataOptions.attr)
-            .css(noDataOptions.style);
-        /*= } =*/
+        if (!chart.styledMode) {
+            chart.noDataLabel
+                .attr(noDataOptions.attr)
+                .css(noDataOptions.style);
+        }
 
         chart.noDataLabel.add();
 

@@ -95,7 +95,9 @@ Highcharts.Point.prototype = {
 
         var point = this,
             colors,
-            colorCount = series.chart.options.chart.colorCount,
+            optionsChart = series.chart.options.chart,
+            colorCount = optionsChart.colorCount,
+            styledMode = series.chart.styledMode,
             colorIndex;
 
         /**
@@ -106,33 +108,26 @@ Highcharts.Point.prototype = {
          */
         point.series = series;
 
-        /*= if (build.classic) { =*/
-
         /**
          * The point's current color.
          *
          * @name Highcharts.Point#color
          * @type {Highcharts.ColorString}
          */
-        point.color = series.color; // #3445
-
-        /*= } =*/
-
+        if (!styledMode) {
+            point.color = series.color; // #3445
+        }
         point.applyOptions(options, x);
 
         // Add a unique ID to the point if none is assigned
         point.id = defined(point.id) ? point.id : uniqueKey();
 
         if (series.options.colorByPoint) {
-
-            /*= if (build.classic) { =*/
-
-            colors = series.options.colors || series.chart.options.colors;
-            point.color = point.color || colors[series.colorCounter];
-            colorCount = colors.length;
-
-            /*= } =*/
-
+            if (!styledMode) {
+                colors = series.options.colors || series.chart.options.colors;
+                point.color = point.color || colors[series.colorCounter];
+                colorCount = colors.length;
+            }
             colorIndex = series.colorCounter;
             series.colorCounter++;
             // loop back to zero
@@ -541,6 +536,11 @@ Highcharts.Point.prototype = {
             valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
+
+        // Replace default point style with class name
+        if (series.chart.styledMode) {
+            pointFormat = series.chart.tooltip.styledModeFormat(pointFormat);
+        }
 
         // Loop over the point array map and replace unformatted values with
         // sprintf formatting markup
