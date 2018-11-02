@@ -274,16 +274,16 @@ extend(defaultOptions, {
          */
         buttonTheme: {
             /*= if (build.classic) { =*/
+            /** @ignore-option */
             'stroke-width': 0,
-            /** @ignore */
             /*= } =*/
-            /** @ignore */
+            /** @ignore-option */
             width: 28,
-            /** @ignore */
+            /** @ignore-option */
             height: 18,
-            /** @ignore */
+            /** @ignore-option */
             padding: 2,
-            /** @ignore */
+            /** @ignore-option */
             zIndex: 7 // #484, #852
         },
 
