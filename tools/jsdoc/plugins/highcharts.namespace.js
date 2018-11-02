@@ -1365,7 +1365,7 @@ exports.defineTags = function (dictionary) {
         mustHaveValue: true,
         onTagged: (doclet, tag) => doclet.products =
             tag.value
-                .split(',')
+                .split(/[,\s]+/)
                 .map(product => product.trim())
     });
 
