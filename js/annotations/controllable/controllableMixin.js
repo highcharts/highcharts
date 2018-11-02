@@ -204,8 +204,7 @@ var controllableMixin = {
     addControlPoints: function () {
         var controlPointsOptions = this.options.controlPoints;
 
-        H.each(
-            controlPointsOptions || [],
+        (controlPointsOptions || []).forEach(
             function (controlPointOptions, i) {
                 var options = H.merge(
                     this.options.controlPointOptions,
@@ -239,7 +238,7 @@ var controllableMixin = {
      * Render a controllable.
      **/
     render: function () {
-        H.each(this.controlPoints, function (controlPoint) {
+        this.controlPoints.forEach(function (controlPoint) {
             controlPoint.render();
         });
     },
@@ -250,7 +249,7 @@ var controllableMixin = {
      * @param {boolean} animation
      **/
     redraw: function (animation) {
-        H.each(this.controlPoints, function (controlPoint) {
+        this.controlPoints.forEach(function (controlPoint) {
             controlPoint.redraw(animation);
         });
     },
@@ -271,7 +270,7 @@ var controllableMixin = {
             cy = temp;
         }
 
-        H.each(this.points, function (point, i) {
+        this.points.forEach(function (point, i) {
             this.transformPoint(transformation, cx, cy, p1, p2, i);
         }, this);
     },
@@ -349,7 +348,7 @@ var controllableMixin = {
      * @param {boolean} [visible]
      */
     setControlPointsVisibility: function (visible) {
-        H.each(this.controlPoints, function (controlPoint) {
+        this.controlPoints.forEach(function (controlPoint) {
             controlPoint.setVisibility(visible);
         });
     },
@@ -362,7 +361,7 @@ var controllableMixin = {
             this.graphic = this.graphic.destroy();
         }
 
-        H.each(this.controlPoints, function (controlPoint) {
+        this.controlPoints.forEach(function (controlPoint) {
             controlPoint.destroy();
         });
 

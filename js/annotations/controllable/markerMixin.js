@@ -152,7 +152,7 @@ var markerMixin = {
                 }
             };
 
-        H.each(['markerStart', 'markerEnd'], setMarker);
+        ['markerStart', 'markerEnd'].forEach(setMarker);
     }
 };
 
@@ -162,7 +162,7 @@ H.SVGRenderer.prototype.definition = function (def) {
 
     function recurse(config, parent) {
         var ret;
-        H.each(H.splat(config), function (item) {
+        H.splat(config).forEach(function (item) {
             var node = ren.createElement(item.tagName),
                 attr = {};
 

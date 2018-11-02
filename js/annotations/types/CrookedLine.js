@@ -32,8 +32,7 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
     },
 
     addControlPoints: function () {
-        H.each(
-            this.getControlPointsOptions(),
+        this.getControlPointsOptions().forEach(
             function (pointOptions, i) {
                 var controlPoint = new ControlPoint(
                     this.chart,

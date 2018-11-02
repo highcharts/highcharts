@@ -19,7 +19,6 @@ import ControlPoint from './ControlPoint.js';
 
 var merge = H.merge,
     addEvent = H.addEvent,
-    each = H.each,
     defined = H.defined,
     erase = H.erase,
     find = H.find,
@@ -668,7 +667,7 @@ merge(
         },
 
         addShapes: function () {
-            each(this.options.shapes || [], function (shapeOptions, i) {
+            (this.options.shapes || []).forEach(function (shapeOptions, i) {
                 var shape = this.initShape(shapeOptions);
 
                 this.options.shapes[i] = shape.options;
@@ -676,7 +675,7 @@ merge(
         },
 
         addLabels: function () {
-            each(this.options.labels || [], function (labelOptions, i) {
+            (this.options.labels || []).forEach(function (labelOptions, i) {
                 var label = this.initLabel(labelOptions);
 
                 this.options.labels[i] = label.options;
@@ -806,8 +805,8 @@ merge(
                 visible
             );
 
-            each(this.shapes, setItemControlPointsVisibility);
-            each(this.labels, setItemControlPointsVisibility);
+            this.shapes.forEach(setItemControlPointsVisibility);
+            this.labels.forEach(setItemControlPointsVisibility);
         },
 
         /**
@@ -822,8 +821,8 @@ merge(
                     item.destroy();
                 };
 
-            each(this.labels, destroyItem);
-            each(this.shapes, destroyItem);
+            this.labels.forEach(destroyItem);
+            this.shapes.forEach(destroyItem);
 
             erase(chart.labelCollectors, this.labelCollector);
 
@@ -1057,7 +1056,7 @@ H.extend(H.Chart.prototype, /** @lends Highcharts.Chart# */ {
     drawAnnotations: function () {
         this.plotBoxClip.attr(this.plotBox);
 
-        each(this.annotations, function (annotation) {
+        this.annotations.forEach(function (annotation) {
             annotation.redraw();
         });
     }
@@ -1079,7 +1078,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
         .clip(chart.plotBoxClip)
         .add();
 
-    each(chart.options.annotations, function (annotationOptions, i) {
+    chart.options.annotations.forEach(function (annotationOptions, i) {
         var annotation = chart.initAnnotation(annotationOptions);
 
         chart.options.annotations[i] = annotation.options;
