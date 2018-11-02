@@ -1027,7 +1027,7 @@ Axis.prototype.getGroupPixelWidth = function () {
  *
  * @function Highcharts.Axis#setDataGrouping
  *
- * @param {Highcharts.SeriesLineDatagroupingOptions} [dataGrouping]
+ * @param {boolean|Highcharts.PlotSeriesDataGroupingOptions} [dataGrouping]
  *        A `dataGrouping` configuration. Use `false` to disable data grouping
  *        dynamically.
  *
