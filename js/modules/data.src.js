@@ -1110,24 +1110,30 @@ Highcharts.extend(Data.prototype, {
                 table = doc.getElementById(table);
             }
 
-            table.getElementsByTagName('tr').forEach(function (tr, rowNo) {
-                if (rowNo >= startRow && rowNo <= endRow) {
-                    tr.children.forEach(function (item, colNo) {
-                        if (
-                            (item.tagName === 'TD' || item.tagName === 'TH') &&
-                            colNo >= startColumn &&
-                            colNo <= endColumn
-                        ) {
-                            if (!columns[colNo - startColumn]) {
-                                columns[colNo - startColumn] = [];
-                            }
+            [].forEach.call(
+                table.getElementsByTagName('tr'),
+                function (tr, rowNo) {
+                    if (rowNo >= startRow && rowNo <= endRow) {
+                        [].forEach.call(tr.children, function (item, colNo) {
+                            if (
+                                (
+                                    item.tagName === 'TD' ||
+                                    item.tagName === 'TH'
+                                ) &&
+                                colNo >= startColumn &&
+                                colNo <= endColumn
+                            ) {
+                                if (!columns[colNo - startColumn]) {
+                                    columns[colNo - startColumn] = [];
+                                }
 
-                            columns[colNo - startColumn][rowNo - startRow] =
-                                item.innerHTML;
-                        }
-                    });
+                                columns[colNo - startColumn][rowNo - startRow] =
+                                    item.innerHTML;
+                            }
+                        });
+                    }
                 }
-            });
+            );
 
             this.dataFound(); // continue
         }

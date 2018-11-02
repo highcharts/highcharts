@@ -1938,7 +1938,7 @@ Chart.prototype.inlineStyles = function () {
             }
 
             // Recurse
-            (node.children || node.childNodes).forEach(recurse);
+            [].forEach.call(node.children || node.childNodes, recurse);
         }
     }
 
