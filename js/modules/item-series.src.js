@@ -69,6 +69,11 @@ seriesType('item', 'column', {
                 series.pointAttribs(point, point.selected && 'select');
             delete pointAttr.r;
 
+            if (series.chart.styledMode) {
+                delete pointAttr.stroke;
+                delete pointAttr['stroke-width'];
+            }
+
             if (point.y !== null) {
 
                 if (!point.graphic) {

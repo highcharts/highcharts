@@ -155,7 +155,7 @@ seriesType('xrange', 'column'
 
     tooltip: {
 
-        headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
+        headerFormat: '<span style="font-size: 10px">{point.x} - {point.x2}</span><br/>',
 
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
     },

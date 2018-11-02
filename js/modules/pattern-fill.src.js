@@ -211,7 +211,8 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
                     fill: fill
                 })
                 .add(pattern);
-        };
+        },
+        attribs;
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
@@ -251,11 +252,14 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
         }
 
         // The pattern
-        this.createElement('path').attr({
-            'd': path.d || path,
-            'stroke': path.stroke || color,
-            'stroke-width': path.strokeWidth || 2
-        }).add(pattern);
+        attribs = {
+            'd': path.d || path
+        };
+        if (!this.styledMode) {
+            attribs.stroke = path.stroke || color;
+            attribs['stroke-width'] = path.strokeWidth || 2;
+        }
+        this.createElement('path').attr(attribs).add(pattern);
         pattern.color = color;
 
     // Image pattern

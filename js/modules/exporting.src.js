@@ -435,14 +435,16 @@ merge(true, defaultOptions.navigation
             /**
              * The default fill exists only to capture hover events.
              * @type {Highcharts.ColorString}
+             * @apioption navigation.buttonOptions.theme.fill
+             * @default ${palette.backgroundColor}
              */
-            fill: '${palette.backgroundColor}',
 
             /**
              * Default stroke for the buttons.
              * @type {Highcharts.ColorString}
+             * @apioption navigation.buttonOptions.theme.stroke
+             * @default none
              */
-            stroke: 'none',
 
             /**
              * Padding for the button.
@@ -1556,6 +1558,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             hover = states && states.hover,
             select = states && states.select,
             callback;
+
+        if (!chart.styledMode) {
+            attr.fill = pick(attr.fill, '${palette.backgroundColor}');
+            attr.stroke = pick(attr.stroke, 'none');
+        }
 
         delete attr.states;
 

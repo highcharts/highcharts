@@ -684,7 +684,7 @@ var sunburstSeries = {
                 animate: animationInfo.to,
                 attr: extend(
                     animationInfo.from,
-                    series.pointAttribs && series.pointAttribs(
+                    !chart.styledMode && series.pointAttribs(
                         point,
                         point.selected && 'select'
                     )

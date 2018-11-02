@@ -853,18 +853,20 @@ seriesType('map', 'scatter', {
         // Set the stroke-width directly on the group element so the children
         // inherit it. We need to use setAttribute directly, because the
         // stroke-widthSetter method expects a stroke color also to be set.
-        group.element.setAttribute(
-            'stroke-width',
-            (
-                series.options[
-                    (
-                        series.pointAttrToOptions &&
-                        series.pointAttrToOptions['stroke-width']
-                    ) || 'borderWidth'
-                ] ||
-                1 // Styled mode
-            ) / (scaleX || 1)
-        );
+        if (!chart.styledMode) {
+            group.element.setAttribute(
+                'stroke-width',
+                (
+                    series.options[
+                        (
+                            series.pointAttrToOptions &&
+                            series.pointAttrToOptions['stroke-width']
+                        ) || 'borderWidth'
+                    ] ||
+                    1 // Styled mode
+                ) / (scaleX || 1)
+            );
+        }
 
         this.drawMapDataLabels();
 

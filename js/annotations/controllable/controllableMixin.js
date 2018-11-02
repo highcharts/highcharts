@@ -61,11 +61,20 @@ var controllableMixin = {
         var map = this.constructor.attrsMap,
             attrs = {},
             key,
-            mappedKey;
+            mappedKey,
+            styledMode = this.chart.styledMode;
 
         for (key in options) {
             mappedKey = map[key];
-            if (mappedKey) {
+
+            if (
+                mappedKey &&
+                (
+                    !styledMode ||
+                    ['fill', 'stroke', 'stroke-width']
+                        .indexOf(mappedKey) === -1
+                )
+            ) {
                 attrs[mappedKey] = options[key];
             }
         }

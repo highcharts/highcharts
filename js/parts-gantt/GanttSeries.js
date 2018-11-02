@@ -54,9 +54,7 @@ seriesType('gantt', 'xrange', {
         }
     },
     tooltip: {
-        headerFormat: '<span style="color:{point.color};text-align:right">' +
-                            '{series.name}' +
-                        '</span><br/>',
+        headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
         pointFormat: null,
         pointFormatter: function () {
             var point = this,
@@ -72,8 +70,6 @@ seriesType('gantt', 'xrange', {
                 start,
                 end,
                 milestone = point.options.milestone,
-                dateRowStart = '<span style="font-size: 0.8em">',
-                dateRowEnd = '</span><br/>',
                 retVal = '<b>' + (point.name || point.category) + '</b>';
 
             if (ttOptions.pointFormat) {
@@ -97,10 +93,10 @@ seriesType('gantt', 'xrange', {
             retVal += '<br/>';
 
             if (!milestone) {
-                retVal += dateRowStart + 'Start: ' + start + dateRowEnd;
-                retVal += dateRowStart + 'End: ' + end + dateRowEnd;
+                retVal += 'Start: ' + start + '<br/>';
+                retVal += 'End: ' + end + '<br/>';
             } else {
-                retVal += dateRowStart + 'Date ' + start + dateRowEnd;
+                retVal += 'Date ' + start + '<br/>';
             }
 
             return retVal;
