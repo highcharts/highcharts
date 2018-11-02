@@ -274,7 +274,6 @@ extend(defaultOptions, {
          */
         buttonTheme: {
             /*= if (build.classic) { =*/
-            /** @ignore */
             'stroke-width': 0,
             /** @ignore */
             /*= } =*/
