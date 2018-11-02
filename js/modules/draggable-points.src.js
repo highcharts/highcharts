@@ -11,7 +11,6 @@ import '../parts/Utilities.js';
 var addEvent = H.addEvent,
     objectEach = H.objectEach,
     pick = H.pick,
-    filter = H.grep,
     merge = H.merge,
     seriesTypes = H.seriesTypes;
 
@@ -1267,7 +1266,7 @@ function getGroupedPoints(point) {
         groupKey = series.options.dragDrop.groupBy;
     return point.options[groupKey] ?
         // If we have a grouping option, filter the points by that
-        filter(series.points, function (comparePoint) {
+        series.points.filter(function (comparePoint) {
             return comparePoint.options[groupKey] === point.options[groupKey];
         }) :
         // Otherwise return the point by itself only

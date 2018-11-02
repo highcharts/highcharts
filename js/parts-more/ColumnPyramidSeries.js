@@ -7,8 +7,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var each = H.each,
-    pick = H.pick,
+var pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
@@ -76,7 +75,7 @@ seriesType('columnpyramid', 'column', {},
             colProto.translate.apply(series);
 
             // Record the new values
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 var yBottom = pick(point.yBottom, translatedThreshold),
                     safeDistance = 999 + Math.abs(yBottom),
                     plotY = Math.min(

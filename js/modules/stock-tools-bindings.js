@@ -12,14 +12,11 @@ var addEvent = H.addEvent,
     correctFloat = H.correctFloat,
     defined = H.defined,
     doc = H.doc,
-    each = H.each,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    grep = H.grep,
     isNumber = H.isNumber,
     isArray = H.isArray,
     isObject = H.isObject,
-    map = H.map,
     objectEach = H.objectEach,
     pick = H.pick,
     PREFIX = 'highcharts-';
@@ -67,7 +64,7 @@ var bindingsUtils = {
                 x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
-            each(options.points, function (point, index) {
+            options.points.forEach(function (point, index) {
                 if (index >= startIndex) {
                     point.x = x;
                     point.y = y;
@@ -105,8 +102,8 @@ var bindingsUtils = {
             distX = Number.MAX_SAFE_INTEGER, // IE?
             closestPoint;
 
-        each(chart.series, function (series) {
-            each(series.points, function (point) {
+        chart.series.forEach(function (series) {
+            series.points.forEach(function (point) {
                 if (point && distX > Math.abs(point.x - x)) {
                     distX = Math.abs(point.x - x);
                     closestPoint = point;
@@ -241,7 +238,7 @@ var bindingsUtils = {
                 yAxis = series.yAxis;
 
                 if (series.linkedSeries) {
-                    each(series.linkedSeries, function (linkedSeries) {
+                    series.linkedSeries.forEach(function (linkedSeries) {
                         linkedSeries.remove(false);
                     });
                 }
@@ -1270,7 +1267,7 @@ var stockToolsBindings = {
         init: function (button) {
             this.toggledAnnotations = !this.toggledAnnotations;
 
-            each(this.chart.annotations || [], function (annotation) {
+            (this.chart.annotations || []).forEach(function (annotation) {
                 annotation.setVisibility(!this.toggledAnnotations);
             }, this);
 
@@ -1294,11 +1291,11 @@ var stockToolsBindings = {
                 flags = [],
                 yAxes = [];
 
-            each(chart.annotations, function (annotation, index) {
+            chart.annotations.forEach(function (annotation, index) {
                 annotations[index] = annotation.userOptions;
             });
 
-            each(chart.series, function (series) {
+            chart.series.forEach(function (series) {
                 if (series instanceof H.seriesTypes.sma) {
                     indicators.push(series.userOptions);
                 } else if (series.type === 'flags') {
@@ -1306,7 +1303,7 @@ var stockToolsBindings = {
                 }
             });
 
-            each(chart.yAxis, function (yAxis) {
+            chart.yAxis.forEach(function (yAxis) {
                 if (toolbar.utils.isNotNavigatorYAxis(yAxis)) {
                     yAxes.push(yAxis.options);
                 }
@@ -1560,7 +1557,7 @@ extend(H.Toolbar.prototype, {
 
             // Remove empty strings or values like 0
             if (value !== '') {
-                each(path, function (name, index) {
+                path.forEach(function (name, index) {
                     if (pathLength === index) {
                         // Last index, put value:
                         parent[name] = value;
@@ -1607,7 +1604,7 @@ extend(H.Toolbar.prototype, {
             return defined(prop) && !isNumber(prop) && prop.match('%');
         }
 
-        positions = map(yAxes, function (yAxis) {
+        positions = yAxes.map(function (yAxis) {
             var height = isPercentage(yAxis.options.height) ?
                         parseFloat(yAxis.options.height) / 100 :
                         yAxis.height / plotHeight,
@@ -1650,7 +1647,7 @@ extend(H.Toolbar.prototype, {
     getYAxisResizers: function (yAxes) {
         var resizers = [];
 
-        each(yAxes, function (yAxis, index) {
+        yAxes.forEach(function (yAxis, index) {
             var nextYAxis = yAxes[index + 1];
 
             // We have next axis, bind them:
@@ -1694,10 +1691,7 @@ extend(H.Toolbar.prototype, {
         defaultHeight = defaultHeight || 20; // in %, but as a number
         var chart = this.chart,
             // Only non-navigator axes
-            yAxes = grep(
-                chart.yAxis,
-                this.utils.isNotNavigatorYAxis
-            ),
+            yAxes = chart.yAxis.filter(this.utils.isNotNavigatorYAxis),
             plotHeight = chart.plotHeight,
             allAxesLength = yAxes.length,
             // Gather current heights (in %)
@@ -1771,7 +1765,7 @@ extend(H.Toolbar.prototype, {
             }
         }
 
-        each(positions, function (position, index) {
+        positions.forEach(function (position, index) {
             // if (index === 0) debugger;
             yAxes[index].update({
                 height: position.height + '%',
@@ -1801,7 +1795,7 @@ extend(H.Toolbar.prototype, {
         modifyHeight,
         adder
     ) {
-        each(positions, function (position, index) {
+        positions.forEach(function (position, index) {
             var prevPosition = positions[index - 1];
 
             position.top = !prevPosition ? 0 :
@@ -1868,7 +1862,7 @@ extend(H.Toolbar.prototype, {
                 if (isArray(option)) {
                     parent[key] = [];
 
-                    each(option, function (arrayOption) {
+                    option.forEach(function (arrayOption) {
                         if (!isObject(arrayOption)) {
                             // Simple arrays, e.g. [String, Number, Boolean]
                             traverse(
@@ -1955,7 +1949,7 @@ addEvent(H.Toolbar, 'afterInit', function () {
             elements = doc.getElementsByClassName(PREFIX + className);
 
             if (elements) {
-                each(elements, function (element) {
+                [].forEach.call(elements, function (element) {
                     addEvent(
                         element,
                         'click',

@@ -686,8 +686,7 @@ merge(
             var annotation = this;
 
             annotation.labelCollector = function () {
-                return H.reduce(
-                    annotation.labels,
+                return annotation.labels.reduce(
                     function (labels, label) {
                         if (!label.options.allowOverlap) {
                             labels.push(label.graphic);

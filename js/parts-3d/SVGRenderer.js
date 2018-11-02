@@ -280,7 +280,7 @@ element3dMethods = {
             zIndexes = paths.zIndexes;
 
         // build parts
-        H.each(elem3d.parts, function (part) {
+        elem3d.parts.forEach(function (part) {
             elem3d[part] = renderer.path(paths[part]).attr({
                 'class': 'highcharts-3d-' + part,
                 zIndex: zIndexes[part] || 0
@@ -329,7 +329,7 @@ element3dMethods = {
     processParts: function (props, partsProps, verb, duration, complete) {
         var elem3d = this;
 
-        H.each(elem3d.parts, function (part) {
+        elem3d.parts.forEach(function (part) {
             // if different props for different parts
             if (partsProps) {
                 props = H.pick(partsProps[part], false);

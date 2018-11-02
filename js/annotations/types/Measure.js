@@ -4,7 +4,6 @@ import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
     ControlPoint = Annotation.ControlPoint,
-    each = H.each,
     merge = H.merge,
     isNumber = H.isNumber;
 
@@ -345,12 +344,12 @@ H.extendAnnotation(Measure, null, {
         this.redrawItems(this.labels, animation);
 
         // redraw control point to run positioner
-        each(this.controlPoints, function (controlPoint) {
+        this.controlPoints.forEach(function (controlPoint) {
             controlPoint.redraw();
         });
     },
     translate: function (dx, dy) {
-        H.each(this.shapes, function (item) {
+        this.shapes.forEach(function (item) {
             item.translate(dx, dy);
         });
     },
@@ -533,12 +532,12 @@ H.extendAnnotation(Measure, null, {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            each(series, function (serie) {
+            series.forEach(function (serie) {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.points, function (point) {
+                    serie.points.forEach(function (point) {
                         if (
                             !point.isNull &&
                             point.y < min &&
@@ -571,12 +570,12 @@ H.extendAnnotation(Measure, null, {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            each(series, function (serie) {
+            series.forEach(function (serie) {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.points, function (point) {
+                    serie.points.forEach(function (point) {
                         if (
                             !point.isNull &&
                             point.y > max &&
@@ -618,12 +617,12 @@ H.extendAnnotation(Measure, null, {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            each(series, function (serie) {
+            series.forEach(function (serie) {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.points, function (point) {
+                    serie.points.forEach(function (point) {
                         if (
                             !point.isNull &&
                             point.x > ext.xAxisMin &&

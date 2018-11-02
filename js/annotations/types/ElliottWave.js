@@ -16,7 +16,7 @@ function ElliottWave() {
 
 H.extendAnnotation(ElliottWave, CrookedLine, /** Annotation.CrookedLine# */ {
     addLabels: function () {
-        H.each(this.getPointsOptions(), function (point, i) {
+        this.getPointsOptions().forEach(function (point, i) {
             var label = this.initLabel(H.merge(
                 point.label, {
                     text: this.options.typeOptions.labels[i],

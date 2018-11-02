@@ -9,8 +9,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var seriesType = H.seriesType,
-    reduce = H.reduce,
-    map = H.map,
     isArray = H.isArray;
 
 /**
@@ -98,10 +96,10 @@ seriesType('linearRegression', 'sma',
                 getSingleYValue = function (yValue, yIndex) {
                     return isArray(yValue) ? yValue[yIndex] : yValue;
                 },
-                xSum = reduce(xData, function (accX, val) {
+                xSum = xData.reduce(function (accX, val) {
                     return val + accX;
                 }, 0),
-                ySum = reduce(yData, function (accY, val) {
+                ySum = yData.reduce(function (accY, val) {
                     return getSingleYValue(val, yIndex) + accY;
                 }, 0),
                 xMean = xSum / xData.length,
@@ -153,7 +151,7 @@ seriesType('linearRegression', 'sma',
          */
         transformXData: function (xData, xAxisUnit) {
             var xOffset = xData[0];
-            return map(xData, function (xValue) {
+            return xData.map(function (xValue) {
                 return (xValue - xOffset) / xAxisUnit;
             });
         },

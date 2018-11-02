@@ -1255,7 +1255,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 function warnLegacy(chart) {
     if (
         chart.options.pathfinder ||
-        H.reduce(chart.series, function (acc, series) {
+        chart.series.reduce(function (acc, series) {
             if (series.options) {
                 merge(true,
                     (

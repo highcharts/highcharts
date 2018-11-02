@@ -459,12 +459,10 @@ seriesType('arearange', 'area', {
             while (i--) {
                 point = data[i];
                 if (point) {
-                    point.dataLabels = H.grep(
-                        [point.dataLabel, point.dataLabelUpper],
-                        function (label) {
+                    point.dataLabels = [point.dataLabel, point.dataLabelUpper]
+                        .filter(function (label) {
                             return !!label;
-                        }
-                    );
+                        });
                 }
             }
         }

@@ -76,7 +76,7 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
         fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
     };
 
-    options.children = H.map(markerOptions.children, function (child) {
+    options.children = markerOptions.children.map(function (child) {
         return H.merge(attrs, child);
     });
 
