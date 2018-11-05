@@ -3691,7 +3691,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *         The generated wrapper element.
      */
     circle: function (x, y, r) {
-        var attribs = isObject(x) ? x : { x: x, y: y, r: r },
+        var attribs = (
+                isObject(x) ?
+                x :
+                x === undefined ? {} : { x: x, y: y, r: r }
+            ),
             wrapper = this.createElement('circle');
 
         // Setting x or y translates to cx and cy
