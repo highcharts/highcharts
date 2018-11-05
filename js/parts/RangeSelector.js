@@ -392,7 +392,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
          *
-         * @type      {Highcharts.RangeSelectorParserCallbackFunction}
+         * @type      {Highcharts.RangeSelectorParseCallbackFunction}
          * @since     1.3.3
          * @apioption rangeSelector.inputDateParser
          */
