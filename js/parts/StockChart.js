@@ -112,7 +112,7 @@ var addEvent = H.addEvent,
  *     }]
  * });
  *
- * @function Highcharts#stockChart
+ * @function Highcharts.stockChart
  *
  * @param {string|Highcharts.HTMLDOMElement} [renderTo]
  *        The DOM element to render to, or its id.
