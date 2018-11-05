@@ -9,7 +9,7 @@
  *
  * @callback Highcharts.RangeSelectorClickCallbackFunction
  *
- * @param {global.ClickEvent} e
+ * @param {global.Event} e
  *        Event arguments.
  *
  * @param {boolean|undefined}
