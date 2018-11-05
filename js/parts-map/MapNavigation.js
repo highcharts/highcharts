@@ -120,7 +120,10 @@ MapNavigation.prototype.update = function (options) {
                 0,
                 n === 'zoomIn' ? 'topbutton' : 'bottombutton'
             )
-            .addClass('highcharts-map-navigation')
+            .addClass('highcharts-map-navigation highcharts-' + {
+                zoomIn: 'zoom-in',
+                zoomOut: 'zoom-out'
+            }[n])
             .attr({
                 width: buttonOptions.width,
                 height: buttonOptions.height,
