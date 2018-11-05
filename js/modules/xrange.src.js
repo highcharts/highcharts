@@ -14,6 +14,7 @@ var addEvent = H.addEvent,
     defined = H.defined,
     color = H.Color,
     columnType = H.seriesTypes.column,
+    correctFloat = H.correctFloat,
     each = H.each,
     isNumber = H.isNumber,
     isObject = H.isObject,
@@ -150,7 +151,7 @@ seriesType('xrange', 'column'
             if (!defined(amount)) {
                 amount = 0;
             }
-            return (amount * 100) + '%';
+            return correctFloat(amount * 100) + '%';
         }
     },
 
