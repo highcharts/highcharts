@@ -2009,9 +2009,17 @@ H.getStyle = function (el, prop, toInt) {
     if (prop === 'width') {
         return Math.max(
             0, // #8377
-            Math.min(el.offsetWidth, el.scrollWidth) -
+            (
+                Math.min(
+                    el.offsetWidth,
+                    el.scrollWidth,
+                    el.getBoundingClientRect ?
+                        Math.floor(el.getBoundingClientRect().width) : // #6427
+                        Infinity
+                ) -
                 H.getStyle(el, 'padding-left') -
                 H.getStyle(el, 'padding-right')
+            )
         );
     } else if (prop === 'height') {
         return Math.max(

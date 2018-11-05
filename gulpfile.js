@@ -122,7 +122,7 @@ const lintSamples = () => {
 /**
  * Run the test suite.
  */
-gulp.task('test', ['styles', 'scripts'], done => {
+gulp.task('test', done => {
 
     const lastRunFile = __dirname + '/test/last-run.json';
 
@@ -138,7 +138,7 @@ gulp.task('test', ['styles', 'scripts'], done => {
     };
 
     const shouldRun = () => {
-        // let lastBuildMTime = getModifiedTime(__dirname + '/code/**/*.js');
+        let lastBuildMTime = getModifiedTime(__dirname + '/code/**/*.js');
         let sourceMTime = getModifiedTime(__dirname + '/js/**/*.js');
         let unitTestsMTime = getModifiedTime(__dirname + '/samples/unit-tests/**/*.*');
         let lastSuccessfulRun = 0;
@@ -160,7 +160,14 @@ gulp.task('test', ['styles', 'scripts'], done => {
             return true;
         }
 
-        if (sourceMTime < lastSuccessfulRun && unitTestsMTime < lastSuccessfulRun) {
+        if (lastBuildMTime < sourceMTime) {
+            throw '\n✖'.red + ' The files have not been built since ' +
+                'the last source code changes. Run ' + 'gulp'.italic +
+                ' and try again.';
+        } else if (
+            sourceMTime < lastSuccessfulRun &&
+            unitTestsMTime < lastSuccessfulRun
+        ) {
             console.log('\n✓'.green + ' Source code and unit tests not modified since the last successful test run.\n'.gray);
             return false;
         }
