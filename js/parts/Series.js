@@ -9,7 +9,7 @@
  *
  * @interface Highcharts.SeriesClickObject
  *
- * @implements {global.ClickEvent}
+ * @implements {global.Event}
  *//**
  * The nearest point on the graph.
  *
@@ -52,7 +52,7 @@
  *
  * @interface Highcharts.SeriesPointClickObject
  *
- * @implements {global.ClickEvent}
+ * @implements {global.Event}
  *//**
  * The clicked point.
  *
