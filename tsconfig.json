@@ -12,6 +12,7 @@
         "lib": ["es6", "dom"],
         "paths": {
             "highcharts": ["code/highcharts"],
+            "highcharts/*": ["code/*"],
             "highcharts/modules/*": ["code/modules/*"]
         },
         "types": []
