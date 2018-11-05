@@ -2,6 +2,7 @@
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
+        styledMode: true,
         zoomType: 'xy'
     },
     title: {

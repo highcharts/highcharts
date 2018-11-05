@@ -1,7 +1,8 @@
 
 Highcharts.chart('container', {
     chart: {
-        zoomType: 'xy'
+        zoomType: 'xy',
+        styledMode: true
     },
     title: {
         text: 'Temperature vs Rainfall'

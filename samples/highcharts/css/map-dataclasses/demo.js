@@ -26,6 +26,11 @@ Highcharts.data({
 
         // Initiate the chart
         Highcharts.mapChart('container', {
+
+            chart: {
+                styledMode: true
+            },
+
             title: {
                 text: 'Named data classes'
             },

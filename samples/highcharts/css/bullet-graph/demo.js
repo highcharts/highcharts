@@ -2,7 +2,8 @@ Highcharts.setOptions({
     chart: {
         inverted: true,
         marginLeft: 135,
-        type: 'bullet'
+        type: 'bullet',
+        styledMode: true
     },
     title: {
         text: null
@@ -33,7 +34,8 @@ Highcharts.setOptions({
 
 Highcharts.chart('container1', {
     chart: {
-        marginTop: 40
+        marginTop: 40,
+        styledMode: true
     },
     title: {
         text: '2017 YTD'
@@ -69,6 +71,9 @@ Highcharts.chart('container1', {
 });
 
 Highcharts.chart('container2', {
+    chart: {
+        styledMode: true
+    },
     xAxis: {
         categories: ['<span class="hc-cat-title">Profit</span><br/>%']
     },
@@ -104,6 +109,9 @@ Highcharts.chart('container2', {
 
 
 Highcharts.chart('container3', {
+    chart: {
+        styledMode: true
+    },
     xAxis: {
         categories: ['<span class="hc-cat-title">New Customers</span><br/>Count']
     },
