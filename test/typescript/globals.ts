@@ -1,3 +1,5 @@
-import * as globals from "highcharts/globals";
+import * as globals from 'highcharts/globals';
 
-const test?: global.GlobalSVGElement;
+let test: (globals.GlobalSVGElement|undefined);
+
+test = undefined;
