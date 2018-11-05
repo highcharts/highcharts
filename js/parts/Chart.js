@@ -1134,6 +1134,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chartWidth = chart.chartWidth;
         chartHeight = chart.chartHeight;
 
+        // Allow table cells and flex-boxes to shrink without the chart blocking
+        // them out (#6427)
+        css(renderTo, { overflow: 'hidden' });
+
         // Create the inner container
         /*= if (build.classic) { =*/
         containerStyle = extend({
