@@ -18,6 +18,8 @@
     },
     "files": [
         "code/globals.d.ts",
+        "test/typescript/globals.ts",
+
         "code/highcharts.d.ts",
         "code/highcharts.src.d.ts",
         "test/typescript/highcharts.ts",
@@ -25,6 +27,14 @@
         "code/modules/accessibility.d.ts",
         "code/modules/accessibility.src.d.ts",
         "test/typescript/modules/accessibility.ts",
+
+        "code/modules/broken-axis.d.ts",
+        "code/modules/broken-axis.src.d.ts",
+        "test/typescript/modules/broken-axis.ts",
+
+        "code/modules/boost.d.ts",
+        "code/modules/boost.src.d.ts",
+        "test/typescript/modules/boost.ts",
 
         "code/modules/export-data.d.ts",
         "code/modules/export-data.src.d.ts",
@@ -41,6 +51,11 @@
         "code/modules/series-label.d.ts",
         "code/modules/series-label.src.d.ts",
         "test/typescript/modules/series-label.ts",
+
+        "code/modules/stock.d.ts",
+        "code/modules/stock.src.d.ts",
+        "test/typescript/modules/stock.ts",
+        "test/typescript/highstock.ts",
 
         "code/modules/vector.d.ts",
         "code/modules/vector.src.d.ts",
