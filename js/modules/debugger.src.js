@@ -22,7 +22,7 @@ setOptions({
        * @type {Boolean}
        * @default true
        * @sample highcharts/chart/display-errors/
-       *         True by default
+       *         Show errors on chart
        * @since 7.0.0
        * @apioption chart.displayErrors
        */
@@ -33,27 +33,29 @@ setOptions({
 addEvent(H.Chart, 'displayError', function (e) {
     var chart = this,
         code = e.code,
-        errorElements = this.errorElements || [],
         msg,
         options = chart.options.chart,
         renderer = chart.renderer,
         chartWidth,
         chartHeight;
 
-    if (errorElements.length) {
-        each(errorElements, function (el) {
-            el.destroy();
+    if (chart.errorElements) {
+        each(chart.errorElements, function (el) {
+            if (el) {
+                el.destroy();
+            }
         });
     }
 
-    if (options.displayErrors) {
+    if (options && options.displayErrors) {
+        chart.errorElements = [];
         msg = isNumber(code) ? 'Highcharts error #' + code + ': ' +
             H.errorMessages[code].title + H.errorMessages[code].text : code;
         chartWidth = chart.chartWidth;
         chartHeight = chart.chartHeight;
 
         // Render red chart frame.
-        errorElements[0] = renderer.rect(
+        chart.errorElements[0] = renderer.rect(
             2,
             2,
             chartWidth - 4,
@@ -65,7 +67,7 @@ addEvent(H.Chart, 'displayError', function (e) {
         }).add();
 
         // Render error message.
-        errorElements[1] = renderer.label(
+        chart.errorElements[1] = renderer.label(
             msg,
             0,
             0,
@@ -84,11 +86,9 @@ addEvent(H.Chart, 'displayError', function (e) {
             zIndex: 10
         }).add();
 
-        errorElements[1].attr({
-            y: chartHeight - errorElements[1].getBBox().height
+        chart.errorElements[1].attr({
+            y: chartHeight - this.errorElements[1].getBBox().height
         });
-
-        chart.errorElements = errorElements;
     }
 });
 
