@@ -1202,48 +1202,21 @@ const jsdoc = () => {
 };
 
 /**
- * Creates additional JSON-based error references from JSDoc.
+ * Copies additional JSON-based error references.
  */
 const jsdocErrors = () => {
 
-    const jsdoc3 = require('gulp-jsdoc3');
+    let copyTargets = [
+        'build/api/gantt',
+        'build/api/highcharts',
+        'build/api/highstock',
+        'build/api/highmaps'
+    ];
 
-    let codeFiles = [
-            'js/modules/debugger.src.js'
-        ],
-        copyTargets = [
-            'build/api/gantt',
-            'build/api/highcharts',
-            'build/api/highstock',
-            'build/api/highmaps',
-            'code/errors',
-            'code/js/errors'
-        ],
-        gulpOptions = [codeFiles, { read: false }],
-        jsdoc3Options = { plugins: ['tools/jsdoc/plugins/highcharts.errors'] };
-
-    let aGulp = (resolve, reject) => {
-
-        let aJson = (error) => {
-
-            if (error) {
-                reject(error);
-            }
-
-            Promise
-                .all(copyTargets.map(copyTarget => copyFile(
-                    'errors/errors.json',
-                    `${copyTarget}/errors.json`
-                )))
-                .then(resolve)
-                .catch(reject);
-        };
-
-        gulp.src(...gulpOptions)
-            .pipe(jsdoc3(jsdoc3Options, aJson));
-    };
-
-    return new Promise(aGulp);
+    return Promise.all(copyTargets.map(copyTarget => copyFile(
+        'errors/errors.json',
+        `${copyTarget}/errors.json`
+    )));
 };
 
 /**
@@ -1345,9 +1318,9 @@ gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
-gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
+gulp.task('jsdoc', ['jsdoc-errors', 'jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
-gulp.task('jsdoc-errors', jsdocErrors);
+gulp.task('jsdoc-errors', ['scripts'], jsdocErrors);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
 gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], tsd);

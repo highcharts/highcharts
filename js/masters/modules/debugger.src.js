@@ -6,5 +6,8 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
+import '../../error-messages.js';
 import '../../modules/debugger.src.js';
