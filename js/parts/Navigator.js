@@ -2339,16 +2339,9 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 
     if (this.isXAxis && ((navigator && navigator.enabled) ||
             (rangeSelector && rangeSelector.enabled))) {
-        // For x only zooming, fool the chart.zoom method not to create the zoom
-        // button because the property already exists
-        if (
-            (!isTouchDevice && zoomType === 'x') ||
-            (isTouchDevice && pinchType === 'x')
-        ) {
-            chart.resetZoomButton = 'blocked';
 
         // For y only zooming, ignore the X axis completely
-        } else if (zoomType === 'y') {
+        if (zoomType === 'y') {
             ret = false;
 
         // For xy zooming, record the state of the zoom before zoom selection,
@@ -2375,6 +2368,29 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 
     }
     return ret !== undefined ? ret : proceed.call(this, newMin, newMax);
+});
+
+/**
+ * For Stock charts. For x only zooming, do not to create the zoom button
+ * because X axis zooming is already allowed by the Navigator and Range
+ * selector. (#9285)
+ */
+addEvent(Chart, 'beforeShowResetZoom', function () {
+    var chartOptions = this.options,
+        navigator = chartOptions.navigator,
+        rangeSelector = chartOptions.rangeSelector;
+
+    if (
+        (
+            (navigator && navigator.enabled) ||
+            (rangeSelector && rangeSelector.enabled)
+        ) && (
+            (!isTouchDevice && chartOptions.chart.zoomType === 'x') ||
+            (isTouchDevice && chartOptions.chart.pinchType === 'x')
+        )
+    ) {
+        return false;
+    }
 });
 
 // Initialize navigator for stock charts
