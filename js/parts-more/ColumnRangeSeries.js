@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,7 +7,6 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 var defaultPlotOptions = H.defaultPlotOptions,
-    each = H.each,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -92,7 +91,7 @@ seriesType('columnrange', 'arearange', merge(
         colProto.translate.apply(series);
 
         // Set plotLow and plotHigh
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var shapeArgs = point.shapeArgs,
                 minPointLength = series.options.minPointLength,
                 heightDifference,
@@ -156,13 +155,23 @@ seriesType('columnrange', 'arearange', merge(
     trackerGroups: ['group', 'dataLabelsGroup'],
     drawGraph: noop,
     getSymbol: noop,
-    crispCol: colProto.crispCol,
-    drawPoints: colProto.drawPoints,
-    drawTracker: colProto.drawTracker,
-    getColumnMetrics: colProto.getColumnMetrics,
-    pointAttribs: colProto.pointAttribs,
 
     // Overrides from modules that may be loaded after this module
+    crispCol: function () {
+        return colProto.crispCol.apply(this, arguments);
+    },
+    drawPoints: function () {
+        return colProto.drawPoints.apply(this, arguments);
+    },
+    drawTracker: function () {
+        return colProto.drawTracker.apply(this, arguments);
+    },
+    getColumnMetrics: function () {
+        return colProto.getColumnMetrics.apply(this, arguments);
+    },
+    pointAttribs: function () {
+        return colProto.pointAttribs.apply(this, arguments);
+    },
     animate: function () {
         return colProto.animate.apply(this, arguments);
     },

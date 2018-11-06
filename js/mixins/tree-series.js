@@ -1,6 +1,5 @@
 import H from '../parts/Globals.js';
-var each = H.each,
-    extend = H.extend,
+var extend = H.extend,
     isArray = H.isArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
@@ -11,8 +10,8 @@ var each = H.each,
     isObject = H.isObject,
     isNumber = H.isNumber,
     merge = H.merge,
-    pick = H.pick,
-    reduce = H.reduce;
+    pick = H.pick;
+
 // TODO Combine buildTree and buildNode with setTreeValues
 // TODO Remove logic from Treemap and make it utilize this mixin.
 var setTreeValues = function setTreeValues(tree, options) {
@@ -43,7 +42,7 @@ var setTreeValues = function setTreeValues(tree, options) {
         tree = before(tree, options);
     }
     // First give the children some values
-    each(tree.children, function (child, i) {
+    tree.children.forEach(function (child, i) {
         var newOptions = extend({}, options);
         extend(newOptions, {
             index: i,
@@ -78,6 +77,7 @@ var getColor = function getColor(node, options) {
         siblings = options.siblings,
         points = series.points,
         getColorByPoint,
+        chartOptionsChart = series.chart.options.chart,
         point,
         level,
         colorByPoint,
@@ -105,21 +105,22 @@ var getColor = function getColor(node, options) {
         if (getColorByPoint) {
             colorIndexByPoint = point.index % (colors ?
                 colors.length :
-                series.chart.options.chart.colorCount
+                chartOptionsChart.colorCount
             );
             colorByPoint = colors && colors[colorIndexByPoint];
         }
 
-        /*= if (build.classic) { =*/
         // Select either point color, level color or inherited color.
-        color = pick(
-            point && point.options.color,
-            level && level.color,
-            colorByPoint,
-            parentColor && variation(parentColor),
-            series.color
-        );
-        /*= } =*/
+        if (!series.chart.styledMode) {
+            color = pick(
+                point && point.options.color,
+                level && level.color,
+                colorByPoint,
+                parentColor && variation(parentColor),
+                series.color
+            );
+        }
+
         colorIndex = pick(
             point && point.options.colorIndex,
             level && level.colorIndex,
@@ -161,7 +162,7 @@ var getLevelOptions = function getLevelOptions(params) {
         converted = {};
         defaults = isObject(params.defaults) ? params.defaults : {};
         if (isArray(levels)) {
-            converted = reduce(levels, function (obj, item) {
+            converted = levels.reduce(function (obj, item) {
                 var level,
                     levelIsConstant,
                     options;

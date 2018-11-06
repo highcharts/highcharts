@@ -1,5 +1,10 @@
 
 Highcharts.chart('container', {
+
+    chart: {
+        styledMode: true
+    },
+
     title: {
         text: 'Styled color zones'
     },

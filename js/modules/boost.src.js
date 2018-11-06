@@ -236,6 +236,11 @@
  * To disable boosting on the series, set the `boostThreshold` to 0. Setting it
  * to 1 will force boosting.
  *
+ * Note that the [cropThreshold](plotOptions.series.cropThreshold) also affects
+ * this setting. When zooming in on a series that has fewer points than the
+ * `cropThreshold`, all points are rendered although outside the visible plot
+ * area, and the `boostThreshold` won't take effect.
+ *
  * Requires `modules/boost.js`.
  *
  * @type {Number}
@@ -270,12 +275,10 @@ var win = H.win,
     Color = H.Color,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    each = H.each,
     objEach = H.objectEach,
     extend = H.extend,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
-    grep = H.grep,
     isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
@@ -298,7 +301,7 @@ var win = H.win,
     ],
     boostableMap = {};
 
-each(boostable, function (item) {
+boostable.forEach(function (item) {
     boostableMap[item] = 1;
 });
 
@@ -457,7 +460,7 @@ function patientMax() {
     var args = Array.prototype.slice.call(arguments),
         r = -Number.MAX_VALUE;
 
-    each(args, function (t) {
+    args.forEach(function (t) {
         if (
             typeof t !== 'undefined' &&
             t !== null &&
@@ -584,7 +587,7 @@ Chart.prototype.getBoostClipRect = function (target) {
     };
 
     if (target === this) {
-        each(this.yAxis, function (yAxis) {
+        this.yAxis.forEach(function (yAxis) {
             clipBox.y = Math.min(yAxis.pos, clipBox.y);
             clipBox.height = Math.max(
                 yAxis.pos - this.plotTop + yAxis.len,
@@ -1391,7 +1394,7 @@ function GLRenderer(postRenderCallback) {
             return;
         }
 
-        each(chart.series, function (series) {
+        chart.series.forEach(function (series) {
             if (series.isSeriesBoosting) {
                 s += seriesPointCount(series);
             }
@@ -1623,7 +1626,7 @@ function GLRenderer(postRenderCallback) {
                 });
             }
 
-            each(points, function (point) {
+            points.forEach(function (point) {
                 var plotY = point.plotY,
                     shapeArgs,
                     swidth,
@@ -1636,11 +1639,10 @@ function GLRenderer(postRenderCallback) {
                 ) {
                     shapeArgs = point.shapeArgs;
 
-                    /*= if (build.classic) { =*/
-                    pointAttr = point.series.pointAttribs(point);
-                    /*= } else { =*/
-                    pointAttr = point.series.colorAttribs(point);
-                    /*= } =*/
+                    pointAttr = chart.styledMode ?
+                        point.series.colorAttribs(point) :
+                        pointAttr = point.series.pointAttribs(point);
+
                     swidth = pointAttr['stroke-width'] || 0;
 
                     // Handle point colors
@@ -1707,7 +1709,7 @@ function GLRenderer(postRenderCallback) {
         }
 
         // Extract color axis
-        // each(chart.axes || [], function (a) {
+        // (chart.axes || []).forEach(function (a) {
         //     if (H.ColorAxis && a instanceof H.ColorAxis) {
         //         caxis = a;
         //     }
@@ -2181,7 +2183,7 @@ function GLRenderer(postRenderCallback) {
         shader.setInverted(chart.inverted);
 
         // Render the series
-        each(series, function (s, si) {
+        series.forEach(function (s, si) {
             var options = s.series.options,
                 shapeOptions = options.marker,
                 sindex,
@@ -2221,20 +2223,21 @@ function GLRenderer(postRenderCallback) {
                 shader.setTexture(shapeTexture.handle);
             }
 
-            /*= if (build.classic) { =*/
-            fillColor =
-                (s.series.pointAttribs && s.series.pointAttribs().fill) ||
-                s.series.color;
+            if (chart.styledMode) {
+                fillColor = (
+                   s.series.markerGroup &&
+                    s.series.markerGroup.getStyle('fill')
+                );
 
-            if (options.colorByPoint) {
-                fillColor = s.series.chart.options.colors[si];
+            } else {
+                fillColor =
+                    (s.series.pointAttribs && s.series.pointAttribs().fill) ||
+                    s.series.color;
+
+                if (options.colorByPoint) {
+                    fillColor = s.series.chart.options.colors[si];
+                }
             }
-            /*= } else { =*/
-            fillColor = (
-                s.series.markerGroup &&
-                s.series.markerGroup.getStyle('fill')
-            );
-            /*= } =*/
 
             if (s.series.fillOpacity && options.fillOpacity) {
                 fillColor = new Color(fillColor).setOpacity(
@@ -2919,7 +2922,7 @@ addEvent(Series, 'destroy', function () {
     }
 
     if (chart.hoverPoints) {
-        chart.hoverPoints = grep(chart.hoverPoints, function (point) {
+        chart.hoverPoints = chart.hoverPoints.filter(function (point) {
             return point.series === series;
         });
     }
@@ -2941,7 +2944,7 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
 });
 
 // Set default options
-each(boostable,
+boostable.forEach(
     function (type) {
         if (plotOptions[type]) {
             plotOptions[type].boostThreshold = 5000;
@@ -2959,13 +2962,13 @@ each(boostable,
  *
  * Note that we're not overriding any of these for heatmaps.
  */
-each([
+[
     'translate',
     'generatePoints',
     'drawTracker',
     'drawPoints',
     'render'
-], function (method) {
+].forEach(function (method) {
     function branch(proceed) {
         var letItPass = this.options.stacking &&
             (method === 'translate' || method === 'generatePoints');
@@ -2992,8 +2995,14 @@ each([
 
     // A special case for some types - their translate method is already wrapped
     if (method === 'translate') {
-        each(
-            ['column', 'bar', 'arearange', 'columnrange', 'heatmap', 'treemap'],
+        [
+            'column',
+            'bar',
+            'arearange',
+            'columnrange',
+            'heatmap',
+            'treemap'
+        ].forEach(
             function (type) {
                 if (seriesTypes[type]) {
                     wrap(seriesTypes[type].prototype, method, branch);
@@ -3075,7 +3084,7 @@ Series.prototype.enterBoost = function () {
 
     // Save the original values, including whether it was an own property or
     // inherited from the prototype.
-    each(['allowDG', 'directTouch', 'stickyTracking'], function (prop) {
+    ['allowDG', 'directTouch', 'stickyTracking'].forEach(function (prop) {
         this.alteredByBoost.push({
             prop: prop,
             val: this[prop],
@@ -3103,7 +3112,7 @@ Series.prototype.enterBoost = function () {
 Series.prototype.exitBoost = function () {
     // Reset instance properties and/or delete instance properties and go back
     // to prototype
-    each(this.alteredByBoost || [], function (setting) {
+    (this.alteredByBoost || []).forEach(function (setting) {
         if (setting.own) {
             this[setting.prop] = setting.val;
         } else {
@@ -3149,7 +3158,7 @@ Series.prototype.destroyGraphics = function () {
         }
     }
 
-    each(['graph', 'area', 'tracker'], function (prop) {
+    ['graph', 'area', 'tracker'].forEach(function (prop) {
         if (series[prop]) {
             series[prop] = series[prop].destroy();
         }
@@ -3472,7 +3481,7 @@ if (!H.hasWebGLSupport()) {
      * This likely needs future optimization.
      *
      */
-    each(['heatmap', 'treemap'],
+    ['heatmap', 'treemap'].forEach(
         function (t) {
             if (seriesTypes[t]) {
                 wrap(seriesTypes[t].prototype, 'drawPoints', pointDrawHandler);

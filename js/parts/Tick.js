@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -27,24 +27,36 @@ var correctFloat = H.correctFloat,
  *
  * @param {Highcharts.Axis} axis
  *
- * @param {number} pos
+ * @param {number} pos The position of the tick on the axis.
  *
- * @param {string} [type]
+ * @param {string} [type] The type of tick.
  *
- * @param {boolean} [noLabel=false]
+ * @param {boolean} [noLabel=false] Wether to disable the label or not. Defaults to
+ * false.
+ *
+ * @param {object} [parameters] Optional parameters for the tick.
+ *
+ * @param {object} [parameters.tickmarkOffset] Set tickmarkOffset for the tick.
+ *
+ * @param {object} [parameters.category] Set category for the tick.
  */
-H.Tick = function (axis, pos, type, noLabel) {
+H.Tick = function (axis, pos, type, noLabel, parameters) {
     this.axis = axis;
     this.pos = pos;
     this.type = type || '';
     this.isNew = true;
     this.isNewLabel = true;
+    this.parameters = parameters || {};
+    // Usually undefined, numeric for grid axes
+    this.tickmarkOffset = this.parameters.tickmarkOffset;
 
+    this.options = this.parameters.options;
     if (!type && !noLabel) {
         this.addLabel();
     }
 };
 
+/** @lends Highcharts.Tick.prototype */
 H.Tick.prototype = {
 
     /**
@@ -61,44 +73,82 @@ H.Tick.prototype = {
             categories = axis.categories,
             names = axis.names,
             pos = tick.pos,
-            labelOptions = options.labels,
+            labelOptions = pick(
+                tick.options && tick.options.labels,
+                options.labels
+            ),
             str,
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
-            value = categories ?
-                pick(categories[pos], names[pos], pos) :
-                pos,
+            value = this.parameters.category || (
+                categories ?
+                    pick(categories[pos], names[pos], pos) :
+                    pos
+            ),
             label = tick.label,
             tickPositionInfo = tickPositions.info,
             dateTimeLabelFormat,
-            params;
+            dateTimeLabelFormats,
+            i,
+            list;
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
         if (axis.isDatetimeAxis && tickPositionInfo) {
-            dateTimeLabelFormat =
+            dateTimeLabelFormats = chart.time.resolveDTLFormat(
                 options.dateTimeLabelFormats[
-                    tickPositionInfo.higherRanks[pos] ||
+                    (
+                        !options.grid &&
+                        tickPositionInfo.higherRanks[pos]
+                    ) ||
                     tickPositionInfo.unitName
-                ];
+                ]
+            );
+            dateTimeLabelFormat = dateTimeLabelFormats.main;
         }
+
         // set properties for access in render method
         tick.isFirst = isFirst;
         tick.isLast = isLast;
 
-        // Get the string. Provide params both as scope (legacy) and as first
-        // parameter which allows use in arrow functions (#8580).
-        params = {
+        // Get the string
+        tick.formatCtx = {
             axis: axis,
             chart: chart,
             isFirst: isFirst,
             isLast: isLast,
             dateTimeLabelFormat: dateTimeLabelFormat,
+            tickPositionInfo: tickPositionInfo,
             value: axis.isLog ? correctFloat(axis.lin2log(value)) : value,
             pos: pos
         };
-        str = axis.labelFormatter.call(params, params);
+        str = axis.labelFormatter.call(tick.formatCtx, this.formatCtx);
+
+        // Set up conditional formatting based on the format list if existing.
+        list = dateTimeLabelFormats && dateTimeLabelFormats.list;
+        if (list) {
+            tick.shortenLabel = function () {
+                for (i = 0; i < list.length; i++) {
+                    label.attr({
+                        text: axis.labelFormatter.call(H.extend(
+                            tick.formatCtx,
+                            { dateTimeLabelFormat: list[i] }
+                        ))
+                    });
+                    if (
+                        label.getBBox().width <
+                        axis.getSlotWidth(tick) - 2 *
+                            pick(labelOptions.padding, 5)
+                    ) {
+                        return;
+                    }
+                }
+                label.attr({
+                    text: ''
+                });
+            };
+        }
 
         // first call
         if (!defined(label)) {
@@ -111,16 +161,16 @@ H.Tick.prototype = {
                             0,
                             labelOptions.useHTML
                         )
-                        /*= if (build.classic) { =*/
-                        // without position absolute, IE export sometimes is
-                        // wrong.
-                        .css(merge(labelOptions.style))
-                        /*= } =*/
                         .add(axis.labelGroup) :
                     null;
 
             // Un-rotated length
             if (label) {
+                // Without position absolute, IE export sometimes is wrong
+                if (!chart.styledMode) {
+                    label.css(merge(labelOptions.style));
+                }
+
                 label.textPxLength = label.getBBox().width;
             }
 
@@ -249,11 +299,15 @@ H.Tick.prototype = {
         }
 
         if (textWidth) {
-            css.width = textWidth;
-            if (!(labelOptions.style || {}).textOverflow) {
-                css.textOverflow = 'ellipsis';
+            if (tick.shortenLabel) {
+                tick.shortenLabel();
+            } else {
+                css.width = textWidth;
+                if (!(labelOptions.style || {}).textOverflow) {
+                    css.textOverflow = 'ellipsis';
+                }
+                label.css(css);
             }
-            label.css(css);
         }
     },
 
@@ -328,27 +382,7 @@ H.Tick.prototype = {
      * Get the x, y position of the tick label
      *
      * @private
-     * @function Highcharts.Tick#getLabelPosition
      *
-     * @param {number} x
-     *
-     * @param {number} y
-     *
-     * @param {Highcharts.SVGElement} label
-     *
-     * @param {boolean} horiz
-     *
-     * @param {*} labelOptions
-     *
-     * @param {number} tickmarkOffset
-     *
-     * @param {number} index
-     *
-     * @param {number} [step]
-     *
-     * @return {Highcharts.PositionObject}
-     *
-     * @fires Highcharts.Tick#event:afterGetLabelPosition
      */
     getLabelPosition: function (
         x,
@@ -423,21 +457,7 @@ H.Tick.prototype = {
      * Extendible method to return the path of the marker
      *
      * @private
-     * @function Highcharts.Tick#getMarkPath
      *
-     * @param {number} x
-     *
-     * @param {number} y
-     *
-     * @param {number} tickLength
-     *
-     * @param {number} tickWidth
-     *
-     * @param {boolean} horiz
-     *
-     * @param {Highcharts.SVGRenderer} renderer
-     *
-     * @return {Highcharts.SVGPathArray}
      */
     getMarkPath: function (x, y, tickLength, tickWidth, horiz, renderer) {
         return renderer.crispLine([
@@ -454,16 +474,11 @@ H.Tick.prototype = {
      * Renders the gridLine.
      *
      * @private
-     * @function Highcharts.Tick#renderGridLine
      *
-     * @param {boolean} old
-     *        Whether or not the tick is old
-     *
-     * @param {number} opacity
-     *        The opacity of the grid line
-     *
-     * @param {number} reverseCrisp
-     *        Modifier for avoiding overlapping 1 or -1
+     * @param  {Boolean} old         Whether or not the tick is old
+     * @param  {number} opacity      The opacity of the grid line
+     * @param  {number} reverseCrisp Modifier for avoiding overlapping 1 or -1
+     * @return {undefined}
      */
     renderGridLine: function (old, opacity, reverseCrisp) {
         var tick = this,
@@ -474,24 +489,21 @@ H.Tick.prototype = {
             attribs = {},
             pos = tick.pos,
             type = tick.type,
-            tickmarkOffset = axis.tickmarkOffset,
-            renderer = axis.chart.renderer;
-
-        /*= if (build.classic) { =*/
-        var gridPrefix = type ? type + 'Grid' : 'grid',
+            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
+            renderer = axis.chart.renderer,
+            gridPrefix = type ? type + 'Grid' : 'grid',
             gridLineWidth = options[gridPrefix + 'LineWidth'],
             gridLineColor = options[gridPrefix + 'LineColor'],
             dashStyle = options[gridPrefix + 'LineDashStyle'];
-        /*= } =*/
 
         if (!gridLine) {
-            /*= if (build.classic) { =*/
-            attribs.stroke = gridLineColor;
-            attribs['stroke-width'] = gridLineWidth;
-            if (dashStyle) {
-                attribs.dashstyle = dashStyle;
+            if (!axis.chart.styledMode) {
+                attribs.stroke = gridLineColor;
+                attribs['stroke-width'] = gridLineWidth;
+                if (dashStyle) {
+                    attribs.dashstyle = dashStyle;
+                }
             }
-            /*= } =*/
             if (!type) {
                 attribs.zIndex = 1;
             }
@@ -530,16 +542,13 @@ H.Tick.prototype = {
      * Renders the tick mark.
      *
      * @private
-     * @function Highcharts.Tick#renderMark
      *
-     * @param {Highcharts.PositionObject} xy
-     *        The position vector of the mark.
-     *
-     * @param {number} opacity
-     *        The opacity of the mark.
-     *
-     * @param {number} reverseCrisp
-     *        Modifier for avoiding overlapping 1 or -1.
+     * @param  {Object} xy           The position vector of the mark
+     * @param  {number} xy.x         The x position of the mark
+     * @param  {number} xy.y         The y position of the mark
+     * @param  {number} opacity      The opacity of the mark
+     * @param  {number} reverseCrisp Modifier for avoiding overlapping 1 or -1
+     * @return {undefined}
      */
     renderMark: function (xy, opacity, reverseCrisp) {
         var tick = this,
@@ -552,15 +561,12 @@ H.Tick.prototype = {
             mark = tick.mark,
             isNewMark = !mark,
             x = xy.x,
-            y = xy.y;
-
-        /*= if (build.classic) { =*/
-        var tickWidth = pick(
+            y = xy.y,
+            tickWidth = pick(
                 options[tickPrefix + 'Width'],
                 !type && axis.isXAxis ? 1 : 0
             ), // X axis defaults to 1
             tickColor = options[tickPrefix + 'Color'];
-        /*= } =*/
 
         if (tickSize) {
 
@@ -575,12 +581,12 @@ H.Tick.prototype = {
                     .addClass('highcharts-' + (type ? type + '-' : '') + 'tick')
                     .add(axis.axisGroup);
 
-                /*= if (build.classic) { =*/
-                mark.attr({
-                    stroke: tickColor,
-                    'stroke-width': tickWidth
-                });
-                /*= } =*/
+                if (!axis.chart.styledMode) {
+                    mark.attr({
+                        stroke: tickColor,
+                        'stroke-width': tickWidth
+                    });
+                }
             }
             mark[isNewMark ? 'attr' : 'animate']({
                 d: tick.getMarkPath(
@@ -602,19 +608,14 @@ H.Tick.prototype = {
      * have to be moved into place.
      *
      * @private
-     * @function Highcharts.Tick#renderLabel
      *
-     * @param {Highcharts.PositionObject} xy
-     *        The position vector of the label
-     *
-     * @param {boolean} old
-     *        Whether or not the tick is old
-     *
-     * @param {number} opacity
-     *        The opacity of the label
-     *
-     * @param {number} index
-     *        The index of the tick
+     * @param  {Object} xy      The position vector of the label
+     * @param  {number} xy.x    The x position of the label
+     * @param  {number} xy.y    The y position of the label
+     * @param  {Boolean} old    Whether or not the tick is old
+     * @param  {number} opacity The opacity of the label
+     * @param  {number} index   The index of the tick
+     * @return {undefined}
      */
     renderLabel: function (xy, old, opacity, index) {
         var tick = this,
@@ -624,7 +625,7 @@ H.Tick.prototype = {
             label = tick.label,
             labelOptions = options.labels,
             step = labelOptions.step,
-            tickmarkOffset = axis.tickmarkOffset,
+            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
             show = true,
             x = xy.x,
             y = xy.y;
@@ -690,23 +691,17 @@ H.Tick.prototype = {
      * Put everything in place
      *
      * @private
-     * @function Highcharts.Tick#render
      *
-     * @param {number} index
-     *
-     * @param {boolean} old
-     *        Use old coordinates to prepare an animation into new position
-     *
-     * @param {number} opacity
-     *
-     * @fires Highcharts.Tick#event:afterRender
+     * @param index {Number}
+     * @param old {Boolean} Use old coordinates to prepare an animation into new
+     *                      position
      */
     render: function (index, old, opacity) {
         var tick = this,
             axis = tick.axis,
             horiz = axis.horiz,
             pos = tick.pos,
-            tickmarkOffset = axis.tickmarkOffset,
+            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
             xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,

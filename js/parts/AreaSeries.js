@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -14,9 +14,7 @@ import './Series.js';
 import './Options.js';
 
 var color = H.color,
-    each = H.each,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    map = H.map,
     pick = H.pick,
     Series = H.Series,
     seriesType = H.seriesType;
@@ -223,11 +221,11 @@ seriesType('area', 'line'
                 return a - b;
             });
 
-            visibleSeries = map(yAxisSeries, function () {
-                return this.visible;
+            visibleSeries = yAxisSeries.map(function (s) {
+                return s.visible;
             });
 
-            each(keys, function (x, idx) {
+            keys.forEach(function (x, idx) {
                 var y = 0,
                     stackPoint,
                     stackedValues;
@@ -236,7 +234,7 @@ seriesType('area', 'line'
                     segment.push(pointMap[x]);
 
                     // Find left and right cliff. -1 goes left, 1 goes right.
-                    each([-1, 1], function (direction) {
+                    [-1, 1].forEach(function (direction) {
                         var nullName = direction === 1 ?
                                 'rightNull' :
                                 'leftNull',
@@ -470,27 +468,24 @@ seriesType('area', 'line'
             props = [[
                 'area',
                 'highcharts-area',
-                /*= if (build.classic) { =*/
                 this.color,
                 options.fillColor
-                /*= } =*/
             ]]; // area name, main color, fill color
 
-        each(zones, function (zone, i) {
+        zones.forEach(function (zone, i) {
             props.push([
                 'zone-area-' + i,
                 'highcharts-area highcharts-zone-area-' + i + ' ' +
                     zone.className,
-                /*= if (build.classic) { =*/
                 zone.color || series.color,
                 zone.fillColor || options.fillColor
-                /*= } =*/
             ]);
         });
 
-        each(props, function (prop) {
+        props.forEach(function (prop) {
             var areaKey = prop[0],
-                area = series[areaKey];
+                area = series[areaKey],
+                attribs;
 
             // Create or update the area
             if (area) { // update
@@ -498,19 +493,24 @@ seriesType('area', 'line'
                 area.animate({ d: areaPath });
 
             } else { // create
+
+                attribs = {
+                    zIndex: 0 // #1069
+                };
+
+                if (!series.chart.styledMode) {
+                    attribs.fill = pick(
+                        prop[3],
+                        color(prop[2])
+                            .setOpacity(pick(options.fillOpacity, 0.75))
+                            .get()
+                    );
+                }
+
                 area = series[areaKey] = series.chart.renderer.path(areaPath)
                     .addClass(prop[1])
-                    .attr({
-                        /*= if (build.classic) { =*/
-                        fill: pick(
-                            prop[3],
-                            color(prop[2])
-                                .setOpacity(pick(options.fillOpacity, 0.75))
-                                .get()
-                        ),
-                        /*= } =*/
-                        zIndex: 0 // #1069
-                    }).add(series.group);
+                    .attr(attribs)
+                    .add(series.group);
                 area.isArea = true;
             }
             area.startX = areaPath.xMap;

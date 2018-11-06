@@ -1380,7 +1380,8 @@ var data = [{
 Highcharts.chart('container', {
 
     chart: {
-        height: '100%'
+        height: '100%',
+        styledMode: true
     },
 
     title: {

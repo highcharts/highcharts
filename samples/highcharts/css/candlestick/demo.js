@@ -1,6 +1,10 @@
 
 Highcharts.stockChart('container', {
 
+    chart: {
+        styledMode: true
+    },
+
     rangeSelector: {
         selected: 1
     },

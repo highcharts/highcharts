@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -84,30 +84,9 @@ seriesType('scatter', 'line'
      * @product highcharts highstock
      */
     tooltip: {
-
-        /*= if (build.classic) { =*/
-
-        /**
-         * @default ● {series.name}
-         */
         headerFormat:
             '<span style="color:{point.color}">\u25CF</span> ' +
-            '<span style="font-size: 0.85em"> {series.name}</span><br/>',
-
-        /*= } else { =*/
-
-        /**
-         * @default ● {series.name}
-         */
-        headerFormat:
-            '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> ' +
-            '<span class="highcharts-header"> {series.name}</span><br/>',
-
-        /*= } =*/
-
-        /**
-         * @default x: {point.x} y: {point.y}
-         */
+            '<span style="font-size: 10px"> {series.name}</span><br/>',
         pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
     }
 

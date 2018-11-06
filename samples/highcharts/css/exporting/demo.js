@@ -5,7 +5,8 @@
 var chart = Highcharts.chart('container', {
 
     chart: {
-        type: 'column'
+        type: 'column',
+        styledMode: true
     },
 
     title: {

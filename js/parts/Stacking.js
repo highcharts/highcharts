@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -17,7 +17,6 @@ var Axis = H.Axis,
     correctFloat = H.correctFloat,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
-    each = H.each,
     format = H.format,
     objectEach = H.objectEach,
     pick = H.pick,
@@ -236,13 +235,13 @@ Chart.prototype.getStacks = function () {
     var chart = this;
 
     // reset stacks for each yAxis
-    each(chart.yAxis, function (axis) {
+    chart.yAxis.forEach(function (axis) {
         if (axis.stacks && axis.hasVisibleSeries) {
             axis.oldStacks = axis.stacks;
         }
     });
 
-    each(chart.series, function (series) {
+    chart.series.forEach(function (series) {
         if (series.options.stacking && (series.visible === true ||
                 chart.options.chart.ignoreHiddenSeries === false)) {
             series.stackKey = series.type + pick(series.options.stack, '');
@@ -519,7 +518,7 @@ Series.prototype.modifyStacks = function () {
         stacking = series.options.stacking;
 
     if (series[stacking + 'Stacker']) { // Modifier function exists
-        each([stackKey, '-' + stackKey], function (key) {
+        [stackKey, '-' + stackKey].forEach(function (key) {
             var i = processedXData.length,
                 x,
                 stack,

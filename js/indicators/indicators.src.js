@@ -3,12 +3,46 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var pick = H.pick,
-    each = H.each,
     error = H.error,
     Series = H.Series,
     isArray = H.isArray,
     addEvent = H.addEvent,
-    seriesType = H.seriesType;
+    seriesType = H.seriesType,
+    ohlcProto = H.seriesTypes.ohlc.prototype;
+
+/**
+ * The parameter allows setting line series type and use OHLC indicators.
+ * Data in OHLC format is required.
+ *
+ * @-type {Boolean}
+ * @-extends plotOptions.line
+ * @-product highstock
+ * @-sample {highstock} stock/indicators/useOHLCdata Plot line on Y axis
+ * @-apioption plotOptions.line.useOHLCdata
+ */
+
+addEvent(H.Series, 'init', function (eventOptions) {
+    var series = this,
+        options = eventOptions.options,
+        dataGrouping = options.dataGrouping;
+
+    if (
+        options.useOHLCdata &&
+        options.id !== 'highcharts-navigator-series'
+        ) {
+
+        if (dataGrouping && dataGrouping.enabled) {
+            dataGrouping.approximation = 'ohlc';
+        }
+
+        H.extend(series, {
+            pointValKey: ohlcProto.pointValKey,
+            keys: ohlcProto.keys,
+            pointArrayMap: ohlcProto.pointArrayMap,
+            toYData: ohlcProto.toYData
+        });
+    }
+});
 
 /**
  * The SMA series type.
@@ -61,6 +95,13 @@ seriesType('sma', 'line',
          * @product highstock
          */
         linkedTo: undefined,
+        /**
+         * Paramters used in calculation of regression series' points.
+         *
+         * @type {Object}
+         * @since 6.0.0
+         * @product highstock
+         */
         params: {
             /**
              * The point index which indicator calculations will base. For
@@ -187,8 +228,7 @@ seriesType('sma', 'line',
 
             if (!name) {
 
-                each(
-                    this.nameComponents,
+                (this.nameComponents || []).forEach(
                     function (component, index) {
                         params.push(
                             this.options.params[component] +
@@ -252,7 +292,7 @@ seriesType('sma', 'line',
             };
         },
         destroy: function () {
-            each(this.dataEventsToUnbind, function (unbinder) {
+            this.dataEventsToUnbind.forEach(function (unbinder) {
                 unbinder();
             });
             Series.prototype.destroy.call(this);

@@ -39,6 +39,14 @@ Highcharts.setOptions({
             }
         }
     },
+    // Stock's Toolbar decreases width of the chart. At the same time, some
+    // tests have hardcoded x/y positions for events which cuases them to fail.
+    // For these tests, let's disable stockTools.gui globally.
+    stockTools: {
+        gui: {
+            enabled: false
+        }
+    },
     tooltip: {
         animation: false
     }

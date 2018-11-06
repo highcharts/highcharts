@@ -9,7 +9,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var isArray = H.isArray,
-    reduce = H.reduce,
     seriesType = H.seriesType;
 
 // Utils:
@@ -27,7 +26,7 @@ function weightedSumArray(array, pLen) {
     var denominator = (pLen + 1) / 2 * pLen;
 
     // reduce VS loop => reduce
-    return reduce(array, function (prev, cur, i) {
+    return array.reduce(function (prev, cur, i) {
         return [null, prev[1] + cur[1] * (i + 1)];
     })[1] / denominator;
 }

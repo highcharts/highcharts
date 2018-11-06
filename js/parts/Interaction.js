@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -20,11 +20,9 @@ var addEvent = H.addEvent,
     css = H.css,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    each = H.each,
     extend = H.extend,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
-    inArray = H.inArray,
     isObject = H.isObject,
     Legend = H.Legend,
     merge = H.merge,
@@ -65,7 +63,7 @@ TrackerMixin = H.TrackerMixin = {
             };
 
         // Add reference to the point
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             if (point.graphic) {
                 point.graphic.element.point = point;
             }
@@ -80,7 +78,7 @@ TrackerMixin = H.TrackerMixin = {
 
         // Add the event listeners, we need to do this only once
         if (!series._hasTracking) {
-            each(series.trackerGroups, function (key) {
+            series.trackerGroups.forEach(function (key) {
                 if (series[key]) { // we don't always have dataLabelsGroup
                     series[key]
                         .addClass('highcharts-tracker')
@@ -92,13 +90,11 @@ TrackerMixin = H.TrackerMixin = {
                         series[key].on('touchstart', onMouseOver);
                     }
 
-                    /*= if (build.classic) { =*/
-                    if (series.options.cursor) {
+                    if (!chart.styledMode && series.options.cursor) {
                         series[key]
                             .css(css)
                             .css({ cursor: series.options.cursor });
                     }
-                    /*= } =*/
                 }
             });
             series._hasTracking = true;
@@ -187,13 +183,6 @@ TrackerMixin = H.TrackerMixin = {
 
             series.tracker = renderer.path(trackerPath)
             .attr({
-                /*= if (build.classic) { =*/
-                'stroke-linejoin': 'round', // #1225
-                stroke: TRACKER_FILL,
-                fill: trackByArea ? TRACKER_FILL : 'none',
-                'stroke-width': series.graph.strokeWidth() +
-                    (trackByArea ? 0 : 2 * snap),
-                /*= } =*/
                 visibility: series.visible ? 'visible' : 'hidden',
                 zIndex: 2
             })
@@ -204,21 +193,29 @@ TrackerMixin = H.TrackerMixin = {
             )
             .add(series.group);
 
+            if (!chart.styledMode) {
+                series.tracker.attr({
+                    'stroke-linejoin': 'round', // #1225
+                    stroke: TRACKER_FILL,
+                    fill: trackByArea ? TRACKER_FILL : 'none',
+                    'stroke-width': series.graph.strokeWidth() +
+                        (trackByArea ? 0 : 2 * snap)
+                });
+            }
+
             // The tracker is added to the series group, which is clipped, but
             // is covered by the marker group. So the marker group also needs to
             // capture events.
-            each([series.tracker, series.markerGroup], function (tracker) {
+            [series.tracker, series.markerGroup].forEach(function (tracker) {
                 tracker.addClass('highcharts-tracker')
                     .on('mouseover', onMouseOver)
                     .on('mouseout', function (e) {
                         pointer.onTrackerMouseOut(e);
                     });
 
-                /*= if (build.classic) { =*/
-                if (options.cursor) {
+                if (options.cursor && !chart.styledMode) {
                     tracker.css({ cursor: options.cursor });
                 }
-                /*= } =*/
 
                 if (hasTouch) {
                     tracker.on('touchstart', onMouseOver);
@@ -260,17 +257,6 @@ if (seriesTypes.scatter) {
     seriesTypes.scatter.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
-/*= if (build.classic) { =*/
-
-// Add pointer cursor to legend itemstyle in defaultOptions
-/**
- * @default   'pointer'
- * @apioption legend.itemStyle.cursor
- */
-defaultOptions.legend.itemStyle.cursor = 'pointer';
-
-/*= } =*/
-
 // Extend Legend for item events.
 extend(Legend.prototype, {
 
@@ -291,7 +277,8 @@ extend(Legend.prototype, {
         var legend = this,
             boxWrapper = legend.chart.renderer.boxWrapper,
             activeClass = 'highcharts-legend-' +
-                (item instanceof Point ? 'point' : 'series') + '-active';
+                (item instanceof Point ? 'point' : 'series') + '-active',
+            styledMode = legend.chart.styledMode;
 
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
@@ -301,16 +288,20 @@ extend(Legend.prototype, {
             // A CSS class to dim or hide other than the hovered series
             boxWrapper.addClass(activeClass);
 
-            /*= if (build.classic) { =*/
-            legendItem.css(legend.options.itemHoverStyle);
-            /*= } =*/
+            if (!styledMode) {
+                legendItem.css(legend.options.itemHoverStyle);
+            }
         })
         .on('mouseout', function () {
-            /*= if (build.classic) { =*/
-            legendItem.css(
-                merge(item.visible ? legend.itemStyle : legend.itemHiddenStyle)
-            );
-            /*= } =*/
+            if (!legend.styledMode) {
+                legendItem.css(
+                    merge(
+                        item.visible ?
+                            legend.itemStyle :
+                            legend.itemHiddenStyle
+                    )
+                );
+            }
 
             // A CSS class to dim or hide other than the hovered series
             boxWrapper.removeClass(activeClass);
@@ -383,7 +374,10 @@ extend(Legend.prototype, {
     }
 });
 
-// Extend the Chart object with interaction.
+/*
+ * Extend the Chart object with interaction
+ */
+
 extend(Chart.prototype, /** @lends Chart.prototype */ {
 
     /**
@@ -455,13 +449,13 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
         // If zoom is called with no arguments, reset the axes
         if (!event || event.resetSelection) {
-            each(chart.axes, function (axis) {
+            chart.axes.forEach(function (axis) {
                 hasZoomed = axis.zoom();
             });
             pointer.initiated = false; // #6804
 
         } else { // else, zoom in on all axes
-            each(event.xAxis.concat(event.yAxis), function (axisData) {
+            event.xAxis.concat(event.yAxis).forEach(function (axisData) {
                 var axis = axisData.axis,
                     isXAxis = axis.isXAxis;
 
@@ -516,13 +510,13 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
         // remove active points for shared tooltip
         if (hoverPoints) {
-            each(hoverPoints, function (point) {
+            hoverPoints.forEach(function (point) {
                 point.setState();
             });
         }
 
         // xy is used in maps
-        each(panning === 'xy' ? [1, 0] : [1], function (isX) {
+        (panning === 'xy' ? [1, 0] : [1]).forEach(function (isX) {
             var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
                 horiz = axis.horiz,
                 mousePos = e[horiz ? 'chartX' : 'chartY'],
@@ -625,7 +619,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *        When `true`, the selection is added to other selected points.
      *        When `false`, other selected points are deselected. Internally in
      *        Highcharts, when
-     *        {@link http://api.highcharts.com/highcharts/plotOptions.series.allowPointSelect|allowPointSelect}
+     *        [allowPointSelect](http://api.highcharts.com/highcharts/plotOptions.series.allowPointSelect)
      *        is `true`, selected points are accumulated on Control, Shift or
      *        Cmd clicking the point.
      *
@@ -655,19 +649,19 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                  * @type {boolean}
                  */
                 point.selected = point.options.selected = selected;
-                series.options.data[inArray(point, series.data)] =
+                series.options.data[series.data.indexOf(point)] =
                     point.options;
 
                 point.setState(selected && 'select');
 
                 // unselect all other points unless Ctrl or Cmd + click
                 if (!accumulate) {
-                    each(chart.getSelectedPoints(), function (loopPoint) {
+                    chart.getSelectedPoints().forEach(function (loopPoint) {
                         if (loopPoint.selected && loopPoint !== point) {
                             loopPoint.selected = loopPoint.options.selected =
                                 false;
                             series.options.data[
-                                inArray(loopPoint, series.data)
+                                series.data.indexOf(loopPoint)
                             ] = loopPoint.options;
                             loopPoint.setState('');
                             loopPoint.firePointEvent('unselect');
@@ -711,7 +705,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         var point = this,
             chart = point.series.chart;
         point.firePointEvent('mouseOut');
-        each(chart.hoverPoints || [], function (p) {
+        (chart.hoverPoints || []).forEach(function (p) {
             p.setState();
         });
         chart.hoverPoints = chart.hoverPoint = null;
@@ -822,15 +816,15 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 point.graphic.addClass('highcharts-point-' + state);
             }
 
-            /*= if (build.classic) { =*/
-            point.graphic.animate(
-                series.pointAttribs(point, state),
-                pick(
-                    chart.options.chart.animation,
-                    stateOptions.animation
-                )
-            );
-            /*= } =*/
+            if (!chart.styledMode) {
+                point.graphic.animate(
+                    series.pointAttribs(point, state),
+                    pick(
+                        chart.options.chart.animation,
+                        stateOptions.animation
+                    )
+                );
+            }
 
             if (markerAttribs) {
                 point.graphic.animate(
@@ -884,11 +878,10 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                         y: markerAttribs.y
                     });
                 }
-                /*= if (build.classic) { =*/
-                if (stateMarkerGraphic) {
+
+                if (!chart.styledMode && stateMarkerGraphic) {
                     stateMarkerGraphic.attr(series.pointAttribs(point, state));
                 }
-                /*= } =*/
             }
 
             if (stateMarkerGraphic) {
@@ -920,12 +913,12 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             });
             halo.point = point; // #6055
 
-            /*= if (build.classic) { =*/
-            halo.attr(extend({
-                'fill': point.color || series.color,
-                'fill-opacity': haloOptions.opacity
-            }, haloOptions.attributes));
-            /*= } =*/
+            if (!chart.styledMode) {
+                halo.attr(extend({
+                    'fill': point.color || series.color,
+                    'fill-opacity': haloOptions.opacity
+                }, haloOptions.attributes));
+            }
 
         } else if (halo && halo.point && halo.point.haloPath) {
             // Animate back to 0 on the current halo point (#6055)
@@ -1065,11 +1058,11 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         if (series.state !== state) {
 
             // Toggle class names
-            each([
+            [
                 series.group,
                 series.markerGroup,
                 series.dataLabelsGroup
-            ], function (group) {
+            ].forEach(function (group) {
                 if (group) {
                     // Old state
                     if (series.state) {
@@ -1084,44 +1077,45 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
             series.state = state;
 
-            /*= if (build.classic) { =*/
+            if (!series.chart.styledMode) {
 
-            if (stateOptions[state] && stateOptions[state].enabled === false) {
-                return;
-            }
+                if (
+                    stateOptions[state] &&
+                    stateOptions[state].enabled === false
+                ) {
+                    return;
+                }
 
-            if (state) {
-                lineWidth = (
-                    stateOptions[state].lineWidth ||
-                    lineWidth + (stateOptions[state].lineWidthPlus || 0)
-                ); // #4035
-            }
+                if (state) {
+                    lineWidth = (
+                        stateOptions[state].lineWidth ||
+                        lineWidth + (stateOptions[state].lineWidthPlus || 0)
+                    ); // #4035
+                }
 
-            if (graph && !graph.dashstyle) {
-                attribs = {
-                    'stroke-width': lineWidth
-                };
+                if (graph && !graph.dashstyle) {
+                    attribs = {
+                        'stroke-width': lineWidth
+                    };
 
-                // Animate the graph stroke-width. By default a quick animation
-                // to hover, slower to un-hover.
-                graph.animate(
-                    attribs,
-                    pick(
-                        (
-                            stateOptions[state || 'normal'] &&
-                            stateOptions[state || 'normal'].animation
-                        ),
-                        series.chart.options.chart.animation
-                    )
-                );
-                while (series['zone-graph-' + i]) {
-                    series['zone-graph-' + i].attr(attribs);
-                    i = i + 1;
+                    // Animate the graph stroke-width. By default a quick
+                    // animation to hover, slower to un-hover.
+                    graph.animate(
+                        attribs,
+                        pick(
+                            (
+                                stateOptions[state || 'normal'] &&
+                                stateOptions[state || 'normal'].animation
+                            ),
+                            series.chart.options.chart.animation
+                        )
+                    );
+                    while (series['zone-graph-' + i]) {
+                        series['zone-graph-' + i].attr(attribs);
+                        i = i + 1;
+                    }
                 }
             }
-
-            /*= } =*/
-
         }
     },
 
@@ -1159,13 +1153,13 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         showOrHide = vis ? 'show' : 'hide';
 
         // show or hide elements
-        each([
+        [
             'group',
             'dataLabelsGroup',
             'markerGroup',
             'tracker',
             'tt'
-        ], function (key) {
+        ].forEach(function (key) {
             if (series[key]) {
                 series[key][showOrHide]();
             }
@@ -1190,7 +1184,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         series.isDirty = true;
         // in a stack, all other series are affected
         if (series.options.stacking) {
-            each(chart.series, function (otherSeries) {
+            chart.series.forEach(function (otherSeries) {
                 if (otherSeries.options.stacking && otherSeries.visible) {
                     otherSeries.isDirty = true;
                 }
@@ -1198,7 +1192,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         }
 
         // show or hide linked series
-        each(series.linkedSeries, function (otherSeries) {
+        series.linkedSeries.forEach(function (otherSeries) {
             otherSeries.setVisible(vis, false);
         });
 

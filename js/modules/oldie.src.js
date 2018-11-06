@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * Support for old IE browsers (6, 7 and 8) in Highcharts v6+.
  *
@@ -21,7 +21,6 @@ var VMLRenderer,
     deg2rad = H.deg2rad,
     discardElement = H.discardElement,
     doc = H.doc,
-    each = H.each,
     erase = H.erase,
     extend = H.extend,
     extendClass = H.extendClass,
@@ -89,99 +88,6 @@ if (doc && !doc.defaultView) {
         }
 
         return val === '' ? 1 : H.pInt(val);
-    };
-}
-
-if (!Array.prototype.forEach) {
-    H.forEachPolyfill = function (fn, ctx) {
-        var i = 0,
-            len = this.length;
-        for (; i < len; i++) {
-            if (
-                this[i] !== undefined && // added check
-                fn.call(ctx, this[i], i, this) === false
-            ) {
-                return i;
-            }
-        }
-    };
-}
-
-if (!Array.prototype.indexOf) {
-    H.indexOfPolyfill = function (member, fromIndex) {
-        var arr = this, // #8874
-            len,
-            i = fromIndex || 0; // #8346
-
-        if (arr) {
-            len = arr.length;
-
-            for (; i < len; i++) {
-                if (arr[i] === member) {
-                    return i;
-                }
-            }
-        }
-
-        return -1;
-    };
-}
-
-if (!Array.prototype.filter) {
-    H.filterPolyfill = function (fn) {
-        var ret = [],
-            i = 0,
-            length = this.length;
-
-        for (; i < length; i++) {
-            if (fn(this[i], i)) {
-                ret.push(this[i]);
-            }
-        }
-
-        return ret;
-    };
-}
-
-if (!Array.prototype.some) {
-    H.somePolyfill = function (fn, ctx) { // legacy
-        var i = 0,
-            len = this.length;
-
-        for (; i < len; i++) {
-            if (fn.call(ctx, this[i], i, this) === true) {
-                return true;
-            }
-        }
-        return false;
-    };
-}
-
-if (!Object.prototype.keys) {
-    H.keysPolyfill = function (obj) {
-        var result = [],
-            hasOwnProperty = Object.prototype.hasOwnProperty,
-            prop;
-        for (prop in obj) {
-            if (hasOwnProperty.call(obj, prop)) {
-                result.push(prop);
-            }
-        }
-        return result;
-    };
-}
-
-
-if (!Array.prototype.reduce) {
-    H.reducePolyfill = function (func, initialValue) {
-        var context = this,
-            i = arguments.length > 1 ? 0 : 1,
-            accumulator = arguments.length > 1 ? initialValue : this[0],
-            len = this.length;
-        for (; i < len; ++i) {
-            accumulator = func.call(context, accumulator, this[i], i, this);
-        }
-        return accumulator;
     };
 }
 
@@ -824,7 +730,7 @@ if (!svg) {
 
             // Let the shadow follow the main element
             if (this.shadows) {
-                each(this.shadows, function (shadow) {
+                this.shadows.forEach(function (shadow) {
                     shadow.style[key] = value;
                 });
             }
@@ -1013,7 +919,7 @@ if (!svg) {
                 // used in attr and animation to update the clipping of all
                 // members
                 updateClipping: function () {
-                    each(clipRect.members, function (member) {
+                    clipRect.members.forEach(function (member) {
                         // Member.element is falsy on deleted series, like in
                         // stock/members/series-remove demo. Should be removed
                         // from members, but this will do.
@@ -1099,7 +1005,7 @@ if (!svg) {
                 }
 
                 // Compute the stops
-                each(stops, function (stop, i) {
+                stops.forEach(function (stop, i) {
                     if (regexRgba.test(stop[1])) {
                         colorObject = H.color(stop[1]);
                         stopColor = colorObject.get('rgb');
@@ -1375,7 +1281,7 @@ if (!svg) {
 
             // Recursively invert child elements, needed for nested composite
             // shapes like box plots and error bars. #1680, #1806.
-            each(element.childNodes, function (child) {
+            element.childNodes.forEach(function (child) {
                 ren.invertChild(child, element);
             });
         },
