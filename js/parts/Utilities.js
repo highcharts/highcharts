@@ -239,6 +239,24 @@
  */
 
 /**
+ * Callback function to map the values in an array.
+ *
+ * @callback Highcharts.MapArrayCallbackFunction
+ *
+ * @param {*} value
+ *        The value to replace.
+ *
+ * @param {number} index
+ *        The index position of the value.
+ *
+ * @param {Array<*>} arr
+ *        The array as a reference.
+ *
+ * @return {*}
+ *         The new value as a replacement.
+ */
+
+/**
  * The iterator callback.
  *
  * @callback Highcharts.ObjectEachCallbackFunction
@@ -2148,10 +2166,10 @@ H.some = function (arr, fn, ctx) {
  *
  * @function Highcharts.map
  *
- * @param {Array} arr
+ * @param {Array<*>} arr
  *        The array to map.
  *
- * @param {Function} fn
+ * @param {Highcharts.MapArrayCallbackFunction} fn
  *        The callback function. Return the new value for the new array.
  *
  * @return {Array}
