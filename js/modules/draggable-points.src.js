@@ -2251,9 +2251,6 @@ function mouseDown(e, chart) {
         return;
     }
 
-    // Prevent zooming
-    chart.mouseIsDown = false;
-
     // If we somehow get a mousedown event while we are dragging, cancel
     if (chart.dragDropData && chart.dragDropData.isDragging) {
         mouseUp(e, chart);
@@ -2262,6 +2259,7 @@ function mouseDown(e, chart) {
 
     // If this point is movable, start dragging it
     if (dragPoint && isPointMovable(dragPoint)) {
+        chart.mouseIsDown = false; // Prevent zooming
         initDragDrop(e, dragPoint);
         dragPoint.firePointEvent('dragStart', e);
     }

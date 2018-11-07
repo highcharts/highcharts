@@ -6,11 +6,16 @@ var setDragStatus = function (status) {
 Highcharts.chart('container', {
     chart: {
         animation: false,
-        type: 'xrange'
+        type: 'xrange',
+        zoomType: 'x'
     },
 
     title: {
         text: 'Highcharts draggable xrange demo'
+    },
+
+    subtitle: {
+        text: 'Test zoom and dragging/resizing of points'
     },
 
     tooltip: {
