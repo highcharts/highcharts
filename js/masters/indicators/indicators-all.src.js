@@ -16,6 +16,7 @@ import '../../indicators/aroon-oscillator.src.js';
 import '../../indicators/atr.src.js';
 import '../../indicators/bollinger-bands.src.js';
 import '../../indicators/cci.src.js';
+import '../../indicators/chaikin.src.js';
 import '../../indicators/cmf.src.js';
 import '../../indicators/ema.src.js';
 import '../../indicators/apo.src.js';
