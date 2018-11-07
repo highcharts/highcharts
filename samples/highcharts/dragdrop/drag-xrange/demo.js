@@ -14,10 +14,6 @@ Highcharts.chart('container', {
         text: 'Highcharts draggable xrange demo'
     },
 
-    subtitle: {
-        text: 'Test zoom and dragging/resizing of points'
-    },
-
     tooltip: {
         headerFormat: '<span style="font-size: 10px">{point.yCategory}</span><br/>',
         pointFormat: '{point.name}'
