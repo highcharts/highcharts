@@ -74,7 +74,7 @@ seriesType('gantt', 'xrange', {
                 milestone = point.options.milestone,
                 dateRowStart = '<span style="font-size: 0.8em">',
                 dateRowEnd = '</span><br/>',
-                retVal = '<b>' + (point.name || point.category) + '</b>';
+                retVal = '<b>' + (point.name || point.yCategory) + '</b>';
 
             if (ttOptions.pointFormat) {
                 return point.tooltipFormatter(ttOptions.pointFormat);

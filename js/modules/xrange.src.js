@@ -354,11 +354,6 @@ seriesType('xrange', 'column'
                 height: shapeArgs.height
             };
         }
-
-        // Category from Y axis
-        if (yAxis.categories) {
-            point.category = yAxis.categories[point.y];
-        }
     },
 
     /**

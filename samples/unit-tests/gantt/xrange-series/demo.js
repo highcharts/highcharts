@@ -242,7 +242,7 @@
     /**
      * Checks that the fill option in a series' partialFill options is applied
      */
-    QUnit.test('series fill option is applied in drawPoints()', function (assert) {
+    QUnit.test('General', function (assert) {
         var chart,
             $graphic,
             expected = "#000",
@@ -258,7 +258,14 @@
         assert.equal(
             actual,
             expected,
-            'fill in point.partialFill options is applied'
+            'Fill in point.partialFill options should be applied'
+        );
+
+        chart.series[0].points[0].onMouseOver();
+        assert.notEqual(
+            chart.tooltip.label.element.textContent.indexOf('Monday'),
+            -1,
+            'The tooltip header should container formatted date (#9301)'
         );
     });
 }());
