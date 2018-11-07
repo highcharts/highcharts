@@ -163,6 +163,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * control features like zooming and panning. Zooming is in effect the same
      * as setting the extremes of one of the exes.
      *
+     * @type         {*|Array<*>}
      * @optionparent xAxis
      */
     defaultOptions: {
@@ -2280,6 +2281,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * See [the Axis object](/class-reference/Highcharts.Axis) for programmatic
      * access to the axis.
      *
+     * @type         {*|Array<*>}
      * @extends      xAxis
      * @excluding    ordinal,overscroll,currentDateIndicator
      * @optionparent yAxis
@@ -2995,7 +2997,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     /**
      * The Z axis or depth axis for 3D plots.
      *
-     * See [the Axis object](/class-reference/Highcharts.Axis) for programmatic
+     * See the [Axis class](/class-reference/Highcharts.Axis) for programmatic
      * access to the axis.
      *
      * @sample {highcharts} highcharts/3d/scatter-zaxis-categories/
@@ -3003,6 +3005,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @sample {highcharts} highcharts/3d/scatter-zaxis-grid/
      *         Z-Axis with styling
      *
+     * @type      {*|Array<*>}
      * @extends   xAxis
      * @since     5.0.0
      * @product   highcharts
