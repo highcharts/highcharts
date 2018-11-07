@@ -470,7 +470,6 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
     // Run fancy cross-animation on supported and equal types
     if (oldSeries.type === newSeries.type) {
         newSeries.animate = newSeries.animateDrilldown || noop;
-        newSeries.options.animation = true;
     }
 };
 
@@ -970,6 +969,13 @@ H.Point.prototype.doDrilldown = function (
             inArray(this.drilldown, chart.ddDupes) === -1
         ) {
             seriesOptions = drilldown.series[i];
+
+            // Set series animation.
+            seriesOptions.animation = pick(
+                seriesOptions.animation,
+                drilldown.animation
+            );
+
             chart.ddDupes.push(this.drilldown);
         }
     }
