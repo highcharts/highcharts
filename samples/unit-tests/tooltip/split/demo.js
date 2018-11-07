@@ -149,6 +149,51 @@ QUnit.test('Split tooltip returning false. #6115', function (assert) {
     );
 });
 
+QUnit.test('Split tooltip with empty formats (#8105)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        tooltip: {
+            split: true,
+            headerFormat: ''
+        },
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            data: [2, 1, 2],
+            tooltip: {
+                pointFormat: ''
+            }
+        }]
+    });
+
+    chart.tooltip.refresh([
+        chart.series[0].points[0],
+        chart.series[1].points[0]
+    ]);
+
+    assert.strictEqual(
+        chart.tooltip.label.element.childNodes.length,
+        1,
+        'Only one label should be added'
+    );
+
+    chart.series[1].update({
+        tooltip: {
+            pointFormat: null
+        }
+    });
+
+    chart.tooltip.refresh([
+        chart.series[0].points[0],
+        chart.series[1].points[0]
+    ]);
+
+    assert.strictEqual(
+        chart.tooltip.label.element.childNodes.length,
+        1,
+        'Only one label should be added'
+    );
+});
+
 QUnit.test('Split tooltip with useHTML (#7238)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

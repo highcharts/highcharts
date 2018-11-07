@@ -56,6 +56,36 @@ QUnit.test('Test updating series by id', function (assert) {
         'No id, type changed to line'
     );
 
+    chart.series[0].points[0].tagged = 'oh, yes';
+    chart.update({
+        chart: {
+            type: 'column'
+        }
+    });
+    assert.strictEqual(
+        chart.series[0].points[0].tagged,
+        'oh, yes',
+        'When not changing chart type, the point should survive (#9197)'
+    );
+
+    chart.series[0].update({
+        dataLabels: {
+            enabled: true
+        }
+    });
+    chart.series[0].points[0].tagged = 'oh, yes, again';
+    chart.series[0].update({
+        dataLabels: {
+            enabled: true
+        },
+        data: [1, 2, 3, 4]
+    });
+    assert.strictEqual(
+        chart.series[0].points[0].tagged,
+        'oh, yes, again',
+        'When not changing series props, the point should survive'
+    );
+
 });
 
 QUnit.test('Updating axes and series', function (assert) {

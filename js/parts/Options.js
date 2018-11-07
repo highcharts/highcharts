@@ -1,9 +1,25 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * Gets fired when an area of the chart has been selected. The default action
+ * for the selection event is to zoom the chart to the selected area. It can be
+ * prevented by calling `event.preventDefault()` or return false.
+ *
+ * @callback Highcharts.ChartSelectionCallbackFunction
+ *
+ * @param {global.Event} event
+ *        Event informations
+ *
+ * @return {boolean|undefined}
+ *         Return false to prevent the default action, usually zoom.
+ */
+
 'use strict';
+
 import H from './Globals.js';
 import './Color.js';
 import './Utilities.js';
@@ -404,7 +420,7 @@ H.defaultOptions = {
          *
          * @type      {boolean}
          * @default   true
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption chart.alignTicks
          */
 
@@ -579,7 +595,7 @@ H.defaultOptions = {
          * passed to the function, containing common event information. The
          * default action for the selection event is to zoom the chart to the
          * selected area. It can be prevented by calling
-         * `event.preventDefault()`.
+         * `event.preventDefault()` or return false.
          *
          * Information on the selected area can be found through `event.xAxis`
          * and `event.yAxis`, which are arrays containing the axes of each
@@ -613,7 +629,7 @@ H.defaultOptions = {
          *         Select a range of points through a drag selection
          *         (Highcharts)
          *
-         * @type      {Function}
+         * @type      {Highcharts.ChartSelectionCallbackFunction}
          * @apioption chart.events.selection
          */
 
@@ -713,7 +729,7 @@ H.defaultOptions = {
          *
          * @type       {string}
          * @since      4.0.3
-         * @product    highcharts
+         * @product    highcharts gantt
          * @validvalue ["alt", "ctrl", "meta", "shift"]
          * @apioption  chart.panKey
          */
@@ -733,7 +749,7 @@ H.defaultOptions = {
          * @default   {highcharts} false
          * @default   {highstock} true
          * @since     4.0.3
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption chart.panning
          */
 
@@ -751,7 +767,7 @@ H.defaultOptions = {
          * @default    {highcharts} undefined
          * @default    {highstock} x
          * @since      3.0
-         * @product    highcharts highstock
+         * @product    highcharts highstock gantt
          * @validvalue ["x", "y", "xy"]
          * @apioption  chart.pinchType
          */
@@ -815,7 +831,7 @@ H.defaultOptions = {
          *         False
          *
          * @since   1.2.0
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         ignoreHiddenSeries: true,
 
@@ -838,7 +854,7 @@ H.defaultOptions = {
          *
          * @type      {boolean}
          * @default   false
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption chart.inverted
          */
 
@@ -1083,7 +1099,7 @@ H.defaultOptions = {
          *
          * @type      {boolean}
          * @since     1.2.5
-         * @product   highcharts
+         * @product   highcharts gantt
          * @apioption chart.showAxes
          */
 
@@ -1233,7 +1249,7 @@ H.defaultOptions = {
          *         Xy
          *
          * @type       {string}
-         * @product    highcharts highstock
+         * @product    highcharts highstock gantt
          * @validvalue ["x", "y", "xy"]
          * @apioption  chart.zoomType
          */
@@ -1830,6 +1846,7 @@ H.defaultOptions = {
          *
          * @default {highstock} false
          * @default {highmaps} true
+         * @default {gantt} false
          */
         enabled: true,
 
@@ -1966,10 +1983,9 @@ H.defaultOptions = {
          */
 
         /**
-         * A [format string](https://www.highcharts.com/docs/chart-concepts/
-         * labels-and-string-formatting) for each legend label. Available
-         * variables relates to properties on the series, or the point in case
-         * of pies.
+         * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * for each legend label. Available variables relates to properties on
+         * the series, or the point in case of pies.
          *
          * @type      {string}
          * @default   {name}
@@ -2011,7 +2027,7 @@ H.defaultOptions = {
          * @type      {number}
          * @default   16
          * @since     2.0
-         * @product   highcharts
+         * @product   highcharts gantt
          * @apioption legend.lineHeight
          */
 
@@ -2424,8 +2440,8 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/
-         * labels-and-string-formatting#html) to render the legend item texts.
+         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the legend item texts.
          *
          * Prior to 4.1.7, when using HTML, [legend.navigation](
          * #legend.navigation) was disabled.
@@ -3001,7 +3017,7 @@ H.defaultOptions = {
          *         A different format
          *
          * @type      {string}
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          * @apioption tooltip.xDateFormat
          */
 
@@ -3057,7 +3073,7 @@ H.defaultOptions = {
          * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
          *
          * @type    {Highcharts.Dictionary<string>}
-         * @product highcharts highstock
+         * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
             millisecond: '%A, %b %e, %H:%M:%S.%L',
@@ -3180,6 +3196,8 @@ H.defaultOptions = {
          * `tooltip.xDateFormat`. To access the original point use
          * `point.point`.
          *
+         * Set an empty string to avoid header on a shared or split tooltip.
+         *
          * @sample {highcharts} highcharts/tooltip/footerformat/
          *         An HTML table in the tooltip
          * @sample {highstock} highcharts/tooltip/footerformat/
@@ -3196,6 +3214,9 @@ H.defaultOptions = {
          * Furthermore, `point.y` can be extended by the `tooltip.valuePrefix`
          * and `tooltip.valueSuffix` variables. This can also be overridden for
          * each series, which makes it a good hook for displaying units.
+         *
+         * Set an empty string to leave out a series from a shared or split
+         * tooltip.
          *
          * In styled mode, the dot is colored by a class name rather
          * than the point color.
@@ -3314,7 +3335,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/credits/customized/
          *         Custom URL and text
          */
-        href: 'https://www.highcharts.com',
+        href: 'https://www.highcharts.com?credits',
 
         /**
          * Position configuration for the credits label.
@@ -3464,14 +3485,13 @@ H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
  * human readable date string. The format is a subset of the formats for PHP's
- * [strftime]{@link
- * http://www.php.net/manual/en/function.strftime.php} function. Additional
- * formats can be given in the {@link Highcharts.dateFormats} hook.
+ * [strftime](http://www.php.net/manual/en/function.strftime.php) function.
+ * Additional formats can be given in the {@link Highcharts.dateFormats} hook.
  *
  * Since v6.0.5, all internal dates are formatted through the
- * [Chart.time](Chart#time) instance to respect chart-level time settings. The
- * `Highcharts.dateFormat` function only reflects global time settings set with
- * `setOptions`.
+ * {@link Highcharts.Chart#time} instance to respect chart-level time settings.
+ * The `Highcharts.dateFormat` function only reflects global time settings set
+ * with `setOptions`.
  *
  * @function Highcharts.dateFormat
  *

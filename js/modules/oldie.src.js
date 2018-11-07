@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * Support for old IE browsers (6, 7 and 8) in Highcharts v6+.
  *

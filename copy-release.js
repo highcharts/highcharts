@@ -92,7 +92,7 @@
         const existing = [];
         const mapFromTo = {};
         const pathTo = '../' + releaseRepo + '/';
-        ['highcharts', 'highstock', 'highmaps']
+        ['highcharts', 'highstock', 'highmaps', 'gantt']
         .map((prod) => 'build/dist/' + prod + '/code/')
         .forEach((pathDir) => {
             const files = getFilesInFolder(pathDir, true);

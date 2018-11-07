@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,38 +7,55 @@
 /**
  * Configuration hash for the data label and tooltip formatters.
  *
- * @typedef Highcharts.PointLabelObject
+ * @interface Highcharts.PointLabelObject
+ *//**
+ * For categorized axes this property holds the category name for the point. For
+ * other axes it holds the X value.
  *
- * @property {number|string} x
- *           For categorized axes this property holds the category name for the
- *           point. For other axes it holds the X value.
+ * @name Highcharts.PointLabelObject#x
+ * @type {number|string}
+ *//**
+ * The y value of the point.
  *
- * @property {number} [y]
- *           The y value of the point.
+ * @name Highcharts.PointLabelObject#y
+ * @type {number|undefined}
+ *//**
+ * The point's current color.
  *
- * @property {Highcharts.ColorString} color
- *           The point's current color.
+ * @name Highcharts.PointLabelObject#color
+ * @type {Highcharts.ColorString}
+ *//**
+ * The point's current color index, used in styled mode instead of `color`. The
+ * color index is inserted in class names used for styling.
  *
- * @property {number} colorIndex
- *           The point's current color index, used in styled mode instead of
- *           `color`. The color index is inserted in class names used for
- *           styling.
+ * @name Highcharts.PointLabelObject#colorIndex
+ * @type {number}
+ *//**
+ * The name of the related point.
  *
- * @property {number|string} key
- *           The name of the related point.
+ * @name Highcharts.PointLabelObject#key
+ * @type {number|string}
+ *//**
+ * The related series.
  *
- * @property {Highcharts.Series} series
- *           The related series.
+ * @name Highcharts.PointLabelObject#series
+ * @type {Highcharts.Series}
+ *//**
+ * The related point.
  *
- * @property {Highcharts.Point} point
- *           The related point.
+ * @name Highcharts.PointLabelObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * The percentage for related points in a stacked series or pies.
  *
- * @property {number} percentage
- *           The percentage for related points in a stacked series or pies.
+ * @name Highcharts.PointLabelObject#percentage
+ * @type {number}
+ *//**
+ * The total of values in either a stack for stacked series, or a pie in a pie
+ * series.
  *
- * @property {number} total
- *           The total of values in either a stack for stacked series, or a pie
- *           in a pie series.
+ * @name Highcharts.PointLabelObject#total
+ * @type {number}
  */
 
 'use strict';
@@ -48,7 +65,6 @@ import './Utilities.js';
 
 var Point,
     H = Highcharts,
-
     each = H.each,
     extend = H.extend,
     erase = H.erase,
@@ -57,6 +73,8 @@ var Point,
     isArray = H.isArray,
     isNumber = H.isNumber,
     pick = H.pick,
+    uniqueKey = H.uniqueKey,
+    defined = H.defined,
     removeEvent = H.removeEvent;
 
 /**
@@ -80,10 +98,10 @@ Highcharts.Point.prototype = {
      * @param {Highcharts.Series} series
      *        The series object containing this point.
      *
-     * @param {number|Array<number>|*} options
+     * @param {number|object|Array<number|string>|null} options
      *        The data in either number, array or object format.
      *
-     * @param {number} x
+     * @param {number} [x]
      *        Optionally, the X value of the point.
      *
      * @return {Highcharts.Point}
@@ -119,6 +137,9 @@ Highcharts.Point.prototype = {
         /*= } =*/
 
         point.applyOptions(options, x);
+
+        // Add a unique ID to the point if none is assigned
+        point.id = defined(point.id) ? point.id : uniqueKey();
 
         if (series.options.colorByPoint) {
 
@@ -162,10 +183,10 @@ Highcharts.Point.prototype = {
      * @private
      * @function Highcharts.Point#applyOptions
      *
-     * @param {*} options
+     * @param {number|object|Array<number|string>|null} options
      *        The point options as defined in series.data.
      *
-     * @param {number} x
+     * @param {number} [x]
      *        Optionally, the x value.
      *
      * @return {Highcharts.Point}
@@ -186,7 +207,7 @@ Highcharts.Point.prototype = {
          * extended through `Point.update`.
          *
          * @name Highcharts.Point#options
-         * @type {*}
+         * @type {object}
          */
         point.options = point.options ?
             extend(point.options, options) :
@@ -196,6 +217,9 @@ Highcharts.Point.prototype = {
         // options must be shielded (#5681)
         if (options.group) {
             delete point.group;
+        }
+        if (options.dataLabels) {
+            delete point.dataLabels;
         }
 
         /**
@@ -289,10 +313,10 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#optionsToObject
      *
-     * @param {number|Array<number>|*} options
+     * @param {number|object|Array<number|string>|null} options
      *        The input option.
      *
-     * @return {*}
+     * @return {object}
      *         Transformed options.
      */
     optionsToObject: function (options) {
@@ -436,8 +460,8 @@ Highcharts.Point.prototype = {
             point.onMouseOut();
         }
 
-        // Remove all events
-        if (point.graphic || point.dataLabel) {
+        // Remove all events and elements
+        if (point.graphic || point.dataLabel || point.dataLabels) {
             removeEvent(point);
             point.destroyElements();
         }
@@ -473,6 +497,23 @@ Highcharts.Point.prototype = {
             if (point[prop]) {
                 point[prop] = point[prop].destroy();
             }
+        }
+        // Handle point.dataLabels and point.connectors
+        if (point.dataLabels) {
+            each(point.dataLabels, function (label) {
+                if (label.element) {
+                    label.destroy();
+                }
+            });
+            delete point.dataLabels;
+        }
+        if (point.connectors) {
+            each(point.connectors, function (connector) {
+                if (connector.element) {
+                    connector.destroy();
+                }
+            });
+            delete point.connectors;
         }
     },
 
@@ -550,7 +591,7 @@ Highcharts.Point.prototype = {
      * @param {string} eventType
      *        Type of the event.
      *
-     * @param {*} eventArgs
+     * @param {object} eventArgs
      *        Additional event arguments.
      *
      * @param {Function} defaultFunction

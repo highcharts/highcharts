@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -625,7 +625,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *        When `true`, the selection is added to other selected points.
      *        When `false`, other selected points are deselected. Internally in
      *        Highcharts, when
-     *        {@link http://api.highcharts.com/highcharts/plotOptions.series.allowPointSelect|allowPointSelect}
+     *        [allowPointSelect](http://api.highcharts.com/highcharts/plotOptions.series.allowPointSelect)
      *        is `true`, selected points are accumulated on Control, Shift or
      *        Cmd clicking the point.
      *

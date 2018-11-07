@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -1044,7 +1044,11 @@ Scrollbar.prototype = {
 addEvent(Axis, 'afterInit', function () {
     var axis = this;
 
-    if (axis.options.scrollbar && axis.options.scrollbar.enabled) {
+    if (
+        axis.options &&
+        axis.options.scrollbar &&
+        axis.options.scrollbar.enabled
+    ) {
         // Predefined options:
         axis.options.scrollbar.vertical = !axis.horiz;
         axis.options.startOnTick = axis.options.endOnTick = false;

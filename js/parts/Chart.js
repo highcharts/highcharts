@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -111,7 +111,7 @@ var addEvent = H.addEvent,
  * @param {Highcharts.ChartCallbackFunction} [callback]
  *        Function to run when the chart has loaded and and all external images
  *        are loaded. Defining a
- *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ *        [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
  *        handler is equivalent.
  */
 var Chart = H.Chart = function () {
@@ -143,7 +143,7 @@ var Chart = H.Chart = function () {
  * @param {Highcharts.ChartCallbackFunction} [callback]
  *        Function to run when the chart has loaded and and all external images
  *        are loaded. Defining a
- *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ *        [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
  *        handler is equivalent.
  *
  * @return {Highcharts.Chart}
@@ -542,6 +542,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // set axes scales
             each(axes, function (axis) {
                 axis.updateNames();
+                // Update categories in a Gantt chart
+                if (axis.updateYNames) {
+                    axis.updateYNames();
+                }
                 axis.setScale();
             });
         }
@@ -730,7 +734,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * can be selected either programmatically by the
      * {@link Highcharts.Series#select}
      * function or by checking the checkbox next to the legend item if
-     * {@link https://api.highcharts.com/highcharts/plotOptions.series.showCheckbox| series.showCheckBox}
+     * [series.showCheckBox](https://api.highcharts.com/highcharts/plotOptions.series.showCheckbox)
      * is true.
      *
      * @sample highcharts/members/chart-getselectedseries/
@@ -1130,6 +1134,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chartWidth = chart.chartWidth;
         chartHeight = chart.chartHeight;
 
+        // Allow table cells and flex-boxes to shrink without the chart blocking
+        // them out (#6427)
+        css(renderTo, { overflow: 'hidden' });
+
         // Create the inner container
         /*= if (build.classic) { =*/
         containerStyle = extend({
@@ -1276,7 +1284,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Reflows the chart to its container. By default, the chart reflows
      * automatically to its container following a `window.resize` event, as per
-     * the {@link https://api.highcharts/highcharts/chart.reflow|chart.reflow}
+     * the [chart.reflow](https://api.highcharts/highcharts/chart.reflow)
      * option. However, there are no reliable events for div resize, so if the
      * container is resized without a window resize event, this must be called
      * explicitly.
@@ -2019,7 +2027,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             /**
              * The chart's credits label. The label has an `update` method that
              * allows setting new options as per the
-             * {@link https://api.highcharts.com/highcharts/credits|credits options set}.
+             * [credits options set](https://api.highcharts.com/highcharts/credits).
              *
              * @name Highcharts.Chart#credits
              * @type {Highcharts.SVGElement}

@@ -1,7 +1,7 @@
 /**
  * Data module
  *
- * (c) 2012-2017 Torstein Honsi
+ * (c) 2012-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -31,8 +31,8 @@ var addEvent = Highcharts.addEvent,
 /**
  * The Data module provides a simplified interface for adding data to
  * a chart from sources like CVS, HTML tables or grid views. See also
- * the [tutorial article on the Data module](https://www.highcharts.com/docs/working-
- * with-data/data-module).
+ * the [tutorial article on the Data module](
+ * https://www.highcharts.com/docs/working-with-data/data-module).
  *
  * It requires the `modules/data.js` file to be loaded.
  *
@@ -166,7 +166,7 @@ var addEvent = Highcharts.addEvent,
  * @sample {highstock} highcharts/data/start-end/ Don't get series names from the CSV
  * @default true
  * @since 4.1.0
- * @product highcharts highstock
+ * @product highcharts highstock gantt
  * @apioption data.firstRowAsNames
  */
 

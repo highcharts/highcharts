@@ -24,6 +24,11 @@ const path = require('path');
  * */
 
 const rootPath = process.cwd();
+const parseCommentBlock = /\/?\*\/?/;
+const parseBreak = /[\n\r]+/;
+const parseJsdocLink = /\{@link\s+((?:[^\|]|\s)+?)(?:\|([^\}]|\s+?))?\}/;
+const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
+const parseSpace = /[ \f\r\t\v]+/;
 
 /* *
  *
@@ -312,11 +317,26 @@ function getDescription (doclet) {
             description = description.substr(0, tagPosition + 1);
         }
 
-        description = description.replace(/\/?\*\/?/gm, '');
+        description = description.replace(new RegExp(parseCommentBlock, 'g'), '');
     }
 
-    description = description.replace(/\s+/gm, ' ');
-    description = description.trim();
+    description = description
+        .replace(new RegExp(parseSpace, 'g'), ' ')
+        .trim()
+        .replace(
+            new RegExp(parseJsdocLink, 'g'),
+            (match, url, text) => (
+                '{@link ' + url.replace(new RegExp(parseBreak, 'g'), '') +
+                (text ? '|' + text.trim() : '') + '}'
+            )
+        )
+        .replace(
+            new RegExp(parseMarkdownLink, 'g'),
+            (match, text, url) => (
+                '[' + text.trim() + '](' +
+                url.replace(new RegExp(parseBreak, 'g'), '') + ')'
+            )
+        );
 
     if (description.indexOf('(c)') > -1) {
         // found only a file header with the copyright line
@@ -786,6 +806,34 @@ function filterNodes (node) {
     node.children.forEach(filterNodes);
 }
 
+/**
+ * Sorts all children of a node in alphabetical ascending order.
+ *
+ * @param {Node} node
+ *        Root node.
+ */
+function sortNodes (node) {
+
+    if (!node.children) {
+        return;
+    }
+
+    let childrenReferences;
+
+    if (node.doclet && node.meta) {
+        childrenReferences = node.children;
+        delete node.children;
+        node.children = childrenReferences;
+    }
+ 
+    childrenReferences = node.children.splice();
+    node.children.push(...childrenReferences.sort((a, b) => (
+        a.doclet.name < b.doclet.name ? -1 :
+        a.doclet.name > b.doclet.name ? 1 :
+        0
+    )));
+ }
+ 
 /**
  * Updates corresponding node in the tree with information from the doclet.
  *
@@ -1267,6 +1315,7 @@ function fileComplete (e) {
 function processingComplete (e) {
 
     filterNodes(globalNamespace);
+    sortNodes(globalNamespace);
 
     fs.writeFileSync(
         path.join(rootPath, 'tree-namespace.json'),
@@ -1286,6 +1335,26 @@ function processingComplete (e) {
  * @return {void}
  */
 exports.defineTags = function (dictionary) {
+
+    dictionary.defineTag('apioption', {
+        // mustHaveValue: true,
+        onTagged: (doclet, tag) => {
+            if (!doclet.type &&
+                tag.value
+            ) {
+                doclet.type = { names: [
+                    tag.value
+                        .split('.')
+                        .filter(name => !!name)
+                        .map(name => name[0].toUpperCase() + name.substr(1))
+                        .join('')
+                        .replace('Options', '') +
+                    'Options'
+                ] };
+            }
+        }
+    })
+    .synonym('optionparent');
 
     dictionary.defineTag('private', {
         mustNotHaveValue: true,

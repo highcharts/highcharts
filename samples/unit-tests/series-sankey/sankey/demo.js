@@ -35,7 +35,13 @@ QUnit.test('Sankey', function (assert) {
                 color: '#FF0000'
             }
         }
-    });
+    }, false);
+
+    // This would cause an error prior to #9300
+    series.update({
+        events: {}
+    }, false);
+    chart.redraw();
 
     assert.strictEqual(
         chart.container.querySelector('.highcharts-no-data'),
