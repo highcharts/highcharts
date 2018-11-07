@@ -3,11 +3,14 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import './BoxPlotSeries.js';
+
 var each = H.each,
     noop = H.noop,
     seriesType = H.seriesType,
@@ -18,15 +21,17 @@ var each = H.each,
  * used on graphs to indicate the error, or uncertainty in a reported
  * measurement.
  *
- * @sample       highcharts/demo/error-bar/
- *               Error bars on a column series
- * @sample       highcharts/series-errorbar/on-scatter/
- *               Error bars on a scatter series
+ * @sample highcharts/demo/error-bar/
+ *         Error bars on a column series
+ * @sample highcharts/series-errorbar/on-scatter/
+ *         Error bars on a scatter series
+ *
  * @extends      {plotOptions.boxplot}
  * @product      highcharts highstock
  * @optionparent plotOptions.errorbar
  */
 seriesType('errorbar', 'boxplot', {
+
     /*= if (build.classic) { =*/
 
     /**
@@ -34,14 +39,16 @@ seriesType('errorbar', 'boxplot', {
      * [stemColor](#plotOptions.errorbar.stemColor) and
      * [whiskerColor](#plotOptions.errorbar.whiskerColor) individually.
      *
-     * @type    {Color}
-     * @sample  {highcharts} highcharts/plotoptions/error-bar-styling/
-     *          Error bar styling
+     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+     *         Error bar styling
+     *
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject}
      * @default #000000
      * @since   3.0
      * @product highcharts
      */
     color: '${palette.neutralColor100}',
+
     /*= } =*/
 
     grouping: false,
@@ -64,9 +71,10 @@ seriesType('errorbar', 'boxplot', {
      * and high values. When `null`, the general
      * [lineWidth](#plotOptions.errorbar.lineWidth) applies.
      *
-     * @type    {Number}
-     * @sample  {highcharts} highcharts/plotoptions/error-bar-styling/
-     *          Error bar styling
+     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+     *         Error bar styling
+     *
+     * @type    {number}
      * @since   3.0
      * @product highcharts
      */
@@ -107,9 +115,8 @@ seriesType('errorbar', 'boxplot', {
  * A `errorbar` series. If the [type](#series.errorbar.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type      {Object}
  * @extends   series,plotOptions.errorbar
- * @excluding dataParser,dataURL,stack,stacking
+ * @excluding dataParser, dataURL, stack, stacking
  * @product   highcharts
  * @apioption series.errorbar
  */
@@ -155,19 +162,20 @@ seriesType('errorbar', 'boxplot', {
  *     }]
  *  ```
  *
- * @type      {Array<Object|Array>}
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type      {Array<Array<number>|*>}
  * @extends   series.arearange.data
- * @excluding dataLabels,drilldown,marker,states
- * @sample    {highcharts} highcharts/chart/reflow-true/
- *            Numerical values
- * @sample    {highcharts} highcharts/series/data-array-of-arrays/
- *            Arrays of numeric x and y
- * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *            Arrays of datetime x and y
- * @sample    {highcharts} highcharts/series/data-array-of-name-value/
- *            Arrays of point.name and y
- * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
+ * @excluding dataLabels, drilldown, marker, states
  * @product   highcharts
  * @apioption series.errorbar.data
  */
