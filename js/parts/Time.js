@@ -23,6 +23,18 @@
 /**
  * Function of an additional date format specifier.
  *
+ * @callback Highcharts.TimeFormatCallbackFunction
+ *
+ * @param {number} timestamp
+ *        The time to format.
+ *
+ * @return {string}
+ *         The formatted portion of the date.
+ */
+
+/**
+ * Function of an additional date format specifier.
+ *
  * @interface Highcharts.TimeTicksInfoObject
  * @augments Highcharts.NormalizedIntervalObject
  *//**
