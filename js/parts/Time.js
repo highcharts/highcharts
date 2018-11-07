@@ -33,7 +33,7 @@
  */
 
 /**
- * Function of an additional date format specifier.
+ * Additonal time tick information.
  *
  * @interface Highcharts.TimeTicksInfoObject
  * @augments Highcharts.NormalizedIntervalObject
@@ -46,7 +46,7 @@
  */
 
 /**
- * Additonal time tick information.
+ * Time ticks.
  *
  * @interface Highcharts.TimeTicksObject
  * @augments Array<number>
