@@ -3,13 +3,16 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
 import '../parts/ScatterSeries.js';
+
 var LegendSymbolMixin = H.LegendSymbolMixin,
     noop = H.noop,
     Series = H.Series,
@@ -22,13 +25,15 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  * stroke is applied through `lineWidth` and `lineColor` options. Requires
  * the `highcharts-more.js` file.
  *
- * @type {Object}
- * @extends plotOptions.scatter
- * @excluding softThreshold,threshold
- * @sample {highcharts} highcharts/demo/polygon/ Polygon
- * @sample {highstock} highcharts/demo/polygon/ Polygon
- * @since 4.1.0
- * @product highcharts highstock
+ * @sample {highcharts} highcharts/demo/polygon/
+ *         Polygon
+ * @sample {highstock} highcharts/demo/polygon/
+ *         Polygon
+ *
+ * @extends      plotOptions.scatter
+ * @since        4.1.0
+ * @excluding    softThreshold, threshold
+ * @product      highcharts highstock
  * @optionparent plotOptions.polygon
  */
 seriesType('polygon', 'scatter', {
@@ -82,10 +87,9 @@ seriesType('polygon', 'scatter', {
  * A `polygon` series. If the [type](#series.polygon.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @extends series,plotOptions.polygon
- * @excluding dataParser,dataURL,stack
- * @product highcharts highstock
+ * @extends   series,plotOptions.polygon
+ * @excluding dataParser, dataURL, stack
+ * @product   highcharts highstock
  * @apioption series.polygon
  */
 
@@ -134,8 +138,6 @@ seriesType('polygon', 'scatter', {
  *     }]
  *  ```
  *
- * @type {Array<Object|Array>}
- * @extends series.line.data
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
@@ -146,6 +148,9 @@ seriesType('polygon', 'scatter', {
  *         Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
- * @product highcharts highstock
+ *
+ * @type      {Array<number|Array<number>|*>}
+ * @extends   series.line.data
+ * @product   highcharts highstock
  * @apioption series.polygon.data
  */
