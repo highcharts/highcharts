@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,31 +7,40 @@
 /**
  * Normalized interval.
  *
- * @typedef Highcharts.NormalizedIntervalObject
+ * @interface Highcharts.NormalizedIntervalObject
+ *//**
+ * The interval in axis values (ms).
  *
- * @property {number} unitRange
- *           The interval in axis values (ms)
+ * @name Highcharts.NormalizedIntervalObject#unitRange
+ * @type {number}
+ *//**
+ * The count.
  *
- * @property {number} count
- *           The count
+ * @name Highcharts.NormalizedIntervalObject#count
+ * @type {number}
+ */
+
+/**
+ * Function of an additional date format specifier.
+ *
+ * @interface Highcharts.TimeTicksInfoObject
+ * @augments Highcharts.NormalizedIntervalObject
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @type {Array<string>}
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#totalRange
+ * @type {number}
  */
 
 /**
  * Additonal time tick information.
  *
- * @typedef {Highcharts.NormalizedIntervalObject} Highcharts.TimeTicksInfoObject
- *
- * @property {Array<string>} higherRanks
- *
- * @property {number} totalRange
- */
-
-/**
- * Time ticks.
- *
- * @typedef {Array<number>} Highcharts.TimeTicksObject
- *
- * @property {Highcharts.TimeTicksInfoObject} info
+ * @interface Highcharts.TimeTicksObject
+ * @augments Array<number>
+ *//**
+ * @name Highcharts.TimeTicksObject#info
+ * @type {Highcharts.TimeTicksInfoObject}
  */
 
 'use strict';
@@ -52,8 +61,7 @@ var H = Highcharts,
  * `Highcharts.setOptions`, or individually for each Chart item through the
  * [time](https://api.highcharts.com/highcharts/time) options set.
  *
- * The Time object is available from
- * [Chart.time](http://api.highcharts.com/class-reference/Highcharts.Chart#.time),
+ * The Time object is available from {@link Highcharts.Chart#time},
  * which refers to  `Highcharts.time` if no individual time settings are
  * applied.
  *
@@ -172,7 +180,7 @@ Highcharts.Time.prototype = {
      *
      * @type      {*}
      * @since     4.0.4
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.Date
      */
 
@@ -190,7 +198,7 @@ Highcharts.Time.prototype = {
      *
      * @type      {Function}
      * @since     4.1.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.getTimezoneOffset
      */
 
@@ -209,7 +217,7 @@ Highcharts.Time.prototype = {
      *
      * @type      {string}
      * @since     5.0.7
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.timezone
      */
 
@@ -227,7 +235,7 @@ Highcharts.Time.prototype = {
      * @type      {number}
      * @default   0
      * @since     3.0.8
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption time.timezoneOffset
      */
 
@@ -576,7 +584,7 @@ Highcharts.Time.prototype = {
                  *         Adding support for week number
                  *
                  * @name Highcharts.dateFormats
-                 * @type {Highcharts.Dictionary<Function>}
+                 * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
                  */
                 H.dateFormats
             );
@@ -598,6 +606,24 @@ Highcharts.Time.prototype = {
         return capitalize ?
             format.substr(0, 1).toUpperCase() + format.substr(1) :
             format;
+    },
+
+    /**
+     * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
+     * an object.
+     * @param  {String|Array|Object} f General format description
+     * @return {Object}   The object definition
+     */
+    resolveDTLFormat: function (f) {
+        if (!H.isObject(f, true)) {
+            f = H.splat(f);
+            return {
+                main: f[0],
+                from: f[1],
+                to: f[2]
+            };
+        }
+        return f;
     },
 
     /**

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,13 +7,18 @@
 /**
  * Adjusted width and x offset of the columns for grouping.
  *
- * @typedef Highcharts.ColumnMetricsObject
+ * @private
+ * @interface Highcharts.ColumnMetricsObject
+ *//**
+ * Width of the columns.
  *
- * @property {number} width
- *           Width of the columns.
+ * @name Highcharts.ColumnMetricsObject#width
+ * @type {number}
+ *//**
+ * Offset of the columns.
  *
- * @property {number} offset
- *           Offset of the columns.
+ * @name Highcharts.ColumnMetricsObject#offset
+ * @type {number}
  */
 
 'use strict';
@@ -29,6 +34,7 @@ var animObject = H.animObject,
     color = H.color,
     each = H.each,
     extend = H.extend,
+    defined = H.defined,
     isNumber = H.isNumber,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
@@ -71,7 +77,7 @@ seriesType('column', 'line'
      * @sample {highcharts} highcharts/plotoptions/column-borderradius/
      *         Rounded columns
      *
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     borderRadius: 0,
 
@@ -95,7 +101,7 @@ seriesType('column', 'line'
      * @type      {boolean}
      * @default   false
      * @since     2.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.colorByPoint
      */
 
@@ -106,7 +112,7 @@ seriesType('column', 'line'
      *
      * @type      {Array<Highcharts.ColorString>}
      * @since     3.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.colors
      */
 
@@ -122,7 +128,7 @@ seriesType('column', 'line'
      *         Crisp is false
      *
      * @since   5.0.10
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     crisp: true,
 
@@ -134,7 +140,7 @@ seriesType('column', 'line'
      * @sample {highcharts} highcharts/plotoptions/column-grouppadding-none/
      *         No group padding - all columns are evenly spaced
      *
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     groupPadding: 0.2,
 
@@ -151,7 +157,7 @@ seriesType('column', 'line'
      * @type      {boolean}
      * @default   true
      * @since     2.3.0
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.grouping
      */
 
@@ -174,7 +180,7 @@ seriesType('column', 'line'
      *
      * @type      {number}
      * @since     4.1.8
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.maxPointWidth
      */
 
@@ -188,7 +194,7 @@ seriesType('column', 'line'
      * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/
      *         0 for tightly packed columns
      *
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     pointPadding: 0.1,
 
@@ -205,8 +211,20 @@ seriesType('column', 'line'
      *
      * @type      {number}
      * @since     1.2.5
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.pointWidth
+     */
+
+    /**
+     * A pixel value specifying a fixed width for the column or bar. Overrides
+     * pointWidth on the series.
+     *
+     * @type      {Number}
+     * @see       [series.pointWidth](#plotOptions.column.pointWidth)
+     * @default   undefined
+     * @since     7.0.0
+     * @product   highcharts highstock gantt
+     * @apioption series.column.data.pointWidth
      */
 
     /**
@@ -221,7 +239,7 @@ seriesType('column', 'line'
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength-pos-and-neg/
      *         Positive and negative close to zero values
      *
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     minPointLength: 0,
 
@@ -233,9 +251,9 @@ seriesType('column', 'line'
      * On the other hand, when the series contains more points than the
      * crop threshold, the series data is cropped to only contain points
      * that fall within the plot area. The advantage of cropping away invisible
-     * points is to increase performance on large series. .
+     * points is to increase performance on large series.
      *
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     cropThreshold: 50,
 
@@ -255,7 +273,7 @@ seriesType('column', 'line'
      *
      * @type    {number|null}
      * @since   2.3
-     * @product highcharts highstock
+     * @product highcharts highstock gantt
      */
     pointRange: null,
 
@@ -267,7 +285,7 @@ seriesType('column', 'line'
          *
          * @extends   plotOptions.series.states.hover
          * @excluding halo, lineWidth, lineWidthPlus, marker
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          */
         hover: {
 
@@ -281,7 +299,7 @@ seriesType('column', 'line'
              * inherit the normal state border color.
              *
              * @type      {Highcharts.ColorString}
-             * @product   highcharts
+             * @product   highcharts gantt
              * @apioption plotOptions.column.states.hover.borderColor
              */
 
@@ -289,7 +307,7 @@ seriesType('column', 'line'
              * A specific color for the hovered point.
              *
              * @type      {Highcharts.ColorString}
-             * @product   highcharts
+             * @product   highcharts gantt
              * @apioption plotOptions.column.states.hover.color
              */
 
@@ -305,7 +323,7 @@ seriesType('column', 'line'
              * @sample {highcharts} highcharts/plotoptions/column-states-hover-brightness/
              *         Brighten by 0.5
              *
-             * @product highcharts highstock
+             * @product highcharts highstock gantt
              */
             brightness: 0.1
 
@@ -320,7 +338,7 @@ seriesType('column', 'line'
          *
          * @extends   plotOptions.series.states.select
          * @excluding halo, lineWidth, lineWidthPlus, marker
-         * @product   highcharts highstock
+         * @product   highcharts highstock gantt
          */
         select: {
 
@@ -329,7 +347,7 @@ seriesType('column', 'line'
              *
              * @type    {Highcharts.ColorString}
              * @default #cccccc
-             * @product highcharts highstock
+             * @product highcharts highstock gantt
              */
             color: '${palette.neutralColor20}',
 
@@ -338,7 +356,7 @@ seriesType('column', 'line'
              *
              * @type    {Highcharts.ColorString}
              * @default #000000
-             * @product highcharts highstock
+             * @product highcharts highstock gantt
              */
             borderColor: '${palette.neutralColor100}'
         }
@@ -414,7 +432,7 @@ seriesType('column', 'line'
      *
      * @type      {number}
      * @default   1
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      * @apioption plotOptions.column.borderWidth
      */
 
@@ -429,7 +447,7 @@ seriesType('column', 'line'
      *
      * @type      {Highcharts.ColorString}
      * @default   #ffffff
-     * @product   highcharts highstock
+     * @product   highcharts highstock gantt
      */
     borderColor: '${palette.backgroundColor}'
 
@@ -645,11 +663,11 @@ seriesType('column', 'line'
                 yAxis.getThreshold(threshold),
             minPointLength = pick(options.minPointLength, 5),
             metrics = series.getColumnMetrics(),
-            pointWidth = metrics.width,
+            seriesPointWidth = metrics.width,
             // postprocessed for border width
             seriesBarW = series.barW =
-                Math.max(pointWidth, 1 + 2 * borderWidth),
-            pointXOffset = series.pointXOffset = metrics.offset;
+                Math.max(seriesPointWidth, 1 + 2 * borderWidth),
+            seriesXOffset = series.pointXOffset = metrics.offset;
 
         if (chart.inverted) {
             translatedThreshold -= 0.5; // #3355
@@ -668,11 +686,12 @@ seriesType('column', 'line'
         each(series.points, function (point) {
             var yBottom = pick(point.yBottom, translatedThreshold),
                 safeDistance = 999 + Math.abs(yBottom),
+                pointWidth = seriesPointWidth,
                 plotY = Math.min(
                     Math.max(-safeDistance, point.plotY),
                     yAxis.len + safeDistance
                 ), // Don't draw too far outside plot area (#1303, #2241, #4264)
-                barX = point.plotX + pointXOffset,
+                barX = point.plotX + seriesXOffset,
                 barW = seriesBarW,
                 barY = Math.min(plotY, yBottom),
                 up,
@@ -700,6 +719,13 @@ seriesType('column', 'line'
                         yBottom - minPointLength :
                         // #1485, #4051
                         translatedThreshold - (up ? minPointLength : 0);
+            }
+
+            // Handle point.options.pointWidth
+            // TODO: Handle grouping/stacking as well. Calculate offset properly
+            if (defined(point.options.pointWidth)) {
+                pointWidth = barW = Math.ceil(point.options.pointWidth);
+                barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
 
             // Cache for access in polar

@@ -1,40 +1,65 @@
 {
     "compilerOptions": {
-        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": false,
         "noEmit": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strictFunctionTypes": true,
         "strictNullChecks": true,
         "module": "umd",
+        "moduleResolution": "node",
         "baseUrl": ".",
         "lib": ["es6", "dom"],
-        "paths": { "highcharts": ["."] },
-        "typeRoots": ["."],
+        "paths": {
+            "highcharts": ["code/highcharts"],
+            "highcharts/*": ["code/*"],
+            "highcharts/modules/*": ["code/modules/*"]
+        },
         "types": []
     },
     "files": [
-        "index.d.ts",
-        "highcharts.d.ts",
-        "highcharts.src.d.ts",
-        "modules/accessibility.d.ts",
-        "modules/accessibility.src.d.ts",
-        "modules/export-data.d.ts",
-        "modules/export-data.src.d.ts",
-        "modules/exporting.d.ts",
-        "modules/exporting.src.d.ts",
-        "modules/offline-exporting.d.ts",
-        "modules/offline-exporting.src.d.ts",
-        "modules/series-label.d.ts",
-        "modules/series-label.src.d.ts",
-        "modules/vector.d.ts",
-        "modules/vector.src.d.ts",
-        "../test/typescript/highcharts.ts",
-        "../test/typescript/modules/accessibility.ts",
-        "../test/typescript/modules/export-data.ts",
-        "../test/typescript/modules/exporting.ts",
-        "../test/typescript/modules/offline-exporting.ts",
-        "../test/typescript/modules/series-label.ts",
-        "../test/typescript/modules/vector.ts"
+        "code/globals.d.ts",
+        "test/typescript/globals.ts",
+
+        "code/highcharts.d.ts",
+        "code/highcharts.src.d.ts",
+        "test/typescript/highcharts.ts",
+
+        "code/modules/accessibility.d.ts",
+        "code/modules/accessibility.src.d.ts",
+        "test/typescript/modules/accessibility.ts",
+
+        "code/modules/broken-axis.d.ts",
+        "code/modules/broken-axis.src.d.ts",
+        "test/typescript/modules/broken-axis.ts",
+
+        "code/modules/boost.d.ts",
+        "code/modules/boost.src.d.ts",
+        "test/typescript/modules/boost.ts",
+
+        "code/modules/export-data.d.ts",
+        "code/modules/export-data.src.d.ts",
+        "test/typescript/modules/export-data.ts",
+
+        "code/modules/exporting.d.ts",
+        "code/modules/exporting.src.d.ts",
+        "test/typescript/modules/exporting.ts",
+
+        "code/modules/offline-exporting.d.ts",
+        "code/modules/offline-exporting.src.d.ts",
+        "test/typescript/modules/offline-exporting.ts",
+
+        "code/modules/series-label.d.ts",
+        "code/modules/series-label.src.d.ts",
+        "test/typescript/modules/series-label.ts",
+
+        "code/modules/stock.d.ts",
+        "code/modules/stock.src.d.ts",
+        "test/typescript/modules/stock.ts",
+        "test/typescript/highstock.ts",
+
+        "code/modules/vector.d.ts",
+        "code/modules/vector.src.d.ts",
+        "test/typescript/modules/vector.ts"
     ]
 }

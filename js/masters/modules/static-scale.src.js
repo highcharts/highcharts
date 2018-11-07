@@ -4,8 +4,6 @@
  *
  * (c) 2016 Torstein Honsi, Lars A. V. Cabrera
  *
- * --- WORK IN PROGRESS ---
- *
  * License: www.highcharts.com/license
  */
 'use strict';

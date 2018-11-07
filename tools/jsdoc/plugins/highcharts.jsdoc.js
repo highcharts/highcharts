@@ -7,17 +7,20 @@
 
 "use strict";
 
-var hcRoot = process.cwd(); // __dirname + '/../../../..';
+const parseTag = require('jsdoc/tag/type').parse;
+const exec = require('child_process').execSync;
+const logger = require('jsdoc/util/logger');
+const Doclet = require('jsdoc/doclet.js').Doclet;
+const colors = require('colors');
+const fs = require('fs');
+const getPalette = require('highcharts-assembler/src/process.js').getPalette;
+const path = require('path');
 
-var parseTag = require('jsdoc/tag/type').parse;
+const hcRoot = process.cwd(); // __dirname + '/../../../..';
+const parseBreak = /[\n\r]+/;
+const parseJsdocLink = /\{@link\s+((?:[^\|]|\s)+?)(?:\|([^\}]|\s+?))?\}/;
+const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
 
-var exec = require('child_process').execSync;
-var logger = require('jsdoc/util/logger');
-var Doclet = require('jsdoc/doclet.js').Doclet;
-var colors = require('colors');
-var fs = require('fs');
-var getPalette = require('highcharts-assembler/src/process.js').getPalette;
-var path = require('path');
 var options = {
     _meta: {
         commit: '',
@@ -319,6 +322,36 @@ function isStr (what) {
     return (typeof what === 'string' || what instanceof String);
 };
 
+function improveDescription(node) {
+
+    let description = (node.doclet && node.doclet.description);
+
+    if (description) {
+        node.doclet.description = description
+            .trim()
+            .replace(
+                new RegExp(parseJsdocLink, 'g'),
+                (match, url, text) => (
+                    '{@link ' + url.replace(new RegExp(parseBreak, 'g'), '') +
+                    (text ? '|' + text.trim() : '') + '}'
+                )
+            )
+            .replace(
+                new RegExp(parseMarkdownLink, 'g'),
+                (match, text, url) => (
+                    '[' + text.trim() + '](' +
+                    url.replace(new RegExp(parseBreak, 'g'), '') + ')'
+                )
+            );
+    }
+
+    let children = node.children;
+
+    if (children) {
+        Object.keys(children).forEach(key => improveDescription(children[key]));
+    }
+}
+
 function inferType(node) {
     var defVal;
 
@@ -463,6 +496,40 @@ function resolveProductTypes(doclet, tagObj) {
     };
 }
 
+/**
+ * Sorts all children of a node in alphabetical ascending order.
+ */
+function sortNodes (node) {
+
+    if (!node.children) {
+        return;
+    }
+
+    let childrenReferences;
+
+    if (node.doclet && node.meta) {
+        childrenReferences = node.children;
+        delete node.children;
+        node.children = childrenReferences;
+    }
+
+    childrenReferences = {};
+
+    Object
+        .keys(node.children)
+        .forEach(key => {
+            childrenReferences[key] = node.children[key];
+            delete node.children[key];
+        });
+    Object
+        .keys(childrenReferences)
+        .sort()
+        .forEach(key => {
+            node.children[key] = childrenReferences[key];
+            sortNodes(node.children[key]);
+        });
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 exports.defineTags = function (dictionary) {
@@ -567,7 +634,8 @@ exports.defineTags = function (dictionary) {
 
             if (tagObj.value.indexOf('highcharts') < 0 &&
                 tagObj.value.indexOf('highmaps') < 0 &&
-                tagObj.value.indexOf('highstock') < 0) {
+                tagObj.value.indexOf('highstock') < 0 &&
+                tagObj.value.indexOf('gantt') < 0) {
 
                 doclet.defaultvalue = tagObj.text;
                 return;
@@ -691,6 +759,7 @@ before functional code for JSDoc to see them.`.yellow
         }
 
         inferTypeForTree({children: options});
+        improveDescription({children: options});
 
         function addSeriesTypeDescription(type) {
             var node = type;
@@ -734,6 +803,7 @@ Highcharts.chart('container', {
 
         Object.keys(options.plotOptions.children).forEach(addSeriesTypeDescription);
 
+        sortNodes({ children: options });
         dumpOptions();
     }
 };

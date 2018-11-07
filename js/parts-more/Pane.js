@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -166,6 +166,7 @@ extend(Pane.prototype, {
      * gauges and polar charts.
      *
      * @since        2.3.0
+     * @product      highcharts
      * @optionparent pane
      */
     defaultOptions: {

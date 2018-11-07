@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,74 +7,92 @@
 /**
  * One position in relation to an axis.
  *
- * @typedef Highcharts.PointerAxisCoordinateObject
+ * @interface Highcharts.PointerAxisCoordinateObject
+ *//**
+ * Related axis.
  *
- * @property {Highcharts.Axis} axis
- *           Related axis.
+ * @name Highcharts.PointerAxisCoordinateObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * Axis value.
  *
- * @property {number} value
- *           Axis value.
+ * @name Highcharts.PointerAxisCoordinateObject#value
+ * @type {number}
  */
 
 /**
  * Positions in terms of axis values.
  *
- * @typedef Highcharts.PointerAxisCoordinatesObject
- *
- * @property {Array<Highcharts.PointerAxisCoordinateObject>} xAxis
- *           Positions on the x-axis.
- *
- * @property {Array<Highcharts.PointerAxisCoordinateObject>} yAxis
- *           Positions on the y-axis.
+ * @interface Highcharts.PointerAxisCoordinatesObject
+ *//**
+ * Positions on the x-axis.
+ * @name Highcharts.PointerAxisCoordinatesObject#xAxis
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>}
+ *//**
+ * Positions on the y-axis.
+ * @name Highcharts.PointerAxisCoordinatesObject#yAxis
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>}
  */
 
 /**
  * Pointer coordinates.
  *
- * @typedef Highcharts.PointerCoordinatesObject
- *
- * @property {number} chartX
- *
- * @property {number} chartY
+ * @interface Highcharts.PointerCoordinatesObject
+ *//**
+ * @name Highcharts.PointerCoordinatesObject#chartX
+ * @type {number}
+ *//**
+ * @name Highcharts.PointerCoordinatesObject#chartY
+ * @type {number}
  */
 
 /**
  * A native browser mouse or touch event, extended with position information
  * relative to the {@link Chart.container}.
  *
- * @typedef {global.PointerEvent} Highcharts.PointerEventObject
+ * @interface Highcharts.PointerEventObject
  *
- * @property {number} chartX
- *           The X coordinate of the pointer interaction relative to the
- *           chart.
+ * @extends {global.PointerEvent}
+ *//**
+ * The X coordinate of the pointer interaction relative to the chart.
  *
- * @property {number} chartY
- *           The Y coordinate of the pointer interaction relative to the
- *           chart.
+ * @name Highcharts.PointerEventObject#chartX
+ * @type {number}
+ *//**
+ * The Y coordinate of the pointer interaction relative to the chart.
+ *
+ * @name Highcharts.PointerEventObject#chartY
+ * @type {number}
  */
 
 /**
  * Axis-specific data of a selection.
  *
- * @typedef Highcharts.SelectDataObject
- *
- * @property {Highcharts.Axis} axis
- *
- * @property {number} min
- *
- * @property {number} max
+ * @interface Highcharts.SelectDataObject
+ *//**
+ * @name Highcharts.SelectDataObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * @name Highcharts.SelectDataObject#min
+ * @type {number}
+ *//**
+ * @name Highcharts.SelectDataObject#max
+ * @type {number}
  */
 
 /**
  * Object for select events.
  *
- * @typedef Highcharts.SelectEventObject
- *
- * @property {global.Event} originalEvent
- *
- * @property {Array<Highcharts.SelectDataObject>} xAxis
- *
- * @property {Array<Highcharts.SelectDataObject>} yAxis
+ * @interface Highcharts.SelectEventObject
+ *//**
+ * @name Highcharts.SelectEventObject#originalEvent
+ * @type {global.Event}
+ *//**
+ * @name Highcharts.SelectEventObject#xAxis
+ * @type {Array<Highcharts.SelectDataObject>}
+ *//**
+ * @name Highcharts.SelectEventObject#yAxis
+ * @type {Array<Highcharts.SelectDataObject>}
  */
 
 'use strict';

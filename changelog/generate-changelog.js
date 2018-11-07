@@ -86,14 +86,16 @@
 
             if (proceed) {
 
-                // Commits tagged with Highstock or Highmaps
+                // Commits tagged with Highstock, Highmaps or Gantt
                 if (name === 'Highstock' && item.indexOf('Highstock:') === 0) {
                     washed.push(item.replace(/Highstock:\s?/, ''));
                 } else if (name === 'Highmaps' && item.indexOf('Highmaps:') === 0) {
                     washed.push(item.replace(/Highmaps:\s?/, ''));
+                } else if (name === 'Highcharts Gantt' && item.indexOf('Gantt:') === 0) {
+                    washed.push(item.replace(/Gantt:\s?/, ''));
 
                     // All others go into the Highcharts changelog for review
-                } else if (name === 'Highcharts' && !/^High(stock|maps):/.test(item)) {
+                } else if (name === 'Highcharts' && !/^(Highstock|Highmaps|Gantt):/.test(item)) {
                     washed.push(item);
                 }
             }
@@ -129,20 +131,27 @@
      */
     function buildMarkdown(name, version, date, log, products, optionKeys) {
         var outputString,
-            filename = name.toLowerCase() + '/' + version + '.md';
+            filename = name.toLowerCase().replace(' ', '-') + '/' +
+                version + '.md',
+            apiFolder = {
+                'Highcharts': 'highcharts',
+                'Highstock': 'highstock',
+                'Highmaps': 'highmaps',
+                'Highcharts Gantt': 'gantt'
+            }[name];
 
         log = washLog(name, log);
 
         // Start the output string
         outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
 
-        if (name === 'Highstock' || name === 'Highmaps') {
+        if (name !== 'Highcharts') {
             outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
         }
         log.forEach((li, i) => {
 
             optionKeys.forEach(key => {
-                let replacement = ` [${key}](https://api.highcharts.com/${name.toLowerCase()}/${key}) `;
+                let replacement = ` [${key}](https://api.highcharts.com/${apiFolder}/${key}) `;
 
                 li = li
                     .replace(

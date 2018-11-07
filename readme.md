@@ -72,7 +72,7 @@ Highcharts is using an UMD module pattern, as a result it has support for Common
 ```js
 // Load Highcharts
 var Highcharts = require('highcharts');
-// Alternatively, this is how to load Highstock. Highmaps is similar.
+// Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
 // var Highcharts = require('highcharts/highstock');
 
 // Load the exporting module, and initialize it.
@@ -90,7 +90,7 @@ Since Highcharts supports CommonJS, it can be loaded as an ES6 module with the u
 ### Babel
 ```js
 import Highcharts from 'highcharts';
-// Alternatively, this is how to load Highstock. Highmaps is similar.
+// Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
 // import Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
@@ -106,7 +106,7 @@ Highcharts.chart('container', {
 ### TypeScript
 ```js
 import * as Highcharts from 'highcharts';
-// Alternatively, this is how to load Highstock. Highmaps is similar.
+// Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
 // import Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
