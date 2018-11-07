@@ -3,7 +3,23 @@
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * Gets fired when an area of the chart has been selected. The default action
+ * for the selection event is to zoom the chart to the selected area. It can be
+ * prevented by calling `event.preventDefault()` or return false.
+ *
+ * @callback Highcharts.ChartSelectionCallbackFunction
+ *
+ * @param {global.Event} event
+ *        Event informations
+ *
+ * @return {boolean|undefined}
+ *         Return false to prevent the default action, usually zoom.
+ */
+
 'use strict';
+
 import H from './Globals.js';
 import './Color.js';
 import './Utilities.js';
@@ -579,7 +595,7 @@ H.defaultOptions = {
          * passed to the function, containing common event information. The
          * default action for the selection event is to zoom the chart to the
          * selected area. It can be prevented by calling
-         * `event.preventDefault()`.
+         * `event.preventDefault()` or return false.
          *
          * Information on the selected area can be found through `event.xAxis`
          * and `event.yAxis`, which are arrays containing the axes of each
@@ -613,7 +629,7 @@ H.defaultOptions = {
          *         Select a range of points through a drag selection
          *         (Highcharts)
          *
-         * @type      {Function}
+         * @type      {Highcharts.ChartSelectionCallbackFunction}
          * @apioption chart.events.selection
          */
 
