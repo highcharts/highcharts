@@ -217,11 +217,11 @@ var replaceString = require('replace-string');
     function formatVersionNumber(versionNumber) {
         return versionNumber.split('.').join('-').slice(0, -3);
     }
-
+/*
     function capitalizeFirstLetter(string) {
         return string[0].toUpperCase() + string.slice(1);
     }
-
+ */
     function writeContentToNewHTMLFile() {
         var outputFile = './' + process.argv[2] + '.html';
         fs.writeFile(outputFile, pretty(htmlContent), function (err) {

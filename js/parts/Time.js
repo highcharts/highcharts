@@ -21,7 +21,7 @@
  */
 
 /**
- * Additonal time tick information.
+ * Function of an additional date format specifier.
  *
  * @interface Highcharts.TimeTicksInfoObject
  * @augments Highcharts.NormalizedIntervalObject
@@ -34,7 +34,7 @@
  */
 
 /**
- * Time ticks.
+ * Additonal time tick information.
  *
  * @interface Highcharts.TimeTicksObject
  * @augments Array<number>
@@ -584,7 +584,7 @@ Highcharts.Time.prototype = {
                  *         Adding support for week number
                  *
                  * @name Highcharts.dateFormats
-                 * @type {Highcharts.Dictionary<Function>}
+                 * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
                  */
                 H.dateFormats
             );
