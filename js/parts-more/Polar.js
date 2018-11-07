@@ -3,7 +3,9 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Pointer.js';
@@ -50,7 +52,7 @@ if (!H.polarExtended) {
 
     /**
      * #6212 Calculate connectors for spline series in polar chart.
-     * @param {Boolean} calculateNeighbours
+     * @param {boolean} calculateNeighbours
      *        Check if connectors should be calculated for neighbour points as
      *        well allows short recurence
      */
@@ -331,15 +333,15 @@ if (!H.polarExtended) {
              * Polar charts only. Whether to connect the ends of a line series
              * plot across the extremes.
              *
-             * @type {Boolean}
              * @sample {highcharts} highcharts/plotoptions/line-connectends-false/
              *         Do not connect
-             * @since 2.3.0
-             * @product highcharts
+             *
+             * @type      {boolean}
+             * @since     2.3.0
+             * @product   highcharts
              * @apioption plotOptions.series.connectEnds
              */
-            if (
-                this.options.connectEnds !== false &&
+            if (this.options.connectEnds !== false &&
                 firstValid !== undefined
             ) {
                 this.connectEnds = true; // re-used in splines
