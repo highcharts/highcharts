@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -444,14 +444,7 @@ H.Tooltip.prototype = {
         points = splat(points);
 
         // When tooltip follows mouse, relate the position to the mouse
-        if (
-            (this.followPointer && mouseEvent) ||
-            (
-                pointer.followTouchMove &&
-                mouseEvent &&
-                mouseEvent.type === 'touchmove'
-            )
-        ) {
+        if (this.followPointer && mouseEvent) {
             if (mouseEvent.chartX === undefined) {
                 mouseEvent = pointer.normalize(mouseEvent);
             }
@@ -847,7 +840,7 @@ H.Tooltip.prototype = {
         }
         // Create the individual labels for header and points, ignore footer
         each(labels.slice(0, points.length + 1), function (str, i) {
-            if (str !== false) {
+            if (str !== false && str !== '') {
                 var point = points[i - 1] ||
                         // Item 0 is the header. Instead of this, we could also
                         // use the crosshair label
@@ -1103,7 +1096,7 @@ H.Tooltip.prototype = {
         }
 
         if (n) {
-            format = dateTimeLabelFormats[n];
+            format = time.resolveDTLFormat(dateTimeLabelFormats[n]).main;
         }
 
         return format;
@@ -1220,7 +1213,9 @@ H.Tooltip.prototype = {
                 item.point.tooltipFormatter
             ).call(
                 item.point,
-                tooltipOptions[(item.point.formatPrefix || 'point') + 'Format']
+                tooltipOptions[
+                    (item.point.formatPrefix || 'point') + 'Format'
+                ] || ''
             );
         });
     }

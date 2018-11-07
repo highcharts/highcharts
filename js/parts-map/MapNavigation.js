@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -120,7 +120,10 @@ MapNavigation.prototype.update = function (options) {
                 0,
                 n === 'zoomIn' ? 'topbutton' : 'bottombutton'
             )
-            .addClass('highcharts-map-navigation')
+            .addClass('highcharts-map-navigation highcharts-' + {
+                zoomIn: 'zoom-in',
+                zoomOut: 'zoom-out'
+            }[n])
             .attr({
                 width: buttonOptions.width,
                 height: buttonOptions.height,

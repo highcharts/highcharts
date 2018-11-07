@@ -1,0 +1,6 @@
+---
+ name: Scatter and regression with Highcharts
+ authors:
+   - Mustapha Mekhatria
+ js_wrap: b
+...

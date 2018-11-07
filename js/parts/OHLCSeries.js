@@ -1,12 +1,15 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Point.js';
+
 var each = H.each,
     Point = H.Point,
     seriesType = H.seriesType,
@@ -15,21 +18,29 @@ var each = H.each,
 /**
  * The ohlc series type.
  *
- * @constructor seriesTypes.ohlc
- * @augments seriesTypes.column
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.ohlc
+ *
+ * @augments Highcharts.seriesTypes.column
  */
+
+seriesType('ohlc', 'column'
+
 /**
  * An OHLC chart is a style of financial chart used to describe price
  * movements over time. It displays open, high, low and close values per data
  * point.
  *
- * @sample stock/demo/ohlc/ OHLC chart
- * @extends plotOptions.column
- * @excluding borderColor,borderRadius,borderWidth,crisp,stacking,stack
- * @product highstock
+ * @sample stock/demo/ohlc/
+ *         OHLC chart
+ *
+ * @extends      plotOptions.column
+ * @excluding    borderColor, borderRadius, borderWidth, crisp, stacking, stack
+ * @product      highstock
  * @optionparent plotOptions.ohlc
  */
-seriesType('ohlc', 'column', {
+, {
 
     /**
      * The approximate pixel width of each group. If for example a series
@@ -39,30 +50,34 @@ seriesType('ohlc', 'column', {
      * to group it into appropriate groups so that each is more or less
      * two pixels wide. Defaults to `5`.
      *
-     * @type {Number}
-     * @default 5
-     * @product highstock
+     * @type      {number}
+     * @default   5
+     * @product   highstock
      * @apioption plotOptions.ohlc.dataGrouping.groupPixelWidth
      */
 
     /**
      * The pixel width of the line/border. Defaults to `1`.
      *
-     * @type {Number}
      * @sample {highstock} stock/plotoptions/ohlc-linewidth/
      *         A greater line width
+     *
+     * @type    {number}
      * @default 1
      * @product highstock
      */
     lineWidth: 1,
 
     tooltip: {
+
         /*= if (!build.classic) { =*/
+
         pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <b> {series.name}</b><br/>' +
             'Open: {point.open}<br/>' +
             'High: {point.high}<br/>' +
             'Low: {point.low}<br/>' +
             'Close: {point.close}<br/>',
+
         /*= } else { =*/
 
         pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
@@ -70,10 +85,13 @@ seriesType('ohlc', 'column', {
             'High: {point.high}<br/>' +
             'Low: {point.low}<br/>' +
             'Close: {point.close}<br/>'
+
         /*= } =*/
+
     },
 
     threshold: null,
+
     /*= if (build.classic) { =*/
 
     states: {
@@ -87,7 +105,7 @@ seriesType('ohlc', 'column', {
             /**
              * The pixel width of the line representing the OHLC point.
              *
-             * @type {Number}
+             * @type    {number}
              * @default 3
              * @product highstock
              */
@@ -99,20 +117,21 @@ seriesType('ohlc', 'column', {
      * Determines which one of `open`, `high`, `low`, `close` values should be
      * represented as `point.y`, which is later used to set dataLabel position.
      *
-     * @type       {String}
+     * @sample {highstock} stock/plotoptions/ohlc-pointvalkey/
+     *         Possible values
+     *
+     * @type       {string}
+     * @default    close
      * @validvalue ["open", "high", "low", "close"]
      * @product    highstock
-     * @sample     {highstock} stock/plotoptions/ohlc-pointvalkey/
-     *             Possible values
-     * @default    close
      * @apioption  plotOptions.ohlc.pointValKey
      */
 
     /**
      * Line color for up points.
      *
-     * @type {Color}
-     * @product highstock
+     * @type      {Highcharts.ColorString}
+     * @product   highstock
      * @apioption plotOptions.ohlc.upColor
      */
 
@@ -120,7 +139,7 @@ seriesType('ohlc', 'column', {
 
     stickyTracking: true
 
-}, /** @lends seriesTypes.ohlc */ {
+}, /** @lends Highcharts.seriesTypes.ohlc */ {
     directTouch: false,
     pointArrayMap: ['open', 'high', 'low', 'close'],
     toYData: function (point) { // return a plain array for speedy calculation
@@ -129,11 +148,16 @@ seriesType('ohlc', 'column', {
     pointValKey: 'close',
 
     /*= if (build.classic) { =*/
+
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'
     },
 
+    /**
+     * @private
+     * @function Highcarts.seriesTypes.ohlc#init
+     */
     init: function () {
         seriesTypes.column.prototype.init.apply(this, arguments);
 
@@ -142,6 +166,15 @@ seriesType('ohlc', 'column', {
 
     /**
      * Postprocess mapping between options and SVG attributes
+     *
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#pointAttribs
+     *
+     * @param {Highcharts.Point} point
+     *
+     * @param {string} state
+     *
+     * @return {Highcharts.Dictionary<*>}
      */
     pointAttribs: function (point, state) {
         var attribs = seriesTypes.column.prototype.pointAttribs.call(
@@ -163,10 +196,14 @@ seriesType('ohlc', 'column', {
 
         return attribs;
     },
+
     /*= } =*/
 
     /**
      * Translate data points from raw values x and y to plotX and plotY
+     *
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#translate
      */
     translate: function () {
         var series = this,
@@ -204,6 +241,9 @@ seriesType('ohlc', 'column', {
 
     /**
      * Draw the data points
+     *
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#drawPoints
      */
     drawPoints: function () {
         var series = this,
@@ -286,10 +326,14 @@ seriesType('ohlc', 'column', {
 
     animate: null // Disable animation
 
-}, /** @lends seriesTypes.ohlc.prototype.pointClass.prototype */ {
+}, /** @lends Highcharts.seriesTypes.ohlc.prototype.pointClass.prototype */ {
+
     /**
-      * Extend the parent method by adding up or down to the class name.
-      */
+     * Extend the parent method by adding up or down to the class name.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#getClassName
+     */
     getClassName: function () {
         return Point.prototype.getClassName.call(this) +
             (
@@ -298,16 +342,16 @@ seriesType('ohlc', 'column', {
                     ' highcharts-point-down'
             );
     }
+
 });
 
 /**
  * A `ohlc` series. If the [type](#series.ohlc.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @extends series,plotOptions.ohlc
- * @excluding dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.ohlc
+ * @excluding dataParser, dataURL
+ * @product   highstock
  * @apioption series.ohlc
  */
 
@@ -323,13 +367,13 @@ seriesType('ohlc', 'column', {
  * either starting at 0 and incremented by 1, or from `pointStart`
  * and `pointInterval` given in the series options.
  *
- *  ```js
+ * ```js
  *     data: [
  *         [0, 6, 5, 6, 7],
  *         [1, 9, 4, 8, 2],
  *         [2, 6, 3, 4, 10]
  *     ]
- *  ```
+ * ```
  *
  * 2.  An array of objects with named values. The following snippet shows only a
  * few settings, see the complete options set below. If the total number of data
@@ -356,25 +400,25 @@ seriesType('ohlc', 'column', {
  *     }]
  *  ```
  *
- * @type {Array<Object|Array>}
- * @extends series.arearange.data
- * @excluding y,marker
- * @product highstock
+ * @type      {Array<Array<number>|*>}
+ * @extends   series.arearange.data
+ * @excluding y, marker
+ * @product   highstock
  * @apioption series.ohlc.data
  */
 
 /**
  * The closing value of each data point.
  *
- * @type {Number}
- * @product highstock
+ * @type      {number}
+ * @product   highstock
  * @apioption series.ohlc.data.close
  */
 
 /**
  * The opening value of each data point.
  *
- * @type {Number}
- * @product highstock
+ * @type      {number}
+ * @product   highstock
  * @apioption series.ohlc.data.open
  */

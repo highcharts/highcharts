@@ -141,5 +141,39 @@
             'Space between two first ticks does not change with axis breaks'
         );
     });
+
+    QUnit.test(
+        'Static scale should give way for chart.height',
+        function (assert) {
+            var chart = Highcharts.chart('container', {
+
+                chart: {
+                    height: 200
+                },
+
+                yAxis: {
+                    staticScale: 24
+                },
+
+                series: [{
+                    data: getData(10)
+                }]
+
+            });
+
+            assert.strictEqual(
+                chart.chartHeight,
+                200,
+                'The chart.height setting should take precedence'
+            );
+
+            assert.notEqual(
+                chart.yAxis[0].transA,
+                24,
+                'Scaling should be dynamic'
+            );
+        }
+    );
+
 }());
 

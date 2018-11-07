@@ -92,3 +92,45 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Overlapping labels with paddings',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'bar',
+                width: 570
+            },
+            yAxis: {
+                min: -10,
+                stackLabels: {
+                    enabled: true
+                }
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
+            series: [{
+                name: 'John',
+                data: [2.89765436543]
+            }, {
+                name: 'Jane',
+                data: [1.89765436543]
+            }, {
+                name: 'Joe',
+                data: [5.89765436543]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].points[0].dataLabel.visibility === 'hidden',
+            true,
+            'Overlapping dataLabel is hidden (#9119).'
+        );
+    }
+);

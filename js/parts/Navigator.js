@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -245,8 +245,9 @@ extend(defaultOptions, {
              * @sample {highstock} stock/navigator/styled-handles/
              *         Styled handles
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since     6.0.0
+             * @product   highstock
+             * @apioption navigator.handles.lineWidth
              */
             lineWidth: 1,
 
@@ -2039,6 +2040,24 @@ Navigator.prototype = {
     },
 
     /**
+     * Get minimum from all base series connected to the navigator
+     *
+     * @param  {number} currentSeriesMin
+     *         Minium from the current series
+     *
+     * @return {number} Minimum from all series
+     */
+    getBaseSeriesMin: function (currentSeriesMin) {
+        return H.reduce(
+            this.baseSeries,
+            function (min, series) {
+                return Math.min(min, series.xData[0]);
+            },
+            currentSeriesMin
+        );
+    },
+
+    /**
      * Set the navigator x axis extremes to reflect the total. The navigator
      * extremes should always be the extremes of the union of all series in the
      * chart as well as the navigator series.
@@ -2112,8 +2131,11 @@ Navigator.prototype = {
                 if (!stickToMin) {
                     newMin = Math.max(
                         newMax - range,
-                        navigatorSeries && navigatorSeries.xData ?
-                            navigatorSeries.xData[0] : -Number.MAX_VALUE
+                        navigator.getBaseSeriesMin(
+                            navigatorSeries && navigatorSeries.xData ?
+                                navigatorSeries.xData[0] :
+                                -Number.MAX_VALUE
+                        )
                     );
                 }
             }
@@ -2142,7 +2164,8 @@ Navigator.prototype = {
     updatedDataHandler: function () {
         var navigator = this.chart.navigator,
             baseSeries = this,
-            navigatorSeries = this.navigatorSeries;
+            navigatorSeries = this.navigatorSeries,
+            xDataMin = navigator.getBaseSeriesMin(baseSeries.xData[0]);
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data  comes in.
@@ -2154,7 +2177,7 @@ Navigator.prototype = {
         // maximum. If the current axis minimum falls outside the new updated
         // dataset, we must adjust.
         navigator.stickToMin = isNumber(baseSeries.xAxis.min) &&
-            (baseSeries.xAxis.min <= baseSeries.xData[0]) &&
+            (baseSeries.xAxis.min <= xDataMin) &&
             (!this.chart.fixedRange || !navigator.stickToMax);
 
         // Set the navigator series data to the new data of the base series
@@ -2288,16 +2311,9 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 
     if (this.isXAxis && ((navigator && navigator.enabled) ||
             (rangeSelector && rangeSelector.enabled))) {
-        // For x only zooming, fool the chart.zoom method not to create the zoom
-        // button because the property already exists
-        if (
-            (!isTouchDevice && zoomType === 'x') ||
-            (isTouchDevice && pinchType === 'x')
-        ) {
-            chart.resetZoomButton = 'blocked';
 
         // For y only zooming, ignore the X axis completely
-        } else if (zoomType === 'y') {
+        if (zoomType === 'y') {
             ret = false;
 
         // For xy zooming, record the state of the zoom before zoom selection,
@@ -2324,6 +2340,29 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 
     }
     return ret !== undefined ? ret : proceed.call(this, newMin, newMax);
+});
+
+/**
+ * For Stock charts. For x only zooming, do not to create the zoom button
+ * because X axis zooming is already allowed by the Navigator and Range
+ * selector. (#9285)
+ */
+addEvent(Chart, 'beforeShowResetZoom', function () {
+    var chartOptions = this.options,
+        navigator = chartOptions.navigator,
+        rangeSelector = chartOptions.rangeSelector;
+
+    if (
+        (
+            (navigator && navigator.enabled) ||
+            (rangeSelector && rangeSelector.enabled)
+        ) && (
+            (!isTouchDevice && chartOptions.chart.zoomType === 'x') ||
+            (isTouchDevice && chartOptions.chart.pinchType === 'x')
+        )
+    ) {
+        return false;
+    }
 });
 
 // Initialize navigator for stock charts

@@ -1,28 +1,40 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
+
 var Axis = H.Axis,
     getMagnitude = H.getMagnitude,
     normalizeTickInterval = H.normalizeTickInterval,
     timeUnits = H.timeUnits;
+
 /**
  * Set the tick positions to a time unit that makes sense, for example
  * on the first of each month or on every Monday. Return an array
  * with the time positions. Used in datetime axes as well as for grouping
  * data on a datetime axis.
  *
- * @param {Object} normalizedInterval
+ * @private
+ * @function Highcharts.Axis#getTimeTicks
+ *
+ * @param {*} normalizedInterval
  *        The interval in axis values (ms) and thecount
- * @param {Number} min The minimum in axis values
- * @param {Number} max The maximum in axis values
- * @param {Number} startOfWeek
- * @ignore
+ *
+ * @param {number} min
+ *        The minimum in axis values
+ *
+ * @param {number} max
+ *        The maximum in axis values
+ *
+ * @param {number} startOfWeek
+ *
+ * @return {number}
  */
 Axis.prototype.getTimeTicks = function () {
     return this.chart.time.getTimeTicks.apply(this.chart.time, arguments);
@@ -36,7 +48,14 @@ Axis.prototype.getTimeTicks = function () {
  * prevent it for running over again for each segment having the same interval.
  * #662, #697.
  *
- * @ignore
+ * @private
+ * @function Highcharts.Axis#normalizeTimeTickInterval
+ *
+ * @param {number} tickInterval
+ *
+ * @param {Array<Array<number|string>>} [unitsOption]
+ *
+ * @return {*}
  */
 Axis.prototype.normalizeTimeTickInterval = function (
     tickInterval,

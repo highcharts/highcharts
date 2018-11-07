@@ -31,6 +31,12 @@
             <filter token="product.version" value="${highmaps.product.version}"/>
             <filter token="product.date" value="${highmaps.product.date}"/>
         </filterset>
+        <filterset id="gantt.filter">
+            <filter token="product.name" value="${gantt.product.name}"/>
+            <filter token="product.cdnpath" value="${gantt.product.cdnpath}"/>
+            <filter token="product.version" value="${gantt.product.version}"/>
+            <filter token="product.date" value="${gantt.product.date}"/>
+        </filterset>
         <filterset id="download.builder.filter">
             <filter token="product.name" value="${highcharts.product.name} ${highcharts.product.version}"/>
             <filter token="product.version" value="/${highstock.product.name} ${highstock.product.version}"/>
@@ -56,6 +62,9 @@
         <property name="highstock.src.name" value="highstock.src.js"/>
         <property name="highstock.src.file" value="${basedir}/js/${highstock.src.name}"/>
         <property name="highstock.minified.name" value="highstock.js"/>
+        <property name="gantt.src.name" value="highcharts-gantt.src.js"/>
+        <property name="gantt.src.file" value="${basedir}/js/${gantt.src.name}"/>
+        <property name="gantt.minified.name" value="highcharts-gantt.js"/>
         <property name="highmaps.src.name" value="highmaps.src.js"/>
         <property name="highmaps.src.file" value="${basedir}/js/${highmaps.src.name}"/>
         <property name="highmaps.minified.name" value="highmaps.js"/>
@@ -392,6 +401,8 @@
         <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts"/>
         <zip destfile="${dist.dir}/${highstock.product.name}-${highstock.product.version}.zip" basedir="${dist.dir}/highstock"/>
         <zip destfile="${dist.dir}/${highmaps.product.name}-${highmaps.product.version}.zip" basedir="${dist.dir}/highmaps"/>
+        <zip destfile="${dist.dir}/Highcharts-Gantt-${gantt.product.version}.zip" basedir="${dist.dir}/gantt"/>
+        
 
     </target>
 
@@ -800,10 +811,107 @@
         </ac:for>
     </target>
 
+
+
+    <!-- Deploy Gantt to S3 -->
+    <target name="deploy-gantt" depends="set.properties" description="Deploy Gantt distribution to Amazon S3">
+        <property file="git-ignore-me.properties"/>
+        <copy
+            file="${basedir}/build/dist/Highcharts-Gantt-${gantt.product.version}.zip"
+            tofile="${basedir}/build/dist/Highcharts-Gantt-${gantt.product.version}.zip"
+        />
+        <antcall target="put-file-to-S3">
+            <param name="local" value="${basedir}/build/dist/Highcharts-Gantt-${gantt.product.version}.zip"/>
+            <param name="remote" value="${amazon.s3.bucketname}/zips"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+        </antcall>
+        <antcall target="gzip-js">
+            <param name="js.dir" value="${basedir}/build/dist/gantt/code/"/>
+        </antcall>
+        <ac:var name="path.var" value=""/>
+        <ac:for list="${gantt.product.version}" delimiter="." param="val">
+            <sequential>
+                <ac:if>
+                    <length string="${path.var}" length="0"/>
+                    <then>
+                        <ac:var name="path.var" value="@{val}"/>
+                        <!-- this will be used later to do a remote copy on S3 -->
+                        <property name="copy.version" value="@{val}"/>
+                        <!-- Copy zipped js/* to Root on S3 -->
+                        <antcall target="put-gzipped-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/gantt/js-gzip/"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/gantt"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                        <!-- copy gfx folder to Root -->
+                        <antcall target="put-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/gantt/gfx"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/gantt"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                        <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+                        <antcall target="put-gzipped-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/gantt/js-gzip/"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/gantt/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                        <!-- copy gfx folder to version folder on S3-->
+                        <antcall target="put-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/gantt/gfx"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/gantt/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                    </then>
+                    <elseif>
+                        <length string="${path.var}" length="3"/>
+                        <then>
+                            <ac:var name="path.var" value="${path.var}.@{val}"/>
+                            <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+                            <antcall target="put-gzipped-files-to-S3">
+                                <param name="local" value="${basedir}/build/dist/gantt/js-gzip/"/>
+                                <param name="remote" value="${amazon.s3.bucketname}/gantt/${path.var}"/>
+                                <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
+                            </antcall>
+                            <!-- copy gfx folder to version folder on S3-->
+                            <antcall target="put-files-to-S3">
+                                <param name="local" value="${basedir}/build/dist/gantt/gfx"/>
+                                <param name="remote" value="${amazon.s3.bucketname}/gantt/${path.var}"/>
+                                <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
+                            </antcall>
+                        </then>
+                    </elseif>
+                    <else>
+                        <!-- concatenate version name and assign to path.var-->
+                        <ac:var name="path.var" value="${path.var}.@{val}"/>
+                        <antcall target="copy-folder-on-S3">
+                            <param name="from.s3" value="${amazon.s3.bucketname}/gantt/${copy.version}/"/>
+                            <param name="to.s3" value="${amazon.s3.bucketname}/gantt/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                        </antcall>
+                    </else>
+                </ac:if>
+            </sequential>
+        </ac:for>
+    </target>
+
     <target name="deploy-all">
         <antcall target="deploy-highcharts"></antcall>
         <antcall target="deploy-highstock"></antcall>
         <antcall target="deploy-highmaps"></antcall>
+        <antcall target="deploy-gantt"></antcall>
     </target>
 
 

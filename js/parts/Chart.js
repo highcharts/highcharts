@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -102,28 +102,16 @@ var addEvent = H.addEvent,
  * @class
  * @name Highcharts.Chart
  *
- * @param {Highcharts.Options} options
- *        The chart options structure.
- *
- * @param {Highcharts.ChartCallbackFunction|undefined} [callback]
- *        Function to run when the chart has loaded and and all external images
- *        are loaded. Defining a
- *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
- *        handler is equivalent.
- *//**
- * @class
- * @name Highcharts.Chart
- *
- * @param {string|Highcharts.HTMLDOMElement} renderTo
+ * @param {string|Highcharts.HTMLDOMElement} [renderTo]
  *        The DOM element to render to, or its id.
  *
  * @param {Highcharts.Options} options
  *        The chart options structure.
  *
- * @param {Highcharts.ChartCallbackFunction|undefined} [callback]
+ * @param {Highcharts.ChartCallbackFunction} [callback]
  *        Function to run when the chart has loaded and and all external images
  *        are loaded. Defining a
- *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ *        [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
  *        handler is equivalent.
  */
 var Chart = H.Chart = function () {
@@ -146,30 +134,16 @@ var Chart = H.Chart = function () {
  *
  * @function Highcharts.chart
  *
- * @param {Highcharts.Options} options
- *        The chart options structure.
- *
- * @param {Highcharts.ChartCallbackFunction|undefined} [callback]
- *        Function to run when the chart has loaded and and all external images
- *        are loaded. Defining a
- *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
- *        handler is equivalent.
- *
- * @return {Highcharts.Chart}
- *         Returns the Chart object.
- *//**
- * @function Highcharts.chart
- *
- * @param {string|Highcharts.HTMLDOMElement} renderTo
+ * @param {string|Highcharts.HTMLDOMElement} [renderTo]
  *        The DOM element to render to, or its id.
  *
  * @param {Highcharts.Options} options
  *        The chart options structure.
  *
- * @param {Highcharts.ChartCallbackFunction|undefined} [callback]
+ * @param {Highcharts.ChartCallbackFunction} [callback]
  *        Function to run when the chart has loaded and and all external images
  *        are loaded. Defining a
- *        {@link https://api.highcharts.com/highcharts/chart.events.load|chart.event.load}
+ *        [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
  *        handler is equivalent.
  *
  * @return {Highcharts.Chart}
@@ -219,7 +193,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {Highcharts.Options} userOptions
      *        Custom options.
      *
-     * @param {Function|undefined} [callback]
+     * @param {Function} [callback]
      *        Function to run when the chart has loaded and and all external
      *        images are loaded.
      *
@@ -458,7 +432,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#redraw
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject|undefined} [animation]
+     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
      *        If or how to apply animation to the redraw.
      *
      * @fires Highcharts.Chart#event:afterSetExtremes
@@ -568,6 +542,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // set axes scales
             each(axes, function (axis) {
                 axis.updateNames();
+                // Update categories in a Gantt chart
+                if (axis.updateYNames) {
+                    axis.updateYNames();
+                }
                 axis.setScale();
             });
         }
@@ -756,7 +734,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * can be selected either programmatically by the
      * {@link Highcharts.Series#select}
      * function or by checking the checkbox next to the legend item if
-     * {@link https://api.highcharts.com/highcharts/plotOptions.series.showCheckbox| series.showCheckBox}
+     * [series.showCheckBox](https://api.highcharts.com/highcharts/plotOptions.series.showCheckbox)
      * is true.
      *
      * @sample highcharts/members/chart-getselectedseries/
@@ -899,7 +877,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#layOutTitles
      *
-     * @param {boolean|undefined} [redraw=true]
+     * @param {boolean} [redraw=true]
      */
     layOutTitles: function (redraw) {
         var titleOffset = 0,
@@ -959,8 +937,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * {@link Chart.chartHeight}.
      *
      * @function Highcharts.Chart#getChartSize
-     *
-     * @return {void}
      */
     getChartSize: function () {
         var chart = this,
@@ -1158,6 +1134,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chartWidth = chart.chartWidth;
         chartHeight = chart.chartHeight;
 
+        // Allow table cells and flex-boxes to shrink without the chart blocking
+        // them out (#6427)
+        css(renderTo, { overflow: 'hidden' });
+
         // Create the inner container
         /*= if (build.classic) { =*/
         containerStyle = extend({
@@ -1238,7 +1218,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#getMargins
      *
-     * @param  {boolean} skipAxes
+     * @param {boolean} skipAxes
      *
      * @fires Highcharts.Chart#event:getMargins
      */
@@ -1304,7 +1284,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Reflows the chart to its container. By default, the chart reflows
      * automatically to its container following a `window.resize` event, as per
-     * the {@link https://api.highcharts/highcharts/chart.reflow|chart.reflow}
+     * the [chart.reflow](https://api.highcharts/highcharts/chart.reflow)
      * option. However, there are no reliable events for div resize, so if the
      * container is resized without a window resize event, this must be called
      * explicitly.
@@ -1316,9 +1296,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#reflow
      *
-     * @param  {global.Event} e
-     *         Event arguments. Used primarily when the function is called
-     *         internally as a response to window resize.
+     * @param {global.Event} e
+     *        Event arguments. Used primarily when the function is called
+     *        internally as a response to window resize.
      */
     reflow: function (e) {
         var chart = this,
@@ -1368,7 +1348,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#setReflow
      *
-     * @param  {boolean} reflow
+     * @param {boolean} reflow
      */
     setReflow: function (reflow) {
 
@@ -1412,19 +1392,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#setSize
      *
-     * @param  {number|null|undefined} [width]
-     *         The new pixel width of the chart. Since v4.2.6, the argument can
-     *         be `undefined` in order to preserve the current value (when
-     *         setting height only), or `null` to adapt to the width of the
-     *         containing element.
+     * @param {number|null} [width]
+     *        The new pixel width of the chart. Since v4.2.6, the argument can
+     *        be `undefined` in order to preserve the current value (when
+     *        setting height only), or `null` to adapt to the width of the
+     *        containing element.
      *
-     * @param  {number|null|undefined} [height]
-     *         The new pixel height of the chart. Since v4.2.6, the argument can
-     *         be `undefined` in order to preserve the current value, or `null`
-     *         in order to adapt to the height of the containing element.
+     * @param {number|null} [height]
+     *        The new pixel height of the chart. Since v4.2.6, the argument can
+     *        be `undefined` in order to preserve the current value, or `null`
+     *        in order to adapt to the height of the containing element.
      *
-     * @param  {Highcharts.AnimationOptionsObject|undefined} [animation=true]
-     *         Whether and how to apply animation.
+     * @param {Highcharts.AnimationOptionsObject} [animation=true]
+     *        Whether and how to apply animation.
      *
      * @fires Highcharts.Chart#event:endResize
      * @fires Highcharts.Chart#event:resize
@@ -1499,7 +1479,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#setChartSize
      *
-     * @param  {boolean} skipAxes
+     * @param {boolean} skipAxes
      *
      * @fires Highcharts.Chart#event:afterSetChartSize
      */
@@ -2035,8 +2015,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#addCredits
      *
-     * @param  {Highcharts.CreditsOptions} options
-     *         A configuration object for the new credits.
+     * @param {Highcharts.CreditsOptions} options
+     *        A configuration object for the new credits.
      */
     addCredits: function (credits) {
         var chart = this;
@@ -2047,7 +2027,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             /**
              * The chart's credits label. The label has an `update` method that
              * allows setting new options as per the
-             * {@link https://api.highcharts.com/highcharts/credits|credits options set}.
+             * [credits options set](https://api.highcharts.com/highcharts/credits).
              *
              * @name Highcharts.Chart#credits
              * @type {Highcharts.SVGElement}
