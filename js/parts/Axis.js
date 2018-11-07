@@ -155,8 +155,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * though if the chart is inverted this is the vertical axis. In case of
      * multiple axes, the xAxis node is an array of configuration objects.
      *
-     * See [the Axis object](/class-reference/Highcharts.Axis) for
-     * programmatic access to the axis.
+     * See the [Axis class](/class-reference/Highcharts.Axis) for programmatic
+     * access to the axis.
      *
      * @productdesc {highmaps}
      * In Highmaps, the axis is hidden, but it is used behind the scenes to
