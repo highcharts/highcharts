@@ -612,8 +612,8 @@ seriesType('sankey', 'column', {
 
 
     destroy: function () {
-        // Nodes must also be destroyed (#8682)
-        this.data = this.points.concat(this.nodes);
+        // Nodes must also be destroyed (#8682, #9300)
+        this.data = [].concat(this.points, this.nodes);
         H.Series.prototype.destroy.call(this);
     }
 }, {
