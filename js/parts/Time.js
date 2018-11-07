@@ -725,7 +725,12 @@ Highcharts.Time.prototype = {
                     minDate,
                     interval >= timeUnits.month ?
                         1 :
-                        count * Math.floor(time.get('Date', minDate) / count)
+                        Math.max(
+                            1,
+                            count * Math.floor(
+                                time.get('Date', minDate) / count
+                            )
+                        )
                     );
             }
 
