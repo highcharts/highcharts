@@ -19,6 +19,7 @@ var each = H.each,
     isObject = H.isObject,
     map = H.map,
     merge = H.merge,
+    noop = H.noop,
     find = H.find,
     reduce = H.reduce,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
@@ -572,6 +573,7 @@ var wordCloudOptions = {
  */
 var wordCloudSeries = {
     animate: Series.prototype.animate,
+    animateDrilldown: noop,
     bindAxes: function () {
         var wordcloudAxis = {
             endOnTick: false,
