@@ -574,6 +574,7 @@ var wordCloudOptions = {
 var wordCloudSeries = {
     animate: Series.prototype.animate,
     animateDrilldown: noop,
+    animateDrillupFrom: noop,
     bindAxes: function () {
         var wordcloudAxis = {
             endOnTick: false,
