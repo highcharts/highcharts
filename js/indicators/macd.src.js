@@ -9,7 +9,8 @@ var seriesType = H.seriesType,
     merge = H.merge,
     defined = H.defined,
     SMA = H.seriesTypes.sma,
-    EMA = H.seriesTypes.ema;
+    EMA = H.seriesTypes.ema,
+    correctFloat = H.correctFloat;
 
 /**
  * The MACD series type.
@@ -385,8 +386,10 @@ seriesType('macd', 'sma',
                         MACD[i][1] = 0;
                         yMACD[i][0] = 0;
                     } else {
-                        MACD[i][1] = (MACD[i][3] - signalLine[j][1]);
-                        yMACD[i][0] = (MACD[i][3] - signalLine[j][1]);
+                        MACD[i][1] = correctFloat(MACD[i][3] -
+                        signalLine[j][1]);
+                        yMACD[i][0] = correctFloat(MACD[i][3] -
+                        signalLine[j][1]);
                     }
 
                     j++;
