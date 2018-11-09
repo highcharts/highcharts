@@ -740,6 +740,8 @@ each(
  *
  * @sample  highcharts/dragdrop/resize-column Draggable column and line series
  *
+ * @sample  highcharts/dragdrop/bar-series Draggable bar
+ *
  * @sample  highcharts/dragdrop/drag-bubble Draggable bubbles
  *
  * @sample  highcharts/dragdrop/drag-xrange Draggable X range series
