@@ -79,10 +79,6 @@
  *         continue async.
  */
 
-/**
- * @interface Highcharts.DataMappingObject
- */
-
 'use strict';
 
 import Highcharts from '../parts/Globals.js';
