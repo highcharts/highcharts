@@ -1369,29 +1369,29 @@ function getGroupedPoints(point) {
 function resizeRect(rect, updateSide, update) {
     var resizeAttrs;
     switch (updateSide) {
-        case 'left':
-            resizeAttrs = {
-                x: rect.attr('x') + update.x,
-                width: Math.max(1, rect.attr('width') - update.x)
-            };
-            break;
-        case 'right':
-            resizeAttrs = {
-                width: Math.max(1, rect.attr('width') + update.x)
-            };
-            break;
-        case 'top':
-            resizeAttrs = {
-                y: rect.attr('y') + update.y,
-                height: Math.max(1, rect.attr('height') - update.y)
-            };
-            break;
-        case 'bottom':
-            resizeAttrs = {
-                height: Math.max(1, rect.attr('height') + update.y)
-            };
-            break;
-        default:
+    case 'left':
+        resizeAttrs = {
+            x: rect.attr('x') + update.x,
+            width: Math.max(1, rect.attr('width') - update.x)
+        };
+        break;
+    case 'right':
+        resizeAttrs = {
+            width: Math.max(1, rect.attr('width') + update.x)
+        };
+        break;
+    case 'top':
+        resizeAttrs = {
+            y: rect.attr('y') + update.y,
+            height: Math.max(1, rect.attr('height') - update.y)
+        };
+        break;
+    case 'bottom':
+        resizeAttrs = {
+            height: Math.max(1, rect.attr('height') + update.y)
+        };
+        break;
+    default:
     }
     rect.attr(resizeAttrs);
 }

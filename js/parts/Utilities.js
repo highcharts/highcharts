@@ -1596,8 +1596,13 @@ H.getMagnitude = function (num) {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-H.normalizeTickInterval = function (interval, multiples, magnitude,
-        allowDecimals, hasTickAmount) {
+H.normalizeTickInterval = function (
+    interval,
+    multiples,
+    magnitude,
+    allowDecimals,
+    hasTickAmount
+) {
     var normalized,
         i,
         retInterval = interval;

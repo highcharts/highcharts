@@ -39,11 +39,7 @@ seriesType('ema', 'sma',
             period: 9
         }
     }, {
-        accumulatePeriodPoints: function (
-          period,
-          index,
-          yVal
-        ) {
+        accumulatePeriodPoints: function (period, index, yVal) {
             var sum = 0,
                 i = 0,
                 y = 0;
@@ -55,15 +51,7 @@ seriesType('ema', 'sma',
 
             return sum;
         },
-        calculateEma: function (
-          xVal,
-          yVal,
-          i,
-          EMApercent,
-          calEMA,
-          index,
-          SMA
-      ) {
+        calculateEma: function (xVal, yVal, i, EMApercent, calEMA, index, SMA) {
             var x = xVal[i - 1],
                 yValue = index < 0 ? yVal[i - 1] : yVal[i - 1][index],
                 y;
