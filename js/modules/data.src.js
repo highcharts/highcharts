@@ -28,6 +28,31 @@
  */
 
 /**
+ * Callback function that returns the correspondig Date object to a match.
+ *
+ * @callback Highcharts.DataDateFormatCallbackFunction
+ *
+ * @param {global.RegExpMatch} match
+ *
+ * @return {global.Data}
+ */
+
+/**
+ * Structure for alternative date formats to parse.
+ *
+ * @interface Highcharts.DataDateFormatObject
+ *//**
+ * @name Highcharts.DataDateFormatObject#alternative
+ * @type {string|undefined}
+ *//**
+ * @name Highcharts.DataDateFormatObject#parser
+ * @type {Highcharts.DataDateFormatCallbackFunction}
+ *//**
+ * @name Highcharts.DataDateFormatObject#regex
+ * @type {global.RegExp}
+ */
+
+/**
  * Callback function to parse string representations of dates into
  * JavaScript timestamps (milliseconds since 1.1.1970).
  *
@@ -474,7 +499,8 @@ var addEvent = Highcharts.addEvent,
 /**
  * The Data class
  *
- * @private
+ * @requires module:modules/data
+ *
  * @class
  * @name Highcharts.Data
  *
@@ -493,6 +519,15 @@ Highcharts.extend(Data.prototype, {
 
     /**
      * Initialize the Data object with the given options
+     *
+     * @private
+     * @function Highcharts.Data#init
+     *
+     * @param {Highcharts.DataOptions} options
+     *
+     * @param {Highcharts.Options} [chartOptions]
+     *
+     * @param {Highcharts.Chart} [chart]
      */
     init: function (options, chartOptions, chart) {
 
@@ -570,6 +605,8 @@ Highcharts.extend(Data.prototype, {
      * Get the column distribution. For example, a line series takes a single
      * column for Y values. A range series takes two columns for low and high
      * values respectively, and an OHLC series takes four columns.
+     *
+     * @function Highcharts.Data#getColumnDistribution
      */
     getColumnDistribution: function () {
         var chartOptions = this.chartOptions,
@@ -677,6 +714,9 @@ Highcharts.extend(Data.prototype, {
     /**
      * When the data is parsed into columns, either by CSV, table, GS or direct
      * input, continue with other operations.
+     *
+     * @private
+     * @function Highcharts.Data#dataFound
      */
     dataFound: function () {
         if (this.options.switchRowsAndColumns) {
@@ -700,6 +740,12 @@ Highcharts.extend(Data.prototype, {
 
     /**
      * Parse a CSV input string
+     *
+     * @function Highcharts.Data#parseCSV
+     *
+     * @param {Highcharts.DataOptions} inOptions
+     *
+     * @return {Array<Array<*>>}
      */
     parseCSV: function (inOptions) {
         var self = this,
@@ -1206,6 +1252,10 @@ Highcharts.extend(Data.prototype, {
 
     /**
      * Parse a HTML table
+     *
+     * @function Highcharts.Data#parseTable
+     *
+     * @return {Array<Array<*>>}
      */
     parseTable: function () {
         var options = this.options,
@@ -1249,6 +1299,11 @@ Highcharts.extend(Data.prototype, {
 
     /**
      * Fetch or refetch live data
+     *
+     * @function Highcharts.Data#fetchLiveData
+     *
+     * @return {string}
+     *         The first URL that was tried.
      */
     fetchLiveData: function () {
         var chart = this.chart,
@@ -1357,6 +1412,11 @@ Highcharts.extend(Data.prototype, {
 
     /**
      * Parse a Google spreadsheet.
+     *
+     * @function Highcharts.Data#parseGoogleSpreadsheet
+     *
+     * @return {boolean}
+     *         Always returns false, because it is an intermediate fetch.
      */
     parseGoogleSpreadsheet: function () {
         var data = this,
@@ -1507,7 +1567,18 @@ Highcharts.extend(Data.prototype, {
     },
 
     /**
-     * Trim a string from whitespace
+     * Trim a string from whitespaces.
+     *
+     * @function Highcharts.Data#trim
+     *
+     * @param {string} str
+     *        String to trim
+     *
+     * @param {boolean} [inside=false]
+     *        Remove all spaces between numbers.
+     *
+     * @return {str}
+     *         Trimed string
      */
     trim: function (str, inside) {
         if (typeof str === 'string') {
@@ -1527,6 +1598,8 @@ Highcharts.extend(Data.prototype, {
 
     /**
      * Parse numeric cells in to number types and date types in to true dates.
+     *
+     * @function Highcharts.Data#parseTypes
      */
     parseTypes: function () {
         var columns = this.columns,
@@ -1540,6 +1613,14 @@ Highcharts.extend(Data.prototype, {
 
     /**
      * Parse a single column. Set properties like .isDatetime and .isNumeric.
+     *
+     * @function Highcharts.Data#parseColumn
+     *
+     * @param {Array<*>} column
+     *        Column to parse
+     *
+     * @param {number} col
+     *        Column index
      */
     parseColumn: function (column, col) {
         var rawColumns = this.rawColumns,
@@ -1668,6 +1749,9 @@ Highcharts.extend(Data.prototype, {
     /**
      * A collection of available date formats, extendable from the outside to
      * support custom date formats.
+     *
+     * @name Highcharts.Data#dateFormats
+     * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
     dateFormats: {
         'YYYY/mm/dd': {
@@ -1717,6 +1801,12 @@ Highcharts.extend(Data.prototype, {
     /**
      * Parse a date and return it as a number. Overridable through
      * `options.parseDate`.
+     *
+     * @function Highcharts.Data#parseDate
+     *
+     * @param {string} val
+     *
+     * @return {global.Date}
      */
     parseDate: function (val) {
         var parseDate = this.options.parseDate,
@@ -1780,7 +1870,13 @@ Highcharts.extend(Data.prototype, {
     },
 
     /**
-     * Reorganize rows into columns
+     * Reorganize rows into columns.
+     *
+     * @function Highcharts.Data#rowsToColumns
+     *
+     * @param {Array<Array<*>>} rows
+     *
+     * @return {Array<Array<*>>}
      */
     rowsToColumns: function (rows) {
         var row,
@@ -1807,6 +1903,10 @@ Highcharts.extend(Data.prototype, {
 
     /**
      * A hook for working directly on the parsed columns
+     *
+     * @function Highcharts.Data#parsed
+     *
+     * @return {*}
      */
     parsed: function () {
         if (this.options.parsed) {
@@ -1814,6 +1914,10 @@ Highcharts.extend(Data.prototype, {
         }
     },
 
+    /**
+     * @private
+     * @function Highcharts.Data#getFreeIndexes
+     */
     getFreeIndexes: function (numberOfColumns, seriesBuilders) {
         var s,
             i,
@@ -1848,6 +1952,8 @@ Highcharts.extend(Data.prototype, {
     /**
      * If a complete callback function is provided in the options, interpret the
      * columns into a Highcharts options object.
+     *
+     * @function Highcharts.Data#complete
      */
     complete: function () {
 
@@ -2013,6 +2119,15 @@ Highcharts.extend(Data.prototype, {
 
     },
 
+    /**
+     * Updates the chart with new data options.
+     *
+     * @function Highcharts.Data#update
+     *
+     * @param {Highcharts.DataOptions} options
+     *
+     * @param {boolean} [redraw=true]
+     */
     update: function (options, redraw) {
         var chart = this.chart;
         if (options) {
@@ -2040,8 +2155,22 @@ Highcharts.extend(Data.prototype, {
 
 // Register the Data prototype and data function on Highcharts
 Highcharts.Data = Data;
-Highcharts.data = function (options, chartOptions) {
-    return new Data(options, chartOptions);
+
+/**
+ * Creates a data object to parse data for a chart.
+ *
+ * @function Highcharts.data
+ *
+ * @param {Highcharts.DataOptions} dataOptions
+ *
+ * @param {Highcharts.Options} [chartOptions]
+ *
+ * @param {Highcharts.Chart} [chart]
+ *
+ * @return {Highcharts.Data}
+ */
+Highcharts.data = function (dataOptions, chartOptions, chart) {
+    return new Data(dataOptions, chartOptions, chart);
 };
 
 // Extend Chart.init so that the Chart constructor accepts a new configuration
@@ -2056,6 +2185,12 @@ addEvent(
 
         if (userOptions && userOptions.data && !chart.hasDataDef) {
             chart.hasDataDef = true;
+            /**
+             * The data parser for this chart.
+             *
+             * @name Highcharts.Chart#data
+             * @type {Highcharts.Data|undefined}
+             */
             chart.data = new Data(Highcharts.extend(userOptions.data, {
 
                 afterComplete: function (dataOptions) {
