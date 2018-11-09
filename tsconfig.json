@@ -25,6 +25,10 @@
         "code/highcharts.src.d.ts",
         "test/typescript/highcharts.ts",
 
+        "code/highcharts-more.d.ts",
+        "code/highcharts-more.src.d.ts",
+        "test/typescript/highcharts-more.ts",
+
         "code/modules/accessibility.d.ts",
         "code/modules/accessibility.src.d.ts",
         "test/typescript/modules/accessibility.ts",
@@ -36,6 +40,10 @@
         "code/modules/boost.d.ts",
         "code/modules/boost.src.d.ts",
         "test/typescript/modules/boost.ts",
+
+        "code/modules/data.d.ts",
+        "code/modules/data.src.d.ts",
+        "test/typescript/modules/data.ts",
 
         "code/modules/export-data.d.ts",
         "code/modules/export-data.src.d.ts",
