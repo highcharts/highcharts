@@ -30,7 +30,7 @@
 /**
  * Callback function that returns the correspondig Date object to a match.
  *
- * @callback Highcharts.DstrataDateFormatCallbackFunction
+ * @callback Highcharts.DataDateFormatCallbackFunction
  *
  * @param {Array<number>} match
  *
