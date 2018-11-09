@@ -12,10 +12,8 @@ import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
 
-/**
- * Extensions for polar charts. Additionally, much of the geometry required for
- * polar charts is gathered in RadialAxes.js.
- */
+// Extensions for polar charts. Additionally, much of the geometry required for
+// polar charts is gathered in RadialAxes.js.
 
 var each = H.each,
     pick = H.pick,
