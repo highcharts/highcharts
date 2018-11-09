@@ -30,11 +30,11 @@
 /**
  * Callback function that returns the correspondig Date object to a match.
  *
- * @callback Highcharts.DataDateFormatCallbackFunction
+ * @callback Highcharts.DstrataDateFormatCallbackFunction
  *
- * @param {global.RegExpMatch} match
+ * @param {Array<number>} match
  *
- * @return {global.Data}
+ * @return {global.Date}
  */
 
 /**
@@ -1573,7 +1573,7 @@ Highcharts.extend(Data.prototype, {
      * @param {boolean} [inside=false]
      *        Remove all spaces between numbers.
      *
-     * @return {str}
+     * @return {string}
      *         Trimed string
      */
     trim: function (str, inside) {
