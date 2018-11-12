@@ -87,7 +87,7 @@ H.seriesType('bb', 'sma',
                  * Color of the line. If not set, it's inherited from
                  * [plotOptions.bb.color](#plotOptions.bb.color).
                  *
-                 * @type    {string}
+                 * @type    {Highcharts.ColorString}
                  * @since   6.0.0
                  * @product highstock
                  */
@@ -104,6 +104,9 @@ H.seriesType('bb', 'sma',
         topLine: {
             styles: {
                 lineWidth: 1,
+                /**
+                 * @type {Highcharts.ColorString}
+                 */
                 lineColor: undefined
             }
         },
