@@ -1,4 +1,6 @@
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -21,19 +23,23 @@ function populateAverage(xVal, yVal, yValVolume, i) {
 /**
  * The AD series type.
  *
- * @constructor seriesTypes.ad
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.ad
+ *
+ * @augments Highcharts.Series
  */
 seriesType('ad', 'sma',
     /**
      * Accumulation Distribution (AD). This series requires `linkedTo` option to
      * be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
      * @sample {highstock} stock/indicators/accumulation-distribution
-     *                        Accumulation/Distribution indicator
-     * @since 6.0.0
+     *         Accumulation/Distribution indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.ad
      */
     {
@@ -43,8 +49,7 @@ seriesType('ad', 'sma',
              * For example using OHLC data, volumeSeriesID='volume' means
              * the indicator will be calculated using OHLC and volume values.
              *
-             * @type {String}
-             * @since 6.0.0
+             * @since   6.0.0
              * @product highstock
              */
             volumeSeriesID: 'volume'
@@ -108,18 +113,16 @@ seriesType('ad', 'sma',
  * A `AD` series. If the [type](#series.ad.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.ad
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.ad
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.ad
  */
 
 /**
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.sma.data
- * @product highstock
+ * @extends   series.sma.data
+ * @since     6.0.0
+ * @product   highstock
  * @apioption series.ad.data
  */
