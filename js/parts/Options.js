@@ -259,12 +259,10 @@ H.defaultOptions = {
 
         /**
          * The default thousands separator used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments. Since
-         * Highcharts 4.1 it defaults to a single space character, which is
-         * compatible with ISO and works across Anglo-American and continental
-         * European languages.
-         *
-         * The default is a single space.
+         * method unless otherwise specified in the function arguments. Defaults
+         * to a single space character, which is recommended in
+         * [ISO 31-0](https://en.wikipedia.org/wiki/ISO_31-0#Numbers) and works
+         * across Anglo-American and continental European languages.
          *
          * @default \u0020
          * @since   1.2.2
