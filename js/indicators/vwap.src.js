@@ -107,7 +107,7 @@ seriesType('vwap', 'sma',
          * @param {Array<number>} xValues
          *        array of timestamps
          *
-         * @param {Array<number|Array<number,number,number,number>} yValues
+         * @param {Array<number|Array<number,number,number,number>>} yValues
          *        array of yValues, can be an array of a four arrays (OHLC) or
          *        array of values (line)
          *
