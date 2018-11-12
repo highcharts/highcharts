@@ -1,4 +1,6 @@
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -37,7 +39,10 @@ function populateAverage(points, xVal, yVal, i, period, prevATR) {
 /**
  * The ATR series type.
  *
- * @constructor seriesTypes.atr
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.atr
+ *
  * @augments seriesTypes.sma
  */
 seriesType('atr', 'sma',
@@ -45,10 +50,12 @@ seriesType('atr', 'sma',
      * Average true range indicator (ATR). This series requires `linkedTo`
      * option to be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/atr ATR indicator
-     * @since 6.0.0
+     * @sample {highstock} stock/indicators/atr
+     *         ATR indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.atr
      */
     {
@@ -123,18 +130,16 @@ seriesType('atr', 'sma',
  * A `ATR` series. If the [type](#series.atr.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.atr
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.atr
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.atr
  */
 
 /**
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.sma.data
- * @product highstock
+ * @extends   series.sma.data
+ * @since     6.0.0
+ * @product   highstock
  * @apioption series.atr.data
  */
