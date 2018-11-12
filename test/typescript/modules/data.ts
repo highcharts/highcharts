@@ -4,18 +4,6 @@ import DataModule from 'highcharts/modules/data';
 DataModule(Highcharts);
 
 function test_beforeParse() {
-    const series1: Highcharts.SeriesLineOptions = {
-        type: 'line',
-        name: 'All sessions',
-        lineWidth: 4,
-        marker: {
-            radius: 4
-        }
-    };
-    const series2: Highcharts.SeriesLineOptions = {
-        type: 'line',
-        name: 'New users'
-    };
     Highcharts.chart('container', {
         chart: {
             scrollablePlotArea: {
@@ -111,6 +99,9 @@ function test_beforeParse() {
             marker: {
                 radius: 4
             }
-        }, series2]
+        }, {
+            type: 'line',
+            name: 'New users'
+        }]
     });
 }
