@@ -11,17 +11,20 @@
  * @private
  * @interface Highcharts.CmfValuesObject
  *//**
+ * Combined xData and yData values into a tuple.
+ *
  * @name Highcharts.CmfValuesObject#values
  * @type {Array<Array<number,number>>}
- *       Combined xData and yData values into a tuple.
  *//**
+ * Values represent x timestamp values
+ *
  * @name Highcharts.CmfValuesObject#xData
  * @type {Array<number>}
- *       Values represent x timestamp values
  *//**
+ * Values represent y values
+ *
  * @name Highcharts.CmfValuesObject#yData
  * @type {Array<number>}
- *       Values represent y values
  */
 
 'use strict';
