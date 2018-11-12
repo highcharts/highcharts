@@ -743,6 +743,22 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         }
     },
 
+    // Custom attributes used for symbols, these should be filtered out when
+    // setting SVGElement attributes (#9375).
+    symbolCustomAttribs: [
+        'x',
+        'y',
+        'width',
+        'height',
+        'r',
+        'start',
+        'end',
+        'innerR',
+        'anchorX',
+        'anchorY',
+        'rounded'
+    ],
+
     /**
      * Apply native and custom attributes to the SVG elements.
      *
@@ -804,7 +820,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             hasSetSymbolSize,
             ret = this,
             skipAttr,
-            setter;
+            setter,
+            symbolCustomAttribs = this.symbolCustomAttribs;
 
         // single key-value pair
         if (typeof hash === 'string' && val !== undefined) {
@@ -836,8 +853,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 // Special handling of symbol attributes
                 if (
                     this.symbolName &&
-                    /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)$/
-                    .test(key)
+                    H.inArray(key, symbolCustomAttribs) !== -1
                 ) {
                     if (!hasSetSymbolSize) {
                         this.symbolAttr(hash);
