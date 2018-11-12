@@ -1,4 +1,6 @@
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -9,19 +11,23 @@ var isArray = H.isArray,
 /**
  * The EMA series type.
  *
- * @constructor seriesTypes.ema
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.ema
+ *
+ * @augments Highcharts.Series
  */
 seriesType('ema', 'sma',
     /**
      * Exponential moving average indicator (EMA). This series requires the
      * `linkedTo` option to be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
      * @sample {highstock} stock/indicators/ema
-     *                        Exponential moving average indicator
-     * @since 6.0.0
+     *         Exponential moving average indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.ema
      */
     {
@@ -127,18 +133,16 @@ seriesType('ema', 'sma',
  * A `EMA` series. If the [type](#series.ema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.ema
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.ema
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.ema
  */
 
 /**
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.sma.data
- * @product highstock
+ * @extends   series.sma.data
+ * @since     6.0.0
+ * @product   highstock
  * @apioption series.ema.data
  */
