@@ -1,4 +1,6 @@
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -13,22 +15,27 @@ var pick = H.pick,
 /**
  * The SMA series type.
  *
- * @constructor seriesTypes.sma
- * @augments seriesTypes.line
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.sma
+ *
+ * @augments Highcharts.Series
  */
 seriesType('sma', 'line',
     /**
      * Simple moving average indicator (SMA). This series requires `linkedTo`
      * option to be set.
      *
-     * @extends plotOptions.line
-     * @product highstock
-     * @sample {highstock} stock/indicators/sma Simple moving average indicator
-     * @since 6.0.0
-     * @excluding
-     *             allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
-     *             showInNavigator,navigatorOptions,pointInterval,
-     *             pointIntervalUnit,pointPlacement,pointRange,pointStart,joinBy
+     * @sample {highstock}
+     *         stock/indicators/sma Simple moving average indicator
+     *
+     * @extends      plotOptions.line
+     * @since        6.0.0
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               stacking, showInNavigator, navigatorOptions, pointInterval,
+     *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
+     *               joinBy
+     * @product      highstock
      * @optionparent plotOptions.sma
      */
     {
@@ -37,8 +44,8 @@ seriesType('sma', 'line',
          * set, it will be based on a technical indicator type and default
          * params.
          *
-         * @type {String}
-         * @since 6.0.0
+         * @type    {string}
+         * @since   6.0.0
          * @product highstock
          */
         name: undefined,
@@ -46,8 +53,7 @@ seriesType('sma', 'line',
             /**
              * Number of decimals in indicator series.
              *
-             * @type {Number}
-             * @since 6.0.0
+             * @since   6.0.0
              * @product highstock
              */
             valueDecimals: 4
@@ -56,8 +62,8 @@ seriesType('sma', 'line',
          * The main series ID that indicator will be based on. Required for this
          * indicator.
          *
-         * @type {String}
-         * @since 6.0.0
+         * @type    {string}
+         * @since   6.0.0
          * @product highstock
          */
         linkedTo: undefined,
@@ -67,8 +73,7 @@ seriesType('sma', 'line',
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
              *
-             * @type {Number}
-             * @since 6.0.0
+             * @since   6.0.0
              * @product highstock
              */
             index: 0,
@@ -77,8 +82,7 @@ seriesType('sma', 'line',
              * data points which are taken into account for the indicator
              * calculations.
              *
-             * @type {Number}
-             * @since 6.0.0
+             * @since   6.0.0
              * @product highstock
              */
             period: 14
@@ -261,11 +265,10 @@ seriesType('sma', 'line',
  * A `SMA` series. If the [type](#series.sma.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.sma
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.sma
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.sma
  */
 
@@ -274,9 +277,8 @@ seriesType('sma', 'line',
  * An array of data points for the series. For the `SMA` series type,
  * points are calculated dynamically.
  *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
+ * @since     6.0.0
+ * @extends   series.line.data
+ * @product   highstock
  * @apioption series.sma.data
  */
