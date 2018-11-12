@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -43,8 +44,11 @@ function populateAverage(xVal, yVal, i, period, index) {
 /**
  * The ROC series type.
  *
- * @constructor seriesTypes.roc
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.roc
+ *
+ * @augments Highcharts.Series
  */
 seriesType('roc', 'sma',
     /**
@@ -59,11 +63,12 @@ seriesType('roc', 'sma',
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
      * @sample {highstock} stock/indicators/roc
-     *                     Rate of change indicator
-     * @since 6.0.0
+     *         Rate of change indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.roc
      */
     {
@@ -128,16 +133,15 @@ seriesType('roc', 'sma',
  *
  * This series requires `linkedTo` option to be set.
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.roc
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.roc
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.roc
  */
 
 /**
- * @extends series.sma.data
- * @product highstock
+ * @extends   series.sma.data
+ * @product   highstock
  * @apioption series.roc.data
  */
