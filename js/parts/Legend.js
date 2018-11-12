@@ -1064,11 +1064,15 @@ Highcharts.Legend.prototype = {
                     allItems[i - 1].pageIx = len - 1;
                 }
 
-                if (i === allItems.length - 1 &&
-                        y + h - pages[len - 1] > clipHeight) {
+                if (
+                    i === allItems.length - 1 &&
+                    y + h - pages[len - 1] > clipHeight &&
+                    y !== lastY // #2617
+                ) {
                     pages.push(y);
                     item.pageIx = len;
                 }
+
                 if (y !== lastY) {
                     lastY = y;
                 }
