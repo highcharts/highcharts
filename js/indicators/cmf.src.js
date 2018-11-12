@@ -12,7 +12,7 @@
  * @interface Highcharts.CmfValuesObject
  *//**
  * @name Highcharts.CmfValuesObject#values
- * @type {Array<Array<Number>>}
+ * @type {Array<Array<number,number>>}
  *       Combined xData and yData values into a tuple.
  *//**
  * @name Highcharts.CmfValuesObject#xData
