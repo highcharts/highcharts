@@ -1,3 +1,4 @@
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -26,16 +27,26 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
     return std;
 }
 
+/**
+ * Bowlinger Bands series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.bb
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('bb', 'sma',
     /**
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @extends plotOptions.sma
-     * @product highstock
      * @sample {highstock} stock/indicators/bollinger-bands
-     *                     Bollinger bands
-     * @since 6.0.0
+     *         Bollinger bands
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.bb
      */
     {
@@ -45,8 +56,7 @@ H.seriesType('bb', 'sma',
             /**
              * Standard deviation for top and bottom bands.
              *
-             * @type {Number}
-             * @since 6.0.0
+             * @since   6.0.0
              * @product highstock
              */
             standardDeviation: 2,
@@ -55,22 +65,21 @@ H.seriesType('bb', 'sma',
         /**
          * Bottom line options.
          *
-         * @since 6.0.0
+         * @since   6.0.0
          * @product highstock
          */
         bottomLine: {
             /**
              * Styles for a bottom line.
              *
-             * @since 6.0.0
+             * @since   6.0.0
              * @product highstock
              */
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @type {Number}
-                 * @since 6.0.0
+                 * @since   6.0.0
                  * @product highstock
                  */
                 lineWidth: 1,
@@ -78,8 +87,8 @@ H.seriesType('bb', 'sma',
                  * Color of the line. If not set, it's inherited from
                  * [plotOptions.bb.color](#plotOptions.bb.color).
                  *
-                 * @type {String}
-                 * @since 6.0.0
+                 * @type    {string}
+                 * @since   6.0.0
                  * @product highstock
                  */
                 lineColor: undefined
@@ -89,7 +98,7 @@ H.seriesType('bb', 'sma',
          * Top line options.
          *
          * @extends plotOptions.bb.bottomLine
-         * @since 6.0.0
+         * @since   6.0.0
          * @product highstock
          */
         topLine: {
@@ -266,11 +275,10 @@ H.seriesType('bb', 'sma',
  * A bollinger bands indicator. If the [type](#series.bb.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.bb
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.bb
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.bb
  */
 
@@ -278,9 +286,8 @@ H.seriesType('bb', 'sma',
  * An array of data points for the series. For the `bb` series type,
  * points are calculated dynamically.
  *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
+ * @extends   series.line.data
+ * @since     6.0.0
+ * @product   highstock
  * @apioption series.bb.data
  */
