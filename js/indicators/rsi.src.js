@@ -1,3 +1,4 @@
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -10,19 +11,27 @@ function toFixed(a, n) {
     return parseFloat(a.toFixed(n));
 }
 
+/**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.rsi
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('rsi', 'sma',
-        /**
-         * Relative strength index (RSI) technical indicator. This series
-         * requires the `linkedTo` option to be set and should be loaded after
-         * the `stock/indicators/indicators.js` file.
-         *
-         * @extends plotOptions.sma
-         * @product highstock
-         * @sample {highstock} stock/indicators/rsi
-         *                     RSI indicator
-         * @since 6.0.0
-         * @optionparent plotOptions.rsi
-         */
+    /**
+     * Relative strength index (RSI) technical indicator. This series
+     * requires the `linkedTo` option to be set and should be loaded after
+     * the `stock/indicators/indicators.js` file.
+     *
+     * @sample {highstock} stock/indicators/rsi
+     *         RSI indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @optionparent plotOptions.rsi
+     */
     {
         /**
          * @excluding index
@@ -32,8 +41,7 @@ H.seriesType('rsi', 'sma',
             /**
              * Number of maximum decimals that are used in RSI calculations.
              *
-             * @type {Number}
-             * @since 6.0.0
+             * @since   6.0.0
              * @product highstock
              */
             decimals: 4
@@ -137,11 +145,10 @@ H.seriesType('rsi', 'sma',
  * A `RSI` series. If the [type](#series.rsi.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.rsi
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.rsi
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.rsi
  */
 
@@ -149,9 +156,8 @@ H.seriesType('rsi', 'sma',
  * An array of data points for the series. For the `rsi` series type,
  * points are calculated dynamically.
  *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
+ * @extends   series.line.data
+ * @since     6.0.0
+ * @product   highstock
  * @apioption series.rsi.data
  */
