@@ -68,6 +68,70 @@
 
         "code/modules/vector.d.ts",
         "code/modules/vector.src.d.ts",
-        "test/typescript/modules/vector.ts"
+        "test/typescript/modules/vector.ts",
+
+        "code/indicators/indicators.d.ts",
+        "code/indicators/indicators.src.d.ts",
+        "test/typescript/indicators/indicators.ts",
+
+        "code/indicators/accumulation-distribution.d.ts",
+        "code/indicators/accumulation-distribution.src.d.ts",
+
+        "code/indicators/atr.d.ts",
+        "code/indicators/atr.src.d.ts",
+
+        "code/indicators/bollinger-bands.d.ts",
+        "code/indicators/bollinger-bands.src.d.ts",
+
+        "code/indicators/cci.d.ts",
+        "code/indicators/cci.src.d.ts",
+
+        "code/indicators/cmf.d.ts",
+        "code/indicators/cmf.src.d.ts",
+
+        "code/indicators/ema.d.ts",
+        "code/indicators/ema.src.d.ts",
+
+        "code/indicators/ichimoku-kinko-hyo.d.ts",
+        "code/indicators/ichimoku-kinko-hyo.src.d.ts",
+
+        "code/indicators/macd.d.ts",
+        "code/indicators/macd.src.d.ts",
+
+        "code/indicators/mfi.d.ts",
+        "code/indicators/mfi.src.d.ts",
+
+        "code/indicators/momentum.d.ts",
+        "code/indicators/momentum.src.d.ts",
+
+        "code/indicators/pivot-points.d.ts",
+        "code/indicators/pivot-points.src.d.ts",
+
+        "code/indicators/price-envelopes.d.ts",
+        "code/indicators/price-envelopes.src.d.ts",
+
+        "code/indicators/psar.d.ts",
+        "code/indicators/psar.src.d.ts",
+
+        "code/indicators/roc.d.ts",
+        "code/indicators/roc.src.d.ts",
+
+        "code/indicators/rsi.d.ts",
+        "code/indicators/rsi.src.d.ts",
+
+        "code/indicators/stochastic.d.ts",
+        "code/indicators/stochastic.src.d.ts",
+
+        "code/indicators/volume-by-price.d.ts",
+        "code/indicators/volume-by-price.src.d.ts",
+
+        "code/indicators/vwap.d.ts",
+        "code/indicators/vwap.src.d.ts",
+
+        "code/indicators/wma.d.ts",
+        "code/indicators/wma.src.d.ts",
+
+        "code/indicators/zigzag.d.ts",
+        "code/indicators/zigzag.src.d.ts"
     ]
 }
