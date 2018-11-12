@@ -1,4 +1,6 @@
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import './ema.src.js';
@@ -84,7 +86,7 @@ seriesType('macd', 'sma',
                 /**
                  * Color of the line.
                  *
-                 * @type    {number}
+                 * @type    {Highcharts.ColorString}
                  * @since   6.0.0
                  * @product highstock
                  */
@@ -116,7 +118,7 @@ seriesType('macd', 'sma',
                 /**
                  * Color of the line.
                  *
-                 * @type    {number}
+                 * @type    {Highcharts.ColorString}
                  * @since   6.0.0
                  * @product highstock
                  */
