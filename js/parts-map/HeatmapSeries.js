@@ -398,7 +398,6 @@ seriesType('heatmap', 'scatter',
  * @type      {Array<Array<number>|*>}
  * @extends   series.line.data
  * @excluding marker
- * @product   highcharts highmaps
  * @apioption series.heatmap.data
  */
 
@@ -408,7 +407,6 @@ seriesType('heatmap', 'scatter',
  * this are set in the [colorAxis](#colorAxis) configuration.
  *
  * @type      {Highcharts.ColorString}
- * @product   highcharts highmaps
  * @apioption series.heatmap.data.color
  */
 
@@ -417,7 +415,6 @@ seriesType('heatmap', 'scatter',
  * as set in the [colorAxis](#colorAxis) configuration.
  *
  * @type      {number}
- * @product   highcharts highmaps
  * @apioption series.heatmap.data.value
  */
 
@@ -426,7 +423,6 @@ seriesType('heatmap', 'scatter',
  * the X value is the timestamp in milliseconds since 1970.
  *
  * @type      {number}
- * @product   highcharts highmaps
  * @apioption series.heatmap.data.x
  */
 
@@ -434,7 +430,6 @@ seriesType('heatmap', 'scatter',
  * The y value of the point.
  *
  * @type      {number}
- * @product   highcharts highmaps
  * @apioption series.heatmap.data.y
  */
 
