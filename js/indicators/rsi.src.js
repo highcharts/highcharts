@@ -24,7 +24,7 @@ H.seriesType('rsi', 'sma',
      * requires the `linkedTo` option to be set and should be loaded after
      * the `stock/indicators/indicators.js` file.
      *
-     * @sample {highstock} stock/indicators/rsi
+     * @sample stock/indicators/rsi
      *         RSI indicator
      *
      * @extends      plotOptions.sma
@@ -41,8 +41,7 @@ H.seriesType('rsi', 'sma',
             /**
              * Number of maximum decimals that are used in RSI calculations.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             decimals: 4
         }
