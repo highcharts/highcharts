@@ -3,30 +3,42 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
+
 var merge = H.merge,
     Point = H.Point,
     seriesType = H.seriesType;
 
 /**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.mappoint
+ *
+ * @augments Highcharts.Series
+ */
+seriesType('mappoint', 'scatter'
+/**
  * A mappoint series is a special form of scatter series where the points can
  * be laid out in map coordinates on top of a map.
  *
- * @sample maps/demo/mapline-mappoint/ Map-line and map-point series.
- * @extends plotOptions.scatter
- * @product highmaps
+ * @sample maps/demo/mapline-mappoint/
+ *         Map-line and map-point series.
+ *
+ * @extends      plotOptions.scatter
+ * @product      highmaps
  * @optionparent plotOptions.mappoint
  */
-seriesType('mappoint', 'scatter', {
-
+, {
     dataLabels: {
         /**
-         * @default {point.name}
+         * @default   {point.name}
          * @apioption plotOptions.mappoint.dataLabels.format
          */
         enabled: true,
@@ -40,12 +52,10 @@ seriesType('mappoint', 'scatter', {
             color: '${palette.neutralColor100}'
         }
     }
-
 // Prototype members
 }, {
     type: 'mappoint',
     forceDL: true
-
 // Point class
 }, {
     applyOptions: function (options, x) {
@@ -64,10 +74,9 @@ seriesType('mappoint', 'scatter', {
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  *
- * @type {Object}
- * @extends series,plotOptions.mappoint
- * @excluding dataParser,dataURL
- * @product highmaps
+ * @extends   series,plotOptions.mappoint
+ * @excluding dataParser, dataURL
+ * @product   highmaps
  * @apioption series.mappoint
  */
 
@@ -116,10 +125,10 @@ seriesType('mappoint', 'scatter', {
  *     }]
  *  ```
  *
- * @type {Array<Object|Array|Number>}
- * @extends series.map.data
- * @excluding labelrank,middleX,middleY,path,value
- * @product highmaps
+ * @type      {Array<number|Array<number,number>|*>}
+ * @extends   series.map.data
+ * @excluding labelrank, middleX, middleY, path, value
+ * @product   highmaps
  * @apioption series.mappoint.data
  */
 
@@ -127,10 +136,12 @@ seriesType('mappoint', 'scatter', {
  * The latitude of the point. Must be combined with the `lon` option
  * to work. Overrides `x` and `y` values.
  *
- * @type {Number}
- * @sample {highmaps} maps/demo/mappoint-latlon/ Point position by lat/lon
- * @since 1.1.0
- * @product highmaps
+ * @sample {highmaps} maps/demo/mappoint-latlon/
+ *         Point position by lat/lon
+ *
+ * @type      {number}
+ * @since     1.1.0
+ * @product   highmaps
  * @apioption series.mappoint.data.lat
  */
 
@@ -138,27 +149,33 @@ seriesType('mappoint', 'scatter', {
  * The longitude of the point. Must be combined with the `lon` option
  * to work. Overrides `x` and `y` values.
  *
- * @type {Number}
- * @sample {highmaps} maps/demo/mappoint-latlon/ Point position by lat/lon
- * @since 1.1.0
- * @product highmaps
+ * @sample {highmaps} maps/demo/mappoint-latlon/
+ *         Point position by lat/lon
+ *
+ * @type      {number}
+ * @since     1.1.0
+ * @product   highmaps
  * @apioption series.mappoint.data.lon
  */
 
 /**
  * The x coordinate of the point in terms of the map path coordinates.
  *
- * @type {Number}
- * @sample {highmaps} maps/demo/mapline-mappoint/ Map point demo
- * @product highmaps
+ * @sample {highmaps} maps/demo/mapline-mappoint/
+ *         Map point demo
+ *
+ * @type      {number}
+ * @product   highmaps
  * @apioption series.mappoint.data.x
  */
 
 /**
  * The x coordinate of the point in terms of the map path coordinates.
  *
- * @type {Number}
- * @sample {highmaps} maps/demo/mapline-mappoint/ Map point demo
- * @product highmaps
+ * @sample {highmaps} maps/demo/mapline-mappoint/
+ *         Map point demo
+ *
+ * @type      {number}
+ * @product   highmaps
  * @apioption series.mappoint.data.y
  */
