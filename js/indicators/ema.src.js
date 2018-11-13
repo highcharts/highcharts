@@ -22,7 +22,7 @@ seriesType('ema', 'sma',
      * Exponential moving average indicator (EMA). This series requires the
      * `linkedTo` option to be set.
      *
-     * @sample {highstock} stock/indicators/ema
+     * @sample stock/indicators/ema
      *         Exponential moving average indicator
      *
      * @extends      plotOptions.sma
