@@ -50,7 +50,7 @@ H.seriesType('mfi', 'sma',
      * Money Flow Index. This series requires `linkedTo` option to be set and
      * should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample {highstock} stock/indicators/mfi
+     * @sample stock/indicators/mfi
      *         Money Flow Index Indicator
      *
      * @extends      plotOptions.sma
@@ -69,15 +69,13 @@ H.seriesType('mfi', 'sma',
              * For example using OHLC data, volumeSeriesID='volume' means
              * the indicator will be calculated using OHLC and volume values.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             volumeSeriesID: 'volume',
             /**
              * Number of maximum decimals that are used in MFI calculations.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             decimals: 4
 
