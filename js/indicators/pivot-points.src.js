@@ -38,7 +38,7 @@ H.seriesType('pivotpoints', 'sma',
      * Pivot points indicator. This series requires the `linkedTo` option to be
      * set and should be loaded after `stock/indicators/indicators.js` file.
      *
-     * @sample {highstock} stock/indicators/pivot-points
+     * @sample stock/indicators/pivot-points
      *         Pivot points
      *
      * @extends      plotOptions.sma
@@ -57,8 +57,7 @@ H.seriesType('pivotpoints', 'sma',
              * on pivot points. Implemented algorithms: `'standard'`,
              * `'fibonacci'` and `'camarilla'`
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             algorithm: 'standard'
         },
