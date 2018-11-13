@@ -27,7 +27,7 @@ seriesType('zigzag', 'sma',
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample {highstock} stock/indicators/zigzag
+     * @sample stock/indicators/zigzag
      *         Zig Zag indicator
      *
      * @extends      plotOptions.sma
@@ -47,8 +47,7 @@ seriesType('zigzag', 'sma',
              * For example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             lowIndex: 2,
             /**
@@ -58,8 +57,7 @@ seriesType('zigzag', 'sma',
              * For example using OHLC data, index=1 means the indicator will be
              * calculated using High values.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             highIndex: 1,
             /**
@@ -68,8 +66,7 @@ seriesType('zigzag', 'sma',
              * For example deviation=1 means the indicator will ignore all price
              * movements less than 1%.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             deviation: 1
         }
