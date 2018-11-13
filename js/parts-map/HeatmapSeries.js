@@ -138,14 +138,10 @@ seriesType('heatmap', 'scatter'
         padding: 0 // #3837
     },
 
-    /**
-     * @ignore
-     */
+    /** @ignore */
     marker: null,
 
-    /**
-     * @ignore
-     */
+    /** @ignore */
     pointRange: null, // dynamically set to colsize by default
 
     tooltip: {
@@ -156,10 +152,8 @@ seriesType('heatmap', 'scatter'
 
         hover: {
 
-            /**
-             * @ignore
-             */
-            halo: false,  // #3406, halo is disabled on heatmaps by default
+            /** @ignore */
+            halo: false, // #3406, halo is disabled on heatmaps by default
 
             /**
              * How much to brighten the point on interaction. Requires the main
