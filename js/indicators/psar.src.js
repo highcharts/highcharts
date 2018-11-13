@@ -109,7 +109,7 @@ H.seriesType('psar', 'sma',
      * option to be set and should be loaded
      * after `stock/indicators/indicators.js` file.
      *
-     * @sample {highstock} stock/indicators/psar
+     * @sample stock/indicators/psar
      *         Parabolic SAR Indicator
      *
      * @extends      plotOptions.sma
@@ -139,8 +139,7 @@ H.seriesType('psar', 'sma',
              * AF can reach a maximum of maxAccelerationFactor,
              * no matter how long the uptrend extends.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             initialAccelerationFactor: 0.02,
             /**
@@ -148,30 +147,26 @@ H.seriesType('psar', 'sma',
              * AF can reach a maximum of maxAccelerationFactor,
              * no matter how long the uptrend extends.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             maxAccelerationFactor: 0.2,
             /**
              * Acceleration factor increases by increment each time
              * the extreme point makes a new high.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             increment: 0.02,
             /**
              * Index from which PSAR is starting calculation
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             index: 2,
             /**
              * Number of maximum decimals that are used in PSAR calculations.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             decimals: 4
         }
