@@ -26,8 +26,8 @@ seriesType('sma', 'line',
      * Simple moving average indicator (SMA). This series requires `linkedTo`
      * option to be set.
      *
-     * @sample {highstock}
-     *         stock/indicators/sma Simple moving average indicator
+     * @sample stock/indicators/sma
+     *         Simple moving average indicator
      *
      * @extends      plotOptions.line
      * @since        6.0.0
@@ -44,17 +44,15 @@ seriesType('sma', 'line',
          * set, it will be based on a technical indicator type and default
          * params.
          *
-         * @type    {string}
-         * @since   6.0.0
-         * @product highstock
+         * @type  {string}
+         * @since 6.0.0
          */
         name: undefined,
         tooltip: {
             /**
              * Number of decimals in indicator series.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             valueDecimals: 4
         },
@@ -62,9 +60,8 @@ seriesType('sma', 'line',
          * The main series ID that indicator will be based on. Required for this
          * indicator.
          *
-         * @type    {string}
-         * @since   6.0.0
-         * @product highstock
+         * @type  {string}
+         * @since 6.0.0
          */
         linkedTo: undefined,
         params: {
@@ -73,8 +70,7 @@ seriesType('sma', 'line',
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             index: 0,
             /**
@@ -82,8 +78,7 @@ seriesType('sma', 'line',
              * data points which are taken into account for the indicator
              * calculations.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             period: 14
         }
