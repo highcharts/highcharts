@@ -57,7 +57,7 @@ seriesType('wma', 'sma',
      * Weighted moving average indicator (WMA). This series requires `linkedTo`
      * option to be set.
      *
-     * @sample {highstock} stock/indicators/wma
+     * @sample stock/indicators/wma
      *         Weighted moving average indicator
      *
      * @extends      plotOptions.sma
