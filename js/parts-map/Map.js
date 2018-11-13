@@ -43,8 +43,6 @@ defaultOptions.mapNavigation = {
      *
      * @sample {highmaps} maps/mapnavigation/button-theme/
      *         Theming the navigation buttons
-     *
-     * @product highmaps
      */
     buttonOptions: {
 
@@ -52,7 +50,6 @@ defaultOptions.mapNavigation = {
          * What box to align the buttons to. Possible values are `plotBox`
          * and `spacingBox`.
          *
-         * @product    highmaps
          * @validvalue ["plotBox", "spacingBox"]
          */
         alignTo: 'plotBox',
@@ -60,7 +57,6 @@ defaultOptions.mapNavigation = {
         /**
          * The alignment of the navigation buttons.
          *
-         * @product    highmaps
          * @validvalue ["left", "center", "right"]
          */
         align: 'left',
@@ -69,37 +65,29 @@ defaultOptions.mapNavigation = {
          * The vertical alignment of the buttons. Individual alignment can
          * be adjusted by each button's `y` offset.
          *
-         * @product    highmaps
          * @validvalue ["top", "middle", "bottom"]
          */
         verticalAlign: 'top',
 
         /**
          * The X offset of the buttons relative to its `align` setting.
-         *
-         * @product highmaps
          */
         x: 0,
 
         /**
          * The width of the map navigation buttons.
-         *
-         * @product highmaps
          */
         width: 18,
 
         /**
          * The pixel height of the map navigation buttons.
-         *
-         * @product highmaps
          */
         height: 18,
 
         /**
          * Padding for the navigation buttons.
          *
-         * @since   5.0.0
-         * @product highmaps
+         * @since 5.0.0
          */
         padding: 5,
 
@@ -108,9 +96,8 @@ defaultOptions.mapNavigation = {
         /**
          * Text styles for the map navigation buttons.
          *
-         * @type       {Highcharts.CSSObject}
-         * @default    {"fontSize": "15px", "fontWeight": "bold"}
-         * @product    highmaps
+         * @type    {Highcharts.CSSObject}
+         * @default {"fontSize": "15px", "fontWeight": "bold"}
          */
         style: {
             /** @ignore */
@@ -130,7 +117,6 @@ defaultOptions.mapNavigation = {
          *
          * @type    {Highcharts.SVGAttributes}
          * @default {"stroke-width": 1, "text-align": "center"}
-         * @product highmaps
          */
         theme: {
             /** @ignore */
@@ -149,8 +135,6 @@ defaultOptions.mapNavigation = {
      * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
      * individual options can be overridden. But default, the `onclick`, `text`
      * and `y` options are individual.
-     *
-     * @product highmaps
      */
     buttons: {
 
@@ -162,7 +146,6 @@ defaultOptions.mapNavigation = {
          * `text` and `y` options are individual.
          *
          * @extends mapNavigation.buttonOptions
-         * @product highmaps
          */
         zoomIn: {
 
@@ -171,7 +154,6 @@ defaultOptions.mapNavigation = {
              *
              * @type    {Function}
              * @default function () { this.mapZoom(0.5); }
-             * @product highmaps
              */
             onclick: function () {
                 this.mapZoom(0.5);
@@ -180,16 +162,12 @@ defaultOptions.mapNavigation = {
             /**
              * The text for the button. The tooltip (title) is a language option
              * given by [lang.zoomIn](#lang.zoomIn).
-             *
-             * @product highmaps
              */
             text: '+',
 
             /**
              * The position of the zoomIn button relative to the vertical
              * alignment.
-             *
-             * @product highmaps
              */
             y: 0
         },
@@ -202,7 +180,6 @@ defaultOptions.mapNavigation = {
          * `text` and `y` options are individual.
          *
          * @extends mapNavigation.buttonOptions
-         * @product highmaps
          */
         zoomOut: {
 
@@ -211,7 +188,6 @@ defaultOptions.mapNavigation = {
              *
              * @type    {Function}
              * @default function () { this.mapZoom(2); }
-             * @product highmaps
              */
             onclick: function () {
                 this.mapZoom(2);
@@ -220,16 +196,12 @@ defaultOptions.mapNavigation = {
             /**
              * The text for the button. The tooltip (title) is a language option
              * given by [lang.zoomOut](#lang.zoomIn).
-             *
-             * @product highmaps
              */
             text: '-',
 
             /**
              * The position of the zoomOut button relative to the vertical
              * alignment.
-             *
-             * @product highmaps
              */
             y: 28
         }
@@ -240,7 +212,6 @@ defaultOptions.mapNavigation = {
      * [enabled](#mapNavigation.enabled) setting.
      *
      * @type      {boolean}
-     * @product   highmaps
      * @apioption mapNavigation.enableButtons
      */
 
@@ -257,7 +228,6 @@ defaultOptions.mapNavigation = {
      *
      * @type      {boolean}
      * @default   false
-     * @product   highmaps
      * @apioption mapNavigation.enabled
      */
 
@@ -266,7 +236,6 @@ defaultOptions.mapNavigation = {
      * it inherits the [enabled](#mapNavigation.enabled) setting.
      *
      * @type      {boolean}
-     * @product   highmaps
      * @apioption mapNavigation.enableDoubleClickZoom
      */
 
@@ -278,7 +247,6 @@ defaultOptions.mapNavigation = {
      *
      * @type      {boolean}
      * @default   false
-     * @product   highmaps
      * @apioption mapNavigation.enableDoubleClickZoomTo
      */
 
@@ -287,7 +255,6 @@ defaultOptions.mapNavigation = {
      * #mapNavigation.enabled) setting.
      *
      * @type      {boolean}
-     * @product   highmaps
      * @apioption mapNavigation.enableMouseWheelZoom
      */
 
@@ -299,7 +266,6 @@ defaultOptions.mapNavigation = {
      * setting.
      *
      * @type      {boolean}
-     * @product   highmaps
      * @apioption mapNavigation.enableTouchZoom
      */
 
@@ -307,13 +273,10 @@ defaultOptions.mapNavigation = {
      * Sensitivity of mouse wheel or trackpad scrolling. 1 is no sensitivity,
      * while with 2, one mousewheel delta will zoom in 50%.
      *
-     * @type      {number}
-     * @default   1.1
-     * @since     4.2.4
-     * @product   highmaps
-     * @apioption mapNavigation.mouseWheelSensitivity
+     * @since 4.2.4
      */
     mouseWheelSensitivity: 1.1
+
     // enabled: false,
     // enableButtons: null, // inherit from enabled
     // enableTouchZoom: null, // inherit from enabled
