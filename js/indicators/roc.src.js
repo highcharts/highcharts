@@ -63,7 +63,7 @@ seriesType('roc', 'sma',
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample {highstock} stock/indicators/roc
+     * @sample stock/indicators/roc
      *         Rate of change indicator
      *
      * @extends      plotOptions.sma
