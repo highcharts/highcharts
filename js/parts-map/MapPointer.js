@@ -3,10 +3,13 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Pointer.js';
+
 var extend = H.extend,
     pick = H.pick,
     Pointer = H.Pointer,
@@ -15,9 +18,7 @@ var extend = H.extend,
 // Extend the Pointer
 extend(Pointer.prototype, {
 
-    /**
-     * The event handler for the doubleclick event
-     */
+    // The event handler for the doubleclick event
     onContainerDblClick: function (e) {
         var chart = this.chart;
 
@@ -46,9 +47,7 @@ extend(Pointer.prototype, {
         }
     },
 
-    /**
-     * The event handler for the mouse scroll event
-     */
+    // The event handler for the mouse scroll event
     onContainerMouseWheel: function (e) {
         var chart = this.chart,
             delta;
