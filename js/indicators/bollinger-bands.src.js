@@ -41,7 +41,7 @@ H.seriesType('bb', 'sma',
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample {highstock} stock/indicators/bollinger-bands
+     * @sample stock/indicators/bollinger-bands
      *         Bollinger bands
      *
      * @extends      plotOptions.sma
@@ -56,8 +56,7 @@ H.seriesType('bb', 'sma',
             /**
              * Standard deviation for top and bottom bands.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             standardDeviation: 2,
             index: 3
@@ -65,31 +64,27 @@ H.seriesType('bb', 'sma',
         /**
          * Bottom line options.
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         bottomLine: {
             /**
              * Styles for a bottom line.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @since   6.0.0
-                 * @product highstock
+                 * @since 6.0.0
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line. If not set, it's inherited from
                  * [plotOptions.bb.color](#plotOptions.bb.color).
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 lineColor: undefined
             }
@@ -99,7 +94,6 @@ H.seriesType('bb', 'sma',
          *
          * @extends plotOptions.bb.bottomLine
          * @since   6.0.0
-         * @product highstock
          */
         topLine: {
             styles: {
