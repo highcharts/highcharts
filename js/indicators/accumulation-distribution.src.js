@@ -34,7 +34,7 @@ seriesType('ad', 'sma',
      * Accumulation Distribution (AD). This series requires `linkedTo` option to
      * be set.
      *
-     * @sample {highstock} stock/indicators/accumulation-distribution
+     * @sample stock/indicators/accumulation-distribution
      *         Accumulation/Distribution indicator
      *
      * @extends      plotOptions.sma
@@ -49,8 +49,7 @@ seriesType('ad', 'sma',
              * For example using OHLC data, volumeSeriesID='volume' means
              * the indicator will be calculated using OHLC and volume values.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             volumeSeriesID: 'volume'
         }
