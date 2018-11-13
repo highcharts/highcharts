@@ -28,7 +28,7 @@ seriesType('macd', 'sma',
      * Moving Average Convergence Divergence (MACD). This series requires
      * `linkedTo` option to be set.
      *
-     * @sample {highstock} stock/indicators/macd
+     * @sample stock/indicators/macd
      *         MACD indicator
      *
      * @extends      plotOptions.sma
@@ -41,22 +41,19 @@ seriesType('macd', 'sma',
             /**
              * The short period for indicator calculations.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             shortPeriod: 12,
             /**
              * The long period for indicator calculations.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             longPeriod: 26,
             /**
              * The base period for signal calculations.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             signalPeriod: 9,
             period: 26
@@ -64,8 +61,7 @@ seriesType('macd', 'sma',
         /**
          * The styles for signal line
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         signalLine: {
             /**
@@ -79,16 +75,14 @@ seriesType('macd', 'sma',
                 /**
                  * Pixel width of the line.
                  *
-                 * @since   6.0.0
-                 * @product highstock
+                 * @since 6.0.0
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 lineColor: undefined
             }
@@ -96,8 +90,7 @@ seriesType('macd', 'sma',
         /**
          * The styles for macd line
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         macdLine: {
             /**
@@ -111,16 +104,14 @@ seriesType('macd', 'sma',
                 /**
                  * Pixel width of the line.
                  *
-                 * @since   6.0.0
-                 * @product highstock
+                 * @since 6.0.0
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 lineColor: undefined
             }
