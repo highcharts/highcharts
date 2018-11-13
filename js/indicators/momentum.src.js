@@ -29,7 +29,7 @@ seriesType('momentum', 'sma',
     /**
      * Momentum. This series requires `linkedTo` option to be set.
      *
-     * @sample {highstock} stock/indicators/momentum
+     * @sample stock/indicators/momentum
      *         Momentum indicator
      *
      * @extends      plotOptions.sma
