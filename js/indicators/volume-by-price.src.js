@@ -59,7 +59,7 @@ seriesType('vbp', 'sma',
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample {highstock} stock/indicators/volume-by-price
+     * @sample stock/indicators/volume-by-price
      *         Volume By Price indicator
      *
      * @extends      plotOptions.sma
@@ -75,8 +75,7 @@ seriesType('vbp', 'sma',
             /**
              * The number of price zones.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             ranges: 12,
             /**
@@ -84,46 +83,40 @@ seriesType('vbp', 'sma',
              * OHLC data, volumeSeriesID='volume' means the indicator will be
              * calculated using OHLC and volume values.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             volumeSeriesID: 'volume'
         },
         /**
          * The styles for lines which determine price zones.
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         zoneLines: {
             /**
              * Enable/disable zone lines.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             enabled: true,
             styles: {
                 /**
                  * Color of zone lines.
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 color: '#0A9AC9',
                 /**
                  * The dash style of zone lines.
                  *
-                 * @since   6.0.0
-                 * @product highstock
+                 * @since 6.0.0
                  */
                 dashStyle: 'LongDash',
                 /**
                  * Pixel width of zone lines.
                  *
-                 * @since   6.0.0
-                 * @product highstock
+                 * @since 6.0.0
                  */
                 lineWidth: 1
             }
@@ -131,32 +124,28 @@ seriesType('vbp', 'sma',
         /**
          * The styles for bars when volume is divided into positive/negative.
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         volumeDivision: {
             /**
              * Option to control if volume is divided.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             enabled: true,
             styles: {
                 /**
                  * Color of positive volume bars.
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 positiveColor: 'rgba(144, 237, 125, 0.8)',
                 /**
                  * Color of negative volume bars.
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 negativeColor: 'rgba(244, 91, 91, 0.8)'
             }
