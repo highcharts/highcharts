@@ -35,7 +35,7 @@ H.seriesType('stochastic', 'sma',
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample {highstock} stock/indicators/stochastic
+     * @sample stock/indicators/stochastic
      *         Stochastic oscillator
      *
      * @extends      plotOptions.sma
@@ -45,7 +45,7 @@ H.seriesType('stochastic', 'sma',
      */
     {
         /**
-         * @excluding index,period
+         * @excluding index, period
          */
         params: {
             /**
@@ -54,7 +54,6 @@ H.seriesType('stochastic', 'sma',
              * @type    {Array<number,number>}
              * @default [14, 3]
              * @since   6.0.0
-             * @product highstock
              */
             periods: [14, 3]
         },
@@ -67,22 +66,19 @@ H.seriesType('stochastic', 'sma',
         /**
          * Smoothed line options.
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         smoothedLine: {
             /**
              * Styles for a smoothed line.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @since   6.0.0
-                 * @product highstock
+                 * @since 6.0.0
                  */
                 lineWidth: 1,
                 /**
@@ -90,9 +86,8 @@ H.seriesType('stochastic', 'sma',
                  * [plotOptions.stochastic.color](
                  * #plotOptions.stochastic.color).
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 lineColor: undefined
             }
