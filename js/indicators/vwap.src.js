@@ -29,7 +29,7 @@ seriesType('vwap', 'sma',
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample {highstock} stock/indicators/vwap
+     * @sample stock/indicators/vwap
      *         Volume Weighted Average Price indicator
      *
      * @extends      plotOptions.sma
@@ -48,8 +48,7 @@ seriesType('vwap', 'sma',
              * OHLC data, volumeSeriesID='volume' means the indicator will be
              * calculated using OHLC and volume values.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             volumeSeriesID: 'volume'
         }
