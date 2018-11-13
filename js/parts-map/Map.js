@@ -353,7 +353,14 @@ H.splitPath = function (path) {
     return path;
 };
 
-// A placeholder for map definitions
+/**
+ * Contains all loaded map data for Highmaps.
+ *
+ * @requires module:modules/map
+ *
+ * @name Highcharts.maps
+ * @type {Highcharts.Dictionary<object>}
+ */
 H.maps = {};
 
 
