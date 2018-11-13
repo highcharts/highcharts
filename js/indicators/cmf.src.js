@@ -12,17 +12,14 @@
  * @interface Highcharts.CmfValuesObject
  *//**
  * Combined xData and yData values into a tuple.
- *
  * @name Highcharts.CmfValuesObject#values
  * @type {Array<Array<number,number>>}
  *//**
  * Values represent x timestamp values
- *
  * @name Highcharts.CmfValuesObject#xData
  * @type {Array<number>}
  *//**
  * Values represent y values
- *
  * @name Highcharts.CmfValuesObject#yData
  * @type {Array<number>}
  */
@@ -42,7 +39,7 @@ H.seriesType('cmf', 'sma',
     /**
      * Chaikin Money Flow indicator (cmf).
      *
-     * @sample {highstock} stock/indicators/cmf/
+     * @sample stock/indicators/cmf/
      *         Chaikin Money Flow indicator
      *
      * @extends      plotOptions.sma
