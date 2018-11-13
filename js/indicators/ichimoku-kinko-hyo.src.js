@@ -137,7 +137,7 @@ seriesType('ikh', 'sma',
      * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
      * set.
      *
-     * @sample {highstock} stock/indicators/ichimoku-kinko-hyo
+     * @sample stock/indicators/ichimoku-kinko-hyo
      *         Ichimoku Kinko Hyo indicator
      *
      * @extends      plotOptions.sma
@@ -154,15 +154,13 @@ seriesType('ikh', 'sma',
             /**
              * The base period for Tenkan calculations.
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             periodTenkan: 9,
             /**
              * The base period for Senkou Span B calculations
              *
-             * @since   6.0.0
-             * @product highstock
+             * @since 6.0.0
              */
             periodSenkouSpanB: 52
         },
@@ -180,24 +178,21 @@ seriesType('ikh', 'sma',
         /**
          * The styles for Tenkan line
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         tenkanLine: {
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @since   6.0.0
-                 * @product highstock
+                 * @since 6.0.0
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 lineColor: undefined
             }
@@ -205,24 +200,21 @@ seriesType('ikh', 'sma',
         /**
          * The styles for Kijun line
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         kijunLine: {
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @since   6.0.0
-                 * @product highstock
+                 * @since 6.0.0
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 lineColor: undefined
             }
@@ -230,24 +222,21 @@ seriesType('ikh', 'sma',
         /**
          * The styles for Chikou line
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         chikouLine: {
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @since   6.0.0
-                 * @product highstock
+                 * @since 6.0.0
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 lineColor: undefined
             }
@@ -255,24 +244,21 @@ seriesType('ikh', 'sma',
         /**
          * The styles for Senkou Span A line
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         senkouSpanA: {
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @since   6.0.0
-                 * @product highstock
+                 * @since 6.0.0
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 lineColor: undefined
             }
@@ -280,24 +266,21 @@ seriesType('ikh', 'sma',
         /**
          * The styles for Senkou Span B line
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         senkouSpanB: {
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @since   6.0.0
-                 * @product highstock
+                 * @since 6.0.0
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 lineColor: undefined
             }
@@ -305,8 +288,7 @@ seriesType('ikh', 'sma',
         /**
          * The styles for area between Senkou Span A and B
          *
-         * @since   6.0.0
-         * @product highstock
+         * @since 6.0.0
          */
         senkouSpan: {
             /**
@@ -317,12 +299,11 @@ seriesType('ikh', 'sma',
             *
             * @see [senkouSpan.styles.fill](#series.ikh.senkouSpan.styles.fill)
             *
-            * @sample {highstock} stock/indicators/ichimoku-kinko-hyo
+            * @sample stock/indicators/ichimoku-kinko-hyo
             *         Ichimoku Kinko Hyo color
             *
             * @type      {Highcharts.ColorString}
             * @since     next
-            * @product   highstock
             * @apioption plotOptions.ikh.senkouSpan.color
             */
 
@@ -330,22 +311,21 @@ seriesType('ikh', 'sma',
             * Color of the area between Senkou Span A and B,
             * when Senkou Span A is under Senkou Span B.
             *
-            * @sample {highstock} stock/indicators/ikh-negative-color
+            * @sample stock/indicators/ikh-negative-color
             *         Ichimoku Kinko Hyo negativeColor
             *
             * @type      {Highcharts.ColorString}
             * @since     next
-            * @product   highstock
             * @apioption plotOptions.ikh.senkouSpan.negativeColor
             */
+
             styles: {
                 /**
                  * Color of the area between Senkou Span A and B.
                  *
                  * @deprecated
-                 * @type    {Highcharts.ColorString}
-                 * @since   6.0.0
-                 * @product highstock
+                 * @type  {Highcharts.ColorString}
+                 * @since 6.0.0
                  */
                 fill: 'rgba(255, 0, 0, 0.5)'
             }
