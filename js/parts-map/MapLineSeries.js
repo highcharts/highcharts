@@ -40,16 +40,13 @@ seriesType('mapline', 'map'
 
     /**
      * The width of the map line.
-     *
-     * @product highmaps
      */
     lineWidth: 1,
 
     /**
      * Fill color for the map line shapes
      *
-     * @type    {Highcharts.ColorString}
-     * @product highmaps
+     * @type {Highcharts.ColorString}
      */
     fillColor: 'none'
 
