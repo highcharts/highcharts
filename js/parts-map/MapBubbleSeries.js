@@ -50,7 +50,6 @@ if (seriesTypes.bubble) {
          *         Pink bubbles
          *
          * @type      {Highcharts.ColorString}
-         * @product   highmaps
          * @apioption plotOptions.mapbubble.color
          */
 
@@ -62,7 +61,6 @@ if (seriesTypes.bubble) {
          *
          * @type      {boolean}
          * @default   true
-         * @product   highmaps
          * @apioption plotOptions.mapbubble.displayNegative
          */
 
@@ -70,7 +68,6 @@ if (seriesTypes.bubble) {
          * @sample {highmaps} maps/demo/map-bubble/
          *         Bubble size
          *
-         * @product   highmaps
          * @apioption plotOptions.mapbubble.maxSize
          */
 
@@ -78,7 +75,6 @@ if (seriesTypes.bubble) {
          * @sample {highmaps} maps/demo/map-bubble/
          *         Bubble size
          *
-         * @product   highmaps
          * @apioption plotOptions.mapbubble.minSize
          */
 
@@ -91,7 +87,6 @@ if (seriesTypes.bubble) {
          *         Negative color below a threshold
          *
          * @type      {Highcharts.ColorString}
-         * @product   highmaps
          * @apioption plotOptions.mapbubble.negativeColor
          */
 
@@ -102,7 +97,6 @@ if (seriesTypes.bubble) {
          *
          * @type       {string}
          * @default    area
-         * @product    highmaps
          * @validvalue ["area", "width"]
          * @apioption  plotOptions.mapbubble.sizeBy
          */
@@ -120,7 +114,6 @@ if (seriesTypes.bubble) {
          * @type      {boolean}
          * @default   false
          * @since     1.1.9
-         * @product   highmaps
          * @apioption plotOptions.mapbubble.sizeByAbsoluteValue
          */
 
@@ -135,7 +128,6 @@ if (seriesTypes.bubble) {
          *
          * @type      {number}
          * @since     1.0.3
-         * @product   highmaps
          * @apioption plotOptions.mapbubble.zMax
          */
 
@@ -150,7 +142,6 @@ if (seriesTypes.bubble) {
          *
          * @type      {number}
          * @since     1.0.3
-         * @product   highmaps
          * @apioption plotOptions.mapbubble.zMin
          */
 
@@ -166,7 +157,6 @@ if (seriesTypes.bubble) {
          *
          * @type      {number}
          * @default   0
-         * @product   highmaps
          * @apioption plotOptions.mapbubble.zThreshold
          */
 
