@@ -74,6 +74,8 @@ seriesType('mapline', 'map'
      * @param {Highcharts.Point} point
      *
      * @param {string} state
+     *
+     * @return {Highcharts.Dictionary<*>}
      */
     pointAttribs: function (point, state) {
         var attr = seriesTypes.map.prototype.pointAttribs.call(
@@ -145,7 +147,7 @@ seriesType('mapline', 'map'
  *     }]
  *  ```
  *
- * @type      {Array<number|Array<string,number>|*>}
+ * @type      {Array<number|Array<string,number>|object>}
  * @product   highmaps
  * @apioption series.mapline.data
  */
