@@ -15,20 +15,223 @@ var seriesType = H.seriesType,
     Series = H.Series;
 
 /**
- * Calculate the positions and size of a shape.
- * @param {object} params The parameters required.
- * @returns {object} The resulting shape attributes.
+ * Calculates the distance between two circles based on their positions.
+ *
+ * TODO: implement this.
+ *
+ * @param {object} circle1 The properties of the first circle.
+ * @param {object} circle2 The properties of the second circle.
+ * @returns {number} Returns the distance between the two circles.
  */
-var getShapeArgs = function (params) {
-    var xAxis = params.xAxis,
-        yAxis = params.yAxis,
-        i = params.i;
+var distanceBetweenCircles = function distanceBetweenCircles(circle1, circle2) {
+    return 0;
+};
 
-    return {
-        x: xAxis.translate(i * 20),
-        y: yAxis.translate(i * 20),
-        r: 50
+/**
+ * Calculates the area of overlap between two circles based on their radiuses
+ * and the distance between them.
+ *
+ * TODO: implement this.
+ *
+ * @param {number} r1 Radius of the first circle.
+ * @param {number} r2 Radius of the second circle.
+ * @param {number} d The distance between the two circles.
+ * @returns {number} Returns the area of overlap between the two circles.
+ */
+var getOverlapBetweenCirclesByDistance =
+function getOverlapBetweenCirclesByDistance(r1, r2, d) {
+    return 0;
+};
+
+/**
+ * Calculates the area of overlap between a list of circles.
+ *
+ * TODO: add support for calculating overlap between more than 2 circles.
+ *
+ * @param {array} circles List of circles with their given positions.
+ * @returns {number} Returns the area of overlap between all the circles.
+ */
+var getOverlapBetweenCircles = function getOverlapBetweenCircles(circles) {
+    var overlap = 0;
+
+    // When there is only two circles we can find the overlap by using their
+    // radiuses and the distance between them.
+    if (circles.length === 2) {
+        var circle1 = circles[0];
+        var circle2 = circles[1];
+
+        overlap = getOverlapBetweenCirclesByDistance(
+            circle1.radius,
+            circle2.radius,
+            distanceBetweenCircles(circle1, circle2)
+        );
+    }
+
+    return overlap;
+};
+
+/**
+ * Calculates the difference between the desired overlap and the actual overlap
+ * between two circles.
+ *
+ * @param {object} mapOfIdToCircle Map from id to circle.
+ * @param {array} relations List of relations to calculate the loss of.
+ * @returns {number} Returns the loss between positions of the circles for the
+ * given relations.
+ */
+var loss = function loss(mapOfIdToCircle, relations) {
+    // Iterate all the relations and calculate their individual loss.
+    return relations.reduce(function (totalLoss, relation) {
+        var loss = 0;
+
+        if (relation.sets.length > 1) {
+            var wantedOverlap = relation.size;
+
+            // Calculate the actual overlap between the sets.
+            var actualOverlap = getOverlapBetweenCircles(
+                // Get the circles for the given sets.
+                relations.sets.map(function (set) {
+                    return mapOfIdToCircle[set];
+                })
+            );
+
+            var diff = wantedOverlap - actualOverlap;
+            loss = diff * diff;
+        }
+
+        // Add calculated loss to the sum.
+        return totalLoss + loss;
+    });
+};
+
+/**
+ * Uses binary search to make a best guess of the ideal distance between two
+ * circles too get the desired overlap.
+ * Currently there is no known formula to calculate the distance from the area
+ * of overlap, which makes the binary search a preferred method.
+ *
+ * TODO: implement this.
+ *
+ * @param {Number} r1 Radius of the first circle.
+ * @param {Number} r2 Radiues of the second circle.
+ * @param {Number} overlap The wanted overlap between the two circles.
+ */
+var getDistanceBetweenCirclesByOverlap =
+function getDistanceBetweenCirclesByOverlap(r1, r2, overlap) {
+    return 0;
+};
+
+/**
+ * Uses a greedy approach to position all the sets. Works well with a small
+ * number of sets, and are in these cases a good choice aesthetically.
+ *
+ * TODO: define circles for each set.
+ * TODO: implement positionSet.
+ * TODO: find the overlap between sets and sort them.
+ *
+ * @param {Array} relations List of the overlap between two or more sets, or the
+ * size of a single set.
+ * @returns List of circles and their calculated positions.
+ */
+var layoutGreedyVenn = function layoutGreedyVenn(relations) {
+    var positioned = [],
+        overlap,
+        radius;
+
+    /**
+     * Takes a set and updates the position, and add the set to the list of
+     * positioned sets.
+     *
+     * @param {object} set The set to add to its final position.
+     * @param {object} coordinates The coordinates to position the set at.
+     * @returns {undefined} Returns undefined.
+     */
+    var positionSet = function positionSet(set, coordinates) {
     };
+
+    // Define a circle for each set.
+    var circles = [];
+
+    /**
+     * Find overlap between sets. Ignore relations with more then 2 sets.
+     * Sort them by the sum of their size from large to small.
+     */
+    var sortedByOverlap = [];
+
+    // Position the most overlapped set at 0,0.
+    positionSet(sortedByOverlap.pop(), { x: 0, y: 0 });
+
+    // Iterate and position the remaining sets.
+    sortedByOverlap.forEach(function (set) {
+        var bestPosition = positioned.reduce(function (best, circle) {
+            // Calculate the distance between the sets to get the correct
+            // overlap
+            var distance = getDistanceBetweenCirclesByOverlap(
+                radius,
+                circle.radius,
+                overlap
+            );
+
+            // Create a list of possible coordinates calculated from distance.
+            var possibleCoordinates = [[0, 0]];
+
+            // Iterate all suggested coordinates and find the best one.
+            possibleCoordinates.forEach(function (coordinates) {
+                // Calculate loss for the suggested coordinates.
+                var currentLoss = loss(coordinates);
+
+                // If the loss is better, then use these new coordinates.
+                if (currentLoss < best.loss) {
+                    best.loss = currentLoss;
+                    best.coordinates = coordinates;
+                }
+            });
+
+            // Return resulting coordinates.
+            return best;
+        }, {
+            loss: Number.MAX_SAFE_INTEGER,
+            coordinates: undefined
+        });
+
+        // Add the set to its final position.
+        positionSet(set, bestPosition.coordinates);
+    });
+
+    // Return the positions of each set.
+    return positioned;
+};
+
+/**
+ * Calculates the positions of all the sets in the venn diagram.
+ *
+ * TODO: Add support for constrained MDS.
+ *
+ * @param {Array} relations List of the overlap between two or more sets, or the
+ * size of a single set.
+ * @returns List of circles and their calculated positions.
+ */
+var layout = function (relations) {
+    // Calculate best initial positions by using greedy layout.
+    var positions = layoutGreedyVenn(relations);
+    return positions;
+};
+
+/**
+ * Prepares the venn data so that it is usable for the layout function.
+ * Filter out sets, or intersections that includes sets, that are missing in the
+ * data or has (value < 1).
+ * Adds missing relations between sets in the data as value = 0.
+ *
+ * TODO: implement filtering and addition of missing relations.
+ *
+ * @param {Array} data The raw input data.
+ * @returns {Array} Returns an array of valid venn data.
+ */
+var processVennData = function processVennData(data) {
+    // Create a clone of the data before operating on it.
+    var processed = data.slice(0);
+    return processed;
 };
 
 var vennOptions = {
@@ -68,27 +271,33 @@ var vennSeries = {
             // Chart properties
             renderer = chart.renderer;
 
-        // Iterate all points and calculate and draw their graphics.
-        points.forEach(function (point, i) {
-            var attr = getShapeArgs({
-                    i: i,
-                    xAxis: xAxis,
-                    yAxis: yAxis
-                }),
-                css = {
-                    color: point.color
-                };
+        // Process the data before passing it into the layout function.
+        var relations = processVennData([]);
 
-            // Draw the point graphic.
-            point.draw({
-                animate: {},
-                attr: attr,
-                css: css,
-                group: group,
-                renderer: renderer,
-                shapeType: 'circle'
-            });
-        });
+        // Calculate the positions of each circle.
+        var circles = layout(relations);
+
+        // Iterate all points and calculate and draw their graphics.
+        // points.forEach(function (point, i) {
+        //     var attr = getShapeArgs({
+        //             i: i,
+        //             xAxis: xAxis,
+        //             yAxis: yAxis
+        //         }),
+        //         css = {
+        //             color: point.color
+        //         };
+
+        //     // Draw the point graphic.
+        //     point.draw({
+        //         animate: {},
+        //         attr: attr,
+        //         css: css,
+        //         group: group,
+        //         renderer: renderer,
+        //         shapeType: 'circle'
+        //     });
+        // });
     }
 };
 
