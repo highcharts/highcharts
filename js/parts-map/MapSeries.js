@@ -110,7 +110,6 @@ seriesType('map', 'scatter',
          * on null points.
          *
          * @type      {boolean}
-         * @default   false
          * @since     4.2.7
          * @apioption plotOptions.map.nullInteraction
          */
@@ -133,6 +132,8 @@ seriesType('map', 'scatter',
          * @sample maps/plotoptions/series-allareas-false/
          *         All areas set to false
          *
+         * @type      {boolean}
+         * @default   true
          * @product   highmaps
          * @apioption plotOptions.series.allAreas
          */
@@ -150,6 +151,7 @@ seriesType('map', 'scatter',
          *         Borders demo
          *
          * @type      {Highcharts.ColorString}
+         * @default   '#cccccc'
          * @product   highmaps highcharts
          * @apioption plotOptions.series.borderColor
          */
@@ -164,6 +166,8 @@ seriesType('map', 'scatter',
          * @sample maps/plotoptions/series-border/
          *         Borders demo
          *
+         * @type      {number}
+         * @default   1
          * @product   highmaps highcharts
          * @apioption plotOptions.series.borderWidth
          */
@@ -177,6 +181,7 @@ seriesType('map', 'scatter',
          * legend item.
          *
          * @type      {boolean}
+         * @product   highmaps
          * @apioption plotOptions.series.colorAxis
          */
 
@@ -204,6 +209,8 @@ seriesType('map', 'scatter',
          *         Simple data joined by null
          *
          * @type      {string|Array<string>}
+         * @default   hc-key
+         * @product   highmaps
          * @apioption plotOptions.series.joinBy
          */
         joinBy: 'hc-key',
@@ -261,7 +268,9 @@ seriesType('map', 'scatter',
                  * The relative brightness of the point when hovered, relative
                  * to the normal point color.
                  *
+                 * @type      {number}
                  * @product   highmaps
+                 * @default   0.2
                  * @apioption plotOptions.series.states.hover.brightness
                  */
                 brightness: 0.2
