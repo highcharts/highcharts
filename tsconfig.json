@@ -61,6 +61,11 @@
         "code/modules/series-label.src.d.ts",
         "test/typescript/modules/series-label.ts",
 
+        "code/modules/map.d.ts",
+        "code/modules/map.src.d.ts",
+        "test/typescript/modules/map.ts",
+        "test/typescript/highmaps.ts",
+
         "code/modules/stock.d.ts",
         "code/modules/stock.src.d.ts",
         "test/typescript/modules/stock.ts",
