@@ -5,24 +5,78 @@
  */
 
 /**
- * The object contains common information for a click event on a series.
+ * Function callback when a series has been animated.
  *
- * @interface Highcharts.SeriesClickObject
+ * @callback Highcharts.SeriesAfterAnimateCallbackFunction
+ *
+ * @param {Highcharts.SeriesAfterAnimateEventObject} e
+ *        Event arguments.
+ */
+
+/**
+ * Event information regarding completed animation of a series.
+ *
+ * @interface Highcharts.SeriesAfterAnimateEventObject
+ *//**
+ * Animated series.
+ * @name Highcharts.SeriesAfterAnimateEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesAfterAnimateEventObject#type
+ * @type {"afterAnimate"}
+ */
+
+/**
+ * Function callback when the checkbox next to the series' name in the legend is
+ * clicked.
+ *
+ * @callback Highcharts.SeriesCheckboxClickCallbackFunction
+ *
+ * @param {Highcharts.SeriesCheckboxClickEventObject} e
+ *        Event arguments.
+ */
+
+/**
+ * Event information regarding check of a series box.
+ *
+ * @interface Highcharts.SeriesCheckboxClickEventObject
+ *//**
+ * Whether the box has been checked.
+ * @name Highcharts.SeriesCheckboxClickEventObject#checked
+ * @type {boolean}
+ *//**
+ * Related series.
+ * @name Highcharts.SeriesCheckboxClickEventObject#item
+ * @type {Highcharts.Series}
+ *//**
+ * Related series.
+ * @name Highcharts.SeriesCheckboxClickEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesCheckboxClickEventObject#type
+ * @type {"checkboxClick"}
+ */
+
+/**
+ * Common information for a click event on a series.
+ *
+ * @interface Highcharts.SeriesClickEventObject
  *
  * @implements {global.Event}
  *//**
- * The nearest point on the graph.
- *
- * @name Highcharts.SeriesClickObject#point
+ * Nearest point on the graph.
+ * @name Highcharts.SeriesClickEventObject#point
  * @type {Highcharts.Point}
  */
 
 /**
- * The function callback to execute when a series is clicked.
+ * Function callback when a series is clicked.
  *
  * @callback Highcharts.SeriesClickCallbackFunction
  *
- * @param {Highcharts.SeriesClickObject} e
+ * @param {Highcharts.SeriesClickEventObject} e
  *        Event arguments.
  *
  * @return {boolean|undefined}
@@ -48,25 +102,27 @@
  */
 
 /**
- * The object contains common information for a click event on a series point.
- *
- * @interface Highcharts.SeriesPointClickObject
- *
- * @implements {global.Event}
- *//**
- * The clicked point.
- *
- * @name Highcharts.SeriesPointClickObject#point
- * @type {Highcharts.Point}
- */
-
-/**
- * The function callback to execute when a series is clicked.
+ * Function callback when a series point is clicked.
  *
  * @callback Highcharts.SeriesPointClickCallbackFunction
  *
- * @param {Highcharts.SeriesPointClickObject} e
+ * @param {Highcharts.SeriesPointClickEventObject} e
  *        Event arguments.
+ *
+ * @return {boolean|undefined}
+ *         Return false to cancel the action.
+ */
+
+/**
+ * Common information for a click event on a series point.
+ *
+ * @interface Highcharts.SeriesPointClickEventObject
+ *
+ * @implements {global.Event}
+ *//**
+ * Clicked point.
+ * @name Highcharts.SeriesPointClickEventObject#point
+ * @type {Highcharts.Point}
  */
 
 'use strict';
@@ -997,15 +1053,15 @@ null
     events: {},
 
     /**
-     * Fires after the series has finished its initial animation, or in
-     * case animation is disabled, immediately as the series is displayed.
+     * Fires after the series has finished its initial animation, or in case
+     * animation is disabled, immediately as the series is displayed.
      *
      * @sample {highcharts} highcharts/plotoptions/series-events-afteranimate/
      *         Show label after animate
      * @sample {highstock} highcharts/plotoptions/series-events-afteranimate/
      *         Show label after animate
      *
-     * @type      {Function}
+     * @type      {Highcharts.SeriesAfterAnimateCallbackFunction}
      * @since     4.0
      * @product   highcharts highstock gantt
      * @context   Highcharts.Series
@@ -1014,15 +1070,15 @@ null
 
     /**
      * Fires when the checkbox next to the series' name in the legend is
-     * clicked. One parameter, `event`, is passed to the function. The state
-     * of the checkbox is found by `event.checked`. The checked item is
-     * found by `event.item`. Return `false` to prevent the default action
-     * which is to toggle the select state of the series.
+     * clicked. One parameter, `event`, is passed to the function. The state of
+     * the checkbox is found by `event.checked`. The checked item is found by
+     * `event.item`. Return `false` to prevent the default action which is to
+     * toggle the select state of the series.
      *
      * @sample {highcharts} highcharts/plotoptions/series-events-checkboxclick/
      *         Alert checkbox status
      *
-     * @type      {Function}
+     * @type      {Highcharts.SeriesCheckboxClickCallbackFunction}
      * @since     1.2.0
      * @context   Highcharts.Series
      * @apioption plotOptions.series.events.checkboxClick
@@ -2469,16 +2525,16 @@ null
 
         /**
          * Read only. The series' type, like "line", "area", "column" etc. The
-         * type in the series options anc can be altered using {@link
-         * Series#update}.
+         * type in the series options anc can be altered using
+         * {@link Series#update}.
          *
          * @name Highcharts.Series#type
          * @type {string}
          */
 
         /**
-         * Read only. The series' current options. To update, use {@link
-         * Series#update}.
+         * Read only. The series' current options. To update, use
+         * {@link Series#update}.
          *
          * @name Highcharts.Series#options
          * @type {Highcharts.PlotSeriesOptions}
@@ -4048,9 +4104,9 @@ null
     /**
      * Draw the markers for line-like series types, and columns or other
      * graphical representation for {@link Point} objects for other series
-     * types. The resulting element is typically stored as {@link
-     * Point.graphic}, and is created on the first call and updated and moved on
-     * subsequent calls.
+     * types. The resulting element is typically stored as
+     * {@link Point.graphic}, and is created on the first call and updated and
+     * moved on subsequent calls.
      *
      * @function Highcharts.Series#drawPoints
      */
@@ -4172,6 +4228,8 @@ null
      *
      * @see Series#pointAttribs
      *
+     * @function Highcharts.Series#markerAttribs
+     *
      * @param {Highcharts.Point} point
      *        The Point to inspect.
      *
@@ -4236,6 +4294,9 @@ null
      * {@link Series#markerAttribs}, this function should return those
      * attributes that can also be set in CSS. In styled mode, `pointAttribs`
      * won't be called.
+     *
+     * @private
+     * @function Highcharts.Series#pointAttribs
      *
      * @param {Highcharts.Point} point
      *        The point instance to inspect.
@@ -4604,8 +4665,8 @@ null
     },
 
     /**
-     * Get zones properties for building graphs.
-     * Extendable by series with multiple lines within one series.
+     * Get zones properties for building graphs. Extendable by series with
+     * multiple lines within one series.
      *
      * @private
      * @function Highcharts.Series#getZonesGraphs
