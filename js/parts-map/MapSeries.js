@@ -1148,7 +1148,7 @@ seriesType('map', 'scatter',
  * @sample maps/demo/category-map/
  *         Map data and joinBy
  *
- * @type      {Highcharts.MapDataObject}
+ * @type      {Highcharts.MapDataObject|Array<Highcharts.MapDataObject>}
  * @product   highmaps
  * @apioption series.mapData
  */
