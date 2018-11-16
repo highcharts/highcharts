@@ -598,9 +598,8 @@ null
      * @sample {highmaps} maps/plotoptions/mapbubble-allowpointselect/
      *         Map bubble
      *
-     * @type       {string}
-     * @validvalue ["crosshair","default","help","none","pointer"]
-     * @apioption  plotOptions.series.cursor
+     * @type      {string|Highcharts.CursorType}
+     * @apioption plotOptions.series.cursor
      */
 
 
