@@ -3,7 +3,7 @@ import DraggablePointsModule from "highcharts/modules/draggable-points";
 
 DraggablePointsModule(Highcharts);
 
-function test_options {
+function test_options() {
     Highcharts.chart('container', {
         chart: {
             animation: false
@@ -35,7 +35,7 @@ function test_options {
             }
         },
         tooltip: {
-            yDecimals: 2
+            valueDecimals: 2
         },
         series: [{
             data: [0, 71.5, -106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
