@@ -1,4 +1,7 @@
 # Cannot run Point.update on a grouped point
 
-This happens in Highstock when a point is grouped by data grouping, so there is
-no reference to the raw points.
+Running `Point.update` in Highstock when a point is grouped by data
+grouping is not supported.
+
+This is not supported because when data grouping is enabled, there won't be any 
+references to the raw points, which is required by the `Point.update` function.
