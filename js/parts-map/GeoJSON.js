@@ -10,11 +10,11 @@
  * @interface Highcharts.MapLatLonObject
  *//**
  * The latitude.
- * @name Highcharts.LatLonObject#lat
+ * @name Highcharts.MapLatLonObject#lat
  * @type {number}
  *//**
  * The longitude.
- * @name Highcharts.LatLonObject#lon
+ * @name Highcharts.MapLatLonObject#lon
  * @type {number}
  */
 
