@@ -37,6 +37,7 @@ import '../../indicators/psar.src.js';
 import '../../indicators/roc.src.js';
 import '../../indicators/rsi.src.js';
 import '../../indicators/stochastic.src.js';
+import '../../indicators/supertrend.src.js';
 import '../../indicators/volume-by-price.src.js';
 import '../../indicators/vwap.src.js';
 import '../../indicators/williams-r.src.js';
