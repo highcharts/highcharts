@@ -10,15 +10,15 @@
  * @interface Highcharts.MapDataObject
  *//**
  * The SVG path.
- * @name path
+ * @name Highcharts.MapDataObject#path
  * @type {Highcharts.SVGPathArray}
  *//**
  * The name of the data.
- * @name name
+ * @name Highcharts.MapDataObject#name
  * @type {string|undefined}
  *//**
  * The GeoJSON meta data.
- * @name properties
+ * @name Highcharts.MapDataObject#properties
  * @type {object|undefined}
  */
 
