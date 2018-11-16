@@ -322,7 +322,7 @@ H.splitPath = function (path) {
  * @requires module:modules/map
  *
  * @name Highcharts.maps
- * @type {Highcharts.Dictionary<object>}
+ * @type {Highcharts.Dictionary<Highcharts.MapDataObject>}
  */
 H.maps = {};
 
