@@ -314,7 +314,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
  *        GeoJSON linestrings and multilinestrings. Setting "mappoint" will
  *        return GeoJSON points and multipoints.
  *
- * @return {object}
+ * @return {Array<object>}
  *         An object ready for the `mapData` option.
  */
 H.geojson = function (geojson, hType, series) {
