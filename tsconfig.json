@@ -45,6 +45,10 @@
         "code/modules/data.src.d.ts",
         "test/typescript/modules/data.ts",
 
+        "code/modules/draggable-points.d.ts",
+        "code/modules/draggable-points.src.d.ts",
+        "test/typescript/modules/draggable-points.ts",
+
         "code/modules/export-data.d.ts",
         "code/modules/export-data.src.d.ts",
         "test/typescript/modules/export-data.ts",
