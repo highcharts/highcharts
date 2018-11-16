@@ -72,15 +72,13 @@
  */
 
 /**
- * Function callback when a series is clicked.
+ * Function callback when a series is clicked. Return false to cancel toogle
+ * actions.
  *
  * @callback Highcharts.SeriesClickCallbackFunction
  *
  * @param {Highcharts.SeriesClickEventObject} e
  *        Event arguments.
- *
- * @return {boolean|undefined}
- *         Returning false cancels toogle actions.
  */
 
 /**
@@ -102,15 +100,13 @@
  */
 
 /**
- * Function callback when a series point is clicked.
+ * Function callback when a series point is clicked. Return false to cancel the
+ * action.
  *
  * @callback Highcharts.SeriesPointClickCallbackFunction
  *
  * @param {Highcharts.SeriesPointClickEventObject} e
  *        Event arguments.
- *
- * @return {boolean|undefined}
- *         Return false to cancel the action.
  */
 
 /**
