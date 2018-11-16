@@ -1142,13 +1142,13 @@ seriesType('map', 'scatter',
 );
 
 /**
- * An array of map data objects containing a `path` definition and optionally
- * additional properties to join in the data as per the `joinBy` option.
+ * A map data object containing a `path` definition and optionally additional
+ * properties to join in the data as per the `joinBy` option.
  *
  * @sample maps/demo/category-map/
  *         Map data and joinBy
  *
- * @type      {Array<Highcharts.MapDataObject>}
+ * @type      {Highcharts.MapDataObject}
  * @product   highmaps
  * @apioption series.mapData
  */
