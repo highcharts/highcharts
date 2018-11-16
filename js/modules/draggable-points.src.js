@@ -892,7 +892,7 @@ var defaultDragSensitivity = 2;
  * Style options for the guide box. The guide box has one state by default, the
  * `default` state.
  *
- * @type         {Highchars.Dictionary<Highcharts.PlotSeriesDragDropGuideBoxDefaultOptions>}
+ * @type         {Highcharts.Dictionary<Highcharts.PlotSeriesDragDropGuideBoxDefaultOptions>}
  * @since        6.2.0
  * @optionparent plotOptions.series.dragDrop.guideBox
  */
