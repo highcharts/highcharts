@@ -3,7 +3,37 @@ import MapModule from 'highcharts/modules/map';
 
 MapModule(Highcharts);
 
-function test_series () {
+function test_simple() {
+    Highcharts.mapChart('container', {
+        series: [{
+          	type: 'map',
+            data: [{
+                value: 100,
+                id: 'a'
+            }, {
+                value: 150,
+                id: 'b'
+            }],
+            joinBy: 'id',
+            mapData: [{
+                path: ['M', 0, 0, 'L', 10, 0, 10, 10, 0, 10, 'Z'],
+                id: 'a'
+            }, {
+                path: ['M', 20, 20, 'L', 30, 20, 15, 15, 20, 30, 'Z'],
+                id: 'b'
+            }]
+        }]
+    });
+}
+
+function test_series() {
+    const defaultOptions = Highcharts.getOptions();
+    const tooltipFormatter = function (this: { point: { id: string, lat: number, lon: number } } ): string {
+        return this.point.id + (
+            this.point.lat ?
+            `<br>Lat:${this.point.lat} Lon: ${this.point.lon}` : ''
+        )
+    };
     Highcharts.mapChart('container', {
         title: {
             text: 'Highmaps simple flight routes demo'
@@ -17,19 +47,14 @@ function test_series () {
             enabled: true
         },
         tooltip: {
-            formatter: function () {
-                return this.point.id + (
-                    this.point.lat ?
-                    '<br>Lat: ' + this.point.lat + ' Lon: ' + this.point.lon : ''
-                );
-            }
+            formatter: tooltipFormatter
         },
         plotOptions: {
             series: {
                 marker: {
                     fillColor: '#FFFFFF',
                     lineWidth: 2,
-                    lineColor: Highcharts.getOptions().colors[1]
+                    lineColor: (defaultOptions.colors && defaultOptions.colors[1])
                 }
             }
         },
