@@ -6,18 +6,18 @@ function test_simple() {
           	type: 'map',
             data: [{
                 value: 100,
-                id: 'a'
+                name: 'a'
             }, {
                 value: 150,
-                id: 'b'
+                name: 'b'
             }],
             joinBy: 'id',
             mapData: [{
                 path: ['M', 0, 0, 'L', 10, 0, 10, 10, 0, 10, 'Z'],
-                id: 'a'
+                name: 'a',
             }, {
                 path: ['M', 20, 20, 'L', 30, 20, 15, 15, 20, 30, 'Z'],
-                id: 'b'
+                name: 'b'
             }]
         }]
     });
@@ -25,11 +25,11 @@ function test_simple() {
 
 function test_series() {
     const defaultOptions = Highmaps.getOptions();
-    const tooltipFormatter = function (this: { point: { id: string, lat: number, lon: number } } ): string {
+    const tooltipFormatter = function(this: { point: { id: string, lat: number, lon: number } }): string {
         return this.point.id + (
             this.point.lat ?
             `<br>Lat:${this.point.lat} Lon: ${this.point.lon}` : ''
-        )
+        );
     };
     Highmaps.mapChart('container', {
         title: {
