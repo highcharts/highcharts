@@ -28,7 +28,7 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
 }
 
 /**
- * Bowlinger Bands series type.
+ * Bollinger Bands series type.
  *
  * @private
  * @class
