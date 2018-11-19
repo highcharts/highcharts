@@ -381,9 +381,7 @@ seriesType('gauge', 'line', {
     noSharedTooltip: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
 
-    /**
-     * Calculate paths etc
-     */
+    // Calculate paths etc
     translate: function () {
 
         var series = this,
@@ -449,9 +447,7 @@ seriesType('gauge', 'line', {
         });
     },
 
-    /**
-     * Draw the points where each point is one needle
-     */
+    // Draw the points where each point is one needle
     drawPoints: function () {
 
         var series = this,
@@ -521,9 +517,7 @@ seriesType('gauge', 'line', {
         }
     },
 
-    /**
-     * Animate the arrow up from startAngle
-     */
+    // Animate the arrow up from startAngle
     animate: function (init) {
         var series = this;
 
@@ -561,10 +555,8 @@ seriesType('gauge', 'line', {
         this.group.clip(this.chart.clipRect);
     },
 
-    /**
-     * Extend the basic setData method by running processData and generatePoints
-     * immediately, in order to access the points from the legend.
-     */
+    // Extend the basic setData method by running processData and generatePoints
+    // immediately, in order to access the points from the legend.
     setData: function (data, redraw) {
         Series.prototype.setData.call(this, data, false);
         this.processData();
@@ -574,16 +566,12 @@ seriesType('gauge', 'line', {
         }
     },
 
-    /**
-     * If the tracking module is loaded, add the point tracker
-     */
+    // If the tracking module is loaded, add the point tracker
     drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
 
 // Point members
 }, {
-    /**
-     * Don't do any hover colors or anything
-     */
+    // Don't do any hover colors or anything
     setState: function (state) {
         this.state = state;
     }
