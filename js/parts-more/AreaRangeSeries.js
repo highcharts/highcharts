@@ -152,12 +152,10 @@ seriesType('arearange', 'area', {
     pointValKey: 'low',
     deferTranslatePolar: true,
 
-    /**
-     * Translate a point's plotHigh from the internal angle and radius measures
-     * to true plotHigh coordinates. This is an addition of the toXY method
-     * found in Polar.js, because it runs too early for arearanges to be
-     * considered (#3419).
-     */
+    // Translate a point's plotHigh from the internal angle and radius measures
+    // to true plotHigh coordinates. This is an addition of the toXY method
+    // found in Polar.js, because it runs too early for arearanges to be
+    // considered (#3419).
     highToXY: function (point) {
         // Find the polar plotX and plotY
         var chart = this.chart,
@@ -170,9 +168,7 @@ seriesType('arearange', 'area', {
         point.plotLowX = point.plotX;
     },
 
-    /**
-     * Translate data points from raw values x and y to plotX and plotY.
-     */
+    // Translate data points from raw values x and y to plotX and plotY.
     translate: function () {
         var series = this,
             yAxis = series.yAxis,
@@ -217,10 +213,8 @@ seriesType('arearange', 'area', {
         }
     },
 
-    /**
-     * Extend the line series' getSegmentPath method by applying the segment
-     * path to both lower and higher values of the range.
-     */
+    // Extend the line series' getSegmentPath method by applying the segment
+    // path to both lower and higher values of the range.
     getGraphPath: function (points) {
 
         var highPoints = [],
@@ -241,11 +235,9 @@ seriesType('arearange', 'area', {
         points = points || this.points;
         i = points.length;
 
-        /**
-         * Create the top line and the top part of the area fill. The area fill
-         * compensates for null points by drawing down to the lower graph,
-         * moving across the null gap and starting again at the lower graph.
-         */
+        // Create the top line and the top part of the area fill. The area fill
+        // compensates for null points by drawing down to the lower graph,
+        // moving across the null gap and starting again at the lower graph.
         i = points.length;
         while (i--) {
             point = points[i];
@@ -327,10 +319,8 @@ seriesType('arearange', 'area', {
         return linePath;
     },
 
-    /**
-     * Extend the basic drawDataLabels method by running it for both lower and
-     * higher values.
-     */
+    // Extend the basic drawDataLabels method by running it for both lower and
+    // higher values.
     drawDataLabels: function () {
 
         var data = this.points,
