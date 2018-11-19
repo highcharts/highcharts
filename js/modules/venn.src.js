@@ -11,8 +11,19 @@
 import draw from '../mixins/draw-point.js';
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
-var seriesType = H.seriesType,
+var isArray = H.isArray,
+    isNumber = H.isNumber,
+    isObject = H.isObject,
+    isString = H.isString,
+    keys = H.keys,
+    seriesType = H.seriesType,
     Series = H.Series;
+
+var objectValues = function objectValues(obj) {
+    return keys(obj).map(function (x) {
+        return obj[x];
+    });
+};
 
 /**
  * Calculates the distance between two circles based on their positions.
@@ -217,6 +228,28 @@ var layout = function (relations) {
     return positions;
 };
 
+var isValidRelation = function (x) {
+    var map = {};
+    return (
+        isObject(x) &&
+        (isNumber(x.value) && x.value > -1) &&
+        (isArray(x.sets) && x.sets.length > 0) &&
+        !x.sets.some(function (set) {
+            var invalid = false;
+            if (!map[set] && isString(set)) {
+                map[set] = true;
+            } else {
+                invalid = true;
+            }
+            return invalid;
+        })
+    );
+};
+
+var isValidSet = function (x) {
+    return (isValidRelation(x) && x.sets.length === 1 && x.value > 0);
+};
+
 /**
  * Prepares the venn data so that it is usable for the layout function.
  * Filter out sets, or intersections that includes sets, that are missing in the
@@ -229,9 +262,45 @@ var layout = function (relations) {
  * @returns {Array} Returns an array of valid venn data.
  */
 var processVennData = function processVennData(data) {
-    // Create a clone of the data before operating on it.
-    var processed = data.slice(0);
-    return processed;
+    var d = isArray(data) ? data : [];
+
+    var validSets = d
+        .reduce(function (arr, x) {
+            // Check if x is a valid set, and that it is not an duplicate.
+            if (isValidSet(x) && arr.indexOf(x.sets[0]) === -1) {
+                arr.push(x.sets[0]);
+            }
+            return arr;
+        }, [])
+        .sort();
+
+    var mapOfIdToRelation = d.reduce(function (mapOfIdToRelation, relation) {
+        if (isValidRelation(relation) && !relation.sets.some(function (set) {
+            return validSets.indexOf(set) === -1;
+        })) {
+            mapOfIdToRelation[relation.sets.sort().join()] = relation;
+        }
+        return mapOfIdToRelation;
+    }, {});
+
+    validSets.reduce(function (combinations, set, i, arr) {
+        var remaining = arr.slice(i + 1);
+        remaining.forEach(function (set2) {
+            combinations.push(set + ',' + set2);
+        });
+        return combinations;
+    }, []).forEach(function (combination) {
+        if (!mapOfIdToRelation[combination]) {
+            var obj = {
+                sets: combination.split(','),
+                value: 0
+            };
+            mapOfIdToRelation[combination] = obj;
+        }
+    });
+
+    // Transform map into array.
+    return objectValues(mapOfIdToRelation);
 };
 
 var vennOptions = {
@@ -272,7 +341,7 @@ var vennSeries = {
             renderer = chart.renderer;
 
         // Process the data before passing it into the layout function.
-        var relations = processVennData([]);
+        var relations = processVennData(series.options.data);
 
         // Calculate the positions of each circle.
         var circles = layout(relations);
@@ -298,6 +367,9 @@ var vennSeries = {
         //         shapeType: 'circle'
         //     });
         // });
+    },
+    utils: {
+        processVennData: processVennData
     }
 };
 
