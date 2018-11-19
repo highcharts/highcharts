@@ -119,15 +119,11 @@ seriesType('waterfall', 'column', {
 }, {
     pointValKey: 'y',
 
-    /**
-     * Property needed to prevent lines between the columns from disappearing
-     * when negativeColor is used.
-     */
+    // Property needed to prevent lines between the columns from disappearing
+    // when negativeColor is used.
     showLine: true,
 
-    /**
-     * After generating points, set y-values for all sums.
-     */
+    // After generating points, set y-values for all sums.
     generatePoints: function () {
         var previousIntermediate = this.options.threshold,
             point,
@@ -151,9 +147,7 @@ seriesType('waterfall', 'column', {
         }
     },
 
-    /**
-     * Translate data points from raw values
-     */
+    // Translate data points from raw values
     translate: function () {
         var series = this,
             options = series.options,
@@ -278,10 +272,8 @@ seriesType('waterfall', 'column', {
         }
     },
 
-    /**
-     * Call default processData then override yData to reflect
-     * waterfall's extremes on yAxis
-     */
+    // Call default processData then override yData to reflect waterfall's
+    // extremes on yAxis
     processData: function (force) {
         var series = this,
             options = series.options,
@@ -325,9 +317,7 @@ seriesType('waterfall', 'column', {
         }
     },
 
-    /**
-     * Return y value or string if point is sum
-     */
+    // Return y value or string if point is sum
     toYData: function (pt) {
         if (pt.isSum) {
             // #3245 Error when first element is Sum or Intermediate Sum
@@ -340,9 +330,8 @@ seriesType('waterfall', 'column', {
     },
 
     /*= if (build.classic) { =*/
-    /**
-     * Postprocess mapping between options and SVG attributes
-     */
+
+    // Postprocess mapping between options and SVG attributes
     pointAttribs: function (point, state) {
 
         var upColor = this.options.upColor,
@@ -365,19 +354,16 @@ seriesType('waterfall', 'column', {
 
         return attr;
     },
+
     /*= } =*/
 
-    /**
-     * Return an empty path initially, because we need to know the
-     * stroke-width in order to set the final path.
-     */
+    // Return an empty path initially, because we need to know the stroke-width
+    // in order to set the final path.
     getGraphPath: function () {
         return ['M', 0, 0];
     },
 
-    /**
-     * Draw columns' connector lines
-     */
+    // Draw columns' connector lines
     getCrispPath: function () {
 
         var data = this.data,
@@ -419,10 +405,8 @@ seriesType('waterfall', 'column', {
         return path;
     },
 
-    /**
-     * The graph is initially drawn with an empty definition, then updated with
-     * crisp rendering.
-     */
+    // The graph is initially drawn with an empty definition, then updated with
+    // crisp rendering.
     drawGraph: function () {
         Series.prototype.drawGraph.call(this);
         this.graph.attr({
@@ -430,9 +414,7 @@ seriesType('waterfall', 'column', {
         });
     },
 
-    /**
-     * Waterfall has stacking along the x-values too.
-     */
+    // Waterfall has stacking along the x-values too.
     setStackedPoints: function () {
         var series = this,
             options = series.options,
@@ -455,10 +437,8 @@ seriesType('waterfall', 'column', {
         }
     },
 
-    /**
-     * Extremes for a non-stacked series are recorded in processData.
-     * In case of stacking, use Series.stackedYData to calculate extremes.
-     */
+    // Extremes for a non-stacked series are recorded in processData.
+    // In case of stacking, use Series.stackedYData to calculate extremes.
     getExtremes: function () {
         if (this.options.stacking) {
             return Series.prototype.getExtremes.apply(this, arguments);
@@ -478,9 +458,7 @@ seriesType('waterfall', 'column', {
         }
         return className;
     },
-    /**
-     * Pass the null test in ColumnSeries.translate.
-     */
+    // Pass the null test in ColumnSeries.translate.
     isValid: function () {
         return isNumber(this.y, true) || this.isSum || this.isIntermediateSum;
     }
