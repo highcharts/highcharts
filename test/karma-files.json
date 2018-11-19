@@ -43,6 +43,7 @@
 	"code/modules/variable-pie.src.js",
 	"code/modules/variwide.src.js",
 	"code/modules/vector.src.js",
+	"code/modules/venn.src.js",
 	"code/modules/windbarb.src.js",
 	"code/modules/wordcloud.src.js",
 	"code/modules/xrange.src.js",
