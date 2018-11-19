@@ -101,10 +101,8 @@ seriesType('errorbar', 'boxplot', {
         } :
         noop,
 
-    /**
-     * Get the width and X offset, either on top of the linked series column
-     * or standalone
-     */
+    // Get the width and X offset, either on top of the linked series column or
+    // standalone
     getColumnMetrics: function () {
         return (this.linkedParent && this.linkedParent.columnMetrics) ||
             seriesTypes.column.prototype.getColumnMetrics.call(this);
