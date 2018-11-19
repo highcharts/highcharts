@@ -18,6 +18,7 @@ import '../../indicators/bollinger-bands.src.js';
 import '../../indicators/cci.src.js';
 import '../../indicators/cmf.src.js';
 import '../../indicators/ema.src.js';
+import '../../indicators/dema.src.js';
 import '../../indicators/apo.src.js';
 import '../../indicators/ichimoku-kinko-hyo.src.js';
 import '../../indicators/keltner-channels.src.js';
