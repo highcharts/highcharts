@@ -42,7 +42,7 @@ seriesType('ema', 'sma',
              * indicator will be calculated using Close values.
              */
             index: 3,
-            period: 9
+            period: 14
         }
     }, {
         accumulatePeriodPoints: function (period, index, yVal) {
