@@ -76,9 +76,7 @@ seriesType('columnrange', 'arearange', merge(
 
 ), {
 
-    /**
-     * Translate data points from raw values x and y to plotX and plotY
-     */
+    // Translate data points from raw values x and y to plotX and plotY
     translate: function () {
         var series = this,
             yAxis = series.yAxis,
