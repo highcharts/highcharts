@@ -12,7 +12,7 @@
 	"code/modules/stock.src.js",
 	"code/modules/map.src.js",
 	"code/modules/gantt.src.js",
-	
+
 	"code/modules/exporting.src.js",
 	"code/modules/export-data.src.js",
 	"code/modules/parallel-coordinates.src.js",
@@ -64,11 +64,12 @@
 	"code/indicators/roc.src.js",
 	"code/indicators/rsi.src.js",
 	"code/indicators/stochastic.src.js",
+	"code/indicators/tema.src.js",
 	"code/indicators/volume-by-price.src.js",
 	"code/indicators/vwap.src.js",
 	"code/indicators/wma.src.js",
 	"code/indicators/zigzag.src.js",
-	
+
 	"samples/data/maps/gb-all.js",
 	"samples/data/maps/bn-all.js",
 	"samples/data/maps/ad-all.js",
@@ -79,5 +80,5 @@
 
 	"samples/data/usdeur.js",
 	"samples/data/ohlc.js"
-	
+
 ]
