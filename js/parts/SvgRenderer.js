@@ -4733,7 +4733,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         /*= } else { =*/
         needsBox = hasBGImage;
         getCrispAdjust = function () {
-            return (strokeWidth || 0) % 2 / 2;
+            return (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
         };
 
         /*= } =*/
@@ -4763,8 +4763,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             wrapper.height = (height || bBox.height || 0) + 2 * padding;
 
             // Update the label-scoped y offset
-            baselineOffset = padding +
-                renderer.fontMetrics(style && style.fontSize, text).b;
+            baselineOffset = padding + Math.min(
+                renderer.fontMetrics(style && style.fontSize, text).b,
+                // Math.min because of inline style (#9400)
+                bBox ? bBox.height : Infinity
+            );
 
             if (needsBox) {
 
@@ -4991,8 +4994,17 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     });
                     text.css(textStyles);
 
-                    if ('width' in textStyles) {
-                        updateBoxSize();
+                    // Update existing text and box
+                    if (box) {
+                        if ('width' in textStyles) {
+                            updateBoxSize();
+                        }
+
+                        // Keep updated (#9400)
+                        if ('fontSize' in textStyles) {
+                            updateBoxSize();
+                            updateTextPadding();
+                        }
                     }
                 }
                 return baseCss.call(wrapper, styles);
