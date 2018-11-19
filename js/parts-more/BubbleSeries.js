@@ -294,6 +294,7 @@ seriesType('bubble', 'scatter', {
     directTouch: true,
 
     /*= if (build.classic) { =*/
+
     pointAttribs: function (point, state) {
         var markerOptions = this.options.marker,
             fillOpacity = markerOptions.fillOpacity,
@@ -305,13 +306,12 @@ seriesType('bubble', 'scatter', {
 
         return attr;
     },
+
     /*= } =*/
 
-    /**
-     * Get the radius for each point based on the minSize, maxSize and each
-     * point's Z value. This must be done prior to Series.translate because
-     * the axis needs to add padding in accordance with the point sizes.
-     */
+    // Get the radius for each point based on the minSize, maxSize and each
+    // point's Z value. This must be done prior to Series.translate because the
+    // axis needs to add padding in accordance with the point sizes.
     getRadii: function (zMin, zMax, minSize, maxSize) {
         var len,
             i,
@@ -361,9 +361,7 @@ seriesType('bubble', 'scatter', {
         this.radii = radii;
     },
 
-    /**
-     * Perform animation on the bubbles
-     */
+    // Perform animation on the bubbles
     animate: function (init) {
         if (
             !init &&
@@ -399,9 +397,7 @@ seriesType('bubble', 'scatter', {
         }
     },
 
-    /**
-     * Extend the base translate method to handle bubble size
-     */
+    // Extend the base translate method to handle bubble size
     translate: function () {
 
         var i,
@@ -458,10 +454,8 @@ seriesType('bubble', 'scatter', {
     ttBelow: false
 });
 
-/**
- * Add logic to pad each axis with the amount of pixels
- * necessary to avoid the bubbles to overflow.
- */
+// Add logic to pad each axis with the amount of pixels necessary to avoid the
+// bubbles to overflow.
 Axis.prototype.beforePadding = function () {
     var axis = this,
         axisLength = this.len,
