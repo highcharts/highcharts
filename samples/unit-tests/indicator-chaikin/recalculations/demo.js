@@ -57,6 +57,10 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         }]
     });
 
+    var mainSeries = chart.series[0],
+        volumeSeries = chart.series[1],
+        chaikinSeries = chart.series[2];
+
     function toFastChaikinWithRound(arr) {
         return Highcharts.map(arr, function (point) {
             return parseFloat(point.toFixed(4));
@@ -64,21 +68,21 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     }
 
     assert.strictEqual(
-        chart.series[0].points.length,
-        chart.series[2].points.length + chart.series[2].options.params.periods[1] - 1,
+        mainSeries.points.length,
+        chaikinSeries.points.length + chaikinSeries.options.params.periods[1] - 1,
         'Initial number of Chaikin points is correct'
     );
 
-    chart.series[0].addPoint([112.06, 113.31, 112.43, 112.95], false);
-    chart.series[1].addPoint(21333);
+    mainSeries.addPoint([112.06, 113.31, 112.43, 112.95], false);
+    volumeSeries.addPoint(21333);
 
     assert.strictEqual(
-        chart.series[0].points.length,
-        chart.series[2].points.length + chart.series[2].options.params.periods[1] - 1,
+        mainSeries.points.length,
+        chaikinSeries.points.length + chaikinSeries.options.params.periods[1] - 1,
         'After addPoint number of Chaikin points is correct'
     );
 
-    chart.series[0].setData([
+    mainSeries.setData([
         [1133391600000, 81.22, 80.92, 81.78, 81.59],
         [1133478000000, 80.99, 80.76, 81.22, 81.06],
         [1133564400000, 81.11, 81.01, 82.87, 82.87],
@@ -96,7 +100,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         [1135119600000, 86.78, 86.57, 87.34, 87.29]
     ], false);
 
-    chart.series[1].setData([
+    volumeSeries.setData([
         [1133391600000, 7849],
         [1133478000000, 11692],
         [1133564400000, 10575],
@@ -115,12 +119,12 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     ], true);
 
     assert.strictEqual(
-        chart.series[0].points.length,
-        chart.series[2].points.length + chart.series[2].options.params.periods[1] - 1,
+        mainSeries.points.length,
+        chaikinSeries.points.length + chaikinSeries.options.params.periods[1] - 1,
         'After setData number of Chaikin points is correct'
     );
 
-    chart.series[2].update({
+    chaikinSeries.update({
         color: '#555',
         params: {
             index: 3,
@@ -129,7 +133,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        toFastChaikinWithRound(chart.series[2].yData),
+        toFastChaikinWithRound(chaikinSeries.yData),
         [
             -14939.5329,
             -12021.9458,
@@ -147,16 +151,16 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[2].graph.attr('stroke'),
+        chaikinSeries.graph.attr('stroke'),
         '#555',
         'Line color changed'
     );
 
-    chart.series[0].points[chart.series[0].points.length - 1].remove();
-    chart.series[1].points[chart.series[1].points.length - 1].remove();
+    mainSeries.points[mainSeries.points.length - 1].remove();
+    volumeSeries.points[volumeSeries.points.length - 1].remove();
 
     assert.deepEqual(
-        toFastChaikinWithRound(chart.series[2].yData),
+        toFastChaikinWithRound(chaikinSeries.yData),
         [
             -14939.5329,
             -12021.9458,

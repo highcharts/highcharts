@@ -80,6 +80,11 @@ H.seriesType('chaikin', 'sma',
                 period: period
             });
 
+            // Check if adl is calculated properly, if not skip
+            if (!ADL) {
+                return false;
+            }
+
             SPE = EMA.prototype.getValues.call(this, ADL, {
                 period: periods[0]
             });
