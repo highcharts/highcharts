@@ -10,6 +10,14 @@ var ATR = H.seriesTypes.atr,
     correctFloat = H.correctFloat,
     parentLoaded = requiredIndicatorMixin.isParentIndicatorLoaded;
 
+// Utils:
+function createPointObj(mainSeries, index, close) {
+    return {
+        close: mainSeries.yData[index][close],
+        x: mainSeries.xData[index]
+    };
+}
+
 H.seriesType('supertrend', 'sma',
     /**
      * Supertrend indicator. This series requires the `linkedTo` option to
@@ -54,8 +62,8 @@ H.seriesType('supertrend', 'sma',
         /**
          * Color of the Supertrend series line that is beneath the main series.
          *
-		 * @sample {highstock} stock/indicators/supertrend/
-		 *         risingTrendColor
+         * @sample {highstock} stock/indicators/supertrend/
+         *          risingTrendColor
          *
          * @type {Highcharts.ColorString}
          * @since 7.0.0
@@ -65,7 +73,7 @@ H.seriesType('supertrend', 'sma',
          * Color of the Supertrend series line that is above the main series.
          *
          * @sample {highstock} stock/indicators/supertrend/
-		 *         fallingTrendColor
+         *          fallingTrendColor
          *
          * @type {Highcharts.ColorString}
          * @since 7.0.0
@@ -75,7 +83,7 @@ H.seriesType('supertrend', 'sma',
          * The styles for the Supertrend line that intersect main series.
          *
          * @sample {highstock} stock/indicators/supertrend/
-		 *         changeTrendLine
+         *          changeTrendLine
          *
          * @since 7.0.0
          */
@@ -98,11 +106,11 @@ H.seriesType('supertrend', 'sma',
                 lineColor: '${palette.colors}'.split(' ')[1],
 
                 /**
-		         * The dash or dot style of the grid lines. For possible
+                 * The dash or dot style of the grid lines. For possible
                  * values, see
                  * [this demonstration](https://jsfiddle.net/gh/get/library/pure/
-		         * highcharts/highcharts/tree/master/samples/highcharts/plotoptions/
-		         * series-dashstyle-all/).
+                 * highcharts/highcharts/tree/master/samples/highcharts/plotoptions/
+                 * series-dashstyle-all/).
 		         *
 		         * @sample {highcharts} highcharts/yaxis/gridlinedashstyle/
 		         *         Long dashes
@@ -138,15 +146,14 @@ H.seriesType('supertrend', 'sma',
 
                 // series that indicator is linked to
                 mainSeries = chart.get(indicOptions.linkedTo),
-                mainLinePoints = mainSeries.points,
+                mainLinePoints = mainSeries ? mainSeries.points : [],
                 indicPoints = indicator.points,
                 indicPath = indicator.graph,
                 indicPointsLen = indicPoints.length,
 
                 // Points offset between lines
-                offset =
-                    mainLinePoints.length - indicPointsLen > 0 ?
-                    mainLinePoints.length - indicPointsLen : 0,
+                tempOffset = mainLinePoints.length - indicPointsLen,
+                offset = tempOffset > 0 ? tempOffset : 0,
                 gappedExtend = {
                     options: {
                         gapSize: indicOptions.gapSize
@@ -225,10 +232,9 @@ H.seriesType('supertrend', 'sma',
                     mainPoint &&
                     mainSeries.yData[mainPoint.index - 1]
                 ) {
-                    nextMainPoint = {};
-                    nextMainPoint.close =
-                        mainSeries.yData[mainPoint.index - 1][close];
-                    nextMainPoint.x = mainSeries.xData[mainPoint.index - 1];
+                    nextMainPoint = createPointObj(
+                        mainSeries, mainPoint.index - 1, close
+                    );
                 }
 
                 // When prevMainPoint is the last one (right plot area edge)
@@ -238,11 +244,9 @@ H.seriesType('supertrend', 'sma',
                     prevMainPoint &&
                     mainSeries.yData[prevMainPoint.index + 1]
                 ) {
-                    prevPrevMainPoint = {};
-                    prevPrevMainPoint.close =
-                        mainSeries.yData[prevMainPoint.index + 1][close];
-                    prevPrevMainPoint.x =
-                        mainSeries.xData[prevMainPoint.index + 1];
+                    prevPrevMainPoint = createPointObj(
+                        mainSeries, prevMainPoint.index + 1, close
+                    );
                 }
 
                 // When points are shifted (right or left plot area edge)
@@ -251,21 +255,17 @@ H.seriesType('supertrend', 'sma',
                     nextMainPoint &&
                     mainSeries.yData[nextMainPoint.index + 1]
                 ) {
-                    mainPoint = {};
-                    mainPoint.close =
-                        mainSeries.yData[nextMainPoint.index + 1][close];
-                    mainPoint.x =
-                        mainSeries.xData[nextMainPoint.index + 1];
+                    mainPoint = createPointObj(
+                        mainSeries, nextMainPoint.index + 1, close
+                    );
                 } else if (
                     !mainPoint &&
                     prevMainPoint &&
                     mainSeries.yData[prevMainPoint.index - 1]
                 ) {
-                    mainPoint = {};
-                    mainPoint.close =
-                        mainSeries.yData[prevMainPoint.index - 1][close];
-                    mainPoint.x =
-                        mainSeries.xData[prevMainPoint.index - 1];
+                    mainPoint = createPointObj(
+                        mainSeries, prevMainPoint.index - 1, close
+                    );
                 }
 
                 // Check if points are shifted relative to each other
@@ -280,10 +280,10 @@ H.seriesType('supertrend', 'sma',
                         mainPoint = prevMainPoint;
                     } else if (point && point.x === nextMainPoint.x) {
                         mainPoint = nextMainPoint;
-                        nextMainPoint = {};
-                        nextMainPoint.close =
-                            mainSeries.yData[mainPoint.index - 1][close];
-                        nextMainPoint.x = mainSeries.xData[mainPoint.index - 1];
+                        nextMainPoint = {
+                            close: mainSeries.yData[mainPoint.index - 1][close],
+                            x: mainSeries.xData[mainPoint.index - 1]
+                        };
                     } else if (point && point.x === prevPrevMainPoint.x) {
                         mainPoint = prevPrevMainPoint;
                         nextMainPoint = prevMainPoint;
@@ -448,7 +448,7 @@ H.seriesType('supertrend', 'sma',
 
             if (
                 (xVal.length <= period) || !isArray(yVal[0]) ||
-                yVal[0].length !== 4
+                yVal[0].length !== 4 || period < 0
             ) {
                 return false;
             }
@@ -459,10 +459,14 @@ H.seriesType('supertrend', 'sma',
 
             for (i = 0; i < ATRData.length; i++) {
                 y = yVal[periodsOffset + i];
-                prevY = yVal[periodsOffset + i - 1];
-                prevFinalUp = (i === 0) ? 0 : finalUp[i - 1];
-                prevFinalDown = (i === 0) ? 0 : finalDown[i - 1];
-                prevST = (i === 0) ? 0 : yData[i - 1];
+                prevY = yVal[periodsOffset + i - 1] || [];
+                prevFinalUp = finalUp[i - 1];
+                prevFinalDown = finalDown[i - 1];
+                prevST = yData[i - 1];
+
+                if (i === 0) {
+                    prevFinalUp = prevFinalDown = prevST = 0;
+                }
 
                 basicUp = correctFloat(
                     (y[high] + y[low]) / 2 + multiplier * ATRData[i]
