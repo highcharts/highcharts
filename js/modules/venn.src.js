@@ -133,6 +133,44 @@ function getDistanceBetweenCirclesByOverlap(r1, r2, overlap) {
 };
 
 /**
+ * Takes an array of relations and sort them by how much a set is overlapping
+ * another, ranging from high to low.
+ * NOTE: This algorithm ignores relations consisting of more than 2 sets.
+ *
+ * @param {array} relations The list of relations that should be sorted.
+ * @returns {array} Returns the sets sorted by overlap.
+ */
+var sortRelationsByOverlap = function sortRelationsByOverlap(relations) {
+    // Calculate the amount of overlap per set.
+    var mapOfIdToOverlap = relations
+        // Filter out relations consisting of 2 sets.
+        .filter(function (relation) {
+            return relation.sets.length === 2;
+        })
+        // Sum up the amount of overlap for each set.
+        .reduce(function (mapOfIdToOverlap, relation) {
+            var sets = relation.sets;
+            sets.forEach(function (set) {
+                if (!isNumber(mapOfIdToOverlap[set])) {
+                    mapOfIdToOverlap[set] = 0;
+                }
+                mapOfIdToOverlap[set] += relation.value;
+            });
+            return mapOfIdToOverlap;
+        }, {});
+
+    return relations
+        // Filter out single sets
+        .filter(function (relation) {
+            return relation.sets.length === 1;
+        })
+        // Sort them by the amount of overlap, ranging from high to low.
+        .sort(function (a, b) {
+            return mapOfIdToOverlap[b.sets[0]] - mapOfIdToOverlap[a.sets[0]];
+        });
+};
+
+/**
  * Uses a greedy approach to position all the sets. Works well with a small
  * number of sets, and are in these cases a good choice aesthetically.
  *
@@ -167,7 +205,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
      * Find overlap between sets. Ignore relations with more then 2 sets.
      * Sort them by the sum of their size from large to small.
      */
-    var sortedByOverlap = [];
+    var sortedByOverlap = sortRelationsByOverlap(relations);
 
     // Position the most overlapped set at 0,0.
     positionSet(sortedByOverlap.pop(), { x: 0, y: 0 });
@@ -369,7 +407,8 @@ var vennSeries = {
         // });
     },
     utils: {
-        processVennData: processVennData
+        processVennData: processVennData,
+        sortRelationsByOverlap: sortRelationsByOverlap
     }
 };
 
