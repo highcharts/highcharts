@@ -153,3 +153,32 @@ QUnit.test('processVennData', function (assert) {
         'should remove relations that has invalid values in sets.'
     );
 });
+
+QUnit.test('sortRelationsByOverlap', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        sortRelationsByOverlap = vennPrototype.utils.sortRelationsByOverlap,
+        data;
+
+    data = [
+        { sets: ['A'], value: 2 },
+        { sets: ['B'], value: 2 },
+        { sets: ['C'], value: 2 },
+        { sets: ['A', 'B'], value: 1 },
+        { sets: ['A', 'C'], value: 2 },
+        { sets: ['B', 'C'], value: 3 }
+    ];
+    assert.deepEqual(
+        sortRelationsByOverlap(data),
+        [{
+            sets: ['C'],
+            value: 2
+        }, {
+            sets: ['B'],
+            value: 2
+        }, {
+            sets: ['A'],
+            value: 2
+        }],
+        'should sort sets from the most overlapping to the least.'
+    );
+});
