@@ -1201,18 +1201,26 @@ const jsdoc = () => {
         .then(() => generateAPIDocs(optionsAPI));
 };
 
-const jsdocOptions = () => {
+/**
+ * Copies additional JSON-based error references.
+ */
+const jsdocErrors = () => {
 
-    return generateAPIDocs({
-        version: getBuildProperties().version,
-        treeFile: './tree.json',
-        output: './build/api',
-        onlyBuildCurrent: true
-    });
+    let copyTargets = [
+        'build/api/gantt',
+        'build/api/highcharts',
+        'build/api/highstock',
+        'build/api/highmaps'
+    ];
+
+    return Promise.all(copyTargets.map(copyTarget => copyFile(
+        'errors/errors.json',
+        `${copyTarget}/errors.json`
+    )));
 };
 
 /**
- * Create additional JSON-based class references from JSDOC
+ * Creates additional JSON-based class references from JSDoc.
  */
 const jsdocNamespace = () => {
 
@@ -1253,6 +1261,19 @@ const jsdocNamespace = () => {
     };
 
     return new Promise(aGulp);
+};
+
+/**
+ * Creates JSON-based option references from JSDoc.
+ */
+const jsdocOptions = () => {
+
+    return generateAPIDocs({
+        version: getBuildProperties().version,
+        treeFile: './tree.json',
+        output: './build/api',
+        onlyBuildCurrent: true
+    });
 };
 
 /**
@@ -1297,8 +1318,9 @@ gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
-gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
+gulp.task('jsdoc', ['jsdoc-errors', 'jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
+gulp.task('jsdoc-errors', ['scripts'], jsdocErrors);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
 gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], tsd);
@@ -1312,7 +1334,7 @@ gulp.task('tsd-lint', ['tsd'], tsdLint);
  * TODO add --help command to inform about usage.
  * @return undefined
  */
-gulp.task('scripts', () => {
+gulp.task('scripts', ['jsdoc-errors'], () => {
     const options = {
         debug: argv.d || false,
         files: (

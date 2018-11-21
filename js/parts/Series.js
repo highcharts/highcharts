@@ -2652,7 +2652,7 @@ null
 
             // The series needs an X and an Y axis
             if (!series[AXIS] && series.optionalAxis !== AXIS) {
-                H.error(18, true);
+                H.error(18, true, chart);
             }
 
         });
@@ -3210,7 +3210,7 @@ null
                 } else {
                     // Highcharts expects configs to be numbers or arrays in
                     // turbo mode
-                    H.error(12);
+                    H.error(12, false, chart);
                 }
             } else {
                 for (i = 0; i < dataLength; i++) {
@@ -3228,7 +3228,7 @@ null
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
             if (yData && isString(yData[0])) {
-                H.error(14, true);
+                H.error(14, true, chart);
             }
 
             series.data = [];
@@ -3380,7 +3380,7 @@ null
             // data grouping and navigation in Stock charts (#725) and width
             // calculation of columns (#1900)
             } else if (distance < 0 && throwOnUnsorted) {
-                H.error(15);
+                H.error(15, false, series.chart);
                 throwOnUnsorted = false; // Only once
             }
         }

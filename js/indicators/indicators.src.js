@@ -191,7 +191,9 @@ seriesType('sma', 'line',
                 return error(
                     'Series ' +
                     indicator.options.linkedTo +
-                    ' not found! Check `linkedTo`.'
+                    ' not found! Check `linkedTo`.',
+                    false,
+                    chart
                 );
             }
 

@@ -414,10 +414,13 @@ var charts = H.charts,
  * @param {boolean} [stop=false]
  *        Whether to throw an error or just log a warning in the console.
  */
-H.error = function (code, stop) {
+H.error = function (code, stop, chart) {
     var msg = H.isNumber(code) ?
         'Highcharts error #' + code + ': www.highcharts.com/errors/' + code :
         code;
+    if (chart) {
+        H.fireEvent(chart, 'displayError', { code: code });
+    }
     if (stop) {
         throw new Error(msg);
     }

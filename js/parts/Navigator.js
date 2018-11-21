@@ -2480,7 +2480,7 @@ wrap(Series.prototype, 'addPoint', function (
         isObject(options, true) &&
         this.chart.navigator
     ) {
-        error(20, true);
+        error(20, true, this.chart);
     }
     proceed.call(this, options, redraw, shift, animation);
 });
@@ -2510,4 +2510,3 @@ Chart.prototype.callbacks.push(function (chart) {
         navigator.render(extremes.min, extremes.max);
     }
 });
-
