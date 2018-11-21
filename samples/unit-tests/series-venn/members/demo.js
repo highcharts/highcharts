@@ -1,3 +1,84 @@
+QUnit.test('addOverlapToRelations', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        addOverlapToSets = vennPrototype.utils.addOverlapToSets,
+        data,
+        set;
+
+    var isSetWithId = function (id) {
+        return function (x) {
+            return x.sets.length === 1 && x.sets[0] === id;
+        };
+    };
+
+    data = [
+        { sets: ['A'], value: 2 },
+        { sets: ['B'], value: 2 },
+        { sets: ['C'], value: 2 },
+        { sets: ['A', 'B'], value: 1 },
+        { sets: ['A', 'C'], value: 2 },
+        { sets: ['B', 'C'], value: 3 }
+    ];
+
+    addOverlapToSets(data);
+
+    set = data.find(isSetWithId('A'));
+    assert.strictEqual(
+        set.totalOverlap,
+        3,
+        'should set the property totalOverlap on set A to 3.'
+    );
+    assert.deepEqual(
+        set.overlapping,
+        {
+            'B': 1,
+            'C': 2
+        },
+        'should set the property overlapping on set A to include a map from id of overlapping set to the amount of overlap.'
+    );
+
+    set = data.find(isSetWithId('B'));
+    assert.strictEqual(
+        set.totalOverlap,
+        4,
+        'should set the property totalOverlap on set B to 4.'
+    );
+    assert.deepEqual(
+        set.overlapping,
+        {
+            'A': 1,
+            'C': 3
+        },
+        'should set the property overlapping on set B to include a map from id of overlapping set to the amount of overlap.'
+    );
+
+    set = data.find(isSetWithId('C'));
+    assert.strictEqual(
+        set.totalOverlap,
+        5,
+        'should set the property totalOverlap on set C to 5.'
+    );
+    assert.deepEqual(
+        set.overlapping,
+        {
+            'A': 2,
+            'B': 3
+        },
+        'should set the property overlapping on set C to include a map from id of overlapping set to the amount of overlap.'
+    );
+
+    assert.strictEqual(
+        data.some(function (x) {
+            return (
+                x.sets.length !== 1 &&
+                typeof x.totalOverlap !== 'undefined' &&
+                typeof x.overlapping !== 'undefined'
+            );
+        }),
+        false,
+        'should not set the properties totalOverlap or overlapping on a relation that is not a set.'
+    );
+});
+
 QUnit.test('processVennData', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         processVennData = vennPrototype.utils.processVennData,
@@ -154,31 +235,25 @@ QUnit.test('processVennData', function (assert) {
     );
 });
 
-QUnit.test('sortRelationsByOverlap', function (assert) {
+QUnit.test('sortByTotalOverlap', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        sortRelationsByOverlap = vennPrototype.utils.sortRelationsByOverlap,
-        data;
+        sortByTotalOverlap = vennPrototype.utils.sortByTotalOverlap;
 
-    data = [
-        { sets: ['A'], value: 2 },
-        { sets: ['B'], value: 2 },
-        { sets: ['C'], value: 2 },
-        { sets: ['A', 'B'], value: 1 },
-        { sets: ['A', 'C'], value: 2 },
-        { sets: ['B', 'C'], value: 3 }
-    ];
     assert.deepEqual(
-        sortRelationsByOverlap(data),
-        [{
-            sets: ['C'],
-            value: 2
-        }, {
-            sets: ['B'],
-            value: 2
-        }, {
-            sets: ['A'],
-            value: 2
-        }],
-        'should sort sets from the most overlapping to the least.'
+        sortByTotalOverlap({ totalOverlap: 1 }, { totalOverlap: 2 }),
+        1,
+        'should return >0 when b is greater than a.'
+    );
+
+    assert.deepEqual(
+        sortByTotalOverlap({ totalOverlap: 2 }, { totalOverlap: 1 }),
+        -1,
+        'should return <0 when a is greater than b.'
+    );
+
+    assert.deepEqual(
+        sortByTotalOverlap({ totalOverlap: 2 }, { totalOverlap: 2 }),
+        0,
+        'should return 0 when a is equal to b.'
     );
 });
