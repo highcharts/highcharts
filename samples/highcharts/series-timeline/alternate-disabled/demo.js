@@ -5,9 +5,10 @@ Highcharts.chart('container', {
         text: "World War Two Timeline"
     },
     subtitle: {
-        text: 'Info source: <a href="www.historyonthenet.com">www.historyonthenet.com</a>'
+        text: 'Info source: <a href="https://www.historyonthenet.com">www.historyonthenet.com</a>'
     },
     series: [{
+        showInLegend: false,
         type: 'timeline',
         dataLabels: {
             alternate: false,

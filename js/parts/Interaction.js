@@ -71,6 +71,7 @@ TrackerMixin = H.TrackerMixin = {
 
         // Add the event listeners, we need to do this only once
         if (!series._hasTracking) {
+
             each(series.trackerGroups, function (key) {
                 if (series[key]) { // we don't always have dataLabelsGroup
                     series[key]

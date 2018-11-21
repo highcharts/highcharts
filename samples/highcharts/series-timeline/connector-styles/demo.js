@@ -1,5 +1,3 @@
-
-
 Highcharts.chart('container', {
     title: {
         text: "World War Two Timeline"
@@ -10,6 +8,10 @@ Highcharts.chart('container', {
     series: [{
         type: 'timeline',
         showInLegend: false,
+        dataLabels: {
+            connectorColor: '#66e',
+            connectorWidth: 5
+        },
         data: [{
             date: 'September 1939',
             label: 'Hitler invades Poland',
