@@ -11,7 +11,8 @@
 import draw from '../mixins/draw-point.js';
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
-var isArray = H.isArray,
+var extend = H.extend,
+    isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
     isString = H.isString,
@@ -132,42 +133,69 @@ function getDistanceBetweenCirclesByOverlap(r1, r2, overlap) {
     return 0;
 };
 
+var isSet = function (x) {
+    return x.sets.length === 1;
+};
+
 /**
- * Takes an array of relations and sort them by how much a set is overlapping
- * another, ranging from high to low.
+ * Takes an array of relations and adds the properties totalOverlap and
+ * overlapping to each set.
+ * The property totalOverlap is the sum of value for each relation where this
+ * set is included.
+ * The property overlapping is a map of how much this set is overlapping another
+ * set.
  * NOTE: This algorithm ignores relations consisting of more than 2 sets.
  *
  * @param {array} relations The list of relations that should be sorted.
- * @returns {array} Returns the sets sorted by overlap.
+ * @returns {array} Returns the modified input relations with added properties
+ * totalOverlap and overlapping.
  */
-var sortRelationsByOverlap = function sortRelationsByOverlap(relations) {
+var addOverlapToSets = function addOverlapToSets(relations) {
     // Calculate the amount of overlap per set.
-    var mapOfIdToOverlap = relations
+    var mapOfIdToProps = relations
         // Filter out relations consisting of 2 sets.
         .filter(function (relation) {
             return relation.sets.length === 2;
         })
         // Sum up the amount of overlap for each set.
-        .reduce(function (mapOfIdToOverlap, relation) {
+        .reduce(function (map, relation) {
             var sets = relation.sets;
-            sets.forEach(function (set) {
-                if (!isNumber(mapOfIdToOverlap[set])) {
-                    mapOfIdToOverlap[set] = 0;
+            sets.forEach(function (set, i, arr) {
+                if (!isObject(map[set])) {
+                    map[set] = {
+                        overlapping: {},
+                        totalOverlap: 0
+                    };
                 }
-                mapOfIdToOverlap[set] += relation.value;
+                map[set].totalOverlap += relation.value;
+                map[set].overlapping[arr[1 - i]] = relation.value;
             });
-            return mapOfIdToOverlap;
+            return map;
         }, {});
 
-    return relations
+    relations
         // Filter out single sets
-        .filter(function (relation) {
-            return relation.sets.length === 1;
-        })
-        // Sort them by the amount of overlap, ranging from high to low.
-        .sort(function (a, b) {
-            return mapOfIdToOverlap[b.sets[0]] - mapOfIdToOverlap[a.sets[0]];
+        .filter(isSet)
+        // Extend the set with the calculated properties.
+        .forEach(function (set) {
+            var properties = mapOfIdToProps[set.sets[0]];
+            extend(set, properties);
         });
+
+    // Returns the modified relations.
+    return relations;
+};
+
+/**
+ * Takes two sets and finds the one with the largest total overlap.
+ *
+ * @param {object} a The first set to compare.
+ * @param {object} b The second set to compare.
+ * @returns {number} Returns 0 if a and b are equal, <0 if a is greater, >0 if b
+ * is greater.
+ */
+var sortByTotalOverlap = function sortByTotalOverlap(a, b) {
+    return b.totalOverlap - a.totalOverlap;
 };
 
 /**
@@ -183,9 +211,19 @@ var sortRelationsByOverlap = function sortRelationsByOverlap(relations) {
  * @returns List of circles and their calculated positions.
  */
 var layoutGreedyVenn = function layoutGreedyVenn(relations) {
-    var positioned = [],
-        overlap,
-        radius;
+    var positionedSets = [];
+
+    // Define a circle for each set.
+    relations
+        .filter(function (relation) {
+            return relation.sets.length === 1;
+        }).forEach(function (relation) {
+            relation.circle = {
+                x: 0,
+                y: 0,
+                r: Math.sqrt(relation.value / Math.PI)
+            };
+        });
 
     /**
      * Takes a set and updates the position, and add the set to the list of
@@ -196,23 +234,33 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
      * @returns {undefined} Returns undefined.
      */
     var positionSet = function positionSet(set, coordinates) {
+        var circle = set.circle;
+        circle.x = coordinates.x;
+        circle.y = coordinates.y;
+        positionedSets.push(set);
     };
 
-    // Define a circle for each set.
-    var circles = [];
+    // Find overlap between sets. Ignore relations with more then 2 sets.
+    addOverlapToSets(relations);
 
-    /**
-     * Find overlap between sets. Ignore relations with more then 2 sets.
-     * Sort them by the sum of their size from large to small.
-     */
-    var sortedByOverlap = sortRelationsByOverlap(relations);
+    // Sort sets by the sum of their size from large to small.
+    var sortedByOverlap = relations
+        .filter(isSet)
+        .sort(sortByTotalOverlap);
 
     // Position the most overlapped set at 0,0.
     positionSet(sortedByOverlap.pop(), { x: 0, y: 0 });
 
     // Iterate and position the remaining sets.
     sortedByOverlap.forEach(function (set) {
-        var bestPosition = positioned.reduce(function (best, circle) {
+        var radius = set.circle.r,
+            overlapping = set.overlapping;
+
+        var bestPosition = positionedSets
+        .reduce(function (best, positionedSet) {
+            var circle = positionedSet.circle,
+                overlap = overlapping[positionedSet.sets[0]];
+
             // Calculate the distance between the sets to get the correct
             // overlap
             var distance = getDistanceBetweenCirclesByOverlap(
@@ -285,7 +333,7 @@ var isValidRelation = function (x) {
 };
 
 var isValidSet = function (x) {
-    return (isValidRelation(x) && x.sets.length === 1 && x.value > 0);
+    return (isValidRelation(x) && isSet(x) && x.value > 0);
 };
 
 /**
@@ -407,8 +455,9 @@ var vennSeries = {
         // });
     },
     utils: {
+        addOverlapToSets: addOverlapToSets,
         processVennData: processVennData,
-        sortRelationsByOverlap: sortRelationsByOverlap
+        sortByTotalOverlap: sortByTotalOverlap
     }
 };
 
