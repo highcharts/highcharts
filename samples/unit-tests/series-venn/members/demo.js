@@ -79,6 +79,23 @@ QUnit.test('addOverlapToRelations', function (assert) {
     );
 });
 
+QUnit.test('getDistanceBetweenPoints', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        getDistanceBetweenPoints = vennPrototype.utils.getDistanceBetweenPoints;
+
+    assert.strictEqual(
+        getDistanceBetweenPoints({ x: 0, y: 0 }, { x: 2, y: 0 }),
+        2,
+        'should return 2 when points have the coordinates (0,0) and (2, 0).'
+    );
+
+    assert.strictEqual(
+        getDistanceBetweenPoints({ x: -1, y: 1 }, { x: 3, y: 4 }),
+        5,
+        'should return 2 when points have the coordinates (-1,1) and (3, 4).'
+    );
+});
+
 QUnit.test('processVennData', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         processVennData = vennPrototype.utils.processVennData,

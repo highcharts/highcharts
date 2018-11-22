@@ -9,9 +9,11 @@
 */
 'use strict';
 import draw from '../mixins/draw-point.js';
+import geometry from '../mixins/geometry.js';
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
 var extend = H.extend,
+    getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
@@ -24,19 +26,6 @@ var objectValues = function objectValues(obj) {
     return keys(obj).map(function (x) {
         return obj[x];
     });
-};
-
-/**
- * Calculates the distance between two circles based on their positions.
- *
- * TODO: implement this.
- *
- * @param {object} circle1 The properties of the first circle.
- * @param {object} circle2 The properties of the second circle.
- * @returns {number} Returns the distance between the two circles.
- */
-var distanceBetweenCircles = function distanceBetweenCircles(circle1, circle2) {
-    return 0;
 };
 
 /**
@@ -75,7 +64,7 @@ var getOverlapBetweenCircles = function getOverlapBetweenCircles(circles) {
         overlap = getOverlapBetweenCirclesByDistance(
             circle1.radius,
             circle2.radius,
-            distanceBetweenCircles(circle1, circle2)
+            getDistanceBetweenPoints(circle1, circle2)
         );
     }
 
@@ -456,6 +445,7 @@ var vennSeries = {
     },
     utils: {
         addOverlapToSets: addOverlapToSets,
+        getDistanceBetweenPoints: getDistanceBetweenPoints,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }
