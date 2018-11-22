@@ -4284,7 +4284,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 linkedParentExtremes.dataMax
             );
             if (options.type !== axis.linkedParent.options.type) {
-                H.error(11, 1); // Can't link axes of different type
+                H.error(11, 1, chart); // Can't link axes of different type
             }
 
         // Initial min and max from the extreme data values
@@ -4312,7 +4312,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 !secondPass &&
                 Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0
             ) { // #978
-                H.error(10, 1); // Can't plot negative values on log axis
+                H.error(10, 1, chart); // Can't plot negative values on log axis
             }
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
@@ -4570,7 +4570,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 )
             ) {
                 tickPositions = [this.min, this.max];
-                H.error(19);
+                H.error(19, false, this.chart);
 
             } else if (this.isDatetimeAxis) {
                 tickPositions = this.getTimeTicks(

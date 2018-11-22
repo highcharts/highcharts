@@ -423,7 +423,7 @@ seriesType('vbp', 'sma',
             var indicator = this,
                 xValues = series.processedXData,
                 yValues = series.processedYData,
-                chart = series.chart,
+                chart = indicator.chart,
                 ranges = params.ranges,
                 VBP = [],
                 xData = [],
@@ -433,11 +433,12 @@ seriesType('vbp', 'sma',
                 priceZones;
 
             // Checks if base series exists
-            if (!chart) {
+            if (!series.chart) {
                 return H.error(
                     'Base series not found! In case it has been removed, add ' +
                     'a new one.',
-                    true
+                    true,
+                    chart
                 );
             }
 
@@ -447,7 +448,8 @@ seriesType('vbp', 'sma',
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
-                    true
+                    true,
+                    chart
                 );
             }
 
@@ -459,7 +461,8 @@ seriesType('vbp', 'sma',
                     'Type of ' +
                     series.name +
                     ' series is different than line, OHLC or candlestick.',
-                    true
+                    true,
+                    chart
                 );
             }
 

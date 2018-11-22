@@ -16,6 +16,13 @@ function CrookedLine() {
 }
 
 H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
+    /**
+     * Overrides default setter to get axes from typeOptions.
+     */
+    setClipAxes: function () {
+        this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis];
+        this.clipYAxis = this.chart.yAxis[this.options.typeOptions.yAxis];
+    },
     getPointsOptions: function () {
         var typeOptions = this.options.typeOptions;
 

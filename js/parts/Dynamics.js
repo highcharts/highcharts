@@ -1101,7 +1101,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             if (seriesTypes[newType || oldType]) {
                 extend(series, seriesTypes[newType || oldType].prototype);
             } else {
-                H.error(17, true);
+                H.error(17, true, chart);
             }
 
             // Re-register groups (#3094) and other preserved properties
