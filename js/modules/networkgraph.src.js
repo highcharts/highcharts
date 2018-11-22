@@ -15,7 +15,7 @@ var defined = H.defined,
     extend = H.extend,
     seriesType = H.seriesType,
     pick = H.pick,
-    Point = H.point;
+    Point = H.Point;
 
 /**
  * A networkgraph is a type of relationship chart, where connnections
@@ -278,6 +278,9 @@ seriesType('networkgraph', 'line', {
 
             // Algorithm:
             function localLayout() {
+                if (fx.stopped) {
+                    return true;
+                }
                 // Repulsive forces:
                 utils.applyRepulsiveForces.call(series, nodes, k);
 
@@ -313,8 +316,9 @@ seriesType('networkgraph', 'line', {
             }
 
             // Animate it:
-            fx = new H.Fx(
-                mockAnimator, {
+            series.simulation = fx = new H.Fx(
+                mockAnimator,
+                {
                     duration: 1000 / maxIterations,
                     easing: function () {},
                     complete: localLayout,
@@ -520,16 +524,25 @@ seriesType('networkgraph', 'line', {
     },
     // Default utils:
     destroy: function () {
-        this.linksFrom.forEach(
-            function (linkFrom) {
-                linkFrom.graphic = linkFrom.graphic.destroy();
-            }
-        );
+        if (this.isNode) {
+            this.linksFrom.forEach(
+                function (linkFrom) {
+                    if (linkFrom.graphic) {
+                        linkFrom.graphic = linkFrom.graphic.destroy();
+                    }
+                }
+            );
+        }
 
-        return Point.destroy.apply(this, arguments);
+        return Point.prototype.destroy.apply(this, arguments);
     }
 });
 
+H.addEvent(H.seriesTypes.networkgraph.prototype, 'updatedData', function () {
+    if (this.simulation) {
+        this.simulation.stopped = true;
+    }
+});
 
 /**
  * A `networkgraph` series. If the [type](#series.networkgraph.type) option is
