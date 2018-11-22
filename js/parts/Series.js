@@ -2995,26 +2995,41 @@ null
 
         // Iterate the new data
         data.forEach(function (pointOptions) {
-            var x,
-                pointIndex;
+            var id,
+                matchingPoint,
+                x,
+                pointIndex,
+                optionsObject = (
+                    H.defined(pointOptions) &&
+                    this.pointClass.prototype.optionsToObject.call(
+                        { series: this },
+                        pointOptions
+                    )
+                ) || {};
 
             // Get the x of the new data point
-            x = (
-                H.defined(pointOptions) &&
-                this.pointClass.prototype.optionsToObject.call(
-                    { series: this },
-                    pointOptions
-                ).x
-            );
+            x = optionsObject.x;
+            id = optionsObject.id;
 
-            if (isNumber(x)) {
+            if (id || isNumber(x)) {
+                if (id) {
+                    matchingPoint = this.chart.get(id);
+                    pointIndex = matchingPoint && matchingPoint.x;
+                }
+
                 // Search for the same X in the existing data set
-                pointIndex = this.xData.indexOf(x, lastIndex);
+                if (pointIndex === undefined && isNumber(x)) {
+                    pointIndex = this.xData.indexOf(x, lastIndex);
+                }
 
                 // Matching X not found
                 // or used already due to ununique x values (#8995),
                 // add point (but later)
-                if (pointIndex === -1 || oldData[pointIndex].touched) {
+                if (
+                    pointIndex === -1 ||
+                    pointIndex === undefined ||
+                    oldData[pointIndex].touched
+                ) {
                     pointsToAdd.push(pointOptions);
 
                 // Matching X found, update
@@ -3115,11 +3130,13 @@ null
      *        configuration object to set duration or easing.
      *
      * @param {boolean} [updatePoints=true]
-     *        When the updated data is the same length as the existing data, or
-     *        points can be matched by X values, points will be updated instead
-     *        of replaced. This allows updating with animation and performs
-     *        better. In this case, the original array is not passed by
-     *        reference. Set `false` to prevent.
+     *        When this is true, points will be updated instead of replaced
+     *        whenever possible. This occurs a) when the updated data is the
+     *        same length as the existing data, b) when points are matched by
+     *        their id's, or c) when points can be matched by X values. This
+     *        allows updating with animation and performs better. In this case,
+     *        the original array is not passed by reference. Set `false` to
+     *        prevent.
      */
     setData: function (data, redraw, animation, updatePoints) {
         var series = this,
