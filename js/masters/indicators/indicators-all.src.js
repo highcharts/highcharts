@@ -14,6 +14,7 @@ import '../../indicators/accumulation-distribution.src.js';
 import '../../indicators/aroon.src.js';
 import '../../indicators/aroon-oscillator.src.js';
 import '../../indicators/atr.src.js';
+import '../../indicators/awesome.src.js';
 import '../../indicators/bollinger-bands.src.js';
 import '../../indicators/cci.src.js';
 import '../../indicators/chaikin.src.js';
