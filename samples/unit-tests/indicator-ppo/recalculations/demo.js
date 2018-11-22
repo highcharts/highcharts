@@ -28,7 +28,7 @@ QUnit.test('Test Percentage Price Oscillator calculations on data updates.', fun
             yAxis: 1,
             type: 'ppo',
             linkedTo: 'main',
-            color: 'tomato',
+            color: '#cc5555',
             lineWidth: 1,
             params: {
                 index: 3,
@@ -82,7 +82,7 @@ QUnit.test('Test Percentage Price Oscillator calculations on data updates.', fun
     );
 
     chart.series[1].update({
-        color: 'tomato',
+        color: '#001e84',
         params: {
             index: 3,
             periods: [2, 5]
@@ -109,7 +109,7 @@ QUnit.test('Test Percentage Price Oscillator calculations on data updates.', fun
 
     assert.strictEqual(
         chart.series[1].graph.attr('stroke'),
-        'tomato',
+        '#001e84',
         'Line color changed'
     );
 
