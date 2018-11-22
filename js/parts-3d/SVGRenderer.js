@@ -1,17 +1,21 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
+ *
+ * Extensions to the SVGRenderer class to enable 3D shapes
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Color.js';
 import '../parts/SvgRenderer.js';
+
 var cos = Math.cos,
     PI = Math.PI,
     sin = Math.sin;
-
 
 var animObject = H.animObject,
     charts = H.charts,
@@ -28,16 +32,12 @@ var animObject = H.animObject,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
     wrap = H.wrap;
-/*
-    EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
-*/
+
 // HELPER METHODS //
 
 var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
-/** Method to construct a curved path
-  * Can 'wrap' around more then 180 degrees
-  */
+// Method to construct a curved path. Can 'wrap' around more then 180 degrees
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
     var result = [],
         arcAngle = end - start;
@@ -76,10 +76,9 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 }
 
 /*= if (!build.classic) { =*/
-/**
- * Override the SVGRenderer initiator to add definitions used by brighter and
- * darker faces of the cuboids.
- */
+
+// Override the SVGRenderer initiator to add definitions used by brighter and
+// darker faces of the cuboids.
 wrap(SVGRenderer.prototype, 'init', function (proceed) {
     proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -112,6 +111,7 @@ wrap(SVGRenderer.prototype, 'init', function (proceed) {
         });
     }, this);
 });
+
 /*= } =*/
 
 SVGRenderer.prototype.toLinePath = function (points, closed) {
@@ -147,11 +147,9 @@ SVGRenderer.prototype.toLineSegments = function (points) {
     return result;
 };
 
-/**
- * A 3-D Face is defined by it's 3D vertexes, and is only
- * visible if it's vertexes are counter-clockwise (Back-face culling).
- * It is used as a polyhedron Element
- */
+// A 3-D Face is defined by it's 3D vertexes, and is only visible if it's
+// vertexes are counter-clockwise (Back-face culling). It is used as a
+// polyhedron Element
 SVGRenderer.prototype.face3d = function (args) {
     var renderer = this,
         ret = this.createElement('path');
@@ -233,11 +231,9 @@ SVGRenderer.prototype.face3d = function (args) {
     return ret.attr(args);
 };
 
-/**
- * A Polyhedron is a handy way of defining a group of 3-D faces. It's only
- * attribute is `faces`, an array of attributes of each one of it's Face3D
- * instances.
- */
+// A Polyhedron is a handy way of defining a group of 3-D faces. It's only
+// attribute is `faces`, an array of attributes of each one of it's Face3D
+// instances.
 SVGRenderer.prototype.polyhedron = function (args) {
     var renderer = this,
         result = this.g(),
@@ -416,9 +412,7 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
     return result;
 };
 
-/**
- *    Generates a cuboid
- */
+// Generates a cuboid
 H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     var x = shapeArgs.x,
         y = shapeArgs.y,
@@ -494,7 +488,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         return pArr[i];
     }
 
-    /*
+    /* *
      * First value - path with specific side
      * Second  value - added information about side for later calculations.
      * Possible second values are 0 for path1, 1 for path2 and -1 for no path
@@ -536,16 +530,14 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     path3 = shape[0];
     isRight = shape[1];
 
-    /*
-     * New block used for calculating zIndex. It is basing on X, Y and Z
-     * position of specific columns. All zIndexes (for X, Y and Z values) are
-     * added to the final zIndex, where every value has different priority. The
-     * biggest priority is in X and Z directions, the lowest index is for
-     * stacked columns (Y direction and the same X and Z positions). Big
-     * differences between priorities is made because we need to ensure that
-     * even for big changes in Y and Z parameters all columns will be drawn
-     * correctly.
-     */
+    /* New block used for calculating zIndex. It is basing on X, Y and Z
+       position of specific columns. All zIndexes (for X, Y and Z values) are
+       added to the final zIndex, where every value has different priority. The
+       biggest priority is in X and Z directions, the lowest index is for
+       stacked columns (Y direction and the same X and Z positions). Big
+       differences between priorities is made because we need to ensure that
+       even for big changes in Y and Z parameters all columns will be drawn
+       correctly. */
 
     if (isRight === 1) {
         zIndex += incrementX * (1000 - x);
@@ -583,10 +575,8 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         renderer = wrapper.renderer,
         customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end'];
 
-    /**
-     * Get custom attributes. Don't mutate the original object and return an
-     * object with only custom attr.
-     */
+    // Get custom attributes. Don't mutate the original object and return an
+    // object with only custom attr.
     function suckOutCustom(params) {
         var hasCA = false,
             ca = {};
@@ -615,9 +605,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     wrapper.inn = renderer.path();
     wrapper.out = renderer.path();
 
-    /**
-     * Add all faces
-     */
+    // Add all faces
     wrapper.onAdd = function () {
         var parent = wrapper.parentGroup,
             className = wrapper.attr('class');
@@ -644,9 +632,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         };
     });
 
-    /**
-     * Compute the transformed paths and set them to the composite shapes
-     */
+    // Compute the transformed paths and set them to the composite shapes
     wrapper.setPaths = function (attribs) {
 
         var paths = wrapper.renderer.arc3dPath(attribs),
@@ -701,9 +687,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         }
     );
 
-    /**
-     * Override attr to remove shape attributes and use those to set child paths
-     */
+    // Override attr to remove shape attributes and use those to set child paths
     wrap(wrapper, 'attr', function (proceed, params) {
         var ca;
         if (typeof params === 'object') {
@@ -716,10 +700,8 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         return proceed.apply(this, [].slice.call(arguments, 1));
     });
 
-    /**
-     * Override the animate function by sucking out custom parameters related to
-     * the shapes directly, and update the shapes from the animation step.
-     */
+    // Override the animate function by sucking out custom parameters related to
+    // the shapes directly, and update the shapes from the animation step.
     wrap(wrapper, 'animate', function (proceed, params, animation, complete) {
         var ca,
             from = this.attribs,
@@ -798,9 +780,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     return wrapper;
 };
 
-/**
- * Generate the paths required to draw a 3D arc
- */
+// Generate the paths required to draw a 3D arc
 SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     var cx = shapeArgs.x, // x coordinate of the center
         cy = shapeArgs.y, // y coordinate of the center
