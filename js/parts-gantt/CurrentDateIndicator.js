@@ -1,44 +1,49 @@
-/**
-* (c) 2016 Highsoft AS
-* Author: Lars A. V. Cabrera
-*
-* License: www.highcharts.com/license
-*/
-'use strict';
-import H from '../parts/Globals.js';
-
-/**
- * Show an indicator on the axis for the current date and time. Can be a boolean
- * or a configuration object similar to [xAxis.plotLines](#xAxis.plotLines).
+/* *
+ * (c) 2016 Highsoft AS
+ * Author: Lars A. V. Cabrera
  *
- * @type {Object}
- * @extends {xAxis.plotLines}
- * @excluding value
- * @sample  gantt/current-date-indicator/demo
- *          Current date indicator enabled
- * @sample  gantt/current-date-indicator/object-config
- *          Current date indicator with custom options
- * @product gantt
- * @apioption xAxis.currentDateIndicator
+ * License: www.highcharts.com/license
  */
+
+'use strict';
+
+import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
     Axis = H.Axis,
     PlotLineOrBand = H.PlotLineOrBand,
-    merge = H.merge,
-    defaultConfig = {
-        currentDateIndicator: true,
-        color: '${palette.highlightColor20}',
-        width: 2,
-        label: {
-            format: '%a, %b %d %Y, %H:%M',
-            formatter: undefined,
-            rotation: 0,
-            style: {
-                fontSize: '10px'
-            }
+    merge = H.merge;
+
+var defaultConfig = {
+    /**
+     * Show an indicator on the axis for the current date and time. Can be a
+     * boolean or a configuration object similar to
+     * [xAxis.plotLines](#xAxis.plotLines).
+     *
+     * @sample gantt/current-date-indicator/demo
+     *         Current date indicator enabled
+     * @sample gantt/current-date-indicator/object-config
+     *         Current date indicator with custom options
+     *
+     * @type      {boolean|*}
+     * @default   true
+     * @extends   {xAxis.plotLines}
+     * @excluding value
+     * @product   gantt
+     * @apioption xAxis.currentDateIndicator
+     */
+    currentDateIndicator: true,
+    color: '${palette.highlightColor20}',
+    width: 2,
+    label: {
+        format: '%a, %b %d %Y, %H:%M',
+        formatter: undefined,
+        rotation: 0,
+        style: {
+            fontSize: '10px'
         }
-    };
+    }
+};
 
 addEvent(Axis, 'afterSetOptions', function () {
     var options = this.options,
