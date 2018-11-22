@@ -15,6 +15,9 @@ Highcharts.chart('container', {
     title: {
         text: 'Networkgraph'
     },
+    subtitle: {
+        text: 'animated'
+    },
     plotOptions: {
         networkgraph: {
             keys: ['from', 'to', 'weight'],
