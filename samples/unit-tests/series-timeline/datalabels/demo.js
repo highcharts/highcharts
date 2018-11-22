@@ -88,7 +88,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
     series.points[2].setVisible();
 
     assert.strictEqual(
-        series.visiblePoints === 3 &&
+        series.visiblePointsCount === 3 &&
         !series.points[2].visible,
         true,
         "The third point is hidden."
@@ -98,7 +98,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
     series.points[2].remove();
 
     assert.strictEqual(
-        series.visiblePoints === 3 &&
+        series.visiblePointsCount === 3 &&
         series.points.length === 3,
         true,
         "The third point is removed."

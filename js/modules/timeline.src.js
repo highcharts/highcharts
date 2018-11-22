@@ -12,6 +12,7 @@ import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
     extend = H.extend,
+    defined = H.defined,
     LegendSymbolMixin = H.LegendSymbolMixin,
     TrackerMixin = H.TrackerMixin,
     merge = H.merge,
@@ -19,7 +20,7 @@ var addEvent = H.addEvent,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,
-    Pie = H.seriesTypes.pie,
+    inArray = H.inArray,
     wrap = H.wrap;
 
 /**
@@ -77,7 +78,6 @@ seriesType('timeline', 'line', {
          * @default 1
          * @sample {highcharts} highcharts/series-timeline/connector-styles
          *         Custom connector width and color
-         * @apioption plotOptions.timeline.dataLabels.connectorWidth
          */
         connectorWidth: 1,
         /**
@@ -89,15 +89,14 @@ seriesType('timeline', 'line', {
          * @type {String}
          * @sample {highcharts} highcharts/series-timeline/connector-styles
          *         Custom connector width and color
-         * @apioption plotOptions.timeline.dataLabels.connectorColor
          */
-        connectorColor: '#000',
-        backgroundColor: '#fff',
+        connectorColor: '${palette.neutralColor100}',
+        backgroundColor: '${palette.backgroundColor}',
         format: '<span style="color:{point.color}">● </span>' +
             '<span style="font-weight: bold;">{point.date}</span><br/>' +
             '{point.label}',
         borderWidth: 1,
-        borderColor: 'gray',
+        borderColor: '${palette.neutralColor60}',
         /**
          * A pixel value defining the distance between the data label
          * and the point. Negative numbers puts the label on top
@@ -105,7 +104,6 @@ seriesType('timeline', 'line', {
          *
          * @type {Number}
          * @default 100
-         * @apioption plotOptions.timeline.dataLabels.distance
          */
         distance: 100,
         /**
@@ -118,7 +116,6 @@ seriesType('timeline', 'line', {
          * @default true
          * @sample {highcharts} highcharts/series-timeline/alternate-disabled
          *         Alternate disabled
-         * @apioption plotOptions.timeline.dataLabels.alternate
          */
         alternate: true,
         verticalAlign: 'middle',
@@ -169,12 +166,12 @@ seriesType('timeline', 'line', {
                 options = seriesOptions.dataLabels,
                 hasRendered = series.hasRendered || 0,
                 defer = pick(options.defer, !!seriesOptions.animation),
-                connectorsGroup = series.dataLabelsConnectorsGroup,
+                connectorsGroup = series.connectorsGroup,
                 dataLabel;
 
             // Create (or redraw) the group for all connectors.
             connectorsGroup = series.plotGroup(
-                'dataLabelsConnectorsGroup',
+                'connectorsGroup',
                 'data-labels-connectors',
                 defer && !hasRendered ? 'hidden' : 'visible',
                 options.zIndex || 5
@@ -235,69 +232,92 @@ seriesType('timeline', 'line', {
             }
         });
     },
-    render: function () {
-        var series = this;
-
-        series.visiblePoints = 0;
-        series.points.forEach(function (point) {
-            if (point.visible && !point.isNull) {
-                series.visiblePoints++;
-            }
-        });
-        Series.prototype.render.apply(this, arguments);
-    },
     alignDataLabel: function (point, dataLabel) {
         var series = this,
             isInverted = series.chart.inverted,
-            filteredMap = series.visibilityMap.filter(function (point) {
+            visiblePoints = series.visibilityMap.filter(function (point) {
                 return point;
             }),
-            filteredMapLen = filteredMap.length,
-            pointIndex = filteredMap.indexOf(point),
-            isFirstOrLast = !pointIndex || pointIndex === filteredMapLen - 1,
+            visiblePointsCount = series.visiblePointsCount,
+            pointIndex = visiblePoints.indexOf(point),
+            isFirstOrLast = !pointIndex ||
+                pointIndex === visiblePointsCount - 1,
             dataLabelsOptions = series.options.dataLabels,
             userDLOptions = point.userDLOptions || {},
+            // Define multiplier which is used to calculate data label width.
+            // If data labels are alternate, they have two times more space to
+            // adapt (excepting first and last ones, which has only one
+            // and half), than in case of placing all data labels side by side.
             multiplier = dataLabelsOptions.alternate ?
                 (isFirstOrLast ? 1.5 : 2) :
                 1,
             distance,
-            availableSpace = Math.floor(series.xAxis.len / filteredMapLen),
+            availableSpace = Math.floor(series.xAxis.len / visiblePointsCount),
             pad = dataLabel.padding,
-            targetDLWidth;
+            targetDLWidth,
+            styles;
 
         // Adjust data label width to the currently available space.
         if (point.visible) {
             distance = Math.abs(userDLOptions.x || point.options.dataLabels.x);
             if (isInverted) {
                 targetDLWidth = (distance - pad) * 2 - (point.itemHeight / 2);
-
-                dataLabel.css({
+                styles = {
                     width: targetDLWidth,
                     // Apply ellipsis when data label height is exceeded.
                     textOverflow: dataLabel.width / targetDLWidth *
                         dataLabel.height / 2 > availableSpace * multiplier ?
                             'ellipsis' : 'none'
-                }).shadow({});
+                };
             } else {
-                targetDLWidth = userDLOptions.width ||
-                    dataLabelsOptions.width ||
-                    availableSpace * multiplier - (pad * 2);
-
-                dataLabel.css({
-                    width: targetDLWidth
-                }).shadow({});
+                styles = {
+                    width: userDLOptions.width ||
+                        dataLabelsOptions.width ||
+                        availableSpace * multiplier - (pad * 2)
+                };
             }
+            dataLabel.css(styles).shadow({});
         }
         Series.prototype.alignDataLabel.apply(series, arguments);
-
-
     },
     processData: function () {
-        var series = this;
+        var series = this,
+            xMap = [],
+            base,
+            visiblePoints = 0,
+            i;
 
-        series.xData = series.getMappedXData();
-        series.yData = series.xData.map(function (data) {
-            return data === null ? null : 1;
+        series.visibilityMap = series.getVisibilityMap();
+
+        // Calculate currently visible points.
+        series.visibilityMap.forEach(function (point) {
+            if (point) {
+                visiblePoints++;
+            }
+        });
+
+        series.visiblePointsCount = visiblePoints;
+        base = series.xAxis.options.max / visiblePoints;
+
+        // Generate xData map.
+        for (i = 1; i <= visiblePoints; i++) {
+            xMap.push(
+                (base * i) - (base / 2)
+            );
+        }
+
+        // Set all hidden points y values as negatives, in order to move them
+        // away from plot area. It is necessary to avoid hiding data labels,
+        // when dataLabels.allowOverlap is set to false.
+        series.visibilityMap.forEach(function (vis, i) {
+            if (!vis) {
+                xMap.splice(i, 0, series.yData[i] === null ? null : -99);
+            }
+        });
+
+        series.xData = xMap;
+        series.yData = xMap.map(function (data) {
+            return defined(data) ? 1 : null;
         });
 
         Series.prototype.processData.call(this, arguments);
@@ -325,39 +345,6 @@ seriesType('timeline', 'line', {
                 });
 
         return map;
-    },
-    getMappedXData: function () {
-        var series = this,
-            xMap = [],
-            base,
-            visiblePoints = 0,
-            visibilityMap = series.visibilityMap = series.getVisibilityMap(),
-            i;
-
-        visibilityMap.forEach(function (point) {
-            if (point) {
-                visiblePoints++;
-            }
-        });
-
-        base = series.xAxis.options.max / visiblePoints;
-
-        for (i = 1; i <= visiblePoints; i++) {
-            xMap.push(
-                (base * i) - (base / 2)
-            );
-        }
-
-        // Set all hidden points y values as negatives, in order to move them
-        // away from plot area. It is necessary to avoid hiding data labels,
-        // when dataLabels.allowOverlap is set to false.
-        visibilityMap.forEach(function (vis, i) {
-            if (!vis) {
-                xMap.splice(i, 0, series.yData[i] !== null ? -99 : null);
-            }
-        });
-
-        return xMap;
     },
     distributeDL: function () {
         var series = this,
@@ -396,7 +383,7 @@ seriesType('timeline', 'line', {
             width = pick(
                 pointMarkerOptions.width,
                 seriesMarkerOptions.width,
-                series.xAxis.len / series.visiblePoints
+                series.xAxis.len / series.visiblePointsCount
             ),
             height = pick(
                 pointMarkerOptions.height,
@@ -434,9 +421,8 @@ seriesType('timeline', 'line', {
 
     },
     bindAxes: function () {
-        var series = this;
-
-        var timelineXAxis = {
+        var series = this,
+            timelineXAxis = {
                 gridLineWidth: 0,
                 lineWidth: 0,
                 min: 0,
@@ -473,7 +459,53 @@ seriesType('timeline', 'line', {
 
         return point;
     },
-    setVisible: Pie.prototype.pointClass.prototype.setVisible,
+    // The setVisible method is taken from Pie series prototype, in order to
+    // prevent importing whole Pie series.
+    setVisible: function (vis, redraw) {
+        var point = this,
+            series = point.series,
+            chart = series.chart,
+            ignoreHiddenPoint = series.options.ignoreHiddenPoint;
+
+        redraw = pick(redraw, ignoreHiddenPoint);
+
+        if (vis !== point.visible) {
+
+            // If called without an argument, toggle visibility
+            point.visible = point.options.visible = vis =
+                vis === undefined ? !point.visible : vis;
+            // update userOptions.data
+            series.options.data[inArray(point, series.data)] = point.options;
+
+            // Show and hide associated elements. This is performed regardless
+            // of redraw or not, because chart.redraw only handles full series.
+            ['graphic', 'dataLabel', 'connector'].forEach(
+                function (key) {
+                    if (point[key]) {
+                        point[key][vis ? 'show' : 'hide'](true);
+                    }
+                }
+            );
+
+            if (point.legendItem) {
+                chart.legend.colorizeItem(point, vis);
+            }
+
+            // #4170, hide halo after hiding point
+            if (!vis && point.state === 'hover') {
+                point.setState('');
+            }
+
+            // Handle ignore hidden slices
+            if (ignoreHiddenPoint) {
+                series.isDirty = true;
+            }
+
+            if (redraw) {
+                chart.redraw();
+            }
+        }
+    },
     setState: function () {
         var proceed = Series.prototype.pointClass.prototype.setState;
 
@@ -486,7 +518,6 @@ seriesType('timeline', 'line', {
         var point = this,
             chart = point.series.chart,
             xAxisLen = point.series.xAxis.len,
-            yAxisLen = point.series.yAxis.len,
             inverted = chart.inverted,
             direction = inverted ? 'x2' : 'y2',
             dl = point.dataLabel,
@@ -497,7 +528,7 @@ seriesType('timeline', 'line', {
                 x2: point.plotX,
                 y2: targetDLPos.y || dl.y
             },
-            negativeDistance = coords[direction] < yAxisLen / 2,
+            negativeDistance = coords[direction] < point.series.yAxis.len / 2,
             path;
 
         // Recalculate coords when the chart is inverted.
@@ -530,23 +561,18 @@ seriesType('timeline', 'line', {
     drawConnector: function () {
         var point = this,
             series = point.series,
-            chart = series.chart,
             dlOptions = point.dataLabel.options = merge(
                 {}, series.options.dataLabels,
                 point.options.dataLabels
-            ),
-            connectorsGroup = series.dataLabelsConnectorsGroup,
-            renderer = chart.renderer,
-            options = {
+            );
+
+        point.connector = series.chart.renderer.path(point.getConnectorPath())
+            .attr({
                 stroke: dlOptions.connectorColor,
                 'stroke-width': dlOptions.connectorWidth,
                 opacity: point.dataLabel.opacity
-            },
-            path = point.getConnectorPath();
-
-        point.connector = renderer.path(path)
-            .attr(options)
-            .add(connectorsGroup);
+            })
+            .add(series.connectorsGroup);
     },
     alignConnector: function () {
         var point = this,
