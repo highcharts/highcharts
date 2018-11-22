@@ -1,13 +1,16 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * Extension to the Series object in 3D charts.
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+
 var addEvent = H.addEvent,
     perspective = H.perspective,
     pick = H.pick;
@@ -19,9 +22,7 @@ addEvent(H.Series, 'afterTranslate', function () {
     }
 });
 
-/**
- * Translate the plotX, plotY properties and add plotZ.
- */
+// Translate the plotX, plotY properties and add plotZ.
 H.Series.prototype.translate3dPoints = function () {
     var series = this,
         chart = series.chart,
@@ -70,4 +71,3 @@ H.Series.prototype.translate3dPoints = function () {
         rawPoint.plotZ = projectedPoint.z;
     }
 };
-
