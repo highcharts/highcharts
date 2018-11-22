@@ -32,8 +32,8 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
             marker: {
                 enabled: false
             },
-            risingTrendColor: '#06B535',
-            fallingTrendColor: '#F21313',
+            risingTrendColor: '#16C535',
+            fallingTrendColor: '#F22303',
             changeTrendLine: {
                 styles: {
                     lineWidth: 0.5,

@@ -68,7 +68,7 @@ H.seriesType('supertrend', 'sma',
          * @type {Highcharts.ColorString}
          * @since 7.0.0
          */
-        risingTrendColor: '${palette.colors}'.split(' ')[2],
+        risingTrendColor: '${palette.indicatorPositiveLine}',
         /**
          * Color of the Supertrend series line that is above the main series.
          *
@@ -78,7 +78,7 @@ H.seriesType('supertrend', 'sma',
          * @type {Highcharts.ColorString}
          * @since 7.0.0
          */
-        fallingTrendColor: '${palette.colors}'.split(' ')[8],
+        fallingTrendColor: '${palette.indicatorNegativeLine}',
         /**
          * The styles for the Supertrend line that intersect main series.
          *
@@ -103,7 +103,7 @@ H.seriesType('supertrend', 'sma',
                  * @type {Highcharts.ColorString}
                  * @since 7.0.0
                  */
-                lineColor: '${palette.colors}'.split(' ')[1],
+                lineColor: '${palette.neutralColor80}',
 
                 /**
                  * The dash or dot style of the grid lines. For possible
@@ -111,14 +111,14 @@ H.seriesType('supertrend', 'sma',
                  * [this demonstration](https://jsfiddle.net/gh/get/library/pure/
                  * highcharts/highcharts/tree/master/samples/highcharts/plotoptions/
                  * series-dashstyle-all/).
-		         *
-		         * @sample {highcharts} highcharts/yaxis/gridlinedashstyle/
-		         *         Long dashes
-		         * @sample {highstock} stock/xaxis/gridlinedashstyle/
-		         *         Long dashes
-		         *
-		         * @type       {String}
-		         * @since      7.0.0
+                 *
+                 * @sample {highcharts} highcharts/yaxis/gridlinedashstyle/
+                 *          Long dashes
+                 * @sample {highstock} stock/xaxis/gridlinedashstyle/
+                 *          Long dashes
+                 *
+                 * @type       {String}
+                 * @since      7.0.0
 		         */
                 dashStyle: 'LongDash'
             }
