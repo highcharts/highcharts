@@ -1,10 +1,12 @@
-/**
+/* *
  * (c) 2016 Highsoft AS
  * Author: Øystein Moseng
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -17,12 +19,20 @@ var min = Math.min,
  * Get index of last obstacle before xMin. Employs a type of binary search, and
  * thus requires that obstacles are sorted by xMin value.
  *
- * @param {Array} obstacles Array of obstacles to search in.
- * @param {Number} xMin The xMin threshold.
- * @param {Number} startIx Starting index to search from. Must be within array
- *  range.
+ * @private
+ * @function findLastObstacleBefore
  *
- * @return {Number} result The index of the last obstacle element before xMin.
+ * @param {Array<object>} obstacles
+ *        Array of obstacles to search in.
+ *
+ * @param {number} xMin
+ *        The xMin threshold.
+ *
+ * @param {number} startIx
+ *        Starting index to search from. Must be within array range.
+ *
+ * @return {number}
+ *         The index of the last obstacle element before xMin.
  */
 function findLastObstacleBefore(obstacles, xMin, startIx) {
     var left = startIx || 0, // left limit
@@ -47,10 +57,17 @@ function findLastObstacleBefore(obstacles, xMin, startIx) {
 /**
  * Test if a point lays within an obstacle.
  *
- * @param {Object} obstacle Obstacle to test.
- * @param {Object} point Point with x/y props.
+ * @private
+ * @function pointWithinObstacle
  *
- * @return {Boolean} result Whether point is within the obstacle or not.
+ * @param {object} obstacle
+ *        Obstacle to test.
+ *
+ * @param {Highcharts.Point} point
+ *        Point with x/y props.
+ *
+ * @return {boolean}
+ *         Whether point is within the obstacle or not.
  */
 function pointWithinObstacle(obstacle, point) {
     return (
@@ -65,10 +82,17 @@ function pointWithinObstacle(obstacle, point) {
  * Find the index of an obstacle that wraps around a point.
  * Returns -1 if not found.
  *
- * @param {Array} obstacles Obstacles to test.
- * @param {Object} point Point with x/y props.
+ * @private
+ * @function findObstacleFromPoint
  *
- * @return {Number} result Ix of the obstacle in the array, or -1 if not found.
+ * @param {Array<object>} obstacles
+ *        Obstacles to test.
+ *
+ * @param {Highcharts.Point} point
+ *        Point with x/y props.
+ *
+ * @return {number}
+ *         Ix of the obstacle in the array, or -1 if not found.
  */
 function findObstacleFromPoint(obstacles, point) {
     var i = findLastObstacleBefore(obstacles, point.x + 1) + 1;
@@ -85,9 +109,14 @@ function findObstacleFromPoint(obstacles, point) {
 /**
  * Get SVG path array from array of line segments.
  *
- * @param {Array} segments The segments to build the path from.
+ * @private
+ * @function pathFromSegments
  *
- * @return {Array} result SVG path array as accepted by the SVG Renderer.
+ * @param {Array<object>} segments
+ *        The segments to build the path from.
+ *
+ * @return {Highcharts.SVGPathArray}
+ *         SVG path array as accepted by the SVG Renderer.
  */
 function pathFromSegments(segments) {
     var path = [];
@@ -104,8 +133,14 @@ function pathFromSegments(segments) {
  * Limits obstacle max/mins in all directions to bounds. Modifies input
  * obstacle.
  *
- * @param {Object} obstacle Obstacle to limit.
- * @param {Object} bounds Bounds to use as limit.
+ * @private
+ * @function limitObstacleToBounds
+ *
+ * @param {object} obstacle
+ *        Obstacle to limit.
+ *
+ * @param {object} bounds
+ *        Bounds to use as limit.
  */
 function limitObstacleToBounds(obstacle, bounds) {
     obstacle.yMin = max(obstacle.yMin, bounds.yMin);
@@ -125,12 +160,18 @@ var algorithms = {
      * Get an SVG path from a starting coordinate to an ending coordinate.
      * Draws a straight line.
      *
-     * @param {Object} start Starting coordinate, object with x/y props.
-     * @param {Object} end Ending coordinate, object with x/y props.
+     * @function Highcharts.Pathfinder.algorithms.straight
      *
-     * @return {Object} result An object with the SVG path in Array form as
-     *  accepted by the SVG renderer, as well as an array of new obstacles
-     *  making up this path.
+     * @param {object} start
+     *        Starting coordinate, object with x/y props.
+     *
+     * @param {object} end
+     *        Ending coordinate, object with x/y props.
+     *
+     * @return {object}
+     *         An object with the SVG path in Array form as accepted by the SVG
+     *         renderer, as well as an array of new obstacles making up this
+     *         path.
      */
     straight: function (start, end) {
         return {
@@ -144,20 +185,25 @@ var algorithms = {
      * right angles only, and taking only starting/ending obstacle into
      * consideration.
      *
-     *  Options
-     *      - chartObstacles:   Array of chart obstacles to avoid
-     *      - startDirectionX:  Optional. True if starting in the X direction.
-     *                          If not provided, the algorithm starts in the
-     *                          direction that is the furthest between
-     *                          start/end.
+     * @function Highcharts.Pathfinder.algorithms.simpleConnect
      *
-     * @param {Object} start Starting coordinate, object with x/y props.
-     * @param {Object} end Ending coordinate, object with x/y props.
-     * @param {Object} options Options for the algorithm.
+     * @param {object} start
+     *        Starting coordinate, object with x/y props.
      *
-     * @return {Object} result An object with the SVG path in Array form as
-     *  accepted by the SVG renderer, as well as an array of new obstacles
-     *  making up this path.
+     * @param {object} end
+     *        Ending coordinate, object with x/y props.
+     *
+     * @param {object} options
+     *        Options for the algorithm:
+     *        - chartObstacles: Array of chart obstacles to avoid
+     *        - startDirectionX: Optional. True if starting in the X direction.
+     *          If not provided, the algorithm starts in the direction that is
+     *          the furthest between start/end.
+     *
+     * @return {object}
+     *         An object with the SVG path in Array form as accepted by the SVG
+     *         renderer, as well as an array of new obstacles making up this
+     *         path.
      */
     simpleConnect: H.extend(function (start, end, options) {
         var segments = [],
@@ -283,24 +329,30 @@ var algorithms = {
      * obstacles into consideration. Might not always find the optimal path,
      * but is fast, and usually good enough.
      *
-     *  Options
-     *      - chartObstacles:   Array of chart obstacles to avoid
-     *      - lineObstacles:    Array of line obstacles to jump over
-     *      - obstacleMetrics:  Object with metrics of chartObstacles cached
-     *      - hardBounds:       Hard boundaries to not cross
-     *      - obstacleOptions:  Options for the obstacles, including margin
-     *      - startDirectionX:  Optional. True if starting in the X direction.
-     *                          If not provided, the algorithm starts in the
-     *                          direction that is the furthest between
-     *                          start/end.
+     * @function Highcharts.Pathfinder.algorithms.fastAvoid
      *
-     * @param {Object} start Starting coordinate, object with x/y props.
-     * @param {Object} end Ending coordinate, object with x/y props.
-     * @param {Object} options Options for the algorithm.
+     * @param {object} start
+     *        Starting coordinate, object with x/y props.
      *
-     * @return {Object} result An object with the SVG path in Array form as
-     *  accepted by the SVG renderer, as well as an array of new obstacles
-     *  making up this path.
+     * @param {object} end
+     *        Ending coordinate, object with x/y props.
+     *
+     * @param {object} options
+     *        Options for the algorithm.
+     *        - chartObstacles:  Array of chart obstacles to avoid
+     *        - lineObstacles:   Array of line obstacles to jump over
+     *        - obstacleMetrics: Object with metrics of chartObstacles cached
+     *        - hardBounds:      Hard boundaries to not cross
+     *        - obstacleOptions: Options for the obstacles, including margin
+     *        - startDirectionX: Optional. True if starting in the X direction.
+     *                           If not provided, the algorithm starts in the
+     *                           direction that is the furthest between
+     *                           start/end.
+     *
+     * @return {object}
+     *         An object with the SVG path in Array form as accepted by the SVG
+     *         renderer, as well as an array of new obstacles making up this
+     *         path.
      */
     fastAvoid: H.extend(function (start, end, options) {
         /*
@@ -315,7 +367,7 @@ var algorithms = {
             Soft min/max x = start/destination x +/- widest obstacle + margin
             Soft min/max y = start/destination y +/- tallest obstacle + margin
 
-            TODO:
+            @todo:
                 - Make retrospective, try changing prev segment to reduce
                   corners
                 - Fix logic for breaking out of end-points - not always picking
@@ -427,16 +479,28 @@ var algorithms = {
          * Considers desired direction, which way is shortest, soft and hard
          * bounds.
          *
-         * Returns a string, either xMin, xMax, yMin or yMax.
+         * (? Returns a string, either xMin, xMax, yMin or yMax.)
          *
-         * @param {Object} obstacle Obstacle to dodge/escape.
-         * @param {Object} fromPoint Point with x/y props that's
-         * dodging/escaping.
-         * @param {Object} toPoint Goal point.
-         * @param {Boolean} dirIsX Dodge in X dimension.
-         * @param {Object} bounds Hard and soft boundaries.
+         * @private
+         * @function
          *
-         * @return {Boolean} result Use max or not.
+         * @param {object} obstacle
+         *        Obstacle to dodge/escape.
+         *
+         * @param {object} fromPoint
+         *        Point with x/y props that's dodging/escaping.
+         *
+         * @param {object} toPoint
+         *        Goal point.
+         *
+         * @param {boolean} dirIsX
+         *        Dodge in X dimension.
+         *
+         * @param {object} bounds
+         *        Hard and soft boundaries.
+         *
+         * @return {boolean}
+         *         Use max or not.
          */
         function getDodgeDirection(
             obstacle,
