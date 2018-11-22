@@ -24,6 +24,8 @@ var merge = H.merge,
     find = H.find,
     isString = H.isString,
     pick = H.pick,
+    reduce = H.reduce,
+    splat = H.splat,
     destroyObjectProperties = H.destroyObjectProperties;
 
 /* *********************************************************************
@@ -59,7 +61,7 @@ var merge = H.merge,
  * @param {AnnotationOptions} options the options object
  */
 var Annotation = H.Annotation = function (chart, options) {
-
+    var labelsAndShapes;
     /**
      * The chart that the annotation belongs to.
      *
@@ -111,6 +113,15 @@ var Annotation = H.Annotation = function (chart, options) {
      * @type {AnnotationOptions}
      */
     this.userOptions = merge(true, {}, options);
+
+    // Handle labels and shapes - those are arrays
+    // Merging does not work with arrays (stores reference)
+    labelsAndShapes = this.getLabelsAndShapesOptions(
+        this.userOptions,
+        options
+    );
+    this.userOptions.labels = labelsAndShapes.labels;
+    this.userOptions.shapes = labelsAndShapes.shapes;
 
     /**
      * The callback that reports to the overlapping-labels module which
@@ -605,7 +616,13 @@ merge(
                  * @sample highcharts/annotations/shape/
                  *         Basic shape annotation
                  */
-                r: 0
+                r: 0,
+
+                /**
+                 * Defines additional snapping area around an annotation
+                 * making this annotation to focus. Defined in pixels.
+                 */
+                snap: 2
             },
 
             /**
@@ -663,7 +680,24 @@ merge(
             this.addControlPoints();
             this.addShapes();
             this.addLabels();
+            this.addClipPaths();
             this.setLabelCollector();
+        },
+
+        getLabelsAndShapesOptions: function (baseOptions, newOptions) {
+            var mergedOptions = {};
+
+            ['labels', 'shapes'].forEach(function (name) {
+                if (baseOptions[name]) {
+                    mergedOptions[name] = splat(newOptions[name]).map(
+                        function (basicOptions, i) {
+                            return merge(baseOptions[name][i], basicOptions);
+                        }
+                    );
+                }
+            });
+
+            return mergedOptions;
         },
 
         addShapes: function () {
@@ -680,6 +714,52 @@ merge(
 
                 this.options.labels[i] = label.options;
             }, this);
+        },
+
+        addClipPaths: function () {
+            this.setClipAxes();
+
+            if (this.clipXAxis && this.clipYAxis) {
+                this.clipRect = this.chart.renderer.clipRect(
+                    this.getClipBox()
+                );
+            }
+        },
+
+        setClipAxes: function () {
+            var xAxes = this.chart.xAxis,
+                yAxes = this.chart.yAxis,
+                linkedAxes = reduce(
+                    (this.options.labels || [])
+                        .concat(this.options.shapes || []),
+                    function (axes, labelOrShape) {
+                        return [
+                            xAxes[
+                                labelOrShape &&
+                                labelOrShape.point &&
+                                labelOrShape.point.xAxis
+                            ] || axes[0],
+                            yAxes[
+                                labelOrShape &&
+                                labelOrShape.point &&
+                                labelOrShape.point.yAxis
+                            ] || axes[1]
+                        ];
+                    },
+                    []
+                );
+
+            this.clipXAxis = linkedAxes[0];
+            this.clipYAxis = linkedAxes[1];
+        },
+
+        getClipBox: function () {
+            return {
+                x: this.clipXAxis.left,
+                y: this.clipYAxis.top,
+                width: this.clipXAxis.width,
+                height: this.clipYAxis.height
+            };
         },
 
         setLabelCollector: function () {
@@ -719,8 +799,13 @@ merge(
                 this.render();
             }
 
+            if (this.clipRect) {
+                this.clipRect.animate(this.getClipBox());
+            }
+
             this.redrawItems(this.shapes, animation);
             this.redrawItems(this.labels, animation);
+
 
             controllableMixin.redraw.call(this, animation);
         },
@@ -766,6 +851,10 @@ merge(
                     translateY: 0
                 })
                 .add(this.graphic);
+
+            if (this.clipRect) {
+                this.graphic.clip(this.clipRect);
+            }
 
             this.addEvents();
 
@@ -823,6 +912,9 @@ merge(
             this.labels.forEach(destroyItem);
             this.shapes.forEach(destroyItem);
 
+            this.clipXAxis = null;
+            this.clipYAxis = null;
+
             erase(chart.labelCollectors, this.labelCollector);
 
             eventEmitterMixin.destroy.call(this);
@@ -840,7 +932,14 @@ merge(
 
         update: function (userOptions) {
             var chart = this.chart,
-                options = H.merge(true, this.options, userOptions);
+                labelsAndShapes = this.getLabelsAndShapesOptions(
+                    this.userOptions,
+                    userOptions
+                ),
+                options = H.merge(true, this.userOptions, userOptions);
+
+            options.labels = labelsAndShapes.labels;
+            options.shapes = labelsAndShapes.shapes;
 
             this.destroy();
             this.constructor(chart, options);

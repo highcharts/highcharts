@@ -399,7 +399,8 @@ Series.prototype.drawDataLabels = function () {
 
                 // If the point is outside the plot area, destroy it. #678, #820
                 if (dataLabel && (!labelEnabled || !defined(labelText))) {
-                    point.dataLabel = point.dataLabel.destroy();
+                    point.dataLabel =
+                        point.dataLabel && point.dataLabel.destroy();
                     if (point.dataLabels) {
                         // Remove point.dataLabels if this was the last one
                         if (point.dataLabels.length === 1) {

@@ -1,3 +1,7 @@
+// Colors for buttons.
+$button-background-color: #f7f7f7;
+$button-hover-color: #e6ebf5;
+
 .chart:-webkit-full-screen {
   width: 100%;
   height: 100%;
@@ -25,6 +29,8 @@
   position: relative;
 }
 
+.highcharts-draw-mode { cursor: crosshair; }
+
 .highcharts-stocktools-wrapper {
   width: 40px;
   height: 100%;
@@ -42,6 +48,10 @@
   height: 40px;
   padding-right: 40px;
   width: auto;
+}
+
+.highcharts-popup.highcharts-annotation-toolbar button {
+  margin-top:0px;
 }
 
 .highcharts-popup.highcharts-annotation-toolbar > span {
@@ -184,7 +194,22 @@
   height: 40px;
   cursor: pointer;
   position: relative;
-  background-color: #f7f7f7;
+  background-color: $button-background-color;
+}
+.highcharts-stocktools-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn {
+  cursor: default;
+}
+
+.highcharts-stocktools-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn > .highcharts-menu-item-btn {
+  opacity: 0.5;
+}
+
+.highcharts-stocktools-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn.highcharts-active {
+  background: $button-background-color;
+}
+
+.highcharts-stocktools-wrapper .highcharts-stocktools-toolbar li.highcharts-disabled-btn .highcharts-menu-item-btn:hover {
+  background-color: transparent;
 }
 
 .highcharts-stocktools-wrapper li>span.highcharts-menu-item-btn {
@@ -226,7 +251,7 @@
 .highcharts-stocktools-wrapper .highcharts-arrow-wrapper > div:hover,
 .highcharts-stocktools-wrapper li.highcharts-active,
 .highcharts-toggle-toolbar:hover {
-  background-color: #e6ebf5;
+  background-color: $button-hover-color;
   transition: background-color 100ms;
 }
 
@@ -236,7 +261,7 @@
   width: 10px;
   height: 10px;
   left: 43px;
-  background-color: #f7f7f7;
+  background-color: $button-background-color;
   background-image: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg);
   background-size: cover;
 }
@@ -244,185 +269,13 @@
 .highcharts-hide {
   display: none;
 }
-/* CHROME BUG
+
 .highcharts-stocktools-wrapper li:hover, .highcharts-submenu-item-arrow:hover {
-  background-color: #e6e6e6;
+  background-color: $button-hover-color;
 }
-*/
+
 .highcharts-stocktools-wrapper .highcharts-arrow-down, .highcharts-stocktools-wrapper .highcharts-arrow-up {
   width: 50%;
   height: 20px;
   float: left;
-}
-
-.highcharts-popup {
-  background-color: #fff;
-  color: #666;
-  display: none;
-  font-size: 0.876em;
-  height: 70%;
-  top: 15%;
-  left: 25%;
-  position: absolute;
-  width: 50%;
-  z-index: 100;
-  -webkit-box-shadow: 0px 0px 8px 0px rgba(61,61,61,0.3);
-  -moz-box-shadow: 0px 0px 8px 0px rgba(61,61,61,0.3);
-  box-shadow: 0px 0px 8px 0px rgba(61,61,61,0.3);
-}
-
-.highcharts-popup input, .highcharts-popup label, .highcharts-popup select {
-  clear: both;
-  float: left;
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-.highcharts-popup input {
-  border: 1px solid #e6e6e6;
-  padding: 5px;
-  width: calc(100% - 12px);
-}
-
-.highcharts-popup-lhs-col, .highcharts-popup-rhs-col {
-  padding: 20px;
-  height: calc(100% - 84px); /* 44px - padding, 40px - tabs*/
-  float: left;
-}
-
-.highcharts-popup-lhs-col.highcharts-popup-lhs-full { 
-  width: calc(100% - 40px);
-  overflow: scroll;
-  height: calc(100% - 100px);
-  border: none;
-}
-
-.highcharts-popup-lhs-col {
-  clear: both;
-  width: calc(30% - 44px);
-  border-right: 1px solid #e6e6e6;
-}
-
-.highcharts-popup-bottom-row {
-  float: left;
-  padding: 0px 20px;
-  width: calc(100% - 40px);
-}
-
-.highcharts-popup-rhs-col {
-  width: calc(70% - 40px);
-}
-
-.highcharts-popup-rhs-col-wrapper {
-  float: left;
-  width: 100%;
-  height: calc(100% - 40px);
-  overflow: scroll;
-}
-
-.highcharts-stocktools-wrapper ul.highcharts-indicator-list,
-.highcharts-indicator-list {
-  float: left;
-  color: #666;
-  height: 100%;
-  width: 100%;
-  overflow: scroll;
-  margin: 0px;
-  padding: 0px;
-}
-
-.highcharts-indicator-list li {
-  cursor: pointer;
-  padding: 0px 0px 5px 0px;
-  margin: 0px;
-  width: 100%;
-  height: auto;
-}
-/* CHROME BUG
-.highcharts-stocktools-wrapper .highcharts-indicator-list li:hover {
-  background-color: #ffffff;
-}*/
-
-.highcharts-tab-item {
-  background-color: #f7f7f7;
-  cursor: pointer;
-  display: block;
-  float:left;
-  padding: 10px;
-  height: 20px;
-}
-
-.highcharts-tab-item.highcharts-tab-item-active {
-  background-color: #e6ebf5;
-}
-
-.highcharts-tab-item-content {
-  display: none; 
-  float: left;
-  height: 100%;
-  overflow: hidden;
-  width: 100%;
-  border-top: 1px solid #e6e6e6;
-}
-
-.highcharts-tab-item-show {
-  display: block;
-}
-
-.highcharts-popup-close {
-  background:url(http://utils.highcharts.local/samples/graphics/close.svg) no-repeat 50% 50%;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  position: absolute;
-  padding: 10px;
-  top: 0%;
-  right: 0%;
-  color: #333333;
-}
-
-.highcharts-popup-close:hover,
-.highcharts-popup button:hover,
-.highcharts-popup button.highcharts-annotation-edit-button:hover,
-.highcharts-popup button.highcharts-annotation-remove-button:hover {
-  background-color: #e6ebf5;
-}
-
-.highcharts-popup button {
-  float: right;
-  border: none;
-  background: #f7f7f7;
-  color: #666;
-  margin-left:5px;
-}
-
-.highcharts-tab-disabled {
-  color: #ccc;
-}
-
-/* annotation edit small popup */
-.highcharts-popup button.highcharts-annotation-edit-button,
-.highcharts-popup button.highcharts-annotation-remove-button {
-  width: 20px;
-  height: 40px;
-  padding: 20px;
-}
-
-.highcharts-popup button.highcharts-annotation-edit-button {
-  background:url(http://utils.highcharts.local/samples/graphics/edit.svg) no-repeat 50% 50% transparent;
-  text-indent: -9999px;
-}
-
-.highcharts-popup button.highcharts-annotation-remove-button {
-  background:url(http://utils.highcharts.local/samples/graphics/destroy.svg) no-repeat 50% 50% transparent;
-  text-indent: -9999px;
-}
-
-.highcharts-popup .highcharts-annotation-title {
-  display: block;
-  float: left;
-  font-size: 1.3em;
-  font-weight: bold;
-  margin-bottom: 15px;
-  width: 100%;
 }

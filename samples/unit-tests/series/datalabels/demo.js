@@ -289,5 +289,7 @@ QUnit.test(
             [1, 2, 1, 0],
             'Data labels should only exist inside given range'
         );
+
+        chart.destroy();
     }
 );

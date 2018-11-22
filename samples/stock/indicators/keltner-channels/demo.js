@@ -1,4 +1,3 @@
-
 $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
 
     Highcharts.stockChart('container', {
@@ -22,13 +21,12 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
         },
 
         series: [{
-            type: 'line',
-            useOHLCdata: true,
+            type: 'ohlc',
             id: 'aapl',
             name: 'AAPL Stock Price',
             data: data
         }, {
-            type: 'atr',
+            type: 'keltnerchannels',
             linkedTo: 'aapl'
         }]
     });
