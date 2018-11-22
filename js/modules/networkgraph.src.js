@@ -52,7 +52,7 @@ seriesType('networkgraph', 'line', {
         repulsiveForce: function (d, k) {
             /*
             basic, not recommended:
-            return -k / d;
+            return k / d;
             */
 
             /*
@@ -68,7 +68,8 @@ seriesType('networkgraph', 'line', {
             return k * k / d;
         },
         attractiveForce: function (d, k) {
-            /* basic, not recommended:
+            /*
+            basic, not recommended:
             return d / k;
             */
             return d * d / k;
@@ -192,7 +193,7 @@ seriesType('networkgraph', 'line', {
                 point.shapeType = 'path';
 
                 // Pass test in drawPoints
-                point.y = point.plotY = 1;
+                point.y = 1;
             });
         });
     },
@@ -233,8 +234,7 @@ seriesType('networkgraph', 'line', {
                 chart = series.chart,
                 nodesLength = nodes.length + 1,
                 // Used in initial positions:
-                // sqrtNodesLength = Math.floor(Math.sqrt(nodesLength)),
-
+                sqrtNodesLength = Math.ceil(Math.sqrt(nodesLength)),
                 // Optimal distance between nodes,
                 // available space around the node:
                 k = options.k ||
@@ -245,40 +245,44 @@ seriesType('networkgraph', 'line', {
                 maxIterations = options.maxIterations,
                 // Cooling system, temperature decreases to 0
                 temperature = Math.sqrt(nodesLength),
-                diffTemperature = temperature / (maxIterations + 1);
+                diffTemperature = temperature / (maxIterations + 1),
+                // Fake object which will imitate animations
+                mockAnimator = {
+                    style: {}
+                },
+                start = +new Date(),
+                fx;
 
             // Initial positions:
             nodes.forEach(
                 function (node, index) {
-                    // More sophisticated starting points:
-                    /*
-                    node.plotX = chart.plotWidth /
-                        (index - index % sqrtNodesLength + 1);
-                    node.plotY = chart.plotHeight /
-                        (index % sqrtNodesLength + 1);
-                    */
-                    node.plotX = chart.plotWidth / 2 + index - nodesLength / 2;
-                    node.plotY = chart.plotHeight / 2 + index - nodesLength / 2;
+                    var xPos = index / nodesLength,
+                        yPos = (index % sqrtNodesLength) / sqrtNodesLength;
+
+                    node.plotX = pick(node.plotX, chart.plotWidth * xPos);
+                    node.plotY = pick(node.plotY, chart.plotHeight * yPos);
+
                     node.dispX = 0;
                     node.dispY = 0;
                 }
             );
 
-            // Render elements in initial positions,
-            // so later we get nice animation:
+            // Render elements in initial positions:
             series.render();
+            // Disable built-in animations:
+            H.setAnimation(false, chart);
 
             // Algorithm:
-            while (maxIterations--) {
+            function localLayout() {
                 // Repulsive forces:
-                utils.applyRepulsiveForces.call(this, nodes, k);
+                utils.applyRepulsiveForces.call(series, nodes, k);
 
                 // Attractive forces:
-                utils.applyAttractiveForces.call(this, links, k);
+                utils.applyAttractiveForces.call(series, links, k);
 
                 // Limit to the plotting area and cool down:
                 utils.applyLimits.call(
-                    this,
+                    series,
                     nodes,
                     temperature,
                     {
@@ -291,7 +295,30 @@ seriesType('networkgraph', 'line', {
 
                 // Cool down:
                 temperature -= diffTemperature;
+
+                series.render();
+                if (maxIterations--) {
+                    fx.run(0, 1, 1);
+                } else {
+                    fx.stopped = true;
+                    chart.setSubtitle({
+                        text: 'Animated in: ' +
+                            (new Date().getTime() - start) + 'ms'
+                    });
+                }
             }
+
+            // Animate it:
+            fx = new H.Fx(
+                mockAnimator, {
+                    duration: 1000 / maxIterations,
+                    easing: function () {},
+                    complete: localLayout,
+                    curAnim: {}
+                }
+            );
+
+            fx.run(0, 1, 1);
         }
     },
     utils: {
@@ -383,21 +410,25 @@ seriesType('networkgraph', 'line', {
                 */
 
                 // Limit X-coordinates:
-                node.plotX = Math.max(
-                    Math.min(
-                        node.plotX,
-                        box.width
-                    ),
-                    box.left
+                node.plotX = Math.round(
+                    Math.max(
+                        Math.min(
+                            node.plotX,
+                            box.width
+                        ),
+                        box.left
+                    )
                 );
 
                 // Limit Y-coordinates:
-                node.plotY = Math.max(
-                    Math.min(
-                        node.plotY,
-                        box.height
-                    ),
-                    box.top
+                node.plotY = Math.round(
+                    Math.max(
+                        Math.min(
+                            node.plotY,
+                            box.height
+                        ),
+                        box.top
+                    )
                 );
 
                 // Reset displacement:
