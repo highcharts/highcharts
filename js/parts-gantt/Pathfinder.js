@@ -792,6 +792,10 @@ function Pathfinder(chart) {
 }
 Pathfinder.prototype = {
 
+    /**
+     * @name Highcharts.Pathfinder#algorithms
+     * @type {Highcharts.Dictionary<Function>}
+     */
     algorithms: pathfinderAlgorithms,
 
     /**
