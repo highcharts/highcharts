@@ -76,8 +76,13 @@ seriesType('networkgraph', 'line', {
         }
     }
 }, {
+    drawGraph: null,
     isCartesian: false,
-    drawGraph: H.noop,
+    requireSorting: false,
+    directTouch: true,
+    noSharedTooltip: true,
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
+    drawTracker: H.TrackerMixin.drawTrackerPoint,
     /**
      * Create a single node that holds information on incoming and outgoing
      * links.
@@ -120,7 +125,6 @@ seriesType('networkgraph', 'line', {
      * but pushed to the this.nodes array.
      */
     generatePoints: function () {
-
         var nodeLookup = {},
             chart = this.chart;
 
