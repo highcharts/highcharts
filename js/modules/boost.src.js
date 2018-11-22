@@ -1929,7 +1929,10 @@ function GLRenderer(postRenderCallback) {
                         continue;
                     }
 
-                    x = plotWidth;
+                    // Having this here will clamp markers and make the angle
+                    // of the last line wrong. See 9166.
+                    // x = plotWidth;
+
                 }
 
             }
@@ -1961,7 +1964,7 @@ function GLRenderer(postRenderCallback) {
             // No markers on out of bounds things.
             // Out of bound things are shown if and only if the next
             // or previous point is inside the rect.
-            if (inst.hasMarkers) { // && isXInside) {
+            if (inst.hasMarkers && isXInside) {
                 // x = H.correctFloat(
                 //     Math.min(Math.max(-1e5, xAxis.translate(
                 //         x,
@@ -2111,7 +2114,7 @@ function GLRenderer(postRenderCallback) {
             hasMarkers: s.options.marker ?
                 s.options.marker.enabled !== false :
                 false,
-            showMarksers: true,
+            showMarkers: true,
             drawMode: ({
                 'area': 'lines',
                 'arearange': 'lines',
