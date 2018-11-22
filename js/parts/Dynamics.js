@@ -508,7 +508,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     indexMap = [];
                     each(chart[coll], function (s, i) {
                         if (!s.options.isInternal) {
-                            indexMap.push(i);
+                            indexMap.push(pick(s.options.index, i));
                         }
                     });
                 }
