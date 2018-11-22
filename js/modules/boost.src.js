@@ -520,7 +520,10 @@ function shouldForceChartSeriesBoosting(chart) {
 
             // Don't count series with boostThreshold set to 0
             // See #8950
-            if (series.options.boostThreshold === 0) {
+            // Also don't count if the series is hidden.
+            // See #9046
+            if (series.options.boostThreshold === 0 ||
+                series.visible === false) {
                 continue;
             }
 
