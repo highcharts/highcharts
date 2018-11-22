@@ -22,7 +22,7 @@ Highcharts.chart('container', {
                 enabled: true
             },
             // Set default connection options here
-            pathfinder: {
+            connectors: {
                 lineWidth: 2
             }
         }

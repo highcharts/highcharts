@@ -3,8 +3,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var pick = H.pick,
-    each = H.each,
-    extend = H.extend,
     error = H.error,
     Series = H.Series,
     isArray = H.isArray,
@@ -36,7 +34,7 @@ addEvent(H.Series, 'init', function (eventOptions) {
             dataGrouping.approximation = 'ohlc';
         }
 
-        extend(series, {
+        H.extend(series, {
             pointValKey: ohlcProto.pointValKey,
             keys: ohlcProto.keys,
             pointArrayMap: ohlcProto.pointArrayMap,
@@ -192,7 +190,9 @@ seriesType('sma', 'line',
                 return error(
                     'Series ' +
                     indicator.options.linkedTo +
-                    ' not found! Check `linkedTo`.'
+                    ' not found! Check `linkedTo`.',
+                    false,
+                    chart
                 );
             }
 
@@ -227,8 +227,7 @@ seriesType('sma', 'line',
 
             if (!name) {
 
-                each(
-                    this.nameComponents,
+                (this.nameComponents || []).forEach(
                     function (component, index) {
                         params.push(
                             this.options.params[component] +
@@ -292,7 +291,7 @@ seriesType('sma', 'line',
             };
         },
         destroy: function () {
-            each(this.dataEventsToUnbind, function (unbinder) {
+            this.dataEventsToUnbind.forEach(function (unbinder) {
                 unbinder();
             });
             Series.prototype.destroy.call(this);

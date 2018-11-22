@@ -47,13 +47,15 @@ var eventEmitterMixin = {
         if (emitter.options.draggable) {
             H.addEvent(emitter, 'drag', emitter.onDrag);
 
-            emitter.graphic.css({
-                cursor: {
-                    x: 'ew-resize',
-                    y: 'ns-resize',
-                    xy: 'move'
-                }[emitter.options.draggable]
-            });
+            if (!emitter.graphic.renderer.styledMode) {
+                emitter.graphic.css({
+                    cursor: {
+                        x: 'ew-resize',
+                        y: 'ns-resize',
+                        xy: 'move'
+                    }[emitter.options.draggable]
+                });
+            }
         }
     },
 
@@ -153,10 +155,10 @@ var eventEmitterMixin = {
             if (this.points.length) {
                 this.translate(translation.x, translation.y);
             } else {
-                H.each(this.shapes, function (shape) {
+                this.shapes.forEach(function (shape) {
                     shape.translate(translation.x, translation.y);
                 });
-                H.each(this.labels, function (label) {
+                this.labels.forEach(function (label) {
                     label.translate(translation.x, translation.y);
                 });
             }

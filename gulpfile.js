@@ -124,7 +124,7 @@ const lintSamples = () => {
 /**
  * Run the test suite.
  */
-gulp.task('test', ['styles', 'scripts'], done => {
+gulp.task('test', done => {
 
     const lastRunFile = __dirname + '/test/last-run.json';
 
@@ -140,7 +140,7 @@ gulp.task('test', ['styles', 'scripts'], done => {
     };
 
     const shouldRun = () => {
-        // let lastBuildMTime = getModifiedTime(__dirname + '/code/**/*.js');
+        let lastBuildMTime = getModifiedTime(__dirname + '/code/**/*.js');
         let sourceMTime = getModifiedTime(__dirname + '/js/**/*.js');
         let unitTestsMTime = getModifiedTime(__dirname + '/samples/unit-tests/**/*.*');
         let lastSuccessfulRun = 0;
@@ -162,7 +162,14 @@ gulp.task('test', ['styles', 'scripts'], done => {
             return true;
         }
 
-        if (sourceMTime < lastSuccessfulRun && unitTestsMTime < lastSuccessfulRun) {
+        if (lastBuildMTime < sourceMTime) {
+            throw '\n✖'.red + ' The files have not been built since ' +
+                'the last source code changes. Run ' + 'gulp'.italic +
+                ' and try again.';
+        } else if (
+            sourceMTime < lastSuccessfulRun &&
+            unitTestsMTime < lastSuccessfulRun
+        ) {
             console.log('\n✓'.green + ' Source code and unit tests not modified since the last successful test run.\n'.gray);
             return false;
         }
@@ -330,6 +337,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/parts/SVGRenderer.js',
         './js/parts/Tick.js',
         './js/parts/Time.js',
+        './js/parts-gantt/GanttChart.js',
         './js/parts-gantt/TreeGrid.js',
         './js/parts-map/GeoJSON.js',
         './js/parts-map/Map.js',
@@ -484,6 +492,9 @@ const copyToDist = () => {
     const additionals = {
         'gfx/vml-radial-gradient.png': 'gfx/vml-radial-gradient.png',
         'code/css/highcharts.scss': 'css/highcharts.scss',
+        'code/css/themes/dark-unica.scss': 'css/themes/dark-unica.scss',
+        'code/css/themes/grid-light.scss': 'css/themes/grid-light.scss',
+        'code/css/themes/sand-signika.scss': 'css/themes/sand-signika.scss',
         'code/lib/canvg.js': 'vendor/canvg.js',
         'code/lib/canvg.src.js': 'vendor/canvg.src.js',
         'code/lib/jspdf.js': 'vendor/jspdf.js',
@@ -1192,18 +1203,26 @@ const jsdoc = () => {
         .then(() => generateAPIDocs(optionsAPI));
 };
 
-const jsdocOptions = () => {
+/**
+ * Copies additional JSON-based error references.
+ */
+const jsdocErrors = () => {
 
-    return generateAPIDocs({
-        version: getBuildProperties().version,
-        treeFile: './tree.json',
-        output: './build/api',
-        onlyBuildCurrent: true
-    });
+    let copyTargets = [
+        'build/api/gantt',
+        'build/api/highcharts',
+        'build/api/highstock',
+        'build/api/highmaps'
+    ];
+
+    return Promise.all(copyTargets.map(copyTarget => copyFile(
+        'errors/errors.json',
+        `${copyTarget}/errors.json`
+    )));
 };
 
 /**
- * Create additional JSON-based class references from JSDOC
+ * Creates additional JSON-based class references from JSDoc.
  */
 const jsdocNamespace = () => {
 
@@ -1244,6 +1263,19 @@ const jsdocNamespace = () => {
     };
 
     return new Promise(aGulp);
+};
+
+/**
+ * Creates JSON-based option references from JSDoc.
+ */
+const jsdocOptions = () => {
+
+    return generateAPIDocs({
+        version: getBuildProperties().version,
+        treeFile: './tree.json',
+        output: './build/api',
+        onlyBuildCurrent: true
+    });
 };
 
 /**
@@ -1288,8 +1320,9 @@ gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
-gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
+gulp.task('jsdoc', ['jsdoc-errors', 'jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
+gulp.task('jsdoc-errors', ['scripts'], jsdocErrors);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
 gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], tsd);
@@ -1303,7 +1336,7 @@ gulp.task('tsd-lint', ['tsd'], tsdLint);
  * TODO add --help command to inform about usage.
  * @return undefined
  */
-gulp.task('scripts', () => {
+gulp.task('scripts', ['jsdoc-errors'], () => {
     const options = {
         debug: argv.d || false,
         files: (

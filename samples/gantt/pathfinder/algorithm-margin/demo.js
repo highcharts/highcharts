@@ -13,7 +13,7 @@ Highcharts.ganttChart('container', {
     plotOptions: {
         series: {
             colorByPoint: false,
-            pathfinder: {
+            connectors: {
                 algorithmMargin: 2,
                 startMarker: {
                     symbol: 'square',

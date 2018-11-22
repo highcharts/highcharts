@@ -414,10 +414,13 @@ var charts = H.charts,
  * @param {boolean} [stop=false]
  *        Whether to throw an error or just log a warning in the console.
  */
-H.error = function (code, stop) {
+H.error = function (code, stop, chart) {
     var msg = H.isNumber(code) ?
         'Highcharts error #' + code + ': www.highcharts.com/errors/' + code :
         code;
+    if (chart) {
+        H.fireEvent(chart, 'displayError', { code: code });
+    }
     if (stop) {
         throw new Error(msg);
     }
@@ -559,7 +562,7 @@ H.Fx.prototype = {
 
         if (from === to && !this.elem['forceAnimate:' + this.prop]) {
             delete options.curAnim[this.prop];
-            if (options.complete && H.keys(options.curAnim).length === 0) {
+            if (options.complete && Object.keys(options.curAnim).length === 0) {
                 options.complete.call(this.elem);
             }
         } else { // #7166
@@ -1602,7 +1605,7 @@ H.normalizeTickInterval = function (interval, multiples, magnitude,
         // the allowDecimals option
         if (allowDecimals === false) {
             if (magnitude === 1) {
-                multiples = H.grep(multiples, function (num) {
+                multiples = multiples.filter(function (num) {
                     return num % 1 === 0;
                 });
             } else if (magnitude <= 0.1) {
@@ -2009,9 +2012,17 @@ H.getStyle = function (el, prop, toInt) {
     if (prop === 'width') {
         return Math.max(
             0, // #8377
-            Math.min(el.offsetWidth, el.scrollWidth) -
+            (
+                Math.min(
+                    el.offsetWidth,
+                    el.scrollWidth,
+                    el.getBoundingClientRect ?
+                        Math.floor(el.getBoundingClientRect().width) : // #6427
+                        Infinity
+                ) -
                 H.getStyle(el, 'padding-left') -
                 H.getStyle(el, 'padding-right')
+            )
         );
     } else if (prop === 'height') {
         return Math.max(
@@ -2043,6 +2054,8 @@ H.getStyle = function (el, prop, toInt) {
  *
  * @function Highcharts.inArray
  *
+ * @deprecated
+ *
  * @param {*} item
  *        The item to search for.
  *
@@ -2056,29 +2069,7 @@ H.getStyle = function (el, prop, toInt) {
  *         The index within the array, or -1 if not found.
  */
 H.inArray = function (item, arr, fromIndex) {
-    return (
-        H.indexOfPolyfill ||
-        Array.prototype.indexOf
-    ).call(arr, item, fromIndex);
-};
-
-/**
- * Filter an array by a callback.
- *
- * @function Highcharts.grep
- *
- * @param {Array} arr
- *        The array to filter.
- *
- * @param {Function} callback
- *        The callback function. The function receives the item as the first
- *        argument. Return `true` if the item is to be preserved.
- *
- * @return {Array}
- *         A new, filtered array.
- */
-H.grep = function (arr, callback) {
-    return (H.filterPolyfill || Array.prototype.filter).call(arr, callback);
+    return arr.indexOf(item, fromIndex);
 };
 
 /**
@@ -2114,57 +2105,10 @@ H.find = Array.prototype.find ?
     };
 
 /**
- * Test whether at least one element in the array passes the test implemented by
- * the provided function.
- *
- * @function Highcharts.some
- *
- * @param {Array} arr
- *        The array to test
- *
- * @param {Function} fn
- *        The function to run on each item. Return truty to pass the test.
- *        Receives arguments `currentValue`, `index` and `array`.
- *
- * @param {*} ctx
- *        The context.
- *
- * @return {boolean}
- */
-H.some = function (arr, fn, ctx) {
-    return (H.somePolyfill || Array.prototype.some).call(arr, fn, ctx);
-};
-
-/**
- * Map an array by a callback.
- *
- * @function Highcharts.map
- *
- * @param {Array} arr
- *        The array to map.
- *
- * @param {Function} fn
- *        The callback function. Return the new value for the new array.
- *
- * @return {Array}
- *         A new array item with modified items.
- */
-H.map = function (arr, fn) {
-    var results = [],
-        i = 0,
-        len = arr.length;
-
-    for (; i < len; i++) {
-        results[i] = fn.call(arr[i], arr[i], i, arr);
-    }
-
-    return results;
-};
-
-/**
  * Returns an array of a given object's own properties.
  *
  * @function Highcharts.keys
+ * @deprecated
  *
  * @param {*} obj
  *        The object of which the properties are to be returned.
@@ -2172,36 +2116,7 @@ H.map = function (arr, fn) {
  * @return {Array<string>}
  *         An array of strings that represents all the properties.
  */
-H.keys = function (obj) {
-    return (H.keysPolyfill || Object.keys).call(undefined, obj);
-};
-
-/**
- * Reduce an array to a single value.
- *
- * @function Highcharts.reduce
- *
- * @param {Array<*>} arr
- *        The array to reduce.
- *
- * @param {Function} fn
- *        The callback function. Return the reduced value. Receives 4
- *        arguments: Accumulated/reduced value, current value, current array
- *        index, and the array.
- *
- * @param {*} initialValue
- *        The initial value of the accumulator.
- *
- * @return {*}
- *         The reduced value.
- */
-H.reduce = function (arr, func, initialValue) {
-    var fn = (H.reducePolyfill || Array.prototype.reduce);
-    return fn.apply(
-        arr,
-        (arguments.length > 2 ? [func, initialValue] : [func])
-    );
-};
+H.keys = Object.keys;
 
 /**
  * Get the element's offset position, corrected for `overflow: auto`.
@@ -2261,27 +2176,6 @@ H.stop = function (el, prop) {
 };
 
 /**
- * Iterate over an array.
- *
- * @function Highcharts.each<T>
- *
- * @param {Array<T>} arr
- *        The array to iterate over.
- *
- * @param {Highcharts.EachCallbackFunction<T>} fn
- *        The iterator callback. It passes three arguments:
- *        * item - The array item.
- *        * index - The item's index in the array.
- *        * arr - The array that each is being applied to.
- *
- * @param {*} [ctx]
- *        The context.
- */
-H.each = function (arr, fn, ctx) { // modern browsers
-    return (H.forEachPolyfill || Array.prototype.forEach).call(arr, fn, ctx);
-};
-
-/**
  * Iterate over object key pairs in an object.
  *
  * @function Highcharts.objectEach
@@ -2305,6 +2199,116 @@ H.objectEach = function (obj, fn, ctx) {
         }
     }
 };
+
+/**
+ * Iterate over an array.
+ *
+ * @function Highcharts.each<T>
+ *
+ * @deprecated
+ *
+ * @param {Array<T>} arr
+ *        The array to iterate over.
+ *
+ * @param {Highcharts.EachCallbackFunction<T>} fn
+ *        The iterator callback. It passes three arguments:
+ *        * item - The array item.
+ *        * index - The item's index in the array.
+ *        * arr - The array that each is being applied to.
+ *
+ * @param {*} [ctx]
+ *        The context.
+ */
+
+/**
+ * Filter an array by a callback.
+ *
+ * @function Highcharts.grep
+ *
+ * @deprecated
+ *
+ * @param {Array} arr
+ *        The array to filter.
+ *
+ * @param {Function} callback
+ *        The callback function. The function receives the item as the first
+ *        argument. Return `true` if the item is to be preserved.
+ *
+ * @return {Array}
+ *         A new, filtered array.
+ */
+
+/**
+ * Map an array by a callback.
+ *
+ * @function Highcharts.map
+ *
+ * @deprecated
+ *
+ * @param {Array} arr
+ *        The array to map.
+ *
+ * @param {Function} fn
+ *        The callback function. Return the new value for the new array.
+ *
+ * @return {Array}
+ *         A new array item with modified items.
+ */
+
+/**
+ * Reduce an array to a single value.
+ *
+ * @function Highcharts.reduce
+ * @deprecated
+ *
+ * @param {Array<*>} arr
+ *        The array to reduce.
+ *
+ * @param {Function} fn
+ *        The callback function. Return the reduced value. Receives 4
+ *        arguments: Accumulated/reduced value, current value, current array
+ *        index, and the array.
+ *
+ * @param {*} initialValue
+ *        The initial value of the accumulator.
+ *
+ * @return {*}
+ *         The reduced value.
+ */
+
+/**
+ * Test whether at least one element in the array passes the test implemented by
+ * the provided function.
+ *
+ * @function Highcharts.some
+ * @deprecated
+ *
+ * @param {Array} arr
+ *        The array to test
+ *
+ * @param {Function} fn
+ *        The function to run on each item. Return truty to pass the test.
+ *        Receives arguments `currentValue`, `index` and `array`.
+ *
+ * @param {*} ctx
+ *        The context.
+ *
+ * @return {boolean}
+ */
+H.objectEach({
+    map: 'map',
+    each: 'forEach',
+    grep: 'filter',
+    reduce: 'reduce',
+    some: 'some'
+}, function (val, key) {
+    H[key] = function (arr) {
+        return Array.prototype[val].apply(
+            arr,
+            [].slice.call(arguments, 1)
+        );
+    };
+});
 
 /**
  * Add an event listener.
@@ -2432,13 +2436,13 @@ H.removeEvent = function (el, type, fn) {
         });
     }
 
-    H.each(['protoEvents', 'hcEvents'], function (coll) {
+    ['protoEvents', 'hcEvents'].forEach(function (coll) {
         var eventCollection = el[coll];
         if (eventCollection) {
             if (type) {
                 events = eventCollection[type] || [];
                 if (fn) {
-                    index = H.inArray(fn, events);
+                    index = events.indexOf(fn);
                     if (index > -1) {
                         events.splice(index, 1);
                         eventCollection[type] = events;
@@ -2500,7 +2504,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
 
     } else {
 
-        H.each(['protoEvents', 'hcEvents'], function (coll) {
+        ['protoEvents', 'hcEvents'].forEach(function (coll) {
 
             if (el[coll]) {
                 events = el[coll][type] || [];
@@ -2694,6 +2698,10 @@ H.uniqueKey = (function () {
         return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
     };
 }());
+
+H.isFunction = function (obj) {
+    return typeof obj === 'function';
+};
 
 // Register Highcharts as a plugin in jQuery
 if (win.jQuery) {

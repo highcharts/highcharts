@@ -14,7 +14,6 @@ var attr = H.attr,
     createElement = H.createElement,
     css = H.css,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
@@ -137,20 +136,18 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             marginTop: translateY
         });
 
-        /*= if (build.classic) { =*/
-        if (wrapper.shadows) { // used in labels/tooltip
-            each(wrapper.shadows, function (shadow) {
+        if (!renderer.styledMode && wrapper.shadows) { // used in labels/tooltip
+            wrapper.shadows.forEach(function (shadow) {
                 css(shadow, {
                     marginLeft: translateX + 1,
                     marginTop: translateY + 1
                 });
             });
         }
-        /*= } =*/
 
         // apply inversion
         if (wrapper.inverted) { // wrapper is a group
-            each(elem.childNodes, function (child) {
+            elem.childNodes.forEach(function (child) {
                 renderer.invertChild(child, elem);
             });
         }
@@ -327,7 +324,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
             addSetters = function (element, style) {
                 // These properties are set as attributes on the SVG group, and
                 // as identical CSS properties on the div. (#3542)
-                each(['opacity', 'visibility'], function (prop) {
+                ['opacity', 'visibility'].forEach(function (prop) {
                     wrap(element, prop + 'Setter', function (
                         proceed,
                         value,
@@ -339,7 +336,9 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                     });
                 });
                 element.addedSetters = true;
-            };
+            },
+            chart = H.charts[renderer.chartIndex],
+            styledMode = chart && chart.styledMode;
 
         // Text setter
         wrapper.textSetter = function (value) {
@@ -388,12 +387,15 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 y: Math.round(y)
             })
             .css({
-                /*= if (build.classic) { =*/
-                fontFamily: this.style.fontFamily,
-                fontSize: this.style.fontSize,
-                /*= } =*/
                 position: 'absolute'
             });
+
+        if (!styledMode) {
+            wrapper.css({
+                fontFamily: this.style.fontFamily,
+                fontSize: this.style.fontSize
+            });
+        }
 
         // Keep the whiteSpace style outside the wrapper.styles collection
         element.style.whiteSpace = 'nowrap';
@@ -430,7 +432,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
                         // Ensure dynamically updating position when any parent
                         // is translated
-                        each(parents.reverse(), function (parentGroup) {
+                        parents.reverse().forEach(function (parentGroup) {
                             var htmlGroupStyle,
                                 cls = attr(parentGroup.element, 'class');
 

@@ -11,6 +11,9 @@ today.setUTCMilliseconds(0);
 
 // THE CHART
 Highcharts.ganttChart('container', {
+    chart: {
+        styledMode: true
+    },
     title: {
         text: 'Highcharts Gantt in Styled Mode'
     },

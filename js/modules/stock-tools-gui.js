@@ -10,7 +10,6 @@ import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
-    each = H.each,
     pick = H.pick,
     isArray = H.isArray,
     fireEvent = H.fireEvent,
@@ -844,7 +843,7 @@ H.Toolbar.prototype = {
             button;
 
         // create buttons
-        each(buttons, function (btnName) {
+        buttons.forEach(function (btnName) {
 
             button = addButton(toolbar, defs, btnName, lang);
 
@@ -952,7 +951,7 @@ H.Toolbar.prototype = {
             submenuBtn;
 
         // add items to submenu
-        each(items, function (btnName) {
+        items.forEach(function (btnName) {
             // add buttons to submenu
             submenuBtn = addButton(submenuWrapper, button, btnName, lang);
 
@@ -977,10 +976,8 @@ H.Toolbar.prototype = {
      * @param {HTMLDOMElement} - Current HTML button
      *
      */
-    eraseActiveButtons: function (buttons, currentButton) {
-        var submenuItems;
-
-        each(buttons, function (btn) {
+    eraseActiveButtons: function (buttons, currentButton, submenuItems) {
+        buttons.forEach(function (btn) {
             if (btn !== currentButton) {
                 btn.classList.remove(PREFIX + 'current');
                 btn.classList.remove(PREFIX + 'active');
@@ -1250,7 +1247,7 @@ H.Toolbar.prototype = {
     unselectAllButtons: function (btn) {
         var activeButtons = btn.parentNode.querySelectorAll('.' + activeClass);
 
-        each(activeButtons, function (activeBtn) {
+        activeButtons.forEach(function (activeBtn) {
             if (activeBtn !== btn) {
                 activeBtn.classList.remove(activeClass);
             }
@@ -1313,7 +1310,7 @@ H.Toolbar.prototype = {
             spacingLeft = this.chart.spacing[3] || 0,
             marginLeft = chartOptions.chart.marginLeft || 0;
 
-        each(this.eventsToUnbind, function (unbinder) {
+        this.eventsToUnbind.forEach(function (unbinder) {
             unbinder();
         });
 

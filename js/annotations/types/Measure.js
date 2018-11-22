@@ -4,7 +4,6 @@ import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
     ControlPoint = Annotation.ControlPoint,
-    each = H.each,
     merge = H.merge,
     isNumber = H.isNumber;
 
@@ -353,12 +352,12 @@ H.extendAnnotation(Measure, null, /** @lends Annotation.Measure# */ {
         this.redrawItems(this.labels, animation);
 
         // redraw control point to run positioner
-        each(this.controlPoints, function (controlPoint) {
+        this.controlPoints.forEach(function (controlPoint) {
             controlPoint.redraw();
         });
     },
     translate: function (dx, dy) {
-        H.each(this.shapes, function (item) {
+        this.shapes.forEach(function (item) {
             item.translate(dx, dy);
         });
     },
@@ -541,12 +540,12 @@ H.extendAnnotation(Measure, null, /** @lends Annotation.Measure# */ {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            each(series, function (serie) {
+            series.forEach(function (serie) {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.points, function (point) {
+                    serie.points.forEach(function (point) {
                         if (
                             !point.isNull &&
                             point.y < min &&
@@ -579,12 +578,12 @@ H.extendAnnotation(Measure, null, /** @lends Annotation.Measure# */ {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            each(series, function (serie) {
+            series.forEach(function (serie) {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.points, function (point) {
+                    serie.points.forEach(function (point) {
                         if (
                             !point.isNull &&
                             point.y > max &&
@@ -626,12 +625,12 @@ H.extendAnnotation(Measure, null, /** @lends Annotation.Measure# */ {
                 ),
                 isCalculated = false; // to avoid Infinity in formatter
 
-            each(series, function (serie) {
+            series.forEach(function (serie) {
                 if (
                     serie.visible &&
                     serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                    each(serie.points, function (point) {
+                    serie.points.forEach(function (point) {
                         if (
                             !point.isNull &&
                             point.x > ext.xAxisMin &&
@@ -714,9 +713,7 @@ H.extendAnnotation(Measure, null, /** @lends Annotation.Measure# */ {
                 /**
                  * The dash or dot style of the crosshair's line. For possible
                  * values, see
-                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/
-                 * highcharts/highcharts/tree/master/samples/highcharts/plotoptions/
-                 * series-dashstyle-all/).
+                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
                  *
                  * @type       {string}
                  * @default    dash
@@ -751,9 +748,7 @@ H.extendAnnotation(Measure, null, /** @lends Annotation.Measure# */ {
                 zIndex: 6,
                 /**
                  * The dash or dot style of the crosshair's line. For possible
-                 * values, see [this demonstration](https://jsfiddle.net/gh/get/library/pure/
-                 * highcharts/highcharts/tree/master/samples/highcharts/plotoptions/
-                 * series-dashstyle-all/).
+                 * values, see [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
                  *
                  * @type       {string}
                  * @default    Dash

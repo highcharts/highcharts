@@ -1,5 +1,9 @@
 Highcharts.chart('container', {
 
+    chart: {
+        styledMode: true
+    },
+
     title: {
         text: 'Highcharts Sankey diagram'
     },

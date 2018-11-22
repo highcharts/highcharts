@@ -43,5 +43,30 @@ QUnit.test('Error 19', function (assert) {
 
     Highcharts.error = error;
 
+});
 
+QUnit.test('Debugger mode', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        series: [{
+            data: [1, 2, 3]
+        }]
+
+    });
+
+    Highcharts.fireEvent(chart, 'displayError', { code: 18 });
+
+    assert.strictEqual(
+        2,
+        chart.errorElements.length,
+        'Error correctly shown on the chart'
+    );
+
+    chart.redraw();
+
+    assert.strictEqual(
+        chart.errorElements,
+        null,
+        'Error correctly removed'
+    );
 });

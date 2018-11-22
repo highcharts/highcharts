@@ -3,6 +3,7 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'pie',
+        styledMode: true,
         width: 500,
         borderWidth: 2
     },

@@ -16,7 +16,6 @@ import './ColorSeriesMixin.js';
 
 var colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
-    each = H.each,
     LegendSymbolMixin = H.LegendSymbolMixin,
     merge = H.merge,
     noop = H.noop,
@@ -115,7 +114,6 @@ seriesType('heatmap', 'scatter'
      * @apioption plotOptions.heatmap.rowsize
      */
 
-    /*= if (build.classic) { =*/
 
     /**
      * The color applied to null points. In styled mode, a general CSS class is
@@ -124,8 +122,6 @@ seriesType('heatmap', 'scatter'
      * @type {Highcharts.ColorString}
      */
     nullColor: '${palette.neutralColor3}',
-
-    /*= } =*/
 
     dataLabels: {
         formatter: function () { // #2945
@@ -214,7 +210,7 @@ seriesType('heatmap', 'scatter'
 
         series.generatePoints();
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var xPad = (options.colsize || 1) / 2,
                 yPad = (options.rowsize || 1) / 2,
                 x1 = between(
@@ -262,16 +258,15 @@ seriesType('heatmap', 'scatter'
      * @function Highcharts.seriesTypes.heatmap#drawPoints
      */
     drawPoints: function () {
+
+        // In styled mode, use CSS, otherwise the fill used in the style sheet
+        // will take precedence over the fill attribute.
+        var func = this.chart.styledMode ? 'css' : 'attr';
+
         seriesTypes.column.prototype.drawPoints.call(this);
 
-        each(this.points, function (point) {
-            /*= if (build.classic) { =*/
-            point.graphic.attr(this.colorAttribs(point));
-            /*= } else { =*/
-            // In styled mode, use CSS, otherwise the fill used in the style
-            // sheet will take precedence over the fill attribute.
-            point.graphic.css(this.colorAttribs(point));
-            /*= } =*/
+        this.points.forEach(function (point) {
+            point.graphic[func](this.colorAttribs(point));
         }, this);
     },
 

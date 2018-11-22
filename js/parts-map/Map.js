@@ -11,7 +11,6 @@ import '../parts/Chart.js';
 import '../parts/SvgRenderer.js';
 var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
-    each = H.each,
     extend = H.extend,
     merge = H.merge,
     pick = H.pick,
@@ -125,8 +124,6 @@ defaultOptions.mapNavigation = {
          */
         padding: 5,
 
-        /*= if (build.classic) { =*/
-
         /**
          * Text styles for the map navigation buttons. Defaults to
          *
@@ -163,7 +160,6 @@ defaultOptions.mapNavigation = {
             'text-align': 'center'
         }
 
-        /*= } =*/
     },
 
     /**
@@ -452,7 +448,7 @@ SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 // Even VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
 if (Renderer === VMLRenderer) {
-    each(['topbutton', 'bottombutton'], function (shape) {
+    ['topbutton', 'bottombutton'].forEach(function (shape) {
         VMLRenderer.prototype.symbols[shape] =
             SVGRenderer.prototype.symbols[shape];
     });
@@ -491,6 +487,7 @@ H.Map = H.mapChart = function (a, b, c) {
 
     var hasRenderToArg = typeof a === 'string' || a.nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],
+        userOptions = options,
         hiddenAxis = {
             endOnTick: false,
             visible: false,
@@ -544,7 +541,7 @@ H.Map = H.mapChart = function (a, b, c) {
         }
     );
 
-    options.series = seriesOptions;
+    options.series = userOptions.series = seriesOptions;
 
 
     return hasRenderToArg ?

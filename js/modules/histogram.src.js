@@ -11,15 +11,13 @@
 import H from '../parts/Globals.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
-var each = H.each,
-    objectEach = H.objectEach,
+var objectEach = H.objectEach,
     seriesType = H.seriesType,
     correctFloat = H.correctFloat,
     isNumber = H.isNumber,
     arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
-    merge = H.merge,
-    map = H.map;
+    merge = H.merge;
 
 /* ***************************************************************************
  *
@@ -108,7 +106,7 @@ seriesType('histogram', 'column', {
     pointPlacement: 'between',
     tooltip: {
         headerFormat: '',
-        pointFormat: '<span style="font-size:10px">{point.x} - {point.x2}' +
+        pointFormat: '<span style="font-size: 10px">{point.x} - {point.x2}' +
             '</span><br/>' +
             '<span style="color:{point.color}">\u25CF</span>' +
             ' {series.name} <b>{point.y}</b><br/>'
@@ -153,11 +151,11 @@ seriesType('histogram', 'column', {
         }
 
         fitToBin = fitToBinLeftClosed(
-            map(frequencies, function (elem) {
+            frequencies.map(function (elem) {
                 return parseFloat(elem);
             }));
 
-        each(baseData, function (y) {
+        baseData.forEach(function (y) {
             var x = correctFloat(fitToBin(y));
             bins[x]++;
         });
