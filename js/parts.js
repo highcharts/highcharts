@@ -391,6 +391,14 @@ var HighchartsConfig = {
         },
         'baseUrl': 'parts-more'
     }, {
+        'name': 'PackedBubbleSeries',
+        'component': 'Packedbubble',
+        'group': 'Chart and Serie types',
+        'depends': {
+            'component': ['Core', 'Scatter']
+        },
+        'baseUrl': 'parts-more'
+    }, {
         'name': 'Polar',
         'component': 'Polar',
         'group': 'Features',
@@ -621,6 +629,9 @@ var HighchartsConfig = {
             'description': ''
         },
         'Columnpyramid': {
+            'description': ''
+        },
+        'Packedbubble': {
             'description': ''
         },
         'Gauge': {
