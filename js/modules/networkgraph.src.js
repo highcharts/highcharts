@@ -214,16 +214,33 @@ seriesType('networkgraph', 'line', {
      * Run pre-translation by generating the nodeColumns.
      */
     translate: function () {
+        var layout = this.options.layoutAlgorithm,
+            algorithmStorage = this.chart.networkgraph,
+            graphStorage;
+
         if (!this.processedXData) {
             this.processData();
         }
         this.generatePoints();
 
-        this.layout(
-            this.nodes,
-            this.points,
-            this.options.layoutAlgorithm
-        );
+        if (!algorithmStorage) {
+            this.chart.networkgraph = algorithmStorage = {};
+        }
+
+        graphStorage = algorithmStorage[layout.type];
+
+        if (!graphStorage) {
+            algorithmStorage[layout.type] = graphStorage = {
+                series: [],
+                nodes: [],
+                links: [],
+                options: layout
+            };
+        }
+
+        graphStorage.series.push(this);
+        graphStorage.nodes = graphStorage.nodes.concat(this.nodes);
+        graphStorage.links = graphStorage.links.concat(this.points);
 
         this.nodes.forEach(function (node) {
             // Draw the links from this node
@@ -300,7 +317,7 @@ seriesType('networkgraph', 'line', {
         * Reingold-Fruchterman algorithm from
         * "Graph Drawing by Force-directed Placement" paper.
         */
-        'reingold-fruchterman': function (nodes, links, options) {
+        'reingold-fruchterman': function (nodes, links, options, allSeries) {
             var series = this,
                 utils = series.utils,
                 chart = series.chart,
@@ -366,7 +383,9 @@ seriesType('networkgraph', 'line', {
                 // Cool down:
                 simulation.temperature -= simulation.diffTemperature;
 
-                series.render();
+                allSeries.forEach(function (s) {
+                    s.render();
+                });
                 if (
                     simulation.maxIterations-- &&
                     simulation.temperature > 0
@@ -676,9 +695,29 @@ seriesType('networkgraph', 'line', {
     }
 });
 
-H.addEvent(H.seriesTypes.networkgraph.prototype, 'updatedData', function () {
+H.addEvent(H.seriesTypes.networkgraph, 'updatedData', function () {
     if (this.simulation) {
         this.simulation.stopped = true;
+    }
+});
+
+/*
+ * Multiple series support:
+ */
+addEvent(H.Chart, 'render', function () {
+    if (this.networkgraph) {
+        H.objectEach(
+            this.networkgraph,
+            function (graph) {
+                graph.series[0].layout(
+                    graph.nodes,
+                    graph.links,
+                    graph.options,
+                    graph.series
+                );
+            }
+        );
+        delete this.networkgraph;
     }
 });
 
@@ -686,21 +725,21 @@ H.addEvent(H.seriesTypes.networkgraph.prototype, 'updatedData', function () {
  * Draggable mode:
  */
 addEvent(
-    H.seriesTypes.networkgraph.prototype.pointClass.prototype,
+    H.seriesTypes.networkgraph.prototype.pointClass,
     'mouseOver',
     function () {
         H.css(this.series.chart.container, { cursor: 'move' });
     }
 );
 addEvent(
-    H.seriesTypes.networkgraph.prototype.pointClass.prototype,
+    H.seriesTypes.networkgraph.prototype.pointClass,
     'mouseOut',
     function () {
         H.css(this.series.chart.container, { cursor: 'default' });
     }
 );
 addEvent(
-    H.Chart.prototype,
+    H.Chart,
     'load',
     function () {
         var chart = this,
