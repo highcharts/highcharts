@@ -31,7 +31,7 @@ var correctFloat = H.correctFloat,
  * @sample highcharts/plotoptions/waterfall-stacked/
  *         Stacked waterfall chart
  *
- * @extends      {plotOptions.column}
+ * @extends      plotOptions.column
  * @product      highcharts
  * @optionparent plotOptions.waterfall
  */

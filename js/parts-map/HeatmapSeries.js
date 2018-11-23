@@ -43,7 +43,7 @@ seriesType('heatmap', 'scatter',
      * @sample highcharts/demo/heatmap-canvas/
      *         Heavy heatmap
      *
-     * @extends      {plotOptions.scatter}
+     * @extends      plotOptions.scatter
      * @excluding    animationLimit, connectEnds, connectNulls, dashStyle,
      *               findNearestPointBy, getExtremesFromAll, linecap, lineWidth,
      *               marker, pointInterval, pointIntervalUnit, pointRange,

@@ -26,7 +26,7 @@ var each = H.each,
  * @sample highcharts/series-errorbar/on-scatter/
  *         Error bars on a scatter series
  *
- * @extends      {plotOptions.boxplot}
+ * @extends      plotOptions.boxplot
  * @product      highcharts highstock
  * @optionparent plotOptions.errorbar
  */
