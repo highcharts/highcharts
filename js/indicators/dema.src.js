@@ -3,7 +3,7 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var isArray = H.isArray,
-    EMA = H.seriesTypes.ema,
+    EMAindicator = H.seriesTypes.ema,
     correctFloat = H.correctFloat;
 
 /**
@@ -29,28 +29,48 @@ H.seriesType('dema', 'ema',
      * @optionparent plotOptions.dema
      */
     {}, {
+        getEMA: function (
+            yVal,
+            prevEMA,
+            SMA,
+            index,
+            i,
+            xVal
+          ) {
+
+            return EMAindicator.prototype.calculateEma(
+                xVal || [],
+                yVal,
+                i === undefined ? 1 : i,
+                this.chart.series[0].EMApercent,
+                prevEMA,
+                index === undefined ? -1 : index,
+                SMA
+            );
+        },
         getValues: function (series, params) {
             var period = params.period,
                 doubledPeriod = 2 * period,
                 xVal = series.xData,
                 yVal = series.yData,
                 yValLen = yVal ? yVal.length : 0,
-                EMApercent = (2 / (period + 1)),
-                ema = 0,
                 index = -1,
-                sum = 0,
+                accumulatePeriodPoints = 0,
                 SMA = 0,
                 DEMA = [],
-                EmaArr = [],
-                yDataEma = [],
                 xDataDema = [],
                 yDataDema = [],
-                calEMA,
-                calDEMA,
-                emaEMA,
+                EMA = 0,
+                // EMA(EMA)
+                EMAlevel2,
+                // EMA of previous point
+                prevEMA,
+                prevEMAlevel2,
+                // EMA values array
+                EMAvalues = [],
                 i,
-                EMAPoint,
                 DEMAPoint;
+            series.EMApercent = (2 / (period + 1));
 
             // Check period, if bigger than EMA points length, skip
             if (yValLen < 2 * period - 1) {
@@ -63,81 +83,56 @@ H.seriesType('dema', 'ema',
             }
 
             // Accumulate first N-points
-            sum = EMA.prototype.accumulatePeriodPoints(
-              period,
-              index,
-              yVal
+            accumulatePeriodPoints =
+                EMAindicator.prototype.accumulatePeriodPoints(
+                    period,
+                    index,
+                    yVal
             );
 
             // first point
-            SMA = sum / period;
-            sum = 0;
+            SMA = accumulatePeriodPoints / period;
+            accumulatePeriodPoints = 0;
 
             // Calculate value one-by-one for each period in visible data
-            for (i = period; i < yValLen + 1; i++) {
-                EMAPoint = EMA.prototype.calculateEma(
-                    xVal,
-                    yVal,
-                    i,
-                    EMApercent,
-                    calEMA,
-                    index,
-                    SMA
-                );
-                EmaArr.push(EMAPoint);
-                yDataEma.push(EMAPoint[1]);
-                calEMA = EMAPoint[1];
-
-                // Summing first period points for ema(ema)
-                if (i < doubledPeriod) {
-                    sum += EMAPoint[1];
+            for (i = period; i < yValLen + 2; i++) {
+                if (i < yValLen + 1) {
+                    EMA = this.getEMA(
+                        yVal,
+                        prevEMA,
+                        SMA,
+                        index,
+                        i
+                    )[1];
+                    EMAvalues.push(EMA);
                 }
+                prevEMA = EMA;
 
-                // Calculate dema
-                if (i >= (doubledPeriod)) {
-                    // First dema point
-                    if (i === (doubledPeriod)) {
-                        SMA = sum / period;
+                // Summing first period points for EMA(EMA)
+                if (i < doubledPeriod) {
+                    accumulatePeriodPoints += EMA;
+                } else {
+                    // Calculate DEMA
+                    // First DEMA point
+                    if (i === doubledPeriod) {
+                        SMA = accumulatePeriodPoints / period;
                     }
-                    ema = EmaArr[i - period - 1][1];
-                    emaEMA = EMA.prototype.calculateEma(
-                      [],
-                      [ema],
-                      1,
-                      EMApercent,
-                      calDEMA,
-                      -1,
-                      SMA
+                    EMA = EMAvalues[i - period - 1];
+                    EMAlevel2 = this.getEMA(
+                        [EMA],
+                        prevEMAlevel2,
+                        SMA
                     )[1];
                     DEMAPoint = [
                         xVal[i - 2],
-                        correctFloat(2 * ema - emaEMA)
+                        correctFloat(2 * EMA - EMAlevel2)
                     ];
                     DEMA.push(DEMAPoint);
                     xDataDema.push(DEMAPoint[0]);
                     yDataDema.push(DEMAPoint[1]);
-                    calDEMA = emaEMA;
+                    prevEMAlevel2 = EMAlevel2;
                 }
             }
-
-            // Calculate the last dema point
-            ema = EmaArr[i - period - 1][1];
-            emaEMA = EMA.prototype.calculateEma(
-              [],
-              [ema],
-              1,
-              EMApercent,
-              calDEMA,
-              -1,
-              SMA
-            )[1];
-            DEMAPoint = [
-                xVal[i - 2],
-                correctFloat(2 * ema - emaEMA)
-            ];
-            DEMA.push(DEMAPoint);
-            xDataDema.push(DEMAPoint[0]);
-            yDataDema.push(DEMAPoint[1]);
 
             return {
                 values: DEMA,
