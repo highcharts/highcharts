@@ -4124,6 +4124,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                 // When adding a series, points are not yet generated
                 if (!series.points || series.isDirtyData) {
+                    // When we're updating the series with data that is longer
+                    // than it was, and cropThreshold is passed, we need to make
+                    // sure that the axis.max is increased _before_ running the
+                    // premature processData. Otherwise this early iteration of
+                    // processData will crop the points to axis.max, and the
+                    // names array will be too short (#5857).
+                    axis.max = Math.max(axis.max, series.xData.length - 1);
+
                     series.processData();
                     series.generatePoints();
                 }
