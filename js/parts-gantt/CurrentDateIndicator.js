@@ -27,7 +27,7 @@ var defaultConfig = {
      *
      * @type      {boolean|*}
      * @default   true
-     * @extends   {xAxis.plotLines}
+     * @extends   xAxis.plotLines
      * @excluding value
      * @product   gantt
      * @apioption xAxis.currentDateIndicator
