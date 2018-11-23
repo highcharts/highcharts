@@ -1,17 +1,21 @@
-/**
-* (c) 2016 Highsoft AS
-* Authors: Jon Arild Nygard
-*
-* License: www.highcharts.com/license
-*/
+/* *
+ * (c) 2016 Highsoft AS
+ * Authors: Jon Arild Nygard
+ *
+ * License: www.highcharts.com/license
+ */
+
 /* eslint no-console: 0 */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import './GridAxis.js';
 import Tree from './Tree.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import '../modules/broken-axis.src.js';
+
 var argsToArray = function (args) {
         return Array.prototype.slice.call(args, 1);
     },
@@ -41,11 +45,19 @@ var argsToArray = function (args) {
     GridAxisTick = H.Tick;
 
 /**
- * some - Equivalent of Array.prototype.some
+ * Equivalent of Array.prototype.some
  *
- * @param  {Array}    arr       Array to look for matching elements in.
- * @param  {function} condition The condition to check against.
- * @return {boolean}            Whether some elements pass the condition.
+ * @private
+ * @function some
+ *
+ * @param {Array<*>} arr
+ *        Array to look for matching elements in.
+ *
+ * @param {Function} condition
+ *        The condition to check against.
+ *
+ * @return {boolean}
+ *         Whether some elements pass the condition.
  */
 var some = function (arr, condition) {
     var result = false;
@@ -71,8 +83,14 @@ var override = function (obj, methods) {
 /**
  * getCategoriesFromTree - getCategories based on a tree
  *
- * @param  {object} tree Root of tree to collect categories from
- * @return {Array}       Array of categories
+ * @private
+ * @function getCategoriesFromTree
+ *
+ * @param {object} tree
+ *        Root of tree to collect categories from
+ *
+ * @return {Array<string>}
+ *         Array of categories
  */
 var getCategoriesFromTree = function (tree) {
     var categories = [];
@@ -120,12 +138,14 @@ var getBreakFromNode = function (node, max) {
  * Creates a list of positions for the ticks on the axis. Filters out positions
  * that are outside min and max, or is inside an axis break.
  *
- * @param {Object} axis The Axis to get the tick positions from.
- * @param {number} axis.min The minimum value of the axis.
- * @param {number} axis.max The maximum value of the axis.
- * @param {function} axis.isInAnyBreak Function to determine if a position is
- * inside any breaks on the axis.
- * @returns {number[]} List of positions.
+ * @private
+ * @function getTickPositions
+ *
+ * @param {Highcharts.Axis} axis
+ *        The Axis to get the tick positions from.
+ *
+ * @return {Array<number>}
+ *         List of positions.
  */
 var getTickPositions = function (axis) {
     return reduce(
@@ -144,12 +164,24 @@ var getTickPositions = function (axis) {
         []
     );
 };
+
 /**
  * Check if a node is collapsed.
- * @param {object} axis The axis to check against.
- * @param {object} node The node to check if is collapsed.
- * @param {number} pos The tick position to collapse.
- * @returns {boolean} Returns true if collapsed, false if expanded.
+ *
+ * @private
+ * @function isCollapsed
+ *
+ * @param {Highcharts.Axis} axis
+ *        The axis to check against.
+ *
+ * @param {object} node
+ *        The node to check if is collapsed.
+ *
+ * @param {number} pos
+ *        The tick position to collapse.
+ *
+ * @return {boolean}
+ *         Returns true if collapsed, false if expanded.
  */
 var isCollapsed = function (axis, node) {
     var breaks = (axis.options.breaks || []),
@@ -161,10 +193,21 @@ var isCollapsed = function (axis, node) {
 
 /**
  * Calculates the new axis breaks to collapse a node.
- * @param {object} axis The axis to check against.
- * @param {object} node The node to collapse.
- * @param {number} pos The tick position to collapse.
- * @returns {array} Returns an array of the new breaks for the axis.
+ *
+ * @private
+ * @function collapse
+ *
+ * @param {Highcharts.Axis} axis
+ *        The axis to check against.
+ *
+ * @param {object} node
+ *        The node to collapse.
+ *
+ * @param {number} pos
+ *        The tick position to collapse.
+ *
+ * @return {Array<object>}
+ *         Returns an array of the new breaks for the axis.
  */
 var collapse = function (axis, node) {
     var breaks = (axis.options.breaks || []),
@@ -175,10 +218,20 @@ var collapse = function (axis, node) {
 
 /**
  * Calculates the new axis breaks to expand a node.
- * @param {object} axis The axis to check against.
- * @param {object} node The node to expand.
- * @param {number} pos The tick position to expand.
- * @returns {array} Returns an array of the new breaks for the axis.
+ *
+ * @private
+ * @function expand
+ *
+ * @param {Highcharts.Axis} axis
+ *        The axis to check against.
+ *
+ * @param {object} node
+ *        The node to expand.
+ *
+ * @param {number} pos
+ *        The tick position to expand.
+ *
+ * @returns {Array<object>} Returns an array of the new breaks for the axis.
  */
 var expand = function (axis, node) {
     var breaks = (axis.options.breaks || []),
@@ -196,10 +249,21 @@ var expand = function (axis, node) {
  * Calculates the new axis breaks after toggling the collapse/expand state of a
  * node. If it is collapsed it will be expanded, and if it is exapended it will
  * be collapsed.
- * @param {object} axis The axis to check against.
- * @param {object} node The node to toggle.
- * @param {number} pos The tick position to toggle.
- * @returns {array} Returns an array of the new breaks for the axis.
+ *
+ * @private
+ * @function toggleCollapse
+ *
+ * @param {Highcharts.Axis} axis
+ *        The axis to check against.
+ *
+ * @param {object} node
+ *        The node to toggle.
+ *
+ * @param {number} pos
+ *        The tick position to toggle.
+ *
+ * @return {Array<object>}
+ *         Returns an array of the new breaks for the axis.
  */
 var toggleCollapse = function (axis, node) {
     return (
@@ -282,11 +346,21 @@ var onTickHoverExit = function (label, options) {
 /**
  * Creates a tree structure of the data, and the treegrid. Calculates
  * categories, and y-values of points based on the tree.
- * @param {Array} data All the data points to display in the axis.
- * @param {boolean} uniqueNames Wether or not the data node with the same name
- * should share grid cell. If true they do share cell. False by default.
- * @returns {object} Returns an object containing categories, mapOfIdToNode,
- * mapOfPosToGridNode, and tree.
+ *
+ * @private
+ * @function getTreeGridFromData
+ *
+ * @param {Array<*>} data
+ *        All the data points to display in the axis.
+ *
+ * @param {boolean} uniqueNames
+ *        Wether or not the data node with the same name should share grid cell.
+ *        If true they do share cell. False by default.
+ *
+ * @return {object}
+ *         Returns an object containing categories, mapOfIdToNode,
+ *         mapOfPosToGridNode, and tree.
+ *
  * @todo There should be only one point per line.
  * @todo It should be optional to have one category per point, or merge cells
  * @todo Add unit-tests.
@@ -465,10 +539,11 @@ override(GridAxis.prototype, {
                     * Set options on specific levels in a tree grid axis. Takes
                     * precedence over labels options.
                     *
-                    * @product gantt
                     * @sample {gantt} gantt/treegrid-axis/labels-levels
-                    *           Levels on TreeGrid Labels
-                    * @type {Array<Object>}
+                    *         Levels on TreeGrid Labels
+                    *
+                    * @type      {Array<*>}
+                    * @product   gantt
                     * @apioption yAxis.labels.levels
                     */
                     levels: [{
@@ -477,11 +552,21 @@ override(GridAxis.prototype, {
                         * applies to.
                         *
                         * @sample {gantt} gantt/treegrid-axis/labels-levels
+                        *
+                        * @type      {number}
+                        * @product   gantt
+                        * @apioption yAxis.labels.levels.level
                         */
                         level: undefined
                     }, {
                         level: 1,
+                        /**
+                         * @type      {Highcharts.CSSObject}
+                         * @product   gantt
+                         * @apioption yAxis.labels.levels.style
+                         */
                         style: {
+                            /** @ignore-option */
                             fontWeight: 'bold'
                         }
                     }],
@@ -490,7 +575,7 @@ override(GridAxis.prototype, {
                      * The symbol for the collapse and expand icon in a
                      * treegrid.
                      *
-                     * @product gantt
+                     * @product      gantt
                      * @optionparent yAxis.labels.symbol
                      */
                     symbol: {
@@ -498,7 +583,7 @@ override(GridAxis.prototype, {
                          * The symbol type. Points to a definition function in
                          * the `Highcharts.Renderer.symbols` collection.
                          *
-                         * @validvalue ['arc', 'circle', 'diamond', 'square', 'triangle', 'triangle-down']
+                         * @validvalue ["arc", "circle", "diamond", "square", "triangle", "triangle-down"]
                          */
                         type: 'triangle',
                         x: -5,
@@ -567,8 +652,12 @@ override(GridAxis.prototype, {
     },
     /**
      * Override to add indentation to axis.maxLabelDimensions.
-     * @param  {Function}   proceed the original function
-     * @returns {undefined}
+     *
+     * @private
+     * @function Highcharts.GridAxis#getMaxLabelDimensions
+     *
+     * @param {Function} proceed
+     *        The original function
      */
     getMaxLabelDimensions: function (proceed) {
         var axis = this,
@@ -594,8 +683,13 @@ override(GridAxis.prototype, {
      * Generates a tick for initial positioning.
      *
      * @private
-     * @param {function} proceed The original generateTick function.
-     * @param {number} pos The tick position in axis values.
+     * @function Highcharts.GridAxis#generateTick
+     *
+     * @param {Function} proceed
+     *        The original generateTick function.
+     *
+     * @param {number} pos
+     *        The tick position in axis values.
      */
     generateTick: function (proceed, pos) {
         var axis = this,
@@ -640,6 +734,10 @@ override(GridAxis.prototype, {
      * Set the tick positions, tickInterval, axis min and max.
      *
      * @private
+     * @function Highcharts.GridAxis#setTickInterval
+     *
+     * @param {Function} proceed
+     *        The original setTickInterval function.
      */
     setTickInterval: function (proceed) {
         var axis = this,
@@ -812,12 +910,18 @@ override(GridAxisTick.prototype, {
 });
 
 extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
+
     /**
      * Collapse the grid cell. Used when axis is of type treegrid.
-     * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
-     * an explicit call to {@link Highcharts.Chart#redraw}
-     * @sample {gantt} gantt/treegrid-axis/collapsed-dynamically/demo.js
-     * Dynamically collapse
+     *
+     * @see gantt/treegrid-axis/collapsed-dynamically/demo.js
+     *
+     * @private
+     * @function Highcharts.GridAxisTick#collapse
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart or wait for an explicit call to
+     *        {@link Highcharts.Chart#redraw}
      */
     collapse: function (redraw) {
         var tick = this,
@@ -830,10 +934,14 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
     /**
      * Expand the grid cell. Used when axis is of type treegrid.
      *
-     * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
-     * an explicit call to {@link Highcharts.Chart#redraw}
-     * @sample {gantt} gantt/treegrid-axis/collapsed-dynamically/demo.js
-     * Dynamically collapse
+     * @see gantt/treegrid-axis/collapsed-dynamically/demo.js
+     *
+     * @private
+     * @function Highcharts.GridAxisTick#expand
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart or wait for an explicit call to
+     *        {@link Highcharts.Chart#redraw}
      */
     expand: function (redraw) {
         var tick = this,
@@ -847,10 +955,14 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
      * Toggle the collapse/expand state of the grid cell. Used when axis is of
      * type treegrid.
      *
-     * @param  {boolean} [redraw=true] Whether to redraw the chart or wait for
-     * an explicit call to {@link Highcharts.Chart#redraw}
-     * @sample {gantt} gantt/treegrid-axis/collapsed-dynamically/demo.js
-     * Dynamically collapse
+     * @see gantt/treegrid-axis/collapsed-dynamically/demo.js
+     *
+     * @private
+     * @function Highcharts.GridAxisTick#toggleCollapse
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart or wait for an explicit call to
+     *        {@link Highcharts.Chart#redraw}
      */
     toggleCollapse: function (redraw) {
         var tick = this,
