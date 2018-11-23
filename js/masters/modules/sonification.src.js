@@ -9,4 +9,4 @@
 
 'use strict';
 
-import '../../modules/sonification.src.js';
+import '../../modules/sonification/sonification.js';
