@@ -15,6 +15,7 @@ var stopOffset = 15, // Time it takes to fade out note
 // Default options for Instrument constructor
 var defaultOptions = {
     type: 'oscillator',
+    playCallbackInterval: 20,
     oscillator: {
         waveformShape: 'sine'
     }
@@ -36,6 +37,11 @@ var defaultOptions = {
  * @param   {String} [options.id]
  *          The unique ID of the instrument. Generated if not supplied.
  *
+ * @param   {number} [playCallbackInterval=20]
+ *          When using functions to determine frequency or other parameters
+ *          during playback, this options specifies how often to call the
+ *          callback functions. Number given in milliseconds.
+ *
  * @param   {Object} [options.oscillator]
  *          Options specific to oscillator instruments.
  *
@@ -44,6 +50,8 @@ var defaultOptions = {
  *
  * @sample highcharts/sonification/instrument/
  *         Using Instruments directly
+ * @sample highcharts/sonification/instrument-advanced/
+ *         Using callbacks for instrument parameters
  */
 function Instrument(options) {
     this.init(options);
@@ -73,6 +81,25 @@ Instrument.prototype.init = function (options) {
     if (this.options.type === 'oscillator') {
         this.initOscillator(this.options.oscillator);
     }
+
+    // Init timer list
+    this.playCallbackTimers = [];
+};
+
+
+/**
+ * Return a copy of an instrument. Only one instrument instance can play at a
+ * time, so use this to get a new copy of the instrument that can play alongside
+ * it.
+ *
+ * @param   {Object} options
+ *          Options to merge in for the copy.
+ *
+ * @return {Highcharts.Instrument} A new Instrument instance with the same
+ *  options.
+ */
+Instrument.prototype.copy = function (options) {
+    return new Instrument(H.merge(this.options, { id: null }, options));
 };
 
 
@@ -127,7 +154,8 @@ Instrument.prototype.setPan = function (panValue) {
 
 
 /**
- * Set gain level.
+ * Set gain level. A maximum of 1.2 is allowed before we emit a warning. The
+ * actual volume is not set above this level regardless of input.
  * @private
  *
  * @param   {number} gainValue
@@ -135,8 +163,27 @@ Instrument.prototype.setPan = function (panValue) {
  */
 Instrument.prototype.setGain = function (gainValue) {
     if (this.gainNode) {
+        if (gainValue > 1.2) {
+            console.warn( // eslint-disable-line
+                'Highcharts sonification warning: ' +
+                'Volume of instrument set too high.'
+            );
+            gainValue = 1.2;
+        }
         this.gainNode.gain.value = gainValue;
     }
+};
+
+
+/**
+ * Clear existing play callback timers.
+ * @private
+ */
+Instrument.prototype.clearPlayCallbackTimers = function () {
+    this.playCallbackTimers.forEach(function (timer) {
+        clearInterval(timer);
+    });
+    this.playCallbackTimers = [];
 };
 
 
@@ -144,17 +191,17 @@ Instrument.prototype.setGain = function (gainValue) {
  * Play oscillator instrument.
  * @private
  *
- * @param   {Object} options
- *          Play options, same as Instrument.play.
+ * @param   {number} frequency
+ *          The frequency to play.
  */
-Instrument.prototype.oscillatorPlay = function (options) {
+Instrument.prototype.oscillatorPlay = function (frequency) {
     if (!this.oscillatorStarted) {
         this.oscillator.start();
         this.oscillatorStarted = true;
     }
 
     this.oscillator.frequency.linearRampToValueAtTime(
-        options.frequency, H.audioContext.currentTime + 0.002
+        frequency, H.audioContext.currentTime + 0.002
     );
 };
 
@@ -165,29 +212,74 @@ Instrument.prototype.oscillatorPlay = function (options) {
  * @param   {Object} options
  *          Options for the playback of the instrument.
  *
- * @param   {Function} options.onEnd
- *          Callback function to be called when the play is completed.
- *
- * @param   {number} options.frequency
- *          The frequency of the note to play.
+ * @param   {number|Function} options.frequency
+ *          The frequency of the note to play. Can be a fixed number, or a
+ *          function. The function receives one argument: the relative time of
+ *          the note playing (0 being the start, and 1 being the end of the
+ *          note). It should return the frequency number for each point in time.
+ *          The poll interval of this function is specified by the
+ *          Instrument.playCallbackInterval option.
  *
  * @param   {number} options.duration
  *          The duration of the note in milliseconds.
  *
- * @param   {number} [options.volume=1]
- *          The volume of the instrument.
+ * @param   {Function} [options.onEnd]
+ *          Callback function to be called when the play is completed.
  *
- * @param   {number} [options.pan=0]
- *          The panning of the instrument.
+ * @param   {number|Function} [options.volume=1]
+ *          The volume of the instrument. Can be a fixed number between 0 and 1,
+ *          or a function. The function receives one argument: the relative time
+ *          of the note playing (0 being the start, and 1 being the end of the
+ *          note). It should return the volume for each point in time. The poll
+ *          interval of this function is specified by the
+ *          Instrument.playCallbackInterval option.
+ *
+ * @param   {number|Function} [options.pan=0]
+ *          The panning of the instrument. Can be a fixed number between -1 and
+ *          1, or a function. The function receives one argument: the relative
+ *          time of the note playing (0 being the start, and 1 being the end of
+ *          the note). It should return the panning value for each point in
+ *          time. The poll interval of this function is specified by the
+ *          Instrument.playCallbackInterval option.
  *
  * @sample highcharts/sonification/instrument/
  *         Using Instruments directly
+ * @sample highcharts/sonification/instrument-advanced/
+ *         Using callbacks for instrument parameters
  */
 Instrument.prototype.play = function (options) {
-    var instrument = this;
+    var instrument = this,
+        // Set a value, or if it is a function, set it continously as a timer
+        setOrStartTimer = function (value, setter) {
+            var target = options.duration,
+                currentDurationIx = 0,
+                callbackInterval = instrument.options.playCallbackInterval;
+            if (typeof value === 'function') {
+                instrument[setter](value(0)); // Init
+                var timer = setInterval(function () {
+                    currentDurationIx++;
+                    var curTime = currentDurationIx * callbackInterval / target;
+                    if (curTime >= 1) {
+                        instrument[setter](value(1));
+                        clearInterval(timer);
+                    } else {
+                        instrument[setter](value(curTime));
+                    }
+                }, callbackInterval);
+                instrument.playCallbackTimers.push(timer);
+            } else {
+                instrument[setter](value);
+            }
+        };
+
     if (!instrument.id) {
         // No audio support - do nothing
         return;
+    }
+
+    // Clear any existing play timers
+    if (instrument.playCallbackTimers.length) {
+        instrument.clearPlayCallbackTimers();
     }
 
     // If a note is playing right now, clear the stop timeout, and call the
@@ -221,12 +313,12 @@ Instrument.prototype.play = function (options) {
     instrument.stopCallback = options.onEnd;
 
     // Set the volume and panning
-    instrument.setGain(H.pick(options.volume, 1));
-    instrument.setPan(H.pick(options.pan, 0));
+    setOrStartTimer(H.pick(options.volume, 1), 'setGain');
+    setOrStartTimer(H.pick(options.pan, 0), 'setPan');
 
     // Play, depending on instrument type
     if (instrument.options.type === 'oscillator') {
-        instrument.oscillatorPlay(options);
+        setOrStartTimer(options.frequency, 'oscillatorPlay');
     }
 };
 
@@ -272,6 +364,10 @@ Instrument.prototype.stop = function (immediately, onStopped) {
                 onStopped();
             }
         };
+    // Clear any existing play timers
+    if (instr.playCallbackTimers.length) {
+        instr.clearPlayCallbackTimers();
+    }
     if (immediately) {
         instr.setGain(0);
         reset();

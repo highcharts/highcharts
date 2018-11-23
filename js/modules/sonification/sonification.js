@@ -10,10 +10,12 @@
 import H from '../../parts/Globals.js';
 import Instrument from 'Instrument.js';
 import instruments from 'instrumentDefinitions.js';
+import Earcon from 'Earcon.js';
 
-// Expose on Highcharts object
+// Expose on the Highcharts object
 H.sonification = {
     Instrument: Instrument,
-    instruments: instruments
+    instruments: instruments,
+    Earcon: Earcon
 };
 

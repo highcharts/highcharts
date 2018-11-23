@@ -95,6 +95,10 @@ H.errorMessages = {
         "title": "Browser does not support WebAudio",
         "text": "<h1>Browser does not support WebAudio</h1><p>This happens when you attempt to use the sonification module on a chart in a browser or environment that does not support the WebAudio API. This API is supported on all modern browsers, including Microsoft Edge, Google Chrome and Mozilla Firefox.</p>"
     },
+    "30": {
+        "title": "Invalid instrument",
+        "text": "<h1>Invalid instrument</h1><p>This happens when you try to use a sonification instrument that is not valid. If you are using a predefined instrument, make sure your spelling is correct.</p>"
+    },
     "meta": {
         "files": [
             "errors/10/readme.md",
@@ -117,7 +121,8 @@ H.errorMessages = {
             "errors/26/readme.md",
             "errors/27/readme.md",
             "errors/28/readme.md",
-            "errors/29/readme.md"
+            "errors/29/readme.md",
+            "errors/30/readme.md"
         ],
         "version": "6.2.0"
     }
