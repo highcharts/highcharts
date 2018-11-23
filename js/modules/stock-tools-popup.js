@@ -10,7 +10,6 @@ import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
-    each = H.each,
     objectEach = H.objectEach,
     pick = H.pick,
     wrap = H.wrap,
@@ -214,7 +213,7 @@ H.Popup.prototype = {
             fields: { }
         };
 
-        each(inputList, function (input) {
+        inputList.forEach(function (input) {
             param = input.getAttribute(PREFIX + 'data-name');
             seriesId = input.getAttribute(PREFIX + 'data-series-id');
 
@@ -718,7 +717,7 @@ H.Popup.prototype = {
             selectBox.setAttribute('id', PREFIX + 'select-' + optionName);
 
             // list all series which have id - mandatory for creating indicator
-            each(chart.series, function (serie) {
+            chart.series.forEach(function (serie) {
 
                 seriesOptions = serie.options;
 
@@ -965,7 +964,7 @@ H.Popup.prototype = {
                 tabs = popupDiv.querySelectorAll('.' + PREFIX + 'tab-item'),
                 dataParam;
 
-            each(tabs, function (tab, i) {
+            tabs.forEach(function (tab, i) {
 
                 dataParam = tab.getAttribute(PREFIX + 'data-tab-type');
 

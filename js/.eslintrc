@@ -9,6 +9,7 @@
         "XMLHttpRequest": true
     },   
     "rules": {
+        "array-callback-return": 0,
         "camelcase": [2, {
             "properties": "always"
         }],

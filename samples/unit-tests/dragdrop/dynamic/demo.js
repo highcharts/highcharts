@@ -6,7 +6,6 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
         }),
         assertNoEvents = function () {
             assert.notOk(chart.unbindDragDropMouseUp, 'No mouse up event');
-            assert.notOk(chart.unbindDragDropTouchEnd, 'No touch end event');
             assert.notOk(chart.hasAddedDragDropEvents, 'No events added flag');
         };
 
@@ -36,6 +35,5 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
     });
 
     assert.ok(chart.unbindDragDropMouseUp, 'Has mouse up event');
-    assert.ok(chart.unbindDragDropTouchEnd, 'Has touch end event');
     assert.ok(chart.hasAddedDragDropEvents, 'Has events added flag');
 });

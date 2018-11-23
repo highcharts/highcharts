@@ -8,16 +8,12 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
 var addEvent = H.addEvent,
-    each = H.each,
     perspective = H.perspective,
     pick = H.pick,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    inArray = H.inArray,
     svg = H.svg,
     wrap = H.wrap;
-
-
 
 /**
  * Depth of the columns in a 3D column chart. Requires `highcharts-3d.js`.
@@ -103,7 +99,7 @@ seriesTypes.column.prototype.translate3dShapes = function () {
     }
 
     z += (seriesOptions.groupZPadding || 1);
-    each(series.data, function (point) {
+    series.data.forEach(function (point) {
         // #7103 Reset outside3dPlot flag
         point.outside3dPlot = null;
         if (point.y !== null) {
@@ -115,7 +111,7 @@ seriesTypes.column.prototype.translate3dShapes = function () {
                 borderlessBase; // Crisped rects can have +/- 0.5 pixels offset.
 
             // #3131 We need to check if column is inside plotArea.
-            each(dimensions, function (d) {
+            dimensions.forEach(function (d) {
                 borderlessBase = shapeArgs[d[0]] - borderCrisp;
                 if (borderlessBase < 0) {
                     // If borderLessBase is smaller than 0, it is needed to set
@@ -154,7 +150,11 @@ seriesTypes.column.prototype.translate3dShapes = function () {
                 }
             });
 
-            point.shapeType = 'cuboid';
+            // Change from 2d to 3d
+            if (point.shapeType === 'rect') {
+                point.shapeType = 'cuboid';
+            }
+
             shapeArgs.z = z;
             shapeArgs.depth = depth;
             shapeArgs.insidePlotArea = true;
@@ -184,7 +184,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 
         if (svg) { // VML is too slow anyway
             if (init) {
-                each(series.data, function (point) {
+                series.data.forEach(function (point) {
                     if (point.y !== null) {
                         point.height = point.shapeArgs.height;
                         point.shapey = point.shapeArgs.y;    // #2968
@@ -207,7 +207,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                 });
 
             } else { // run the animation
-                each(series.data, function (point) {
+                series.data.forEach(function (point) {
                     if (point.y !== null) {
                         point.shapeArgs.height = point.height;
                         point.shapeArgs.y = point.shapey;    // #2968
@@ -266,11 +266,11 @@ wrap(
         var series = this,
             pointVis;
         if (series.chart.is3d()) {
-            each(series.data, function (point) {
+            series.data.forEach(function (point) {
                 point.visible = point.options.visible = vis =
                     vis === undefined ? !point.visible : vis;
                 pointVis = vis ? 'visible' : 'hidden';
-                series.options.data[inArray(point, series.data)] =
+                series.options.data[series.data.indexOf(point)] =
                     point.options;
                 if (point.graphic) {
                     point.graphic.attr({
@@ -315,7 +315,6 @@ addEvent(Series, 'afterInit', function () {
     }
 });
 
-/*= if (build.classic) { =*/
 function pointAttribs(proceed) {
     var attr = proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -336,14 +335,13 @@ if (seriesTypes.columnrange) {
     seriesTypes.columnrange.prototype.setVisible =
         seriesTypes.column.prototype.setVisible;
 }
-/*= } =*/
 
 wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 
-    // Only do this for 3D columns and columnranges
+    // Only do this for 3D columns and it's derived series
     if (
         this.chart.is3d() &&
-        (this.type === 'column' || this.type === 'columnrange')
+        this instanceof seriesTypes.column
     ) {
         var series = this,
             chart = series.chart;
@@ -380,57 +378,3 @@ wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) { // #3946
 
     return stackBox;
 });
-
-/*
-    EXTENSION FOR 3D CYLINDRICAL COLUMNS
-    Not supported
-*/
-/*
-var defaultOptions = H.getOptions();
-defaultOptions.plotOptions.cylinder =
-    H.merge(defaultOptions.plotOptions.column);
-var CylinderSeries = H.extendClass(seriesTypes.column, {
-    type: 'cylinder'
-});
-seriesTypes.cylinder = CylinderSeries;
-
-wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    // Do not do this if the chart is not 3D
-    if (!this.chart.is3d()) {
-        return;
-    }
-
-    var series = this,
-        chart = series.chart,
-        options = chart.options,
-        cylOptions = options.plotOptions.cylinder,
-        options3d = options.chart.options3d,
-        depth = cylOptions.depth || 0,
-        alpha = chart.alpha3d;
-
-    var z = cylOptions.stacking ?
-        (this.options.stack || 0) * depth :
-        series._i * depth;
-    z += depth / 2;
-
-    if (cylOptions.grouping !== false) { z = 0; }
-
-    each(series.data, function (point) {
-        var shapeArgs = point.shapeArgs,
-            deg2rad = H.deg2rad;
-        point.shapeType = 'arc3d';
-        shapeArgs.x += depth / 2;
-        shapeArgs.z = z;
-        shapeArgs.start = 0;
-        shapeArgs.end = 2 * PI;
-        shapeArgs.r = depth * 0.95;
-        shapeArgs.innerR = 0;
-        shapeArgs.depth =
-            shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
-        shapeArgs.alpha = 90 - alpha;
-        shapeArgs.beta = 0;
-    });
-});
-*/

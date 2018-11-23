@@ -21,8 +21,6 @@ import './Chart.js';
 import './Utilities.js';
 
 var Chart = H.Chart,
-    each = H.each,
-    inArray = H.inArray,
     isArray = H.isArray,
     isObject = H.isObject,
     pick = H.pick,
@@ -160,7 +158,7 @@ Chart.prototype.setResponsive = function (redraw) {
         currentRuleIds;
 
     if (options && options.rules) {
-        each(options.rules, function (rule) {
+        options.rules.forEach(function (rule) {
             if (rule._id === undefined) {
                 rule._id = H.uniqueKey();
             }
@@ -170,7 +168,7 @@ Chart.prototype.setResponsive = function (redraw) {
     }
 
     // Merge matching rules
-    var mergedOptions = H.merge.apply(0, H.map(ruleIds, function (ruleId) {
+    var mergedOptions = H.merge.apply(0, ruleIds.map(function (ruleId) {
         return H.find(options.rules, function (rule) {
             return rule._id === ruleId;
         }).chartOptions;
@@ -257,7 +255,7 @@ Chart.prototype.currentOptions = function (options) {
     function getCurrent(options, curr, ret, depth) {
         var i;
         H.objectEach(options, function (val, key) {
-            if (!depth && inArray(key, ['series', 'xAxis', 'yAxis']) > -1) {
+            if (!depth && ['series', 'xAxis', 'yAxis'].indexOf(key) > -1) {
                 val = splat(val);
 
                 ret[key] = [];

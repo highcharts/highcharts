@@ -10,7 +10,6 @@ import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
-    each = H.each,
     pick = H.pick,
     isArray = H.isArray,
     fireEvent = H.fireEvent,
@@ -124,11 +123,74 @@ H.setOptions({
             }
         }
     },
+    /**
+     * Configure the stockTools gui strings in the chart. Requires the
+     * [stockTools module]() to be loaded. For a description of the module
+     * and information on its features, see [Highcharts StockTools]().
+     *
+     * @product highstock
+     * @since 7.0.0
+     * @type {Object}
+     * @optionparent stockTools
+     */
     stockTools: {
+        /**
+         * Definitions of buttons in Stock Tools GUI.
+         */
         gui: {
+            /**
+             * Enable or disable the stockTools gui.
+             *
+             * @type      {boolean}
+             * @default true
+             */
             enabled: true,
+            /**
+             * A CSS class name to apply to the stocktools' div,
+             * allowing unique CSS styling for each chart.
+             *
+             * @type      {string}
+             * @default 'stocktools-wrapper'
+             *
+             */
             className: 'stocktools-wrapper',
+            /**
+             * A CSS class name to apply to the container of buttons,
+             * allowing unique CSS styling for each chart.
+             *
+             * @type      {string}
+             * @default 'stocktools-toolbar'
+             *
+             */
             toolbarClassName: 'stocktools-toolbar',
+            /**
+             * A collection of strings pointing to config options for the
+             * toolbar items. Each name refers to unique key from definitions
+             * object.
+             *
+             * @type      {array}
+             *
+             * @default [
+             *  'indicators',
+             *   'separator',
+             *   'simpleShapes',
+             *   'lines',
+             *   'crookedLines',
+             *   'measure',
+             *   'advanced',
+             *   'toggleAnnotations',
+             *   'separator',
+             *   'verticalLabels',
+             *   'flags',
+             *   'separator',
+             *   'zoomChange',
+             *   'fullScreen',
+             *   'typeChange',
+             *   'separator',
+             *   'currentPriceIndicator',
+             *   'saveChart'
+             *  ]
+             */
             buttons: [
                 'indicators',
                 'separator',
@@ -149,23 +211,82 @@ H.setOptions({
                 'currentPriceIndicator',
                 'saveChart'
             ],
+            /**
+             * An options object of the buttons definitions. Each name refers to
+             * unique key from buttons array.
+             *
+             * @type      {object}
+             *
+             */
             definitions: {
                 separator: {
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
                     symbol: 'url(http://utils.highcharts.local/samples/graphics/separator.svg)'
                 },
                 simpleShapes: {
-                    items: ['label', 'circle', 'rectangle'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'label',
+                     *   'circle',
+                     *   'rectangle'
+                     * ]
+                     *
+                     */
+                    items: [
+                        'label',
+                        'circle',
+                        'rectangle'
+                    ],
                     circle: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/circle.svg)'
                     },
                     rectangle: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/rectangle.svg)'
                     },
                     label: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/label.svg)'
                     }
                 },
                 flags: {
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'flagCirclepin',
+                     *   'flagDiamondpin',
+                     *   'flagSquarepin',
+                     *   'flagSimplepin'
+                     * ]
+                     *
+                     */
                     items: [
                         'flagCirclepin',
                         'flagDiamondpin',
@@ -173,19 +294,57 @@ H.setOptions({
                         'flagSimplepin'
                     ],
                     flagSimplepin: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-basic.svg)'
                     },
                     flagDiamondpin: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-diamond.svg)'
                     },
                     flagSquarepin: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-trapeze.svg)'
                     },
                     flagCirclepin: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-elipse.svg)'
                     }
                 },
                 lines: {
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'segment',
+                     *   'arrowSegment',
+                     *   'ray',
+                     *   'arrowRay',
+                     *   'line',
+                     *   'arrowLine',
+                     *   'horizontalLine',
+                     *   'verticalLine'
+                     * ]
+                     */
                     items: [
                         'segment',
                         'arrowSegment',
@@ -197,48 +356,136 @@ H.setOptions({
                         'verticalLine'
                     ],
                     segment: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/segment.svg)'
                     },
                     arrowSegment: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-segment.svg)'
                     },
                     ray: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/ray.svg)'
                     },
                     arrowRay: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-ray.svg)'
                     },
                     line: {
-                        type: 'aaa',
-                        label: 'bbb',
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/line.svg)'
                     },
                     arrowLine: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-line.svg)'
                     },
                     verticalLine: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-line.svg)'
                     },
                     horizontalLine: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/horizontal-line.svg)'
                     }
                 },
                 crookedLines: {
-                    items: ['elliott3', 'elliott5', 'crooked3', 'crooked5'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'elliott3',
+                     *   'elliott5',
+                     *   'crooked3',
+                     *   'crooked5'
+                     * ]
+                     *
+                     */
+                    items: [
+                        'elliott3',
+                        'elliott5',
+                        'crooked3',
+                        'crooked5'
+                    ],
                     crooked3: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/crooked-3.svg)'
                     },
                     crooked5: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/crooked-5.svg)'
                     },
                     elliott3: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/elliott-3.svg)'
                     },
                     elliott5: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/elliott-5.svg)'
                     }
                 },
                 verticalLabels: {
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'verticalCounter',
+                     *   'verticalLabel',
+                     *   'verticalArrow',
+                     *   'verticalDoubleArrow'
+                     * ]
+                     */
                     items: [
                         'verticalCounter',
                         'verticalLabel',
@@ -246,79 +493,244 @@ H.setOptions({
                         'verticalDoubleArrow'
                     ],
                     verticalCounter: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-counter.svg)'
                     },
                     verticalLabel: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-label.svg)'
                     },
                     verticalArrow: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-arrow.svg)'
                     },
                     verticalDoubleArrow: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-double-arrow.svg)'
                     }
                 },
                 advanced: {
-                    items: ['fibonacci', 'pitchfork', 'parallelChannel'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'fibonacci',
+                     *   'pitchfork',
+                     *   'parallelChannel'
+                     * ]
+                     */
+                    items: [
+                        'fibonacci',
+                        'pitchfork',
+                        'parallelChannel'
+                    ],
                     pitchfork: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/pitchfork.svg)'
                     },
                     fibonacci: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/fibonacci.svg)'
                     },
                     parallelChannel: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/parallel-channel.svg)'
                     }
                 },
                 measure: {
-                    items: ['measureXY', 'measureX', 'measureY'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'measureXY',
+                     *   'measureX',
+                     *   'measureY'
+                     * ]
+                     */
+                    items: [
+                        'measureXY',
+                        'measureX',
+                        'measureY'
+                    ],
                     measureX: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-x.svg)'
                     },
                     measureY: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-y.svg)'
                     },
                     measureXY: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-xy.svg)'
                     }
                 },
                 toggleAnnotations: {
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
                     symbol: 'url(http://utils.highcharts.local/samples/graphics/annotations-visible.svg)'
                 },
                 currentPriceIndicator: {
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
                     symbol: 'url(http://utils.highcharts.local/samples/graphics/current-price-show.svg)'
                 },
                 indicators: {
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
                     symbol: 'url(http://utils.highcharts.local/samples/graphics/indicators.svg)'
                 },
                 zoomChange: {
-                    items: ['zoomX', 'zoomY', 'zoomXY'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'zoomX',
+                     *   'zoomY',
+                     *   'zoomXY'
+                     * ]
+                     */
+                    items: [
+                        'zoomX',
+                        'zoomY',
+                        'zoomXY'
+                    ],
                     zoomX: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-x.svg)'
                     },
                     zoomY: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-y.svg)'
                     },
                     zoomXY: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-xy.svg)'
                     }
                 },
                 typeChange: {
-                    items: ['typeOHLC', 'typeLine', 'typeCandlestick'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'typeOHLC',
+                     *   'typeLine',
+                     *   'typeCandlestick'
+                     * ]
+                     */
+                    items: [
+                        'typeOHLC',
+                        'typeLine',
+                        'typeCandlestick'
+                    ],
                     typeOHLC: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/series-ohlc.svg)'
                     },
                     typeLine: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/series-line.svg)'
                     },
                     typeCandlestick: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
                         symbol: 'url(http://utils.highcharts.local/samples/graphics/series-candlestick.svg)'
                     }
                 },
                 fullScreen: {
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
                     symbol: 'url(http://utils.highcharts.local/samples/graphics/fullscreen.svg)'
                 },
                 saveChart: {
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
                     symbol: 'url(http://utils.highcharts.local/samples/graphics/save-chart.svg)'
                 }
             }
@@ -431,7 +843,7 @@ H.Toolbar.prototype = {
             button;
 
         // create buttons
-        each(buttons, function (btnName) {
+        buttons.forEach(function (btnName) {
 
             button = addButton(toolbar, defs, btnName, lang);
 
@@ -539,7 +951,7 @@ H.Toolbar.prototype = {
             submenuBtn;
 
         // add items to submenu
-        each(items, function (btnName) {
+        items.forEach(function (btnName) {
             // add buttons to submenu
             submenuBtn = addButton(submenuWrapper, button, btnName, lang);
 
@@ -564,10 +976,8 @@ H.Toolbar.prototype = {
      * @param {HTMLDOMElement} - Current HTML button
      *
      */
-    eraseActiveButtons: function (buttons, currentButton) {
-        var submenuItems;
-
-        each(buttons, function (btn) {
+    eraseActiveButtons: function (buttons, currentButton, submenuItems) {
+        buttons.forEach(function (btn) {
             if (btn !== currentButton) {
                 btn.classList.remove(PREFIX + 'current');
                 btn.classList.remove(PREFIX + 'active');
@@ -837,7 +1247,7 @@ H.Toolbar.prototype = {
     unselectAllButtons: function (btn) {
         var activeButtons = btn.parentNode.querySelectorAll('.' + activeClass);
 
-        each(activeButtons, function (activeBtn) {
+        activeButtons.forEach(function (activeBtn) {
             if (activeBtn !== btn) {
                 activeBtn.classList.remove(activeClass);
             }
@@ -900,7 +1310,7 @@ H.Toolbar.prototype = {
             spacingLeft = this.chart.spacing[3] || 0,
             marginLeft = chartOptions.chart.marginLeft || 0;
 
-        each(this.eventsToUnbind, function (unbinder) {
+        this.eventsToUnbind.forEach(function (unbinder) {
             unbinder();
         });
 
@@ -956,9 +1366,9 @@ H.Toolbar.prototype = {
         pitchfork: PREFIX + 'pitchfork',
         fibonacci: PREFIX + 'fibonacci',
         parallelChannel: PREFIX + 'parallel-channel',
-        measureX: PREFIX + 'measureX',
-        measureY: PREFIX + 'measureY',
-        measureXY: PREFIX + 'measureXY',
+        measureX: PREFIX + 'measure-x',
+        measureY: PREFIX + 'measure-y',
+        measureXY: PREFIX + 'measure-xy',
         verticalCounter: PREFIX + 'vertical-counter',
         verticalLabel: PREFIX + 'vertical-label',
         verticalArrow: PREFIX + 'vertical-arrow',

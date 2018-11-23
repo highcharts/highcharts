@@ -4,12 +4,12 @@ import '../parts/Utilities.js';
 import './ema.src.js';
 
 var seriesType = H.seriesType,
-    each = H.each,
     noop = H.noop,
     merge = H.merge,
     defined = H.defined,
     SMA = H.seriesTypes.sma,
-    EMA = H.seriesTypes.ema;
+    EMA = H.seriesTypes.ema,
+    correctFloat = H.correctFloat;
 
 /**
  * The MACD series type.
@@ -189,8 +189,8 @@ seriesType('macd', 'sma',
 
             H.seriesTypes.column.prototype.translate.apply(indicator);
 
-            each(indicator.points, function (point) {
-                each([point.signal, point.MACD], function (value, i) {
+            indicator.points.forEach(function (point) {
+                [point.signal, point.MACD].forEach(function (value, i) {
                     if (value !== null) {
                         point[plotNames[i]] = indicator.yAxis.toPixels(
                             value,
@@ -243,7 +243,7 @@ seriesType('macd', 'sma',
             }
 
             // Modify options and generate smoothing line:
-            each(['macd', 'signal'], function (lineName, i) {
+            ['macd', 'signal'].forEach(function (lineName, i) {
                 indicator.points = otherSignals[i];
                 indicator.options = merge(
                     mainLineOptions[lineName + 'Line'].styles,
@@ -385,8 +385,10 @@ seriesType('macd', 'sma',
                         MACD[i][1] = 0;
                         yMACD[i][0] = 0;
                     } else {
-                        MACD[i][1] = (MACD[i][3] - signalLine[j][1]);
-                        yMACD[i][0] = (MACD[i][3] - signalLine[j][1]);
+                        MACD[i][1] = correctFloat(MACD[i][3] -
+                        signalLine[j][1]);
+                        yMACD[i][0] = correctFloat(MACD[i][3] -
+                        signalLine[j][1]);
                     }
 
                     j++;

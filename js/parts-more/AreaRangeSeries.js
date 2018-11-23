@@ -8,8 +8,7 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
-var each = H.each,
-    noop = H.noop,
+var noop = H.noop,
     pick = H.pick,
     extend = H.extend,
     isArray = H.isArray,
@@ -35,7 +34,6 @@ var each = H.each,
  * @optionparent plotOptions.arearange
  */
 seriesType('arearange', 'area', {
-    /*= if (build.classic) { =*/
 
     /**
      * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
@@ -54,17 +52,12 @@ seriesType('arearange', 'area', {
      * @product highcharts highstock
      */
     lineWidth: 1,
-    /*= } =*/
 
     threshold: null,
 
     tooltip: {
-        /*= if (!build.classic) { =*/
-        pointFormat: '<span class="highcharts-color-{series.colorIndex}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>',
-        /*= } else { =*/
-
-        pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // eslint-disable-line no-dupe-keys
-        /*= } =*/
+        pointFormat: '<span style="color:{series.color}">\u25CF</span> ' +
+            '{series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
     },
 
     /**
@@ -179,7 +172,7 @@ seriesType('arearange', 'area', {
         seriesTypes.area.prototype.translate.apply(series);
 
         // Set plotLow and plotHigh
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
 
             var low = point.low,
                 high = point.high,
@@ -205,7 +198,7 @@ seriesType('arearange', 'area', {
 
         // Postprocess plotHigh
         if (this.chart.polar) {
-            each(this.points, function (point) {
+            this.points.forEach(function (point) {
                 series.highToXY(point);
                 point.tooltipPos = [
                     (point.plotHighX + point.plotLowX) / 2,
@@ -465,8 +458,11 @@ seriesType('arearange', 'area', {
             i = length;
             while (i--) {
                 point = data[i];
-                if (point && point.dataLabelUpper) {
-                    point.dataLabels = [point.dataLabelUpper, point.dataLabel];
+                if (point) {
+                    point.dataLabels = [point.dataLabel, point.dataLabelUpper]
+                        .filter(function (label) {
+                            return !!label;
+                        });
                 }
             }
         }
@@ -626,7 +622,7 @@ seriesType('arearange', 'area', {
     destroyElements: function () {
         var graphics = ['lowerGraphic', 'upperGraphic'];
 
-        each(graphics, function (graphicName) {
+        graphics.forEach(function (graphicName) {
             if (this[graphicName]) {
                 this[graphicName] = this[graphicName].destroy();
             }

@@ -1,0 +1,20 @@
+@import 'https://code.highcharts.com/css/highcharts.css';
+
+#container {
+	min-width: 310px;
+	height: 400px;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.highcharts-color-0 {
+	fill: rgba(223, 83, 83, .75);
+	stroke: rgba(223, 83, 83, .75);
+}
+.highcharts-color-1 {
+	fill: rgba(119, 152, 191, .75);
+	stroke: rgba(119, 152, 191, .75);
+}
+.highcharts-point-hover {
+	stroke: black;
+}

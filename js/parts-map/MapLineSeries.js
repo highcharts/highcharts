@@ -21,8 +21,6 @@ var seriesType = H.seriesType,
  * @optionparent plotOptions.mapline
  */
 seriesType('mapline', 'map', {
-    /*= if (build.classic) { =*/
-
     /**
      * The width of the map line.
      *
@@ -40,11 +38,9 @@ seriesType('mapline', 'map', {
      * @product highmaps
      */
     fillColor: 'none'
-    /*= } =*/
 }, {
     type: 'mapline',
     colorProp: 'stroke',
-    /*= if (build.classic) { =*/
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'
@@ -65,7 +61,6 @@ seriesType('mapline', 'map', {
 
         return attr;
     },
-    /*= } =*/
     drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });
 

@@ -26,7 +26,6 @@ var color = H.color,
  * @optionparent
  */
 H.defaultOptions = {
-    /*= if (build.classic) { =*/
 
     /**
      * An array containing the default colors for the chart's series. When
@@ -61,7 +60,6 @@ H.defaultOptions = {
      *          "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
      */
     colors: '${palette.colors}'.split(' '),
-    /*= } =*/
 
 
     /**
@@ -756,6 +754,20 @@ H.defaultOptions = {
          * @apioption  chart.pinchType
          */
 
+
+        /**
+         * Whether to apply styled mode. When in styled mode, no presentational
+         * attributes or CSS are applied to the chart SVG. Instead, CSS rules
+         * are required to style the chart. The default style sheet is
+         * available from `https://code.highcharts.com/css/highcharts.css`.
+         *
+         * @type       {boolean}
+         * @default    false
+         * @since      7.0
+         * @apioption  chart.styledMode
+         */
+        styledMode: false,
+
         /**
          * The corner radius of the outer chart border.
          *
@@ -769,8 +781,6 @@ H.defaultOptions = {
          */
         borderRadius: 0,
 
-        /*= if (!build.classic) { =*/
-
         /**
          * In styled mode, this sets how many colors the class names
          * should rotate between. With ten colors, series (or points) are
@@ -781,8 +791,6 @@ H.defaultOptions = {
          * @since      5.0.0
          */
         colorCount: 10,
-
-        /*= } =*/
 
         /**
          * Alias of `type`.
@@ -1277,8 +1285,6 @@ H.defaultOptions = {
          */
         height: null,
 
-        /*= if (build.classic) { =*/
-
         /**
          * The color of the outer chart border.
          *
@@ -1396,8 +1402,6 @@ H.defaultOptions = {
          * @type {Highcharts.ColorString}
          */
         plotBorderColor: '${palette.neutralColor20}'
-
-        /*= } =*/
 
     },
 
@@ -1967,10 +1971,9 @@ H.defaultOptions = {
          */
 
         /**
-         * A [format string](https://www.highcharts.com/docs/chart-concepts/
-         * labels-and-string-formatting) for each legend label. Available
-         * variables relates to properties on the series, or the point in case
-         * of pies.
+         * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * for each legend label. Available variables relates to properties on
+         * the series, or the point in case of pies.
          *
          * @type      {string}
          * @default   {name}
@@ -2142,8 +2145,6 @@ H.defaultOptions = {
              * @apioption legend.navigation.style
              */
 
-            /*= if (build.classic) { =*/
-
             /**
              * The color for the active up or down arrow in the legend page
              * navigation.
@@ -2177,7 +2178,6 @@ H.defaultOptions = {
              * @since 2.2.4
              */
             inactiveColor: '${palette.neutralColor20}'
-            /*= } =*/
         },
 
         /**
@@ -2236,8 +2236,6 @@ H.defaultOptions = {
          * @apioption legend.style
          */
 
-        /*= if (build.classic) { =*/
-
         /**
          * CSS styles for each legend item. Only a subset of CSS is supported,
          * notably those options related to text. The default `textOverflow`
@@ -2261,6 +2259,10 @@ H.defaultOptions = {
              * @ignore
              */
             color: '${palette.neutralColor80}',
+            /**
+             * @ignore
+             */
+            cursor: 'pointer',
             /**
              * @ignore
              */
@@ -2336,8 +2338,6 @@ H.defaultOptions = {
          * @type {boolean|Highcharts.CSSObject}
          */
         shadow: false,
-
-        /*= } =*/
 
         /**
          * Default styling for the checkbox next to a legend item when
@@ -2425,8 +2425,8 @@ H.defaultOptions = {
          */
 
         /**
-         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/
-         * labels-and-string-formatting#html) to render the legend item texts.
+         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+         * to render the legend item texts.
          *
          * Prior to 4.1.7, when using HTML, [legend.navigation](
          * #legend.navigation) was disabled.
@@ -2529,8 +2529,6 @@ H.defaultOptions = {
              * @apioption legend.title.text
              */
 
-            /*= if (build.classic) { =*/
-
             /**
              * Generic CSS styles for the legend title.
              *
@@ -2547,9 +2545,6 @@ H.defaultOptions = {
                  */
                 fontWeight: 'bold'
             }
-
-            /*= } =*/
-
         }
     },
 
@@ -2588,8 +2583,6 @@ H.defaultOptions = {
          * @since     1.2.0
          * @apioption loading.showDuration
          */
-
-        /*= if (build.classic) { =*/
 
         /**
          * CSS styles for the loading label `span`.
@@ -2654,7 +2647,6 @@ H.defaultOptions = {
              */
             textAlign: 'center'
         }
-        /*= } =*/
     },
 
 
@@ -3142,16 +3134,49 @@ H.defaultOptions = {
          * @product highcharts highstock
          */
         snap: isTouchDevice ? 25 : 10,
+        /**
+         * The HTML of the tooltip header line. Variables are enclosed by
+         * curly brackets. Available variables are `point.key`, `series.name`,
+         * `series.color` and other members from the `point` and `series`
+         * objects. The `point.key` variable contains the category name, x
+         * value or datetime string depending on the type of axis. For datetime
+         * axes, the `point.key` date format can be set using
+         * `tooltip.xDateFormat`.
+         *
+         * @sample {highcharts} highcharts/tooltip/footerformat/
+         *         An HTML table in the tooltip
+         * @sample {highstock} highcharts/tooltip/footerformat/
+         *         An HTML table in the tooltip
+         * @sample {highmaps} maps/tooltip/format/
+         *         Format demo
+         *
+         * @type       {string}
+         * @apioption  tooltip.headerFormat
+         */
+        headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 
-        /*= if (!build.classic) { =*/
-
-        headerFormat: '<span class="highcharts-header">{point.key}</span><br/>',
-
-        pointFormat: '<span class="highcharts-color-{point.colorIndex}">' +
-            '\u25CF</span> {series.name}: <span class="highcharts-strong">' +
-            '{point.y}</span><br/>',
-
-        /*= } else { =*/
+        /**
+         * The HTML of the point's line in the tooltip. Variables are enclosed
+         * by curly brackets. Available variables are point.x, point.y, series.
+         * name and series.color and other properties on the same form.
+         * Furthermore, `point.y` can be extended by the `tooltip.valuePrefix`
+         * and `tooltip.valueSuffix` variables. This can also be overridden for
+         * each series, which makes it a good hook for displaying units.
+         *
+         * In styled mode, the dot is colored by a class name rather
+         * than the point color.
+         *
+         * @sample {highcharts} highcharts/tooltip/pointformat/
+         *         A different point format with value suffix
+         * @sample {highmaps} maps/tooltip/format/
+         *         Format demo
+         *
+         * @type       {string}
+         * @default    <span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>
+         * @since      2.2
+         * @apioption  tooltip.pointFormat
+         */
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 
         /**
          * The background color or gradient for the tooltip.
@@ -3203,50 +3228,6 @@ H.defaultOptions = {
         borderWidth: 1,
 
         /**
-         * The HTML of the tooltip header line. Variables are enclosed by
-         * curly brackets. Available variables are `point.key`, `series.name`,
-         * `series.color` and other members from the `point` and `series`
-         * objects. The `point.key` variable contains the category name, x
-         * value or datetime string depending on the type of axis. For datetime
-         * axes, the `point.key` date format can be set using
-         * `tooltip.xDateFormat`. To access the original point use
-         * `point.point`.
-         *
-         * Set an empty string to avoid header on a shared or split tooltip.
-         *
-         * @sample {highcharts} highcharts/tooltip/footerformat/
-         *         An HTML table in the tooltip
-         * @sample {highstock} highcharts/tooltip/footerformat/
-         *         An HTML table in the tooltip
-         * @sample {highmaps} maps/tooltip/format/
-         *         Format demo
-         */
-        headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-
-        /**
-         * The HTML of the point's line in the tooltip. Variables are enclosed
-         * by curly brackets. Available variables are point.x, point.y, series.
-         * name and series.color and other properties on the same form.
-         * Furthermore, `point.y` can be extended by the `tooltip.valuePrefix`
-         * and `tooltip.valueSuffix` variables. This can also be overridden for
-         * each series, which makes it a good hook for displaying units.
-         *
-         * Set an empty string to leave out a series from a shared or split
-         * tooltip.
-         *
-         * In styled mode, the dot is colored by a class name rather
-         * than the point color.
-         *
-         * @sample {highcharts} highcharts/tooltip/pointformat/
-         *         A different point format with value suffix
-         * @sample {highmaps} maps/tooltip/format/
-         *         Format demo
-         *
-         * @since 2.2
-         */
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
-
-        /**
          * Whether to apply a drop shadow to the tooltip.
          *
          * @sample {highcharts} highcharts/tooltip/bordercolor-default/
@@ -3291,7 +3272,6 @@ H.defaultOptions = {
              */
             whiteSpace: 'nowrap'
         }
-        /*= } =*/
     },
 
 
@@ -3351,7 +3331,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/credits/customized/
          *         Custom URL and text
          */
-        href: 'https://www.highcharts.com',
+        href: 'https://www.highcharts.com?credits',
 
         /**
          * Position configuration for the credits label.
@@ -3395,8 +3375,6 @@ H.defaultOptions = {
 
         },
 
-        /*= if (build.classic) { =*/
-
         /**
          * CSS styles for the credits label.
          *
@@ -3420,8 +3398,6 @@ H.defaultOptions = {
              */
             fontSize: '9px'
         },
-
-        /*= } =*/
 
         /**
          * The text for the credits label.
@@ -3527,3 +3503,9 @@ H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 H.dateFormat = function (format, timestamp, capitalize) {
     return H.time.dateFormat(format, timestamp, capitalize);
 };
+
+
+/*= if (!build.classic) { =*/
+// Legacy build for styled mode, set the styledMode option to true by default.
+H.defaultOptions.chart.styledMode = true;
+/*= } =*/

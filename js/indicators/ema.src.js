@@ -3,36 +3,9 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var isArray = H.isArray,
-    seriesType = H.seriesType;
+    seriesType = H.seriesType,
+    correctFloat = H.correctFloat;
 
-// Utils:
-function accumulateAverage(points, xVal, yVal, i, index) {
-    var xValue = xVal[i],
-        yValue = index < 0 ? yVal[i] : yVal[i][index];
-
-    points.push([xValue, yValue]);
-}
-
-function populateAverage(
-    points,
-    xVal,
-    yVal,
-    i,
-    EMApercent,
-    calEMA,
-    index,
-    SMA
-) {
-    var x = xVal[i - 1],
-        yValue = index < 0 ? yVal[i - 1] : yVal[i - 1][index],
-        y;
-
-    y = calEMA === undefined ?
-        SMA :
-        ((yValue * EMApercent) + (calEMA * (1 - EMApercent)));
-
-    return [x, y];
-}
 /**
  * The EMA series type.
  *
@@ -53,30 +26,72 @@ seriesType('ema', 'sma',
      */
     {
         params: {
-            index: 0,
-            period: 14
+            /**
+             * The point index which indicator calculations will base. For
+             * example using OHLC data, index=2 means the indicator will be
+             * calculated using Low values.
+             *
+             * By default index value used to be set to 0. Since Highstock 7
+             * by default index is set to 3 which means that the ema
+             * indicator will be calculated using Close values.
+             */
+            index: 3,
+            period: 9
         }
     }, {
+        accumulatePeriodPoints: function (
+          period,
+          index,
+          yVal
+        ) {
+            var sum = 0,
+                i = 0,
+                y = 0;
+            while (i < period) {
+                y = index < 0 ? yVal[i] : yVal[i][index];
+                sum = sum + y;
+                i++;
+            }
+
+            return sum;
+        },
+        calculateEma: function (
+          xVal,
+          yVal,
+          i,
+          EMApercent,
+          calEMA,
+          index,
+          SMA
+      ) {
+            var x = xVal[i - 1],
+                yValue = index < 0 ? yVal[i - 1] : yVal[i - 1][index],
+                y;
+
+            y = calEMA === undefined ?
+              SMA : correctFloat((yValue * EMApercent) +
+              (calEMA * (1 - EMApercent)));
+
+            return [x, y];
+        },
         getValues: function (series, params) {
             var period = params.period,
                 xVal = series.xData,
                 yVal = series.yData,
                 yValLen = yVal ? yVal.length : 0,
-                EMApercent = (2 / (period + 1)),
-                range = 0,
+                EMApercent = 2 / (period + 1),
                 sum = 0,
                 EMA = [],
                 xData = [],
                 yData = [],
                 index = -1,
-                points = [],
                 SMA = 0,
                 calEMA,
                 EMAPoint,
                 i;
 
             // Check period, if bigger than points length, skip
-            if (xVal.length < period) {
+            if (yValLen < period) {
                 return false;
             }
 
@@ -86,47 +101,31 @@ seriesType('ema', 'sma',
             }
 
             // Accumulate first N-points
-            while (range < period) {
-                accumulateAverage(points, xVal, yVal, range, index);
-                sum += index < 0 ? yVal[range] : yVal[range][index];
-                range++;
-            }
+            sum = this.accumulatePeriodPoints(
+              period,
+              index,
+              yVal
+            );
 
             // first point
             SMA = sum / period;
 
             // Calculate value one-by-one for each period in visible data
-            for (i = range; i < yValLen; i++) {
-                EMAPoint = populateAverage(
-                    points,
-                    xVal,
-                    yVal,
-                    i,
-                    EMApercent,
-                    calEMA,
-                    index,
-                    SMA
-                );
+            for (i = period; i < yValLen + 1; i++) {
+                EMAPoint = this.calculateEma(
+                      xVal,
+                      yVal,
+                      i,
+                      EMApercent,
+                      calEMA,
+                      index,
+                      SMA
+                  );
                 EMA.push(EMAPoint);
                 xData.push(EMAPoint[0]);
                 yData.push(EMAPoint[1]);
                 calEMA = EMAPoint[1];
-
-                accumulateAverage(points, xVal, yVal, i, index);
             }
-
-            EMAPoint = populateAverage(
-                points,
-                xVal,
-                yVal,
-                i,
-                EMApercent,
-                calEMA,
-                index
-            );
-            EMA.push(EMAPoint);
-            xData.push(EMAPoint[0]);
-            yData.push(EMAPoint[1]);
 
             return {
                 values: EMA,

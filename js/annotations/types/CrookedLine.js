@@ -26,7 +26,7 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
     getPointsOptions: function () {
         var typeOptions = this.options.typeOptions;
 
-        return H.map(typeOptions.points, function (pointOptions) {
+        return typeOptions.points.map(function (pointOptions) {
             pointOptions.xAxis = typeOptions.xAxis;
             pointOptions.yAxis = typeOptions.yAxis;
 
@@ -39,8 +39,7 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
     },
 
     addControlPoints: function () {
-        H.each(
-            this.getControlPointsOptions(),
+        this.getControlPointsOptions().forEach(
             function (pointOptions, i) {
                 var controlPoint = new ControlPoint(
                     this.chart,
@@ -65,7 +64,7 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
             shape = this.initShape(
                 H.merge(typeOptions.line, {
                     type: 'path',
-                    points: H.map(this.points, function (point, i) {
+                    points: this.points.map(function (point, i) {
                         return function (target) {
                             return target.annotation.points[i];
                         };
