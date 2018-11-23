@@ -10,6 +10,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
+import '../modules/layouts.js';
 
 var addEvent = H.addEvent,
     defined = H.defined,
@@ -214,33 +215,12 @@ seriesType('networkgraph', 'line', {
      * Run pre-translation by generating the nodeColumns.
      */
     translate: function () {
-        var layout = this.options.layoutAlgorithm,
-            algorithmStorage = this.chart.networkgraph,
-            graphStorage;
-
         if (!this.processedXData) {
             this.processData();
         }
         this.generatePoints();
 
-        if (!algorithmStorage) {
-            this.chart.networkgraph = algorithmStorage = {};
-        }
-
-        graphStorage = algorithmStorage[layout.type];
-
-        if (!graphStorage) {
-            algorithmStorage[layout.type] = graphStorage = {
-                series: [],
-                nodes: [],
-                links: [],
-                options: layout
-            };
-        }
-
-        graphStorage.series.push(this);
-        graphStorage.nodes = graphStorage.nodes.concat(this.nodes);
-        graphStorage.links = graphStorage.links.concat(this.points);
+        this.deferLayout();
 
         this.nodes.forEach(function (node) {
             // Draw the links from this node
@@ -255,12 +235,28 @@ seriesType('networkgraph', 'line', {
         });
     },
 
-    layout: function (nodes, links, layoutAlgorithm) {
-        if (H.isFunction(layoutAlgorithm)) {
-            layoutAlgorithm.apply(this, arguments);
-        } else {
-            this.layouts[layoutAlgorithm.type].apply(this, arguments);
+    deferLayout: function () {
+        var layoutOptions = this.options.layoutAlgorithm,
+            graphLayoutsStorage = this.chart.graphLayoutsStorage,
+            layout;
+
+        if (!graphLayoutsStorage) {
+            this.chart.graphLayoutsStorage = graphLayoutsStorage = {};
         }
+
+        layout = graphLayoutsStorage[layoutOptions.type];
+
+        if (!layout) {
+            graphLayoutsStorage[layoutOptions.type] = layout =
+                new H.layouts[layoutOptions.type](layoutOptions);
+        }
+
+        this.layout = layout;
+
+        layout.setArea(0, 0, this.chart.plotWidth, this.chart.plotHeight);
+        layout.addSeries(this);
+        layout.addNodes(this.nodes);
+        layout.addLinks(this.points);
     },
 
     /**
@@ -286,289 +282,6 @@ seriesType('networkgraph', 'line', {
         }
     },
 
-    resetSimulation: function () {
-        this.setMaxIterations();
-        this.setTemperature();
-        this.setDiffTemperature();
-    },
-
-    setMaxIterations: function () {
-        if (this.simulation) {
-            this.simulation.maxIterations =
-                this.options.layoutAlgorithm.maxIterations;
-        }
-    },
-
-    setTemperature: function () {
-        if (this.simulation) {
-            this.simulation.temperature = Math.sqrt(this.nodes.length);
-        }
-    },
-
-    setDiffTemperature: function () {
-        if (this.simulation) {
-            this.simulation.diffTemperature = this.simulation.temperature /
-                (this.simulation.maxIterations + 1);
-        }
-    },
-
-    layouts: {
-        /**
-        * Reingold-Fruchterman algorithm from
-        * "Graph Drawing by Force-directed Placement" paper.
-        */
-        'reingold-fruchterman': function (nodes, links, options, allSeries) {
-            var series = this,
-                utils = series.utils,
-                chart = series.chart,
-                nodesLength = nodes.length + 1,
-                // Used in initial positions:
-                sqrtNodesLength = Math.ceil(Math.sqrt(nodesLength)),
-                // Optimal distance between nodes,
-                // available space around the node:
-                k = series.options.link.length ||
-                    Math.pow(
-                        chart.plotWidth * chart.plotHeight / nodesLength,
-                        0.4
-                    ),
-                // Fake object which will imitate animations
-                mockAnimator = {
-                    style: {}
-                },
-                simulation;
-
-            // Initial positions:
-            nodes.forEach(
-                function (node, index) {
-                    var xPos = index / nodesLength,
-                        yPos = (index % sqrtNodesLength) / sqrtNodesLength;
-
-                    node.plotX = pick(node.plotX, chart.plotWidth * xPos);
-                    node.plotY = pick(node.plotY, chart.plotHeight * yPos);
-
-                    node.dispX = 0;
-                    node.dispY = 0;
-                }
-            );
-
-            // Render elements in initial positions:
-            series.render();
-            // Disable built-in animations:
-            H.setAnimation(false, chart);
-
-            // Algorithm:
-            function localLayout() {
-                if (simulation.stopped) {
-                    return true;
-                }
-                // Repulsive forces:
-                utils.applyRepulsiveForces.call(series, nodes, k);
-
-                // Attractive forces:
-                utils.applyAttractiveForces.call(series, links, k);
-
-                // Limit to the plotting area and cool down:
-                utils.applyLimits.call(
-                    series,
-                    nodes,
-                    simulation.temperature,
-                    {
-                        left: 0,
-                        top: 0,
-                        width: chart.plotWidth,
-                        height: chart.plotHeight
-                    }
-                );
-
-                // Cool down:
-                simulation.temperature -= simulation.diffTemperature;
-
-                allSeries.forEach(function (s) {
-                    s.render();
-                });
-                if (
-                    simulation.maxIterations-- &&
-                    simulation.temperature > 0
-                ) {
-                    simulation.run(0, 1, 1);
-                } else {
-                    simulation.stopped = true;
-                }
-            }
-
-            // Animate it:
-            series.simulation = simulation = new H.Fx(
-                mockAnimator,
-                {
-                    duration: 13,
-                    easing: function () {},
-                    complete: localLayout,
-                    curAnim: {}
-                }
-            );
-
-            series.resetSimulation(options);
-
-            simulation.run(0, 1, 1);
-        }
-    },
-    utils: {
-        applyRepulsiveForces: function (nodes, k) {
-            var utils = this.utils,
-                options = this.options.layoutAlgorithm;
-
-            nodes.forEach(function (node) {
-                nodes.forEach(function (repNode) {
-                    var force,
-                        distanceR,
-                        distanceXY;
-
-                    if (
-                        // Node can not repulse itself:
-                        node !== repNode &&
-                        // Only close nodes affect each other:
-                        utils.getDistR(node, repNode) < 2 * k &&
-                        // Not dragged:
-                        !node.fixedPosition
-                    ) {
-                        distanceXY = utils.getDistXY(node, repNode);
-                        distanceR = utils.vectorLength(distanceXY);
-
-                        force = options.repulsiveForce.call(
-                            this, distanceR, k
-                        );
-
-                        node.dispX += (distanceXY.x / distanceR) * force;
-                        node.dispY += (distanceXY.y / distanceR) * force;
-                    }
-                });
-            });
-        },
-        applyAttractiveForces: function (links, k) {
-            var utils = this.utils,
-                options = this.options.layoutAlgorithm;
-
-            links.forEach(function (link) {
-                var distanceXY = utils.getDistXY(
-                        link.fromNode,
-                        link.toNode
-                    ),
-                    distanceR = utils.vectorLength(distanceXY),
-                    force = options.attractiveForce.call(
-                        this, distanceR, k
-                    );
-
-                if (!link.fromNode.fixedPosition) {
-                    link.fromNode.dispX -= (distanceXY.x / distanceR) * force;
-                    link.fromNode.dispY -= (distanceXY.y / distanceR) * force;
-                }
-
-                if (!link.toNode.fixedPosition) {
-                    link.toNode.dispX += (distanceXY.x / distanceR) * force;
-                    link.toNode.dispY += (distanceXY.y / distanceR) * force;
-                }
-            });
-        },
-        applyLimits: function (nodes, temperature, box) {
-            var utils = this.utils;
-
-            nodes.forEach(function (node) {
-                if (node.fixedPosition) {
-                    return;
-                }
-                var distanceR = utils.vectorLength({
-                    x: node.dispX,
-                    y: node.dispY
-                });
-
-                // Place nodes:
-                if (distanceR !== 0) {
-                    node.plotX += node.dispX / distanceR *
-                        Math.min(Math.abs(node.dispX), temperature);
-                    node.plotY += node.dispY / distanceR *
-                        Math.min(Math.abs(node.dispY), temperature);
-                }
-
-                /*
-                TO DO: Consider elastic collision instead of stopping.
-                o' means end position when hitting plotting area edge:
-
-                - "inealstic":
-                o
-                 \
-                ______
-                |  o'
-                |   \
-                |    \
-
-                - "elastic"/"bounced":
-                o
-                 \
-                ______
-                |  ^
-                | / \
-                |o'  \
-
-                */
-
-                // Limit X-coordinates:
-                node.plotX = Math.round(
-                    Math.max(
-                        Math.min(
-                            node.plotX,
-                            box.width
-                        ),
-                        box.left
-                    )
-                );
-
-                // Limit Y-coordinates:
-                node.plotY = Math.round(
-                    Math.max(
-                        Math.min(
-                            node.plotY,
-                            box.height
-                        ),
-                        box.top
-                    )
-                );
-
-                // Reset displacement:
-                node.dispX = 0;
-                node.dispY = 0;
-            });
-        },
-        vectorLength: function (vector) {
-            return Math.sqrt(vector.x * vector.x + vector.y * vector.y);
-        },
-        getDistR: function (nodeA, nodeB) {
-            var distance = this.getDistXY(nodeA, nodeB);
-
-            return Math.sqrt(
-                distance.x * distance.x +
-                distance.y * distance.y
-            );
-        },
-        getDistXY: function (nodeA, nodeB) {
-            var xDist = nodeA.plotX - nodeB.plotX,
-                yDist = nodeA.plotY - nodeB.plotY;
-
-            if (xDist === 0) {
-                xDist = 0.01;
-            }
-
-            if (yDist === 0) {
-                yDist = 0.01;
-            }
-
-            return {
-                x: xDist,
-                y: yDist,
-                absX: Math.abs(xDist),
-                absY: Math.abs(yDist)
-            };
-        }
-    },
     /*
      * Draggable mode:
      */
@@ -612,12 +325,14 @@ seriesType('networkgraph', 'line', {
 
                     series.redrawHalo();
 
-                    if (series.simulation.stopped) {
+                    if (!series.layout.simulation ||
+                        series.layout.simulation.stopped
+                    ) {
                         // Start new simulation:
-                        series.translate();
+                        series.layout.run();
                     } else {
                         // Extend current simulation:
-                        series.resetSimulation();
+                        series.layout.resetSimulation();
                     }
                 }
             }
@@ -696,8 +411,8 @@ seriesType('networkgraph', 'line', {
 });
 
 H.addEvent(H.seriesTypes.networkgraph, 'updatedData', function () {
-    if (this.simulation) {
-        this.simulation.stopped = true;
+    if (this.layout) {
+        this.layout.stop();
     }
 });
 
@@ -705,19 +420,15 @@ H.addEvent(H.seriesTypes.networkgraph, 'updatedData', function () {
  * Multiple series support:
  */
 addEvent(H.Chart, 'render', function () {
-    if (this.networkgraph) {
+    if (this.graphLayoutsStorage) {
+        H.setAnimation(false, this);
         H.objectEach(
-            this.networkgraph,
-            function (graph) {
-                graph.series[0].layout(
-                    graph.nodes,
-                    graph.links,
-                    graph.options,
-                    graph.series
-                );
+            this.graphLayoutsStorage,
+            function (layout) {
+                layout.run();
             }
         );
-        delete this.networkgraph;
+        delete this.graphLayoutsStorage;
     }
 });
 
