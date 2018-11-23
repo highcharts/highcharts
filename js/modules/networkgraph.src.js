@@ -11,7 +11,8 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 
-var defined = H.defined,
+var addEvent = H.addEvent,
+    defined = H.defined,
     extend = H.extend,
     seriesType = H.seriesType,
     pick = H.pick,
@@ -76,6 +77,7 @@ seriesType('networkgraph', 'line', {
         }
     }
 }, {
+    isNetworkgraph: true,
     drawGraph: null,
     isCartesian: false,
     requireSorting: false,
@@ -215,7 +217,9 @@ seriesType('networkgraph', 'line', {
      * the points.
      */
     render: function () {
-        var points = this.points;
+        var points = this.points,
+            hoverPoint = this.chart.hoverPoint;
+
         // Render markers:
         this.points = this.nodes;
         H.seriesTypes.line.prototype.render.call(this);
@@ -225,6 +229,36 @@ seriesType('networkgraph', 'line', {
             point.renderLink();
             point.redrawLink();
         });
+
+        if (hoverPoint && hoverPoint.series === this) {
+            this.redrawHalo(hoverPoint);
+        }
+    },
+
+    resetSimulation: function () {
+        this.setMaxIterations();
+        this.setTemperature();
+        this.setDiffTemperature();
+    },
+
+    setMaxIterations: function () {
+        if (this.simulation) {
+            this.simulation.maxIterations =
+                this.options.layoutAlgorithm.maxIterations;
+        }
+    },
+
+    setTemperature: function () {
+        if (this.simulation) {
+            this.simulation.temperature = Math.sqrt(this.nodes.length);
+        }
+    },
+
+    setDiffTemperature: function () {
+        if (this.simulation) {
+            this.simulation.diffTemperature = this.simulation.temperature /
+                (this.simulation.maxIterations + 1);
+        }
     },
 
     layouts: {
@@ -246,16 +280,12 @@ seriesType('networkgraph', 'line', {
                         chart.plotWidth * chart.plotHeight / nodesLength,
                         0.33
                     ),
-                maxIterations = options.maxIterations,
-                // Cooling system, temperature decreases to 0
-                temperature = Math.sqrt(nodesLength),
-                diffTemperature = temperature / (maxIterations + 1),
                 // Fake object which will imitate animations
                 mockAnimator = {
                     style: {}
                 },
                 start = +new Date(),
-                fx;
+                simulation;
 
             // Initial positions:
             nodes.forEach(
@@ -278,7 +308,7 @@ seriesType('networkgraph', 'line', {
 
             // Algorithm:
             function localLayout() {
-                if (fx.stopped) {
+                if (simulation.stopped) {
                     return true;
                 }
                 // Repulsive forces:
@@ -291,7 +321,7 @@ seriesType('networkgraph', 'line', {
                 utils.applyLimits.call(
                     series,
                     nodes,
-                    temperature,
+                    simulation.temperature,
                     {
                         left: 0,
                         top: 0,
@@ -301,13 +331,13 @@ seriesType('networkgraph', 'line', {
                 );
 
                 // Cool down:
-                temperature -= diffTemperature;
+                simulation.temperature -= simulation.diffTemperature;
 
                 series.render();
-                if (maxIterations--) {
-                    fx.run(0, 1, 1);
+                if (series.simulation.maxIterations--) {
+                    simulation.run(0, 1, 1);
                 } else {
-                    fx.stopped = true;
+                    simulation.stopped = true;
                     chart.setSubtitle({
                         text: 'Animated in: ' +
                             (new Date().getTime() - start) + 'ms'
@@ -316,17 +346,19 @@ seriesType('networkgraph', 'line', {
             }
 
             // Animate it:
-            series.simulation = fx = new H.Fx(
+            series.simulation = simulation = new H.Fx(
                 mockAnimator,
                 {
-                    duration: 1000 / maxIterations,
+                    duration: 13,
                     easing: function () {},
                     complete: localLayout,
                     curAnim: {}
                 }
             );
 
-            fx.run(0, 1, 1);
+            series.resetSimulation();
+
+            simulation.run(0, 1, 1);
         }
     },
     utils: {
@@ -344,7 +376,9 @@ seriesType('networkgraph', 'line', {
                         // Node can not repulse itself:
                         node !== repNode &&
                         // Only close nodes affect each other:
-                        utils.getDistR(node, repNode) < 2 * k
+                        utils.getDistR(node, repNode) < 2 * k &&
+                        // Not dragged:
+                        !node.fixedPosition
                     ) {
                         distanceXY = utils.getDistXY(node, repNode);
                         distanceR = utils.vectorLength(distanceXY);
@@ -373,17 +407,24 @@ seriesType('networkgraph', 'line', {
                         this, distanceR, k
                     );
 
-                link.fromNode.dispX -= (distanceXY.x / distanceR) * force;
-                link.fromNode.dispY -= (distanceXY.y / distanceR) * force;
+                if (!link.fromNode.fixedPosition) {
+                    link.fromNode.dispX -= (distanceXY.x / distanceR) * force;
+                    link.fromNode.dispY -= (distanceXY.y / distanceR) * force;
+                }
 
-                link.toNode.dispX += (distanceXY.x / distanceR) * force;
-                link.toNode.dispY += (distanceXY.y / distanceR) * force;
+                if (!link.toNode.fixedPosition) {
+                    link.toNode.dispX += (distanceXY.x / distanceR) * force;
+                    link.toNode.dispY += (distanceXY.y / distanceR) * force;
+                }
             });
         },
         applyLimits: function (nodes, temperature, box) {
             var utils = this.utils;
 
             nodes.forEach(function (node) {
+                if (node.fixedPosition) {
+                    return;
+                }
                 var distanceR = utils.vectorLength({
                     x: node.dispX,
                     y: node.dispY
@@ -474,6 +515,65 @@ seriesType('networkgraph', 'line', {
                 absY: Math.abs(yDist)
             };
         }
+    },
+    /*
+     * Draggable mode:
+     */
+    redrawHalo: function (point) {
+        if (point && this.halo) {
+            this.halo.attr({
+                d: point.haloPath(
+                    this.options.states.hover.halo.size
+                )
+            });
+        }
+    },
+    onMouseDown: function (point, event) {
+        var normalizedEvent = this.chart.pointer.normalize(event);
+
+        point.fixedPosition = {
+            chartX: normalizedEvent.chartX,
+            chartY: normalizedEvent.chartY,
+            plotX: point.plotX,
+            plotY: point.plotY
+        };
+    },
+    onMouseMove: function (point, event) {
+        if (point.fixedPosition) {
+            var series = this,
+                chart = series.chart,
+                normalizedEvent = chart.pointer.normalize(event),
+                diffX = point.fixedPosition.chartX - normalizedEvent.chartX,
+                diffY = point.fixedPosition.chartY - normalizedEvent.chartY,
+                newPlotX,
+                newPlotY;
+
+            // At least 5px to apply change (avoids simple click):
+            if (Math.abs(diffX) > 5 || Math.abs(diffY) > 5) {
+                newPlotX = point.fixedPosition.plotX - diffX;
+                newPlotY = point.fixedPosition.plotY - diffY;
+
+                if (chart.isInsidePlot(newPlotX, newPlotY)) {
+                    point.plotX = newPlotX;
+                    point.plotY = newPlotY;
+
+                    series.redrawHalo();
+
+                    if (series.simulation.stopped) {
+                        // Start new simulation:
+                        series.translate();
+                    } else {
+                        // Extend current simulation:
+                        series.resetSimulation();
+                    }
+                }
+            }
+        }
+    },
+    onMouseUp: function (point) {
+        if (point.fixedPosition) {
+            delete point.fixedPosition;
+        }
     }
 }, {
     // Links:
@@ -543,6 +643,74 @@ H.addEvent(H.seriesTypes.networkgraph.prototype, 'updatedData', function () {
         this.simulation.stopped = true;
     }
 });
+
+/*
+ * Draggable mode:
+ */
+addEvent(
+    H.seriesTypes.networkgraph.prototype.pointClass.prototype,
+    'mouseOver',
+    function () {
+        H.css(this.series.chart.container, { cursor: 'move' });
+    }
+);
+addEvent(
+    H.seriesTypes.networkgraph.prototype.pointClass.prototype,
+    'mouseOut',
+    function () {
+        H.css(this.series.chart.container, { cursor: 'default' });
+    }
+);
+addEvent(
+    H.Chart.prototype,
+    'load',
+    function () {
+        var chart = this,
+            unbinders = [];
+
+        unbinders.push(
+            addEvent(
+                chart.container,
+                'mousedown',
+                function (event) {
+                    var point = chart.hoverPoint;
+
+                    if (
+                        point &&
+                        point.series &&
+                        point.series.isNetworkgraph
+                    ) {
+                        point.series.onMouseDown(point, event);
+                        unbinders.push(
+                             addEvent(
+                                chart.container,
+                                'mousemove',
+                                function (e) {
+                                    return point.series.onMouseMove(point, e);
+                                }
+                            )
+                        );
+                        unbinders.push(
+                             addEvent(
+                                chart.container,
+                                'mouseup',
+                                function (e) {
+                                    return point.series.onMouseUp(point, e);
+                                }
+                            )
+                        );
+                    }
+                }
+            )
+        );
+
+        addEvent(chart, 'destroy', function () {
+            unbinders.forEach(function (unbind) {
+                unbind();
+            });
+        });
+    }
+);
 
 /**
  * A `networkgraph` series. If the [type](#series.networkgraph.type) option is
