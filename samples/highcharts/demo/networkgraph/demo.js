@@ -20,11 +20,7 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         networkgraph: {
-            keys: ['from', 'to', 'weight'],
-            layoutAlgorithm: {
-                k: 50, // aka preferred distance between nodes
-                maxIterations: 200
-            }
+            keys: ['from', 'to', 'weight']
         }
     },
     series: [{
