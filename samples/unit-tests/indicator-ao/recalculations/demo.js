@@ -55,7 +55,7 @@ QUnit.test('Test Awesome calculations on data updates.', function (assert) {
             ]
         }, {
             yAxis: 1,
-            type: 'awesome',
+            type: 'ao',
             linkedTo: 'main',
             lineWidth: 1
         }]

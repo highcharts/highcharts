@@ -6,29 +6,29 @@ var correctFloat = H.correctFloat,
     isArray = H.isArray,
     noop = H.noop;
 
-H.seriesType('awesome', 'sma',
+H.seriesType('ao', 'sma',
     /**
-     * Awesome. This series requires the `linkedTo` option to
+     * Awesome Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`
      *
      * @extends plotOptions.sma
      * @product highstock
-     * @sample {highstock} stock/indicators/awesome
+     * @sample {highstock} stock/indicators/ao
      *                     Awesome
      * @since 7.0.0
      * @excluding
      *             allAreas,colorAxis,joinBy,keys,stacking,
      *             showInNavigator,navigatorOptions,params,pointInterval,
      *             pointIntervalUnit,pointPlacement,pointRange,pointStart
-     * @optionparent plotOptions.awesome
+     * @optionparent plotOptions.ao
      */
     {
         /**
-         * Color of the awesome series bar that is greater than the
+         * Color of the Awesome oscillator series bar that is greater than the
          * previous one. Note that if a `color` is defined, the `color`
          * takes precedence and the `greaterBarColor` is ignored.
          *
-         * @sample {highstock} stock/indicators/awesome/
+         * @sample {highstock} stock/indicators/ao/
          *          greaterBarColor
          *
          * @type {Highcharts.ColorString}
@@ -36,11 +36,11 @@ H.seriesType('awesome', 'sma',
          */
         greaterBarColor: '#06B535',
         /**
-         * Color of the awesome series bar that is lower than the
+         * Color of the Awesome oscillator series bar that is lower than the
          * previous one. Note that if a `color` is defined, the `color`
          * takes precedence and the `lowerBarColor` is ignored.
          *
-         * @sample {highstock} stock/indicators/awesome/
+         * @sample {highstock} stock/indicators/ao/
          *          lowerBarColor
          *
          * @type {Highcharts.ColorString}
@@ -96,9 +96,9 @@ H.seriesType('awesome', 'sma',
         getValues: function (series) {
             var shortPeriod = 5,
                 longPeriod = 34,
-                xVal = series.xData,
-                yVal = series.yData,
-                yValLen = yVal ? yVal.length : 0,
+                xVal = series.xData || [],
+                yVal = series.yData || [],
+                yValLen = yVal.length,
                 AO = [], // 0- date, 1- Awesome Oscillator
                 xData = [],
                 yData = [],
@@ -171,27 +171,27 @@ H.seriesType('awesome', 'sma',
 );
 
 /**
- * An `Awesome` series. If the [type](#series.awesome.type)
+ * An `AO` series. If the [type](#series.ao.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @type {Object}
  * @since 7.0.0
- * @extends series,plotOptions.awesome
+ * @extends series,plotOptions.ao
  * @excluding   data,dataParser,dataURL
  *              allAreas,colorAxis,joinBy,
  *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
  *              pointIntervalUnit,pointPlacement,pointRange,pointStart
  * @product highstock
- * @apioption series.awesome
+ * @apioption series.ao
  */
 
 /**
- * An array of data points for the series. For the `awesome` series type,
+ * An array of data points for the series. For the `ao` series type,
  * points are calculated dynamically.
  *
  * @type {Array<Object|Array>}
  * @since 7.0.0
  * @extends series.line.data
  * @product highstock
- * @apioption series.awesome.data
+ * @apioption series.ao.data
  */

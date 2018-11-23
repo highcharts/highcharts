@@ -37,7 +37,7 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (da
                 valueDecimals: 2
             }
         }, {
-            type: 'awesome',
+            type: 'ao',
             yAxis: 1,
             greaterBarColor: '#00cc66',
             lowerBarColor: '#FF5E5E',

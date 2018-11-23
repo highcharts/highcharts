@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../indicators/awesome.src.js';
+import '../../indicators/ao.src.js';
