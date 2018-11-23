@@ -27,29 +27,61 @@ var addEvent = H.addEvent,
  * @sample       highcharts/demo/networkgraph/
  *               Networkgraph
  * @since        7.0.0
- * @excluding    boostThreshold
+ * @excluding    boostThreshold, animation
  * @optionparent plotOptions.networkgraph
  */
 seriesType('networkgraph', 'line', {
-    lineWidth: 5,
-    showInLegend: false,
-    tooltip: {
-        followPointer: true
-    },
-    clip: false,
     marker: {
         enabled: true
     },
     dataLabels: {
-        enabled: true,
         format: '{key}'
     },
-    animationLimit: 1,
-    linkColor: 'rgba(100, 100, 100, 0.5)',
-    linkWidth: 1,
+    /**
+     * Link style options
+     */
+    link: {
+        /**
+         * Ideal length (px) of the link between two nodes. When not defined,
+         * length is calculated as:
+         * `Math.pow(availableWidth * availableHeight / nodesLength, 0.4);`
+         *
+         * Note: Because of the algorithm specification, length of each link
+         * might be not exactly as specified.
+         *
+         * @type      {number}
+         * @product   highcharts
+         * @apioption series.networkgraph.link.length
+         * @sample    {highcharts} highcharts/series-networkgraph/styled-links/
+         *            Numerical values
+         * @defaults  undefined
+         */
+
+        /**
+         * A name for the dash style to use for links.
+         *
+         * @type      {number}
+         * @product   highcharts
+         * @apioption series.networkgraph.link.dashStyle
+         * @defaults  undefined
+         */
+
+        /**
+         * Color of the link between two nodes.
+         */
+        color: 'rgba(100, 100, 100, 0.5)',
+        /**
+         * Width (px) of the link between two nodes.
+         */
+        width: 1
+    },
+    /**
+     * Flag to determine if nodes are draggable or not.
+     */
+    draggable: true,
     layoutAlgorithm: {
         type: 'reingold-fruchterman',
-        maxIterations: 100,
+        maxIterations: 1000,
         repulsiveForce: function (d, k) {
             /*
             basic, not recommended:
@@ -85,6 +117,8 @@ seriesType('networkgraph', 'line', {
     noSharedTooltip: true,
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     drawTracker: H.TrackerMixin.drawTrackerPoint,
+    // Animation is run in `series.simulation`.
+    animate: null,
     /**
      * Create a single node that holds information on incoming and outgoing
      * links.
@@ -275,16 +309,15 @@ seriesType('networkgraph', 'line', {
                 sqrtNodesLength = Math.ceil(Math.sqrt(nodesLength)),
                 // Optimal distance between nodes,
                 // available space around the node:
-                k = options.k ||
+                k = series.options.link.length ||
                     Math.pow(
                         chart.plotWidth * chart.plotHeight / nodesLength,
-                        0.33
+                        0.4
                     ),
                 // Fake object which will imitate animations
                 mockAnimator = {
                     style: {}
                 },
-                start = +new Date(),
                 simulation;
 
             // Initial positions:
@@ -334,14 +367,13 @@ seriesType('networkgraph', 'line', {
                 simulation.temperature -= simulation.diffTemperature;
 
                 series.render();
-                if (series.simulation.maxIterations--) {
+                if (
+                    simulation.maxIterations-- &&
+                    simulation.temperature > 0
+                ) {
                     simulation.run(0, 1, 1);
                 } else {
                     simulation.stopped = true;
-                    chart.setSubtitle({
-                        text: 'Animated in: ' +
-                            (new Date().getTime() - start) + 'ms'
-                    });
                 }
             }
 
@@ -356,7 +388,7 @@ seriesType('networkgraph', 'line', {
                 }
             );
 
-            series.resetSimulation();
+            series.resetSimulation(options);
 
             simulation.run(0, 1, 1);
         }
@@ -431,10 +463,12 @@ seriesType('networkgraph', 'line', {
                 });
 
                 // Place nodes:
-                node.plotX += node.dispX / distanceR *
-                    Math.min(Math.abs(node.dispX), temperature);
-                node.plotY += node.dispY / distanceR *
-                    Math.min(Math.abs(node.dispY), temperature);
+                if (distanceR !== 0) {
+                    node.plotX += node.dispX / distanceR *
+                        Math.min(Math.abs(node.dispX), temperature);
+                    node.plotY += node.dispY / distanceR *
+                        Math.min(Math.abs(node.dispY), temperature);
+                }
 
                 /*
                 TO DO: Consider elastic collision instead of stopping.
@@ -577,18 +611,22 @@ seriesType('networkgraph', 'line', {
     }
 }, {
     // Links:
+    getLinkAttribues: function () {
+        var linkOptions = this.series.options.link;
+
+        return {
+            'stroke-width': linkOptions.width,
+            stroke: linkOptions.color,
+            dashstyle: linkOptions.dashStyle
+        };
+    },
     renderLink: function () {
         if (!this.graphic) {
             this.graphic = this.series.chart.renderer
                 .path(
                     this.getLinkPath(this.fromNode, this.toNode)
                 )
-                .attr({
-                    'stroke-width': this.options.linkWidth ||
-                        this.series.options.linkWidth,
-                    stroke: this.options.linkColor ||
-                        this.series.options.linkColor
-                })
+                .attr(this.getLinkAttribues())
                 .add(this.series.group);
         }
     },
@@ -678,7 +716,8 @@ addEvent(
                     if (
                         point &&
                         point.series &&
-                        point.series.isNetworkgraph
+                        point.series.isNetworkgraph &&
+                        point.series.options.draggable
                     ) {
                         point.series.onMouseDown(point, event);
                         unbinders.push(
@@ -692,7 +731,7 @@ addEvent(
                         );
                         unbinders.push(
                              addEvent(
-                                chart.container,
+                                chart.container.ownerDocument,
                                 'mouseup',
                                 function (e) {
                                     return point.series.onMouseUp(point, e);
@@ -718,7 +757,7 @@ addEvent(
  *
  * @type      {Object}
  * @extends   series,plotOptions.networkgraph
- * @excluding boostThreshold
+ * @excluding boostThreshold, animation
  * @product   highcharts
  * @apioption series.networkgraph
  */
@@ -735,12 +774,10 @@ addEvent(
  *  ```js
  *     data: [{
  *         from: 'Category1',
- *         to: 'Category2',
- *         weight: 2
+ *         to: 'Category2'
  *     }, {
  *         from: 'Category1',
- *         to: 'Category3',
- *         weight: 5
+ *         to: 'Category3'
  *     }]
  *  ```
  *
