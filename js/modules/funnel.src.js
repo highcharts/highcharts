@@ -27,7 +27,7 @@ seriesType('funnel', 'pie',
  * It requires that the modules/funnel.js file is loaded.
  *
  * @sample       highcharts/demo/funnel/ Funnel demo
- * @extends      {plotOptions.pie}
+ * @extends      plotOptions.pie
  * @excluding    size
  * @product      highcharts
  * @optionparent plotOptions.funnel
