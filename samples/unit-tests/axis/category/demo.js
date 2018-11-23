@@ -676,3 +676,42 @@ QUnit.test('Test different point.name types.', function (assert) {
         );
     });
 });
+
+QUnit.test('Updating above cropThreshold', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            data: [
+                ['Ein', 1],
+                ['To', 2],
+                ['Tre', 3],
+                ['Fire', 4]
+            ],
+            type: 'column',
+            cropThreshold: 1
+        }]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Ein', 'To', 'Tre', 'Fire'],
+        'Initial categories'
+    );
+
+    chart.series[0].update({
+        data: [
+            ['Ein', 1],
+            ['To', 2],
+            ['Fem', 5],
+            ['Seks', 6]
+        ]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Ein', 'To', 'Fem', 'Seks'],
+        'Categories should be updated (#9487)'
+    );
+});

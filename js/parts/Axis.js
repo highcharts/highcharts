@@ -4128,9 +4128,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     series.generatePoints();
                 }
 
-                each(series.points, function (point, i) {
+                each(series.data, function (point, i) { // #9487
                     var x;
-                    if (point.options) {
+                    if (point && point.options) {
                         x = axis.nameToX(point);
                         if (x !== undefined && x !== point.x) {
                             point.x = x;
