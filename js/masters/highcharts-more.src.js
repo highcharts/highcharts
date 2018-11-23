@@ -18,4 +18,5 @@ import '../parts-more/ErrorBarSeries.js';
 import '../parts-more/WaterfallSeries.js';
 import '../parts-more/PolygonSeries.js';
 import '../parts-more/BubbleSeries.js';
+import '../parts-more/PackedBubbleSeries.js';
 import '../parts-more/Polar.js';
