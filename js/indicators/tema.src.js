@@ -39,17 +39,14 @@ H.seriesType('tema', 'ema',
             i,
             xVal
           ) {
-            index = index === undefined ? -1 : index;
-            i = i === undefined ? 1 : i;
-            xVal = xVal || [];
 
             return EMAindicator.prototype.calculateEma(
-                xVal,
+                xVal || [],
                 yVal,
-                i,
+                i === undefined ? 1 : i,
                 this.chart.series[0].EMApercent,
                 prevEMA,
-                index,
+                index === undefined ? -1 : index,
                 SMA
             );
         },
