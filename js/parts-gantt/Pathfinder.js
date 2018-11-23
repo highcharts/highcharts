@@ -118,13 +118,14 @@ extend(H.defaultOptions, {
          *                  focus is performance over accuracy. Works well with
          *                  less dense datasets.
          *
-         * `straight` is used as default for most series types, while
-         * `simpleConnect` is used as default for Gantt series, to show
+         * Default value: `straight` is used as default for most series types,
+         * while `simpleConnect` is used as default for Gantt series, to show
          * dependencies between points.
          *
          * @sample gantt/pathfinder/demo
          *         Different types used
          *
+         * @default    undefined
          * @since      6.2.0
          * @validvalue ["straight", "simpleConnect", "fastAvoid"]
          */
