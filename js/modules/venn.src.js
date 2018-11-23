@@ -10,10 +10,12 @@
 'use strict';
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
+import geometryCircles from '../mixins/geometry-circles.js';
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
 var extend = H.extend,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
+    getOverlapBetweenCirclesByDistance = geometryCircles.getOverlapBetweenCircles,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
@@ -26,22 +28,6 @@ var objectValues = function objectValues(obj) {
     return keys(obj).map(function (x) {
         return obj[x];
     });
-};
-
-/**
- * Calculates the area of overlap between two circles based on their radiuses
- * and the distance between them.
- *
- * TODO: implement this.
- *
- * @param {number} r1 Radius of the first circle.
- * @param {number} r2 Radius of the second circle.
- * @param {number} d The distance between the two circles.
- * @returns {number} Returns the area of overlap between the two circles.
- */
-var getOverlapBetweenCirclesByDistance =
-function getOverlapBetweenCirclesByDistance(r1, r2, d) {
-    return 0;
 };
 
 /**
@@ -446,6 +432,7 @@ var vennSeries = {
     utils: {
         addOverlapToSets: addOverlapToSets,
         getDistanceBetweenPoints: getDistanceBetweenPoints,
+        getOverlapBetweenCirclesByDistance: getOverlapBetweenCirclesByDistance,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }

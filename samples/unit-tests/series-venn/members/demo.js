@@ -79,6 +79,30 @@ QUnit.test('addOverlapToRelations', function (assert) {
     );
 });
 
+QUnit.test('getOverlapBetweenCircles', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        getOverlapBetweenCircles =
+            vennPrototype.utils.getOverlapBetweenCirclesByDistance;
+
+    assert.strictEqual(
+        getOverlapBetweenCircles(3, 4, 5),
+        6.64,
+        'should return 6.64 when r1=3, r2=4 and d=5.'
+    );
+
+    assert.strictEqual(
+        getOverlapBetweenCircles(8, 6, 1),
+        113.09,
+        'should return 113.09 when r1=8, r2=6 and d=1. The circles completely overlaps.'
+    );
+
+    assert.strictEqual(
+        getOverlapBetweenCircles(2, 3, 6),
+        0,
+        'should return 0 when r1=2, r2=3 and d=6. The circles does not overlap.'
+    );
+});
+
 QUnit.test('getDistanceBetweenPoints', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getDistanceBetweenPoints = vennPrototype.utils.getDistanceBetweenPoints;
