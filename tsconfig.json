@@ -65,6 +65,16 @@
         "code/modules/exporting.src.d.ts",
         "test/typescript/modules/exporting.ts",
 
+        "code/modules/gantt.d.ts",
+        "code/modules/gantt.src.d.ts",
+        "test/typescript/modules/gantt.ts",
+        "test/typescript/highcharts-gantt.ts",
+
+        "code/modules/map.d.ts",
+        "code/modules/map.src.d.ts",
+        "test/typescript/modules/map.ts",
+        "test/typescript/highmaps.ts",
+
         "code/modules/offline-exporting.d.ts",
         "code/modules/offline-exporting.src.d.ts",
         "test/typescript/modules/offline-exporting.ts",
@@ -72,11 +82,6 @@
         "code/modules/series-label.d.ts",
         "code/modules/series-label.src.d.ts",
         "test/typescript/modules/series-label.ts",
-
-        "code/modules/map.d.ts",
-        "code/modules/map.src.d.ts",
-        "test/typescript/modules/map.ts",
-        "test/typescript/highmaps.ts",
 
         "code/modules/stock.d.ts",
         "code/modules/stock.src.d.ts",
