@@ -112,6 +112,9 @@ Instrument.prototype.initAudioContext = function () {
     var Context = H.win.AudioContext || H.win.webkitAudioContext;
     if (Context) {
         H.audioContext = H.audioContext || new Context();
+        if (H.audioContext && H.audioContext.state === 'running') {
+            H.audioContext.suspend(); // Pause until we need it
+        }
         return !!(
             H.audioContext &&
             H.audioContext.createOscillator &&
@@ -297,6 +300,11 @@ Instrument.prototype.play = function (options) {
             instrument.stopCallback('cancelled');
             instrument.play = instrument._play;
         }
+    }
+
+    // If the AudioContext is suspended we have to resume it before playing
+    if (H.audioContext.state === 'suspended') {
+        H.audioContext.resume();
     }
 
     // Stop the instrument after the duration of the note

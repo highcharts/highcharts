@@ -75,7 +75,7 @@ Earcon.prototype.play = function (options) {
     // Go through the instruments and play them
     this.options.instruments.forEach(function (opts) {
         var instrument = typeof opts.instrument === 'string' ?
-            H.sonification.instruments[opts.instrument] : opts.instrument,
+                H.sonification.instruments[opts.instrument] : opts.instrument,
             playOpts = H.merge(opts.playOptions);
         if (instrument && instrument.play) {
             if (playOpts) {
