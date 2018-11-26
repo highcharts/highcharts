@@ -79,6 +79,37 @@ QUnit.test('addOverlapToRelations', function (assert) {
     );
 });
 
+QUnit.test('binarySearch', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        binarySearch = vennPrototype.utils.binarySearch,
+        arr = [1, 3, 5, 8, 10, 12, 16],
+        noError = function (x) {
+            return x;
+        },
+        allowError = function (x, value) {
+            // Allow an error of 1
+            return (Math.abs(value - x) <= 1) ? value : x;
+        };
+
+    assert.strictEqual(
+        binarySearch(arr, 12, noError),
+        5,
+        'should return index 5 when looking for 12.'
+    );
+
+    assert.strictEqual(
+        binarySearch(arr, 4, noError),
+        -1,
+        'should return index -1 since 4 does not exist in the array.'
+    );
+
+    assert.strictEqual(
+        binarySearch(arr, 7, allowError),
+        3,
+        'should return index 3 when looking for 7, since fn allows an error of 1 which accepts 8.'
+    );
+});
+
 QUnit.test('getOverlapBetweenCircles', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getOverlapBetweenCircles =
