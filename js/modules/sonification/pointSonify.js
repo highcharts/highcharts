@@ -9,7 +9,6 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-import musicalFrequencies from 'musicalFrequencies.js';
 
 // Defaults for the instrument options
 var defaultInstrumentOptions = {
@@ -20,8 +19,7 @@ var defaultInstrumentOptions = {
     minPan: -1,
     maxPan: 1,
     minFrequency: 220,
-    maxFrequency: 2500,
-    allowedFrequencies: musicalFrequencies
+    maxFrequency: 2500
 };
 
 
@@ -34,32 +32,15 @@ var defaultInstrumentOptions = {
  * @param {number} value The data value to translate.
  * @param {Object} dataExtremes The data extremes for the chart for this value.
  * @param {Object} limits Limits for the sonification axis.
- * @param {Array<number>} allowedValues List of allowed values for the
- *      sonification axis. If none is provided, we assume all values are okay.
  * @return {number} The value mapped to the sonification axis.
  */
-function sonifyAxisTranslate(value, dataExtremes, limits, allowedValues) {
+function sonifyAxisTranslate(value, dataExtremes, limits) {
     var lenValueAxis = dataExtremes.max - dataExtremes.min,
         lenSonifyAxis = limits.max - limits.min,
         sonifyValue = limits.min +
             lenSonifyAxis * (value - dataExtremes.min) / lenValueAxis;
 
-    return allowedValues ?
-
-        // Use allowed values only
-        allowedValues.filter(
-            // Only use allowed values within min/max limits
-            function (allowedValue) {
-                return allowedValue < limits.max && allowedValue > limits.min;
-            }
-        ).reduce(function (acc, cur) {
-            // Find the closest allowed value
-            return Math.abs(cur - sonifyValue) < Math.abs(acc - sonifyValue) ?
-                cur : acc;
-        }, Infinity) :
-
-        // Use the sonify axis value directly
-        sonifyValue;
+    return Math.max(Math.min(sonifyValue, limits.max), limits.min);
 }
 
 
@@ -143,13 +124,6 @@ function sonifyAxisTranslate(value, dataExtremes, limits, allowedValues) {
  *      frequency for a note when using a data property for frequency. Can be
  *      overridden by using either a fixed number or a function for
  *      instrumentMapping.frequency.
- * @property {Array<number>} [instrumentOptions.allowedFrequencies] - A
- *      list of frequencies to use when using a data property for frequency.
- *      Only frequencies in this list between minFrequency and maxFrequency
- *      will be used. Set to `null` to allow all frequencies to be used. This
- *      list is not considered if a fixed number or function is used for
- *      instrumentMapping.frequency. By default, this option is set to a list
- *      of musical frequencies from C0 to C8.
  * @property {Function} [onEnd] - A callback function to call when a note has
  *      ended.
  */
@@ -241,8 +215,7 @@ function pointSonify(options) {
                 frequency: getMappingValue(
                     mapping.frequency,
                     true,
-                    { min: extremes.minFrequency, max: extremes.maxFrequency },
-                    extremes.allowedFrequencies
+                    { min: extremes.minFrequency, max: extremes.maxFrequency }
                 ),
                 duration: getMappingValue(
                     mapping.duration,
@@ -259,7 +232,9 @@ function pointSonify(options) {
                     true,
                     { min: extremes.minVolume, max: extremes.maxVolume }
                 ),
-                onEnd: instrumentDefinition.onEnd
+                onEnd: instrumentDefinition.onEnd,
+                minFrequency: extremes.minFrequency,
+                maxFrequency: extremes.maxFrequency
             });
         } else {
             H.error(30);

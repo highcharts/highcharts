@@ -42,6 +42,11 @@ var defaultOptions = {
  *          during playback, this options specifies how often to call the
  *          callback functions. Number given in milliseconds.
  *
+ * @param   {Array<number>} [options.allowedFrequencies=null]
+ *          A list of allowed frequencies for this instrument. If trying to play
+ *          a frequency not on this list, the closest frequency will be used.
+ *          Set to `null` to allow all frequencies to be used.
+ *
  * @param   {Object} [options.oscillator]
  *          Options specific to oscillator instruments.
  *
@@ -179,6 +184,36 @@ Instrument.prototype.setGain = function (gainValue) {
 
 
 /**
+ * Get the closest valid frequency for this instrument.
+ * @private
+ *
+ * @param   {number} frequency
+ *          The target frequency.
+ * @param   {number} [min]
+ *          Minimum frequency to return.
+ * @param   {number} [max]
+ *          Maximum frequency to return.
+ *
+ * @return {number} The closest valid frequency to the input frequency.
+ */
+Instrument.prototype.getValidFrequency = function (frequency, min, max) {
+    var validFrequencies = this.options.allowedFrequencies,
+        maximum = H.pick(max, Infinity),
+        minimum = H.pick(min, -Infinity);
+    return !validFrequencies || !validFrequencies.length ?
+            // No valid frequencies for this instrument, return the target
+            frequency :
+            // Use the valid frequencies and return the closest match
+            validFrequencies.reduce(function (acc, cur) {
+                // Find the closest allowed value
+                return Math.abs(cur - frequency) < Math.abs(acc - frequency) &&
+                    cur < maximum && cur > minimum ?
+                    cur : acc;
+            }, Infinity);
+};
+
+
+/**
  * Clear existing play callback timers.
  * @private
  */
@@ -223,6 +258,16 @@ Instrument.prototype.oscillatorPlay = function (frequency) {
  *          The poll interval of this function is specified by the
  *          Instrument.playCallbackInterval option.
  *
+ * @param   {number} [options.minFrequency]
+ *          The minimum frequency to allow. If the instrument has a set of
+ *          allowed frequencies, the closest frequency is used by default. Use
+ *          this option to stop too low frequencies from being used.
+ *
+ * @param   {number} [options.maxFrequency]
+ *          The maximum frequency to allow. If the instrument has a set of
+ *          allowed frequencies, the closest frequency is used by default. Use
+ *          this option to stop too high frequencies from being used.
+ *
  * @param   {number} options.duration
  *          The duration of the note in milliseconds.
  *
@@ -252,6 +297,9 @@ Instrument.prototype.oscillatorPlay = function (frequency) {
  */
 Instrument.prototype.play = function (options) {
     var instrument = this,
+        frequency = instrument.getValidFrequency(
+            options.frequency, options.minFrequency, options.maxFrequency
+        ),
         // Set a value, or if it is a function, set it continously as a timer
         setOrStartTimer = function (value, setter) {
             var target = options.duration,
@@ -326,7 +374,7 @@ Instrument.prototype.play = function (options) {
 
     // Play, depending on instrument type
     if (instrument.options.type === 'oscillator') {
-        setOrStartTimer(options.frequency, 'oscillatorPlay');
+        setOrStartTimer(frequency, 'oscillatorPlay');
     }
 };
 

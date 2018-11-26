@@ -12,8 +12,8 @@ Highcharts.chart('container', {
         },
         cursor: 'pointer',
         data: [
-            10, 14, 20, { y: 18, color: 'red' }, 21, 11, 7,
-            { y: 15, color: 'red' }, 27, 2
+            1, 2, { y: 4, color: 'red' }, 5, 7, 9, 11, 13,
+            { y: 6, color: 'red' }, 7, 1
         ],
         point: {
             events: {
@@ -21,7 +21,7 @@ Highcharts.chart('container', {
                     // Sonify the point when clicked
                     this.sonify({
                         instruments: [{
-                            instrument: 'triangle',
+                            instrument: 'triangleMajor',
                             instrumentMapping: {
                                 volume: function (point) {
                                     return point.color === 'red' ? 0.2 : 0.8;
@@ -29,6 +29,11 @@ Highcharts.chart('container', {
                                 duration: 200,
                                 pan: 'x',
                                 frequency: 'y'
+                            },
+                            // Start at C5 note, end at C6
+                            instrumentOptions: {
+                                minFrequency: 520,
+                                maxFrequency: 1050
                             }
                         }]
                     });
