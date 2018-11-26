@@ -12,9 +12,10 @@ import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
-import '../parts/ScatterSeries.js';
+
 
 var seriesType = H.seriesType,
+    defined = H.defined,
     each = H.each;
 
 
@@ -85,7 +86,7 @@ seriesType('packedbubble', 'bubble',
 
                 series = chart.series[i];
 
-                if (series.visible) {
+                if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
                     // add data to array only if series is visible
                     for (j = 0; j < series.processedYData.length; j++) {
@@ -117,13 +118,15 @@ seriesType('packedbubble', 'bubble',
                 i;
 
             // merged data is an array with all of the data from all series
-            this.allDataPoints = series.accumulateAllPoints(series);
+            if (!defined(chart.allDataPoints)) {
+                chart.allDataPoints = series.accumulateAllPoints(series);
 
-            // calculate radius for all added data
-            series.getRadius();
+                // calculate radius for all added data
+                series.getRadius();
+            }
 
             // after getting initial radius, calculate bubble positions
-            positions = this.placeBubbles(this.allDataPoints);
+            positions = this.placeBubbles(chart.allDataPoints);
 
             // Run the parent method
             H.seriesTypes.scatter.prototype.translate.call(this);
@@ -447,7 +450,7 @@ seriesType('packedbubble', 'bubble',
                 extremes = {},
                 radii = [],
                 sizeByArea = this.options.sizeBy !== 'width',
-                allDataPoints = this.allDataPoints,
+                allDataPoints = chart.allDataPoints,
                 minSize,
                 maxSize,
                 pos,
@@ -500,6 +503,14 @@ seriesType('packedbubble', 'bubble',
         }
     }
 );
+
+// Remove accumulated data points to redistribute all of them again
+// (i.e after hiding series by legend)
+H.addEvent(H.Chart, 'beforeRedraw', function () {
+    if (this.allDataPoints) {
+        delete this.allDataPoints;
+    }
+});
 
 /**
  * A `packedbubble` series. If the [type](#series.packedbubble.type) option is
