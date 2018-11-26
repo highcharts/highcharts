@@ -33,239 +33,238 @@ var dateFormat = H.dateFormat,
  *
  * @augments Highcharts.Series
  */
-seriesType('gantt', 'xrange',
-    /**
-     * A `gantt` series. If the [type](#series.gantt.type) option is not
-     * specified, it is inherited from [chart.type](#chart.type).
-     *
-     * @extends      plotOptions.xrange
-     * @product      gantt
-     * @optionparent plotOptions.gantt
-     */
-    {
-        // options - default options merged with parent
 
-        grouping: false,
+/**
+ * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
+ * it is inherited from [chart.type](#chart.type).
+ *
+ * @extends      plotOptions.xrange
+ * @product      gantt
+ * @optionparent plotOptions.gantt
+ */
+seriesType('gantt', 'xrange', {
+    // options - default options merged with parent
 
-        dataLabels: {
-            enabled: true,
-            formatter: function () {
-                var point = this,
-                    amount = point.point.partialFill;
+    grouping: false,
 
-                if (isObject(amount)) {
-                    amount = amount.amount;
-                }
-                if (isNumber(amount) && amount > 0) {
-                    return (amount * 100) + '%';
-                }
+    dataLabels: {
+        enabled: true,
+        formatter: function () {
+            var point = this,
+                amount = point.point.partialFill;
+
+            if (isObject(amount)) {
+                amount = amount.amount;
             }
-        },
-        tooltip: {
-            headerFormat: '<span style="color:{point.color};text-align:right">' +
-                                '{series.name}' +
-                            '</span><br/>',
-            pointFormat: null,
-            pointFormatter: function () {
-                var point = this,
-                    series = point.series,
-                    tooltip = series.chart.tooltip,
-                    xAxis = series.xAxis,
-                    options = xAxis.options,
-                    formats = options.dateTimeLabelFormats,
-                    startOfWeek = xAxis.options.startOfWeek,
-                    ttOptions = series.tooltipOptions,
-                    format = ttOptions.xDateFormat,
-                    range = point.end ? point.end - point.start : 0,
-                    start,
-                    end,
-                    milestone = point.options.milestone,
-                    dateRowStart = '<span style="font-size: 0.8em">',
-                    dateRowEnd = '</span><br/>',
-                    retVal = '<b>' + (point.name || point.yCategory) + '</b>';
-
-                if (ttOptions.pointFormat) {
-                    return point.tooltipFormatter(ttOptions.pointFormat);
-                }
-
-                if (!format) {
-                    format = H.splat(
-                        tooltip.getDateFormat(
-                            range,
-                            point.start,
-                            startOfWeek,
-                            formats
-                        )
-                    )[0];
-                }
-
-                start = dateFormat(format, point.start);
-                end = dateFormat(format, point.end);
-
-                retVal += '<br/>';
-
-                if (!milestone) {
-                    retVal += dateRowStart + 'Start: ' + start + dateRowEnd;
-                    retVal += dateRowStart + 'End: ' + end + dateRowEnd;
-                } else {
-                    retVal += dateRowStart + 'Date ' + start + dateRowEnd;
-                }
-
-                return retVal;
-            }
-        },
-        connectors: {
-            type: 'simpleConnect',
-            animation: {
-                reversed: true // Dependencies go from child to parent
-            },
-            startMarker: {
-                enabled: true,
-                symbol: 'arrow-filled',
-                radius: 4,
-                fill: '#fa0',
-                align: 'left'
-            },
-            endMarker: {
-                enabled: false, // Only show arrow on the dependent task
-                align: 'right'
+            if (isNumber(amount) && amount > 0) {
+                return (amount * 100) + '%';
             }
         }
-    }, {
-        // props - series member overrides
-
-        // Keyboard navigation, don't use nearest vertical mode
-        keyboardMoveVertical: false,
-
-        // Handle milestones, as they have no x2
-        translatePoint: function (point) {
-            var series = this,
-                shapeArgs,
-                size;
-
-            parent.prototype.translatePoint.call(series, point);
-
-            if (point.options.milestone) {
-                shapeArgs = point.shapeArgs;
-                size = shapeArgs.height;
-                point.shapeArgs = {
-                    x: shapeArgs.x - (size / 2),
-                    y: shapeArgs.y,
-                    width: size,
-                    height: size
-                };
-            }
-        },
-
-        /**
-         * Draws a single point in the series.
-         *
-         * This override draws the point as a diamond if point.options.milestone
-         * is true, and uses the original drawPoint() if it is false or not set.
-         *
-         * @requires module:highcharts-gantt
-         *
-         * @private
-         * @function Highcharts.seriesTypes.gantt#drawPoint
-         *
-         * @param {Highcharts.Point} point
-         *        An instance of Point in the series
-         *
-         * @param {"animate"|"attr"} verb
-         *        'animate' (animates changes) or 'attr' (sets options)
-         */
-        drawPoint: function (point, verb) {
-            var series = this,
-                seriesOpts = series.options,
-                renderer = series.chart.renderer,
-                shapeArgs = point.shapeArgs,
-                plotY = point.plotY,
-                graphic = point.graphic,
-                state = point.selected && 'select',
-                cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
-                diamondShape;
-
-            if (point.options.milestone) {
-                if (isNumber(plotY) && point.y !== null) {
-                    diamondShape = renderer.symbols.diamond(
-                        shapeArgs.x,
-                        shapeArgs.y,
-                        shapeArgs.width,
-                        shapeArgs.height
-                    );
-
-                    if (graphic) {
-                        stop(graphic);
-                        graphic[verb]({
-                            d: diamondShape
-                        });
-                    } else {
-                        point.graphic = graphic = renderer.path(diamondShape)
-                        .addClass(point.getClassName(), true)
-                        .add(point.group || series.group);
-                    }
-                    /*= if (build.classic) { =*/
-                    // Presentational
-                    point.graphic
-                        .attr(series.pointAttribs(point, state))
-                        .shadow(seriesOpts.shadow, null, cutOff);
-                    /*= } =*/
-                } else if (graphic) {
-                    point.graphic = graphic.destroy(); // #1269
-                }
-            } else {
-                parent.prototype.drawPoint.call(series, point, verb);
-            }
-        },
-
-        setData: Series.prototype.setData,
-
-        setGanttPointAliases: function (options) {
-            // Add a value to options if the value exists
-            function addIfExists(prop, val) {
-                if (val !== undefined) {
-                    options[prop] = val;
-                }
-            }
-            addIfExists('x', pick(options.start, options.x));
-            addIfExists('x2', pick(options.end, options.x2));
-            addIfExists(
-                'partialFill', pick(options.completed, options.partialFill)
-            );
-            addIfExists('connect', pick(options.dependency, options.connect));
-        }
-
-    }, merge(parent.prototype.pointClass.prototype, {
-        // pointProps - point member overrides. We inherit from parent as well.
-        /**
-         * Applies the options containing the x and y data and possible some
-         * extra properties. This is called on point init or from point.update.
-         *
-         * @private
-         * @function Highcharts.Point#applyOptions
-         *
-         * @param {object} options
-         *        The point options
-         *
-         * @param {number} x
-         *        The x value
-         *
-         * @return {Highcharts.Point}
-         *         The Point instance
-         */
-        applyOptions: function (options, x) {
+    },
+    tooltip: {
+        headerFormat: '<span style="color:{point.color};text-align:right">' +
+                            '{series.name}' +
+                        '</span><br/>',
+        pointFormat: null,
+        pointFormatter: function () {
             var point = this,
                 series = point.series,
-                retVal = merge(options);
+                tooltip = series.chart.tooltip,
+                xAxis = series.xAxis,
+                options = xAxis.options,
+                formats = options.dateTimeLabelFormats,
+                startOfWeek = xAxis.options.startOfWeek,
+                ttOptions = series.tooltipOptions,
+                format = ttOptions.xDateFormat,
+                range = point.end ? point.end - point.start : 0,
+                start,
+                end,
+                milestone = point.options.milestone,
+                dateRowStart = '<span style="font-size: 0.8em">',
+                dateRowEnd = '</span><br/>',
+                retVal = '<b>' + (point.name || point.yCategory) + '</b>';
 
-            series.setGanttPointAliases(retVal);
+            if (ttOptions.pointFormat) {
+                return point.tooltipFormatter(ttOptions.pointFormat);
+            }
 
-            retVal = parent.prototype.pointClass.prototype.applyOptions
-                .call(point, retVal, x);
+            if (!format) {
+                format = H.splat(
+                    tooltip.getDateFormat(
+                        range,
+                        point.start,
+                        startOfWeek,
+                        formats
+                    )
+                )[0];
+            }
+
+            start = dateFormat(format, point.start);
+            end = dateFormat(format, point.end);
+
+            retVal += '<br/>';
+
+            if (!milestone) {
+                retVal += dateRowStart + 'Start: ' + start + dateRowEnd;
+                retVal += dateRowStart + 'End: ' + end + dateRowEnd;
+            } else {
+                retVal += dateRowStart + 'Date ' + start + dateRowEnd;
+            }
+
             return retVal;
         }
-    })
-);
+    },
+    connectors: {
+        type: 'simpleConnect',
+        animation: {
+            reversed: true // Dependencies go from child to parent
+        },
+        startMarker: {
+            enabled: true,
+            symbol: 'arrow-filled',
+            radius: 4,
+            fill: '#fa0',
+            align: 'left'
+        },
+        endMarker: {
+            enabled: false, // Only show arrow on the dependent task
+            align: 'right'
+        }
+    }
+}, {
+    // props - series member overrides
+
+    // Keyboard navigation, don't use nearest vertical mode
+    keyboardMoveVertical: false,
+
+    // Handle milestones, as they have no x2
+    translatePoint: function (point) {
+        var series = this,
+            shapeArgs,
+            size;
+
+        parent.prototype.translatePoint.call(series, point);
+
+        if (point.options.milestone) {
+            shapeArgs = point.shapeArgs;
+            size = shapeArgs.height;
+            point.shapeArgs = {
+                x: shapeArgs.x - (size / 2),
+                y: shapeArgs.y,
+                width: size,
+                height: size
+            };
+        }
+    },
+
+    /**
+     * Draws a single point in the series.
+     *
+     * This override draws the point as a diamond if point.options.milestone is
+     * true, and uses the original drawPoint() if it is false or not set.
+     *
+     * @requires module:highcharts-gantt
+     *
+     * @private
+     * @function Highcharts.seriesTypes.gantt#drawPoint
+     *
+     * @param {Highcharts.Point} point
+     *        An instance of Point in the series
+     *
+     * @param {"animate"|"attr"} verb
+     *        'animate' (animates changes) or 'attr' (sets options)
+     */
+    drawPoint: function (point, verb) {
+        var series = this,
+            seriesOpts = series.options,
+            renderer = series.chart.renderer,
+            shapeArgs = point.shapeArgs,
+            plotY = point.plotY,
+            graphic = point.graphic,
+            state = point.selected && 'select',
+            cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
+            diamondShape;
+
+        if (point.options.milestone) {
+            if (isNumber(plotY) && point.y !== null) {
+                diamondShape = renderer.symbols.diamond(
+                    shapeArgs.x,
+                    shapeArgs.y,
+                    shapeArgs.width,
+                    shapeArgs.height
+                );
+
+                if (graphic) {
+                    stop(graphic);
+                    graphic[verb]({
+                        d: diamondShape
+                    });
+                } else {
+                    point.graphic = graphic = renderer.path(diamondShape)
+                    .addClass(point.getClassName(), true)
+                    .add(point.group || series.group);
+                }
+                /*= if (build.classic) { =*/
+                // Presentational
+                point.graphic
+                    .attr(series.pointAttribs(point, state))
+                    .shadow(seriesOpts.shadow, null, cutOff);
+                /*= } =*/
+            } else if (graphic) {
+                point.graphic = graphic.destroy(); // #1269
+            }
+        } else {
+            parent.prototype.drawPoint.call(series, point, verb);
+        }
+    },
+
+    setData: Series.prototype.setData,
+
+    setGanttPointAliases: function (options) {
+        // Add a value to options if the value exists
+        function addIfExists(prop, val) {
+            if (val !== undefined) {
+                options[prop] = val;
+            }
+        }
+        addIfExists('x', pick(options.start, options.x));
+        addIfExists('x2', pick(options.end, options.x2));
+        addIfExists(
+            'partialFill', pick(options.completed, options.partialFill)
+        );
+        addIfExists('connect', pick(options.dependency, options.connect));
+    }
+
+}, merge(parent.prototype.pointClass.prototype, {
+    // pointProps - point member overrides. We inherit from parent as well.
+    /**
+     * Applies the options containing the x and y data and possible some extra
+     * properties. This is called on point init or from point.update.
+     *
+     * @private
+     * @function Highcharts.Point#applyOptions
+     *
+     * @param {object} options
+     *        The point options
+     *
+     * @param {number} x
+     *        The x value
+     *
+     * @return {Highcharts.Point}
+     *         The Point instance
+     */
+    applyOptions: function (options, x) {
+        var point = this,
+            series = point.series,
+            retVal = merge(options);
+
+        series.setGanttPointAliases(retVal);
+
+        retVal = parent.prototype.pointClass.prototype.applyOptions
+            .call(point, retVal, x);
+        return retVal;
+    }
+}));
 
 /**
  * A `gantt` series.
