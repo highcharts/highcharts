@@ -1,7 +1,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-import './ema.src.js';
+
 
 var seriesType = H.seriesType,
     each = H.each,
