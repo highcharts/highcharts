@@ -92,6 +92,37 @@ var loss = function loss(mapOfIdToCircle, relations) {
 };
 
 /**
+ * A binary search function that takes an higher order function to opererate on
+ * the values in the array before returning the result to compare with the value
+ * that is searched for.
+ * Useful to find a value that will give a result that meets some requirement.
+ *
+ * @param {array} arr The array to search for.
+ * @param {*} value The value that is wanted to find.
+ * @param {function} fn The higher order function to operate on the values in
+ * the array.
+ * @returns {number} Returns the index of the matching value, or -1 if the value
+ * was not found.
+ */
+var binarySearch = function binarySearch(arr, value, fn) {
+    var start = 0,
+        stop = arr.length - 1,
+        middle = Math.floor((start + stop) / 2),
+        res;
+
+    while ((res = fn(arr[middle], value)) !== value && start < stop) {
+        if (value < res) {
+            stop = middle - 1;
+        } else {
+            start = middle + 1;
+        }
+        middle = Math.floor((start + stop) / 2);
+    }
+
+    return res === value ? middle : -1;
+};
+
+/**
  * Uses binary search to make a best guess of the ideal distance between two
  * circles too get the desired overlap.
  * Currently there is no known formula to calculate the distance from the area
@@ -431,6 +462,7 @@ var vennSeries = {
     },
     utils: {
         addOverlapToSets: addOverlapToSets,
+        binarySearch: binarySearch,
         getDistanceBetweenPoints: getDistanceBetweenPoints,
         getOverlapBetweenCirclesByDistance: getOverlapBetweenCirclesByDistance,
         processVennData: processVennData,
