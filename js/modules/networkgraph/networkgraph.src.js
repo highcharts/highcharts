@@ -7,10 +7,10 @@
  */
 
 'use strict';
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
-import '../parts/Options.js';
-import '../modules/layouts.js';
+import H from '../../parts/Globals.js';
+import '../../parts/Utilities.js';
+import '../../parts/Options.js';
+import '../../modules/layouts.js';
 
 var addEvent = H.addEvent,
     defined = H.defined,

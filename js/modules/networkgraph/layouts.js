@@ -7,7 +7,7 @@
  */
 
 'use strict';
-import H from '../parts/Globals.js';
+import H from '../../parts/Globals.js';
 
 var pick = H.pick,
     correctFloat = H.correctFloat;
