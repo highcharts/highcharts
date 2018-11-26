@@ -1268,9 +1268,13 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
     select: function (selected) {
         var series = this;
 
-        series.selected = selected = (selected === undefined) ?
-            !series.selected :
-            selected;
+        series.selected =
+        selected =
+        this.options.selected = (
+            selected === undefined ?
+                !series.selected :
+                selected
+        );
 
         if (series.checkbox) {
             series.checkbox.checked = selected;
