@@ -58,7 +58,7 @@ function normalDensity(x, mean, standardDeviation) {
 }
 
 
-/**
+/* *
  * Bell curve class
  *
  * @private
@@ -67,7 +67,7 @@ function normalDensity(x, mean, standardDeviation) {
  *
  * @augments Highcharts.Series
  * @mixes    DerivedSeriesMixin
- **/
+ */
 
 /**
  * A bell curve is an areaspline series which represents the probability density
@@ -84,7 +84,7 @@ function normalDensity(x, mean, standardDeviation) {
  * @excluding    boostThreshold, connectNulls, stacking, pointInterval,
  *               pointIntervalUnit
  * @optionparent plotOptions.bellcurve
- **/
+ */
 seriesType('bellcurve', 'areaspline', {
    /**
     * This option allows to define the length of the bell curve. A unit of the
@@ -149,36 +149,36 @@ seriesType('bellcurve', 'areaspline', {
 
 
 /**
-* A `bellcurve` series. If the [type](#series.bellcurve.type) option is not
-* specified, it is inherited from [chart.type](#chart.type).
-*
-* For options that apply to multiple series, it is recommended to add
-* them to the [plotOptions.series](#plotOptions.series) options structure.
-* To apply to all series of this specific type, apply it to
-* [plotOptions.bellcurve](#plotOptions.bellcurve).
-*
-* @extends   series,plotOptions.bellcurve
-* @since     6.0.0
-* @product   highcharts
-* @excluding dataParser, dataURL, data
-* @apioption series.bellcurve
-*/
+ * A `bellcurve` series. If the [type](#series.bellcurve.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * For options that apply to multiple series, it is recommended to add
+ * them to the [plotOptions.series](#plotOptions.series) options structure.
+ * To apply to all series of this specific type, apply it to
+ * [plotOptions.bellcurve](#plotOptions.bellcurve).
+ *
+ * @extends   series,plotOptions.bellcurve
+ * @since     6.0.0
+ * @product   highcharts
+ * @excluding dataParser, dataURL, data
+ * @apioption series.bellcurve
+ */
 
 /**
-* An integer identifying the index to use for the base series, or a string
-* representing the id of the series.
-*
-* @type      {number|string}
-* @apioption series.bellcurve.baseSeries
-*/
+ * An integer identifying the index to use for the base series, or a string
+ * representing the id of the series.
+ *
+ * @type      {number|string}
+ * @apioption series.bellcurve.baseSeries
+ */
 
 /**
-* An array of data points for the series. For the `bellcurve` series type,
-* points are calculated dynamically.
-*
-* @type      {Array<number|Array<number|string>|*>}
-* @extends   series.areaspline.data
-* @since     6.0.0
-* @product   highcharts
-* @apioption series.bellcurve.data
-*/
+ * An array of data points for the series. For the `bellcurve` series type,
+ * points are calculated dynamically.
+ *
+ * @type      {Array<number|Array<number|string>|*>}
+ * @extends   series.areaspline.data
+ * @since     6.0.0
+ * @product   highcharts
+ * @apioption series.bellcurve.data
+ */
