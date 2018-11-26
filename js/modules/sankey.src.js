@@ -185,7 +185,7 @@ seriesType('sankey', 'column', {
             node.linksTo = [];
             node.linksFrom = [];
             node.formatPrefix = 'node';
-            node.name = node.name || node.id; // for use in formats
+            node.name = node.name || node.options.id; // for use in formats
 
             /**
              * Return the largest sum of either the incoming or outgoing links.
@@ -398,7 +398,7 @@ seriesType('sankey', 'column', {
                 point.toNode = nodeLookup[point.to];
             }
 
-            point.name = point.name || point.id; // for use in formats
+            point.name = point.name || point.options.id; // for use in formats
 
         }, this);
     },
@@ -491,7 +491,8 @@ seriesType('sankey', 'column', {
                         ),
                         nodeW = nodeWidth,
                         right = toNode.column * colDistance,
-                        outgoing = point.outgoing;
+                        outgoing = point.outgoing,
+                        straight = right > nodeLeft;
 
                     if (inverted) {
                         fromY = chart.plotSizeY - fromY;
@@ -499,12 +500,13 @@ seriesType('sankey', 'column', {
                         right = chart.plotSizeX - right;
                         nodeW = -nodeW;
                         linkHeight = -linkHeight;
+                        straight = nodeLeft > right;
                     }
 
                     point.shapeType = 'path';
 
                     // Links going from left to right
-                    if (right > left) {
+                    if (straight) {
                         point.shapeArgs = {
                             d: [
                                 'M', nodeLeft + nodeW, fromY,
