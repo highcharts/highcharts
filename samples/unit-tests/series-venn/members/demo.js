@@ -134,6 +134,18 @@ QUnit.test('getOverlapBetweenCircles', function (assert) {
     );
 });
 
+QUnit.test('getDistanceBetweenCirclesByOverlap', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        getDistanceBetweenCirclesByOverlap =
+            vennPrototype.utils.getDistanceBetweenCirclesByOverlap;
+
+    assert.strictEqual(
+        getDistanceBetweenCirclesByOverlap(3, 4, 6.64),
+        5,
+        'should return a distance of 5 when r1=3, r2=4 and overlap=6.64.'
+    );
+});
+
 QUnit.test('getDistanceBetweenPoints', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getDistanceBetweenPoints = vennPrototype.utils.getDistanceBetweenPoints;

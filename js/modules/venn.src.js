@@ -123,20 +123,53 @@ var binarySearch = function binarySearch(arr, value, fn) {
 };
 
 /**
+ * Creates a list that contains a sequence of numbers ranging from start to end.
+ *
+ * TODO: add unit tests.
+ *
+ * @param {number} start The smallest number in the list.
+ * @param {number} end The largest number in the list.
+ * @param {number} [step=1] The increment between the values in the sequence.
+ * @returns {array} Returns the sequence of numbers in the range from start to
+ * end.
+ */
+var range = function range(start, end, step) {
+    var s = step || 1,
+        length = Math.round((start + end) / s),
+        range = Array.apply(0, Array(length)).map(function (_, i) {
+            return i * s;
+        });
+    return range;
+};
+
+/**
  * Uses binary search to make a best guess of the ideal distance between two
  * circles too get the desired overlap.
  * Currently there is no known formula to calculate the distance from the area
  * of overlap, which makes the binary search a preferred method.
  *
- * TODO: implement this.
- *
- * @param {Number} r1 Radius of the first circle.
- * @param {Number} r2 Radiues of the second circle.
- * @param {Number} overlap The wanted overlap between the two circles.
+ * @param {number} r1 Radius of the first circle.
+ * @param {number} r2 Radiues of the second circle.
+ * @param {number} overlap The wanted overlap between the two circles.
+ * @returns {number} Returns the distance needed to get the wanted overlap
+ * between the two circles.
  */
 var getDistanceBetweenCirclesByOverlap =
 function getDistanceBetweenCirclesByOverlap(r1, r2, overlap) {
-    return 0;
+    var error = 0.01,
+        maxDistance = r1 + r2,
+        list = range(0, maxDistance, 0.001),
+        index = binarySearch(list, 0, function (x) {
+            var actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x),
+                diff = overlap - actualOverlap;
+
+            // If the difference is below accepted error then return overlap to
+            // confirm we have found the right value.
+            return (Math.abs(diff) < error) ? 0 : diff;
+        });
+
+    // Round the resulting value to have two decimals.
+    return Math.round(list[index] * 100) / 100;
 };
 
 var isSet = function (x) {
@@ -464,6 +497,7 @@ var vennSeries = {
         addOverlapToSets: addOverlapToSets,
         binarySearch: binarySearch,
         getDistanceBetweenPoints: getDistanceBetweenPoints,
+        getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         getOverlapBetweenCirclesByDistance: getOverlapBetweenCirclesByDistance,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
