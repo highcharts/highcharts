@@ -49,13 +49,29 @@
         "code/modules/boost.src.d.ts",
         "test/typescript/modules/boost.ts",
 
+        "code/modules/boost-canvas.d.ts",
+        "code/modules/boost-canvas.src.d.ts",
+        "test/typescript/modules/boost-canvas.ts",
+
+        "code/modules/bullet.d.ts",
+        "code/modules/bullet.src.d.ts",
+        "test/typescript/modules/bullet.ts",
+
         "code/modules/data.d.ts",
         "code/modules/data.src.d.ts",
         "test/typescript/modules/data.ts",
 
+        "code/modules/drag-panes.d.ts",
+        "code/modules/drag-panes.src.d.ts",
+        "test/typescript/modules/drag-panes.ts",
+
         "code/modules/draggable-points.d.ts",
         "code/modules/draggable-points.src.d.ts",
         "test/typescript/modules/draggable-points.ts",
+
+        "code/modules/drilldown.d.ts",
+        "code/modules/drilldown.src.d.ts",
+        "test/typescript/modules/drilldown.ts",
 
         "code/modules/export-data.d.ts",
         "code/modules/export-data.src.d.ts",
@@ -73,6 +89,10 @@
         "code/modules/heatmap.d.ts",
         "code/modules/heatmap.src.d.ts",
         "test/typescript/modules/heatmap.ts",
+
+        "code/modules/histogram-bellcurve.d.ts",
+        "code/modules/histogram-bellcurve.src.d.ts",
+        "test/typescript/modules/histogram-bellcurve.ts",
 
         "code/modules/map.d.ts",
         "code/modules/map.src.d.ts",
