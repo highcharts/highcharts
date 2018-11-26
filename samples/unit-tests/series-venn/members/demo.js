@@ -163,6 +163,70 @@ QUnit.test('getDistanceBetweenPoints', function (assert) {
     );
 });
 
+QUnit.test('loss', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        loss = vennPrototype.utils.loss,
+        map = {
+            'A': { x: 0, y: 0, r: 3 },
+            'B': { x: 6, y: 0, r: 3 },
+            'C': { x: 5.074, y: 0, r: 3 }
+        };
+
+    assert.strictEqual(
+        loss(
+            map,
+            [{
+                sets: ['A', 'B'],
+                value: 2
+            }]
+        ),
+        4,
+        'should return a loss of 4, since overlap between A and B equals 0.'
+    );
+
+    assert.strictEqual(
+        loss(
+            map,
+            [{
+                sets: ['A', 'C'],
+                value: 2
+            }]
+        ),
+        0,
+        'should return a loss of 0, since overlap between A and C equals 2.'
+    );
+
+    assert.strictEqual(
+        loss(
+            map,
+            [{
+                sets: ['B', 'C'],
+                value: 24
+            }]
+        ),
+        1.5876,
+        'should return a loss of 1.5876, since overlap between B and C equals 22.74.'
+    );
+
+    assert.strictEqual(
+        loss(
+            map,
+            [{
+                sets: ['A', 'B'],
+                value: 2
+            }, {
+                sets: ['A', 'C'],
+                value: 2
+            }, {
+                sets: ['B', 'C'],
+                value: 24
+            }]
+        ),
+        5.5876,
+        'should return a total loss of 5.5876 between A∩B, A∩C, B∩C.'
+    );
+});
+
 QUnit.test('processVennData', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         processVennData = vennPrototype.utils.processVennData,

@@ -48,8 +48,8 @@ var getOverlapBetweenCircles = function getOverlapBetweenCircles(circles) {
         var circle2 = circles[1];
 
         overlap = getOverlapBetweenCirclesByDistance(
-            circle1.radius,
-            circle2.radius,
+            circle1.r,
+            circle2.r,
             getDistanceBetweenPoints(circle1, circle2)
         );
     }
@@ -67,28 +67,28 @@ var getOverlapBetweenCircles = function getOverlapBetweenCircles(circles) {
  * given relations.
  */
 var loss = function loss(mapOfIdToCircle, relations) {
+    var precision = 10e10;
     // Iterate all the relations and calculate their individual loss.
     return relations.reduce(function (totalLoss, relation) {
         var loss = 0;
 
         if (relation.sets.length > 1) {
-            var wantedOverlap = relation.size;
-
+            var wantedOverlap = relation.value;
             // Calculate the actual overlap between the sets.
             var actualOverlap = getOverlapBetweenCircles(
                 // Get the circles for the given sets.
-                relations.sets.map(function (set) {
+                relation.sets.map(function (set) {
                     return mapOfIdToCircle[set];
                 })
             );
 
             var diff = wantedOverlap - actualOverlap;
-            loss = diff * diff;
+            loss = Math.round((diff * diff) * precision) / precision;
         }
 
         // Add calculated loss to the sum.
         return totalLoss + loss;
-    });
+    }, 0);
 };
 
 /**
@@ -499,6 +499,7 @@ var vennSeries = {
         getDistanceBetweenPoints: getDistanceBetweenPoints,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         getOverlapBetweenCirclesByDistance: getOverlapBetweenCirclesByDistance,
+        loss: loss,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }
