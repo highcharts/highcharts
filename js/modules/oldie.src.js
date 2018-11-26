@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * Support for old IE browsers (6, 7 and 8) in Highcharts v6+.
@@ -7,13 +7,14 @@
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/SvgRenderer.js';
+
 var VMLRenderer,
     VMLRendererExtension,
     VMLElement,
-
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
@@ -43,15 +44,10 @@ var VMLRenderer,
  * Path to the pattern image required by VML browsers in order to
  * draw radial gradients.
  *
- * @type {String}
+ * @type      {string}
+ * @default   http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
+ * @since     2.3.0
  * @apioption global.VMLRadialGradientURL
- * @default {highcharts}
- *          http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
- * @default {highstock}
- *          http://code.highcharts.com/highstock/{version}/gfx/vml-radial-gradient.png
- * @default {highmaps}
- *          http://code.highcharts.com/{version}/gfx/vml-radial-gradient.png
- * @since 2.3.0
  */
 H.getOptions().global.VMLRadialGradientURL =
     'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
@@ -203,6 +199,13 @@ if (!svg) {
     /**
      * Old IE override for pointer normalize, adds chartX and chartY to event
      * arguments.
+     *
+     * @ignore
+     * @function Highcharts.Pointer#normalize
+     *
+     * @param {global.Event} e
+     *
+     * @param {boolean} [chartPosition=false]
      */
     H.Pointer.prototype.normalize = function (e, chartPosition) {
 
@@ -227,6 +230,9 @@ if (!svg) {
     /**
      * Further sanitize the mock-SVG that is generated when exporting charts in
      * oldIE.
+     *
+     * @private
+     * @function Highcharts.Chart#ieSanitizeSVG
      */
     Chart.prototype.ieSanitizeSVG = function (svg) {
         svg = svg
@@ -250,8 +256,8 @@ if (!svg) {
      * VML namespaces can't be added until after complete. Listening
      * for Perini's doScroll hack is not enough.
      *
-     * @todo: Move this to the oldie.js module.
      * @private
+     * @function Highcharts.Chart#isReadyToRender
      */
     Chart.prototype.isReadyToRender = function () {
         var chart = this;
@@ -286,6 +292,13 @@ if (!svg) {
     /**
      * Old IE polyfill for addEventListener, called from inside the addEvent
      * function.
+     *
+     * @private
+     * @function Highcharts.addEventListenerPolyfill
+     *
+     * @param {string} type
+     *
+     * @param {Function} fn
      */
     H.addEventListenerPolyfill = function (type, fn) {
         var el = this;
@@ -312,6 +325,14 @@ if (!svg) {
         }
 
     };
+    /**
+     * @private
+     * @function Highcharts.removeEventListenerPolyfill
+     *
+     * @param {string} type
+     *
+     * @param {Function} fn
+     */
     H.removeEventListenerPolyfill = function (type, fn) {
         if (this.detachEvent) {
             fn = this.hcEventsIE[fn.hcKey];
@@ -322,6 +343,12 @@ if (!svg) {
 
     /**
      * The VML element wrapper.
+     *
+     * @private
+     * @class
+     * @name Highcharts.VMLElement
+     *
+     * @augments Highcharts.SVGElement
      */
     VMLElement = {
 
@@ -330,8 +357,12 @@ if (!svg) {
         /**
          * Initialize a new VML element wrapper. It builds the markup as a
          * string to minimize DOM traffic.
-         * @param {Object} renderer
-         * @param {Object} nodeName
+         *
+         * @function Highcharts.VMLElement#init
+         *
+         * @param {object} renderer
+         *
+         * @param {object} nodeName
          */
         init: function (renderer, nodeName) {
             var wrapper = this,
@@ -360,7 +391,10 @@ if (!svg) {
 
         /**
          * Add the node to the given parent
-         * @param {Object} parent
+         *
+         * @function Highcharts.VMLElement
+         *
+         * @param {object} parent
          */
         add: function (parent) {
             var wrapper = this,
@@ -408,11 +442,15 @@ if (!svg) {
 
         /**
          * VML always uses htmlUpdateTransform
+         *
+         * @function Highcharts.VMLElement#updateTransform
          */
         updateTransform: SVGElement.prototype.htmlUpdateTransform,
 
         /**
          * Set the rotation of a span with oldIE's filter
+         *
+         * @function Highcharts.VMLElement#setSpanRotation
          */
         setSpanRotation: function () {
             // Adjust for alignment and rotation. Rotation of useHTML content is
@@ -437,6 +475,8 @@ if (!svg) {
 
         /**
          * Get the positioning correction for the span after rotating.
+         *
+         * @function Highcharts.VMLElement#getSpanCorrection
          */
         getSpanCorrection: function (
             width,
@@ -487,6 +527,8 @@ if (!svg) {
         /**
          * Converts a subset of an SVG path definition to its VML counterpart.
          * Takes an array as the parameter and returns a string.
+         *
+         * @function Highcharts.VMLElement#pathToVML
          */
         pathToVML: function (value) {
             // convert paths
@@ -531,7 +573,9 @@ if (!svg) {
         /**
          * Set the element's clipping to a predefined rectangle
          *
-         * @param {String} id The id of the clip rectangle
+         * @function Highcharts.VMLElement#clip
+         *
+         * @param {object} clipRect
          */
         clip: function (clipRect) {
             var wrapper = this,
@@ -564,7 +608,10 @@ if (!svg) {
 
         /**
          * Set styles for the element
-         * @param {Object} styles
+         *
+         * @function Highcharts.VMLElement#css
+         *
+         * @param {Highcharts.SVGAttributes} styles
          */
         css: SVGElement.prototype.htmlCss,
 
@@ -572,6 +619,8 @@ if (!svg) {
          * Removes a child either by removeChild or move to garbageBin.
          * Issue 490; in VML removeChild results in Orphaned nodes according to
          * sIEve, discardElement does not.
+         *
+         * @function Highcharts.VMLElement#safeRemoveChild
          */
         safeRemoveChild: function (element) {
             // discardElement will detach the node from its parent before
@@ -584,6 +633,8 @@ if (!svg) {
 
         /**
          * Extend element.destroy by removing it from the clip members array
+         *
+         * @function Highcharts.VMLElement#destroy
          */
         destroy: function () {
             if (this.destroyClip) {
@@ -595,7 +646,11 @@ if (!svg) {
 
         /**
          * Add an event listener. VML override for normalizing event parameters.
-         * @param {String} eventType
+         *
+         * @function Highcharts.VMLElement#on
+         *
+         * @param {string} eventType
+         *
          * @param {Function} handler
          */
         on: function (eventType, handler) {
@@ -610,6 +665,8 @@ if (!svg) {
 
         /**
          * In stacked columns, cut off the shadows so that they don't overlap
+         *
+         * @function Highcharts.VMLElement#cutOffPath
          */
         cutOffPath: function (path, length) {
 
@@ -629,8 +686,15 @@ if (!svg) {
 
         /**
          * Apply a drop shadow by copying elements and giving them different
-         * strokes
-         * @param {Boolean|Object} shadowOptions
+         * strokes.
+         *
+         * @function Highcharts.VMLElement#shadow
+         *
+         * @param {boolean|Highcharts.ShadowOptionsObject} shadowOptions
+         *
+         * @param {boolean} group
+         *
+         * @param {boolean} cutOff
          */
         shadow: function (shadowOptions, group, cutOff) {
             var shadows = [],
@@ -890,6 +954,12 @@ if (!svg) {
 
     /**
      * The VML renderer
+     *
+     * @private
+     * @class
+     * @name Highcharts.VMLRenderer
+     *
+     * @augments Highcharts.SVGRenderer
      */
     VMLRendererExtension = { // inherit SVGRenderer
 
@@ -898,10 +968,15 @@ if (!svg) {
 
 
         /**
-         * Initialize the VMLRenderer
-         * @param {Object} container
-         * @param {Number} width
-         * @param {Number} height
+         * Initialize the VMLRenderer.
+         *
+         * @function Highcharts.VMLRenderer#init
+         *
+         * @param {object} container
+         *
+         * @param {number} width
+         *
+         * @param {number} height
          */
         init: function (container, width, height) {
             var renderer = this,
@@ -953,6 +1028,8 @@ if (!svg) {
         /**
          * Detect whether the renderer is hidden. This happens when one of the
          * parent elements has display: none
+         *
+         * @function Highcharts.VMLRenderer#isHidden
          */
         isHidden: function () {
             return !this.box.offsetWidth;
@@ -962,10 +1039,15 @@ if (!svg) {
          * Define a clipping rectangle. In VML it is accomplished by storing the
          * values for setting the CSS style to all associated members.
          *
-         * @param {Number} x
-         * @param {Number} y
-         * @param {Number} width
-         * @param {Number} height
+         * @function Highcharts.VMLRenderer#clipRect
+         *
+         * @param {number} x
+         *
+         * @param {number} y
+         *
+         * @param {number} width
+         *
+         * @param {number} height
          */
         clipRect: function (x, y, width, height) {
 
@@ -1031,7 +1113,10 @@ if (!svg) {
          * Take a color and return it if it's a string, make it a gradient if
          * it's a gradient configuration object, and apply opacity.
          *
-         * @param {Object} color The color or config object
+         * @function Highcharts.VMLRenderer#color
+         *
+         * @param {object} color
+         *        The color or config object
          */
         color: function (color, elem, prop, wrapper) {
             var renderer = this,
@@ -1221,7 +1306,11 @@ if (!svg) {
 
         /**
          * Take a VML string and prepare it for either IE8 or IE6/IE7.
-         * @param {Array} markup A string array of the VML markup to prepare
+         *
+         * @function Highcharts.VMLRenderer#prepVML
+         *
+         * @param {Array<*>} markup
+         *        A string array of the VML markup to prepare
          */
         prepVML: function (markup) {
             var vmlStyle = 'display:inline-block;behavior:url(#default#VML);',
@@ -1252,15 +1341,23 @@ if (!svg) {
 
         /**
          * Create rotated and aligned text
-         * @param {String} str
-         * @param {Number} x
-         * @param {Number} y
+         *
+         * @function Highcharts.VMLRenderer#text
+         *
+         * @param {string} str
+         *
+         * @param {number} x
+         *
+         * @param {number} y
          */
         text: SVGRenderer.prototype.html,
 
         /**
          * Create and return a path element
-         * @param {Array} path
+         *
+         * @function Highcharts.VMLRenderer#path
+         *
+         * @param {Highcharts.SVGPathArray} path
          */
         path: function (path) {
             var attr = {
@@ -1279,9 +1376,14 @@ if (!svg) {
         /**
          * Create and return a circle element. In VML circles are implemented as
          * shapes, which is faster than v:oval
-         * @param {Number} x
-         * @param {Number} y
-         * @param {Number} r
+         *
+         * @function Highcharts.VMLRenderer#circle
+         *
+         * @param {number} x
+         *
+         * @param {number} y
+         *
+         * @param {number} r
          */
         circle: function (x, y, r) {
             var circle = this.symbol('circle');
@@ -1300,7 +1402,10 @@ if (!svg) {
          * rotating and flipping. A simple v:group would have problems with
          * positioning child HTML elements and CSS clip.
          *
-         * @param {String} name The name of the group
+         * @function Highcharts.VMLRenderer#g
+         *
+         * @param {string} name
+         *        The name of the group
          */
         g: function (name) {
             var wrapper,
@@ -1321,12 +1426,19 @@ if (!svg) {
         },
 
         /**
-         * VML override to create a regular HTML image
-         * @param {String} src
-         * @param {Number} x
-         * @param {Number} y
-         * @param {Number} width
-         * @param {Number} height
+         * VML override to create a regular HTML image.
+         *
+         * @function Highcharts.VMLRenderer#image
+         *
+         * @param {string} src
+         *
+         * @param {number} x
+         *
+         * @param {number} y
+         *
+         * @param {number} width
+         *
+         * @param {number} height
          */
         image: function (src, x, y, width, height) {
             var obj = this.createElement('img')
@@ -1346,6 +1458,10 @@ if (!svg) {
         /**
          * For rectangles, VML uses a shape for rect to overcome bugs and
          * rotation problems
+         *
+         * @function Highcharts.VMLRenderer#createElement
+         *
+         * @param {string} nodeName
          */
         createElement: function (nodeName) {
             return nodeName === 'rect' ?
@@ -1356,8 +1472,12 @@ if (!svg) {
         /**
          * In the VML renderer, each child of an inverted div (group) is
          * inverted
-         * @param {Object} element
-         * @param {Object} parentNode
+         *
+         * @function Highcharts.VMLRenderer#invertChild
+         *
+         * @param {object} element
+         *
+         * @param {object} parentNode
          */
         invertChild: function (element, parentNode) {
             var ren = this,
@@ -1383,6 +1503,8 @@ if (!svg) {
         /**
          * Symbol definitions that override the parent SVG renderer's symbols
          *
+         * @name Highcharts.VMLRenderer#symbols
+         * @type {Highcharts.Dictionary<Function>}
          */
         symbols: {
             // VML specific arc function
