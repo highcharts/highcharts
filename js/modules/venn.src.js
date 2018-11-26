@@ -48,8 +48,8 @@ var getOverlapBetweenCircles = function getOverlapBetweenCircles(circles) {
         var circle2 = circles[1];
 
         overlap = getOverlapBetweenCirclesByDistance(
-            circle1.r,
-            circle2.r,
+            circle1.radius,
+            circle2.radius,
             getDistanceBetweenPoints(circle1, circle2)
         );
     }
@@ -250,14 +250,15 @@ var sortByTotalOverlap = function sortByTotalOverlap(a, b) {
  * @returns List of circles and their calculated positions.
  */
 var layoutGreedyVenn = function layoutGreedyVenn(relations) {
-    var positionedSets = [];
+    var positionedSets = [],
+        mapOfIdToCircles = {};
 
     // Define a circle for each set.
     relations
         .filter(function (relation) {
             return relation.sets.length === 1;
         }).forEach(function (relation) {
-            relation.circle = {
+            mapOfIdToCircles[relation.sets[0]] = relation.circle = {
                 x: 0,
                 y: 0,
                 r: Math.sqrt(relation.value / Math.PI)
@@ -290,31 +291,44 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
     // Position the most overlapped set at 0,0.
     positionSet(sortedByOverlap.pop(), { x: 0, y: 0 });
 
+    var relationsWithTwoSets = relations.filter(function (x) {
+        return x.sets.length === 2;
+    });
+
     // Iterate and position the remaining sets.
     sortedByOverlap.forEach(function (set) {
-        var radius = set.circle.r,
+        var circle = set.circle,
+            radius = circle.r,
             overlapping = set.overlapping;
 
         var bestPosition = positionedSets
         .reduce(function (best, positionedSet) {
-            var circle = positionedSet.circle,
+            var positionedCircle = positionedSet.circle,
                 overlap = overlapping[positionedSet.sets[0]];
 
             // Calculate the distance between the sets to get the correct
             // overlap
             var distance = getDistanceBetweenCirclesByOverlap(
                 radius,
-                circle.radius,
+                positionedCircle.r,
                 overlap
             );
 
             // Create a list of possible coordinates calculated from distance.
-            var possibleCoordinates = [[0, 0]];
+            var possibleCoordinates = [
+                { x: positionedCircle.x + distance, y: positionedCircle.y },
+                { x: positionedCircle.x - distance, y: positionedCircle.y },
+                { x: positionedCircle.x, y: positionedCircle.y + distance },
+                { x: positionedCircle.x, y: positionedCircle.y - distance }
+            ];
 
             // Iterate all suggested coordinates and find the best one.
             possibleCoordinates.forEach(function (coordinates) {
+                circle.x = coordinates.x;
+                circle.y = coordinates.y;
+
                 // Calculate loss for the suggested coordinates.
-                var currentLoss = loss(coordinates);
+                var currentLoss = loss(mapOfIdToCircles, relationsWithTwoSets);
 
                 // If the loss is better, then use these new coordinates.
                 if (currentLoss < best.loss) {
@@ -335,7 +349,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
     });
 
     // Return the positions of each set.
-    return positioned;
+    return mapOfIdToCircles;
 };
 
 /**
@@ -349,8 +363,8 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
  */
 var layout = function (relations) {
     // Calculate best initial positions by using greedy layout.
-    var positions = layoutGreedyVenn(relations);
-    return positions;
+    var mapOfIdToShape = layoutGreedyVenn(relations);
+    return mapOfIdToShape;
 };
 
 var isValidRelation = function (x) {
@@ -428,7 +442,64 @@ var processVennData = function processVennData(data) {
     return objectValues(mapOfIdToRelation);
 };
 
+/**
+ * getScale - Calculates the proper scale to fit the cloud inside the plotting
+ *            area.
+ *
+ * NOTE: copied from wordcloud.
+ *
+ * @param  {number} targetWidth  Width of target area.
+ * @param  {number} targetHeight Height of target area.
+ * @param  {object} field The playing field.
+ * @param  {Series} series Series object.
+ * @return {number} Returns the value to scale the playing field up to the size
+ *     of the target area.
+ */
+var getScale = function getScale(targetWidth, targetHeight, field) {
+    var height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
+        width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
+        scaleX = width > 0 ? 1 / width * targetWidth : 1,
+        scaleY = height > 0 ? 1 / height * targetHeight : 1;
+    return Math.min(scaleX, scaleY);
+};
+
+/**
+ * updateFieldBoundaries - If a circle is outside a give field, then the
+ * boundaries of the field is adjusted accordingly. Modifies the field object
+ * which is passed as the first parameter.
+ *
+ * NOTE: Copied from wordcloud, can probably be unified.
+ *
+ * @param  {object} field The bounding box of a playing field.
+ * @param  {object} placement The bounding box for a placed point.
+ * @return {object} Returns a modified field object.
+ */
+var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
+    var left = circle.x - circle.r,
+        right = circle.x + circle.r,
+        bottom = circle.y + circle.r,
+        top = circle.y - circle.r;
+
+    // TODO improve type checking.
+    if (!isNumber(field.left) || field.left > left) {
+        field.left = left;
+    }
+    if (!isNumber(field.right) || field.right < right) {
+        field.right = right;
+    }
+    if (!isNumber(field.top) || field.top > top) {
+        field.top = top;
+    }
+    if (!isNumber(field.bottom) || field.bottom < bottom) {
+        field.bottom = bottom;
+    }
+    return field;
+};
+
 var vennOptions = {
+    clip: false,
+    colorByPoint: true,
+    opacity: 0.15
 };
 
 var vennSeries = {
@@ -437,18 +508,19 @@ var vennSeries = {
      * @returns {undefined}
      */
     bindAxes: function () {
-        var series = this,
-            axis = {
-                min: 0,
-                max: 100
-            };
+        var axis = {
+            endOnTick: false,
+            gridLineWidth: 0,
+            lineWidth: 0,
+            maxPadding: 0,
+            startOnTick: false,
+            title: null,
+            tickPositions: []
+        };
 
-        // Call original function to bind the axes.
         Series.prototype.bindAxes.call(this);
-
-        // Extend axes with new values.
-        H.extend(series.yAxis.options, axis);
-        H.extend(series.xAxis.options, axis);
+        extend(this.yAxis.options, axis);
+        extend(this.xAxis.options, axis);
     },
     /**
      * Draw the graphics for each point.
@@ -462,6 +534,7 @@ var vennSeries = {
             points = series.points || [],
             xAxis = series.xAxis,
             yAxis = series.yAxis,
+            field = { top: 0, bottom: 0, left: 0, right: 0 },
             // Chart properties
             renderer = chart.renderer;
 
@@ -472,26 +545,54 @@ var vennSeries = {
         var circles = layout(relations);
 
         // Iterate all points and calculate and draw their graphics.
-        // points.forEach(function (point, i) {
-        //     var attr = getShapeArgs({
-        //             i: i,
-        //             xAxis: xAxis,
-        //             yAxis: yAxis
-        //         }),
-        //         css = {
-        //             color: point.color
-        //         };
+        points.forEach(function (point) {
+            var shape = circles[point.sets.join()],
+                attr = shape,
+                css = {
+                    color: point.color
+                };
 
-        //     // Draw the point graphic.
-        //     point.draw({
-        //         animate: {},
-        //         attr: attr,
-        //         css: css,
-        //         group: group,
-        //         renderer: renderer,
-        //         shapeType: 'circle'
-        //     });
-        // });
+            if (shape) {
+                field = updateFieldBoundaries(field, shape);
+            }
+
+            // Draw the point graphic.
+            point.draw({
+                animate: {},
+                attr: attr,
+                css: css,
+                group: group,
+                renderer: renderer,
+                shapeType: 'circle'
+            });
+        });
+
+        /**
+         * Scale the series group to fit within the plotArea.
+         */
+        var scale = getScale(xAxis.len, yAxis.len, field);
+        series.group.attr({
+            scaleX: scale,
+            scaleY: scale
+        });
+    },
+    getPlotBox: function () {
+        var series = this,
+            chart = series.chart,
+            inverted = chart.inverted,
+            // Swap axes for inverted (#2339)
+            xAxis = series[(inverted ? 'yAxis' : 'xAxis')],
+            yAxis = series[(inverted ? 'xAxis' : 'yAxis')],
+            width = xAxis ? xAxis.len : chart.plotWidth,
+            height = yAxis ? yAxis.len : chart.plotHeight,
+            x = xAxis ? xAxis.left : chart.plotLeft,
+            y = yAxis ? yAxis.top : chart.plotTop;
+        return {
+            translateX: x + (width / 2),
+            translateY: y + (height / 2),
+            scaleX: 1, // #1623
+            scaleY: 1
+        };
     },
     utils: {
         addOverlapToSets: addOverlapToSets,
@@ -508,10 +609,10 @@ var vennSeries = {
 var vennPoint = {
     draw: draw,
     shouldDraw: function () {
-        // var point = this;
+        var point = this;
 
-        // Draw all points for now.
-        return true;
+        // Only draw points with single sets.
+        return isSet(point);
     }
 };
 
