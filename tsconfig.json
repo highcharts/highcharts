@@ -70,6 +70,10 @@
         "test/typescript/modules/gantt.ts",
         "test/typescript/highcharts-gantt.ts",
 
+        "code/modules/heatmap.d.ts",
+        "code/modules/heatmap.src.d.ts",
+        "test/typescript/modules/heatmap.ts",
+
         "code/modules/map.d.ts",
         "code/modules/map.src.d.ts",
         "test/typescript/modules/map.ts",
