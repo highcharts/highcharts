@@ -43,24 +43,24 @@ seriesType('packedbubble', 'bubble',
         *
         * @sample {highcharts}
         *         highcharts/variable-radius-pie/min-point-size-100/
-        *         minPointSize set to 100
+        *         minSize set to 100
         * @type {String|Number}
         * @since 7.0.0
         * @product highcharts
         */
-        minPointSize: '10%',
+        minSize: '10%',
         /**
         * The maximum size of the points' radius related to chart's `plotArea`.
         * If a number is set, it applies in pixels.
         *
         * @sample {highcharts}
         *         highcharts/variable-radius-pie/min-max-point-size/
-        *         Example of minPointSize and maxPointSize
+        *         Example of minSize and maxSize
         * @type {String|Number}
         * @since 7.0.0
         * @product highcharts
         */
-        maxPointSize: '100%',
+        maxSize: '100%',
         sizeBy: 'radius',
         zoneAxis: 'y',
         tooltip: {
@@ -462,7 +462,7 @@ seriesType('packedbubble', 'bubble',
                 return false;
             }
 
-            ['minPointSize', 'maxPointSize'].forEach(function (prop) {
+            ['minSize', 'maxSize'].forEach(function (prop) {
                 var length = parseInt(seriesOptions[prop], 10),
                     isPercent = /%$/.test(length);
 
@@ -471,8 +471,8 @@ seriesType('packedbubble', 'bubble',
                     length;
             });
 
-            chart.minRadius = minSize = extremes.minPointSize;
-            chart.maxRadius = maxSize = extremes.maxPointSize;
+            chart.minRadius = minSize = extremes.minSize;
+            chart.maxRadius = maxSize = extremes.maxSize;
 
             // range of size
             radiusRange = maxSize - minSize;

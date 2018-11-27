@@ -6,7 +6,7 @@ QUnit.test('Bubble min size', function (assert) {
             },
             plotOptions: {
                 packedbubble: {
-                    minPointSize: 50
+                    minSize: 50
                 }
             },
             series: [{
