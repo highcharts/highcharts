@@ -15,7 +15,8 @@ import H from '../parts/Globals.js';
 import '../parts/Series.js';
 var extend = H.extend,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
-    getOverlapBetweenCirclesByDistance = geometryCircles.getOverlapBetweenCircles,
+    getOverlapBetweenCirclesByDistance =
+        geometryCircles.getOverlapBetweenCircles,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
@@ -241,10 +242,6 @@ var sortByTotalOverlap = function sortByTotalOverlap(a, b) {
  * Uses a greedy approach to position all the sets. Works well with a small
  * number of sets, and are in these cases a good choice aesthetically.
  *
- * TODO: define circles for each set.
- * TODO: implement positionSet.
- * TODO: find the overlap between sets and sort them.
- *
  * @param {Array} relations List of the overlap between two or more sets, or the
  * size of a single set.
  * @returns List of circles and their calculated positions.
@@ -394,8 +391,6 @@ var isValidSet = function (x) {
  * Filter out sets, or intersections that includes sets, that are missing in the
  * data or has (value < 1).
  * Adds missing relations between sets in the data as value = 0.
- *
- * TODO: implement filtering and addition of missing relations.
  *
  * @param {Array} data The raw input data.
  * @returns {Array} Returns an array of valid venn data.
