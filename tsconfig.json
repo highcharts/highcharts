@@ -81,6 +81,10 @@
         "code/modules/exporting.src.d.ts",
         "test/typescript/modules/exporting.ts",
 
+        "code/modules/funnel.d.ts",
+        "code/modules/funnel.src.d.ts",
+        "test/typescript/modules/funnel.ts",
+
         "code/modules/gantt.d.ts",
         "code/modules/gantt.src.d.ts",
         "test/typescript/modules/gantt.ts",
@@ -94,14 +98,30 @@
         "code/modules/histogram-bellcurve.src.d.ts",
         "test/typescript/modules/histogram-bellcurve.ts",
 
+        "code/modules/item-series.d.ts",
+        "code/modules/item-series.src.d.ts",
+        "test/typescript/modules/item-series.ts",
+
         "code/modules/map.d.ts",
         "code/modules/map.src.d.ts",
         "test/typescript/modules/map.ts",
         "test/typescript/highmaps.ts",
 
+        "code/modules/map-parser.d.ts",
+        "code/modules/map-parser.src.d.ts",
+        "test/typescript/modules/map-parser.ts",
+
+        "code/modules/no-data-no-display.d.ts",
+        "code/modules/no-data-no-display.src.d.ts",
+        "test/typescript/modules/no-data-no-display.ts",
+
         "code/modules/offline-exporting.d.ts",
         "code/modules/offline-exporting.src.d.ts",
         "test/typescript/modules/offline-exporting.ts",
+
+        "code/modules/oldie.d.ts",
+        "code/modules/oldie.src.d.ts",
+        "test/typescript/modules/oldie.ts",
 
         "code/modules/series-label.d.ts",
         "code/modules/series-label.src.d.ts",
