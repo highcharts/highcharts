@@ -1,4 +1,4 @@
-/**
+/* *
  * Module for using patterns or images as point fills.
  *
  * (c) 2010-2018 Highsoft AS
@@ -6,7 +6,102 @@
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * Pattern options
+ *
+ * @interface Highcharts.PatternOptionsObject
+ *//**
+ * URL to an image to use as the pattern.
+ * @name Highcharts.PatternOptionsObject#image
+ * @type {string}
+ *//**
+ * Width of the pattern. For images this is automatically set to the width of
+ * the element bounding box if not supplied. For non-image patterns the default
+ * is 32px. Note that automatic resizing of image patterns to fill a bounding
+ * box dynamically is only supported for patterns with an automatically
+ * calculated ID.
+ * @name Highcharts.PatternOptionsObject#with
+ * @type {number}
+ *//**
+ * Analogous to pattern.width.
+ * @name Highcharts.PatternOptionsObject#height
+ * @type {number}
+ *//**
+ * For automatically calculated width and height on images, it is possible to
+ * set an aspect ratio. The image will be zoomed to fill the bounding box,
+ * maintaining the aspect ratio defined.
+ * @name Highcharts.PatternOptionsObject#aspectRatio
+ * @type {number}
+ *//**
+ * Horizontal offset of the pattern. Defaults to 0.
+ * @name Highcharts.PatternOptionsObject#x
+ * @type {number|undefined}
+ *//**
+ * Vertical offset of the pattern. Defaults to 0.
+ * @name Highcharts.PatternOptionsObject#y
+ * @type {number|undefined}
+ *//**
+ * Either an SVG path as string, or an object. As an object, supply the path
+ * string in the `path.d` property. Other supported properties are standard SVG
+ * attributes like `path.stroke` and `path.fill`. If a path is supplied for the
+ * pattern, the `image` property is ignored.
+ * @name Highcharts.PatternOptionsObject#path
+ * @type {string|Highcharts.SVGAttributes}
+ *//**
+ * Pattern color, used as default path stroke.
+ * @name Highcharts.PatternOptionsObject#color
+ * @type {Highcharts.ColorString}
+ *//**
+ * Opacity of the pattern as a float value from 0 to 1.
+ * @name Highcharts.PatternOptionsObject#opacity
+ * @type {number}
+ *//**
+ * ID to assign to the pattern. This is automatically computed if not added, and
+ * identical patterns are reused. To refer to an existing pattern for a
+ * Highcharts color, use `color: "url(#pattern-id)"`.
+ * @name Highcharts.PatternOptionsObject#id
+ * @type {string}
+ */
+
+/**
+ * Holds a pattern definition.
+ *
+ * @sample highcharts/series/pattern-fill-area/
+ *         Define a custom path pattern
+ * @sample highcharts/series/pattern-fill-pie/
+ *         Default patterns and a custom image pattern
+ * @sample maps/demo/pattern-fill-map/
+ *         Custom images on map
+ *
+ * @example
+ * // Pattern used as a color option
+ * color: {
+ *     pattern: {
+ *            path: {
+ *                 d: 'M 3 3 L 8 3 L 8 8 Z',
+ *                fill: '#102045'
+ *            },
+ *            width: 12,
+ *            height: 12,
+ *            color: '#907000',
+ *            opacity: 0.5
+ *     }
+ * }
+ *
+ * @interface Highcharts.PatternObject
+ *//**
+ * Pattern options
+ * @name Highcharts.PatternObject#pattern
+ * @type {Highcharts.PatternOptionsObject}
+ *//**
+ * Animation options for the image pattern loading.
+ * @name Highcharts.PatternObject#animation
+ * @type {boolean|Highcharts.AnimationOptionsObject|undefined}
+ */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -21,10 +116,17 @@ var wrap = H.wrap,
  * String.hashCode implementation in JS. Use the preSeed parameter to add an
  * additional seeding step.
  *
- * @param {Object} obj The javascript object to compute the hash from.
- * @param {Bool} [preSeed=false] Add an optional preSeed stage.
+ * @private
+ * @function hashFromObject
  *
- * @return {String} The computed hash.
+ * @param {object} obj
+ *        The javascript object to compute the hash from.
+ *
+ * @param {boolean} [preSeed=false]
+ *        Add an optional preSeed stage.
+ *
+ * @return {string}
+ *         The computed hash.
  */
 function hashFromObject(obj, preSeed) {
     var str = JSON.stringify(obj),
@@ -55,12 +157,16 @@ function hashFromObject(obj, preSeed) {
 /**
  * Set dimensions on pattern from point. This function will set internal
  * pattern._width/_height properties if width and height are not both already
- * set. We only do this on image patterns. The _width/_height properties are
- * set to the size of the bounding box of the point, optionally taking aspect
- * ratio into account. If only one of width or height are supplied as options,
- * the undefined option is calculated as above.
+ * set. We only do this on image patterns. The _width/_height properties are set
+ * to the size of the bounding box of the point, optionally taking aspect ratio
+ * into account. If only one of width or height are supplied as options, the
+ * undefined option is calculated as above.
  *
- * @param {Object} pattern The pattern to set dimensions on.
+ * @private
+ * @function Highcharts.Point#calculatePatternDimensions
+ *
+ * @param {Highcharts.PatternObject} pattern
+ *        The pattern to set dimensions on.
  */
 H.Point.prototype.calculatePatternDimensions = function (pattern) {
     if (pattern.width && pattern.height) {
@@ -134,66 +240,17 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
     }
 };
 
-
-/**
- * @typedef {Object} PatternOptions
- * @property {Object} pattern Holds a pattern definition.
- * @property {String} pattern.image URL to an image to use as the pattern.
- * @property {Number} pattern.width Width of the pattern. For images this is
- *  automatically set to the width of the element bounding box if not supplied.
- *  For non-image patterns the default is 32px. Note that automatic resizing of
- *  image patterns to fill a bounding box dynamically is only supported for
- *  patterns with an automatically calculated ID.
- * @property {Number} pattern.height Analogous to pattern.width.
- * @property {Number} pattern.aspectRatio For automatically calculated width and
- *  height on images, it is possible to set an aspect ratio. The image will be
- *  zoomed to fill the bounding box, maintaining the aspect ratio defined.
- * @property {Number} pattern.x Horizontal offset of the pattern. Defaults to 0.
- * @property {Number} pattern.y Vertical offset of the pattern. Defaults to 0.
- * @property {Object|String} pattern.path Either an SVG path as string, or an
- *  object. As an object, supply the path string in the `path.d` property. Other
- *  supported properties are standard SVG attributes like `path.stroke` and
- *  `path.fill`. If a path is supplied for the pattern, the `image` property is
- *  ignored.
- * @property {String} pattern.color Pattern color, used as default path stroke.
- * @property {Number} pattern.opacity Opacity of the pattern as a float value
- *     from 0 to 1.
- * @property {String} pattern.id ID to assign to the pattern. This is
- *    automatically computed if not added, and identical patterns are reused. To
- *    refer to an existing pattern for a Highcharts color, use
- *    `color: "url(#pattern-id)"`.
- * @property {Object|Boolean} animation Animation options for the image pattern
- *  loading.
- *
- * @example
- * // Pattern used as a color option
- * color: {
- *     pattern: {
- *            path: {
- *                 d: 'M 3 3 L 8 3 L 8 8 Z',
- *                fill: '#102045'
- *            },
- *            width: 12,
- *            height: 12,
- *            color: '#907000',
- *            opacity: 0.5
- *     }
- * }
- *
- * @sample highcharts/series/pattern-fill-area/
- *         Define a custom path pattern
- * @sample highcharts/series/pattern-fill-pie/
- *         Default patterns and a custom image pattern
- * @sample maps/demo/pattern-fill-map/
- *         Custom images on map
- */
 /**
  * Add a pattern to the renderer.
  *
  * @private
- * @param {PatternOptions} options The pattern options.
+ * @function Highcharts.SVGRenderer#addPattern
  *
- * @return {Object} The added pattern. Undefined if the pattern already exists.
+ * @param {Highcharts.PatternObject} options
+ *        The pattern options.
+ *
+ * @return {Highcharts.SVGElement|undefined}
+ *         The added pattern. Undefined if the pattern already exists.
  */
 H.SVGRenderer.prototype.addPattern = function (options, animation) {
     var pattern,
@@ -291,9 +348,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
 };
 
 
-/**
- * Make sure we have a series color
- */
+// Make sure we have a series color
 wrap(H.Series.prototype, 'getColor', function (proceed) {
     var oldColor = this.options.color;
     // Temporarely remove color options to get defaults
@@ -311,9 +366,7 @@ wrap(H.Series.prototype, 'getColor', function (proceed) {
 });
 
 
-/**
- * Calculate pattern dimensions on points that have their own pattern.
- */
+// Calculate pattern dimensions on points that have their own pattern.
 wrap(H.Series.prototype, 'render', function (proceed) {
     var isResizing = this.chart.isResizing;
     if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
@@ -344,9 +397,7 @@ wrap(H.Series.prototype, 'render', function (proceed) {
 });
 
 
-/**
- * Merge series color options to points
- */
+// Merge series color options to points
 wrap(H.Point.prototype, 'applyOptions', function (proceed) {
     var point = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
         colorOptions = point.options.color;
@@ -370,9 +421,7 @@ wrap(H.Point.prototype, 'applyOptions', function (proceed) {
 });
 
 
-/**
- * Add functionality to SVG renderer to handle patterns as complex colors
- */
+// Add functionality to SVG renderer to handle patterns as complex colors
 H.addEvent(H.SVGRenderer, 'complexColor', function (args) {
     var color = args.args[0],
         prop = args.args[1],
@@ -451,10 +500,8 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (args) {
 });
 
 
-/**
- * When animation is used, we have to recalculate pattern dimensions after
- * resize, as the bounding boxes are not available until then.
- */
+// When animation is used, we have to recalculate pattern dimensions after
+// resize, as the bounding boxes are not available until then.
 H.addEvent(H.Chart, 'endResize', function () {
     if (
         H.grep(this.renderer.defIds || [], function (id) {
@@ -478,10 +525,8 @@ H.addEvent(H.Chart, 'endResize', function () {
 });
 
 
-/**
- * Add a garbage collector to delete old patterns with autogenerated hashes that
- * are no longer being referenced.
- */
+// Add a garbage collector to delete old patterns with autogenerated hashes that
+// are no longer being referenced.
 H.addEvent(H.Chart, 'redraw', function () {
     var usedIds = [],
         renderer = this.renderer,
@@ -524,9 +569,7 @@ H.addEvent(H.Chart, 'redraw', function () {
 });
 
 
-/**
- * Add the predefined patterns
- */
+// Add the predefined patterns
 H.Chart.prototype.callbacks.push(function (chart) {
     var colors = H.getOptions().colors;
     each([
