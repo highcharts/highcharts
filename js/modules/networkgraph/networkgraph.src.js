@@ -10,7 +10,7 @@
 import H from '../../parts/Globals.js';
 import '../../parts/Utilities.js';
 import '../../parts/Options.js';
-import '../../modules/layouts.js';
+import '/layouts.js';
 
 var addEvent = H.addEvent,
     defined = H.defined,
