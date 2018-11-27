@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'packedbubble'
+        type: 'packedbubble',
+        height: '80%'
     },
     title: {
         text: 'Carbon emissions around the world (2014)'
@@ -17,6 +18,11 @@ Highcharts.chart('container', {
                     property: 'y',
                     operator: '>',
                     value: 250
+                },
+                style: {
+                    color: 'black',
+                    textOutline: 'none',
+                    fontWeight: 'normal'
                 }
             },
             minPointSize: 5
