@@ -19,12 +19,10 @@ import '../parts/SvgRenderer.js';
 
 var win = H.win,
     doc = win.document,
-    each = H.each,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     merge = H.merge,
-    pick = H.pick,
-    hasSVGFocusSupport;
+    pick = H.pick;
 
 /*
  * Add focus border functionality to SVGElements. Draws a new rect on top of
@@ -48,6 +46,7 @@ H.extend(H.SVGElement.prototype, {
         // Add the border rect
         var bb = this.getBBox(),
             pad = pick(margin, 3);
+
         this.focusBorder = this.renderer.rect(
             bb.x - pad,
             bb.y - pad,
@@ -56,16 +55,17 @@ H.extend(H.SVGElement.prototype, {
             style && style.borderRadius
         )
         .addClass('highcharts-focus-border')
-        /*= if (build.classic) { =*/
-        .attr({
-            stroke: style && style.stroke,
-            'stroke-width': style && style.strokeWidth
-        })
-        /*= } =*/
         .attr({
             zIndex: 99
         })
         .add(this.parentGroup);
+
+        if (!this.renderer.styledMode) {
+            this.focusBorder.attr({
+                stroke: style && style.stroke,
+                'stroke-width': style && style.strokeWidth
+            });
+        }
     },
 
     /**
@@ -86,7 +86,7 @@ H.extend(H.SVGElement.prototype, {
  * up/down arrows, and which series types should just move to next series.
  */
 H.Series.prototype.keyboardMoveVertical = true;
-each(['column', 'pie'], function (type) {
+['column', 'pie'].forEach(function (type) {
     if (H.seriesTypes[type]) {
         H.seriesTypes[type].prototype.keyboardMoveVertical = false;
     }
@@ -336,7 +336,7 @@ KeyboardNavigationModule.prototype = {
             keyCode = e.which || e.keyCode,
             found = false,
             handled = false;
-        each(this.keyCodeMap, function (codeSet) {
+        this.keyCodeMap.forEach(function (codeSet) {
             if (codeSet[0].indexOf(keyCode) > -1) {
                 found = true;
                 handled = codeSet[1].call(navModule, keyCode, e) === false ?
@@ -797,11 +797,11 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
     if (curPoint.plotX === undefined || curPoint.plotY === undefined) {
         return false;
     }
-    each(this.series, function (series) {
+    this.series.forEach(function (series) {
         if (isSkipSeries(series)) {
             return;
         }
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             if (point.plotY === undefined || point.plotX === undefined ||
                 point === curPoint) {
                 return;
@@ -860,7 +860,7 @@ H.Chart.prototype.hideExportMenu = function () {
         exportList = chart.exportDivElements;
     if (exportList && chart.exportContextMenu) {
         // Reset hover states etc.
-        each(exportList, function (el) {
+        exportList.forEach(function (el) {
             if (el.className === 'highcharts-menu-item' && el.onmouseout) {
                 el.onmouseout();
             }
@@ -888,16 +888,22 @@ H.Chart.prototype.highlightExportItem = function (ix) {
     var listItem = this.exportDivElements && this.exportDivElements[ix],
         curHighlighted =
             this.exportDivElements &&
-            this.exportDivElements[this.highlightedExportItem];
+            this.exportDivElements[this.highlightedExportItem],
+        hasSVGFocusSupport;
 
     if (
         listItem &&
         listItem.tagName === 'DIV' &&
         !(listItem.children && listItem.children.length)
     ) {
+        // Test if we have focus support for SVG elements
+        hasSVGFocusSupport = !!(
+            this.renderTo.getElementsByTagName('g')[0] || {}
+        ).focus;
+
+        // Only focus if we can set focus back to the elements after
+        // destroying the menu (#7422)
         if (listItem.focus && hasSVGFocusSupport) {
-            // Only focus if we can set focus back to the elements after
-            // destroying the menu (#7422)
             listItem.focus();
         }
         if (curHighlighted && curHighlighted.onmouseout) {
@@ -1239,7 +1245,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
                     zoomOut = chart.mapNavButtons[1],
                     initialButton = direction > 0 ? zoomIn : zoomOut;
 
-                each(chart.mapNavButtons, function (button, i) {
+                chart.mapNavButtons.forEach(function (button, i) {
                     button.element.setAttribute('tabindex', -1);
                     button.element.setAttribute('role', 'button');
                     button.element.setAttribute(
@@ -1294,7 +1300,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 
             // Make elements focusable and accessible
             init: function (direction) {
-                each(chart.rangeSelector.buttons, function (button) {
+                chart.rangeSelector.buttons.forEach(function (button) {
                     button.element.setAttribute('tabindex', '-1');
                     button.element.setAttribute('role', 'button');
                     button.element.setAttribute(
@@ -1395,7 +1401,7 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
 
             // Make elements focusable and accessible
             init: function (direction) {
-                each(chart.legend.allItems, function (item) {
+                chart.legend.allItems.forEach(function (item) {
                     item.legendGroup.element.setAttribute('tabindex', '-1');
                     item.legendGroup.element.setAttribute('role', 'button');
                     item.legendGroup.element.setAttribute(
@@ -1527,10 +1533,6 @@ H.addEvent(H.Series, 'destroy', function () {
 H.Chart.prototype.callbacks.push(function (chart) {
     var a11yOptions = chart.options.accessibility;
     if (a11yOptions.enabled && a11yOptions.keyboardNavigation.enabled) {
-
-        // Test if we have focus support for SVG elements
-        hasSVGFocusSupport = !!chart.renderTo
-                                .getElementsByTagName('g')[0].focus;
 
         // Init nav modules. We start at the first module, and as the user
         // navigates through the chart the index will increase to use different

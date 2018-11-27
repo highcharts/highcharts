@@ -38,7 +38,6 @@ var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
-    each = H.each,
     erase = H.erase,
     merge = H.merge,
     pick = H.pick;
@@ -110,25 +109,25 @@ H.PlotLineOrBand.prototype = {
             value = axis.log2lin(value);
         }
 
-        /*= if (build.classic) { =*/
         // Set the presentational attributes
-        if (isLine) {
-            attribs.stroke = color;
-            attribs['stroke-width'] = options.width;
-            if (options.dashStyle) {
-                attribs.dashstyle = options.dashStyle;
-            }
+        if (!axis.chart.styledMode) {
+            if (isLine) {
+                attribs.stroke = color;
+                attribs['stroke-width'] = options.width;
+                if (options.dashStyle) {
+                    attribs.dashstyle = options.dashStyle;
+                }
 
-        } else if (isBand) { // plot band
-            if (color) {
-                attribs.fill = color;
-            }
-            if (options.borderWidth) {
-                attribs.stroke = options.borderColor;
-                attribs['stroke-width'] = options.borderWidth;
+            } else if (isBand) { // plot band
+                if (color) {
+                    attribs.fill = color;
+                }
+                if (options.borderWidth) {
+                    attribs.stroke = options.borderColor;
+                    attribs['stroke-width'] = options.borderWidth;
+                }
             }
         }
-        /*= } =*/
 
         // Grouping and zIndex
         groupAttribs.zIndex = zIndex;
@@ -269,9 +268,9 @@ H.PlotLineOrBand.prototype = {
                 .attr(attribs)
                 .add();
 
-            /*= if (build.classic) { =*/
-            label.css(optionsLabel.style);
-            /*= } =*/
+            if (!this.axis.chart.styledMode) {
+                label.css(optionsLabel.style);
+            }
         }
 
         // get the bounding box and align the label
@@ -504,8 +503,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
 
     /**
-     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts
-     * /labels-and-string-formatting#html) to render the labels.
+     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+     * to render the labels.
      *
      * @type      {boolean}
      * @default   false
@@ -592,9 +591,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
 
     /**
      * The dashing or dot style for the plot line. For possible values see
-     * [this overview](https://jsfiddle.net/gh/get/library/pure/highcharts
-     * /highcharts/tree/master/samples/highcharts/plotoptions/series-
-     * dashstyle-all/).
+     * [this overview](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
      *
      * @sample {highcharts} highcharts/xaxis/plotlines-dashstyle/
      *         Dash and dot pattern
@@ -743,8 +740,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
 
     /**
-     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts
-     * /labels-and-string-formatting#html) to render the labels.
+     * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+     * to render the labels.
      *
      * @type      {boolean}
      * @default   false
@@ -1016,12 +1013,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 plotLinesAndBands[i].destroy();
             }
         }
-        each([
+        ([
             options.plotLines || [],
             userOptions.plotLines || [],
             options.plotBands || [],
             userOptions.plotBands || []
-        ], function (arr) {
+        ]).forEach(function (arr) {
             i = arr.length;
             while (i--) {
                 if (arr[i].id === id) {

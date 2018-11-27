@@ -54,9 +54,7 @@ seriesType('gantt', 'xrange', {
         }
     },
     tooltip: {
-        headerFormat: '<span style="color:{point.color};text-align:right">' +
-                            '{series.name}' +
-                        '</span><br/>',
+        headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
         pointFormat: null,
         pointFormatter: function () {
             var point = this,
@@ -72,8 +70,6 @@ seriesType('gantt', 'xrange', {
                 start,
                 end,
                 milestone = point.options.milestone,
-                dateRowStart = '<span style="font-size: 0.8em">',
-                dateRowEnd = '</span><br/>',
                 retVal = '<b>' + (point.name || point.category) + '</b>';
 
             if (ttOptions.pointFormat) {
@@ -97,16 +93,16 @@ seriesType('gantt', 'xrange', {
             retVal += '<br/>';
 
             if (!milestone) {
-                retVal += dateRowStart + 'Start: ' + start + dateRowEnd;
-                retVal += dateRowStart + 'End: ' + end + dateRowEnd;
+                retVal += 'Start: ' + start + '<br/>';
+                retVal += 'End: ' + end + '<br/>';
             } else {
-                retVal += dateRowStart + 'Date ' + start + dateRowEnd;
+                retVal += 'Date ' + start + '<br/>';
             }
 
             return retVal;
         }
     },
-    pathfinder: {
+    connectors: {
         type: 'simpleConnect',
         animation: {
             reversed: true // Dependencies go from child to parent
@@ -190,12 +186,13 @@ seriesType('gantt', 'xrange', {
                     .addClass(point.getClassName(), true)
                     .add(point.group || series.group);
                 }
-                /*= if (build.classic) { =*/
+
                 // Presentational
-                point.graphic
-                    .attr(series.pointAttribs(point, state))
-                    .shadow(seriesOpts.shadow, null, cutOff);
-                /*= } =*/
+                if (!series.chart.styledMode) {
+                    point.graphic
+                        .attr(series.pointAttribs(point, state))
+                        .shadow(seriesOpts.shadow, null, cutOff);
+                }
             } else if (graphic) {
                 point.graphic = graphic.destroy(); // #1269
             }
@@ -331,7 +328,7 @@ seriesType('gantt', 'xrange', {
 /**
  * The ID of the point (task) that this point depends on in Gantt charts.
  * Aliases [connect](series.xrange.data.connect). Can also be an object,
- * specifying further connecting [options](series.gantt.pathfinder) between the
+ * specifying further connecting [options](series.gantt.connectors) between the
  * points. Multiple connections can be specified by providing an array.
  *
  * @type {Array<string|*>|string|*}

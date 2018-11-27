@@ -13,23 +13,17 @@ import '../parts/Tooltip.js';
 var merge = H.merge,
     addEvent = H.addEvent,
     extend = H.extend,
-    each = H.each,
     isString = H.isString,
     isNumber = H.isNumber,
     defined = H.defined,
     isObject = H.isObject,
-    inArray = H.inArray,
     erase = H.erase,
     find = H.find,
     format = H.format,
     pick = H.pick,
     objectEach = H.objectEach,
     uniqueKey = H.uniqueKey,
-    doc = H.doc,
-    splat = H.splat,
     destroyObjectProperties = H.destroyObjectProperties,
-    grep = H.grep,
-
     tooltipPrototype = H.Tooltip.prototype,
     seriesPrototype = H.Series.prototype,
     chartPrototype = H.Chart.prototype;
@@ -85,9 +79,7 @@ var defaultMarkers = {
         children: [{
             tagName: 'path',
             d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
-            /*= if (build.classic) { =*/
             strokeWidth: 0
-            /*= } =*/
         }]
     }
 };
@@ -105,65 +97,19 @@ extend(MarkerMixin, {
     markerStartSetter: MarkerMixin.markerSetter('marker-start')
 });
 
-/*= if (build.classic) { =*/
-// In a styled mode definition is implemented
-H.SVGRenderer.prototype.definition = function (def) {
-    var ren = this;
-
-    function recurse(config, parent) {
-        var ret;
-        each(splat(config), function (item) {
-            var node = ren.createElement(item.tagName),
-                attr = {};
-
-            // Set attributes
-            objectEach(item, function (val, key) {
-                if (
-          key !== 'tagName' &&
-          key !== 'children' &&
-          key !== 'textContent'
-        ) {
-                    attr[key] = val;
-                }
-            });
-            node.attr(attr);
-
-            // Add to the tree
-            node.add(parent || ren.defs);
-
-            // Add text content
-            if (item.textContent) {
-                node.element.appendChild(
-          doc.createTextNode(item.textContent)
-        );
-            }
-
-            // Recurse
-            recurse(item.children || [], node);
-
-            ret = node;
-        });
-
-        // Return last node added (on top level it's the only one)
-        return ret;
-    }
-    return recurse(def);
-};
-/*= } =*/
-
 H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
     var options = { id: id };
 
-    /*= if (build.classic) { =*/
-    var attrs = {
-        stroke: markerOptions.color || 'none',
-        fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
-    };
+    if (!this.styledMode) {
+        var attrs = {
+            stroke: markerOptions.color || 'none',
+            fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
+        };
 
-    options.children = H.map(markerOptions.children, function (child) {
-        return merge(attrs, child);
-    });
-    /*= } =*/
+        options.children = markerOptions.children.map(function (child) {
+            return merge(attrs, child);
+        });
+    }
 
     var marker = this.definition(merge({
         markerWidth: 20,
@@ -495,29 +441,35 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
     shapesWithoutBackground: ['connector'],
 
     /**
-     * A map object which allows to map options attributes to element
+     * Returns a map object which allows to map options attributes to element
      * attributes.
      *
-     * @type {Object}
+     * @type {function}
      * @private
      */
-    attrsMap: {
-        /*= if (build.classic) { =*/
-        backgroundColor: 'fill',
-        borderColor: 'stroke',
-        borderWidth: 'stroke-width',
-        dashStyle: 'dashstyle',
-        strokeWidth: 'stroke-width',
-        stroke: 'stroke',
-        fill: 'fill',
+    getAttrsMap: function () {
 
-        /*= } =*/
-        zIndex: 'zIndex',
-        width: 'width',
-        height: 'height',
-        borderRadius: 'r',
-        r: 'r',
-        padding: 'padding'
+        var attrsMap = {
+            zIndex: 'zIndex',
+            width: 'width',
+            height: 'height',
+            borderRadius: 'r',
+            r: 'r',
+            padding: 'padding'
+        };
+
+        if (!this.chart.styledMode) {
+            extend(attrsMap, {
+                backgroundColor: 'fill',
+                borderColor: 'stroke',
+                borderWidth: 'stroke-width',
+                dashStyle: 'dashstyle',
+                strokeWidth: 'stroke-width',
+                stroke: 'stroke',
+                fill: 'fill'
+            });
+        }
+        return attrsMap;
     },
 
     /**
@@ -539,6 +491,14 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
      * @optionparent annotations
      */
     defaultOptions: {
+        /**
+         * Sets an ID for an annotation. Can be user later when removing an
+         * annotation in [Chart#removeAnnotation(id)](
+         * /class-reference/Highcharts.Chart#removeAnnotation) method.
+         *
+         * @apioption annotations.id
+         * @default undefined
+         */
 
         /**
          * Whether the annotation is visible.
@@ -974,11 +934,11 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
      */
     init: function () {
         var anno = this;
-        each(this.options.labels || [], this.initLabel, this);
-        each(this.options.shapes || [], this.initShape, this);
+        (this.options.labels || []).forEach(this.initLabel, this);
+        (this.options.shapes || []).forEach(this.initShape, this);
 
         this.labelCollector = function () {
-            return grep(anno.labels, function (label) {
+            return anno.labels.filter(function (label) {
                 return !label.options.allowOverlap;
             });
         };
@@ -1068,8 +1028,8 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
 
         erase(this.chart.labelCollectors, this.labelCollector);
 
-        each(this.labels, destroyItem);
-        each(this.shapes, destroyItem);
+        this.labels.forEach(destroyItem);
+        this.shapes.forEach(destroyItem);
 
         destroyObjectProperties(this, chart);
     },
@@ -1149,17 +1109,17 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
 
         label.attr(attr);
 
-        /*= if (build.classic) { =*/
-        var style = options.style;
-        if (style.color === 'contrast') {
-            style.color = this.chart.renderer.getContrast(
-                inArray(options.shape, this.shapesWithoutBackground) > -1 ?
-                '#FFFFFF' :
-                options.backgroundColor
-            );
+        if (!this.chart.styledMode) {
+            var style = options.style;
+            if (style.color === 'contrast') {
+                style.color = this.chart.renderer.getContrast(
+                    this.shapesWithoutBackground.indexOf(options.shape) > -1 ?
+                    '#FFFFFF' :
+                    options.backgroundColor
+                );
+            }
+            label.css(style).shadow(options.shadow);
         }
-        label.css(style).shadow(options.shadow);
-        /*= } =*/
 
         if (options.className) {
             label.addClass(options.className);
@@ -1428,7 +1388,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
                 }
             };
 
-        each(['markerStart', 'markerEnd'], setMarker);
+        ['markerStart', 'markerEnd'].forEach(setMarker);
     },
 
     /**
@@ -1694,7 +1654,7 @@ Annotation.prototype = /** @lends Highcharts.Annotation# */ {
      * @return {Object} mapped options
     **/
     attrsFromOptions: function (options) {
-        var map = this.attrsMap,
+        var map = this.getAttrsMap(),
             attrs = {},
             key,
             mappedKey;
@@ -1771,7 +1731,7 @@ H.extend(chartPrototype, /** @lends Chart# */ {
             this.plotBoxClip = this.renderer.clipRect(plotBox);
         }
 
-        each(this.annotations, function (annotation) {
+        this.annotations.forEach(function (annotation) {
             annotation.redraw();
         });
     }
@@ -1781,7 +1741,7 @@ H.extend(chartPrototype, /** @lends Chart# */ {
 chartPrototype.callbacks.push(function (chart) {
     chart.annotations = [];
 
-    each(chart.options.annotations, function (annotationOptions) {
+    chart.options.annotations.forEach(function (annotationOptions) {
         chart.annotations.push(
             new Annotation(chart, annotationOptions)
         );
@@ -1803,13 +1763,13 @@ chartPrototype.callbacks.push(function (chart) {
 addEvent(H.Chart, 'afterGetContainer', function () {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-    /*= if (build.classic) { =*/
-    objectEach(this.options.defs, function (def) {
-        if (def.tagName === 'marker' && def.render !== false) {
-            this.renderer.addMarker(def.id, def);
-        }
-    }, this);
-    /*= } =*/
+    if (!this.styledMode) {
+        objectEach(this.options.defs, function (def) {
+            if (def.tagName === 'marker' && def.render !== false) {
+                this.renderer.addMarker(def.id, def);
+            }
+        }, this);
+    }
 });
 
 

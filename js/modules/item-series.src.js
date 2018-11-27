@@ -16,8 +16,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
-var each = H.each,
-    extend = H.extend,
+var extend = H.extend,
     pick = H.pick,
     seriesType = H.seriesType;
 
@@ -40,7 +39,7 @@ seriesType('item', 'column', {
             borderWidth = this.borderWidth,
             crisp = borderWidth % 2 ? 0.5 : 1;
 
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var yPos,
                 attr,
                 graphics,
@@ -69,6 +68,11 @@ seriesType('item', 'column', {
                 ) :
                 series.pointAttribs(point, point.selected && 'select');
             delete pointAttr.r;
+
+            if (series.chart.styledMode) {
+                delete pointAttr.stroke;
+                delete pointAttr['stroke-width'];
+            }
 
             if (point.y !== null) {
 

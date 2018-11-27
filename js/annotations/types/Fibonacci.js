@@ -77,7 +77,7 @@ H.extendAnnotation(Fibonacci, Tunnel, /** @lends Annotation.Fibonacci# */ {
             startX = points[0].x,
             endX = points[1].x;
 
-        H.each(Fibonacci.levels, function (level, i) {
+        Fibonacci.levels.forEach(function (level, i) {
             var startRetracement = points[0].y - startDiff * level,
                 endRetracement = points[1].y - endDiff * level;
 
@@ -126,7 +126,7 @@ H.extendAnnotation(Fibonacci, Tunnel, /** @lends Annotation.Fibonacci# */ {
     },
 
     addShapes: function () {
-        H.each(Fibonacci.levels, function (level, i) {
+        Fibonacci.levels.forEach(function (level, i) {
             this.initShape({
                 type: 'path',
                 d: createPathDGenerator(i)
@@ -144,7 +144,7 @@ H.extendAnnotation(Fibonacci, Tunnel, /** @lends Annotation.Fibonacci# */ {
     },
 
     addLabels: function () {
-        H.each(Fibonacci.levels, function (level, i) {
+        Fibonacci.levels.forEach(function (level, i) {
             var options = this.options.typeOptions,
                 label = this.initLabel(
                     H.merge(options.labels[i], {

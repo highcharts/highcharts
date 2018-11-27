@@ -12,6 +12,7 @@
 	"code/modules/stock.src.js",
 	"code/modules/map.src.js",
 	"code/modules/gantt.src.js",
+	
 	"code/modules/exporting.src.js",
 	"code/modules/export-data.src.js",
 	"code/modules/parallel-coordinates.src.js",
@@ -47,6 +48,7 @@
 	"code/modules/xrange.src.js",
 	"code/modules/no-data-to-display.src.js",
 	"code/modules/drag-panes.src.js",
+	"code/modules/debugger.src.js",
 
 	"code/indicators/indicators-all.src.js",
 

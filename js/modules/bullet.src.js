@@ -8,8 +8,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var each = H.each,
-    pick = H.pick,
+var pick = H.pick,
     isNumber = H.isNumber,
     relativeLength = H.relativeLength,
     seriesType = H.seriesType,
@@ -65,8 +64,6 @@ seriesType('bullet', 'column',
              */
             height: 3,
 
-            /*= if (build.classic) { =*/
-
             /**
              * The border color of the rectangle representing the target. When
              * not set, the  point's border color is used.
@@ -104,24 +101,12 @@ seriesType('bullet', 'column',
              * @product highcharts
              */
             borderWidth: 0
-
-            /*= } =*/
         },
 
         tooltip: {
-            /*= if (build.classic) { =*/
             pointFormat: '<span style="color:{series.color}">\u25CF</span>' +
                 ' {series.name}: <b>{point.y}</b>. Target: <b>{point.target}' +
-                '</b><br/>',
-            /*= } else { =*/
-
-            pointFormat: '' + // eslint-disable-line no-dupe-keys
-                '<span class="highcharts-color-{point.colorIndex}">' +
-                '\u25CF</span> {series.name}: ' +
-                '<span class="highcharts-strong">{point.y}</span>. ' +
-                'Target: <span class="highcharts-strong">' +
-                '{point.target}</span><br/>'
-            /*= } =*/
+                '</b><br/>'
         }
     }, {
         pointArrayMap: ['y', 'target'],
@@ -140,7 +125,7 @@ seriesType('bullet', 'column',
 
             columnProto.drawPoints.apply(this);
 
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 var pointOptions = point.options,
                     shapeArgs,
                     targetGraphic = point.targetGraphic,
@@ -206,29 +191,30 @@ seriesType('bullet', 'column',
                             .attr(targetShapeArgs)
                             .add(series.group);
                     }
-                    /*= if (build.classic) { =*/
+
                     // Presentational
-                    targetGraphic.attr({
-                        fill: pick(
-                            targetOptions.color,
-                            pointOptions.color,
-                            (series.zones.length && (point.getZone.call({
-                                series: series,
-                                x: point.x,
-                                y: targetVal,
-                                options: {}
-                            }).color || series.color)) || undefined,
-                            point.color,
-                            series.color
-                        ),
-                        stroke: pick(
-                            targetOptions.borderColor,
-                            point.borderColor,
-                            series.options.borderColor
-                        ),
-                        'stroke-width': targetOptions.borderWidth
-                    });
-                    /*= } =*/
+                    if (!chart.styledMode) {
+                        targetGraphic.attr({
+                            fill: pick(
+                                targetOptions.color,
+                                pointOptions.color,
+                                (series.zones.length && (point.getZone.call({
+                                    series: series,
+                                    x: point.x,
+                                    y: targetVal,
+                                    options: {}
+                                }).color || series.color)) || undefined,
+                                point.color,
+                                series.color
+                            ),
+                            stroke: pick(
+                                targetOptions.borderColor,
+                                point.borderColor,
+                                series.options.borderColor
+                            ),
+                            'stroke-width': targetOptions.borderWidth
+                        });
+                    }
 
                     // Add tooltip reference
                     if (isNumber(pointVal) && pointVal !== null) {

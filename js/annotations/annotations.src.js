@@ -19,8 +19,6 @@ import ControlPoint from './ControlPoint.js';
 
 var merge = H.merge,
     addEvent = H.addEvent,
-    each = H.each,
-    map = H.map,
     defined = H.defined,
     erase = H.erase,
     find = H.find,
@@ -689,22 +687,21 @@ merge(
         getLabelsAndShapesOptions: function (baseOptions, newOptions) {
             var mergedOptions = {};
 
-            each(['labels', 'shapes'], function (name) {
+            ['labels', 'shapes'].forEach(function (name) {
                 if (baseOptions[name]) {
-                    mergedOptions[name] = map(
-                        splat(newOptions[name]),
+                    mergedOptions[name] = splat(newOptions[name]).map(
                         function (basicOptions, i) {
                             return merge(baseOptions[name][i], basicOptions);
                         }
                     );
                 }
-            }, this);
+            });
 
             return mergedOptions;
         },
 
         addShapes: function () {
-            each(this.options.shapes || [], function (shapeOptions, i) {
+            (this.options.shapes || []).forEach(function (shapeOptions, i) {
                 var shape = this.initShape(shapeOptions);
 
                 this.options.shapes[i] = shape.options;
@@ -712,7 +709,7 @@ merge(
         },
 
         addLabels: function () {
-            each(this.userOptions.labels || [], function (labelOptions, i) {
+            (this.options.labels || []).forEach(function (labelOptions, i) {
                 var label = this.initLabel(labelOptions);
 
                 this.options.labels[i] = label.options;
@@ -769,8 +766,7 @@ merge(
             var annotation = this;
 
             annotation.labelCollector = function () {
-                return H.reduce(
-                    annotation.labels,
+                return annotation.labels.reduce(
                     function (labels, label) {
                         if (!label.options.allowOverlap) {
                             labels.push(label.graphic);
@@ -897,8 +893,8 @@ merge(
                 visible
             );
 
-            each(this.shapes, setItemControlPointsVisibility);
-            each(this.labels, setItemControlPointsVisibility);
+            this.shapes.forEach(setItemControlPointsVisibility);
+            this.labels.forEach(setItemControlPointsVisibility);
         },
 
         /**
@@ -913,8 +909,8 @@ merge(
                     item.destroy();
                 };
 
-            each(this.labels, destroyItem);
-            each(this.shapes, destroyItem);
+            this.labels.forEach(destroyItem);
+            this.shapes.forEach(destroyItem);
 
             this.clipXAxis = null;
             this.clipYAxis = null;
@@ -1158,7 +1154,7 @@ H.extend(H.Chart.prototype, /** @lends Highcharts.Chart# */ {
     drawAnnotations: function () {
         this.plotBoxClip.attr(this.plotBox);
 
-        each(this.annotations, function (annotation) {
+        this.annotations.forEach(function (annotation) {
             annotation.redraw();
         });
     }
@@ -1180,7 +1176,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
         .clip(chart.plotBoxClip)
         .add();
 
-    each(chart.options.annotations, function (annotationOptions, i) {
+    chart.options.annotations.forEach(function (annotationOptions, i) {
         var annotation = chart.initAnnotation(annotationOptions);
 
         chart.options.annotations[i] = annotation.options;

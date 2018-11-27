@@ -3,7 +3,8 @@ QUnit.test('Solid gauge styled series color (#6350)', function (assert) {
     var gaugeOptions = {
         chart: {
             type: 'solidgauge',
-            animation: false
+            animation: false,
+            styledMode: true
         },
 
         title: null,

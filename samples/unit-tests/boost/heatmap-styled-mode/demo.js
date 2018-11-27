@@ -19,6 +19,7 @@ QUnit.test('Boosted heatmap with styled mode (#6650)', function (assert) {
     Highcharts.chart('container', {
         chart: {
             type: 'heatmap',
+            styledMode: true,
             margin: [60, 10, 80, 50]
         },
 

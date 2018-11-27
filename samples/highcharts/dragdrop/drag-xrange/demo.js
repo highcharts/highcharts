@@ -39,7 +39,7 @@ Highcharts.chart('container', {
                 events: {
                     dragStart: function (e) {
                         setDragStatus('Drag started at page coordinates ' +
-                                e.pageX + '/' + e.pageY + (
+                                e.chartX + '/' + e.chartY + (
                                     e.updateProp ?
                                         '. Updating ' + e.updateProp :
                                         ''

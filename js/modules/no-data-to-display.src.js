@@ -15,8 +15,7 @@ import '../parts/Options.js';
 var seriesTypes = H.seriesTypes,
     chartPrototype = H.Chart.prototype,
     defaultOptions = H.getOptions(),
-    extend = H.extend,
-    each = H.each;
+    extend = H.extend;
 
 // Add language option
 extend(defaultOptions.lang, {
@@ -115,29 +114,26 @@ defaultOptions.noData = {
          * @product highcharts highstock gantt
          */
         verticalAlign: 'middle'
+    },
+
+    /**
+     * CSS styles for the no-data label.
+     *
+     * @sample highcharts/no-data-to-display/no-data-line
+     *         Styled no-data text
+     * @optionparent noData.style
+     */
+    style: {
+        fontWeight: 'bold',
+        fontSize: '12px',
+        color: '${palette.neutralColor60}'
     }
 };
-
-/*= if (build.classic) { =*/
-// Presentational
-/**
- * CSS styles for the no-data label.
- *
- * @sample highcharts/no-data-to-display/no-data-line
- *         Styled no-data text
- * @optionparent noData.style
- */
-defaultOptions.noData.style = {
-    fontWeight: 'bold',
-    fontSize: '12px',
-    color: '${palette.neutralColor60}'
-};
-/*= } =*/
 
 
 // Define hasData function for non-cartesian seris. Returns true if the series
 // has points at all.
-each([
+[
     'bubble',
     'gauge',
     'heatmap',
@@ -145,7 +141,7 @@ each([
     'sankey',
     'treemap',
     'waterfall'
-], function (type) {
+].forEach(function (type) {
     if (seriesTypes[type]) {
         seriesTypes[type].prototype.hasData = function () {
             return !!this.points.length; // != 0
@@ -190,11 +186,11 @@ chartPrototype.showNoData = function (str) {
                 'no-data'
             );
 
-        /*= if (build.classic) { =*/
-        chart.noDataLabel
-            .attr(noDataOptions.attr)
-            .css(noDataOptions.style);
-        /*= } =*/
+        if (!chart.styledMode) {
+            chart.noDataLabel
+                .attr(noDataOptions.attr)
+                .css(noDataOptions.style);
+        }
 
         chart.noDataLabel.add();
 
