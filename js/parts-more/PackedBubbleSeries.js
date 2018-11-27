@@ -15,8 +15,7 @@ import '../parts/Series.js';
 
 
 var seriesType = H.seriesType,
-    defined = H.defined,
-    each = H.each;
+    defined = H.defined;
 
 
 /**
@@ -458,7 +457,7 @@ seriesType('packedbubble', 'bubble',
                 value,
                 radius;
 
-            each(['minPointSize', 'maxPointSize'], function (prop) {
+            ['minPointSize', 'maxPointSize'].forEach(function (prop) {
                 var length = parseInt(seriesOptions[prop], 10),
                     isPercent = /%$/.test(length);
 
@@ -473,7 +472,7 @@ seriesType('packedbubble', 'bubble',
             // range of size
             radiusRange = maxSize - minSize;
 
-            each(allDataPoints, function (point, i) {
+            (allDataPoints || []).forEach(function (point, i) {
 
                 value = point[2];
 
