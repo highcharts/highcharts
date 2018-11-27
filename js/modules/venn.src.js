@@ -180,7 +180,7 @@ function getDistanceBetweenCirclesByOverlap(r1, r2, overlap) {
 };
 
 var isSet = function (x) {
-    return x.sets.length === 1;
+    return isArray(x.sets) && x.sets.length === 1;
 };
 
 /**
@@ -365,8 +365,12 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
  * @returns List of circles and their calculated positions.
  */
 var layout = function (relations) {
+    var mapOfIdToShape = {};
+
     // Calculate best initial positions by using greedy layout.
-    var mapOfIdToShape = layoutGreedyVenn(relations);
+    if (relations.length > 0) {
+        mapOfIdToShape = layoutGreedyVenn(relations);
+    }
     return mapOfIdToShape;
 };
 
@@ -627,7 +631,8 @@ var vennSeries = {
 
         // Iterate all points and calculate and draw their graphics.
         points.forEach(function (point) {
-            var shape = circles[point.sets.join()],
+            var sets = isArray(point.sets) ? point.sets : [],
+                shape = circles[sets.join()],
                 attr = !shape ? {} : {
                     x: centerX + shape.x * scale,
                     y: centerY + shape.y * scale,
@@ -659,7 +664,7 @@ var vennSeries = {
             });
 
             // Set name for usage in tooltip and in data label.
-            point.name = point.sets.join('∩');
+            point.name = sets.join('∩');
         });
 
         // Draw data labels after points
