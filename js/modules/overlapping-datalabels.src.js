@@ -1,4 +1,7 @@
-/**
+/* *
+ * Highcharts module to hide overlapping data labels. This module is included in
+ * Highcharts.
+ *
  * (c) 2009-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -9,11 +12,6 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
-
-/*
- * Highcharts module to hide overlapping data labels. This module is included in
- * Highcharts.
- */
 
 var Chart = H.Chart,
     each = H.each,
@@ -109,10 +107,8 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
             );
         },
 
-        /**
-         * Get the box with its position inside the chart, as opposed to getBBox
-         * that only reports the position relative to the parent.
-         */
+        // Get the box with its position inside the chart, as opposed to getBBox
+        // that only reports the position relative to the parent.
         getAbsoluteBox = function (label) {
             var pos,
                 parent,
