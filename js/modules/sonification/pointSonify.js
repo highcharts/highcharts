@@ -158,8 +158,13 @@ function sonifyAxisTranslate(value, dataExtremes, limits) {
  *      }
  *  ```
  *
+ * @param   {Function} [onEnd]
+ *          Callback function to call when the sonification has ended.
+ *
  * @sample highcharts/sonification/point-basic/
  *         Click on points to sonify
+ * @sample highcharts/sonification/point-advanced/
+ *         Sonify bubbles
  */
 function pointSonify(options) {
     var point = this,
@@ -199,6 +204,14 @@ function pointSonify(options) {
             }
         };
 
+    // Keep track of instruments playing
+    point.sonification = point.sonification || {};
+    point.sonification.instrumentsPlaying =
+        point.sonification.instrumentsPlaying || {};
+
+    // Set onEnd if it is specified
+    point.sonification.onEnd = options.onEnd;
+
     options.instruments.forEach(function (instrumentDefinition) {
         var instrument = typeof instrumentDefinition.instrument === 'string' ?
                 H.sonification.instruments[instrumentDefinition.instrument] :
@@ -207,10 +220,32 @@ function pointSonify(options) {
             extremes = H.merge(
                 defaultInstrumentOptions,
                 instrumentDefinition.instrumentOptions
-            );
+            ),
+            id = instrument.id,
+            oldOnEnd = instrumentDefinition.onEnd,
+            onEnd = function () {
+                if (
+                    point.sonification && point.sonification.instrumentsPlaying
+                ) {
+                    delete point.sonification.instrumentsPlaying[id];
+                    if (
+                        !Object.keys(
+                            point.sonification.instrumentsPlaying
+                        ).length &&
+                        point.sonification.onEnd
+                    ) {
+                        point.sonification.onEnd.apply(this, arguments);
+                        delete point.sonification.onEnd;
+                    }
+                }
+                if (oldOnEnd) {
+                    oldOnEnd.apply(this, arguments);
+                }
+            };
 
         // Play the note on the instrument
         if (instrument && instrument.play) {
+            point.sonification.instrumentsPlaying[instrument.id] = instrument;
             instrument.play({
                 frequency: getMappingValue(
                     mapping.frequency,
@@ -232,7 +267,7 @@ function pointSonify(options) {
                     true,
                     { min: extremes.minVolume, max: extremes.maxVolume }
                 ),
-                onEnd: instrumentDefinition.onEnd,
+                onEnd: onEnd,
                 minFrequency: extremes.minFrequency,
                 maxFrequency: extremes.maxFrequency
             });
@@ -242,4 +277,28 @@ function pointSonify(options) {
     });
 }
 
-export default pointSonify;
+
+/**
+ * Cancel sonification of a point. Calls onEnd functions.
+ */
+function pointCancelSonify() {
+    var playing = this.sonification && this.sonification.instrumentsPlaying,
+        instrIds = playing && Object.keys(playing);
+    if (instrIds && instrIds.length) {
+        instrIds.forEach(function (instr) {
+            playing[instr].stop(true);
+        });
+        this.sonification.instrumentsPlaying = {};
+        if (this.sonification && this.sonification.onEnd) {
+            this.sonification.onEnd('cancelled');
+            delete this.sonification.onEnd;
+        }
+    }
+}
+
+
+var pointSonifyFunctions = {
+    pointSonify: pointSonify,
+    pointCancelSonify: pointCancelSonify
+};
+export default pointSonifyFunctions;

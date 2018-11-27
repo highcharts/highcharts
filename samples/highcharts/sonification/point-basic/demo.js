@@ -6,6 +6,9 @@ Highcharts.chart('container', {
     title: {
         text: 'Click points to sonify'
     },
+    legend: {
+        enabled: false
+    },
     series: [{
         marker: {
             radius: 8

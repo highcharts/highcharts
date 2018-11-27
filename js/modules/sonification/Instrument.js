@@ -420,9 +420,12 @@ Instrument.prototype.stop = function (immediately, onStopped) {
                 onStopped();
             }
         };
-    // Clear any existing play timers
+    // Clear any existing timers
     if (instr.playCallbackTimers.length) {
         instr.clearPlayCallbackTimers();
+    }
+    if (instr.stopTimeout) {
+        clearTimeout(instr.stopTimeout);
     }
     if (immediately) {
         instr.setGain(0);

@@ -43,6 +43,9 @@ import H from '../../parts/Globals.js';
  *          instruments. This setting does not affect volumes set by functions
  *          in individual instruments. Can be a number between 0 and 1.
  *
+ * @param   {Function} [options.onEnd]
+ *          Callback function to call when earcon has finished playing.
+ *
  * @sample highcharts/sonification/earcon/
  *         Using earcons directly
  */
@@ -54,6 +57,7 @@ Earcon.prototype.init = function (options) {
     if (!this.options.id) {
         this.options.id = this.id = H.uniqueKey();
     }
+    this.instrumentsPlaying = {};
 };
 
 /**
@@ -65,35 +69,76 @@ Earcon.prototype.init = function (options) {
  * @sample highcharts/sonification/earcon/
  *         Using earcons directly
  */
-Earcon.prototype.play = function (options) {
-    this.options = H.merge(this.options, options);
+Earcon.prototype.sonify = function (options) {
+    var playOptions = H.merge(this.options, options);
 
     // Find master volume/pan settings
-    var masterVolume = H.pick(this.options.volume, 1),
-        masterPan = this.options.pan;
+    var masterVolume = H.pick(playOptions.volume, 1),
+        masterPan = playOptions.pan,
+        earcon = this;
 
     // Go through the instruments and play them
-    this.options.instruments.forEach(function (opts) {
+    playOptions.instruments.forEach(function (opts) {
         var instrument = typeof opts.instrument === 'string' ?
                 H.sonification.instruments[opts.instrument] : opts.instrument,
-            playOpts = H.merge(opts.playOptions);
+            instrumentOpts = H.merge(opts.playOptions),
+            oldOnEnd,
+            instrumentCopy,
+            copyId;
         if (instrument && instrument.play) {
-            if (playOpts) {
+            if (instrumentOpts) {
                 // Handle master pan/volume
                 if (typeof opts.playOptions.volume !== 'function') {
-                    playOpts.volume = H.pick(masterVolume, 1) *
+                    instrumentOpts.volume = H.pick(masterVolume, 1) *
                         H.pick(opts.playOptions.volume, 1);
                 }
-                playOpts.pan = H.pick(masterPan, playOpts.pan);
+                instrumentOpts.pan = H.pick(masterPan, instrumentOpts.pan);
+
+                // Handle onEnd
+                oldOnEnd = instrumentOpts.onEnd;
+                instrumentOpts.onEnd = function () {
+                    delete earcon.instrumentsPlaying[copyId];
+                    if (
+                        !Object.keys(earcon.instrumentsPlaying).length &&
+                        playOptions.onEnd
+                    ) {
+                        playOptions.onEnd.apply(this, arguments);
+                    }
+                    if (oldOnEnd) {
+                        oldOnEnd.apply(this, arguments);
+                    }
+                };
 
                 // Play the instrument. Use a copy so we can play multiple at
                 // the same time.
-                instrument.copy().play(playOpts);
+                instrumentCopy = instrument.copy();
+                copyId = instrumentCopy.id;
+                earcon.instrumentsPlaying[copyId] = instrumentCopy;
+                instrumentCopy.play(instrumentOpts);
             }
         } else {
             H.error(30);
         }
     });
 };
+
+
+/**
+ * Cancel any current sonification of the Earcon. Calls onEnd functions.
+ */
+Earcon.prototype.cancelSonify = function () {
+    var playing = this.instrumentsPlaying,
+        instrIds = playing && Object.keys(playing);
+    if (instrIds && instrIds.length) {
+        instrIds.forEach(function (instr) {
+            playing[instr].stop(true);
+        });
+        this.instrumentsPlaying = {};
+        if (this.options.onEnd) {
+            this.options.onEnd('cancelled');
+        }
+    }
+};
+
 
 export default Earcon;

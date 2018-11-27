@@ -40,33 +40,33 @@ var earconA = new Highcharts.sonification.Earcon({
             instrument: 'square',
             playOptions: {
                 frequency: 110,
-                duration: 1350,
+                duration: 1150,
                 volume: 0.2
             }
         }, {
-            // Low bass, fades in and pans across from left
+            // Low bass, fades in and pans across from center to left
             instrument: 'square',
             playOptions: {
                 frequency: 55,
                 duration: 1250,
                 volume: function (time) {
-                    return Math.min(time * time, 0.2);
+                    return Math.min(time * time, 0.4);
                 },
                 pan: function (time) {
-                    return time * time - 1;
+                    return -time * time;
                 }
             }
         }, {
-            // Triangle pad, fades in and pans across from right
+            // Triangle pad, fades in and pans across from center to right
             instrument: 'triangle',
             playOptions: {
                 frequency: 164.81,
-                duration: 1300,
+                duration: 1200,
                 volume: function (time) {
-                    return Math.min(time * time, 0.7);
+                    return Math.min(time * time, 0.8);
                 },
                 pan: function (time) {
-                    return 1 - time * time;
+                    return time * time;
                 }
             }
         }],
@@ -75,10 +75,10 @@ var earconA = new Highcharts.sonification.Earcon({
 
 // Play a chord
 document.getElementById('playA').onclick = function () {
-    earconA.play();
+    earconA.sonify();
 };
 
 // Play an arpeggio
 document.getElementById('playB').onclick = function () {
-    earconB.play();
+    earconB.sonify();
 };
