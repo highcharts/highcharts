@@ -1,4 +1,5 @@
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
 
@@ -8,24 +9,25 @@ var each = H.each,
     noop = H.noop;
 
 
-/* ***************************************************************************
-*
-* DERIVED SERIES MIXIN
-*
-**************************************************************************** */
+/* ************************************************************************** *
+ *
+ * DERIVED SERIES MIXIN
+ *
+ * ************************************************************************** */
 
 /**
  * Provides methods for auto setting/updating series data based on the based
  * series data.
  *
- * @mixin
- **/
+ * @private
+ * @mixin derivedSeriesMixin
+ */
 var derivedSeriesMixin = {
-  /**
-   * Initialise series
-   *
-   * returns {undefined}
-   **/
+    /**
+     * Initialise series
+     *
+     * @function derivedSeriesMixin.init
+     */
     init: function () {
         Series.prototype.init.apply(this, arguments);
 
@@ -36,21 +38,24 @@ var derivedSeriesMixin = {
         this.addEvents();
     },
 
-  /**
-   * Method to be implemented - inside the method the series has already access
-   * to the base series via m `this.baseSeries` and the bases data is
-   * initialised. It should return data in the format accepted by
-   * `Series.setData()` method
-   *
-   * @returns {Array} - an array of data
-   **/
+    /**
+     * Method to be implemented - inside the method the series has already
+     * access to the base series via m `this.baseSeries` and the bases data is
+     * initialised. It should return data in the format accepted by
+     * `Series.setData()` method
+     *
+     * @function derivedSeriesMixin.setDerivedData
+     *
+     * @return {Array<*>}
+     *         An array of data
+     */
     setDerivedData: noop,
 
-  /**
-   * Sets base series for the series
-   *
-   * returns {undefined}
-   **/
+    /**
+     * Sets base series for the series
+     *
+     * @function derivedSeriesMixin.setBaseSeries
+     */
     setBaseSeries: function () {
         var chart = this.chart,
             baseSeriesOptions = this.options.baseSeries,
@@ -61,11 +66,11 @@ var derivedSeriesMixin = {
         this.baseSeries = baseSeries || null;
     },
 
-  /**
-   * Adds events for the series
-   *
-   * @returns {undefined}
-   **/
+    /**
+     * Adds events for the series
+     *
+     * @function derivedSeriesMixin.addEvents
+     */
     addEvents: function () {
         var derivedSeries = this,
             chartSeriesLinked;
@@ -89,12 +94,12 @@ var derivedSeriesMixin = {
         );
     },
 
-  /**
-   * Adds events to the base series - it required for recalculating the data in
-   * the series if the base series is updated / removed / etc.
-   *
-   * @returns {undefined}
-   **/
+    /**
+     * Adds events to the base series - it required for recalculating the data
+     * in the series if the base series is updated / removed / etc.
+     *
+     * @function derivedSeriesMixin.addBaseSeriesEvents
+     */
     addBaseSeriesEvents: function () {
         var derivedSeries = this,
             updatedDataRemover,
@@ -123,11 +128,11 @@ var derivedSeriesMixin = {
       );
     },
 
-  /**
-   * Destroys the series
-   *
-   * @returns {undefined}
-   **/
+    /**
+     * Destroys the series
+     *
+     * @function derivedSeriesMixin.destroy
+     */
     destroy: function () {
         each(this.eventRemovers, function (remover) {
             remover();
