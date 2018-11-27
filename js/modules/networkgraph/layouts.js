@@ -76,6 +76,8 @@ H.extend(
                 if (simulation.stopped) {
                     return true;
                 }
+                // Barycenter forces:
+                layout.applyBarycenterForces();
 
                 // Repulsive forces:
                 layout.applyRepulsiveForces();
@@ -180,7 +182,34 @@ H.extend(
                     (this.options.maxIterations + 1);
             }
         },
+        applyBarycenterForces: function () {
+            var nodesLength = this.nodes.length,
+                gravitationalConstant = this.options.gravitationalConstant,
+                cx = 0,
+                cy = 0;
 
+            // Calculate center:
+            this.nodes.forEach(function (node) {
+                cx += node.plotX;
+                cy += node.plotY;
+            });
+
+            this.barycenter = {
+                x: cx,
+                y: cy
+            };
+
+            // Apply forces:
+            this.nodes.forEach(function (node) {
+                var degree = node.getDegree(),
+                    phi = degree * (1 + degree / 2);
+
+                node.dispX = (cx / nodesLength - node.plotX) *
+                    gravitationalConstant * phi;
+                node.dispY = (cy / nodesLength - node.plotY) *
+                    gravitationalConstant * phi;
+            });
+        },
         applyRepulsiveForces: function () {
             var layout = this,
                 nodes = layout.nodes,

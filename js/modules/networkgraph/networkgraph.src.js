@@ -83,6 +83,7 @@ seriesType('networkgraph', 'line', {
     layoutAlgorithm: {
         type: 'reingold-fruchterman',
         maxIterations: 1000,
+        gravitationalConstant: 1 / 16,
         repulsiveForce: function (d, k) {
             /*
             basic, not recommended:
@@ -344,6 +345,9 @@ seriesType('networkgraph', 'line', {
         }
     }
 }, {
+    getDegree: function () {
+        return this.isNode ? this.linksFrom.length + this.linksTo.length : 0;
+    },
     // Links:
     getLinkAttribues: function () {
         var linkOptions = this.series.options.link;
