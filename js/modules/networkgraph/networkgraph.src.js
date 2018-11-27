@@ -84,6 +84,7 @@ seriesType('networkgraph', 'line', {
         type: 'reingold-fruchterman',
         maxIterations: 1000,
         gravitationalConstant: 1 / 16,
+        friction: -0.981,
         repulsiveForce: function (d, k) {
             /*
             basic, not recommended:
