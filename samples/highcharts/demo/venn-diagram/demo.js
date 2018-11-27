@@ -8,5 +8,8 @@ Highcharts.chart('container', {
             { sets: ['A', 'C'], value: 6 },
             { sets: ['B', 'C'], value: 1 }
         ]
-    }]
+    }],
+    title: {
+        text: 'Simple venn diagram'
+    }
 });
