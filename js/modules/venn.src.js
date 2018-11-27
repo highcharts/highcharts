@@ -525,7 +525,7 @@ var vennOptions = {
     dataLabels: {
         enabled: true,
         formatter: function () {
-            return this.point.sets.join('∩');
+            return this.point.name;
         }
     },
     marker: false,
@@ -535,6 +535,9 @@ var vennOptions = {
             opacity: 1,
             halo: false
         }
+    },
+    tooltip: {
+        pointFormat: '{point.name}: {point.value}'
     }
 };
 
@@ -654,6 +657,9 @@ var vennSeries = {
                 optionsPoint: point.options,
                 optionsSeries: series.options
             });
+
+            // Set name for usage in tooltip and in data label.
+            point.name = point.sets.join('∩');
         });
 
         // Draw data labels after points
