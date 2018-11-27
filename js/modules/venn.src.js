@@ -18,10 +18,15 @@ var extend = H.extend,
     getOverlapBetweenCirclesByDistance =
         geometryCircles.getOverlapBetweenCircles,
     isArray = H.isArray,
+    isBoolean = function (x) {
+        return typeof x === 'boolean';
+    },
     isNumber = H.isNumber,
     isObject = H.isObject,
     isString = H.isString,
     keys = H.keys,
+    merge = H.merge,
+    noop = H.noop,
     seriesType = H.seriesType,
     Series = H.Series;
 
@@ -491,10 +496,33 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
     return field;
 };
 
+var getDlOptions = function getDlOptions(params) {
+    // Set options to new object to avoid problems with scope
+    var optionsPoint = (
+            isObject(params.optionsPoint) ?
+            params.optionsPoint.dataLabels :
+            {}
+        ),
+        optionsSeries = (
+            isObject(params.optionsSeries) ?
+            params.optionsSeries.dataLabels :
+            {}
+        ),
+        options = merge({
+            style: {}
+        }, optionsSeries, optionsPoint);
+    return options;
+};
+
 var vennOptions = {
     clip: false,
     colorByPoint: true,
-    opacity: 0.15
+    dataLabels: {
+        enabled: true,
+        formatter: function () {
+            return this.point.sets.join('∩');
+        }
+    }
 };
 
 var vennSeries = {
@@ -517,6 +545,8 @@ var vennSeries = {
         extend(this.yAxis.options, axis);
         extend(this.xAxis.options, axis);
     },
+    // Datalabels are drawn at the end of drawPoints.
+    drawDataLabels: noop,
     /**
      * Draw the graphics for each point.
      * @returns {undefined}
@@ -529,9 +559,40 @@ var vennSeries = {
             points = series.points || [],
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            field = { top: 0, bottom: 0, left: 0, right: 0 },
             // Chart properties
             renderer = chart.renderer;
+
+        // Add necessary properties for the data labels hack.
+        // TODO: draw labels in the loop where the point graphic is drawn.
+        var optionsChart = chart && chart.options && chart.options.chart || {},
+            hasRendered = series.hasRendered,
+            animation = (
+                isBoolean(optionsChart.animation) ?
+                optionsChart.animation :
+                true
+            ),
+            animateLabels,
+            animateLabelsCalled = false,
+            addedHack = false,
+            hackDataLabelAnimation = !!(
+                animation &&
+                hasRendered &&
+                series.dataLabelsGroup
+            );
+
+        if (hackDataLabelAnimation) {
+            series.dataLabelsGroup.attr({ opacity: 0 });
+            animateLabels = function () {
+                var s = series;
+                animateLabelsCalled = true;
+                if (s.dataLabelsGroup) {
+                    s.dataLabelsGroup.animate({
+                        opacity: 1,
+                        visibility: 'visible'
+                    });
+                }
+            };
+        }
 
         // Process the data before passing it into the layout function.
         var relations = processVennData(series.options.data);
@@ -539,17 +600,25 @@ var vennSeries = {
         // Calculate the positions of each circle.
         var circles = layout(relations);
 
+        // Calculate the scale, and center of the plot area.
+        var field = Object.keys(circles).reduce(function (field, key) {
+                return updateFieldBoundaries(field, circles[key]);
+            }, { top: 0, bottom: 0, left: 0, right: 0 }),
+            scale = getScale(xAxis.len, yAxis.len, field),
+            centerX = xAxis.len / 2,
+            centerY = yAxis.len / 2;
+
         // Iterate all points and calculate and draw their graphics.
         points.forEach(function (point) {
             var shape = circles[point.sets.join()],
-                attr = shape,
+                attr = !shape ? {} : {
+                    x: centerX + shape.x * scale,
+                    y: centerY + shape.y * scale,
+                    r: shape.r * scale
+                },
                 css = {
                     color: point.color
                 };
-
-            if (shape) {
-                field = updateFieldBoundaries(field, shape);
-            }
 
             // Draw the point graphic.
             point.draw({
@@ -560,34 +629,32 @@ var vennSeries = {
                 renderer: renderer,
                 shapeType: 'circle'
             });
+
+            // Set a lot of options to have the data labels logic work.
+            point.isNull = !point.graphic;
+            point.plotX = attr.x;
+            point.plotY = attr.y;
+            point.dlOptions = getDlOptions({
+                optionsPoint: point.options,
+                optionsSeries: series.options
+            });
         });
 
-        /**
-         * Scale the series group to fit within the plotArea.
-         */
-        var scale = getScale(xAxis.len, yAxis.len, field);
-        series.group.attr({
-            scaleX: scale,
-            scaleY: scale
-        });
-    },
-    getPlotBox: function () {
-        var series = this,
-            chart = series.chart,
-            inverted = chart.inverted,
-            // Swap axes for inverted (#2339)
-            xAxis = series[(inverted ? 'yAxis' : 'xAxis')],
-            yAxis = series[(inverted ? 'xAxis' : 'yAxis')],
-            width = xAxis ? xAxis.len : chart.plotWidth,
-            height = yAxis ? yAxis.len : chart.plotHeight,
-            x = xAxis ? xAxis.left : chart.plotLeft,
-            y = yAxis ? yAxis.top : chart.plotTop;
-        return {
-            translateX: x + (width / 2),
-            translateY: y + (height / 2),
-            scaleX: 1, // #1623
-            scaleY: 1
-        };
+        // Draw data labels after points
+        // TODO draw labels one by one to avoid addtional looping
+        if (hackDataLabelAnimation && addedHack) {
+            series.hasRendered = false;
+            series.options.dataLabels.defer = true;
+            Series.prototype.drawDataLabels.call(series);
+            series.hasRendered = true;
+            // If animateLabels is called before labels were hidden, then call
+            // it again.
+            if (animateLabelsCalled) {
+                animateLabels();
+            }
+        } else {
+            Series.prototype.drawDataLabels.call(series);
+        }
     },
     utils: {
         addOverlapToSets: addOverlapToSets,
