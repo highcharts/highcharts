@@ -226,7 +226,7 @@ H.extend(
                         // Node can not repulse itself:
                         node !== repNode &&
                         // Only close nodes affect each other:
-                        layout.getDistR(node, repNode) < 2 * k &&
+                        /* layout.getDistR(node, repNode) < 2 * k && */
                         // Not dragged:
                         !node.fixedPosition
                     ) {
@@ -272,13 +272,19 @@ H.extend(
         },
         applyLimits: function (temperature) {
             var layout = this,
-                nodes = this.nodes,
-                box = this.box;
+                options = layout.options,
+                nodes = layout.nodes,
+                box = layout.box;
 
             nodes.forEach(function (node) {
                 if (node.fixedPosition) {
                     return;
                 }
+
+                // Friction:
+                node.dispX += options.friction * node.dispX;
+                node.dispY += options.friction * node.dispY;
+
                 var distanceR = layout.vectorLength({
                     x: node.dispX,
                     y: node.dispY
