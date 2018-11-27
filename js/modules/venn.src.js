@@ -13,7 +13,8 @@ import geometry from '../mixins/geometry.js';
 import geometryCircles from '../mixins/geometry-circles.js';
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
-var extend = H.extend,
+var color = H.Color,
+    extend = H.extend,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
     getOverlapBetweenCirclesByDistance =
         geometryCircles.getOverlapBetweenCircles,
@@ -515,12 +516,24 @@ var getDlOptions = function getDlOptions(params) {
 };
 
 var vennOptions = {
+    borderColor: '#cccccc',
+    borderDashStyle: 'solid',
+    borderWidth: 0,
+    brighten: 0,
     clip: false,
     colorByPoint: true,
     dataLabels: {
         enabled: true,
         formatter: function () {
             return this.point.sets.join('∩');
+        }
+    },
+    marker: false,
+    opacity: 0.75,
+    states: {
+        hover: {
+            opacity: 1,
+            halo: false
         }
     }
 };
@@ -545,6 +558,7 @@ var vennSeries = {
         extend(this.yAxis.options, axis);
         extend(this.xAxis.options, axis);
     },
+    directTouch: true,
     // Datalabels are drawn at the end of drawPoints.
     drawDataLabels: noop,
     /**
@@ -615,16 +629,18 @@ var vennSeries = {
                     x: centerX + shape.x * scale,
                     y: centerY + shape.y * scale,
                     r: shape.r * scale
-                },
-                css = {
-                    color: point.color
                 };
+
+            // Add point attribs
+            if (!chart.styledMode) {
+                extend(attr, series.pointAttribs(point, point.state));
+            }
 
             // Draw the point graphic.
             point.draw({
                 animate: {},
                 attr: attr,
-                css: css,
+                css: {},
                 group: group,
                 renderer: renderer,
                 shapeType: 'circle'
@@ -656,6 +672,37 @@ var vennSeries = {
             Series.prototype.drawDataLabels.call(series);
         }
     },
+    /**
+     * Calculates the style attributes for a point. The attributes can vary
+     * depending on the state of the point.
+     *
+     * @param {object} point The point which will get the resulting attributes.
+     * @param {string} state The state of the point.
+     * @returns {object} Returns the calculated attributes.
+     */
+    pointAttribs: function (point, state) {
+        var series = this,
+            seriesOptions = series.options || {},
+            pointOptions = point && point.options || {},
+            stateOptions = (state && seriesOptions.states[state]) || {},
+            options = merge(
+                seriesOptions,
+                { color: point && point.color },
+                pointOptions,
+                stateOptions
+            );
+
+        // Return resulting values for the attributes.
+        return {
+            dashStyle: options.borderDashStyle,
+            fill: color(options.color)
+                .setOpacity(options.opacity)
+                .brighten(options.brightness)
+                .get(),
+            stroke: options.borderColor,
+            strokeWidth: options.borderWidth
+        };
+    },
     utils: {
         addOverlapToSets: addOverlapToSets,
         binarySearch: binarySearch,
@@ -678,4 +725,4 @@ var vennPoint = {
     }
 };
 
-seriesType('venn', 'line', vennOptions, vennSeries, vennPoint);
+seriesType('venn', 'scatter', vennOptions, vennSeries, vennPoint);
