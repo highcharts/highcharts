@@ -21,7 +21,8 @@ H.sonification = {
     instruments: instruments,
     Earcon: Earcon,
     utilities: utilities,
-    TimelineEvent: TimelineClasses.TimelineEvent
+    TimelineEvent: TimelineClasses.TimelineEvent,
+    TimelinePath: TimelineClasses.TimelinePath
 };
 
 H.Point.prototype.sonify = pointSonifyFunctions.pointSonify;

@@ -86,7 +86,7 @@ Earcon.prototype.sonify = function (options) {
             instrumentCopy,
             copyId;
         if (instrument && instrument.play) {
-            if (instrumentOpts) {
+            if (opts.playOptions) {
                 // Handle master pan/volume
                 if (typeof opts.playOptions.volume !== 'function') {
                     instrumentOpts.volume = H.pick(masterVolume, 1) *
