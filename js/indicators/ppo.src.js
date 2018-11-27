@@ -1,59 +1,47 @@
 'use strict';
 import H from '../parts/Globals.js';
-import './accumulation-distribution.src.js';
 import '../parts/Utilities.js';
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var EMA = H.seriesTypes.ema,
-    AD = H.seriesTypes.ad,
     error = H.error,
     correctFloat = H.correctFloat,
     parentLoaded = requiredIndicatorMixin.isParentIndicatorLoaded;
 
-H.seriesType('chaikin', 'ema',
+H.seriesType('ppo', 'ema',
     /**
-     * Chaikin Oscillator. This series requires the `linkedTo` option to
-     * be set and should be loaded after the `stock/indicators/indicators.js`
-     * and `stock/indicators/ema.js`.
+     * Percentage Price Oscillator. This series requires the
+     * `linkedTo` option to be set and should be loaded after the
+     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
      *
      * @extends plotOptions.ema
      * @product highstock
-     * @sample {highstock} stock/indicators/chaikin
-     *                     Chaikin Oscillator
+     * @sample {highstock} stock/indicators/ppo
+     *                     Percentage Price Oscillator
      * @since 7.0.0
      * @excluding
      *             allAreas,colorAxis,joinBy,keys,stacking,
      *             showInNavigator,navigatorOptions,pointInterval,
      *             pointIntervalUnit,pointPlacement,pointRange,pointStart
-     * @optionparent plotOptions.chaikin
+     * @optionparent plotOptions.ppo
      */
     {
         /**
-         * Paramters used in calculation of Chaikin Oscillator
+         * Paramters used in calculation of Percentage Price Oscillator
          * series points.
-         * @excluding index, period
+         * @excluding period
          */
         params: {
             /**
-             * The id of volume series which is mandatory.
-             * For example using OHLC data, volumeSeriesID='volume' means
-             * the indicator will be calculated using OHLC and volume values.
-             *
-             * @type {String}
-             * @since 7.0.0
-             * @product highstock
-             */
-            volumeSeriesID: 'volume',
-            /**
-             * Periods for Chaikin Oscillator calculations.
-             * @default [3, 10]
+             * Periods for Percentage Price Oscillator calculations.
+             * @default [12, 26]
              * @type {Array}
              * @since 7.0.0
              */
-            periods: [3, 10]
+            periods: [12, 26]
         }
     }, /** @lends Highcharts.Series.prototype */ {
-        nameBase: 'Chaikin Osc',
+        nameBase: 'PPO',
         nameComponents: ['periods'],
         init: function () {
             var args = arguments,
@@ -70,9 +58,8 @@ H.seriesType('chaikin', 'ema',
         },
         getValues: function (series, params) {
             var periods = params.periods,
-                period = params.period,
-                ADL, // Accumulation Distribution Line data
-                CHA = [], // 0- date, 1- Chaikin Oscillator
+                index = params.index,
+                PPO = [], // 0- date, 1- Percentage Price Oscillator
                 xData = [],
                 yData = [],
                 periodsOffset,
@@ -84,27 +71,19 @@ H.seriesType('chaikin', 'ema',
             // Check if periods are correct
             if (periods.length !== 2 || periods[1] <= periods[0]) {
                 error(
-                    'Error: "Chaikin requires two periods. Notice, first ' +
-                    'period should be lower than the second one."'
+                    'Error: "PPO requires two periods. Notice, first period ' +
+                    'should be lower than the second one."'
                 );
                 return false;
             }
 
-            ADL = AD.prototype.getValues.call(this, series, {
-                volumeSeriesID: params.volumeSeriesID,
-                period: period
-            });
-
-            // Check if adl is calculated properly, if not skip
-            if (!ADL) {
-                return false;
-            }
-
-            SPE = EMA.prototype.getValues.call(this, ADL, {
+            SPE = EMA.prototype.getValues.call(this, series, {
+                index: index,
                 period: periods[0]
             });
 
-            LPE = EMA.prototype.getValues.call(this, ADL, {
+            LPE = EMA.prototype.getValues.call(this, series, {
+                index: index,
                 period: periods[1]
             });
 
@@ -117,16 +96,18 @@ H.seriesType('chaikin', 'ema',
 
             for (i = 0; i < LPE.yData.length; i++) {
                 oscillator = correctFloat(
-                    SPE.yData[i + periodsOffset] - LPE.yData[i]
+                    (SPE.yData[i + periodsOffset] - LPE.yData[i]) /
+                    LPE.yData[i] *
+                    100
                 );
 
-                CHA.push([LPE.xData[i], oscillator]);
+                PPO.push([LPE.xData[i], oscillator]);
                 xData.push(LPE.xData[i]);
                 yData.push(oscillator);
             }
 
             return {
-                values: CHA,
+                values: PPO,
                 xData: xData,
                 yData: yData
             };
@@ -135,27 +116,27 @@ H.seriesType('chaikin', 'ema',
 );
 
 /**
- * A `Chaikin Oscillator` series. If the [type](#series.chaikin.type)
+ * A `Percentage Price Oscillator` series. If the [type](#series.ppo.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @type {Object}
  * @since 7.0.0
- * @extends series,plotOptions.chaikin
+ * @extends series,plotOptions.ppo
  * @excluding   data,dataParser,dataURL
  *              allAreas,colorAxis,joinBy,
  *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
  *              pointIntervalUnit,pointPlacement,pointRange,pointStart
  * @product highstock
- * @apioption series.chaikin
+ * @apioption series.ppo
  */
 
 /**
- * An array of data points for the series. For the `chaikin` series type,
+ * An array of data points for the series. For the `ppo` series type,
  * points are calculated dynamically.
  *
  * @type {Array<Object|Array>}
  * @since 7.0.0
  * @extends series.line.data
  * @product highstock
- * @apioption series.chaikin.data
+ * @apioption series.ppo.data
  */
