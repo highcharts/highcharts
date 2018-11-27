@@ -1,4 +1,4 @@
-var chart = Highcharts.chart('container', {
+Highcharts.chart('container', {
     series: [{
         type: 'venn',
         data: [
