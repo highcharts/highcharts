@@ -440,6 +440,7 @@ seriesType('packedbubble', 'bubble',
          * so it is accepting the current bubble array format.
          */
         getRadius: function () { // bubbles array
+
             var series = this,
                 chart = series.chart,
                 plotWidth = chart.plotWidth,
@@ -456,6 +457,10 @@ seriesType('packedbubble', 'bubble',
                 radiusRange,
                 value,
                 radius;
+
+            if (!defined(allDataPoints)) {
+                return false;
+            }
 
             ['minPointSize', 'maxPointSize'].forEach(function (prop) {
                 var length = parseInt(seriesOptions[prop], 10),
