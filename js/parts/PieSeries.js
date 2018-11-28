@@ -132,8 +132,6 @@ seriesType('pie', 'line'
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorpadding/
          *         No padding
          *
-         * @type      {number}
-         * @default   5
          * @since     2.1
          * @product   highcharts
          * @apioption plotOptions.pie.dataLabels.connectorPadding
