@@ -270,6 +270,8 @@ Series.prototype.drawDataLabels = function () {
         seriesDlOptions
     );
 
+    H.fireEvent(this, 'beforeDrawDataLabels');
+
     if (
         isArray(seriesDlOptions) ||
         seriesDlOptions.enabled ||
