@@ -33,7 +33,7 @@ Highcharts.chart('container', {
         ]
     }, {
     */
-        data: [
+        _data: [
             ['1', 'a_a', 1],
             ['1', 'a_b', 1],
             ['1', 'a_c', 1],
@@ -63,7 +63,32 @@ Highcharts.chart('container', {
             ['y', 'y_y', 1],
             ['z', 'z_x', 1],
             ['z', 'z_y', 1]
-        ]
+        ],
+        layoutAlgorithm: {
+          linkLength: 50
+        },
+        data: (function () {
+            var d = [],
+                groups = 7,
+                points = 14;
+
+            for (var l = 0; l < groups; l++) {
+                for (var i = 0; i < points; i++) {
+                    for (var j = i; j < points; j++) {
+                        d.push(
+                            [i + '_' + l, j + '_' + l]
+                        )
+                    }
+                    d.push([i + '_' + l, l + '_' + l])
+                }
+                
+                for (var k = 0; k < groups; k++) {
+                    d.push([k + '_' + k, l + '_' + l])
+                }
+            }
+
+            return d;
+        })(),
     }]
 });
 
