@@ -280,6 +280,7 @@ seriesType('gantt', 'xrange', {
 /**
  * Data for a Gantt series.
  *
+ * @type      {Array<*>}
  * @extends   series.xrange.data
  * @excluding className, color, colorIndex, connect, dataLabels, events, id,
  *            partialFill, selected, x, x2
