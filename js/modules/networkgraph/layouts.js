@@ -8,6 +8,7 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
+import '/QuadTree.js';
 
 var pick = H.pick;
 
@@ -34,6 +35,18 @@ H.extend(
     */
     H.layouts['reingold-fruchterman'].prototype,
     {
+        createQuadTree: function () {
+            var quadTree = new H.QuadTree(
+                this.box.left,
+                this.box.top,
+                this.box.width,
+                this.box.height
+            );
+
+            quadTree.insertNodes(this.nodes);
+
+            return quadTree;
+        },
         run: function () {
             var layout = this,
                 box = this.box,
@@ -63,18 +76,22 @@ H.extend(
                 }
             );
 
+            layout.quadTree = layout.createQuadTree();
+            layout.quadTree.render(series[0].chart);
+
             // Render elements in initial positions:
             series.forEach(function (s) {
                 s.render();
             });
-            // Disable built-in animations:
-            // H.setAnimation(false, chart);
 
             // Algorithm:
             function localLayout() {
                 if (simulation.stopped) {
                     return true;
                 }
+                layout.quadTree.clear(series[0].chart);
+                layout.quadTree = layout.createQuadTree();
+                layout.quadTree.render(series[0].chart);
                 // Barycenter forces:
                 layout.applyBarycenterForces();
 
