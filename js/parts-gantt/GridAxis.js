@@ -218,8 +218,16 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
  * @return {object} object - an object containing x and y positions
  *                           for the tick
  */
-wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz,
-            labelOpts, tickmarkOffset, index) {
+wrap(Tick.prototype, 'getLabelPosition', function (
+    proceed,
+    x,
+    y,
+    label,
+    horiz,
+    labelOpts,
+    tickmarkOffset,
+    index
+) {
     var tick = this,
         axis = tick.axis,
         reversed = axis.reversed,

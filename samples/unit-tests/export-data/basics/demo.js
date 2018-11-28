@@ -804,3 +804,73 @@ QUnit.test('Boosted chart', function (assert) {
         'Boosted chart'
     );
 });
+
+QUnit.test('Gantt chart', function (assert) {
+    var chart = Highcharts.ganttChart('container', {
+        title: {
+            text: 'Simple Gantt Chart'
+        },
+        series: [{
+            name: 'Project 1',
+            data: [{
+                id: 's',
+                name: 'Start prototype',
+                start: Date.UTC(2014, 10, 18),
+                end: Date.UTC(2014, 10, 20)
+            }, {
+                id: 'b',
+                name: 'Develop',
+                start: Date.UTC(2014, 10, 20),
+                end: Date.UTC(2014, 10, 25),
+                dependency: 's'
+            }, {
+                id: 'a',
+                name: 'Run acceptance tests',
+                start: Date.UTC(2014, 10, 23),
+                end: Date.UTC(2014, 10, 26)
+            }, {
+                name: 'Test prototype',
+                start: Date.UTC(2014, 10, 27),
+                end: Date.UTC(2014, 10, 29),
+                dependency: ['a', 'b']
+            }]
+        }]
+    });
+
+    assert.deepEqual(
+        chart.getDataRows(),
+        [
+            [
+                "DateTime",
+                "Project 1 (start)",
+                "Project 1 (end)",
+                "Project 1 (y)"
+            ],
+            [
+                "Start prototype",
+                "2014-11-18 00:00:00",
+                "2014-11-20 00:00:00",
+                "Start prototype"
+            ],
+            [
+                "Develop",
+                "2014-11-20 00:00:00",
+                "2014-11-25 00:00:00",
+                "Develop"
+            ],
+            [
+                "Run acceptance tests",
+                "2014-11-23 00:00:00",
+                "2014-11-26 00:00:00",
+                "Run acceptance tests"
+            ],
+            [
+                "Test prototype",
+                "2014-11-27 00:00:00",
+                "2014-11-29 00:00:00",
+                "Test prototype"
+            ]
+        ],
+        'Gantt chart'
+    );
+});

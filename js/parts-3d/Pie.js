@@ -1,27 +1,29 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * 3D pie series
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+
 var deg2rad = H.deg2rad,
     pick = H.pick,
     seriesTypes = H.seriesTypes,
     svg = H.svg,
     wrap = H.wrap;
 
-
 /**
  * The thickness of a 3D pie. Requires `highcharts-3d.js`
  *
- * @type {Number}
- * @default 0
- * @since 4.0
- * @product highcharts
+ * @type      {number}
+ * @default   0
+ * @since     4.0
+ * @product   highcharts
  * @apioption plotOptions.pie.depth
  */
 

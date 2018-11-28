@@ -3,18 +3,19 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
+
 var addEvent = H.addEvent,
     Axis = H.Axis,
     pick = H.pick;
 
-/**
- * Override to use the extreme coordinates from the SVG shape, not the
- * data values
- */
+// Override to use the extreme coordinates from the SVG shape, not the data
+// values
 addEvent(Axis, 'getSeriesExtremes', function () {
     var xData = [];
 
@@ -61,9 +62,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
 
 });
 
-/**
- * Override axis translation to make sure the aspect ratio is always kept
- */
+// Override axis translation to make sure the aspect ratio is always kept
 addEvent(Axis, 'afterSetAxisTranslation', function () {
     var chart = this.chart,
         mapRatio,
@@ -119,9 +118,7 @@ addEvent(Axis, 'afterSetAxisTranslation', function () {
     }
 });
 
-/**
- * Override Axis.render in order to delete the fixTo prop
- */
+// Override Axis.render in order to delete the fixTo prop
 addEvent(Axis, 'render', function () {
     this.fixTo = null;
 });

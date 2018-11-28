@@ -7,13 +7,18 @@
 /**
  * Adjusted width and x offset of the columns for grouping.
  *
- * @typedef Highcharts.ColumnMetricsObject
+ * @private
+ * @interface Highcharts.ColumnMetricsObject
+ *//**
+ * Width of the columns.
  *
- * @property {number} width
- *           Width of the columns.
+ * @name Highcharts.ColumnMetricsObject#width
+ * @type {number}
+ *//**
+ * Offset of the columns.
  *
- * @property {number} offset
- *           Offset of the columns.
+ * @name Highcharts.ColumnMetricsObject#offset
+ * @type {number}
  */
 
 'use strict';
@@ -405,7 +410,9 @@ seriesType('column', 'line'
     threshold: 0,
 
     /**
-     * The width of the border surrounding each column or bar.
+     * The width of the border surrounding each column or bar. Defaults to `1`
+     * when there is room for a border, but to `0` when the columns are so dense
+     * that a border would cover the next column.
      *
      * In styled mode, the stroke width can be set with the `.highcharts-point`
      * rule.
@@ -414,7 +421,7 @@ seriesType('column', 'line'
      *         2px black border
      *
      * @type      {number}
-     * @default   1
+     * @default   undefined
      * @product   highcharts highstock gantt
      * @apioption plotOptions.column.borderWidth
      */

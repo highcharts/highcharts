@@ -22,24 +22,20 @@
  * @interface Highcharts.AnimationOptionsObject
  *//**
  * The animation duration in milliseconds.
- *
  * @name Highcharts.AnimationOptionsObject#duration
  * @type {number}
  *//**
  * The name of an easing function as defined on the `Math` object.
- *
  * @name Highcharts.AnimationOptionsObject#easing
  * @type {string|undefined}
  *//**
  * A callback function to exectute when the animation finishes.
- *
  * @name Highcharts.AnimationOptionsObject#complete
  * @type {Function|undefined}
  *//**
  * A callback function to execute on each step of each attribute or CSS property
  * that's being animated. The first argument contains information about the
  * animation and progress.
- *
  * @name Highcharts.AnimationOptionsObject#step
  * @type {Function|undefined}
  */
@@ -61,123 +57,106 @@
  * @type {boolean|number|string|undefined}
  *//**
  * Background style for the element.
- *
  * @name Highcharts.CSSObject#background
  * @type {string|undefined}
  *//**
  * Background color of the element.
- *
  * @name Highcharts.CSSObject#backgroundColor
  * @type {Highcharts.ColorString|undefined}
  *//**
  * Border style for the element.
- *
  * @name Highcharts.CSSObject#border
  * @type {string|undefined}
  *//**
  * Radius of the element border.
- *
  * @name Highcharts.CSSObject#borderRadius
  * @type {number|undefined}
  *//**
  * Color used in the element. The "contrast" option is a Highcharts custom
  * property that results in black or white, depending on the background of the
  * element.
- *
  * @name Highcharts.CSSObject#color
  * @type {"contrast"|Highcharts.ColorString|undefined}
  *//**
  * Style of the mouse cursor when resting over the element.
- *
  * @name Highcharts.CSSObject#cursor
- * @type {string|undefined}
+ * @type {Highcharts.CursorType|undefined}
  *//**
  * Font family of the element text. Multiple values have to be in decreasing
  * preference order and separated by comma.
- *
  * @name Highcharts.CSSObject#fontFamily
  * @type {string|undefined}
  *//**
  * Font size of the element text.
- *
  * @name Highcharts.CSSObject#fontSize
  * @type {string|undefined}
  *//**
  * Font weight of the element text.
- *
  * @name Highcharts.CSSObject#fontWeight
  * @type {string|undefined}
  *//**
  * Height of the element.
- *
  * @name Highcharts.CSSObject#height
  * @type {number|undefined}
  *//**
  * Width of the element border.
- *
  * @name Highcharts.CSSObject#lineWidth
  * @type {number|undefined}
  *//**
  * Opacity of the element.
- *
  * @name Highcharts.CSSObject#opacity
  * @type {number|undefined}
  *//**
  * Space around the element content.
- *
  * @name Highcharts.CSSObject#padding
  * @type {string|undefined}
  *//**
  * Behaviour of the element when the mouse cursor rests over it.
- *
  * @name Highcharts.CSSObject#pointerEvents
  * @type {string|undefined}
  *//**
  * Positioning of the element.
- *
  * @name Highcharts.CSSObject#position
  * @type {string|undefined}
  *//**
  * Alignment of the element text.
- *
  * @name Highcharts.CSSObject#textAlign
  * @type {string|undefined}
  *//**
  * Outline style of the element text.
- *
  * @name Highcharts.CSSObject#textOutline
  * @type {string|undefined}
  *//**
  * Additional decoration of the element text.
- *
  * @name Highcharts.CSSObject#textDecoration
  * @type {string|undefined}
  *//**
  * Line break style of the element text. Highcharts SVG elements support
  * `ellipsis` when a `width` is set.
- *
  * @name Highcharts.CSSObject#textOverflow
  * @type {string|undefined}
  *//**
  * Animated transition of selected element properties.
- *
  * @name Highcharts.CSSObject#transition
  * @type {string|undefined}
  *//**
  * Top spacing of the element relative to the parent element.
- *
  * @name Highcharts.CSSObject#top
  * @type {string|undefined}
  *//**
  * Line break style of the element text.
- *
  * @name Highcharts.CSSObject#whiteSpace
  * @type {string|undefined}
  *//**
  * Width of the element.
- *
  * @name Highcharts.CSSObject#width
  * @type {number|undefined}
+ */
+
+/**
+ * All possible cursor styles.
+ *
+ * @typedef {"alias"|"all-scroll"|"auto"|"cell"|"col-resize"|"context-menu"|"copy"|"crosshair"|"default"|"e-resize"|"ew-resize"|"grab"|"grabbing"|"help"|"move"|"n-resize"|"ne-resize"|"nesw-resize"|"no-drop"|"none"|"not-allowed"|"ns-resize"|"nw-resize"|"nwse-resize"|"pointer"|"progress"|"row-resize"|"s-resize"|"se-resize"|"sw-resize"|"text"|"vertical-text"|"w-resize"|"wait"|"zoom-in"|"zoom-out"} Highcharts.CursorType
  */
 
 /**
@@ -239,6 +218,24 @@
  */
 
 /**
+ * Callback function to map the values in an array.
+ *
+ * @callback Highcharts.MapArrayCallbackFunction
+ *
+ * @param {*} value
+ *        The value to replace.
+ *
+ * @param {number} index
+ *        The index position of the value.
+ *
+ * @param {Array<*>} arr
+ *        The array as a reference.
+ *
+ * @return {*}
+ *         The new value as a replacement.
+ */
+
+/**
  * The iterator callback.
  *
  * @callback Highcharts.ObjectEachCallbackFunction
@@ -260,12 +257,10 @@
  * @interface Highcharts.OffsetObject
  *//**
  * Left distance to the page border.
- *
  * @name Highcharts.OffsetObject#left
  * @type {number}
  *//**
  * Top distance to the page border.
- *
  * @name Highcharts.OffsetObject#top
  * @type {number}
  */
@@ -276,12 +271,10 @@
  * @interface Highcharts.PositionObject
  *//**
  * X position of the element.
- *
  * @name Highcharts.PositionObject#x
  * @type {number}
  *//**
  * Y position of the element.
- *
  * @name Highcharts.PositionObject#y
  * @type {number}
  */
@@ -1581,8 +1574,13 @@ H.getMagnitude = function (num) {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-H.normalizeTickInterval = function (interval, multiples, magnitude,
-        allowDecimals, hasTickAmount) {
+H.normalizeTickInterval = function (
+    interval,
+    multiples,
+    magnitude,
+    allowDecimals,
+    hasTickAmount
+) {
     var normalized,
         i,
         retInterval = interval;

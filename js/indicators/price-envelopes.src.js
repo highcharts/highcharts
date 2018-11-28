@@ -1,3 +1,4 @@
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -7,17 +8,25 @@ var merge = H.merge,
     isArray = H.isArray,
     SMA = H.seriesTypes.sma;
 
+/**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.priceenvelopes
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('priceenvelopes', 'sma',
     /**
      * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations.
      * This series requires the `linkedTo` option to be set and should be loaded
      * after the `stock/indicators/indicators.js` file.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/price-envelopes
-     *                     Price envelopes
-     * @since 6.0.0
+     * @sample stock/indicators/price-envelopes
+     *         Price envelopes
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.priceenvelopes
      */
     {
@@ -33,18 +42,14 @@ H.seriesType('priceenvelopes', 'sma',
              * Percentage above the moving average that should be displayed.
              * 0.1 means 110%. Relative to the calculated value.
              *
-             * @type {Number}
              * @since 6.0.0
-             * @product highstock
              */
             topBand: 0.1,
             /**
              * Percentage below the moving average that should be displayed.
              * 0.1 means 90%. Relative to the calculated value.
              *
-             * @type {Number}
              * @since 6.0.0
-             * @product highstock
              */
             bottomBand: 0.1
         },
@@ -52,16 +57,13 @@ H.seriesType('priceenvelopes', 'sma',
          * Bottom line options.
          *
          * @since 6.0.0
-         * @product highstock
          */
         bottomLine: {
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @type {Number}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
@@ -69,9 +71,8 @@ H.seriesType('priceenvelopes', 'sma',
                  * [plotOptions.priceenvelopes.color](
                  * #plotOptions.priceenvelopes.color).
                  *
-                 * @type {String}
+                 * @type  {Highcharts.ColorString}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 lineColor: undefined
             }
@@ -80,8 +81,7 @@ H.seriesType('priceenvelopes', 'sma',
          * Top line options.
          *
          * @extends plotOptions.priceenvelopes.bottomLine
-         * @since 6.0.0
-         * @product highstock
+         * @since   6.0.0
          */
         topLine: {
             styles: {
@@ -240,11 +240,10 @@ H.seriesType('priceenvelopes', 'sma',
  * A price envelopes indicator. If the [type](#series.priceenvelopes.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.priceenvelopes
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.priceenvelopes
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.priceenvelopes
  */
 
@@ -252,9 +251,8 @@ H.seriesType('priceenvelopes', 'sma',
  * An array of data points for the series. For the `priceenvelopes` series type,
  * points are calculated dynamically.
  *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
+ * @extends   series.line.data
+ * @since     6.0.0
+ * @product   highstock
  * @apioption series.priceenvelopes.data
  */

@@ -180,24 +180,24 @@ QUnit.test('X-Range', function (assert) {
 QUnit.test('X-range data labels', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            "zoomType": "x",
+            zoomType: 'x',
             width: 600
         },
         xAxis: [{
             minRange: 1
         }],
         series: [{
-            "type": "xrange",
-            "dataLabels": {
-                "enabled": true,
-                "format": "{point.label}"
+            type: 'xrange',
+            dataLabels: {
+                enabled: true
             },
             "data": [{
                 "y": 0,
                 "x": 0,
                 "x2": 2,
                 "color": "#8CCAF4",
-                "label": "first"
+                "label": "first",
+                partialFill: 0.28
             }, {
                 "y": 0,
                 "x": 2,
@@ -218,6 +218,18 @@ QUnit.test('X-range data labels', function (assert) {
                 "label": "fourth"
             }]
         }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.text.textStr,
+        '28%',
+        'Correctly rounded value using default formatter (#9291)'
+    );
+
+    chart.series[0].update({
+        dataLabels: {
+            format: '{point.label}'
+        }
     });
 
     var y = chart.series[0].points[0].dataLabel.attr('y');

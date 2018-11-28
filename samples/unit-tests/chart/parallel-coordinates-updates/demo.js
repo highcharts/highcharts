@@ -1,28 +1,29 @@
 QUnit.test('Update parallel coordinates plot', function (assert) {
     var chart = Highcharts.chart('container', {
-        chart: {
-            parallelCoordinates: true,
-            parallelAxes: {
-                tickAmount: 2
-            }
-        },
-        yAxis: [{
-            reversed: true
-        }, {
-            reversed: false
-        }, {
-            type: 'category'
-        }, {
-            type: 'datetime'
-        }, {
-            type: 'logarithmic'
-        }],
-        series: [{
-            data: [1, 2, 3, 1, 10000, 3, 1, 2, 3, 1000]
-        }, {
-            data: [5, 10, 12, 3, 0.5, 5, -20, 1000, 9, 10]
-        }]
-    });
+            chart: {
+                parallelCoordinates: true,
+                parallelAxes: {
+                    tickAmount: 2
+                }
+            },
+            yAxis: [{
+                reversed: true
+            }, {
+                reversed: false
+            }, {
+                type: 'category'
+            }, {
+                type: 'datetime'
+            }, {
+                type: 'logarithmic'
+            }],
+            series: [{
+                data: [1, 2, 3, 1, 10000, 3, 1, 2, 3, 1000]
+            }, {
+                data: [5, 10, 12, 3, 0.5, 5, -20, 1000, 9, 10]
+            }]
+        }),
+        yAxisMax;
 
     chart.update({
         chart: {
@@ -97,6 +98,13 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
         chart.series[2].points[4].dataLabel instanceof Highcharts.SVGElement,
         true,
         'Fourth point has a datalabel.'
+    );
+    yAxisMax = chart.yAxis[4].getExtremes().max;
+    chart.series[0].setVisible();
+    assert.strictEqual(
+        chart.yAxis[4].getExtremes().max !== yAxisMax,
+        true,
+        'On series toggle yAxis extremes have been changed. (#9248)'
     );
 
 

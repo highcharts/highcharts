@@ -1110,19 +1110,19 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
             y;
 
         switch (markerOptions.align) { // eslint-disable-line default-case
-            case 'right':
-                x = 'xMax';
-                break;
-            case 'left':
-                x = 'xMin';
+        case 'right':
+            x = 'xMax';
+            break;
+        case 'left':
+            x = 'xMin';
         }
 
         switch (markerOptions.verticalAlign) { // eslint-disable-line default-case
-            case 'top':
-                y = 'yMin';
-                break;
-            case 'bottom':
-                y = 'yMax';
+        case 'top':
+            y = 'yMin';
+            break;
+        case 'bottom':
+            y = 'yMax';
         }
 
         return {
