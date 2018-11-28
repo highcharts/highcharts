@@ -82,7 +82,7 @@ seriesType('sankey', 'column'
          * Callback to format data labels for _nodes_ in the sankey diagram.
          * The `nodeFormat` option takes precedence over the `nodeFormatter`.
          *
-         * @type  {Highcharts.FormatterCallbackFunction}
+         * @type  {Highcharts.FormatterCallbackFunction<*>}
          * @since 6.0.2
          */
         nodeFormatter: function () {
@@ -102,7 +102,7 @@ seriesType('sankey', 'column'
          * Callback to format data labels for _links_ in the sankey diagram.
          * The `format` option takes precedence over the `formatter`.
          *
-         * @type  {Highcharts.FormatterCallbackFunction}
+         * @type  {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
          * @since 6.0.2
          */
         formatter: function () {
@@ -140,7 +140,7 @@ seriesType('sankey', 'column'
          * A callback for defining the format for _nodes_ in the sankey chart's
          * tooltip, as opposed to links.
          *
-         * @type      {Highcharts.FormatterCallbackFunction}
+         * @type      {Highcharts.FormatterCallbackFunction<*>}
          * @since     6.0.2
          * @apioption plotOptions.sankey.tooltip.nodeFormatter
          */
