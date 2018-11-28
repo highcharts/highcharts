@@ -7,6 +7,7 @@
  */
 
 /**
+ * @private
  * @todo
  * - Check update, remove etc.
  * - Custom icons like persons, carts etc. Either as images, font icons or
