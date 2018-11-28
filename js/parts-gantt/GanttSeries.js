@@ -269,7 +269,10 @@ seriesType('gantt', 'xrange', {
 /**
  * A `gantt` series.
  *
- * @extends   plotOptions.gantt
+ * @extends   series,plotOptions.gantt
+ * @excluding boostThreshold, connectors, dashStyle, findNearestPointBy,
+ *            getExtremesFromAll, marker, negativeColor, pointInterval,
+ *            pointIntervalUnit, pointPlacement, pointStart
  * @product   gantt
  * @apioption series.gantt
  */
@@ -278,7 +281,8 @@ seriesType('gantt', 'xrange', {
  * Data for a Gantt series.
  *
  * @extends   series.xrange.data
- * @excluding connect, partialFill, x, x2
+ * @excluding className, color, colorIndex, connect, dataLabels, events, id,
+ *            partialFill, selected, x, x2
  * @product   gantt
  * @apioption series.gantt.data
  */
@@ -400,4 +404,9 @@ seriesType('gantt', 'xrange', {
  * @since     6.2.0
  * @product   gantt
  * @apioption series.gantt.data.parent
+ */
+
+/**
+ * @excluding afterAnimate
+ * @apioption series.gantt.events
  */
