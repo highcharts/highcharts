@@ -92,9 +92,40 @@ seriesType('timeline', 'line', {
          */
         connectorColor: '${palette.neutralColor100}',
         backgroundColor: '${palette.backgroundColor}',
-        format: '<span style="color:{point.color}">● </span>' +
-            '<span style="font-weight: bold;">{point.date}</span><br/>' +
-            '{point.label}',
+        /**
+         * @type      {Highcharts.FormatterCallbackFunction}
+         * @default function () {
+         *   var format;
+         *
+         *   if (!this.series.chart.styledMode) {
+         *       format = '<span style="color:' + this.point.color +
+         *           '">● </span><span style="font-weight: bold;" > ' +
+         *           (this.point.date || '') + '</span><br/>' +
+         *           (this.point.label || '');
+         *   } else {
+         *       format = '<span>● </span>' +
+         *           '<span>' + (this.point.date || '') +
+         *           '</span><br/>' + (this.point.label || '');
+         *   }
+         *   return format;
+         * }
+         * @apioption plotOptions.timeline.dataLabels.formatter
+         */
+        formatter: function () {
+            var format;
+
+            if (!this.series.chart.styledMode) {
+                format = '<span style="color:' + this.point.color +
+                    '">● </span><span style="font-weight: bold;" > ' +
+                    (this.point.date || '') + '</span><br/>' +
+                    (this.point.label || '');
+            } else {
+                format = '<span>● </span>' +
+                    '<span>' + (this.point.date || '') +
+                    '</span><br/>' + (this.point.label || '');
+            }
+            return format;
+        },
         borderWidth: 1,
         borderColor: '${palette.neutralColor60}',
         /**
@@ -276,7 +307,11 @@ seriesType('timeline', 'line', {
                         availableSpace * multiplier - (pad * 2)
                 };
             }
-            dataLabel.css(styles).shadow({});
+            dataLabel.css(styles);
+
+            if (!series.chart.styledMode) {
+                dataLabel.shadow({});
+            }
         }
         Series.prototype.alignDataLabel.apply(series, arguments);
     },
@@ -567,12 +602,15 @@ seriesType('timeline', 'line', {
             );
 
         point.connector = series.chart.renderer.path(point.getConnectorPath())
-            .attr({
+            .add(series.connectorsGroup);
+
+        if (!series.chart.styledMode) {
+            point.connector.attr({
                 stroke: dlOptions.connectorColor,
                 'stroke-width': dlOptions.connectorWidth,
                 opacity: point.dataLabel.opacity
-            })
-            .add(series.connectorsGroup);
+            });
+        }
     },
     alignConnector: function () {
         var point = this,
