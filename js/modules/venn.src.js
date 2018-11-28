@@ -55,8 +55,8 @@ var getOverlapBetweenCircles = function getOverlapBetweenCircles(circles) {
         var circle2 = circles[1];
 
         overlap = getOverlapBetweenCirclesByDistance(
-            circle1.radius,
-            circle2.radius,
+            circle1.r,
+            circle2.r,
             getDistanceBetweenPoints(circle1, circle2)
         );
     }
