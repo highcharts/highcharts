@@ -9,8 +9,7 @@ import '../parts/Utilities.js';
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
 
-var each = H.each,
-    charts = H.charts,
+var charts = H.charts,
     color = H.color,
     deg2rad = H.deg2rad,
     perspective = H.perspective,
@@ -331,7 +330,7 @@ RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
         x, z;
 
     // rotete to match chart's beta and translate to the shape center
-    each(points, function (point, i) {
+    points.forEach(function (point, i) {
         x = point.x;
         z = point.z;
 

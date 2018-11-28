@@ -2,7 +2,8 @@
 Highcharts.chart('container', {
 
     chart: {
-        type: 'bubble'
+        type: 'bubble',
+        styledMode: true
     },
 
     legend: {

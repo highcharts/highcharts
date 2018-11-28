@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -65,10 +65,8 @@ seriesType('polygon', 'scatter', {
         return graphPath;
     },
     drawGraph: function () {
-        /*= if (build.classic) { =*/
         // Hack into the fill logic in area.drawGraph
         this.options.fillColor = this.color;
-        /*= } =*/
         seriesTypes.area.prototype.drawGraph.call(this);
     },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
@@ -115,8 +113,8 @@ seriesType('polygon', 'scatter', {
  *     ]
  *  ```
  *
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 3.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.polygon.turboThreshold),
  * this option is not available.
  *

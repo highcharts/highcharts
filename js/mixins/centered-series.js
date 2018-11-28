@@ -1,19 +1,42 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * @private
+ * @typedef Highcharts.RadianAngles
+ *
+ * @property {number} start
+ *
+ * @property {number} end
+ */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+
 var deg2rad = H.deg2rad,
     isNumber = H.isNumber,
     pick = H.pick,
     relativeLength = H.relativeLength;
+
+/**
+ * @private
+ * @mixin Highcharts.CenteredSeriesMixin
+ */
 H.CenteredSeriesMixin = {
+
     /**
      * Get the center of the pie based on the size and center options relative
      * to the plot area. Borrowed by the polar and gauge series types.
+     *
+     * @private
+     * @function Highcharts.CenteredSeriesMixin.getCenter
+     *
+     * @return {Array<number>}
      */
     getCenter: function () {
 
@@ -54,14 +77,22 @@ H.CenteredSeriesMixin = {
         }
         return positions;
     },
+
     /**
      * getStartAndEndRadians - Calculates start and end angles in radians.
      * Used in series types such as pie and sunburst.
      *
-     * @param  {Number} start Start angle in degrees.
-     * @param  {Number} end Start angle in degrees.
-     * @return {object} Returns an object containing start and end angles as
-     * radians.
+     * @private
+     * @function Highcharts.CenteredSeriesMixin.getStartAndEndRadians
+     *
+     * @param {number} start
+     *        Start angle in degrees.
+     *
+     * @param {number} end
+     *        Start angle in degrees.
+     *
+     * @return {Highcharts.RadianAngles}
+     *         Returns an object containing start and end angles as radians.
      */
     getStartAndEndRadians: function getStartAndEndRadians(start, end) {
         var startAngle = isNumber(start) ? start : 0, // must be a number

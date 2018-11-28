@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -21,8 +21,6 @@ var seriesType = H.seriesType,
  * @optionparent plotOptions.mapline
  */
 seriesType('mapline', 'map', {
-    /*= if (build.classic) { =*/
-
     /**
      * The width of the map line.
      *
@@ -40,11 +38,9 @@ seriesType('mapline', 'map', {
      * @product highmaps
      */
     fillColor: 'none'
-    /*= } =*/
 }, {
     type: 'mapline',
     colorProp: 'stroke',
-    /*= if (build.classic) { =*/
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'
@@ -65,7 +61,6 @@ seriesType('mapline', 'map', {
 
         return attr;
     },
-    /*= } =*/
     drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });
 
@@ -103,8 +98,8 @@ seriesType('mapline', 'map', {
  *     ]
  *  ```
  *
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 3.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.map.turboThreshold),
  * this option is not available.
  *

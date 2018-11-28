@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,7 +7,6 @@
 import H from './Globals.js';
 import './Utilities.js';
 var defaultPlotOptions = H.defaultPlotOptions,
-    each = H.each,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
@@ -68,7 +67,6 @@ var candlestickOptions = {
     tooltip: defaultPlotOptions.ohlc.tooltip,
 
     threshold: null,
-    /*= if (build.classic) { =*/
 
     /**
      * The color of the line/border of the candlestick.
@@ -111,7 +109,6 @@ var candlestickOptions = {
      * @product highstock
      */
     upColor: '${palette.backgroundColor}',
-    /*= } =*/
 
     stickyTracking: true
 
@@ -127,7 +124,6 @@ seriesType('candlestick', 'ohlc', merge(
     defaultPlotOptions.column,
     candlestickOptions
 ), /** @lends seriesTypes.candlestick */ {
-    /*= if (build.classic) { =*/
     /**
      * Postprocess mapping between options and SVG attributes
      */
@@ -161,7 +157,7 @@ seriesType('candlestick', 'ohlc', merge(
 
         return attribs;
     },
-    /*= } =*/
+
     /**
      * Draw the data points
      */
@@ -172,7 +168,7 @@ seriesType('candlestick', 'ohlc', merge(
             reversedYAxis = series.yAxis.reversed;
 
 
-        each(points, function (point) {
+        points.forEach(function (point) {
 
             var graphic = point.graphic,
                 plotOpen,
@@ -194,13 +190,16 @@ seriesType('candlestick', 'ohlc', merge(
                         .add(series.group);
                 }
 
-                /*= if (build.classic) { =*/
-                graphic
-                    .attr(
-                        series.pointAttribs(point, point.selected && 'select')
-                    ) // #3897
-                    .shadow(series.options.shadow);
-                /*= } =*/
+                if (!series.chart.styledMode) {
+                    graphic
+                        .attr(
+                            series.pointAttribs(
+                                point,
+                                point.selected && 'select'
+                            )
+                        ) // #3897
+                        .shadow(series.options.shadow);
+                }
 
                 // Crisp vector coordinates
                 crispCorr = (graphic.strokeWidth() % 2) / 2;
@@ -298,8 +297,8 @@ seriesType('candlestick', 'ohlc', merge(
  *     ]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](
  * #series.candlestick.turboThreshold), this option is not available.
  *

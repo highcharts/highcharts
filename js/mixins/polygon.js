@@ -3,9 +3,7 @@ import '../parts/Utilities.js';
 var deg2rad = H.deg2rad,
     find = H.find,
     isArray = H.isArray,
-    isNumber = H.isNumber,
-    map = H.map,
-    reduce = H.reduce;
+    isNumber = H.isNumber;
 
 /**
  * Alternative solution to correctFloat.
@@ -52,7 +50,7 @@ var dotProduct = function dotProduct(a, b) {
  * @param {Array} target The coordinate of pr
  */
 var project = function project(polygon, target) {
-    var products = map(polygon, function (point) {
+    var products = polygon.map(function (point) {
         return dotProduct(point, target);
     });
     return {
@@ -109,8 +107,7 @@ var getAxesFromPolygon = function (polygon) {
     if (!isArray(axes)) {
         axes = [];
         points = points = polygon.concat([polygon[0]]);
-        reduce(
-            points,
+        points.reduce(
             function findAxis(p1, p2) {
                 var normals = getNormals(p1, p2),
                     axis = normals[0]; // Use the left normal as axis.
@@ -150,13 +147,13 @@ var getPolygon = function (x, y, width, height, rotation) {
             [right, bottom],
             [left, bottom]
         ];
-    return map(polygon, function (point) {
+    return polygon.map(function (point) {
         return rotate2DToPoint(point, origin, -rotation);
     });
 };
 
 var getBoundingBoxFromPolygon = function (points) {
-    return reduce(points, function (obj, point) {
+    return points.reduce(function (obj, point) {
         var x = point[0],
             y = point[1];
         obj.left = Math.min(x, obj.left);
@@ -165,10 +162,10 @@ var getBoundingBoxFromPolygon = function (points) {
         obj.top = Math.min(y, obj.top);
         return obj;
     }, {
-        left: Number.MAX_SAFE_INTEGER,
-        right: Number.MIN_SAFE_INTEGER,
-        bottom: Number.MIN_SAFE_INTEGER,
-        top: Number.MAX_SAFE_INTEGER
+        left: Number.MAX_VALUE,
+        right: -Number.MAX_VALUE,
+        bottom: -Number.MAX_VALUE,
+        top: Number.MAX_VALUE
     });
 };
 
@@ -198,7 +195,7 @@ var isPolygonsColliding = function isPolygonsColliding(polygon1, polygon2) {
 };
 
 var movePolygon = function (deltaX, deltaY, polygon) {
-    return map(polygon, function (point) {
+    return polygon.map(function (point) {
         return [
             point[0] + deltaX,
             point[1] + deltaY

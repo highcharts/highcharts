@@ -37,14 +37,12 @@ QUnit.test(
     }
 );
 QUnit.test('Axis.isBroken', function (assert) {
-
-    var chart;
-
-    chart = Highcharts.chart('container', {
+    var chart = Highcharts.chart('container', {
         series: [{
-            data: [1, 3, 2, 4]
+            data: [1, 2, 3, 4]
         }]
     });
+
     assert.strictEqual(
         chart.xAxis[0].isBroken,
         false,

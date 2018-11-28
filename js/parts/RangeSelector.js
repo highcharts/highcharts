@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -16,7 +16,6 @@ var addEvent = H.addEvent,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     discardElement = H.discardElement,
-    each = H.each,
     extend = H.extend,
     fireEvent = H.fireEvent,
     isNumber = H.isNumber,
@@ -155,7 +154,7 @@ extend(defaultOptions, {
          */
 
         /**
-         * When buttons apply dataGrouping on a series, by deafault zooming
+         * When buttons apply dataGrouping on a series, by default zooming
          * in/out will deselect buttons and unset dataGrouping. Enable this
          * option to keep buttons selected when extremes change.
          *
@@ -262,7 +261,6 @@ extend(defaultOptions, {
          * @apioption  rangeSelector.buttonTheme
          */
         buttonTheme: {
-            'stroke-width': 0,
             width: 28,
             height: 18,
             padding: 2,
@@ -523,8 +521,6 @@ extend(defaultOptions, {
             y: 0
         },
 
-        /*= if (build.classic) { =*/
-
         /**
          * CSS for the HTML inputs in the range selector.
          *
@@ -556,7 +552,6 @@ extend(defaultOptions, {
         labelStyle: {
             color: '${palette.neutralColor60}'
         }
-        /*= } =*/
     }
 });
 
@@ -728,7 +723,7 @@ RangeSelector.prototype = {
                 if (dataMax === undefined) {
                     dataMin = Number.MAX_VALUE;
                     dataMax = Number.MIN_VALUE;
-                    each(chart.series, function (series) {
+                    chart.series.forEach(function (series) {
                         // reassign it to the last item
                         var xData = series.xData;
                         dataMin = Math.min(xData[0], dataMin);
@@ -871,7 +866,7 @@ RangeSelector.prototype = {
         this.unResize = addEvent(chart, 'resize', blurInputs);
 
         // Extend the buttonOptions with actual range
-        each(buttonOptions, rangeSelector.computeButtonRange);
+        buttonOptions.forEach(rangeSelector.computeButtonRange);
 
         // zoomed range based on a pre-selected button index
         if (selectedOption !== undefined && buttonOptions[selectedOption]) {
@@ -931,7 +926,7 @@ RangeSelector.prototype = {
             allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
             buttons = rangeSelector.buttons;
 
-        each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+        rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
             var range = rangeOptions._range,
                 type = rangeOptions.type,
                 count = rangeOptions.count || 1,
@@ -1221,9 +1216,6 @@ RangeSelector.prototype = {
                 padding: 2,
                 width: options.inputBoxWidth || 90,
                 height: options.inputBoxHeight || 17,
-                stroke:
-                    options.inputBoxBorderColor || '${palette.neutralColor20}',
-                'stroke-width': 1,
                 'text-align': 'center'
             })
             .on('click', function () {
@@ -1233,6 +1225,15 @@ RangeSelector.prototype = {
                 rangeSelector[name + 'Input'].focus();
             })
             .add(inputGroup);
+
+        if (!chart.styledMode) {
+            dateBox.attr({
+                stroke:
+                    options.inputBoxBorderColor || '${palette.neutralColor20}',
+                'stroke-width': 1
+            });
+        }
+
         inputGroup.offset += dateBox.width + (isMin ? 10 : 0);
 
 
@@ -1246,26 +1247,26 @@ RangeSelector.prototype = {
             top: chart.plotTop + 'px' // prevent jump on focus in Firefox
         }, div);
 
-        /*= if (build.classic) { =*/
-        // Styles
-        label.css(merge(chartStyle, options.labelStyle));
+        if (!chart.styledMode) {
+            // Styles
+            label.css(merge(chartStyle, options.labelStyle));
 
-        dateBox.css(merge({
-            color: '${palette.neutralColor80}'
-        }, chartStyle, options.inputStyle));
+            dateBox.css(merge({
+                color: '${palette.neutralColor80}'
+            }, chartStyle, options.inputStyle));
 
-        css(input, extend({
-            position: 'absolute',
-            border: 0,
-            width: '1px', // Chrome needs a pixel to see it
-            height: '1px',
-            padding: 0,
-            textAlign: 'center',
-            fontSize: chartStyle.fontSize,
-            fontFamily: chartStyle.fontFamily,
-            top: '-9999em' // #4798
-        }, options.inputStyle));
-        /*= } =*/
+            css(input, extend({
+                position: 'absolute',
+                border: 0,
+                width: '1px', // Chrome needs a pixel to see it
+                height: '1px',
+                padding: 0,
+                textAlign: 'center',
+                fontSize: chartStyle.fontSize,
+                fontFamily: chartStyle.fontFamily,
+                top: '-9999em' // #4798
+            }, options.inputStyle));
+        }
 
         // Blow up the input box
         input.onfocus = function () {
@@ -1368,6 +1369,12 @@ RangeSelector.prototype = {
             lang = defaultOptions.lang,
             div = rangeSelector.div,
             options = chartOptions.rangeSelector,
+            // Place inputs above the container
+            inputsZIndex = pick(
+                chartOptions.chart.style &&
+                chartOptions.chart.style.zIndex,
+                0
+            ) + 1,
             floating = options.floating,
             buttons = rangeSelector.buttons,
             inputGroup = rangeSelector.inputGroup,
@@ -1417,10 +1424,17 @@ RangeSelector.prototype = {
                     0,
                     15
                 )
-                .css(options.labelStyle)
                 .add(buttonGroup);
 
-            each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+            if (!chart.styledMode) {
+
+                rangeSelector.zoomText.css(options.labelStyle);
+
+                buttonTheme['stroke-width'] =
+                    pick(buttonTheme['stroke-width'], 0);
+            }
+
+            rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
 
                 buttons[i] = renderer.button(
                         rangeOptions.text,
@@ -1463,7 +1477,7 @@ RangeSelector.prototype = {
                 rangeSelector.div = div = createElement('div', null, {
                     position: 'relative',
                     height: 0,
-                    zIndex: 1 // above container
+                    zIndex: inputsZIndex
                 });
 
                 container.parentNode.insertBefore(div, container);
@@ -1485,7 +1499,7 @@ RangeSelector.prototype = {
         // button start position
         buttonLeft = pick(plotLeft + buttonPosition.x, plotLeft) +
             rangeSelector.zoomText.getBBox().width + 5;
-        each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+        rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
 
             buttons[i][verb]({ x: buttonLeft });
 
@@ -1925,7 +1939,7 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
 
     if (rangeSelector) {
 
-        each(axes, function (axis) {
+        axes.forEach(function (axis) {
             axis.updateNames();
             axis.setScale();
         });

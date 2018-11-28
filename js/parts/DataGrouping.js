@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -16,7 +16,6 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     defaultPlotOptions = H.defaultPlotOptions,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     format = H.format,
     isNumber = H.isNumber,
@@ -40,7 +39,11 @@ var addEvent = H.addEvent,
  *
  * If data grouping is applied, the grouping information of grouped
  * points can be read from the [Point.dataGroup](
- * /class-reference/Highcharts.Point#.dataGroup).
+ * /class-reference/Highcharts.Point#.dataGroup). If point options other than
+ * the data itself are set, for example `name` or `color` or custom properties,
+ * the grouping logic doesn't know how to group it. In this case the options of
+ * the first point instance are copied over to the group point. This can be
+ * altered through a custom `approximation` callback function.
  *
  * @product highstock
  * @apioption plotOptions.series.dataGrouping
@@ -401,7 +404,7 @@ var seriesProto = Series.prototype,
         averages: function () { // #5479
             var ret = [];
 
-            each(arguments, function (arr) {
+            [].forEach.call(arguments, function (arr) {
                 ret.push(approximations.average(arr));
             });
 
@@ -488,6 +491,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
                 ) || approximations[commonOptions.approximation],
         pointArrayMap = series.pointArrayMap,
         pointArrayMapLength = pointArrayMap && pointArrayMap.length,
+        extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
         pos = 0,
         start = 0,
         valuesLen,
@@ -495,7 +499,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
     // Calculate values array size from pointArrayMap length
     if (pointArrayMapLength) {
-        each(pointArrayMap, function () {
+        pointArrayMap.forEach(function () {
             values.push([]);
         });
     } else {
@@ -523,6 +527,28 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
             pointX = groupPositions[pos];
             series.dataGroupInfo = { start: start, length: values[0].length };
             groupedY = approximationFn.apply(series, values);
+
+            // By default, let options of the first grouped point be passed over
+            // to the grouped point. This allows preserving properties like
+            // `name` and `color` or custom properties. Implementers can
+            // override this from the approximation function, where they can
+            // write custom options to `this.dataGroupInfo.options`.
+            if (!defined(series.dataGroupInfo.options)) {
+                // Convert numbers and arrays into objects
+                series.dataGroupInfo.options = merge(
+                    series.pointClass.prototype
+                        .optionsToObject.call(
+                            { series: series },
+                            series.options.data[start]
+                        )
+                );
+
+                // Make sure the raw data (x, y, open, high etc) is not copied
+                // over and overwriting approximated data.
+                extendedPointArrayMap.forEach(function (key) {
+                    delete series.dataGroupInfo.options[key];
+                });
+            }
 
             // push the grouped data
             if (groupedY !== undefined) {
@@ -694,7 +720,13 @@ seriesProto.processData = function () {
                 groupedXData[0] < xAxis.dataMin &&
                 visible
             ) {
-                if (xAxis.min <= xAxis.dataMin) {
+                if (
+                    (
+                        !defined(xAxis.options.min) &&
+                        xAxis.min <= xAxis.dataMin
+                    ) ||
+                    xAxis.min === xAxis.dataMin
+                ) {
                     xAxis.min = groupedXData[0];
                 }
                 xAxis.dataMin = groupedXData[0];
@@ -736,7 +768,7 @@ seriesProto.destroyGroupedData = function () {
     var groupedData = this.groupedData;
 
     // clear previous groups
-    each(groupedData || [], function (point, i) {
+    (groupedData || []).forEach(function (point, i) {
         if (point) {
             groupedData[i] = point.destroy ? point.destroy() : null;
         }
@@ -763,7 +795,7 @@ seriesProto.generatePoints = function () {
  */
 addEvent(Point, 'update', function () {
     if (this.dataGroup) {
-        H.error(24);
+        H.error(24, false, this.series.chart);
         return false;
     }
 });
@@ -789,7 +821,10 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
         currentDataGrouping,
         dateTimeLabelFormats,
         labelFormats,
-        formattedKey;
+        formattedKey,
+        formatString = tooltipOptions[
+            (isFooter ? 'footer' : 'header') + 'Format'
+        ];
 
     // apply only to grouped series
     if (
@@ -833,9 +868,14 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
             );
         }
 
+        // Replace default header style with class name
+        if (series.chart.styledMode) {
+            formatString = this.styledModeFormat(formatString);
+        }
+
         // return the replaced format
         return format(
-            tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
+            formatString, {
                 point: extend(labelConfig.point, { key: formattedKey }),
                 series: series
             },
@@ -892,7 +932,7 @@ addEvent(Series, 'afterSetOptions', function (e) {
  * group pixel width (#2692).
  */
 addEvent(Axis, 'afterSetScale', function () {
-    each(this.series, function (series) {
+    this.series.forEach(function (series) {
         series.hasProcessed = false;
     });
 });
@@ -986,7 +1026,7 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 
     // Axis not yet instanciated, alter series options
     } else {
-        each(this.chart.options.series, function (seriesOptions) {
+        this.chart.options.series.forEach(function (seriesOptions) {
             seriesOptions.dataGrouping = dataGrouping;
         }, false);
     }

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -8,8 +8,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
-var each = H.each,
-    noop = H.noop,
+var noop = H.noop,
     pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
@@ -38,17 +37,7 @@ seriesType('boxplot', 'column', {
     threshold: null,
 
     tooltip: {
-        /*= if (!build.classic) { =*/
-        pointFormat: '<span class="highcharts-color-{point.colorIndex}">' +
-            '\u25CF</span> <b> {series.name}</b><br/>' +
-            'Maximum: {point.high}<br/>' +
-            'Upper quartile: {point.q3}<br/>' +
-            'Median: {point.median}<br/>' +
-            'Lower quartile: {point.q1}<br/>' +
-            'Minimum: {point.low}<br/>',
-        /*= } else { =*/
-
-        pointFormat: // eslint-disable-line no-dupe-keys
+        pointFormat:
             '<span style="color:{point.color}">\u25CF</span> <b> ' +
             '{series.name}</b><br/>' +
             'Maximum: {point.high}<br/>' +
@@ -56,7 +45,6 @@ seriesType('boxplot', 'column', {
             'Median: {point.median}<br/>' +
             'Lower quartile: {point.q1}<br/>' +
             'Minimum: {point.low}<br/>'
-        /*= } =*/
     },
 
     /**
@@ -71,7 +59,6 @@ seriesType('boxplot', 'column', {
      * @product highcharts
      */
     whiskerLength: '50%',
-    /*= if (build.classic) { =*/
 
     /**
      * The fill color of the box.
@@ -148,7 +135,6 @@ seriesType('boxplot', 'column', {
             brightness: -0.3
         }
     },
-    */
 
     /**
      * The color of the stem, the vertical line extending from the box to
@@ -245,7 +231,6 @@ seriesType('boxplot', 'column', {
      * @product highcharts
      */
     whiskerWidth: 2
-    /*= } =*/
 
 }, /** @lends seriesTypes.boxplot */ {
 
@@ -258,7 +243,6 @@ seriesType('boxplot', 'column', {
     // defines the top of the tracker
     pointValKey: 'high',
 
-    /*= if (build.classic) { =*/
     /**
      * Get presentational attributes
      */
@@ -266,7 +250,6 @@ seriesType('boxplot', 'column', {
         // No attributes should be set on point.graphic which is the group
         return {};
     },
-    /*= } =*/
 
     /**
      * Disable data labels for box plot
@@ -284,8 +267,8 @@ seriesType('boxplot', 'column', {
         seriesTypes.column.prototype.translate.apply(series);
 
         // do the translation on each point dimension
-        each(series.points, function (point) {
-            each(pointArrayMap, function (key) {
+        series.points.forEach(function (point) {
+            pointArrayMap.forEach(function (key) {
                 if (point[key] !== null) {
                     point[key + 'Plot'] = yAxis.translate(
                         point[key], 0, 1, 0, 1
@@ -323,19 +306,16 @@ seriesType('boxplot', 'column', {
             whiskerLength = series.options.whiskerLength;
 
 
-        each(points, function (point) {
+        points.forEach(function (point) {
 
             var graphic = point.graphic,
                 verb = graphic ? 'animate' : 'attr',
-                shapeArgs = point.shapeArgs; // the box
-
-            /*= if (build.classic) { =*/
-            var boxAttr = {},
+                shapeArgs = point.shapeArgs,
+                boxAttr = {},
                 stemAttr = {},
                 whiskersAttr = {},
                 medianAttr = {},
                 color = point.color || series.color;
-            /*= } =*/
 
             if (point.plotY !== undefined) {
 
@@ -372,54 +352,55 @@ seriesType('boxplot', 'column', {
                         .add(graphic);
                 }
 
-                /*= if (build.classic) { =*/
+                if (!chart.styledMode) {
 
-                // Stem attributes
-                stemAttr.stroke = point.stemColor || options.stemColor || color;
-                stemAttr['stroke-width'] = pick(
-                    point.stemWidth,
-                    options.stemWidth,
-                    options.lineWidth
-                );
-                stemAttr.dashstyle =
-                    point.stemDashStyle || options.stemDashStyle;
-                point.stem.attr(stemAttr);
-
-                // Whiskers attributes
-                if (whiskerLength) {
-                    whiskersAttr.stroke =
-                        point.whiskerColor || options.whiskerColor || color;
-                    whiskersAttr['stroke-width'] = pick(
-                        point.whiskerWidth,
-                        options.whiskerWidth,
+                    // Stem attributes
+                    stemAttr.stroke =
+                        point.stemColor || options.stemColor || color;
+                    stemAttr['stroke-width'] = pick(
+                        point.stemWidth,
+                        options.stemWidth,
                         options.lineWidth
                     );
-                    point.whiskers.attr(whiskersAttr);
-                }
+                    stemAttr.dashstyle =
+                        point.stemDashStyle || options.stemDashStyle;
+                    point.stem.attr(stemAttr);
 
-                if (doQuartiles) {
-                    boxAttr.fill = (
-                        point.fillColor ||
-                        options.fillColor ||
-                        color
+                    // Whiskers attributes
+                    if (whiskerLength) {
+                        whiskersAttr.stroke =
+                            point.whiskerColor || options.whiskerColor || color;
+                        whiskersAttr['stroke-width'] = pick(
+                            point.whiskerWidth,
+                            options.whiskerWidth,
+                            options.lineWidth
+                        );
+                        point.whiskers.attr(whiskersAttr);
+                    }
+
+                    if (doQuartiles) {
+                        boxAttr.fill = (
+                            point.fillColor ||
+                            options.fillColor ||
+                            color
+                        );
+                        boxAttr.stroke = options.lineColor || color;
+                        boxAttr['stroke-width'] = options.lineWidth || 0;
+                        point.box.attr(boxAttr);
+                    }
+
+
+                    // Median attributes
+                    medianAttr.stroke =
+                        point.medianColor || options.medianColor || color;
+                    medianAttr['stroke-width'] = pick(
+                        point.medianWidth,
+                        options.medianWidth,
+                        options.lineWidth
                     );
-                    boxAttr.stroke = options.lineColor || color;
-                    boxAttr['stroke-width'] = options.lineWidth || 0;
-                    point.box.attr(boxAttr);
+                    point.medianShape.attr(medianAttr);
+
                 }
-
-
-                // Median attributes
-                medianAttr.stroke =
-                    point.medianColor || options.medianColor || color;
-                medianAttr['stroke-width'] = pick(
-                    point.medianWidth,
-                    options.medianWidth,
-                    options.lineWidth
-                );
-                point.medianShape.attr(medianAttr);
-
-                /*= } =*/
 
 
                 // The stem
@@ -540,8 +521,8 @@ seriesType('boxplot', 'column', {
  *     ]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.boxplot.turboThreshold),
  * this option is not available.
  *

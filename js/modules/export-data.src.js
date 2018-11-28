@@ -1,7 +1,7 @@
 /**
  * Experimental data export module for Highcharts
  *
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -11,18 +11,19 @@
 //   module importing the same data.
 
 'use strict';
+
 import Highcharts from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
+import '../mixins/download-url.js';
 
 var defined = Highcharts.defined,
-    each = Highcharts.each,
     pick = Highcharts.pick,
     win = Highcharts.win,
     doc = win.document,
     seriesTypes = Highcharts.seriesTypes,
-    downloadAttrSupported = doc.createElement('a').download !== undefined;
+    downloadURL = Highcharts.downloadURL;
 
 // Can we add this to utils? Also used in screen-reader.js
 /**
@@ -41,6 +42,7 @@ function htmlencode(html) {
 }
 
 Highcharts.setOptions({
+
     /**
      * @optionparent exporting
      */
@@ -50,11 +52,11 @@ Highcharts.setOptions({
          * Export-data module required. Caption for the data table. Same as
          * chart title by default. Set to `false` to disable.
          *
-         * @type {Boolean|String}
-         * @since 6.0.4
          * @sample highcharts/export-data/multilevel-table
-         *            Multiple table headers
-         * @default undefined
+         *         Multiple table headers
+         *
+         * @type      {boolean|string}
+         * @since     6.0.4
          * @apioption exporting.tableCaption
          */
 
@@ -78,6 +80,7 @@ Highcharts.setOptions({
          * @since 6.0.0
          */
         csv: {
+
             /**
              * Formatter callback for the column headers. Parameters are:
              * - `item` - The series or axis object)
@@ -102,10 +105,12 @@ Highcharts.setOptions({
              * Return `false` to use Highcharts' proposed header.
              *
              * @sample highcharts/export-data/multilevel-table
-             *            Multiple table headers
+             *         Multiple table headers
+             *
              * @type {Function|null}
              */
             columnHeaderFormatter: null,
+
             /**
              * Which date format to use for exported dates on a datetime X axis.
              * See `Highcharts.dateFormat`.
@@ -116,29 +121,39 @@ Highcharts.setOptions({
              * Which decimal point to use for exported CSV. Defaults to the same
              * as the browser locale, typically `.` (English) or `,` (German,
              * French etc).
-             * @type  {String}
+             *
+             * @type  {string|null}
              * @since 6.0.4
              */
             decimalPoint: null,
+
             /**
              * The item delimiter in the exported data. Use `;` for direct
              * exporting to Excel. Defaults to a best guess based on the browser
              * locale. If the locale _decimal point_ is `,`, the `itemDelimiter`
              * defaults to `;`, otherwise the `itemDelimiter` defaults to `,`.
              *
-             * @type {String}
+             * @type {string|null}
              */
             itemDelimiter: null,
+
             /**
              * The line delimiter in the exported data, defaults to a newline.
              */
             lineDelimiter: '\n'
+
         },
+
         /**
          * Export-data module required. Show a HTML table below the chart with
          * the chart's current data.
          *
-         * @sample highcharts/export-data/showtable/ Show the table
+         * @sample highcharts/export-data/showtable/
+         *         Show the table
+         * @sample highcharts/studies/exporting-table-html
+         *         Experiment with putting the table inside the subtitle to
+         *         allow exporting it.
+         *
          * @since 6.0.0
          */
         showTable: false,
@@ -150,7 +165,8 @@ Highcharts.setOptions({
          * to work.
          *
          * @sample highcharts/export-data/multilevel-table
-         *            Multiple table headers
+         *         Multiple table headers
+         *
          * @since 6.0.4
          */
         useMultiLevelHeaders: true,
@@ -160,32 +176,42 @@ Highcharts.setOptions({
          * rowspans for headers that have only one level.
          *
          * @sample highcharts/export-data/multilevel-table
-         *            Multiple table headers
+         *         Multiple table headers
+         *
          * @since 6.0.4
          */
         useRowspanHeaders: true
     },
+
     /**
      * @optionparent lang
      */
     lang: {
+
         /**
          * Export-data module only. The text for the menu item.
+         *
          * @since 6.0.0
          */
         downloadCSV: 'Download CSV',
+
         /**
          * Export-data module only. The text for the menu item.
+         *
          * @since 6.0.0
          */
         downloadXLS: 'Download XLS',
+
         /**
          * Export-data module only. The text for the menu item.
+         *
          * @since 6.1.0
          */
         openInCloud: 'Open in Highcharts Cloud',
+
         /**
          * Export-data module only. The text for the menu item.
+         *
          * @since 6.0.0
          */
         viewData: 'View data table'
@@ -203,10 +229,15 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
     }
 });
 
-// Set up key-to-axis bindings. This is used when the Y axis is datetime or
-// categorized. For example in an arearange series, the low and high values
-// should be formatted according to the Y axis type, and in order to link them
-// we need this map.
+/**
+ * Set up key-to-axis bindings. This is used when the Y axis is datetime or
+ * categorized. For example in an arearange series, the low and high values
+ * should be formatted according to the Y axis type, and in order to link them
+ * we need this map.
+ *
+ * @private
+ * @function Highcharts.Chart#setUpKeyToAxis
+ */
 Highcharts.Chart.prototype.setUpKeyToAxis = function () {
     if (seriesTypes.arearange) {
         seriesTypes.arearange.prototype.keyToAxis = {
@@ -220,13 +251,15 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  * Export-data module required. Returns a two-dimensional array containing the
  * current chart data.
  *
- * @param  {Boolean} multiLevelHeaders
- *            Use multilevel headers for the rows by default. Adds an extra row
- *            with top level headers. If a custom columnHeaderFormatter is
- *            defined, this can override the behavior.
+ * @function Highcharts.Chart#getDataRows
  *
- * @returns {Array<Array<Number|String>>}
- *          The current chart data
+ * @param {boolean} multiLevelHeaders
+ *        Use multilevel headers for the rows by default. Adds an extra row with
+ *        top level headers. If a custom columnHeaderFormatter is defined, this
+ *        can override the behavior.
+ *
+ * @return {Array<Array<number|string>>}
+ *         The current chart data
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
     var time = this.time,
@@ -277,19 +310,19 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 
     this.setUpKeyToAxis();
 
-    each(this.series, function (series) {
+    this.series.forEach(function (series) {
         var keys = series.options.keys,
             pointArrayMap = keys || series.pointArrayMap || ['y'],
             valueCount = pointArrayMap.length,
             xTaken = !series.requireSorting && {},
             categoryMap = {},
             datetimeValueAxisMap = {},
-            xAxisIndex = Highcharts.inArray(series.xAxis, xAxes),
+            xAxisIndex = xAxes.indexOf(series.xAxis),
             mockSeries,
             j;
 
         // Map the categories for value axes
-        each(pointArrayMap, function (prop) {
+        pointArrayMap.forEach(function (prop) {
             var axisName = (
                 (series.keyToAxis && series.keyToAxis[prop]) ||
                 prop
@@ -349,7 +382,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
-            each(series.options.data, function eachData(options, pIdx) {
+            series.options.data.forEach(function eachData(options, pIdx) {
                 var key,
                     prop,
                     val,
@@ -441,7 +474,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
         }
 
         // Add the category column
-        each(rowArr, function (row) { // eslint-disable-line no-loop-func
+        rowArr.forEach(function (row) { // eslint-disable-line no-loop-func
             var category = row.name;
             if (xAxis && !defined(category)) {
                 if (xAxis.isDatetimeAxis) {
@@ -477,13 +510,15 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
 /**
  * Export-data module required. Returns the current chart data as a CSV string.
  *
- * @param  {Boolean} useLocalDecimalPoint
- *         Whether to use the local decimal point as detected from the browser.
- *         This makes it easier to export data to Excel in the same locale as
- *         the user is.
+ * @function Highcharts.Chart#getCSV
  *
- * @returns {String}
- *          CSV representation of the data
+ * @param {boolean} useLocalDecimalPoint
+ *        Whether to use the local decimal point as detected from the browser.
+ *        This makes it easier to export data to Excel in the same locale as the
+ *        user is.
+ *
+ * @return {string}
+ *         CSV representation of the data
  */
 Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
     var csv = '',
@@ -504,7 +539,7 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
         lineDelimiter = csvOptions.lineDelimiter;
 
     // Transform the rows to CSV
-    each(rows, function (row, i) {
+    rows.forEach(function (row, i) {
         var val = '',
             j = row.length;
         while (j--) {
@@ -534,10 +569,18 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
  * Export-data module required. Build a HTML table with the chart's current
  * data.
  *
- * @sample  highcharts/export-data/viewdata/
- *          View the data from the export menu
- * @returns {String}
- *          HTML representation of the data.
+ * @sample highcharts/export-data/viewdata/
+ *         View the data from the export menu
+ *
+ * @function Highcharts.Chart#getTable
+ *
+ * @param {boolean} useLocalDecimalPoint
+ *        Whether to use the local decimal point as detected from the browser.
+ *        This makes it easier to export data to Excel in the same locale as the
+ *        user is.
+ *
+ * @return {string}
+ *         HTML representation of the data.
  */
 Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
     var html = '<table>',
@@ -690,7 +733,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 
     // Transform the rows to HTML
     html += '<tbody>';
-    each(rows, function (row) {
+    rows.forEach(function (row) {
         html += '<tr>';
         for (var j = 0; j < rowLength; j++) {
             // Make first column a header too. Especially important for
@@ -710,59 +753,54 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
     return html;
 };
 
+
 /**
- * File download using download attribute if supported.
+ * Get the filename for a chart that is being downloaded
  *
  * @private
+ * @return {String} The filename.
  */
-Highcharts.Chart.prototype.fileDownload = function (href, extension, content) {
-    var a,
-        blobObject,
-        name;
-
+Highcharts.Chart.prototype.getFilename = function () {
     if (this.options.exporting.filename) {
-        name = this.options.exporting.filename;
-    } else if (this.title && this.title.textStr) {
-        name = this.title.textStr.replace(/ /g, '-').toLowerCase();
-    } else {
-        name = 'chart';
+        return this.options.exporting.filename;
     }
-
-    // MS specific. Check this first because of bug with Edge (#76)
-    if (win.Blob && win.navigator.msSaveOrOpenBlob) {
-        // Falls to msSaveOrOpenBlob if download attribute is not supported
-        blobObject = new win.Blob(
-            ['\uFEFF' + content], // #7084
-            { type: 'text/csv' }
-        );
-        win.navigator.msSaveOrOpenBlob(blobObject, name + '.' + extension);
-
-    // Download attribute supported
-    } else if (downloadAttrSupported) {
-        a = doc.createElement('a');
-        a.href = href;
-        a.download = name + '.' + extension;
-        this.container.appendChild(a); // #111
-        a.click();
-        a.remove();
-
-    } else {
-        Highcharts.error('The browser doesn\'t support downloading files');
-    }
+    return this.title && this.title.textStr ?
+        this.title.textStr.replace(/ /g, '-').toLowerCase() :
+        'chart';
 };
+
+
+/**
+ * Get a blob object from content, if blob is supported
+ *
+ * @private
+ *
+ * @param {String} content The content to create the blob from.
+ * @param {String} type The type of the content.
+ * @return {object} The blob object, or undefined if not supported.
+ */
+function getBlobFromContent(content, type) {
+    if (win.Blob && win.navigator.msSaveOrOpenBlob) {
+        return new win.Blob(
+            ['\uFEFF' + content], // #7084
+            { type: type }
+        );
+    }
+}
+
 
 /**
  * Call this on click of 'Download CSV' button
  *
  * @private
+ * @function Highcharts.Chart#downloadCSV
  */
 Highcharts.Chart.prototype.downloadCSV = function () {
     var csv = this.getCSV(true);
-    this.fileDownload(
-        'data:text/csv,\uFEFF' + encodeURIComponent(csv),
-        'csv',
-        csv,
-        'text/csv'
+    downloadURL(
+        getBlobFromContent(csv, 'text/csv') ||
+            'data:text/csv,\uFEFF' + encodeURIComponent(csv),
+        this.getFilename() + '.csv'
     );
 };
 
@@ -770,6 +808,7 @@ Highcharts.Chart.prototype.downloadCSV = function () {
  * Call this on click of 'Download XLS' button
  *
  * @private
+ * @function Highcharts.Chart#downloadXLS
  */
 Highcharts.Chart.prototype.downloadXLS = function () {
     var uri = 'data:application/vnd.ms-excel;base64,',
@@ -793,16 +832,18 @@ Highcharts.Chart.prototype.downloadXLS = function () {
         base64 = function (s) {
             return win.btoa(unescape(encodeURIComponent(s))); // #50
         };
-    this.fileDownload(
-        uri + base64(template),
-        'xls',
-        template,
-        'application/vnd.ms-excel'
+
+    downloadURL(
+        getBlobFromContent(template, 'application/vnd.ms-excel') ||
+            uri + base64(template),
+        this.getFilename() + '.xls'
     );
 };
 
 /**
  * Export-data module required. View the data in a table below the chart.
+ *
+ * @function Highcharts.Chart#viewData
  */
 Highcharts.Chart.prototype.viewData = function () {
     if (!this.dataTableDiv) {
@@ -825,6 +866,8 @@ Highcharts.Chart.prototype.viewData = function () {
  * Limitations
  * - All functions (formatters and callbacks) are removed since they're not
  *   JSON.
+ *
+ * @function Highcharts.Chart#openInCloud
  *
  * @todo
  * - Let the Cloud throw a friendly warning about unsupported structures like

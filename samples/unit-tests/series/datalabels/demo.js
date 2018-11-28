@@ -254,3 +254,42 @@ QUnit.test(
 
     }
 );
+
+QUnit.test(
+    'Data labels with missing values on arearange (#9247)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'arearange'
+            },
+            series: [{
+                data: [
+                    [0, 1],
+                    [2, 3],
+                    [4, 5],
+                    [0, 5]
+                ],
+                dataLabels: {
+                    enabled: true,
+                    formatter: function () {
+                        if (this.y > 0.5 && this.y < 4.5) {
+                            return this.y;
+                        }
+                        return null;
+                    }
+                }
+            }]
+
+        });
+
+        assert.deepEqual(
+            chart.series[0].points.map(function (p) {
+                return p.dataLabels && p.dataLabels.length;
+            }),
+            [1, 2, 1, 0],
+            'Data labels should only exist inside given range'
+        );
+
+        chart.destroy();
+    }
+);

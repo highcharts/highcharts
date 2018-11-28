@@ -4,6 +4,9 @@ import './../../parts/Utilities.js';
 import controllableMixin from './controllableMixin.js';
 import markerMixin from './markerMixin.js';
 
+// See TRACKER_FILL in highcharts.src.js
+var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
+
 /**
  * A controllable path class.
  *
@@ -34,12 +37,10 @@ function ControllablePath(annotation, options) {
  * @type {Annotation.ControllablePath.AttrsMap}
  */
 ControllablePath.attrsMap = {
-    /*= if (build.classic) { =*/
     dashStyle: 'dashstyle',
     strokeWidth: 'stroke-width',
     stroke: 'stroke',
     fill: 'fill',
-    /*= } =*/
     zIndex: 'zIndex'
 };
 
@@ -115,6 +116,18 @@ H.merge(
                 .attr(attrs)
                 .add(parent);
 
+            this.tracker = this.annotation.chart.renderer
+                .path(['M', 0, 0])
+                .attr({
+                    'stroke-linejoin': 'round', // #1225
+                    stroke: TRACKER_FILL,
+                    fill: TRACKER_FILL,
+                    'stroke-width': this.graphic.strokeWidth() +
+                        options.snap * 2,
+                    zIndex: 2
+                })
+                .add(parent);
+
             controllableMixin.render.call(this);
 
             H.extend(this.graphic, {
@@ -127,15 +140,18 @@ H.merge(
 
         redraw: function (animation) {
 
-            var d = this.toD();
+            var d = this.toD(),
+                action = animation ? 'animate' : 'attr';
 
             if (d) {
-                this.graphic[animation ? 'animate' : 'attr']({ d: d });
+                this.graphic[action]({ d: d });
+                this.tracker[action]({ d: d });
             } else {
                 this.graphic.attr({ d: 'M 0 ' + -9e9 });
+                this.tracker.attr({ d: 'M 0 ' + -9e9 });
             }
 
-            this.graphic.placed = Boolean(d);
+            this.graphic.placed = this.tracker.placed = Boolean(d);
 
             controllableMixin.redraw.call(this, animation);
         }

@@ -1,28 +1,29 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
+
 var addEvent = H.addEvent,
     arrayMax = H.arrayMax,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     format = H.format,
-    map = H.map,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
     relativeLength = H.relativeLength,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    some = H.some,
-    stableSort = H.stableSort;
-
+    stableSort = H.stableSort,
+    isArray = H.isArray,
+    splat = H.splat;
 
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -30,6 +31,15 @@ var addEvent = H.addEvent,
  * objects containing a size, a target and a rank. It will place the labels as
  * close as possible to their targets, skipping the lowest ranked labels if
  * necessary.
+ *
+ * @private
+ * @function Highcharts.distribute
+ *
+ * @param {Array<object>} boxes
+ *
+ * @param {number} len
+ *
+ * @param {number} maxDistance
  */
 H.distribute = function (boxes, len, maxDistance) {
 
@@ -73,7 +83,7 @@ H.distribute = function (boxes, len, maxDistance) {
 
     // So far we have been mutating the original array. Now
     // create a copy with target arrays
-    boxes = map(boxes, function (box) {
+    boxes = boxes.map(function (box) {
         return {
             size: box.size,
             targets: [box.target],
@@ -127,9 +137,9 @@ H.distribute = function (boxes, len, maxDistance) {
     // Now the composite boxes are placed, we need to put the original boxes
     // within them
     i = 0;
-    some(boxes, function (box) {
+    boxes.some(function (box) {
         var posInCompositeBox = 0;
-        if (some(box.targets, function () {
+        if (box.targets.some(function () {
             origBoxes[i].pos = box.pos + posInCompositeBox;
 
             // If the distance between the position and the target exceeds
@@ -141,7 +151,7 @@ H.distribute = function (boxes, len, maxDistance) {
                 maxDistance
             ) {
                 // Reset the positions that are already set
-                each(origBoxes.slice(0, i + 1), function (box) {
+                origBoxes.slice(0, i + 1).forEach(function (box) {
                     delete box.pos;
                 });
 
@@ -174,19 +184,22 @@ H.distribute = function (boxes, len, maxDistance) {
 
 /**
  * Draw the data labels
+ *
+ * @private
+ * @function Highcharts.Series#drawDataLabels
+ *
+ * @fires Highcharts.Series#event:afterDrawDataLabels
  */
 Series.prototype.drawDataLabels = function () {
     var series = this,
         chart = series.chart,
         seriesOptions = series.options,
-        options = seriesOptions.dataLabels,
+        seriesDlOptions = seriesOptions.dataLabels,
         points = series.points,
         pointOptions,
-        generalOptions,
         hasRendered = series.hasRendered || 0,
-        str,
         dataLabelsGroup,
-        defer = pick(options.defer, !!seriesOptions.animation),
+        defer = pick(seriesDlOptions.defer, !!seriesOptions.animation),
         renderer = chart.renderer;
 
     /*
@@ -216,21 +229,59 @@ Series.prototype.drawDataLabels = function () {
         return true;
     }
 
-    H.fireEvent(this, 'beforeDrawDataLabels');
-
-    if (options.enabled || series._hasPointLabels) {
-
-        // Process default alignment of data labels for columns
-        if (series.dlProcessOptions) {
-            series.dlProcessOptions(options);
+    /*
+     * Merge two objects that can be arrays. If one of them is an array, the
+     * other is merged into each element. If both are arrays, each element is
+     * merged by index. If neither are arrays, we use normal merge.
+     */
+    function mergeArrays(one, two) {
+        var res = [],
+            i;
+        if (isArray(one) && !isArray(two)) {
+            res = one.map(function (el) {
+                return merge(el, two);
+            });
+        } else if (isArray(two) && !isArray(one)) {
+            res = two.map(function (el) {
+                return merge(one, el);
+            });
+        } else if (!isArray(one) && !isArray(two)) {
+            res = merge(one, two);
+        } else {
+            i = Math.max(one.length, two.length);
+            while (i--) {
+                res[i] = merge(one[i], two[i]);
+            }
         }
+        return res;
+    }
+
+
+    // Merge in plotOptions.dataLabels for series
+    seriesDlOptions = mergeArrays(
+        mergeArrays(
+            chart.options.plotOptions &&
+            chart.options.plotOptions.series &&
+            chart.options.plotOptions.series.dataLabels,
+            chart.options.plotOptions &&
+            chart.options.plotOptions[series.type] &&
+            chart.options.plotOptions[series.type].dataLabels
+        ),
+        seriesDlOptions
+    );
+
+    if (
+        isArray(seriesDlOptions) ||
+        seriesDlOptions.enabled ||
+        series._hasPointLabels
+    ) {
 
         // Create a separate group for the data labels to avoid rotation
         dataLabelsGroup = series.plotGroup(
             'dataLabelsGroup',
             'data-labels',
             defer && !hasRendered ? 'hidden' : 'visible', // #5133
-            options.zIndex || 6
+            seriesDlOptions.zIndex || 6
         );
 
         if (defer) {
@@ -248,149 +299,198 @@ Series.prototype.drawDataLabels = function () {
         }
 
         // Make the labels for each point
-        generalOptions = options;
-        each(points, function (point) {
-            var enabled,
-                dataLabel = point.dataLabel,
-                labelConfig,
-                attr,
-                rotation,
-                connector = point.connector,
-                isNew = !dataLabel,
-                style,
-                formatString;
+        points.forEach(function (point) {
 
-            // Determine if each data label is enabled
+            // Merge in series options for the point.
             // @note dataLabelAttribs (like pointAttribs) would eradicate
             // the need for dlOptions, and simplify the section below.
-            pointOptions = point.dlOptions || // dlOptions is used in treemaps
-                (point.options && point.options.dataLabels);
-            enabled = pick(
-                pointOptions && pointOptions.enabled,
-                generalOptions.enabled
-            ) && !point.isNull; // #2282, #4641, #7112
+            pointOptions = splat(
+                mergeArrays(
+                    seriesDlOptions,
+                    point.dlOptions || // dlOptions is used in treemaps
+                        (point.options && point.options.dataLabels)
+                )
+            );
 
-            if (enabled) {
-                enabled = applyFilter(point, pointOptions || options) === true;
-            }
+            // Handle each individual data label for this point
+            pointOptions.forEach(function (labelOptions, i) {
+                // Options for one datalabel
+                var labelEnabled = labelOptions.enabled &&
+                        !point.isNull && // #2282, #4641, #7112
+                        applyFilter(point, labelOptions),
+                    labelConfig,
+                    formatString,
+                    labelText,
+                    style,
+                    rotation,
+                    attr,
+                    dataLabel = point.dataLabels ? point.dataLabels[i] :
+                        point.dataLabel,
+                    connector = point.connectors ? point.connectors[i] :
+                        point.connector,
+                    isNew = !dataLabel;
 
-            if (enabled) {
-                // Create individual options structure that can be extended
-                // without affecting others
-                options = merge(generalOptions, pointOptions);
-                labelConfig = point.getLabelConfig();
-                formatString = (
-                    options[point.formatPrefix + 'Format'] ||
-                    options.format
-                );
+                if (labelEnabled) {
+                    // Create individual options structure that can be extended
+                    // without affecting others
+                    labelConfig = point.getLabelConfig();
+                    formatString = (
+                        labelOptions[point.formatPrefix + 'Format'] ||
+                        labelOptions.format
+                    );
 
-                str = defined(formatString) ?
-                    format(formatString, labelConfig, chart.time) :
-                    (
-                        options[point.formatPrefix + 'Formatter'] ||
-                        options.formatter
-                    ).call(labelConfig, options);
+                    labelText = defined(formatString) ?
+                        format(formatString, labelConfig, chart.time) :
+                        (
+                            labelOptions[point.formatPrefix + 'Formatter'] ||
+                            labelOptions.formatter
+                        ).call(labelConfig, labelOptions);
 
-                style = options.style;
-                rotation = options.rotation;
-                /*= if (build.classic) { =*/
-                // Determine the color
-                style.color = pick(
-                    options.color,
-                    style.color,
-                    series.color,
-                    '${palette.neutralColor100}'
-                );
-                // Get automated contrast color
-                if (style.color === 'contrast') {
-                    point.contrastColor =
-                        renderer.getContrast(point.color || series.color);
-                    style.color = options.inside ||
-                        pick(point.labelDistance, options.distance) < 0 ||
-                        !!seriesOptions.stacking ?
-                            point.contrastColor :
-                            '${palette.neutralColor100}';
-                }
-                if (seriesOptions.cursor) {
-                    style.cursor = seriesOptions.cursor;
-                }
-                /*= } =*/
+                    style = labelOptions.style;
+                    rotation = labelOptions.rotation;
 
-                attr = {
-                    /*= if (build.classic) { =*/
-                    fill: options.backgroundColor,
-                    stroke: options.borderColor,
-                    'stroke-width': options.borderWidth,
-                    /*= } =*/
-                    r: options.borderRadius || 0,
-                    rotation: rotation,
-                    padding: options.padding,
-                    zIndex: 1
-                };
-
-                // Remove unused attributes (#947)
-                H.objectEach(attr, function (val, name) {
-                    if (val === undefined) {
-                        delete attr[name];
+                    if (!chart.styledMode) {
+                        // Determine the color
+                        style.color = pick(
+                            labelOptions.color,
+                            style.color,
+                            series.color,
+                            '${palette.neutralColor100}'
+                        );
+                        // Get automated contrast color
+                        if (style.color === 'contrast') {
+                            point.contrastColor = renderer.getContrast(
+                                point.color || series.color
+                            );
+                            style.color = labelOptions.inside ||
+                                pick(
+                                    labelOptions.distance,
+                                    point.labelDistance
+                                ) < 0 ||
+                                !!seriesOptions.stacking ?
+                                    point.contrastColor :
+                                    '${palette.neutralColor100}';
+                        }
+                        if (seriesOptions.cursor) {
+                            style.cursor = seriesOptions.cursor;
+                        }
                     }
-                });
-            }
-            // If the point is outside the plot area, destroy it. #678, #820
-            if (dataLabel && (!enabled || !defined(str))) {
-                point.dataLabel = dataLabel = dataLabel.destroy();
-                if (connector) {
-                    point.connector = connector.destroy();
-                }
-            // Individual labels are disabled if the are explicitly disabled
-            // in the point options, or if they fall outside the plot area.
-            } else if (enabled && defined(str)) {
-                // create new label
-                if (!dataLabel) {
-                    dataLabel = point.dataLabel = rotation ?
 
-                        renderer
-                            .text( // labels don't rotate
-                                str,
+                    attr = {
+                        r: labelOptions.borderRadius || 0,
+                        rotation: rotation,
+                        padding: labelOptions.padding,
+                        zIndex: 1
+                    };
+
+                    if (!chart.styledMode) {
+                        attr.fill = labelOptions.backgroundColor;
+                        attr.stroke = labelOptions.borderColor;
+                        attr['stroke-width'] = labelOptions.borderWidth;
+                    }
+
+                    // Remove unused attributes (#947)
+                    H.objectEach(attr, function (val, name) {
+                        if (val === undefined) {
+                            delete attr[name];
+                        }
+                    });
+                }
+
+                // If the point is outside the plot area, destroy it. #678, #820
+                if (dataLabel && (!labelEnabled || !defined(labelText))) {
+                    point.dataLabel =
+                        point.dataLabel && point.dataLabel.destroy();
+                    if (point.dataLabels) {
+                        // Remove point.dataLabels if this was the last one
+                        if (point.dataLabels.length === 1) {
+                            delete point.dataLabels;
+                        } else {
+                            delete point.dataLabels[i];
+                        }
+                    }
+                    if (!i) {
+                        delete point.dataLabel;
+                    }
+                    if (connector) {
+                        point.connector = point.connector.destroy();
+                        if (point.connectors) {
+                            // Remove point.connectors if this was the last one
+                            if (point.connectors.length === 1) {
+                                delete point.connectors;
+                            } else {
+                                delete point.connectors[i];
+                            }
+                        }
+                    }
+
+                // Individual labels are disabled if the are explicitly disabled
+                // in the point options, or if they fall outside the plot area.
+                } else if (labelEnabled && defined(labelText)) {
+
+                    if (!dataLabel) {
+                        // Create new label element
+                        point.dataLabels = point.dataLabels || [];
+                        dataLabel = point.dataLabels[i] = rotation ?
+
+                            // Labels don't rotate, use text element
+                            renderer.text(labelText, 0, -9999)
+                                .addClass('highcharts-data-label') :
+
+                            // We can use label
+                            renderer.label(
+                                labelText,
                                 0,
                                 -9999,
-                                options.useHTML
+                                labelOptions.shape,
+                                null,
+                                null,
+                                labelOptions.useHTML,
+                                null,
+                                'data-label'
+                            );
+
+                        // Store for backwards compatibility
+                        if (!i) {
+                            point.dataLabel = dataLabel;
+                        }
+
+                        dataLabel.addClass(
+                            ' highcharts-data-label-color-' + point.colorIndex +
+                            ' ' + (labelOptions.className || '') +
+                            (   // #3398
+                                labelOptions.useHTML ?
+                                    ' highcharts-tracker' :
+                                    ''
                             )
-                            .addClass('highcharts-data-label') :
-
-                        renderer.label(
-                            str,
-                            0,
-                            -9999,
-                            options.shape,
-                            null,
-                            null,
-                            options.useHTML,
-                            null,
-                            'data-label'
                         );
+                    } else {
+                        // Use old element and just update text
+                        attr.text = labelText;
+                    }
 
-                    dataLabel.addClass(
-                        ' highcharts-data-label-color-' + point.colorIndex +
-                        ' ' + (options.className || '') +
-                        (options.useHTML ? ' highcharts-tracker' : '') // #3398
+                    // Store data label options for later access
+                    dataLabel.options = labelOptions;
+
+                    dataLabel.attr(attr);
+
+                    if (!chart.styledMode) {
+                        // Styles must be applied before add in order to read
+                        // text bounding box
+                        dataLabel.css(style).shadow(labelOptions.shadow);
+                    }
+
+                    if (!dataLabel.added) {
+                        dataLabel.add(dataLabelsGroup);
+                    }
+
+                    // Now the data label is created and placed at 0,0, so we
+                    // need to align it
+                    series.alignDataLabel(
+                        point, dataLabel, labelOptions, null, isNew
                     );
-                } else {
-                    attr.text = str;
                 }
-                dataLabel.attr(attr);
-                /*= if (build.classic) { =*/
-                // Styles must be applied before add in order to read text
-                // bounding box
-                dataLabel.css(style).shadow(options.shadow);
-                /*= } =*/
-
-                if (!dataLabel.added) {
-                    dataLabel.add(dataLabelsGroup);
-                }
-                // Now the data label is created and placed at 0,0, so we need
-                // to align it
-                series.alignDataLabel(point, dataLabel, options, null, isNew);
-            }
+            });
         });
     }
 
@@ -398,7 +498,20 @@ Series.prototype.drawDataLabels = function () {
 };
 
 /**
- * Align each individual data label
+ * Align each individual data label.
+ *
+ * @private
+ * @function Highcharts.Series#alignDataLabel
+ *
+ * @param {Highcharts.Point} point
+ *
+ * @param {Highcharts.SVGElement} dataLabel
+ *
+ * @param {Highcharts.PlotSeriesDataLabelsOptions} options
+ *
+ * @param {Highcharts.BBoxObject} alignTo
+ *
+ * @param {boolean} isNew
  */
 Series.prototype.alignDataLabel = function (
     point,
@@ -412,7 +525,6 @@ Series.prototype.alignDataLabel = function (
         plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX, -9999),
         plotY = pick(point.plotY, -9999),
         bBox = dataLabel.getBBox(),
-        fontSize,
         baseline,
         rotation = options.rotation,
         normRotation,
@@ -441,11 +553,10 @@ Series.prototype.alignDataLabel = function (
 
     if (visible) {
 
-        /*= if (build.classic) { =*/
-        fontSize = options.style.fontSize;
-        /*= } =*/
-
-        baseline = chart.renderer.fontMetrics(fontSize, dataLabel).b;
+        baseline = chart.renderer.fontMetrics(
+            chart.styledMode ? undefined : options.style.fontSize,
+            dataLabel
+        ).b;
 
         // The alignment box is a singular point
         alignTo = extend({
@@ -546,6 +657,21 @@ Series.prototype.alignDataLabel = function (
 /**
  * If data labels fall partly outside the plot area, align them back in, in a
  * way that doesn't hide the point.
+ *
+ * @private
+ * @function Highcharts.Series#justifyDataLabel
+ *
+ * @param {Highcharts.SVGElement} dataLabel
+ *
+ * @param {Highcharts.PlotSeriesDataLabelsOptions} options
+ *
+ * @param {*} alignAttr
+ *
+ * @param {Highcharts.BBoxObject} bBox
+ *
+ * @param {boolean} isNew
+ *
+ * @return {boolean}
  */
 Series.prototype.justifyDataLabel = function (
     dataLabel,
@@ -614,9 +740,6 @@ Series.prototype.justifyDataLabel = function (
     return justified;
 };
 
-/**
- * Override the base drawDataLabels method by pie specific functionality
- */
 if (seriesTypes.pie) {
     seriesTypes.pie.prototype.dataLabelPositioners = {
 
@@ -665,7 +788,7 @@ if (seriesTypes.pie) {
                 dataLabelWidth;
 
             // find widest data label
-            each(points, function (point) {
+            points.forEach(function (point) {
                 dataLabelWidth = point.dataLabel.getBBox().width;
                 if (dataLabelWidth > maxDataLabelWidth) {
                     maxDataLabelWidth = dataLabelWidth;
@@ -676,6 +799,12 @@ if (seriesTypes.pie) {
         }
     };
 
+    /**
+     * Override the base drawDataLabels method by pie specific functionality
+     *
+     * @private
+     * @function Highcharts.seriesTypes.pie#drawDataLabels
+     */
     seriesTypes.pie.prototype.drawDataLabels = function () {
         var series = this,
             data = series.data,
@@ -715,7 +844,7 @@ if (seriesTypes.pie) {
         }
 
         // Reset all labels that have been shortened
-        each(data, function (point) {
+        data.forEach(function (point) {
             if (point.dataLabel && point.visible && point.dataLabel.shortened) {
                 point.dataLabel
                     .attr({
@@ -732,7 +861,7 @@ if (seriesTypes.pie) {
         // run parent method
         Series.prototype.drawDataLabels.apply(series);
 
-        each(data, function (point) {
+        data.forEach(function (point) {
             if (point.dataLabel) {
 
                 if (point.visible) { // #407, #2510
@@ -744,7 +873,6 @@ if (seriesTypes.pie) {
                     point.dataLabel._pos = null;
 
                     // Avoid long labels squeezing the pie size too far down
-                    /*= if (build.classic) { =*/
                     if (
                         !defined(options.style.width) &&
                         !defined(
@@ -753,7 +881,6 @@ if (seriesTypes.pie) {
                             point.options.dataLabels.style.width
                         )
                     ) {
-                    /*= } =*/
                         if (point.dataLabel.getBBox().width > maxWidth) {
                             point.dataLabel.css({
                                 // Use a fraction of the maxWidth to avoid
@@ -762,11 +889,15 @@ if (seriesTypes.pie) {
                             });
                             point.dataLabel.shortened = true;
                         }
-                    /*= if (build.classic) { =*/
                     }
-                    /*= } =*/
                 } else {
                     point.dataLabel = point.dataLabel.destroy();
+                    // Workaround to make pies destroy multiple datalabels
+                    // correctly. This logic needs rewriting to support multiple
+                    // datalabels fully.
+                    if (point.dataLabels && point.dataLabels.length === 1) {
+                        delete point.dataLabels;
+                    }
                 }
             }
         });
@@ -774,7 +905,7 @@ if (seriesTypes.pie) {
         /* Loop over the points in each half, starting from the top and bottom
          * of the pie to detect overlapping labels.
          */
-        each(halves, function (points, i) {
+        halves.forEach(function (points, i) {
 
             var top,
                 bottom,
@@ -802,7 +933,7 @@ if (seriesTypes.pie) {
                     centerY + radius + series.maxLabelDistance,
                     chart.plotHeight
                 );
-                each(points, function (point) {
+                points.forEach(function (point) {
                     // check if specific points' label is outside the pie
                     if (point.labelDistance > 0 && point.dataLabel) {
                         // point.top depends on point.labelDistance value
@@ -964,7 +1095,7 @@ if (seriesTypes.pie) {
 
             // Draw the connectors
             if (connectorWidth) {
-                each(this.points, function (point) {
+                this.points.forEach(function (point) {
                     var isNew;
 
                     connector = point.connector;
@@ -992,16 +1123,16 @@ if (seriesTypes.pie) {
                                 )
                                 .add(series.dataLabelsGroup);
 
-                            /*= if (build.classic) { =*/
-                            connector.attr({
-                                'stroke-width': connectorWidth,
-                                'stroke': (
-                                    options.connectorColor ||
-                                    point.color ||
-                                    '${palette.neutralColor60}'
-                                )
-                            });
-                            /*= } =*/
+                            if (!chart.styledMode) {
+                                connector.attr({
+                                    'stroke-width': connectorWidth,
+                                    'stroke': (
+                                        options.connectorColor ||
+                                        point.color ||
+                                        '${palette.neutralColor60}'
+                                    )
+                                });
+                            }
                         }
                         connector[isNew ? 'attr' : 'animate']({
                             d: point.getConnectorPath()
@@ -1019,6 +1150,13 @@ if (seriesTypes.pie) {
     /**
      * Extendable method for getting the path of the connector between the data
      * label and the pie slice.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.pie#connectorPath
+     *
+     * @param {*} labelPos
+     *
+     * @return {Highcharts.PathObject}
      */
      // TODO: depracated - remove it
      /*
@@ -1051,9 +1189,12 @@ if (seriesTypes.pie) {
     /**
      * Perform the final placement of the data labels after we have verified
      * that they fall within the plot area.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.pie#placeDataLabels
      */
     seriesTypes.pie.prototype.placeDataLabels = function () {
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var dataLabel = point.dataLabel,
                 _pos;
             if (dataLabel && point.visible) {
@@ -1093,6 +1234,13 @@ if (seriesTypes.pie) {
      * Verify whether the data labels are allowed to draw, or we should run more
      * translation and data label positioning to keep them inside the plot area.
      * Returns true when data labels are ready to draw.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.pie#verifyDataLabelOverflow
+     *
+     * @param {boolean} overflow
+     *
+     * @return {boolean}
      */
     seriesTypes.pie.prototype.verifyDataLabelOverflow = function (overflow) {
 
@@ -1166,7 +1314,20 @@ if (seriesTypes.column) {
 
     /**
      * Override the basic data label alignment by adjusting for the position of
-     * the column
+     * the column.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#alignDataLabel
+     *
+     * @param {Highcharts.Point} point
+     *
+     * @param {Highcharts.SVGElement} dataLabel
+     *
+     * @param {Highcharts.PlotSeriesDataLabelsOptions} options
+     *
+     * @param {Highcharts.BBoxObject} alignTo
+     *
+     * @param {boolean} isNew
      */
     seriesTypes.column.prototype.alignDataLabel = function (
         point,
@@ -1245,7 +1406,7 @@ if (seriesTypes.column) {
 
         // If label was justified and we have contrast, set it:
         if (point.isLabelJustified && point.contrastColor) {
-            point.dataLabel.css({
+            dataLabel.css({
                 color: point.contrastColor
             });
         }

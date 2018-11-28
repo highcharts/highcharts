@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -8,7 +8,7 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
-/*= if (build.classic) { =*/
+
 var addEvent = H.addEvent,
     Axis = H.Axis,
     SVGRenderer = H.SVGRenderer,
@@ -58,4 +58,3 @@ if (VMLRenderer) {
     });
 
 }
-/*= } =*/

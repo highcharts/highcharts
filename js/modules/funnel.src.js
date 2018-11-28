@@ -1,7 +1,7 @@
 /**
  * Highcharts funnel module
  *
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -16,8 +16,7 @@ import '../parts/Series.js';
 var seriesType = Highcharts.seriesType,
     seriesTypes = Highcharts.seriesTypes,
     noop = Highcharts.noop,
-    pick = Highcharts.pick,
-    each = Highcharts.each;
+    pick = Highcharts.pick;
 
 
 seriesType('funnel', 'pie',
@@ -108,9 +107,6 @@ seriesType('funnel', 'pie',
      */
     size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 
-    /*= if (build.classic) { =*/
-    // Presentational
-
     dataLabels: {
         connectorWidth: 1
     },
@@ -152,7 +148,6 @@ seriesType('funnel', 'pie',
             borderColor: '${palette.neutralColor100}'
         }
     }
-    /*= } =*/
 },
 
 // Properties
@@ -247,13 +242,13 @@ seriesType('funnel', 'pie',
 
 
         // get the total sum
-        each(data, function (point) {
+        data.forEach(function (point) {
             if (!ignoreHiddenPoint || point.visible !== false) {
                 sum += point.y;
             }
         });
 
-        each(data, function (point) {
+        data.forEach(function (point) {
             // set start and end positions
             y5 = null;
             fraction = sum ? point.y / sum : 0;
@@ -436,8 +431,8 @@ seriesType('funnel', 'pie',
  *  data: [0, 5, 3, 5]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.funnel.turboThreshold),
  * this option is not available.
  *
@@ -536,8 +531,8 @@ seriesType('pyramid', 'funnel',
  *  data: [0, 5, 3, 5]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.pyramid.turboThreshold),
  * this option is not available.
  *

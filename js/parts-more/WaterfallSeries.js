@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -50,7 +50,6 @@ seriesType('waterfall', 'column', {
     dataLabels: {
         inside: true
     },
-    /*= if (build.classic) { =*/
 
     /**
      * The width of the line connecting waterfall columns.
@@ -115,7 +114,6 @@ seriesType('waterfall', 'column', {
             lineWidthPlus: 0 // #3126
         }
     }
-    /*= } =*/
 
 // Prototype members
 }, {
@@ -341,7 +339,6 @@ seriesType('waterfall', 'column', {
         return pt.y;
     },
 
-    /*= if (build.classic) { =*/
     /**
      * Postprocess mapping between options and SVG attributes
      */
@@ -367,7 +364,6 @@ seriesType('waterfall', 'column', {
 
         return attr;
     },
-    /*= } =*/
 
     /**
      * Return an empty path initially, because we need to know the
@@ -526,8 +522,8 @@ seriesType('waterfall', 'column', {
  *     ]
  *  ```
  *
- * 3.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 3.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series'
  * [turboThreshold](#series.waterfall.turboThreshold),
  * this option is not available.

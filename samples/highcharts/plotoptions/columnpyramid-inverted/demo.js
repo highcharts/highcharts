@@ -5,7 +5,7 @@ Highcharts.chart('container', {
         inverted: true
     },
     title: {
-        text: 'Stacked bar chart'
+        text: 'Stacked columppyramid chart'
     },
     xAxis: {
         categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']

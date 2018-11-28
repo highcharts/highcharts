@@ -2,7 +2,7 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Data module
  *
- * (c) 2012-2017 Torstein Honsi
+ * (c) 2012-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

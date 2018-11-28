@@ -1,0 +1,6 @@
+---
+ name: Highstock Demo
+ authors:
+   - Daniel Studencki
+ js_wrap: b
+...

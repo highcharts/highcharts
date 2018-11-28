@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -18,10 +18,7 @@ var animObject = H.animObject,
     color = H.color,
     defined = H.defined,
     deg2rad = H.deg2rad,
-    each = H.each,
     extend = H.extend,
-    inArray = H.inArray,
-    map = H.map,
     merge = H.merge,
     perspective = H.perspective,
     pick = H.pick,
@@ -78,50 +75,12 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
     ];
 }
 
-/*= if (!build.classic) { =*/
-/**
- * Override the SVGRenderer initiator to add definitions used by brighter and
- * darker faces of the cuboids.
- */
-wrap(SVGRenderer.prototype, 'init', function (proceed) {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    each([{
-        name: 'darker',
-        slope: 0.6
-    }, {
-        name: 'brighter',
-        slope: 1.4
-    }], function (cfg) {
-        this.definition({
-            tagName: 'filter',
-            id: 'highcharts-' + cfg.name,
-            children: [{
-                tagName: 'feComponentTransfer',
-                children: [{
-                    tagName: 'feFuncR',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncG',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncB',
-                    type: 'linear',
-                    slope: cfg.slope
-                }]
-            }]
-        });
-    }, this);
-});
-/*= } =*/
 
 SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
 
     // Put "L x y" for each point
-    each(points, function (point) {
+    points.forEach(function (point) {
         result.push('L', point.x, point.y);
     });
 
@@ -142,7 +101,7 @@ SVGRenderer.prototype.toLineSegments = function (points) {
     var result = [],
         m = true;
 
-    each(points, function (point) {
+    points.forEach(function (point) {
         result.push(m ? 'M' : 'L', point.x, point.y);
         m = !m;
     });
@@ -246,11 +205,11 @@ SVGRenderer.prototype.polyhedron = function (args) {
         result = this.g(),
         destroy = result.destroy;
 
-    /*= if (build.classic) { =*/
-    result.attr({
-        'stroke-linejoin': 'round'
-    });
-    /*= } =*/
+    if (!this.styledMode) {
+        result.attr({
+            'stroke-linejoin': 'round'
+        });
+    }
 
     result.faces = [];
 
@@ -275,6 +234,9 @@ SVGRenderer.prototype.polyhedron = function (args) {
                     result.faces.push(renderer.face3d().add(result));
                 }
                 for (var i = 0; i < hash.faces.length; i++) {
+                    if (renderer.styledMode) {
+                        delete hash.faces[i].fill;
+                    }
                     result.faces[i].attr(
                         hash.faces[i],
                         null,
@@ -318,7 +280,7 @@ element3dMethods = {
             zIndexes = paths.zIndexes;
 
         // build parts
-        H.each(elem3d.parts, function (part) {
+        elem3d.parts.forEach(function (part) {
             elem3d[part] = renderer.path(paths[part]).attr({
                 'class': 'highcharts-3d-' + part,
                 zIndex: zIndexes[part] || 0
@@ -367,7 +329,7 @@ element3dMethods = {
     processParts: function (props, partsProps, verb, duration, complete) {
         var elem3d = this;
 
-        H.each(elem3d.parts, function (part) {
+        elem3d.parts.forEach(function (part) {
             // if different props for different parts
             if (partsProps) {
                 props = H.pick(partsProps[part], false);
@@ -562,8 +524,8 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         var ret = [
                 [], -1
         ];
-        path1 = map(path1, mapPath);
-        path2 = map(path2, mapPath);
+        path1 = path1.map(mapPath);
+        path2 = path2.map(mapPath);
         if (H.shapeArea(path1) < 0) {
             ret = [path1, 0];
         } else if (H.shapeArea(path2) < 0) {
@@ -657,7 +619,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         params = merge(params); // Don't mutate the original object
 
         for (key in params) {
-            if (inArray(key, customAttribs) !== -1) {
+            if (customAttribs.indexOf(key) !== -1) {
                 ca[key] = params[key];
                 delete params[key];
                 hasCA = true;
@@ -688,7 +650,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 
         // These faces are added outside the wrapper group because the z index
         // relates to neighbour elements as well
-        each(['out', 'inn', 'side1', 'side2'], function (face) {
+        ['out', 'inn', 'side1', 'side2'].forEach(function (face) {
             wrapper[face]
                 .attr({
                     'class': className + ' highcharts-3d-side'
@@ -698,10 +660,10 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     };
 
     // Cascade to faces
-    each(['addClass', 'removeClass'], function (fn) {
+    ['addClass', 'removeClass'].forEach(function (fn) {
         wrapper[fn] = function () {
             var args = arguments;
-            each(['top', 'out', 'inn', 'side1', 'side2'], function (face) {
+            ['top', 'out', 'inn', 'side1', 'side2'].forEach(function (face) {
                 wrapper[face][fn].apply(wrapper[face], args);
             });
         };
@@ -752,12 +714,11 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 
     // Apply the same value to all. These properties cascade down to the
     // children when set to the composite arc3d.
-    each(
-        ['opacity', 'translateX', 'translateY', 'visibility'],
+    ['opacity', 'translateX', 'translateY', 'visibility'].forEach(
         function (setter) {
             wrapper[setter + 'Setter'] = function (value, key) {
                 wrapper[key] = value;
-                each(['out', 'inn', 'side1', 'side2', 'top'], function (el) {
+                ['out', 'inn', 'side1', 'side2', 'top'].forEach(function (el) {
                     wrapper[el].attr(key, value);
                 });
             };

@@ -1,20 +1,22 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
+
 var Axis = H.Axis,
     Chart = H.Chart,
     correctFloat = H.correctFloat,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
-    each = H.each,
     format = H.format,
     objectEach = H.objectEach,
     pick = H.pick,
@@ -24,7 +26,19 @@ var Axis = H.Axis,
  * The class for stacks. Each stack, on a specific X value and either negative
  * or positive, has its own stack item.
  *
+ * @private
  * @class
+ * @name Highcharts.StackItem
+ *
+ * @param {Highcharts.Axis} axis
+ *
+ * @param {Highcharts.Options} options
+ *
+ * @param {boolean} isNegative
+ *
+ * @param {number} x
+ *
+ * @param {string|*} stackOption
  */
 H.StackItem = function (axis, options, isNegative, x, stackOption) {
 
@@ -71,12 +85,22 @@ H.StackItem = function (axis, options, isNegative, x, stackOption) {
 };
 
 H.StackItem.prototype = {
+
+    /**
+     * @private
+     * @function Highcharts.StackItem#destroy
+     */
     destroy: function () {
         destroyObjectProperties(this, this.axis);
     },
 
     /**
      * Renders the stack total label and adds it to the stack label group.
+     *
+     * @private
+     * @function Highcharts.StackItem#render
+     *
+     * @param {Highcharts.SVGElement} group
      */
     render: function (group) {
         var chart = this.axis.chart,
@@ -110,6 +134,13 @@ H.StackItem.prototype = {
     /**
      * Sets the offset that the stack has from the x value and repositions the
      * label.
+     *
+     * @private
+     * @function Highcarts.StackItem#setOffset
+     *
+     * @param {number} xOffset
+     *
+     * @param {number} xWidth
      */
     setOffset: function (xOffset, xWidth) {
         var stackItem = this,
@@ -151,6 +182,27 @@ H.StackItem.prototype = {
                 ) ? 'show' : 'hide'](true);
         }
     },
+
+    /**
+     * @private
+     * @function Highcharts.StackItem#getStackBox
+     *
+     * @param {Highcharts.Chart} chart
+     *
+     * @param {Highcharts.StackItem} stackItem
+     *
+     * @param {number} x
+     *
+     * @param {number} y
+     *
+     * @param {number} xWidth
+     *
+     * @param {number} h
+     *
+     * @param {Highcharts.Axis} axis
+     *
+     * @return {*}
+     */
     getStackBox: function (chart, stackItem, x, y, xWidth, h, axis) {
         var reversed = stackItem.axis.reversed,
             inverted = chart.inverted,
@@ -175,18 +227,21 @@ H.StackItem.prototype = {
 
 /**
  * Generate stacks for each series and calculate stacks total values
+ *
+ * @private
+ * @function Highcharts.Chart#getStacks
  */
 Chart.prototype.getStacks = function () {
     var chart = this;
 
     // reset stacks for each yAxis
-    each(chart.yAxis, function (axis) {
+    chart.yAxis.forEach(function (axis) {
         if (axis.stacks && axis.hasVisibleSeries) {
             axis.oldStacks = axis.stacks;
         }
     });
 
-    each(chart.series, function (series) {
+    chart.series.forEach(function (series) {
         if (series.options.stacking && (series.visible === true ||
                 chart.options.chart.ignoreHiddenSeries === false)) {
             series.stackKey = series.type + pick(series.options.stack, '');
@@ -200,7 +255,8 @@ Chart.prototype.getStacks = function () {
 /**
  * Build the stacks from top down
  *
- * @ignore
+ * @private
+ * @function Highcharts.Axis#buildStacks
  */
 Axis.prototype.buildStacks = function () {
     var axisSeries = this.series,
@@ -221,6 +277,10 @@ Axis.prototype.buildStacks = function () {
     }
 };
 
+/**
+ * @private
+ * @function Highcharts.Axis#renderStackTotals
+ */
 Axis.prototype.renderStackTotals = function () {
     var axis = this,
         chart = axis.chart,
@@ -254,7 +314,8 @@ Axis.prototype.renderStackTotals = function () {
 /**
  * Set all the stacks to initial states and destroy unused ones.
  *
- * @ignore
+ * @private
+ * @function Highcharts.Axis#resetStacks
  */
 Axis.prototype.resetStacks = function () {
     var axis = this,
@@ -277,6 +338,10 @@ Axis.prototype.resetStacks = function () {
     }
 };
 
+/**
+ * @private
+ * @function Highcharts.Axis#cleanStacks
+ */
 Axis.prototype.cleanStacks = function () {
     var stacks;
 
@@ -299,6 +364,9 @@ Axis.prototype.cleanStacks = function () {
 
 /**
  * Adds series' points value to corresponding stack
+ *
+ * @private
+ * @function Highcharts.Series#setStackedPoints
  */
 Series.prototype.setStackedPoints = function () {
     if (!this.options.stacking || (this.visible !== true &&
@@ -437,6 +505,9 @@ Series.prototype.setStackedPoints = function () {
 
 /**
  * Iterate over all stacks and compute the absolute values to percent
+ *
+ * @private
+ * @function Highcharts.Series#modifyStacks
  */
 Series.prototype.modifyStacks = function () {
     var series = this,
@@ -447,7 +518,7 @@ Series.prototype.modifyStacks = function () {
         stacking = series.options.stacking;
 
     if (series[stacking + 'Stacker']) { // Modifier function exists
-        each([stackKey, '-' + stackKey], function (key) {
+        [stackKey, '-' + stackKey].forEach(function (key) {
             var i = processedXData.length,
                 x,
                 stack,
@@ -473,6 +544,15 @@ Series.prototype.modifyStacks = function () {
 
 /**
  * Modifier function for percent stacks. Blows up the stack to 100%.
+ *
+ * @private
+ * @function Highcharts.Series#percentStacker
+ *
+ * @param {Array<number>} pointExtremes
+ *
+ * @param {Highcharts.StackItem} stack
+ *
+ * @param {number} i
  */
 Series.prototype.percentStacker = function (pointExtremes, stack, i) {
     var totalFactor = stack.total ? 100 / stack.total : 0;
@@ -484,9 +564,22 @@ Series.prototype.percentStacker = function (pointExtremes, stack, i) {
 };
 
 /**
-* Get stack indicator, according to it's x-value, to determine points with the
-* same x-value
-*/
+ * Get stack indicator, according to it's x-value, to determine points with the
+ * same x-value
+ *
+ * @private
+ * @function Highcharts.Series#getStackIndicator
+ *
+ * @param {*} stackIndicator
+ *
+ * @param {number} x
+ *
+ * @param {number} index
+ *
+ * @param {string} key
+ *
+ * @return {*}
+ */
 Series.prototype.getStackIndicator = function (stackIndicator, x, index, key) {
     // Update stack indicator, when:
     // first point in a stack || x changed || stack type (negative vs positive)

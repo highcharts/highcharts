@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,8 +7,7 @@
 import H from './Globals.js';
 import './Utilities.js';
 import './Point.js';
-var each = H.each,
-    Point = H.Point,
+var Point = H.Point,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
@@ -25,7 +24,7 @@ var each = H.each,
  *
  * @sample stock/demo/ohlc/ OHLC chart
  * @extends plotOptions.column
- * @excluding borderColor,borderRadius,borderWidth,crisp
+ * @excluding borderColor,borderRadius,borderWidth,crisp,stacking,stack
  * @product highstock
  * @optionparent plotOptions.ohlc
  */
@@ -57,24 +56,15 @@ seriesType('ohlc', 'column', {
     lineWidth: 1,
 
     tooltip: {
-        /*= if (!build.classic) { =*/
-        pointFormat: '<span class="highcharts-color-{point.colorIndex}">\u25CF</span> <b> {series.name}</b><br/>' +
-            'Open: {point.open}<br/>' +
-            'High: {point.high}<br/>' +
-            'Low: {point.low}<br/>' +
-            'Close: {point.close}<br/>',
-        /*= } else { =*/
-
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '<b> {series.name}</b><br/>' +
             'Open: {point.open}<br/>' +
             'High: {point.high}<br/>' +
             'Low: {point.low}<br/>' +
             'Close: {point.close}<br/>'
-        /*= } =*/
     },
 
     threshold: null,
-    /*= if (build.classic) { =*/
 
     states: {
 
@@ -116,8 +106,6 @@ seriesType('ohlc', 'column', {
      * @apioption plotOptions.ohlc.upColor
      */
 
-    /*= } =*/
-
     stickyTracking: true
 
 }, /** @lends seriesTypes.ohlc */ {
@@ -128,10 +116,15 @@ seriesType('ohlc', 'column', {
     },
     pointValKey: 'close',
 
-    /*= if (build.classic) { =*/
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'
+    },
+
+    init: function () {
+        seriesTypes.column.prototype.init.apply(this, arguments);
+
+        this.options.stacking = false; // #8817
     },
 
     /**
@@ -157,7 +150,6 @@ seriesType('ohlc', 'column', {
 
         return attribs;
     },
-    /*= } =*/
 
     /**
      * Translate data points from raw values x and y to plotX and plotY
@@ -177,9 +169,8 @@ seriesType('ohlc', 'column', {
         seriesTypes.column.prototype.translate.apply(series);
 
         // Do the translation
-        each(series.points, function (point) {
-            each(
-                [point.open, point.high, point.low, point.close, point.low],
+        series.points.forEach(function (point) {
+            [point.open, point.high, point.low, point.close, point.low].forEach(
                 function (value, i) {
                     if (value !== null) {
                         if (hasModifyValue) {
@@ -205,7 +196,7 @@ seriesType('ohlc', 'column', {
             chart = series.chart;
 
 
-        each(points, function (point) {
+        points.forEach(function (point) {
             var plotOpen,
                 plotClose,
                 crispCorr,
@@ -223,11 +214,11 @@ seriesType('ohlc', 'column', {
                         .add(series.group);
                 }
 
-                /*= if (build.classic) { =*/
-                graphic.attr(
-                    series.pointAttribs(point, point.selected && 'select')
-                ); // #3897
-                /*= } =*/
+                if (!chart.styledMode) {
+                    graphic.attr(
+                        series.pointAttribs(point, point.selected && 'select')
+                    ); // #3897
+                }
 
                 // crisp vector coordinates
                 crispCorr = (graphic.strokeWidth() % 2) / 2;
@@ -325,8 +316,8 @@ seriesType('ohlc', 'column', {
  *     ]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.ohlc.turboThreshold),
  * this option is not available.
  *

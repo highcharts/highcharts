@@ -1,17 +1,11 @@
 /**
  * Highcharts variwide module
  *
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-/**
- * To do:
- * - When X axis is not categorized, the scale should reflect how the z values
- *   increase, like a horizontal stack. But then the actual X values aren't
- *   reflected the the axis.. Should we introduce a Z axis too?
- */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/AreaSeries.js';
@@ -19,7 +13,6 @@ import '../parts/AreaSeries.js';
 var addEvent = H.addEvent,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    each = H.each,
     pick = H.pick;
 
 /**
@@ -33,6 +26,8 @@ var addEvent = H.addEvent,
  *         Variwide chart
  * @sample {highcharts} highcharts/series-variwide/inverted/
  *         Inverted variwide chart
+ * @sample {highcharts} highcharts/series-variwide/datetime/
+ *         Variwide columns on a datetime axis
  * @since 6.0.0
  * @optionparent plotOptions.variwide
  */
@@ -55,10 +50,9 @@ seriesType('variwide', 'column', {
         this.relZ = [];
         seriesTypes.column.prototype.processData.call(this);
 
-        each(
-            this.xAxis.reversed ?
+        (this.xAxis.reversed ?
                 this.zData.slice().reverse() :
-                this.zData,
+                this.zData).forEach(
             function (z, i) {
                 this.relZ[i] = this.totalZ;
                 this.totalZ += z;
@@ -112,7 +106,8 @@ seriesType('variwide', 'column', {
     translate: function () {
 
         // Temporarily disable crisping when computing original shapeArgs
-        var crispOption = this.options.crisp;
+        var crispOption = this.options.crisp,
+            xAxis = this.xAxis;
         this.options.crisp = false;
 
         seriesTypes.column.prototype.translate.call(this);
@@ -124,16 +119,33 @@ seriesType('variwide', 'column', {
             crisp = this.borderWidth % 2 / 2;
 
         // Distort the points to reflect z dimension
-        each(this.points, function (point, i) {
-            var left = this.postTranslate(
+        this.points.forEach(function (point, i) {
+            var left, right;
+
+            if (xAxis.variwide) {
+                left = this.postTranslate(
                     i,
                     point.shapeArgs.x,
                     point
-                ),
+                );
+
                 right = this.postTranslate(
                     i,
                     point.shapeArgs.x + point.shapeArgs.width
                 );
+
+            // For linear or datetime axes, the variwide column should start
+            // with X and extend Z units, without modifying the axis.
+            } else {
+                left = point.plotX;
+                right = xAxis.translate(
+                    point.x + point.z,
+                    0,
+                    0,
+                    0,
+                    1
+                );
+            }
 
             if (this.options.crisp) {
                 left = Math.round(left) - crisp;
@@ -146,16 +158,13 @@ seriesType('variwide', 'column', {
             // Crosshair position (#8083)
             point.plotX = (left + right) / 2;
 
+            // Adjust the tooltip position
             if (!inverted) {
-                point.tooltipPos[0] = this.postTranslate(
-                    i,
-                    point.tooltipPos[0]
-                );
+                point.tooltipPos[0] =
+                    point.shapeArgs.x + point.shapeArgs.width / 2;
             } else {
-                point.tooltipPos[1] = this.xAxis.len - this.postTranslate(
-                    i,
-                    this.xAxis.len - point.tooltipPos[1]
-                );
+                point.tooltipPos[1] =
+                    xAxis.len - point.shapeArgs.x - point.shapeArgs.width / 2;
             }
         }, this);
     }
@@ -194,7 +203,7 @@ addEvent(H.Axis, 'afterRender', function () {
     var axis = this;
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(function () {
-            return H.map(axis.tickPositions, function (pos, i) {
+            return axis.tickPositions.map(function (pos, i) {
                 var label = axis.ticks[pos].label;
                 label.labelrank = axis.zData[i];
                 return label;
@@ -207,7 +216,7 @@ addEvent(H.Tick, 'afterGetPosition', function (e) {
     var axis = this.axis,
         xOrY = axis.horiz ? 'x' : 'y';
 
-    if (axis.categories && axis.variwide) {
+    if (axis.variwide) {
         this[xOrY + 'Orig'] = e.pos[xOrY];
         this.postTranslate(e.pos, xOrY, this.pos);
     }
@@ -273,8 +282,8 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (
  *     ]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.variwide.turboThreshold),
  * this option is not available.
  *
@@ -312,8 +321,9 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (
  */
 
 /**
- * The relative width for each column. The widths are distributed so they sum
- * up to the X axis length.
+ * The relative width for each column. On a category axis, the widths are
+ * distributed so they sum up to the X axis length. On linear and datetime axes,
+ * the columns will be laid out from the X value and Z units along the axis.
  *
  * @type {Number}
  * @product highcharts

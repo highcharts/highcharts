@@ -163,12 +163,9 @@ ControllableLabel.justifiedOptions = function (
  * @type {Annotation.ControllableLabel.AttrsMap}
  */
 ControllableLabel.attrsMap = {
-    /*= if (build.classic) { =*/
     backgroundColor: 'fill',
     borderColor: 'stroke',
     borderWidth: 'stroke-width',
-    /*= } =*/
-
     zIndex: 'zIndex',
     borderRadius: 'r',
     padding: 'padding'
@@ -205,15 +202,6 @@ H.merge(
                 attrs = this.attrsFromOptions(options),
                 style = options.style;
 
-            if (style.color === 'contrast') {
-                style.color = this.annotation.chart.renderer.getContrast(
-                    H.inArray(
-                        options.shape,
-                        ControllableLabel.shapesWithoutBackground
-                    ) > -1 ? '#FFFFFF' : options.backgroundColor
-                );
-            }
-
             this.graphic = this.annotation.chart.renderer
                 .label(
                     '',
@@ -227,11 +215,20 @@ H.merge(
                     'annotation-label'
                 )
                 .attr(attrs)
-                .css(options.style)
-                /*= if (build.classic) { =*/
-                .shadow(options.shadow)
-                /*= } =*/
                 .add(parent);
+
+            if (!this.annotation.chart.styledMode) {
+                if (style.color === 'contrast') {
+                    style.color = this.annotation.chart.renderer.getContrast(
+                        ControllableLabel.shapesWithoutBackground.indexOf(
+                            options.shape
+                        ) > -1 ? '#FFFFFF' : options.backgroundColor
+                    );
+                }
+                this.graphic
+                    .css(options.style)
+                    .shadow(options.shadow);
+            }
 
             if (options.className) {
                 this.graphic.addClass(options.className);

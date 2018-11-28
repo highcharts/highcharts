@@ -393,4 +393,37 @@
         })))
         // */
     });
+
+    QUnit.test('Time ticks, week', function (assert) {
+        var time = new Highcharts.Time({
+            useUTC: true
+        });
+
+        var ticks = time.getTimeTicks(
+            {
+                unitRange: 7 * 24 * 36e5,
+                count: 1,
+                unitName: "week"
+            },
+            Date.UTC(2018, 8, 9, 12), // Sunday at noon
+            Date.UTC(2018, 9, 9),
+            1
+        );
+
+        assert.deepEqual(
+            ticks.map(function (tick) {
+                return time.dateFormat('%d-%m-%Y', tick);
+            }),
+            [
+                "03-09-2018",
+                "10-09-2018",
+                "17-09-2018",
+                "24-09-2018",
+                "01-10-2018",
+                "08-10-2018",
+                "15-10-2018"
+            ],
+            'All ticks created (#7051).'
+        );
+    });
 }());

@@ -12,8 +12,6 @@ var Series = H.Series,
 
     addEvent = H.addEvent,
     wrap = H.wrap,
-    each = H.each,
-    grep = H.grep,
     color = H.color,
     isNumber = H.isNumber,
     numberFormat = H.numberFormat,
@@ -388,7 +386,6 @@ H.BubbleLegend.prototype = {
             options = bubbleLegend.options,
             series = bubbleLegend.chart.series[options.seriesIndex],
             baseline = bubbleLegend.legend.baseline,
-            /*= if (build.classic) { =*/
             bubbleStyle = {
                 'z-index': options.zIndex,
                 'stroke-width': options.borderWidth
@@ -398,43 +395,48 @@ H.BubbleLegend.prototype = {
                 'stroke-width': options.connectorWidth
             },
             labelStyle = bubbleLegend.getLabelStyles(),
-            /*= } =*/
-            fillOpacity = series.options.marker.fillOpacity;
+            fillOpacity = series.options.marker.fillOpacity,
+            styledMode = bubbleLegend.chart.styledMode;
 
         // Allow to parts of styles be used individually for range
-        each(ranges, function (range, i) {
-            /*= if (build.classic) { =*/
-            bubbleStyle.stroke = pick(
-                range.borderColor,
-                options.borderColor,
-                series.color
-            );
-            bubbleStyle.fill = pick(
-                range.color,
-                options.color,
-                fillOpacity !== 1 ?
-                    color(series.color).setOpacity(fillOpacity).get('rgba') :
+        ranges.forEach(function (range, i) {
+            if (!styledMode) {
+                bubbleStyle.stroke = pick(
+                    range.borderColor,
+                    options.borderColor,
                     series.color
-            );
-            connectorStyle.stroke = pick(
-                range.connectorColor,
-                options.connectorColor,
-                series.color
-            );
-            /*= } =*/
+                );
+                bubbleStyle.fill = pick(
+                    range.color,
+                    options.color,
+                    fillOpacity !== 1 ?
+                        color(series.color).setOpacity(fillOpacity)
+                            .get('rgba') :
+                        series.color
+                );
+                connectorStyle.stroke = pick(
+                    range.connectorColor,
+                    options.connectorColor,
+                    series.color
+                );
+            }
+
             // Set options needed for rendering each range
             ranges[i].radius = bubbleLegend.getRangeRadius(range.value);
             ranges[i] = merge(ranges[i], {
-                center: ranges[0].radius - ranges[i].radius + baseline,
-                /*= if (build.classic) { =*/
-                bubbleStyle: merge(false, bubbleStyle),
-                connectorStyle: merge(false, connectorStyle),
-                labelStyle: labelStyle
-                /*= } =*/
+                center: ranges[0].radius - ranges[i].radius + baseline
             });
+
+            if (!styledMode) {
+                merge(true, ranges[i], {
+                    bubbleStyle: merge(false, bubbleStyle),
+                    connectorStyle: merge(false, connectorStyle),
+                    labelStyle: labelStyle
+                });
+            }
         });
     },
-    /*= if (build.classic) { =*/
+
     /**
      * Merge options for bubbleLegend labels.
      *
@@ -463,7 +465,7 @@ H.BubbleLegend.prototype = {
             align: rtl || labelsOnLeft ? 'right' : 'left'
         });
     },
-    /*= } =*/
+
 
     /**
      * Calculate radius for each bubble range,
@@ -521,7 +523,7 @@ H.BubbleLegend.prototype = {
         bubbleLegend.legendSymbol.translateX = 0;
         bubbleLegend.legendSymbol.translateY = 0;
 
-        each(bubbleLegend.ranges, function (range) {
+        bubbleLegend.ranges.forEach(function (range) {
             if (range.value >= zThreshold) {
                 bubbleLegend.renderRange(range);
             }
@@ -569,7 +571,8 @@ H.BubbleLegend.prototype = {
             fontMetrics = bubbleLegend.fontMetrics,
             labelMovement = fontSize / 2 - (fontMetrics.h - fontSize) / 2,
             crispMovement = (posY % 1 ? 1 : 0.5) -
-                (connectorWidth % 2 ? 0 : 0.5);
+                (connectorWidth % 2 ? 0 : 0.5),
+            styledMode = renderer.styledMode;
 
         // Set options for centered labels
         if (labelsAlign === 'center') {
@@ -589,16 +592,17 @@ H.BubbleLegend.prototype = {
                     elementCenter + crispMovement,
                     absoluteRadius
                 )
-                /*= if (build.classic) { =*/
                 .attr(
-                    range.bubbleStyle
+                    styledMode ? {} : range.bubbleStyle
                 )
-                /*= } =*/
                 .addClass(
-                    /*= if (!build.classic) { =*/
-                    'highcharts-color-' + bubbleLegend.options.seriesIndex +
-                    /*= } =*/
-                    ' highcharts-bubble-legend-symbol ' +
+                    (
+                        styledMode ?
+                            'highcharts-color-' +
+                                bubbleLegend.options.seriesIndex + ' ' :
+                            ''
+                    ) +
+                    'highcharts-bubble-legend-symbol ' +
                     (options.className || '')
                 ).add(
                     bubbleLegend.legendSymbol
@@ -612,16 +616,17 @@ H.BubbleLegend.prototype = {
                     ['M', posX, posY, 'L', posX + connectorLength, posY],
                      options.connectorWidth)
                 )
-                /*= if (build.classic) { =*/
                 .attr(
-                    range.connectorStyle
+                    styledMode ? {} : range.connectorStyle
                 )
-                /*= } =*/
                 .addClass(
-                    /*= if (!build.classic) { =*/
-                    'highcharts-color-' + bubbleLegend.options.seriesIndex +
-                    /*= } =*/
-                    ' highcharts-bubble-legend-connectors ' +
+                    (
+                        styledMode ?
+                            'highcharts-color-' +
+                                bubbleLegend.options.seriesIndex + ' ' :
+                            ''
+                    ) +
+                    'highcharts-bubble-legend-connectors ' +
                     (options.connectorClassName || '')
                 ).add(
                     bubbleLegend.legendSymbol
@@ -635,11 +640,9 @@ H.BubbleLegend.prototype = {
                 labelX,
                 labelY + labelMovement
             )
-            /*= if (build.classic) { =*/
             .attr(
-                range.labelStyle
+                styledMode ? {} : range.labelStyle
             )
-            /*= } =*/
             .addClass(
                 'highcharts-bubble-legend-labels ' +
                 (options.labels.className || '')
@@ -666,7 +669,7 @@ H.BubbleLegend.prototype = {
             maxLabel,
             labelSize;
 
-        each(labels, function (label) {
+        labels.forEach(function (label) {
             labelSize = label.getBBox(true);
 
             if (maxLabel) {
@@ -715,7 +718,7 @@ H.BubbleLegend.prototype = {
             chart.hideOverlappingLabels(symbols.labels);
 
             // Hide or show connectors
-            each(symbols.labels, function (label, index) {
+            symbols.labels.forEach(function (label, index) {
                 if (!label.newOpacity) {
                     symbols.connectors[index].hide();
                 } else if (label.newOpacity !== label.oldOpacity) {
@@ -741,10 +744,10 @@ H.BubbleLegend.prototype = {
             minZ = Number.MAX_VALUE,
             maxZ = -Number.MAX_VALUE;
 
-        each(series, function (s) {
+        series.forEach(function (s) {
             // Find the min and max Z, like in bubble series
             if (s.isBubble && !s.ignoreSeries) {
-                zData = grep(s.zData, isNumber);
+                zData = s.zData.filter(isNumber);
 
                 if (zData.length) {
                     minZ = pick(s.options.zMin, Math.min(
@@ -781,7 +784,7 @@ H.BubbleLegend.prototype = {
         }
 
         // Merge ranges values with user options
-        each(ranges, function (range, i) {
+        ranges.forEach(function (range, i) {
             if (rangesOptions && rangesOptions[i]) {
                 ranges[i] = merge(false, rangesOptions[i], range);
             }
@@ -981,7 +984,7 @@ Legend.prototype.retranslateItems = function (lines) {
         rtl = this.options.rtl,
         actualLine = 0;
 
-    each(items, function (item, index) {
+    items.forEach(function (item, index) {
         orgTranslateX = item.legendGroup.translateX;
         orgTranslateY = item._legendItemPos[1];
 
@@ -1060,7 +1063,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed, options, callback) {
         if (!bubbleLegendOptions.placed) {
             legend.group.placed = false;
 
-            each(legend.allItems, function (item) {
+            legend.allItems.forEach(function (item) {
                 item.legendGroup.translateY = null;
             });
         }
@@ -1070,7 +1073,7 @@ wrap(Chart.prototype, 'drawChartBox', function (proceed, options, callback) {
 
         chart.getMargins();
 
-        each(chart.axes, function (axis) {
+        chart.axes.forEach(function (axis) {
             axis.render();
 
             if (!bubbleLegendOptions.placed) {

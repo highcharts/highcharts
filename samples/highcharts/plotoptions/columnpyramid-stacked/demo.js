@@ -4,7 +4,7 @@ Highcharts.chart('container', {
         type: 'columnpyramid'
     },
     title: {
-        text: 'Stacked column chart'
+        text: 'Stacked columnpyramid chart'
     },
     xAxis: {
         categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']

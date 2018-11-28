@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -16,7 +16,6 @@ var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     Axis = H.Axis,
     color = H.color,
-    each = H.each,
     isNumber = H.isNumber,
     noop = H.noop,
     pick = H.pick,
@@ -75,7 +74,6 @@ seriesType('bubble', 'scatter', {
      * @excluding enabled,enabledThreshold,height,radius,width
      */
     marker: {
-        /*= if (build.classic) { =*/
         lineColor: null, // inherit from series.color
         lineWidth: 1,
 
@@ -83,7 +81,6 @@ seriesType('bubble', 'scatter', {
          * The fill opacity of the bubble markers.
          */
         fillOpacity: 0.5,
-        /*= } =*/
         /**
          * In bubble charts, the radius is overridden and determined based on
          * the point's data value.
@@ -277,7 +274,6 @@ seriesType('bubble', 'scatter', {
     directTouch: true,
     isBubble: true,
 
-    /*= if (build.classic) { =*/
     pointAttribs: function (point, state) {
         var markerOptions = this.options.marker,
             fillOpacity = markerOptions.fillOpacity,
@@ -289,7 +285,6 @@ seriesType('bubble', 'scatter', {
 
         return attr;
     },
-    /*= } =*/
 
     /**
      * Get the radius for each point based on the minSize, maxSize and each
@@ -362,7 +357,7 @@ seriesType('bubble', 'scatter', {
             !init &&
             this.points.length < this.options.animationLimit // #8099
         ) {
-            each(this.points, function (point) {
+            this.points.forEach(function (point) {
                 var graphic = point.graphic,
                     animationTarget;
 
@@ -473,7 +468,7 @@ Axis.prototype.beforePadding = function () {
         activeSeries = [];
 
     // Handle padding on the second pass, or on redraw
-    each(this.series, function (series) {
+    this.series.forEach(function (series) {
 
         var seriesOptions = series.options,
             zData;
@@ -492,7 +487,7 @@ Axis.prototype.beforePadding = function () {
             if (isXAxis) { // because X axis is evaluated first
 
                 // For each series, translate the size extremes to pixel values
-                each(['minSize', 'maxSize'], function (prop) {
+                ['minSize', 'maxSize'].forEach(function (prop) {
                     var length = seriesOptions[prop],
                         isPercent = /%$/.test(length);
 
@@ -508,7 +503,7 @@ Axis.prototype.beforePadding = function () {
                 series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
 
                 // Find the min and max Z
-                zData = H.grep(series.zData, H.isNumber);
+                zData = series.zData.filter(H.isNumber);
                 if (zData.length) { // #1735
                     zMin = pick(seriesOptions.zMin, Math.min(
                         zMin,
@@ -528,7 +523,7 @@ Axis.prototype.beforePadding = function () {
         }
     });
 
-    each(activeSeries, function (series) {
+    activeSeries.forEach(function (series) {
 
         var data = series[dataKey],
             i = data.length,
@@ -559,11 +554,15 @@ Axis.prototype.beforePadding = function () {
         }
     });
 
+    // Apply the padding to the min and max properties
     if (activeSeries.length && range > 0 && !this.isLog) {
         pxMax -= axisLength;
-        transA *= (axisLength + pxMin - pxMax) / axisLength;
-        each(
-            [['min', 'userMin', pxMin], ['max', 'userMax', pxMax]],
+        transA *= (
+            axisLength +
+            Math.max(0, pxMin) - // #8901
+            Math.min(pxMax, axisLength)
+        ) / axisLength;
+        [['min', 'userMin', pxMin], ['max', 'userMax', pxMax]].forEach(
             function (keys) {
                 if (pick(axis.options[keys[0]], axis[keys[1]]) === undefined) {
                     axis[keys[0]] += keys[2] / transA;
@@ -605,8 +604,8 @@ Axis.prototype.beforePadding = function () {
  *     ]
  *  ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.bubble.turboThreshold),
  * this option is not available.
  *

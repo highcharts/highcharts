@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -11,9 +11,7 @@ import '../parts/Tick.js';
 import './Pane.js';
 var addEvent = H.addEvent,
     Axis = H.Axis,
-    each = H.each,
     extend = H.extend,
-    map = H.map,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -353,7 +351,7 @@ if (!H.radialAxisExtended) {
                 }
 
                 // Convert percentages to pixel values
-                radii = map(radii, function (radius) {
+                radii = radii.map(function (radius) {
                     if (percentRegex.test(radius)) {
                         radius = (pInt(radius, 10) * fullRadius) / 100;
                     }
@@ -418,13 +416,14 @@ if (!H.radialAxisExtended) {
             // Concentric circles
             } else if (axis.options.gridLineInterpolation === 'circle') {
                 value = axis.translate(value);
-                if (value) { // a value of 0 is in the center
-                    ret = axis.getLinePath(0, value);
-                }
+
+                // a value of 0 is in the center, so it won't be visible,
+                // but draw it anyway for update and animation (#2366)
+                ret = axis.getLinePath(0, value);
             // Concentric polygons
             } else {
                 // Find the X axis in the same pane
-                each(chart.xAxis, function (a) {
+                chart.xAxis.forEach(function (a) {
                     if (a.pane === axis.pane) {
                         xAxis = a;
                     }
@@ -441,7 +440,7 @@ if (!H.radialAxisExtended) {
                     tickPositions = [].concat(tickPositions).reverse();
                 }
 
-                each(tickPositions, function (pos, i) {
+                tickPositions.forEach(function (pos, i) {
                     xy = xAxis.getPosition(pos, value);
                     ret.push(i ? 'L' : 'M', xy.x, xy.y);
                 });

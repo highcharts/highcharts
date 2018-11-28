@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -10,7 +10,6 @@ import './Series.js';
 import './SvgRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
 var addEvent = H.addEvent,
-    each = H.each,
     merge = H.merge,
     noop = H.noop,
     Renderer = H.Renderer,
@@ -181,8 +180,6 @@ seriesType('flags', 'column', {
      * @apioption plotOptions.flags.height
      */
 
-    /*= if (build.classic) { =*/
-
     /**
      * The fill color for the flags.
      *
@@ -253,7 +250,6 @@ seriesType('flags', 'column', {
         fontSize: '11px',
         fontWeight: 'bold'
     }
-    /*= } =*/
 
 }, /** @lends seriesTypes.flags.prototype */ {
     sorted: false,
@@ -267,7 +263,6 @@ seriesType('flags', 'column', {
      */
     init: Series.prototype.init,
 
-    /*= if (build.classic) { =*/
     /**
      * Get presentational attributes
      */
@@ -290,7 +285,6 @@ seriesType('flags', 'column', {
             'stroke-width': lineWidth || options.lineWidth || 0
         };
     },
-    /*= } =*/
 
     translate: onSeriesMixin.translate,
     getPlotBox: onSeriesMixin.getPlotBox,
@@ -357,12 +351,15 @@ seriesType('flags', 'column', {
                         null,
                         null,
                         options.useHTML
-                    )
-                    /*= if (build.classic) { =*/
-                    .attr(series.pointAttribs(point))
-                    .css(merge(options.style, point.style))
-                    /*= } =*/
-                    .attr({
+                    );
+
+                    if (!chart.styledMode) {
+                        graphic
+                            .attr(series.pointAttribs(point))
+                            .css(merge(options.style, point.style));
+                    }
+
+                    graphic.attr({
                         align: shape === 'flag' ? 'left' : 'center',
                         width: options.width,
                         height: options.height,
@@ -376,9 +373,10 @@ seriesType('flags', 'column', {
                         point.graphic.div.point = point;
                     }
 
-                    /*= if (build.classic) { =*/
-                    graphic.shadow(options.shadow);
-                    /*= } =*/
+                    if (!chart.styledMode) {
+                        graphic.shadow(options.shadow);
+                    }
+
                     graphic.isNew = true;
                 }
 
@@ -437,7 +435,7 @@ seriesType('flags', 'column', {
 
             H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
 
-            each(points, function (point) {
+            points.forEach(function (point) {
                 var box = point.graphic && boxesMap[point.plotX];
                 if (box) {
                     point.graphic[point.graphic.isNew ? 'attr' : 'animate']({
@@ -485,7 +483,7 @@ seriesType('flags', 'column', {
          * of vertically stacked elements as well as tight points on
          * the x axis. #1924.
          */
-        each(points, function (point) {
+        points.forEach(function (point) {
             var graphic = point.graphic;
             if (graphic) {
                 addEvent(graphic.element, 'mouseover', function () {
@@ -500,7 +498,7 @@ seriesType('flags', 'column', {
                     }
 
                     // Revert other raised points
-                    each(points, function (otherPoint) {
+                    points.forEach(function (otherPoint) {
                         if (
                             otherPoint !== point &&
                             otherPoint.raised &&
@@ -517,9 +515,21 @@ seriesType('flags', 'column', {
         });
     },
 
-    animate: noop, // Disable animation
+    // Disable animation, but keep clipping (#8546):
+    animate: function (init) {
+        if (init) {
+            this.setClip();
+        } else {
+            this.animate = null;
+        }
+    },
+    setClip: function () {
+        Series.prototype.setClip.apply(this, arguments);
+        if (this.options.clip !== false && this.sharedClipKey) {
+            this.markerGroup.clip(this.chart[this.sharedClipKey]);
+        }
+    },
     buildKDTree: noop,
-    setClip: noop,
     /**
      * Don't invert the flag marker group (#4960)
      */
@@ -591,18 +601,16 @@ function createPinSymbol(shape) {
 createPinSymbol('circle');
 createPinSymbol('square');
 
-/*= if (build.classic) { =*/
 /**
  * The symbol callbacks are generated on the SVGRenderer object in all browsers.
  * Even VML browsers need this in order to generate shapes in export. Now share
  * them with the VMLRenderer.
  */
 if (Renderer === VMLRenderer) {
-    each(['flag', 'circlepin', 'squarepin'], function (shape) {
+    ['flag', 'circlepin', 'squarepin'].forEach(function (shape) {
         VMLRenderer.prototype.symbols[shape] = symbols[shape];
     });
 }
-/*= } =*/
 
 /**
  * A `flags` series. If the [type](#series.flags.type) option is not
@@ -619,8 +627,8 @@ if (Renderer === VMLRenderer) {
  * An array of data points for the series. For the `flags` series type,
  * points can be given in the following ways:
  *
- * 1.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
+ * 1.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
  * points exceeds the series' [turboThreshold](#series.flags.turboThreshold),
  * this option is not available.
  *

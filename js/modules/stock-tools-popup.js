@@ -10,13 +10,13 @@ import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
     createElement = H.createElement,
-    each = H.each,
     objectEach = H.objectEach,
     pick = H.pick,
     wrap = H.wrap,
     isString = H.isString,
     isObject = H.isObject,
     isArray = H.isArray,
+    indexFilter = /\d/g,
     PREFIX = 'highcharts-',
     DIV = 'div',
     INPUT = 'input',
@@ -26,7 +26,8 @@ var addEvent = H.addEvent,
     OPTION = 'option',
     SPAN = 'span',
     UL = 'ul',
-    LI = 'li';
+    LI = 'li',
+    H3 = 'h3';
 
 // onContainerMouseDown blocks internal popup events, due to e.preventDefault.
 // Related issue #4606
@@ -131,15 +132,17 @@ H.Popup.prototype = {
             lang = this.lang,
             inputName = PREFIX + type + '-' + optionName;
 
-        // add label
-        createElement(
-            LABEL, {
-                innerHTML: lang[optionName] || optionName,
-                htmlFor: inputName
-            },
-            null,
-            parentDiv
-        );
+        if (!inputName.match(indexFilter)) {
+            // add label
+            createElement(
+                LABEL, {
+                    innerHTML: lang[optionName] || optionName,
+                    htmlFor: inputName
+                },
+                null,
+                parentDiv
+            );
+        }
 
         // add input
         createElement(
@@ -196,7 +199,10 @@ H.Popup.prototype = {
     getFields: function (parentDiv, type) {
 
         var inputList = parentDiv.querySelectorAll('input'),
-            linkedTo = parentDiv.querySelectorAll('select > option:checked')[0],
+            optionSeries = '#' + PREFIX + 'select-series > option:checked',
+            optionVolume = '#' + PREFIX + 'select-volume > option:checked',
+            linkedTo = parentDiv.querySelectorAll(optionSeries)[0],
+            volumeTo = parentDiv.querySelectorAll(optionVolume)[0],
             seriesId,
             param,
             fieldsOutput;
@@ -207,7 +213,7 @@ H.Popup.prototype = {
             fields: { }
         };
 
-        each(inputList, function (input) {
+        inputList.forEach(function (input) {
             param = input.getAttribute(PREFIX + 'data-name');
             seriesId = input.getAttribute(PREFIX + 'data-series-id');
 
@@ -221,6 +227,11 @@ H.Popup.prototype = {
                 fieldsOutput.type = input.value;
             }
         });
+
+        if (volumeTo) {
+            fieldsOutput.fields['params.volumeSeriesID'] = volumeTo
+                                                        .getAttribute('value');
+        }
 
         return fieldsOutput;
     },
@@ -297,6 +308,18 @@ H.Popup.prototype = {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }
     },
+     /*
+     * Return lang definitions for popup.
+     *
+     * @return {Object} - elements translations.
+     */
+    getLangpack: function () {
+        var defaultOptions = H.getOptions();
+
+        return defaultOptions &&
+                defaultOptions.lang &&
+                defaultOptions.lang.stockTools.gui;
+    },
     annotations: {
         /*
          * Create annotation simple form. It contains two buttons
@@ -309,6 +332,7 @@ H.Popup.prototype = {
          */
         addToolbar: function (chart, options, callback) {
             var _self = this,
+                lang = this.getLangpack(),
                 popupDiv = this.popup.container,
                 showForm = this.showForm,
                 toolbarClass = PREFIX + 'annotation-toolbar',
@@ -326,7 +350,7 @@ H.Popup.prototype = {
             createElement(SPAN, {
                 innerHTML: pick(
                     // Advanced annotations:
-                    options.type,
+                    lang[options.langKey] || options.langKey,
                     // Basic shapes:
                     options.shapes && options.shapes[0].type
                 )
@@ -336,7 +360,7 @@ H.Popup.prototype = {
             button = this.addButton.call(
                 this,
                 popupDiv,
-                'remove',
+                lang.removeButton || 'remove',
                 'remove',
                 callback,
                 popupDiv
@@ -347,7 +371,7 @@ H.Popup.prototype = {
             button = this.addButton.call(
                 this,
                 popupDiv,
-                'edit',
+                lang.editButton || 'edit',
                 'edit',
                 function () {
                     showForm.call(
@@ -365,7 +389,7 @@ H.Popup.prototype = {
         },
         /*
          * Create annotation simple form.
-         * It contains two buttons (edit / remove).
+         * It contains fields with param names.
          *
          * @param {Chart} - chart
          * @param {Object} - options
@@ -375,10 +399,17 @@ H.Popup.prototype = {
          */
         addForm: function (chart, options, callback, isInit) {
             var popupDiv = this.popup.container,
+                lang = this.getLangpack(),
                 bottomRow,
                 lhsCol;
 
-             // left column
+            // create title of annotations
+            lhsCol = createElement('h2', {
+                innerHTML: lang[options.langKey] || options.langKey,
+                className: PREFIX + 'popup-main-title'
+            }, null, popupDiv);
+
+            // left column
             lhsCol = createElement(DIV, {
                 className: PREFIX + 'popup-lhs-col ' + PREFIX + 'popup-lhs-full'
             }, null, popupDiv);
@@ -398,8 +429,10 @@ H.Popup.prototype = {
             this.addButton.call(
                 this,
                 bottomRow,
-                isInit ? 'add' : 'edit',
-                isInit ? 'add' : 'edit',
+                isInit ?
+                    (lang.addButton || 'add') :
+                    (lang.saveButton || 'save'),
+                isInit ? 'add' : 'save',
                 callback,
                 popupDiv
             );
@@ -418,7 +451,8 @@ H.Popup.prototype = {
                 addFormFields = this.annotations.addFormFields,
                 addInput = this.addInput,
                 lang = chart.stockToolbar.lang,
-                parentFullName;
+                parentFullName,
+                titleName;
 
             objectEach(options, function (value, option) {
 
@@ -433,11 +467,14 @@ H.Popup.prototype = {
                         // array of objects with params. i.e labels in Fibonacci
                         (isArray(value) && isObject(value[0]))
                     ) {
+                        titleName = lang[option] || option;
 
-                        createElement(SPAN, {
-                            className: PREFIX + 'annotation-title',
-                            innerHTML: lang[option] || option
-                        }, null, parentDiv);
+                        if (!titleName.match(indexFilter)) {
+                            createElement(SPAN, {
+                                className: PREFIX + 'annotation-title',
+                                innerHTML: titleName
+                            }, null, parentDiv);
+                        }
 
                         addFormFields.call(
                             _self,
@@ -473,6 +510,7 @@ H.Popup.prototype = {
 
             var tabsContainers,
                 indicators = this.indicators,
+                lang = this.getLangpack(),
                 buttonParentDiv;
 
             // add tabs
@@ -497,7 +535,7 @@ H.Popup.prototype = {
             this.addButton.call(
                 this,
                 buttonParentDiv,
-                'add',
+                lang.addButton || 'add',
                 'add',
                 callback,
                 buttonParentDiv
@@ -518,7 +556,7 @@ H.Popup.prototype = {
             this.addButton.call(
                 this,
                 buttonParentDiv,
-                'update',
+                lang.saveButton || 'save',
                 'edit',
                 callback,
                 buttonParentDiv
@@ -526,7 +564,7 @@ H.Popup.prototype = {
             this.addButton.call(
                 this,
                 buttonParentDiv,
-                'remove',
+                lang.removeButton || 'remove',
                 'remove',
                 callback,
                 buttonParentDiv
@@ -645,27 +683,41 @@ H.Popup.prototype = {
          * correct linking.
          *
          * @param {String} - indicator type like: sma, ema, etc.
+         * @param {String} - type of select i.e series or volume.
          * @param {Chart} - chart
          * @param {HTMLDOMElement} - element where created HTML list is added
          *
          */
-        listAllSeries: function (type, chart, parentDiv) {
-            var selectBox,
+        listAllSeries: function (type, optionName, chart, parentDiv) {
+            var selectName = PREFIX + optionName + '-type-' + type,
+                lang = chart.stockToolbar && chart.stockToolbar.lang,
+                selectBox,
                 seriesOptions;
 
-            // input type
+            createElement(
+                LABEL, {
+                    innerHTML: lang[optionName] || optionName,
+                    htmlFor: selectName
+                },
+                null,
+                parentDiv
+            );
+
+            // select type
             selectBox = createElement(
                 SELECT,
                 {
-                    name: PREFIX + 'type-' + type,
+                    name: selectName,
                     className: PREFIX + 'popup-field'
                 },
                 null,
                 parentDiv
             );
 
+            selectBox.setAttribute('id', PREFIX + 'select-' + optionName);
+
             // list all series which have id - mandatory for creating indicator
-            each(chart.series, function (serie) {
+            chart.series.forEach(function (serie) {
 
                 seriesOptions = serie.options;
 
@@ -700,10 +752,22 @@ H.Popup.prototype = {
          *
          */
         addFormFields: function (chart, series, seriesType, rhsColWrapper) {
-            var fields = series.params || series.options.params;
+            var fields = series.params || series.options.params,
+                getNameType = this.indicators.getNameType;
 
             // reset current content
             rhsColWrapper.innerHTML = '';
+
+            // create title (indicator name in the right column)
+            createElement(
+                H3,
+                {
+                    className: PREFIX + 'indicator-title',
+                    innerHTML: getNameType(series, seriesType).name
+                },
+                null,
+                rhsColWrapper
+            );
 
             // input type
             createElement(
@@ -718,7 +782,21 @@ H.Popup.prototype = {
             );
 
             // list all series with id
-            this.indicators.listAllSeries(seriesType, chart, rhsColWrapper);
+            this.indicators.listAllSeries(
+                seriesType,
+                'series',
+                chart,
+                rhsColWrapper
+            );
+
+            if (fields.volumeSeriesID) {
+                this.indicators.listAllSeries(
+                    seriesType,
+                    'volume',
+                    chart,
+                    rhsColWrapper
+                );
+            }
 
             // add param fields
             this.indicators.addParamInputs.call(
@@ -761,7 +839,10 @@ H.Popup.prototype = {
                         type,
                         parentDiv
                     );
-                } else {
+                } else if (
+                        // skip volume field which is created by addFormFields
+                        parentFullName !== 'params.volumeSeriesID'
+                    ) {
                     addInput.call(
                         chart.stockToolbar,
                         parentFullName,
@@ -831,6 +912,7 @@ H.Popup.prototype = {
         addMenuItem: function (tabName, disableTab) {
             var popupDiv = this.popup.container,
                 className = PREFIX + 'tab-item',
+                lang = this.getLangpack(),
                 menuItem;
 
             if (disableTab === 0) {
@@ -841,7 +923,7 @@ H.Popup.prototype = {
             menuItem = createElement(
                 SPAN,
                 {
-                    innerHTML: tabName,
+                    innerHTML: lang[tabName + 'Button'] || tabName,
                     className: className
                 },
                 null,
@@ -882,7 +964,7 @@ H.Popup.prototype = {
                 tabs = popupDiv.querySelectorAll('.' + PREFIX + 'tab-item'),
                 dataParam;
 
-            each(tabs, function (tab, i) {
+            tabs.forEach(function (tab, i) {
 
                 dataParam = tab.getAttribute(PREFIX + 'data-tab-type');
 

@@ -11,16 +11,13 @@
 import H from '../parts/Globals.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
-var each = H.each,
-    objectEach = H.objectEach,
+var objectEach = H.objectEach,
     seriesType = H.seriesType,
     correctFloat = H.correctFloat,
     isNumber = H.isNumber,
     arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
-    merge = H.merge,
-    keys = H.keys,
-    map = H.map;
+    merge = H.merge;
 
 /* ***************************************************************************
  *
@@ -109,7 +106,7 @@ seriesType('histogram', 'column', {
     pointPlacement: 'between',
     tooltip: {
         headerFormat: '',
-        pointFormat: '<span style="font-size:10px">{point.x} - {point.x2}' +
+        pointFormat: '<span style="font-size: 10px">{point.x} - {point.x2}' +
             '</span><br/>' +
             '<span style="color:{point.color}">\u25CF</span>' +
             ' {series.name} <b>{point.y}</b><br/>'
@@ -129,7 +126,8 @@ seriesType('histogram', 'column', {
     derivedData: function (baseData, binsNumber, binWidth) {
         var max = arrayMax(baseData),
             min = arrayMin(baseData),
-            frequencies = {},
+            frequencies = [],
+            bins = {},
             data = [],
             x,
             fitToBin;
@@ -143,27 +141,26 @@ seriesType('histogram', 'column', {
         // If binWidth is 0 then max and min are equaled,
         // increment the x with some positive value to quit the loop
         for (x = min; x < max; x = correctFloat(x + binWidth)) {
-            frequencies[x] = 0;
+            frequencies.push(x);
+            bins[x] = 0;
         }
 
-        if (frequencies[min] !== 0) {
-            frequencies[correctFloat(min)] = 0;
+        if (bins[min] !== 0) {
+            frequencies.push(correctFloat(min));
+            bins[correctFloat(min)] = 0;
         }
 
         fitToBin = fitToBinLeftClosed(
-            // Sorting the array of keys from frequencies is needed,
-            // because of the discrepancy in ordering the numerable keys inside
-            // the objects, when there are integers and floats simultanously.
-            map(keys(frequencies).sort(), function (elem) {
+            frequencies.map(function (elem) {
                 return parseFloat(elem);
             }));
 
-        each(baseData, function (y) {
+        baseData.forEach(function (y) {
             var x = correctFloat(fitToBin(y));
-            frequencies[x]++;
+            bins[x]++;
         });
 
-        objectEach(frequencies, function (frequency, x) {
+        objectEach(bins, function (frequency, x) {
             data.push({
                 x: Number(x),
                 y: frequency,

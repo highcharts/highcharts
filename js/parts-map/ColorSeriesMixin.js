@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -7,7 +7,6 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 var defined = H.defined,
-    each = H.each,
     noop = H.noop,
     seriesTypes = H.seriesTypes;
 
@@ -35,8 +34,10 @@ H.colorPointMixin = {
         var point = this,
             method = vis ? 'show' : 'hide';
 
+        point.visible = Boolean(vis);
+
         // Show and hide associated elements
-        each(['graphic', 'dataLabel'], function (key) {
+        ['graphic', 'dataLabel'].forEach(function (key) {
             if (point[key]) {
                 point[key][method]();
             }
@@ -61,9 +62,7 @@ H.colorSeriesMixin = {
     parallelArrays: ['x', 'y', 'value'],
     colorKey: 'value',
 
-    /*= if (build.classic) { =*/
     pointAttribs: seriesTypes.column.prototype.pointAttribs,
-    /*= } =*/
 
     /**
      * In choropleth maps, the color is a result of the value, so this needs
@@ -75,7 +74,7 @@ H.colorSeriesMixin = {
             colorAxis = this.colorAxis,
             colorKey = this.colorKey;
 
-        each(this.data, function (point) {
+        this.data.forEach(function (point) {
             var value = point[colorKey],
                 color;
 
