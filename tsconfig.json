@@ -123,9 +123,9 @@
         "code/modules/map-parser.src.d.ts",
         "test/typescript/modules/map-parser.ts",
 
-        "code/modules/no-data-no-display.d.ts",
-        "code/modules/no-data-no-display.src.d.ts",
-        "test/typescript/modules/no-data-no-display.ts",
+        "code/modules/no-data-to-display.d.ts",
+        "code/modules/no-data-to-display.src.d.ts",
+        "test/typescript/modules/no-data-to-display.ts",
 
         "code/modules/offline-exporting.d.ts",
         "code/modules/offline-exporting.src.d.ts",
