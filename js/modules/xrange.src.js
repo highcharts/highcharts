@@ -139,7 +139,7 @@ seriesType('xrange', 'column'
          * The default formatter for X-range data labels displays the percentage
          * of the partial fill amount.
          *
-         * @type    {Highcharts.FormatterCallbackFunction}
+         * @type    {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
          * @default function () { return (amount * 100) + '%'; }
          */
         formatter: function () {
