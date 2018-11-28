@@ -9,8 +9,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 
-var pick = H.pick,
-    correctFloat = H.correctFloat;
+var pick = H.pick;
 
 H.layouts = {
     'reingold-fruchterman': function (options) {
@@ -233,12 +232,14 @@ H.extend(
                         distanceXY = layout.getDistXY(node, repNode);
                         distanceR = layout.vectorLength(distanceXY);
 
-                        force = options.repulsiveForce.call(
-                            layout, distanceR, k
-                        );
+                        if (distanceR !== 0) {
+                            force = options.repulsiveForce.call(
+                                layout, distanceR, k
+                            );
 
-                        node.dispX += (distanceXY.x / distanceR) * force;
-                        node.dispY += (distanceXY.y / distanceR) * force;
+                            node.dispX += (distanceXY.x / distanceR) * force;
+                            node.dispY += (distanceXY.y / distanceR) * force;
+                        }
                     }
                 });
             });
@@ -259,14 +260,20 @@ H.extend(
                         layout, distanceR, k
                     );
 
-                if (!link.fromNode.fixedPosition) {
-                    link.fromNode.dispX -= (distanceXY.x / distanceR) * force;
-                    link.fromNode.dispY -= (distanceXY.y / distanceR) * force;
-                }
+                if (distanceR !== 0) {
+                    if (!link.fromNode.fixedPosition) {
+                        link.fromNode.dispX -= (distanceXY.x / distanceR) *
+                            force;
+                        link.fromNode.dispY -= (distanceXY.y / distanceR) *
+                            force;
+                    }
 
-                if (!link.toNode.fixedPosition) {
-                    link.toNode.dispX += (distanceXY.x / distanceR) * force;
-                    link.toNode.dispY += (distanceXY.y / distanceR) * force;
+                    if (!link.toNode.fixedPosition) {
+                        link.toNode.dispX += (distanceXY.x / distanceR) *
+                            force;
+                        link.toNode.dispY += (distanceXY.y / distanceR) *
+                            force;
+                    }
                 }
             });
         },
@@ -359,16 +366,8 @@ H.extend(
             );
         },
         getDistXY: function (nodeA, nodeB) {
-            var xDist = correctFloat(nodeA.plotX - nodeB.plotX),
-                yDist = correctFloat(nodeA.plotY - nodeB.plotY);
-
-            if (xDist === 0) {
-                xDist = 0.01;
-            }
-
-            if (yDist === 0) {
-                yDist = 0.01;
-            }
+            var xDist = nodeA.plotX - nodeB.plotX,
+                yDist = nodeA.plotY - nodeB.plotY;
 
             return {
                 x: xDist,
