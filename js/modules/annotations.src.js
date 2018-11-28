@@ -751,7 +751,7 @@ Annotation.prototype = {
              * @sample highcharts/annotations/label-text/
              *         Set labels text
              *
-             * @type    {Highcharts.FormatterCallbackFunction}
+             * @type    {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
              * @default function () { return defined(this.y) ? this.y : 'Annotation label'; }
              */
             formatter: function () {
