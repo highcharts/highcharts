@@ -2,6 +2,9 @@
 * (c) 2016 Highsoft AS
 * Authors: Jon Arild Nygard
 *
+* Layout algorithm by Ben Frederickson:
+* https://www.benfrederickson.com/better-venn-diagrams/
+*
 * License: www.highcharts.com/license
 *
 * This is an experimental Highcharts module which enables visualization
