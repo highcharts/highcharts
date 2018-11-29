@@ -82,6 +82,13 @@
  */
 
 /**
+ * @interface Highcharts.SeriesDataLabelsFormatterContextObject
+ *//**
+ * @name Highcharts.SeriesDataLabelsFormatterContextObject#point
+ * @type {Highcharts.Point}
+ */
+
+/**
  * Translation and scale for the plot area of a series.
  *
  * @interface Highcharts.SeriesPlotBoxObject
@@ -1851,7 +1858,7 @@ null
          * @sample {highmaps} maps/plotoptions/series-datalabels-format/
          *         Formatted value
          *
-         * @type    {Highcharts.FormatterCallbackFunction}
+         * @type    {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
          * @default function () { return this.y; }
          */
         formatter: function () {
