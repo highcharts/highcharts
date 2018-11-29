@@ -2,25 +2,24 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var isArray = H.isArray,
-    EMAindicator = H.seriesTypes.ema,
-    correctFloat = H.correctFloat;
+var correctFloat = H.correctFloat;
 
 /**
 * The TRIX series Type
 *
 * @constructor seriesTypes.trix
-* @augments seriesTypes.ema
+* @augments seriesTypes.tema
 */
 
-H.seriesType('trix', 'ema',
+H.seriesType('trix', 'tema',
     /**
      * Normalized average true range indicator (NATR). This series requires
      * `linkedTo` option to be set.
      *
-     * Requires https://code.highcharts.com/stock/indicators/ema.js.
+     * Requires https://code.highcharts.com/stock/indicators/ema.js
+     * and https://code.highcharts.com/stock/indicators/tema.js.
      *
-     * @extends plotOptions.ema
+     * @extends plotOptions.tema
      * @product highstock
      * @sample {highstock} stock/indicators/trix TRIX indicator
      * @excluding
@@ -31,165 +30,34 @@ H.seriesType('trix', 'ema',
      * @optionparent plotOptions.trix
      */
     {}, {
-        getEMA: function (
-            yVal,
-            prevEMA,
-            SMA,
-            index,
-            i,
-            xVal
-          ) {
-
-            return EMAindicator.prototype.calculateEma(
-                xVal || [],
-                yVal,
-                i === undefined ? 1 : i,
-                this.chart.series[0].EMApercent,
-                prevEMA,
-                index === undefined ? -1 : index,
-                SMA
-            );
-        },
-        getValues: function (series, params) {
-            var period = params.period,
-                doubledPeriod = 2 * period,
-                tripledPeriod = 3 * period,
-                xVal = series.xData,
-                yVal = series.yData,
-                yValLen = yVal ? yVal.length : 0,
-                index = -1,
-                accumulatePeriodPoints = 0,
-                SMA = 0,
-                xDataTrix = [],
-                yDataTrix = [],
-                EMA = 0,
-                // EMA(EMA)
-                EMAlevel2,
-                // EMA(EMA(EMA))
-                EMAlevel3,
-                // EMA of previous point
-                prevEMA,
-                prevEMAlevel2,
-                prevEMAlevel3,
-                // EMA values array
-                EMAvalues = [],
-                EMAlevel2values = [],
-                i,
-                TRIXPoint,
-                TRIX = [];
-            series.EMApercent = (2 / (period + 1));
-
-            // Check period. We need at least 3*period-1 points to generate TRIX
-            if (yValLen < 3 * period - 1) {
-                return false;
+        getPoint: function (
+          xVal,
+          tripledPeriod,
+          EMA,
+          EMAlevel2,
+          EMAlevel3,
+          prevEMAlevel3,
+          i
+        ) {
+            if (i > tripledPeriod) {
+                var TRIXPoint = [
+                    xVal[i - 3],
+                    prevEMAlevel3 !== 0 ? correctFloat(EMAlevel3 -
+                    prevEMAlevel3) / prevEMAlevel3 * 100 : null
+                ];
             }
 
-            // Switch index for OHLC / Candlestick / Arearange
-            if (isArray(yVal[0])) {
-                index = params.index ? params.index : 0;
-            }
-
-            // Accumulate first N-points
-            accumulatePeriodPoints =
-              EMAindicator.prototype.accumulatePeriodPoints(
-                period,
-                index,
-                yVal
-              );
-
-            // first value of EMA
-            SMA = accumulatePeriodPoints / period;
-            accumulatePeriodPoints = 0;
-
-            // Calculate value one-by-one for each period in visible data
-            for (i = period; i < yValLen + 3; i++) {
-                if (i < yValLen + 1) {
-                    EMA = this.getEMA(
-                        yVal,
-                        prevEMA,
-                        SMA,
-                        index,
-                        i
-                    )[1];
-                    EMAvalues.push(EMA);
-                }
-                prevEMA = EMA;
-
-                // Summing first period points for EMA(EMA)
-                if (i < doubledPeriod) {
-                    accumulatePeriodPoints += EMA;
-                } else {
-                    // Calculate EMA(EMA)
-                    // First EMA(EMA) value
-                    if (i === doubledPeriod) {
-                        SMA = accumulatePeriodPoints / period;
-                        accumulatePeriodPoints = 0;
-                    }
-                    EMA = EMAvalues[i - period - 1];
-                    EMAlevel2 = this.getEMA(
-                        [EMA],
-                        prevEMAlevel2,
-                        SMA
-                    )[1];
-                    EMAlevel2values.push(EMAlevel2);
-                    prevEMAlevel2 = EMAlevel2;
-                    // Summing first period points for EMA(EMA(EMA))
-                    if (i < tripledPeriod) {
-                        accumulatePeriodPoints += EMAlevel2;
-                    } else {
-                        // Calculate EMA(EMA(EMA))
-                        // First EMA(EMA(EMA)) point
-                        if (i === tripledPeriod) {
-                            SMA = accumulatePeriodPoints / period;
-                        }
-                        if (i === yValLen + 1) {
-                            // Calculate the last EMA and EMA(EMA) points
-                            EMA = EMAvalues[i - period - 1];
-                            EMAlevel2 = this.getEMA(
-                                [EMA],
-                                prevEMAlevel2,
-                                SMA
-                            )[1];
-                            EMAlevel2values.push(EMAlevel2);
-                        }
-                        EMA = EMAvalues[i - period - 2];
-                        EMAlevel2 = EMAlevel2values[i - 2 * period - 1];
-                        EMAlevel3 = this.getEMA(
-                            [EMAlevel2],
-                            prevEMAlevel3,
-                            SMA
-                        )[1];
-                        // Calculate TRIX
-                        if (i > tripledPeriod) {
-                            TRIXPoint = [
-                                xVal[i - 3],
-                                prevEMAlevel3 !== 0 ? correctFloat(EMAlevel3 -
-                                prevEMAlevel3) / prevEMAlevel3 * 100 : null
-                            ];
-                            TRIX.push(TRIXPoint);
-                            xDataTrix.push(TRIXPoint[0]);
-                            yDataTrix.push(TRIXPoint[1]);
-                        }
-                        prevEMAlevel3 = EMAlevel3;
-                    }
-                }
-            }
-
-            return {
-                values: TRIX,
-                xData: xDataTrix,
-                yData: yDataTrix
-            };
+            return TRIXPoint;
         }
     });
 
 /**
- * A `EMA` series. If the [type](#series.ema.type) option is not
+ * A `TEMA` series. If the [type](#series.tema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @type {Object}
  * @since 7.0.0
- * @extends series,plotOptions.ema
+ * @extends series,plotOptions.tema
  * @excluding
  *          allAreas,colorAxis,compare,compareBase,data,dataParser,dataURL,
  *          joinBy,keys,stacking,showInNavigator,navigatorOptions,pointInterval,
