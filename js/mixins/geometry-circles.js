@@ -2,7 +2,8 @@ import geometry from './geometry.js';
 var getDistanceBetweenPoints = geometry.getDistanceBetweenPoints;
 
 var round = function round(x, decimals) {
-    return Number(Math.round(x + 'e' + decimals) + 'e-' + decimals);
+    var a = Math.pow(10, decimals);
+    return Math.round(x * a) / a;
 };
 
 /**
@@ -50,6 +51,8 @@ function getOverlapBetweenCircles(r1, r2, d) {
 /**
  * Calculates the intersection points of two circles.
  *
+ * NOTE: does not handle floating errors well.
+ *
  * @param {object} c1 The first circle.s
  * @param {object} c2 The second sircle.
  * @returns {array} Returns the resulting intersection points.
@@ -81,14 +84,31 @@ function getCircleCircleIntersection(c1, c2) {
 
         points = [
             { x: round(x0 + rx, 3), y: round(y0 - ry, 3) },
-            { x: round(x0 + rx, 3), y: round(y0 + ry, 3) }
+            { x: round(x0 - rx, 3), y: round(y0 + ry, 3) }
         ];
     }
     return points;
 };
 
+/**
+ * Calculates all the intersection points for between a list of circles.
+ *
+ * @param {array} circles The circles to calculate the points from.
+ * @returns {array} Returns a list of intersection points.
+ */
+var getCirclesIntersectionPoints = function getIntersectionPoints(circles) {
+    return circles.reduce(function (points, c1, i, arr) {
+        var additional = arr.slice(i + 1)
+            .reduce(function (points, c2) {
+                return points.concat(getCircleCircleIntersection(c1, c2));
+            }, []);
+        return points.concat(additional);
+    }, []);
+};
+
 var geometryCircles = {
     getCircleCircleIntersection: getCircleCircleIntersection,
+    getCirclesIntersectionPoints: getCirclesIntersectionPoints,
     getOverlapBetweenCircles: getOverlapBetweenCircles
 };
 
