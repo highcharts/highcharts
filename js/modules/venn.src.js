@@ -523,7 +523,7 @@ var getDlOptions = function getDlOptions(params) {
 };
 
 var vennOptions = {
-    borderColor: '#cccccc',
+    borderColor: '${palette.neutralColor80}',
     borderDashStyle: 'solid',
     borderWidth: 0,
     brighten: 0,
@@ -540,7 +540,8 @@ var vennOptions = {
     states: {
         hover: {
             opacity: 1,
-            halo: false
+            halo: false,
+            borderWidth: 1
         }
     },
     tooltip: {
@@ -708,13 +709,13 @@ var vennSeries = {
 
         // Return resulting values for the attributes.
         return {
-            dashStyle: options.borderDashStyle,
-            fill: color(options.color)
+            'fill': color(options.color)
                 .setOpacity(options.opacity)
                 .brighten(options.brightness)
                 .get(),
-            stroke: options.borderColor,
-            strokeWidth: options.borderWidth
+            'stroke': options.borderColor,
+            'stroke-width': options.borderWidth,
+            'dashstyle': options.borderDashStyle
         };
     },
     utils: {
@@ -736,6 +737,9 @@ var vennPoint = {
 
         // Only draw points with single sets.
         return isSet(point);
+    },
+    isValid: function () {
+        return isNumber(this.value);
     }
 };
 
