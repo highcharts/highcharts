@@ -12,22 +12,26 @@ var isFn = function (x) {
 var draw = function draw(params) {
     var point = this,
         graphic = point.graphic,
-        animate = params.animate,
-        attr = params.attr,
+        animatableAttribs = params.animatableAttribs,
         onComplete = params.onComplete,
         css = params.css,
-        group = params.group,
-        renderer = params.renderer,
-        shape = params.shapeArgs,
-        type = params.shapeType;
+        renderer = params.renderer;
 
     if (point.shouldDraw()) {
         if (!graphic) {
-            point.graphic = graphic = renderer[type](shape).add(group);
+            point.graphic = graphic =
+                renderer[params.shapeType](params.shapeArgs).add(params.group);
         }
-        graphic.css(css).attr(attr).animate(animate, undefined, onComplete);
+        graphic
+            .css(css)
+            .attr(params.attribs)
+            .animate(
+                animatableAttribs,
+                params.isNew ? false : undefined,
+                onComplete
+            );
     } else if (graphic) {
-        graphic.animate(animate, undefined, function () {
+        graphic.animate(animatableAttribs, undefined, function () {
             point.graphic = graphic = graphic.destroy();
             if (isFn(onComplete)) {
                 onComplete();

@@ -765,8 +765,8 @@ var wordCloudSeries = {
             }
 
             point.draw({
-                animate: animate,
-                attr: attr,
+                animatableAttribs: animate,
+                attribs: attr,
                 css: css,
                 group: group,
                 renderer: renderer,

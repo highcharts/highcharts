@@ -642,32 +642,33 @@ var vennSeries = {
         points.forEach(function (point) {
             var sets = isArray(point.sets) ? point.sets : [],
                 shape = circles[sets.join()],
-                attr = !shape ? {} : {
+                shapeArgs = !shape ? {} : {
                     x: centerX + shape.x * scale,
                     y: centerY + shape.y * scale,
                     r: shape.r * scale
-                };
+                },
+                attribs;
 
-            point.shapeArgs = attr;
+            point.shapeArgs = shapeArgs;
 
             // Add point attribs
             if (!chart.styledMode) {
-                extend(attr, series.pointAttribs(point, point.state));
+                attribs = series.pointAttribs(point, point.state);
             }
 
             // Draw the point graphic.
             point.draw({
-                attr: attr,
-                css: {},
+                isNew: !point.graphic,
+                animatableAttribs: shapeArgs,
+                attribs: attribs,
                 group: group,
                 renderer: renderer,
                 shapeType: 'circle'
             });
 
             // Set a lot of options to have the data labels logic work.
-            point.isNull = !point.graphic;
-            point.plotX = attr.x;
-            point.plotY = attr.y;
+            point.plotX = shapeArgs.x;
+            point.plotY = shapeArgs.y;
             point.dlOptions = getDlOptions({
                 optionsPoint: point.options,
                 optionsSeries: series.options
