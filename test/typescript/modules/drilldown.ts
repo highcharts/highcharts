@@ -70,6 +70,7 @@ function test_labelStyling() {
                 }
             },
             series: [{
+                type: 'column',
                 id: 'animals',
                 data: [
                     ['Katten', 4],
@@ -79,6 +80,7 @@ function test_labelStyling() {
                     ['Varkens', 1]
                 ]
             }, {
+                type: 'column',
                 id: 'fruits',
                 data: [
                     ['Appels', 4],
