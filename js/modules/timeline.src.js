@@ -20,7 +20,6 @@ var addEvent = H.addEvent,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,
-    inArray = H.inArray,
     wrap = H.wrap;
 
 /**
@@ -150,7 +149,7 @@ seriesType('timeline', 'line', {
          */
         alternate: true,
         verticalAlign: 'middle',
-        color: '#000'
+        color: '${palette.neutralColor80}'
     },
     marker: {
         enabledThreshold: 0,
@@ -510,7 +509,7 @@ seriesType('timeline', 'line', {
             point.visible = point.options.visible = vis =
                 vis === undefined ? !point.visible : vis;
             // update userOptions.data
-            series.options.data[inArray(point, series.data)] = point.options;
+            series.options.data[series.data.indexOf(point)] = point.options;
 
             // Show and hide associated elements. This is performed regardless
             // of redraw or not, because chart.redraw only handles full series.
