@@ -643,6 +643,8 @@ var vennSeries = {
                     r: shape.r * scale
                 };
 
+            point.shapeArgs = attr;
+
             // Add point attribs
             if (!chart.styledMode) {
                 extend(attr, series.pointAttribs(point, point.state));
@@ -650,7 +652,6 @@ var vennSeries = {
 
             // Draw the point graphic.
             point.draw({
-                animate: {},
                 attr: attr,
                 css: {},
                 group: group,
@@ -718,6 +719,24 @@ var vennSeries = {
             'dashstyle': options.borderDashStyle
         };
     },
+
+    animate: function (init) {
+        if (!init) {
+            this.points.forEach(function (point) {
+                if (point.graphic && point.shapeArgs) {
+                    point.graphic
+                        .attr({
+                            r: 0
+                        })
+                        .animate({
+                            r: point.shapeArgs.r
+                        }, H.animObject(this.options.animation));
+                }
+            }, this);
+            this.animate = null;
+        }
+    },
+
     utils: {
         addOverlapToSets: addOverlapToSets,
         binarySearch: binarySearch,
