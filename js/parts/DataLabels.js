@@ -270,7 +270,7 @@ Series.prototype.drawDataLabels = function () {
         seriesDlOptions
     );
 
-    H.fireEvent(this, 'beforeDrawDataLabels');
+    H.fireEvent(this, 'drawDataLabels');
 
     if (
         isArray(seriesDlOptions) ||
@@ -1011,17 +1011,17 @@ if (seriesTypes.pie) {
                         seriesCenter);
                 } else {
                     switch (options.alignTo) {
-                        case 'connectors':
-                            x = dataLabelPositioners.alignToConnectors(points,
-                                i, plotWidth, plotLeft);
-                            break;
-                        case 'plotEdges':
-                            x = dataLabelPositioners.alignToPlotEdges(dataLabel,
-                                 i, plotWidth, plotLeft);
-                            break;
-                        default:
-                            x = dataLabelPositioners.radialDistributionX(series,
-                                point, y, naturalY);
+                    case 'connectors':
+                        x = dataLabelPositioners.alignToConnectors(points,
+                            i, plotWidth, plotLeft);
+                        break;
+                    case 'plotEdges':
+                        x = dataLabelPositioners.alignToPlotEdges(dataLabel,
+                             i, plotWidth, plotLeft);
+                        break;
+                    default:
+                        x = dataLabelPositioners.radialDistributionX(series,
+                            point, y, naturalY);
                     }
                 }
 

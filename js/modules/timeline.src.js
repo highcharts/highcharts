@@ -175,7 +175,7 @@ seriesType('timeline', 'line', {
 
         // Distribute data labels before rendering them. Distribution is based
         // on the 'dataLabels.distance' and 'dataLabels.alternate' property.
-        addEvent(series, 'beforeDrawDataLabels', function () {
+        addEvent(series, 'drawDataLabels', function () {
             // Delete the oldTextWidth parameter, in order to force adjusting
             // data label wrapper box width. It's needed only when useHTML
             // is enabled. This prevents the data label text getting out
