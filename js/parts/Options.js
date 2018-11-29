@@ -2104,7 +2104,7 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              *
-             * @type      {boolean|Highcharts.AnimationObject}
+             * @type      {boolean|Highcharts.AnimationOptionsObject}
              * @default   true
              * @since     2.2.4
              * @apioption legend.navigation.animation

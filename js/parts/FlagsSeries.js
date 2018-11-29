@@ -16,6 +16,7 @@ var addEvent = H.addEvent,
     each = H.each,
     merge = H.merge,
     noop = H.noop,
+    defined = H.defined,
     Renderer = H.Renderer,
     Series = H.Series,
     seriesType = H.seriesType,
@@ -42,7 +43,7 @@ seriesType('flags', 'column'
  * @sample stock/demo/flags-general/
  *         Flags on a line series
  *
- * @extends      {plotOptions.column}
+ * @extends      plotOptions.column
  * @excluding    animation, borderColor, borderRadius, borderWidth,
  *               colorByPoint, dataGrouping, pointPadding, pointWidth,
  *               turboThreshold
@@ -477,8 +478,9 @@ seriesType('flags', 'column'
                         x: box.pos,
                         anchorX: point.anchorX
                     });
-                    // Hide flag when its box position is not specified (#8573)
-                    if (!box.pos) {
+                    // Hide flag when its box position is not specified
+                    // (#8573, #9299)
+                    if (!defined(box.pos)) {
                         point.graphic.attr({
                             x: -9999,
                             anchorX: -9999

@@ -16,7 +16,7 @@ import '../parts/Utilities.js';
 var isArray = H.isArray,
     reduce = H.reduce;
 
-    // Utils:
+// Utils:
 function sumArray(array) {
 
     return reduce(array, function (prev, cur) {
@@ -35,26 +35,29 @@ function calculateTypicalPrice(point) {
 function calculateRawMoneyFlow(typicalPrice, volume) {
     return typicalPrice * volume;
 }
+
 /**
  * The MFI series type.
  *
- * @constructor seriesTypes.mfi
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.mfi
+ *
+ * @augments Highcharts.Series
  */
 H.seriesType('mfi', 'sma',
-
     /**
      * Money Flow Index. This series requires `linkedTo` option to be set and
      * should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/mfi
-     *                     Money Flow Index Indicator
-     * @since 6.0.0
+     * @sample stock/indicators/mfi
+     *         Money Flow Index Indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.mfi
      */
-
     {
         /**
          * @excluding index
@@ -66,17 +69,13 @@ H.seriesType('mfi', 'sma',
              * For example using OHLC data, volumeSeriesID='volume' means
              * the indicator will be calculated using OHLC and volume values.
              *
-             * @type {String}
              * @since 6.0.0
-             * @product highstock
              */
             volumeSeriesID: 'volume',
             /**
              * Number of maximum decimals that are used in MFI calculations.
              *
-             * @type {Number}
              * @since 6.0.0
-             * @product highstock
              */
             decimals: 4
 
@@ -189,11 +188,10 @@ H.seriesType('mfi', 'sma',
  * A `MFI` series. If the [type](#series.mfi.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.mfi
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.mfi
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.mfi
  */
 
@@ -201,9 +199,8 @@ H.seriesType('mfi', 'sma',
  * An array of data points for the series. For the `mfi` series type,
  * points are calculated dynamically.
  *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
+ * @extends   series.line.data
+ * @since     6.0.0
+ * @product   highstock
  * @apioption series.mfi.data
  */

@@ -35,7 +35,7 @@ var each = H.each,
  * @sample highcharts/demo/box-plot/
  *         Box plot
  *
- * @extends      {plotOptions.column}
+ * @extends      plotOptions.column
  * @excluding    borderColor, borderRadius, borderWidth, groupZPadding, states
  * @product      highcharts
  * @optionparent plotOptions.boxplot
@@ -279,23 +279,19 @@ seriesType('boxplot', 'column', {
     pointValKey: 'high',
 
     /*= if (build.classic) { =*/
-    /**
-     * Get presentational attributes
-     */
+
+    // Get presentational attributes
     pointAttribs: function () {
         // No attributes should be set on point.graphic which is the group
         return {};
     },
+
     /*= } =*/
 
-    /**
-     * Disable data labels for box plot
-     */
+    // Disable data labels for box plot
     drawDataLabels: noop,
 
-    /**
-     * Translate data points from raw values x and y to plotX and plotY
-     */
+    // Translate data points from raw values x and y to plotX and plotY
     translate: function () {
         var series = this,
             yAxis = series.yAxis,
@@ -315,9 +311,7 @@ seriesType('boxplot', 'column', {
         });
     },
 
-    /**
-     * Draw the data points
-     */
+    // Draw the data points
     drawPoints: function () {
         var series = this,
             points = series.points,

@@ -51,8 +51,7 @@
  * relative to the {@link Chart.container}.
  *
  * @interface Highcharts.PointerEventObject
- *
- * @extends {global.PointerEvent}
+ * @extends global.PointerEvent
  *//**
  * The X coordinate of the pointer interaction relative to the chart.
  *

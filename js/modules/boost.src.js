@@ -520,7 +520,10 @@ function shouldForceChartSeriesBoosting(chart) {
 
             // Don't count series with boostThreshold set to 0
             // See #8950
-            if (series.options.boostThreshold === 0) {
+            // Also don't count if the series is hidden.
+            // See #9046
+            if (series.options.boostThreshold === 0 ||
+                series.visible === false) {
                 continue;
             }
 
@@ -1576,6 +1579,7 @@ function GLRenderer(postRenderCallback) {
             drawAsBar = asBar[series.type],
             isXInside = false,
             isYInside = true,
+            firstPoint = true,
             threshold = options.threshold;
 
         if (options.boostData && options.boostData.length > 0) {
@@ -1929,7 +1933,10 @@ function GLRenderer(postRenderCallback) {
                         continue;
                     }
 
-                    x = plotWidth;
+                    // Having this here will clamp markers and make the angle
+                    // of the last line wrong. See 9166.
+                    // x = plotWidth;
+
                 }
 
             }
@@ -1961,7 +1968,7 @@ function GLRenderer(postRenderCallback) {
             // No markers on out of bounds things.
             // Out of bound things are shown if and only if the next
             // or previous point is inside the rect.
-            if (inst.hasMarkers) { // && isXInside) {
+            if (inst.hasMarkers && isXInside) {
                 // x = H.correctFloat(
                 //     Math.min(Math.max(-1e5, xAxis.translate(
                 //         x,
@@ -2001,7 +2008,7 @@ function GLRenderer(postRenderCallback) {
             // Draws an additional point at the old Y at the new X.
             // See #6976.
 
-            if (options.step) {
+            if (options.step && !firstPoint) {
                 vertice(
                     x,
                     lastY,
@@ -2033,6 +2040,7 @@ function GLRenderer(postRenderCallback) {
             lastY = y;
 
             hadPoints = true;
+            firstPoint = false;
         }
 
         if (settings.debug.showSkipSummary) {
@@ -2111,7 +2119,7 @@ function GLRenderer(postRenderCallback) {
             hasMarkers: s.options.marker ?
                 s.options.marker.enabled !== false :
                 false,
-            showMarksers: true,
+            showMarkers: true,
             drawMode: ({
                 'area': 'lines',
                 'arearange': 'lines',
@@ -3382,6 +3390,12 @@ if (!H.hasWebGLSupport()) {
                 ),
 
                 addKDPoint = function (clientX, plotY, i) {
+
+                    // We need to do ceil on the clientX to make things
+                    // snap to pixel values. The renderer will frequently
+                    // draw stuff on "sub-pixels".
+                    clientX = Math.ceil(clientX);
+
                     // Shaves off about 60ms compared to repeated concatenation
                     index = compareX ? clientX : clientX + ',' + plotY;
 
@@ -3499,9 +3513,7 @@ if (!H.hasWebGLSupport()) {
 
                     if (!isNull && x >= xMin && x <= xMax && isYInside) {
 
-                        // We use ceil to allow the KD tree to work with sub
-                        // pixels, which can be used in boost to space pixels
-                        clientX = Math.ceil(xAxis.toPixels(x, true));
+                        clientX = xAxis.toPixels(x, true);
 
                         if (sampling) {
                             if (minI === undefined || clientX === lastClientX) {

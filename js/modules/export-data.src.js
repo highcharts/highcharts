@@ -246,6 +246,12 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
             high: 'y'
         };
     }
+    if (seriesTypes.gantt) {
+        seriesTypes.gantt.prototype.keyToAxis = {
+            start: 'x',
+            end: 'x'
+        };
+    }
 };
 
 /**

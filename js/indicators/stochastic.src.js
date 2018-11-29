@@ -1,3 +1,4 @@
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -22,30 +23,37 @@ function maxInArray(arr, index) {
     }, 0);
 }
 
+/**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.stochastic
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('stochastic', 'sma',
     /**
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/stochastic
-     *                     Stochastic oscillator
-     * @since 6.0.0
+     * @sample stock/indicators/stochastic
+     *         Stochastic oscillator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.stochastic
      */
     {
         /**
-         * @excluding index,period
+         * @excluding index, period
          */
         params: {
             /**
              * Periods for Stochastic oscillator: [%K, %D].
              *
+             * @type    {Array<number,number>}
              * @default [14, 3]
-             * @type {Array}
-             * @since 6.0.0
-             * @product highstock
+             * @since   6.0.0
              */
             periods: [14, 3]
         },
@@ -59,22 +67,18 @@ H.seriesType('stochastic', 'sma',
          * Smoothed line options.
          *
          * @since 6.0.0
-         * @product highstock
          */
         smoothedLine: {
             /**
              * Styles for a smoothed line.
              *
              * @since 6.0.0
-             * @product highstock
              */
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @type {Number}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
@@ -82,9 +86,8 @@ H.seriesType('stochastic', 'sma',
                  * [plotOptions.stochastic.color](
                  * #plotOptions.stochastic.color).
                  *
-                 * @type {String}
+                 * @type  {Highcharts.ColorString}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 lineColor: undefined
             }
@@ -238,11 +241,10 @@ H.seriesType('stochastic', 'sma',
  * A Stochastic indicator. If the [type](#series.stochastic.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.stochastic
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.stochastic
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.stochastic
  */
 
@@ -250,10 +252,9 @@ H.seriesType('stochastic', 'sma',
  * An array of data points for the series. For the `stochastic` series type,
  * points are calculated dynamically.
  *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
+ * @extends   series.line.data
+ * @since     6.0.0
+ * @product   highstock
  * @apioption series.stochastic.data
  */
 

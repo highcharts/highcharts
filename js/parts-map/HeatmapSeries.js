@@ -32,313 +32,306 @@ var colorPointMixin = H.colorPointMixin,
  *
  * @augments Highcharts.Series
  */
-seriesType('heatmap', 'scatter'
-
-/**
- * A heatmap is a graphical representation of data where the individual values
- * contained in a matrix are represented as colors.
- *
- * @sample highcharts/demo/heatmap/
- *         Simple heatmap
- * @sample highcharts/demo/heatmap-canvas/
- *         Heavy heatmap
- *
- * @extends      {plotOptions.scatter}
- * @excluding    animationLimit, connectEnds, connectNulls, dashStyle,
- *               findNearestPointBy, getExtremesFromAll, linecap, lineWidth,
- *               marker, pointInterval, pointIntervalUnit, pointRange,
- *               pointStart, shadow, softThreshold, stacking, step, threshold
- * @product      highcharts highmaps
- * @optionparent plotOptions.heatmap
- */
-, {
+seriesType('heatmap', 'scatter',
 
     /**
-     * Animation is disabled by default on the heatmap series.
-     */
-    animation: false,
-
-    /**
-     * The border width for each heat map item.
-     */
-    borderWidth: 0,
-
-    /**
-     * Padding between the points in the heatmap.
+     * A heatmap is a graphical representation of data where the individual
+     * values contained in a matrix are represented as colors.
      *
-     * @type      {number}
-     * @default   0
-     * @since     6.0
-     * @apioption plotOptions.heatmap.pointPadding
+     * @sample highcharts/demo/heatmap/
+     *         Simple heatmap
+     * @sample highcharts/demo/heatmap-canvas/
+     *         Heavy heatmap
+     *
+     * @extends      plotOptions.scatter
+     * @excluding    animationLimit, connectEnds, connectNulls, dashStyle,
+     *               findNearestPointBy, getExtremesFromAll, linecap, lineWidth,
+     *               marker, pointInterval, pointIntervalUnit, pointRange,
+     *               pointStart, shadow, softThreshold, stacking, step,
+     *               threshold
+     * @product      highcharts highmaps
+     * @optionparent plotOptions.heatmap
      */
+    {
 
-    /**
-     * The main color of the series. In heat maps this color is rarely used,
-     * as we mostly use the color to denote the value of each point. Unless
-     * options are set in the [colorAxis](#colorAxis), the default value
-     * is pulled from the [options.colors](#colors) array.
-     *
-     * @type      {Highcharts.ColorString}
-     * @since     4.0
-     * @product   highcharts
-     * @apioption plotOptions.heatmap.color
-     */
+        /**
+         * Animation is disabled by default on the heatmap series.
+         */
+        animation: false,
 
-    /**
-     * The column size - how many X axis units each column in the heatmap
-     * should span.
-     *
-     * @sample {highcharts} maps/demo/heatmap/
-     *         One day
-     * @sample {highmaps} maps/demo/heatmap/
-     *         One day
-     *
-     * @type      {number}
-     * @default   1
-     * @since     4.0
-     * @product   highcharts highmaps
-     * @apioption plotOptions.heatmap.colsize
-     */
+        /**
+         * The border width for each heat map item.
+         */
+        borderWidth: 0,
 
-    /**
-     * The row size - how many Y axis units each heatmap row should span.
-     *
-     * @sample {highcharts} maps/demo/heatmap/
-     *         1 by default
-     * @sample {highmaps} maps/demo/heatmap/
-     *         1 by default
-     *
-     * @type      {number}
-     * @default   1
-     * @since     4.0
-     * @product   highcharts highmaps
-     * @apioption plotOptions.heatmap.rowsize
-     */
+        /**
+         * Padding between the points in the heatmap.
+         *
+         * @type      {number}
+         * @default   0
+         * @since     6.0
+         * @apioption plotOptions.heatmap.pointPadding
+         */
 
-    /*= if (build.classic) { =*/
+        /**
+         * The main color of the series. In heat maps this color is rarely used,
+         * as we mostly use the color to denote the value of each point. Unless
+         * options are set in the [colorAxis](#colorAxis), the default value
+         * is pulled from the [options.colors](#colors) array.
+         *
+         * @type      {Highcharts.ColorString}
+         * @since     4.0
+         * @product   highcharts
+         * @apioption plotOptions.heatmap.color
+         */
 
-    /**
-     * The color applied to null points. In styled mode, a general CSS class is
-     * applied instead.
-     *
-     * @type {Highcharts.ColorString}
-     */
-    nullColor: '${palette.neutralColor3}',
+        /**
+         * The column size - how many X axis units each column in the heatmap
+         * should span.
+         *
+         * @sample {highcharts} maps/demo/heatmap/
+         *         One day
+         * @sample {highmaps} maps/demo/heatmap/
+         *         One day
+         *
+         * @type      {number}
+         * @default   1
+         * @since     4.0
+         * @apioption plotOptions.heatmap.colsize
+         */
 
-    /*= } =*/
+        /**
+         * The row size - how many Y axis units each heatmap row should span.
+         *
+         * @sample {highcharts} maps/demo/heatmap/
+         *         1 by default
+         * @sample {highmaps} maps/demo/heatmap/
+         *         1 by default
+         *
+         * @type      {number}
+         * @default   1
+         * @since     4.0
+         * @apioption plotOptions.heatmap.rowsize
+         */
 
-    dataLabels: {
-        formatter: function () { // #2945
-            return this.point.value;
+        /*= if (build.classic) { =*/
+
+        /**
+         * The color applied to null points. In styled mode, a general CSS class
+         * is applied instead.
+         *
+         * @type {Highcharts.ColorString}
+         */
+        nullColor: '${palette.neutralColor3}',
+
+        /*= } =*/
+
+        dataLabels: {
+            formatter: function () { // #2945
+                return this.point.value;
+            },
+            inside: true,
+            verticalAlign: 'middle',
+            crop: false,
+            overflow: false,
+            padding: 0 // #3837
         },
-        inside: true,
-        verticalAlign: 'middle',
-        crop: false,
-        overflow: false,
-        padding: 0 // #3837
-    },
 
-    /**
-     * @ignore
-     */
-    marker: null,
+        /** @ignore */
+        marker: null,
 
-    /**
-     * @ignore
-     */
-    pointRange: null, // dynamically set to colsize by default
+        /** @ignore */
+        pointRange: null, // dynamically set to colsize by default
 
-    tooltip: {
-        pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
-    },
+        tooltip: {
+            pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
+        },
 
-    states: {
+        states: {
 
-        hover: {
+            hover: {
 
-            /**
-             * @ignore
-             */
-            halo: false,  // #3406, halo is disabled on heatmaps by default
+                /** @ignore */
+                halo: false, // #3406, halo is disabled on heatmaps by default
 
-            /**
-             * How much to brighten the point on interaction. Requires the main
-             * color to be defined in hex or rgb(a) format.
-             *
-             * In styled mode, the hover brightening is by default replaced
-             * with a fill-opacity set in the `.highcharts-point:hover` rule.
-             *
-             * @product highcharts highmaps
-             */
-            brightness: 0.2
+                /**
+                 * How much to brighten the point on interaction. Requires the
+                 * main color to be defined in hex or rgb(a) format.
+                 *
+                 * In styled mode, the hover brightening is by default replaced
+                 * with a fill-opacity set in the `.highcharts-point:hover`
+                 * rule.
+                 */
+                brightness: 0.2
+            }
+
         }
 
-    }
+    }, merge(colorSeriesMixin, {
 
-}, merge(colorSeriesMixin, {
+        pointArrayMap: ['y', 'value'],
+        hasPointSpecificOptions: true,
+        getExtremesFromAll: true,
+        directTouch: true,
 
-    pointArrayMap: ['y', 'value'],
-    hasPointSpecificOptions: true,
-    getExtremesFromAll: true,
-    directTouch: true,
+        /**
+         * Override the init method to add point ranges on both axes.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.heatmap#init
+         */
+        init: function () {
+            var options;
+            seriesTypes.scatter.prototype.init.apply(this, arguments);
 
-    /**
-     * Override the init method to add point ranges on both axes.
-     *
-     * @private
-     * @function Highcharts.seriesTypes.heatmap#init
-     */
-    init: function () {
-        var options;
-        seriesTypes.scatter.prototype.init.apply(this, arguments);
+            options = this.options;
+            // #3758, prevent resetting in setData
+            options.pointRange = pick(options.pointRange, options.colsize || 1);
+            // general point range
+            this.yAxis.axisPointRange = options.rowsize || 1;
+        },
 
-        options = this.options;
-        // #3758, prevent resetting in setData
-        options.pointRange = pick(options.pointRange, options.colsize || 1);
-        this.yAxis.axisPointRange = options.rowsize || 1; // general point range
-    },
+        /**
+         * @private
+         * @function Highcharts.seriesTypes.heatmap#translate
+         */
+        translate: function () {
+            var series = this,
+                options = series.options,
+                xAxis = series.xAxis,
+                yAxis = series.yAxis,
+                seriesPointPadding = options.pointPadding || 0,
+                between = function (x, a, b) {
+                    return Math.min(Math.max(a, x), b);
+                };
 
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.heatmap#translate
-     */
-    translate: function () {
-        var series = this,
-            options = series.options,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
-            seriesPointPadding = options.pointPadding || 0,
-            between = function (x, a, b) {
-                return Math.min(Math.max(a, x), b);
-            };
+            series.generatePoints();
 
-        series.generatePoints();
-
-        each(series.points, function (point) {
-            var xPad = (options.colsize || 1) / 2,
-                yPad = (options.rowsize || 1) / 2,
-                x1 = between(
-                    Math.round(
-                        xAxis.len -
-                        xAxis.translate(point.x - xPad, 0, 1, 0, 1)
+            each(series.points, function (point) {
+                var xPad = (options.colsize || 1) / 2,
+                    yPad = (options.rowsize || 1) / 2,
+                    x1 = between(
+                        Math.round(
+                            xAxis.len -
+                            xAxis.translate(point.x - xPad, 0, 1, 0, 1)
+                        ),
+                        -xAxis.len, 2 * xAxis.len
                     ),
-                    -xAxis.len, 2 * xAxis.len
-                ),
-                x2 = between(
-                    Math.round(
-                        xAxis.len -
-                        xAxis.translate(point.x + xPad, 0, 1, 0, 1)
+                    x2 = between(
+                        Math.round(
+                            xAxis.len -
+                            xAxis.translate(point.x + xPad, 0, 1, 0, 1)
+                        ),
+                        -xAxis.len, 2 * xAxis.len
                     ),
-                    -xAxis.len, 2 * xAxis.len
-                ),
-                y1 = between(
-                    Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)),
-                    -yAxis.len, 2 * yAxis.len
-                ),
-                y2 = between(
-                    Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)),
-                    -yAxis.len, 2 * yAxis.len
-                ),
-                pointPadding = pick(point.pointPadding, seriesPointPadding);
+                    y1 = between(
+                        Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)),
+                        -yAxis.len, 2 * yAxis.len
+                    ),
+                    y2 = between(
+                        Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)),
+                        -yAxis.len, 2 * yAxis.len
+                    ),
+                    pointPadding = pick(point.pointPadding, seriesPointPadding);
 
-            // Set plotX and plotY for use in K-D-Tree and more
-            point.plotX = point.clientX = (x1 + x2) / 2;
-            point.plotY = (y1 + y2) / 2;
+                // Set plotX and plotY for use in K-D-Tree and more
+                point.plotX = point.clientX = (x1 + x2) / 2;
+                point.plotY = (y1 + y2) / 2;
 
-            point.shapeType = 'rect';
-            point.shapeArgs = {
-                x: Math.min(x1, x2) + pointPadding,
-                y: Math.min(y1, y2) + pointPadding,
-                width: Math.abs(x2 - x1) - pointPadding * 2,
-                height: Math.abs(y2 - y1) - pointPadding * 2
-            };
-        });
+                point.shapeType = 'rect';
+                point.shapeArgs = {
+                    x: Math.min(x1, x2) + pointPadding,
+                    y: Math.min(y1, y2) + pointPadding,
+                    width: Math.abs(x2 - x1) - pointPadding * 2,
+                    height: Math.abs(y2 - y1) - pointPadding * 2
+                };
+            });
 
-        series.translateColors();
-    },
+            series.translateColors();
+        },
 
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.heatmap#drawPoints
-     */
-    drawPoints: function () {
-        seriesTypes.column.prototype.drawPoints.call(this);
+        /**
+         * @private
+         * @function Highcharts.seriesTypes.heatmap#drawPoints
+         */
+        drawPoints: function () {
+            seriesTypes.column.prototype.drawPoints.call(this);
 
-        each(this.points, function (point) {
-            /*= if (build.classic) { =*/
-            point.graphic.attr(this.colorAttribs(point));
-            /*= } else { =*/
-            // In styled mode, use CSS, otherwise the fill used in the style
-            // sheet will take precedence over the fill attribute.
-            point.graphic.css(this.colorAttribs(point));
-            /*= } =*/
-        }, this);
-    },
+            each(this.points, function (point) {
+                /*= if (build.classic) { =*/
+                point.graphic.attr(this.colorAttribs(point));
+                /*= } else { =*/
+                // In styled mode, use CSS, otherwise the fill used in the style
+                // sheet will take precedence over the fill attribute.
+                point.graphic.css(this.colorAttribs(point));
+                /*= } =*/
+            }, this);
+        },
 
-    /**
-     * @ignore
-     * @deprecated
-     * @function Highcharts.seriesTypes.heatmap#animate
-     */
-    animate: noop,
+        /**
+         * @ignore
+         * @deprecated
+         * @function Highcharts.seriesTypes.heatmap#animate
+         */
+        animate: noop,
 
-    /**
-     * @ignore
-     * @deprecated
-     * @function Highcharts.seriesTypes.heatmap#getBox
-     */
-    getBox: noop,
+        /**
+         * @ignore
+         * @deprecated
+         * @function Highcharts.seriesTypes.heatmap#getBox
+         */
+        getBox: noop,
 
-    /**
-     * @private
-     * @borrows Highcharts.LegendSymbolMixin.drawRectangle as Highcharts.seriesTypes.heatmap#drawLegendSymbol
-     */
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+        /**
+         * @private
+         * @borrows Highcharts.LegendSymbolMixin.drawRectangle as Highcharts.seriesTypes.heatmap#drawLegendSymbol
+         */
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
-    /**
-     * @private
-     * @borrows Highcharts.seriesTypes.column#alignDataLabel as Highcharts.seriesTypes.heatmap#alignDataLabel
-     */
-    alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+        /**
+         * @private
+         * @borrows Highcharts.seriesTypes.column#alignDataLabel as Highcharts.seriesTypes.heatmap#alignDataLabel
+         */
+        alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 
-    /**
-     * @private
-     * @function Highcharts.seriesTypes.heatmap#getExtremes
-     */
-    getExtremes: function () {
-        // Get the extremes from the value data
-        Series.prototype.getExtremes.call(this, this.valueData);
-        this.valueMin = this.dataMin;
-        this.valueMax = this.dataMax;
+        /**
+         * @private
+         * @function Highcharts.seriesTypes.heatmap#getExtremes
+         */
+        getExtremes: function () {
+            // Get the extremes from the value data
+            Series.prototype.getExtremes.call(this, this.valueData);
+            this.valueMin = this.dataMin;
+            this.valueMax = this.dataMax;
 
-        // Get the extremes from the y data
-        Series.prototype.getExtremes.call(this);
-    }
-
-}), H.extend({
-
-    /**
-     * @private
-     * @function Highcharts.Point#haloPath
-     *
-     * @param {number} size
-     *
-     * @return {Highcharts.SVGPathArray}
-     */
-    haloPath: function (size) {
-        if (!size) {
-            return [];
+            // Get the extremes from the y data
+            Series.prototype.getExtremes.call(this);
         }
-        var rect = this.shapeArgs;
-        return [
-            'M', rect.x - size, rect.y - size,
-            'L', rect.x - size, rect.y + rect.height + size,
-            rect.x + rect.width + size, rect.y + rect.height + size,
-            rect.x + rect.width + size, rect.y - size,
-            'Z'
-        ];
-    }
-}, colorPointMixin));
+
+    }), H.extend({
+        /**
+         * @private
+         * @function Highcharts.Point#haloPath
+         *
+         * @param {number} size
+         *
+         * @return {Highcharts.SVGPathArray}
+         */
+        haloPath: function (size) {
+            if (!size) {
+                return [];
+            }
+            var rect = this.shapeArgs;
+            return [
+                'M', rect.x - size, rect.y - size,
+                'L', rect.x - size, rect.y + rect.height + size,
+                rect.x + rect.width + size, rect.y + rect.height + size,
+                rect.x + rect.width + size, rect.y - size,
+                'Z'
+            ];
+        }
+    }, colorPointMixin)
+);
 
 /**
  * A `heatmap` series. If the [type](#series.heatmap.type) option is
@@ -452,6 +445,7 @@ seriesType('heatmap', 'scatter'
  *         Point padding on tiles
  *
  * @type      {number}
+ * @product   highcharts highmaps
  * @apioption series.heatmap.data.pointPadding
  */
 

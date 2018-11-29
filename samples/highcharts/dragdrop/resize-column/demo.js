@@ -34,7 +34,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        yDecimals: 2
+        valueDecimals: 2
     },
 
     series: [{

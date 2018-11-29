@@ -289,7 +289,7 @@ addEvent(Axis, 'getSeriesExtremes', function (e) {
         var index = this.parallelPosition,
             currentPoints = [];
         each(this.series, function (series) {
-            if (defined(series.yData[index])) {
+            if (series.visible && defined(series.yData[index])) {
                 // We need to use push() beacause of null points
                 currentPoints.push(series.yData[index]);
             }
