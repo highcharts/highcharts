@@ -80,7 +80,7 @@ var dotProduct = function dotProduct(a, b) {
  * @private
  * @function project
  *
- * @param {Array<Array<number,number>} polygon
+ * @param {Array<Array<number,number>>} polygon
  *        Array of points in a polygon.
  *
  * @param {Array<number,number>} target
@@ -249,7 +249,7 @@ var isPolygonsOverlappingOnAxis = function (axis, polygon1, polygon2) {
  * @param {Array<Array<number,number>>} polygon1
  *        First polygon.
  *
- * @param {Array<Array<number,number>} polygon2
+ * @param {Array<Array<number,number>>} polygon2
  *        Second polygon.
  *
  * @return {boolean}
