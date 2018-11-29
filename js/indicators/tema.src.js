@@ -38,8 +38,7 @@ H.seriesType('tema', 'ema',
             index,
             i,
             xVal
-          ) {
-
+        ) {
             return EMAindicator.prototype.calculateEma(
                 xVal || [],
                 yVal,
@@ -49,6 +48,21 @@ H.seriesType('tema', 'ema',
                 index === undefined ? -1 : index,
                 SMA
             );
+        },
+        getPoint: function (
+          xVal,
+          tripledPeriod,
+          EMA,
+          EMAlevel2,
+          EMAlevel3,
+          prevEMAlevel3,
+          i
+        ) {
+            var TEMAPoint = [
+                xVal[i - 3],
+                correctFloat(3 * EMA - 3 * EMAlevel2 + EMAlevel3)
+            ];
+            return TEMAPoint;
         },
         getValues: function (series, params) {
             var period = params.period,
@@ -159,13 +173,21 @@ H.seriesType('tema', 'ema',
                             prevEMAlevel3,
                             SMA
                         )[1];
-                        TEMAPoint = [
-                            xVal[i - 3],
-                            correctFloat(3 * EMA - 3 * EMAlevel2 + EMAlevel3)
-                        ];
-                        TEMA.push(TEMAPoint);
-                        xDataTema.push(TEMAPoint[0]);
-                        yDataTema.push(TEMAPoint[1]);
+                        TEMAPoint = this.getPoint(
+                          xVal,
+                          tripledPeriod,
+                          EMA,
+                          EMAlevel2,
+                          EMAlevel3,
+                          prevEMAlevel3,
+                          i
+                        );
+                        // Make sure that point exists (for TRIX oscillator)
+                        if (TEMAPoint) {
+                            TEMA.push(TEMAPoint);
+                            xDataTema.push(TEMAPoint[0]);
+                            yDataTema.push(TEMAPoint[1]);
+                        }
                         prevEMAlevel3 = EMAlevel3;
                     }
                 }
