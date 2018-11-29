@@ -22,17 +22,12 @@ var color = H.Color,
     getOverlapBetweenCirclesByDistance =
         geometryCircles.getOverlapBetweenCircles,
     isArray = H.isArray,
-    isBoolean = function (x) {
-        return typeof x === 'boolean';
-    },
     isNumber = H.isNumber,
     isObject = H.isObject,
     isString = H.isString,
     keys = H.keys,
     merge = H.merge,
-    noop = H.noop,
-    seriesType = H.seriesType,
-    Series = H.Series;
+    seriesType = H.seriesType;
 
 var objectValues = function objectValues(obj) {
     return keys(obj).map(function (x) {
@@ -504,24 +499,6 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
     return field;
 };
 
-var getDlOptions = function getDlOptions(params) {
-    // Set options to new object to avoid problems with scope
-    var optionsPoint = (
-            isObject(params.optionsPoint) ?
-            params.optionsPoint.dataLabels :
-            {}
-        ),
-        optionsSeries = (
-            isObject(params.optionsSeries) ?
-            params.optionsSeries.dataLabels :
-            {}
-        ),
-        options = merge({
-            style: {}
-        }, optionsSeries, optionsPoint);
-    return options;
-};
-
 var vennOptions = {
     borderColor: '${palette.neutralColor20}',
     borderDashStyle: 'solid',
@@ -558,11 +535,46 @@ var vennSeries = {
     isCartesian: false,
     axisTypes: [],
     directTouch: true,
-    // Datalabels are drawn at the end of drawPoints.
-    drawDataLabels: noop,
     translate: function () {
+
+        var chart = this.chart;
+
         this.processedXData = this.xData;
         this.generatePoints();
+
+        // Process the data before passing it into the layout function.
+        var relations = processVennData(this.options.data);
+
+        // Calculate the positions of each circle.
+        var circles = layout(relations);
+
+        // Calculate the scale, and center of the plot area.
+        var field = Object.keys(circles).reduce(function (field, key) {
+                return updateFieldBoundaries(field, circles[key]);
+            }, { top: 0, bottom: 0, left: 0, right: 0 }),
+            scale = getScale(chart.plotWidth, chart.plotHeight, field),
+            centerX = chart.plotWidth / 2,
+            centerY = chart.plotHeight / 2;
+
+        // Iterate all points and calculate and draw their graphics.
+        this.points.forEach(function (point) {
+            var sets = isArray(point.sets) ? point.sets : [],
+                shape = circles[sets.join()],
+                shapeArgs = !shape ? {} : {
+                    x: centerX + shape.x * scale,
+                    y: centerY + shape.y * scale,
+                    r: shape.r * scale
+                };
+
+            point.shapeArgs = shapeArgs;
+
+            // Placement for the data labels
+            point.plotX = shapeArgs.x;
+            point.plotY = shapeArgs.y;
+
+            // Set name for usage in tooltip and in data label.
+            point.name = sets.join('∩');
+        });
     },
     /**
      * Draw the graphics for each point.
@@ -577,64 +589,10 @@ var vennSeries = {
             // Chart properties
             renderer = chart.renderer;
 
-        // Add necessary properties for the data labels hack.
-        // TODO: draw labels in the loop where the point graphic is drawn.
-        var optionsChart = chart && chart.options && chart.options.chart || {},
-            hasRendered = series.hasRendered,
-            animation = (
-                isBoolean(optionsChart.animation) ?
-                optionsChart.animation :
-                true
-            ),
-            animateLabels,
-            animateLabelsCalled = false,
-            addedHack = false,
-            hackDataLabelAnimation = !!(
-                animation &&
-                hasRendered &&
-                series.dataLabelsGroup
-            );
-
-        if (hackDataLabelAnimation) {
-            series.dataLabelsGroup.attr({ opacity: 0 });
-            animateLabels = function () {
-                var s = series;
-                animateLabelsCalled = true;
-                if (s.dataLabelsGroup) {
-                    s.dataLabelsGroup.animate({
-                        opacity: 1,
-                        visibility: 'visible'
-                    });
-                }
-            };
-        }
-
-        // Process the data before passing it into the layout function.
-        var relations = processVennData(series.options.data);
-
-        // Calculate the positions of each circle.
-        var circles = layout(relations);
-
-        // Calculate the scale, and center of the plot area.
-        var field = Object.keys(circles).reduce(function (field, key) {
-                return updateFieldBoundaries(field, circles[key]);
-            }, { top: 0, bottom: 0, left: 0, right: 0 }),
-            scale = getScale(chart.plotWidth, chart.plotHeight, field),
-            centerX = chart.plotWidth / 2,
-            centerY = chart.plotHeight / 2;
-
         // Iterate all points and calculate and draw their graphics.
         points.forEach(function (point) {
-            var sets = isArray(point.sets) ? point.sets : [],
-                shape = circles[sets.join()],
-                shapeArgs = !shape ? {} : {
-                    x: centerX + shape.x * scale,
-                    y: centerY + shape.y * scale,
-                    r: shape.r * scale
-                },
-                attribs;
 
-            point.shapeArgs = shapeArgs;
+            var attribs;
 
             // Add point attribs
             if (!chart.styledMode) {
@@ -644,40 +602,14 @@ var vennSeries = {
             // Draw the point graphic.
             point.draw({
                 isNew: !point.graphic,
-                animatableAttribs: shapeArgs,
+                animatableAttribs: point.shapeArgs,
                 attribs: attribs,
                 group: group,
                 renderer: renderer,
                 shapeType: 'circle'
             });
-
-            // Set a lot of options to have the data labels logic work.
-            point.plotX = shapeArgs.x;
-            point.plotY = shapeArgs.y;
-            point.dlOptions = getDlOptions({
-                optionsPoint: point.options,
-                optionsSeries: series.options
-            });
-
-            // Set name for usage in tooltip and in data label.
-            point.name = sets.join('∩');
         });
 
-        // Draw data labels after points
-        // TODO draw labels one by one to avoid addtional looping
-        if (hackDataLabelAnimation && addedHack) {
-            series.hasRendered = false;
-            series.options.dataLabels.defer = true;
-            Series.prototype.drawDataLabels.call(series);
-            series.hasRendered = true;
-            // If animateLabels is called before labels were hidden, then call
-            // it again.
-            if (animateLabelsCalled) {
-                animateLabels();
-            }
-        } else {
-            Series.prototype.drawDataLabels.call(series);
-        }
     },
     /**
      * Calculates the style attributes for a point. The attributes can vary
