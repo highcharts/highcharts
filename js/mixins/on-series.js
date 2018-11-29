@@ -1,9 +1,11 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 
 var each = H.each,
@@ -11,11 +13,20 @@ var each = H.each,
     seriesTypes = H.seriesTypes,
     stableSort = H.stableSort;
 
+/**
+ * @private
+ * @mixin onSeriesMixin
+ */
 var onSeriesMixin = {
 
     /**
      * Override getPlotBox. If the onSeries option is valid, return the plot box
      * of the onSeries, otherwise proceed as usual.
+     *
+     * @private
+     * @function onSeriesMixin.getPlotBox
+     *
+     * @return {Highcharts.SeriesPlotBoxObject}
      */
     getPlotBox: function () {
         return H.Series.prototype.getPlotBox.call(
@@ -28,6 +39,9 @@ var onSeriesMixin = {
 
     /**
      * Extend the translate method by placing the point on the related series
+     *
+     * @private
+     * @function onSeriesMixin.translate
      */
     translate: function () {
 
