@@ -69,6 +69,8 @@ seriesType('packedbubble', 'bubble',
         }
     }, {
         pointArrayMap: ['name', 'y'],
+        isCartesian: false,
+        axisTypes: [],
         /**
          * Create a single array of all points from all series
          *
@@ -89,10 +91,10 @@ seriesType('packedbubble', 'bubble',
                 if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
                     // add data to array only if series is visible
-                    for (j = 0; j < series.processedYData.length; j++) {
+                    for (j = 0; j < series.yData.length; j++) {
                         allDataPoints.push([
                             null, null,
-                            series.processedYData[j],
+                            series.yData[j],
                             series.index,
                             j
                         ]);
@@ -117,6 +119,9 @@ seriesType('packedbubble', 'bubble',
                 radius,
                 i;
 
+            this.processedXData = this.xData;
+            this.generatePoints();
+
             // merged data is an array with all of the data from all series
             if (!defined(chart.allDataPoints)) {
                 chart.allDataPoints = series.accumulateAllPoints(series);
@@ -127,9 +132,6 @@ seriesType('packedbubble', 'bubble',
 
             // after getting initial radius, calculate bubble positions
             positions = this.placeBubbles(chart.allDataPoints);
-
-            // Run the parent method
-            H.seriesTypes.scatter.prototype.translate.call(this);
 
             // Set the shape type and arguments to be picked up in drawPoints
             for (i = 0; i < positions.length; i++) {
@@ -150,14 +152,6 @@ seriesType('packedbubble', 'bubble',
                         width: 2 * radius,
                         height: 2 * radius
                     });
-
-                    // Alignment box for the data label
-                    point.dlBox = {
-                        x: point.plotX - radius,
-                        y: point.plotY - radius,
-                        width: 2 * radius,
-                        height: 2 * radius
-                    };
                 }
             }
         },
@@ -489,9 +483,20 @@ seriesType('packedbubble', 'bubble',
             });
 
             this.radii = radii;
-        }
+        },
+
+        alignDataLabel: H.Series.prototype.alignDataLabel
     }
 );
+
+// When one series is modified, the others need to be recomputed
+H.addEvent(H.seriesTypes.packedbubble, 'updatedData', function () {
+    this.chart.series.forEach(function (s) {
+        if (s.accumulateAllPoints) {
+            s.isDirty = true;
+        }
+    });
+});
 
 // Remove accumulated data points to redistribute all of them again
 // (i.e after hiding series by legend)
@@ -499,11 +504,6 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
     if (this.allDataPoints) {
         delete this.allDataPoints;
     }
-});
-
-// Hide all axes, we cannot use isCartesian, because it breaks all updates.
-H.addEvent(H.Axis, 'init', function (options) {
-    options.userOptions.visible = false;
 });
 
 /**
