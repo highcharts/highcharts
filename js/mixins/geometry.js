@@ -28,7 +28,21 @@ var getDistanceBetweenPoints = function getDistanceBetweenPoints(p1, p2) {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 };
 
+/**
+ * Calculates the angle between two points.
+ *
+ * TODO: add unit tests.
+ *
+ * @param {object} p1 The first point.
+ * @param {object} p2 The second point.
+ * @returns {number} Returns the angle in radians.
+ */
+var getAngleBetweenPoints = function getAngleBetweenPoints(p1, p2) {
+    return Math.atan2(p2.x - p1.x, p2.y - p1.y);
+};
+
 var geometry = {
+    getAngleBetweenPoints: getAngleBetweenPoints,
     getCenterOfPoints: getCenterOfPoints,
     getDistanceBetweenPoints: getDistanceBetweenPoints
 };

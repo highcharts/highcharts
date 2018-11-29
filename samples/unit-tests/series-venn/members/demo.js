@@ -110,6 +110,18 @@ QUnit.test('binarySearch', function (assert) {
     );
 });
 
+QUnit.test('getAreaOfIntersectionBetweenCircles', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        getAreaOfIntersectionBetweenCircles =
+            vennPrototype.utils.geometryCircles
+            .getAreaOfIntersectionBetweenCircles;
+    assert.strictEqual(
+        getAreaOfIntersectionBetweenCircles([{ x: 0, y: 0, r: 3 }, { x: 5, y: 0, r: 3 }]),
+        'M 2.5 1.658 A 3 3 0 0 1 2.5 -1.658 A 3 3 0 0 1 2.5 1.658',
+        'should return a path representing the area of overlap between the two circles.'
+    );
+});
+
 QUnit.test('getCenterOfPoints', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getCenterOfPoints =
@@ -219,10 +231,10 @@ QUnit.test('getCirclesIntersectionPoints', function (assert) {
     assert.deepEqual(
         getCirclesIntersectionPoints(circles),
         [
-            { x: 2.5, y: 1.658 },
-            { x: 2.5, y: -1.658 },
-            { x: -3, y: 0 },
-            { x: 0, y: 3 }
+            { x: 2.5, y: 1.658, indexes: [0, 1] },
+            { x: 2.5, y: -1.658, indexes: [0, 1] },
+            { x: -3, y: 0, indexes: [0, 2] },
+            { x: 0, y: 3, indexes: [0, 2] }
         ],
         'should return a list of all the intersection points between the circles.'
     );
