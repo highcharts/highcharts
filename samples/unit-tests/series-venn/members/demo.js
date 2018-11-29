@@ -110,6 +110,23 @@ QUnit.test('binarySearch', function (assert) {
     );
 });
 
+QUnit.test('getCenterOfPoints', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        getCenterOfPoints =
+            vennPrototype.utils.geometry.getCenterOfPoints;
+
+    assert.deepEqual(
+        getCenterOfPoints([
+            { x: -2, y: 1 },
+            { x: -2, y: 3 },
+            { x: 0, y: 3 },
+            { x: 0, y: 1 }
+        ]),
+        { x: -1, y: 2 },
+        'should return center (-1, 2) when points are [(-2, 1), (-2, 3), (0, 3), (0, 1).'
+    );
+});
+
 QUnit.test('getOverlapBetweenCircles', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getOverlapBetweenCircles =
