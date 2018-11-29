@@ -106,10 +106,37 @@ var getCirclesIntersectionPoints = function getIntersectionPoints(circles) {
     }, []);
 };
 
+/**
+ * Tests wether a point lies within a given circle.
+ *
+ * @param {object} point The point to test for.
+ * @param {object} circle The circle to test if the point is within.
+ * @returns {boolean} Returns true if the point is inside, false if outside.
+ */
+var isPointInsideCircle = function isPointInsideCircle(point, circle) {
+    return getDistanceBetweenPoints(point, circle) < circle.r;
+};
+
+/**
+ * Tests wether a point lies within a set of circles.
+ *
+ * @param {object} point The point to test.
+ * @param {array} circles The list of circles to test against.
+ * @returns {boolean} Returns true if the point is inside all the circles, false
+ * if not.
+ */
+var isPointInsideAllCircles = function isPointInsideAllCircles(point, circles) {
+    return !circles.some(function (circle) {
+        return !isPointInsideCircle(point, circle);
+    });
+};
+
 var geometryCircles = {
     getCircleCircleIntersection: getCircleCircleIntersection,
     getCirclesIntersectionPoints: getCirclesIntersectionPoints,
-    getOverlapBetweenCircles: getOverlapBetweenCircles
+    getOverlapBetweenCircles: getOverlapBetweenCircles,
+    isPointInsideCircle: isPointInsideCircle,
+    isPointInsideAllCircles: isPointInsideAllCircles
 };
 
 export default geometryCircles;
