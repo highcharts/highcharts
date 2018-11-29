@@ -1579,6 +1579,7 @@ function GLRenderer(postRenderCallback) {
             drawAsBar = asBar[series.type],
             isXInside = false,
             isYInside = true,
+            firstPoint = true,
             threshold = options.threshold;
 
         if (options.boostData && options.boostData.length > 0) {
@@ -2007,7 +2008,7 @@ function GLRenderer(postRenderCallback) {
             // Draws an additional point at the old Y at the new X.
             // See #6976.
 
-            if (options.step) {
+            if (options.step && !firstPoint) {
                 vertice(
                     x,
                     lastY,
@@ -2039,6 +2040,7 @@ function GLRenderer(postRenderCallback) {
             lastY = y;
 
             hadPoints = true;
+            firstPoint = false;
         }
 
         if (settings.debug.showSkipSummary) {
