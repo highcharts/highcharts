@@ -21,11 +21,32 @@
 /**
  * @interface Highcharts.TooltipFormatterContextObject
  *//**
+ * @name Highcharts.TooltipFormatterContextObject#color
+ * @type {Highcharts.ColorString}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#colorIndex
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#key
+ * @type {number}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#percentage
+ * @type {number|undefined}
+ *//**
  * @name Highcharts.TooltipFormatterContextObject#point
  * @type {Highcharts.Point}
  *//**
  * @name Highcharts.TooltipFormatterContextObject#series
  * @type {Highcharts.Series}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#total
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#x
+ * @type {number}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#y
+ * @type {number}
  */
 
 'use strict';
