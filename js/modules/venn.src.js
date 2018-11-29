@@ -523,9 +523,9 @@ var getDlOptions = function getDlOptions(params) {
 };
 
 var vennOptions = {
-    borderColor: '${palette.neutralColor80}',
+    borderColor: '${palette.neutralColor20}',
     borderDashStyle: 'solid',
-    borderWidth: 0,
+    borderWidth: 1,
     brighten: 0,
     clip: false,
     colorByPoint: true,
@@ -541,7 +541,7 @@ var vennOptions = {
         hover: {
             opacity: 1,
             halo: false,
-            borderWidth: 1
+            borderColor: '${palette.neutralColor80}'
         }
     },
     tooltip: {
