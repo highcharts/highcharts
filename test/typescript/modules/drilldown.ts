@@ -19,13 +19,14 @@ function test_labelStyling() {
         },
         plotOptions: {
             series: {
-                borderWidth: 0,
+                // borderWidth: 0,
                 dataLabels: {
                     enabled: true
                 }
             }
         },
         series: [{
+            type: 'column',
             name: 'Things',
             colorByPoint: true,
             data: [{
