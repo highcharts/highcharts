@@ -152,14 +152,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * though if the chart is inverted this is the vertical axis. In case of
      * multiple axes, the xAxis node is an array of configuration objects.
      *
-     * See [the Axis object](/class-reference/Highcharts.Axis) for
-     * programmatic access to the axis.
+     * See the [Axis class](/class-reference/Highcharts.Axis) for programmatic
+     * access to the axis.
      *
      * @productdesc {highmaps}
      * In Highmaps, the axis is hidden, but it is used behind the scenes to
      * control features like zooming and panning. Zooming is in effect the same
      * as setting the extremes of one of the exes.
      *
+     * @type         {*|Array<*>}
      * @optionparent xAxis
      */
     defaultOptions: {
@@ -2263,6 +2264,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * See [the Axis object](/class-reference/Highcharts.Axis) for programmatic
      * access to the axis.
      *
+     * @type         {*|Array<*>}
      * @extends      xAxis
      * @excluding    ordinal,overscroll,currentDateIndicator
      * @optionparent yAxis
@@ -2967,7 +2969,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     /**
      * The Z axis or depth axis for 3D plots.
      *
-     * See [the Axis object](/class-reference/Highcharts.Axis) for programmatic
+     * See the [Axis class](/class-reference/Highcharts.Axis) for programmatic
      * access to the axis.
      *
      * @sample {highcharts} highcharts/3d/scatter-zaxis-categories/
@@ -2975,6 +2977,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @sample {highcharts} highcharts/3d/scatter-zaxis-grid/
      *         Z-Axis with styling
      *
+     * @type      {*|Array<*>}
      * @extends   xAxis
      * @since     5.0.0
      * @product   highcharts
@@ -4093,13 +4096,21 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                 // When adding a series, points are not yet generated
                 if (!series.points || series.isDirtyData) {
+                    // When we're updating the series with data that is longer
+                    // than it was, and cropThreshold is passed, we need to make
+                    // sure that the axis.max is increased _before_ running the
+                    // premature processData. Otherwise this early iteration of
+                    // processData will crop the points to axis.max, and the
+                    // names array will be too short (#5857).
+                    axis.max = Math.max(axis.max, series.xData.length - 1);
+
                     series.processData();
                     series.generatePoints();
                 }
 
-                series.points.forEach(function (point, i) {
+                series.data.forEach(function (point, i) { // #9487
                     var x;
-                    if (point.options) {
+                    if (point && point.options) {
                         x = axis.nameToX(point);
                         if (x !== undefined && x !== point.x) {
                             point.x = x;

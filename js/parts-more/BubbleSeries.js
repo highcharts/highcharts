@@ -3,7 +3,9 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
@@ -12,6 +14,7 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './BubbleLegend.js';
+
 var arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
     Axis = H.Axis,
@@ -32,7 +35,9 @@ var arrayMax = H.arrayMax,
  * along the X and Y axes mark the X and Y values, and the size of the bubble
  * relates to the Z value. Requires `highcharts-more.js`.
  *
- * @sample       {highcharts} highcharts/demo/bubble/ Bubble chart
+ * @sample {highcharts} highcharts/demo/bubble/
+ *         Bubble chart
+ *
  * @extends      plotOptions.scatter
  * @product      highcharts highstock
  * @optionparent plotOptions.bubble
@@ -51,6 +56,7 @@ seriesType('bubble', 'scatter', {
      * If there are more points in the series than the `animationLimit`, the
      * animation won't run. Animation affects overall performance and doesn't
      * work well with heavy data series.
+     *
      * @since 6.1.0
      */
     animationLimit: 250,
@@ -61,9 +67,10 @@ seriesType('bubble', 'scatter', {
      * bubbles can be visualized by setting
      * [negativeColor](#plotOptions.bubble.negativeColor).
      *
-     * @type      {Boolean}
-     * @sample    {highcharts} highcharts/plotoptions/bubble-negative/
-     *            Negative bubbles
+     * @sample {highcharts} highcharts/plotoptions/bubble-negative/
+     *         Negative bubbles
+     *
+     * @type      {boolean}
      * @default   true
      * @since     3.0
      * @apioption plotOptions.bubble.displayNegative
@@ -71,22 +78,24 @@ seriesType('bubble', 'scatter', {
 
     /**
      * @extends   plotOptions.series.marker
-     * @excluding enabled,enabledThreshold,height,radius,width
+     * @excluding enabled, enabledThreshold, height, radius, width
      */
     marker: {
+
         lineColor: null, // inherit from series.color
+
         lineWidth: 1,
 
         /**
          * The fill opacity of the bubble markers.
          */
         fillOpacity: 0.5,
+
         /**
          * In bubble charts, the radius is overridden and determined based on
          * the point's data value.
-         */
-        /**
-         * @ignore-option
+         *
+         * @ignore
          */
         radius: null,
 
@@ -108,15 +117,17 @@ seriesType('bubble', 'scatter', {
          * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
          * used by its method name, as shown in the demo.
          *
-         * @validvalue ["circle", "square", "diamond", "triangle",
-         *              "triangle-down"]
          * @sample     {highcharts} highcharts/plotoptions/bubble-symbol/
          *             Bubble chart with various symbols
          * @sample     {highcharts} highcharts/plotoptions/series-marker-symbol/
          *             General chart with predefined, graphic and custom markers
+         *
          * @since      5.0.11
+         * @validvalue ["circle", "square", "diamond", "triangle",
+         *             "triangle-down"]
          */
         symbol: 'circle'
+
     },
 
     /**
@@ -125,8 +136,10 @@ seriesType('bubble', 'scatter', {
      * Can be either pixels (when no unit is given), or a percentage of
      * the smallest one of the plot width and height.
      *
-     * @type    {Number|String}
-     * @sample  {highcharts} highcharts/plotoptions/bubble-size/ Bubble size
+     * @sample {highcharts} highcharts/plotoptions/bubble-size/
+     *         Bubble size
+     *
+     * @type    {number|string}
      * @since   3.0
      * @product highcharts highstock
      */
@@ -138,9 +151,10 @@ seriesType('bubble', 'scatter', {
      * Can be either pixels (when no unit is given), or a percentage of
      * the smallest one of the plot width and height.
      *
-     * @type    {Number|String}
-     * @sample  {highcharts} highcharts/plotoptions/bubble-size/
-     *          Bubble size
+     * @sample {highcharts} highcharts/plotoptions/bubble-size/
+     *         Bubble size
+     *
+     * @type    {number|string}
      * @since   3.0
      * @product highcharts highstock
      */
@@ -150,10 +164,10 @@ seriesType('bubble', 'scatter', {
      * When a point's Z value is below the
      * [zThreshold](#plotOptions.bubble.zThreshold) setting, this color is used.
      *
-     * @type      {Color}
-     * @sample    {highcharts} highcharts/plotoptions/bubble-negative/
-     *            Negative bubbles
-     * @default   null
+     * @sample {highcharts} highcharts/plotoptions/bubble-negative/
+     *         Negative bubbles
+     *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.bubble.negativeColor
@@ -164,12 +178,13 @@ seriesType('bubble', 'scatter', {
      * width of the bubble. The default, `area`, corresponds best to the
      * human perception of the size of each bubble.
      *
-     * @validvalue ["area", "width"]
-     * @type       {String}
-     * @sample     {highcharts} highcharts/plotoptions/bubble-sizeby/
-     *             Comparison of area and size
+     * @sample {highcharts} highcharts/plotoptions/bubble-sizeby/
+     *         Comparison of area and size
+     *
+     * @type       {string}
      * @default    area
      * @since      3.0.7
+     * @validvalue ["area", "width"]
      * @apioption  plotOptions.bubble.sizeBy
      */
 
@@ -180,10 +195,10 @@ seriesType('bubble', 'scatter', {
      * while a bubble of value 0 will have a smaller size according to
      * `minSize`.
      *
-     * @type      {Boolean}
-     * @sample    {highcharts}
-     *            highcharts/plotoptions/bubble-sizebyabsolutevalue/
+     * @sample    {highcharts} highcharts/plotoptions/bubble-sizebyabsolutevalue/
      *            Size by absolute value, various thresholds
+     *
+     * @type      {boolean}
      * @default   false
      * @since     4.1.9
      * @product   highcharts
@@ -222,11 +237,12 @@ seriesType('bubble', 'scatter', {
      * The minimum for the Z value range. Defaults to the highest Z value
      * in the data.
      *
-     * @type      {Number}
-     * @see       [zMin](#plotOptions.bubble.zMin)
-     * @sample    {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
-     *            Z has a possible range of 0-100
-     * @default   null
+     * @see [zMin](#plotOptions.bubble.zMin)
+     *
+     * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
+     *         Z has a possible range of 0-100
+     *
+     * @type      {number}
      * @since     4.0.3
      * @product   highcharts
      * @apioption plotOptions.bubble.zMax
@@ -236,11 +252,12 @@ seriesType('bubble', 'scatter', {
      * The minimum for the Z value range. Defaults to the lowest Z value
      * in the data.
      *
-     * @type      {Number}
-     * @see       [zMax](#plotOptions.bubble.zMax)
-     * @sample    {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
-     *            Z has a possible range of 0-100
-     * @default   null
+     * @see [zMax](#plotOptions.bubble.zMax)
+     *
+     * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
+     *         Z has a possible range of 0-100
+     *
+     * @type      {number}
      * @since     4.0.3
      * @product   highcharts
      * @apioption plotOptions.bubble.zMin
@@ -252,10 +269,9 @@ seriesType('bubble', 'scatter', {
      * is `true` and a [negativeColor](#plotOptions.bubble.negativeColor)
      * is given, points with lower Z is colored.
      *
-     * @type    {Number}
-     * @sample  {highcharts} highcharts/plotoptions/bubble-negative/
-     *          Negative bubbles
-     * @default 0
+     * @sample {highcharts} highcharts/plotoptions/bubble-negative/
+     *         Negative bubbles
+     *
      * @since   3.0
      * @product highcharts
      */
@@ -286,11 +302,9 @@ seriesType('bubble', 'scatter', {
         return attr;
     },
 
-    /**
-     * Get the radius for each point based on the minSize, maxSize and each
-     * point's Z value. This must be done prior to Series.translate because
-     * the axis needs to add padding in accordance with the point sizes.
-     */
+    // Get the radius for each point based on the minSize, maxSize and each
+    // point's Z value. This must be done prior to Series.translate because
+    // the axis needs to add padding in accordance with the point sizes.
     getRadii: function (zMin, zMax, series) {
         var len,
             i,
@@ -309,9 +323,7 @@ seriesType('bubble', 'scatter', {
         this.radii = radii;
     },
 
-    /**
-     * Get the individual radius for one point.
-     */
+    // Get the individual radius for one point.
     getRadius: function (zMin, zMax, minSize, maxSize, value) {
         var options = this.options,
             sizeByArea = options.sizeBy !== 'width',
@@ -349,9 +361,7 @@ seriesType('bubble', 'scatter', {
         return radius;
     },
 
-    /**
-     * Perform animation on the bubbles
-     */
+    // Perform animation on the bubbles
     animate: function (init) {
         if (
             !init &&
@@ -387,9 +397,7 @@ seriesType('bubble', 'scatter', {
         }
     },
 
-    /**
-     * Extend the base translate method to handle bubble size
-     */
+    // Extend the base translate method to handle bubble size
     translate: function () {
 
         var i,
@@ -446,10 +454,8 @@ seriesType('bubble', 'scatter', {
     ttBelow: false
 });
 
-/**
- * Add logic to pad each axis with the amount of pixels
- * necessary to avoid the bubbles to overflow.
- */
+// Add logic to pad each axis with the amount of pixels necessary to avoid the
+// bubbles to overflow.
 Axis.prototype.beforePadding = function () {
     var axis = this,
         axisLength = this.len,
@@ -577,9 +583,8 @@ Axis.prototype.beforePadding = function () {
  * A `bubble` series. If the [type](#series.bubble.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type      {Object}
  * @extends   series,plotOptions.bubble
- * @excluding dataParser,dataURL,stack
+ * @excluding dataParser, dataURL, stack
  * @product   highcharts highstock
  * @apioption series.bubble
  */
@@ -625,19 +630,20 @@ Axis.prototype.beforePadding = function () {
  *     }]
  *  ```
  *
- * @type      {Array<Object|Array>}
+ * @sample {highcharts} highcharts/chart/reflow-true/
+ *         Numerical values
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type      {Array<Array<number>|*>}
  * @extends   series.line.data
  * @excluding marker
- * @sample    {highcharts} highcharts/chart/reflow-true/
- *            Numerical values
- * @sample    {highcharts} highcharts/series/data-array-of-arrays/
- *            Arrays of numeric x and y
- * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *            Arrays of datetime x and y
- * @sample    {highcharts} highcharts/series/data-array-of-name-value/
- *            Arrays of point.name and y
- * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
  * @product   highcharts
  * @apioption series.bubble.data
  */
@@ -647,12 +653,12 @@ Axis.prototype.beforePadding = function () {
  * based on the `z`, and controlled by series options like `minSize`,
  * `maxSize`, `sizeBy`, `zMin` and `zMax`.
  *
- * @type {Number}
- * @product highcharts
+ * @type      {number}
+ * @product   highcharts
  * @apioption series.bubble.data.z
  */
 
 /**
- * @excluding enabled,enabledThreshold,height,radius,width
+ * @excluding enabled, enabledThreshold, height, radius, width
  * @apioption series.bubble.marker
  */

@@ -65,18 +65,16 @@ function isApiOption (doclet) {
     let name = getName(doclet),
         comment = (doclet.comment || ''),
         isApiOption = (
-            name.indexOf('Highcharts') !== 0 &&
+            comment.indexOf('@apioption') >= 0 ||
+            comment.indexOf('@optionparent') >= 0 ||
+            comment.indexOf('@ignore-option') >= 0 ||
             (
-                comment.indexOf('@apioption') >= 0 ||
-                comment.indexOf('@optionparent') >= 0 ||
-                comment.indexOf('@ignore-option') >= 0 ||
+                name.indexOf('Highcharts') !== 0 &&
+                !doclet.undocumented &&
+                doclet.kind === 'member' &&
                 (
-                    !doclet.undocumented &&
-                    doclet.kind === 'member' &&
-                    (
-                        doclet.children ||
-                        doclet.scope === 'global'
-                    )
+                    doclet.children ||
+                    doclet.scope === 'global'
                 )
             )
         );
@@ -1365,7 +1363,7 @@ exports.defineTags = function (dictionary) {
         mustHaveValue: true,
         onTagged: (doclet, tag) => doclet.products =
             tag.value
-                .split(',')
+                .split(/[,\s]+/)
                 .map(product => product.trim())
     });
 

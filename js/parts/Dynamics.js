@@ -509,7 +509,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     indexMap = [];
                     chart[coll].forEach(function (s, i) {
                         if (!s.options.isInternal) {
-                            indexMap.push(i);
+                            indexMap.push(pick(s.options.index, i));
                         }
                     });
                 }
@@ -627,11 +627,11 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @function Highcharts.Point#update
      *
-     * @param {*} options
+     * @param {number|object|Array<number|string>|null} options
      *        The point options. Point options are handled as described under
      *        the `series.type.data` item for each series type. For example
      *        for a line series, if options is a single number, the point will
-     *        be given that number as the main y value. If it is an array, it
+     *        be given that number as the marin y value. If it is an array, it
      *        will be interpreted as x and y values respectively. If it is an
      *        object, advanced options are applied.
      *
@@ -775,7 +775,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *
      * @function Highcharts.Series#addPoint
      *
-     * @param {number|Array<number>|*} options
+     * @param {number|object|Array<number|string>|null} options
      *        The point options. If options is a single number, a point with
      *        that y value is appended to the series. If it is an array, it will
      *        be interpreted as x and y values respectively. If it is an

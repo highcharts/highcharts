@@ -31,8 +31,8 @@
     "jsdoc": "gulp jsdoc --watch",
     "precommit": "lint-staged && gulp test",
     "commitmsg": "node tools/validate-commit-msg.js ${GIT_PARAMS}",
-    "tsd": "gulp tsd",
-    "tsd-lint": "gulp tsd-lint"
+    "dts": "gulp dts",
+    "dtslint": "gulp dtslint"
   },
   "devDependencies": {
     "aws-sdk": "^2.337.0",

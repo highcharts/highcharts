@@ -27,7 +27,7 @@ seriesType('bullet', 'column',
      * of qualitative ranges of performance that could be set using
      * [plotBands](#yAxis.plotBands) on [yAxis](#yAxis).
      *
-     * @extends      {plotOptions.column}
+     * @extends      plotOptions.column
      * @product      highcharts
      * @sample       {highcharts} highcharts/demo/bullet-graph/ Bullet graph
      * @since        6.0.0

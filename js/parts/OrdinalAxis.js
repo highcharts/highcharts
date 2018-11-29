@@ -4,12 +4,15 @@
  * License: www.highcharts.com/license
  */
 /* eslint max-len: 0 */
+
 'use strict';
+
 import H from './Globals.js';
 import './Axis.js';
 import './Utilities.js';
 import './Chart.js';
 import './Series.js';
+
 var addEvent = H.addEvent,
     Axis = H.Axis,
     Chart = H.Chart,
@@ -25,7 +28,6 @@ var addEvent = H.addEvent,
 /* ****************************************************************************
  * Start ordinal axis logic                                                   *
  *****************************************************************************/
-
 
 wrap(Series.prototype, 'init', function (proceed) {
     var series = this,
@@ -44,14 +46,24 @@ wrap(Series.prototype, 'init', function (proceed) {
     }
 });
 
-/**
- * In an ordinal axis, there might be areas with dense consentrations of points, then large
- * gaps between some. Creating equally distributed ticks over this entire range
- * may lead to a huge number of ticks that will later be removed. So instead, break the
- * positions up in segments, find the tick positions for each segment then concatenize them.
- * This method is used from both data grouping logic and X axis tick position logic.
+/* *
+ * In an ordinal axis, there might be areas with dense consentrations of points,
+ * then large gaps between some. Creating equally distributed ticks over this
+ * entire range may lead to a huge number of ticks that will later be removed.
+ * So instead, break the positions up in segments, find the tick positions for
+ * each segment then concatenize them. This method is used from both data
+ * grouping logic and X axis tick position logic.
  */
-wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
+wrap(Axis.prototype, 'getTimeTicks', function (
+    proceed,
+    normalizedInterval,
+    min,
+    max,
+    startOfWeek,
+    positions,
+    closestDistance,
+    findHigherRanks
+) {
 
     var start = 0,
         end,
@@ -221,6 +233,9 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 
     /**
      * Calculate the ordinal positions before tick positions are calculated.
+     *
+     * @private
+     * @function Highcharts.Axis#beforeSetTickPositions
      */
     beforeSetTickPositions: function () {
         var axis = this,
@@ -391,13 +406,24 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
         axis.isOrdinal = isOrdinal && useOrdinal; // #3818, #4196, #4926
         axis.groupIntervalFactor = null; // reset for next run
     },
+
     /**
-     * Translate from a linear axis value to the corresponding ordinal axis position. If there
-     * are no gaps in the ordinal axis this will be the same. The translated value is the value
-     * that the point would have if the axis were linear, using the same min and max.
+     * Translate from a linear axis value to the corresponding ordinal axis
+     * position. If there are no gaps in the ordinal axis this will be the same.
+     * The translated value is the value that the point would have if the axis
+     * were linear, using the same min and max.
      *
-     * @param Number val The axis value
-     * @param Boolean toIndex Whether to return the index in the ordinalPositions or the new value
+     * @private
+     * @function Highcharts.Axis#val2lin
+     *
+     * @param {number} val
+     *        The axis value.
+     *
+     * @param {boolean} toIndex
+     *        Whether to return the index in the ordinalPositions or the new
+     *        value.
+     *
+     * @return {number}
      */
     val2lin: function (val, toIndex) {
         var axis = this,
@@ -439,10 +465,19 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
         return ret;
     },
     /**
-     * Translate from linear (internal) to axis value
+     * Translate from linear (internal) to axis value.
      *
-     * @param Number val The linear abstracted value
-     * @param Boolean fromIndex Translate from an index in the ordinal positions rather than a value
+     * @private
+     * @function Highcharts.Axis#lin2val
+     *
+     * @param {number} val
+     *        The linear abstracted value.
+     *
+     * @param {boolean} fromIndex
+     *        Translate from an index in the ordinal positions rather than a
+     *        value.
+     *
+     * @return {number}
      */
     lin2val: function (val, fromIndex) {
         var axis = this,
@@ -497,11 +532,17 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
         return ret;
     },
     /**
-     * Get the ordinal positions for the entire data set. This is necessary in chart panning
-     * because we need to find out what points or data groups are available outside the
-     * visible range. When a panning operation starts, if an index for the given grouping
-     * does not exists, it is created and cached. This index is deleted on updated data, so
-     * it will be regenerated the next time a panning operation starts.
+     * Get the ordinal positions for the entire data set. This is necessary in
+     * chart panning because we need to find out what points or data groups are
+     * available outside the visible range. When a panning operation starts, if
+     * an index for the given grouping does not exists, it is created and
+     * cached. This index is deleted on updated data, so it will be regenerated
+     * the next time a panning operation starts.
+     *
+     * @private
+     * @function Highcharts.Axis#getExtendedPositions
+     *
+     * @return {Array<number>}
      */
     getExtendedPositions: function () {
         var axis = this,
@@ -580,11 +621,14 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
      * Get ticks for an ordinal axis within a range where points don't exist.
      * It is required when overscroll is enabled. We can't base on points,
      * because we may not have any, so we use approximated pointRange and
-     * generate these ticks between <Axis.dataMax, Axis.dataMax + Axis.overscroll>
+     * generate these ticks between Axis.dataMax, Axis.dataMax + Axis.overscroll
      * evenly spaced. Used in panning and navigator scrolling.
      *
-     * @returns positions {Array} Generated ticks
      * @private
+     * @function Highcharts.Axis#getOverscrollPositions
+     *
+     * @returns {Array<number>}
+     *          Generated ticks
      */
     getOverscrollPositions: function () {
         var axis = this,
@@ -609,25 +653,36 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
     },
 
     /**
-     * Find the factor to estimate how wide the plot area would have been if ordinal
-     * gaps were included. This value is used to compute an imagined plot width in order
-     * to establish the data grouping interval.
+     * Find the factor to estimate how wide the plot area would have been if
+     * ordinal gaps were included. This value is used to compute an imagined
+     * plot width in order to establish the data grouping interval.
      *
-     * A real world case is the intraday-candlestick
-     * example. Without this logic, it would show the correct data grouping when viewing
-     * a range within each day, but once moving the range to include the gap between two
-     * days, the interval would include the cut-away night hours and the data grouping
-     * would be wrong. So the below method tries to compensate by identifying the most
-     * common point interval, in this case days.
+     * A real world case is the intraday-candlestick example. Without this
+     * logic, it would show the correct data grouping when viewing a range
+     * within each day, but once moving the range to include the gap between two
+     * days, the interval would include the cut-away night hours and the data
+     * grouping would be wrong. So the below method tries to compensate by
+     * identifying the most common point interval, in this case days.
      *
-     * An opposite case is presented in issue #718. We have a long array of daily data,
-     * then one point is appended one hour after the last point. We expect the data grouping
-     * not to change.
+     * An opposite case is presented in issue #718. We have a long array of
+     * daily data, then one point is appended one hour after the last point. We
+     * expect the data grouping not to change.
      *
-     * In the future, if we find cases where this estimation doesn't work optimally, we
-     * might need to add a second pass to the data grouping logic, where we do another run
-     * with a greater interval if the number of data groups is more than a certain fraction
-     * of the desired group count.
+     * In the future, if we find cases where this estimation doesn't work
+     * optimally, we might need to add a second pass to the data grouping logic,
+     * where we do another run with a greater interval if the number of data
+     * groups is more than a certain fraction of the desired group count.
+     *
+     * @private
+     * @function Highcharts.Axis#getGroupIntervalFactor
+     *
+     * @param {number} xMin
+     *
+     * @param {number} xMax
+     *
+     * @param {Highcharts.Series} series
+     *
+     * @return {number}
      */
     getGroupIntervalFactor: function (xMin, xMax, series) {
         var i,
@@ -663,7 +718,15 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
     },
 
     /**
-     * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
+     * Make the tick intervals closer because the ordinal gaps make the ticks
+     * spread out or cluster.
+     *
+     * @private
+     * @function Highcharts.Axis#postProcessTickInterval
+     *
+     * @param {number} tickInterval
+     *
+     * @return {number}
      */
     postProcessTickInterval: function (tickInterval) {
         // Problem: https://jsfiddle.net/highcharts/FQm4E/1/

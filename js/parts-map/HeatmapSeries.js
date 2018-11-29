@@ -42,11 +42,12 @@ seriesType('heatmap', 'scatter'
  * @sample highcharts/demo/heatmap-canvas/
  *         Heavy heatmap
  *
- * @extends      {plotOptions.scatter}
+ * @extends      plotOptions.scatter
  * @excluding    animationLimit, connectEnds, connectNulls, dashStyle,
  *               findNearestPointBy, getExtremesFromAll, linecap, lineWidth,
  *               marker, pointInterval, pointIntervalUnit, pointRange,
- *               pointStart, shadow, softThreshold, stacking, step, threshold
+ *               pointStart, shadow, softThreshold, stacking, step,
+ *               threshold
  * @product      highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
@@ -114,7 +115,6 @@ seriesType('heatmap', 'scatter'
      * @apioption plotOptions.heatmap.rowsize
      */
 
-
     /**
      * The color applied to null points. In styled mode, a general CSS class is
      * applied instead.
@@ -134,9 +134,7 @@ seriesType('heatmap', 'scatter'
         padding: 0 // #3837
     },
 
-    /**
-     * @ignore
-     */
+    /** @ignore */
     marker: null,
 
     /**
@@ -152,19 +150,15 @@ seriesType('heatmap', 'scatter'
 
         hover: {
 
-            /**
-             * @ignore
-             */
-            halo: false,  // #3406, halo is disabled on heatmaps by default
+            /** @ignore */
+            halo: false, // #3406, halo is disabled on heatmaps by default
 
             /**
              * How much to brighten the point on interaction. Requires the main
              * color to be defined in hex or rgb(a) format.
              *
-             * In styled mode, the hover brightening is by default replaced
-             * with a fill-opacity set in the `.highcharts-point:hover` rule.
-             *
-             * @product highcharts highmaps
+             * In styled mode, the hover brightening is by default replaced with
+             * a fill-opacity set in the `.highcharts-point:hover` rule.
              */
             brightness: 0.2
         }
@@ -191,7 +185,8 @@ seriesType('heatmap', 'scatter'
         options = this.options;
         // #3758, prevent resetting in setData
         options.pointRange = pick(options.pointRange, options.colsize || 1);
-        this.yAxis.axisPointRange = options.rowsize || 1; // general point range
+        // general point range
+        this.yAxis.axisPointRange = options.rowsize || 1;
     },
 
     /**
@@ -447,6 +442,7 @@ seriesType('heatmap', 'scatter'
  *         Point padding on tiles
  *
  * @type      {number}
+ * @product   highcharts highmaps
  * @apioption series.heatmap.data.pointPadding
  */
 

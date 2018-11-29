@@ -91,8 +91,16 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
      *
      * @param {number|undefined} [forcedScale=1]
      */
-    pinchTranslateDirection: function (horiz, pinchDown, touches, transform,
-            selectionMarker, clip, lastValidTouch, forcedScale) {
+    pinchTranslateDirection: function (
+        horiz,
+        pinchDown,
+        touches,
+        transform,
+        selectionMarker,
+        clip,
+        lastValidTouch,
+        forcedScale
+    ) {
         var chart = this.chart,
             xy = horiz ? 'x' : 'y',
             XY = horiz ? 'X' : 'Y',
