@@ -335,7 +335,7 @@ defaultOptions.drilldown = {
          * @sample {highmaps} highcharts/drilldown/drillupbutton/
          *         Button theming
          *
-         * @type      {Highcharts.SVGAttributes}
+         * @type      {object}
          * @since     3.0.8
          * @product   highcharts highmaps
          * @apioption drilldown.drillUpButton.theme
