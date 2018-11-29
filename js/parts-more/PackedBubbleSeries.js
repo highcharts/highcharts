@@ -38,28 +38,29 @@ var seriesType = H.seriesType,
 seriesType('packedbubble', 'bubble',
     {
         /**
-        * The minimum size of the points' radius related to chart's `plotArea`.
-        * If a number is set, it applies in pixels.
-        *
-        * @sample {highcharts}
-        *         highcharts/variable-radius-pie/min-point-size-100/
-        *         minSize set to 100
-        * @type {String|Number}
-        * @since 7.0.0
-        * @product highcharts
-        */
+         * Minimum bubble size. Bubbles will automatically size between the
+         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * Can be either pixels (when no unit is given), or a percentage of
+         * the smallest one of the plot width and height.
+         *
+         * @type    {Number|String}
+         * @sample  {highcharts} highcharts/plotoptions/bubble-size/ Bubble size
+         * @since   3.0
+         * @product highcharts highstock
+         */
         minSize: '10%',
         /**
-        * The maximum size of the points' radius related to chart's `plotArea`.
-        * If a number is set, it applies in pixels.
-        *
-        * @sample {highcharts}
-        *         highcharts/variable-radius-pie/min-max-point-size/
-        *         Example of minSize and maxSize
-        * @type {String|Number}
-        * @since 7.0.0
-        * @product highcharts
-        */
+         * Maximum bubble size. Bubbles will automatically size between the
+         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * Can be either pixels (when no unit is given), or a percentage of
+         * the smallest one of the plot width and height.
+         *
+         * @type    {Number|String}
+         * @sample  {highcharts} highcharts/plotoptions/bubble-size/
+         *          Bubble size
+         * @since   3.0
+         * @product highcharts highstock
+         */
         maxSize: '100%',
         sizeBy: 'radius',
         zoneAxis: 'y',
@@ -67,7 +68,7 @@ seriesType('packedbubble', 'bubble',
             pointFormat: 'Value: {point.y}'
         }
     }, {
-        isCartesian: false,
+        pointArrayMap: ['name', 'y'],
         /**
          * Create a single array of all points from all series
          *
@@ -121,7 +122,7 @@ seriesType('packedbubble', 'bubble',
                 chart.allDataPoints = series.accumulateAllPoints(series);
 
                 // calculate radius for all added data
-                series.getRadius();
+                series.getPointRadius();
             }
 
             // after getting initial radius, calculate bubble positions
@@ -240,7 +241,7 @@ seriesType('packedbubble', 'bubble',
                 nextBubble[4]
             ]; // the same as described before
         },
-        /*
+        /**
          * This is the main function responsible
          * for positioning all of the bubbles
          * allDataPoints - bubble array, in format [pixel x value,
@@ -370,15 +371,15 @@ seriesType('packedbubble', 'bubble',
 
             return series.chart.rawPositions;
         },
-        /*
-        * The function responsible for resizing the bubble radius.
-        * In shortcut: it is taking the initially
-        * calculated positions of bubbles. Then it is calculating the min max
-        * of both dimensions, creating something in shape of bBox.
-        * The comparison of bBox and the size of plotArea
-        * (later it may be also the size set by customer) is giving the
-        * value how to recalculate the radius so it will match the size
-        */
+        /**
+         * The function responsible for resizing the bubble radius.
+         * In shortcut: it is taking the initially
+         * calculated positions of bubbles. Then it is calculating the min max
+         * of both dimensions, creating something in shape of bBox.
+         * The comparison of bBox and the size of plotArea
+         * (later it may be also the size set by customer) is giving the
+         * value how to recalculate the radius so it will match the size
+         */
         resizeRadius: function () {
 
             var chart = this.chart,
@@ -423,12 +424,12 @@ seriesType('packedbubble', 'bubble',
                 }
                 this.placeBubbles(positions);
             } else {
-                /* if no radius recalculation is needed, we need to position
-                * the whole bubbles in center of chart plotarea
-                * for this, we are adding two parameters,
-                * diffY and diffX, that are related to differences
-                * between the initial center and the bounding box
-                */
+                /** if no radius recalculation is needed, we need to position
+                 * the whole bubbles in center of chart plotarea
+                 * for this, we are adding two parameters,
+                 * diffY and diffX, that are related to differences
+                 * between the initial center and the bounding box
+                 */
                 chart.diffY = chartHeight / 2 +
                     plotTop - minY - (maxY - minY) / 2;
                 chart.diffX = chartWidth / 2 +
@@ -436,10 +437,10 @@ seriesType('packedbubble', 'bubble',
             }
         },
 
-        /* Small change in default getRadius method,
-         * so it is accepting the current bubble array format.
+        /**
+         * Calculate radius of bubbles in series.
          */
-        getRadius: function () { // bubbles array
+        getPointRadius: function () { // bubbles array
 
             var series = this,
                 chart = series.chart,
@@ -449,18 +450,11 @@ seriesType('packedbubble', 'bubble',
                 smallestSize = Math.min(plotWidth, plotHeight),
                 extremes = {},
                 radii = [],
-                sizeByArea = this.options.sizeBy !== 'width',
                 allDataPoints = chart.allDataPoints,
                 minSize,
                 maxSize,
-                pos,
-                radiusRange,
                 value,
                 radius;
-
-            if (!defined(allDataPoints)) {
-                return false;
-            }
 
             ['minSize', 'maxSize'].forEach(function (prop) {
                 var length = parseInt(seriesOptions[prop], 10),
@@ -474,29 +468,20 @@ seriesType('packedbubble', 'bubble',
             chart.minRadius = minSize = extremes.minSize;
             chart.maxRadius = maxSize = extremes.maxSize;
 
-            // range of size
-            radiusRange = maxSize - minSize;
-
             (allDataPoints || []).forEach(function (point, i) {
 
                 value = point[2];
 
-                // part of bubble's algorithm (getRadii)
-                if (value === null || value === 0) {
-                    radius = null;
-                    // Issue #4419 - if value is less than zMin, push a radius
-                    // that's always smaller than the minimum size
-                } else if (value < minSize) {
-                    radius = minSize - 1;
-                } else {
-                    pos = radiusRange > 0 ?
-                            (value - minSize) / radiusRange :
-                            0.5;
+                radius = series.getRadius(
+                    minSize,
+                    maxSize,
+                    minSize,
+                    maxSize,
+                    value
+                );
 
-                    if (sizeByArea && pos >= 0) {
-                        pos = Math.sqrt(pos);
-                    }
-                    radius = Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
+                if (value === 0) {
+                    radius = null;
                 }
 
                 allDataPoints[i][2] = radius;
@@ -514,6 +499,11 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
     if (this.allDataPoints) {
         delete this.allDataPoints;
     }
+});
+
+// Hide all axes, we cannot use isCartesian, because it breaks all updates.
+H.addEvent(H.Axis, 'init', function (options) {
+    options.userOptions.visible = false;
 });
 
 /**
