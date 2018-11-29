@@ -25,10 +25,12 @@ function test_simple() {
 
 function test_series() {
     const defaultOptions = Highmaps.getOptions();
-    const tooltipFormatter = function(this: { point: { id: string, lat: number, lon: number } }): string {
-        return this.point.id + (
-            this.point.lat ?
-            `<br>Lat:${this.point.lat} Lon: ${this.point.lon}` : ''
+    const tooltipFormatter = function(
+        this: Highmaps.TooltipFormatterContextObject
+    ) {
+        const point = this.point as any; // @todo make id, lat, lon public
+        return point.id + (
+            point.lat ? `<br>Lat:${point.lat} Lon: ${point.lon}` : ''
         );
     };
     Highmaps.mapChart('container', {
