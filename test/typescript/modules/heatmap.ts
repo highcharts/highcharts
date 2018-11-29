@@ -5,6 +5,17 @@ HeatmapModule(Highcharts);
 
 function test() {
     const colors = Highcharts.getOptions().colors;
+    const tooltipFormatter = function(
+        this: Highcharts.TooltipFormatterContextObject
+    ) {
+        const point = this.point as any; // @todo make Point.value public
+        const series = this.series as any; // @todo make Axis.categories public
+        return (
+            `<b>${series.xAxis.categories[this.point.x]}</b> sold <br>
+            <b>${point.value}</b> items on <br>
+            <b>${series.yAxis.categories[this.point.y || Number.MAX_SAFE_INTEGER]}</b>`
+        );
+    };
     Highcharts.chart('container', {
         chart: {
             type: 'heatmap',
@@ -36,10 +47,7 @@ function test() {
             symbolHeight: 280
         },
         tooltip: {
-            formatter: function () {
-                return '<b>' + this.series.xAxis.categories[this.point.x] + '</b> sold <br><b>' +
-                    this.point.value + '</b> items on <br><b>' + this.series.yAxis.categories[this.point.y] + '</b>';
-            }
+            formatter: tooltipFormatter
         },
         series: [{
             type: 'heatmap',
