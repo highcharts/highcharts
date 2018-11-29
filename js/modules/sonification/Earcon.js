@@ -75,14 +75,16 @@ Earcon.prototype.sonify = function (options) {
     // Find master volume/pan settings
     var masterVolume = H.pick(playOptions.volume, 1),
         masterPan = playOptions.pan,
-        earcon = this;
+        earcon = this,
+        playOnEnd = options && options.onEnd,
+        masterOnEnd = earcon.options.onEnd;
 
     // Go through the instruments and play them
     playOptions.instruments.forEach(function (opts) {
         var instrument = typeof opts.instrument === 'string' ?
                 H.sonification.instruments[opts.instrument] : opts.instrument,
             instrumentOpts = H.merge(opts.playOptions),
-            oldOnEnd,
+            instrOnEnd,
             instrumentCopy,
             copyId;
         if (instrument && instrument.play) {
@@ -95,17 +97,19 @@ Earcon.prototype.sonify = function (options) {
                 instrumentOpts.pan = H.pick(masterPan, instrumentOpts.pan);
 
                 // Handle onEnd
-                oldOnEnd = instrumentOpts.onEnd;
+                instrOnEnd = instrumentOpts.onEnd;
                 instrumentOpts.onEnd = function () {
                     delete earcon.instrumentsPlaying[copyId];
-                    if (
-                        !Object.keys(earcon.instrumentsPlaying).length &&
-                        playOptions.onEnd
-                    ) {
-                        playOptions.onEnd.apply(this, arguments);
+                    if (instrOnEnd) {
+                        instrOnEnd.apply(this, arguments);
                     }
-                    if (oldOnEnd) {
-                        oldOnEnd.apply(this, arguments);
+                    if (!Object.keys(earcon.instrumentsPlaying).length) {
+                        if (playOnEnd) {
+                            playOnEnd.apply(this, arguments);
+                        }
+                        if (masterOnEnd) {
+                            masterOnEnd.apply(this, arguments);
+                        }
                     }
                 };
 
@@ -125,18 +129,18 @@ Earcon.prototype.sonify = function (options) {
 
 /**
  * Cancel any current sonification of the Earcon. Calls onEnd functions.
+ *
+ * @param   {boolean} [fadeOut=false] Whether or not to fade out as we stop. If
+ *          false, the earcon is cancelled synchronously.
  */
-Earcon.prototype.cancelSonify = function () {
+Earcon.prototype.cancelSonify = function (fadeOut) {
     var playing = this.instrumentsPlaying,
         instrIds = playing && Object.keys(playing);
     if (instrIds && instrIds.length) {
         instrIds.forEach(function (instr) {
-            playing[instr].stop(true);
+            playing[instr].stop(!fadeOut, null, 'cancelled');
         });
         this.instrumentsPlaying = {};
-        if (this.options.onEnd) {
-            this.options.onEnd('cancelled');
-        }
     }
 };
 

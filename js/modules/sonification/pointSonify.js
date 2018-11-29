@@ -1,7 +1,7 @@
 /**
  * (c) 2009-2018 Øystein Moseng
  *
- * Implementation of Higcharts.Point.sonify()
+ * Code for sonifying single points.
  *
  * License: www.highcharts.com/license
  */
@@ -9,6 +9,7 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+import utilities from 'utilities.js';
 
 // Defaults for the instrument options
 var defaultInstrumentOptions = {
@@ -21,27 +22,6 @@ var defaultInstrumentOptions = {
     minFrequency: 220,
     maxFrequency: 2500
 };
-
-
-/**
- * Translate a value on a sonification axis. Creates a new, virtual,
- * sonification axis with a min and max, and maps the value onto this axis.
- *
- * @private
- *
- * @param {number} value The data value to translate.
- * @param {Object} dataExtremes The data extremes for the chart for this value.
- * @param {Object} limits Limits for the sonification axis.
- * @return {number} The value mapped to the sonification axis.
- */
-function sonifyAxisTranslate(value, dataExtremes, limits) {
-    var lenValueAxis = dataExtremes.max - dataExtremes.min,
-        lenSonifyAxis = limits.max - limits.min,
-        sonifyValue = limits.min +
-            lenSonifyAxis * (value - dataExtremes.min) / lenValueAxis;
-
-    return Math.max(Math.min(sonifyValue, limits.max), limits.min);
-}
 
 
 /**
@@ -168,6 +148,7 @@ function sonifyAxisTranslate(value, dataExtremes, limits) {
  */
 function pointSonify(options) {
     var point = this,
+        chart = point.series.chart,
         dataExtremes = options.dataExtremes || {},
         // Get the value to pass to instrument.play from the mapping value
         // passed in.
@@ -191,11 +172,11 @@ function pointSonify(options) {
             if (typeof value === 'string') {
                 // Find data extremes if we don't have them
                 dataExtremes[value] = dataExtremes[value] ||
-                    H.sonification.utilities.calculateDataExtremes(
+                    utilities.calculateDataExtremes(
                         point.series.chart, value
                     );
                 // Find the value
-                return sonifyAxisTranslate(
+                return utilities.virtualAxisTranslate(
                     H.pick(point[value], point.options[value]),
                     dataExtremes[value],
                     allowedExtremes,
@@ -204,13 +185,20 @@ function pointSonify(options) {
             }
         };
 
+    // Register playing point on chart
+    chart.sonification.currentlyPlayingPoint = point;
+
+    // Register signal handler for the point
+    point.signalHandler = point.signalHandler || new utilities.SignalHandler(
+        ['onEnd']
+    );
+    point.signalHandler.clearSignalCallbacks();
+    point.signalHandler.registerSignalCallbacks({ onEnd: options.onEnd });
+
     // Keep track of instruments playing
     point.sonification = point.sonification || {};
     point.sonification.instrumentsPlaying =
         point.sonification.instrumentsPlaying || {};
-
-    // Set onEnd if it is specified
-    point.sonification.onEnd = options.onEnd;
 
     options.instruments.forEach(function (instrumentDefinition) {
         var instrument = typeof instrumentDefinition.instrument === 'string' ?
@@ -222,24 +210,34 @@ function pointSonify(options) {
                 instrumentDefinition.instrumentOptions
             ),
             id = instrument.id,
-            oldOnEnd = instrumentDefinition.onEnd,
-            onEnd = function () {
+            onEnd = function (cancelled) {
+                // Instrument on end
+                if (instrumentDefinition.onEnd) {
+                    instrumentDefinition.onEnd.apply(this, arguments);
+                }
+
+                // Remove currently playing point reference on chart
+                if (
+                    chart.sonification &&
+                    chart.sonification.currentlyPlayingPoint
+                ) {
+                    delete chart.sonification.currentlyPlayingPoint;
+                }
+
+                // Remove reference from instruments playing
                 if (
                     point.sonification && point.sonification.instrumentsPlaying
                 ) {
                     delete point.sonification.instrumentsPlaying[id];
+
+                    // This was the last instrument?
                     if (
                         !Object.keys(
                             point.sonification.instrumentsPlaying
-                        ).length &&
-                        point.sonification.onEnd
+                        ).length
                     ) {
-                        point.sonification.onEnd.apply(this, arguments);
-                        delete point.sonification.onEnd;
+                        point.signalHandler.emitSignal('onEnd', cancelled);
                     }
-                }
-                if (oldOnEnd) {
-                    oldOnEnd.apply(this, arguments);
                 }
             };
 
@@ -280,19 +278,19 @@ function pointSonify(options) {
 
 /**
  * Cancel sonification of a point. Calls onEnd functions.
+ *
+ * @param   {boolean} [fadeOut=false] Whether or not to fade out as we stop. If
+ *          false, the points are cancelled synchronously.
  */
-function pointCancelSonify() {
+function pointCancelSonify(fadeOut) {
     var playing = this.sonification && this.sonification.instrumentsPlaying,
         instrIds = playing && Object.keys(playing);
     if (instrIds && instrIds.length) {
         instrIds.forEach(function (instr) {
-            playing[instr].stop(true);
+            playing[instr].stop(!fadeOut, null, 'cancelled');
         });
         this.sonification.instrumentsPlaying = {};
-        if (this.sonification && this.sonification.onEnd) {
-            this.sonification.onEnd('cancelled');
-            delete this.sonification.onEnd;
-        }
+        this.signalHandler.emitSignal('onEnd', 'cancelled');
     }
 }
 

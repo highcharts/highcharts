@@ -9,9 +9,6 @@
 'use strict';
 import H from '../../parts/Globals.js';
 
-var stopOffset = 15, // Time it takes to fade out note
-    stopImmediateThreshold = 30; // No fade out if duration is less
-
 // Default options for Instrument constructor
 var defaultOptions = {
     type: 'oscillator',
@@ -238,8 +235,8 @@ Instrument.prototype.oscillatorPlay = function (frequency) {
         this.oscillatorStarted = true;
     }
 
-    this.oscillator.frequency.linearRampToValueAtTime(
-        frequency, H.audioContext.currentTime + 0.002
+    this.oscillator.frequency.setValueAtTime(
+        frequency, H.audioContext.currentTime + 0.005
     );
 };
 
@@ -355,18 +352,20 @@ Instrument.prototype.play = function (options) {
         H.audioContext.resume();
     }
 
+    // Stop the note without fadeOut if the duration is too short to hear the
+    // note otherwise.
+    var immediate = options.duration < H.sonification.fadeOutDuration + 20;
+
     // Stop the instrument after the duration of the note
-    var immediate = options.duration < stopImmediateThreshold;
-    instrument.stopTimeout = setTimeout(function () {
-        delete instrument.stopTimeout;
-        instrument.stop(immediate, function () {
-            // After stop, call the stop callback for the play we finished
-            if (instrument.stopCallback) {
-                instrument.stopCallback();
-            }
-        });
-    }, immediate ? options.duration : options.duration - stopOffset);
     instrument.stopCallback = options.onEnd;
+    instrument.stopTimeout = setTimeout(
+        function () {
+            delete instrument.stopTimeout;
+            instrument.stop(immediate);
+        },
+        immediate ? options.duration :
+            options.duration - H.sonification.fadeOutDuration
+    );
 
     // Set the volume and panning
     setOrStartTimer(H.pick(options.volume, 1), 'setGain');
@@ -389,7 +388,9 @@ Instrument.prototype.mute = function () {
             this.gainNode.gain.value, H.audioContext.currentTime
         );
         this.gainNode.gain.exponentialRampToValueAtTime(
-            0.0001, H.audioContext.currentTime + 0.008
+            0.0001,
+            H.audioContext.currentTime +
+                H.sonification.fadeOutDuration * 0.9 / 1000
         );
     }
 };
@@ -403,8 +404,11 @@ Instrument.prototype.mute = function () {
  *
  * @param   {Function} onStopped
  *          Callback function to be called when the stop is completed.
+ *
+ * @param   {*} callbackData
+ *          Data to send to the onEnd callback functions.
  */
-Instrument.prototype.stop = function (immediately, onStopped) {
+Instrument.prototype.stop = function (immediately, onStopped, callbackData) {
     var instr = this,
         reset = function () {
             // The oscillator may have stopped in the meantime here, so allow
@@ -415,9 +419,13 @@ Instrument.prototype.stop = function (immediately, onStopped) {
             instr.oscillator.disconnect(instr.gainNode);
             // We need a new oscillator in order to restart it
             instr.initOscillator(instr.options.oscillator);
-            // Done stopping, call the callback
+            // Done stopping, call the callback from the stop
             if (onStopped) {
-                onStopped();
+                onStopped(callbackData);
+            }
+            // Call the callback for the play we finished
+            if (instr.stopCallback) {
+                instr.stopCallback(callbackData);
             }
         };
     // Clear any existing timers
@@ -433,7 +441,7 @@ Instrument.prototype.stop = function (immediately, onStopped) {
     } else {
         instr.mute();
         // Stop the oscillator after the mute fade-out has finished
-        setTimeout(reset, 10);
+        setTimeout(reset, H.sonification.fadeOutDuration);
     }
 };
 

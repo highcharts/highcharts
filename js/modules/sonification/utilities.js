@@ -10,10 +10,94 @@
 
 import musicalFrequencies from 'musicalFrequencies.js';
 
+
+/**
+ * The SignalHandler class. Stores signal callbacks (event handlers), and
+ * provides an interface to register them, and emit signals. The word "event" is
+ * not used to avoid confusion with TimelineEvents.
+ *
+ * @private
+ * @class SignalHandler
+ *
+ * @param   {Array<String>} supportedSignals
+ *          List of supported signal names.
+ */
+function SignalHandler(supportedSignals) {
+    this.init(supportedSignals || []);
+}
+SignalHandler.prototype.init = function (supportedSignals) {
+    this.supportedSignals = supportedSignals;
+    this.signals = {};
+};
+
+
+/**
+ * Register a set of signal callbacks with this SignalHandler.
+ * Multiple signal callbacks can be registered for the same signal.
+ *
+ * @param   {Object} signals An object that contains a mapping from the signal
+ *          name to the callbacks. Only supported events are considered.
+ */
+SignalHandler.prototype.registerSignalCallbacks = function (signals) {
+    var signalHandler = this;
+    signalHandler.supportedSignals.forEach(function (supportedSignal) {
+        if (signals[supportedSignal]) {
+            (
+                signalHandler.signals[supportedSignal] =
+                signalHandler.signals[supportedSignal] || []
+            ).push(
+                signals[supportedSignal]
+            );
+        }
+    });
+};
+
+
+/**
+ * Clear signal callbacks, optionally by name.
+ *
+ * @private
+ * @param   {Array<String>} [signalNames] A list of signal names to clear. If
+ *          not supplied, all signal callbacks are removed.
+ */
+SignalHandler.prototype.clearSignalCallbacks = function (signalNames) {
+    var signalHandler = this;
+    if (signalNames) {
+        signalNames.forEach(function (signalName) {
+            if (signalHandler.signals[signalName]) {
+                delete signalHandler.signals[signalName];
+            }
+        });
+    } else {
+        signalHandler.signals = {};
+    }
+};
+
+
+/**
+ * Emit a signal. Does nothing if the signal does not exist, or has no
+ * registered callbacks.
+ *
+ * @private
+ * @param   {String} signalNames Name of signal to emit.
+ * @param   {*} data Data to pass to the callback.
+ */
+SignalHandler.prototype.emitSignal = function (signalName, data) {
+    if (this.signals[signalName]) {
+        this.signals[signalName].forEach(function (handler) {
+            handler(data);
+        });
+    }
+};
+
+
 var utilities = {
 
     // List of musical frequencies from C0 to C8
     musicalFrequencies: musicalFrequencies,
+
+    // SignalHandler class
+    SignalHandler: SignalHandler,
 
     /**
      * Get a musical scale by specifying the semitones from 1-12 to include.
@@ -44,21 +128,39 @@ var utilities = {
      * @return {Object} Object with min and max properties
      */
     calculateDataExtremes: function (chart, prop) {
-        var extremes = {
-            min: Infinity,
-            max: -Infinity
-        };
-        chart.series.forEach(function (series) {
-            series.data.forEach(function (point) {
+        return chart.series.reduce(function (extremes, series) {
+            // We use cropped points rather than series.data here, to allow
+            // users to zoom in for better fidelity.
+            series.points.forEach(function (point) {
                 var val = point[prop] !== undefined ?
                         point[prop] : point.options[prop];
                 extremes.min = Math.min(extremes.min, val);
                 extremes.max = Math.max(extremes.max, val);
             });
+            return extremes;
+        }, {
+            min: Infinity,
+            max: -Infinity
         });
-        return extremes;
-    }
+    },
 
+    /**
+     * Translate a value on a virtual axis. Creates a new, virtual, axis with a
+     * min and max, and maps the relative value onto this axis.
+     * @private
+     * @param {number} value The relative data value to translate.
+     * @param {Object} dataExtremes The possible extremes for this value.
+     * @param {Object} limits Limits for the virtual axis.
+     * @return {number} The value mapped to the virtual axis.
+     */
+    virtualAxisTranslate: function (value, dataExtremes, limits) {
+        var lenValueAxis = dataExtremes.max - dataExtremes.min,
+            lenVirtualAxis = limits.max - limits.min,
+            virtualAxisValue = limits.min +
+                lenVirtualAxis * (value - dataExtremes.min) / lenValueAxis;
+
+        return Math.max(Math.min(virtualAxisValue, limits.max), limits.min);
+    }
 };
 
 export default utilities;
