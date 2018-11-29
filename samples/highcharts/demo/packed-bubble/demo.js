@@ -7,7 +7,8 @@ Highcharts.chart('container', {
         text: 'Carbon emissions around the world (2014)'
     },
     tooltip: {
-        pointFormat: '<b>{point.name}:</b> {point.y}'
+        useHTML: true,
+        pointFormat: '<b>{point.name}:</b> {point.y}m CO<sub>2</sub>'
     },
     plotOptions: {
         packedbubble: {
@@ -286,12 +287,10 @@ Highcharts.chart('container', {
         {
             name: "USA",
             y: 5334.5
-        },
-        {
+        }, {
             name: "Canada",
             y: 566
-        },
-        {
+        }, {
             name: "Mexico",
             y: 456.3
         }]
@@ -332,8 +331,7 @@ Highcharts.chart('container', {
         {
             name: "Brazil",
             y: 501.1
-        },
-        {
+        }, {
             name: "Argentina",
             y: 199
         },
