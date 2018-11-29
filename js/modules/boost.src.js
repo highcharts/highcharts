@@ -3388,6 +3388,12 @@ if (!H.hasWebGLSupport()) {
                 ),
 
                 addKDPoint = function (clientX, plotY, i) {
+
+                    // We need to do ceil on the clientX to make things
+                    // snap to pixel values. The renderer will frequently
+                    // draw stuff on "sub-pixels".
+                    clientX = Math.ceil(clientX);
+
                     // Shaves off about 60ms compared to repeated concatenation
                     index = compareX ? clientX : clientX + ',' + plotY;
 
@@ -3505,9 +3511,7 @@ if (!H.hasWebGLSupport()) {
 
                     if (!isNull && x >= xMin && x <= xMax && isYInside) {
 
-                        // We use ceil to allow the KD tree to work with sub
-                        // pixels, which can be used in boost to space pixels
-                        clientX = Math.ceil(xAxis.toPixels(x, true));
+                        clientX = xAxis.toPixels(x, true);
 
                         if (sampling) {
                             if (minI === undefined || clientX === lastClientX) {
