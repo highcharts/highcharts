@@ -211,6 +211,44 @@ QUnit.test('getCirclesIntersectionPoints', function (assert) {
     );
 });
 
+QUnit.test('isPointInsideCircle', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        isPointInsideCircle =
+            vennPrototype.utils.geometryCircles.isPointInsideCircle;
+
+    assert.strictEqual(
+        isPointInsideCircle({ x: 1, y: 1 }, { x: 0, y: 0, r: 3 }),
+        true,
+        'should return true for P(1, 1) and C(0, 0, 3).'
+    );
+
+    assert.strictEqual(
+        isPointInsideCircle({ x: 4, y: 1 }, { x: 0, y: 0, r: 3 }),
+        false,
+        'should return true for P(4, 1) and C(0, 0, 3).'
+    );
+});
+
+QUnit.test('isPointInsideAllCircles', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        isPointInsideAllCircles =
+            vennPrototype.utils.geometryCircles.isPointInsideAllCircles,
+        circles = [{ x: 0, y: 0, r: 3 }, { x: 4, y: 0, r: 3 }];
+
+    assert.strictEqual(
+        isPointInsideAllCircles({ x: 2, y: 0 }, circles),
+        true,
+        'should return true for P(2, 0) and [(0, 0, 3), (4, 0, 3)].'
+    );
+
+    assert.strictEqual(
+        isPointInsideAllCircles({ x: -1, y: 0 }, circles),
+        false,
+        'should return true for P(-1, 0) and [(0, 0, 3), (4, 0, 3)].'
+    );
+});
+
+
 QUnit.test('loss', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         loss = vennPrototype.utils.loss,
