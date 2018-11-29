@@ -163,6 +163,33 @@ QUnit.test('getDistanceBetweenPoints', function (assert) {
     );
 });
 
+QUnit.test('getCircleCircleIntersection', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        getCircleCircleIntersection =
+            vennPrototype.utils.getCircleCircleIntersection;
+    var a = { x: 0, y: 0, r: 3 };
+    var b = { x: 1, y: 0, r: 1 };
+    var c = { x: 5, y: 0, r: 3 };
+
+    assert.deepEqual(
+        getCircleCircleIntersection(b, c),
+        [],
+        'should return empty array if no overlap.'
+    );
+
+    assert.deepEqual(
+        getCircleCircleIntersection(a, b),
+        [],
+        'should return empty array if circles completely overlap.'
+    );
+
+    assert.deepEqual(
+        getCircleCircleIntersection(a, c),
+        [{ x: 2.5, y: 1.658 }, { x: 2.5, y: -1.658 }],
+        'should return (2.5, 1.658) and (2.5, -1.658) when c1(0, 0, 3) and c2(5, 0, 3).'
+    );
+});
+
 QUnit.test('loss', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         loss = vennPrototype.utils.loss,
