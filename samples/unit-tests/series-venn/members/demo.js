@@ -142,7 +142,8 @@ QUnit.test('getCenterOfPoints', function (assert) {
 QUnit.test('getOverlapBetweenCircles', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getOverlapBetweenCircles =
-            vennPrototype.utils.getOverlapBetweenCirclesByDistance;
+            vennPrototype.utils.geometryCircles
+            .getOverlapBetweenCircles;
 
     assert.strictEqual(
         getOverlapBetweenCircles(3, 4, 5),
@@ -177,7 +178,8 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', function (assert) {
 
 QUnit.test('getDistanceBetweenPoints', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        getDistanceBetweenPoints = vennPrototype.utils.getDistanceBetweenPoints;
+        getDistanceBetweenPoints = vennPrototype.utils.geometry
+            .getDistanceBetweenPoints;
 
     assert.strictEqual(
         getDistanceBetweenPoints({ x: 0, y: 0 }, { x: 2, y: 0 }),
@@ -195,7 +197,7 @@ QUnit.test('getDistanceBetweenPoints', function (assert) {
 QUnit.test('getCircleCircleIntersection', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getCircleCircleIntersection =
-            vennPrototype.utils.getCircleCircleIntersection;
+            vennPrototype.utils.geometryCircles.getCircleCircleIntersection;
     var a = { x: 0, y: 0, r: 3 };
     var b = { x: 1, y: 0, r: 1 };
     var c = { x: 5, y: 0, r: 3 };
@@ -222,7 +224,7 @@ QUnit.test('getCircleCircleIntersection', function (assert) {
 QUnit.test('getCirclesIntersectionPoints', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getCirclesIntersectionPoints =
-            vennPrototype.utils.getCirclesIntersectionPoints,
+            vennPrototype.utils.geometryCircles.getCirclesIntersectionPoints,
         circles = [
             { x: 0, y: 0, r: 3 },
             { x: 5, y: 0, r: 3 },

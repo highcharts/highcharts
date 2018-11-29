@@ -664,13 +664,7 @@ var vennSeries = {
         binarySearch: binarySearch,
         geometry: geometry,
         geometryCircles: geometryCircles,
-        getCircleCircleIntersection: geometryCircles
-            .getCircleCircleIntersection,
-        getCirclesIntersectionPoints:
-                geometryCircles.getCirclesIntersectionPoints,
-        getDistanceBetweenPoints: getDistanceBetweenPoints,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
-        getOverlapBetweenCirclesByDistance: getOverlapBetweenCirclesByDistance,
         loss: loss,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
