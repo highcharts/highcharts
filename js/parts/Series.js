@@ -5402,7 +5402,7 @@ null
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<number|string|Date>|*|null>}
+ * @type      {Array<number|Array<number|string>|*>}
  * @apioption series.line.data
  */
 
