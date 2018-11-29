@@ -35,7 +35,7 @@ var each = H.each,
  * @sample highcharts/demo/box-plot/
  *         Box plot
  *
- * @extends      {plotOptions.column}
+ * @extends      plotOptions.column
  * @excluding    borderColor, borderRadius, borderWidth, groupZPadding, states
  * @product      highcharts
  * @optionparent plotOptions.boxplot

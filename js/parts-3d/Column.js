@@ -1,12 +1,15 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
+
 var addEvent = H.addEvent,
     each = H.each,
     perspective = H.perspective,
@@ -17,15 +20,13 @@ var addEvent = H.addEvent,
     svg = H.svg,
     wrap = H.wrap;
 
-
-
 /**
  * Depth of the columns in a 3D column chart. Requires `highcharts-3d.js`.
  *
- * @type {Number}
- * @default 25
- * @since 4.0
- * @product highcharts
+ * @type      {number}
+ * @default   25
+ * @since     4.0
+ * @product   highcharts
  * @apioption plotOptions.column.depth
  */
 
@@ -33,17 +34,17 @@ var addEvent = H.addEvent,
  * 3D columns only. The color of the edges. Similar to `borderColor`,
  *  except it defaults to the same color as the column.
  *
- * @type {Color}
- * @product highcharts
+ * @type      {Highcharts.ColorString}
+ * @product   highcharts
  * @apioption plotOptions.column.edgeColor
  */
 
 /**
  * 3D columns only. The width of the colored edges.
  *
- * @type {Number}
- * @default 1
- * @product highcharts
+ * @type      {number}
+ * @default   1
+ * @product   highcharts
  * @apioption plotOptions.column.edgeWidth
  */
 
@@ -51,10 +52,10 @@ var addEvent = H.addEvent,
  * The spacing between columns on the Z Axis in a 3D chart. Requires
  * `highcharts-3d.js`.
  *
- * @type {Number}
- * @default 1
- * @since 4.0
- * @product highcharts
+ * @type      {number}
+ * @default   1
+ * @since     4.0
+ * @product   highcharts
  * @apioption plotOptions.column.groupZPadding
  */
 
@@ -231,12 +232,9 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
     }
 });
 
-/*
- * In case of 3d columns there is no sense to add this columns
- * to a specific series group - if series is added to a group
- * all columns will have the same zIndex in comparison with different series
- */
-
+// In case of 3d columns there is no sense to add this columns to a specific
+// series group - if series is added to a group all columns will have the same
+// zIndex in comparison with different series.
 wrap(
     seriesTypes.column.prototype,
     'plotGroup',
@@ -254,11 +252,8 @@ wrap(
     }
 );
 
-/*
- * When series is not added to group it is needed to change
- * setVisible method to allow correct Legend funcionality
- * This wrap is basing on pie chart series
- */
+// When series is not added to group it is needed to change setVisible method to
+// allow correct Legend funcionality. This wrap is basing on pie chart series.
 wrap(
     seriesTypes.column.prototype,
     'setVisible',
@@ -316,6 +311,7 @@ addEvent(Series, 'afterInit', function () {
 });
 
 /*= if (build.classic) { =*/
+
 function pointAttribs(proceed) {
     var attr = proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -336,6 +332,7 @@ if (seriesTypes.columnrange) {
     seriesTypes.columnrange.prototype.setVisible =
         seriesTypes.column.prototype.setVisible;
 }
+
 /*= } =*/
 
 wrap(Series.prototype, 'alignDataLabel', function (proceed) {
@@ -382,6 +379,7 @@ wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) { // #3946
 });
 
 /*
+    @todo
     EXTENSION FOR 3D CYLINDRICAL COLUMNS
     Not supported
 */
