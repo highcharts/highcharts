@@ -555,28 +555,15 @@ var vennOptions = {
 };
 
 var vennSeries = {
-    /**
-     * Owerwrite bindAxes to modify the axes according to a venn diagram.
-     * @returns {undefined}
-     */
-    bindAxes: function () {
-        var axis = {
-            endOnTick: false,
-            gridLineWidth: 0,
-            lineWidth: 0,
-            maxPadding: 0,
-            startOnTick: false,
-            title: null,
-            tickPositions: []
-        };
-
-        Series.prototype.bindAxes.call(this);
-        extend(this.yAxis.options, axis);
-        extend(this.xAxis.options, axis);
-    },
+    isCartesian: false,
+    axisTypes: [],
     directTouch: true,
     // Datalabels are drawn at the end of drawPoints.
     drawDataLabels: noop,
+    translate: function () {
+        this.processedXData = this.xData;
+        this.generatePoints();
+    },
     /**
      * Draw the graphics for each point.
      * @returns {undefined}
@@ -587,8 +574,6 @@ var vennSeries = {
             chart = series.chart,
             group = series.group,
             points = series.points || [],
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
             // Chart properties
             renderer = chart.renderer;
 
@@ -634,9 +619,9 @@ var vennSeries = {
         var field = Object.keys(circles).reduce(function (field, key) {
                 return updateFieldBoundaries(field, circles[key]);
             }, { top: 0, bottom: 0, left: 0, right: 0 }),
-            scale = getScale(xAxis.len, yAxis.len, field),
-            centerX = xAxis.len / 2,
-            centerY = yAxis.len / 2;
+            scale = getScale(chart.plotWidth, chart.plotHeight, field),
+            centerX = chart.plotWidth / 2,
+            centerY = chart.plotHeight / 2;
 
         // Iterate all points and calculate and draw their graphics.
         points.forEach(function (point) {
