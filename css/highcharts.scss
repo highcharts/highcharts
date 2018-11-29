@@ -484,13 +484,12 @@ g.highcharts-series,
 }
 .highcharts-venn-series .highcharts-point {
     fill-opacity: 0.75;
-    stroke-width: 0;
-    stroke: $neutral-color-80;
-    transition: stroke-width 250ms, fill-opacity 250ms;
+    stroke: $neutral-color-20;
+    transition: stroke 250ms, fill-opacity 250ms;
 }
 .highcharts-venn-series .highcharts-point-hover {
     fill-opacity: 1;
-    stroke-width: 1px;
+    stroke: $neutral-color-20;
 }
 
 /* Highstock */
