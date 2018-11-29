@@ -30,7 +30,7 @@ var each = H.each,
  * @sample highcharts/demo/gauge-speedometer/
  *         Gauge chart
  *
- * @extends      {plotOptions.line}
+ * @extends      plotOptions.line
  * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
  *               cropThreshold, dashStyle, findNearestPointBy,
  *               getExtremesFromAll, marker, negativeColor, pointPlacement,

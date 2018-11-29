@@ -1,10 +1,12 @@
-/**
-* (c) 2016 Highsoft AS
-* Authors: Lars A. V. Cabrera
-*
-* License: www.highcharts.com/license
-*/
+/* *
+ * (c) 2016 Highsoft AS
+ * Authors: Lars A. V. Cabrera
+ *
+ * License: www.highcharts.com/license
+ */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import 'CurrentDateIndicator.js';
 import 'GridAxis.js';
@@ -12,7 +14,6 @@ import '../modules/static-scale.src.js';
 import 'TreeGrid.js';
 import 'Pathfinder.js';
 import '../modules/xrange.src.js';
-
 
 var dateFormat = H.dateFormat,
     isObject = H.isObject,
@@ -26,12 +27,19 @@ var dateFormat = H.dateFormat,
     parent = seriesTypes.xrange;
 
 /**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.gantt
+ *
+ * @augments Highcharts.Series
+ */
+
+/**
  * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
  * it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @extends {plotOptions.xrange}
- * @product gantt
+ * @extends      plotOptions.xrange
+ * @product      gantt
  * @optionparent plotOptions.gantt
  */
 seriesType('gantt', 'xrange', {
@@ -157,10 +165,16 @@ seriesType('gantt', 'xrange', {
      * This override draws the point as a diamond if point.options.milestone is
      * true, and uses the original drawPoint() if it is false or not set.
      *
-     * @param  {Object} point an instance of Point in the series
-     * @param  {string} verb 'animate' (animates changes) or 'attr' (sets
-     *                       options)
-     * @returns {void}
+     * @requires module:highcharts-gantt
+     *
+     * @private
+     * @function Highcharts.seriesTypes.gantt#drawPoint
+     *
+     * @param {Highcharts.Point} point
+     *        An instance of Point in the series
+     *
+     * @param {"animate"|"attr"} verb
+     *        'animate' (animates changes) or 'attr' (sets options)
      */
     drawPoint: function (point, verb) {
         var series = this,
@@ -229,9 +243,17 @@ seriesType('gantt', 'xrange', {
      * Applies the options containing the x and y data and possible some extra
      * properties. This is called on point init or from point.update.
      *
-     * @param {Object} options the point options
-     * @param {number} x the x value
-     * @return {Object} the Point instance
+     * @private
+     * @function Highcharts.Point#applyOptions
+     *
+     * @param {object} options
+     *        The point options
+     *
+     * @param {number} x
+     *        The x value
+     *
+     * @return {Highcharts.Point}
+     *         The Point instance
      */
     applyOptions: function (options, x) {
         var point = this,
@@ -246,12 +268,24 @@ seriesType('gantt', 'xrange', {
 }));
 
 /**
+ * A `gantt` series.
+ *
+ * @extends   series,plotOptions.gantt
+ * @excluding boostThreshold, connectors, dashStyle, findNearestPointBy,
+ *            getExtremesFromAll, marker, negativeColor, pointInterval,
+ *            pointIntervalUnit, pointPlacement, pointStart
+ * @product   gantt
+ * @apioption series.gantt
+ */
+
+/**
  * Data for a Gantt series.
  *
- * @type {Object}
- * @extends {series.xrange.data}
- * @excluding connect,x,x2,partialFill
- * @product gantt
+ * @type      {Array<*>}
+ * @extends   series.xrange.data
+ * @excluding className, color, colorIndex, connect, dataLabels, events, id,
+ *            partialFill, selected, x, x2
+ * @product   gantt
  * @apioption series.gantt.data
  */
 
@@ -259,34 +293,36 @@ seriesType('gantt', 'xrange', {
  * Whether the grid node belonging to this point should start as collapsed. Used
  * in axes of type treegrid.
  *
- * @type {Boolean}
- * @default false
- * @product gantt
- * @sample {gantt} gantt/treegrid-axis/collapsed/ Start as collapsed
+ * @sample {gantt} gantt/treegrid-axis/collapsed/
+ *         Start as collapsed
+ *
+ * @type      {boolean}
+ * @default   false
+ * @product   gantt
  * @apioption series.gantt.data.collapsed
  */
 
 /**
  * The start time of a task.
  *
- * @type {number}
- * @product gantt
+ * @type      {number}
+ * @product   gantt
  * @apioption series.gantt.data.start
  */
 
 /**
  * The end time of a task.
  *
- * @type {number}
- * @product gantt
+ * @type      {number}
+ * @product   gantt
  * @apioption series.gantt.data.end
  */
 
 /**
  * The Y value of a task.
  *
- * @type {number}
- * @product gantt
+ * @type      {number}
+ * @product   gantt
  * @apioption series.gantt.data.y
  */
 
@@ -294,8 +330,8 @@ seriesType('gantt', 'xrange', {
  * The name of a task. If a `treegrid` y-axis is used (default in Gantt charts),
  * this will be picked up automatically, and used to calculate the y-value.
  *
- * @type {string}
- * @product gantt
+ * @type      {string}
+ * @product   gantt
  * @apioption series.gantt.data.name
  */
 
@@ -303,11 +339,12 @@ seriesType('gantt', 'xrange', {
  * Progress indicator, how much of the task completed. If it is a number, the
  * `fill` will be applied automatically.
  *
- * @type {object|number}
- * @default undefined
- * @extends {series.xrange.data.partialFill}
- * @product gantt
- * @sample {gantt} gantt/demo/progress-indicator Progress indicator
+ * @sample {gantt} gantt/demo/progress-indicator
+ *         Progress indicator
+ *
+ * @type      {number|*}
+ * @extends   series.xrange.data.partialFill
+ * @product   gantt
  * @apioption series.gantt.data.completed
  */
 
@@ -315,8 +352,8 @@ seriesType('gantt', 'xrange', {
  * The amount of the progress indicator, ranging from 0 (not started) to 1
  * (finished).
  *
- * @type {number}
- * @default 0
+ * @type      {number}
+ * @default   0
  * @apioption series.gantt.data.completed.amount
  */
 
@@ -324,8 +361,7 @@ seriesType('gantt', 'xrange', {
  * The fill of the progress indicator. Defaults to a darkened variety of the
  * main color.
  *
- * @type {Highcharts.ColorString}
- * @default undefined
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
  * @apioption series.gantt.data.completed.fill
  */
 
@@ -335,14 +371,15 @@ seriesType('gantt', 'xrange', {
  * specifying further connecting [options](series.gantt.connectors) between the
  * points. Multiple connections can be specified by providing an array.
  *
- * @type {Array<string|*>|string|*}
- * @extends {series.xrange.data.connect}
- * @since 6.2.0
- * @sample  gantt/demo/project-management
- *          Dependencies
+ * @sample gantt/demo/project-management
+ *         Dependencies
  * @sample gantt/pathfinder/demo
- *          Different connection types
- * @product gantt
+ *         Different connection types
+ *
+ * @type      {string|Array<string|*>|*}
+ * @extends   series.xrange.data.connect
+ * @since     6.2.0
+ * @product   gantt
  * @apioption series.gantt.data.dependency
  */
 
@@ -350,30 +387,28 @@ seriesType('gantt', 'xrange', {
  * Whether this point is a milestone. If so, only the `start` option is handled,
  * while `end` is ignored.
  *
- * @type {boolean}
- * @since 6.2.0
- * @sample  gantt/gantt/milestones
- *          Milestones
- * @product gantt
+ * @sample gantt/gantt/milestones
+ *         Milestones
+ *
+ * @type      {boolean}
+ * @since     6.2.0
+ * @product   gantt
  * @apioption series.gantt.data.milestone
  */
 
 /**
  * The ID of the parent point (task) of this point in Gantt charts.
  *
- * @type {string}
- * @since 6.2.0
- * @sample  gantt/demo/subtasks
- *          Gantt chart with subtasks
- * @product gantt
+ * @sample gantt/demo/subtasks
+ *         Gantt chart with subtasks
+ *
+ * @type      {string}
+ * @since     6.2.0
+ * @product   gantt
  * @apioption series.gantt.data.parent
  */
 
 /**
- * A `gantt` series.
- *
- * @type {Object}
- * @extends {plotOptions.gantt}
- * @product gantt
- * @apioption series.gantt
+ * @excluding afterAnimate
+ * @apioption series.gantt.events
  */

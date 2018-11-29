@@ -354,3 +354,5 @@ addEvent(Chart, 'beforeRender', function () {
     this.mapNavigation = new MapNavigation(this);
     this.mapNavigation.update();
 });
+
+H.MapNavigation = MapNavigation;

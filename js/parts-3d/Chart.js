@@ -1,14 +1,17 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * Extension for 3D charts
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
+
 var addEvent = H.addEvent,
     Chart = H.Chart,
     each = H.each,
@@ -60,13 +63,18 @@ addEvent(Chart, 'addSeries', function (e) {
  *         object, but since the chart object is needed for perspective it is
  *         not practical. Possible to make both getScale and perspective more
  *         logical and also immutable.
- * @param  {Object} chart Chart object
- * @param  {Number} chart.plotLeft
- * @param  {Number} chart.plotWidth
- * @param  {Number} chart.plotTop
- * @param  {Number} chart.plotHeight
- * @param  {Number} depth The depth of the chart
- * @return {Number} The scale to fit the 3D chart into the plotting area.
+ *
+ * @private
+ * @function getScale
+ *
+ * @param {Highcharts.Chart} chart
+ *        Chart object
+ *
+ * @param {number} depth
+ *        The depth of the chart
+ *
+ * @return {number}
+ *         The scale to fit the 3D chart into the plotting area.
  */
 function getScale(chart, depth) {
     var plotLeft = chart.plotLeft,
@@ -184,10 +192,9 @@ var extendedOptions = {
         /**
          * Options to render charts in 3 dimensions. This feature requires
          * `highcharts-3d.js`, found in the download package or online at
-         * [code.highcharts.com/highcharts-3d.js](http://code.highcharts.com/highcharts-
-         * 3d.js).
+         * [code.highcharts.com/highcharts-3d.js](http://code.highcharts.com/highcharts-3d.js).
          *
-         * @since 4.0
+         * @since   4.0
          * @product highcharts
          */
         options3d: {
@@ -195,9 +202,7 @@ var extendedOptions = {
             /**
              * Wether to render the chart using the 3D functionality.
              *
-             * @type {Boolean}
-             * @default false
-             * @since 4.0
+             * @since   4.0
              * @product highcharts
              */
             enabled: false,
@@ -205,9 +210,7 @@ var extendedOptions = {
             /**
              * One of the two rotation angles for the chart.
              *
-             * @type {Number}
-             * @default 0
-             * @since 4.0
+             * @since   4.0
              * @product highcharts
              */
             alpha: 0,
@@ -215,9 +218,7 @@ var extendedOptions = {
             /**
              * One of the two rotation angles for the chart.
              *
-             * @type {Number}
-             * @default 0
-             * @since 4.0
+             * @since   4.0
              * @product highcharts
              */
             beta: 0,
@@ -225,9 +226,7 @@ var extendedOptions = {
             /**
              * The total depth of the chart.
              *
-             * @type {Number}
-             * @default 100
-             * @since 4.0
+             * @since   4.0
              * @product highcharts
              */
             depth: 100,
@@ -236,9 +235,7 @@ var extendedOptions = {
              * Whether the 3d box should automatically adjust to the chart plot
              * area.
              *
-             * @type {Boolean}
-             * @default true
-             * @since 4.2.4
+             * @since   4.2.4
              * @product highcharts
              */
             fitToPlot: true,
@@ -249,9 +246,7 @@ var extendedOptions = {
              * effect in column and scatter charts. It is not used for 3D pie
              * charts.
              *
-             * @type {Number}
-             * @default 100
-             * @since 4.0
+             * @since   4.0
              * @product highcharts
              */
             viewDistance: 25,
@@ -260,9 +255,8 @@ var extendedOptions = {
              * Set it to `"auto"` to automatically move the labels to the best
              * edge.
              *
-             * @validvalue [null, "auto"]
-             * @type {String}
-             * @since 5.0.12
+             * @type    {"auto"|null}
+             * @since   5.0.12
              * @product highcharts
              */
             axisLabelPosition: null,
@@ -271,7 +265,7 @@ var extendedOptions = {
              * Provides the option to draw a frame around the charts by defining
              * a bottom, front and back panel.
              *
-             * @since 4.0
+             * @since   4.0
              * @product highcharts
              */
             frame: {
@@ -289,27 +283,27 @@ var extendedOptions = {
                 /**
                  * The bottom of the frame around a 3D chart.
                  *
-                 * @since 4.0
+                 * @since   4.0
                  * @product highcharts
                  */
 
                 /**
                  * The color of the panel.
                  *
-                 * @type {Color}
-                 * @default transparent
-                 * @since 4.0
-                 * @product highcharts
+                 * @type      {Highcharts.ColorString}
+                 * @default   transparent
+                 * @since     4.0
+                 * @product   highcharts
                  * @apioption chart.options3d.frame.bottom.color
                  */
 
                 /**
                  * The thickness of the panel.
                  *
-                 * @type {Number}
-                 * @default 1
-                 * @since 4.0
-                 * @product highcharts
+                 * @type      {number}
+                 * @default   1
+                 * @since     4.0
+                 * @product   highcharts
                  * @apioption chart.options3d.frame.bottom.size
                  */
 
@@ -319,12 +313,13 @@ var extendedOptions = {
                  * and `"default"` to display faces behind the data based on the
                  * axis layout, ignoring the point of view.
                  *
-                 * @validvalue ["default", "auto", true, false]
-                 * @type {Boolean|String}
-                 * @sample {highcharts} highcharts/3d/scatter-frame/ Auto frames
-                 * @default default
-                 * @since 5.0.12
-                 * @product highcharts
+                 * @sample {highcharts} highcharts/3d/scatter-frame/
+                 *         Auto frames
+                 *
+                 * @type      {boolean|"default"|"auto"}
+                 * @default   default
+                 * @since     5.0.12
+                 * @product   highcharts
                  * @apioption chart.options3d.frame.bottom.visible
                  */
 
@@ -375,9 +370,8 @@ var extendedOptions = {
 merge(true, defaultOptions, extendedOptions);
 
 /*= if (!build.classic) { =*/
-/**
- * Add the required CSS classes for column sides (#6018)
- */
+
+// Add the required CSS classes for column sides (#6018)
 addEvent(Chart, 'afterGetContainer', function () {
     this.renderer.definition({
         tagName: 'style',
@@ -390,6 +384,7 @@ addEvent(Chart, 'afterGetContainer', function () {
             '}\n'
     });
 });
+
 /*= } =*/
 
 wrap(Chart.prototype, 'setClassName', function (proceed) {
@@ -1659,9 +1654,7 @@ Chart.prototype.get3dFrame = function () {
     return ret;
 };
 
-/**
- * Animation setter for matrix property.
- */
+// Animation setter for matrix property.
 H.Fx.prototype.matrixSetter = function () {
     var interpolated;
     if (this.pos < 1 &&
@@ -1685,33 +1678,34 @@ H.Fx.prototype.matrixSetter = function () {
 };
 
 /**
- * Note: As of v5.0.12, `frame.left` or `frame.right` should be used
- * instead.
+ * Note: As of v5.0.12, `frame.left` or `frame.right` should be used instead.
  *
  * The side for the frame around a 3D chart.
  *
- * @since 4.0
- * @product highcharts
+ * @deprecated
+ * @since     4.0
+ * @product   highcharts
  * @apioption chart.options3d.frame.side
  */
 
 /**
  * The color of the panel.
  *
- * @type {Color}
- * @default transparent
- * @since 4.0
- * @product highcharts
+ * @deprecated
+ * @type      {Highcharts.ColorString}
+ * @default   transparent
+ * @since     4.0
+ * @product   highcharts
  * @apioption chart.options3d.frame.side.color
  */
 
 /**
  * The thickness of the panel.
  *
- * @type {Number}
- * @default 1
- * @since 4.0
- * @product highcharts
+ * @deprecated
+ * @type      {number}
+ * @default   1
+ * @since     4.0
+ * @product   highcharts
  * @apioption chart.options3d.frame.side.size
  */
-

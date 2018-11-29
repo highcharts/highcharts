@@ -1,14 +1,15 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-/**
- *    Mathematical Functionility
- */
+
+// Mathematical Functionility
 var deg2rad = H.deg2rad,
     pick = H.pick;
 
@@ -36,6 +37,9 @@ var deg2rad = H.deg2rad,
  * |      cosB     |   0    |    - sinB     |     | x |     | px |
  * | - sinA * sinB |  cosA  | - sinA * cosB |  x  | y |  =  | py |
  * |  cosA * sinB  |  sinA  |  cosA * cosB  |     | z |     | pz |
+ *
+ * @private
+ * @function rotate3D
  */
 /* eslint-enable max-len */
 function rotate3D(x, y, z, angles) {
@@ -62,12 +66,21 @@ H.perspective3D = function (coordinate, origin, distance) {
 
 /**
  * Transforms a given array of points according to the angles in chart.options.
- * Parameters:
- *        - points: the array of points
- *        - chart: the chart
- *        - insidePlotArea: wether to verifiy the points are inside the plotArea
- * Returns:
- *        - an array of transformed points
+ *
+ * @private
+ * @function Highcharts.perspective
+ *
+ * @param {Array<Highcharts.Point>} points
+ *        The array of points
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart
+ *
+ * @param {boolean} [insidePlotArea]
+ *        Wether to verifiy the points are inside the plotArea
+ *
+ * @return {Array<Highcharts.Point>}
+ *         An array of transformed points
  */
 H.perspective = function (points, chart, insidePlotArea) {
     var options3d = chart.options.chart.options3d,
@@ -120,11 +133,18 @@ H.perspective = function (points, chart, insidePlotArea) {
 /**
  * Calculate a distance from camera to points - made for calculating zIndex of
  * scatter points.
- * Parameters:
- *        - coordinates: The coordinates of the specific point
- *        - chart: the chart
- * Returns:
- *        - a distance from camera to point
+ *
+ * @private
+ * @function Highcharts.pointCameraDistance
+ *
+ * @param {object} coordinates
+ *        The coordinates of the specific point
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart
+ *
+ * @return {number}
+ *         A distance from camera to point
  */
 H.pointCameraDistance = function (coordinates, chart) {
     var options3d = chart.options.chart.options3d,
@@ -145,6 +165,13 @@ H.pointCameraDistance = function (coordinates, chart) {
 /**
  * Calculate area of a 2D polygon using Shoelace algorithm
  * http://en.wikipedia.org/wiki/Shoelace_formula
+ *
+ * @private
+ * @function Highcharts.shapeArea
+ *
+ * @param {Array<object>} vertexes
+ *
+ * @return {number}
  */
 H.shapeArea = function (vertexes) {
     var area = 0,
@@ -159,6 +186,17 @@ H.shapeArea = function (vertexes) {
 
 /**
  * Calculate area of a 3D polygon after perspective projection
+ *
+ * @private
+ * @function Highcharts.shapeArea3d
+ *
+ * @param {Array<object>} vertexes
+ *
+ * @param {Highcharts.Chart} chart
+ *
+ * @param {boolean} [insidePlotArea]
+ *
+ * @return {number}
  */
 H.shapeArea3d = function (vertexes, chart, insidePlotArea) {
     return H.shapeArea(H.perspective(vertexes, chart, insidePlotArea));
