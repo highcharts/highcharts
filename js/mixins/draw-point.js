@@ -3,11 +3,16 @@ var isFn = function (x) {
 };
 
 /**
- * draw - Handles the drawing of a point.
- * TODO: add type checking.
+ * Handles the drawing of a point.
  *
- * @param  {object} params Parameters.
- * @return {undefined} Returns undefined.
+ * @private
+ * @function draw
+ *
+ * @param {object} params
+ *        Parameters.
+ *
+ * @todo
+ * - add type checking.
  */
 var draw = function draw(params) {
     var point = this,
