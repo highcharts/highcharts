@@ -18,6 +18,16 @@
  *         Return false to prevent the default action, usually zoom.
  */
 
+/**
+ * @interface Highcharts.TooltipFormatterContextObject
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#series
+ * @type {Highcharts.Series}
+ */
+
 'use strict';
 
 import H from './Globals.js';
@@ -2816,7 +2826,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/tooltip/formatter/
          *         String formatting
          *
-         * @type      {Function}
+         * @type      {Highcharts.FormatterCallbackFunction<Highcharts.TooltipFormatterContextObject>}
          * @apioption tooltip.formatter
          */
 
