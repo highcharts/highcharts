@@ -4,6 +4,10 @@ import DrilldownModule from 'highcharts/modules/drilldown';
 DrilldownModule(Highcharts);
 
 function test_labelStyling() {
+    enum relativeToValues {
+        plotBox = 'plotBox',
+        spacingBox = 'spacingBox'
+    }
     Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -44,7 +48,7 @@ function test_labelStyling() {
         }],
         drilldown: {
             drillUpButton: {
-                relativeTo: 'spacingBox',
+                relativeTo: relativeToValues.spacingBox,
                 position: {
                     y: 0,
                     x: 0
