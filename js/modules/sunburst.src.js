@@ -716,8 +716,8 @@ var sunburstSeries = {
                 onComplete = animateLabels;
             }
             point.draw({
-                animate: animationInfo.to,
-                attr: extend(
+                animatableAttribs: animationInfo.to,
+                attribs: extend(
                     animationInfo.from,
                     !chart.styledMode && series.pointAttribs(
                         point,
