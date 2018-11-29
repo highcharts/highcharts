@@ -542,6 +542,11 @@ var vennOptions = {
             opacity: 1,
             halo: false,
             borderColor: '${palette.neutralColor80}'
+        },
+        select: {
+            color: '${palette.neutralColor20}',
+            borderColor: '${palette.neutralColor100}',
+            animation: false
         }
     },
     tooltip: {
