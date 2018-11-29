@@ -190,6 +190,27 @@ QUnit.test('getCircleCircleIntersection', function (assert) {
     );
 });
 
+QUnit.test('getCirclesIntersectionPoints', function (assert) {
+    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
+        getCirclesIntersectionPoints =
+            vennPrototype.utils.getCirclesIntersectionPoints,
+        circles = [
+            { x: 0, y: 0, r: 3 },
+            { x: 5, y: 0, r: 3 },
+            { x: -3, y: 3, r: 3 }
+        ];
+    assert.deepEqual(
+        getCirclesIntersectionPoints(circles),
+        [
+            { x: 2.5, y: 1.658 },
+            { x: 2.5, y: -1.658 },
+            { x: -3, y: 0 },
+            { x: 0, y: 3 }
+        ],
+        'should return a list of all the intersection points between the circles.'
+    );
+});
+
 QUnit.test('loss', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         loss = vennPrototype.utils.loss,
