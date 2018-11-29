@@ -1,4 +1,4 @@
-/**
+/* *
  * Mixin for downloading content in the browser
  *
  * (c) 2018 Oystein Moseng
@@ -47,8 +47,14 @@ Highcharts.dataURLtoBlob = function (dataURL) {
 /**
  * Download a data URL in the browser. Can also take a blob as first param.
  *
- * @param  {string|object} dataURL The dataURL/Blob to download
- * @param  {string} filename The name of the resulting file (w/extension)
+ * @private
+ * @function Highcharts.downloadURL
+ *
+ * @param {string|object} dataURL
+ *        The dataURL/Blob to download
+ *
+ * @param {string} filename
+ *        The name of the resulting file (w/extension)
  */
 Highcharts.downloadURL = function (dataURL, filename) {
     var a = doc.createElement('a'),
