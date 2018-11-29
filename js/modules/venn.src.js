@@ -25,12 +25,11 @@ var color = H.Color,
     isNumber = H.isNumber,
     isObject = H.isObject,
     isString = H.isString,
-    keys = H.keys,
     merge = H.merge,
     seriesType = H.seriesType;
 
 var objectValues = function objectValues(obj) {
-    return keys(obj).map(function (x) {
+    return Object.keys(obj).map(function (x) {
         return obj[x];
     });
 };
