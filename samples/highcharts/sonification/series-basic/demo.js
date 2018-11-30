@@ -1,0 +1,44 @@
+
+Highcharts.chart('container', {
+    title: {
+        text: 'Click series to sonify'
+    },
+    legend: {
+        enabled: false
+    },
+    series: [{
+        marker: {
+            radius: 8
+        },
+        cursor: 'pointer',
+        data: [
+            1, 2, { y: 4, color: 'red' }, 5, 7, 9, 11, 13,
+            { y: 6, color: 'red' }, 7, 1
+        ],
+        events: {
+            click: function () {
+                // Sonify the series when clicked
+                this.sonify({
+                    duration: 3000,
+                    pointPlayTime: 'x',
+                    instruments: [{
+                        instrument: 'triangleMajor',
+                        instrumentMapping: {
+                            volume: function (point) {
+                                return point.color === 'rede' ? 0.2 : 0.8;
+                            },
+                            duration: 300,
+                            pan: 'x',
+                            frequency: 'y'
+                        },
+                        // Start at C5 note, end at C6
+                        instrumentOptions: {
+                            minFrequency: 520,
+                            maxFrequency: 1050
+                        }
+                    }]
+                });
+            }
+        }
+    }]
+});

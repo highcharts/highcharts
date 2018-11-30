@@ -67,7 +67,7 @@ TimelineEvent.prototype.play = function (options) {
             this.options.playOptions.onEnd,
         playOptions = H.merge(this.options.playOptions, options);
 
-    if (eventObject) {
+    if (eventObject && eventObject.sonify) {
         // If we have multiple onEnds defined, use all
         playOptions.onEnd = masterOnEnd || playOnEnd || playOptionsOnEnd ?
             function () {
@@ -196,13 +196,13 @@ TimelinePath.prototype.updateEventIdMap = function () {
 
 
 /**
- * Add an event to the path. Should not be done while the path is playing.
- * The new event is inserted according to its time property.
+ * Add events to the path. Should not be done while the path is playing.
+ * The new events are inserted according to their time property.
  *
- * @param {TimelineEvent} newEvent The new timeline event to add to the path.
+ * @param {Array<TimelineEvent>} newEvents The new timeline events to add.
  */
-TimelinePath.prototype.addTimelineEvent = function (newEvent) {
-    this.events.push(newEvent);
+TimelinePath.prototype.addTimelineEvents = function (newEvents) {
+    this.events = this.events.concat(newEvents);
     this.sortEvents(); // Sort events by time
     this.updateEventIdMap(); // Update the event ID to index map
 };

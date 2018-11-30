@@ -147,7 +147,7 @@ function buildTimelinePathFromSeries(series, options) {
         },
         // Compute any data extremes that aren't defined yet
         dataExtremes = getExtremesForInstrumentProps(
-            series.chart, options.dataExtremes, options.instruments
+            series.chart, options.instruments, options.dataExtremes
         ),
         // Go through the points, convert to events, optionally add Earcons
         timelineEvents = series.points.reduce(function (events, point) {
@@ -178,20 +178,24 @@ function buildTimelinePathFromSeries(series, options) {
     return new H.sonification.TimelinePath({
         events: timelineEvents,
         onStart: function () {
-            options.onStart(series);
+            if (options.onStart) {
+                options.onStart(series);
+            }
         },
         onEventStart: function (event) {
-            if (event instanceof H.Point) {
+            if (event instanceof H.Point && options.onPointStart) {
                 options.onPointStart(event);
             }
         },
         onEventEnd: function (eventData) {
-            if (eventData.event instanceof H.Point) {
-                options.onPointStart(eventData.event);
+            if (eventData.event instanceof H.Point && options.onPointEnd) {
+                options.onPointEnd(eventData.event);
             }
         },
         onEnd: function () {
-            options.onEnd(series);
+            if (options.onEnd) {
+                options.onEnd(series);
+            }
         }
     });
 }
@@ -257,7 +261,7 @@ function buildTimelinePathFromSeries(series, options) {
  */
 function seriesSonify(options) {
     var timelinePath = buildTimelinePathFromSeries(this, options),
-        chartSonification = this.chart.sonifiation;
+        chartSonification = this.chart.sonification;
 
     // Only one timeline can play at a time. If we want multiple series playing
     // at the same time, use chart.sonify.
@@ -274,65 +278,83 @@ function seriesSonify(options) {
 
 
 /**
- * Sonify a chart.
+ * Utility function to assemble options for creating a TimelinePath from a
+ * series when sonifying an entire chart.
+ * @private
+ *
+ * @param {Highcharts.Series} series The series to return options for.
+ * @param {Object} dataExtremes Pre-calculated data extremes for the chart.
+ * @param {Object} chartSonifyOptions Options passed in to chart.sonify.
+ * @return {Object} Options for buildTimelinePathFromSeries.
  */
-function chartSonify(options) {
-    var chart = this;
-
-    // Only one timeline can play at a time.
-    if (this.sonification.timeline) {
-        this.sonification.timeline.pause();
-    }
-
-    // Calculate data extremes for the props used
-    var dataExtremes = getExtremesForInstrumentProps(
-        this, options.dataExtremes, options.instruments
+function buildSeriesOptions(series, dataExtremes, chartSonifyOptions) {
+    var seriesOptions = chartSonifyOptions.seriesOptions || {};
+    return H.merge(
+        {
+            // Calculated dataExtremes for chart
+            dataExtremes: dataExtremes,
+            // We need to get timeExtremes for each series. We pass this
+            // in when building the TimelinePath objects to avoid
+            // calculating twice.
+            timeExtremes: getTimeExtremes(
+                series, chartSonifyOptions.pointPlayTime
+            ),
+            // Some options we just pass on
+            instruments: chartSonifyOptions.instruments,
+            onStart: chartSonifyOptions.onSeriesStart,
+            onEnd: chartSonifyOptions.onSeriesEnd
+        },
+        // Merge in the specific series options by ID
+        H.isArray(seriesOptions) ? (
+            H.find(seriesOptions, function (optEntry) {
+                return optEntry.id === series.id;
+            }) || {}
+        ) : seriesOptions,
+        {
+            // Forced options
+            pointPlayTime: chartSonifyOptions.pointPlayTime
+        }
     );
+}
 
-    // Utility function to assemble options for creating TimelinePath from a
-    // series
-    var buildSeriesOptions = function (series) {
-        var seriesOptions = options.seriesOptions || {};
-        return H.merge(
-            {
-                // Calculated dataExtremes for chart
-                dataExtremes: dataExtremes,
-                // We need to get timeExtremes for each series. We pass this
-                // in when building the TimelinePath objects to avoid
-                // calculating twice.
-                timeExtremes: getTimeExtremes(series, options.pointPlayTime),
-                // Some options we just pass on
-                instruments: options.instruments,
-                pointPlayTime: options.pointPlayTime,
-                onStart: options.onSeriesStart,
-                onEnd: options.onSeriesEnd
-            },
-            // Merge in the series options
-            H.isArray(seriesOptions) ? (
-                H.find(seriesOptions, function (optEntry) {
-                    return optEntry.id === series.id;
-                }) || {}
-            ) : seriesOptions
-        );
-    };
 
-    // Figure out ordering of series
-    var order = options.order;
-    if (order === 'sequential' || order === 'simultaneous') {
+/**
+ * Utility function to normalize the ordering of timeline paths when sonifying
+ * a chart.
+ * @private
+ *
+ * @param   {Object} orderOptions
+ *          Order options for the sonification.
+ * @param   {Highcharts.Chart} chart
+ *          The chart we are sonifying.
+ * @param   {Function} seriesOptionsCallback
+ *          A function that takes a series as argument, and returns the series
+ *          options for that series to be used with buildTimelinePathFromSeries.
+ * @return  {Array<Object|Array<Object|TimelinePath>>}
+ *          If order is sequential, we return an array of objects to create
+ *          series paths from. If order is simultaneous we return an array of
+ *          an array with the same. If there is a custom order, we return
+ *          an array of arrays of either objects (for series) or TimelinePaths
+ *          (for earcons and delays).
+ */
+function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
+    var order;
+    if (orderOptions === 'sequential' || orderOptions === 'simultaneous') {
         // Just add the series from the chart
-        order = this.series.map(function (series) {
+        order = chart.series.map(function (series) {
             return {
                 series: series,
-                seriesOptions: buildSeriesOptions(series)
+                seriesOptions: seriesOptionsCallback(series)
             };
         });
+        // If order is simultaneous, group all series together
         if (order === 'simultaneous') {
             order = [order];
         }
     } else {
         // We have a specific order, and potentially custom items - like
         // earcons or silent waits.
-        order = order.map(function (orderDef) {
+        order = orderOptions.map(function (orderDef) {
             // Return set of items to play simultaneously. Could be only one.
             return H.splat(orderDef).map(function (item) {
                 // Is this item a series ID?
@@ -340,7 +362,7 @@ function chartSonify(options) {
                     var series = chart.get(item);
                     return {
                         series: series,
-                        seriesOptions: buildSeriesOptions(series)
+                        seriesOptions: seriesOptionsCallback(series)
                     };
                 }
 
@@ -363,74 +385,180 @@ function chartSonify(options) {
             });
         });
     }
+    return order;
+}
 
-    // Add delays and figure out the total available duration
-    var totalAvailableDuration = options.duration,
-        newOrder = [],
-        totalTimeExtremes = {
-            min: Infinity,
-            max: -Infinity
-        };
-    order.forEach(function (orderDef, i) {
-        // Add to new order
-        newOrder.push(orderDef);
 
-        // Go throuh the paths/series to play at this point
+/**
+ * Utility function to add a silent wait after all series.
+ * @private
+ *
+ * @param {Array<*>} order The order of items.
+ * @param {number} wait The wait in milliseconds to add.
+ * @return {Array<*>} The order with waits inserted.
+ */
+function addAfterSeriesWaits(order, wait) {
+    if (!wait) {
+        return order;
+    }
+
+    return order.reduce(function (newOrder, orderDef, i) {
+        var simultaneousPaths = H.splat(orderDef);
+        newOrder.push(simultaneousPaths);
+
+        // Go through the simultaneous paths and see if there is a series there
         if (
-            orderDef.length === 1 &&
-            orderDef[0].options &&
-            orderDef[0].options.silentWait
+            i < order.length - 1 && // Do not add wait after last series
+            simultaneousPaths.some(function (item) {
+                return item.series;
+            })
         ) {
-            // We have a custom delay, subtract this from available duration
-            totalAvailableDuration -= orderDef[0].options.silentWait;
-        } else {
-            // Not a delay. Find out if there is a series, if there is we might
-            // want to add a delay after.
-            var hasSeries = false;
-            orderDef.forEach(function (item) {
-                if (item.series) {
-                    hasSeries = true;
+            // We have a series, meaning we should add a wait after these
+            // paths have finished.
+            newOrder.push(new H.sonification.TimelinePath({
+                silentWait: wait
+            }));
+        }
 
-                    // Compute total time extremes
-                    totalTimeExtremes.min = Math.min(
-                        totalTimeExtremes.min,
-                        item.seriesOptions.timeExtremes.min
+        return newOrder;
+    }, []);
+}
+
+
+/**
+ * Utility function to find the total amout of wait time in the TimelinePaths.
+ * @private
+ *
+ * @param {Array<*>} order The order of TimelinePaths/items.
+ * @return {number} The total time in ms spent on wait paths between playing.
+ */
+function getWaitTime(order) {
+    return order.reduce(function (waitTime, orderDef) {
+        var def = H.splat(orderDef);
+        return waitTime + (
+            def.length === 1 && def[0].silentWait || 0
+        );
+    }, 0);
+}
+
+
+/**
+ * Utility function to ensure simultaneous paths have start/end events at the
+ * same time, to sync them.
+ * @private
+ *
+ * @param {Array<*>} order The order of TimelinePaths/items. The order array is
+ *  modified in place.
+ */
+function syncSimultaneousPaths(order) {
+    order.forEach(function (orderDef) {
+        var simultaneousPaths = H.splat(orderDef),
+            simulExtremes = simultaneousPaths.reduce(function (acc, item) {
+                if (item.series) {
+                    acc.min = Math.min(
+                        acc.min, item.seriesOptions.timeExtremes.min
                     );
-                    totalTimeExtremes.max = Math.max(
-                        totalTimeExtremes.max,
-                        item.seriesOptions.timeExtremes.max
+                    acc.max = Math.max(
+                        acc.max, item.seriesOptions.timeExtremes.max
                     );
                 }
+                return acc;
+            }, {
+                min: Infinity,
+                max: -Infinity
             });
 
-            // If we have a series, and we want an after series delay, add it.
-            // Also reduce the total available duration accordingly.
-            // Do not add a delay after the final series.
-            if (hasSeries && options.afterSeriesDelay && i < order.length - 1) {
-                newOrder.push(new H.sonification.TimelinePath({
-                    silentWait: options.afterSeriesDelay
-                }));
-                totalAvailableDuration -= options.afterSeriesDelay;
-            }
+        // If we have extremes for these paths, go through them and normalize
+        if (isFinite(simulExtremes.max) && isFinite(simulExtremes.min)) {
+            simultaneousPaths.forEach(function (item) {
+                var start = new H.sonification.TimelineEvent({
+                        time: simulExtremes.min
+                    }),
+                    end = new H.sonification.TimelineEvent({
+                        time: simulExtremes.max
+                    });
+                if (item.series) {
+                    // If the item is a series building object, add props only
+                    item.startEvent = start;
+                    item.endEvent = end;
+                    item.durationValueSpan =
+                        simulExtremes.max - simulExtremes.min;
+                } else {
+                    // If we have a timeline, just add the events directly
+                    item.addTimelineEvents([start, end]);
+                }
+            });
         }
     });
+}
 
-    // Function to get the duration for a series.
-    var getSeriesDuration = function (
-        seriesTimeExtremes, overallTimeExtremes, duration
-    ) {
-        // A series spanning the whole chart would get the full duration.
-        return utilities.virtualAxisTranslate(
-            seriesTimeExtremes.max - seriesTimeExtremes.min,
-            overallTimeExtremes.max - overallTimeExtremes.min,
-            { min: 0, max: duration }
+
+/**
+ * Utility function to find the total duration span for all simul path sets
+ * that include series.
+ * @private
+ *
+ * @param {Array<*>} order The order of TimelinePaths/items.
+ * @return {number} The total time value span difference for all series.
+ */
+function getSimulPathDurationTotal(order) {
+    return order.reduce(function (acc, cur) {
+        var seriesItem = H.find(H.splat(cur), function (item) {
+            return item.durationValueSpan;
+        });
+        return acc + (
+            seriesItem ? seriesItem.durationValueSpan : 0
         );
-    };
+    }, 0);
+}
 
-    // We now have a list of either TimelinePath objects or series that need to
-    // be converted to TimelinePath objects. Go through the ordering and make
-    // objects from them. Add delay after each series if applicable.
-    var paths = order.reduce(function (allPaths, orderDef) {
+
+/**
+ * Function to calculate the duration in ms for a series.
+ * @private
+ *
+ * @param   {number} seriesValueDuration
+ *          The duration of the series in value difference.
+ * @param   {number} totalValueDuration
+ *          The total duration of all (non simultaneous) series in value
+ *          difference.
+ * @param   {number} totalDurationMs
+ *          The desired total duration for all series in milliseconds.
+ * @return  {number} The duration for the series in milliseconds.
+ */
+function getSeriesDurationMs(
+    seriesValueDuration, totalValueDuration, totalDurationMs
+) {
+    // A series spanning the whole chart would get the full duration.
+    return utilities.virtualAxisTranslate(
+        seriesValueDuration,
+        { min: 0, max: totalValueDuration },
+        { min: 0, max: totalDurationMs }
+    );
+}
+
+
+/**
+ * Convert series building objects into paths and return a new list of
+ * TimelinePaths.
+ * @private
+ *
+ * @param {Array<*>} order The order list.
+ * @param {number} duration Total duration to aim for in milliseconds.
+ * @return {Array<Array<TimelinePath>>} Array of TimelinePath objects to play.
+ */
+function buildPathsFromOrder(order, duration) {
+    // Find time used for waits (custom or after series), and subtract it from
+    // available duration.
+    var totalAvailableDurationMs = Math.max(
+            duration - getWaitTime(order), 0
+        ),
+        // Add up simultaneous path durations to find total value span duration
+        // of everything
+        totalUsedDuration = getSimulPathDurationTotal(order);
+
+    // Go through the order list and convert the items
+    return order.reduce(function (allPaths, orderDef) {
         var simultaneousPaths = H.splat(orderDef).reduce(
                 function (simulPaths, item) {
                     if (item instanceof H.sonification.TimelinePath) {
@@ -439,19 +567,28 @@ function chartSonify(options) {
                     } else if (item.series) {
                         // We have a series.
                         // We need to set the duration of the series
-                        item.seriesOptions.duration = getSeriesDuration(
-                            item.seriesOptions.timeExtremes,
-                            totalTimeExtremes,
-                            totalAvailableDuration // Non-delay time
-                        );
+                        item.seriesOptions.duration =
+                            item.seriesOptions.duration || getSeriesDurationMs(
+                                item.seriesOptions.timeExtremes.max -
+                                item.seriesOptions.timeExtremes.min,
+                                totalUsedDuration,
+                                totalAvailableDurationMs
+                            );
 
                         // Add the path
-                        simulPaths.push(
-                            buildTimelinePathFromSeries(
-                                item.series,
-                                item.seriesOptions
-                            )
+                        var path = buildTimelinePathFromSeries(
+                            item.series,
+                            item.seriesOptions
                         );
+
+                        // Add start/end times to sync with other paths played
+                        // at the same time.
+                        path.addTimelineEvents(
+                            [item.startEvent, item.endEvent]
+                        );
+
+                        // Push the path
+                        simulPaths.push(path);
                     }
                     return simulPaths;
                 }, []
@@ -460,7 +597,102 @@ function chartSonify(options) {
         // Add in the simultaneous paths
         return allPaths.concat(simultaneousPaths);
     }, []);
+}
 
+
+/**
+ * Sonify a chart.
+ *
+ * @function Highcharts.Chart#sonify
+ *
+ * @param   {Object} options
+ *          The options for sonifying this chart.
+ * @param   {number} options.duration
+ *          Duration for sonifying the entire chart. The duration is distributed
+ *          across the different series intelligently, but does not take earcons
+ *          into account. It is also possible to set the duration explicitly per
+ *          series, using options.seriesOptions. Note that points may continue
+ *          to play after the duration has passed, but no new points will start
+ *          playing.
+ * @param   {String|Array<*>} order
+ *          Define the order to play the series in. This can be given as a
+ *          string, or an array specifying a custom ordering. If given as a
+ *          string, valid values are `sequential` - where each series is played
+ *          in order - or `simultaneous`, where all series are played at once.
+ *          For custom ordering, supply an array as the order. Each element in
+ *          the array can be either a string with a series ID, an Earcon object,
+ *          or an object with a numeric `silentWait` property designating a
+ *          number of milliseconds to wait before continuing. Each element of
+ *          the array will be played in order. To play elements simultaneously,
+ *          group the elements in an array.
+ * @param   {String|Function} pointPlayTime
+ *          The axis to use for when to play the points. Can be a string with a
+ *          data property (e.g. `x`), or a function. If it is a function, this
+ *          function receives the point as argument, and should return a numeric
+ *          value. The points with the lowest numeric values are then played
+ *          first, and the time between points will be proportional to the
+ *          distance between the numeric values. This option can not be
+ *          overridden per series.
+ * @param   {Object|Array<Object>} [options.seriesOptions]
+ *          Options as given to `series.sonify` to override options per series.
+ *          If the option is supplied as an array of options objects, the `id`
+ *          property of the object should correspond to the series' id. If the
+ *          option is supplied as a single object, the options apply to all
+ *          series.
+ * @param   {number} [options.afterSeriesWait]
+ *          Milliseconds of silent waiting to add between series. Note that
+ *          waiting time is considered part of the sonify duration.
+ * @param   {Array<PointInstrumentOptions>} [options.instruments]
+ *          The instrument definitions for the points in this chart.
+ * @param   {Function} [options.onSeriesStart]
+ *          Callback before a series is played.
+ * @param   {Function} [options.onSeriesEnd]
+ *          Callback after a series has finished playing.
+ * @param   {Function} [options.onEnd]
+ *          Callback after the chart has played.
+ * @param   {Object} [options.dataExtremes]
+ *          Optionally provide the minimum/maximum data values for the points.
+ *          If this is not supplied, it is calculated from all points in the
+ *          chart on demand. This option is supplied in the following format,
+ *          as a map of point data properties to objects with min/max values:
+ *  ```js
+ *      dataExtremes: {
+ *          y: {
+ *              min: 0,
+ *              max: 100
+ *          },
+ *          z: {
+ *              min: -10,
+ *              max: 10
+ *          }
+ *          // Properties used and not provided are calculated on demand
+ *      }
+ *  ```
+ */
+function chartSonify(options) {
+    // Only one timeline can play at a time.
+    if (this.sonification.timeline) {
+        this.sonification.timeline.pause();
+    }
+
+    // Calculate data extremes for the props used
+    var dataExtremes = getExtremesForInstrumentProps(
+        this, options.instruments, options.dataExtremes
+    );
+
+    // Figure out ordering of series and custom paths
+    var order = buildPathOrder(options.order, this, function (series) {
+        return buildSeriesOptions(series, dataExtremes, options);
+    });
+
+    // Stretch simultaneous paths to span the same relative time, and add waits
+    // after simultaneous paths with series in them.
+    syncSimultaneousPaths(order);
+    order = addAfterSeriesWaits(order);
+
+    // We now have a list of either TimelinePath objects or series that need to
+    // be converted to TimelinePath objects. Convert everything to paths.
+    var paths = buildPathsFromOrder(order, options.duration);
 
     // We have a set of paths. Create the timeline, and play it.
     this.sonification.timeline = new H.sonification.Timeline({
@@ -501,7 +733,7 @@ function getCurrentPoints() {
  *          are being played simultaneously.
  */
 function setCursor(points) {
-    var timeline = this.sonfication.timeline;
+    var timeline = this.sonification.timeline;
     if (timeline) {
         H.splat(points).forEach(function (point) {
             // We created the events with the ID of the points, which makes

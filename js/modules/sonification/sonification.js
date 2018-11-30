@@ -18,7 +18,7 @@ import TimelineClasses from 'Timeline.js';
 
 // Expose on the Highcharts object
 H.sonification = {
-    fadeOutDuration: 15, // Note fade-out-time in milliseconds
+    fadeOutDuration: 20, // Note fade-out-time in milliseconds
 
     // Classes and functions
     utilities: utilities,

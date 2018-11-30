@@ -165,8 +165,10 @@ Instrument.prototype.setPan = function (panValue) {
  *
  * @param   {number} gainValue
  *          The gain level to set for the instrument.
+ * @param   {number} [rampTime=0]
+ *          Gradually change the gain level, time given in milliseconds.
  */
-Instrument.prototype.setGain = function (gainValue) {
+Instrument.prototype.setGain = function (gainValue, rampTime) {
     if (this.gainNode) {
         if (gainValue > 1.2) {
             console.warn( // eslint-disable-line
@@ -175,7 +177,28 @@ Instrument.prototype.setGain = function (gainValue) {
             );
             gainValue = 1.2;
         }
-        this.gainNode.gain.value = gainValue;
+        if (rampTime) {
+            this.gainNode.gain.setValueAtTime(
+                this.gainNode.gain.value, H.audioContext.currentTime
+            );
+            this.gainNode.gain.exponentialRampToValueAtTime(
+                gainValue,
+                H.audioContext.currentTime + rampTime / 1000
+            );
+        } else {
+            this.gainNode.gain.value = gainValue;
+        }
+    }
+};
+
+
+/**
+ * Cancel ongoing gain ramps.
+ * @private
+ */
+Instrument.prototype.cancelGainRamp = function () {
+    if (this.gainNode) {
+        this.gainNode.gain.cancelScheduledValues(0);
     }
 };
 
@@ -236,7 +259,10 @@ Instrument.prototype.oscillatorPlay = function (frequency) {
     }
 
     this.oscillator.frequency.setValueAtTime(
-        frequency, H.audioContext.currentTime + 0.005
+        this.oscillator.frequency.value, H.audioContext.currentTime
+    );
+    this.oscillator.frequency.linearRampToValueAtTime(
+        frequency, H.audioContext.currentTime + 0.01
     );
 };
 
@@ -298,25 +324,25 @@ Instrument.prototype.play = function (options) {
             options.frequency, options.minFrequency, options.maxFrequency
         ),
         // Set a value, or if it is a function, set it continously as a timer
-        setOrStartTimer = function (value, setter) {
+        setOrStartTimer = function (value, setter, initData) {
             var target = options.duration,
                 currentDurationIx = 0,
                 callbackInterval = instrument.options.playCallbackInterval;
             if (typeof value === 'function') {
-                instrument[setter](value(0)); // Init
                 var timer = setInterval(function () {
+                    var setterData = !currentDurationIx ? initData : null;
                     currentDurationIx++;
                     var curTime = currentDurationIx * callbackInterval / target;
                     if (curTime >= 1) {
-                        instrument[setter](value(1));
+                        instrument[setter](value(1), setterData);
                         clearInterval(timer);
                     } else {
-                        instrument[setter](value(curTime));
+                        instrument[setter](value(curTime), setterData);
                     }
                 }, callbackInterval);
                 instrument.playCallbackTimers.push(timer);
             } else {
-                instrument[setter](value);
+                instrument[setter](value, initData);
             }
         };
 
@@ -328,6 +354,15 @@ Instrument.prototype.play = function (options) {
     // Clear any existing play timers
     if (instrument.playCallbackTimers.length) {
         instrument.clearPlayCallbackTimers();
+    }
+
+    // Clear any gain ramps
+    instrument.cancelGainRamp();
+
+    // Clear stop oscillator timer
+    if (instrument.stopOscillatorTimeout) {
+        clearTimeout(instrument.stopOscillatorTimeout);
+        delete instrument.stopOscillatorTimeout;
     }
 
     // If a note is playing right now, clear the stop timeout, and call the
@@ -383,16 +418,7 @@ Instrument.prototype.play = function (options) {
  * playing, this function does nothing.
  */
 Instrument.prototype.mute = function () {
-    if (this.gainNode) {
-        this.gainNode.gain.setValueAtTime(
-            this.gainNode.gain.value, H.audioContext.currentTime
-        );
-        this.gainNode.gain.exponentialRampToValueAtTime(
-            0.0001,
-            H.audioContext.currentTime +
-                H.sonification.fadeOutDuration * 0.9 / 1000
-        );
-    }
+    this.setGain(0.0001, H.sonification.fadeOutDuration * 0.8);
 };
 
 
@@ -411,6 +437,10 @@ Instrument.prototype.mute = function () {
 Instrument.prototype.stop = function (immediately, onStopped, callbackData) {
     var instr = this,
         reset = function () {
+            // Remove timeout reference
+            if (instr.stopOscillatorTimeout) {
+                delete instr.stopOscillatorTimeout;
+            }
             // The oscillator may have stopped in the meantime here, so allow
             // this function to fail if so.
             try {
@@ -441,7 +471,8 @@ Instrument.prototype.stop = function (immediately, onStopped, callbackData) {
     } else {
         instr.mute();
         // Stop the oscillator after the mute fade-out has finished
-        setTimeout(reset, H.sonification.fadeOutDuration);
+        instr.stopOscillatorTimeout =
+            setTimeout(reset, H.sonification.fadeOutDuration + 100);
     }
 };
 
