@@ -382,6 +382,46 @@ QUnit.test('Keeping updated with setData (#5768)', function (assert) {
     );
 });
 
+QUnit.test('Combined with a series with no names (#9562)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            type: 'column',
+            data: [{
+                y: 1,
+                name: 'Cat1'
+            }, {
+                y: 2,
+                name: 'Cat2'
+            }, {
+                y: 3,
+                name: 'Cat3'
+            }],
+            name: 'Drillable'
+        }, {
+            data: [2, 2, 2],
+            type: 'column',
+            name: 'Static'
+        }]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Cat1', 'Cat2', 'Cat3'],
+        'Initial categories'
+    );
+
+    chart.series[0].points[0].update(2);
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Cat1', 'Cat2', 'Cat3'],
+        'Categories should not be affected'
+    );
+});
+
 
 QUnit.test('Set crosshair width (#5819)', function (assert) {
     var chart = Highcharts.chart('container', {

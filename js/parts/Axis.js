@@ -4157,7 +4157,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                 each(series.data, function (point, i) { // #9487
                     var x;
-                    if (point && point.options) {
+                    if (
+                        point &&
+                        point.options &&
+                        point.name !== undefined // #9562
+                    ) {
                         x = axis.nameToX(point);
                         if (x !== undefined && x !== point.x) {
                             point.x = x;
