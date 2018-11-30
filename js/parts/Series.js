@@ -3068,6 +3068,8 @@ null
             lastIndex,
             requireSorting = this.requireSorting;
 
+        this.xIncrement = null;
+
         // Iterate the new data
         each(data, function (pointOptions) {
             var x,

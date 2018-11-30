@@ -291,7 +291,8 @@ QUnit.test('uniqueNames: false', function (assert) {
                 y: 3
             }],
             type: 'column',
-            stacking: 'normal'
+            stacking: 'normal',
+            cropThreshold: false
         }]
 
     });
@@ -299,6 +300,29 @@ QUnit.test('uniqueNames: false', function (assert) {
         chart.xAxis[0].names.length,
         3,
         'Each point its own category'
+    );
+
+
+    chart.series[0].points.forEach(function (p) {
+        p.graphic.hasSurvived = true;
+    });
+    chart.series[0].setData([{
+        name: 'First',
+        y: 4
+    }, {
+        name: 'Third',
+        y: 3
+    }, {
+        name: 'Third',
+        y: 2
+    }]);
+
+    assert.deepEqual(
+        chart.series[0].points.map(function (p) {
+            return p.graphic.hasSurvived;
+        }),
+        [true, true, true],
+        'All graphics should survive setting data, preserving animation'
     );
 });
 
