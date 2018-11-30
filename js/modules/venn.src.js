@@ -18,6 +18,8 @@ import H from '../parts/Globals.js';
 import '../parts/Series.js';
 var color = H.Color,
     extend = H.extend,
+    getAreaOfIntersectionBetweenCircles =
+        geometryCircles.getAreaOfIntersectionBetweenCircles,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
     getOverlapBetweenCirclesByDistance =
         geometryCircles.getOverlapBetweenCircles,
@@ -25,6 +27,9 @@ var color = H.Color,
     isNumber = H.isNumber,
     isObject = H.isObject,
     isString = H.isString,
+    isUndefined = function (x) {
+        return typeof x === 'undefined';
+    },
     merge = H.merge,
     seriesType = H.seriesType;
 
@@ -367,6 +372,22 @@ var layout = function (relations) {
     // Calculate best initial positions by using greedy layout.
     if (relations.length > 0) {
         mapOfIdToShape = layoutGreedyVenn(relations);
+
+        relations
+            .filter(function (x) {
+                return !isSet(x);
+            })
+            .forEach(function (relation) {
+                var sets = relation.sets,
+                    id = sets.join(),
+                    circles = sets.map(function (set) {
+                        return mapOfIdToShape[set];
+                    });
+
+                // Add intersection shape to map
+                mapOfIdToShape[id] =
+                    getAreaOfIntersectionBetweenCircles(circles);
+            });
     }
     return mapOfIdToShape;
 };
@@ -545,11 +566,15 @@ var vennSeries = {
         var relations = processVennData(this.options.data);
 
         // Calculate the positions of each circle.
-        var circles = layout(relations);
+        var mapOfIdToShape = layout(relations);
 
         // Calculate the scale, and center of the plot area.
-        var field = Object.keys(circles).reduce(function (field, key) {
-                return updateFieldBoundaries(field, circles[key]);
+        var field = Object.keys(mapOfIdToShape)
+            .filter(function (key) {
+                return isUndefined(mapOfIdToShape[key].d);
+            })
+            .reduce(function (field, key) {
+                return updateFieldBoundaries(field, mapOfIdToShape[key]);
             }, { top: 0, bottom: 0, left: 0, right: 0 }),
             scale = getScale(chart.plotWidth, chart.plotHeight, field),
             centerX = chart.plotWidth / 2,
@@ -558,18 +583,47 @@ var vennSeries = {
         // Iterate all points and calculate and draw their graphics.
         this.points.forEach(function (point) {
             var sets = isArray(point.sets) ? point.sets : [],
-                shape = circles[sets.join()],
-                shapeArgs = !shape ? {} : {
-                    x: centerX + shape.x * scale,
-                    y: centerY + shape.y * scale,
-                    r: shape.r * scale
-                };
+                shape = mapOfIdToShape[sets.join()],
+                shapeArgs = {},
+                dataLabelPosition = {};
+
+            if (shape) {
+                if (shape.r) {
+                    shapeArgs = {
+                        x: centerX + shape.x * scale,
+                        y: centerY + shape.y * scale,
+                        r: shape.r * scale
+                    };
+
+                    dataLabelPosition.x = shapeArgs.x;
+                    dataLabelPosition.y = shapeArgs.y;
+                } else if (shape.d) {
+                    // TODO: find a better way to handle scaling of a path.
+                    var d = shape.d.reduce(function (path, arr) {
+                        if (arr[0] === 'M') {
+                            arr[1] = centerX + arr[1] * scale;
+                            arr[2] = centerY + arr[2] * scale;
+                        } else if (arr[0] === 'A') {
+                            arr[1] = arr[1] * scale;
+                            arr[2] = arr[2] * scale;
+                            arr[6] = centerX + arr[6] * scale;
+                            arr[7] = centerY + arr[7] * scale;
+                        }
+                        return path.concat(arr);
+                    }, [])
+                    .join(' ');
+                    shapeArgs.d = d;
+
+                    dataLabelPosition.x = centerX + shape.center.x * scale;
+                    dataLabelPosition.y = centerY + shape.center.y * scale;
+                }
+            }
 
             point.shapeArgs = shapeArgs;
 
             // Placement for the data labels
-            point.plotX = shapeArgs.x;
-            point.plotY = shapeArgs.y;
+            point.plotX = dataLabelPosition.x;
+            point.plotY = dataLabelPosition.y;
 
             // Set name for usage in tooltip and in data label.
             point.name = sets.join('∩');
@@ -590,23 +644,23 @@ var vennSeries = {
 
         // Iterate all points and calculate and draw their graphics.
         points.forEach(function (point) {
-
-            var attribs;
+            var attribs,
+                shapeArgs = point.shapeArgs;
 
             // Add point attribs
             if (!chart.styledMode) {
                 attribs = series.pointAttribs(point, point.state);
             }
-
             // Draw the point graphic.
             point.draw({
                 isNew: !point.graphic,
-                animatableAttribs: point.shapeArgs,
+                animatableAttribs: shapeArgs,
                 attribs: attribs,
                 group: group,
                 renderer: renderer,
-                shapeType: 'circle'
+                shapeType: shapeArgs && shapeArgs.d ? 'path' : 'circle'
             });
+
         });
 
     },
@@ -677,7 +731,7 @@ var vennPoint = {
         var point = this;
 
         // Only draw points with single sets.
-        return isSet(point);
+        return !!point.shapeArgs;
     },
     isValid: function () {
         return isNumber(this.value);

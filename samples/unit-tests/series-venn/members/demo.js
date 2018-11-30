@@ -110,7 +110,7 @@ QUnit.test('binarySearch', function (assert) {
     );
 });
 
-QUnit.test('getAreaOfIntersectionBetweenCircles', function (assert) {
+QUnit.skip('getAreaOfIntersectionBetweenCircles', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getAreaOfIntersectionBetweenCircles =
             vennPrototype.utils.geometryCircles
