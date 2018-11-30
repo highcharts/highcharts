@@ -1,4 +1,5 @@
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
 
