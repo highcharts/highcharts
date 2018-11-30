@@ -155,7 +155,7 @@ function getAreaOfIntersectionBetweenCircles(circles) {
         .filter(function (p) {
             return isPointInsideAllCircles(p, circles);
         }),
-        path = [];
+        result = {};
 
     if (intersectionPoints.length > 1) {
         // Calculate the center of the intersection points.
@@ -241,16 +241,15 @@ function getAreaOfIntersectionBetweenCircles(circles) {
         if (arcs.length === 0) {
         } else if (arcs.length === 1) {
         } else {
-            path = arcs.reduce(
-                function (arr, arc) {
-                    return arr.concat(arc);
-                },
-                ['M', startPoint.x, startPoint.y]
-            );
+            arcs.unshift(['M', startPoint.x, startPoint.y]);
+            result = {
+                center: center,
+                d: arcs
+            };
         }
     }
 
-    return path.join(' ');
+    return result;
 };
 
 var geometryCircles = {
