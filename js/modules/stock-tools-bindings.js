@@ -29,15 +29,10 @@
  * @name Highcharts.StockToolsBindingsObject#start
  * @type {Function|undefined}
  *//**
- * Last event to be fired after last step event.
+ * Last event to be fired after last step event. Array of step events to be
+ * called sequentially after each user click.
  * @name Highcharts.StockToolsBindingsObject#steps
- * @type {Highcharts.BindingsStepsArray|undefined}
- */
-
-/**
- * Array of step events to be called sequentially after each user click.
- *
- * @typedef {Array<Function>} Highcharts.BindingsStepsArray
+ * @type {Array<Function>|undefined}
  */
 
 'use strict';
@@ -433,6 +428,7 @@ function updateRectSize(event, annotation) {
  * `highcharts-circle-annotation` will bind automatically
  * `bindings.circle-annotation` events.
  *
+ * @type         {Highcharts.Dictionary<Highcharts.StockToolsBindingsObject>|*}
  * @since        7.0.0
  * @product      highstock
  * @optionparent stockTools.bindings
