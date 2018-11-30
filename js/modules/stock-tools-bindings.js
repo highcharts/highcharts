@@ -2881,8 +2881,16 @@ addEvent(H.Chart, 'load', function () {
 
     if (toolbar) {
         toolbar.eventsToUnbind.push(
-            addEvent(chart, 'click', function (e) {
-                toolbar.bindingsChartClick(this, e);
+            addEvent(chart.container, 'click', function (e) {
+                if (
+                    !chart.cancelClick &&
+                    chart.isInsidePlot(
+                        e.chartX - chart.plotLeft,
+                        e.chartY - chart.plotTop
+                    )
+                ) {
+                    toolbar.bindingsChartClick(this, e);
+                }
             })
         );
         toolbar.eventsToUnbind.push(
