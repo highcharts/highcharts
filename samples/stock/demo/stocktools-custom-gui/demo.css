@@ -20,7 +20,7 @@
 }
 
 /* GENERAL */
-.chart { float: left; height: 400px; position: relative; width: 100%; }
+.chart { float: left; height: 800px; position: relative; width: 100%; }
 .highcharts-draw-mode { cursor: crosshair; }
 .left { float:left; }
 .right, .highcharts-stocktools-toolbar li.right { float:right; }
