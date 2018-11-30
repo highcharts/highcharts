@@ -85,8 +85,8 @@ function getCircleCircleIntersection(c1, c2) {
             ry = -(x2 - x1) * (y / d);
 
         points = [
-            { x: round(x0 + rx, 3), y: round(y0 - ry, 3) },
-            { x: round(x0 - rx, 3), y: round(y0 + ry, 3) }
+            { x: round(x0 + rx, 14), y: round(y0 - ry, 14) },
+            { x: round(x0 - rx, 14), y: round(y0 + ry, 14) }
         ];
     }
     return points;
@@ -123,7 +123,7 @@ var getCirclesIntersectionPoints = function getIntersectionPoints(circles) {
  * @returns {boolean} Returns true if the point is inside, false if outside.
  */
 var isPointInsideCircle = function isPointInsideCircle(point, circle) {
-    return getDistanceBetweenPoints(point, circle) < circle.r;
+    return getDistanceBetweenPoints(point, circle) <= circle.r;
 };
 
 /**
@@ -188,12 +188,12 @@ function getAreaOfIntersectionBetweenCircles(circles) {
                     })
                     // Iterate the circles of the intersection points and
                     // calculate arcs.
-                    .reduce(function (arc, i) {
-                        var circle = circles[i],
+                    .reduce(function (arc, index) {
+                        var circle = circles[index],
                             angle1 = getAngleBetweenPoints(circle, p1),
                             angle2 = getAngleBetweenPoints(circle, startPoint),
                             angleDiff = angle2 - angle1 +
-                                (angle2 > angle1 ? 2 * Math.PI : 0),
+                                (angle2 < angle1 ? 2 * Math.PI : 0),
                             angle = angle2 - angleDiff / 2,
                             width = getDistanceBetweenPoints(
                                 midPoint,
