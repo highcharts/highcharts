@@ -12,7 +12,6 @@
 
 import H from '../parts/Globals.js';
 
-
 var addEvent = H.addEvent,
     Axis = H.Axis,
     PlotLineOrBand = H.PlotLineOrBand,

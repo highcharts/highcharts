@@ -291,7 +291,8 @@ QUnit.test('uniqueNames: false', function (assert) {
                 y: 3
             }],
             type: 'column',
-            stacking: 'normal'
+            stacking: 'normal',
+            cropThreshold: false
         }]
 
     });
@@ -299,6 +300,29 @@ QUnit.test('uniqueNames: false', function (assert) {
         chart.xAxis[0].names.length,
         3,
         'Each point its own category'
+    );
+
+
+    chart.series[0].points.forEach(function (p) {
+        p.graphic.hasSurvived = true;
+    });
+    chart.series[0].setData([{
+        name: 'First',
+        y: 4
+    }, {
+        name: 'Third',
+        y: 3
+    }, {
+        name: 'Third',
+        y: 2
+    }]);
+
+    assert.deepEqual(
+        chart.series[0].points.map(function (p) {
+            return p.graphic.hasSurvived;
+        }),
+        [true, true, true],
+        'All graphics should survive setting data, preserving animation'
     );
 });
 
@@ -379,6 +403,46 @@ QUnit.test('Keeping updated with setData (#5768)', function (assert) {
         chart.xAxis[0].names.join(','),
         'Updated 1,Updated 2,Updated 3',
         'Changed with setData'
+    );
+});
+
+QUnit.test('Combined with a series with no names (#9562)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            type: 'column',
+            data: [{
+                y: 1,
+                name: 'Cat1'
+            }, {
+                y: 2,
+                name: 'Cat2'
+            }, {
+                y: 3,
+                name: 'Cat3'
+            }],
+            name: 'Drillable'
+        }, {
+            data: [2, 2, 2],
+            type: 'column',
+            name: 'Static'
+        }]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Cat1', 'Cat2', 'Cat3'],
+        'Initial categories'
+    );
+
+    chart.series[0].points[0].update(2);
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        ['Cat1', 'Cat2', 'Cat3'],
+        'Categories should not be affected'
     );
 });
 

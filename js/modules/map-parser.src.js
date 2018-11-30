@@ -1,14 +1,15 @@
-/**
+/* *
  * (c) 2009-2018 Torstein Honsi
+ *
+ * SVG map parser. This file requires data.js.
  *
  * License: www.highcharts.com/license
  */
-/**
- * SVG map parser.
- * This file requires data.js.
- */
+
 /* global document, jQuery, $ */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import './data.src.js';
@@ -22,9 +23,7 @@ H.wrap(H.Data.prototype, 'init', function (proceed, options) {
 });
 
 H.extend(H.Data.prototype, {
-    /**
-     * Parse an SVG path into a simplified array that Highcharts can read
-     */
+    // Parse an SVG path into a simplified array that Highcharts can read
     pathToArray: function (path, matrix) {
         var i = 0,
             position = 0,
@@ -176,9 +175,7 @@ H.extend(H.Data.prototype, {
         return path;
     },
 
-    /**
-     * Join the path back to a string for compression
-     */
+    // Join the path back to a string for compression
     pathToString: function (arr) {
         arr.forEach(function (point) {
             var path = point.path;
@@ -196,9 +193,7 @@ H.extend(H.Data.prototype, {
         return arr;
     },
 
-    /**
-     * Scale the path to fit within a given box and round all numbers
-     */
+    // Scale the path to fit within a given box and round all numbers
     roundPaths: function (arr, scale) {
         var mapProto = H.seriesTypes.map.prototype,
             fakeSeries,
@@ -252,10 +247,7 @@ H.extend(H.Data.prototype, {
         return arr;
     },
 
-    /**
-     * Load an SVG file and extract the paths
-     * @param {Object} url
-     */
+    // Load an SVG file and extract the paths
     loadSVG: function () {
 
         var data = this,

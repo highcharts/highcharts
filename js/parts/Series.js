@@ -82,6 +82,13 @@
  */
 
 /**
+ * @interface Highcharts.SeriesDataLabelsFormatterContextObject
+ *//**
+ * @name Highcharts.SeriesDataLabelsFormatterContextObject#point
+ * @type {Highcharts.Point}
+ */
+
+/**
  * Translation and scale for the plot area of a series.
  *
  * @interface Highcharts.SeriesPlotBoxObject
@@ -1842,7 +1849,7 @@ null
          * @sample {highmaps} maps/plotoptions/series-datalabels-format/
          *         Formatted value
          *
-         * @type    {Highcharts.FormatterCallbackFunction}
+         * @type    {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
          * @default function () { return this.y; }
          */
         formatter: function () {
@@ -3043,6 +3050,8 @@ null
             point,
             lastIndex,
             requireSorting = this.requireSorting;
+
+        this.xIncrement = null;
 
         // Iterate the new data
         data.forEach(function (pointOptions) {
@@ -5401,7 +5410,7 @@ null
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<number|string|Date>|*|null>}
+ * @type      {Array<number|Array<number|string>|*>}
  * @apioption series.line.data
  */
 

@@ -189,7 +189,7 @@ seriesType('pie', 'line'
         enabled: true,
 
         /**
-         * @type      {Highcharts.FormatterCallbackFunction}
+         * @type      {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
          * @default   function () { return this.point.name; }
          * @apioption plotOptions.pie.dataLabels.formatter
          */

@@ -824,12 +824,13 @@ function sortNodes (node) {
         node.children = childrenReferences;
     }
  
-    childrenReferences = node.children.splice();
-    node.children.push(...childrenReferences.sort((a, b) => (
+    node.children = node.children.sort((a, b) => (
         a.doclet.name < b.doclet.name ? -1 :
         a.doclet.name > b.doclet.name ? 1 :
         0
-    )));
+    ));
+
+    node.children.forEach(sortNodes);
  }
  
 /**

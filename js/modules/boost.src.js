@@ -1577,6 +1577,7 @@ function GLRenderer(postRenderCallback) {
             drawAsBar = asBar[series.type],
             isXInside = false,
             isYInside = true,
+            firstPoint = true,
             threshold = options.threshold;
 
         if (options.boostData && options.boostData.length > 0) {
@@ -2004,7 +2005,7 @@ function GLRenderer(postRenderCallback) {
             // Draws an additional point at the old Y at the new X.
             // See #6976.
 
-            if (options.step) {
+            if (options.step && !firstPoint) {
                 vertice(
                     x,
                     lastY,
@@ -2036,6 +2037,7 @@ function GLRenderer(postRenderCallback) {
             lastY = y;
 
             hadPoints = true;
+            firstPoint = false;
         }
 
         if (settings.debug.showSkipSummary) {
@@ -3392,6 +3394,12 @@ if (!H.hasWebGLSupport()) {
                 ),
 
                 addKDPoint = function (clientX, plotY, i) {
+
+                    // We need to do ceil on the clientX to make things
+                    // snap to pixel values. The renderer will frequently
+                    // draw stuff on "sub-pixels".
+                    clientX = Math.ceil(clientX);
+
                     // Shaves off about 60ms compared to repeated concatenation
                     index = compareX ? clientX : clientX + ',' + plotY;
 
@@ -3509,9 +3517,7 @@ if (!H.hasWebGLSupport()) {
 
                     if (!isNull && x >= xMin && x <= xMax && isYInside) {
 
-                        // We use ceil to allow the KD tree to work with sub
-                        // pixels, which can be used in boost to space pixels
-                        clientX = Math.ceil(xAxis.toPixels(x, true));
+                        clientX = xAxis.toPixels(x, true);
 
                         if (sampling) {
                             if (minI === undefined || clientX === lastClientX) {

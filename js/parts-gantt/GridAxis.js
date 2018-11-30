@@ -1,10 +1,12 @@
-/**
-* (c) 2016 Highsoft AS
-* Authors: Lars A. V. Cabrera
-*
-* License: www.highcharts.com/license
-*/
+/* *
+ * (c) 2016 Highsoft AS
+ * Authors: Lars A. V. Cabrera
+ *
+ * License: www.highcharts.com/license
+ */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 
 var argsToArray = function (args) {
@@ -27,7 +29,6 @@ var argsToArray = function (args) {
 /**
  * Set grid options for the axis labels. Requires Highcharts Gantt.
  *
- * @type      {object}
  * @since     6.2.0
  * @product   gantt
  * @apioption xAxis.grid
@@ -37,8 +38,8 @@ var argsToArray = function (args) {
  * Enable grid on the axis labels. Defaults to true for Gantt charts.
  *
  * @type      {boolean}
- * @since     6.2.0
  * @default   true
+ * @since     6.2.0
  * @product   gantt
  * @apioption xAxis.grid.enabled
  */
@@ -48,9 +49,10 @@ var argsToArray = function (args) {
  * grid. Each extra column/row is its own axis, and the axis options can be set
  * here.
  *
- * @type      {Array<object>}
- * @sample    gantt/demo/left-axis-table
- *            Left axis as a table
+ * @sample gantt/demo/left-axis-table
+ *         Left axis as a table
+ *
+ * @type      {Array<Highcharts.XAxisOptions>}
  * @apioption xAxis.grid.columns
  */
 
@@ -65,7 +67,7 @@ var argsToArray = function (args) {
  * Set border width of the label grid lines.
  *
  * @type      {number}
- * @default 1
+ * @default   1
  * @apioption xAxis.grid.borderWidth
  */
 
@@ -74,7 +76,6 @@ var argsToArray = function (args) {
  * size.
  *
  * @type      {number}
- * @default null
  * @apioption xAxis.grid.cellHeight
  */
 
@@ -94,7 +95,12 @@ var axisSide = {
 
 /**
  * Checks if an axis is a navigator axis.
- * @return {Boolean} true if axis is found in axis.chart.navigator
+ *
+ * @private
+ * @function Highcharts.Axis#isNavigatorAxis
+ *
+ * @return {boolean}
+ *         true if axis is found in axis.chart.navigator
  */
 Axis.prototype.isNavigatorAxis = function () {
     return /highcharts-navigator-[xy]axis/.test(this.options.className);
@@ -109,8 +115,11 @@ Axis.prototype.isNavigatorAxis = function () {
  * this function returns true if the axis supplied is the last
  * of the x-axes.
  *
- * @return true if the axis is the outermost axis in its dimension;
- *         false if not
+ * @private
+ * @function Highcharts.Axis#isOuterAxis
+ *
+ * @return {boolean}
+ *         true if the axis is the outermost axis in its dimension; false if not
  */
 Axis.prototype.isOuterAxis = function () {
     var axis = this,
@@ -140,9 +149,18 @@ Axis.prototype.isOuterAxis = function () {
 
 /**
  * Get the largest label width and height.
- * @param {object} ticks All the ticks on one axis.
- * @param {array} tickPositions All the tick positions on one axis.
- * @return {object} object containing the properties height and width.
+ *
+ * @private
+ * @function Highcharts.Axis#getMaxLabelDimensions
+ *
+ * @param {Highcharts.Dictionary<Highcharts.Tick>} ticks
+ *        All the ticks on one axis.
+ *
+ * @param {Array<number|string>} tickPositions
+ *        All the tick positions on one axis.
+ *
+ * @return {object}
+ *         object containing the properties height and width.
  */
 Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
     var dimensions = {
@@ -172,9 +190,7 @@ Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
     return dimensions;
 };
 
-/**
- * Add custom date formats
- */
+// Add custom date formats
 H.dateFormats = {
     // Week number
     W: function (timestamp) {
@@ -193,169 +209,185 @@ H.dateFormats = {
     }
 };
 
-/**
- * If chart is stockChart, always return 'left' to avoid labels being placed
- * inside chart. Stock charts place yAxis labels inside by default.
- * @param {function} proceed - the original function
- * @return {string} 'left' if stockChart, or auto calculated alignment
- */
-wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
-    var axis = this,
-        retVal;
-    if (axis.chart.isStock) {
-        retVal = 'left';
-    } else {
-        retVal = proceed.apply(axis, argsToArray(arguments));
+wrap(Axis.prototype, 'autoLabelAlign',
+    /**
+     * If chart is stockChart, always return 'left' to avoid labels being placed
+     * inside chart. Stock charts place yAxis labels inside by default.
+     *
+     * @private
+     * @function
+     *
+     * @param {Function} proceed
+     *        the original function
+     *
+     * @return {string}
+     *         'left' if stockChart, or auto calculated alignment
+     */
+    function (proceed) {
+        var axis = this,
+            retVal;
+        if (axis.chart.isStock) {
+            retVal = 'left';
+        } else {
+            retVal = proceed.apply(axis, argsToArray(arguments));
+        }
+        return retVal;
     }
-    return retVal;
-});
+);
 
-/**
- * Center tick labels in cells.
- *
- * @param {function} proceed - the original function
- *
- * @return {object} object - an object containing x and y positions
- *                           for the tick
- */
-wrap(Tick.prototype, 'getLabelPosition', function (
-    proceed,
-    x,
-    y,
-    label,
-    horiz,
-    labelOpts,
-    tickmarkOffset,
-    index
-) {
-    var tick = this,
-        axis = tick.axis,
-        reversed = axis.reversed,
-        chart = axis.chart,
-        options = axis.options,
-        gridOptions = (options && isObject(options.grid)) ? options.grid : {},
-        align = labelOpts.align,
-        // verticalAlign is currently not supported for axis.labels.
-        verticalAlign = 'middle', // labelOpts.verticalAlign,
-        side = axisSide[axis.side],
-        tickPositions = axis.tickPositions,
-        tickPos = tick.pos - tickmarkOffset,
-        nextTickPos = (
-            isNumber(tickPositions[index + 1]) ?
-            tickPositions[index + 1] - tickmarkOffset :
-            axis.max + tickmarkOffset
-        ),
-        tickSize = axis.tickSize('tick', true),
-        tickWidth = isArray(tickSize) ? tickSize[0] : 0,
-        crispCorr = tickSize && tickSize[1] / 2,
-        labelHeight,
-        lblMetrics,
-        lines,
-        result,
-        bottom,
-        top,
-        left,
-        right;
-
-    // Only center tick labels in grid axes
-    if (gridOptions.enabled === true) {
-        /**
-         * Calculate top and bottom positions of the cell.
-         */
-        if (side === 'top') {
-            bottom = axis.top + axis.offset;
-            top = bottom - tickWidth;
-        } else if (side === 'bottom') {
-            top = chart.chartHeight - axis.bottom + axis.offset;
-            bottom = top + tickWidth;
-        } else {
-            bottom = axis.top + axis.len - axis.translate(
-                reversed ? nextTickPos : tickPos
-            );
-            top = axis.top + axis.len - axis.translate(
-                reversed ? tickPos : nextTickPos
-            );
-        }
-
-        /**
-         * Calculate left and right positions of the cell.
-         */
-        if (side === 'right') {
-            left = chart.chartWidth - axis.right + axis.offset;
-            right = left + tickWidth;
-        } else if (side === 'left') {
-            right = axis.left + axis.offset;
-            left = right - tickWidth;
-        } else {
-            left = Math.round(axis.left + axis.translate(
-                reversed ? nextTickPos : tickPos
-            )) - crispCorr;
-            right = Math.round(axis.left + axis.translate(
-                reversed ? tickPos : nextTickPos
-            )) - crispCorr;
-        }
-
-        tick.slotWidth = right - left;
-
-        /**
-         * Calculate the positioning of the label based on alignment.
-         */
-        result = {
-            x: (
-                align === 'left' ?
-                left :
-                align === 'right' ?
-                right :
-                left + ((right - left) / 2) // default to center
+wrap(Tick.prototype, 'getLabelPosition',
+    /**
+     * Center tick labels in cells.
+     *
+     * @private
+     * @function
+     *
+     * @param {Function} proceed
+     *        the original function
+     *
+     * @return {object}
+     *         an object containing x and y positions for the tick
+     */
+    function (
+        proceed,
+        x,
+        y,
+        label,
+        horiz,
+        labelOpts,
+        tickmarkOffset,
+        index
+    ) {
+        var tick = this,
+            axis = tick.axis,
+            reversed = axis.reversed,
+            chart = axis.chart,
+            options = axis.options,
+            gridOptions = (
+                (options && isObject(options.grid)) ? options.grid : {}
             ),
-            y: (
-                verticalAlign === 'top' ?
-                top :
-                verticalAlign === 'bottom' ?
-                bottom :
-                top + ((bottom - top) / 2) // default to middle
-            )
-        };
+            align = labelOpts.align,
+            // verticalAlign is currently not supported for axis.labels.
+            verticalAlign = 'middle', // labelOpts.verticalAlign,
+            side = axisSide[axis.side],
+            tickPositions = axis.tickPositions,
+            tickPos = tick.pos - tickmarkOffset,
+            nextTickPos = (
+                isNumber(tickPositions[index + 1]) ?
+                tickPositions[index + 1] - tickmarkOffset :
+                axis.max + tickmarkOffset
+            ),
+            tickSize = axis.tickSize('tick', true),
+            tickWidth = isArray(tickSize) ? tickSize[0] : 0,
+            crispCorr = tickSize && tickSize[1] / 2,
+            labelHeight,
+            lblMetrics,
+            lines,
+            result,
+            bottom,
+            top,
+            left,
+            right;
 
-        lblMetrics = chart.renderer.fontMetrics(
-            labelOpts.style.fontSize,
-            label.element
-        );
-        labelHeight = label.getBBox().height;
+        // Only center tick labels in grid axes
+        if (gridOptions.enabled === true) {
+            // Calculate top and bottom positions of the cell.
+            if (side === 'top') {
+                bottom = axis.top + axis.offset;
+                top = bottom - tickWidth;
+            } else if (side === 'bottom') {
+                top = chart.chartHeight - axis.bottom + axis.offset;
+                bottom = top + tickWidth;
+            } else {
+                bottom = axis.top + axis.len - axis.translate(
+                    reversed ? nextTickPos : tickPos
+                );
+                top = axis.top + axis.len - axis.translate(
+                    reversed ? tickPos : nextTickPos
+                );
+            }
 
-        // Adjustment to y position to align the label correctly.
-        // Would be better to have a setter or similar for this.
-        if (!labelOpts.useHTML) {
-            lines = Math.round(labelHeight / lblMetrics.h);
-            result.y += (
-                // Center the label
-                // TODO: why does this actually center the label?
-                ((lblMetrics.b - (lblMetrics.h - lblMetrics.f)) / 2) +
-                // Adjust for height of additional lines.
-                -(((lines - 1) * lblMetrics.h) / 2)
+            // Calculate left and right positions of the cell.
+            if (side === 'right') {
+                left = chart.chartWidth - axis.right + axis.offset;
+                right = left + tickWidth;
+            } else if (side === 'left') {
+                right = axis.left + axis.offset;
+                left = right - tickWidth;
+            } else {
+                left = Math.round(axis.left + axis.translate(
+                    reversed ? nextTickPos : tickPos
+                )) - crispCorr;
+                right = Math.round(axis.left + axis.translate(
+                    reversed ? tickPos : nextTickPos
+                )) - crispCorr;
+            }
+
+            tick.slotWidth = right - left;
+
+            // Calculate the positioning of the label based on alignment.
+            result = {
+                x: (
+                    align === 'left' ?
+                    left :
+                    align === 'right' ?
+                    right :
+                    left + ((right - left) / 2) // default to center
+                ),
+                y: (
+                    verticalAlign === 'top' ?
+                    top :
+                    verticalAlign === 'bottom' ?
+                    bottom :
+                    top + ((bottom - top) / 2) // default to middle
+                )
+            };
+
+            lblMetrics = chart.renderer.fontMetrics(
+                labelOpts.style.fontSize,
+                label.element
             );
+            labelHeight = label.getBBox().height;
+
+            // Adjustment to y position to align the label correctly.
+            // Would be better to have a setter or similar for this.
+            if (!labelOpts.useHTML) {
+                lines = Math.round(labelHeight / lblMetrics.h);
+                result.y += (
+                    // Center the label
+                    // TODO: why does this actually center the label?
+                    ((lblMetrics.b - (lblMetrics.h - lblMetrics.f)) / 2) +
+                    // Adjust for height of additional lines.
+                    -(((lines - 1) * lblMetrics.h) / 2)
+                );
+            } else {
+                result.y += (
+                    // Readjust yCorr in htmlUpdateTransform
+                    lblMetrics.b +
+                    // Adjust for height of html label
+                    -(labelHeight / 2)
+                );
+            }
+
+            result.x += (axis.horiz && labelOpts.x || 0);
         } else {
-            result.y += (
-                // Readjust yCorr in htmlUpdateTransform
-                lblMetrics.b +
-                // Adjust for height of html label
-                -(labelHeight / 2)
-            );
+            result = proceed.apply(tick, argsToArray(arguments));
         }
-
-        result.x += (axis.horiz && labelOpts.x || 0);
-    } else {
-        result = proceed.apply(tick, argsToArray(arguments));
+        return result;
     }
-    return result;
-});
+);
 
 /**
  * Draw vertical axis ticks extra long to create cell floors and roofs.
  * Overrides the tickLength for vertical axes.
  *
- * @param {function} proceed - the original function
- * @returns {array} retVal -
+ * @private
+ * @function
+ *
+ * @param {Function} proceed
+ *        the original function
+ *
+ * @returns {Array<number>}
  */
 wrap(Axis.prototype, 'tickSize', function (proceed) {
     var axis = this,
@@ -432,9 +464,7 @@ wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
     return proceed.apply(this, argsToArray(arguments));
 });
 
-/**
- * Avoid altering tickInterval when reserving space.
- */
+// Avoid altering tickInterval when reserving space.
 wrap(Axis.prototype, 'unsquish', function (proceed) {
     var axis = this,
         options = axis.options,
@@ -447,417 +477,457 @@ wrap(Axis.prototype, 'unsquish', function (proceed) {
     return proceed.apply(this, argsToArray(arguments));
 });
 
-/**
- * Creates a left and right wall on horizontal axes:
- * - Places leftmost tick at the start of the axis, to create a left wall
- * - Ensures that the rightmost tick is at the end of the axis, to create a
- *    right wall.
- *
- * @param {function} proceed - the original function
- * @param {object} options - the pure axis options as input by the user
- */
-H.addEvent(Axis, 'afterSetOptions', function (e) {
-    var options = this.options,
-        userOptions = e.userOptions,
-        gridAxisOptions,
-        gridOptions = (options && isObject(options.grid)) ? options.grid : {};
+H.addEvent(Axis, 'afterSetOptions',
+    /**
+     * Creates a left and right wall on horizontal axes:
+     *
+     * - Places leftmost tick at the start of the axis, to create a left wall
+     *
+     * - Ensures that the rightmost tick is at the end of the axis, to create a
+     *   right wall.
+     *
+     * @private
+     * @function
+     */
+    function (e) {
+        var options = this.options,
+            userOptions = e.userOptions,
+            gridAxisOptions,
+            gridOptions = (
+                (options && isObject(options.grid)) ? options.grid : {}
+            );
 
-    if (gridOptions.enabled === true) {
+        if (gridOptions.enabled === true) {
 
-        // Merge the user options into default grid axis options so that when a
-        // user option is set, it takes presedence.
-        gridAxisOptions = merge(true, {
+            // Merge the user options into default grid axis options so that
+            // when a user option is set, it takes presedence.
+            gridAxisOptions = merge(true, {
 
-            className: 'highcharts-grid-axis ' + (userOptions.className || ''),
+                className: (
+                    'highcharts-grid-axis ' + (userOptions.className || '')
+                ),
 
-            dateTimeLabelFormats: {
-                hour: {
-                    list: ['%H:%M', '%H']
+                dateTimeLabelFormats: {
+                    hour: {
+                        list: ['%H:%M', '%H']
+                    },
+                    day: {
+                        list: ['%A, %e. %B', '%a, %e. %b', '%E']
+                    },
+                    week: {
+                        list: ['Week %W', 'W%W']
+                    },
+                    month: {
+                        list: ['%B', '%b', '%o']
+                    }
                 },
-                day: {
-                    list: ['%A, %e. %B', '%a, %e. %b', '%E']
+
+                grid: {
+                    borderWidth: 1
                 },
-                week: {
-                    list: ['Week %W', 'W%W']
+
+                labels: {
+                    padding: 2,
+                    style: {
+                        fontSize: '13px'
+                    }
                 },
-                month: {
-                    list: ['%B', '%b', '%o']
+
+                title: {
+                    text: null,
+                    reserveSpace: false,
+                    rotation: 0
+                },
+
+                // In a grid axis, only allow one unit of certain types, for
+                // example we shouln't have one grid cell spanning two days.
+                units: [[
+                    'millisecond', // unit name
+                    [1, 10, 100]
+                ], [
+                    'second',
+                    [1, 10]
+                ], [
+                    'minute',
+                    [1, 5, 15]
+                ], [
+                    'hour',
+                    [1, 6]
+                ], [
+                    'day',
+                    [1]
+                ], [
+                    'week',
+                    [1]
+                ], [
+                    'month',
+                    [1]
+                ], [
+                    'year',
+                    null
+                ]]
+            }, userOptions);
+
+            // X-axis specific options
+            if (this.coll === 'xAxis') {
+
+                // For linked axes, tickPixelInterval is used only if the
+                // tickPositioner below doesn't run or returns undefined (like
+                // multiple years)
+                if (
+                    defined(userOptions.linkedTo) &&
+                    !defined(userOptions.tickPixelInterval)
+                ) {
+                    gridAxisOptions.tickPixelInterval = 350;
                 }
-            },
 
-            grid: {
-                borderWidth: 1
-            },
+                // For the secondary grid axis, use the primary axis' tick
+                // intervals and return ticks one level higher.
+                if (
+                    // Check for tick pixel interval in options
+                    !defined(userOptions.tickPixelInterval) &&
 
-            labels: {
-                padding: 2,
-                style: {
-                    fontSize: '13px'
+                    // Only for linked axes
+                    defined(userOptions.linkedTo) &&
+
+                    !defined(userOptions.tickPositioner) &&
+                    !defined(userOptions.tickInterval)
+                ) {
+                    gridAxisOptions.tickPositioner = function (min, max) {
+
+                        var parentInfo = (
+                            this.linkedParent &&
+                            this.linkedParent.tickPositions &&
+                            this.linkedParent.tickPositions.info
+                        );
+
+                        if (parentInfo) {
+
+                            var unitIdx,
+                                count,
+                                unitName,
+                                i,
+                                units = gridAxisOptions.units,
+                                unitRange;
+
+                            for (i = 0; i < units.length; i++) {
+                                if (units[i][0] === parentInfo.unitName) {
+                                    unitIdx = i;
+                                    break;
+                                }
+                            }
+
+                            // Spanning multiple years, go default
+                            if (!units[unitIdx][1]) {
+                                return;
+                            }
+
+                            // Get the first allowed count on the next unit.
+                            if (units[unitIdx + 1]) {
+                                unitName = units[unitIdx + 1][0];
+                                count = (units[unitIdx + 1][1] || [1])[0];
+                            }
+
+                            unitRange = H.timeUnits[unitName];
+                            this.tickInterval = unitRange * count;
+                            return this.getTimeTicks(
+                                {
+                                    unitRange: unitRange,
+                                    count: count,
+                                    unitName: unitName
+                                },
+                                min,
+                                max,
+                                this.options.startOfWeek
+                            );
+                        }
+                    };
                 }
-            },
 
-            title: {
-                text: null,
-                reserveSpace: false,
-                rotation: 0
-            },
-
-            // In a grid axis, only allow one unit of certain types, for example
-            // we shouln't have one grid cell spanning two days.
-            units: [[
-                'millisecond', // unit name
-                [1, 10, 100]
-            ], [
-                'second',
-                [1, 10]
-            ], [
-                'minute',
-                [1, 5, 15]
-            ], [
-                'hour',
-                [1, 6]
-            ], [
-                'day',
-                [1]
-            ], [
-                'week',
-                [1]
-            ], [
-                'month',
-                [1]
-            ], [
-                'year',
-                null
-            ]]
-        }, userOptions);
-
-        // X-axis specific options
-        if (this.coll === 'xAxis') {
-
-            // For linked axes, tickPixelInterval is used only if the
-            // tickPositioner below doesn't run or returns undefined (like
-            // multiple years)
-            if (
-                defined(userOptions.linkedTo) &&
-                !defined(userOptions.tickPixelInterval)
-            ) {
-                gridAxisOptions.tickPixelInterval = 350;
             }
 
-            // For the secondary grid axis, use the primary axis' tick intervals
-            // and return ticks one level higher.
-            if (
-                // Check for tick pixel interval in options
-                !defined(userOptions.tickPixelInterval) &&
+            // Now merge the combined options into the axis options
+            merge(true, this.options, gridAxisOptions);
 
-                // Only for linked axes
-                defined(userOptions.linkedTo) &&
+            if (this.horiz) {
+                /*               _________________________
+                   Make this:    ___|_____|_____|_____|__|
+                                 ^                     ^
+                                 _________________________
+                   Into this:    |_____|_____|_____|_____|
+                                    ^                 ^    */
+                options.minPadding = pick(userOptions.minPadding, 0);
+                options.maxPadding = pick(userOptions.maxPadding, 0);
+            }
 
-                !defined(userOptions.tickPositioner) &&
-                !defined(userOptions.tickInterval)
-            ) {
-                gridAxisOptions.tickPositioner = function (min, max) {
-
-                    var parentInfo = (
-                        this.linkedParent &&
-                        this.linkedParent.tickPositions &&
-                        this.linkedParent.tickPositions.info
-                    );
-
-                    if (parentInfo) {
-
-                        var unitIdx,
-                            count,
-                            unitName,
-                            i,
-                            units = gridAxisOptions.units,
-                            unitRange;
-
-                        for (i = 0; i < units.length; i++) {
-                            if (units[i][0] === parentInfo.unitName) {
-                                unitIdx = i;
-                                break;
-                            }
-                        }
-
-                        // Spanning multiple years, go default
-                        if (!units[unitIdx][1]) {
-                            return;
-                        }
-
-                        // Get the first allowed count on the next unit.
-                        if (units[unitIdx + 1]) {
-                            unitName = units[unitIdx + 1][0];
-                            count = (units[unitIdx + 1][1] || [1])[0];
-                        }
-
-                        unitRange = H.timeUnits[unitName];
-                        this.tickInterval = unitRange * count;
-                        return this.getTimeTicks(
-                            {
-                                unitRange: unitRange,
-                                count: count,
-                                unitName: unitName
-                            },
-                            min,
-                            max,
-                            this.options.startOfWeek
-                        );
-                    }
-                };
+            // If borderWidth is set, then use its value for tick and line
+            // width.
+            if (isNumber(options.grid.borderWidth)) {
+                options.tickWidth = options.lineWidth = gridOptions.borderWidth;
             }
 
         }
+    }
+);
 
-        // Now merge the combined options into the axis options
-        merge(true, this.options, gridAxisOptions);
+wrap(Axis.prototype, 'setAxisTranslation',
+    /**
+     * Ensures a left wall on horizontal axes with series inheriting from
+     * column. ColumnSeries normally sets pointRange to null, resulting in Axis
+     * to select other values for point ranges. This enforces the above
+     * Axis.setOptions() override.
+     * ```
+     *                  _________________________
+     * Enforce this:    ___|_____|_____|_____|__|
+     *                  ^
+     *                  _________________________
+     * To be this:      |_____|_____|_____|_____|
+     *                  ^
+     * ```
+     *
+     * @private
+     * @function
+     *
+     * @param {Function} proceed
+     *        the original function
+     */
+    function (proceed) {
+        var axis = this,
+            options = axis.options,
+            gridOptions = (
+                (options && isObject(options.grid)) ? options.grid : {}
+            ),
+            tickInfo = this.tickPositions && this.tickPositions.info,
+            userLabels = this.userOptions.labels || {};
 
         if (this.horiz) {
-            /**              _________________________
-             * Make this:    ___|_____|_____|_____|__|
-             *               ^                     ^
-             *               _________________________
-             * Into this:    |_____|_____|_____|_____|
-             *                  ^                 ^
-             */
-            options.minPadding = pick(userOptions.minPadding, 0);
-            options.maxPadding = pick(userOptions.maxPadding, 0);
-        }
+            if (gridOptions.enabled === true) {
+                axis.series.forEach(function (series) {
+                    series.options.pointRange = 0;
+                });
+            }
 
-        // If borderWidth is set, then use its value for tick and line width.
-        if (isNumber(options.grid.borderWidth)) {
-            options.tickWidth = options.lineWidth = gridOptions.borderWidth;
-        }
+            // Lower level time ticks, like hours or minutes, represent points
+            // in time and not ranges. These should be aligned left in the grid
+            // cell by default. The same applies to years of higher order.
+            if (
+                tickInfo &&
+                (
+                    options.dateTimeLabelFormats[tickInfo.unitName]
+                        .range === false ||
+                    tickInfo.count > 1 // years
+                ) &&
+                !defined(userLabels.align)
+            ) {
+                options.labels.align = 'left';
 
-    }
-});
-
-/**
- * Ensures a left wall on horizontal axes with series inheriting from column.
- * ColumnSeries normally sets pointRange to null, resulting in Axis to select
- * other values for point ranges. This enforces the above Axis.setOptions()
- * override.
- *                  _________________________
- * Enforce this:    ___|_____|_____|_____|__|
- *                  ^
- *                  _________________________
- * To be this:      |_____|_____|_____|_____|
- *                  ^
- *
- * @param {function} proceed - the original function
- * @param {object} options - the pure axis options as input by the user
- */
-wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
-    var axis = this,
-        options = axis.options,
-        gridOptions = (options && isObject(options.grid)) ? options.grid : {},
-        tickInfo = this.tickPositions && this.tickPositions.info,
-        userLabels = this.userOptions.labels || {};
-
-    if (this.horiz) {
-        if (gridOptions.enabled === true) {
-            axis.series.forEach(function (series) {
-                series.options.pointRange = 0;
-            });
-        }
-
-        // Lower level time ticks, like hours or minutes, represent points in
-        // time and not ranges. These should be aligned left in the grid cell
-        // by default. The same applies to years of higher order.
-        if (
-            tickInfo &&
-            (
-                options.dateTimeLabelFormats[tickInfo.unitName]
-                    .range === false ||
-                tickInfo.count > 1 // years
-            ) &&
-            !defined(userLabels.align)
-        ) {
-            options.labels.align = 'left';
-
-            if (!defined(userLabels.x)) {
-                options.labels.x = 3;
+                if (!defined(userLabels.x)) {
+                    options.labels.x = 3;
+                }
             }
         }
+
+        proceed.apply(axis, argsToArray(arguments));
     }
+);
 
-    proceed.apply(axis, argsToArray(arguments));
-});
-
-// TODO: Does this function do what the drawing says? Seems to affect ticks and
+// @todo Does this function do what the drawing says? Seems to affect ticks and
 //       not the labels directly?
-/**
- * Makes tick labels which are usually ignored in a linked axis displayed if
- * they are within range of linkedParent.min.
- *                        _____________________________
- *                        |   |       |       |       |
- * Make this:             |   |   2   |   3   |   4   |
- *                        |___|_______|_______|_______|
- *                          ^
- *                        _____________________________
- *                        |   |       |       |       |
- * Into this:             | 1 |   2   |   3   |   4   |
- *                        |___|_______|_______|_______|
- *                          ^
- * @param {function} proceed - the original function
- */
-wrap(Axis.prototype, 'trimTicks', function (proceed) {
-    var axis = this,
-        options = axis.options,
-        gridOptions = (options && isObject(options.grid)) ? options.grid : {},
-        categoryAxis = axis.categories,
-        tickPositions = axis.tickPositions,
-        firstPos = tickPositions[0],
-        lastPos = tickPositions[tickPositions.length - 1],
-        linkedMin = axis.linkedParent && axis.linkedParent.min,
-        linkedMax = axis.linkedParent && axis.linkedParent.max,
-        min = linkedMin || axis.min,
-        max = linkedMax || axis.max,
-        tickInterval = axis.tickInterval,
-        moreThanMin = firstPos > min,
-        lessThanMax = lastPos < max,
-        endMoreThanMin = firstPos < min && firstPos + tickInterval > min,
-        startLessThanMax = lastPos > max && lastPos - tickInterval < max;
+wrap(Axis.prototype, 'trimTicks',
+    /**
+     * Makes tick labels which are usually ignored in a linked axis displayed if
+     * they are within range of linkedParent.min.
+     * ```
+     *                        _____________________________
+     *                        |   |       |       |       |
+     * Make this:             |   |   2   |   3   |   4   |
+     *                        |___|_______|_______|_______|
+     *                          ^
+     *                        _____________________________
+     *                        |   |       |       |       |
+     * Into this:             | 1 |   2   |   3   |   4   |
+     *                        |___|_______|_______|_______|
+     *                          ^
+     * ```
+     *
+     * @private
+     * @function
+     *
+     * @param {Function} proceed
+     *        the original function
+     */
+    function (proceed) {
+        var axis = this,
+            options = axis.options,
+            gridOptions = (
+                (options && isObject(options.grid)) ? options.grid : {}
+            ),
+            categoryAxis = axis.categories,
+            tickPositions = axis.tickPositions,
+            firstPos = tickPositions[0],
+            lastPos = tickPositions[tickPositions.length - 1],
+            linkedMin = axis.linkedParent && axis.linkedParent.min,
+            linkedMax = axis.linkedParent && axis.linkedParent.max,
+            min = linkedMin || axis.min,
+            max = linkedMax || axis.max,
+            tickInterval = axis.tickInterval,
+            moreThanMin = firstPos > min,
+            lessThanMax = lastPos < max,
+            endMoreThanMin = firstPos < min && firstPos + tickInterval > min,
+            startLessThanMax = lastPos > max && lastPos - tickInterval < max;
 
-    if (
-        gridOptions.enabled === true &&
-        !categoryAxis &&
-        (axis.horiz || axis.isLinked)
-    ) {
-        if ((moreThanMin || endMoreThanMin) && !options.startOnTick) {
-            tickPositions[0] = min;
-        }
-
-        if ((lessThanMax || startLessThanMax) && !options.endOnTick) {
-            tickPositions[tickPositions.length - 1] = max;
-        }
-    }
-
-    proceed.apply(axis, argsToArray(arguments));
-});
-
-/**
- * Draw an extra line on the far side of the outermost axis,
- * creating floor/roof/wall of a grid. And some padding.
- *
- * Make this:
- *             (axis.min) __________________________ (axis.max)
- *                           |    |    |    |    |
- * Into this:
- *             (axis.min) __________________________ (axis.max)
- *                        ___|____|____|____|____|__
- *
- * @param {function} proceed - the original function
- */
-wrap(Axis.prototype, 'render', function (proceed) {
-    var axis = this,
-        options = axis.options,
-        gridOptions = (options && isObject(options.grid)) ? options.grid : {},
-        labelPadding,
-        distance,
-        lineWidth,
-        linePath,
-        yStartIndex,
-        yEndIndex,
-        xStartIndex,
-        xEndIndex,
-        renderer = axis.chart.renderer,
-        horiz = axis.horiz,
-        axisGroupBox;
-
-    if (gridOptions.enabled === true) {
-        // TODO acutual label padding (top, bottom, left, right)
-        // Label padding is needed to figure out where to draw the outer line.
-        labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
-        axis.maxLabelDimensions = axis.getMaxLabelDimensions(
-            axis.ticks,
-            axis.tickPositions
-        );
-        distance = axis.maxLabelDimensions.width + labelPadding;
-        lineWidth = options.lineWidth;
-
-        // Remove right wall before rendering if updating
-        if (axis.rightWall) {
-            axis.rightWall.destroy();
-        }
-
-        // Call original Axis.render() to obtain axis.axisLine and
-        // axis.axisGroup
-        proceed.apply(axis);
-
-        axisGroupBox = axis.axisGroup.getBBox();
-
-        /*
-         * Draw an extra axis line on outer axes
-         *             >
-         * Make this:    |______|______|______|___
-         *
-         *             > _________________________
-         * Into this:    |______|______|______|__|
-         *
-         */
-        if (axis.isOuterAxis() && axis.axisLine) {
-            if (horiz) {
-                // -1 to avoid adding distance each time the chart updates
-                distance = axisGroupBox.height - 1;
+        if (
+            gridOptions.enabled === true &&
+            !categoryAxis &&
+            (axis.horiz || axis.isLinked)
+        ) {
+            if ((moreThanMin || endMoreThanMin) && !options.startOnTick) {
+                tickPositions[0] = min;
             }
 
-            if (lineWidth) {
-                linePath = axis.getLinePath(lineWidth);
-                xStartIndex = linePath.indexOf('M') + 1;
-                xEndIndex = linePath.indexOf('L') + 1;
-                yStartIndex = linePath.indexOf('M') + 2;
-                yEndIndex = linePath.indexOf('L') + 2;
+            if ((lessThanMax || startLessThanMax) && !options.endOnTick) {
+                tickPositions[tickPositions.length - 1] = max;
+            }
+        }
 
-                // Negate distance if top or left axis
-                if (axis.side === axisSide.top || axis.side === axisSide.left) {
-                    distance = -distance;
-                }
+        proceed.apply(axis, argsToArray(arguments));
+    }
+);
 
-                // If axis is horizontal, reposition line path vertically
+wrap(Axis.prototype, 'render',
+    /**
+     * Draw an extra line on the far side of the outermost axis,
+     * creating floor/roof/wall of a grid. And some padding.
+     * ```
+     * Make this:
+     *             (axis.min) __________________________ (axis.max)
+     *                           |    |    |    |    |
+     * Into this:
+     *             (axis.min) __________________________ (axis.max)
+     *                        ___|____|____|____|____|__
+     * ```
+     *
+     * @private
+     * @function
+     *
+     * @param {Function} proceed
+     *        the original function
+     */
+    function (proceed) {
+        var axis = this,
+            options = axis.options,
+            gridOptions = ((
+                options && isObject(options.grid)) ? options.grid : {}
+            ),
+            labelPadding,
+            distance,
+            lineWidth,
+            linePath,
+            yStartIndex,
+            yEndIndex,
+            xStartIndex,
+            xEndIndex,
+            renderer = axis.chart.renderer,
+            horiz = axis.horiz,
+            axisGroupBox;
+
+        if (gridOptions.enabled === true) {
+
+            // @todo acutual label padding (top, bottom, left, right)
+
+            // Label padding is needed to figure out where to draw the outer
+            // line.
+            labelPadding = (Math.abs(axis.defaultLeftAxisOptions.labels.x) * 2);
+            axis.maxLabelDimensions = axis.getMaxLabelDimensions(
+                axis.ticks,
+                axis.tickPositions
+            );
+            distance = axis.maxLabelDimensions.width + labelPadding;
+            lineWidth = options.lineWidth;
+
+            // Remove right wall before rendering if updating
+            if (axis.rightWall) {
+                axis.rightWall.destroy();
+            }
+
+            // Call original Axis.render() to obtain axis.axisLine and
+            // axis.axisGroup
+            proceed.apply(axis);
+
+            axisGroupBox = axis.axisGroup.getBBox();
+
+            /*
+               Draw an extra axis line on outer axes
+                           >
+               Make this:    |______|______|______|___
+
+                           > _________________________
+               Into this:    |______|______|______|__|
+                                                       */
+            if (axis.isOuterAxis() && axis.axisLine) {
                 if (horiz) {
-                    linePath[yStartIndex] = linePath[yStartIndex] + distance;
-                    linePath[yEndIndex] = linePath[yEndIndex] + distance;
-                } else {
-                    // If axis is vertical, reposition line path horizontally
-                    linePath[xStartIndex] = linePath[xStartIndex] + distance;
-                    linePath[xEndIndex] = linePath[xEndIndex] + distance;
+                    // -1 to avoid adding distance each time the chart updates
+                    distance = axisGroupBox.height - 1;
                 }
 
-                if (!axis.axisLineExtra) {
-                    axis.axisLineExtra = renderer.path(linePath)
-                        .attr({
-                            zIndex: 7
-                        })
-                        .addClass('highcharts-axis-line')
-                        .add(axis.axisGroup);
-                    if (!renderer.styledMode) {
-                        axis.axisLineExtra.attr({
-                            stroke: options.lineColor,
-                            'stroke-width': lineWidth
+                if (lineWidth) {
+                    linePath = axis.getLinePath(lineWidth);
+                    xStartIndex = linePath.indexOf('M') + 1;
+                    xEndIndex = linePath.indexOf('L') + 1;
+                    yStartIndex = linePath.indexOf('M') + 2;
+                    yEndIndex = linePath.indexOf('L') + 2;
+
+                    // Negate distance if top or left axis
+                    if (axis.side === axisSide.top ||
+                        axis.side === axisSide.left
+                    ) {
+                        distance = -distance;
+                    }
+
+                    // If axis is horizontal, reposition line path vertically
+                    if (horiz) {
+                        linePath[yStartIndex] = (
+                            linePath[yStartIndex] + distance
+                        );
+                        linePath[yEndIndex] = linePath[yEndIndex] + distance;
+                    } else {
+                        // If axis is vertical, reposition line path
+                        // horizontally
+                        linePath[xStartIndex] = (
+                            linePath[xStartIndex] + distance
+                        );
+                        linePath[xEndIndex] = linePath[xEndIndex] + distance;
+                    }
+
+                    if (!axis.axisLineExtra) {
+                        axis.axisLineExtra = renderer.path(linePath)
+                            .attr({
+                                /*= if (build.classic) { =*/
+                                stroke: options.lineColor,
+                                'stroke-width': lineWidth,
+                                /*= } =*/
+                                zIndex: 7
+                            })
+                            .addClass('highcharts-axis-line')
+                            .add(axis.axisGroup);
+                    } else {
+                        axis.axisLineExtra.animate({
+                            d: linePath
                         });
                     }
-                } else {
-                    axis.axisLineExtra.animate({
-                        d: linePath
-                    });
+
+                    // show or hide the line depending on options.showEmpty
+                    axis.axisLine[axis.showAxis ? 'show' : 'hide'](true);
                 }
-
-                // show or hide the line depending on options.showEmpty
-                axis.axisLine[axis.showAxis ? 'show' : 'hide'](true);
             }
+
+        } else {
+            proceed.apply(axis);
         }
-
-    } else {
-        proceed.apply(axis);
     }
-});
+);
 
-/**
- * Wraps axis init to draw cell walls on vertical axes.
- *
- * @param {function} proceed - the original function
- */
+// Wraps axis init to draw cell walls on vertical axes.
 wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
     var axis = this,
         gridOptions = (
@@ -884,32 +954,26 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
         }
         options.labels.align = pick(options.labels.align, 'center');
 
-        // TODO: Check against tickLabelPlacement between/on etc
-        /**
-         * Prevents adding the last tick label if the axis is not a category
-         * axis.
-         *
-         * Since numeric labels are normally placed at starts and ends of a
-         * range of value, and this module makes the label point at the value,
-         * an "extra" label would appear.
-         */
+        // @todo: Check against tickLabelPlacement between/on etc
+
+        /* Prevents adding the last tick label if the axis is not a category
+           axis.
+           Since numeric labels are normally placed at starts and ends of a
+           range of value, and this module makes the label point at the value,
+           an "extra" label would appear. */
         if (!axis.categories) {
             options.showLastLabel = false;
         }
 
-        /**
-         * Make tick marks taller, creating cell walls of a grid.
-         * Use cellHeight axis option if set
-         */
+        // Make tick marks taller, creating cell walls of a grid. Use cellHeight
+        // axis option if set
         if (axis.horiz) {
             options.tickLength = gridOptions.cellHeight ||
                     fontMetrics.h * fontSizeToCellHeightRatio;
         }
 
-        /**
-         * Prevents rotation of labels when squished, as rotating them would not
-         * help.
-         */
+        // Prevents rotation of labels when squished, as rotating them would not
+        // help.
         axis.labelRotation = 0;
         options.labels.rotation = 0;
     }

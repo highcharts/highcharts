@@ -197,7 +197,9 @@
  * Formats data as a string. Usually the data is accessible throught the `this`
  * keyword.
  *
- * @callback Highcharts.FormatterCallbackFunction
+ * @callback Highcharts.FormatterCallbackFunction<T>
+ *
+ * @param {T} this
  *
  * @return {string}
  */
