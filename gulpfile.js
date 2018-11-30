@@ -556,7 +556,6 @@ const copyToDist = () => {
         .filter((path) => (
             path.endsWith('.js') ||
             path.endsWith('.js.map') ||
-            path.endsWith('.d.ts') ||
             path.endsWith('.css') ||
             path.endsWith('readme.txt')
         ))
@@ -1293,18 +1292,16 @@ gulp.task('jsdoc-options', jsdocOptions);
  * Add TypeScript declarations to the code folder using tree.json and
  * tree-namespace.json.
  */
-function dts() {
+gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], () => {
     return require('highcharts-declarations-generator').task();
-}
-gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], dts);
+});
 
 /**
  * Test TypeScript declarations in the code folder using tsconfig.json.
  */
-function dtsLint() {
+gulp.task('dtslint', ['dts'], () => {
     return commandLine('npx dtslint --onlyTestTsNext');
-}
-gulp.task('dtslint', ['dts'], dtsLint);
+});
 
 /**
  * Gulp task to run the building process of distribution files. By default it
@@ -1429,8 +1426,6 @@ gulp.task('dist', () => {
         .then(gulpify('scripts', getBuildScripts({}).fnFirstBuild))
         .then(gulpify('lint', lint))
         .then(gulpify('compile', compileScripts))
-        .then(gulpify('dts', dts))
-        .then(gulpify('dtsLint', dtsLint))
         .then(gulpify('cleanDist', cleanDist))
         .then(gulpify('copyToDist', copyToDist))
         .then(gulpify('createProductJS', createProductJS))
