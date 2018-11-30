@@ -94,7 +94,7 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-stocktools-wrapper .highcharts-arrow-down {
-  background-image: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg);
+  background-image: url(https://code.highcharts.com/gfx/stock-icons/arrow-right.svg);
   background-size: cover;
   /* Safari */
   -webkit-transform: rotate(90deg);
@@ -109,7 +109,7 @@ $button-hover-color: #e6ebf5;
   transform: rotate(90deg);
 }
 .highcharts-stocktools-wrapper .highcharts-arrow-up {
-  background-image: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg);
+  background-image: url(https://code.highcharts.com/gfx/stock-icons/arrow-right.svg);
   background-size: cover;
   outline: none;
   display: inline-block;
@@ -138,7 +138,7 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-stocktools-wrapper .highcharts-arrow-right {
-  background: url(http://utils.highcharts.local/samples/graphics/arrow-bottom.svg) no-repeat right bottom;
+  background: url(https://code.highcharts.com/gfx/stock-icons/arrow-bottom.svg) no-repeat right bottom;
   background-size: contain;
 }
 
@@ -157,7 +157,7 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-stocktools-wrapper .highcharts-arrow-left {
-  background-image: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg);
+  background-image: url(https://code.highcharts.com/gfx/stock-icons/arrow-right.svg);
   /* Safari */
   -webkit-transform: rotate(180deg);
   /* Firefox */
@@ -262,7 +262,7 @@ $button-hover-color: #e6ebf5;
   height: 10px;
   left: 43px;
   background-color: $button-background-color;
-  background-image: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg);
+  background-image: url(https://code.highcharts.com/gfx/stock-icons/arrow-right.svg);
   background-size: cover;
 }
 
