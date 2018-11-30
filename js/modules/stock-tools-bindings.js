@@ -1785,10 +1785,10 @@ var stockToolsBindings = {
             if (this.guiEnabled) {
                 if (lastPrice) {
                     button.firstChild.style['background-image'] =
-                        'url("http://utils.highcharts.local/samples/graphics/current-price-show.svg")';
+                        'url("https://code.highcharts.com/gfx/stock-icons/current-price-show.svg")';
                 } else {
                     button.firstChild.style['background-image'] =
-                        'url("http://utils.highcharts.local/samples/graphics/current-price-hide.svg")';
+                        'url("https://code.highcharts.com/gfx/stock-icons/current-price-hide.svg")';
                 }
             }
 
@@ -1861,10 +1861,10 @@ var stockToolsBindings = {
             if (this.guiEnabled) {
                 if (this.toggledAnnotations) {
                     button.firstChild.style['background-image'] =
-                        'url("http://utils.highcharts.local/samples/graphics/annotations-hidden.svg")';
+                        'url("https://code.highcharts.com/gfx/stock-icons/annotations-hidden.svg")';
                 } else {
                     button.firstChild.style['background-image'] =
-                        'url("http://utils.highcharts.local/samples/graphics/annotations-visible.svg")';
+                        'url("https://code.highcharts.com/gfx/stock-icons/annotations-visible.svg")';
                 }
             }
 

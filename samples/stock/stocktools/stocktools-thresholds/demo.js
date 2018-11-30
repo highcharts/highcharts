@@ -58,7 +58,7 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
                 ],
                 definitions: {
                     thresholds: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/horizontal-line.svg)'
+                        symbol: 'url(https://code.highcharts.com/gfx/stock-icons/horizontal-line.svg)'
                     }
                 }
             },
