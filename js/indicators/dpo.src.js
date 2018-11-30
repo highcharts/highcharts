@@ -4,6 +4,15 @@ import H from '../parts/Globals.js';
 var correctFloat = H.correctFloat,
     pick = H.pick;
 
+// Utils
+function accumulatePoints(sum, yVal, i, index, subtract) {
+    var price = pick(yVal[i][index], yVal[i]);
+    if (subtract) {
+        return correctFloat(sum - price);
+    }
+    return correctFloat(sum + price);
+}
+
 H.seriesType('dpo', 'sma',
     /**
      * Detrended Price Oscillator. This series requires the `linkedTo`
@@ -49,11 +58,9 @@ H.seriesType('dpo', 'sma',
                 yData = [],
                 sum = 0,
                 oscillator,
-                lastPeriodPrice,
-                fisrtPeriodPrice,
-                currentPrice,
                 periodIndex,
                 rangeIndex,
+                price,
                 i,
                 j;
 
@@ -63,8 +70,7 @@ H.seriesType('dpo', 'sma',
 
             // Accumulate first N-points for SMA
             for (i = 0; i < period - 1; i++) {
-                lastPeriodPrice = pick(yVal[i][index], yVal[i]);
-                sum = correctFloat(sum + lastPeriodPrice);
+                sum = accumulatePoints(sum, yVal, i, index);
             }
 
             // Detrended Price Oscillator formula:
@@ -74,20 +80,18 @@ H.seriesType('dpo', 'sma',
                 periodIndex = j + period - 1;
                 rangeIndex = j + range - 1;
 
-                lastPeriodPrice =
-                    pick(yVal[periodIndex][index], yVal[periodIndex]);
-                currentPrice =
-                    pick(yVal[rangeIndex][index], yVal[rangeIndex]);
+                // adding the last period point
+                sum = accumulatePoints(sum, yVal, periodIndex, index);
+                price = pick(yVal[rangeIndex][index], yVal[rangeIndex]);
 
-                sum = correctFloat(sum + lastPeriodPrice);
-                oscillator = currentPrice - sum / period;
+                oscillator = price - sum / period;
+
+                // substracting the first period point
+                sum = accumulatePoints(sum, yVal, j, index, true);
 
                 DPO.push([xVal[rangeIndex], oscillator]);
                 xData.push(xVal[rangeIndex]);
                 yData.push(oscillator);
-
-                fisrtPeriodPrice = pick(yVal[j][index], yVal[j]);
-                sum = correctFloat(sum - fisrtPeriodPrice);
             }
 
             return {
