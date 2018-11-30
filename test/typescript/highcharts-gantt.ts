@@ -1,7 +1,21 @@
-import * as Gantt from 'highcharts/highcharts-gantt';
+/* *
+ *
+ *  Test cases for highcharts-gantt.d.ts
+ *
+ *  (c) 2018 Highsoft AS. All rights reserved.
+ *
+ * */
 
-function test_progress() {
-    Gantt.ganttChart('container', {
+import * as Highcharts from 'highcharts/highcharts-gantt';
+
+/**
+ * Tests Highcharts.seriesTypes.gantt in a complex use case.
+ *
+ * @todo
+ * - Make it more complex.
+ */
+function test_Gantt() {
+    Highcharts.ganttChart('container', {
         title: {
             text: 'Gantt Chart with Progress Indicators'
         },
