@@ -490,7 +490,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * Formatter function for the label text.
          *
-         * @type      {Highcharts.FormatterCallbackFunction<*>}
+         * @type      {Highcharts.FormatterCallbackFunction<object>}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.formatter
@@ -2937,7 +2937,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highcharts} highcharts/yaxis/stacklabels-formatter/
              *         Added units to stack total value
              *
-             * @type    {Highcharts.FormatterCallbackFunction<*>}
+             * @type    {Highcharts.FormatterCallbackFunction<object>}
              * @since   2.1.5
              * @product highcharts
              */
