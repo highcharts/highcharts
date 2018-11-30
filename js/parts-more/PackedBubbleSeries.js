@@ -491,8 +491,9 @@ seriesType('packedbubble', 'bubble',
 
 // When one series is modified, the others need to be recomputed
 H.addEvent(H.seriesTypes.packedbubble, 'updatedData', function () {
+    var self = this;
     this.chart.series.forEach(function (s) {
-        if (s.accumulateAllPoints) {
+        if (s.type === self.type) {
             s.isDirty = true;
         }
     });
