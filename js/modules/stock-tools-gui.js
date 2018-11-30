@@ -88,7 +88,7 @@ H.setOptions({
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
                 fill: 'Fill',
-                format: 'Format',
+                format: 'Text',
                 strokeWidth: 'Line width',
                 stroke: 'Line color',
                 title: 'Title',
