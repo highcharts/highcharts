@@ -1,9 +1,13 @@
-/**
- * (c) 2010-2018 Kacper Madej
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Kacper Madej
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/ColumnSeries.js';
@@ -21,85 +25,90 @@ var charts = H.charts,
     cylinderMethods;
 
  /**
- * The cylinder series type.
- *
- * Requires `highcharts-3d.js` and `cylinder.js` module.
- *
- * @constructor seriesTypes.cylinder
- * @augments seriesTypes.column
- */
+  * The cylinder series type.
+  *
+  * @requires module:highcharts-3d
+  * @requires module:modules/cylinder
+  *
+  * @private
+  * @class
+  * @name Highcharts.seriesTypes.cylinder
+  *
+  * @augments Highcharts.Series
+  */
 seriesType('cylinder', 'column',
     /**
      * A cylinder graph is a variation of a 3d column graph. The cylinder graph
      * features cylindrical points.
      *
-     * @extends      {plotOptions.column}
-     * @product      highcharts
-     * @sample       {highcharts} highcharts/demo/cylinder/ Cylinder graph
+     * @sample {highcharts} highcharts/demo/cylinder/
+     *         Cylinder graph
+     *
+     * @extends      plotOptions.column
      * @since        7.0.0
-     * @excluding    allAreas,boostThreshold,colorAxis,compare,compareBase
+     * @product      highcharts
+     * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
      * @optionparent plotOptions.cylinder
      */
     {},
-    {}, /** @lends seriesTypes.cylinder.prototype.pointClass.prototype */ {
+    {}, /** @lends Highcharts.seriesTypes.cylinder#pointClass# */ {
         shapeType: 'cylinder'
     });
 
 /**
- * A `cylinder` series. If the [type](#series.cylinder.type) option is
- * not specified, it is inherited from [chart.type](#chart.type).
+ * A `cylinder` series. If the [type](#series.cylinder.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
  *
- * @since     7.0.0
  * @extends   series,plotOptions.cylinder
- * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
+ * @since     7.0.0
  * @product   highcharts
+ * @excluding allAreas, boostThreshold, colorAxis, compare, compareBase
  * @apioption series.cylinder
  */
 
 /**
- * An array of data points for the series. For the `cylinder` series
- * type, points can be given in the following ways:
+ * An array of data points for the series. For the `cylinder` series type,
+ * points can be given in the following ways:
  *
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. The `x` values will be automatically
- * calculated, either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options. If the axis has
- * categories, these will be used. Example:
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `y` options. The `x` values will be automatically
+ *    calculated, either starting at 0 and incremented by 1, or from
+ *    `pointStart` and `pointInterval` given in the series options. If the axis
+ *    has categories, these will be used. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
  *
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
+ * 2. An array of arrays with 2 values. In this case, the values correspond to
+ *    `x,y`. If the first value is a string, it is applied as the name of the
+ *    point, and the `x` value is inferred.
+ *    ```js
+ *    data: [
+ *        [0, 0],
+ *        [1, 8],
+ *        [2, 9]
+ *    ]
+ *    ```
  *
- * 2.  An array of arrays with 2 values. In this case, the values correspond
- * to `x,y`. If the first value is a string, it is applied as the name
- * of the point, and the `x` value is inferred.
+ * 3. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.cylinder.turboThreshold), this option is not
+ *    available.
  *
- *  ```js
- *     data: [
- *         [0, 0],
- *         [1, 8],
- *         [2, 9]
- *     ]
- *  ```
- *
- * 3.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.cylinder.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         x: 1,
- *         y: 2,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         x: 1,
- *         y: 4,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        y: 2,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        x: 1,
+ *        y: 4,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
@@ -144,9 +153,7 @@ RendererProto.cylinder = function (shapeArgs) {
     return this.element3d('cylinder', shapeArgs);
 };
 
-/**
- * Generates paths and zIndexes.
- */
+// Generates paths and zIndexes.
 RendererProto.cylinderPath = function (shapeArgs) {
     var renderer = this,
         chart = charts[renderer.chartIndex],
@@ -258,9 +265,8 @@ RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
         // Could be top or bottom of the cylinder
         y = shapeArgs.y + (isBottom ? shapeArgs.height : 0),
 
-        /* Use cubic Bezier curve to draw a cricle in x,z (y is constant).
-         * More math. at spencermortensen.com/articles/bezier-circle/
-         */
+        // Use cubic Bezier curve to draw a cricle in x,z (y is constant).
+        // More math. at spencermortensen.com/articles/bezier-circle/
         c = 0.5519 * radius,
         centerX = shapeArgs.width / 2 + shapeArgs.x,
         centerZ = shapeArgs.depth / 2 + shapeArgs.z,
@@ -334,9 +340,8 @@ RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
         x = point.x;
         z = point.z;
 
-        /* x′ = (x * cosθ − z * sinθ) + centerX
-         * z′ = (z * cosθ + x * sinθ) + centerZ
-         */
+        // x′ = (x * cosθ − z * sinθ) + centerX
+        // z′ = (z * cosθ + x * sinθ) + centerZ
         points[i].x = (x * cosTheta - z * sinTheta) + centerX;
         points[i].z = (z * cosTheta + x * sinTheta) + centerZ;
     });
@@ -360,10 +365,9 @@ RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
     return path;
 };
 
-/* Returns curved path in format of:
- * [ M, x, y, [C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
- * (cp - control point, ep - end point)
- */
+// Returns curved path in format of:
+// [ M, x, y, [C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
+// (cp - control point, ep - end point)
 RendererProto.getCurvedPath = function (points) {
     var path = [
             'M',
