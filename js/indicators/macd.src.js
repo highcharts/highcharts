@@ -25,7 +25,8 @@ var seriesType = H.seriesType,
 seriesType('macd', 'sma',
     /**
      * Moving Average Convergence Divergence (MACD). This series requires
-     * `linkedTo` option to be set.
+     * `linkedTo` option to be set and should be loaded after the
+     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
      *
      * @sample stock/indicators/macd
      *         MACD indicator
@@ -137,6 +138,7 @@ seriesType('macd', 'sma',
         minPointLength: 0
     }, {
         nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
+        requiredIndicators: ['ema'],
         // "y" value is treated as Histogram data
         pointArrayMap: ['y', 'signal', 'MACD'],
         parallelArrays: ['x', 'y', 'signal', 'MACD'],
@@ -149,33 +151,37 @@ seriesType('macd', 'sma',
         init: function () {
             SMA.prototype.init.apply(this, arguments);
 
-            // Set default color for a signal line and the histogram:
-            this.options = merge({
-                signalLine: {
-                    styles: {
-                        lineColor: this.color
+            // Check whether series is initialized. It may be not initialized,
+            // when any of required indicators is missing.
+            if (this.options) {
+                // Set default color for a signal line and the histogram:
+                this.options = merge({
+                    signalLine: {
+                        styles: {
+                            lineColor: this.color
+                        }
+                    },
+                    macdLine: {
+                        styles: {
+                            color: this.color
+                        }
                     }
-                },
-                macdLine: {
-                    styles: {
-                        color: this.color
-                    }
-                }
-            }, this.options);
+                }, this.options);
 
-            // Zones have indexes automatically calculated, we need to
-            // translate them to support multiple lines within one indicator
-            this.macdZones = {
-                zones: this.options.macdLine.zones,
-                startIndex: 0
-            };
-            this.signalZones = {
-                zones: this.macdZones.zones.concat(
-                    this.options.signalLine.zones
-                ),
-                startIndex: this.macdZones.zones.length
-            };
-            this.resetZones = true;
+                // Zones have indexes automatically calculated, we need to
+                // translate them to support multiple lines within one indicator
+                this.macdZones = {
+                    zones: this.options.macdLine.zones,
+                    startIndex: 0
+                };
+                this.signalZones = {
+                    zones: this.macdZones.zones.concat(
+                        this.options.signalLine.zones
+                    ),
+                    startIndex: this.macdZones.zones.length
+                };
+                this.resetZones = true;
+            }
         },
         toYData: function (point) {
             return [point.y, point.signal, point.MACD];

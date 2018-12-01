@@ -3,6 +3,7 @@
 
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var pick = H.pick,
     error = H.error,
@@ -10,7 +11,9 @@ var pick = H.pick,
     isArray = H.isArray,
     addEvent = H.addEvent,
     seriesType = H.seriesType,
-    ohlcProto = H.seriesTypes.ohlc.prototype;
+    seriesTypes = H.seriesTypes,
+    ohlcProto = H.seriesTypes.ohlc.prototype,
+    generateMessage = requiredIndicatorMixin.generateMessage;
 
 /**
  * The parameter allows setting line series type and use OHLC indicators.
@@ -131,8 +134,35 @@ seriesType('sma', 'line',
         nameComponents: ['period'],
         nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
         calculateOn: 'init',
+        // Defines on which other indicators is this indicator based on.
+        requiredIndicators: [],
+        requireIndicators: function () {
+            var obj = {
+                allLoaded: true
+            };
+
+            // Check whether all required indicators are loaded, else return
+            // the object with missing indicator's name.
+            this.requiredIndicators.forEach(function (indicator) {
+                if (seriesTypes[indicator]) {
+                    seriesTypes[indicator].prototype.requireIndicators();
+                } else {
+                    obj.allLoaded = false;
+                    obj.needed = indicator;
+                }
+            });
+            return obj;
+        },
         init: function (chart, options) {
-            var indicator = this;
+            var indicator = this,
+                requiredIndicators = indicator.requireIndicators();
+
+            // Check whether all required indicators are loaded.
+            if (!requiredIndicators.allLoaded) {
+                return error(
+                    generateMessage(indicator.type, requiredIndicators.needed)
+                );
+            }
 
             Series.prototype.init.call(
                 indicator,

@@ -1,9 +1,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var isArray = H.isArray,
     EMAindicator = H.seriesTypes.ema,
+    requiredIndicator = requiredIndicatorMixin,
     correctFloat = H.correctFloat;
 
 /**
@@ -16,7 +18,8 @@ var isArray = H.isArray,
 H.seriesType('tema', 'ema',
     /**
      * Normalized average true range indicator (NATR). This series requires
-     * `linkedTo` option to be set.
+     * `linkedTo` option to be set and should be loaded after the
+     * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
      *
      * Requires https://code.highcharts.com/stock/indicators/ema.js.
      *
@@ -31,6 +34,19 @@ H.seriesType('tema', 'ema',
      * @optionparent plotOptions.tema
      */
     {}, {
+        init: function () {
+            var args = arguments,
+                ctx = this;
+
+            requiredIndicator.isParentLoaded(
+                EMAindicator,
+                'ema',
+                ctx.type,
+                function (indicator) {
+                    indicator.prototype.init.apply(ctx, args);
+                }
+            );
+        },
         getEMA: function (
             yVal,
             prevEMA,

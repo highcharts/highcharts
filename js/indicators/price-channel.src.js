@@ -3,19 +3,17 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import reduceArrayMixin from '../mixins/reduce-array.js';
-import requiredIndicatorMixin from '../mixins/indicator-required.js';
+import multipleLinesMixin from '../mixins/multipe-lines.js';
 
 var getArrayExtremes = reduceArrayMixin.getArrayExtremes,
-    BB = H.seriesTypes.bb,
-    parentLoaded = requiredIndicatorMixin.isParentIndicatorLoaded;
+    merge = H.merge;
 
-H.seriesType('pc', 'bb',
+H.seriesType('pc', 'sma',
     /**
      * Price channel (PC). This series requires the `linkedTo` option to be
-     * set and should be loaded after the `stock/indicators/indicators.js`
-     * and `stock/indicators/bollinger-bands.js` files.
+     * set and should be loaded after the `stock/indicators/indicators.js`.
      *
-     * @extends plotOptions.bb
+     * @extends plotOptions.sma
      * @product highstock
      * @sample {highstock} stock/indicators/price-channel Price Channel
      * @excluding
@@ -28,9 +26,11 @@ H.seriesType('pc', 'bb',
     {
         /**
          * @excluding
-         *    index, standardDeviation
+         *    index
          */
-        params: {},
+        params: {
+            period: 20
+        },
         lineWidth: 1,
         topLine: {
             styles: {
@@ -41,7 +41,13 @@ H.seriesType('pc', 'bb',
                  * @type {String}
                  * @product highstock
                  */
-                lineColor: '${palette.colors}'.split(' ')[2]
+                lineColor: '${palette.colors}'.split(' ')[2],
+                /**
+                 * Pixel width of the line.
+                 *
+                 * @type {Number}
+                 */
+                lineWidth: 1
             }
         },
         bottomLine: {
@@ -53,25 +59,24 @@ H.seriesType('pc', 'bb',
                  * @type {String}
                  * @product highstock
                  */
-                lineColor: '${palette.colors}'.split(' ')[8]
+                lineColor: '${palette.colors}'.split(' ')[8],
+                /**
+                 * Pixel width of the line.
+                 *
+                 * @type {Number}
+                 */
+                lineWidth: 1
             }
+        },
+        dataGrouping: {
+            approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    }, /** @lends Highcharts.Series.prototype */ merge(multipleLinesMixin, {
+        pointArrayMap: ['top', 'middle', 'bottom'],
+        pointValKey: 'middle',
         nameBase: 'Price Channel',
         nameComponents: ['period'],
-        init: function () {
-            var args = arguments,
-                ctx = this;
-
-            parentLoaded(
-                BB,
-                'bollinger-bands',
-                ctx.type,
-                function (indicator) {
-                    indicator.prototype.init.apply(ctx, args);
-                }
-            );
-        },
+        linesApiNames: ['topLine', 'bottomLine'],
         getValues: function (series, params) {
             var period = params.period,
                 xVal = series.xData,
@@ -110,7 +115,7 @@ H.seriesType('pc', 'bb',
                 yData: yData
             };
         }
-    }
+    })
 );
 
 /**

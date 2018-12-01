@@ -2,12 +2,11 @@
 
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-import requiredIndicatorMixin from '../mixins/indicator-required.js';
+import multipleLinesMixin from '../mixins/multipe-lines.js';
 
-var BB = H.seriesTypes.bb,
-    SMA = H.seriesTypes.sma,
-    correctFloat = H.correctFloat,
-    parentLoaded = requiredIndicatorMixin.isParentIndicatorLoaded;
+var SMA = H.seriesTypes.sma,
+    merge = H.merge,
+    correctFloat = H.correctFloat;
 
 function getBaseForBand(low, high, factor) {
     return ((
@@ -24,13 +23,13 @@ function getPointLB(low, base) {
     return low * (correctFloat(1 - 2 * base));
 }
 
-H.seriesType('abands', 'bb',
+H.seriesType('abands', 'sma',
     /**
      * Acceleration bands (ABANDS). This series requires the `linkedTo` option
-     * to be set and should be loaded after the `stock/indicators/indicators.js`
-     * and `stock/indicators/bollinger-bands.js` files.
+     * to be set and should be loaded after the
+     * `stock/indicators/indicators.js`.
      *
-     * @extends plotOptions.bb
+     * @extends plotOptions.sma
      * @product highstock
      * @sample {highstock} stock/indicators/acceleration-bands
      *        Acceleration Bands
@@ -42,10 +41,6 @@ H.seriesType('abands', 'bb',
      * @optionparent plotOptions.abands
      */
     {
-        /**
-         * @excluding
-         *    standardDeviation
-         */
         params: {
             period: 20,
             /**
@@ -54,25 +49,39 @@ H.seriesType('abands', 'bb',
              * @type {Number}
              * @product highstock
              */
-            factor: 0.001
+            factor: 0.001,
+            index: 3
         },
-        lineWidth: 1
-    }, /** @lends Highcharts.Series.prototype */ {
+        lineWidth: 1,
+        topLine: {
+            styles: {
+                /**
+                 * Pixel width of the line.
+                 *
+                 * @type {Number}
+                 */
+                lineWidth: 1
+            }
+        },
+        bottomLine: {
+            styles: {
+                /**
+                 * Pixel width of the line.
+                 *
+                 * @type {Number}
+                 */
+                lineWidth: 1
+            }
+        },
+        dataGrouping: {
+            approximation: 'averages'
+        }
+    }, /** @lends Highcharts.Series.prototype */ merge(multipleLinesMixin, {
+        pointArrayMap: ['top', 'middle', 'bottom'],
+        pointValKey: 'middle',
         nameBase: 'Acceleration Bands',
         nameComponents: ['period', 'factor'],
-        init: function () {
-            var args = arguments,
-                ctx = this;
-
-            parentLoaded(
-                BB,
-                'bollinger-bands',
-                ctx.type,
-                function (indicator) {
-                    indicator.prototype.init.apply(ctx, args);
-                }
-            );
-        },
+        linesApiNames: ['topLine', 'bottomLine'],
         getValues: function (series, params) {
             var period = params.period,
                 factor = params.factor,
@@ -155,7 +164,7 @@ H.seriesType('abands', 'bb',
                 yData: yData
             };
         }
-    }
+    })
 );
 
 /**
