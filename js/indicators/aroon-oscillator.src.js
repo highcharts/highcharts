@@ -4,7 +4,7 @@ import multipleLinesMixin from '../mixins/multipe-lines.js';
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var AROON = H.seriesTypes.aroon,
-    parentLoaded = requiredIndicatorMixin.isParentIndicatorLoaded;
+    requiredIndicator = requiredIndicatorMixin;
 
 /**
  * The Aroon Oscillator series type.
@@ -54,7 +54,7 @@ H.seriesType('aroonoscillator', 'aroon',
             var args = arguments,
                 ctx = this;
 
-            parentLoaded(
+            requiredIndicator.isParentLoaded(
                 AROON,
                 'aroon',
                 ctx.type,

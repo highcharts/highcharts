@@ -2,8 +2,6 @@
 
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-import './ema.src.js';
-import './atr.src.js';
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
 var SMA = H.seriesTypes.sma,
@@ -16,7 +14,8 @@ H.seriesType('keltnerchannels', 'sma',
     /**
      * Keltner Channels. This series requires the `linkedTo`
      * option to be set and should be loaded after the
-     * `stock/indicators/indicators.js`.
+     * `stock/indicators/indicators.js`, `stock/indicators/atr.js`, and
+     * `stock/ema/.js`.
      *
      * @extends plotOptions.sma
      * @product highstock
@@ -97,6 +96,7 @@ H.seriesType('keltnerchannels', 'sma',
         nameBase: 'Keltner Channels',
         nameComponents: ['period', 'periodATR', 'multiplierATR'],
         linesApiNames: ['topLine', 'bottomLine'],
+        requiredIndicators: ['ema', 'atr'],
         init: function () {
             SMA.prototype.init.apply(this, arguments);
             // Set default color for lines:
