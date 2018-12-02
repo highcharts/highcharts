@@ -181,7 +181,7 @@ Instrument.prototype.setGain = function (gainValue, rampTime) {
             this.gainNode.gain.setValueAtTime(
                 this.gainNode.gain.value, H.audioContext.currentTime
             );
-            this.gainNode.gain.exponentialRampToValueAtTime(
+            this.gainNode.gain.linearRampToValueAtTime(
                 gainValue,
                 H.audioContext.currentTime + rampTime / 1000
             );
@@ -258,12 +258,7 @@ Instrument.prototype.oscillatorPlay = function (frequency) {
         this.oscillatorStarted = true;
     }
 
-    this.oscillator.frequency.setValueAtTime(
-        this.oscillator.frequency.value, H.audioContext.currentTime
-    );
-    this.oscillator.frequency.linearRampToValueAtTime(
-        frequency, H.audioContext.currentTime + 0.01
-    );
+    this.oscillator.frequency.value = frequency;
 };
 
 
@@ -402,14 +397,14 @@ Instrument.prototype.play = function (options) {
             options.duration - H.sonification.fadeOutDuration
     );
 
-    // Set the volume and panning
-    setOrStartTimer(H.pick(options.volume, 1), 'setGain');
-    setOrStartTimer(H.pick(options.pan, 0), 'setPan');
-
     // Play, depending on instrument type
     if (instrument.options.type === 'oscillator') {
         setOrStartTimer(frequency, 'oscillatorPlay');
     }
+
+    // Set the volume and panning
+    setOrStartTimer(H.pick(options.volume, 1), 'setGain', 2); // Slight ramp
+    setOrStartTimer(H.pick(options.pan, 0), 'setPan');
 };
 
 

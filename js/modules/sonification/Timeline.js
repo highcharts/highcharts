@@ -295,7 +295,9 @@ TimelinePath.prototype.pause = function (fadeOut) {
 
     // Cancel currently playing events
     Object.keys(timelinePath.eventsPlaying).forEach(function (id) {
-        timelinePath.eventsPlaying[id].cancel(fadeOut);
+        if (timelinePath.eventsPlaying[id]) {
+            timelinePath.eventsPlaying[id].cancel(fadeOut);
+        }
     });
     timelinePath.eventsPlaying = {};
 };
@@ -464,10 +466,10 @@ Timeline.prototype.playPaths = function (direction) {
 
                 // Handle next paths
                 pathsEnded++;
-                if (nextPaths && !cancelled) {
-                    if (pathsEnded >= curPaths.length) {
-                        // We finished all of the current paths for cursor.
-                        // Move cursor along
+                if (pathsEnded >= curPaths.length) {
+                    // We finished all of the current paths for cursor.
+                    if (nextPaths && !cancelled) {
+                        // We have more paths, move cursor along
                         timeline.cursor += direction;
                         // Reset upcoming path cursors before playing
                         H.splat(nextPaths).forEach(function (nextPath) {
@@ -477,11 +479,11 @@ Timeline.prototype.playPaths = function (direction) {
                         });
                         // Play next
                         timeline.playPaths(direction);
+                    } else {
+                        // If it is the last path in this direction, call onEnd
+                        signalHandler.emitSignal('playOnEnd', signalData);
+                        signalHandler.emitSignal('masterOnEnd', signalData);
                     }
-                } else {
-                    // If it is the last path in this direction, call onEnd
-                    signalHandler.emitSignal('playOnEnd', signalData);
-                    signalHandler.emitSignal('masterOnEnd', signalData);
                 }
             });
         };
@@ -508,7 +510,9 @@ Timeline.prototype.pause = function (fadeOut) {
 
     // Cancel currently playing events
     Object.keys(timeline.pathsPlaying).forEach(function (id) {
-        timeline.pathsPlaying[id].pause(fadeOut);
+        if (timeline.pathsPlaying[id]) {
+            timeline.pathsPlaying[id].pause(fadeOut);
+        }
     });
     timeline.pathsPlaying = {};
 };

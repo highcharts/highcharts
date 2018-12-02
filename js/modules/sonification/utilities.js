@@ -159,7 +159,9 @@ var utilities = {
             virtualAxisValue = limits.min +
                 lenVirtualAxis * (value - dataExtremes.min) / lenValueAxis;
 
-        return Math.max(Math.min(virtualAxisValue, limits.max), limits.min);
+        return lenValueAxis > 0 ?
+            Math.max(Math.min(virtualAxisValue, limits.max), limits.min) :
+            limits.min;
     }
 };
 

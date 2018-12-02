@@ -124,7 +124,29 @@ function getPointEarcons(point, earconDefinitions) {
 
 
 /**
+ * Utility function to get a new list of instrument options where all the
+ * instrument references are copies.
+ * @private
+ *
+ * @param {Array<PointInstrumentOptions>} instruments The instrument options.
+ * @return {Array<PointInstrumentOptions>} Array of copyed instrument options.
+ */
+function makeInstrumentCopies(instruments) {
+    return instruments.map(function (instrumentDef) {
+        var instrument = instrumentDef.instrument,
+            copy = (typeof instrument === 'string' ?
+                H.sonification.instruments[instrument] :
+                instrument).copy();
+        return H.merge(instrumentDef, { instrument: copy });
+    });
+}
+
+
+/**
  * Create a TimelinePath from a series. Takes the same options as seriesSonify.
+ * To intuitively allow multiple series to play simultaneously we make copies of
+ * the instruments for each series.
+ *
  * @private
  *
  * @param {Highcharts.Series} series The series to build from.
@@ -149,6 +171,9 @@ function buildTimelinePathFromSeries(series, options) {
         dataExtremes = getExtremesForInstrumentProps(
             series.chart, options.instruments, options.dataExtremes
         ),
+        // Make copies of the instruments used for this series, to allow
+        // multiple series with the same instrument to play together
+        instruments = makeInstrumentCopies(options.instruments),
         // Go through the points, convert to events, optionally add Earcons
         timelineEvents = series.points.reduce(function (events, point) {
             var earcons = getPointEarcons(point, options.earcons || []),
@@ -160,7 +185,7 @@ function buildTimelinePathFromSeries(series, options) {
                     time: time,
                     id: point.id,
                     playOptions: {
-                        instruments: options.instruments,
+                        instruments: instruments,
                         dataExtremes: dataExtremes
                     }
                 }),
@@ -348,7 +373,7 @@ function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
             };
         });
         // If order is simultaneous, group all series together
-        if (order === 'simultaneous') {
+        if (orderOptions === 'simultaneous') {
             order = [order];
         }
     } else {
@@ -436,7 +461,7 @@ function getWaitTime(order) {
     return order.reduce(function (waitTime, orderDef) {
         var def = H.splat(orderDef);
         return waitTime + (
-            def.length === 1 && def[0].silentWait || 0
+            def.length === 1 && def[0].options && def[0].options.silentWait || 0
         );
     }, 0);
 }
@@ -447,47 +472,41 @@ function getWaitTime(order) {
  * same time, to sync them.
  * @private
  *
- * @param {Array<*>} order The order of TimelinePaths/items. The order array is
- *  modified in place.
+ * @param {Array<TimelinePath>} paths The paths to sync.
  */
-function syncSimultaneousPaths(order) {
-    order.forEach(function (orderDef) {
-        var simultaneousPaths = H.splat(orderDef),
-            simulExtremes = simultaneousPaths.reduce(function (acc, item) {
-                if (item.series) {
-                    acc.min = Math.min(
-                        acc.min, item.seriesOptions.timeExtremes.min
-                    );
-                    acc.max = Math.max(
-                        acc.max, item.seriesOptions.timeExtremes.max
-                    );
-                }
-                return acc;
-            }, {
-                min: Infinity,
-                max: -Infinity
-            });
+function syncSimultaneousPaths(paths) {
+    // Find the extremes for these paths
+    var extremes = paths.reduce(function (extremes, path) {
+        var events = path.events;
+        if (events && events.length) {
+            extremes.min = Math.min(events[0].time, extremes.min);
+            extremes.max = Math.max(
+                events[events.length - 1].time, extremes.max
+            );
+        }
+        return extremes;
+    }, {
+        min: Infinity,
+        max: -Infinity
+    });
 
-        // If we have extremes for these paths, go through them and normalize
-        if (isFinite(simulExtremes.max) && isFinite(simulExtremes.min)) {
-            simultaneousPaths.forEach(function (item) {
-                var start = new H.sonification.TimelineEvent({
-                        time: simulExtremes.min
-                    }),
-                    end = new H.sonification.TimelineEvent({
-                        time: simulExtremes.max
-                    });
-                if (item.series) {
-                    // If the item is a series building object, add props only
-                    item.startEvent = start;
-                    item.endEvent = end;
-                    item.durationValueSpan =
-                        simulExtremes.max - simulExtremes.min;
-                } else {
-                    // If we have a timeline, just add the events directly
-                    item.addTimelineEvents([start, end]);
-                }
-            });
+    // Go through the paths and add events to make them fit the same timespan
+    paths.forEach(function (path) {
+        var events = path.events,
+            hasEvents = events && events.length,
+            eventsToAdd = [];
+        if (!(hasEvents && events[0].time <= extremes.min)) {
+            eventsToAdd.push(new H.sonification.TimelineEvent({
+                time: extremes.min
+            }));
+        }
+        if (!(hasEvents && events[events.length - 1].time >= extremes.max)) {
+            eventsToAdd.push(new H.sonification.TimelineEvent({
+                time: extremes.max
+            }));
+        }
+        if (eventsToAdd.length) {
+            path.addTimelineEvents(eventsToAdd);
         }
     });
 }
@@ -502,13 +521,16 @@ function syncSimultaneousPaths(order) {
  * @return {number} The total time value span difference for all series.
  */
 function getSimulPathDurationTotal(order) {
-    return order.reduce(function (acc, cur) {
-        var seriesItem = H.find(H.splat(cur), function (item) {
-            return item.durationValueSpan;
-        });
-        return acc + (
-            seriesItem ? seriesItem.durationValueSpan : 0
-        );
+    return order.reduce(function (durationTotal, orderDef) {
+        return durationTotal + H.splat(orderDef).reduce(
+            function (maxPathDuration, item) {
+                var timeExtremes = item.series && item.seriesOptions &&
+                        item.seriesOptions.timeExtremes;
+                return timeExtremes ?
+                    Math.max(
+                        maxPathDuration, timeExtremes.max - timeExtremes.min
+                    ) : maxPathDuration;
+            }, 0);
     }, 0);
 }
 
@@ -576,26 +598,18 @@ function buildPathsFromOrder(order, duration) {
                             );
 
                         // Add the path
-                        var path = buildTimelinePathFromSeries(
+                        simulPaths.push(buildTimelinePathFromSeries(
                             item.series,
                             item.seriesOptions
-                        );
-
-                        // Add start/end times to sync with other paths played
-                        // at the same time.
-                        path.addTimelineEvents(
-                            [item.startEvent, item.endEvent]
-                        );
-
-                        // Push the path
-                        simulPaths.push(path);
+                        ));
                     }
                     return simulPaths;
                 }, []
             );
 
         // Add in the simultaneous paths
-        return allPaths.concat(simultaneousPaths);
+        allPaths.push(simultaneousPaths);
+        return allPaths;
     }, []);
 }
 
@@ -685,14 +699,17 @@ function chartSonify(options) {
         return buildSeriesOptions(series, dataExtremes, options);
     });
 
-    // Stretch simultaneous paths to span the same relative time, and add waits
-    // after simultaneous paths with series in them.
-    syncSimultaneousPaths(order);
-    order = addAfterSeriesWaits(order);
+    // Add waits after simultaneous paths with series in them.
+    order = addAfterSeriesWaits(order, options.afterSeriesWait || 0);
 
     // We now have a list of either TimelinePath objects or series that need to
     // be converted to TimelinePath objects. Convert everything to paths.
     var paths = buildPathsFromOrder(order, options.duration);
+
+    // Sync simultaneous paths
+    paths.forEach(function (simultaneousPaths) {
+        syncSimultaneousPaths(simultaneousPaths);
+    });
 
     // We have a set of paths. Create the timeline, and play it.
     this.sonification.timeline = new H.sonification.Timeline({
