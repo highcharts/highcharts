@@ -186,6 +186,119 @@ var isSet = function (x) {
 };
 
 /**
+ * Calculates a margin for a point based on the iternal and external circles.
+ * The margin describes if the point is well placed within the internal circles,
+ * and away from the external
+ *
+ * TODO: add unit tests.
+ *
+ * @param {object} point The point to evaluate.
+ * @param {array} internal The internal circles.
+ * @param {array} external The external circles.
+ * @returns {number} Returns the margin.
+ */
+var getMarginFromCircles =
+function getMarginFromCircles(point, internal, external) {
+    var margin = internal.reduce(function (margin, circle) {
+        var m = circle.r - getDistanceBetweenPoints(point, circle);
+        return (m <= margin) ? m : margin;
+    }, Number.MAX_SAFE_INTEGER);
+
+    margin = external.reduce(function (margin, circle) {
+        var m = getDistanceBetweenPoints(point, circle) - circle.r;
+        return (m <= margin) ? m : margin;
+    }, margin);
+
+    return margin;
+};
+
+/**
+ * Finds the optimal label position by looking for a position that has a low
+ * distance from the internal circles, and as large possible distane to the
+ * external circles.
+ *
+ * TODO: Optimize the intial position.
+ * TODO: Add unit tests.
+ *
+ * @param {array} internal Internal circles.
+ * @param {array} external External circles.
+ * @returns {object} Returns the found position.
+ */
+var getLabelPosition = function getLabelPosition(internal, external) {
+    // Get the best label position within the internal circles.
+    var best = internal.reduce(function (best, circle) {
+        var d = circle.r / 2;
+
+        // Give a set of points with the circle to evaluate as the best label
+        // position.
+        return [
+            { x: circle.x, y: circle.y },
+            { x: circle.x + d, y: circle.y },
+            { x: circle.x - d, y: circle.y },
+            { x: circle.x, y: circle.y + d },
+            { x: circle.x, y: circle.y - d }
+        ]
+        // Iterate the given points and return the one with the largest margin.
+        .reduce(function (best, point) {
+            var margin = getMarginFromCircles(point, internal, external);
+
+            // If the margin better than the current best, then update best.
+            if (best.margin < margin) {
+                best.point = point;
+                best.margin = margin;
+            }
+            return best;
+        }, best);
+    }, {
+        point: undefined,
+        margin: -Number.MAX_SAFE_INTEGER
+    });
+
+    // Return the point which was found to have the best margin.
+    return best.point;
+};
+
+/**
+ * Calulates data label positions for a list of relations.
+ *
+ * TODO: add unit tests
+ * NOTE: may be better suited as a part of the layout function.
+ *
+ * @param {array} relations The list of relations.
+ * @returns {object} Returns a map from id to the data label position.
+ */
+var getLabelPositions = function getLabelPositions(relations) {
+    var singleSets = relations.filter(isSet);
+    return relations.reduce(function (map, relation) {
+        if (relation.value) {
+            var sets = relation.sets,
+                id = sets.join(),
+                // Create a list of internal and external circles.
+                data = singleSets.reduce(function (data, set) {
+                    // If the set exists in this relation, then it is internal,
+                    // otherwise it will be external.
+                    var isInternal = sets.indexOf(set.sets[0]) > -1,
+                        property = isInternal ? 'internal' : 'external';
+
+                    // Add the circle to the list.
+                    data[property].push(set.circle);
+                    return data;
+                }, {
+                    internal: [],
+                    external: []
+                });
+
+            // Calulate the label position.
+            map[id] = getLabelPosition(
+                data.internal,
+                data.external
+            );
+        }
+        return map;
+    }, {});
+};
+
+/**
  * Takes an array of relations and adds the properties totalOverlap and
  * overlapping to each set.
  * The property totalOverlap is the sum of value for each relation where this
@@ -568,6 +681,9 @@ var vennSeries = {
         // Calculate the positions of each circle.
         var mapOfIdToShape = layout(relations);
 
+        // Calculate positions of each data label
+        var mapOfIdToLabelPosition = getLabelPositions(relations);
+
         // Calculate the scale, and center of the plot area.
         var field = Object.keys(mapOfIdToShape)
             .filter(function (key) {
@@ -583,9 +699,10 @@ var vennSeries = {
         // Iterate all points and calculate and draw their graphics.
         this.points.forEach(function (point) {
             var sets = isArray(point.sets) ? point.sets : [],
-                shape = mapOfIdToShape[sets.join()],
+                id = sets.join(),
+                shape = mapOfIdToShape[id],
                 shapeArgs = {},
-                dataLabelPosition = {};
+                dataLabelPosition = mapOfIdToLabelPosition[id];
 
             if (shape) {
                 if (shape.r) {
@@ -594,9 +711,6 @@ var vennSeries = {
                         y: centerY + shape.y * scale,
                         r: shape.r * scale
                     };
-
-                    dataLabelPosition.x = shapeArgs.x;
-                    dataLabelPosition.y = shapeArgs.y;
                 } else if (shape.d) {
                     // TODO: find a better way to handle scaling of a path.
                     var d = shape.d.reduce(function (path, arr) {
@@ -613,9 +727,14 @@ var vennSeries = {
                     }, [])
                     .join(' ');
                     shapeArgs.d = d;
+                }
 
-                    dataLabelPosition.x = centerX + shape.center.x * scale;
-                    dataLabelPosition.y = centerY + shape.center.y * scale;
+                // Scale the position for the data label.
+                if (dataLabelPosition) {
+                    dataLabelPosition.x = centerX + dataLabelPosition.x * scale;
+                    dataLabelPosition.y = centerY + dataLabelPosition.y * scale;
+                } else {
+                    dataLabelPosition = {};
                 }
             }
 
