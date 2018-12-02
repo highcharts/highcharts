@@ -728,21 +728,29 @@ var processVennData = function processVennData(data) {
  * getScale - Calculates the proper scale to fit the cloud inside the plotting
  *            area.
  *
- * NOTE: copied from wordcloud.
+ * TODO: add unit test
  *
  * @param  {number} targetWidth  Width of target area.
  * @param  {number} targetHeight Height of target area.
  * @param  {object} field The playing field.
  * @param  {Series} series Series object.
- * @return {number} Returns the value to scale the playing field up to the size
- *     of the target area.
+ * @returns {object} Returns the value to scale the playing field up to the size
+ * of the target area, and center of x and y.
  */
 var getScale = function getScale(targetWidth, targetHeight, field) {
-    var height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
-        width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
+    var height = field.bottom - field.top, // top is smaller than bottom
+        width = field.right - field.left,
         scaleX = width > 0 ? 1 / width * targetWidth : 1,
-        scaleY = height > 0 ? 1 / height * targetHeight : 1;
-    return Math.min(scaleX, scaleY);
+        scaleY = height > 0 ? 1 / height * targetHeight : 1,
+        adjustX = (field.right + field.left) / 2,
+        adjustY = (field.top + field.bottom) / 2,
+        scale = Math.min(scaleX, scaleY);
+
+    return {
+        scale: scale,
+        centerX: targetWidth / 2 - adjustX * scale,
+        centerY: targetHeight / 2 - adjustY * scale
+    };
 };
 
 /**
@@ -838,9 +846,10 @@ var vennSeries = {
             .reduce(function (field, key) {
                 return updateFieldBoundaries(field, mapOfIdToShape[key]);
             }, { top: 0, bottom: 0, left: 0, right: 0 }),
-            scale = getScale(chart.plotWidth, chart.plotHeight, field),
-            centerX = chart.plotWidth / 2,
-            centerY = chart.plotHeight / 2;
+            scaling = getScale(chart.plotWidth, chart.plotHeight, field),
+            scale = scaling.scale,
+            centerX = scaling.centerX,
+            centerY = scaling.centerY;
 
         // Iterate all points and calculate and draw their graphics.
         this.points.forEach(function (point) {
