@@ -123,7 +123,7 @@ var getCirclesIntersectionPoints = function getIntersectionPoints(circles) {
  * @returns {boolean} Returns true if the point is inside, false if outside.
  */
 var isPointInsideCircle = function isPointInsideCircle(point, circle) {
-    return getDistanceBetweenPoints(point, circle) <= circle.r;
+    return getDistanceBetweenPoints(point, circle) <= circle.r + 1e-10;
 };
 
 /**
@@ -258,7 +258,8 @@ var geometryCircles = {
     getCirclesIntersectionPoints: getCirclesIntersectionPoints,
     getOverlapBetweenCircles: getOverlapBetweenCircles,
     isPointInsideCircle: isPointInsideCircle,
-    isPointInsideAllCircles: isPointInsideAllCircles
+    isPointInsideAllCircles: isPointInsideAllCircles,
+    round: round
 };
 
 export default geometryCircles;

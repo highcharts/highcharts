@@ -198,8 +198,8 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', function (assert) {
 
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(3, 4, 6.64),
-        5,
-        'should return a distance of 5 when r1=3, r2=4 and overlap=6.64.'
+        5.002,
+        'should return a distance of 5.002 when r1=3, r2=4 and overlap=6.64.'
     );
 });
 
