@@ -54,22 +54,31 @@ H.extend(
                 series = this.series,
                 options = this.options,
                 nodesLength = nodes.length + 1,
-                // Used in initial positions:
-                sqrtNodesLength = Math.ceil(Math.sqrt(nodesLength)),
                 // Fake object which will imitate animations
                 mockAnimator = {
                     style: {}
                 },
                 simulation;
 
+            // Return a repeatable, quasi-random number based on an integer
+            // input. For the initial positions
+            function unrandom(n) {
+                var rand = n * n / Math.PI;
+                rand = rand - Math.floor(rand);
+                return rand;
+            }
+
             // Initial positions:
             nodes.forEach(
                 function (node, index) {
-                    var xPos = index / nodesLength,
-                        yPos = (index % sqrtNodesLength) / sqrtNodesLength;
-
-                    node.plotX = pick(node.plotX, box.width * xPos);
-                    node.plotY = pick(node.plotY, box.height * yPos);
+                    node.plotX = pick(
+                        node.plotX,
+                        box.width * unrandom(index)
+                    );
+                    node.plotY = pick(
+                        node.plotY,
+                        box.height * unrandom(nodesLength + index)
+                    );
 
                     node.dispX = 0;
                     node.dispY = 0;
