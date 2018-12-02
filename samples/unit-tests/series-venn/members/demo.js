@@ -183,6 +183,12 @@ QUnit.test('getOverlapBetweenCircles', function (assert) {
         0,
         'should return 0 when r1=2, r2=3 and d=6. The circles does not overlap.'
     );
+
+    assert.strictEqual(
+        getOverlapBetweenCircles(1.9544100476116797, 1.9544100476116797, 0),
+        12,
+        'should return the area of one of the circles when they have equal position and radius.'
+    );
 });
 
 QUnit.test('getDistanceBetweenCirclesByOverlap', function (assert) {

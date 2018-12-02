@@ -28,7 +28,7 @@ function getOverlapBetweenCircles(r1, r2, d) {
         var r1Square = r1 * r1,
             r2Square = r2 * r2;
 
-        if (d < Math.abs(r2 - r1)) {
+        if (d <= Math.abs(r2 - r1)) {
             // If the circles are completely overlapping, then the overlap
             // equals the area of the smallest circle.
             overlap = Math.PI * Math.min(r1Square, r2Square);
