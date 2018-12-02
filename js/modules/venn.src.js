@@ -31,6 +31,7 @@ var color = H.Color,
         return typeof x === 'undefined';
     },
     merge = H.merge,
+    round = geometryCircles.round,
     seriesType = H.seriesType;
 
 var objectValues = function objectValues(obj) {
@@ -178,7 +179,7 @@ function getDistanceBetweenCirclesByOverlap(r1, r2, overlap) {
         });
 
     // Round the resulting value to have two decimals.
-    return Math.round(list[index] * 100) / 100;
+    return round(list[index], 14);
 };
 
 var isSet = function (x) {
@@ -523,8 +524,8 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
             return relation.sets.length === 1;
         }).forEach(function (relation) {
             mapOfIdToCircles[relation.sets[0]] = relation.circle = {
-                x: 0,
-                y: 0,
+                x: Number.MAX_SAFE_INTEGER,
+                y: Number.MAX_SAFE_INTEGER,
                 r: Math.sqrt(relation.value / Math.PI)
             };
         });
