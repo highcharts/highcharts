@@ -1314,16 +1314,19 @@ gulp.task('jsdoc-options', jsdocOptions);
  * Add TypeScript declarations to the code folder using tree.json and
  * tree-namespace.json.
  */
-gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], () => {
+function dts() {
     return require('highcharts-declarations-generator').task();
-});
+}
 
 /**
  * Test TypeScript declarations in the code folder using tsconfig.json.
  */
-gulp.task('dtslint', ['dts'], () => {
+function dtsLint() {
     return commandLine('npx dtslint --onlyTestTsNext');
-});
+}
+
+gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], dts);
+gulp.task('dtslint', ['dts'], dtsLint);
 
 /**
  * Gulp task to run the building process of distribution files. By default it
@@ -1453,6 +1456,10 @@ gulp.task('dist', () => {
         .then(gulpify('createProductJS', createProductJS))
         .then(gulpify('createExamples', createAllExamples))
         .then(gulpify('copyGraphicsToDist', copyGraphicsToDist))
+        .then(gulpify('jsdoc-namespace', jsdocNamespace))
+        .then(gulpify('jsdoc-options', jsdocOptions))
+        .then(gulpify('dts', dts))
+        .then(gulpify('dtsLint', dtsLint))
         .then(gulpify('ant-dist', antDist));
 });
 
