@@ -42,7 +42,7 @@ const buildESModules = () => {
     buildModules({
         base: './js/',
         output: './code/',
-        type: 'both'
+        type: 'classic'
     });
 };
 
@@ -1403,8 +1403,7 @@ gulp.task('default', () => {
     const watchlist = [
         './css/*.scss',
         './js/**/*.js',
-        './code/es-modules/**/*.js',
-        './code/js/es-modules/**/*.js'
+        './code/es-modules/**/*.js'
     ];
     const msgBuildAll = 'Built JS files from modules.'.cyan;
     let watcher;
@@ -1428,9 +1427,6 @@ gulp.task('default', () => {
         } else if (path.startsWith('code/es-modules')) {
             // Build dist files in classic mode.
             mapOfWatchFn['code/es-modules/**/*.js'](event);
-        } else if (path.startsWith('code/js/es-modules')) {
-            // Build dist files in styled mode.
-            mapOfWatchFn['code/js/es-modules/**/*.js'](event);
         }
     };
     return styles()
