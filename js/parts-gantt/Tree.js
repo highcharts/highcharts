@@ -1,13 +1,20 @@
-/**
-* (c) 2016 Highsoft AS
-* Authors: Jon Arild Nygard
-*
-* License: www.highcharts.com/license
-*/
+/* *
+ *
+ *  (c) 2016-2018 Highsoft AS
+ *
+ *  Authors: Jon Arild Nygard
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 /* eslint no-console: 0 */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+
 var extend = H.extend,
     isNumber = H.isNumber,
     pick = H.pick,
@@ -17,10 +24,18 @@ var extend = H.extend,
 
 /**
  * Creates an object map from parent id to childrens index.
- * @param   {Array}  data          List of points set in options.
- * @param   {string} data[].parent Parent id of point.
- * @param   {Array}  ids           List of all point ids.
- * @returns {Object}               Map from parent id to children index in data
+ *
+ * @private
+ * @function Highcharts.Tree#getListOfParents
+ *
+ * @param {Array<*>} data
+ *        List of points set in options. `Array<*>.parent`is parent id of point.
+ *
+ * @param {Array<string>} ids
+ *        List of all point ids.
+ *
+ * @return {object}
+ *         Map from parent id to children index in data
  */
 var getListOfParents = function (data, ids) {
     var listOfParents = data.reduce(function (prev, curr) {
@@ -66,10 +81,8 @@ var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
         before(node, options);
     }
 
-    /**
-     * Call getNode recursively on the children. Calulate the height of the
-     * node, and the number of descendants.
-     */
+    // Call getNode recursively on the children. Calulate the height of the
+    // node, and the number of descendants.
     children = ((mapOfIdToChildren[id] || [])).map(function (child) {
         var node = getNode(
                 child.id,

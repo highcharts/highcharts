@@ -16,6 +16,7 @@ var addEvent = H.addEvent,
     getStyle = H.getStyle,
     merge = H.merge,
     css = H.css,
+    win = H.win,
     DIV = 'div',
     SPAN = 'span',
     UL = 'ul',
@@ -74,17 +75,20 @@ H.setOptions({
                 verticalDoubleArrow: 'Vertical double arrow',
                 fibonacci: 'Fibonacci',
                 pitchfork: 'Pitchfork',
-                'parallel-channel': 'Parallel channel',
+                parallelChannel: 'Parallel channel',
+                infinityLine: 'Infinity line',
                 measureXY: 'Measure XY',
                 measureX: 'Measure X',
                 measureY: 'Measure Y',
                 zoomX: 'Zoom X',
                 zoomY: 'Zoom Y',
                 zoomXY: 'Zooom XY',
+                fullScreen: 'Fullscreen',
                 typeOHLC: 'OHLC',
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
                 fill: 'Fill',
+                format: 'Text',
                 strokeWidth: 'Line width',
                 stroke: 'Line color',
                 title: 'Title',
@@ -109,15 +113,94 @@ H.setOptions({
                 crosshairX: 'Crosshair X',
                 crosshairY: 'Crosshair Y',
                 tunnel: 'Tunnel',
-                background: 'Background'
+                background: 'Background',
+                addButton: 'add',
+                saveButton: 'save',
+                editButton: 'edit',
+                removeButton: 'remove',
+                series: 'Series',
+                volume: 'Volume'
             }
         }
     },
+    /**
+     * Configure the stockTools gui strings in the chart. Requires the
+     * [stockTools module]() to be loaded. For a description of the module
+     * and information on its features, see [Highcharts StockTools]().
+     *
+     * @product highstock
+     *
+     * @sample stock/demo/stock-tools-gui Stock Tools GUI
+     *
+     * @sample stock/demo/stock-tools-custom-gui Stock Tools customized GUI
+     *
+     * @since 7.0.0
+     * @type {Object}
+     * @optionparent stockTools
+     */
     stockTools: {
+        /**
+         * Definitions of buttons in Stock Tools GUI.
+         */
         gui: {
+            /**
+             * Enable or disable the stockTools gui.
+             *
+             * @type      {boolean}
+             * @default true
+             */
             enabled: true,
+            /**
+             * A CSS class name to apply to the stocktools' div,
+             * allowing unique CSS styling for each chart.
+             *
+             * @type      {string}
+             * @default 'stocktools-wrapper'
+             *
+             */
             className: 'stocktools-wrapper',
+            /**
+             * A CSS class name to apply to the container of buttons,
+             * allowing unique CSS styling for each chart.
+             *
+             * @type      {string}
+             * @default 'stocktools-toolbar'
+             *
+             */
             toolbarClassName: 'stocktools-toolbar',
+            /**
+             * Path where Highcharts will look for icons. Change this to use
+             * icons from a different server.
+             */
+            iconsURL: 'https://code.highcharts.com/@product.version@/gfx/stock-icons/',
+            /**
+             * A collection of strings pointing to config options for the
+             * toolbar items. Each name refers to unique key from definitions
+             * object.
+             *
+             * @type      {array}
+             *
+             * @default [
+             *  'indicators',
+             *   'separator',
+             *   'simpleShapes',
+             *   'lines',
+             *   'crookedLines',
+             *   'measure',
+             *   'advanced',
+             *   'toggleAnnotations',
+             *   'separator',
+             *   'verticalLabels',
+             *   'flags',
+             *   'separator',
+             *   'zoomChange',
+             *   'fullScreen',
+             *   'typeChange',
+             *   'separator',
+             *   'currentPriceIndicator',
+             *   'saveChart'
+             *  ]
+             */
             buttons: [
                 'indicators',
                 'separator',
@@ -138,23 +221,82 @@ H.setOptions({
                 'currentPriceIndicator',
                 'saveChart'
             ],
+            /**
+             * An options object of the buttons definitions. Each name refers to
+             * unique key from buttons array.
+             *
+             * @type      {object}
+             *
+             */
             definitions: {
                 separator: {
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/separator.svg)'
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
+                    symbol: 'separator.svg'
                 },
                 simpleShapes: {
-                    items: ['circle', 'rectangle', 'label'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'label',
+                     *   'circle',
+                     *   'rectangle'
+                     * ]
+                     *
+                     */
+                    items: [
+                        'label',
+                        'circle',
+                        'rectangle'
+                    ],
                     circle: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/circle.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
+                        symbol: 'circle.svg'
                     },
                     rectangle: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/rectangle.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
+                        symbol: 'rectangle.svg'
                     },
                     label: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/label.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
+                        symbol: 'label.svg'
                     }
                 },
                 flags: {
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'flagCirclepin',
+                     *   'flagDiamondpin',
+                     *   'flagSquarepin',
+                     *   'flagSimplepin'
+                     * ]
+                     *
+                     */
                     items: [
                         'flagCirclepin',
                         'flagDiamondpin',
@@ -162,19 +304,57 @@ H.setOptions({
                         'flagSimplepin'
                     ],
                     flagSimplepin: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-basic.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
+                        symbol: 'flag-basic.svg'
                     },
                     flagDiamondpin: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-diamond.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         *
+                         */
+                        symbol: 'flag-diamond.svg'
                     },
                     flagSquarepin: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-trapeze.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'flag-trapeze.svg'
                     },
                     flagCirclepin: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-elipse.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'flag-elipse.svg'
                     }
                 },
                 lines: {
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'segment',
+                     *   'arrowSegment',
+                     *   'ray',
+                     *   'arrowRay',
+                     *   'line',
+                     *   'arrowLine',
+                     *   'horizontalLine',
+                     *   'verticalLine'
+                     * ]
+                     */
                     items: [
                         'segment',
                         'arrowSegment',
@@ -186,48 +366,136 @@ H.setOptions({
                         'verticalLine'
                     ],
                     segment: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/segment.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'segment.svg'
                     },
                     arrowSegment: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-segment.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'arrow-segment.svg'
                     },
                     ray: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/ray.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'ray.svg'
                     },
                     arrowRay: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-ray.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'arrow-ray.svg)'
                     },
                     line: {
-                        type: 'aaa',
-                        label: 'bbb',
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/line.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'line.svg'
                     },
                     arrowLine: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-line.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'arrow-line.svg'
                     },
                     verticalLine: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-line.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'vertical-line.svg'
                     },
                     horizontalLine: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/horizontal-line.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'horizontal-line.svg'
                     }
                 },
                 crookedLines: {
-                    items: ['elliott3', 'elliott5', 'crooked3', 'crooked5'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'elliott3',
+                     *   'elliott5',
+                     *   'crooked3',
+                     *   'crooked5'
+                     * ]
+                     *
+                     */
+                    items: [
+                        'elliott3',
+                        'elliott5',
+                        'crooked3',
+                        'crooked5'
+                    ],
                     crooked3: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/crooked-3.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'crooked-3.svg'
                     },
                     crooked5: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/crooked-5.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'crooked-5.svg'
                     },
                     elliott3: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/elliott-3.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'elliott-3.svg'
                     },
                     elliott5: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/elliott-5.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'elliott-5.svg'
                     }
                 },
                 verticalLabels: {
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'verticalCounter',
+                     *   'verticalLabel',
+                     *   'verticalArrow',
+                     *   'verticalDoubleArrow'
+                     * ]
+                     */
                     items: [
                         'verticalCounter',
                         'verticalLabel',
@@ -235,80 +503,245 @@ H.setOptions({
                         'verticalDoubleArrow'
                     ],
                     verticalCounter: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-counter.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'vertical-counter.svg'
                     },
                     verticalLabel: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-label.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'vertical-label.svg'
                     },
                     verticalArrow: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-arrow.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'vertical-arrow.svg'
                     },
                     verticalDoubleArrow: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-double-arrow.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'vertical-double-arrow.svg'
                     }
                 },
                 advanced: {
-                    items: ['fibonacci', 'pitchfork', 'parallel-channel'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'fibonacci',
+                     *   'pitchfork',
+                     *   'parallelChannel'
+                     * ]
+                     */
+                    items: [
+                        'fibonacci',
+                        'pitchfork',
+                        'parallelChannel'
+                    ],
                     pitchfork: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/pitchfork.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'pitchfork.svg'
                     },
                     fibonacci: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/fibonacci.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'fibonacci.svg'
                     },
-                    'parallel-channel': {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/parallel-channel.svg)'
+                    parallelChannel: {
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'parallel-channel.svg'
                     }
                 },
                 measure: {
-                    items: ['measureXY', 'measureX', 'measureY'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'measureXY',
+                     *   'measureX',
+                     *   'measureY'
+                     * ]
+                     */
+                    items: [
+                        'measureXY',
+                        'measureX',
+                        'measureY'
+                    ],
                     measureX: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-x.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'measure-x.svg'
                     },
                     measureY: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-y.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'measure-y.svg'
                     },
                     measureXY: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-xy.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'measure-xy.svg'
                     }
                 },
                 toggleAnnotations: {
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/annotations-visible.svg)'
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
+                    symbol: 'annotations-visible.svg'
                 },
                 currentPriceIndicator: {
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/current-price-show.svg)'
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
+                    symbol: 'current-price-show.svg'
                 },
                 indicators: {
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/indicators.svg)'
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
+                    symbol: 'indicators.svg'
                 },
                 zoomChange: {
-                    items: ['zoomX', 'zoomY', 'zoomXY'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'zoomX',
+                     *   'zoomY',
+                     *   'zoomXY'
+                     * ]
+                     */
+                    items: [
+                        'zoomX',
+                        'zoomY',
+                        'zoomXY'
+                    ],
                     zoomX: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-x.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'zoom-x.svg'
                     },
                     zoomY: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-y.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'zoom-y.svg'
                     },
                     zoomXY: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-xy.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'zoom-xy.svg'
                     }
                 },
                 typeChange: {
-                    items: ['typeOHLC', 'typeLine', 'typeCandlestick'],
+                    /**
+                     * A collection of strings pointing to config options for
+                     * the items.
+                     *
+                     * @type {array}
+                     * @default [
+                     *   'typeOHLC',
+                     *   'typeLine',
+                     *   'typeCandlestick'
+                     * ]
+                     */
+                    items: [
+                        'typeOHLC',
+                        'typeLine',
+                        'typeCandlestick'
+                    ],
                     typeOHLC: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-ohlc.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-ohlc.svg'
                     },
                     typeLine: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-line.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-line.svg'
                     },
                     typeCandlestick: {
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-candlestick.svg)'
+                        /**
+                         * A predefined background symbol for the button.
+                         *
+                         * @type   {string}
+                         */
+                        symbol: 'series-candlestick.svg'
                     }
                 },
                 fullScreen: {
-                    symbol: 'url(https://cdn.rawgit.com/YR/weather-symbols/6.0.2/dist/svg/40d.svg)'
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
+                    symbol: 'fullscreen.svg'
                 },
                 saveChart: {
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/save-chart.svg)'
+                    /**
+                     * A predefined background symbol for the button.
+                     *
+                     * @type   {string}
+                     */
+                    symbol: 'save-chart.svg'
                 }
             }
         }
@@ -327,7 +760,7 @@ addEvent(H.Chart, 'destroy', function () {
 });
 
 addEvent(H.Chart, 'redraw', function () {
-    if (this.stockToolbar) {
+    if (this.stockToolbar && this.stockToolbar.guiEnabled) {
         this.stockToolbar.redraw();
     }
 });
@@ -353,15 +786,25 @@ H.Toolbar = function (options, langOptions, chart) {
     this.options = options;
     this.lang = langOptions;
 
+    this.guiEnabled = options.enabled;
     this.visible = pick(options.visible, true);
     this.placed = pick(options.placed, false);
-    this.createHTML();
+
+    // General events collection which should be removed upon destroy/update:
+    this.eventsToUnbind = [];
 
     // add popup to main container
     this.popup = new H.Popup(chart.container);
-    this.init();
 
-    this.showHideNavigatorion();
+    if (this.guiEnabled) {
+        this.createHTML();
+
+        this.init();
+
+        this.showHideNavigatorion();
+    }
+
+    fireEvent(this, 'afterInit');
 };
 
 H.extend(H.Chart.prototype, {
@@ -382,8 +825,9 @@ H.extend(H.Chart.prototype, {
             ),
             langOptions = lang.stockTools && lang.stockTools.gui;
 
-        if (guiOptions.enabled) {
-            this.stockToolbar = new H.Toolbar(guiOptions, langOptions, this);
+        this.stockToolbar = new H.Toolbar(guiOptions, langOptions, this);
+
+        if (this.stockToolbar.guiEnabled) {
             this.stockToolbar.setToolbarSpace();
         }
     }
@@ -400,24 +844,34 @@ H.Toolbar.prototype = {
             lang = this.lang,
             guiOptions = this.options,
             toolbar = this.toolbar,
-            addButton = _self.addButton,
             addSubmenu = _self.addSubmenu,
             buttons = guiOptions.buttons,
             defs = guiOptions.definitions,
+            allButtons = toolbar.childNodes,
+            inIframe = this.inIframe(),
             button;
 
         // create buttons
         buttons.forEach(function (btnName) {
 
-            button = addButton(toolbar, defs, btnName, lang);
+            button = _self.addButton(toolbar, defs, btnName, lang);
+
+            if (inIframe && btnName === 'fullScreen') {
+                button.buttonWrapper.className += ' ' + PREFIX + 'disabled-btn';
+            }
+
+            addEvent(button.buttonWrapper, 'click', function () {
+                _self.eraseActiveButtons(
+                    allButtons,
+                    button.buttonWrapper
+                );
+            });
 
             if (isArray(defs[btnName].items)) {
                 // create submenu buttons
                 addSubmenu.call(_self, button, defs[btnName]);
             }
         });
-
-        fireEvent(this, 'afterInit');
     },
     /*
      * Create submenu (list of buttons) for the option. In example main button
@@ -436,8 +890,7 @@ H.Toolbar.prototype = {
             menuWrapper = this.listWrapper,
             allButtons = this.toolbar.childNodes,
             topMargin = 0,
-            submenuWrapper,
-            submenuItems;
+            submenuWrapper;
 
         // create submenu container
         this.submenu = submenuWrapper = createElement(UL, {
@@ -448,10 +901,11 @@ H.Toolbar.prototype = {
         this.addSubmenuItems.call(this, buttonWrapper, button);
 
         // show / hide submenu
-        addEvent(submenuArrow, 'click', function () {
+        addEvent(submenuArrow, 'click', function (e) {
 
+            e.stopPropagation();
             // Erase active class on all other buttons
-            _self.eraseActiveButtons(allButtons, buttonWrapper, submenuItems);
+            _self.eraseActiveButtons(allButtons, buttonWrapper);
 
             // hide menu
             if (buttonWrapper.className.indexOf(PREFIX + 'current') >= 0) {
@@ -499,7 +953,6 @@ H.Toolbar.prototype = {
         var _self = this,
             submenuWrapper = this.submenu,
             lang = this.lang,
-            addButton = this.addButton,
             menuWrapper = this.listWrapper,
             items = button.items,
             firstSubmenuItem,
@@ -508,7 +961,12 @@ H.Toolbar.prototype = {
         // add items to submenu
         items.forEach(function (btnName) {
             // add buttons to submenu
-            submenuBtn = addButton(submenuWrapper, button, btnName, lang);
+            submenuBtn = _self.addButton(
+                submenuWrapper,
+                button,
+                btnName,
+                lang
+            );
 
             addEvent(submenuBtn.mainButton, 'click', function () {
                 _self.switchSymbol(this, buttonWrapper, true);
@@ -529,7 +987,6 @@ H.Toolbar.prototype = {
      *
      * @param {Array} - Array of HTML buttons
      * @param {HTMLDOMElement} - Current HTML button
-     * @param {Array} - List of HTML submenus
      *
      */
     eraseActiveButtons: function (buttons, currentButton, submenuItems) {
@@ -559,7 +1016,8 @@ H.Toolbar.prototype = {
      * @return {Object} - references to all created HTML elements
      */
     addButton: function (target, options, btnName, lang) {
-        var btnOptions = options[btnName],
+        var guiOptions = this.options,
+            btnOptions = options[btnName],
             items = btnOptions.items,
             classMapping = H.Toolbar.prototype.classMapping,
             userClassName = btnOptions.className || '',
@@ -570,7 +1028,7 @@ H.Toolbar.prototype = {
         // main button wrapper
         buttonWrapper = createElement(LI, {
             className: classMapping[btnName] + ' ' + userClassName,
-            title: lang[btnName]
+            title: lang[btnName] || btnName
         }, null, target);
 
         // single button
@@ -588,7 +1046,8 @@ H.Toolbar.prototype = {
                     PREFIX + 'arrow-right'
             }, null, buttonWrapper);
         } else {
-            mainButton.style['background-image'] = btnOptions.symbol;
+            mainButton.style['background-image'] = 'url(' +
+                guiOptions.iconsURL + btnOptions.symbol + ')';
         }
 
         return {
@@ -706,6 +1165,10 @@ H.Toolbar.prototype = {
         ) {
             this.arrowWrapper.style.display = 'block';
         } else {
+            // reset margin if whole toolbar is visible
+            this.toolbar.style.marginTop = '0px';
+
+            // hide arrows
             this.arrowWrapper.style.display = 'none';
         }
     },
@@ -838,29 +1301,47 @@ H.Toolbar.prototype = {
         this.chart.isDirtyBox = true;
     },
     /*
+     * Verify if chart is in iframe.
+     *
+     * @return {Object} - elements translations.
+     */
+    inIframe: function () {
+        try {
+            return win.self !== win.top;
+        } catch (e) {
+            return true;
+        }
+    },
+    /*
      * Destroy all HTML GUI elements.
      *
      */
     destroy: function () {
         var stockToolsDiv = this.wrapper,
-            parent = stockToolsDiv.parentNode,
+            parent = stockToolsDiv && stockToolsDiv.parentNode,
             chartOptions = this.chart.options,
             visible = this.chart.stockToolbar.visible,
             placed = this.chart.stockToolbar.placed,
             spacingLeft = this.chart.spacing[3] || 0,
             marginLeft = chartOptions.chart.marginLeft || 0;
 
+        this.eventsToUnbind.forEach(function (unbinder) {
+            unbinder();
+        });
+
         // Remove the empty element
         if (parent) {
             parent.removeChild(stockToolsDiv);
         }
 
-        // remove extra space if toolbar was added
-        if (visible) {
-            // 50 - width of toolbar
-            this.chart.options.chart.marginLeft = marginLeft - 50;
-        } else if (placed) {
-            this.chart.options.chart.marginLeft = marginLeft - spacingLeft;
+        if (this.guiEnabled) {
+            // remove extra space if toolbar was added
+            if (visible) {
+                // 50 - width of toolbar
+                this.chart.options.chart.marginLeft = marginLeft - 50;
+            } else if (placed) {
+                this.chart.options.chart.marginLeft = marginLeft - spacingLeft;
+            }
         }
 
         // delete stockToolbar reference
@@ -899,10 +1380,10 @@ H.Toolbar.prototype = {
         elliott5: PREFIX + 'elliott5',
         pitchfork: PREFIX + 'pitchfork',
         fibonacci: PREFIX + 'fibonacci',
-        'parallel-channel': PREFIX + 'parallel-channel',
-        measureX: PREFIX + 'measureX',
-        measureY: PREFIX + 'measureY',
-        measureXY: PREFIX + 'measureXY',
+        parallelChannel: PREFIX + 'parallel-channel',
+        measureX: PREFIX + 'measure-x',
+        measureY: PREFIX + 'measure-y',
+        measureXY: PREFIX + 'measure-xy',
         verticalCounter: PREFIX + 'vertical-counter',
         verticalLabel: PREFIX + 'vertical-label',
         verticalArrow: PREFIX + 'vertical-arrow',
@@ -928,21 +1409,44 @@ H.Toolbar.prototype = {
 
 // Comunication with bindings:
 addEvent(H.Toolbar, 'selectButton', function (event) {
-    // Unslect other active buttons
-    this.unselectAllButtons(event.button);
+    var button = event.button,
+        className = PREFIX + 'submenu-wrapper';
 
-    // Set active class on the current button
-    this.selectButton(event.button);
+    if (this.guiEnabled) {
+        // Unslect other active buttons
+        this.unselectAllButtons(event.button);
+
+        // If clicked on a submenu, select state for it's parent
+        if (button.parentNode.className.indexOf(className) >= 0) {
+            button = button.parentNode.parentNode;
+        }
+        // Set active class on the current button
+        this.selectButton(button);
+    }
 });
+
 
 addEvent(H.Toolbar, 'deselectButton', function (event) {
-    this.selectButton(event.button);
+    var button = event.button,
+        className = PREFIX + 'submenu-wrapper';
+
+    if (this.guiEnabled) {
+        // If deselecting a button from a submenu, select state for it's parent
+        if (button.parentNode.className.indexOf(className) >= 0) {
+            button = button.parentNode.parentNode;
+        }
+        this.selectButton(button);
+    }
 });
 
-addEvent(H.Toolbar, 'showForm', function (config) {
-    this.showForm(config.formType, config.options, config.onSubmit);
+addEvent(H.Toolbar, 'showPopup', function (config) {
+    if (this.guiEnabled) {
+        this.showForm(config.formType, config.options, config.onSubmit);
+    }
 });
 
-addEvent(H.Toolbar, 'closePopUp', function () {
-    this.popup.closePopup();
+addEvent(H.Toolbar, 'closePopup', function () {
+    if (this.guiEnabled) {
+        this.popup.closePopup();
+    }
 });

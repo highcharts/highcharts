@@ -302,11 +302,12 @@ H.Tick.prototype = {
             if (tick.shortenLabel) {
                 tick.shortenLabel();
             } else {
-                css.width = textWidth;
+                css.width = Math.floor(textWidth);
                 if (!(labelOptions.style || {}).textOverflow) {
                     css.textOverflow = 'ellipsis';
                 }
                 label.css(css);
+
             }
         }
     },

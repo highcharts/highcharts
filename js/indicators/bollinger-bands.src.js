@@ -1,7 +1,9 @@
+
 'use strict';
 
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+import multipleLinesMixin from '../mixins/multipe-lines.js';
 
 var merge = H.merge,
     isArray = H.isArray,
@@ -25,28 +27,35 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
     return std;
 }
 
+/**
+ * Bollinger Bands series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.bb
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('bb', 'sma',
     /**
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/bollinger-bands
-     *                     Bollinger bands
-     * @since 6.0.0
+     * @sample stock/indicators/bollinger-bands
+     *         Bollinger bands
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.bb
      */
     {
-        name: 'BB (20, 2)',
         params: {
             period: 20,
             /**
              * Standard deviation for top and bottom bands.
              *
-             * @type {Number}
              * @since 6.0.0
-             * @product highstock
              */
             standardDeviation: 2,
             index: 3
@@ -55,31 +64,26 @@ H.seriesType('bb', 'sma',
          * Bottom line options.
          *
          * @since 6.0.0
-         * @product highstock
          */
         bottomLine: {
             /**
              * Styles for a bottom line.
              *
              * @since 6.0.0
-             * @product highstock
              */
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @type {Number}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line. If not set, it's inherited from
                  * [plotOptions.bb.color](#plotOptions.bb.color).
                  *
-                 * @type {String}
+                 * @type  {Highcharts.ColorString}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 lineColor: undefined
             }
@@ -88,12 +92,14 @@ H.seriesType('bb', 'sma',
          * Top line options.
          *
          * @extends plotOptions.bb.bottomLine
-         * @since 6.0.0
-         * @product highstock
+         * @since   6.0.0
          */
         topLine: {
             styles: {
                 lineWidth: 1,
+                /**
+                 * @type {Highcharts.ColorString}
+                 */
                 lineColor: undefined
             }
         },
@@ -106,10 +112,11 @@ H.seriesType('bb', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    }, /** @lends Highcharts.Series.prototype */ H.merge(multipleLinesMixin, {
         pointArrayMap: ['top', 'middle', 'bottom'],
         pointValKey: 'middle',
         nameComponents: ['period', 'standardDeviation'],
+        linesApiNames: ['topLine', 'bottomLine'],
         init: function () {
             SMA.prototype.init.apply(this, arguments);
 
@@ -126,77 +133,6 @@ H.seriesType('bb', 'sma',
                     }
                 }
             }, this.options);
-        },
-        toYData: function (point) {
-            return [point.top, point.middle, point.bottom];
-        },
-        translate: function () {
-            var indicator = this,
-                translatedBB = ['plotTop', 'plotMiddle', 'plotBottom'];
-
-            SMA.prototype.translate.apply(indicator, arguments);
-
-            indicator.points.forEach(function (point) {
-                [point.top, point.middle, point.bottom].forEach(
-                    function (value, i) {
-                        if (value !== null) {
-                            point[translatedBB[i]] = indicator.yAxis.toPixels(
-                                value,
-                                true
-                            );
-                        }
-                    }
-                );
-            });
-        },
-        drawGraph: function () {
-            var indicator = this,
-                middleLinePoints = indicator.points,
-                pointsLength = middleLinePoints.length,
-                middleLineOptions = indicator.options,
-                middleLinePath = indicator.graph,
-                gappedExtend = {
-                    options: {
-                        gapSize: middleLineOptions.gapSize
-                    }
-                },
-                deviations = [[], []], // top and bottom point place holders
-                point;
-
-            // Generate points for top and bottom lines:
-            while (pointsLength--) {
-                point = middleLinePoints[pointsLength];
-                deviations[0].push({
-                    plotX: point.plotX,
-                    plotY: point.plotTop,
-                    isNull: point.isNull
-                });
-                deviations[1].push({
-                    plotX: point.plotX,
-                    plotY: point.plotBottom,
-                    isNull: point.isNull
-                });
-            }
-
-            // Modify options and generate lines:
-            ['topLine', 'bottomLine'].forEach(function (lineName, i) {
-                indicator.points = deviations[i];
-                indicator.options = merge(
-                    middleLineOptions[lineName].styles,
-                    gappedExtend
-                );
-                indicator.graph = indicator['graph' + lineName];
-                SMA.prototype.drawGraph.call(indicator);
-
-                // Now save lines:
-                indicator['graph' + lineName] = indicator.graph;
-            });
-
-            // Restore options and draw a middle line:
-            indicator.points = middleLinePoints;
-            indicator.options = middleLineOptions;
-            indicator.graph = middleLinePath;
-            SMA.prototype.drawGraph.call(indicator);
         },
         getValues: function (series, params) {
             var period = params.period,
@@ -257,18 +193,17 @@ H.seriesType('bb', 'sma',
                 yData: yData
             };
         }
-    }
+    })
 );
 
 /**
  * A bollinger bands indicator. If the [type](#series.bb.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.bb
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.bb
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.bb
  */
 
@@ -276,9 +211,8 @@ H.seriesType('bb', 'sma',
  * An array of data points for the series. For the `bb` series type,
  * points are calculated dynamically.
  *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
+ * @extends   series.line.data
+ * @since     6.0.0
+ * @product   highstock
  * @apioption series.bb.data
  */

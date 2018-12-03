@@ -1,7 +1,6 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-import './atr.src.js';
 
 var ATR = H.seriesTypes.atr;
 
@@ -14,7 +13,8 @@ var ATR = H.seriesTypes.atr;
 H.seriesType('natr', 'sma',
     /**
      * Normalized average true range indicator (NATR). This series requires
-     * `linkedTo` option to be set.
+     * `linkedTo` option to be set and should be loaded after the
+     * `stock/indicators/indicators.js` and `stock/indicators/atr.js`.
      *
      * @extends plotOptions.atr
      * @product highstock
@@ -27,6 +27,7 @@ H.seriesType('natr', 'sma',
             valueSuffix: '%'
         }
     }, {
+        requiredIndicators: ['atr'],
         getValues: function (series, params) {
             var atrData = ATR.prototype.getValues.apply(this, arguments),
                 atrLength = atrData.values.length,

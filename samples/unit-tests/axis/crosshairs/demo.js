@@ -207,6 +207,8 @@ QUnit.test('Use correct hover point for axis. #6860', function (assert) {
         'yAxis,side: 1,point: B.0',
         'yAxis on right side is assigned point B.0'
     );
+    // restore to default function
+    AxisPrototype.drawCrosshair = drawCrosshair;
 });
 
 

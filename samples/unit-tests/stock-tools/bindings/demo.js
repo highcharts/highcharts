@@ -31,7 +31,6 @@ QUnit.test('Bindings general tests', function (assert) {
         }),
         plotLeft = chart.plotLeft,
         plotTop = chart.plotTop,
-        bindings = chart.options.stockTools.bindings,
         points = chart.series[0].points,
         controller = TestController(chart),
         annotationsCounter = 0,
@@ -54,7 +53,7 @@ QUnit.test('Bindings general tests', function (assert) {
         // Bind annotation to the chart events:
         chart.stockToolbar.bindingsButtonClick(
             button,
-            bindings[name],
+            chart.stockToolbar.boundClassNames['highcharts-' + name],
             {
                 target: {
                     parentNode: button,
@@ -84,9 +83,9 @@ QUnit.test('Bindings general tests', function (assert) {
             'pitchfork',
             'fibonacci',
             'parallel-channel',
-            'measureXY',
-            'measureY',
-            'measureX'
+            'measure-xy',
+            'measure-y',
+            'measure-x'
         ],
         function (name) {
             selectButton(name);
@@ -95,12 +94,15 @@ QUnit.test('Bindings general tests', function (assert) {
                 points[2].plotX + plotLeft - 5,
                 points[2].plotY + plotTop - 5
             );
-            Highcharts.each(bindings[name].steps, function (step, index) {
-                controller.click(
-                    points[4 + index].plotX + plotLeft - 5,
-                    points[4 + index].plotY + plotTop - 5
-                );
-            });
+            Highcharts.each(
+                chart.stockToolbar.boundClassNames['highcharts-' + name].steps,
+                function (step, index) {
+                    controller.click(
+                        points[4 + index].plotX + plotLeft - 5,
+                        points[4 + index].plotY + plotTop - 5
+                    );
+                }
+            );
 
             assert.strictEqual(
                 chart.annotations.length,
@@ -170,7 +172,6 @@ QUnit.test('Bindings general tests', function (assert) {
     // Individual button events:
 
     // Current Price Indicator
-    /*
     selectButton('current-price-indicator');
     assert.strictEqual(
         chart.series[0].lastVisiblePrice &&
@@ -198,7 +199,6 @@ QUnit.test('Bindings general tests', function (assert) {
         Highcharts.UNDEFINED,
         'Last price in the dataset hidden.'
     );
-    */
 
     // Annotations:
     var visibleAnnotations = false;
@@ -257,6 +257,8 @@ QUnit.test('Bindings general tests', function (assert) {
 
     // Test yAxis resizers and adding indicators:
     for (i = 0; i < 9; i++) {
+        chart.stockToolbar.selectedButtonElement = document
+            .getElementsByClassName('highcharts-indicators')[0];
         chart.stockToolbar.utils.manageIndicators.call(
             chart.stockToolbar,
             {
@@ -288,6 +290,8 @@ QUnit.test('Bindings general tests', function (assert) {
     }
 
     for (i = 9; i > 0; i--) {
+        chart.stockToolbar.selectedButtonElement = document
+            .getElementsByClassName('highcharts-indicators')[0];
         chart.stockToolbar.utils.manageIndicators.call(
             chart.stockToolbar,
             {

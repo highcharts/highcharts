@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -44,19 +45,23 @@ function populateAverage(points, xVal, yVal, i) {
 /**
  * The SMA series type.
  *
- * @constructor seriesTypes.wma
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.wma
+ *
+ * @augments Highcharts.Series
  */
 seriesType('wma', 'sma',
     /**
      * Weighted moving average indicator (WMA). This series requires `linkedTo`
      * option to be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/wma
-     *                     Weighted moving average indicator
-     * @since 6.0.0
+     * @sample stock/indicators/wma
+     *         Weighted moving average indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.wma
      */
     {
@@ -124,16 +129,15 @@ seriesType('wma', 'sma',
  * A `WMA` series. If the [type](#series.wma.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.wma
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.wma
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.wma
  */
 
 /**
- * @extends series.sma.data
- * @product highstock
+ * @extends   series.sma.data
+ * @product   highstock
  * @apioption series.wma.data
  */

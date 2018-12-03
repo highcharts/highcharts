@@ -124,3 +124,33 @@ QUnit.test('Updating axes and series', function (assert) {
     );
 });
 
+QUnit.test('Updating series with indexes', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            index: 2,
+            data: [1, 2, 3]
+        }, {
+            index: 1,
+            data: [3, 2, 1]
+        }]
+    });
+
+    chart.update({
+        series: [{
+            index: 2,
+            data: [1, 1, 1]
+        }, {
+            index: 1,
+            data: [2, 2, 2]
+        }, {
+            index: 4,
+            data: [3, 3, 3]
+        }]
+    }, true, true, false);
+
+    assert.strictEqual(
+        chart.series.length,
+        3,
+        'The updated chart should have three series (#9226)'
+    );
+});

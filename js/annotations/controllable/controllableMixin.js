@@ -370,6 +370,10 @@ var controllableMixin = {
             this.graphic = this.graphic.destroy();
         }
 
+        if (this.tracker) {
+            this.tracker = this.tracker.destroy();
+        }
+
         this.controlPoints.forEach(function (controlPoint) {
             controlPoint.destroy();
         });

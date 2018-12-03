@@ -1,9 +1,11 @@
-/**
+/* *
  * (c) 2018 Torstein Honsi, Lars Cabrera
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -17,11 +19,13 @@ var Chart = H.Chart,
  * height of the chart adjusts. Adding or removing items will make the chart
  * resize.
  *
- * @type {number}
- * @sample gantt/xrange-series/demo/ X-range series with static scale
- * @since 6.2.0
- * @product gantt
- * @default 50
+ * @sample gantt/xrange-series/demo/
+ *         X-range series with static scale
+ *
+ * @type      {number}
+ * @default   50
+ * @since     6.2.0
+ * @product   gantt
  * @apioption yAxis.staticScale
  */
 

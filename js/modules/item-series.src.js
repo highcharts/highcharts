@@ -1,25 +1,38 @@
-/**
- * (c) 2009-2018 Torstein Honsi
+/* *
  *
- * Item series type for Highcharts
+ *  (c) 2009-2018 Torstein Honsi
  *
- * License: www.highcharts.com/license
- */
+ *  Item series type for Highcharts
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 /**
+ * @private
  * @todo
  * - Check update, remove etc.
  * - Custom icons like persons, carts etc. Either as images, font icons or
  *   Highcharts symbols.
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
+
 var extend = H.extend,
     pick = H.pick,
     seriesType = H.seriesType;
 
+/**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.item
+ *
+ * @augments Highcharts.Series
+ */
 seriesType('item', 'column', {
     itemPadding: 0.2,
     marker: {
