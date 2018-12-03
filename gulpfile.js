@@ -27,6 +27,9 @@ const {
 } = require('./tools/build.js');
 const compile = require('./tools/compile.js').compile;
 const {
+    copyFile
+} = require('./tools/filesystem.js');
+const {
     asyncForeach,
     uploadFiles
 } = require('./tools/upload.js');
@@ -48,8 +51,8 @@ const buildESModules = () => {
 
 const compileSingleStyle = (fileName) => {
     const sass = require('node-sass');
-    const input = './css/' + fileName + '.scss';
-    const output = './code/css/' + fileName + '.css';
+    const input = './css/' + fileName;
+    const output = './code/css/' + fileName;
     return new Promise((resolve, reject) => {
         sass.render({
             file: input,
@@ -67,37 +70,13 @@ const compileSingleStyle = (fileName) => {
 };
 
 const styles = () => {
-    const files = [
-        'highcharts',
-        'themes/dark-unica',
-        'themes/sand-signika',
-        'themes/grid-light',
-        'stocktools/gui',
-        'stocktools/popup'
-    ];
+    const promisesCopyGfx = getFilesInFolder('./gfx', true)
+        .map((path) => copyFile(join('./gfx', path), join('./code/gfx', path)));
 
-    const copyFiles = (folder) => {
-        fs.readdirSync(folder).forEach(file => {
-            let src = folder + '/' + file;
-            let dest = folder.replace(/^\.\//, './code/') + '/' + file;
-            if (fs.statSync(folder + '/' + file).isDirectory()) {
-                if (!fs.existsSync(dest)) {
-                    fs.mkdirSync(dest);
-                }
-                copyFiles(src);
-            } else {
-                fs.copyFileSync(src, dest);
-            }
-        });
-    };
+    const promisesCompileStyles = getFilesInFolder('./css', true)
+        .map(file => compileSingleStyle(file));
 
-    if (!fs.existsSync('./code/gfx')) {
-        fs.mkdirSync('./code/gfx');
-    }
-
-    copyFiles('./gfx');
-
-    const promises = files.map(file => compileSingleStyle(file));
+    const promises = [].concat(promisesCopyGfx, promisesCompileStyles);
     return Promise.all(promises).then(() => {
         console.log('Built CSS files from SASS.'.cyan);
     });
@@ -484,28 +463,6 @@ const cleanApi = () => {
             console.log('Successfully removed api directory.');
         });
 };
-
-const copyFile = (source, target) => new Promise((resolve, reject) => {
-    const {
-        dirname
-    } = require('path');
-    const {
-        createDirectory
-    } = require('highcharts-assembler/src/utilities.js');
-    const directory = dirname(target);
-    createDirectory(directory);
-    let read = fs.createReadStream(source);
-    let write = fs.createWriteStream(target);
-    const onError = (err) => {
-        read.destroy();
-        write.end();
-        reject(err);
-    };
-    read.on('error', onError);
-    write.on('error', onError);
-    write.on('finish', resolve);
-    read.pipe(write);
-});
 
 const copyToDist = () => {
     const sourceFolder = 'code/';
