@@ -1,4 +1,4 @@
-# Contributer's Guide
+# Contributor's Guide
 
 First of all, thank you for contributing to Highcharts! :+1: :confetti_ball:
 
@@ -83,7 +83,7 @@ function anMITLicensedFunction () {
 Commits should use the following format:
 * past tense, e.g. `Fixed..` rather than `Fixes..`: this is because we use the commit messages to generate changelogs
 * try to limit the name to <=100 characters
-* fixes should refer to issues where aplicable, i.e. `Fixes #1235, <description>`
+* fixes should refer to issues where applicable, i.e. `Fixes #1235, <description>`
 
 **JavaScript**
 
@@ -113,5 +113,6 @@ Your pull request should:
 * use the branch name (or follow the branch naming convention if the PR is based on the master branch on a fork) as the title
 * contain a link to an open issue - if there is one - in the description
 * contain a description of what the pull request implements/fixes
+
 
 
