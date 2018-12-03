@@ -1107,6 +1107,18 @@ var vennPoint = {
  */
 
 /**
+* The name of the point. Used in data labels and tooltip. If name is not defined
+* then it will default to the joined values in [sets](#series.venn.sets).
+*
+* @type {Number}
+* @default undefined
+* @since next
+* @sample {highcharts} highcharts/demo/venn-diagram/ Simple venn diagram
+* @product highcharts
+* @apioption series.venn.data.name
+*/
+
+/**
 * The value of the point, resulting in a relative area of the circle, or area of
 * overlap between two sets in the venn/euler diagram.
 *
