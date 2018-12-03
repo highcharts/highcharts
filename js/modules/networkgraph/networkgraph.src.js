@@ -111,7 +111,8 @@ seriesType('networkgraph', 'line', {
             */
             return d * d / k;
         }
-    }
+    },
+    showInLegend: false
 }, {
     isNetworkgraph: true,
     drawGraph: null,
