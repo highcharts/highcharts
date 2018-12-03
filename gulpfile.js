@@ -75,6 +75,28 @@ const styles = () => {
         'stocktools/gui',
         'stocktools/popup'
     ];
+
+    const copyFiles = (folder) => {
+        fs.readdirSync(folder).forEach(file => {
+            let src = folder + '/' + file;
+            let dest = folder.replace(/^\.\//, './code/') + '/' + file;
+            if (fs.statSync(folder + '/' + file).isDirectory()) {
+                if (!fs.existsSync(dest)) {
+                    fs.mkdirSync(dest);
+                }
+                copyFiles(src);
+            } else {
+                fs.copyFileSync(src, dest);
+            }
+        });
+    };
+
+    if (!fs.existsSync('./code/gfx')) {
+        fs.mkdirSync('./code/gfx');
+    }
+
+    copyFiles('./gfx');
+
     const promises = files.map(file => compileSingleStyle(file));
     return Promise.all(promises).then(() => {
         console.log('Built CSS files from SASS.'.cyan);
