@@ -279,7 +279,8 @@ seriesType('networkgraph', 'line', {
      */
     render: function () {
         var points = this.points,
-            hoverPoint = this.chart.hoverPoint;
+            hoverPoint = this.chart.hoverPoint,
+            dataLabels = [];
 
         // Render markers:
         this.points = this.nodes;
@@ -294,6 +295,13 @@ seriesType('networkgraph', 'line', {
         if (hoverPoint && hoverPoint.series === this) {
             this.redrawHalo(hoverPoint);
         }
+
+        this.nodes.forEach(function (node) {
+            if (node.dataLabel) {
+                dataLabels.push(node.dataLabel);
+            }
+        });
+        H.Chart.prototype.hideOverlappingLabels(dataLabels);
     },
 
     /*
