@@ -81,6 +81,7 @@ seriesType('networkgraph', 'line', {
      */
     draggable: true,
     layoutAlgorithm: {
+        initialPositions: 'circle',
         enableSimulation: false,
         type: 'reingold-fruchterman',
         maxIterations: 1000,
