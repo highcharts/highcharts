@@ -141,6 +141,23 @@ var isPointInsideAllCircles = function isPointInsideAllCircles(point, circles) {
 };
 
 /**
+ * Tests wether a point lies outside a set of circles.
+ *
+ * TODO: add unit tests.
+ *
+ * @param {object} point The point to test.
+ * @param {array} circles The list of circles to test against.
+ * @returns {boolean} Returns true if the point is outside all the circles,
+ * false if not.
+ */
+var isPointOutsideAllCircles =
+function isPointOutsideAllCircles(point, circles) {
+    return !circles.some(function (circle) {
+        return isPointInsideCircle(point, circle);
+    });
+};
+
+/**
  * Calculate the path for the area of overlap between a set of circles.
  *
  * TODO: handle cases with only 1 or 0 arcs.
@@ -155,7 +172,7 @@ function getAreaOfIntersectionBetweenCircles(circles) {
         .filter(function (p) {
             return isPointInsideAllCircles(p, circles);
         }),
-        result = {};
+        result;
 
     if (intersectionPoints.length > 1) {
         // Calculate the center of the intersection points.
@@ -259,6 +276,7 @@ var geometryCircles = {
     getOverlapBetweenCircles: getOverlapBetweenCircles,
     isPointInsideCircle: isPointInsideCircle,
     isPointInsideAllCircles: isPointInsideAllCircles,
+    isPointOutsideAllCircles: isPointOutsideAllCircles,
     round: round
 };
 

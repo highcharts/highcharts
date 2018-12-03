@@ -21,16 +21,16 @@ var color = H.Color,
     getAreaOfIntersectionBetweenCircles =
         geometryCircles.getAreaOfIntersectionBetweenCircles,
     getCircleCircleIntersection = geometryCircles.getCircleCircleIntersection,
+    getCenterOfPoints = geometry.getCenterOfPoints,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
     getOverlapBetweenCirclesByDistance =
         geometryCircles.getOverlapBetweenCircles,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
+    isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles,
+    isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles,
     isString = H.isString,
-    isUndefined = function (x) {
-        return typeof x === 'undefined';
-    },
     merge = H.merge,
     round = geometryCircles.round,
     seriesType = H.seriesType;
@@ -399,11 +399,23 @@ var getLabelPosition = function getLabelPosition(internal, external) {
         [best.x, best.y]
     );
 
-    // Return the point which was found to have the best margin.
-    return {
+    // Update best to be the point which was found to have the best margin.
+    best = {
         x: optimal[0],
         y: optimal[1]
     };
+
+    if (!(
+        isPointInsideAllCircles(best, internal) &&
+        isPointOutsideAllCircles(best, external)
+    )) {
+        // If point was either outside one of the internal, or inside one of the
+        // external, then it was invalid and should use a fallback.
+        best = getCenterOfPoints(internal);
+    }
+
+    // Return the best point.
+    return best;
 };
 
 /**
@@ -886,7 +898,8 @@ var vennSeries = {
         // Calculate the scale, and center of the plot area.
         var field = Object.keys(mapOfIdToShape)
             .filter(function (key) {
-                return isUndefined(mapOfIdToShape[key].d);
+                var shape = mapOfIdToShape[key];
+                return shape && isNumber(shape.r);
             })
             .reduce(function (field, key) {
                 return updateFieldBoundaries(field, mapOfIdToShape[key]);
@@ -901,7 +914,7 @@ var vennSeries = {
             var sets = isArray(point.sets) ? point.sets : [],
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
-                shapeArgs = {},
+                shapeArgs,
                 dataLabelPosition = mapOfIdToLabelPosition[id];
 
             if (shape) {
@@ -926,7 +939,9 @@ var vennSeries = {
                         return path.concat(arr);
                     }, [])
                     .join(' ');
-                    shapeArgs.d = d;
+                    shapeArgs = {
+                        d: d
+                    };
                 }
 
                 // Scale the position for the data label.
@@ -941,7 +956,7 @@ var vennSeries = {
             point.shapeArgs = shapeArgs;
 
             // Placement for the data labels
-            if (dataLabelPosition) {
+            if (dataLabelPosition && shapeArgs) {
                 point.plotX = dataLabelPosition.x;
                 point.plotY = dataLabelPosition.y;
             }
