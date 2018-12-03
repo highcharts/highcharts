@@ -1937,6 +1937,7 @@ var stockToolsBindings = {
         init: function (button) {
             var series = this.chart.series[0],
                 options = series.options,
+                iconsURL = this.options.iconsURL,
                 lastVisiblePrice = options.lastVisiblePrice &&
                                 options.lastVisiblePrice.enabled,
                 lastPrice = options.lastPrice && options.lastPrice.enabled;
@@ -1944,10 +1945,10 @@ var stockToolsBindings = {
             if (this.guiEnabled) {
                 if (lastPrice) {
                     button.firstChild.style['background-image'] =
-                        'url("https://code.highcharts.com/gfx/stock-icons/current-price-show.svg")';
+                        'url("' + iconsURL + 'current-price-show.svg")';
                 } else {
                     button.firstChild.style['background-image'] =
-                        'url("https://code.highcharts.com/gfx/stock-icons/current-price-hide.svg")';
+                        'url("' + iconsURL + 'current-price-hide.svg")';
                 }
             }
 
@@ -2028,10 +2029,12 @@ var stockToolsBindings = {
             if (this.guiEnabled) {
                 if (this.toggledAnnotations) {
                     button.firstChild.style['background-image'] =
-                        'url("https://code.highcharts.com/gfx/stock-icons/annotations-hidden.svg")';
+                        'url("' + this.options.iconsURL +
+                            'annotations-hidden.svg")';
                 } else {
                     button.firstChild.style['background-image'] =
-                        'url("https://code.highcharts.com/gfx/stock-icons/annotations-visible.svg")';
+                        'url("' + this.options.iconsURL +
+                            'annotations-visible.svg")';
                 }
             }
 
