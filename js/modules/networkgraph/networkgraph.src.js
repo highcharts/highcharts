@@ -23,12 +23,16 @@ var addEvent = H.addEvent,
  * A networkgraph is a type of relationship chart, where connnections
  * (links) attracts nodes (points) and other nodes repulse each other.
  *
- * @extends      {plotOptions.line}
+ * @extends      plotOptions.line
  * @product      highcharts
  * @sample       highcharts/demo/networkgraph/
  *               Networkgraph
  * @since        7.0.0
- * @excluding    boostThreshold, animation
+ * @excluding    boostThreshold, animation, animationLimit, connectEnds,
+ *               connectNulls, dragDrop, getExtremesFromAll, label, linecap,
+ *               negativeColor, pointInterval, pointIntervalUnit,
+ *               pointPlacement, pointStart, softThreshold, stack, stacking,
+ *               step, threshold, xAxis, yAxis, zoneAxis
  * @optionparent plotOptions.networkgraph
  */
 seriesType('networkgraph', 'line', {
@@ -43,26 +47,9 @@ seriesType('networkgraph', 'line', {
      */
     link: {
         /**
-         * Ideal length (px) of the link between two nodes. When not defined,
-         * length is calculated as:
-         * `Math.pow(availableWidth * availableHeight / nodesLength, 0.4);`
-         *
-         * Note: Because of the algorithm specification, length of each link
-         * might be not exactly as specified.
-         *
-         * @type      {number}
-         * @product   highcharts
-         * @apioption series.networkgraph.link.length
-         * @sample    {highcharts} highcharts/series-networkgraph/styled-links/
-         *            Numerical values
-         * @defaults  undefined
-         */
-
-        /**
          * A name for the dash style to use for links.
          *
          * @type      {number}
-         * @product   highcharts
          * @apioption series.networkgraph.link.dashStyle
          * @defaults  undefined
          */
@@ -81,12 +68,76 @@ seriesType('networkgraph', 'line', {
      */
     draggable: true,
     layoutAlgorithm: {
+        /**
+         * Ideal length (px) of the link between two nodes. When not defined,
+         * length is calculated as:
+         * `Math.pow(availableWidth * availableHeight / nodesLength, 0.4);`
+         *
+         * Note: Because of the algorithm specification, length of each link
+         * might be not exactly as specified.
+         *
+         * @type      {number}
+         * @apioption series.networkgraph.layoutAlgorithm.linkLength
+         * @sample    highcharts/series-networkgraph/styled-links/
+         *            Numerical values
+         * @defaults  undefined
+         */
+
+        /**
+         * Initial layout algorithm for positioning nodes. Can be one of
+         * built-in options ("circle", "random") or a function where positions
+         * should be set on each node (`this.nodes`) as `node.plotX` and
+         * `node.plotY`
+         *
+         * @sample      highcharts/series-networkgraph/initial-positions/
+         *              Initial positions with callback
+         * @type        {String|Function}
+         * @validvalue  ["circle", "random"]
+         */
         initialPositions: 'circle',
+        /**
+         * Experimental. Enables live simulation of the algorithm
+         * implementation. All nodes are animated as the forces applies on
+         * them.
+         *
+         * @sample       highcharts/demo/networkgraph/
+         *               Live simulation enabled
+         */
         enableSimulation: false,
+        /**
+         * Type of the algorithm used when positioning nodes.
+         *
+         * @validvalue  ["reingold-fruchterman"]
+         */
         type: 'reingold-fruchterman',
+        /**
+         * Max number of iterations before algorithm will stop. In general,
+         * algorithm should find positions sooner, but when rendering huge
+         * number of nodes, it is recommended to increase this value as
+         * finding perfect graph positions can require more time.
+         */
         maxIterations: 1000,
+        /**
+         * Gravitational const used in the barycenter force of the algorithm.
+         *
+         * @sample      highcharts/series-networkgraph/forces/
+         *              Custom forces
+         */
         gravitationalConstant: 1 / 16,
+        /**
+         * Friction applied on forces to prevent nodes rushing to fast to the
+         * desired positions.
+         */
         friction: -0.981,
+        /**
+         * Repulsive force applied on a node. Passed are two arguments:
+         * - `d` - which is current distance between two nodes
+         * - `k` - which is desired distance between two nodes
+         *
+         * @sample      highcharts/series-networkgraph/forces/
+         *              Custom forces
+         * @defaults function (d, k) { return k * k / d; }
+         */
         repulsiveForce: function (d, k) {
             /*
             basic, not recommended:
@@ -105,6 +156,16 @@ seriesType('networkgraph', 'line', {
 
             return k * k / d;
         },
+        /**
+         * Attraction force applied on a node which is conected to another node
+         * by a link. Passed are two arguments:
+         * - `d` - which is current distance between two nodes
+         * - `k` - which is desired distance between two nodes
+         *
+         * @sample      highcharts/series-networkgraph/forces/
+         *              Custom forces
+         * @defaults function (d, k) { return k * k / d; }
+         */
         attractiveForce: function (d, k) {
             /*
             basic, not recommended:
@@ -550,7 +611,11 @@ addEvent(
  *
  * @type      {Object}
  * @extends   series,plotOptions.networkgraph
- * @excluding boostThreshold, animation
+ * @excluding boostThreshold, animation, animationLimit, connectEnds,
+ *            connectNulls, dragDrop, getExtremesFromAll, label, linecap,
+ *            negativeColor, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointStart, softThreshold, stack, stacking,
+ *            step, threshold, xAxis, yAxis, zoneAxis
  * @product   highcharts
  * @apioption series.networkgraph
  */
