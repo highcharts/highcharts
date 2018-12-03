@@ -215,7 +215,7 @@ var addEvent = H.addEvent,
  * @param {Highcharts.Chart} chart
  *        The chart instance.
  *
- * @param {Highcharts.PlotSeriesOptions} options
+ * @param {Highcharts.SeriesOptions|object} options
  *        The series options.
  *//**
  * The line series is the base type and is therefor the series base prototype.
@@ -555,7 +555,7 @@ null
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption plotOptions.series.color
      */
 
@@ -778,7 +778,7 @@ null
      * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/
      *         Arearange
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @apioption plotOptions.series.negativeColor
      */
@@ -1217,7 +1217,7 @@ null
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         White fill
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption plotOptions.series.marker.fillColor
          */
 
@@ -1360,7 +1360,7 @@ null
                  * `undefined`, the series' or point's fillColor for normal
                  * state is used.
                  *
-                 * @type      {Highcharts.ColorString}
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @apioption plotOptions.series.marker.states.hover.fillColor
                  */
 
@@ -1460,7 +1460,7 @@ null
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
                  *         Solid red discs for selected points
                  *
-                 * @type {Highcharts.ColorString}
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
                 fillColor: '${palette.neutralColor20}',
 
@@ -1889,21 +1889,13 @@ null
          * @since   4.1.0
          */
         style: {
-            /**
-             * @ignore
-             */
+            /** @ignore */
             fontSize: '11px',
-            /**
-             * @ignore
-             */
+            /** @ignore */
             fontWeight: 'bold',
-            /**
-             * @ignore
-             */
+            /** @ignore */
             color: 'contrast',
-            /**
-             * @ignore
-             */
+            /** @ignore */
             textOutline: '1px contrast'
         },
 
@@ -1986,7 +1978,7 @@ null
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.backgroundColor
          */
@@ -2443,7 +2435,7 @@ null
      *
      * @see [fillColor](#plotOptions.area.fillColor)
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     4.1.0
      * @product   highcharts highstock
      * @apioption plotOptions.series.zones.fillColor
@@ -3591,10 +3583,10 @@ null
                  * in the group.
                  * - `dataGroup.length` is the amount of points in the group.
                  *
+                 * @product highstock
+                 *
                  * @name Highcharts.Point#dataGroup
                  * @type {Highcharts.SVGElement|undefined}
-                 *
-                 * @product highstock
                  */
                 point.dataGroup = series.groupMap[i];
                 if (point.dataGroup.options) {
@@ -3646,7 +3638,7 @@ null
          * @see Series.points
          *
          * @name Highcharts.Series#data
-         * @type {Array<Point>}
+         * @type {Array<Highcharts.Point>}
          */
         series.data = data;
 
@@ -3747,8 +3739,7 @@ null
      *
      * @function Highcharts.Series#translate
      *
-     * @todo
-     * Make events official: Fires the event `afterTranslate`.
+     * @fires Highcharts.Series#events:translate
      */
     translate: function () {
         if (!this.processedXData) { // hidden series
@@ -3777,11 +3768,9 @@ null
             stackIndicator,
             closestPointRangePx = Number.MAX_VALUE;
 
-        /*
-         * Plotted coordinates need to be within a limited range. Drawing too
-         * far outside the viewport causes various rendering issues (#3201,
-         * #3923, #7555).
-         */
+        // Plotted coordinates need to be within a limited range. Drawing too
+        // far outside the viewport causes various rendering issues (#3201,
+        // #3923, #7555).
         function limitedRange(val) {
             return Math.min(Math.max(-1e5, val), 1e5);
         }
@@ -4098,8 +4087,7 @@ null
      * @private
      * @function Highcharts.Series#afterAnimate
      *
-     * @todo
-     * Make events official: Fires the event `afterAnimate`.
+     * @fires Highcharts.Series#event:afterAnimate
      */
     afterAnimate: function () {
         this.setClip();
@@ -4384,8 +4372,7 @@ null
      * @private
      * @function Highcharts.Series#destroy
      *
-     * @todo
-     * Make events official: Fires the event `destroy`.
+     * @fires Highcharts.Series#event:destroy
      */
     destroy: function () {
         var series = this,
@@ -4989,8 +4976,7 @@ null
      *
      * @function Highcharts.Series#render
      *
-     * @todo
-     * Make events official: Fires the event `afterRender`.
+     * @fires Highcharts.Series#event:afterRender
      */
     render: function () {
         var series = this,
@@ -5041,11 +5027,11 @@ null
             series.applyZones();
         }
 
-/*        series.points.forEach(function (point) {
+        /* series.points.forEach(function (point) {
             if (point.redraw) {
                 point.redraw();
             }
-        });*/
+        }); */
 
         // draw the data labels (inn pies they go before the points)
         if (series.drawDataLabels) {
@@ -5141,9 +5127,9 @@ null
      * @private
      * @function Highcharts.Series#searchPoint
      *
-     * @param {*} e
+     * @param {object} e
      *
-     * @param {*} compareX
+     * @param {boolean} [compareX]
      *
      * @return {Highcharts.Point}
      */
@@ -5238,9 +5224,9 @@ null
      * @private
      * @function Highcharts.Series#searchKDTree
      *
-     * @param {*} point
+     * @param {object} point
      *
-     * @param {*} compareX
+     * @param {boolean} [compareX]
      *
      * @return {Highcharts.Point}
      */
@@ -5434,7 +5420,7 @@ null
  * @sample {highcharts} highcharts/point/color/
  *         Mark the highest point
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts highstock gantt
  * @apioption series.line.data.color
  */
