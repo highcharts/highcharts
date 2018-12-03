@@ -23,6 +23,7 @@
         "code/highcharts.d.ts",
         "code/highcharts.src.d.ts",
         "test/typescript/highcharts.ts",
+        "test/typescript/classes/Series.ts",
 
         "code/highcharts-3d.d.ts",
         "code/highcharts-3d.src.d.ts",
