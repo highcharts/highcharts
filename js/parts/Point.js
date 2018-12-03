@@ -9,53 +9,44 @@
  *
  * @interface Highcharts.PointLabelObject
  *//**
- * For categorized axes this property holds the category name for the point. For
- * other axes it holds the X value.
- *
- * @name Highcharts.PointLabelObject#x
- * @type {number|string}
- *//**
- * The y value of the point.
- *
- * @name Highcharts.PointLabelObject#y
- * @type {number|undefined}
- *//**
  * The point's current color.
- *
  * @name Highcharts.PointLabelObject#color
- * @type {Highcharts.ColorString}
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  *//**
  * The point's current color index, used in styled mode instead of `color`. The
  * color index is inserted in class names used for styling.
- *
  * @name Highcharts.PointLabelObject#colorIndex
  * @type {number}
  *//**
  * The name of the related point.
- *
  * @name Highcharts.PointLabelObject#key
  * @type {number|string}
  *//**
- * The related series.
- *
- * @name Highcharts.PointLabelObject#series
- * @type {Highcharts.Series}
- *//**
- * The related point.
- *
- * @name Highcharts.PointLabelObject#point
- * @type {Highcharts.Point}
- *//**
  * The percentage for related points in a stacked series or pies.
- *
  * @name Highcharts.PointLabelObject#percentage
  * @type {number}
  *//**
+ * The related point.
+ * @name Highcharts.PointLabelObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * The related series.
+ * @name Highcharts.PointLabelObject#series
+ * @type {Highcharts.Series}
+ *//**
  * The total of values in either a stack for stacked series, or a pie in a pie
  * series.
- *
  * @name Highcharts.PointLabelObject#total
  * @type {number}
+ *//**
+ * For categorized axes this property holds the category name for the point. For
+ * other axes it holds the X value.
+ * @name Highcharts.PointLabelObject#x
+ * @type {number|string}
+ *//**
+ * The y value of the point.
+ * @name Highcharts.PointLabelObject#y
+ * @type {number|undefined}
  */
 
 'use strict';
@@ -129,7 +120,7 @@ Highcharts.Point.prototype = {
          * The point's current color.
          *
          * @name Highcharts.Point#color
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         if (!styledMode) {
             point.color = series.color; // #3445
@@ -199,7 +190,6 @@ Highcharts.Point.prototype = {
         /**
          * The point's options as applied in the initial configuration, or
          * extended through `Point.update`.
-         *
          * @name Highcharts.Point#options
          * @type {object}
          */
@@ -218,7 +208,6 @@ Highcharts.Point.prototype = {
 
         /**
          * The y value of the point.
-         *
          * @name Highcharts.Point#y
          * @type {number|undefined}
          */
@@ -239,7 +228,6 @@ Highcharts.Point.prototype = {
 
         /**
          * The x value of the point.
-         *
          * @name Highcharts.Point#x
          * @type {number}
          */
