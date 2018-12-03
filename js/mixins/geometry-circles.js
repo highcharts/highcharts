@@ -80,7 +80,7 @@ function getCircleCircleIntersection(c1, c2) {
             y1 = c1.y,
             y2 = c2.y,
             x0 = x1 + x * (x2 - x1) / d,
-            y0 = y1 + y * (y2 - y1) / d,
+            y0 = y1 + x * (y2 - y1) / d,
             rx = -(y2 - y1) * (y / d),
             ry = -(x2 - x1) * (y / d);
 
