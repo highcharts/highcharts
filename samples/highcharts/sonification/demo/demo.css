@@ -1,0 +1,15 @@
+#container {
+	min-width: 500px;
+	max-width: 900px;
+	height: 500px;
+	margin: 0 auto
+}
+
+#controls {
+    width: 500px;
+    margin: 0 auto;
+}
+
+#controls button, #controls input {
+    width: 20%;
+}
