@@ -65,10 +65,11 @@ seriesType('packedbubble', 'bubble',
         sizeBy: 'radius',
         zoneAxis: 'y',
         tooltip: {
-            pointFormat: 'Value: {point.y}'
+            pointFormat: 'Value: {point.value}'
         }
     }, {
-        pointArrayMap: ['name', 'y'],
+        pointArrayMap: ['value'],
+        pointValKey: 'value',
         isCartesian: false,
         axisTypes: [],
         /**
