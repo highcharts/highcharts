@@ -29,6 +29,6 @@ Highcharts.chart('container', {
         }]
     }],
     title: {
-        text: 'The Unnattainable Triangle'
+        text: 'The Unattainable Triangle'
     }
 });
