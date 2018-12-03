@@ -83,6 +83,11 @@ var eventEmitterMixin = {
             prevChartX,
             prevChartY;
 
+        // On right click, do nothing:
+        if (e.button === 2) {
+            return;
+        }
+
         e.stopPropagation();
 
         e = pointer.normalize(e);

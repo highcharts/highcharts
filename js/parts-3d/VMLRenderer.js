@@ -1,9 +1,13 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
+ *
+ * Extension to the VML Renderer
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
@@ -14,9 +18,6 @@ var addEvent = H.addEvent,
     SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer;
 
-/**
- *    Extension to the VML Renderer
- */
 if (VMLRenderer) {
 
     H.setOptions({ animate: false });

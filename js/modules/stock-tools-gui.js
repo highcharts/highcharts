@@ -1394,18 +1394,33 @@ H.Toolbar.prototype = {
 
 // Comunication with bindings:
 addEvent(H.Toolbar, 'selectButton', function (event) {
+    var button = event.button,
+        className = PREFIX + 'submenu-wrapper';
+
     if (this.guiEnabled) {
         // Unslect other active buttons
         this.unselectAllButtons(event.button);
 
+        // If clicked on a submenu, select state for it's parent
+        if (button.parentNode.className.indexOf(className) >= 0) {
+            button = button.parentNode.parentNode;
+        }
         // Set active class on the current button
-        this.selectButton(event.button);
+        this.selectButton(button);
     }
 });
 
+
 addEvent(H.Toolbar, 'deselectButton', function (event) {
+    var button = event.button,
+        className = PREFIX + 'submenu-wrapper';
+
     if (this.guiEnabled) {
-        this.selectButton(event.button);
+        // If deselecting a button from a submenu, select state for it's parent
+        if (button.parentNode.className.indexOf(className) >= 0) {
+            button = button.parentNode.parentNode;
+        }
+        this.selectButton(button);
     }
 });
 

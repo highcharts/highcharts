@@ -1,4 +1,6 @@
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -14,18 +16,23 @@ var seriesType = H.seriesType,
 /**
  * The MACD series type.
  *
- * @constructor seriesTypes.macd
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.macd
+ *
+ * @augments Highcharts.Series
  */
 seriesType('macd', 'sma',
     /**
      * Moving Average Convergence Divergence (MACD). This series requires
      * `linkedTo` option to be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/macd MACD indicator
-     * @since 6.0.0
+     * @sample stock/indicators/macd
+     *         MACD indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.macd
      */
     {
@@ -33,25 +40,19 @@ seriesType('macd', 'sma',
             /**
              * The short period for indicator calculations.
              *
-             * @type {Number}
              * @since 6.0.0
-             * @product highstock
              */
             shortPeriod: 12,
             /**
              * The long period for indicator calculations.
              *
-             * @type {Number}
              * @since 6.0.0
-             * @product highstock
              */
             longPeriod: 26,
             /**
              * The base period for signal calculations.
              *
-             * @type {Number}
              * @since 6.0.0
-             * @product highstock
              */
             signalPeriod: 9,
             period: 26
@@ -60,29 +61,27 @@ seriesType('macd', 'sma',
          * The styles for signal line
          *
          * @since 6.0.0
-         * @product highstock
          */
         signalLine: {
             /**
+             * @sample stock/indicators/macd-zones
+             *         Zones in MACD
+             *
              * @extends plotOptions.macd.zones
-             * @sample  stock/indicators/macd-zones Zones in MACD
              */
             zones: [],
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @type {Number}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type {Number}
+                 * @type  {Highcharts.ColorString}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 lineColor: undefined
             }
@@ -91,29 +90,27 @@ seriesType('macd', 'sma',
          * The styles for macd line
          *
          * @since 6.0.0
-         * @product highstock
          */
         macdLine: {
             /**
+             * @sample stock/indicators/macd-zones
+             *         Zones in MACD
+             *
              * @extends plotOptions.macd.zones
-             * @sample  stock/indicators/macd-zones Zones in MACD
              */
             zones: [],
             styles: {
                 /**
                  * Pixel width of the line.
                  *
-                 * @type {Number}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line.
                  *
-                 * @type {Number}
+                 * @type  {Highcharts.ColorString}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 lineColor: undefined
             }
@@ -401,24 +398,23 @@ seriesType('macd', 'sma',
                 yData: yMACD
             };
         }
-    });
+    }
+);
 
 /**
  * A `MACD` series. If the [type](#series.macd.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.macd
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.macd
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.macd
  */
 
 /**
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.sma.data
- * @product highstock
+ * @extends   series.sma.data
+ * @since     6.0.0
+ * @product   highstock
  * @apioption series.macd.data
  */

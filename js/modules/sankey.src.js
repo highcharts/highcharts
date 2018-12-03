@@ -21,7 +21,7 @@ var defined = H.defined,
  * A sankey diagram is a type of flow diagram, in which the width of the
  * link between two nodes is shown proportionally to the flow quantity.
  *
- * @extends      {plotOptions.column}
+ * @extends      plotOptions.column
  * @product      highcharts
  * @sample       highcharts/demo/sankey-diagram/
  *               Sankey diagram
@@ -177,7 +177,7 @@ seriesType('sankey', 'column', {
             node.linksTo = [];
             node.linksFrom = [];
             node.formatPrefix = 'node';
-            node.name = node.name || node.id; // for use in formats
+            node.name = node.name || node.options.id; // for use in formats
 
             /**
              * Return the largest sum of either the incoming or outgoing links.
@@ -389,7 +389,7 @@ seriesType('sankey', 'column', {
                 point.toNode = nodeLookup[point.to];
             }
 
-            point.name = point.name || point.id; // for use in formats
+            point.name = point.name || point.options.id; // for use in formats
 
         }, this);
     },
@@ -482,7 +482,8 @@ seriesType('sankey', 'column', {
                         ),
                         nodeW = nodeWidth,
                         right = toNode.column * colDistance,
-                        outgoing = point.outgoing;
+                        outgoing = point.outgoing,
+                        straight = right > nodeLeft;
 
                     if (inverted) {
                         fromY = chart.plotSizeY - fromY;
@@ -490,12 +491,13 @@ seriesType('sankey', 'column', {
                         right = chart.plotSizeX - right;
                         nodeW = -nodeW;
                         linkHeight = -linkHeight;
+                        straight = nodeLeft > right;
                     }
 
                     point.shapeType = 'path';
 
                     // Links going from left to right
-                    if (right > left) {
+                    if (straight) {
                         point.shapeArgs = {
                             d: [
                                 'M', nodeLeft + nodeW, fromY,
@@ -603,8 +605,8 @@ seriesType('sankey', 'column', {
 
 
     destroy: function () {
-        // Nodes must also be destroyed (#8682)
-        this.data = this.points.concat(this.nodes);
+        // Nodes must also be destroyed (#8682, #9300)
+        this.data = [].concat(this.points, this.nodes);
         H.Series.prototype.destroy.call(this);
     }
 }, {

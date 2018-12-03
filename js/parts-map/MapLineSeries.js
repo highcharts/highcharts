@@ -3,50 +3,71 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
+
 var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
+
+/**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.mapline
+ *
+ * @augments Highcharts.Series
+ */
+seriesType('mapline', 'map'
 
 /**
  * A mapline series is a special case of the map series where the value colors
  * are applied to the strokes rather than the fills. It can also be used for
  * freeform drawing, like dividers, in the map.
  *
- * @sample maps/demo/mapline-mappoint/ Mapline and map-point chart
- * @extends plotOptions.map
- * @product highmaps
+ * @sample maps/demo/mapline-mappoint/
+ *         Mapline and map-point chart
+ *
+ * @extends      plotOptions.map
+ * @product      highmaps
  * @optionparent plotOptions.mapline
  */
-seriesType('mapline', 'map', {
+, {
     /**
      * The width of the map line.
-     *
-     * @type {Number}
-     * @default 1
-     * @product highmaps
      */
     lineWidth: 1,
 
     /**
      * Fill color for the map line shapes
      *
-     * @type {Color}
-     * @default none
-     * @product highmaps
+     * @type {Highcharts.ColorString}
      */
     fillColor: 'none'
 }, {
+
     type: 'mapline',
+
     colorProp: 'stroke',
+
     pointAttrToOptions: {
         'stroke': 'color',
         'stroke-width': 'lineWidth'
     },
+
     /**
      * Get presentational attributes
+     *
+     * @private
+     * @function Highcharts.seriesTypes.mapline#pointAttribs
+     *
+     * @param {Highcharts.Point} point
+     *
+     * @param {string} state
+     *
+     * @return {Highcharts.Dictionary<*>}
      */
     pointAttribs: function (point, state) {
         var attr = seriesTypes.map.prototype.pointAttribs.call(
@@ -61,17 +82,18 @@ seriesType('mapline', 'map', {
 
         return attr;
     },
+
     drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
+
 });
 
 /**
  * A `mapline` series. If the [type](#series.mapline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @extends series,plotOptions.mapline
- * @excluding dataParser,dataURL,marker
- * @product highmaps
+ * @extends   series,plotOptions.mapline
+ * @excluding dataParser, dataURL, marker
+ * @product   highmaps
  * @apioption series.mapline
  */
 
@@ -115,7 +137,7 @@ seriesType('mapline', 'map', {
  *     }]
  *  ```
  *
- * @type {Array<Object>}
- * @product highmaps
+ * @type      {Array<number|Array<string,number>|object>}
+ * @product   highmaps
  * @apioption series.mapline.data
  */

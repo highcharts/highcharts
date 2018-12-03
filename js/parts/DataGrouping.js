@@ -5,11 +5,13 @@
  */
 
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
+
 var addEvent = H.addEvent,
     arrayMax = H.arrayMax,
     arrayMin = H.arrayMin,
@@ -45,7 +47,7 @@ var addEvent = H.addEvent,
  * the first point instance are copied over to the group point. This can be
  * altered through a custom `approximation` callback function.
  *
- * @product highstock
+ * @product   highstock
  * @apioption plotOptions.series.dataGrouping
  */
 
@@ -77,12 +79,13 @@ var addEvent = H.addEvent,
  * Defaults to `average` for line-type series, `sum` for columns, `range`
  * for range series and `ohlc` for OHLC and candlestick.
  *
- * @validvalue ["average", "averages", "open", "high", "low", "close", "sum"]
- * @type {String|Function}
  * @sample {highstock} stock/plotoptions/series-datagrouping-approximation
  *         Approximation callback with custom data
- * @product highstock
- * @apioption plotOptions.series.dataGrouping.approximation
+ *
+ * @type       {string|Function}
+ * @validvalue ["average", "averages", "open", "high", "low", "close", "sum"]
+ * @product    highstock
+ * @apioption  plotOptions.series.dataGrouping.approximation
  */
 
 /**
@@ -113,17 +116,17 @@ var addEvent = H.addEvent,
  * to two weeks, the second and third item of the week array are used,
  *  and applied to the start and end date of the time span.
  *
- * @type {Object}
- * @product highstock
+ * @type      {object}
+ * @product   highstock
  * @apioption plotOptions.series.dataGrouping.dateTimeLabelFormats
  */
 
 /**
  * Enable or disable data grouping.
  *
- * @type {Boolean}
- * @default true
- * @product highstock
+ * @type      {boolean}
+ * @default   true
+ * @product   highstock
  * @apioption plotOptions.series.dataGrouping.enabled
  */
 
@@ -132,9 +135,9 @@ var addEvent = H.addEvent,
  * are. This can be handy for example when the sum should be calculated
  * for values appearing at random times within each hour.
  *
- * @type {Boolean}
- * @default false
- * @product highstock
+ * @type      {boolean}
+ * @default   false
+ * @product   highstock
  * @apioption plotOptions.series.dataGrouping.forced
  */
 
@@ -150,9 +153,9 @@ var addEvent = H.addEvent,
  * series have 10px. If combined, both the line and the column will
  * have 10px by default.
  *
- * @type {Number}
- * @default 2
- * @product highstock
+ * @type      {number}
+ * @default   2
+ * @product   highstock
  * @apioption plotOptions.series.dataGrouping.groupPixelWidth
  */
 
@@ -164,12 +167,13 @@ var addEvent = H.addEvent,
  * [Series.getExtremesFromAll](#plotOptions.series.getExtremesFromAll) but does
  * not affect yAxis extremes.
  *
- * @type {Boolean}
  * @sample {highstock} stock/plotoptions/series-datagrouping-groupall/
  *         Two series with the same data but different groupAll setting
- * @default false
- * @since 6.1.0
- * @product highstock
+ *
+ * @type      {boolean}
+ * @default   false
+ * @since     6.1.0
+ * @product   highstock
  * @apioption plotOptions.series.dataGrouping.groupAll
  */
 
@@ -181,9 +185,9 @@ var addEvent = H.addEvent,
  * The data is shifted to the middle of the group, and min and max
  * values are preserved. Internally, this is used in the Navigator series.
  *
- * @type {Boolean}
- * @default false
- * @product highstock
+ * @type      {boolean}
+ * @default   false
+ * @product   highstock
  * @apioption plotOptions.series.dataGrouping.smoothed
  */
 
@@ -219,8 +223,8 @@ var addEvent = H.addEvent,
  *     null
  * ]]</pre>
  *
- * @type {Array}
- * @product highstock
+ * @type      {Array<Array<string,(Array<number>|null)>>}
+ * @product   highstock
  * @apioption plotOptions.series.dataGrouping.units
  */
 
@@ -232,11 +236,12 @@ var addEvent = H.addEvent,
  * to group it into appropriate groups so that each is more or less
  * two pixels wide. Defaults to `10`.
  *
- * @type {Number}
  * @sample {highstock} stock/plotoptions/series-datagrouping-grouppixelwidth/
  *         Two series with the same data density but different groupPixelWidth
- * @default 10
- * @product highstock
+ *
+ * @type      {number}
+ * @default   10
+ * @product   highstock
  * @apioption plotOptions.column.dataGrouping.groupPixelWidth
  */
 
@@ -245,7 +250,7 @@ var seriesProto = Series.prototype,
     baseGeneratePoints = seriesProto.generatePoints,
 
     /**
-     *
+     * @ignore
      */
     commonOptions = {
         approximation: 'average', // average, open, high, low, close, sum
@@ -366,6 +371,12 @@ var seriesProto = Series.prototype,
      * of ohlc, four arrays are sent in as four parameters. Each array consists
      * only of numbers. In case null values belong to the group, the property
      * .hasNulls will be set to true on the array.
+     *
+     * @product highstock
+     *
+     * @private
+     * @name Highcharts.approximations
+     * @type {Highcharts.Dictionary<Function>}
      */
     approximations = H.approximations = {
         sum: function (arr) {
@@ -464,6 +475,19 @@ var seriesProto = Series.prototype,
 /**
  * Takes parallel arrays of x and y data and groups the data into intervals
  * defined by groupPositions, a collection of starting x values for each group.
+ *
+ * @private
+ * @function Highcharts.Series#groupData
+ *
+ * @param {Array<number>} xData
+ *
+ * @param {Array<number>} yData
+ *
+ * @param {boolean} groupPositions
+ *
+ * @param {string|Function} approximation
+ *
+ * @return {Array<Array<number>,Array<number>,Array<*>>}
  */
 seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
     var series = this,
@@ -615,6 +639,9 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 /**
  * Extend the basic processData method, that crops the data to the current zoom
  * range, with data grouping logic.
+ *
+ * @private
+ * @function Highcharts.Series#processData
  */
 seriesProto.processData = function () {
     var series = this,
@@ -762,6 +789,9 @@ seriesProto.processData = function () {
 
 /**
  * Destroy the grouped data points. #622, #740
+ *
+ * @private
+ * @function Highcharts.Series#destroyGroupedData
  */
 seriesProto.destroyGroupedData = function () {
 
@@ -778,6 +808,9 @@ seriesProto.destroyGroupedData = function () {
 
 /**
  * Override the generatePoints method by adding a reference to grouped data
+ *
+ * @private
+ * @function Highcharts.Series#generatePoints
  */
 seriesProto.generatePoints = function () {
 
@@ -789,9 +822,9 @@ seriesProto.generatePoints = function () {
     this.groupedData = this.hasGroupedData ? this.points : null;
 };
 
-/**
+/*
  * Override point prototype to throw a warning when trying to update grouped
- * points
+ * points.
  */
 addEvent(Point, 'update', function () {
     if (this.dataGroup) {
@@ -800,7 +833,7 @@ addEvent(Point, 'update', function () {
     }
 });
 
-/**
+/*
  * Extend the original method, make the tooltip's header reflect the grouped
  * range
  */
@@ -888,7 +921,7 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
     return proceed.call(tooltip, labelConfig, isFooter);
 });
 
-/**
+/*
  * Destroy grouped data on series destroy
  */
 addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
@@ -926,7 +959,7 @@ addEvent(Series, 'afterSetOptions', function (e) {
 });
 
 
-/**
+/*
  * When resetting the scale reset the hasProccessed flag to avoid taking
  * previous data grouping of neighbour series into accound when determining
  * group pixel width (#2692).
@@ -939,8 +972,12 @@ addEvent(Axis, 'afterSetScale', function () {
 
 /**
  * Get the data grouping pixel width based on the greatest defined individual
- * width
- * of the axis' series, and if whether one of the axes need grouping.
+ * width of the axis' series, and if whether one of the axes need grouping.
+ *
+ * @private
+ * @function Highcharts.Axis#getGroupPixelWidth
+ *
+ * @return {number}
  */
 Axis.prototype.getGroupPixelWidth = function () {
 
@@ -993,15 +1030,17 @@ Axis.prototype.getGroupPixelWidth = function () {
 /**
  * Highstock only. Force data grouping on all the axis' series.
  *
- * @param  {SeriesDatagroupingOptions} [dataGrouping]
- *         A `dataGrouping` configuration. Use `false` to disable data grouping
- *         dynamically.
- * @param  {Boolean} [redraw=true]
- *         Whether to redraw the chart or wait for a later call to {@link
- *         Chart#redraw}.
+ * @product highstock
  *
- * @function setDataGrouping
- * @memberof Axis.prototype
+ * @function Highcharts.Axis#setDataGrouping
+ *
+ * @param {boolean|Highcharts.PlotSeriesDataGroupingOptions} [dataGrouping]
+ *        A `dataGrouping` configuration. Use `false` to disable data grouping
+ *        dynamically.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart or wait for a later call to
+ *        {@link Chart#redraw}.
  */
 Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
     var i;

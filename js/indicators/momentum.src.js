@@ -1,4 +1,6 @@
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -17,17 +19,22 @@ function populateAverage(points, xVal, yVal, i, period) {
 /**
  * The Momentum series type.
  *
- * @constructor seriesTypes.momentum
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.momentum
+ *
+ * @augments Highcharts.Series
  */
 seriesType('momentum', 'sma',
     /**
      * Momentum. This series requires `linkedTo` option to be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/momentum Momentum indicator
-     * @since 6.0.0
+     * @sample stock/indicators/momentum
+     *         Momentum indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.momentum
      */
     {
@@ -86,24 +93,23 @@ seriesType('momentum', 'sma',
                 yData: yData
             };
         }
-    });
+    }
+);
 
 /**
  * A `Momentum` series. If the [type](#series.momentum.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.momentum
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.momentum
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.momentum
  */
 
 /**
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.sma.data
- * @product highstock
+ * @extends   series.sma.data
+ * @since     6.0.0
+ * @product   highstock
  * @apioption series.momentum.data
  */

@@ -137,3 +137,97 @@ QUnit.test('SVG text wrap (#3132)', function (assert) {
         labelWithMarkup.width > label.width,
         "The width of the label that contains markup should be the greatest");
 });
+
+QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
+
+    document.getElementById('container').innerHTML = '';
+    var ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    var label1, label2, label3;
+
+    label1 = ren
+        .label(
+            '<span style="font-size: 10px">I should be inside the box</span>',
+            100,
+            100
+        )
+        .attr({
+            'stroke': 'blue',
+            'stroke-width': '1px'
+        })
+        .css({
+            fontSize: '20px'
+        })
+        .add();
+
+    label2 = ren
+        .label(
+            '<span style="font-size: 10px">I should be inside</span> the box',
+            100,
+            130
+        )
+        .attr({
+            'stroke': 'blue',
+            'stroke-width': '1px'
+        })
+        .css({
+            fontSize: '20px'
+        })
+        .add();
+
+    label3 = ren
+        .label(
+            'No inline span',
+            100,
+            160
+        )
+        .attr({
+            'stroke': 'blue',
+            'stroke-width': '1px'
+        })
+        .css({
+            fontSize: '20px'
+        })
+        .add();
+
+    assert.strictEqual(
+        ren.box.innerHTML.indexOf('NaN'),
+        -1,
+        'No NaN attribute values should be allowed'
+    );
+
+    assert.ok(
+        label1.element.getBBox().height < label2.element.getBBox().height,
+        'Label with inline style should be smaller'
+    );
+
+    assert.strictEqual(
+        label2.element.getBBox().height,
+        label3.element.getBBox().height,
+        'Label with text outside inner span should be equal'
+    );
+
+    label1 = ren.label('I should be inside the box', 100, 200)
+        .attr({
+            'stroke': 'red',
+            'stroke-width': '1px'
+        })
+        .add()
+        .css({
+            fontSize: '30px'
+        });
+
+    assert.ok(
+        label1.box.element.getBBox().height > label1.text.element.getBBox().height,
+        'Border should be higher than text'
+    );
+
+    assert.ok(
+        label1.box.element.getBBox().width > label1.text.element.getBBox().width,
+        'Border should be wider than text'
+    );
+});

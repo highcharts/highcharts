@@ -70,8 +70,7 @@ seriesType('gantt', 'xrange', {
                 start,
                 end,
                 milestone = point.options.milestone,
-                retVal = '<b>' + (point.name || point.category) + '</b>';
-
+                retVal = '<b>' + (point.name || point.yCategory) + '</b>';
             if (ttOptions.pointFormat) {
                 return point.tooltipFormatter(ttOptions.pointFormat);
             }
@@ -121,6 +120,8 @@ seriesType('gantt', 'xrange', {
     }
 }, {
     // props - series member overrides
+
+    pointArrayMap: ['start', 'end', 'y'],
 
     // Keyboard navigation, don't use nearest vertical mode
     keyboardMoveVertical: false,
@@ -230,10 +231,9 @@ seriesType('gantt', 'xrange', {
      */
     applyOptions: function (options, x) {
         var point = this,
-            series = point.series,
             retVal = merge(options);
 
-        series.setGanttPointAliases(retVal);
+        H.seriesTypes.gantt.prototype.setGanttPointAliases(retVal);
 
         retVal = parent.prototype.pointClass.prototype.applyOptions
             .call(point, retVal, x);

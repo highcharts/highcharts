@@ -740,6 +740,22 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         }
     },
 
+    // Custom attributes used for symbols, these should be filtered out when
+    // setting SVGElement attributes (#9375).
+    symbolCustomAttribs: [
+        'x',
+        'y',
+        'width',
+        'height',
+        'r',
+        'start',
+        'end',
+        'innerR',
+        'anchorX',
+        'anchorY',
+        'rounded'
+    ],
+
     /**
      * Apply native and custom attributes to the SVG elements.
      *
@@ -801,7 +817,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             hasSetSymbolSize,
             ret = this,
             skipAttr,
-            setter;
+            setter,
+            symbolCustomAttribs = this.symbolCustomAttribs;
 
         // single key-value pair
         if (typeof hash === 'string' && val !== undefined) {
@@ -833,8 +850,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 // Special handling of symbol attributes
                 if (
                     this.symbolName &&
-                    /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)$/
-                    .test(key)
+                    H.inArray(key, symbolCustomAttribs) !== -1
                 ) {
                     if (!hasSetSymbolSize) {
                         this.symbolAttr(hash);
@@ -4710,12 +4726,28 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             wrapper.addClass('highcharts-' + className);
         }
 
-        /**
-         * This function runs after the label is added to the DOM (when the
-         * bounding box is available), and after the text of the label is
-         * updated to detect the new bounding box and reflect it in the border
-         * box.
+        /* @merge v6.2
+            if (!build.classic) { =
+            needsBox = true; // for styling
+            getCrispAdjust = function () {
+                return box.strokeWidth() % 2 / 2;
+            };
+            = } else { =
+            needsBox = hasBGImage;
+            getCrispAdjust = function () {
+                return (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
+            };
          */
+
+        needsBox = hasBGImage;
+        getCrispAdjust = function () {
+            return (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
+        };
+
+        /* This function runs after the label is added to the DOM (when the
+           bounding box is available), and after the text of the label is
+           updated to detect the new bounding box and reflect it in the border
+           box. */
         updateBoxSize = function () {
             var style = text.element.style,
                 crispAdjust,
@@ -4735,8 +4767,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             wrapper.height = (height || bBox.height || 0) + 2 * padding;
 
             // Update the label-scoped y offset
-            baselineOffset = padding +
-                renderer.fontMetrics(style && style.fontSize, text).b;
+            baselineOffset = padding + Math.min(
+                renderer.fontMetrics(style && style.fontSize, text).b,
+                // Math.min because of inline style (#9400)
+                bBox ? bBox.height : Infinity
+            );
 
             if (needsBox) {
 
@@ -4965,8 +5000,17 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     });
                     text.css(textStyles);
 
-                    if ('width' in textStyles) {
-                        updateBoxSize();
+                    // Update existing text and box
+                    if (box) {
+                        if ('width' in textStyles) {
+                            updateBoxSize();
+                        }
+
+                        // Keep updated (#9400)
+                        if ('fontSize' in textStyles) {
+                            updateBoxSize();
+                            updateTextPadding();
+                        }
                     }
                 }
                 return baseCss.call(wrapper, styles);

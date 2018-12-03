@@ -17,6 +17,7 @@
         "consistent-return": 0,
         "func-style": 0,
         "guard-for-in": 0,                          /*@todo: Make the each function handle objects, then run a guarded for-in there.*/
+        "indent": ["error", 4, { "FunctionExpression": { "parameters": 1 }}],
         "lines-around-comment": 0,
         "max-len": [
             "error", {

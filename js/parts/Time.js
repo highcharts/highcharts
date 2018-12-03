@@ -21,6 +21,18 @@
  */
 
 /**
+ * Function of an additional date format specifier.
+ *
+ * @callback Highcharts.TimeFormatCallbackFunction
+ *
+ * @param {number} timestamp
+ *        The time to format.
+ *
+ * @return {string}
+ *         The formatted portion of the date.
+ */
+
+/**
  * Additonal time tick information.
  *
  * @interface Highcharts.TimeTicksInfoObject
@@ -583,7 +595,7 @@ Highcharts.Time.prototype = {
                  *         Adding support for week number
                  *
                  * @name Highcharts.dateFormats
-                 * @type {Highcharts.Dictionary<Function>}
+                 * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
                  */
                 H.dateFormats
             );
@@ -712,7 +724,12 @@ Highcharts.Time.prototype = {
                     minDate,
                     interval >= timeUnits.month ?
                         1 :
-                        count * Math.floor(time.get('Date', minDate) / count)
+                        Math.max(
+                            1,
+                            count * Math.floor(
+                                time.get('Date', minDate) / count
+                            )
+                        )
                     );
             }
 

@@ -1336,7 +1336,7 @@ gulp.task('tsd-lint', ['tsd'], tsdLint);
  * TODO add --help command to inform about usage.
  * @return undefined
  */
-gulp.task('scripts', ['jsdoc-errors'], () => {
+gulp.task('scripts', () => {
     const options = {
         debug: argv.d || false,
         files: (

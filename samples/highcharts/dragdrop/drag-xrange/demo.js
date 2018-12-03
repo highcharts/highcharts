@@ -6,7 +6,8 @@ var setDragStatus = function (status) {
 Highcharts.chart('container', {
     chart: {
         animation: false,
-        type: 'xrange'
+        type: 'xrange',
+        zoomType: 'x'
     },
 
     title: {

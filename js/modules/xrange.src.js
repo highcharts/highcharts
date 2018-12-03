@@ -14,6 +14,7 @@ var addEvent = H.addEvent,
     defined = H.defined,
     color = H.Color,
     columnType = H.seriesTypes.column,
+    correctFloat = H.correctFloat,
     isNumber = H.isNumber,
     isObject = H.isObject,
     merge = H.merge,
@@ -59,7 +60,7 @@ seriesType('xrange', 'column'
  * The X-range series displays ranges on the X axis, typically time intervals
  * with a start and end date.
  *
- * @extends      {plotOptions.column}
+ * @extends      plotOptions.column
  * @excluding    boostThreshold,crisp,cropThreshold,depth,edgeColor,edgeWidth,
  *               findNearestPointBy,getExtremesFromAll,negativeColor,
  *               pointInterval,pointIntervalUnit,pointPlacement,
@@ -149,7 +150,7 @@ seriesType('xrange', 'column'
             if (!defined(amount)) {
                 amount = 0;
             }
-            return (amount * 100) + '%';
+            return correctFloat(amount * 100) + '%';
         }
     },
 
@@ -351,11 +352,6 @@ seriesType('xrange', 'column'
                 ),
                 height: shapeArgs.height
             };
-        }
-
-        // Category from Y axis
-        if (yAxis.categories) {
-            point.category = yAxis.categories[point.y];
         }
     },
 
