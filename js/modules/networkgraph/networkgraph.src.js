@@ -337,11 +337,18 @@ seriesType('networkgraph', 'line', {
 
                     series.redrawHalo();
 
-                    if (!series.layout.simulation ||
-                        series.layout.simulation.stopped
-                    ) {
+                    if (!series.layout.simulation) {
                         // Start new simulation:
+                        if (!series.layout.enableSimulation) {
+                            // Run only one iteration to speed things up:
+                            series.layout.setMaxIterations(1);
+                        }
+                        // When dragging nodes, we don't need to calculate
+                        // initial positions and rendering nodes:
+                        series.layout.setInitialRendering(false);
                         series.layout.run();
+                        // Restore defaults:
+                        series.layout.setInitialRendering(true);
                     } else {
                         // Extend current simulation:
                         series.layout.resetSimulation();

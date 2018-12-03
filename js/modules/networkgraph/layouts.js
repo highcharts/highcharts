@@ -24,6 +24,8 @@ H.layouts = {
             width: 0,
             height: 0
         };
+
+        this.setInitialRendering(true);
     }
 };
 
@@ -39,14 +41,14 @@ H.extend(
                 series = this.series,
                 options = this.options;
 
-            layout.systemTemperature = 0;
+            if (layout.initialRendering) {
+                layout.initPositions();
 
-            layout.initPositions();
-
-            // Render elements in initial positions:
-            series.forEach(function (s) {
-                s.render();
-            });
+                // Render elements in initial positions:
+                series.forEach(function (s) {
+                    s.render();
+                });
+            }
 
             // Algorithm:
             function localLayout() {
@@ -76,6 +78,8 @@ H.extend(
                         !layout.isStable()
                     ) {
                         H.win.requestAnimationFrame(localLayout);
+                    } else {
+                        layout.simulation = false;
                     }
                 }
             }
@@ -85,7 +89,7 @@ H.extend(
 
             if (options.enableSimulation) {
                 // Animate it:
-                H.win.requestAnimationFrame(localLayout);
+                layout.simulation = H.win.requestAnimationFrame(localLayout);
             } else {
                 // Synchronous rendering:
                 while (
@@ -138,6 +142,7 @@ H.extend(
         },
 
         resetSimulation: function () {
+            this.systemTemperature = 0;
             this.setMaxIterations();
             this.setTemperature();
             this.setDiffTemperature();
@@ -157,6 +162,9 @@ H.extend(
         setDiffTemperature: function () {
             this.diffTemperature = this.temperature /
                 (this.options.maxIterations + 1);
+        },
+        setInitialRendering: function (enable) {
+            this.initialRendering = enable;
         },
         initPositions: function () {
             var box = this.box,
