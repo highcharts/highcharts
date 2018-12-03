@@ -787,6 +787,24 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
     return field;
 };
 
+/**
+ * A Venn diagram displays all possible logical relations between a collection
+ * of different sets. The sets are represented by circles, and the relation
+ * between the sets are displayed by the overlap or lack of overlap between
+ * them. The venn diagram is a special case of Euler diagrams, which can also
+ * be displayed by this series type
+ *
+ * @extends plotOptions.scatter
+ * @sample highcharts/demo/venn-diagram Venn Diagram
+ * @excluding connectEnds, connectNulls, cropThreshold, findNearestPointBy,
+ *            getExtremesFromAll, label, linecap, lineWidth, linkedTo, marker,
+ *            negativeColor, pointInterval, pointIntervalUnit, pointPlacement,
+ *            pointStart, softThreshold, stacking, steps, threshold, xAxis,
+ *            yAxis, zoneAxis, zones
+ *
+ * @product highcharts
+ * @optionparent plotOptions.venn
+ */
 var vennOptions = {
     borderColor: '${palette.neutralColor20}',
     borderDashStyle: 'solid',
@@ -1015,4 +1033,51 @@ var vennPoint = {
     }
 };
 
+/**
+ * A `venn` series. If the [type](#series.venn.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @type {Object}
+ * @extends series,plotOptions.venn
+ * @excluding connectEnds, connectNulls, cropThreshold, dataParser, dataURL,
+ *            findNearestPointBy, getExtremesFromAll, label, linecap, lineWidth,
+ *            linkedTo, marker, negativeColor, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointStart, softThreshold, stack, stacking, steps,
+ *            threshold, xAxis, yAxis, zoneAxis, zones
+ * @product highcharts
+ * @apioption series.venn
+ */
+
+/**
+ * @type {Array<Object|Number>}
+ * @extends series.scatter.data
+ * @excluding marker, x, y
+ * @product highcharts
+ * @apioption series.venn.data
+ */
+
+/**
+* The value of the point, resulting in a relative area of the circle, or area of
+* overlap between two sets in the venn/euler diagram.
+*
+* @type {Number}
+* @default undefined
+* @since next
+* @sample {highcharts} highcharts/demo/venn-diagram/ Simple venn diagram
+* @product highcharts
+* @apioption series.venn.data.value
+*/
+
+/**
+* The set or sets the options will be applied to. If a single entry is defined,
+* then it will create a new set. If more than one entry is defined, then it will
+* define the overlap between the sets in the array.
+*
+* @type {Array}
+* @default undefined
+* @since next
+* @sample {highcharts} highcharts/demo/venn-diagram/ Simple venn diagram
+* @product highcharts
+* @apioption series.venn.data.sets
+*/
 seriesType('venn', 'scatter', vennOptions, vennSeries, vennPoint);
