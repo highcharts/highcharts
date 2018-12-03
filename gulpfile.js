@@ -532,12 +532,14 @@ const copyToDist = () => {
 
     // Copy source files to the distribution packages.
     const codeFiles = getFilesInFolder(sourceFolder, true, '')
-        .filter((path) => (
-            path.endsWith('.js') ||
-            path.endsWith('.js.map') ||
-            path.endsWith('.css') ||
-            path.endsWith('readme.txt')
-        ))
+        // Probably do not need filter anymore.
+        // .filter((path) => (
+        //     path.endsWith('.js') ||
+        //     path.endsWith('.js.map') ||
+        //     path.endsWith('.css') ||
+        //     path.endsWith('readme.txt') ||
+        //     path.endsWith('.svg')
+        // ))
         .reduce((obj, path) => {
             const source = sourceFolder + path;
             const filename = path.replace('.src.js', '.js').replace('js/', '');

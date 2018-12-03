@@ -90,7 +90,7 @@ const checkDependency = (name, severity = 'warn', type = 'dependencies') => {
  * been created.
  */
 const createDirectory = path => {
-    const folders = path.split(sep);
+    const folders = path.split(sep).join('/').split('/');
     let directory = '';
     return folders.reduce((promise, name) => {
         const p = join(directory, name);
