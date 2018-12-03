@@ -830,10 +830,11 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
  * of different sets. The sets are represented by circles, and the relation
  * between the sets are displayed by the overlap or lack of overlap between
  * them. The venn diagram is a special case of Euler diagrams, which can also
- * be displayed by this series type
+ * be displayed by this series type.
  *
  * @extends plotOptions.scatter
- * @sample highcharts/demo/venn-diagram Venn Diagram
+ * @sample {highcharts} highcharts/demo/venn-diagram/ Venn diagram
+ * @sample {highcharts} highcharts/demo/euler-diagram/ Euler diagram
  * @excluding connectEnds, connectNulls, cropThreshold, findNearestPointBy,
  *            getExtremesFromAll, label, linecap, lineWidth, linkedTo, marker,
  *            negativeColor, pointInterval, pointIntervalUnit, pointPlacement,
@@ -1128,19 +1129,21 @@ var vennPoint = {
 * @type {Number}
 * @default undefined
 * @since next
-* @sample {highcharts} highcharts/demo/venn-diagram/ Simple venn diagram
+* @sample {highcharts} highcharts/demo/venn-diagram/ Venn diagram
+* @sample {highcharts} highcharts/demo/euler-diagram/ Euler diagram
 * @product highcharts
 * @apioption series.venn.data.name
 */
 
 /**
 * The value of the point, resulting in a relative area of the circle, or area of
-* overlap between two sets in the venn/euler diagram.
+* overlap between two sets in the venn or euler diagram.
 *
 * @type {Number}
 * @default undefined
 * @since next
-* @sample {highcharts} highcharts/demo/venn-diagram/ Simple venn diagram
+* @sample {highcharts} highcharts/demo/venn-diagram/ Venn diagram
+* @sample {highcharts} highcharts/demo/euler-diagram/ Euler diagram
 * @product highcharts
 * @apioption series.venn.data.value
 */
@@ -1153,7 +1156,8 @@ var vennPoint = {
 * @type {Array}
 * @default undefined
 * @since next
-* @sample {highcharts} highcharts/demo/venn-diagram/ Simple venn diagram
+* @sample {highcharts} highcharts/demo/venn-diagram/ Venn diagram
+* @sample {highcharts} highcharts/demo/euler-diagram/ Euler diagram
 * @product highcharts
 * @apioption series.venn.data.sets
 */
