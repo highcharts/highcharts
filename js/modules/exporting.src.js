@@ -682,6 +682,8 @@ defaultOptions.exporting = {
      * to the default buttons listed here, custom buttons can be added.
      * See [navigation.buttonOptions](#navigation.buttonOptions) for general
      * options.
+     *
+     * @type {Highcharts.Dictionary<*>}
      */
     buttons: {
 
