@@ -8,9 +8,9 @@ as well as writing good issue reports.
 ## Contents
 
 [Reporting Bugs](#reporting-bugs)
-[Suggesting Features and/or Enhancements)(#suggesting-features-and-enhancements)
+[Suggesting Features and/or Enhancements](#suggesting-features-and-enhancements)
 [Contributing Code](#contributing-code)
-  [Licensing And Legal)(#licensing-and-legal)
+  [Licensing And Legal](#licensing-and-legal)
   [Style Guide](#style-guide)
   [Pull Requests](#pull-requests)
 
