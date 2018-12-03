@@ -272,7 +272,7 @@ Highcharts.Point.prototype = {
      *
      * @function Highcharts.Point#setNestedProperty
      *
-     * @param {*} object
+     * @param {object} object
      *        The object to set the value on.
      *
      * @param {*} value
@@ -281,7 +281,7 @@ Highcharts.Point.prototype = {
      * @param {string} key
      *        Key to the property to set.
      *
-     * @return {*}
+     * @return {object}
      *         The modified object.
      */
     setNestedProperty: function (object, value, key) {
