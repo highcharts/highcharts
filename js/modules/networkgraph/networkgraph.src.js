@@ -49,8 +49,8 @@ seriesType('networkgraph', 'line', {
         /**
          * A name for the dash style to use for links.
          *
-         * @type      {number}
-         * @apioption series.networkgraph.link.dashStyle
+         * @type      {String}
+         * @apioption plotOptions.networkgraph.link.dashStyle
          * @defaults  undefined
          */
 
@@ -123,7 +123,7 @@ seriesType('networkgraph', 'line', {
          * @sample      highcharts/series-networkgraph/forces/
          *              Custom forces
          */
-        gravitationalConstant: 1 / 16,
+        gravitationalConstant: 0.0625,
         /**
          * Friction applied on forces to prevent nodes rushing to fast to the
          * desired positions.
@@ -136,7 +136,8 @@ seriesType('networkgraph', 'line', {
          *
          * @sample      highcharts/series-networkgraph/forces/
          *              Custom forces
-         * @defaults function (d, k) { return k * k / d; }
+         * @type        {Function}
+         * @default function (d, k) { return k * k / d; }
          */
         repulsiveForce: function (d, k) {
             /*
@@ -164,7 +165,8 @@ seriesType('networkgraph', 'line', {
          *
          * @sample      highcharts/series-networkgraph/forces/
          *              Custom forces
-         * @defaults function (d, k) { return k * k / d; }
+         * @type        {Function}
+         * @default function (d, k) { return k * k / d; }
          */
         attractiveForce: function (d, k) {
             /*
@@ -275,6 +277,19 @@ seriesType('networkgraph', 'line', {
 
             point.name = point.name || point.id; // for use in formats
         }, this);
+
+
+        if (this.options.nodes) {
+            this.options.nodes.forEach(
+                function (nodeOptions) {
+                    if (!nodeLookup[nodeOptions.id]) {
+                        nodeLookup[nodeOptions.id] = this
+                            .createNode(nodeOptions.id);
+                    }
+                },
+                this
+            );
+        }
     },
 
     /**
@@ -435,7 +450,8 @@ seriesType('networkgraph', 'line', {
     }
 }, {
     getDegree: function () {
-        return this.isNode ? this.linksFrom.length + this.linksTo.length : 0;
+        var deg = this.isNode ? this.linksFrom.length + this.linksTo.length : 0;
+        return deg === 0 ? 1 : deg;
     },
     // Links:
     getLinkAttribues: function () {
@@ -641,7 +657,7 @@ addEvent(
  *
  * @type      {Array<Object|Array|Number>}
  * @extends   series.line.data
- * @excluding drilldown,marker,x,y
+ * @excluding drilldown,marker,x,y,draDrop
  * @sample    {highcharts} highcharts/chart/reflow-true/
  *            Numerical values
  * @sample    {highcharts} highcharts/series/data-array-of-arrays/

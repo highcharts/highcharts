@@ -997,6 +997,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         './js/annotations/types',
         './js/indicators',
         './js/modules',
+        './js/modules/networkgraph',
         './js/parts',
         './js/parts-3d',
         './js/parts-more',
