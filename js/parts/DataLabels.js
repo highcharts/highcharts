@@ -270,6 +270,8 @@ Series.prototype.drawDataLabels = function () {
         seriesDlOptions
     );
 
+    H.fireEvent(this, 'drawDataLabels');
+
     if (
         isArray(seriesDlOptions) ||
         seriesDlOptions.enabled ||
@@ -755,8 +757,8 @@ if (seriesTypes.pie) {
         radialDistributionX: function (series, point, y, naturalY) {
             return series.getX(
                 y < point.top + 2 || y > point.bottom - 2 ?
-                naturalY :
-                y,
+                    naturalY :
+                    y,
                 point.half,
                 point
             );
@@ -771,19 +773,27 @@ if (seriesTypes.pie) {
         // Left edges of the left-half labels touch the left edge of the plot
         // area. Right edges of the right-half labels touch the right edge of
         // the plot area.
-        alignToPlotEdges: function (dataLabel, half,
-            plotWidth, plotLeft) {
+        alignToPlotEdges: function (
+            dataLabel,
+            half,
+            plotWidth,
+            plotLeft
+        ) {
             var dataLabelWidth = dataLabel.getBBox().width;
             return half ? dataLabelWidth + plotLeft :
                     plotWidth - dataLabelWidth - plotLeft;
         },
 
         // Connectors of each side end in the same x position. Labels are
-        // alignedto them.  Left edge of the widest left-half label touches the
+        // aligned to them. Left edge of the widest left-half label touches the
         // left edge of the plot area. Right edge of the widest right-half label
         // touches the right edge of the plot area.
-        alignToConnectors: function (points, half, plotWidth,
-            plotLeft) {
+        alignToConnectors: function (
+            points,
+            half,
+            plotWidth,
+            plotLeft
+        ) {
             var maxDataLabelWidth = 0,
                 dataLabelWidth;
 
@@ -1001,17 +1011,17 @@ if (seriesTypes.pie) {
                         seriesCenter);
                 } else {
                     switch (options.alignTo) {
-                        case 'connectors':
-                            x = dataLabelPositioners.alignToConnectors(points,
-                                i, plotWidth, plotLeft);
-                            break;
-                        case 'plotEdges':
-                            x = dataLabelPositioners.alignToPlotEdges(dataLabel,
-                                 i, plotWidth, plotLeft);
-                            break;
-                        default:
-                            x = dataLabelPositioners.radialDistributionX(series,
-                                point, y, naturalY);
+                    case 'connectors':
+                        x = dataLabelPositioners.alignToConnectors(points,
+                            i, plotWidth, plotLeft);
+                        break;
+                    case 'plotEdges':
+                        x = dataLabelPositioners.alignToPlotEdges(dataLabel,
+                             i, plotWidth, plotLeft);
+                        break;
+                    default:
+                        x = dataLabelPositioners.radialDistributionX(series,
+                            point, y, naturalY);
                     }
                 }
 
@@ -1020,6 +1030,7 @@ if (seriesTypes.pie) {
                     visibility: visibility,
                     align: labelPosition.alignment
                 };
+
                 dataLabel._pos = {
                     x: (
                         x +

@@ -75,6 +75,28 @@ const styles = () => {
         'stocktools/gui',
         'stocktools/popup'
     ];
+
+    const copyFiles = (folder) => {
+        fs.readdirSync(folder).forEach(file => {
+            let src = folder + '/' + file;
+            let dest = folder.replace(/^\.\//, './code/') + '/' + file;
+            if (fs.statSync(folder + '/' + file).isDirectory()) {
+                if (!fs.existsSync(dest)) {
+                    fs.mkdirSync(dest);
+                }
+                copyFiles(src);
+            } else {
+                fs.copyFileSync(src, dest);
+            }
+        });
+    };
+
+    if (!fs.existsSync('./code/gfx')) {
+        fs.mkdirSync('./code/gfx');
+    }
+
+    copyFiles('./gfx');
+
     const promises = files.map(file => compileSingleStyle(file));
     return Promise.all(promises).then(() => {
         console.log('Built CSS files from SASS.'.cyan);
@@ -1204,33 +1226,20 @@ const jsdoc = () => {
 };
 
 /**
- * Copies additional JSON-based error references.
- */
-const jsdocErrors = () => {
-
-    let copyTargets = [
-        'build/api/gantt',
-        'build/api/highcharts',
-        'build/api/highstock',
-        'build/api/highmaps'
-    ];
-
-    return Promise.all(copyTargets.map(copyTarget => copyFile(
-        'errors/errors.json',
-        `${copyTarget}/errors.json`
-    )));
-};
-
-/**
- * Creates additional JSON-based class references from JSDoc.
+ * Creates additional JSON-based class references with JSDoc using
+ * tsconfig.json.
  */
 const jsdocNamespace = () => {
 
     const jsdoc3 = require('gulp-jsdoc3');
 
-    let codeFiles = [
-            'code/highcharts.src.js'
-        ],
+    let codeFiles = JSON.parse(fs.readFileSync('tsconfig.json')).files
+            .filter(file => (
+                file.indexOf('test') !== 0 &&
+                !file.indexOf('global.d.ts') >= 0 &&
+                !file.indexOf('.src.d.ts') >= 0
+            ))
+            .map(file => file.replace(/.d.ts$/, '.src.js')),
         productFolders = [
             'gantt',
             'highcharts',
@@ -1240,6 +1249,10 @@ const jsdocNamespace = () => {
         gulpOptions = [codeFiles, { read: false }],
         jsdoc3Options = { plugins: ['tools/jsdoc/plugins/highcharts.namespace'] };
 
+    if (codeFiles.length === 0) {
+        console.error('No files in tsconfig.json found.');
+        return Promise.resolve([]);
+    }
 
     let aGulp = (resolve, reject) => {
 
@@ -1278,40 +1291,6 @@ const jsdocOptions = () => {
     });
 };
 
-/**
- * Add TypeScript declarations to the code folder.
- */
-const tsd = () => {
-    return require('../highcharts-typescript-generator').task();
-};
-
-/**
- * Test TypeScript declarations in the code folder using tsconfig.json.
- */
-const tsdLint = () => {
-
-    const configFiles = [
-        'tslint.json',
-        'tsconfig.json'
-    ];
-
-    const targetPath = 'code';
-
-    return Promise.all(configFiles.map(file => copyFile(
-            file,
-            targetPath + '/' + file
-        )))
-        .then(() => commandLine('npx dtslint --installAll'))
-        .then(() => commandLine('npx dtslint ' + targetPath))
-        .then((result) => {
-            console.info('tsdLint:', result);
-        })
-        .catch((error) => {
-            console.error(error);
-            throw error;
-        });
-};
-
 gulp.task('start-api-server', startServer);
 gulp.task('upload-api', uploadAPIDocs);
 gulp.task('create-productjs', createProductJS);
@@ -1320,13 +1299,31 @@ gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
-gulp.task('jsdoc', ['jsdoc-errors', 'jsdoc-namespace'], jsdoc);
+gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
-gulp.task('jsdoc-errors', ['scripts'], jsdocErrors);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
-gulp.task('tsd', ['jsdoc-options', 'jsdoc-namespace'], tsd);
-gulp.task('tsd-lint', ['tsd'], tsdLint);
+
+/* *
+ *
+ *  TypeScript Declarations
+ *
+ * */
+
+/**
+ * Add TypeScript declarations to the code folder using tree.json and
+ * tree-namespace.json.
+ */
+gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], () => {
+    return require('highcharts-declarations-generator').task();
+});
+
+/**
+ * Test TypeScript declarations in the code folder using tsconfig.json.
+ */
+gulp.task('dtslint', ['dts'], () => {
+    return commandLine('npx dtslint --onlyTestTsNext');
+});
 
 /**
  * Gulp task to run the building process of distribution files. By default it
@@ -1336,7 +1333,7 @@ gulp.task('tsd-lint', ['tsd'], tsdLint);
  * TODO add --help command to inform about usage.
  * @return undefined
  */
-gulp.task('scripts', ['jsdoc-errors'], () => {
+gulp.task('scripts', () => {
     const options = {
         debug: argv.d || false,
         files: (

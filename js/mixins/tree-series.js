@@ -1,4 +1,5 @@
 import H from '../parts/Globals.js';
+
 var extend = H.extend,
     isArray = H.isArray,
     isBoolean = function (x) {
@@ -136,16 +137,22 @@ var getColor = function getColor(node, options) {
 };
 
 /**
- * getLevelOptions - Creates a map from level number to its given options.
- * @param {Object} params Object containing parameters.
- * @param {Object} params.defaults Object containing default options. The
- * default options are merged with the userOptions to get the final options for
- * a specific level.
- * @param {Number} params.from The lowest level number.
- * @param {Array} params.levels User options from series.levels.
- * @param {Number} params.to The highest level number.
- * @return {null|Object} Returns a map from level number to its given options.
- * Returns null if invalid input parameters.
+ * Creates a map from level number to its given options.
+ *
+ * @private
+ * @function getLevelOptions
+ *
+ * @param {object} params
+ *        Object containing parameters.
+ *        - `defaults` Object containing default options. The default options
+ *           are merged with the userOptions to get the final options for a
+ *           specific level.
+ *        - `from` The lowest level number.
+ *        - `levels` User options from series.levels.
+ *        - `to` The highest level number.
+ *
+ * @return {Highcharts.Dictionary<object>}
+ *         Returns a map from level number to its given options.
  */
 var getLevelOptions = function getLevelOptions(params) {
     var result = null,
@@ -202,8 +209,15 @@ var getLevelOptions = function getLevelOptions(params) {
 /**
  * Update the rootId property on the series. Also makes sure that it is
  * accessible to exporting.
- * @param {object} series The series to operate on.
- * @returns Returns the resulting rootId after update.
+ *
+ * @private
+ * @function updateRootId
+ *
+ * @param {object} series
+ *        The series to operate on.
+ *
+ * @return {string}
+ *         Returns the resulting rootId after update.
  */
 var updateRootId = function (series) {
     var rootId,
@@ -231,4 +245,5 @@ var result = {
     setTreeValues: setTreeValues,
     updateRootId: updateRootId
 };
+
 export default result;

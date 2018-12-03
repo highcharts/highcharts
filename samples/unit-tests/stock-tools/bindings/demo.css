@@ -63,7 +63,7 @@
 }
 
 .highcharts-stocktools-wrapper .highcharts-arrow-down {
-  background-image: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg);
+  background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/arrow-right.svg);
   background-size: cover;
   /* Safari */
   -webkit-transform: rotate(90deg);
@@ -78,7 +78,7 @@
   transform: rotate(90deg);
 }
 .highcharts-stocktools-wrapper .highcharts-arrow-up {
-  background-image: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg);
+  background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/arrow-right.svg);
   background-size: cover;
   outline: none;
   display: inline-block;
@@ -107,7 +107,7 @@
 }
 
 .highcharts-stocktools-wrapper .highcharts-arrow-right {
-  background: url(http://utils.highcharts.local/samples/graphics/arrow-bottom.svg) no-repeat right bottom;
+  background: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/arrow-bottom.svg) no-repeat right bottom;
   background-size: contain;
 }
 
@@ -126,7 +126,7 @@
 }
 
 .highcharts-stocktools-wrapper .highcharts-arrow-left {
-  background-image: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg);
+  background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/arrow-right.svg);
   /* Safari */
   -webkit-transform: rotate(180deg);
   /* Firefox */
@@ -214,7 +214,7 @@
   height: 10px;
   left: 40px;
   background-color: #f7f7f7;
-  background-image: url(http://utils.highcharts.local/samples/graphics/arrow-right.svg);
+  background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/arrow-right.svg);
   background-size: cover;
 }
 
@@ -347,7 +347,7 @@
 }
 
 .highcharts-popup-close {
-  background:url(http://utils.highcharts.local/samples/graphics/close.svg) no-repeat 50% 50%;
+  background:url(https://code.highcharts.com/7.0.0/gfx/stock-icons/close.svg) no-repeat 50% 50%;
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -386,12 +386,12 @@
 }
 
 .highcharts-popup button.highcharts-annotation-edit-button {
-  background:url(http://utils.highcharts.local/samples/graphics/edit.svg) no-repeat 50% 50% transparent;
+  background:url(https://code.highcharts.com/7.0.0/gfx/stock-icons/edit.svg) no-repeat 50% 50% transparent;
   text-indent: -9999px;
 }
 
 .highcharts-popup button.highcharts-annotation-remove-button {
-  background:url(http://utils.highcharts.local/samples/graphics/destroy.svg) no-repeat 50% 50% transparent;
+  background:url(https://code.highcharts.com/7.0.0/gfx/stock-icons/destroy.svg) no-repeat 50% 50% transparent;
   text-indent: -9999px;
 }
 

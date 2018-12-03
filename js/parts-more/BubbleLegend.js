@@ -1,11 +1,33 @@
-/**
- * (c) 2010-2017 Highsoft AS
- * Author: Paweł Potaczek
+/* *
  *
- * License: www.highcharts.com/license
+ *  (c) 2010-2018 Highsoft AS
+ *
+ *  Author: Paweł Potaczek
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
+/**
+ * @interface Highcharts.LegendBubbleLegendFormatterContextObject
+ *//**
+ * The center y position of the range.
+ * @name Highcharts.LegendBubbleLegendFormatterContextObject#center
+ * @type {number}
+ *//**
+ * The radius of the bubble range.
+ * @name Highcharts.LegendBubbleLegendFormatterContextObject#radius
+ * @type {number}
+ *//**
+ * The bubble value.
+ * @name Highcharts.LegendBubbleLegendFormatterContextObject#value
+ * @type {number}
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
+
 var Series = H.Series,
     Legend = H.Legend,
     Chart = H.Chart,
@@ -26,26 +48,28 @@ var Series = H.Series,
 
 setOptions({  // Set default bubble legend options
     legend: {
-      /**
-       * The bubble legend is an additional element in legend which presents
-       * the scale of the bubble series. Individual bubble ranges can be
-       * defined by user or calculated from series. In the case of
-       * automatically calculated ranges, a 1px margin of error is permitted.
-       * Requires `highcharts-more.js`.
-       *
-       * @product      highcharts highstock highmaps
-       * @optionparent legend.bubbleLegend
-       * @since 7.0.0
-       */
+        /**
+         * The bubble legend is an additional element in legend which presents
+         * the scale of the bubble series. Individual bubble ranges can be
+         * defined by user or calculated from series. In the case of
+         * automatically calculated ranges, a 1px margin of error is permitted.
+         * Requires `highcharts-more.js`.
+         *
+         * @since        7.0.0
+         * @product      highcharts highstock highmaps
+         * @optionparent legend.bubbleLegend
+         */
         bubbleLegend: {
             /**
              * The color of the ranges borders, can be also defined for an
              * individual range.
-             * @type {color}
+             *
              * @sample highcharts/bubble-legend/similartoseries/
              *         Similat look to the bubble series
              * @sample highcharts/bubble-legend/bordercolor/
              *         Individual bubble border color
+             *
+             * @type {Highcharts.ColorString}
              */
             borderColor: undefined,
             /**
@@ -57,45 +81,54 @@ setOptions({  // Set default bubble legend options
              * An additional class name to apply to the bubble legend' circle
              * graphical elements. This option does not replace default class
              * names of the graphical element.
-             * @type {string}
+             *
              * @sample {highcharts} highcharts/css/bubble-legend/
              *         Styling by CSS
+             *
+             * @type {string}
              */
             className: undefined,
             /**
              * The main color of the bubble legend. Applies to ranges, if
              * individual color is not defined.
-             * @type {color}
+             *
              * @sample highcharts/bubble-legend/similartoseries/
              *         Similat look to the bubble series
              * @sample highcharts/bubble-legend/color/
              *         Individual bubble color
+             *
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             color: undefined,
             /**
-             * An additional class name to apply to the bubble legend'
+             * An additional class name to apply to the bubble legend's
              * connector graphical elements. This option does not replace
              * default class names of the graphical element.
-             * @type {string}
+             *
              * @sample {highcharts} highcharts/css/bubble-legend/
              *         Styling by CSS
+             *
+             * @type {string}
              */
             connectorClassName: undefined,
             /**
              * The color of the connector, can be also defined
              * for an individual range.
-             * @type {color}
+             *
+             * @type {Highcharts.ColorString}
              */
             connectorColor: undefined,
             /**
              * The length of the connectors in pixels. If labels are centered,
              * the distance is reduced to 0.
+             *
              * @sample highcharts/bubble-legend/connectorandlabels/
              *         Increased connector length
              */
             connectorDistance: 60,
             /**
              * The width of the connectors in pixels.
+             *
              * @sample highcharts/bubble-legend/connectorandlabels/
              *         Increased connector width
              */
@@ -112,9 +145,11 @@ setOptions({  // Set default bubble legend options
                  * An additional class name to apply to the bubble legend
                  * label graphical elements. This option does not replace
                  * default class names of the graphical element.
-                 * @type {string}
+                 *
                  * @sample {highcharts} highcharts/css/bubble-legend/
                  *         Styling by CSS
+                 *
+                 * @type {string}
                  */
                 className: undefined,
                 /**
@@ -125,66 +160,45 @@ setOptions({  // Set default bubble legend options
                  * A [format string](http://docs.highcharts.com/#formatting)
                  * for the bubble legend labels. Available variables are the
                  * same as for `formatter`.
+                 *
                  * @sample highcharts/bubble-legend/format/
                  *         Add a unit
+                 *
                  * @type {string}
                  */
                 format: '',
                 /**
-                 * Available `this.value` are:
+                 * Available `this` properties are:
                  *
-                 * <table>
+                 * - `this.value`: The bubble value.
                  *
-                 * <tbody>
+                 * - `this.radius`: The radius of the bubble range.
                  *
-                 * <tr>
+                 * - `this.center`: The center y position of the range.
                  *
-                 * <td>`this.value`:</td>
-                 *
-                 * <td>The bubble value.</td>
-                 *
-                 * </tr>
-                 *
-                 * <tr>
-                 *
-                 * <td>`this.radius`:</td>
-                 *
-                 * <td>The radius of the bubble range.</td>
-                 *
-                 * </tr>
-                 *
-                 * <tr>
-                 *
-                 * <td>`this.center`:</td>
-                 *
-                 * <td>The center y position of the range.</td>
-                 *
-                 * </tr>
-                 *
-                 * </tbody>
-                 *
-                 * </table>
-                 *
-                 * @type {function}
+                 * @type {Highcharts.FormatterCallbackFunction<Highcharts.LegendBubbleLegendFormatterContextObject>}
                  */
                 formatter: undefined,
                 /**
                  * The alignment of the labels compared to the bubble legend.
                  * Can be one of `left`, `center` or `right`.
                  * @validvalue ["left", "center", "right"]
+                 *
                  * @sample highcharts/bubble-legend/connectorandlabels/
                  *         Labels on left
+                 *
+                 * @validvalue ["left", "center", "right"]
                  */
                 align: 'right',
                 /**
                  * CSS styles for the labels.
-                 * @type {CSSObject}
+                 *
+                 * @type {Highcharts.CSSObject}
                  */
                 style: {
+                    /** @ignore */
                     fontSize: 10,
-                    /**
-                     * @type {Color}
-                     */
+                    /** @ignore */
                     color: undefined
                 },
                 /**
@@ -219,11 +233,13 @@ setOptions({  // Set default bubble legend options
             /**
              * Options for specific range. One range consists of bubble, label
              * and connector.
+             *
              * @sample highcharts/bubble-legend/ranges/
              *         Manually defined ranges
              * @sample highcharts/bubble-legend/autoranges/
              *         Auto calculated ranges
-             * @type {Array<Object>}
+             *
+             * @type {Array<*>}
              */
             ranges: {
                /**
@@ -232,17 +248,17 @@ setOptions({  // Set default bubble legend options
                 value: undefined,
                 /**
                  * The color of the border for individual range.
-                 * @type {Color}
+                 * @type {Highcharts.ColorString}
                  */
                 borderColor: undefined,
                 /**
                  * The color of the bubble for individual range.
-                 * @type {Color}
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
                 color: undefined,
                 /**
                  * The color of the connector for individual range.
-                 * @type {Color}
+                 * @type {Highcharts.ColorString}
                  */
                 connectorColor: undefined
             },
@@ -251,9 +267,11 @@ setOptions({  // Set default bubble legend options
              * the area or the width of the bubble. The default, area,
              * corresponds best to the human perception of the size of each
              * bubble.
-             * @validvalue ["area", "width"]
+             *
              * @sample highcharts/bubble-legend/ranges/
              *         Size by width
+             *
+             * @validvalue ["area", "width"]
              */
             sizeBy: 'area',
             /**
@@ -279,8 +297,15 @@ setOptions({  // Set default bubble legend options
 /**
  * BubbleLegend class.
  *
- * @param {Object} config - Bubble legend options
- * @param {Object} config - Legend options
+ * @private
+ * @class
+ * @name Highcharts.BubbleLegend
+ *
+ * @param {Highcharts.LegendBubbleLegendOptions} config
+ *        Bubble legend options
+ *
+ * @param {Highcharts.LegendOptions} config
+ *        Legend options
  */
 H.BubbleLegend = function (options, legend) {
     this.init(options, legend);
@@ -290,10 +315,14 @@ H.BubbleLegend.prototype = {
     /**
      * Create basic bubbleLegend properties similar to item in legend.
      *
-     * @param {Object} config - Bubble legend options
-     * @param {Object} config - Legend options
-     *
      * @private
+     * @function Highcharts.BubbleLegend#init
+     *
+     * @param {Highcharts.LegendBubbleLegendOptions} config
+     *        Bubble legend options
+     *
+     * @param {Highcharts.LegendOptions} config
+     *        Legend options
      */
     init: function (options, legend) {
         this.options = options;
@@ -307,9 +336,11 @@ H.BubbleLegend.prototype = {
     /**
      * Depending on the position option, add bubbleLegend to legend items.
      *
-     * @param {Array} - All legend items
-     *
      * @private
+     * @function Highcharts.BubbleLegend#addToLegend
+     *
+     * @param {Array<*>}
+     *        All legend items
      */
     addToLegend: function (items) {
         // Insert bubbleLegend into legend items
@@ -317,12 +348,13 @@ H.BubbleLegend.prototype = {
     },
 
     /**
-     * Calculate ranges, sizes and call the next steps of bubbleLegend
-     * creation.
-     *
-     * @param {Object} config - Legend options
+     * Calculate ranges, sizes and call the next steps of bubbleLegend creation.
      *
      * @private
+     * @function Highcharts.BubbleLegend#drawLegendSymbol
+     *
+     * @param {Highcharts.Legend} legend
+     *        Legend instance
      */
     drawLegendSymbol: function (legend) {
         var bubbleLegend = this,
@@ -379,6 +411,7 @@ H.BubbleLegend.prototype = {
      * Set style options for each bubbleLegend range.
      *
      * @private
+     * @function Highcharts.BubbleLegend#setOptions
      */
     setOptions: function () {
         var bubbleLegend = this,
@@ -441,6 +474,7 @@ H.BubbleLegend.prototype = {
      * Merge options for bubbleLegend labels.
      *
      * @private
+     * @function Highcharts.BubbleLegend#getLabelStyles
      */
     getLabelStyles: function () {
         var options = this.options,
@@ -471,11 +505,14 @@ H.BubbleLegend.prototype = {
      * Calculate radius for each bubble range,
      * used code from BubbleSeries.js 'getRadius' method.
      *
-     * @param {Number} - Range value
-     *
-     * @return {Number} - Radius for one range
-     *
      * @private
+     * @function Highcharts.BubbleLegend#getRangeRadius
+     *
+     * @param {number} value
+     *        Range value
+     *
+     * @return {number}
+     *         Radius for one range
      */
     getRangeRadius: function (value) {
         var bubbleLegend = this,
@@ -501,6 +538,7 @@ H.BubbleLegend.prototype = {
      * Render the legendSymbol group.
      *
      * @private
+     * @function Highcharts.BubbleLegend#render
      */
     render: function () {
         var bubbleLegend = this,
@@ -538,7 +576,11 @@ H.BubbleLegend.prototype = {
     /**
      * Render one range, consisting of bubble symbol, connector and label.
      *
-     * @param {Object} config - Range options
+     * @private
+     * @function Highcharts.BubbleLegend#renderRange
+     *
+     * @param {Highcharts.LegendBubbleLegendRangesOptions} config
+     *        Range options
      *
      * @private
      */
@@ -663,6 +705,7 @@ H.BubbleLegend.prototype = {
      * Get the label which takes up the most space.
      *
      * @private
+     * @function Highcharts.BubbleLegend#getMaxLabelSize
      */
     getMaxLabelSize: function () {
         var labels = this.symbols.labels,
@@ -686,11 +729,14 @@ H.BubbleLegend.prototype = {
     /**
      * Get formatted label for range.
      *
-     * @param {Object} config - Range options
-     *
-     * @return {String} - Range label text
-     *
      * @private
+     * @function Highcharts.BubbleLegend#formatLabel
+     *
+     * @param {Highcharts.LegendBubbleLegendRangesOptions} range
+     *        Range options
+     *
+     * @return {string}
+     *         Range label text
      */
     formatLabel: function (range) {
         var options = this.options,
@@ -707,6 +753,7 @@ H.BubbleLegend.prototype = {
      * labels and connectors.
      *
      * @private
+     * @function Highcharts.BubbleLegend#hideOverlappingLabels
      */
     hideOverlappingLabels: function () {
         var bubbleLegend = this,
@@ -731,9 +778,11 @@ H.BubbleLegend.prototype = {
     /**
      * Calculate ranges from created series.
      *
-     * @return {Array} - Array of range objects
-     *
      * @private
+     * @function Highcharts.BubbleLegend#getRanges
+     *
+     * @return {Array<Highcharts.LegendBubbleLegendRangesOptions>}
+     *         Array of range objects
      */
     getRanges: function () {
         var bubbleLegend = this.legend.bubbleLegend,
@@ -796,9 +845,11 @@ H.BubbleLegend.prototype = {
     /**
      * Calculate bubble legend sizes from rendered series.
      *
-     * @return {Array} - Calculated min and max bubble sizes
-     *
      * @private
+     * @function Highcharts.BubbleLegend#predictBubbleSizes
+     *
+     * @return {Array<number,number>}
+     *         Calculated min and max bubble sizes
      */
     predictBubbleSizes: function () {
         var chart = this.chart,
@@ -844,6 +895,11 @@ H.BubbleLegend.prototype = {
      * Correct ranges with calculated sizes.
      *
      * @private
+     * @function Highcharts.BubbleLegend#updateRanges
+     *
+     * @param {number} min
+     *
+     * @param {number} max
      */
     updateRanges: function (min, max) {
         var bubbleLegendOptions = this.legend.options.bubbleLegend;
@@ -859,6 +915,7 @@ H.BubbleLegend.prototype = {
      * correct them.
      *
      * @private
+     * @function Highcharts.BubbleLegend#correctSizes
      */
     correctSizes: function () {
         var legend = this.legend,
@@ -874,9 +931,7 @@ H.BubbleLegend.prototype = {
     }
 };
 
-/**
- * Start the bubble legend creation process.
- */
+// Start the bubble legend creation process.
 addEvent(H.Legend, 'afterGetAllItems', function (e) {
     var legend = this,
         bubbleLegend = legend.bubbleLegend,
@@ -907,9 +962,11 @@ addEvent(H.Legend, 'afterGetAllItems', function (e) {
 /**
  * Check if there is at least one visible bubble series.
  *
- * @return {Number} - First visible bubble series index
- *
  * @private
+ * @function Highcharts.Chart#getVisibleBubbleSeriesIndex
+ *
+ * @return {number}
+ *         First visible bubble series index
  */
 Chart.prototype.getVisibleBubbleSeriesIndex = function () {
     var series = this.series,
@@ -932,9 +989,11 @@ Chart.prototype.getVisibleBubbleSeriesIndex = function () {
 /**
  * Calculate height for each row in legend.
  *
- * @return {Array} - Informations about line height and items amount
- *
  * @private
+ * @function Highcharts.Legend#getLinesHeights
+ *
+ * @return {Array<object>}
+ *         Informations about line height and items amount
  */
 Legend.prototype.getLinesHeights = function () {
     var items = this.allItems,
@@ -972,9 +1031,11 @@ Legend.prototype.getLinesHeights = function () {
 /**
  * Correct legend items translation in case of different elements heights.
  *
- * @param {Array} - Informations about line height and items amount
- *
  * @private
+ * @function Highcharts.Legend#retranslateItems
+ *
+ * @param {Array<object>} lines
+ *        Informations about line height and items amount
  */
 Legend.prototype.retranslateItems = function (lines) {
     var items = this.allItems,
@@ -1009,9 +1070,7 @@ Legend.prototype.retranslateItems = function (lines) {
     });
 };
 
-/**
- * Hide or show bubble legend depending on the visible status of bubble series.
- */
+// Hide or show bubble legend depending on the visible status of bubble series.
 addEvent(Series, 'legendItemClick', function () {
     var series = this,
         chart = series.chart,
@@ -1040,10 +1099,8 @@ addEvent(Series, 'legendItemClick', function () {
     }
 });
 
-/**
- * If ranges are not specified, determine ranges from rendered bubble series
- * and render legend again.
- */
+// If ranges are not specified, determine ranges from rendered bubble series and
+// render legend again.
 wrap(Chart.prototype, 'drawChartBox', function (proceed, options, callback) {
     var chart = this,
         legend = chart.legend,

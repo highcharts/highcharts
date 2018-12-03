@@ -3,4 +3,5 @@
  js_wrap: b
  authors:
    - Lars Cabrera
+ compareTooltips: true
 ...

@@ -1,7 +1,10 @@
 {
     "extends": "dtslint/dtslint.json",
     "rules": {
-        "file-name-casing": false
+        "array-type": false,
+        "ban-types": false,
+        "file-name-casing": false,
+        "max-line-length": false,
+        "unified-signatures": false
     }
 }
-

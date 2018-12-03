@@ -6,7 +6,7 @@ import requiredIndicatorMixin from '../mixins/indicator-required.js';
 var EMA = H.seriesTypes.ema,
     error = H.error,
     correctFloat = H.correctFloat,
-    parentLoaded = requiredIndicatorMixin.isParentIndicatorLoaded;
+    requiredIndicator = requiredIndicatorMixin;
 
 H.seriesType('ppo', 'ema',
     /**
@@ -47,7 +47,7 @@ H.seriesType('ppo', 'ema',
             var args = arguments,
                 ctx = this;
 
-            parentLoaded(
+            requiredIndicator.isParentLoaded(
                 EMA,
                 'ema',
                 ctx.type,

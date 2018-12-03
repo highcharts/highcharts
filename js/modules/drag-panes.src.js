@@ -1,4 +1,4 @@
-/**
+/* *
  * Plugin for resizing axes / panes in a chart.
  *
  * (c) 2010-2017 Highsoft AS
@@ -8,6 +8,7 @@
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
@@ -23,9 +24,7 @@ var hasTouch = H.hasTouch,
     Axis = H.Axis,
     Pointer = H.Pointer,
 
-    /**
-     * Default options for AxisResizer.
-     */
+    // Default options for AxisResizer.
     resizerOptions = {
         /**
          * Minimal size of a resizable axis. Could be set as a percent
@@ -186,8 +185,13 @@ merge(true, Axis.prototype.defaultYAxisOptions, resizerOptions);
 
 /**
  * The AxisResizer class.
- * @param {Object} axis - main axis for the AxisResizer.
+ *
+ * @private
  * @class
+ * @name Highcharts.AxisResizer
+ *
+ * @param {Highcharts.Axis} axis
+ *        Main axis for the AxisResizer.
  */
 H.AxisResizer = function (axis) {
     this.init(axis);
@@ -196,7 +200,11 @@ H.AxisResizer = function (axis) {
 H.AxisResizer.prototype = {
     /**
      * Initiate the AxisResizer object.
-     * @param {Object} axis - main axis for the AxisResizer.
+     *
+     * @function Highcharts.AxisResizer#init
+     *
+     * @param {Highcharts.Axis} axis
+     *        Main axis for the AxisResizer.
      */
     init: function (axis, update) {
         this.axis = axis;
@@ -211,6 +219,8 @@ H.AxisResizer.prototype = {
 
     /**
      * Render the AxisResizer
+     *
+     * @function Highcharts.AxisResizer#render
      */
     render: function () {
         var resizer = this,
@@ -268,6 +278,8 @@ H.AxisResizer.prototype = {
 
     /**
      * Set up the mouse and touch events for the control line.
+     *
+     * @function Highcharts.AxisResizer#addMouseEvents
      */
     addMouseEvents: function () {
         var resizer = this,
@@ -316,14 +328,18 @@ H.AxisResizer.prototype = {
 
     /**
      * Mouse move event based on x/y mouse position.
-     * @param {Object} e  - mouse event.
+     *
+     * @function Highcharts.AxisResizer#onMouseMove
+     *
+     * @param {global.PointerEvent} e
+     *        Mouse event.
      */
     onMouseMove: function (e) {
         /*
          * In iOS, a mousemove event with e.pageX === 0 is fired when holding
          * the finger down in the center of the scrollbar. This should
          * be ignored. Borrowed from Navigator.
-        */
+         */
         if (!e.touches || e.touches[0].pageX !== 0) {
             // Drag the control line
             if (this.grabbed) {
@@ -336,7 +352,11 @@ H.AxisResizer.prototype = {
 
     /**
      * Mouse up event based on x/y mouse position.
-     * @param {Object} e - mouse event.
+     *
+     * @function Highcharts.AxisResizer#onMouseUp
+     *
+     * @param {global.PointerEvent} e
+     *        Mouse event.
      */
     onMouseUp: function (e) {
         if (this.hasDragged) {
@@ -351,6 +371,8 @@ H.AxisResizer.prototype = {
     /**
      * Mousedown on a control line.
      * Will store necessary information for drag&drop.
+     *
+     * @function Highcharts.AxisResizer#onMouseDown
      */
     onMouseDown: function () {
         // Clear all hover effects.
@@ -362,6 +384,10 @@ H.AxisResizer.prototype = {
 
     /**
      * Update all connected axes after a change of control line position
+     *
+     * @function Highcharts.AxisResizer#updateAxes
+     *
+     * @param {number} chartY
      */
     updateAxes: function (chartY) {
         var resizer = this,
@@ -510,6 +536,8 @@ H.AxisResizer.prototype = {
     /**
      * Destroy AxisResizer. Clear outside references, clear events,
      * destroy elements, nullify properties.
+     *
+     * @function Highcharts.AxisResizer#destroy
      */
     destroy: function () {
         var resizer = this,
@@ -584,8 +612,8 @@ wrap(Pointer.prototype, 'runPointActions', function (proceed) {
     }
 });
 
-// Prevent default drag action detection while dragging a control line
-// of AxisResizer. (#7563)
+// Prevent default drag action detection while dragging a control line of
+// AxisResizer. (#7563)
 wrap(Pointer.prototype, 'drag', function (proceed) {
     if (!this.chart.activeResizer) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));

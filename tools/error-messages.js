@@ -281,6 +281,20 @@ function parseErrorsDirectory (directoryPath) {
  */
 function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
 
+    if (fs.existsSync(jsonPath)) {
+        const oldErrorsJson = require(jsonPath);
+        const same = Object
+            .keys(oldErrorsJson)
+            .every(error => (
+                oldErrorsJson[error].title === parsedErrors[error].title &&
+                oldErrorsJson[error].text === parsedErrors[error].text &&
+                oldErrorsJson[error].enduser === parsedErrors[error].enduser
+            ));
+        if (same) {
+            return Promise.resolve();
+        }
+    }
+
     return Promise.all([
         new Promise((resolve, reject) => fs.writeFile(jsonPath,
             JSON.stringify(parsedErrors, undefined, '\t'),

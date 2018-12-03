@@ -11,6 +11,25 @@
  */
 
 /**
+ * @interface Highcharts.AxisLabelsFormatterContextObject
+ *//**
+ * @name Highcharts.AxisLabelsFormatterContextObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * @name Highcharts.AxisLabelsFormatterContextObject#chart
+ * @type {Highcharts.Chart}
+ *//**
+ * @name Highcharts.AxisLabelsFormatterContextObject#isFirst
+ * @type {boolean}
+ *//**
+ * @name Highcharts.AxisLabelsFormatterContextObject#isLast
+ * @type {boolean}
+ *//**
+ * @name Highcharts.AxisLabelsFormatterContextObject#value
+ * @type {number}
+ */
+
+/**
  * Options for axes.
  *
  * @typedef {Highcharts.XAxisOptions|Highcharts.YAxisOptions|Highcharts.ZAxisOptions} Highcharts.AxisOptions
@@ -152,14 +171,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * though if the chart is inverted this is the vertical axis. In case of
      * multiple axes, the xAxis node is an array of configuration objects.
      *
-     * See [the Axis object](/class-reference/Highcharts.Axis) for
-     * programmatic access to the axis.
+     * See the [Axis class](/class-reference/Highcharts.Axis) for programmatic
+     * access to the axis.
      *
      * @productdesc {highmaps}
      * In Highmaps, the axis is hidden, but it is used behind the scenes to
      * control features like zooming and panning. Zooming is in effect the same
      * as setting the extremes of one of the exes.
      *
+     * @type         {*|Array<*>}
      * @optionparent xAxis
      */
     defaultOptions: {
@@ -470,7 +490,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * Formatter function for the label text.
          *
-         * @type      {Highcharts.FormatterCallbackFunction}
+         * @type      {Highcharts.FormatterCallbackFunction<object>}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.formatter
@@ -909,7 +929,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highstock} stock/xaxis/labels-formatter/
              *         Added units on Y axis
              *
-             * @type      {Function}
+             * @type      {Highcharts.FormatterCallbackFunction<Highcharts.AxisLabelsFormatterContextObject>}
              * @apioption xAxis.labels.formatter
              */
 
@@ -2263,6 +2283,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * See [the Axis object](/class-reference/Highcharts.Axis) for programmatic
      * access to the axis.
      *
+     * @type         {*|Array<*>}
      * @extends      xAxis
      * @excluding    ordinal,overscroll,currentDateIndicator
      * @optionparent yAxis
@@ -2916,7 +2937,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highcharts} highcharts/yaxis/stacklabels-formatter/
              *         Added units to stack total value
              *
-             * @type    {Highcharts.FormatterCallbackFunction}
+             * @type    {Highcharts.FormatterCallbackFunction<object>}
              * @since   2.1.5
              * @product highcharts
              */
@@ -2967,7 +2988,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     /**
      * The Z axis or depth axis for 3D plots.
      *
-     * See [the Axis object](/class-reference/Highcharts.Axis) for programmatic
+     * See the [Axis class](/class-reference/Highcharts.Axis) for programmatic
      * access to the axis.
      *
      * @sample {highcharts} highcharts/3d/scatter-zaxis-categories/
@@ -2975,6 +2996,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @sample {highcharts} highcharts/3d/scatter-zaxis-grid/
      *         Z-Axis with styling
      *
+     * @type      {*|Array<*>}
      * @extends   xAxis
      * @since     5.0.0
      * @product   highcharts
@@ -4093,13 +4115,25 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                 // When adding a series, points are not yet generated
                 if (!series.points || series.isDirtyData) {
+                    // When we're updating the series with data that is longer
+                    // than it was, and cropThreshold is passed, we need to make
+                    // sure that the axis.max is increased _before_ running the
+                    // premature processData. Otherwise this early iteration of
+                    // processData will crop the points to axis.max, and the
+                    // names array will be too short (#5857).
+                    axis.max = Math.max(axis.max, series.xData.length - 1);
+
                     series.processData();
                     series.generatePoints();
                 }
 
-                series.points.forEach(function (point, i) {
+                series.data.forEach(function (point, i) { // #9487
                     var x;
-                    if (point.options) {
+                    if (
+                        point &&
+                        point.options &&
+                        point.name !== undefined // #9562
+                    ) {
                         x = axis.nameToX(point);
                         if (x !== undefined && x !== point.x) {
                             point.x = x;

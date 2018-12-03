@@ -5,7 +5,9 @@
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -44,8 +46,11 @@ var abs = Math.abs,
 /**
  * The Volume By Price (VBP) series type.
  *
- * @constructor seriesTypes.vbp
- * @augments seriesTypes.vbp
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.vbp
+ *
+ * @augments Highcharts.Series
  */
 seriesType('vbp', 'sma',
     /**
@@ -53,24 +58,23 @@ seriesType('vbp', 'sma',
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/volume-by-price
-     *                     Volume By Price indicator
-     * @since 6.0.0
+     * @sample stock/indicators/volume-by-price
+     *         Volume By Price indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.vbp
      */
     {
         /**
-         * @excluding index,period
+         * @excluding index, period
          */
         params: {
             /**
              * The number of price zones.
              *
-             * @type {Number}
              * @since 6.0.0
-             * @product highstock
              */
             ranges: 12,
             /**
@@ -78,52 +82,40 @@ seriesType('vbp', 'sma',
              * OHLC data, volumeSeriesID='volume' means the indicator will be
              * calculated using OHLC and volume values.
              *
-             * @type {String}
              * @since 6.0.0
-             * @product highstock
              */
             volumeSeriesID: 'volume'
         },
         /**
          * The styles for lines which determine price zones.
          *
-         * @type {Object}
          * @since 6.0.0
-         * @product highstock
          */
         zoneLines: {
             /**
              * Enable/disable zone lines.
              *
-             * @type {Boolean}
              * @since 6.0.0
-             * @default true
-             * @product highstock
              */
             enabled: true,
             styles: {
                 /**
                  * Color of zone lines.
                  *
-                 * @type {Color}
+                 * @type  {Highcharts.ColorString}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 color: '#0A9AC9',
                 /**
                  * The dash style of zone lines.
                  *
-                 * @type {String}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 dashStyle: 'LongDash',
                 /**
                  * Pixel width of zone lines.
                  *
-                 * @type {Number}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 lineWidth: 1
             }
@@ -131,34 +123,28 @@ seriesType('vbp', 'sma',
         /**
          * The styles for bars when volume is divided into positive/negative.
          *
-         * @type {Object}
          * @since 6.0.0
-         * @product highstock
          */
         volumeDivision: {
             /**
              * Option to control if volume is divided.
              *
-             * @type {Boolean}
              * @since 6.0.0
-             * @product highstock
              */
             enabled: true,
             styles: {
                 /**
                  * Color of positive volume bars.
                  *
-                 * @type {Color}
+                 * @type  {Highcharts.ColorString}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 positiveColor: 'rgba(144, 237, 125, 0.8)',
                 /**
                  * Color of negative volume bars.
                  *
-                 * @type {Color}
+                 * @type  {Highcharts.ColorString}
                  * @since 6.0.0
-                 * @product highstock
                  */
                 negativeColor: 'rgba(244, 91, 91, 0.8)'
             }
@@ -679,22 +665,22 @@ seriesType('vbp', 'sma',
             }
             return H.Point.prototype.destroy.apply(this, arguments);
         }
-    });
+    }
+);
 
 /**
  * A `Volume By Price (VBP)` series. If the [type](#series.vbp.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.vbp
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.vbp
+ * @since     6.0.0
+ * @excluding data, dataParser, dataURL
+ * @product   highstock
  * @apioption series.vbp
  */
 
 /**
- * @extends series.sma.data
- * @product highstock
+ * @extends   series.sma.data
+ * @product   highstock
  * @apioption series.vbp.data
  */

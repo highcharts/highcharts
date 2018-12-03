@@ -423,7 +423,9 @@ H.Popup.prototype = {
                 lhsCol,
                 chart,
                 '',
-                options
+                options,
+                [],
+                true
             );
 
             this.addButton.call(
@@ -444,9 +446,18 @@ H.Popup.prototype = {
          * @param {Chart} - chart
          * @param {String} - name of parent to create chain of names
          * @param {Object} - options
+         * @param {Array} - storage - array where all items are stored
+         * @param {Boolean} - isRoot - recursive flag for root
          *
          */
-        addFormFields: function (parentDiv, chart, parentNode, options) {
+        addFormFields: function (
+            parentDiv,
+            chart,
+            parentNode,
+            options,
+            storage,
+            isRoot
+        ) {
             var _self = this,
                 addFormFields = this.annotations.addFormFields,
                 addInput = this.addInput,
@@ -481,19 +492,31 @@ H.Popup.prototype = {
                             parentDiv,
                             chart,
                             parentFullName,
-                            value
+                            value,
+                            storage,
+                            false
                         );
                     } else {
-                        addInput.call(
+                        storage.push([
                             chart.stockToolbar,
                             parentFullName,
                             'annotation',
                             parentDiv,
                             value
-                        );
+                        ]);
                     }
                 }
             });
+
+            if (isRoot) {
+                storage = storage.sort(function (a) {
+                    return a[1].match(/format/g) ? -1 : 1;
+                });
+
+                storage.forEach(function (genInput) {
+                    addInput.apply(genInput[0], genInput.splice(1));
+                });
+            }
         }
     },
     indicators: {

@@ -8,7 +8,7 @@ var EMA = H.seriesTypes.ema,
     AD = H.seriesTypes.ad,
     error = H.error,
     correctFloat = H.correctFloat,
-    parentLoaded = requiredIndicatorMixin.isParentIndicatorLoaded;
+    requiredIndicator = requiredIndicatorMixin;
 
 H.seriesType('chaikin', 'ema',
     /**
@@ -59,7 +59,7 @@ H.seriesType('chaikin', 'ema',
             var args = arguments,
                 ctx = this;
 
-            parentLoaded(
+            requiredIndicator.isParentLoaded(
                 EMA,
                 'ema',
                 ctx.type,

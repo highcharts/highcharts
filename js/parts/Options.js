@@ -3,7 +3,54 @@
  *
  * License: www.highcharts.com/license
  */
+
+/**
+ * Gets fired when an area of the chart has been selected. The default action
+ * for the selection event is to zoom the chart to the selected area. It can be
+ * prevented by calling `event.preventDefault()` or return false.
+ *
+ * @callback Highcharts.ChartSelectionCallbackFunction
+ *
+ * @param {global.Event} event
+ *        Event informations
+ *
+ * @return {boolean|undefined}
+ *         Return false to prevent the default action, usually zoom.
+ */
+
+/**
+ * @interface Highcharts.TooltipFormatterContextObject
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#color
+ * @type {Highcharts.ColorString}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#colorIndex
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#key
+ * @type {number}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#percentage
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#series
+ * @type {Highcharts.Series}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#total
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#x
+ * @type {number}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#y
+ * @type {number}
+ */
+
 'use strict';
+
 import H from './Globals.js';
 import './Color.js';
 import './Utilities.js';
@@ -241,12 +288,10 @@ H.defaultOptions = {
 
         /**
          * The default thousands separator used in the `Highcharts.numberFormat`
-         * method unless otherwise specified in the function arguments. Since
-         * Highcharts 4.1 it defaults to a single space character, which is
-         * compatible with ISO and works across Anglo-American and continental
-         * European languages.
-         *
-         * The default is a single space.
+         * method unless otherwise specified in the function arguments. Defaults
+         * to a single space character, which is recommended in
+         * [ISO 31-0](https://en.wikipedia.org/wiki/ISO_31-0#Numbers) and works
+         * across Anglo-American and continental European languages.
          *
          * @default \u0020
          * @since   1.2.2
@@ -577,7 +622,7 @@ H.defaultOptions = {
          * passed to the function, containing common event information. The
          * default action for the selection event is to zoom the chart to the
          * selected area. It can be prevented by calling
-         * `event.preventDefault()`.
+         * `event.preventDefault()` or return false.
          *
          * Information on the selected area can be found through `event.xAxis`
          * and `event.yAxis`, which are arrays containing the axes of each
@@ -611,7 +656,7 @@ H.defaultOptions = {
          *         Select a range of points through a drag selection
          *         (Highcharts)
          *
-         * @type      {Function}
+         * @type      {Highcharts.ChartSelectionCallbackFunction}
          * @apioption chart.events.selection
          */
 
@@ -983,7 +1028,8 @@ H.defaultOptions = {
 
         /**
          * When true, cartesian charts like line, spline, area and column are
-         * transformed into the polar coordinate system. Requires
+         * transformed into the polar coordinate system. This produces _polar
+         * charts_, also known as _radar charts_. Requires
          * `highcharts-more.js`.
          *
          * @sample {highcharts} highcharts/demo/polar/
@@ -2093,7 +2139,7 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              *
-             * @type      {boolean|Highcharts.AnimationObject}
+             * @type      {boolean|Highcharts.AnimationOptionsObject}
              * @default   true
              * @since     2.2.4
              * @apioption legend.navigation.animation
@@ -2794,7 +2840,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/tooltip/formatter/
          *         String formatting
          *
-         * @type      {Function}
+         * @type      {Highcharts.FormatterCallbackFunction<Highcharts.TooltipFormatterContextObject>}
          * @apioption tooltip.formatter
          */
 
