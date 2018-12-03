@@ -1,11 +1,42 @@
 /**
- * Events generator for Stock tools
  *
- * (c) 2009-2018 Paweł Fus
+ *  Events generator for Stock tools
  *
- * License: www.highcharts.com/license
+ *  (c) 2009-2018 Paweł Fus
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
+/**
+ * A config object for bindings in Stock Tools module.
+ *
+ * @interface Highcharts.StockToolsBindingsObject
+ *//**
+ * ClassName of the element for a binding.
+ * @name Highcharts.StockToolsBindingsObject#className
+ * @type {string|undefined}
+ *//**
+ * Last event to be fired after last step event.
+ * @name Highcharts.StockToolsBindingsObject#end
+ * @type {Function|undefined}
+ *//**
+ * Initial event, fired on a button click.
+ * @name Highcharts.StockToolsBindingsObject#init
+ * @type {Function|undefined}
+ *//**
+ * Event fired on first click on a chart.
+ * @name Highcharts.StockToolsBindingsObject#start
+ * @type {Function|undefined}
+ *//**
+ * Last event to be fired after last step event. Array of step events to be
+ * called sequentially after each user click.
+ * @name Highcharts.StockToolsBindingsObject#steps
+ * @type {Array<Function>|undefined}
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
@@ -21,13 +52,22 @@ var addEvent = H.addEvent,
     pick = H.pick,
     PREFIX = 'highcharts-';
 
+/**
+ * @private
+ * @interface bindingsUtils
+ */
 var bindingsUtils = {
     /**
      * Get field type according to value
      *
-     * @param {*} Atomic type (one of: string, number, boolean)
-     * @return Field type (one of: text, number, checkbox)
+     * @private
+     * @function bindingsUtils.getFieldType
      *
+     * @param {*} value
+     *        Atomic type (one of: string, number, boolean)
+     *
+     * @return {string}
+     *         Field type (one of: text, number, checkbox)
      */
     getFieldType: function getType(value) {
         return {
@@ -39,9 +79,13 @@ var bindingsUtils = {
     /**
      * Shorthand to check if given yAxis comes from navigator.
      *
-     * @param {Axis} Axis
-     * @return {Boolean}
      * @private
+     * @function bindingsUtils.isNotNavigatorYAxis
+     *
+     * @param {Highcharts.Axis} axis
+     *        Axis
+     *
+     * @return {boolean}
      */
     isNotNavigatorYAxis: function (axis) {
         return axis.userOptions.className !== PREFIX + 'navigator-yaxis';
@@ -54,9 +98,14 @@ var bindingsUtils = {
      * Example: Toolbar.utils.updateNthPoint(1) - will generate function that
      * updates all consecutive points except point with index=0.
      *
-     * @param {Number} Index from each point should udpated
+     * @private
+     * @function bindingsUtils.updateNthPoint
      *
-     * @return {function} Callback to be used in steps array
+     * @param {number} startIndex
+     *        Index from each point should udpated
+     *
+     * @return {Function}
+     *         Callback to be used in steps array
      */
     updateNthPoint: function (startIndex) {
         return function (e, annotation) {
@@ -83,9 +132,14 @@ var bindingsUtils = {
      * between last point in `typeOptions` and current position. It's a value,
      * not pixels height.
      *
-     * @param {Event} event - normalized browser event
-     * @param {Annotation} annotation - annotation to be updated
      * @private
+     * @function bindingsUtils.updateHeight
+     *
+     * @param {global.Event} e
+     *        normalized browser event
+     *
+     * @param {Highcharts.Annotation} annotation
+     *        Annotation to be updated
      */
     updateHeight: function (e, annotation) {
         annotation.update({
@@ -95,7 +149,8 @@ var bindingsUtils = {
             }
         });
     },
-    // TO DO: Consider using getHoverData(), but always kdTree (columns?)
+    // @todo
+    // Consider using getHoverData(), but always kdTree (columns?)
     attractToPoint: function (e, chart) {
         var x = chart.xAxis[0].toValue(e.chartX),
             y = chart.yAxis[0].toValue(e.chartY),
@@ -128,9 +183,14 @@ var bindingsUtils = {
      * Example: Toolbar.utils.addFlagFromForm('url(...)') - will generate
      * function that shows modal in GUI.
      *
-     * @param {String} Type of flag series, e.g. "squarepin"
+     * @private
+     * @function bindingsUtils.addFlagFromForm
      *
-     * @return {function} Callback to be used in `start` callback
+     * @param {string} type
+     *        Type of flag series, e.g. "squarepin"
+     *
+     * @return {Function}
+     *         Callback to be used in `start` callback
      */
     addFlagFromForm: function (type) {
         return function (e) {
@@ -320,8 +380,14 @@ var bindingsUtils = {
 /**
  * Update size of background (rect) in some annotations: Measure, Simple Rect.
  *
- * @param {Event} event - normalized browser event
- * @param {Annotation} annotation - annotation to be updated
+ * @private
+ * @function updateRectSize
+ *
+ * @param {global.Event} event
+ *        Normalized browser event
+ *
+ * @param {Highcharts.Annotation} annotation
+ *        Annotation to be updated
  */
 function updateRectSize(event, annotation) {
     var options = annotation.options.typeOptions,
@@ -343,61 +409,18 @@ function updateRectSize(event, annotation) {
 }
 
 /**
- * Array of step events to be called sequentially after each user click.
- *
- * @typedef {Array<Function>} Highcharts.BindingsStepsArray
- */
-
- /**
- * A config object for bindings in Stock Tools module.
- *
- * @interface Highcharts.BindingObject
- */
-
- /**
- * Initial event, fired on a button click.
- *
- * @name Highcharts.BindingsObject#init
- * @type {Function|undefined}
- */
-
- /**
- * Event fired on first click on a chart.
- *
- * @name Highcharts.BindingsObject#start
- * @type {Function|undefined}
- */
-
- /**
- * Last event to be fired after last step event.
- *
- * @name Highcharts.BindingsObject#steps
- * @type {Highcharts.BindingsStepsArray|undefined}
- */
-
- /**
- * Last event to be fired after last step event.
- *
- * @name Highcharts.BindingsObject#end
- * @type {Function|undefined}
- */
-
- /**
- * ClassName of the element for a binding.
- *
- * @name Highcharts.BindingsObject#className
- * @type {String|undefined}
- */
-
-/**
- * Bindings defintions for buttons in Stock Tools GUI. Each binding
- * implements simple event-driven interface:
+ * Bindings defintions for buttons in Stock Tools GUI. Each binding implements
+ * simple event-driven interface:
  *
  * - `className`: classname used to bind event to
+ *
  * - `init`: initial event, fired on button click
+ *
  * - `start`: fired on first click on a chart
+ *
  * - `steps`: array of sequential events fired one after another on each
  *   of users clicks
+ *
  * - `end`: last event to be called after last step event
  *
  * Name of the each binding is a part of `highcharts-NAME` classname used to
@@ -405,9 +428,9 @@ function updateRectSize(event, annotation) {
  * `highcharts-circle-annotation` will bind automatically
  * `bindings.circle-annotation` events.
  *
- * @product highstock
- * @since 7.0.0
- * @type {Object}
+ * @type         {Highcharts.Dictionary<Highcharts.StockToolsBindingsObject>|*}
+ * @since        7.0.0
+ * @product      highstock
  * @optionparent stockTools.bindings
  */
 var stockToolsBindings = {
@@ -415,17 +438,13 @@ var stockToolsBindings = {
      * A circle annotation bindings. Includes `start` and one event in `steps`
      * array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-circle-annotation", "start": function() {}, "steps": [function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     circleAnnotation: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-circle-annotation',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY),
@@ -478,9 +497,7 @@ var stockToolsBindings = {
 
             return annotation;
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             function (e, annotation) {
                 var point = annotation.options.shapes[0].point,
@@ -508,17 +525,13 @@ var stockToolsBindings = {
      * A rectangle annotation bindings. Includes `start` and one event in
      * `steps` array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-rectangle-annotation", "start": function() {}, "steps": [function() {}]}
-     * @type    {Highcharts.BindingsObject}
      */
     rectangleAnnotation: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-rectangle-annotation',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY),
@@ -552,9 +565,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation(options);
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             updateRectSize
         ]
@@ -562,17 +573,13 @@ var stockToolsBindings = {
     /**
      * A label annotation bindings. Includes `start` event only.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-label-annotation", "start": function() {}, "steps": [function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     labelAnnotation: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-label-annotation',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -659,17 +666,13 @@ var stockToolsBindings = {
      * A segment annotation bindings. Includes `start` and one event in `steps`
      * array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-segment", "start": function() {}, "steps": [function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     segment: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-segment',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -688,9 +691,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -699,17 +700,13 @@ var stockToolsBindings = {
      * A segment with an arrow annotation bindings. Includes `start` and one
      * event in `steps` array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-arrow-segment", "start": function() {}, "steps": [function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     arrowSegment: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-arrow-segment',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -731,9 +728,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -742,17 +737,13 @@ var stockToolsBindings = {
      * A ray annotation bindings. Includes `start` and one event in `steps`
      * array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-ray", "start": function() {}, "steps": [function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     ray: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-ray',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -772,9 +763,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -783,17 +772,13 @@ var stockToolsBindings = {
      * A ray with an arrow annotation bindings. Includes `start` and one event
      * in `steps` array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-arrow-ray", "start": function() {}, "steps": [function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     arrowRay: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-arrow-ray',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -816,9 +801,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -826,17 +809,13 @@ var stockToolsBindings = {
     /**
      * A line annotation. Includes `start` and one event in `steps` array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-infinity-line", "start": function() {}, "steps": [function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     infinityLine: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-infinity-line',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -856,9 +835,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -867,17 +844,13 @@ var stockToolsBindings = {
      * A line with arrow annotation. Includes `start` and one event in `steps`
      * array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-arrow-infinity-line", "start": function() {}, "steps": [function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     arrowInfinityLine: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-arrow-infinity-line',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -900,9 +873,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -910,17 +881,13 @@ var stockToolsBindings = {
     /**
      * A horizontal line annotation. Includes `start` event.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-horizontal-line", "start": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     horizontalLine: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-horizontal-line',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -941,17 +908,13 @@ var stockToolsBindings = {
     /**
      * A vertical line annotation. Includes `start` event.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-vertical-line", "start": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     verticalLine: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-vertical-line',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -973,18 +936,14 @@ var stockToolsBindings = {
      * Crooked line (three points) annotation bindings. Includes `start` and two
      * events in `steps` (for second and third points in crooked line) array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-crooked3", "start": function() {}, "steps": [function() {}, function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     // Crooked Line type annotations:
     crooked3: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-crooked3',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -1006,9 +965,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2)
@@ -1018,17 +975,13 @@ var stockToolsBindings = {
      * Crooked line (five points) annotation bindings. Includes `start` and four
      * events in `steps` (for all consequent points in crooked line) array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-crooked3", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     crooked5: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-crooked5',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -1056,9 +1009,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2),
@@ -1070,17 +1021,13 @@ var stockToolsBindings = {
      * Elliott wave (three points) annotation bindings. Includes `start` and two
      * events in `steps` (for second and third points) array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-elliott3", "start": function() {}, "steps": [function() {}, function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     elliott3: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-elliott3',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -1107,9 +1054,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2)
@@ -1119,17 +1064,13 @@ var stockToolsBindings = {
      * Elliott wave (five points) annotation bindings. Includes `start` and four
      * event in `steps` (for all consequent points in Elliott wave) array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-elliott3", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     elliott5: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-elliott5',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -1162,9 +1103,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2),
@@ -1176,17 +1115,13 @@ var stockToolsBindings = {
      * A measure (x-dimension) annotation bindings. Includes `start` and one
      * event in `steps` array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-measure-x", "start": function() {}, "steps": [function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     measureX: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-measure-x',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY),
@@ -1226,9 +1161,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation(options);
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             updateRectSize
         ]
@@ -1237,17 +1170,13 @@ var stockToolsBindings = {
      * A measure (y-dimension) annotation bindings. Includes `start` and one
      * event in `steps` array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-measure-y", "start": function() {}, "steps": [function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     measureY: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-measure-y',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY),
@@ -1287,9 +1216,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation(options);
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             updateRectSize
         ]
@@ -1298,17 +1225,13 @@ var stockToolsBindings = {
      * A measure (xy-dimension) annotation bindings. Includes `start` and one
      * event in `steps` array.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-measure-xy", "start": function() {}, "steps": [function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     measureXY: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-measure-xy',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY),
@@ -1347,9 +1270,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation(options);
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             updateRectSize
         ]
@@ -1359,17 +1280,13 @@ var stockToolsBindings = {
      * A fibonacci annotation bindings. Includes `start` and two events in
      * `steps` array (updates second point, then height).
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-fibonacci", "start": function() {}, "steps": [function() {}, function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     fibonacci: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-fibonacci',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -1392,9 +1309,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateHeight
@@ -1404,17 +1319,13 @@ var stockToolsBindings = {
      * A parallel channel (tunnel) annotation bindings. Includes `start` and
      * two events in `steps` array (updates second point, then height).
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-parallel-channel", "start": function() {}, "steps": [function() {}, function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     parallelChannel: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-parallel-channel',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -1433,9 +1344,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateHeight
@@ -1445,17 +1354,13 @@ var stockToolsBindings = {
      * An Andrew's pitchfork annotation bindings. Includes `start` and two
      * events in `steps` array (sets second and third control points).
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-pitchfork", "start": function() {}, "steps": [function() {}, function() {}]}
-     * @type {Highcharts.BindingsObject}
      */
     pitchfork: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-pitchfork',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
@@ -1488,9 +1393,7 @@ var stockToolsBindings = {
                 }
             });
         },
-        /**
-         * @ignore
-         */
+        /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2)
@@ -1498,21 +1401,17 @@ var stockToolsBindings = {
     },
     // Labels with arrow and auto increments
     /**
-     * A vertical counter annotation bindings. Includes `start` event.
-     * On click, finds the closest point and marks it with a numeric annotation
-     * - incrementing counter on each add.
+     * A vertical counter annotation bindings. Includes `start` event. On click,
+     * finds the closest point and marks it with a numeric annotation -
+     * incrementing counter on each add.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-vertical-counter", "start": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     verticalCounter: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-vertical-counter',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 annotation;
@@ -1554,21 +1453,17 @@ var stockToolsBindings = {
         }
     },
     /**
-     * A vertical arrow annotation bindings. Includes `start` event.
-     * On click, finds the closest point and marks it with an arrow and a
-     * label with value.
+     * A vertical arrow annotation bindings. Includes `start` event. On click,
+     * finds the closest point and marks it with an arrow and a label with
+     * value.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-vertical-label", "start": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     verticalLabel: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-vertical-label',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 annotation;
@@ -1603,21 +1498,17 @@ var stockToolsBindings = {
         }
     },
     /**
-     * A vertical arrow annotation bindings. Includes `start` event.
-     * On click, finds the closest point and marks it with an arrow. Green
-     * arrow when pointing from above, red when pointing from below the point.
+     * A vertical arrow annotation bindings. Includes `start` event. On click,
+     * finds the closest point and marks it with an arrow. Green arrow when
+     * pointing from above, red when pointing from below the point.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-vertical-arrow", "start": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     verticalArrow: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-vertical-arrow',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: function (e) {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 annotation;
@@ -1652,40 +1543,30 @@ var stockToolsBindings = {
     },
     // Flag types:
     /**
-     * A flag series bindings. Includes `start` event.
-     * On click, finds the closest point and marks it with a flag with
-     * `'circlepin'` shape.
+     * A flag series bindings. Includes `start` event. On click, finds the
+     * closest point and marks it with a flag with `'circlepin'` shape.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-flag-circlepin", "start": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     flagCirclepin: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-flag-circlepin',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: bindingsUtils
             .addFlagFromForm('circlepin')
     },
     /**
-     * A flag series bindings. Includes `start` event.
-     * On click, finds the closest point and marks it with a flag with
-     * `'diamondpin'` shape.
+     * A flag series bindings. Includes `start` event. On click, finds the
+     * closest point and marks it with a flag with `'diamondpin'` shape.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-flag-diamondpin", "start": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     flagDiamondpin: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-flag-diamondpin',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: bindingsUtils
             .addFlagFromForm('flag')
     },
@@ -1694,17 +1575,13 @@ var stockToolsBindings = {
      * On click, finds the closest point and marks it with a flag with
      * `'squarepin'` shape.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-flag-squarepin", "start": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     flagSquarepin: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-flag-squarepin',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: bindingsUtils
             .addFlagFromForm('squarepin')
     },
@@ -1713,17 +1590,13 @@ var stockToolsBindings = {
      * On click, finds the closest point and marks it with a flag without pin
      * shape.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-flag-simplepin", "start": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     flagSimplepin: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-flag-simplepin',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         start: bindingsUtils
             .addFlagFromForm('nopin')
     },
@@ -1732,17 +1605,13 @@ var stockToolsBindings = {
      * Enables zooming in xAxis on a chart. Includes `start` event which
      * changes [chart.zoomType](#chart.zoomType).
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-zoom-x", "init": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     zoomX: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-zoom-x',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         init: function (button) {
             this.chart.update({
                 chart: {
@@ -1761,17 +1630,13 @@ var stockToolsBindings = {
      * Enables zooming in yAxis on a chart. Includes `start` event which
      * changes [chart.zoomType](#chart.zoomType).
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-zoom-y", "init": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     zoomY: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-highcharts-zoom-y',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         init: function (button) {
             this.chart.update({
                 chart: {
@@ -1789,17 +1654,13 @@ var stockToolsBindings = {
      * Enables zooming in xAxis and yAxis on a chart. Includes `start` event
      * which changes [chart.zoomType](#chart.zoomType).
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-zoom-xy", "init": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     zoomXY: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-zoom-xy',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         init: function (button) {
             this.chart.update({
                 chart: {
@@ -1817,17 +1678,13 @@ var stockToolsBindings = {
     /**
      * Changes main series to `'line'` type.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-series-type-line", "init": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     seriesTypeLine: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-series-type-line',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         init: function (button) {
             this.chart.series[0].update({
                 type: 'line'
@@ -1843,17 +1700,13 @@ var stockToolsBindings = {
     /**
      * Changes main series to `'ohlc'` type.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-series-type-ohlc", "init": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     seriesTypeOhlc: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-series-type-ohlc',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         init: function (button) {
             this.chart.series[0].update({
                 type: 'ohlc'
@@ -1869,17 +1722,13 @@ var stockToolsBindings = {
     /**
      * Changes main series to `'candlestick'` type.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-series-type-candlestick", "init": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     seriesTypeCandlestick: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-series-type-candlestick',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         init: function (button) {
             this.chart.series[0].update({
                 type: 'candlestick'
@@ -1895,17 +1744,13 @@ var stockToolsBindings = {
     /**
      * Displays chart in fullscreen.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-full-screen", "init": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     fullScreen: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-full-screen',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         init: function (button) {
             var chart = this.chart;
 
@@ -1923,17 +1768,13 @@ var stockToolsBindings = {
      * - last price in the dataset
      * - last price in the selected range
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-current-price-indicator", "init": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     currentPriceIndicator: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-current-price-indicator',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         init: function (button) {
             var series = this.chart.series[0],
                 options = series.options,
@@ -1976,17 +1817,13 @@ var stockToolsBindings = {
     /**
      * Indicators bindings. Includes `init` event to show a popup.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-indicators", "init": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     indicators: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-indicators',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         init: function () {
             var toolbar = this;
 
@@ -2007,17 +1844,13 @@ var stockToolsBindings = {
     /**
      * Hides/shows all annotations on a chart.
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-toggle-annotations", "init": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     toggleAnnotations: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-toggle-annotations',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         init: function (button) {
             this.toggledAnnotations = !this.toggledAnnotations;
 
@@ -2049,17 +1882,13 @@ var stockToolsBindings = {
      * - indicators (with yAxes)
      * - flags
      *
+     * @type    {Highcharts.StockToolsBindingsObject}
      * @default {"className": "highcharts-save-chart", "init": function() {}}
-     * @type {Highcharts.BindingsObject}
      */
     saveChart: {
-        /**
-         * @ignore
-         */
+        /** @ignore */
         className: 'highcharts-save-chart',
-        /**
-         * @ignore
-         */
+        /** @ignore */
         init: function (button) {
             var toolbar = this,
                 chart = toolbar.chart,
@@ -2174,12 +2003,17 @@ extend(H.Toolbar.prototype, {
      * Hook for click on a button, method selcts/unselects buttons,
      * then calls `bindings.init` callback.
      *
-     * @param {HTMLDOMElement} [button] Clicked button
-     * @param {Object} [events] Events passed down from bindings (`init`,
-     * `start`, `step`, `end`)
-     * @param {Event} [clickEvent] Browser's click event
-     *
      * @private
+     * @function Highcharts.Toolbar#bindingsButtonClick
+     *
+     * @param {Highcharts.HTMLDOMElement} [button]
+     *        Clicked button
+     *
+     * @param {object} [events]
+     *        Events passed down from bindings (`init`, `start`, `step`, `end`)
+     *
+     * @param {global.Event} [clickEvent]
+     *        Browser's click event
      */
     bindingsButtonClick: function (button, events, clickEvent) {
         var toolbar = this;
@@ -2222,10 +2056,14 @@ extend(H.Toolbar.prototype, {
      * then on all subsequent clicks iterate over `steps` array.
      * When finished, calls `end` event.
      *
-     * @param {Chart} Chart that click was performed on
-     * @param {Event} Browser's click event
-     *
      * @private
+     * @function Highcharts.Toolbar#bindingsChartClick
+     *
+     * @param {Highcharts.Chart} chart
+     *        Chart that click was performed on.
+     *
+     * @param {global.Event} clickEvent
+     *        Browser's click event.
      */
     bindingsChartClick: function (chart, clickEvent) {
         var toolbar = this,
@@ -2322,10 +2160,14 @@ extend(H.Toolbar.prototype, {
     /**
      * Hook for mouse move on a chart's container. It calls current step.
      *
-     * @param {HTMLDOMElement} Chart's container
-     * @param {Event} Browser's click event
-     *
      * @private
+     * @function Highcharts.Toolbar#bindingsContainerMouseMove
+     *
+     * @param {Highcharts.HTMLDOMElement} container
+     *        Chart's container.
+     *
+     * @param {global.Event} moveEvent
+     *        Browser's move event.
      */
     bindingsContainerMouseMove: function (container, moveEvent) {
         if (this.mouseMoveEvent) {
@@ -2340,11 +2182,17 @@ extend(H.Toolbar.prototype, {
      * Translate fields (e.g. `params.period` or `marker.styles.color`) to
      * Highcharts options object (e.g. `{ params: { period } }`).
      *
-     * @param {Object} fields - Fields from popup form
-     * @param {Object} config - Default config to be modified
-     *
-     * @return {Object} Modified config
      * @private
+     * @function Highcharts.Toolbar#fieldsToOptions
+     *
+     * @param {object} fields
+     *        Fields from popup form.
+     *
+     * @param {object} config
+     *        Default config to be modified.
+     *
+     * @return {object}
+     *         Modified config
      */
     fieldsToOptions: function (fields, config) {
         objectEach(fields, function (value, field) {
@@ -2385,6 +2233,8 @@ extend(H.Toolbar.prototype, {
     },
     /**
      * Shorthand method to deselect an annotation.
+     *
+     * @function Highcharts.Toolbar#deselectAnnotation
      */
     deselectAnnotation: function () {
         if (this.activeAnnotation) {
@@ -2397,13 +2247,21 @@ extend(H.Toolbar.prototype, {
      * Get current positions for all yAxes. If new axis does not have position,
      * returned is default height and last available top place.
      *
-     * @param {Array} yAxes - Array of yAxes available in the chart
-     * @param {Number} plotHeight - available height in the chart
-     * @param {Number} defaultHeight - default height in percents
-     *
-     * @return {Array} An array of calculated positions in percentages. Format:
-     * `{top: Number, height: Number}`
      * @private
+     * @function Highcharts.Toolbar#getYAxisPositions
+     *
+     * @param {Array<Highcharts.Axis>} yAxes
+     *        Array of yAxes available in the chart.
+     *
+     * @param {number} plotHeight
+     *        Available height in the chart.
+     *
+     * @param {number} defaultHeight
+     *        Default height in percents.
+     *
+     * @return {Array}
+     *         An array of calculated positions in percentages.
+     *         Format: `{top: Number, height: Number}`
      */
     getYAxisPositions: function (yAxes, plotHeight, defaultHeight) {
         var positions,
@@ -2447,11 +2305,15 @@ extend(H.Toolbar.prototype, {
      * axes in the navigator. Because indicator can be removed with it's yAxis
      * in the middle of yAxis array, we need to bind closest yAxes back.
      *
-     * @param {Array} yAxes - Array of yAxes available in the chart
-     *
-     * @return {Array} An array of resizer options. Format:
-     * `{enabled: Boolean, controlledAxis: { next: [String]}}`
      * @private
+     * @function Highcharts.Toolbar#getYAxisResizers
+     *
+     * @param {Array<Highcharts.Axis>} yAxes
+     *        Array of yAxes available in the chart
+     *
+     * @return {Array<object>}
+     *         An array of resizer options.
+     *         Format: `{enabled: Boolean, controlledAxis: { next: [String]}}`
      */
     getYAxisResizers: function (yAxes) {
         var resizers = [];
@@ -2492,9 +2354,11 @@ extend(H.Toolbar.prototype, {
      * axes. If chart has less than 5 panes, first pane receives all extra
      * space.
      *
-     * @param {Number} defaultHeight - default height for yAxis
-     *
      * @private
+     * @function Highcharts.Toolbar#resizeYAxes
+     *
+     * @param {number} defaultHeight
+     *        Default height for yAxis
      */
     resizeYAxes: function (defaultHeight) {
         defaultHeight = defaultHeight || 20; // in %, but as a number
@@ -2587,16 +2451,22 @@ extend(H.Toolbar.prototype, {
      * Utility to modify calculated positions according to the remaining/needed
      * space. Later, these positions are used in `yAxis.update({ top, height })`
      *
-     * @param {Array} positions - default positions of all yAxes
-     * @param {Number} changedSpace - how much space should be added or removed
-     * @param {Number} adder - `-1` or `1`, to determine whether we should add
-     * or remove space
-     * @param {Boolean} modifyHeight - update only `top` or both `top` and
-     * `height`
-     *
-     * @return {Array} positions - modified positions
-     *
      * @private
+     * @function Highcharts.Toolbar#recalculateYAxisPositions
+     *
+     * @param {Array<object>} positions
+     *        Default positions of all yAxes.
+     *
+     * @param {number} changedSpace
+     *        How much space should be added or removed.
+     * @param {number} adder
+     *        `-1` or `1`, to determine whether we should add or remove space.
+     *
+     * @param {boolean} modifyHeight
+     *        Update only `top` or both `top` and `height`.
+     *
+     * @return {Array<object>}
+     *         Modified positions,
      */
     recalculateYAxisPositions: function (
         positions,
@@ -2623,8 +2493,13 @@ extend(H.Toolbar.prototype, {
      * Generates API config for popup in the same format as options for
      * Annotation object.
      *
-     * @param {Annotation} Annotations object
-     * @return {Object} Annotation options to be displayed in popup box
+     * @function Highcharts.Toolbar#annotationToFields
+     *
+     * @param {Highcharts.Annotation} annotation
+     *        Annotations object
+     *
+     * @return {object}
+     *         Annotation options to be displayed in popup box
      */
     annotationToFields: function (annotation) {
         var options = annotation.options,
@@ -2651,10 +2526,20 @@ extend(H.Toolbar.prototype, {
          * allowed options (with values) to new object, which is last parameter:
          * "parent".
          *
-         * @param {*} option/value - atomic type or object/array
-         * @param {String} key - option name, for example "visible" or "x", "y"
-         * @param {Object} allowed editables from H.Toolbar.annotationsEditable
-         * @param {Object} parent - where new options will be assigned
+         * @private
+         * @function Highcharts.Toolbar#annotationToFields.traverse
+         *
+         * @param {*} option
+         *        Atomic type or object/array
+         *
+         * @param {string} key
+         *        Option name, for example "visible" or "x", "y"
+         *
+         * @param {object} allowed
+         *        Editables from H.Toolbar.annotationsEditable
+         *
+         * @param {object} parent
+         *        Where new options will be assigned
          */
         function traverse(option, key, parentEditables, parent) {
             var nextParent;
@@ -2760,10 +2645,16 @@ extend(H.Toolbar.prototype, {
      * Get all class names for all parents in the element. Iterates until finds
      * main container.
      *
-     * @param {Highcharts.HTMLDOMElement} - container that event is bound to
-     * @param {Event} event - browser's event
+     * @function Highcharts.Toolbar#getClickedClassNames
      *
-     * @return {Array} Array of class names with corresponding elements
+     * @param {Highcharts.HTMLDOMElement}
+     *        Container that event is bound to.
+     *
+     * @param {global.Event} event
+     *        Browser's event.
+     *
+     * @return {Array<string>}
+     *         Array of class names with corresponding elements
      */
     getClickedClassNames: function (container, event) {
         var element = event.target,
@@ -2795,13 +2686,19 @@ extend(H.Toolbar.prototype, {
 
     },
     /**
-     * Get events bound to a button. It's a custom event delegation to find
-     * all events connected to the element.
+     * Get events bound to a button. It's a custom event delegation to find all
+     * events connected to the element.
      *
-     * @param {Highcharts.HTMLDOMElement} - container that event is bound to
-     * @param {Event} event - browser's event
+     * @function Highcharts.Toolbar#getButtonEvents
      *
-     * @return {*} object with events (init, start, steps and end)
+     * @param {Highcharts.HTMLDOMElement}
+     *        Container that event is bound to.
+     *
+     * @param {global.Event} event
+     *        Browser's event.
+     *
+     * @return {object}
+     *         Oject with events (init, start, steps, and end)
      */
     getButtonEvents: function (container, event) {
         var toolbar = this,
@@ -2822,6 +2719,10 @@ extend(H.Toolbar.prototype, {
     },
     /**
      * General utils for bindings
+     *
+     * @private
+     * @name Highcharts.Toolbar#utils
+     * @type {bindingsUtils}
      */
     utils: bindingsUtils
 });
@@ -2996,7 +2897,7 @@ H.setOptions({
         /**
          * A `showPopup` event. Fired when selecting for example an annotation.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption stockTools.events.showPopup
          */
 
@@ -3004,14 +2905,14 @@ H.setOptions({
          * A `hidePopop` event. Fired when Popup should be hidden, for exampole
          * when clicking on an annotation again.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption stockTools.events.hidePopup
          */
 
         /**
          * Event fired on a button click.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption stockTools.events.selectButton
          */
 
@@ -3019,15 +2920,15 @@ H.setOptions({
          * Event fired when button state should change, for example after
          * adding an annotation.
          *
-         * @type {Function}
+         * @type      {Function}
          * @apioption stockTools.events.deselectButton
          */
 
         /**
          * Events to communicate between Stock Tools and custom GUI.
          *
-         * @product highstock
-         * @since 7.0.0
+         * @since        7.0.0
+         * @product      highstock
          * @optionparent stockTools.events
          */
         events: {}

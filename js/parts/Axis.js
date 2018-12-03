@@ -11,6 +11,25 @@
  */
 
 /**
+ * @interface Highcharts.AxisLabelsFormatterContextObject
+ *//**
+ * @name Highcharts.AxisLabelsFormatterContextObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * @name Highcharts.AxisLabelsFormatterContextObject#chart
+ * @type {Highcharts.Chart}
+ *//**
+ * @name Highcharts.AxisLabelsFormatterContextObject#isFirst
+ * @type {boolean}
+ *//**
+ * @name Highcharts.AxisLabelsFormatterContextObject#isLast
+ * @type {boolean}
+ *//**
+ * @name Highcharts.AxisLabelsFormatterContextObject#value
+ * @type {number}
+ */
+
+/**
  * Options for axes.
  *
  * @typedef {Highcharts.XAxisOptions|Highcharts.YAxisOptions|Highcharts.ZAxisOptions} Highcharts.AxisOptions
@@ -471,7 +490,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * Formatter function for the label text.
          *
-         * @type      {Highcharts.FormatterCallbackFunction}
+         * @type      {Highcharts.FormatterCallbackFunction<object>}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.formatter
@@ -910,7 +929,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highstock} stock/xaxis/labels-formatter/
              *         Added units on Y axis
              *
-             * @type      {Function}
+             * @type      {Highcharts.FormatterCallbackFunction<Highcharts.AxisLabelsFormatterContextObject>}
              * @apioption xAxis.labels.formatter
              */
 
@@ -2918,7 +2937,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highcharts} highcharts/yaxis/stacklabels-formatter/
              *         Added units to stack total value
              *
-             * @type    {Highcharts.FormatterCallbackFunction}
+             * @type    {Highcharts.FormatterCallbackFunction<object>}
              * @since   2.1.5
              * @product highcharts
              */
@@ -4110,7 +4129,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                 series.data.forEach(function (point, i) { // #9487
                     var x;
-                    if (point && point.options) {
+                    if (
+                        point &&
+                        point.options &&
+                        point.name !== undefined // #9562
+                    ) {
                         x = axis.nameToX(point);
                         if (x !== undefined && x !== point.x) {
                             point.x = x;

@@ -92,7 +92,7 @@ seriesType('timeline', 'line', {
         connectorColor: '${palette.neutralColor100}',
         backgroundColor: '${palette.backgroundColor}',
         /**
-         * @type      {Highcharts.FormatterCallbackFunction}
+         * @type      {Highcharts.FormatterCallbackFunction<object>}
          * @default function () {
          *   var format;
          *
