@@ -129,6 +129,11 @@ H.setOptions({
      * and information on its features, see [Highcharts StockTools]().
      *
      * @product highstock
+     *
+     * @sample stock/demo/stock-tools-gui Stock Tools GUI
+     *
+     * @sample stock/demo/stock-tools-custom-gui Stock Tools customized GUI
+     *
      * @since 7.0.0
      * @type {Object}
      * @optionparent stockTools
