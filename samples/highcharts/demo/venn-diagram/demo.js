@@ -1,15 +1,34 @@
 Highcharts.chart('container', {
     series: [{
         type: 'venn',
-        data: [
-            { sets: ['A'], value: 24 },
-            { sets: ['B'], value: 12 },
-            { sets: ['C'], value: 12 },
-            { sets: ['A', 'C'], value: 6 },
-            { sets: ['B', 'C'], value: 1 }
-        ]
+        data: [{
+            sets: ['Good'],
+            value: 2
+        }, {
+            sets: ['Fast'],
+            value: 2
+        }, {
+            sets: ['Cheap'],
+            value: 2
+        }, {
+            sets: ['Good', 'Fast'],
+            value: 1,
+            name: 'More expensive'
+        }, {
+            sets: ['Good', 'Cheap'],
+            value: 1,
+            name: 'Will take time to deliver'
+        }, {
+            sets: ['Fast', 'Cheap'],
+            value: 1,
+            name: 'Not the best quality'
+        }, {
+            sets: ['Fast', 'Cheap', 'Good'],
+            value: 1,
+            name: 'They\'re dreaming'
+        }]
     }],
     title: {
-        text: 'Simple venn diagram'
+        text: 'The Unnattainable Triangle'
     }
 });
