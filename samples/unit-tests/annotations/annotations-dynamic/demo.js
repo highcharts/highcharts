@@ -82,3 +82,31 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         'Annotation options from the chart options are added when the annotations are added (#8393).'
     );
 });
+
+QUnit.test('Hiding and showing annotations with linked points', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            showInLegend: true,
+            data: [{
+                id: "point1",
+                visible: false,
+                y: 3
+            }, {
+                y: 3
+            }],
+            type: "pie"
+        }],
+        annotations: [{
+            labels: [{
+                point: "point1",
+                text: "Annotation"
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.annotations[0].labels[0].visibility,
+        "hidden",
+        'Annotation correctly hidden.'
+    );
+});
