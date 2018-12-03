@@ -947,7 +947,7 @@ var vennSeries = {
             }
 
             // Set name for usage in tooltip and in data label.
-            point.name = sets.join('∩');
+            point.name = point.options.name || sets.join('∩');
         });
     },
     /**
