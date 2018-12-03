@@ -4123,7 +4123,7 @@ null
             markerAttribs,
             globallyEnabled = pick(
                 seriesMarkerOptions.enabled,
-                xAxis.isRadial ? true : null,
+                !xAxis || xAxis.isRadial ? true : null,
                 // Use larger or equal as radius is null in bubbles (#6321)
                 series.closestPointRangePx >= (
                     seriesMarkerOptions.enabledThreshold *
@@ -4142,7 +4142,7 @@ null
                     globallyEnabled &&
                     pointMarkerOptions.enabled === undefined
                 ) || pointMarkerOptions.enabled;
-                isInside = point.isInside;
+                isInside = point.isInside !== false;
 
                 // only draw the point if y is defined
                 if (enabled && !point.isNull) {
@@ -4160,6 +4160,7 @@ null
                         // marker must be toggled
                         graphic[isInside ? 'show' : 'hide'](true)
                             .animate(markerAttribs);
+
                     } else if (
                         isInside &&
                         (markerAttribs.width > 0 || point.hasImage)

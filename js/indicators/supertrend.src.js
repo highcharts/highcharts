@@ -1,14 +1,12 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var ATR = H.seriesTypes.atr,
     SMA = H.seriesTypes.sma,
     isArray = H.isArray,
     merge = H.merge,
-    correctFloat = H.correctFloat,
-    parentLoaded = requiredIndicatorMixin.isParentIndicatorLoaded;
+    correctFloat = H.correctFloat;
 
 // Utils:
 function createPointObj(mainSeries, index, close) {
@@ -108,9 +106,7 @@ H.seriesType('supertrend', 'sma',
                 /**
                  * The dash or dot style of the grid lines. For possible
                  * values, see
-                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/
-                 * highcharts/highcharts/tree/master/samples/highcharts/plotoptions/
-                 * series-dashstyle-all/).
+                 * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
                  *
                  * @sample {highcharts} highcharts/yaxis/gridlinedashstyle/
                  *          Long dashes
@@ -126,19 +122,7 @@ H.seriesType('supertrend', 'sma',
     }, /** @lends Highcharts.Series.prototype */ {
         nameBase: 'Supertrend',
         nameComponents: ['multiplier', 'period'],
-        init: function () {
-            var args = arguments,
-                ctx = this;
-
-            parentLoaded(
-                ATR,
-                'atr',
-                ctx.type,
-                function (indicator) {
-                    indicator.prototype.init.apply(ctx, args);
-                }
-            );
-        },
+        requiredIndicators: ['atr'],
         drawGraph: function () {
             var indicator = this,
                 chart = indicator.chart,
