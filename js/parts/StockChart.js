@@ -1,8 +1,10 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -345,10 +347,8 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
         uniqueAxes,
         transVal;
 
-    /**
-     * Return the other axis based on either the axis option or on related
-     * series.
-     */
+    // Return the other axis based on either the axis option or on related
+    // series.
     function getAxis(coll) {
         var otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
             opt = axis.options[otherColl];
@@ -478,7 +478,18 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
         null; // #3557 getPlotLinePath in regular Highcharts also returns null
 });
 
-// Function to crisp a line with multiple segments
+/**
+ * Function to crisp a line with multiple segments
+ *
+ * @private
+ * @function Highcharts.SVGRenderer#crispPolyLine
+ *
+ * @param {Array<number>} points
+ *
+ * @param {number} width
+ *
+ * @return {Array<number>}
+ */
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
     // points format: ['M', 0, 0, 'L', 100, 0]
     // normalize to a crisp line
@@ -680,15 +691,16 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     });
 });
 
-/* ****************************************************************************
- * Start value compare logic                                                  *
- *****************************************************************************/
+/* ************************************************************************** *
+ *  Start value compare logic                                                 *
+ * ************************************************************************** */
 
 /**
  * Extend series.init by adding a method to modify the y value used for plotting
  * on the y axis. This method is called both from the axis when finding dataMin
  * and dataMax, and from the series.translate method.
  *
+ * @ignore
  * @function Highcharts.Series#init
  */
 seriesProto.init = function () {
@@ -757,6 +769,7 @@ seriesProto.setCompare = function (compare) {
  * Extend series.processData by finding the first y value in the plot area,
  * used for comparing the following values
  *
+ * @ignore
  * @function Highcharts.Series#processData
  */
 seriesProto.processData = function () {
@@ -807,9 +820,7 @@ seriesProto.processData = function () {
     }
 };
 
-/* *
- * Modify series extremes
- */
+// Modify series extremes
 wrap(seriesProto, 'getExtremes', function (proceed) {
     var extremes;
 
@@ -858,6 +869,7 @@ Axis.prototype.setCompare = function (compare, redraw) {
  * Extend the tooltip formatter by adding support for the point.change variable
  * as well as the changeDecimals option.
  *
+ * @ignore
  * @function Highcharts.Point#tooltipFormatter
  *
  * @param {string} pointFormat
@@ -876,16 +888,14 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
     return pointTooltipFormatter.apply(this, [pointFormat]);
 };
 
-/* ****************************************************************************
- * End value compare logic                                                    *
- *****************************************************************************/
+/* ************************************************************************** *
+ *  End value compare logic                                                   *
+ * ************************************************************************** */
 
 
-/* *
- * Extend the Series prototype to create a separate series clip box. This is
- * related to using multiple panes, and a future pane logic should incorporate
- * this feature (#2754).
- */
+// Extend the Series prototype to create a separate series clip box. This is
+// related to using multiple panes, and a future pane logic should incorporate
+// this feature (#2754).
 wrap(Series.prototype, 'render', function (proceed) {
     var clipHeight;
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
