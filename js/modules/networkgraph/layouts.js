@@ -37,12 +37,7 @@ H.extend(
         run: function () {
             var layout = this,
                 series = this.series,
-                options = this.options,
-                // Fake object which will imitate animations
-                mockAnimator = {
-                    style: {}
-                },
-                simulation;
+                options = this.options;
 
             layout.initPositions();
 
@@ -53,9 +48,6 @@ H.extend(
 
             // Algorithm:
             function localLayout() {
-                if (simulation && simulation.stopped) {
-                    return true;
-                }
                 // Barycenter forces:
                 layout.applyBarycenterForces();
 
@@ -72,17 +64,11 @@ H.extend(
                 layout.temperature -= layout.diffTemperature;
 
                 if (options.showSimulation) {
-
                     series.forEach(function (s) {
                         s.render();
                     });
-
-                    if (
-                        layout.maxIterations--
-                    ) {
-                        simulation.run(0, 1, 1);
-                    } else {
-                        simulation.stopped = true;
+                    if (layout.maxIterations--) {
+                        H.win.requestAnimationFrame(localLayout);
                     }
                 }
             }
@@ -92,18 +78,9 @@ H.extend(
 
             if (options.showSimulation) {
                 // Animate it:
-                layout.simulation = simulation = new H.Fx(
-                    mockAnimator,
-                    {
-                        duration: 13,
-                        easing: function () {},
-                        complete: localLayout,
-                        curAnim: {}
-                    }
-                );
-
-                simulation.run(0, 1, 1);
+                H.win.requestAnimationFrame(localLayout);
             } else {
+                // Synchronous rendering:
                 while (layout.maxIterations--) {
                     localLayout();
                 }
@@ -156,8 +133,11 @@ H.extend(
             this.setDiffTemperature();
         },
 
-        setMaxIterations: function () {
-            this.maxIterations = this.options.maxIterations;
+        setMaxIterations: function (maxIterations) {
+            this.maxIterations = pick(
+                maxIterations,
+                this.options.maxIterations
+            );
         },
 
         setTemperature: function () {
