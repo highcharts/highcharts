@@ -897,8 +897,10 @@ var vennSeries = {
             point.shapeArgs = shapeArgs;
 
             // Placement for the data labels
-            point.plotX = dataLabelPosition.x;
-            point.plotY = dataLabelPosition.y;
+            if (dataLabelPosition) {
+                point.plotX = dataLabelPosition.x;
+                point.plotY = dataLabelPosition.y;
+            }
 
             // Set name for usage in tooltip and in data label.
             point.name = sets.join('∩');
