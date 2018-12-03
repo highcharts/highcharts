@@ -27,7 +27,6 @@ const build = require('highcharts-assembler');
 // TODO move to a utils file
 const replaceAll = (str, search, replace) => str.split(search).join(replace);
 const isArray = x => Array.isArray(x);
-const isString = x => typeof x === 'string';
 const isUndefined = (x) => typeof x === 'undefined';
 
 /**
@@ -115,15 +114,7 @@ const getBuildOptions = (input) => {
         input.files :
         getFilesInFolder(base, true)
     );
-    const type = (
-        isArray(input.type) ?
-        input.type :
-        (
-            isString(input.type) ?
-            input.type.split(',') :
-            ['classic', 'css']
-        )
-    );
+    const type = ['classic'];
     const fileOptions = getFileOptions(files);
     const mapTypeToSource = {
         'classic': './code/es-modules',
