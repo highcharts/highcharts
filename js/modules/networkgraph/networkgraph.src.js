@@ -241,6 +241,7 @@ seriesType('networkgraph', 'line', {
     deferLayout: function () {
         var layoutOptions = this.options.layoutAlgorithm,
             graphLayoutsStorage = this.chart.graphLayoutsStorage,
+            chartOptions = this.chart.options.chart,
             layout;
 
         if (!this.visible) {
@@ -254,6 +255,10 @@ seriesType('networkgraph', 'line', {
         layout = graphLayoutsStorage[layoutOptions.type];
 
         if (!layout) {
+            layoutOptions.showSimulation = !defined(chartOptions.forExport) ?
+                layoutOptions.showSimulation :
+                !chartOptions.forExport;
+
             graphLayoutsStorage[layoutOptions.type] = layout =
                 new H.layouts[layoutOptions.type](layoutOptions);
         }

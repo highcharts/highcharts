@@ -101,27 +101,32 @@ Highcharts.chart('container', {
             id: 'Germanic',
             marker: {
                 radius: 10
-            }
+            },
+            color: Highcharts.getOptions().colors[1]
         }, {
             id: 'Celtic',
             marker: {
                 radius: 10
-            }
+            },
+            color: Highcharts.getOptions().colors[2]
         }, {
             id: 'Balto-Slavic',
             marker: {
                 radius: 10
-            }
+            },
+            color: Highcharts.getOptions().colors[3]
         }, {
             id: 'Indo-Iranian',
             marker: {
                 radius: 10
-            }
+            },
+            color: Highcharts.getOptions().colors[4]
         }, {
             id: 'Italic',
             marker: {
                 radius: 10
-            }
+            },
+            color: Highcharts.getOptions().colors[5]
         }],
         data: [
             ['Proto Indo-European', 'Balto-Slavic'],
