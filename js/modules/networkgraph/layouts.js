@@ -8,7 +8,6 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
-import '/QuadTree.js';
 
 var pick = H.pick;
 
@@ -35,58 +34,17 @@ H.extend(
     */
     H.layouts['reingold-fruchterman'].prototype,
     {
-        createQuadTree: function () {
-            var quadTree = new H.QuadTree(
-                this.box.left,
-                this.box.top,
-                this.box.width,
-                this.box.height
-            );
-
-            quadTree.insertNodes(this.nodes);
-
-            return quadTree;
-        },
         run: function () {
             var layout = this,
-                box = this.box,
-                nodes = this.nodes,
                 series = this.series,
                 options = this.options,
-                nodesLength = nodes.length + 1,
                 // Fake object which will imitate animations
                 mockAnimator = {
                     style: {}
                 },
                 simulation;
 
-            // Return a repeatable, quasi-random number based on an integer
-            // input. For the initial positions
-            function unrandom(n) {
-                var rand = n * n / Math.PI;
-                rand = rand - Math.floor(rand);
-                return rand;
-            }
-
-            // Initial positions:
-            nodes.forEach(
-                function (node, index) {
-                    node.plotX = pick(
-                        node.plotX,
-                        box.width * unrandom(index)
-                    );
-                    node.plotY = pick(
-                        node.plotY,
-                        box.height * unrandom(nodesLength + index)
-                    );
-
-                    node.dispX = 0;
-                    node.dispY = 0;
-                }
-            );
-
-            layout.quadTree = layout.createQuadTree();
-            layout.quadTree.render(series[0].chart);
+            layout.initPositions();
 
             // Render elements in initial positions:
             series.forEach(function (s) {
@@ -95,12 +53,9 @@ H.extend(
 
             // Algorithm:
             function localLayout() {
-                if (simulation.stopped) {
+                if (simulation && simulation.stopped) {
                     return true;
                 }
-                layout.quadTree.clear(series[0].chart);
-                layout.quadTree = layout.createQuadTree();
-                layout.quadTree.render(series[0].chart);
                 // Barycenter forces:
                 layout.applyBarycenterForces();
 
@@ -111,38 +66,51 @@ H.extend(
                 layout.applyAttractiveForces();
 
                 // Limit to the plotting area and cool down:
-                layout.applyLimits(simulation.temperature);
+                layout.applyLimits(layout.temperature);
 
                 // Cool down:
-                simulation.temperature -= simulation.diffTemperature;
+                layout.temperature -= layout.diffTemperature;
 
-                series.forEach(function (s) {
-                    s.render();
-                });
+                if (options.showSimulation) {
 
-                if (
-                    simulation.maxIterations--
-                ) {
-                    simulation.run(0, 1, 1);
-                } else {
-                    simulation.stopped = true;
+                    series.forEach(function (s) {
+                        s.render();
+                    });
+
+                    if (
+                        layout.maxIterations--
+                    ) {
+                        simulation.run(0, 1, 1);
+                    } else {
+                        simulation.stopped = true;
+                    }
                 }
             }
 
-            // Animate it:
-            layout.simulation = simulation = new H.Fx(
-                mockAnimator,
-                {
-                    duration: 13,
-                    easing: function () {},
-                    complete: localLayout,
-                    curAnim: {}
-                }
-            );
             layout.setK();
             layout.resetSimulation(options);
 
-            simulation.run(0, 1, 1);
+            if (options.showSimulation) {
+                // Animate it:
+                layout.simulation = simulation = new H.Fx(
+                    mockAnimator,
+                    {
+                        duration: 13,
+                        easing: function () {},
+                        complete: localLayout,
+                        curAnim: {}
+                    }
+                );
+
+                simulation.run(0, 1, 1);
+            } else {
+                while (layout.maxIterations--) {
+                    localLayout();
+                }
+                series.forEach(function (s) {
+                    s.render();
+                });
+            }
         },
         stop: function () {
             if (this.simulation) {
@@ -189,23 +157,46 @@ H.extend(
         },
 
         setMaxIterations: function () {
-            if (this.simulation) {
-                this.simulation.maxIterations =
-                    this.options.maxIterations;
-            }
+            this.maxIterations = this.options.maxIterations;
         },
 
         setTemperature: function () {
-            if (this.simulation) {
-                this.simulation.temperature = Math.sqrt(this.nodes.length);
-            }
+            this.temperature = Math.sqrt(this.nodes.length);
         },
 
         setDiffTemperature: function () {
-            if (this.simulation) {
-                this.simulation.diffTemperature = this.simulation.temperature /
-                    (this.options.maxIterations + 1);
+            this.diffTemperature = this.temperature /
+                (this.options.maxIterations + 1);
+        },
+        initPositions: function () {
+            var box = this.box,
+                nodes = this.nodes,
+                nodesLength = nodes.length + 1;
+
+            // Return a repeatable, quasi-random number based on an integer
+            // input. For the initial positions
+            function unrandom(n) {
+                var rand = n * n / Math.PI;
+                rand = rand - Math.floor(rand);
+                return rand;
             }
+
+            // Initial positions:
+            nodes.forEach(
+                function (node, index) {
+                    node.plotX = pick(
+                        node.plotX,
+                        box.width * unrandom(index)
+                    );
+                    node.plotY = pick(
+                        node.plotY,
+                        box.height * unrandom(nodesLength + index)
+                    );
+
+                    node.dispX = 0;
+                    node.dispY = 0;
+                }
+            );
         },
         applyBarycenterForces: function () {
             var nodesLength = this.nodes.length,

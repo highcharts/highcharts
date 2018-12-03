@@ -81,6 +81,7 @@ seriesType('networkgraph', 'line', {
      */
     draggable: true,
     layoutAlgorithm: {
+        showSimulation: true,
         type: 'reingold-fruchterman',
         maxIterations: 1000,
         gravitationalConstant: 1 / 16,
@@ -241,6 +242,10 @@ seriesType('networkgraph', 'line', {
         var layoutOptions = this.options.layoutAlgorithm,
             graphLayoutsStorage = this.chart.graphLayoutsStorage,
             layout;
+
+        if (!this.visible) {
+            return;
+        }
 
         if (!graphLayoutsStorage) {
             this.chart.graphLayoutsStorage = graphLayoutsStorage = {};
@@ -424,6 +429,18 @@ H.addEvent(H.seriesTypes.networkgraph, 'updatedData', function () {
 /*
  * Multiple series support:
  */
+// Clear previous layouts
+addEvent(H.Chart, 'predraw', function () {
+    if (this.graphLayoutsStorage) {
+        H.objectEach(
+            this.graphLayoutsStorage,
+            function (layout) {
+                layout.stop();
+            }
+        );
+        delete this.graphLayoutsStorage;
+    }
+});
 addEvent(H.Chart, 'render', function () {
     if (this.graphLayoutsStorage) {
         H.setAnimation(false, this);
@@ -433,7 +450,6 @@ addEvent(H.Chart, 'render', function () {
                 layout.run();
             }
         );
-        delete this.graphLayoutsStorage;
     }
 });
 
