@@ -580,6 +580,18 @@ Timeline.prototype.getCursor = function () {
 
 
 /**
+ * Check if timeline is reset or at start.
+ *
+ * @return {boolean} True if timeline is at the beginning.
+ */
+Timeline.prototype.atStart = function () {
+    return !this.getCurrentPlayingPaths().some(function (path) {
+        return path.cursor;
+    });
+};
+
+
+/**
  * Get the current TimelinePaths being played.
  *
  * @return {Array<TimelinePath>} The TimelinePaths currently being played.

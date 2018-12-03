@@ -34,14 +34,15 @@ H.sonification = {
 H.Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 H.Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
 H.Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
-H.Chart.prototype.sonify = chartSonifyFunctions.chartSonify;
-H.Chart.prototype.sonification = {
-    pause: chartSonifyFunctions.pause,
-    resume: chartSonifyFunctions.resume,
-    rewind: chartSonifyFunctions.rewind,
-    cancel: chartSonifyFunctions.cancel,
-    getCurrentPoints: chartSonifyFunctions.getCurrentPoints,
-    setCursor: chartSonifyFunctions.setCursor,
-    resetCursor: chartSonifyFunctions.resetCursor,
-    resetCursorEnd: chartSonifyFunctions.resetCursorEnd
-};
+H.extend(H.Chart.prototype, {
+    sonify: chartSonifyFunctions.chartSonify,
+    pauseSonify: chartSonifyFunctions.pause,
+    resumeSonify: chartSonifyFunctions.resume,
+    rewindSonify: chartSonifyFunctions.rewind,
+    cancelSonify: chartSonifyFunctions.cancel,
+    getCurrentSonifyPoints: chartSonifyFunctions.getCurrentPoints,
+    setSonifyCursor: chartSonifyFunctions.setCursor,
+    resetSonifyCursor: chartSonifyFunctions.resetCursor,
+    resetSonifyCursorEnd: chartSonifyFunctions.resetCursorEnd,
+    sonification: {}
+});

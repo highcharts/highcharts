@@ -210,13 +210,16 @@ function buildTimelinePathFromSeries(series, options) {
             }
         },
         onEventStart: function (event) {
-            if (event instanceof H.Point && options.onPointStart) {
-                options.onPointStart(event);
+            var eventObject = event.options && event.options.eventObject;
+            if (eventObject instanceof H.Point && options.onPointStart) {
+                options.onPointStart(event, eventObject);
             }
         },
         onEventEnd: function (eventData) {
-            if (eventData.event instanceof H.Point && options.onPointEnd) {
-                options.onPointEnd(eventData.event);
+            var eventObject = eventData.event && eventData.event.options &&
+                    eventData.event.options.eventObject;
+            if (eventObject instanceof H.Point && options.onPointEnd) {
+                options.onPointEnd(eventData.event, eventObject);
             }
         },
         onEnd: function () {
@@ -833,8 +836,8 @@ function rewind(onEnd) {
  * @param {boolean} [fadeOut=true] Fade out as we pause to avoid clicks.
  */
 function cancel(fadeOut) {
-    this.sonification.pause(fadeOut);
-    this.sonification.resetCursor();
+    this.pauseSonify(fadeOut);
+    this.resetSonifyCursor();
 }
 
 
