@@ -20,6 +20,7 @@ var color = H.Color,
     extend = H.extend,
     getAreaOfIntersectionBetweenCircles =
         geometryCircles.getAreaOfIntersectionBetweenCircles,
+    getCircleCircleIntersection = geometryCircles.getCircleCircleIntersection,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
     getOverlapBetweenCirclesByDistance =
         geometryCircles.getOverlapBetweenCircles,
@@ -567,7 +568,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
             overlapping = set.overlapping;
 
         var bestPosition = positionedSets
-        .reduce(function (best, positionedSet) {
+        .reduce(function (best, positionedSet, i) {
             var positionedCircle = positionedSet.circle,
                 overlap = overlapping[positionedSet.sets[0]];
 
@@ -586,6 +587,31 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
                 { x: positionedCircle.x, y: positionedCircle.y + distance },
                 { x: positionedCircle.x, y: positionedCircle.y - distance }
             ];
+
+            // If there are more circles overlapping, then add the intersection
+            // points as possible positions.
+            positionedSets.slice(i + 1).forEach(function (positionedSet2) {
+                var positionedCircle2 = positionedSet2.circle,
+                    overlap2 = overlapping[positionedSet2.sets[0]],
+                    distance2 = getDistanceBetweenCirclesByOverlap(
+                        radius,
+                        positionedCircle2.r,
+                        overlap2
+                    );
+
+                // Add intersections to list of coordinates.
+                possibleCoordinates = possibleCoordinates.concat(
+                    getCircleCircleIntersection({
+                        x: positionedCircle.x,
+                        y: positionedCircle.y,
+                        r: distance2
+                    }, {
+                        x: positionedCircle2.x,
+                        y: positionedCircle2.y,
+                        r: distance2
+                    })
+                );
+            });
 
             // Iterate all suggested coordinates and find the best one.
             possibleCoordinates.forEach(function (coordinates) {
