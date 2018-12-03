@@ -167,6 +167,42 @@ H.extend(
             this.initialRendering = enable;
         },
         initPositions: function () {
+            var initialPositions = this.options.initialPositions;
+
+            if (H.isFunction(initialPositions)) {
+                initialPositions.call(this);
+            } else if (initialPositions === 'circle') {
+                this.setCircularPositions();
+            } else {
+                this.setRandomPositions();
+            }
+        },
+        setCircularPositions: function () {
+            var box = this.box,
+                nodes = this.nodes,
+                nodesLength = nodes.length + 1,
+                angle = 2 * Math.PI / nodesLength;
+
+            // Initial positions:
+            nodes.forEach(
+                function (node, index) {
+                    node.plotX = pick(
+                        node.plotX,
+                        box.width / 2 + box.width / 10 *
+                            Math.cos(index * angle)
+                    );
+                    node.plotY = pick(
+                        node.plotY,
+                        box.height / 2 + box.height / 10 *
+                            Math.sin(index * angle) * 2 - box.height / 10
+                    );
+
+                    node.dispX = 0;
+                    node.dispY = 0;
+                }
+            );
+        },
+        setRandomPositions: function () {
             var box = this.box,
                 nodes = this.nodes,
                 nodesLength = nodes.length + 1;
