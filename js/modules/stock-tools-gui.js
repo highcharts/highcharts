@@ -72,7 +72,6 @@ H.setOptions({
                 verticalCounter: 'Vertical counter',
                 verticalLabel: 'Vertical label',
                 verticalArrow: 'Vertical arrow',
-                verticalDoubleArrow: 'Vertical double arrow',
                 fibonacci: 'Fibonacci',
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel',
@@ -395,7 +394,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'arrow-ray.svg)'
+                        symbol: 'arrow-ray.svg'
                     },
                     line: {
                         /**
@@ -492,15 +491,13 @@ H.setOptions({
                      * @default [
                      *   'verticalCounter',
                      *   'verticalLabel',
-                     *   'verticalArrow',
-                     *   'verticalDoubleArrow'
+                     *   'verticalArrow'
                      * ]
                      */
                     items: [
                         'verticalCounter',
                         'verticalLabel',
-                        'verticalArrow',
-                        'verticalDoubleArrow'
+                        'verticalArrow'
                     ],
                     verticalCounter: {
                         /**
@@ -525,14 +522,6 @@ H.setOptions({
                          * @type   {string}
                          */
                         symbol: 'vertical-arrow.svg'
-                    },
-                    verticalDoubleArrow: {
-                        /**
-                         * A predefined background symbol for the button.
-                         *
-                         * @type   {string}
-                         */
-                        symbol: 'vertical-double-arrow.svg'
                     }
                 },
                 advanced: {
@@ -1387,7 +1376,6 @@ H.Toolbar.prototype = {
         verticalCounter: PREFIX + 'vertical-counter',
         verticalLabel: PREFIX + 'vertical-label',
         verticalArrow: PREFIX + 'vertical-arrow',
-        verticalDoubleArrow: PREFIX + 'vertical-double-arrow',
         currentPriceIndicator: PREFIX + 'current-price-indicator',
         indicators: PREFIX + 'indicators',
         flagCirclepin: PREFIX + 'flag-circlepin',
