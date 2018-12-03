@@ -11,30 +11,24 @@
 import Instrument from 'Instrument.js';
 import utilities from 'utilities.js';
 
-var instruments = {
+var instruments = {};
+['sine', 'square', 'triangle', 'sawtooth'].forEach(function (waveform) {
+    // Add basic instruments
+    instruments[waveform] = new Instrument({
+        oscillator: { waveformShape: waveform }
+    });
 
-    // Basic instruments
-    sine: new Instrument(),
-    square: new Instrument({ oscillator: { waveformShape: 'square' } }),
-    triangle: new Instrument({ oscillator: { waveformShape: 'triangle' } }),
-    sawtooth: new Instrument({ oscillator: { waveformShape: 'sawtooth' } }),
-
-    // Instrument with only musical notes
-    triangleMusical: new Instrument({
+    // Add musical instruments
+    instruments[waveform + 'Musical'] = new Instrument({
         allowedFrequencies: utilities.musicalFrequencies,
-        oscillator: {
-            waveformShape: 'triangle'
-        }
-    }),
+        oscillator: { waveformShape: waveform }
+    });
 
-    // C-major scale instrument
-    triangleMajor: new Instrument({
+    // Add scaled instruments
+    instruments[waveform + 'Major'] = new Instrument({
         allowedFrequencies: utilities.getMusicalScale([1, 3, 5, 6, 8, 10, 12]),
-        oscillator: {
-            waveformShape: 'triangle'
-        }
-    })
-
-};
+        oscillator: { waveformShape: waveform }
+    });
+});
 
 export default instruments;

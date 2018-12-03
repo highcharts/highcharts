@@ -188,18 +188,25 @@ function pointSonify(options) {
     // Register playing point on chart
     chart.sonification.currentlyPlayingPoint = point;
 
-    // Register signal handler for the point
-    point.signalHandler = point.signalHandler || new utilities.SignalHandler(
-        ['onEnd']
-    );
-    point.signalHandler.clearSignalCallbacks();
-    point.signalHandler.registerSignalCallbacks({ onEnd: options.onEnd });
-
     // Keep track of instruments playing
     point.sonification = point.sonification || {};
     point.sonification.instrumentsPlaying =
         point.sonification.instrumentsPlaying || {};
 
+    // Register signal handler for the point
+    var signalHandler = point.sonification.signalHandler =
+        point.sonification.signalHandler ||
+        new utilities.SignalHandler(['onEnd']);
+    signalHandler.clearSignalCallbacks();
+    signalHandler.registerSignalCallbacks({ onEnd: options.onEnd });
+
+    // If we have a null point, just return
+    if (point.isNull) {
+        signalHandler.emitSignal('onEnd');
+        return;
+    }
+
+    // Go through instruments and play them
     options.instruments.forEach(function (instrumentDefinition) {
         var instrument = typeof instrumentDefinition.instrument === 'string' ?
                 H.sonification.instruments[instrumentDefinition.instrument] :
@@ -236,7 +243,7 @@ function pointSonify(options) {
                             point.sonification.instrumentsPlaying
                         ).length
                     ) {
-                        point.signalHandler.emitSignal('onEnd', cancelled);
+                        signalHandler.emitSignal('onEnd', cancelled);
                     }
                 }
             };
@@ -290,7 +297,7 @@ function pointCancelSonify(fadeOut) {
             playing[instr].stop(!fadeOut, null, 'cancelled');
         });
         this.sonification.instrumentsPlaying = {};
-        this.signalHandler.emitSignal('onEnd', 'cancelled');
+        this.sonification.signalHandler.emitSignal('onEnd', 'cancelled');
     }
 }
 

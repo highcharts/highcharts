@@ -246,6 +246,23 @@ Instrument.prototype.clearPlayCallbackTimers = function () {
 
 
 /**
+ * Set the current frequency being played by the instrument. The closest valid
+ * frequency between the frequency limits is used.
+ * @param {number} frequency The frequency to set.
+ * @param {Object} [frequencyLimits] Object with maxFrequency and minFrequency
+ */
+Instrument.prototype.setFrequency = function (frequency, frequencyLimits) {
+    var limits = frequencyLimits || {},
+        validFrequency = this.getValidFrequency(
+            frequency, limits.min, limits.max
+        );
+    if (this.options.type === 'oscillator') {
+        this.oscillatorPlay(validFrequency);
+    }
+};
+
+
+/**
  * Play oscillator instrument.
  * @private
  *
@@ -315,17 +332,16 @@ Instrument.prototype.oscillatorPlay = function (frequency) {
  */
 Instrument.prototype.play = function (options) {
     var instrument = this,
-        frequency = instrument.getValidFrequency(
-            options.frequency, options.minFrequency, options.maxFrequency
-        ),
-        // Set a value, or if it is a function, set it continously as a timer
-        setOrStartTimer = function (value, setter, initData) {
+        duration = options.duration || 0,
+        // Set a value, or if it is a function, set it continously as a timer.
+        // Pass in the value/function to set, the setter function, and any
+        // additional data to pass through to the setter function.
+        setOrStartTimer = function (value, setter, setterData) {
             var target = options.duration,
                 currentDurationIx = 0,
                 callbackInterval = instrument.options.playCallbackInterval;
             if (typeof value === 'function') {
                 var timer = setInterval(function () {
-                    var setterData = !currentDurationIx ? initData : null;
                     currentDurationIx++;
                     var curTime = currentDurationIx * callbackInterval / target;
                     if (curTime >= 1) {
@@ -337,7 +353,7 @@ Instrument.prototype.play = function (options) {
                 }, callbackInterval);
                 instrument.playCallbackTimers.push(timer);
             } else {
-                instrument[setter](value, initData);
+                instrument[setter](value, setterData);
             }
         };
 
@@ -384,27 +400,34 @@ Instrument.prototype.play = function (options) {
 
     // Stop the note without fadeOut if the duration is too short to hear the
     // note otherwise.
-    var immediate = options.duration < H.sonification.fadeOutDuration + 20;
+    var immediate = duration < H.sonification.fadeOutDuration + 20;
 
     // Stop the instrument after the duration of the note
     instrument.stopCallback = options.onEnd;
-    instrument.stopTimeout = setTimeout(
-        function () {
-            delete instrument.stopTimeout;
-            instrument.stop(immediate);
-        },
-        immediate ? options.duration :
-            options.duration - H.sonification.fadeOutDuration
-    );
+    var onStop = function () {
+        delete instrument.stopTimeout;
+        instrument.stop(immediate);
+    };
+    if (duration) {
+        instrument.stopTimeout = setTimeout(
+            onStop,
+            immediate ? duration :
+                duration - H.sonification.fadeOutDuration
+        );
 
-    // Play, depending on instrument type
-    if (instrument.options.type === 'oscillator') {
-        setOrStartTimer(frequency, 'oscillatorPlay');
+        // Play the note
+        setOrStartTimer(options.frequency, 'setFrequency', null, {
+            minFrequency: options.minFrequency,
+            maxFrequency: options.maxFrequency
+        });
+
+        // Set the volume and panning
+        setOrStartTimer(H.pick(options.volume, 1), 'setGain', 4); // Slight ramp
+        setOrStartTimer(H.pick(options.pan, 0), 'setPan');
+    } else {
+        // No note duration, so just stop immediately
+        onStop();
     }
-
-    // Set the volume and panning
-    setOrStartTimer(H.pick(options.volume, 1), 'setGain', 2); // Slight ramp
-    setOrStartTimer(H.pick(options.pan, 0), 'setPan');
 };
 
 

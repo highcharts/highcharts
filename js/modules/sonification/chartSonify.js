@@ -67,7 +67,9 @@ function getTimeExtremes(series, timeProp) {
  *          New extremes with data properties mapped to min/max objects.
  */
 function getExtremesForInstrumentProps(chart, instruments, dataExtremes) {
-    return instruments.reduce(function (newExtremes, instrumentDefinition) {
+    return (
+        instruments || []
+    ).reduce(function (newExtremes, instrumentDefinition) {
         Object.keys(instrumentDefinition.instrumentMapping || {}).forEach(
             function (instrumentParameter) {
                 var value = instrumentDefinition.instrumentMapping[
@@ -283,6 +285,15 @@ function buildTimelinePathFromSeries(series, options) {
  *          // Properties used and not provided are calculated on demand
  *      }
  *  ```
+ *
+ * @sample highcharts/sonification/series-basic/
+ *         Click on series to sonify
+ * @sample highcharts/sonification/series-earcon/
+ *         Series with earcon
+ * @sample highcharts/sonification/point-play-time/
+ *         Play y-axis by time
+ * @sample highcharts/sonification/earcon-on-point/
+ *         Earcon set on point
  */
 function seriesSonify(options) {
     var timelinePath = buildTimelinePathFromSeries(this, options),
@@ -298,6 +309,7 @@ function seriesSonify(options) {
     chartSonification.timeline = new H.sonification.Timeline({
         paths: [timelinePath]
     });
+
     chartSonification.timeline.play();
 }
 
@@ -327,12 +339,13 @@ function buildSeriesOptions(series, dataExtremes, chartSonifyOptions) {
             // Some options we just pass on
             instruments: chartSonifyOptions.instruments,
             onStart: chartSonifyOptions.onSeriesStart,
-            onEnd: chartSonifyOptions.onSeriesEnd
+            onEnd: chartSonifyOptions.onSeriesEnd,
+            earcons: chartSonifyOptions.earcons
         },
         // Merge in the specific series options by ID
         H.isArray(seriesOptions) ? (
             H.find(seriesOptions, function (optEntry) {
-                return optEntry.id === series.id;
+                return optEntry.id === H.pick(series.id, series.options.id);
             }) || {}
         ) : seriesOptions,
         {
@@ -658,6 +671,8 @@ function buildPathsFromOrder(order, duration) {
  *          waiting time is considered part of the sonify duration.
  * @param   {Array<PointInstrumentOptions>} [options.instruments]
  *          The instrument definitions for the points in this chart.
+ * @param   {Array<EarconConfiguration>} [earcons]
+ *          Earcons to add to the chart.
  * @param   {Function} [options.onSeriesStart]
  *          Callback before a series is played.
  * @param   {Function} [options.onSeriesEnd]
@@ -682,6 +697,17 @@ function buildPathsFromOrder(order, duration) {
  *          // Properties used and not provided are calculated on demand
  *      }
  *  ```
+ *
+ * @sample highcharts/sonification/chart-sequential/
+ *         Sonify a basic chart
+ * @sample highcharts/sonification/chart-simultaneous/
+ *         Sonify series simultaneously
+ * @sample highcharts/sonification/chart-custom-order/
+ *         Custom defined order of series
+ * @sample highcharts/sonification/chart-earcon/
+ *         Earcons on chart
+ * @sample highcharts/sonification/chart-events/
+ *         Sonification events on chart
  */
 function chartSonify(options) {
     // Only one timeline can play at a time.
