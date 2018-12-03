@@ -10,11 +10,11 @@
 import H from '../../parts/Globals.js';
 import '../../parts/Utilities.js';
 import '../../parts/Options.js';
+import '../../mixins/nodes.js';
 import '/layouts.js';
 
 var addEvent = H.addEvent,
     defined = H.defined,
-    extend = H.extend,
     seriesType = H.seriesType,
     pick = H.pick,
     Point = H.Point;
@@ -192,38 +192,7 @@ seriesType('networkgraph', 'line', {
      * Create a single node that holds information on incoming and outgoing
      * links.
      */
-    createNode: function (id) {
-
-        function findById(nodes, id) {
-            return H.find(nodes, function (node) {
-                return node.id === id;
-            });
-        }
-
-        var node = findById(this.nodes, id),
-            PointClass = this.pointClass,
-            options;
-
-        if (!node) {
-            options = this.options.nodes && findById(this.options.nodes, id);
-            node = (new PointClass()).init(
-                this,
-                extend({
-                    className: 'highcharts-node',
-                    isNode: true,
-                    id: id,
-                    y: 1 // Pass isNull test
-                }, options)
-            );
-            node.linksTo = [];
-            node.linksFrom = [];
-            node.formatPrefix = 'node';
-            node.name = node.name || node.id; // for use in formats
-
-            this.nodes.push(node);
-        }
-        return node;
-    },
+    createNode: H.NodesMixin.createNode,
 
     /**
      * Extend generatePoints by adding the nodes, which are Point objects
