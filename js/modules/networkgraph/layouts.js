@@ -39,6 +39,8 @@ H.extend(
                 series = this.series,
                 options = this.options;
 
+            layout.systemTemperature = 0;
+
             layout.initPositions();
 
             // Render elements in initial positions:
@@ -62,12 +64,17 @@ H.extend(
 
                 // Cool down:
                 layout.temperature -= layout.diffTemperature;
+                layout.prevSystemTemperature = layout.systemTemperature;
+                layout.systemTemperature = layout.getSystemTemperature();
 
-                if (options.showSimulation) {
+                if (options.enableSimulation) {
                     series.forEach(function (s) {
                         s.render();
                     });
-                    if (layout.maxIterations--) {
+                    if (
+                        layout.maxIterations-- &&
+                        !layout.isStable()
+                    ) {
                         H.win.requestAnimationFrame(localLayout);
                     }
                 }
@@ -76,12 +83,15 @@ H.extend(
             layout.setK();
             layout.resetSimulation(options);
 
-            if (options.showSimulation) {
+            if (options.enableSimulation) {
                 // Animate it:
                 H.win.requestAnimationFrame(localLayout);
             } else {
                 // Synchronous rendering:
-                while (layout.maxIterations--) {
+                while (
+                    layout.maxIterations-- &&
+                    !layout.isStable()
+                ) {
                     localLayout();
                 }
                 series.forEach(function (s) {
@@ -278,7 +288,8 @@ H.extend(
             var layout = this,
                 options = layout.options,
                 nodes = layout.nodes,
-                box = layout.box;
+                box = layout.box,
+                distanceR;
 
             nodes.forEach(function (node) {
                 if (node.fixedPosition) {
@@ -289,7 +300,7 @@ H.extend(
                 node.dispX += options.friction * node.dispX;
                 node.dispY += options.friction * node.dispY;
 
-                var distanceR = layout.vectorLength({
+                distanceR = node.temperature = layout.vectorLength({
                     x: node.dispX,
                     y: node.dispY
                 });
@@ -350,6 +361,17 @@ H.extend(
                 node.dispX = 0;
                 node.dispY = 0;
             });
+        },
+        isStable: function () {
+            return Math.abs(
+                this.systemTemperature -
+                this.prevSystemTemperature
+            ) === 0;
+        },
+        getSystemTemperature: function () {
+            return this.nodes.reduce(function (value, node) {
+                return value + node.temperature;
+            }, 0);
         },
         vectorLength: function (vector) {
             return Math.sqrt(vector.x * vector.x + vector.y * vector.y);

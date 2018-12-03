@@ -81,7 +81,7 @@ seriesType('networkgraph', 'line', {
      */
     draggable: true,
     layoutAlgorithm: {
-        showSimulation: true,
+        enableSimulation: false,
         type: 'reingold-fruchterman',
         maxIterations: 1000,
         gravitationalConstant: 1 / 16,
@@ -255,8 +255,8 @@ seriesType('networkgraph', 'line', {
         layout = graphLayoutsStorage[layoutOptions.type];
 
         if (!layout) {
-            layoutOptions.showSimulation = !defined(chartOptions.forExport) ?
-                layoutOptions.showSimulation :
+            layoutOptions.enableSimulation = !defined(chartOptions.forExport) ?
+                layoutOptions.enableSimulation :
                 !chartOptions.forExport;
 
             graphLayoutsStorage[layoutOptions.type] = layout =

@@ -65,7 +65,7 @@ Highcharts.chart('container', {
             ['z', 'z_y', 1]
         ],
         layoutAlgorithm: {
-            showSimulation: false
+            enableSimulation: true
         },
         dataLabels: {
             enabled: true
