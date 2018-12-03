@@ -1,7 +1,6 @@
 QUnit.test('Drilldown methods', function (assert) {
 
     // Create the chart
-    // Create the chart
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
@@ -69,6 +68,14 @@ QUnit.test('Drilldown methods', function (assert) {
         'Initial categories'
     );
 
+    chart.series[0].select(true);
+
+    assert.strictEqual(
+        chart.series[0].selected,
+        true,
+        'First series should be selected'
+    );
+
     chart.series[0].points[0].doDrilldown();
 
     assert.deepEqual(
@@ -96,6 +103,13 @@ QUnit.test('Drilldown methods', function (assert) {
         ['Animals', 'Fruits', 'Cars'],
         'Initial categories again'
     );
+
+    assert.strictEqual(
+        chart.series[0].selected,
+        true,
+        'First series selected state should be preserved'
+    );
+
 
 
     chart.drillUp(); // Just checking #7602

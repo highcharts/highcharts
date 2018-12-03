@@ -14,32 +14,35 @@ var requiredIndicatorMixin = {
     /**
      * Check whether given indicator is loaded, else throw error.
      * @param {function} indicator Indicator constructor function.
-     * @param {string} indicatorName Given indicator name.
-     * @param {string} type Type of indicator where function was called.
+     * @param {string} requiredIndicator required indicator type.
+     * @param {string} type Type of indicator where function was called (parent).
      * @param {function} callback Callback which is triggered if the given
-     *                            indicator is loaded.
+     *                            indicator is loaded. Takes indicator as
+     *                            an argument.
      * @param {string} errMessage Error message that will be logged in console.
      * @returns {boolean} Returns false when there is no required indicator loaded.
      */
-    isParentIndicatorLoaded: function (
+    isParentLoaded: function (
         indicator,
-        indicatorName,
+        requiredIndicator,
         type,
         callback,
         errMessage
     ) {
-        var apiLink = 'https://api.highcharts.com/highstock/';
-
         if (indicator) {
-            return callback(indicator);
+            return callback ? callback(indicator) : true;
         }
         error(
-            errMessage || 'Error: "' + type +
-            '" indicator type requires ' + indicatorName +
-            ' indicator loaded before. Please read docs: ' +
-            '' + apiLink + 'plotOptions.' + type
+            errMessage || this.generateMessage(type, requiredIndicator)
         );
         return false;
+    },
+    generateMessage: function (indicatorType, required) {
+        return 'Error: "' + indicatorType +
+            '" indicator type requires "' + required +
+            '" indicator loaded before. Please read docs: ' +
+            'https://api.highcharts.com/highstock/plotOptions.' +
+            indicatorType;
     }
 };
 export default requiredIndicatorMixin;

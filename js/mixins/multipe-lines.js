@@ -1,8 +1,10 @@
 /**
- * (c) 2010-2018 Wojciech Chmiel
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Wojciech Chmiel
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -21,6 +23,9 @@ var each = H.each,
  * getValues method appropriate to your indicator and pointArrayMap,
  * pointValKey, linesApiNames properites. Notice that pointArrayMap
  * should be consistent with amount of lines calculated in getValues method.
+ *
+ * @private
+ * @mixin multipleLinesMixin
  */
 var multipleLinesMixin = {
     /**
@@ -29,12 +34,18 @@ var multipleLinesMixin = {
      * linesApiNames, because it contains main line and additional lines ids.
      * Also it should be consistent with amount of lines calculated in
      * getValues method from your implementation.
-     * @type {Array}
+     *
+     * @private
+     * @name multipleLinesMixin.pointArrayMap
+     * @type {Array<string>}
      */
     pointArrayMap: ['top', 'bottom'],
 
     /**
      * Main line id.
+     *
+     * @private
+     * @name multipleLinesMixin.pointValKey
      * @type {string}
      */
     pointValKey: 'top',
@@ -44,14 +55,24 @@ var multipleLinesMixin = {
      * be consistent with DOCS line names defined in your implementation.
      * Notice that linesApiNames should have decreased amount of elements
      * relative to pointArrayMap (without pointValKey).
-     * @type {Array}
+     *
+     * @private
+     * @name multipleLinesMixin.linesApiNames
+     * @type {Array<string>}
      */
     linesApiNames: ['bottomLine'],
 
     /**
      * Create translatedLines Collection based on pointArrayMap.
-     * @param {string} excludedValue pointValKey - main line id
-     * @returns {Array} Returns translated lines names without excluded value.
+     *
+     * @private
+     * @function multipleLinesMixin.getTranslatedLinesNames
+     *
+     * @param {string} excludedValue
+     *        pointValKey - main line id
+     *
+     * @return {Array<string>}
+     *         Returns translated lines names without excluded value.
      */
     getTranslatedLinesNames: function (excludedValue) {
         var translatedLines = [];
@@ -69,8 +90,13 @@ var multipleLinesMixin = {
         return translatedLines;
     },
     /**
+     * @private
+     * @function multipleLinesMixin.toYData
+     *
      * @param {string} point
-     * @returns {Array} Returns point Y value for all lines
+     *
+     * @return {Array<number>}
+     *         Returns point Y value for all lines
      */
     toYData: function (point) {
         var pointColl = [];
@@ -82,6 +108,9 @@ var multipleLinesMixin = {
     },
     /**
      * Add lines plot pixel values.
+     *
+     * @private
+     * @function multipleLinesMixin.translate
      */
     translate: function () {
         var indicator = this,
@@ -108,6 +137,9 @@ var multipleLinesMixin = {
     },
     /**
      * Draw main and additional lines.
+     *
+     * @private
+     * @function multipleLinesMixin.drawGraph
      */
     drawGraph: function () {
         var indicator = this,

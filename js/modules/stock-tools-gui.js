@@ -88,7 +88,7 @@ H.setOptions({
                 typeLine: 'Line',
                 typeCandlestick: 'Candlestick',
                 fill: 'Fill',
-                format: 'Format',
+                format: 'Text',
                 strokeWidth: 'Line width',
                 stroke: 'Line color',
                 title: 'Title',
@@ -129,6 +129,11 @@ H.setOptions({
      * and information on its features, see [Highcharts StockTools]().
      *
      * @product highstock
+     *
+     * @sample stock/demo/stock-tools-gui Stock Tools GUI
+     *
+     * @sample stock/demo/stock-tools-custom-gui Stock Tools customized GUI
+     *
      * @since 7.0.0
      * @type {Object}
      * @optionparent stockTools
@@ -163,6 +168,11 @@ H.setOptions({
              *
              */
             toolbarClassName: 'stocktools-toolbar',
+            /**
+             * Path where Highcharts will look for icons. Change this to use
+             * icons from a different server.
+             */
+            iconsURL: 'https://code.highcharts.com/@product.version@/gfx/stock-icons/',
             /**
              * A collection of strings pointing to config options for the
              * toolbar items. Each name refers to unique key from definitions
@@ -225,7 +235,7 @@ H.setOptions({
                      *
                      * @type   {string}
                      */
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/separator.svg)'
+                    symbol: 'separator.svg'
                 },
                 simpleShapes: {
                     /**
@@ -252,7 +262,7 @@ H.setOptions({
                          * @type   {string}
                          *
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/circle.svg)'
+                        symbol: 'circle.svg'
                     },
                     rectangle: {
                         /**
@@ -261,7 +271,7 @@ H.setOptions({
                          * @type   {string}
                          *
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/rectangle.svg)'
+                        symbol: 'rectangle.svg'
                     },
                     label: {
                         /**
@@ -270,7 +280,7 @@ H.setOptions({
                          * @type   {string}
                          *
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/label.svg)'
+                        symbol: 'label.svg'
                     }
                 },
                 flags: {
@@ -300,7 +310,7 @@ H.setOptions({
                          * @type   {string}
                          *
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-basic.svg)'
+                        symbol: 'flag-basic.svg'
                     },
                     flagDiamondpin: {
                         /**
@@ -309,7 +319,7 @@ H.setOptions({
                          * @type   {string}
                          *
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-diamond.svg)'
+                        symbol: 'flag-diamond.svg'
                     },
                     flagSquarepin: {
                         /**
@@ -317,7 +327,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-trapeze.svg)'
+                        symbol: 'flag-trapeze.svg'
                     },
                     flagCirclepin: {
                         /**
@@ -325,7 +335,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/flag-elipse.svg)'
+                        symbol: 'flag-elipse.svg'
                     }
                 },
                 lines: {
@@ -361,7 +371,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/segment.svg)'
+                        symbol: 'segment.svg'
                     },
                     arrowSegment: {
                         /**
@@ -369,7 +379,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-segment.svg)'
+                        symbol: 'arrow-segment.svg'
                     },
                     ray: {
                         /**
@@ -377,7 +387,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/ray.svg)'
+                        symbol: 'ray.svg'
                     },
                     arrowRay: {
                         /**
@@ -385,7 +395,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-ray.svg)'
+                        symbol: 'arrow-ray.svg)'
                     },
                     line: {
                         /**
@@ -393,7 +403,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/line.svg)'
+                        symbol: 'line.svg'
                     },
                     arrowLine: {
                         /**
@@ -401,7 +411,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/arrow-line.svg)'
+                        symbol: 'arrow-line.svg'
                     },
                     verticalLine: {
                         /**
@@ -409,7 +419,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-line.svg)'
+                        symbol: 'vertical-line.svg'
                     },
                     horizontalLine: {
                         /**
@@ -417,7 +427,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/horizontal-line.svg)'
+                        symbol: 'horizontal-line.svg'
                     }
                 },
                 crookedLines: {
@@ -446,7 +456,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/crooked-3.svg)'
+                        symbol: 'crooked-3.svg'
                     },
                     crooked5: {
                         /**
@@ -454,7 +464,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/crooked-5.svg)'
+                        symbol: 'crooked-5.svg'
                     },
                     elliott3: {
                         /**
@@ -462,7 +472,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/elliott-3.svg)'
+                        symbol: 'elliott-3.svg'
                     },
                     elliott5: {
                         /**
@@ -470,7 +480,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/elliott-5.svg)'
+                        symbol: 'elliott-5.svg'
                     }
                 },
                 verticalLabels: {
@@ -498,7 +508,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-counter.svg)'
+                        symbol: 'vertical-counter.svg'
                     },
                     verticalLabel: {
                         /**
@@ -506,7 +516,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-label.svg)'
+                        symbol: 'vertical-label.svg'
                     },
                     verticalArrow: {
                         /**
@@ -514,7 +524,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-arrow.svg)'
+                        symbol: 'vertical-arrow.svg'
                     },
                     verticalDoubleArrow: {
                         /**
@@ -522,7 +532,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/vertical-double-arrow.svg)'
+                        symbol: 'vertical-double-arrow.svg'
                     }
                 },
                 advanced: {
@@ -548,7 +558,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/pitchfork.svg)'
+                        symbol: 'pitchfork.svg'
                     },
                     fibonacci: {
                         /**
@@ -556,7 +566,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/fibonacci.svg)'
+                        symbol: 'fibonacci.svg'
                     },
                     parallelChannel: {
                         /**
@@ -564,7 +574,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/parallel-channel.svg)'
+                        symbol: 'parallel-channel.svg'
                     }
                 },
                 measure: {
@@ -590,7 +600,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-x.svg)'
+                        symbol: 'measure-x.svg'
                     },
                     measureY: {
                         /**
@@ -598,7 +608,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-y.svg)'
+                        symbol: 'measure-y.svg'
                     },
                     measureXY: {
                         /**
@@ -606,7 +616,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/measure-xy.svg)'
+                        symbol: 'measure-xy.svg'
                     }
                 },
                 toggleAnnotations: {
@@ -615,7 +625,7 @@ H.setOptions({
                      *
                      * @type   {string}
                      */
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/annotations-visible.svg)'
+                    symbol: 'annotations-visible.svg'
                 },
                 currentPriceIndicator: {
                     /**
@@ -623,7 +633,7 @@ H.setOptions({
                      *
                      * @type   {string}
                      */
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/current-price-show.svg)'
+                    symbol: 'current-price-show.svg'
                 },
                 indicators: {
                     /**
@@ -631,7 +641,7 @@ H.setOptions({
                      *
                      * @type   {string}
                      */
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/indicators.svg)'
+                    symbol: 'indicators.svg'
                 },
                 zoomChange: {
                     /**
@@ -656,7 +666,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-x.svg)'
+                        symbol: 'zoom-x.svg'
                     },
                     zoomY: {
                         /**
@@ -664,7 +674,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-y.svg)'
+                        symbol: 'zoom-y.svg'
                     },
                     zoomXY: {
                         /**
@@ -672,7 +682,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/zoom-xy.svg)'
+                        symbol: 'zoom-xy.svg'
                     }
                 },
                 typeChange: {
@@ -698,7 +708,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-ohlc.svg)'
+                        symbol: 'series-ohlc.svg'
                     },
                     typeLine: {
                         /**
@@ -706,7 +716,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-line.svg)'
+                        symbol: 'series-line.svg'
                     },
                     typeCandlestick: {
                         /**
@@ -714,7 +724,7 @@ H.setOptions({
                          *
                          * @type   {string}
                          */
-                        symbol: 'url(http://utils.highcharts.local/samples/graphics/series-candlestick.svg)'
+                        symbol: 'series-candlestick.svg'
                     }
                 },
                 fullScreen: {
@@ -723,7 +733,7 @@ H.setOptions({
                      *
                      * @type   {string}
                      */
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/fullscreen.svg)'
+                    symbol: 'fullscreen.svg'
                 },
                 saveChart: {
                     /**
@@ -731,7 +741,7 @@ H.setOptions({
                      *
                      * @type   {string}
                      */
-                    symbol: 'url(http://utils.highcharts.local/samples/graphics/save-chart.svg)'
+                    symbol: 'save-chart.svg'
                 }
             }
         }
@@ -834,7 +844,6 @@ H.Toolbar.prototype = {
             lang = this.lang,
             guiOptions = this.options,
             toolbar = this.toolbar,
-            addButton = _self.addButton,
             addSubmenu = _self.addSubmenu,
             buttons = guiOptions.buttons,
             defs = guiOptions.definitions,
@@ -845,7 +854,7 @@ H.Toolbar.prototype = {
         // create buttons
         buttons.forEach(function (btnName) {
 
-            button = addButton(toolbar, defs, btnName, lang);
+            button = _self.addButton(toolbar, defs, btnName, lang);
 
             if (inIframe && btnName === 'fullScreen') {
                 button.buttonWrapper.className += ' ' + PREFIX + 'disabled-btn';
@@ -944,7 +953,6 @@ H.Toolbar.prototype = {
         var _self = this,
             submenuWrapper = this.submenu,
             lang = this.lang,
-            addButton = this.addButton,
             menuWrapper = this.listWrapper,
             items = button.items,
             firstSubmenuItem,
@@ -953,7 +961,12 @@ H.Toolbar.prototype = {
         // add items to submenu
         items.forEach(function (btnName) {
             // add buttons to submenu
-            submenuBtn = addButton(submenuWrapper, button, btnName, lang);
+            submenuBtn = _self.addButton(
+                submenuWrapper,
+                button,
+                btnName,
+                lang
+            );
 
             addEvent(submenuBtn.mainButton, 'click', function () {
                 _self.switchSymbol(this, buttonWrapper, true);
@@ -1003,7 +1016,8 @@ H.Toolbar.prototype = {
      * @return {Object} - references to all created HTML elements
      */
     addButton: function (target, options, btnName, lang) {
-        var btnOptions = options[btnName],
+        var guiOptions = this.options,
+            btnOptions = options[btnName],
             items = btnOptions.items,
             classMapping = H.Toolbar.prototype.classMapping,
             userClassName = btnOptions.className || '',
@@ -1032,7 +1046,8 @@ H.Toolbar.prototype = {
                     PREFIX + 'arrow-right'
             }, null, buttonWrapper);
         } else {
-            mainButton.style['background-image'] = btnOptions.symbol;
+            mainButton.style['background-image'] = 'url(' +
+                guiOptions.iconsURL + btnOptions.symbol + ')';
         }
 
         return {
@@ -1394,18 +1409,33 @@ H.Toolbar.prototype = {
 
 // Comunication with bindings:
 addEvent(H.Toolbar, 'selectButton', function (event) {
+    var button = event.button,
+        className = PREFIX + 'submenu-wrapper';
+
     if (this.guiEnabled) {
         // Unslect other active buttons
         this.unselectAllButtons(event.button);
 
+        // If clicked on a submenu, select state for it's parent
+        if (button.parentNode.className.indexOf(className) >= 0) {
+            button = button.parentNode.parentNode;
+        }
         // Set active class on the current button
-        this.selectButton(event.button);
+        this.selectButton(button);
     }
 });
 
+
 addEvent(H.Toolbar, 'deselectButton', function (event) {
+    var button = event.button,
+        className = PREFIX + 'submenu-wrapper';
+
     if (this.guiEnabled) {
-        this.selectButton(event.button);
+        // If deselecting a button from a submenu, select state for it's parent
+        if (button.parentNode.className.indexOf(className) >= 0) {
+            button = button.parentNode.parentNode;
+        }
+        this.selectButton(button);
     }
 });
 

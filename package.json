@@ -31,8 +31,8 @@
     "jsdoc": "gulp jsdoc --watch",
     "precommit": "lint-staged && gulp test",
     "commitmsg": "node tools/validate-commit-msg.js ${GIT_PARAMS}",
-    "tsd": "gulp tsd",
-    "tsd-lint": "gulp tsd-lint"
+    "dts": "gulp dts",
+    "dtslint": "gulp dtslint"
   },
   "devDependencies": {
     "aws-sdk": "^2.337.0",
@@ -57,6 +57,7 @@
     "gzip-size": "^3.0.0",
     "highcharts-api-docs": "github:highcharts/api-docs",
     "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.0.28",
+    "highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.0.1",
     "highcharts-docstrap": "github:highcharts/highcharts-docstrap",
     "husky": "^0.14.3",
     "js-yaml": "^3.12.0",

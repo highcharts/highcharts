@@ -110,7 +110,7 @@ import * as Highcharts from 'highcharts';
 // import Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
-import * as Exporting from 'highcharts/modules/exporting';
+import Exporting from 'highcharts/modules/exporting';
 // Initialize exporting module.
 Exporting(Highcharts);
 

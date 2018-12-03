@@ -1273,14 +1273,24 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     print: function () {
 
         var chart = this,
-            container = chart.container,
             origDisplay = [],
-            origParent = container.parentNode,
             body = doc.body,
             childNodes = body.childNodes,
             printMaxWidth = chart.options.exporting.printMaxWidth,
             resetParams,
             handleMaxWidth;
+
+        // Move the chart container(s) to another div
+        function moveContainers(moveTo) {
+            (
+                chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
+                    [chart.fixedDiv, chart.scrollingContainer] :
+                    [chart.container]
+
+            ).forEach(function (div) {
+                moveTo.appendChild(div);
+            });
+        }
 
         if (chart.isPrinting) { // block the button while in printing mode
             return;
@@ -1307,7 +1317,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         // pull out the chart
-        body.appendChild(container);
+        moveContainers(body);
 
         // Give the browser time to draw WebGL content, an issue that randomly
         // appears (at least) in Chrome ~67 on the Mac (#8708).
@@ -1320,7 +1330,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             setTimeout(function () {
 
                 // put the chart back in
-                origParent.appendChild(container);
+                moveContainers(chart.renderTo);
 
                 // restore all body content
                 childNodes.forEach(function (node, i) {

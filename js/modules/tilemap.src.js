@@ -1,4 +1,4 @@
-/**
+/* *
  * Tilemaps module
  *
  * (c) 2010-2017 Highsoft AS
@@ -27,22 +27,10 @@ var seriesType = H.seriesType,
         };
     };
 
-/**
- * Map of shape types.
- *
- * @private
- * @name Highcharts.tileShapeTypes
- * @type {*}
- */
+// Map of shape types.
 H.tileShapeTypes = {
 
-    /**
-     * Hexagon shape type.
-     *
-     * @private
-     * @name Highcharts.tileShapeTypes.hexagon
-     * @type {*}
-     */
+    // Hexagon shape type.
     hexagon: {
         alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
         getSeriesPadding: function (series) {
@@ -174,13 +162,7 @@ H.tileShapeTypes = {
     },
 
 
-    /**
-     * Diamond shape type.
-     *
-     * @private
-     * @name Highcharts.tileShapeTypes.diamond
-     * @type {*}
-     */
+    // Diamond shape type.
     diamond: {
         alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
         getSeriesPadding: function (series) {
@@ -297,13 +279,7 @@ H.tileShapeTypes = {
     },
 
 
-    /**
-     * Circle shape type.
-     *
-     * @private
-     * @name Highcharts.tileShapeTypes.circle
-     * @type {*}
-     */
+    // Circle shape type.
     circle: {
         alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
         getSeriesPadding: function (series) {
@@ -433,13 +409,7 @@ H.tileShapeTypes = {
     },
 
 
-    /**
-     * Square shape type.
-     *
-     * @private
-     * @name Highcharts.tileShapeTypes.square
-     * @type {*}
-     */
+    // Square shape type.
     square: {
         alignDataLabel: H.seriesTypes.heatmap.prototype.alignDataLabel,
         translate: H.seriesTypes.heatmap.prototype.translate,
@@ -594,14 +564,7 @@ seriesType('tilemap', 'heatmap'
 
 }, { // Prototype functions
 
-    /**
-     * Set tile shape object on series
-     *
-     * @private
-     * @function Highcharts.seriesTypes.tilemap#setOptions
-     *
-     * @return {*}
-     */
+    // Set tile shape object on series
     setOptions: function () {
         // Call original function
         var ret = H.seriesTypes.heatmap.prototype.setOptions.apply(this,
@@ -612,30 +575,14 @@ seriesType('tilemap', 'heatmap'
         return ret;
     },
 
-    /**
-     * Use the shape's defined data label alignment function
-     *
-     * @private
-     * @function Highcharts.seriesTypes.tilemap#alignDataLabel
-     *
-     * @return {*}
-     */
+    // Use the shape's defined data label alignment function
     alignDataLabel: function () {
         return this.tileShape.alignDataLabel.apply(this,
             Array.prototype.slice.call(arguments)
         );
     },
 
-    /**
-     * Get metrics for padding of axis for this series
-     *
-     * @private
-     * @function Highcharts.seriesTypes.tilemap#getSeriesPixelPadding
-     *
-     * @param {Highcharts.Axis} axis
-     *
-     * @return {*}
-     */
+    // Get metrics for padding of axis for this series
     getSeriesPixelPadding: function (axis) {
         var isX = axis.isXAxis,
             padding = this.tileShape.getSeriesPadding(this),
@@ -680,12 +627,7 @@ seriesType('tilemap', 'heatmap'
         };
     },
 
-    /**
-     * Use translate from tileShape
-     *
-     * @private
-     * @function Highcharts.seriesTypes.tilemap#translate
-     */
+    // Use translate from tileShape
     translate: function () {
         return this.tileShape.translate.apply(this,
             Array.prototype.slice.call(arguments)

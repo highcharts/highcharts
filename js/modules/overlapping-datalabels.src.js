@@ -1,4 +1,7 @@
-/**
+/* *
+ * Highcharts module to hide overlapping data labels. This module is included in
+ * Highcharts.
+ *
  * (c) 2009-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -10,16 +13,12 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
 
-/*
- * Highcharts module to hide overlapping data labels. This module is included in
- * Highcharts.
- */
-
 var Chart = H.Chart,
     isArray = H.isArray,
     objectEach = H.objectEach,
     pick = H.pick,
-    addEvent = H.addEvent;
+    addEvent = H.addEvent,
+    fireEvent = H.fireEvent;
 
 // Collect potensial overlapping data labels. Stack labels probably don't need
 // to be considered because they are usually accompanied by data labels that lie
@@ -89,8 +88,9 @@ addEvent(Chart, 'render', function collectAndHide() {
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
 
-    var len = labels.length,
-        ren = this.renderer,
+    var chart = this,
+        len = labels.length,
+        ren = chart.renderer,
         label,
         i,
         j,
@@ -108,10 +108,8 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
             );
         },
 
-        /**
-         * Get the box with its position inside the chart, as opposed to getBBox
-         * that only reports the position relative to the parent.
-         */
+        // Get the box with its position inside the chart, as opposed to getBBox
+        // that only reports the position relative to the parent.
         getAbsoluteBox = function (label) {
             var pos,
                 parent,
@@ -235,6 +233,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                         null,
                         complete
                     );
+                    fireEvent(chart, 'afterHideOverlappingLabels');
                 } else { // other labels, tick labels
                     label.attr({
                         opacity: newOpacity
