@@ -159,7 +159,7 @@ H.seriesType('dema', 'ema',
     });
 
 /**
- * A `EMA` series. If the [type](#series.ema.type) option is not
+ * A `DEMA` series. If the [type](#series.ema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @type {Object}

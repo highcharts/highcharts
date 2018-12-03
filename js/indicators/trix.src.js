@@ -1,8 +1,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+import requiredIndicator from '../mixins/indicator-required.js';
 
-var correctFloat = H.correctFloat;
+var correctFloat = H.correctFloat,
+    TEMA = H.seriesTypes.tema;
 
 /**
 * The TRIX series Type
@@ -30,20 +32,32 @@ H.seriesType('trix', 'tema',
      * @optionparent plotOptions.trix
      */
     {}, {
+        init: function () {
+            var args = arguments,
+                ctx = this;
+
+            requiredIndicator.isParentLoaded(
+                TEMA,
+                'tema',
+                ctx.type,
+                function (indicator) {
+                    indicator.prototype.init.apply(ctx, args);
+                }
+            );
+        },
         getPoint: function (
-          xVal,
-          tripledPeriod,
-          EMA,
-          EMAlevel2,
-          EMAlevel3,
-          prevEMAlevel3,
-          i
+            xVal,
+            tripledPeriod,
+            EMAlevels,
+            i
         ) {
             if (i > tripledPeriod) {
                 var TRIXPoint = [
                     xVal[i - 3],
-                    prevEMAlevel3 !== 0 ? correctFloat(EMAlevel3 -
-                    prevEMAlevel3) / prevEMAlevel3 * 100 : null
+                    EMAlevels.prevEMAlevel3 !== 0 ?
+                        correctFloat(EMAlevels.EMAlevel3 -
+                        EMAlevels.prevEMAlevel3) /
+                        EMAlevels.prevEMAlevel3 * 100 : null
                 ];
             }
 
@@ -52,7 +66,7 @@ H.seriesType('trix', 'tema',
     });
 
 /**
- * A `TEMA` series. If the [type](#series.tema.type) option is not
+ * A `TRIX` series. If the [type](#series.tema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @type {Object}
