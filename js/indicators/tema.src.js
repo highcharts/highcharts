@@ -66,17 +66,16 @@ H.seriesType('tema', 'ema',
             );
         },
         getPoint: function (
-          xVal,
-          tripledPeriod,
-          EMA,
-          EMAlevel2,
-          EMAlevel3,
-          prevEMAlevel3,
-          i
+            xVal,
+            tripledPeriod,
+            EMAlevels,
+            i
         ) {
             var TEMAPoint = [
                 xVal[i - 3],
-                correctFloat(3 * EMA - 3 * EMAlevel2 + EMAlevel3)
+                correctFloat(3 * EMAlevels.EMA -
+                  3 * EMAlevels.EMAlevel2 + EMAlevels.EMAlevel3
+                )
             ];
             return TEMAPoint;
         },
@@ -93,20 +92,20 @@ H.seriesType('tema', 'ema',
                 TEMA = [],
                 xDataTema = [],
                 yDataTema = [],
-                EMA = 0,
-                // EMA(EMA)
-                EMAlevel2,
-                // EMA(EMA(EMA))
-                EMAlevel3,
                 // EMA of previous point
                 prevEMA,
                 prevEMAlevel2,
-                prevEMAlevel3,
+                // prevEMAlevel3,
                 // EMA values array
                 EMAvalues = [],
                 EMAlevel2values = [],
                 i,
-                TEMAPoint;
+                TEMAPoint,
+                // This object contains all EMA EMAlevels calculated like below
+                // EMA(EMA) = EMAlevel2,
+                // EMA(EMA(EMA)) = EMAlevel3,
+                EMAlevels = {};
+
             series.EMApercent = (2 / (period + 1));
 
             // Check period, if bigger than EMA points length, skip
@@ -134,20 +133,20 @@ H.seriesType('tema', 'ema',
             // Calculate value one-by-one for each period in visible data
             for (i = period; i < yValLen + 3; i++) {
                 if (i < yValLen + 1) {
-                    EMA = this.getEMA(
+                    EMAlevels.EMA = this.getEMA(
                         yVal,
                         prevEMA,
                         SMA,
                         index,
                         i
                     )[1];
-                    EMAvalues.push(EMA);
+                    EMAvalues.push(EMAlevels.EMA);
                 }
-                prevEMA = EMA;
+                prevEMA = EMAlevels.EMA;
 
                 // Summing first period points for ema(ema)
                 if (i < doubledPeriod) {
-                    accumulatePeriodPoints += EMA;
+                    accumulatePeriodPoints += EMAlevels.EMA;
                 } else {
                     // Calculate dema
                     // First dema point
@@ -155,17 +154,17 @@ H.seriesType('tema', 'ema',
                         SMA = accumulatePeriodPoints / period;
                         accumulatePeriodPoints = 0;
                     }
-                    EMA = EMAvalues[i - period - 1];
-                    EMAlevel2 = this.getEMA(
-                        [EMA],
+                    EMAlevels.EMA = EMAvalues[i - period - 1];
+                    EMAlevels.EMAlevel2 = this.getEMA(
+                        [EMAlevels.EMA],
                         prevEMAlevel2,
                         SMA
                     )[1];
-                    EMAlevel2values.push(EMAlevel2);
-                    prevEMAlevel2 = EMAlevel2;
+                    EMAlevel2values.push(EMAlevels.EMAlevel2);
+                    prevEMAlevel2 = EMAlevels.EMAlevel2;
                     // Summing first period points for ema(ema(ema))
                     if (i < tripledPeriod) {
-                        accumulatePeriodPoints += EMAlevel2;
+                        accumulatePeriodPoints += EMAlevels.EMAlevel2;
                     } else {
                         // Calculate tema
                         // First tema point
@@ -174,28 +173,26 @@ H.seriesType('tema', 'ema',
                         }
                         if (i === yValLen + 1) {
                             // Calculate the last ema and emaEMA points
-                            EMA = EMAvalues[i - period - 1];
-                            EMAlevel2 = this.getEMA(
-                                [EMA],
+                            EMAlevels.EMA = EMAvalues[i - period - 1];
+                            EMAlevels.EMAlevel2 = this.getEMA(
+                                [EMAlevels.EMA],
                                 prevEMAlevel2,
                                 SMA
                             )[1];
-                            EMAlevel2values.push(EMAlevel2);
+                            EMAlevel2values.push(EMAlevels.EMAlevel2);
                         }
-                        EMA = EMAvalues[i - period - 2];
-                        EMAlevel2 = EMAlevel2values[i - 2 * period - 1];
-                        EMAlevel3 = this.getEMA(
-                            [EMAlevel2],
-                            prevEMAlevel3,
+                        EMAlevels.EMA = EMAvalues[i - period - 2];
+                        EMAlevels.EMAlevel2 =
+                        EMAlevel2values[i - 2 * period - 1];
+                        EMAlevels.EMAlevel3 = this.getEMA(
+                            [EMAlevels.EMAlevel2],
+                            EMAlevels.prevEMAlevel3,
                             SMA
                         )[1];
                         TEMAPoint = this.getPoint(
                           xVal,
                           tripledPeriod,
-                          EMA,
-                          EMAlevel2,
-                          EMAlevel3,
-                          prevEMAlevel3,
+                          EMAlevels,
                           i
                         );
                         // Make sure that point exists (for TRIX oscillator)
@@ -204,7 +201,7 @@ H.seriesType('tema', 'ema',
                             xDataTema.push(TEMAPoint[0]);
                             yDataTema.push(TEMAPoint[1]);
                         }
-                        prevEMAlevel3 = EMAlevel3;
+                        EMAlevels.prevEMAlevel3 = EMAlevels.EMAlevel3;
                     }
                 }
             }
@@ -218,7 +215,7 @@ H.seriesType('tema', 'ema',
     });
 
 /**
- * A `EMA` series. If the [type](#series.ema.type) option is not
+ * A `TEMA` series. If the [type](#series.ema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @type {Object}
