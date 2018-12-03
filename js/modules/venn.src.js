@@ -1019,18 +1019,42 @@ var vennSeries = {
 
     animate: function (init) {
         if (!init) {
-            this.points.forEach(function (point) {
-                if (point.graphic && point.shapeArgs) {
+            var series = this,
+                animOptions = H.animObject(series.options.animation);
+
+            series.points.forEach(function (point) {
+                var args = point.shapeArgs;
+                if (point.graphic && args) {
+                    var attr = {},
+                        animate = {};
+
+                    if (args.d) {
+                        // If shape is a path, then animate opacity.
+                        attr.opacity = 0.001;
+                    } else {
+                        // If shape is a circle, then animate radius.
+                        attr.r = 0;
+                        animate.r = args.r;
+                    }
+
                     point.graphic
-                        .attr({
-                            r: 0
-                        })
-                        .animate({
-                            r: point.shapeArgs.r
-                        }, H.animObject(this.options.animation));
+                        .attr(attr)
+                        .animate(animate, animOptions);
+
+                    // If shape is path, then fade it in after the circles
+                    // animation
+                    if (args.d) {
+                        setTimeout(function () {
+                            if (point && point.graphic) {
+                                point.graphic.animate({
+                                    opacity: 1
+                                });
+                            }
+                        }, animOptions.duration);
+                    }
                 }
-            }, this);
-            this.animate = null;
+            }, series);
+            series.animate = null;
         }
     },
 
