@@ -92,29 +92,14 @@
      * Copy the JavaScript files over
      */
     function copyFiles() {
-        const fnFilter = (src) => (
-            (src.indexOf('.') !== 0) &&
-            (src.indexOf('readme') === -1)
-        );
-        const existing = [];
         const mapFromTo = {};
+        const sourceFolder = 'code/';
         const pathTo = '../' + releaseRepo + '/';
-        ['highcharts', 'highstock', 'highmaps', 'gantt']
-        .map((prod) => 'build/dist/' + prod + '/code/')
-        .forEach((pathDir) => {
-            const files = getFilesInFolder(pathDir, true);
-            files.forEach((filename) => {
-                if (fnFilter(filename) && !existing.includes(filename)) {
-                    existing.push(filename);
-                    mapFromTo[pathDir + filename] = pathTo + filename;
-                }
-            });
-        });
 
-        getFilesInFolder('code/', true)
-            .filter(path => /.d.ts$/.test(path))
+        // Copy all the files in the code folder
+        getFilesInFolder(sourceFolder, true)
             .forEach(path => {
-                mapFromTo['code/' + path] = pathTo + path;
+                mapFromTo[sourceFolder + path] = pathTo + path;
             });
 
         // Copy all the files to release repository
