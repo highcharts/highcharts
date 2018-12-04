@@ -77,7 +77,9 @@ H.extend(
                         layout.maxIterations-- &&
                         !layout.isStable()
                     ) {
-                        H.win.requestAnimationFrame(localLayout);
+                        layout.simulation = H.win.requestAnimationFrame(
+                            localLayout
+                        );
                     } else {
                         layout.simulation = false;
                     }
@@ -105,7 +107,7 @@ H.extend(
         },
         stop: function () {
             if (this.simulation) {
-                this.simulation.stopped = true;
+                H.win.cancelAnimationFrame(this.simulation);
             }
         },
         setArea: function (x, y, w, h) {
@@ -126,13 +128,37 @@ H.extend(
                 );
         },
         addNodes: function (nodes) {
-            this.nodes = this.nodes.concat(nodes);
+            nodes.forEach(function (node) {
+                if (this.nodes.indexOf(node) === -1) {
+                    this.nodes.push(node);
+                }
+            }, this);
+        },
+        removeNode: function (node) {
+            var index = this.nodes.indexOf(node);
+
+            if (index !== -1) {
+                this.nodes.splice(index, 1);
+            }
+        },
+        removeLink: function (link) {
+            var index = this.links.indexOf(link);
+
+            if (index !== -1) {
+                this.links.splice(index, 1);
+            }
         },
         addLinks: function (links) {
-            this.links = this.links.concat(links);
+            links.forEach(function (link) {
+                if (this.links.indexOf(link) === -1) {
+                    this.links.push(link);
+                }
+            }, this);
         },
         addSeries: function (series) {
-            this.series.push(series);
+            if (this.series.indexOf(series) === -1) {
+                this.series.push(series);
+            }
         },
         clear: function () {
             this.nodes.length = 0;
@@ -142,6 +168,7 @@ H.extend(
         },
 
         resetSimulation: function () {
+            this.forcedStop = false;
             this.systemTemperature = 0;
             this.setMaxIterations();
             this.setTemperature();

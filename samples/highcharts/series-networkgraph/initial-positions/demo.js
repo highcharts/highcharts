@@ -20,8 +20,12 @@ Highcharts.chart('container', {
                     height = chart.plotHeight;
 
                 this.nodes.forEach(function (node) {
-                    node.plotX = Math.random() * width;
-                    node.plotY = Math.random() * height;
+                    // If initial positions were set previously, use that
+                    // positions. Otherwise use random position:
+                    node.plotX = node.plotX === undefined ?
+                        Math.random() * width : node.plotX;
+                    node.plotY = node.plotY === undefined ?
+                        Math.random() * height : node.plotY;
                 });
             }
         },

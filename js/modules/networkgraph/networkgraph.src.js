@@ -16,8 +16,11 @@ import '/layouts.js';
 var addEvent = H.addEvent,
     defined = H.defined,
     seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes,
     pick = H.pick,
-    Point = H.Point;
+    Chart = H.Chart,
+    Point = H.Point,
+    Series = H.Series;
 
 /**
  * A networkgraph is a type of relationship chart, where connnections
@@ -329,7 +332,7 @@ seriesType('networkgraph', 'line', {
 
         // Render markers:
         this.points = this.nodes;
-        H.seriesTypes.line.prototype.render.call(this);
+        seriesTypes.line.prototype.render.call(this);
         this.points = points;
 
         points.forEach(function (point) {
@@ -414,8 +417,15 @@ seriesType('networkgraph', 'line', {
     },
     onMouseUp: function (point) {
         if (point.fixedPosition) {
+            this.layout.run();
             delete point.fixedPosition;
         }
+    },
+    destroy: function () {
+        this.nodes.forEach(function (node) {
+            node.destroy();
+        });
+        return Series.prototype.destroy.apply(this, arguments);
     }
 }, {
     getDegree: function () {
@@ -488,9 +498,17 @@ seriesType('networkgraph', 'line', {
     }
 });
 
-H.addEvent(H.seriesTypes.networkgraph, 'updatedData', function () {
+addEvent(seriesTypes.networkgraph, 'updatedData', function () {
     if (this.layout) {
         this.layout.stop();
+    }
+});
+
+addEvent(seriesTypes.networkgraph.prototype.pointClass, 'remove', function () {
+    if (this.isNode && this.series.layout) {
+        this.series.layout.removeNode(this);
+    } else {
+        this.series.layout.removeLink(this);
     }
 });
 
@@ -498,7 +516,7 @@ H.addEvent(H.seriesTypes.networkgraph, 'updatedData', function () {
  * Multiple series support:
  */
 // Clear previous layouts
-addEvent(H.Chart, 'predraw', function () {
+addEvent(Chart, 'predraw', function () {
     if (this.graphLayoutsStorage) {
         H.objectEach(
             this.graphLayoutsStorage,
@@ -506,10 +524,9 @@ addEvent(H.Chart, 'predraw', function () {
                 layout.stop();
             }
         );
-        delete this.graphLayoutsStorage;
     }
 });
-addEvent(H.Chart, 'render', function () {
+addEvent(Chart, 'render', function () {
     if (this.graphLayoutsStorage) {
         H.setAnimation(false, this);
         H.objectEach(
@@ -525,21 +542,21 @@ addEvent(H.Chart, 'render', function () {
  * Draggable mode:
  */
 addEvent(
-    H.seriesTypes.networkgraph.prototype.pointClass,
+    seriesTypes.networkgraph.prototype.pointClass,
     'mouseOver',
     function () {
         H.css(this.series.chart.container, { cursor: 'move' });
     }
 );
 addEvent(
-    H.seriesTypes.networkgraph.prototype.pointClass,
+    seriesTypes.networkgraph.prototype.pointClass,
     'mouseOut',
     function () {
         H.css(this.series.chart.container, { cursor: 'default' });
     }
 );
 addEvent(
-    H.Chart,
+    Chart,
     'load',
     function () {
         var chart = this,
