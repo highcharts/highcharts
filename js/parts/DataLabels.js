@@ -523,7 +523,7 @@ Series.prototype.alignDataLabel = function (
     isNew
 ) {
     var chart = this.chart,
-        inverted = chart.inverted,
+        inverted = this.isCartesian && chart.inverted,
         plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX, -9999),
         plotY = pick(point.plotY, -9999),
         bBox = dataLabel.getBBox(),

@@ -19,13 +19,18 @@ const {
 const {
     getFile,
     removeDirectory,
-    writeFile
+    writeFile,
+    writeFilePromise
 } = require('highcharts-assembler/src/utilities.js');
 const {
     scripts,
     getBuildScripts
 } = require('./tools/build.js');
 const compile = require('./tools/compile.js').compile;
+const {
+    copyFile,
+    promisify
+} = require('./tools/filesystem.js');
 const {
     asyncForeach,
     uploadFiles
@@ -42,62 +47,30 @@ const buildESModules = () => {
     buildModules({
         base: './js/',
         output: './code/',
-        type: 'both'
+        type: 'classic'
     });
 };
+const sass = require('node-sass');
+const sassRender = promisify(sass.render);
 
 const compileSingleStyle = (fileName) => {
-    const sass = require('node-sass');
-    const input = './css/' + fileName + '.scss';
-    const output = './code/css/' + fileName + '.css';
-    return new Promise((resolve, reject) => {
-        sass.render({
-            file: input,
-            outputStyle: 'expanded'
-        }, (err, result) => {
-            if (err) {
-                console.error(err);
-                reject(err);
-            } else {
-                writeFile(output, result.css);
-                resolve();
-            }
-        });
-    });
+    const input = './css/' + fileName;
+    const output = './code/css/' + fileName.replace('.scss', '.css');
+    return sassRender({
+        file: input,
+        outputStyle: 'expanded'
+    })
+    .then((result) => writeFilePromise(output, result.css));
 };
 
 const styles = () => {
-    const files = [
-        'highcharts',
-        'themes/dark-unica',
-        'themes/sand-signika',
-        'themes/grid-light',
-        'stocktools/gui',
-        'stocktools/popup'
-    ];
+    const promisesCopyGfx = getFilesInFolder('./gfx', true)
+        .map((path) => copyFile(join('./gfx', path), join('./code/gfx', path)));
 
-    const copyFiles = (folder) => {
-        fs.readdirSync(folder).forEach(file => {
-            let src = folder + '/' + file;
-            let dest = folder.replace(/^\.\//, './code/') + '/' + file;
-            if (fs.statSync(folder + '/' + file).isDirectory()) {
-                if (!fs.existsSync(dest)) {
-                    fs.mkdirSync(dest);
-                }
-                copyFiles(src);
-            } else {
-                fs.copyFileSync(src, dest);
-            }
-        });
-    };
+    const promisesCompileStyles = getFilesInFolder('./css', true)
+        .map(file => compileSingleStyle(file));
 
-    if (!fs.existsSync('./code/gfx')) {
-        fs.mkdirSync('./code/gfx');
-    }
-
-    copyFiles('./gfx');
-
-    const promises = files.map(file => compileSingleStyle(file));
+    const promises = [].concat(promisesCopyGfx, promisesCompileStyles);
     return Promise.all(promises).then(() => {
         console.log('Built CSS files from SASS.'.cyan);
     });
@@ -486,38 +459,18 @@ const cleanApi = () => {
         });
 };
 
-const copyFile = (source, target) => new Promise((resolve, reject) => {
-    const {
-        dirname
-    } = require('path');
-    const {
-        createDirectory
-    } = require('highcharts-assembler/src/utilities.js');
-    const directory = dirname(target);
-    createDirectory(directory);
-    let read = fs.createReadStream(source);
-    let write = fs.createWriteStream(target);
-    const onError = (err) => {
-        read.destroy();
-        write.end();
-        reject(err);
-    };
-    read.on('error', onError);
-    write.on('error', onError);
-    write.on('finish', resolve);
-    read.pipe(write);
-});
-
 const copyToDist = () => {
     const sourceFolder = 'code/';
     const distFolder = 'build/dist/';
-    // Additional files to include in distribution.
-    const additionals = {
-        'gfx/vml-radial-gradient.png': 'gfx/vml-radial-gradient.png',
-        'code/css/highcharts.scss': 'css/highcharts.scss',
-        'code/css/themes/dark-unica.scss': 'css/themes/dark-unica.scss',
-        'code/css/themes/grid-light.scss': 'css/themes/grid-light.scss',
-        'code/css/themes/sand-signika.scss': 'css/themes/sand-signika.scss',
+    const folders = [{
+        from: 'gfx',
+        to: 'gfx'
+    }, {
+        from: 'css',
+        to: 'code/css'
+    }];
+    // Additional files to include in distribution. // Map of pathTo to pathFrom
+    let additionals = {
         'code/lib/canvg.js': 'vendor/canvg.js',
         'code/lib/canvg.src.js': 'vendor/canvg.src.js',
         'code/lib/jspdf.js': 'vendor/jspdf.js',
@@ -579,8 +532,7 @@ const copyToDist = () => {
         .filter((path) => (
             path.endsWith('.js') ||
             path.endsWith('.js.map') ||
-            path.endsWith('.css') ||
-            path.endsWith('readme.txt')
+            path.endsWith('.css')
         ))
         .reduce((obj, path) => {
             const source = sourceFolder + path;
@@ -597,6 +549,16 @@ const copyToDist = () => {
             });
             return obj;
         }, {});
+
+    // Add additional files in folders to copy list
+    additionals = folders.reduce((map, folder) => {
+        const { from, to } = folder;
+        getFilesInFolder(from, true, '')
+        .forEach((filename) => {
+            map[join(to, filename)] = join(from, filename);
+        });
+        return map;
+    }, additionals);
 
     const additionalFiles = Object.keys(additionals).reduce((obj, file) => {
         ['highcharts', 'highstock', 'highmaps', 'gantt'].forEach((lib) => {
@@ -998,6 +960,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         './js/annotations/types',
         './js/indicators',
         './js/modules',
+        './js/modules/networkgraph',
         './js/modules/sonification',
         './js/parts',
         './js/parts-3d',
@@ -1404,8 +1367,7 @@ gulp.task('default', () => {
     const watchlist = [
         './css/*.scss',
         './js/**/*.js',
-        './code/es-modules/**/*.js',
-        './code/js/es-modules/**/*.js'
+        './code/es-modules/**/*.js'
     ];
     const msgBuildAll = 'Built JS files from modules.'.cyan;
     let watcher;
@@ -1429,9 +1391,6 @@ gulp.task('default', () => {
         } else if (path.startsWith('code/es-modules')) {
             // Build dist files in classic mode.
             mapOfWatchFn['code/es-modules/**/*.js'](event);
-        } else if (path.startsWith('code/js/es-modules')) {
-            // Build dist files in styled mode.
-            mapOfWatchFn['code/js/es-modules/**/*.js'](event);
         }
     };
     return styles()

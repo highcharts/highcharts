@@ -770,7 +770,8 @@ seriesType('map', 'scatter',
                             );
                         }
 
-                        if (!chart.styledMode) {
+                        // In styled mode, apply point colors by CSS
+                        if (chart.styledMode) {
                             point.graphic.css(
                                 series.pointAttribs(
                                     point,

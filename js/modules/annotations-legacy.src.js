@@ -1242,7 +1242,8 @@ Annotation.prototype = {
         var points = this.linkPoints(item),
             itemOptions = item.options,
             text,
-            time = this.chart.time;
+            time = this.chart.time,
+            hasVisiblePoints = false;
 
         if (!points.length) {
             this.destroyItem(item);
@@ -1259,6 +1260,23 @@ Annotation.prototype = {
                         format(text, points[0].getLabelConfig(), time) :
                         itemOptions.formatter.call(points[0])
                 });
+            }
+
+            // Hide or show annotaiton attached to points (#9481)
+            points.forEach(function (point) {
+                if (
+                    point.series.visible !== false &&
+                    point.visible !== false
+                ) {
+                    hasVisiblePoints = true;
+                }
+            });
+
+            if (!hasVisiblePoints) {
+                item.hide();
+
+            } else if (item.visibility === 'hidden') {
+                item.show();
             }
 
 

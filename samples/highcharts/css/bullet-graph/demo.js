@@ -18,7 +18,6 @@ Highcharts.setOptions({
         series: {
             pointPadding: 0.25,
             borderWidth: 0,
-            color: '#000',
             targetOptions: {
                 width: '200%'
             }

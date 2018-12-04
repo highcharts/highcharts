@@ -1,8 +1,10 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -28,9 +30,9 @@ var addEvent = H.addEvent,
     Tooltip = H.Tooltip,
     wrap = H.wrap;
 
-/* ****************************************************************************
- * Start data grouping module                                                 *
- ******************************************************************************/
+/* ************************************************************************** *
+ *  Start data grouping module                                                *
+ * ************************************************************************** */
 
 /**
  * Data grouping is the concept of sampling the data values into larger
@@ -41,7 +43,7 @@ var addEvent = H.addEvent,
  *
  * If data grouping is applied, the grouping information of grouped
  * points can be read from the [Point.dataGroup](
- * /class-reference/Highcharts.Point#.dataGroup). If point options other than
+ * /class-reference/Highcharts.Point#dataGroup). If point options other than
  * the data itself are set, for example `name` or `color` or custom properties,
  * the grouping logic doesn't know how to group it. In this case the options of
  * the first point instance are copied over to the group point. This can be
@@ -487,7 +489,7 @@ var seriesProto = Series.prototype,
  *
  * @param {string|Function} approximation
  *
- * @return {Array<Array<number>,Array<number>,Array<*>>}
+ * @return {Array<Array<number>,Array<number>,Array<object>>}
  */
 seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
     var series = this,
@@ -636,13 +638,8 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
     return [groupedXData, groupedYData, groupMap];
 };
 
-/**
- * Extend the basic processData method, that crops the data to the current zoom
- * range, with data grouping logic.
- *
- * @private
- * @function Highcharts.Series#processData
- */
+// Extend the basic processData method, that crops the data to the current zoom
+// range, with data grouping logic.
 seriesProto.processData = function () {
     var series = this,
         chart = series.chart,
@@ -787,12 +784,7 @@ seriesProto.processData = function () {
     }
 };
 
-/**
- * Destroy the grouped data points. #622, #740
- *
- * @private
- * @function Highcharts.Series#destroyGroupedData
- */
+// Destroy the grouped data points. #622, #740
 seriesProto.destroyGroupedData = function () {
 
     var groupedData = this.groupedData;
@@ -806,12 +798,7 @@ seriesProto.destroyGroupedData = function () {
     this.groupedData = null;
 };
 
-/**
- * Override the generatePoints method by adding a reference to grouped data
- *
- * @private
- * @function Highcharts.Series#generatePoints
- */
+// Override the generatePoints method by adding a reference to grouped data
 seriesProto.generatePoints = function () {
 
     baseGeneratePoints.apply(this);
@@ -822,10 +809,8 @@ seriesProto.generatePoints = function () {
     this.groupedData = this.hasGroupedData ? this.points : null;
 };
 
-/*
- * Override point prototype to throw a warning when trying to update grouped
- * points.
- */
+// Override point prototype to throw a warning when trying to update grouped
+// points.
 addEvent(Point, 'update', function () {
     if (this.dataGroup) {
         H.error(24, false, this.series.chart);
@@ -833,10 +818,8 @@ addEvent(Point, 'update', function () {
     }
 });
 
-/*
- * Extend the original method, make the tooltip's header reflect the grouped
- * range
- */
+// Extend the original method, make the tooltip's header reflect the grouped
+// range.
 wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
     proceed,
     labelConfig,
@@ -921,9 +904,7 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
     return proceed.call(tooltip, labelConfig, isFooter);
 });
 
-/*
- * Destroy grouped data on series destroy
- */
+// Destroy grouped data on series destroy
 addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 
 
@@ -959,26 +940,17 @@ addEvent(Series, 'afterSetOptions', function (e) {
 });
 
 
-/*
- * When resetting the scale reset the hasProccessed flag to avoid taking
- * previous data grouping of neighbour series into accound when determining
- * group pixel width (#2692).
- */
+// When resetting the scale reset the hasProccessed flag to avoid taking
+// previous data grouping of neighbour series into accound when determining
+// group pixel width (#2692).
 addEvent(Axis, 'afterSetScale', function () {
     this.series.forEach(function (series) {
         series.hasProcessed = false;
     });
 });
 
-/**
- * Get the data grouping pixel width based on the greatest defined individual
- * width of the axis' series, and if whether one of the axes need grouping.
- *
- * @private
- * @function Highcharts.Axis#getGroupPixelWidth
- *
- * @return {number}
- */
+// Get the data grouping pixel width based on the greatest defined individual
+// width of the axis' series, and if whether one of the axes need grouping.
 Axis.prototype.getGroupPixelWidth = function () {
 
     var series = this.series,
@@ -1080,6 +1052,6 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 
 
 
-/* ****************************************************************************
- * End data grouping module                                                   *
- ******************************************************************************/
+/* ************************************************************************** *
+ *  End data grouping module                                                  *
+ * ************************************************************************** */

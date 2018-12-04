@@ -486,6 +486,15 @@ g.highcharts-series,
     transition: fill 50ms, fill-opacity 50ms;
     fill-opacity: 1;
 }
+.highcharts-venn-series .highcharts-point {
+    fill-opacity: 0.75;
+    stroke: $neutral-color-20;
+    transition: stroke 250ms, fill-opacity 250ms;
+}
+.highcharts-venn-series .highcharts-point-hover {
+    fill-opacity: 1;
+    stroke: $neutral-color-20;
+}
 
 /* Highstock */
 .highcharts-navigator-mask-outside {
