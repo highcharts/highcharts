@@ -5,7 +5,11 @@ QUnit.test('Bubble positions', function (assert) {
             chart: {
                 type: 'packedbubble',
                 width: 500,
-                height: 500
+                height: 500,
+
+                // Hard coded plot area for browser consistency
+                marginTop: 46,
+                marginBottom: 53
             },
             series: [{
                 data: [50, 80, 50]
