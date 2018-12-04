@@ -128,5 +128,6 @@ const copyFile = (source, target) => {
 module.exports = {
     checkDependency,
     copyFile,
-    createDirectory
+    createDirectory,
+    promisify
 };

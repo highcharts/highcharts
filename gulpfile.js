@@ -19,7 +19,8 @@ const {
 const {
     getFile,
     removeDirectory,
-    writeFile
+    writeFile,
+    writeFilePromise
 } = require('highcharts-assembler/src/utilities.js');
 const {
     scripts,
@@ -27,7 +28,8 @@ const {
 } = require('./tools/build.js');
 const compile = require('./tools/compile.js').compile;
 const {
-    copyFile
+    copyFile,
+    promisify
 } = require('./tools/filesystem.js');
 const {
     asyncForeach,
@@ -48,25 +50,17 @@ const buildESModules = () => {
         type: 'classic'
     });
 };
+const sass = require('node-sass');
+const sassRender = promisify(sass.render);
 
 const compileSingleStyle = (fileName) => {
-    const sass = require('node-sass');
     const input = './css/' + fileName;
-    const output = './code/css/' + fileName;
-    return new Promise((resolve, reject) => {
-        sass.render({
-            file: input,
-            outputStyle: 'expanded'
-        }, (err, result) => {
-            if (err) {
-                console.error(err);
-                reject(err);
-            } else {
-                writeFile(output, result.css);
-                resolve();
-            }
-        });
-    });
+    const output = './code/css/' + fileName.replace('.scss', '.css');
+    return sassRender({
+        file: input,
+        outputStyle: 'expanded'
+    })
+    .then((result) => writeFilePromise(output, result.css));
 };
 
 const styles = () => {
@@ -467,13 +461,15 @@ const cleanApi = () => {
 const copyToDist = () => {
     const sourceFolder = 'code/';
     const distFolder = 'build/dist/';
-    // Additional files to include in distribution.
-    const additionals = {
-        'gfx/vml-radial-gradient.png': 'gfx/vml-radial-gradient.png',
-        'code/css/highcharts.scss': 'css/highcharts.scss',
-        'code/css/themes/dark-unica.scss': 'css/themes/dark-unica.scss',
-        'code/css/themes/grid-light.scss': 'css/themes/grid-light.scss',
-        'code/css/themes/sand-signika.scss': 'css/themes/sand-signika.scss',
+    const folders = [{
+        from: 'gfx',
+        to: 'gfx'
+    }, {
+        from: 'css',
+        to: 'code/css'
+    }];
+    // Additional files to include in distribution. // Map of pathTo to pathFrom
+    let additionals = {
         'code/lib/canvg.js': 'vendor/canvg.js',
         'code/lib/canvg.src.js': 'vendor/canvg.src.js',
         'code/lib/jspdf.js': 'vendor/jspdf.js',
@@ -532,14 +528,11 @@ const copyToDist = () => {
 
     // Copy source files to the distribution packages.
     const codeFiles = getFilesInFolder(sourceFolder, true, '')
-        // Probably do not need filter anymore.
-        // .filter((path) => (
-        //     path.endsWith('.js') ||
-        //     path.endsWith('.js.map') ||
-        //     path.endsWith('.css') ||
-        //     path.endsWith('readme.txt') ||
-        //     path.endsWith('.svg')
-        // ))
+        .filter((path) => (
+            path.endsWith('.js') ||
+            path.endsWith('.js.map') ||
+            path.endsWith('.css')
+        ))
         .reduce((obj, path) => {
             const source = sourceFolder + path;
             const filename = path.replace('.src.js', '.js').replace('js/', '');
@@ -555,6 +548,16 @@ const copyToDist = () => {
             });
             return obj;
         }, {});
+
+    // Add additional files in folders to copy list
+    additionals = folders.reduce((map, folder) => {
+        const { from, to } = folder;
+        getFilesInFolder(from, true, '')
+        .forEach((filename) => {
+            map[join(to, filename)] = join(from, filename);
+        });
+        return map;
+    }, additionals);
 
     const additionalFiles = Object.keys(additionals).reduce((obj, file) => {
         ['highcharts', 'highstock', 'highmaps', 'gantt'].forEach((lib) => {
