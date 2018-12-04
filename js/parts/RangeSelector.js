@@ -1171,8 +1171,7 @@ RangeSelector.prototype = {
                 // (#3713)
                 rangeSelector.showInput(name);
                 rangeSelector[name + 'Input'].focus();
-            })
-            .add(inputGroup);
+            });
 
         if (!chart.styledMode) {
             dateBox.attr({
@@ -1181,6 +1180,8 @@ RangeSelector.prototype = {
                 'stroke-width': 1
             });
         }
+
+        dateBox.add(inputGroup);
 
         inputGroup.offset += dateBox.width + (isMin ? 10 : 0);
 
