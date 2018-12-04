@@ -19,7 +19,7 @@ var pick = H.pick,
  * The parameter allows setting line series type and use OHLC indicators.
  * Data in OHLC format is required.
  *
- * @sample {highstock} stock/indicators/useOhlcData
+ * @sample {highstock} stock/indicators/use-ohlc-data
  *         Plot line on Y axis
  *
  * @type      {boolean}
