@@ -54,10 +54,9 @@ H.seriesType('trix', 'tema',
             if (i > tripledPeriod) {
                 var TRIXPoint = [
                     xVal[i - 3],
-                    EMAlevels.prevEMAlevel3 !== 0 ?
-                        correctFloat(EMAlevels.EMAlevel3 -
-                        EMAlevels.prevEMAlevel3) /
-                        EMAlevels.prevEMAlevel3 * 100 : null
+                    EMAlevels.prevLevel3 !== 0 ?
+                      correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
+                      EMAlevels.prevLevel3 * 100 : null
                 ];
             }
 
