@@ -4716,7 +4716,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             getCrispAdjust = function () {
                 return styledMode ?
                     box.strokeWidth() % 2 / 2 :
-                    (strokeWidth || 0) % 2 / 2;
+                    (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
             },
             updateBoxSize,
             updateTextPadding,
@@ -4725,24 +4725,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         if (className) {
             wrapper.addClass('highcharts-' + className);
         }
-
-        /* @merge v6.2
-            if (!build.classic) { =
-            needsBox = true; // for styling
-            getCrispAdjust = function () {
-                return box.strokeWidth() % 2 / 2;
-            };
-            = } else { =
-            needsBox = hasBGImage;
-            getCrispAdjust = function () {
-                return (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
-            };
-         */
-
-        needsBox = hasBGImage;
-        getCrispAdjust = function () {
-            return (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
-        };
 
         /* This function runs after the label is added to the DOM (when the
            bounding box is available), and after the text of the label is
