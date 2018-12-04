@@ -18,21 +18,18 @@ import './Utilities.js';
 import './Series.js';
 import './Options.js';
 var seriesType = H.seriesType,
-    each = H.each,
     Series = H.Series;
 
 seriesType('plotband', 'column', {
     lineWidth: 0,
     threshold: null
 }, {
-    /*= if (build.classic) { =*/
     // mapping between SVG attributes and the corresponding options
     pointAttrToOptions: {
         fill: 'color',
         stroke: 'lineColor',
         'stroke-width': 'lineWidth'
     },
-    /*= } =*/
     animate: function () {},
 
     translate: function () {
@@ -42,7 +39,7 @@ seriesType('plotband', 'column', {
 
         Series.prototype.translate.apply(series);
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var onXAxis = point.onXAxis,
                 ownAxis = onXAxis ? xAxis : yAxis,
                 otherAxis = onXAxis ? yAxis : xAxis,

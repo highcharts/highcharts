@@ -3,14 +3,50 @@
 
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var pick = H.pick,
-    each = H.each,
     error = H.error,
     Series = H.Series,
     isArray = H.isArray,
     addEvent = H.addEvent,
-    seriesType = H.seriesType;
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes,
+    ohlcProto = H.seriesTypes.ohlc.prototype,
+    generateMessage = requiredIndicatorMixin.generateMessage;
+
+/**
+ * The parameter allows setting line series type and use OHLC indicators.
+ * Data in OHLC format is required.
+ *
+ * @type {Boolean}
+ * @product highstock
+ * @sample {highstock} stock/indicators/useOhlcData Plot line on Y axis
+ * @apioption plotOptions.line.useOhlcData
+ */
+
+addEvent(H.Series, 'init', function (eventOptions) {
+    var series = this,
+        options = eventOptions.options,
+        dataGrouping = options.dataGrouping;
+
+    if (
+        options.useOhlcData &&
+        options.id !== 'highcharts-navigator-series'
+        ) {
+
+        if (dataGrouping && dataGrouping.enabled) {
+            dataGrouping.approximation = 'ohlc';
+        }
+
+        H.extend(series, {
+            pointValKey: ohlcProto.pointValKey,
+            keys: ohlcProto.keys,
+            pointArrayMap: ohlcProto.pointArrayMap,
+            toYData: ohlcProto.toYData
+        });
+    }
+});
 
 /**
  * The SMA series type.
@@ -32,9 +68,9 @@ seriesType('sma', 'line',
      * @extends      plotOptions.line
      * @since        6.0.0
      * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
-     *               stacking, showInNavigator, navigatorOptions, pointInterval,
-     *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
-     *               joinBy
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking, useOhlcData
      * @product      highstock
      * @optionparent plotOptions.sma
      */
@@ -64,6 +100,13 @@ seriesType('sma', 'line',
          * @since 6.0.0
          */
         linkedTo: undefined,
+        /**
+         * Paramters used in calculation of regression series' points.
+         *
+         * @type {Object}
+         * @since 6.0.0
+         * @product highstock
+         */
         params: {
             /**
              * The point index which indicator calculations will base. For
@@ -91,8 +134,35 @@ seriesType('sma', 'line',
         nameComponents: ['period'],
         nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name
         calculateOn: 'init',
+        // Defines on which other indicators is this indicator based on.
+        requiredIndicators: [],
+        requireIndicators: function () {
+            var obj = {
+                allLoaded: true
+            };
+
+            // Check whether all required indicators are loaded, else return
+            // the object with missing indicator's name.
+            this.requiredIndicators.forEach(function (indicator) {
+                if (seriesTypes[indicator]) {
+                    seriesTypes[indicator].prototype.requireIndicators();
+                } else {
+                    obj.allLoaded = false;
+                    obj.needed = indicator;
+                }
+            });
+            return obj;
+        },
         init: function (chart, options) {
-            var indicator = this;
+            var indicator = this,
+                requiredIndicators = indicator.requireIndicators();
+
+            // Check whether all required indicators are loaded.
+            if (!requiredIndicators.allLoaded) {
+                return error(
+                    generateMessage(indicator.type, requiredIndicators.needed)
+                );
+            }
 
             Series.prototype.init.call(
                 indicator,
@@ -149,7 +219,9 @@ seriesType('sma', 'line',
                 return error(
                     'Series ' +
                     indicator.options.linkedTo +
-                    ' not found! Check `linkedTo`.'
+                    ' not found! Check `linkedTo`.',
+                    false,
+                    chart
                 );
             }
 
@@ -184,8 +256,7 @@ seriesType('sma', 'line',
 
             if (!name) {
 
-                each(
-                    this.nameComponents,
+                (this.nameComponents || []).forEach(
                     function (component, index) {
                         params.push(
                             this.options.params[component] +
@@ -249,7 +320,7 @@ seriesType('sma', 'line',
             };
         },
         destroy: function () {
-            each(this.dataEventsToUnbind, function (unbinder) {
+            this.dataEventsToUnbind.forEach(function (unbinder) {
                 unbinder();
             });
             Series.prototype.destroy.call(this);
@@ -262,7 +333,7 @@ seriesType('sma', 'line',
  *
  * @extends   series,plotOptions.sma
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
+ * @excluding data, dataParser, dataURL, useOhlcData
  * @product   highstock
  * @apioption series.sma
  */

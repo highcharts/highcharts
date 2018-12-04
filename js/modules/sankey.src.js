@@ -11,10 +11,9 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
+import '../mixins/nodes.js';
 
 var defined = H.defined,
-    each = H.each,
-    extend = H.extend,
     seriesType = H.seriesType,
     pick = H.pick,
     Point = H.Point;
@@ -82,7 +81,7 @@ seriesType('sankey', 'column'
          * Callback to format data labels for _nodes_ in the sankey diagram.
          * The `nodeFormat` option takes precedence over the `nodeFormatter`.
          *
-         * @type  {Highcharts.FormatterCallbackFunction<*>}
+         * @type  {Highcharts.FormatterCallbackFunction<object>}
          * @since 6.0.2
          */
         nodeFormatter: function () {
@@ -110,12 +109,10 @@ seriesType('sankey', 'column'
         },
         inside: true
     },
-    /*= if (build.classic) { =*/
     /**
      * Opacity for the links between nodes in the sankey diagram.
      */
     linkOpacity: 0.5,
-    /*= } =*/
     /**
      * The pixel width of each node in a sankey diagram, or the height in case
      * the chart is inverted.
@@ -140,7 +137,7 @@ seriesType('sankey', 'column'
          * A callback for defining the format for _nodes_ in the sankey chart's
          * tooltip, as opposed to links.
          *
-         * @type      {Highcharts.FormatterCallbackFunction<*>}
+         * @type      {Highcharts.FormatterCallbackFunction<object>}
          * @since     6.0.2
          * @apioption plotOptions.sankey.tooltip.nodeFormatter
          */
@@ -151,13 +148,8 @@ seriesType('sankey', 'column'
          */
         followPointer: true,
 
-        /*= if (build.classic) { =*/
         headerFormat:
-            '<span style="font-size: 0.85em">{series.name}</span><br/>',
-        /*= } else { =*/
-        headerFormat: // eslint-disable-line no-dupe-keys
-            '<span class="highcharts-header">{series.name}</span><br/>',
-        /*= } =*/
+            '<span style="font-size: 10px">{series.name}</span><br/>',
         pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>{point.weight}</b><br/>',
         /**
          * The
@@ -173,72 +165,7 @@ seriesType('sankey', 'column'
     forceDL: true,
     // Create a single node that holds information on incoming and outgoing
     // links.
-    createNode: function (id) {
-
-        function findById(nodes, id) {
-            return H.find(nodes, function (node) {
-                return node.id === id;
-            });
-        }
-
-        var node = findById(this.nodes, id),
-            options;
-
-        if (!node) {
-            options = this.options.nodes && findById(this.options.nodes, id);
-            node = (new Point()).init(
-                this,
-                extend({
-                    className: 'highcharts-node',
-                    isNode: true,
-                    id: id,
-                    y: 1 // Pass isNull test
-                }, options)
-            );
-            node.linksTo = [];
-            node.linksFrom = [];
-            node.formatPrefix = 'node';
-            node.name = node.name || node.options.id; // for use in formats
-
-            // Return the largest sum of either the incoming or outgoing links.
-            node.getSum = function () {
-                var sumTo = 0,
-                    sumFrom = 0;
-                each(node.linksTo, function (link) {
-                    sumTo += link.weight;
-                });
-                each(node.linksFrom, function (link) {
-                    sumFrom += link.weight;
-                });
-                return Math.max(sumTo, sumFrom);
-            };
-            // Get the offset in weight values of a point/link.
-            node.offset = function (point, coll) {
-                var offset = 0;
-                for (var i = 0; i < node[coll].length; i++) {
-                    if (node[coll][i] === point) {
-                        return offset;
-                    }
-                    offset += node[coll][i].weight;
-                }
-            };
-
-            // Return true if the node has a shape, otherwise all links are
-            // outgoing.
-            node.hasShape = function () {
-                var outgoing = 0;
-                each(node.linksTo, function (link) {
-                    if (link.outgoing) {
-                        outgoing++;
-                    }
-                });
-                return !node.linksTo.length || outgoing !== node.linksTo.length;
-            };
-
-            this.nodes.push(node);
-        }
-        return node;
-    },
+    createNode: H.NodesMixin.createNode,
 
     // Create a node column.
     createNodeColumn: function () {
@@ -248,7 +175,7 @@ seriesType('sankey', 'column'
 
         column.sum = function () {
             var sum = 0;
-            each(this, function (node) {
+            this.forEach(function (node) {
                 sum += node.getSum();
             });
             return sum;
@@ -283,7 +210,7 @@ seriesType('sankey', 'column'
     // incoming and outgoing links.
     createNodeColumns: function () {
         var columns = [];
-        each(this.nodes, function (node) {
+        this.nodes.forEach(function (node) {
             var fromColumn = -1,
                 i,
                 point;
@@ -325,8 +252,6 @@ seriesType('sankey', 'column'
     },
 
 
-    /*= if (build.classic) { =*/
-
     // Return the presentational attributes.
     pointAttribs: function (point, state) {
 
@@ -345,13 +270,12 @@ seriesType('sankey', 'column'
         };
     },
 
-    /*= } =*/
-
     // Extend generatePoints by adding the nodes, which are Point objects but
     // pushed to the this.nodes array.
     generatePoints: function () {
 
-        var nodeLookup = {};
+        var nodeLookup = {},
+            chart = this.chart;
 
         H.Series.prototype.generatePoints.call(this);
 
@@ -361,13 +285,13 @@ seriesType('sankey', 'column'
         this.colorCounter = 0;
 
         // Reset links from previous run
-        each(this.nodes, function (node) {
+        this.nodes.forEach(function (node) {
             node.linksFrom.length = 0;
             node.linksTo.length = 0;
         });
 
         // Create the node list and set up links
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             if (defined(point.from)) {
                 if (!nodeLookup[point.from]) {
                     nodeLookup[point.from] = this.createNode(point.from);
@@ -376,15 +300,15 @@ seriesType('sankey', 'column'
                 point.fromNode = nodeLookup[point.from];
 
                 // Point color defaults to the fromNode's color
-                /*= if (build.classic) { =*/
-                point.color =
-                    point.options.color || nodeLookup[point.from].color;
-                /*= } else { =*/
-                point.colorIndex = pick(
-                    point.options.colorIndex,
-                    nodeLookup[point.from].colorIndex
-                );
-                /*= } =*/
+                if (chart.styledMode) {
+                    point.colorIndex = pick(
+                        point.options.colorIndex,
+                        nodeLookup[point.from].colorIndex
+                    );
+                } else {
+                    point.color =
+                        point.options.color || nodeLookup[point.from].color;
+                }
 
             }
             if (defined(point.to)) {
@@ -425,15 +349,15 @@ seriesType('sankey', 'column'
 
         // Find out how much space is needed. Base it on the translation
         // factor of the most spaceous column.
-        each(this.nodeColumns, function (column) {
+        this.nodeColumns.forEach(function (column) {
             var height = chart.plotSizeY -
                 (column.length - 1) * options.nodePadding;
 
             factor = Math.min(factor, height / column.sum());
         });
 
-        each(this.nodeColumns, function (column) {
-            each(column, function (node) {
+        this.nodeColumns.forEach(function (column) {
+            column.forEach(function (node) {
                 var sum = node.getSum(),
                     height = sum * factor,
                     fromNodeTop = (
@@ -469,7 +393,7 @@ seriesType('sankey', 'column'
                 node.plotY = 1;
 
                 // Draw the links from this node
-                each(node.linksFrom, function (point) {
+                node.linksFrom.forEach(function (point) {
                     var linkHeight = point.weight * factor,
                         fromLinkTop = node.offset(point, 'linksFrom') *
                             factor,

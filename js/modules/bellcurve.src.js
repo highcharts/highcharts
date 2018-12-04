@@ -16,8 +16,7 @@ import derivedSeriesMixin from '../mixins/derived-series.js';
 var seriesType = H.seriesType,
     correctFloat = H.correctFloat,
     isNumber = H.isNumber,
-    merge = H.merge,
-    reduce = H.reduce;
+    merge = H.merge;
 
 
 /** ****************************************************************************
@@ -28,7 +27,7 @@ var seriesType = H.seriesType,
 
 function mean(data) {
     var length = data.length,
-        sum = reduce(data, function (sum, value) {
+        sum = data.reduce(function (sum, value) {
             return (sum += value);
         }, 0);
 
@@ -41,7 +40,7 @@ function standardDeviation(data, average) {
 
     average = isNumber(average) ? average : mean(data);
 
-    sum = reduce(data, function (sum, value) {
+    sum = data.reduce(function (sum, value) {
         var diff = value - average;
         return (sum += diff * diff);
     }, 0);

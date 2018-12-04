@@ -18,7 +18,6 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     color = H.color,
     ColorAxis,
-    each = H.each,
     extend = H.extend,
     isNumber = H.isNumber,
     Legend = H.Legend,
@@ -319,8 +318,6 @@ if (!H.ColorAxis) {
                 /** @ignore */
                 width: 0.01,
 
-                /*= if (build.classic) { =*/
-
                 /**
                  * The color of the marker.
                  *
@@ -328,9 +325,6 @@ if (!H.ColorAxis) {
                  * @product highcharts highmaps
                  */
                 color: '${palette.neutralColor40}'
-
-                /*= } =*/
-
             },
 
             /**
@@ -526,23 +520,23 @@ if (!H.ColorAxis) {
             this.dataClasses = dataClasses = [];
             this.legendItems = [];
 
-            each(userOptions.dataClasses, function (dataClass, i) {
+            userOptions.dataClasses.forEach(function (dataClass, i) {
                 var colors;
 
                 dataClass = merge(dataClass);
                 dataClasses.push(dataClass);
 
-                /*= if (build.classic) { =*/
-                if (dataClass.color) {
+                if (!chart.styledMode && dataClass.color) {
                     return;
                 }
-                /*= } =*/
+
                 if (options.dataClassColor === 'category') {
-                    /*= if (build.classic) { =*/
-                    colors = chart.options.colors;
-                    colorCount = colors.length;
-                    dataClass.color = colors[colorCounter];
-                    /*= } =*/
+                    if (!chart.styledMode) {
+                        colors = chart.options.colors;
+                        colorCount = colors.length;
+                        dataClass.color = colors[colorCounter];
+                    }
+
                     dataClass.colorIndex = colorCounter;
 
                     // increase and loop back to zero
@@ -576,7 +570,7 @@ if (!H.ColorAxis) {
                 [0, this.options.minColor],
                 [1, this.options.maxColor]
             ];
-            each(this.stops, function (stop) {
+            this.stops.forEach(function (stop) {
                 stop.color = color(stop[1]);
             });
         },
@@ -663,9 +657,9 @@ if (!H.ColorAxis) {
                         (from === undefined || value >= from) &&
                         (to === undefined || value <= to)
                     ) {
-                        /*= if (build.classic) { =*/
+
                         color = dataClass.color;
-                        /*= } =*/
+
                         if (point) {
                             point.dataClass = i;
                             point.colorIndex = dataClass.colorIndex;
@@ -810,7 +804,7 @@ if (!H.ColorAxis) {
          * @param {*} state
          */
         setState: function (state) {
-            each(this.series, function (series) {
+            this.series.forEach(function (series) {
                 series.setState(state);
             });
         },
@@ -865,11 +859,11 @@ if (!H.ColorAxis) {
 
                     this.cross.addedToColorAxis = true;
 
-                    /*= if (build.classic) { =*/
-                    this.cross.attr({
-                        fill: this.crosshair.color
-                    });
-                    /*= } =*/
+                    if (!this.chart.styledMode) {
+                        this.cross.attr({
+                            fill: this.crosshair.color
+                        });
+                    }
 
                 }
             }
@@ -902,7 +896,7 @@ if (!H.ColorAxis) {
             var chart = this.chart,
                 legend = chart.legend;
 
-            each(this.series, function (series) {
+            this.series.forEach(function (series) {
                 // Needed for Axis.update when choropleth colors change
                 series.isDirtyData = true;
             });
@@ -910,7 +904,7 @@ if (!H.ColorAxis) {
             // When updating data classes, destroy old items and make sure new
             // ones are created (#3207)
             if (newOptions.dataClasses && legend.allItems) {
-                each(legend.allItems, function (item) {
+                legend.allItems.forEach(function (item) {
                     if (item.isDataClass && item.legendGroup) {
                         item.legendGroup.destroy();
                     }
@@ -960,7 +954,7 @@ if (!H.ColorAxis) {
                 name;
 
             if (!legendItems.length) {
-                each(this.dataClasses, function (dataClass, i) {
+                this.dataClasses.forEach(function (dataClass, i) {
                     var vis = true,
                         from = dataClass.from,
                         to = dataClass.to;
@@ -994,8 +988,8 @@ if (!H.ColorAxis) {
                         isDataClass: true,
                         setVisible: function () {
                             vis = this.visible = !vis;
-                            each(axis.series, function (series) {
-                                each(series.points, function (point) {
+                            axis.series.forEach(function (series) {
+                                series.points.forEach(function (point) {
                                     if (point.dataClass === i) {
                                         point.setVisible(vis);
                                     }
@@ -1022,7 +1016,7 @@ if (!H.ColorAxis) {
      * @private
      * @function Highcharts.Fx#strokeSetter
      */
-    each(['fill', 'stroke'], function (prop) {
+    ['fill', 'stroke'].forEach(function (prop) {
         H.Fx.prototype[prop + 'Setter'] = function () {
             this.elem.attr(
                 prop,
@@ -1068,7 +1062,7 @@ if (!H.ColorAxis) {
                 }
 
                 // Don't add the color axis' series
-                each(colorAxis.series, function (series) {
+                colorAxis.series.forEach(function (series) {
                     H.erase(e.allItems, series);
                 });
             }

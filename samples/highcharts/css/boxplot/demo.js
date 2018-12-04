@@ -2,7 +2,8 @@
 Highcharts.chart('container', {
 
     chart: {
-        type: 'boxplot'
+        type: 'boxplot',
+        styledMode: true
     },
 
     title: {

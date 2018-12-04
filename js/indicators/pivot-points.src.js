@@ -4,8 +4,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var each = H.each,
-    defined = H.defined,
+var defined = H.defined,
     isArray = H.isArray,
     SMA = H.seriesTypes.sma;
 
@@ -84,8 +83,8 @@ H.seriesType('pivotpoints', 'sma',
 
             SMA.prototype.translate.apply(indicator);
 
-            each(indicator.points, function (point) {
-                each(indicator.pointArrayMap, function (value) {
+            indicator.points.forEach(function (point) {
+                indicator.pointArrayMap.forEach(function (value) {
                     if (defined(point[value])) {
                         point['plot' + value] = indicator.yAxis.toPixels(
                             point[value],
@@ -141,7 +140,7 @@ H.seriesType('pivotpoints', 'sma',
                 endPoint = point.plotX;
             }
 
-            each(allPivotPoints, function (pivotPoints) {
+            allPivotPoints.forEach(function (pivotPoints) {
                 path = path.concat(
                     SMA.prototype.getGraphPath.call(indicator, pivotPoints)
                 );
@@ -164,7 +163,7 @@ H.seriesType('pivotpoints', 'sma',
                 // For every Ressitance/Support group we need to render labels.
                 // Add one more item, which will just store dataLabels from
                 // previous iteration
-                each(pointMapping.concat([false]), function (position, k) {
+                pointMapping.concat([false]).forEach(function (position, k) {
                     i = pointsLength;
                     while (i--) {
                         point = indicator.points[i];
@@ -264,7 +263,7 @@ H.seriesType('pivotpoints', 'sma',
                 low = Infinity,
                 close = values[values.length - 1][3],
                 pivot;
-            each(values, function (p) {
+            values.forEach(function (p) {
                 high = Math.max(high, p[1]);
                 low = Math.min(low, p[2]);
             });

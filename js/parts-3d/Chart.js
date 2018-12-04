@@ -14,7 +14,6 @@ import '../parts/Chart.js';
 
 var addEvent = H.addEvent,
     Chart = H.Chart,
-    each = H.each,
     merge = H.merge,
     perspective = H.perspective,
     pick = H.pick,
@@ -37,7 +36,7 @@ addEvent(Chart, 'afterInit', function () {
     var options = this.options;
 
     if (this.is3d()) {
-        each(options.series || [], function (s) {
+        (options.series || []).forEach(function (s) {
             var type = s.type ||
                 options.chart.type ||
                 options.chart.defaultSeriesType;
@@ -104,7 +103,7 @@ function getScale(chart, depth) {
     }];
 
     // Top right corners:
-    each([0, 1], function (i) {
+    [0, 1].forEach(function (i) {
         corners.push({
             x: plotRight,
             y: corners[i].y,
@@ -113,7 +112,7 @@ function getScale(chart, depth) {
     });
 
     // All bottom corners:
-    each([0, 1, 2, 3], function (i) {
+    [0, 1, 2, 3].forEach(function (i) {
         corners.push({
             x: corners[i].x,
             y: plotBottom,
@@ -125,7 +124,7 @@ function getScale(chart, depth) {
     corners = perspective(corners, chart, false);
 
     // Get bounding box of 3D element:
-    each(corners, function (corner) {
+    corners.forEach(function (corner) {
         bbox3d.minX = Math.min(bbox3d.minX, corner.x);
         bbox3d.maxX = Math.max(bbox3d.maxX, corner.x);
         bbox3d.minY = Math.min(bbox3d.minY, corner.y);
@@ -369,23 +368,51 @@ var extendedOptions = {
 
 merge(true, defaultOptions, extendedOptions);
 
-/*= if (!build.classic) { =*/
-
 // Add the required CSS classes for column sides (#6018)
 addEvent(Chart, 'afterGetContainer', function () {
-    this.renderer.definition({
-        tagName: 'style',
-        textContent:
-            '.highcharts-3d-top{' +
-                'filter: url(#highcharts-brighter)' +
-            '}\n' +
-            '.highcharts-3d-side{' +
-                'filter: url(#highcharts-darker)' +
-            '}\n'
-    });
-});
+    if (this.styledMode) {
+        this.renderer.definition({
+            tagName: 'style',
+            textContent:
+                '.highcharts-3d-top{' +
+                    'filter: url(#highcharts-brighter)' +
+                '}\n' +
+                '.highcharts-3d-side{' +
+                    'filter: url(#highcharts-darker)' +
+                '}\n'
+        });
 
-/*= } =*/
+        // Add add definitions used by brighter and darker faces of the cuboids.
+        [{
+            name: 'darker',
+            slope: 0.6
+        }, {
+            name: 'brighter',
+            slope: 1.4
+        }].forEach(function (cfg) {
+            this.renderer.definition({
+                tagName: 'filter',
+                id: 'highcharts-' + cfg.name,
+                children: [{
+                    tagName: 'feComponentTransfer',
+                    children: [{
+                        tagName: 'feFuncR',
+                        type: 'linear',
+                        slope: cfg.slope
+                    }, {
+                        tagName: 'feFuncG',
+                        type: 'linear',
+                        slope: cfg.slope
+                    }, {
+                        tagName: 'feFuncB',
+                        type: 'linear',
+                        slope: cfg.slope
+                    }]
+                }]
+            });
+        }, this);
+    }
+});
 
 wrap(Chart.prototype, 'setClassName', function (proceed) {
     proceed.apply(this, [].slice.call(arguments, 1));
@@ -1276,7 +1303,7 @@ Chart.prototype.retrieveStacks = function (stacking) {
         stackNumber,
         i = 1;
 
-    each(this.series, function (s) {
+    this.series.forEach(function (s) {
         stackNumber = pick(
             s.options.stack,
             (stacking ? 0 : series.length - 1 - s.index)
@@ -1360,7 +1387,7 @@ Chart.prototype.get3dFrame = function () {
     // The 'default' criteria to visible faces of the frame is looking up every
     // axis to decide whenever the left/right//top/bottom sides of the frame
     // will be shown
-    each([].concat(chart.xAxis, chart.yAxis, chart.zAxis), function (axis) {
+    [].concat(chart.xAxis, chart.yAxis, chart.zAxis).forEach(function (axis) {
         if (axis) {
             if (axis.horiz) {
                 if (axis.opposite) {

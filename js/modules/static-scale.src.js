@@ -10,7 +10,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var Chart = H.Chart,
-    each = H.each,
     pick = H.pick;
 
 /**
@@ -42,7 +41,7 @@ H.addEvent(H.Axis, 'afterSetOptions', function () {
 
 Chart.prototype.adjustHeight = function () {
     if (this.redrawTrigger !== 'adjustHeight') {
-        each(this.axes || [], function (axis) {
+        (this.axes || []).forEach(function (axis) {
             var chart = axis.chart,
                 animate = !!chart.initiatedScale && chart.options.animation,
                 staticScale = axis.options.staticScale,
@@ -69,7 +68,7 @@ Chart.prototype.adjustHeight = function () {
 
                 // Make sure clip rects have the right height before initial
                 // animation.
-                each(axis.series, function (series) {
+                axis.series.forEach(function (series) {
                     var clipRect =
                         series.sharedClipKey && chart[series.sharedClipKey];
                     if (clipRect) {

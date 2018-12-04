@@ -3,7 +3,8 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'bubble',
-        zoomType: 'xy'
+        zoomType: 'xy',
+        styledMode: true
     },
 
     legend: {

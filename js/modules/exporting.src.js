@@ -64,7 +64,6 @@ var defaultOptions = H.defaultOptions,
     css = H.css,
     merge = H.merge,
     pick = H.pick,
-    each = H.each,
     objectEach = H.objectEach,
     extend = H.extend,
     isTouchDevice = H.isTouchDevice,
@@ -265,8 +264,6 @@ defaultOptions.navigation = {
 
 };
 
-/*= if (build.classic) { =*/
-
 // Presentational attributes
 merge(true, defaultOptions.navigation
 
@@ -437,13 +434,21 @@ merge(true, defaultOptions.navigation
 
             /**
              * The default fill exists only to capture hover events.
-             *
              * @type {Highcharts.ColorString}
+             * @apioption navigation.buttonOptions.theme.fill
+             * @default ${palette.backgroundColor}
              */
-            fill: '${palette.backgroundColor}',
 
-            stroke: 'none',
+            /**
+             * Default stroke for the buttons.
+             * @type {Highcharts.ColorString}
+             * @apioption navigation.buttonOptions.theme.stroke
+             * @default none
+             */
 
+            /**
+             * Padding for the button.
+             */
             padding: 5
 
         }
@@ -451,8 +456,6 @@ merge(true, defaultOptions.navigation
     }
 
 });
-
-/*= } =*/
 
 
 // Add the export related options
@@ -737,7 +740,9 @@ defaultOptions.exporting = {
             /**
              * The symbol for the button. Points to a definition function in
              * the `Highcharts.Renderer.symbols` collection. The default
-             * `exportIcon` function is part of the exporting module.
+             * `exportIcon` function is part of the exporting module. Possible
+             * values are "circle", "square", "diamond", "triangle",
+             * "triangle-down", "menu", "menuball" or custom shape.
              *
              * @sample highcharts/exporting/buttons-contextbutton-symbol/
              *         Use a circle for symbol
@@ -745,7 +750,7 @@ defaultOptions.exporting = {
              *         Custom shape as symbol
              *
              * @since      2.0
-             * @validvalue ["exportIcon", "circle", "square", "diamond", "triangle", "triangle-down", "menu"]
+             * @validvalue ["menu", "menuball", "exportIcon", "circle", "square", "diamond", "triangle", "triangle-down"]
              */
             symbol: 'menu',
 
@@ -1012,12 +1017,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             .replace(/&nbsp;/g, '\u00A0') // no-break space
             .replace(/&shy;/g, '\u00AD'); // soft hyphen
 
-        /*= if (build.classic) { =*/
         // Further sanitize for oldIE
         if (this.ieSanitizeSVG) {
             svg = this.ieSanitizeSVG(svg);
         }
-        /*= } =*/
 
         return svg;
     },
@@ -1034,9 +1037,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *          The unfiltered SVG of the chart.
      */
     getChartHTML: function () {
-        /*= if (!build.classic) { =*/
-        this.inlineStyles();
-        /*= } =*/
+        if (this.styledMode) {
+            this.inlineStyles();
+        }
+
         return this.container.innerHTML;
     },
 
@@ -1107,7 +1111,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // prepare for replicating the chart
         options.series = [];
-        each(chart.series, function (serie) {
+        chart.series.forEach(function (serie) {
             seriesOptions = merge(serie.userOptions, { // #4912
                 animation: false, // turn off animation
                 enableMouseTracking: false,
@@ -1122,7 +1126,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         // Assign an internal key to ensure a one-to-one mapping (#5924)
-        each(chart.axes, function (axis) {
+        chart.axes.forEach(function (axis) {
             if (!axis.userOptions.internalKey) { // #6444
                 axis.userOptions.internalKey = H.uniqueKey();
             }
@@ -1133,7 +1137,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
-            each(['xAxis', 'yAxis', 'series'], function (coll) {
+            ['xAxis', 'yAxis', 'series'].forEach(function (coll) {
                 var collOptions = {};
                 if (chartOptions[coll]) {
                     collOptions[coll] = chartOptions[coll];
@@ -1143,7 +1147,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // Reflect axis extremes in the export (#5924)
-        each(chart.axes, function (axis) {
+        chart.axes.forEach(function (axis) {
             var axisCopy = H.find(chartCopy.axes, function (copy) {
                     return copy.options.internalKey ===
                         axis.userOptions.internalKey;
@@ -1269,14 +1273,24 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     print: function () {
 
         var chart = this,
-            container = chart.container,
             origDisplay = [],
-            origParent = container.parentNode,
             body = doc.body,
             childNodes = body.childNodes,
             printMaxWidth = chart.options.exporting.printMaxWidth,
             resetParams,
             handleMaxWidth;
+
+        // Move the chart container(s) to another div
+        function moveContainers(moveTo) {
+            (
+                chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
+                    [chart.fixedDiv, chart.scrollingContainer] :
+                    [chart.container]
+
+            ).forEach(function (div) {
+                moveTo.appendChild(div);
+            });
+        }
 
         if (chart.isPrinting) { // block the button while in printing mode
             return;
@@ -1295,7 +1309,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // hide all body content
-        each(childNodes, function (node, i) {
+        childNodes.forEach(function (node, i) {
             if (node.nodeType === 1) {
                 origDisplay[i] = node.style.display;
                 node.style.display = 'none';
@@ -1303,7 +1317,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         // pull out the chart
-        body.appendChild(container);
+        moveContainers(body);
 
         // Give the browser time to draw WebGL content, an issue that randomly
         // appears (at least) in Chrome ~67 on the Mac (#8708).
@@ -1316,10 +1330,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             setTimeout(function () {
 
                 // put the chart back in
-                origParent.appendChild(container);
+                moveContainers(chart.renderTo);
 
                 // restore all body content
-                each(childNodes, function (node, i) {
+                childNodes.forEach(function (node, i) {
                     if (node.nodeType === 1) {
                         node.style.display = origDisplay[i];
                     }
@@ -1395,16 +1409,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 menu
             );
 
-            /*= if (build.classic) { =*/
-
             // Presentational CSS
-            css(innerMenu, extend({
-                MozBoxShadow: '3px 3px 10px #888',
-                WebkitBoxShadow: '3px 3px 10px #888',
-                boxShadow: '3px 3px 10px #888'
-            }, navOptions.menuStyle));
-
-            /*= } =*/
+            if (!chart.styledMode) {
+                css(innerMenu, extend({
+                    MozBoxShadow: '3px 3px 10px #888',
+                    WebkitBoxShadow: '3px 3px 10px #888',
+                    boxShadow: '3px 3px 10px #888'
+                }, navOptions.menuStyle));
+            }
 
             // hide on mouse out
             menu.hideMenu = function () {
@@ -1441,7 +1453,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             );
 
             // create the items
-            each(items, function (item) {
+            items.forEach(function (item) {
 
                 if (typeof item === 'string') {
                     item = chart.options.exporting.menuItemDefinitions[item];
@@ -1471,17 +1483,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                             )
                         }, null, innerMenu);
 
-                        /*= if (build.classic) { =*/
-                        element.onmouseover = function () {
-                            css(this, navOptions.menuItemHoverStyle);
-                        };
-                        element.onmouseout = function () {
-                            css(this, navOptions.menuItemStyle);
-                        };
-                        css(element, extend({
-                            cursor: 'pointer'
-                        }, navOptions.menuItemStyle));
-                        /*= } =*/
+                        if (!chart.styledMode) {
+                            element.onmouseover = function () {
+                                css(this, navOptions.menuItemHoverStyle);
+                            };
+                            element.onmouseout = function () {
+                                css(this, navOptions.menuItemStyle);
+                            };
+                            css(element, extend({
+                                cursor: 'pointer'
+                            }, navOptions.menuItemStyle));
+                        }
                     }
 
                     // Keep references to menu divs to be able to destroy them
@@ -1557,6 +1569,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             select = states && states.select,
             callback;
 
+        if (!chart.styledMode) {
+            attr.fill = pick(attr.fill, '${palette.backgroundColor}');
+            attr.stroke = pick(attr.stroke, 'none');
+        }
+
         delete attr.states;
 
         if (onclick) {
@@ -1598,20 +1615,22 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             });
         }
 
+
+        if (!chart.styledMode) {
+            attr['stroke-linecap'] = 'round';
+            attr.fill = pick(attr.fill, '${palette.backgroundColor}');
+            attr.stroke = pick(attr.stroke, 'none');
+        }
+
         button = renderer
             .button(btnOptions.text, 0, 0, callback, attr, hover, select)
             .addClass(options.className)
             .attr({
-                /*= if (build.classic) { =*/
-                'stroke-linecap': 'round',
-                /*= } =*/
-                title: pick(
-                    chart.options.lang[
-                        btnOptions._titleKey || btnOptions.titleKey
-                    ],
-                    ''
-                )
+                title: pick(chart.options.lang[
+                    btnOptions._titleKey || btnOptions.titleKey
+                ], '')
             });
+
         button.menuClassName = (
             options.menuClassName ||
             'highcharts-menu-' + chart.btnCount++
@@ -1637,16 +1656,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 })
                 .add(button);
 
-            /*= if (build.classic) { =*/
-
-            symbol.attr({
-                stroke: btnOptions.symbolStroke,
-                fill: btnOptions.symbolFill,
-                'stroke-width': btnOptions.symbolStrokeWidth || 1
-            });
-
-            /*= } =*/
-
+            if (!chart.styledMode) {
+                symbol.attr({
+                    stroke: btnOptions.symbolStroke,
+                    fill: btnOptions.symbolFill,
+                    'stroke-width': btnOptions.symbolStrokeWidth || 1
+                });
+            }
         }
 
         button.add(chart.exportingGroup)
@@ -1681,7 +1697,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Destroy the extra buttons added
         if (exportSVGElements) {
-            each(exportSVGElements, function (elem, i) {
+            exportSVGElements.forEach(function (elem, i) {
 
                 // Destroy and null the svg elements
                 if (elem) { // #1822
@@ -1706,7 +1722,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Destroy the divs for the menu
         if (exportDivElements) {
-            each(exportDivElements, function (elem, i) {
+            exportDivElements.forEach(function (elem, i) {
 
                 // Remove the event handler
                 H.clearTimeout(elem.hideTimer); // #5427
@@ -1726,15 +1742,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         if (exportEvents) {
-            each(exportEvents, function (unbind) {
+            exportEvents.forEach(function (unbind) {
                 unbind();
             });
             exportEvents.length = 0;
         }
     }
 });
-
-/*= if (!build.classic) { =*/
 
 // These ones are translated to attributes rather than styles
 SVGRenderer.prototype.inlineToAttributes = [
@@ -1941,7 +1955,7 @@ Chart.prototype.inlineStyles = function () {
             }
 
             // Recurse
-            each(node.children || node.childNodes, recurse);
+            [].forEach.call(node.children || node.childNodes, recurse);
         }
     }
 
@@ -1957,8 +1971,6 @@ Chart.prototype.inlineStyles = function () {
 
 };
 
-/*= } =*/
-
 
 symbols.menu = function (x, y, width, height) {
     var arr = [
@@ -1970,6 +1982,18 @@ symbols.menu = function (x, y, width, height) {
         'L', x + width, y + height - 1.5
     ];
     return arr;
+};
+
+symbols.menuball = function (x, y, width, height) {
+    var path = [],
+        h = (height / 3) - 2;
+
+    path = path.concat(
+                this.circle(width - h, y, h, h),
+                this.circle(width - h, y + h + 4, h, h),
+                this.circle(width - h, y + 2 * (h + 4), h, h)
+            );
+    return path;
 };
 
 /**
@@ -2021,7 +2045,7 @@ addEvent(Chart, 'init', function () {
             chart.redraw();
         }
     }
-    each(['exporting', 'navigation'], function (prop) {
+    ['exporting', 'navigation'].forEach(function (prop) {
         chart[prop] = {
             update: function (options, redraw) {
                 update(prop, options, redraw);

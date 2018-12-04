@@ -17,7 +17,6 @@ import '../parts/Pointer.js';
 var hasTouch = H.hasTouch,
     merge = H.merge,
     wrap = H.wrap,
-    each = H.each,
     isNumber = H.isNumber,
     addEvent = H.addEvent,
     relativeLength = H.relativeLength,
@@ -118,8 +117,6 @@ var hasTouch = H.hasTouch,
              */
             enabled: false,
 
-            /*= if (build.classic) { =*/
-
             /**
              * Cursor style for the control line.
              *
@@ -164,8 +161,6 @@ var hasTouch = H.hasTouch,
              * @sample {highstock} stock/yaxis/styled-resizer Styled resizer
              */
             lineWidth: 4,
-
-            /*= } =*/
 
             /**
              * Horizontal offset of the control line.
@@ -245,14 +240,14 @@ H.AxisResizer.prototype = {
             attr = {},
             lineWidth;
 
-        /*= if (build.classic) { =*/
-        attr = {
-            cursor: options.cursor,
-            stroke: options.lineColor,
-            'stroke-width': options.lineWidth,
-            dashstyle: options.lineDashStyle
-        };
-        /*= } =*/
+        if (!chart.styledMode) {
+            attr = {
+                cursor: options.cursor,
+                stroke: options.lineColor,
+                'stroke-width': options.lineWidth,
+                dashstyle: options.lineDashStyle
+            };
+        }
 
         // Register current position for future reference.
         resizer.lastPos = pos - y;
@@ -263,16 +258,13 @@ H.AxisResizer.prototype = {
         }
 
         // Add to axisGroup after axis update, because the group is recreated
-        /*= if (!build.classic) { =*/
         // Do .add() before path is calculated because strokeWidth() needs it.
-        /*= } =*/
         resizer.controlLine.add(axis.axisGroup);
 
-        /*= if (build.classic) { =*/
-        lineWidth = options.lineWidth;
-        /*= } else { =*/
-        lineWidth = resizer.controlLine.strokeWidth();
-        /*= } =*/
+        lineWidth = chart.styledMode ?
+            resizer.controlLine.strokeWidth() :
+            options.lineWidth;
+
         attr.d = chart.renderer.crispLine(
             [
                 'M', axis.left + x, pos,
@@ -402,7 +394,7 @@ H.AxisResizer.prototype = {
             chart = resizer.axis.chart,
             axes = resizer.options.controlledAxis,
             nextAxes = axes.next.length === 0 ?
-                [H.inArray(resizer.axis, chart.yAxis) + 1] : axes.next,
+                [chart.yAxis.indexOf(resizer.axis) + 1] : axes.next,
             // Main axis is included in the prev array by default
             prevAxes = [resizer.axis].concat(axes.prev),
             axesConfigs = [], // prev and next configs
@@ -426,8 +418,8 @@ H.AxisResizer.prototype = {
         }
 
         // First gather info how axes should behave
-        each([prevAxes, nextAxes], function (axesGroup, isNext) {
-            each(axesGroup, function (axisInfo, i) {
+        [prevAxes, nextAxes].forEach(function (axesGroup, isNext) {
+            axesGroup.forEach(function (axisInfo, i) {
                 // Axes given as array index, axis object or axis id
                 var axis = isNumber(axisInfo) ?
                         // If it's a number - it's an index
@@ -533,7 +525,7 @@ H.AxisResizer.prototype = {
         // If we hit the min/maxLength with dragging, don't do anything:
         if (!stopDrag) {
             // Now update axes:
-            each(axesConfigs, function (config) {
+            axesConfigs.forEach(function (config) {
                 config.axis.update(config.options, false);
             });
 
@@ -556,7 +548,7 @@ H.AxisResizer.prototype = {
 
         // Clear control line events
         if (this.eventsToUnbind) {
-            each(this.eventsToUnbind, function (unbind) {
+            this.eventsToUnbind.forEach(function (unbind) {
                 unbind();
             });
         }

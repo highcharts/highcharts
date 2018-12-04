@@ -12,8 +12,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var each = H.each,
-    pick = H.pick;
+var pick = H.pick;
 
 /**
  * String trim that works for IE6-8 as well.
@@ -249,7 +248,7 @@ H.i18nFormat = function (formatString, context, time) {
     // Perform the formatting. The formatArrayStatement function returns the
     // statement in brackets if it is not an array statement, which means it
     // gets picked up by H.format below.
-    each(tokens, function (token) {
+    tokens.forEach(function (token) {
         if (token.type === 'statement') {
             token.value = formatExtendedStatement(token.value, context);
         }
@@ -257,7 +256,7 @@ H.i18nFormat = function (formatString, context, time) {
 
     // Join string back together and pass to H.format to pick up non-array
     // statements.
-    return H.format(H.reduce(tokens, function (acc, cur) {
+    return H.format(tokens.reduce(function (acc, cur) {
         return acc + cur.value;
     }, ''), context, time);
 };
@@ -418,9 +417,9 @@ H.setOptions({ lang: {
         axis: {
             /* eslint-disable max-len */
             xAxisDescriptionSingular: 'The chart has 1 X axis displaying {names[0]}.',
-            xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each(names, -1), }and {names[-1]}',
+            xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#names.forEach(-1), }and {names[-1]}',
             yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}.',
-            yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each(names, -1), }and {names[-1]}'
+            yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#names.forEach(-1), }and {names[-1]}'
         },  /* eslint-enable max-len */
 
         /**

@@ -32,7 +32,6 @@ import './Options.js';
 
 var animObject = H.animObject,
     color = H.color,
-    each = H.each,
     extend = H.extend,
     defined = H.defined,
     isNumber = H.isNumber,
@@ -65,7 +64,7 @@ seriesType('column', 'line'
  *
  * @extends      plotOptions.line
  * @excluding    connectNulls, dashStyle, gapSize, gapUnit, linecap,
- *               lineWidth, marker, connectEnds, step
+ *               lineWidth, marker, connectEnds, step, useOhlcData
  * @product      highcharts highstock
  * @optionparent plotOptions.column
  */
@@ -311,8 +310,6 @@ seriesType('column', 'line'
              * @apioption plotOptions.column.states.hover.color
              */
 
-            /*= if (build.classic) { =*/
-
             /**
              * How much to brighten the point on interaction. Requires the main
              * color to be defined in hex or rgb(a) format.
@@ -326,11 +323,7 @@ seriesType('column', 'line'
              * @product highcharts highstock gantt
              */
             brightness: 0.1
-
-            /*= } =*/
         },
-
-        /*= if (build.classic) { =*/
 
         /**
          * Options for the selected point. These settings override the normal
@@ -360,9 +353,6 @@ seriesType('column', 'line'
              */
             borderColor: '${palette.neutralColor100}'
         }
-
-        /*= } =*/
-
     },
 
     dataLabels: {
@@ -419,8 +409,6 @@ seriesType('column', 'line'
      */
     threshold: 0,
 
-    /*= if (build.classic) { =*/
-
     /**
      * The width of the border surrounding each column or bar. Defaults to `1`
      * when there is room for a border, but to `0` when the columns are so dense
@@ -453,8 +441,6 @@ seriesType('column', 'line'
      */
     borderColor: '${palette.backgroundColor}'
 
-    /*= } =*/
-
 }, /** @lends seriesTypes.column.prototype */ {
     cropShoulder: 0,
     // When tooltip is not shared, this series (and derivatives) requires direct
@@ -481,7 +467,7 @@ seriesType('column', 'line'
         // if the series is added dynamically, force redraw of other
         // series affected by a new column
         if (chart.hasRendered) {
-            each(chart.series, function (otherSeries) {
+            chart.series.forEach(function (otherSeries) {
                 if (otherSeries.type === series.type) {
                     otherSeries.isDirty = true;
                 }
@@ -518,7 +504,7 @@ seriesType('column', 'line'
         if (options.grouping === false) {
             columnCount = 1;
         } else {
-            each(series.chart.series, function (otherSeries) {
+            series.chart.series.forEach(function (otherSeries) {
                 var otherOptions = otherSeries.options,
                     otherYAxis = otherSeries.yAxis,
                     columnIndex;
@@ -685,7 +671,7 @@ seriesType('column', 'line'
         Series.prototype.translate.apply(series);
 
         // Record the new values
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var yBottom = pick(point.yBottom, translatedThreshold),
                 safeDistance = 999 + Math.abs(yBottom),
                 pointWidth = seriesPointWidth,
@@ -743,7 +729,8 @@ seriesType('column', 'line'
             [barX + barW / 2, plotY + yAxis.pos - chart.plotTop, barH];
 
             // Register shape type and arguments to be used in drawPoints
-            point.shapeType = 'rect';
+            // Allow shapeType defined on pointClass level
+            point.shapeType = point.shapeType || 'rect';
             point.shapeArgs = series.crispCol.apply(
                 series,
                 point.isNull ?
@@ -786,7 +773,6 @@ seriesType('column', 'line'
         ]('highcharts-dense-data');
     },
 
-    /*= if (build.classic) { =*/
     /**
      * Get presentational attributes
      *
@@ -854,7 +840,6 @@ seriesType('column', 'line'
 
         return ret;
     },
-    /*= } =*/
 
     /**
      * Draw the columns. For bars, the series.group is rotated, so the same
@@ -873,7 +858,7 @@ seriesType('column', 'line'
             shapeArgs;
 
         // draw the columns
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var plotY = point.plotY,
                 graphic = point.graphic,
                 verb = graphic && chart.pointCount < animationLimit ?
@@ -900,18 +885,18 @@ seriesType('column', 'line'
                     });
                 }
 
-                /*= if (build.classic) { =*/
                 // Presentational
-                graphic[verb](series.pointAttribs(
-                        point,
-                        point.selected && 'select'
-                    ))
-                    .shadow(
-                        options.shadow,
-                        null,
-                        options.stacking && !options.borderRadius
-                    );
-                /*= } =*/
+                if (!chart.styledMode) {
+                    graphic[verb](series.pointAttribs(
+                            point,
+                            point.selected && 'select'
+                        ))
+                        .shadow(
+                            options.shadow,
+                            null,
+                            options.stacking && !options.borderRadius
+                        );
+                }
 
                 graphic.addClass(point.getClassName(), true);
 
@@ -991,7 +976,7 @@ seriesType('column', 'line'
         // column and bar series affects other series of the same type
         // as they are either stacked or grouped
         if (chart.hasRendered) {
-            each(chart.series, function (otherSeries) {
+            chart.series.forEach(function (otherSeries) {
                 if (otherSeries.type === series.type) {
                     otherSeries.isDirty = true;
                 }

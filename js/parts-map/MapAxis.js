@@ -12,7 +12,6 @@ import '../parts/Axis.js';
 
 var addEvent = H.addEvent,
     Axis = H.Axis,
-    each = H.each,
     pick = H.pick;
 
 // Override to use the extreme coordinates from the SVG shape, not the data
@@ -23,7 +22,7 @@ addEvent(Axis, 'getSeriesExtremes', function () {
     // Remove the xData array and cache it locally so that the proceed method
     // doesn't use it
     if (this.isXAxis) {
-        each(this.series, function (series, i) {
+        this.series.forEach(function (series, i) {
             if (series.useMapGeometry) {
                 xData[i] = series.xData;
                 series.xData = [];
@@ -45,7 +44,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
     if (this.isXAxis) {
         dataMin = pick(this.dataMin, Number.MAX_VALUE);
         dataMax = pick(this.dataMax, -Number.MAX_VALUE);
-        each(this.series, function (series, i) {
+        this.series.forEach(function (series, i) {
             if (series.useMapGeometry) {
                 dataMin = Math.min(dataMin, pick(series.minX, dataMin));
                 dataMax = Math.max(dataMax, pick(series.maxX, dataMax));
@@ -77,7 +76,7 @@ addEvent(Axis, 'afterSetAxisTranslation', function () {
 
     // Check for map-like series
     if (this.coll === 'yAxis' && xAxis.transA !== undefined) {
-        each(this.series, function (series) {
+        this.series.forEach(function (series) {
             if (series.preserveAspectRatio) {
                 preserveAspectRatio = true;
             }

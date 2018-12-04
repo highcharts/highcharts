@@ -18,7 +18,6 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     css = H.css,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     noop = H.noop,
     pick = H.pick,
@@ -261,7 +260,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
         // Apply the ordinal logic
         if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
 
-            each(axis.series, function (series, i) {
+            axis.series.forEach(function (series, i) {
                 uniqueOrdinalPositions = [];
 
                 if (
@@ -583,7 +582,7 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             };
 
             // Add the fake series to hold the full data, then apply processData to it
-            each(axis.series, function (series) {
+            axis.series.forEach(function (series) {
                 fakeSeries = {
                     xAxis: fakeAxis,
                     xData: series.xData.slice(),
@@ -789,7 +788,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 
             // Remove active points for shared tooltip
             if (hoverPoints) {
-                each(hoverPoints, function (point) {
+                hoverPoints.forEach(function (point) {
                     point.setState();
                 });
             }

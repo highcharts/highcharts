@@ -10,7 +10,6 @@ import H from './Globals.js';
 import './Utilities.js';
 
 var defaultPlotOptions = H.defaultPlotOptions,
-    each = H.each,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
@@ -77,8 +76,6 @@ var candlestickOptions = {
      */
     threshold: null,
 
-    /*= if (build.classic) { =*/
-
     /**
      * The color of the line/border of the candlestick.
      *
@@ -124,8 +121,6 @@ var candlestickOptions = {
      */
     upColor: '${palette.backgroundColor}',
 
-    /*= } =*/
-
     /**
      * @product highstock
      */
@@ -146,8 +141,6 @@ seriesType('candlestick', 'ohlc', merge(
     defaultPlotOptions.column,
     candlestickOptions
 ), /** @lends seriesTypes.candlestick */ {
-
-    /*= if (build.classic) { =*/
 
     /**
      * Postprocess mapping between options and SVG attributes
@@ -192,8 +185,6 @@ seriesType('candlestick', 'ohlc', merge(
         return attribs;
     },
 
-    /*= } =*/
-
     /**
      * Draw the data points.
      *
@@ -207,7 +198,7 @@ seriesType('candlestick', 'ohlc', merge(
             reversedYAxis = series.yAxis.reversed;
 
 
-        each(points, function (point) {
+        points.forEach(function (point) {
 
             var graphic = point.graphic,
                 plotOpen,
@@ -229,13 +220,16 @@ seriesType('candlestick', 'ohlc', merge(
                         .add(series.group);
                 }
 
-                /*= if (build.classic) { =*/
-                graphic
-                    .attr(
-                        series.pointAttribs(point, point.selected && 'select')
-                    ) // #3897
-                    .shadow(series.options.shadow);
-                /*= } =*/
+                if (!series.chart.styledMode) {
+                    graphic
+                        .attr(
+                            series.pointAttribs(
+                                point,
+                                point.selected && 'select'
+                            )
+                        ) // #3897
+                        .shadow(series.options.shadow);
+                }
 
                 // Crisp vector coordinates
                 crispCorr = (graphic.strokeWidth() % 2) / 2;

@@ -11,8 +11,7 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
-var each = H.each,
-    correctFloat = H.correctFloat,
+var correctFloat = H.correctFloat,
     seriesType = H.seriesType,
     merge = H.merge;
 
@@ -102,7 +101,7 @@ seriesType('pareto', 'line'
             percentPoints = [],
             percentPoint;
 
-        each(yValues, function (point, i) {
+        yValues.forEach(function (point, i) {
             if (point !== null) {
                 if (isSum) {
                     sumY += point;

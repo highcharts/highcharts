@@ -14,8 +14,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import './data.src.js';
 
-var each = H.each;
-
 H.wrap(H.Data.prototype, 'init', function (proceed, options) {
     proceed.call(this, options);
 
@@ -179,7 +177,7 @@ H.extend(H.Data.prototype, {
 
     // Join the path back to a string for compression
     pathToString: function (arr) {
-        each(arr, function (point) {
+        arr.forEach(function (point) {
             var path = point.path;
 
             // Join all by commas
@@ -230,7 +228,7 @@ H.extend(H.Data.prototype, {
         fakeSeries.xAxis.min = fakeSeries.minX;
         fakeSeries.yAxis.min = (fakeSeries.minY + scale) / transA;
 
-        each(arr, function (point) {
+        arr.forEach(function (point) {
 
             var i,
                 path;
@@ -341,16 +339,18 @@ H.extend(H.Data.prototype, {
             allPaths = getPathLikeChildren(xml);
 
             // Skip clip paths
-            each(['defs', 'clipPath'], function (nodeName) {
-                each(xml.getElementsByTagName(nodeName), function (parent) {
-                    each(parent.getElementsByTagName('path'), function (path) {
-                        path.skip = true;
-                    });
+            ['defs', 'clipPath'].forEach(function (nodeName) {
+                xml.getElementsByTagName(nodeName).forEach(function (parent) {
+                    parent.getElementsByTagName('path').forEach(
+                        function (path) {
+                            path.skip = true;
+                        }
+                    );
                 });
             });
 
             // If not all paths belong to the same group, handle groups
-            each(allPaths, function (path, i) {
+            allPaths.forEach(function (path, i) {
                 if (!path.skip) {
                     var itemLineage = [],
                         parentNode,
@@ -384,13 +384,12 @@ H.extend(H.Data.prototype, {
 
             // Iterate groups to find sub paths
             if (handleGroups) {
-                each(
-                    lastCommonAncestor.getElementsByTagName('g'),
+                lastCommonAncestor.getElementsByTagName('g').forEach(
                     function (g) {
                         var groupPath = [],
                             pathHasFill;
 
-                        each(getPathLikeChildren(g), function (path) {
+                        getPathLikeChildren(g).forEach(function (path) {
                             if (!path.skip) {
                                 groupPath = groupPath.concat(
                                     data.pathToArray(
@@ -416,7 +415,7 @@ H.extend(H.Data.prototype, {
             }
 
             // Iterate the remaining paths that are not parts of groups
-            each(allPaths, function (path) {
+            allPaths.forEach(function (path) {
                 if (!path.skip) {
                     arr.push({
                         name: getName(path),

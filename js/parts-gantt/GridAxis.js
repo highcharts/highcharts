@@ -14,7 +14,6 @@ var argsToArray = function (args) {
     },
     dateFormat = H.dateFormat,
     defined = H.defined,
-    each = H.each,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = function (x) {
@@ -128,7 +127,7 @@ Axis.prototype.isOuterAxis = function () {
         thisIndex = -1,
         isOuter = true;
 
-    each(chart.axes, function (otherAxis, index) {
+    chart.axes.forEach(function (otherAxis, index) {
         if (otherAxis.side === axis.side && !otherAxis.isNavigatorAxis()) {
             if (otherAxis === axis) {
                 // Get the index of the axis in question
@@ -169,7 +168,7 @@ Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
         height: 0
     };
 
-    each(tickPositions, function (pos) {
+    tickPositions.forEach(function (pos) {
         var tick = ticks[pos],
             tickHeight = 0,
             tickWidth = 0,
@@ -703,7 +702,7 @@ wrap(Axis.prototype, 'setAxisTranslation',
 
         if (this.horiz) {
             if (gridOptions.enabled === true) {
-                each(axis.series, function (series) {
+                axis.series.forEach(function (series) {
                     series.options.pointRange = 0;
                 });
             }

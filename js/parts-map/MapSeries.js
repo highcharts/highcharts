@@ -35,11 +35,9 @@ import '../parts/ScatterSeries.js';
 
 var colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
-    each = H.each,
     extend = H.extend,
     isNumber = H.isNumber,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    map = H.map,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -88,8 +86,6 @@ seriesType('map', 'scatter',
         /** @ignore-option */
         marker: null,
 
-        /*= if (build.classic) { =*/
-
         /**
          * The color to apply to null points.
          *
@@ -102,8 +98,6 @@ seriesType('map', 'scatter',
          * @type {Highcharts.ColorString}
          */
         nullColor: '${palette.neutralColor3}',
-
-        /*= } =*/
 
         /**
          * Whether to allow pointer interaction like tooltips and mouse events
@@ -139,8 +133,6 @@ seriesType('map', 'scatter',
          */
         allAreas: true,
 
-        /*= if (build.classic) { =*/
-
         /**
          * The border color of the map areas.
          *
@@ -166,14 +158,10 @@ seriesType('map', 'scatter',
          * @sample maps/plotoptions/series-border/
          *         Borders demo
          *
-         * @type      {number}
-         * @default   1
          * @product   highmaps highcharts
          * @apioption plotOptions.series.borderWidth
          */
         borderWidth: 1,
-
-        /*= } =*/
 
         /**
          * Set this option to `false` to prevent a series from connecting to
@@ -224,14 +212,6 @@ seriesType('map', 'scatter',
          */
 
         states: {
-
-            /*= if (build.classic) { =*/
-
-            select: {
-                color: '${palette.neutralColor20}'
-            },
-
-            /*= } =*/
 
             hover: {
 
@@ -300,8 +280,11 @@ seriesType('map', 'scatter',
                  * @apioption plotOptions.series.states.normal.animation
                  */
                 animation: true
-            }
+            },
 
+            select: {
+                color: '${palette.neutralColor20}'
+            }
         }
 
     // Prototype members
@@ -317,9 +300,8 @@ seriesType('map', 'scatter',
         // X axis and Y axis must have same translation slope
         preserveAspectRatio: true,
         pointArrayMap: ['value'],
-        /* *
-         * Get the bounding box of all paths in the map combined.
-         */
+
+        // Get the bounding box of all paths in the map combined.
         getBox: function (paths) {
             var MAX_VALUE = Number.MAX_VALUE,
                 maxX = -MAX_VALUE,
@@ -332,7 +314,7 @@ seriesType('map', 'scatter',
                 hasBox;
 
             // Find the bounding box
-            each(paths || [], function (point) {
+            (paths || []).forEach(function (point) {
 
                 if (point.path) {
                     if (typeof point.path === 'string') {
@@ -444,9 +426,7 @@ seriesType('map', 'scatter',
             this.dataMax = this.maxY;
         },
 
-        /* *
-         * Translate the path, so it automatically fits into the plot area box
-         */
+        // Translate the path, so it automatically fits into the plot area box
         translatePath: function (path) {
 
             var series = this,
@@ -480,11 +460,9 @@ seriesType('map', 'scatter',
             return ret;
         },
 
-        /* *
-         * Extend setData to join in mapData. If the allAreas option is true,
-         * all areas from the mapData are used, and those that don't correspond
-         * to a data value are given null values.
-         */
+        // Extend setData to join in mapData. If the allAreas option is true,
+        // all areas from the mapData are used, and those that don't correspond
+        // to a data value are given null values.
         setData: function (data, redraw, animation, updatePoints) {
             var options = this.options,
                 chartOptions = this.chart.options.chart,
@@ -518,7 +496,7 @@ seriesType('map', 'scatter',
             // Pick up numeric values, add index
             // Convert Array point definitions to objects using pointArrayMap
             if (data) {
-                each(data, function (val, i) {
+                data.forEach(function (val, i) {
                     var ix = 0;
                     if (isNumber(val)) {
                         data[i] = {
@@ -598,7 +576,7 @@ seriesType('map', 'scatter',
 
                 // Registered the point codes that actually hold data
                 if (data && joinBy[1]) {
-                    each(data, function (point) {
+                    data.forEach(function (point) {
                         if (mapMap[point[joinBy[1]]]) {
                             dataUsed.push(mapMap[point[joinBy[1]]]);
                         }
@@ -611,19 +589,20 @@ seriesType('map', 'scatter',
 
                     // Registered the point codes that actually hold data
                     if (joinBy[1]) {
-                        each(data, function (point) {
+                        data.forEach(function (point) {
                             dataUsed.push(point[joinBy[1]]);
                         });
                     }
 
                     // Add those map points that don't correspond to data, which
                     // will be drawn as null points
-                    dataUsed = '|' + map(dataUsed, function (point) {
+                    dataUsed = '|' + dataUsed.map(function (point) {
                         return point && point[joinBy[0]];
                     }).join('|') + '|'; // Faster than array.indexOf
 
-                    each(mapData, function (mapPoint) {
-                        if (!joinBy[0] ||
+                    mapData.forEach(function (mapPoint) {
+                        if (
+                            !joinBy[0] ||
                             dataUsed.indexOf(
                                 '|' + mapPoint[joinBy[0]] + '|'
                             ) === -1
@@ -655,10 +634,8 @@ seriesType('map', 'scatter',
         // so we skip it now and call it from drawPoints instead.
         drawDataLabels: noop,
 
-        /* *
-         * Allow a quick redraw by just translating the area group. Used for
-         * zooming and panning in capable browsers.
-         */
+        // Allow a quick redraw by just translating the area group. Used for
+        // zooming and panning in capable browsers.
         doFullTranslate: function () {
             return (
                 this.isDirtyData ||
@@ -668,10 +645,8 @@ seriesType('map', 'scatter',
             );
         },
 
-        /* *
-         * Add the path option for data points. Find the max value for color
-         * calculation.
-         */
+        // Add the path option for data points. Find the max value for color
+        // calculation.
         translate: function () {
             var series = this,
                 xAxis = series.xAxis,
@@ -680,7 +655,7 @@ seriesType('map', 'scatter',
 
             series.generatePoints();
 
-            each(series.data, function (point) {
+            series.data.forEach(function (point) {
 
                 // Record the middle point (loosely based on centroid),
                 // determined by the middleX and middleY options.
@@ -699,24 +674,19 @@ seriesType('map', 'scatter',
             series.translateColors();
         },
 
-        /* *
-         * Get presentational attributes. In the maps series this runs in both
-         * styled and non-styled mode, because colors hold data when a colorAxis
-         * is used.
-         */
+        // Get presentational attributes. In the maps series this runs in both
+        // styled and non-styled mode, because colors hold data when a colorAxis
+        // is used.
         pointAttribs: function (point, state) {
-            var attr;
-            /*= if (build.classic) { =*/
-            attr = seriesTypes.column.prototype.pointAttribs.call(
-                this, point, state
-            );
-            /*= } else { =*/
-            attr = this.colorAttribs(point);
-            /*= } =*/
+            var attr = point.series.chart.styledMode ?
+                this.colorAttribs(point) :
+                seriesTypes.column.prototype.pointAttribs.call(
+                    this, point, state
+                );
 
-            /* Set the stroke-width on the group element and let all point
-               graphics inherit. That way we don't have to iterate over all
-               points to update the stroke-width on zooming. */
+            // Set the stroke-width on the group element and let all point
+            // graphics inherit. That way we don't have to iterate over all
+            // points to update the stroke-width on zooming.
             attr['stroke-width'] = pick(
                 point.options[
                     (
@@ -730,10 +700,8 @@ seriesType('map', 'scatter',
             return attr;
         },
 
-        /* *
-         * Use the drawPoints method of column, that is able to handle simple
-         * shapeArgs. Extend it by assigning the tooltip position.
-         */
+        // Use the drawPoints method of column, that is able to handle simple
+        // shapeArgs. Extend it by assigning the tooltip position.
         drawPoints: function () {
             var series = this,
                 xAxis = series.xAxis,
@@ -767,10 +735,9 @@ seriesType('map', 'scatter',
             // Draw the shapes again
             if (series.doFullTranslate()) {
 
-                // Individual point actions. TODO: Check unstyled.
-                /*= if (build.classic) { =*/
-                if (chart.hasRendered) {
-                    each(series.points, function (point) {
+                // Individual point actions.
+                if (chart.hasRendered && !chart.styledMode) {
+                    series.points.forEach(function (point) {
 
                         // Restore state color on update/redraw (#3529)
                         if (point.shapeArgs) {
@@ -781,7 +748,6 @@ seriesType('map', 'scatter',
                         }
                     });
                 }
-                /*= } =*/
 
                 // Draw them in transformGroup
                 series.group = series.transformGroup;
@@ -789,7 +755,7 @@ seriesType('map', 'scatter',
                 series.group = group; // Reset
 
                 // Add class names
-                each(series.points, function (point) {
+                series.points.forEach(function (point) {
                     if (point.graphic) {
                         if (point.name) {
                             point.graphic.addClass(
@@ -804,12 +770,14 @@ seriesType('map', 'scatter',
                             );
                         }
 
-                        /*= if (!build.classic) { =*/
-                        point.graphic.css(
-                            series
-                                .pointAttribs(point, point.selected && 'select')
-                        );
-                        /*= } =*/
+                        if (!chart.styledMode) {
+                            point.graphic.css(
+                                series.pointAttribs(
+                                    point,
+                                    point.selected && 'select'
+                                )
+                            );
+                        }
                     }
                 });
 
@@ -859,8 +827,9 @@ seriesType('map', 'scatter',
                 /* Animate or move to the new zoom level. In order to prevent
                    flickering as the different transform components are set out
                    of sync (#5991), we run a fake animator attribute and set
-                   scale and translation synchronously in the same step. A
-                   possible improvement to the API would be to handle this in
+                   scale and translation synchronously in the same step.
+
+                   A possible improvement to the API would be to handle this in
                    the renderer or animation engine itself, to ensure that when
                    we are animating multiple properties, we make sure that each
                    step for each property is performed in the same step. Also,
@@ -908,29 +877,28 @@ seriesType('map', 'scatter',
                children inherit it. We need to use setAttribute directly,
                because the stroke-widthSetter method expects a stroke color also
                to be set. */
-            group.element.setAttribute(
-                'stroke-width',
-                (
-                    series.options[
-                        (
-                            series.pointAttrToOptions &&
-                            series.pointAttrToOptions['stroke-width']
-                        ) || 'borderWidth'
-                    ] ||
-                    1 // Styled mode
-                ) / (scaleX || 1)
-            );
+            if (!chart.styledMode) {
+                group.element.setAttribute(
+                    'stroke-width',
+                    (
+                        series.options[
+                            (
+                                series.pointAttrToOptions &&
+                                series.pointAttrToOptions['stroke-width']
+                            ) || 'borderWidth'
+                        ] ||
+                        1 // Styled mode
+                    ) / (scaleX || 1)
+                );
+            }
 
             this.drawMapDataLabels();
 
-
         },
 
-        /* *
-         * Draw the data labels. Special for maps is the time that the data
-         * labels are drawn (after points), and the clipping of the
-         * dataLabelsGroup.
-         */
+        // Draw the data labels. Special for maps is the time that the data
+        // labels are drawn (after points), and the clipping of the
+        // dataLabelsGroup.
         drawMapDataLabels: function () {
 
             Series.prototype.drawDataLabels.call(this);
@@ -939,10 +907,8 @@ seriesType('map', 'scatter',
             }
         },
 
-        /* *
-         * Override render to throw in an async call in IE8. Otherwise it chokes
-         * on the US counties demo.
-         */
+        // Override render to throw in an async call in IE8. Otherwise it chokes
+        // on the US counties demo.
         render: function () {
             var series = this,
                 render = Series.prototype.render;
@@ -957,11 +923,9 @@ seriesType('map', 'scatter',
             }
         },
 
-        /* *
-         * The initial animation for the map series. By default, animation is
-         * disabled. Animation of map shapes is not at all supported in VML
-         * browsers.
-         */
+        // The initial animation for the map series. By default, animation is
+        // disabled. Animation of map shapes is not at all supported in VML
+        // browsers.
         animate: function (init) {
             var chart = this.chart,
                 animation = this.options.animation,
@@ -1005,10 +969,8 @@ seriesType('map', 'scatter',
             }
         },
 
-        /* *
-         * Animate in the new series from the clicked point in the old series.
-         * Depends on the drilldown.js module
-         */
+        // Animate in the new series from the clicked point in the old series.
+        // Depends on the drilldown.js module
         animateDrilldown: function (init) {
             var toBox = this.chart.plotBox,
                 level = this.chart.drilldownLevels[
@@ -1031,7 +993,7 @@ seriesType('map', 'scatter',
                     translateY: fromBox.y
                 };
 
-                each(this.points, function (point) {
+                this.points.forEach(function (point) {
                     if (point.graphic) {
                         point.graphic
                             .attr(level.shapeArgs)
@@ -1051,29 +1013,24 @@ seriesType('map', 'scatter',
 
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
-        /* *
-         * When drilling up, pull out the individual point graphics from the
-         * lower series and animate them into the origin point in the upper
-         * series.
-         */
+        // When drilling up, pull out the individual point graphics from the
+        // lower series and animate them into the origin point in the upper
+        // series.
         animateDrillupFrom: function (level) {
             seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
         },
 
 
-        /* *
-         * When drilling up, keep the upper series invisible until the lower
-         * series has moved into place
-         */
+        // When drilling up, keep the upper series invisible until the lower
+        // series has moved into place
         animateDrillupTo: function (init) {
             seriesTypes.column.prototype.animateDrillupTo.call(this, init);
         }
 
     // Point class
     }), extend({
-        /* *
-         * Extend the Point object to split paths
-         */
+
+        // Extend the Point object to split paths
         applyOptions: function (options, x) {
 
             var point = Point.prototype.applyOptions.call(this, options, x),
@@ -1099,9 +1056,7 @@ seriesType('map', 'scatter',
             return point;
         },
 
-        /* *
-         * Stop the fade-out
-         */
+        // Stop the fade-out
         onMouseOver: function (e) {
             H.clearTimeout(this.colorInterval);
             if (this.value !== null || this.series.options.nullInteraction) {
@@ -1115,10 +1070,10 @@ seriesType('map', 'scatter',
         /**
          * Highmaps only. Zoom in on the point using the global animation.
          *
-         * @requires module:modules/map
-         *
          * @sample maps/members/point-zoomto/
          *         Zoom to points from butons
+         *
+         * @requires module:modules/map
          *
          * @function Highcharts.Point#zoomTo
          */

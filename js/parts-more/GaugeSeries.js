@@ -13,8 +13,7 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
 
-var each = H.each,
-    isNumber = H.isNumber,
+var isNumber = H.isNumber,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -110,9 +109,6 @@ seriesType('gauge', 'line', {
          */
         zIndex: 2,
 
-        /*= if (build.classic) { =*/
-        // Presentational
-
         /**
          * The border width in pixels for the gauge data label.
          *
@@ -130,8 +126,6 @@ seriesType('gauge', 'line', {
          * @product highcharts highmaps
          */
         borderColor: '${palette.neutralColor20}'
-
-        /*= } =*/
 
     },
 
@@ -219,8 +213,6 @@ seriesType('gauge', 'line', {
      * @apioption plotOptions.gauge.dial.topWidth
      */
 
-    /*= if (build.classic) { =*/
-
     /**
      * The background or fill color of the gauge's dial.
      *
@@ -261,8 +253,6 @@ seriesType('gauge', 'line', {
      * @product   highcharts
      * @apioption plotOptions.gauge.dial.borderWidth
      */
-
-    /*= } =*/
 
     /**
      * Allow the dial to overshoot the end of the perimeter axis by this
@@ -309,8 +299,6 @@ seriesType('gauge', 'line', {
      * @apioption plotOptions.gauge.pivot.radius
      */
 
-    /*= if (build.classic) { =*/
-
     /**
      * The border or stroke width of the pivot.
      *
@@ -352,8 +340,6 @@ seriesType('gauge', 'line', {
      * @apioption plotOptions.gauge.pivot.backgroundColor
      */
 
-    /*= } =*/
-
     tooltip: {
         headerFormat: ''
     },
@@ -366,8 +352,6 @@ seriesType('gauge', 'line', {
      * @product highcharts
      */
     showInLegend: false
-
-
 
 // Prototype members
 }, {
@@ -391,7 +375,7 @@ seriesType('gauge', 'line', {
 
         series.generatePoints();
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
 
             var dialOptions = merge(options.dial, point.dial),
                 radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) /
@@ -451,13 +435,14 @@ seriesType('gauge', 'line', {
     drawPoints: function () {
 
         var series = this,
+            chart = series.chart,
             center = series.yAxis.center,
             pivot = series.pivot,
             options = series.options,
             pivotOptions = options.pivot,
-            renderer = series.chart.renderer;
+            renderer = chart.renderer;
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
 
             var graphic = point.graphic,
                 shapeArgs = point.shapeArgs,
@@ -477,15 +462,15 @@ seriesType('gauge', 'line', {
                     .addClass('highcharts-dial')
                     .add(series.group);
 
-                /*= if (build.classic) { =*/
                 // Presentational attributes
-                point.graphic.attr({
-                    stroke: dialOptions.borderColor || 'none',
-                    'stroke-width': dialOptions.borderWidth || 0,
-                    fill: dialOptions.backgroundColor ||
-                        '${palette.neutralColor100}'
-                });
-                /*= } =*/
+                if (!chart.styledMode) {
+                    point.graphic.attr({
+                        stroke: dialOptions.borderColor || 'none',
+                        'stroke-width': dialOptions.borderWidth || 0,
+                        fill: dialOptions.backgroundColor ||
+                            '${palette.neutralColor100}'
+                    });
+                }
             }
         });
 
@@ -504,16 +489,16 @@ seriesType('gauge', 'line', {
                 .translate(center[0], center[1])
                 .add(series.group);
 
-            /*= if (build.classic) { =*/
             // Presentational attributes
-            series.pivot.attr({
-                'stroke-width': pivotOptions.borderWidth || 0,
-                stroke: pivotOptions.borderColor ||
-                    '${palette.neutralColor20}',
-                fill: pivotOptions.backgroundColor ||
-                    '${palette.neutralColor100}'
-            });
-            /*= } =*/
+            if (!chart.styledMode) {
+                series.pivot.attr({
+                    'stroke-width': pivotOptions.borderWidth || 0,
+                    stroke: pivotOptions.borderColor ||
+                        '${palette.neutralColor20}',
+                    fill: pivotOptions.backgroundColor ||
+                        '${palette.neutralColor100}'
+                });
+            }
         }
     },
 
@@ -522,7 +507,7 @@ seriesType('gauge', 'line', {
         var series = this;
 
         if (!init) {
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 var graphic = point.graphic;
 
                 if (graphic) {

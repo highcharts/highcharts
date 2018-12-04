@@ -259,10 +259,12 @@ const fnFirstBuild = (options) => {
         output: pathESModules,
         type: types
     });
-    const promises = types.map((type) => {
+    const promises = [];
+    promises.push(require('./error-messages')());
+    types.forEach((type) => {
         const pathSource = mapTypeToSource[type];
         const pathESMasters = join(pathSource, 'masters');
-        return buildDistFromModules({
+        promises.push(buildDistFromModules({
             base: pathESMasters,
             debug: debug,
             fileOptions: fileOptions,
@@ -270,7 +272,7 @@ const fnFirstBuild = (options) => {
             output: './code/',
             type: [type],
             version: version
-        });
+        }));
     });
     return Promise.all(promises);
 };

@@ -9,7 +9,7 @@ var isArray = H.isArray,
 
 // Utils:
 function sumArray(array) {
-    return H.reduce(array, function (prev, cur) {
+    return array.reduce(function (prev, cur) {
         return prev + cur;
     }, 0);
 }

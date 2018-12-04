@@ -19,7 +19,6 @@ var ZAxis,
     Axis = H.Axis,
     Chart = H.Chart,
     deg2rad = H.deg2rad,
-    each = H.each,
     extend = H.extend,
     merge = H.merge,
     perspective = H.perspective,
@@ -479,7 +478,7 @@ addEvent(Axis, 'drawCrosshair', function (e) {
 });
 
 addEvent(Axis, 'destroy', function () {
-    each(['backFrame', 'bottomFrame', 'sideFrame'], function (prop) {
+    ['backFrame', 'bottomFrame', 'sideFrame'].forEach(function (prop) {
         if (this[prop]) {
             this[prop] = this[prop].destroy();
         }
@@ -538,7 +537,7 @@ extend(ZAxis.prototype, {
         }
 
         // loop through this axis' series
-        each(axis.series, function (series) {
+        axis.series.forEach(function (series) {
 
             if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
@@ -580,7 +579,7 @@ addEvent(Chart, 'afterGetAxes', function () {
         return;
     }
     this.zAxis = [];
-    each(zAxisOptions, function (axisOptions, i) {
+    zAxisOptions.forEach(function (axisOptions, i) {
         axisOptions.index = i;
         // Z-Axis is shown horizontally, so it's kind of a X-Axis
         axisOptions.isX = true;

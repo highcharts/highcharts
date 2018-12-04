@@ -20,11 +20,9 @@ var addEvent = H.addEvent,
     createElement = H.createElement,
     css = H.css,
     defined = H.defined,
-    each = H.each,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    inArray = H.inArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
     isArray = H.isArray,
@@ -222,26 +220,26 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Update text
         chart.loadingSpan.innerHTML = str || options.lang.loading;
 
-        /*= if (build.classic) { =*/
-        // Update visuals
-        css(loadingDiv, extend(loadingOptions.style, {
-            zIndex: 10
-        }));
-        css(chart.loadingSpan, loadingOptions.labelStyle);
+        if (!chart.styledMode) {
+            // Update visuals
+            css(loadingDiv, extend(loadingOptions.style, {
+                zIndex: 10
+            }));
+            css(chart.loadingSpan, loadingOptions.labelStyle);
 
-        // Show it
-        if (!chart.loadingShown) {
-            css(loadingDiv, {
-                opacity: 0,
-                display: ''
-            });
-            animate(loadingDiv, {
-                opacity: loadingOptions.style.opacity || 0.5
-            }, {
-                duration: loadingOptions.showDuration || 0
-            });
+            // Show it
+            if (!chart.loadingShown) {
+                css(loadingDiv, {
+                    opacity: 0,
+                    display: ''
+                });
+                animate(loadingDiv, {
+                    opacity: loadingOptions.style.opacity || 0.5
+                }, {
+                    duration: loadingOptions.showDuration || 0
+                });
+            }
         }
-        /*= } =*/
 
         chart.loadingShown = true;
         setLoadingSize();
@@ -267,16 +265,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (loadingDiv) {
             loadingDiv.className =
                 'highcharts-loading highcharts-loading-hidden';
-            /*= if (build.classic) { =*/
-            animate(loadingDiv, {
-                opacity: 0
-            }, {
-                duration: options.loading.hideDuration || 100,
-                complete: function () {
-                    css(loadingDiv, { display: 'none' });
-                }
-            });
-            /*= } =*/
+
+            if (!this.styledMode) {
+                animate(loadingDiv, {
+                    opacity: 0
+                }, {
+                    duration: options.loading.hideDuration || 100,
+                    complete: function () {
+                        css(loadingDiv, { display: 'none' });
+                    }
+                });
+            }
         }
 
         this.loadingShown = false;
@@ -322,6 +321,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         'plotOptions',
         'time',
         'tooltip'
+    ],
+
+    /**
+     * These collections (arrays) implement update() methods with support for
+     * one-to-one option.
+     */
+    collectionsWithUpdate: [
+        'xAxis',
+        'yAxis',
+        'zAxis',
+        'series',
+        'colorAxis',
+        'pane'
     ],
 
     /**
@@ -427,30 +439,26 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             objectEach(optionsChart, function (val, key) {
                 if (
-                    inArray('chart.' + key, chart.propsRequireUpdateSeries) !==
+                    chart.propsRequireUpdateSeries.indexOf('chart.' + key) !==
                     -1
                 ) {
                     updateAllSeries = true;
                 }
                 // Only dirty box
-                if (inArray(key, chart.propsRequireDirtyBox) !== -1) {
+                if (chart.propsRequireDirtyBox.indexOf(key) !== -1) {
                     chart.isDirtyBox = true;
                 }
             });
 
-            /*= if (build.classic) { =*/
-            if ('style' in optionsChart) {
+            if (!chart.styledMode && 'style' in optionsChart) {
                 chart.renderer.setStyle(optionsChart.style);
             }
-            /*= } =*/
         }
 
         // Moved up, because tooltip needs updated plotOptions (#6218)
-        /*= if (build.classic) { =*/
-        if (options.colors) {
+        if (!chart.styledMode && options.colors) {
             this.options.colors = options.colors;
         }
-        /*= } =*/
 
         if (options.plotOptions) {
             merge(true, this.options.plotOptions, options.plotOptions);
@@ -477,7 +485,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             if (
                 key !== 'chart' &&
-                inArray(key, chart.propsRequireUpdateSeries) !== -1
+                chart.propsRequireUpdateSeries.indexOf(key) !== -1
             ) {
                 updateAllSeries = true;
             }
@@ -489,14 +497,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // update the first series in the chart. Setting two series without
         // an id will update the first and the second respectively (#6019)
         // chart.update and responsive.
-        each([
-            'xAxis',
-            'yAxis',
-            'zAxis',
-            'series',
-            'colorAxis',
-            'pane'
-        ], function (coll) {
+        this.collectionsWithUpdate.forEach(function (coll) {
             var indexMap;
 
             if (options[coll]) {
@@ -506,7 +507,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // here (#8196).
                 if (coll === 'series') {
                     indexMap = [];
-                    each(chart[coll], function (s, i) {
+                    chart[coll].forEach(function (s, i) {
                         if (!s.options.isInternal) {
                             indexMap.push(pick(s.options.index, i));
                         }
@@ -514,7 +515,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
 
 
-                each(splat(options[coll]), function (newOptions, i) {
+                splat(options[coll]).forEach(function (newOptions, i) {
                     var item = (
                         defined(newOptions.id) &&
                         chart.get(newOptions.id)
@@ -542,7 +543,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
                 // Add items for removal
                 if (oneToOne) {
-                    each(chart[coll], function (item) {
+                    chart[coll].forEach(function (item) {
                         if (!item.touched && !item.options.isInternal) {
                             itemsForRemoval.push(item);
                         } else {
@@ -555,14 +556,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }
         });
 
-        each(itemsForRemoval, function (item) {
+        itemsForRemoval.forEach(function (item) {
             if (item.remove) {
                 item.remove(false);
             }
         });
 
         if (updateAllAxes) {
-            each(chart.axes, function (axis) {
+            chart.axes.forEach(function (axis) {
                 axis.update({}, false);
             });
         }
@@ -570,7 +571,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Certain options require the whole series structure to be thrown away
         // and rebuilt
         if (updateAllSeries) {
-            each(chart.series, function (series) {
+            chart.series.forEach(function (series) {
                 series.update({}, false);
             });
         }
@@ -743,7 +744,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     remove: function (redraw, animation) {
         this.series.removePoint(
-            inArray(this, this.series.data),
+            this.series.data.indexOf(this),
             redraw,
             animation
         );
@@ -1050,7 +1051,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 'name',
                 'turboThreshold'
             ],
-            keys = H.keys(newOptions),
+            keys = Object.keys(newOptions),
             doSoftUpdate = keys.length > 0;
 
         // Running Series.update to update the data only is an intuitive usage,
@@ -1060,8 +1061,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // adding points to the data set. The `name` should also support soft
         // update because the data module sets name and data when setting new
         // data by `chart.update`.
-        each(keys, function (key) {
-            if (inArray(key, allowSoftUpdate) === -1) {
+        keys.forEach(function (key) {
+            if (allowSoftUpdate.indexOf(key) === -1) {
                 doSoftUpdate = false;
             }
         });
@@ -1076,7 +1077,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
             // Make sure preserved properties are not destroyed (#3094)
             preserve = groups.concat(preserve);
-            each(preserve, function (prop) {
+            preserve.forEach(function (prop) {
                 preserve[prop] = series[prop];
                 delete series[prop];
             });
@@ -1100,11 +1101,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             if (seriesTypes[newType || oldType]) {
                 extend(series, seriesTypes[newType || oldType].prototype);
             } else {
-                H.error(17, true);
+                H.error(17, true, chart);
             }
 
             // Re-register groups (#3094) and other preserved properties
-            each(preserve, function (prop) {
+            preserve.forEach(function (prop) {
                 series[prop] = preserve[prop];
             });
 
@@ -1112,7 +1113,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
             // Update the Z index of groups (#3380, #7397)
             if (newOptions.zIndex !== oldOptions.zIndex) {
-                each(groups, function (groupName) {
+                groups.forEach(function (groupName) {
                     if (series[groupName]) {
                         series[groupName].attr({
                             zIndex: newOptions.zIndex
@@ -1230,7 +1231,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             delete chart.options[key];
         }
 
-        each(chart[key], function (axis, i) { // Re-index, #1706, #8075
+        chart[key].forEach(function (axis, i) { // Re-index, #1706, #8075
             axis.options.index = axis.userOptions.index = i;
         });
         this.destroy();

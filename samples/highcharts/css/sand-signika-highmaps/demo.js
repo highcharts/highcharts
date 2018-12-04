@@ -10,6 +10,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb2
 
         chart: {
             map: 'countries/us/us-all',
+            styledMode: true,
             borderWidth: 1
         },
 

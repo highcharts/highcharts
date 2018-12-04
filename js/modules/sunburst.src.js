@@ -1,11 +1,14 @@
 /* *
- * (c) 2016-2018 Highsoft AS
- * Authors: Jon Arild Nygard
  *
- * License: www.highcharts.com/license
+ *  This module implements sunburst charts in Highcharts.
  *
- * This module implements sunburst charts in Highcharts.
- */
+ *  (c) 2016-2018 Highsoft AS
+ *
+ *  Authors: Jon Arild Nygard
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -18,28 +21,23 @@ import './treemap.src.js';
 
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
     Series = H.Series,
-    each = H.each,
     extend = H.extend,
     getCenter = CenteredSeriesMixin.getCenter,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
-    grep = H.grep,
-    inArray = H.inArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
     },
     isNumber = H.isNumber,
     isObject = H.isObject,
     isString = H.isString,
-    keys = H.keys,
     merge = H.merge,
     noop = H.noop,
     rad2deg = 180 / Math.PI,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     setTreeValues = mixinTreeSeries.setTreeValues,
-    reduce = H.reduce,
     updateRootId = mixinTreeSeries.updateRootId;
 
 // TODO introduce step, which should default to 1.
@@ -80,15 +78,15 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
         from = isNumber(p.from) ? p.from : 0;
         to = isNumber(p.to) ? p.to : 0;
         levels = range(from, to);
-        levelsNotIncluded = grep(keys(result), function (k) {
-            return inArray(+k, levels) === -1;
+        levelsNotIncluded = Object.keys(result).filter(function (k) {
+            return levels.indexOf(+k) === -1;
         });
         diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;
 
-        // Convert percentage to pixels.* Calculate the remaining size to divide
-        // between "weight" levels. Calculate total weight to use in convertion
-        // from weight to pixels.
-        each(levels, function (level) {
+        // Convert percentage to pixels.
+        // Calculate the remaining size to divide between "weight" levels.
+        // Calculate total weight to use in convertion from weight to pixels.
+        levels.forEach(function (level) {
             var options = result[level],
                 unit = options.levelSize.unit,
                 value = options.levelSize.value;
@@ -106,7 +104,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
         });
 
         // Convert weight to pixels.
-        each(levels, function (level) {
+        levels.forEach(function (level) {
             var options = result[level],
                 weight;
             if (options.levelSize.unit === 'weight') {
@@ -119,7 +117,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
         });
 
         // Set all levels not included in interval [from,to] to have 0 pixels.
-        each(levelsNotIncluded, function (level) {
+        levelsNotIncluded.forEach(function (level) {
             result[level].levelSize = {
                 value: 0,
                 unit: 'pixels'
@@ -179,7 +177,7 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
             options.slicedOffset :
             0;
 
-    return reduce(children || [], function (arr, child) {
+    return (children || []).reduce(function (arr, child) {
         var percentage = (1 / total) * child.val,
             radians = percentage * range,
             radiansCenter = startAngle + (radians / 2),
@@ -669,7 +667,7 @@ var sunburstSeries = {
                 }
             };
         }
-        each(points, function (point) {
+        points.forEach(function (point) {
             var node = point.node,
                 level = mapOptionsToLevel[node.level],
                 shapeExisting = point.shapeExisting || {},
@@ -718,10 +716,10 @@ var sunburstSeries = {
                 onComplete = animateLabels;
             }
             point.draw({
-                animate: animationInfo.to,
-                attr: extend(
+                animatableAttribs: animationInfo.to,
+                attribs: extend(
                     animationInfo.from,
-                    series.pointAttribs && series.pointAttribs(
+                    !chart.styledMode && series.pointAttribs(
                         point,
                         point.selected && 'select'
                     )
@@ -749,9 +747,8 @@ var sunburstSeries = {
             Series.prototype.drawDataLabels.call(series);
         }
     },
-    /*= if (build.classic) { =*/
+
     pointAttribs: seriesTypes.column.prototype.pointAttribs,
-    /*= } =*/
 
     // The layout algorithm for the levels
     layoutAlgorithm: layoutAlgorithm,
@@ -762,12 +759,12 @@ var sunburstSeries = {
             level = parent.level + 1,
             options = mapOptionsToLevel[level],
             // Collect all children which should be included
-            children = grep(parent.children, function (n) {
+            children = parent.children.filter(function (n) {
                 return n.visible;
             }),
             twoPi = 6.28; // Two times Pi.
         childrenValues = this.layoutAlgorithm(parentValues, children, options);
-        each(children, function (child, index) {
+        children.forEach(function (child, index) {
             var values = childrenValues[index],
                 angle = values.start + ((values.end - values.start) / 2),
                 radius = values.innerR + ((values.r - values.innerR) / 2),

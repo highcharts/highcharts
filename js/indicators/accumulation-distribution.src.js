@@ -78,7 +78,8 @@ seriesType('ad', 'sma',
                     'Series ' +
                     volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
-                    true
+                    true,
+                    series.chart
                 );
             }
 

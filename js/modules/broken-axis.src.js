@@ -14,7 +14,6 @@ import '../parts/Series.js';
 var addEvent = H.addEvent,
     pick = H.pick,
     wrap = H.wrap,
-    each = H.each,
     extend = H.extend,
     isArray = H.isArray,
     fireEvent = H.fireEvent,
@@ -227,7 +226,7 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
                     i;
 
                 // Min & max check (#4247)
-                each(breaks, function (brk) {
+                breaks.forEach(function (brk) {
                     repeat = brk.repeat || Infinity;
                     if (axis.isInBreak(brk, min)) {
                         min += (brk.to % repeat) - (min % repeat);
@@ -238,7 +237,7 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
                 });
 
                 // Construct an array holding all breaks in the axis
-                each(breaks, function (brk) {
+                breaks.forEach(function (brk) {
                     start = brk.from;
                     repeat = brk.repeat || Infinity;
 
@@ -274,7 +273,7 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
                 inBrk = 0;
                 start = min;
 
-                each(breakArrayT, function (brk) {
+                breakArrayT.forEach(function (brk) {
                     inBrk += (brk.move === 'in' ? 1 : -1);
 
                     if (inBrk === 1 && brk.move === 'in') {
@@ -376,14 +375,14 @@ H.Series.prototype.drawBreaks = function (axis, keys) {
         return; // #5950
     }
 
-    each(keys, function (key) {
+    keys.forEach(function (key) {
         breaks = axis.breakArray || [];
         threshold = axis.isXAxis ?
             axis.min :
             pick(series.options.threshold, axis.min);
-        each(points, function (point) {
+        points.forEach(function (point) {
             y = pick(point['stack' + key.toUpperCase()], point[key]);
-            each(breaks, function (brk) {
+            breaks.forEach(function (brk) {
                 eventName = false;
 
                 if (

@@ -65,7 +65,6 @@ import './Utilities.js';
 
 var Point,
     H = Highcharts,
-    each = H.each,
     extend = H.extend,
     erase = H.erase,
     fireEvent = H.fireEvent,
@@ -113,7 +112,9 @@ Highcharts.Point.prototype = {
 
         var point = this,
             colors,
-            colorCount = series.chart.options.chart.colorCount,
+            optionsChart = series.chart.options.chart,
+            colorCount = optionsChart.colorCount,
+            styledMode = series.chart.styledMode,
             colorIndex;
 
         /**
@@ -124,33 +125,26 @@ Highcharts.Point.prototype = {
          */
         point.series = series;
 
-        /*= if (build.classic) { =*/
-
         /**
          * The point's current color.
          *
          * @name Highcharts.Point#color
          * @type {Highcharts.ColorString}
          */
-        point.color = series.color; // #3445
-
-        /*= } =*/
-
+        if (!styledMode) {
+            point.color = series.color; // #3445
+        }
         point.applyOptions(options, x);
 
         // Add a unique ID to the point if none is assigned
         point.id = defined(point.id) ? point.id : uniqueKey();
 
         if (series.options.colorByPoint) {
-
-            /*= if (build.classic) { =*/
-
-            colors = series.options.colors || series.chart.options.colors;
-            point.color = point.color || colors[series.colorCounter];
-            colorCount = colors.length;
-
-            /*= } =*/
-
+            if (!styledMode) {
+                colors = series.options.colors || series.chart.options.colors;
+                point.color = point.color || colors[series.colorCounter];
+                colorCount = colors.length;
+            }
             colorIndex = series.colorCounter;
             series.colorCounter++;
             // loop back to zero
@@ -292,7 +286,7 @@ Highcharts.Point.prototype = {
      */
     setNestedProperty: function (object, value, key) {
         var nestedKeys = key.split('.');
-        H.reduce(nestedKeys, function (result, key, i, arr) {
+        nestedKeys.reduce(function (result, key, i, arr) {
             var isLastKey = arr.length - 1 === i;
             result[key] = (
                 isLastKey ?
@@ -500,7 +494,7 @@ Highcharts.Point.prototype = {
         }
         // Handle point.dataLabels and point.connectors
         if (point.dataLabels) {
-            each(point.dataLabels, function (label) {
+            point.dataLabels.forEach(function (label) {
                 if (label.element) {
                     label.destroy();
                 }
@@ -508,7 +502,7 @@ Highcharts.Point.prototype = {
             delete point.dataLabels;
         }
         if (point.connectors) {
-            each(point.connectors, function (connector) {
+            point.connectors.forEach(function (connector) {
                 if (connector.element) {
                     connector.destroy();
                 }
@@ -560,9 +554,14 @@ Highcharts.Point.prototype = {
             valuePrefix = seriesTooltipOptions.valuePrefix || '',
             valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
+        // Replace default point style with class name
+        if (series.chart.styledMode) {
+            pointFormat = series.chart.tooltip.styledModeFormat(pointFormat);
+        }
+
         // Loop over the point array map and replace unformatted values with
         // sprintf formatting markup
-        each(series.pointArrayMap || ['y'], function (key) {
+        (series.pointArrayMap || ['y']).forEach(function (key) {
             key = '{point.' + key; // without the closing bracket
             if (valuePrefix || valueSuffix) {
                 pointFormat = pointFormat.replace(

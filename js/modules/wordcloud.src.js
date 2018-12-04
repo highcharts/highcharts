@@ -1,12 +1,15 @@
 /* *
- * (c) 2016 Highsoft AS
- * Authors: Jon Arild Nygard
  *
- * License: www.highcharts.com/license
+ *  This is an experimental Highcharts module which enables visualization of a
+ *  word cloud.
  *
- * This is an experimental Highcharts module which enables visualization
- * of a word cloud.
- */
+ *  (c) 2016 Highsoft AS
+ *
+ *  Authors: Jon Arild Nygard
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -15,16 +18,13 @@ import drawPoint from '../mixins/draw-point.js';
 import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
 
-var each = H.each,
-    extend = H.extend,
+var extend = H.extend,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
-    map = H.map,
     merge = H.merge,
     noop = H.noop,
     find = H.find,
-    reduce = H.reduce,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
     getPolygon = polygon.getPolygon,
     isPolygonsColliding = polygon.isPolygonsColliding,
@@ -304,7 +304,7 @@ function getPlayingField(
     targetHeight,
     data
 ) {
-    var info = reduce(data, function (obj, point) {
+    var info = data.reduce(function (obj, point) {
             var dimensions = point.dimensions,
                 x = Math.max(dimensions.width, dimensions.height);
             // Find largest height.
@@ -404,9 +404,13 @@ function getRotation(orientations, index, from, to) {
  */
 function getSpiral(fn, params) {
     var length = 10000,
-        arr = map(new Array(length), function (_, i) {
-            return fn(i + 1, params);
-        });
+        i,
+        arr = [];
+
+    for (i = 1; i < length; i++) {
+        arr.push(fn(i, params));
+    }
+
     return function (attempt) {
         return attempt <= length ? arr[attempt - 1] : false;
     };
@@ -773,7 +777,7 @@ var wordCloudSeries = {
 
         // Get the dimensions for each word.
         // Used in calculating the playing field.
-        each(data, function (point) {
+        data.forEach(function (point) {
             var relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -803,7 +807,7 @@ var wordCloudSeries = {
             field: field
         });
         // Draw all the points.
-        each(data, function (point) {
+        data.forEach(function (point) {
             var relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -895,8 +899,8 @@ var wordCloudSeries = {
             }
 
             point.draw({
-                animate: animate,
-                attr: attr,
+                animatableAttribs: animate,
+                attribs: attr,
                 css: css,
                 group: group,
                 renderer: renderer,

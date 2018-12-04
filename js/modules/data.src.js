@@ -91,15 +91,12 @@ var addEvent = Highcharts.addEvent,
     Chart = Highcharts.Chart,
     win = Highcharts.win,
     doc = win.document,
-    each = Highcharts.each,
     objectEach = Highcharts.objectEach,
     pick = Highcharts.pick,
-    inArray = Highcharts.inArray,
     isNumber = Highcharts.isNumber,
     merge = Highcharts.merge,
     splat = Highcharts.splat,
     fireEvent = Highcharts.fireEvent,
-    some = Highcharts.some,
     SeriesBuilder;
 
 /**
@@ -635,7 +632,7 @@ Highcharts.extend(Data.prototype, {
                 (
                     chartOptions &&
                     chartOptions.series &&
-                    Highcharts.map(chartOptions.series, function () {
+                    chartOptions.series.map(function () {
                         return { x: 0 };
                     })
                 ) ||
@@ -643,12 +640,14 @@ Highcharts.extend(Data.prototype, {
             ),
             i;
 
-        each((chartOptions && chartOptions.series) || [], function (series) {
-            individualCounts.push(getValueCount(series.type || globalType));
-        });
+        ((chartOptions && chartOptions.series) || []).forEach(
+            function (series) {
+                individualCounts.push(getValueCount(series.type || globalType));
+            }
+        );
 
         // Collect the x-column indexes from seriesMapping
-        each(seriesMapping, function (mapping) {
+        seriesMapping.forEach(function (mapping) {
             xColumns.push(mapping.x || 0);
         });
 
@@ -660,7 +659,7 @@ Highcharts.extend(Data.prototype, {
 
         // Loop all seriesMappings and constructs SeriesBuilders from
         // the mapping options.
-        each(seriesMapping, function (mapping) {
+        seriesMapping.forEach(function (mapping) {
             var builder = new SeriesBuilder(),
                 numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
                     getValueCount(globalType),
@@ -930,7 +929,7 @@ Highcharts.extend(Data.prototype, {
                 commas = 0,
                 guessed = false;
 
-            some(lines, function (columnStr, i) {
+            lines.some(function (columnStr, i) {
                 var inStr = false,
                     c,
                     cn,
@@ -1199,7 +1198,7 @@ Highcharts.extend(Data.prototype, {
             }
 
             // //Make sure that there's header columns for everything
-            // each(columns, function (col) {
+            // columns.forEach(function (col) {
 
             // });
 
@@ -1214,7 +1213,7 @@ Highcharts.extend(Data.prototype, {
             }
 
 
-            // each(lines, function (line, rowNo) {
+            // lines.forEach(function (line, rowNo) {
             //    var trimmed = self.trim(line),
             //        isComment = trimmed.indexOf('#') === 0,
             //        isBlank = trimmed === '',
@@ -1226,7 +1225,7 @@ Highcharts.extend(Data.prototype, {
             //        !isComment && !isBlank
             //    ) {
             //        items = line.split(itemDelimiter);
-            //        each(items, function (item, colNo) {
+            //        items.forEach(function (item, colNo) {
             //            if (colNo >= startColumn && colNo <= endColumn) {
             //                if (!columns[colNo - startColumn]) {
             //                    columns[colNo - startColumn] = [];
@@ -1268,24 +1267,30 @@ Highcharts.extend(Data.prototype, {
                 table = doc.getElementById(table);
             }
 
-            each(table.getElementsByTagName('tr'), function (tr, rowNo) {
-                if (rowNo >= startRow && rowNo <= endRow) {
-                    each(tr.children, function (item, colNo) {
-                        if (
-                            (item.tagName === 'TD' || item.tagName === 'TH') &&
-                            colNo >= startColumn &&
-                            colNo <= endColumn
-                        ) {
-                            if (!columns[colNo - startColumn]) {
-                                columns[colNo - startColumn] = [];
-                            }
+            [].forEach.call(
+                table.getElementsByTagName('tr'),
+                function (tr, rowNo) {
+                    if (rowNo >= startRow && rowNo <= endRow) {
+                        [].forEach.call(tr.children, function (item, colNo) {
+                            if (
+                                (
+                                    item.tagName === 'TD' ||
+                                    item.tagName === 'TH'
+                                ) &&
+                                colNo >= startColumn &&
+                                colNo <= endColumn
+                            ) {
+                                if (!columns[colNo - startColumn]) {
+                                    columns[colNo - startColumn] = [];
+                                }
 
-                            columns[colNo - startColumn][rowNo - startRow] =
-                                item.innerHTML;
-                        }
-                    });
+                                columns[colNo - startColumn][rowNo - startRow] =
+                                    item.innerHTML;
+                            }
+                        });
+                    }
                 }
-            });
+            );
 
             this.dataFound(); // continue
         }
@@ -1537,7 +1542,7 @@ Highcharts.extend(Data.prototype, {
                 }
 
                 // Insert null for empty spreadsheet cells (#5298)
-                each(columns, function (column) {
+                columns.forEach(function (column) {
                     for (i = 0; i < column.length; i++) {
                         if (column[i] === undefined) {
                             column[i] = null;
@@ -1627,7 +1632,7 @@ Highcharts.extend(Data.prototype, {
             trimVal,
             trimInsideVal,
             firstRowAsNames = this.firstRowAsNames,
-            isXColumn = inArray(col, this.valueCount.xColumns) !== -1,
+            isXColumn = this.valueCount.xColumns.indexOf(col) !== -1,
             dateVal,
             backup = [],
             diff,
@@ -2008,7 +2013,7 @@ Highcharts.extend(Data.prototype, {
                 builder.addColumnReader(0, 'x');
 
                 // Mark index as used (not free)
-                index = inArray(0, freeIndexes);
+                index = freeIndexes.indexOf(0);
                 if (index !== -1) {
                     freeIndexes.splice(index, 1);
                 }
@@ -2265,7 +2270,7 @@ SeriesBuilder.prototype.populateColumns = function (freeIndexes) {
     // Loop each reader and give it an index if its missing.
     // The freeIndexes.shift() will return undefined if there
     // are no more columns.
-    each(builder.readers, function (reader) {
+    builder.readers.forEach(function (reader) {
         if (reader.columnIndex === undefined) {
             reader.columnIndex = freeIndexes.shift();
         }
@@ -2274,7 +2279,7 @@ SeriesBuilder.prototype.populateColumns = function (freeIndexes) {
     // Now, all readers should have columns mapped. If not
     // then return false to signal that this series should
     // not be added.
-    each(builder.readers, function (reader) {
+    builder.readers.forEach(function (reader) {
         if (reader.columnIndex === undefined) {
             enoughColumns = false;
         }
@@ -2303,7 +2308,7 @@ SeriesBuilder.prototype.read = function (columns, rowIndex) {
 
     // Loop each reader and ask it to read its value.
     // Then, build an array or point based on the readers names.
-    each(builder.readers, function (reader) {
+    builder.readers.forEach(function (reader) {
         var value = columns[reader.columnIndex][rowIndex];
         if (pointIsArray) {
             point.push(value);

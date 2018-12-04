@@ -3,25 +3,13 @@
 
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+import reduceArrayMixin from '../mixins/reduce-array.js';
+import multipleLinesMixin from '../mixins/multipe-lines.js';
 
-var each = H.each,
-    merge = H.merge,
+var merge = H.merge,
     isArray = H.isArray,
-    defined = H.defined,
-    SMA = H.seriesTypes.sma;
-
-// Utils:
-function minInArray(arr, index) {
-    return H.reduce(arr, function (min, target) {
-        return Math.min(min, target[index]);
-    }, Infinity);
-}
-
-function maxInArray(arr, index) {
-    return H.reduce(arr, function (min, target) {
-        return Math.max(min, target[index]);
-    }, 0);
-}
+    SMA = H.seriesTypes.sma,
+    getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 
 /**
  * @private
@@ -39,6 +27,9 @@ H.seriesType('stochastic', 'sma',
      *         Stochastic oscillator
      *
      * @extends      plotOptions.sma
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
      * @since        6.0.0
      * @product      highstock
      * @optionparent plotOptions.stochastic
@@ -95,12 +86,13 @@ H.seriesType('stochastic', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    }, /** @lends Highcharts.Series.prototype */ H.merge(multipleLinesMixin, {
         nameComponents: ['periods'],
         nameBase: 'Stochastic',
         pointArrayMap: ['y', 'smoothed'],
         parallelArrays: ['x', 'y', 'smoothed'],
         pointValKey: 'y',
+        linesApiNames: ['smoothedLine'],
         init: function () {
             SMA.prototype.init.apply(this, arguments);
 
@@ -112,63 +104,6 @@ H.seriesType('stochastic', 'sma',
                     }
                 }
             }, this.options);
-        },
-        toYData: function (point) {
-            return [point.y, point.smoothed];
-        },
-        translate: function () {
-            var indicator = this;
-
-            SMA.prototype.translate.apply(indicator);
-
-            each(indicator.points, function (point) {
-                if (point.smoothed !== null) {
-                    point.plotSmoothed = indicator.yAxis.toPixels(
-                        point.smoothed,
-                        true
-                    );
-                }
-            });
-        },
-        drawGraph: function () {
-            var indicator = this,
-                mainLinePoints = indicator.points,
-                pointsLength = mainLinePoints.length,
-                mainLineOptions = indicator.options,
-                mainLinePath = indicator.graph,
-                gappedExtend = {
-                    options: {
-                        gapSize: mainLineOptions.gapSize
-                    }
-                },
-                smoothing = [],
-                point;
-
-            // Generate points for %K and %D lines:
-            while (pointsLength--) {
-                point = mainLinePoints[pointsLength];
-                smoothing.push({
-                    plotX: point.plotX,
-                    plotY: point.plotSmoothed,
-                    isNull: !defined(point.plotSmoothed)
-                });
-            }
-
-            // Modify options and generate smoothing line:
-            indicator.points = smoothing;
-            indicator.options = merge(
-                mainLineOptions.smoothedLine.styles,
-                gappedExtend
-            );
-            indicator.graph = indicator.graphSmoothed;
-            SMA.prototype.drawGraph.call(indicator);
-            indicator.graphSmoothed = indicator.graph;
-
-            // Restore options and draw a main line:
-            indicator.points = mainLinePoints;
-            indicator.options = mainLineOptions;
-            indicator.graph = mainLinePath;
-            SMA.prototype.drawGraph.call(indicator);
         },
         getValues: function (series, params) {
             var periodK = params.periods[0],
@@ -186,6 +121,7 @@ H.seriesType('stochastic', 'sma',
                 CL, HL, LL, K,
                 D = null,
                 points,
+                extremes,
                 i;
 
 
@@ -205,9 +141,10 @@ H.seriesType('stochastic', 'sma',
                 slicedY = yVal.slice(i - periodK + 1, i + 1);
 
                 // Calculate %K
-                LL = minInArray(slicedY, low); // Lowest low in %K periods
+                extremes = getArrayExtremes(slicedY, low, high);
+                LL = extremes[0]; // Lowest low in %K periods
                 CL = yVal[i][close] - LL;
-                HL = maxInArray(slicedY, high) - LL;
+                HL = extremes[1] - LL;
                 K = CL / HL * 100;
 
                 xData.push(xVal[i]);
@@ -234,7 +171,7 @@ H.seriesType('stochastic', 'sma',
                 yData: yData
             };
         }
-    }
+    })
 );
 
 /**
@@ -243,7 +180,9 @@ H.seriesType('stochastic', 'sma',
  *
  * @extends   series,plotOptions.stochastic
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
+ * @excluding allAreas, colorAxis, data, dataParser, dataURL, joinBy, keys,
+ * ,          navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @product   highstock
  * @apioption series.stochastic
  */

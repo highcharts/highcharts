@@ -57,8 +57,6 @@ seriesType('waterfall', 'column', {
         inside: true
     },
 
-    /*= if (build.classic) { =*/
-
     /**
      * The width of the line connecting waterfall columns.
      *
@@ -112,8 +110,6 @@ seriesType('waterfall', 'column', {
             lineWidthPlus: 0 // #3126
         }
     }
-
-    /*= } =*/
 
 // Prototype members
 }, {
@@ -329,8 +325,6 @@ seriesType('waterfall', 'column', {
         return pt.y;
     },
 
-    /*= if (build.classic) { =*/
-
     // Postprocess mapping between options and SVG attributes
     pointAttribs: function (point, state) {
 
@@ -354,8 +348,6 @@ seriesType('waterfall', 'column', {
 
         return attr;
     },
-
-    /*= } =*/
 
     // Return an empty path initially, because we need to know the stroke-width
     // in order to set the final path.

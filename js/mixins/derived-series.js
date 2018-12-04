@@ -3,8 +3,7 @@
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
 
-var each = H.each,
-    Series = H.Series,
+var Series = H.Series,
     addEvent = H.addEvent,
     noop = H.noop;
 
@@ -140,7 +139,7 @@ var derivedSeriesMixin = {
      * @function derivedSeriesMixin.destroy
      */
     destroy: function () {
-        each(this.eventRemovers, function (remover) {
+        this.eventRemovers.forEach(function (remover) {
             remover();
         });
 

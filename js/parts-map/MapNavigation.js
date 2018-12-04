@@ -13,7 +13,6 @@ import '../parts/Chart.js';
 var addEvent = H.addEvent,
     Chart = H.Chart,
     doc = H.doc,
-    each = H.each,
     extend = H.extend,
     merge = H.merge,
     pick = H.pick;
@@ -98,17 +97,17 @@ MapNavigation.prototype.update = function (options) {
         H.objectEach(o.buttons, function (button, n) {
             buttonOptions = merge(o.buttonOptions, button);
 
-            /*= if (build.classic) { =*/
             // Presentational
-            attr = buttonOptions.theme;
-            attr.style = merge(
-                buttonOptions.theme.style,
-                buttonOptions.style // #3203
-            );
-            states = attr.states;
-            hoverStates = states && states.hover;
-            selectStates = states && states.select;
-            /*= } =*/
+            if (!chart.styledMode) {
+                attr = buttonOptions.theme;
+                attr.style = merge(
+                    buttonOptions.theme.style,
+                    buttonOptions.style // #3203
+                );
+                states = attr.states;
+                hoverStates = states && states.hover;
+                selectStates = states && states.select;
+            }
 
             button = chart.renderer.button(
                 buttonOptions.text,
@@ -222,7 +221,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      *         The inner box
      */
     fitToBox: function (inner, outer) {
-        each([['x', 'width'], ['y', 'height']], function (dim) {
+        [['x', 'width'], ['y', 'height']].forEach(function (dim) {
             var pos = dim[0],
                 size = dim[1];
 

@@ -7,7 +7,8 @@ $.getJSON(
         Highcharts.stockChart('container', {
 
             chart: {
-                marginRight: 50
+                marginRight: 50,
+                styledMode: true
             },
 
             rangeSelector: {

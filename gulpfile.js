@@ -71,8 +71,32 @@ const styles = () => {
         'highcharts',
         'themes/dark-unica',
         'themes/sand-signika',
-        'themes/grid-light'
+        'themes/grid-light',
+        'stocktools/gui',
+        'stocktools/popup'
     ];
+
+    const copyFiles = (folder) => {
+        fs.readdirSync(folder).forEach(file => {
+            let src = folder + '/' + file;
+            let dest = folder.replace(/^\.\//, './code/') + '/' + file;
+            if (fs.statSync(folder + '/' + file).isDirectory()) {
+                if (!fs.existsSync(dest)) {
+                    fs.mkdirSync(dest);
+                }
+                copyFiles(src);
+            } else {
+                fs.copyFileSync(src, dest);
+            }
+        });
+    };
+
+    if (!fs.existsSync('./code/gfx')) {
+        fs.mkdirSync('./code/gfx');
+    }
+
+    copyFiles('./gfx');
+
     const promises = files.map(file => compileSingleStyle(file));
     return Promise.all(promises).then(() => {
         console.log('Built CSS files from SASS.'.cyan);
@@ -341,13 +365,30 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/parts-map/Map.js',
         './js/parts-map/MapNavigation.js',
         './js/parts-map/MapSeries.js',
-        './js/modules/annotations.src.js',
         './js/modules/drilldown.src.js',
         './js/modules/exporting.src.js',
         './js/modules/export-data.src.js',
         './js/modules/data.src.js',
         './js/modules/offline-exporting.src.js',
-        './js/modules/pattern-fill.src.js'
+        './js/modules/pattern-fill.src.js',
+        './js/annotations/eventEmitterMixin.js',
+        './js/annotations/MockPoint.js',
+        './js/annotations/ControlPoint.js',
+        './js/annotations/controllable/controllableMixin.js',
+        './js/annotations/controllable/ControllableCircle.js',
+        './js/annotations/controllable/ControllableImage.js',
+        './js/annotations/controllable/ControllableLabel.js',
+        './js/annotations/controllable/ControllablePath.js',
+        './js/annotations/controllable/ControllableRect.js',
+        './js/annotations/annotations.src.js',
+        './js/annotations/types/CrookedLine.js',
+        './js/annotations/types/ElliottWave.js',
+        './js/annotations/types/Tunnel.js',
+        './js/annotations/types/Fibonacci.js',
+        './js/annotations/types/InfinityLine.js',
+        './js/annotations/types/Measure.js',
+        './js/annotations/types/Pitchfork.js',
+        './js/annotations/types/VerticalLine.js'
     ];
     const optionsJSDoc = {
         navOptions: {
@@ -701,14 +742,14 @@ const commandLine = (command) => {
     return new Promise((resolve, reject) => {
         const cli = exec(command, (error, stdout) => {
             if (error) {
-                console.error(error);
+                console.log(error);
                 reject(error);
             } else {
-                console.info('Command finished: ' + command);
+                console.log('Command finished: ' + command);
                 resolve(stdout);
             }
         });
-        cli.stdout.on('data', (data) => console.info(data.toString()));
+        cli.stdout.on('data', (data) => console.log(data.toString()));
     });
 };
 
@@ -893,14 +934,6 @@ const createAllExamples = () => new Promise((resolve) => {
     resolve();
 });
 
-
-
-/* *
- *
- *  API Documentation
- *
- * */
-
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
     const generate = require('highcharts-api-docs');
     const message = {
@@ -960,8 +993,11 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         'successJSDoc': colors.green('Created tree.json')
     };
     const sourceFiles = [
+        './js/annotations',
+        './js/annotations/types',
         './js/indicators',
         './js/modules',
+        './js/modules/networkgraph',
         './js/parts',
         './js/parts-3d',
         './js/parts-more',
@@ -1190,18 +1226,9 @@ const jsdoc = () => {
         .then(() => generateAPIDocs(optionsAPI));
 };
 
-const jsdocOptions = () => {
-
-    return generateAPIDocs({
-        version: getBuildProperties().version,
-        treeFile: './tree.json',
-        output: './build/api',
-        onlyBuildCurrent: true
-    });
-};
-
 /**
- * Create additional JSON-based class references from JSDOC
+ * Creates additional JSON-based class references with JSDoc using
+ * tsconfig.json.
  */
 const jsdocNamespace = () => {
 
@@ -1252,7 +1279,21 @@ const jsdocNamespace = () => {
     return new Promise(aGulp);
 };
 
+/**
+ * Creates JSON-based option references from JSDoc.
+ */
+const jsdocOptions = () => {
+
+    return generateAPIDocs({
+        version: getBuildProperties().version,
+        treeFile: './tree.json',
+        output: './build/api',
+        onlyBuildCurrent: true
+    });
+};
+
 gulp.task('start-api-server', startServer);
+gulp.task('upload-api', uploadAPIDocs);
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-api', cleanApi);
 gulp.task('clean-dist', cleanDist);
@@ -1263,9 +1304,6 @@ gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
-gulp.task('upload-api', uploadAPIDocs);
-
-
 
 /* *
  *
@@ -1274,26 +1312,22 @@ gulp.task('upload-api', uploadAPIDocs);
  * */
 
 /**
- * Add TypeScript declarations to the code folder.
+ * Add TypeScript declarations to the code folder using tree.json and
+ * tree-namespace.json.
  */
-gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], () => {
-    return require('../highcharts-typescript-generator').task();
-});
+function dts() {
+    return require('highcharts-declarations-generator').task();
+}
 
 /**
  * Test TypeScript declarations in the code folder using tsconfig.json.
  */
-gulp.task('dtslint', ['dts'], () => {
+function dtsLint() {
     return commandLine('npx dtslint --onlyTestTsNext');
-});
+}
 
-
-
-/* *
- *
- *  Building Scripts
- *
- * */
+gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], dts);
+gulp.task('dtslint', ['dts'], dtsLint);
 
 /**
  * Gulp task to run the building process of distribution files. By default it
@@ -1423,6 +1457,10 @@ gulp.task('dist', () => {
         .then(gulpify('createProductJS', createProductJS))
         .then(gulpify('createExamples', createAllExamples))
         .then(gulpify('copyGraphicsToDist', copyGraphicsToDist))
+        .then(gulpify('jsdoc-namespace', jsdocNamespace))
+        .then(gulpify('jsdoc-options', jsdocOptions))
+        .then(gulpify('dts', dts))
+        .then(gulpify('dtsLint', dtsLint))
         .then(gulpify('ant-dist', antDist));
 });
 
