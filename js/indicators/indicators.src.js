@@ -19,9 +19,11 @@ var pick = H.pick,
  * The parameter allows setting line series type and use OHLC indicators.
  * Data in OHLC format is required.
  *
- * @type {Boolean}
- * @product highstock
- * @sample {highstock} stock/indicators/useOhlcData Plot line on Y axis
+ * @sample {highstock} stock/indicators/useOhlcData
+ *         Plot line on Y axis
+ *
+ * @type      {boolean}
+ * @product   highstock
  * @apioption plotOptions.line.useOhlcData
  */
 
@@ -103,9 +105,7 @@ seriesType('sma', 'line',
         /**
          * Paramters used in calculation of regression series' points.
          *
-         * @type {Object}
          * @since 6.0.0
-         * @product highstock
          */
         params: {
             /**
