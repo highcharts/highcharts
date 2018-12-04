@@ -1,46 +1,32 @@
-// Description of euler and venn diagram. Source: Wikipedia.
-var description = {
-    euler: [
-        'An Euler diagram is a diagrammatic means of representing sets and their',
-        'relationships. Unlike Venn diagrams, which show all possible relations',
-        'between different sets, the Euler diagram shows only relevant',
-        'relationships.'
-    ].join(' '),
-    venn: [
-        'In Venn diagrams the curves are overlapped in every possible way,',
-        'showing all possible relations between the sets. They are thus a',
-        'special case of Euler diagrams, which do not necessarily show all',
-        'relations'
-    ].join(' ')
-};
-
 Highcharts.chart('container', {
     series: [{
         type: 'venn',
         data: [{
             sets: ['A'],
             value: 4,
-            name: 'Euler diagrams'
+            name: 'Euler diagrams',
+            description: 'An Euler diagram is a diagrammatic means of representing sets and their' +
+                'relationships. Unlike Venn diagrams, which show all possible relations' +
+                'between different sets, the Euler diagram shows only relevant' +
+                'relationships.'
         }, {
             sets: ['B'],
             value: 1,
-            name: 'Venn diagrams'
+            name: 'Venn diagrams',
+            description: 'In Venn diagrams the curves are overlapped in every possible way,' +
+                'showing all possible relations between the sets. They are thus a' +
+                'special case of Euler diagrams, which do not necessarily show all' +
+                'relations'
         }, {
             sets: ['A', 'B'],
             value: 1
         }]
     }],
     tooltip: {
-        formatter: function () {
-            var point = this.point,
-                name = point.name;
-            return (
-                (name === 'Euler diagrams') ?
-                description.euler :
-                description.venn
-            ) + '</br>Source: Wikipedia';
-        },
-        useHTML: true
+        headerFormat:
+            '<span style="color:{point.color}">\u2022</span> ' +
+            '<span style="font-size: 14px"> {point.point.name}</span><br/>',
+        pointFormat: '{point.description}<br><span style="font-size: 10px">Source: Wikipedia</span>'
     },
     title: {
         text: 'Relationship between Euler and Venn diagrams'
