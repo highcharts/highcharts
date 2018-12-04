@@ -83,7 +83,7 @@ function anMITLicensedFunction () {
 Commits should use the following format:
 * past tense, e.g. `Fixed..` rather than `Fixes..`: this is because we use the commit messages to generate changelogs
 * try to limit the name to <=100 characters
-* fixes should refer to issues where applicable, i.e. `Fixes #1235, <description>`
+* fixes should refer to issues where applicable, i.e. `Fixed #1235, <description>`
 
 **JavaScript**
 
