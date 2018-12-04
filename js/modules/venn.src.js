@@ -173,7 +173,6 @@ function getDistanceBetweenCirclesByOverlap(r1, r2, overlap) {
         index = binarySearch(list, 0, function (x) {
             var actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x),
                 diff = overlap - actualOverlap;
-
             // If the difference is below accepted error then return overlap to
             // confirm we have found the right value.
             return (Math.abs(diff) < error) ? 0 : diff;
@@ -983,7 +982,6 @@ var vennSeries = {
         points.forEach(function (point) {
             var attribs,
                 shapeArgs = point.shapeArgs;
-
             // Add point attribs
             if (!chart.styledMode) {
                 attribs = series.pointAttribs(point, point.state);
