@@ -43,7 +43,7 @@ var addEvent = H.addEvent,
  *
  * If data grouping is applied, the grouping information of grouped
  * points can be read from the [Point.dataGroup](
- * /class-reference/Highcharts.Point#.dataGroup). If point options other than
+ * /class-reference/Highcharts.Point#dataGroup). If point options other than
  * the data itself are set, for example `name` or `color` or custom properties,
  * the grouping logic doesn't know how to group it. In this case the options of
  * the first point instance are copied over to the group point. This can be
@@ -489,7 +489,7 @@ var seriesProto = Series.prototype,
  *
  * @param {string|Function} approximation
  *
- * @return {Array<Array<number>,Array<number>,Array<*>>}
+ * @return {Array<Array<number>,Array<number>,Array<object>>}
  */
 seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
     var series = this,
@@ -638,13 +638,8 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
     return [groupedXData, groupedYData, groupMap];
 };
 
-/**
- * Extend the basic processData method, that crops the data to the current zoom
- * range, with data grouping logic.
- *
- * @ignore
- * @function Highcharts.Series#processData
- */
+// Extend the basic processData method, that crops the data to the current zoom
+// range, with data grouping logic.
 seriesProto.processData = function () {
     var series = this,
         chart = series.chart,
@@ -789,12 +784,7 @@ seriesProto.processData = function () {
     }
 };
 
-/**
- * Destroy the grouped data points. #622, #740
- *
- * @private
- * @function Highcharts.Series#destroyGroupedData
- */
+// Destroy the grouped data points. #622, #740
 seriesProto.destroyGroupedData = function () {
 
     var groupedData = this.groupedData;
@@ -808,12 +798,7 @@ seriesProto.destroyGroupedData = function () {
     this.groupedData = null;
 };
 
-/**
- * Override the generatePoints method by adding a reference to grouped data
- *
- * @ignore
- * @function Highcharts.Series#generatePoints
- */
+// Override the generatePoints method by adding a reference to grouped data
 seriesProto.generatePoints = function () {
 
     baseGeneratePoints.apply(this);
@@ -964,15 +949,8 @@ addEvent(Axis, 'afterSetScale', function () {
     });
 });
 
-/**
- * Get the data grouping pixel width based on the greatest defined individual
- * width of the axis' series, and if whether one of the axes need grouping.
- *
- * @private
- * @function Highcharts.Axis#getGroupPixelWidth
- *
- * @return {number}
- */
+// Get the data grouping pixel width based on the greatest defined individual
+// width of the axis' series, and if whether one of the axes need grouping.
 Axis.prototype.getGroupPixelWidth = function () {
 
     var series = this.series,
