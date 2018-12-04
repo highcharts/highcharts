@@ -73,8 +73,8 @@ H.seriesType('tema', 'ema',
         ) {
             var TEMAPoint = [
                 xVal[i - 3],
-                correctFloat(3 * EMAlevels.EMA -
-                  3 * EMAlevels.EMAlevel2 + EMAlevels.EMAlevel3
+                correctFloat(3 * EMAlevels.level1 -
+                  3 * EMAlevels.level2 + EMAlevels.level3
                 )
             ];
             return TEMAPoint;
@@ -95,15 +95,15 @@ H.seriesType('tema', 'ema',
                 // EMA of previous point
                 prevEMA,
                 prevEMAlevel2,
-                // prevEMAlevel3,
                 // EMA values array
                 EMAvalues = [],
                 EMAlevel2values = [],
                 i,
                 TEMAPoint,
                 // This object contains all EMA EMAlevels calculated like below
-                // EMA(EMA) = EMAlevel2,
-                // EMA(EMA(EMA)) = EMAlevel3,
+                // EMA = level1
+                // EMA(EMA) = level2,
+                // EMA(EMA(EMA)) = level3,
                 EMAlevels = {};
 
             series.EMApercent = (2 / (period + 1));
@@ -133,20 +133,20 @@ H.seriesType('tema', 'ema',
             // Calculate value one-by-one for each period in visible data
             for (i = period; i < yValLen + 3; i++) {
                 if (i < yValLen + 1) {
-                    EMAlevels.EMA = this.getEMA(
+                    EMAlevels.level1 = this.getEMA(
                         yVal,
                         prevEMA,
                         SMA,
                         index,
                         i
                     )[1];
-                    EMAvalues.push(EMAlevels.EMA);
+                    EMAvalues.push(EMAlevels.level1);
                 }
-                prevEMA = EMAlevels.EMA;
+                prevEMA = EMAlevels.level1;
 
                 // Summing first period points for ema(ema)
                 if (i < doubledPeriod) {
-                    accumulatePeriodPoints += EMAlevels.EMA;
+                    accumulatePeriodPoints += EMAlevels.level1;
                 } else {
                     // Calculate dema
                     // First dema point
@@ -154,17 +154,17 @@ H.seriesType('tema', 'ema',
                         SMA = accumulatePeriodPoints / period;
                         accumulatePeriodPoints = 0;
                     }
-                    EMAlevels.EMA = EMAvalues[i - period - 1];
-                    EMAlevels.EMAlevel2 = this.getEMA(
-                        [EMAlevels.EMA],
+                    EMAlevels.level1 = EMAvalues[i - period - 1];
+                    EMAlevels.level2 = this.getEMA(
+                        [EMAlevels.level1],
                         prevEMAlevel2,
                         SMA
                     )[1];
-                    EMAlevel2values.push(EMAlevels.EMAlevel2);
-                    prevEMAlevel2 = EMAlevels.EMAlevel2;
+                    EMAlevel2values.push(EMAlevels.level2);
+                    prevEMAlevel2 = EMAlevels.level2;
                     // Summing first period points for ema(ema(ema))
                     if (i < tripledPeriod) {
-                        accumulatePeriodPoints += EMAlevels.EMAlevel2;
+                        accumulatePeriodPoints += EMAlevels.level2;
                     } else {
                         // Calculate tema
                         // First tema point
@@ -173,20 +173,19 @@ H.seriesType('tema', 'ema',
                         }
                         if (i === yValLen + 1) {
                             // Calculate the last ema and emaEMA points
-                            EMAlevels.EMA = EMAvalues[i - period - 1];
-                            EMAlevels.EMAlevel2 = this.getEMA(
-                                [EMAlevels.EMA],
+                            EMAlevels.level1 = EMAvalues[i - period - 1];
+                            EMAlevels.level2 = this.getEMA(
+                                [EMAlevels.level1],
                                 prevEMAlevel2,
                                 SMA
                             )[1];
-                            EMAlevel2values.push(EMAlevels.EMAlevel2);
+                            EMAlevel2values.push(EMAlevels.level2);
                         }
-                        EMAlevels.EMA = EMAvalues[i - period - 2];
-                        EMAlevels.EMAlevel2 =
-                        EMAlevel2values[i - 2 * period - 1];
-                        EMAlevels.EMAlevel3 = this.getEMA(
-                            [EMAlevels.EMAlevel2],
-                            EMAlevels.prevEMAlevel3,
+                        EMAlevels.level1 = EMAvalues[i - period - 2];
+                        EMAlevels.level2 = EMAlevel2values[i - 2 * period - 1];
+                        EMAlevels.level3 = this.getEMA(
+                            [EMAlevels.level2],
+                            EMAlevels.prevLevel3,
                             SMA
                         )[1];
                         TEMAPoint = this.getPoint(
@@ -201,7 +200,7 @@ H.seriesType('tema', 'ema',
                             xDataTema.push(TEMAPoint[0]);
                             yDataTema.push(TEMAPoint[1]);
                         }
-                        EMAlevels.prevEMAlevel3 = EMAlevels.EMAlevel3;
+                        EMAlevels.prevLevel3 = EMAlevels.level3;
                     }
                 }
             }
