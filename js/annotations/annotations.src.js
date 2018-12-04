@@ -1010,6 +1010,7 @@ merge(
          */
         redrawItem: function (item, animation) {
             item.linkPoints();
+
             if (!item.shouldBeDrawn()) {
                 this.destroyItem(item);
             } else {
@@ -1020,6 +1021,35 @@ merge(
                 item.redraw(
                     H.pick(animation, true) && item.graphic.placed
                 );
+
+                this.adjustVisibility(item);
+            }
+        },
+
+        /**
+         * Hide or show annotaiton attached to points.
+         *
+         * @param {Annotation.Label|Annotation.Shape} item
+         */
+
+        adjustVisibility: function (item) {  // #9481
+            var hasVisiblePoints = false,
+                label = item.graphic;
+
+            item.points.forEach(function (point) {
+                if (
+                    point.series.visible !== false &&
+                    point.visible !== false
+                ) {
+                    hasVisiblePoints = true;
+                }
+            });
+
+            if (!hasVisiblePoints) {
+                label.hide();
+
+            } else if (label.visibility === 'hidden') {
+                label.show();
             }
         },
 
