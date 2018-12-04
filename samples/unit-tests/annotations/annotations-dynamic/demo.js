@@ -125,25 +125,25 @@ QUnit.test('Hiding and showing annotations with linked points', function (assert
         series: [{
             showInLegend: true,
             data: [{
-                id: "point1",
+                id: 'point1',
                 visible: false,
                 y: 3
             }, {
                 y: 3
             }],
-            type: "pie"
+            type: 'pie'
         }],
         annotations: [{
             labels: [{
-                point: "point1",
-                text: "Annotation"
+                point: 'point1',
+                text: 'Annotation'
             }]
         }]
     });
 
     assert.strictEqual(
-        chart.annotations[0].labels[0].visibility,
-        "hidden",
+        chart.annotations[0].labels[0].graphic.visibility,
+        'hidden',
         'Annotation correctly hidden.'
     );
 });

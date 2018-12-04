@@ -1263,7 +1263,7 @@ Annotation.prototype = {
             }
 
             // Hide or show annotaiton attached to points (#9481)
-            each(points, function (point) {
+            points.forEach(function (point) {
                 if (
                     point.series.visible !== false &&
                     point.visible !== false
