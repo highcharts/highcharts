@@ -28,3 +28,6 @@
 .highcharts-bullet-target {
 	fill: black;
 }
+.highcharts-bullet-series .highcharts-point {
+	fill: black;
+}
