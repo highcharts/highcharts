@@ -858,6 +858,7 @@ var vennOptions = {
     },
     marker: false,
     opacity: 0.75,
+    showInLegend: false,
     states: {
         hover: {
             opacity: 1,

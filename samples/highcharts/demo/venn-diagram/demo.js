@@ -1,6 +1,7 @@
 Highcharts.chart('container', {
     series: [{
         type: 'venn',
+        name: 'The Unattainable Triangle',
         data: [{
             sets: ['Good'],
             value: 2
