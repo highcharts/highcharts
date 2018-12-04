@@ -113,8 +113,8 @@ var controllableMixin = {
             }, point),
 
             anchor = {
-                x: box[0],
-                y: box[1],
+                x: box[0] + (this.options.x || 0),
+                y: box[1] + (this.options.y || 0),
                 height: box[2] || 0,
                 width: box[3] || 0
             };
