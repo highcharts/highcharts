@@ -11,40 +11,57 @@
 import H from '../../parts/Globals.js';
 
 /**
- * @typedef {Object} EarconInstrument
- * @property {Highcharts.Instrument|String} instrument - An instrument instance
- *      or the name of the instrument in the Highcharts.sonification.instruments
- *      map.
- * @property {Object} playOptions - The options to pass to Instrument.play
+ * Define an Instrument and the options for playing it.
+ * @interface Highcharts.EarconInstrument
+ *//**
+ * An instrument instance or the name of the instrument in the
+ * Highcharts.sonification.instruments map.
+ * @name Highcharts.EarconInstrument#instrument
+ * @type {Highcharts.Instrument|String}
+ *//**
+ * The options to pass to Instrument.play.
+ * @name Highcharts.EarconInstrument#playOptions
+ * @type {object}
+ */
+
+
+/**
+ * Options for an Earcon.
+ * @interface Highcharts.EarconOptionsObject
+ *//**
+ * The instruments and their options defining this earcon.
+ * @name Highcharts.EarconOptionsObject#instruments
+ * @type {Array<Highcharts.EarconInstrument>}
+ *//**
+ * The unique ID of the Earcon. Generated if not supplied.
+ * @name Highcharts.EarconOptionsObject#id
+ * @type {string|undefined}
+ *//**
+ * Global panning of all instruments. Overrides all panning on individual
+ * instruments. Can be a number between -1 and 1.
+ * @name Highcharts.EarconOptionsObject#pan
+ * @type {number|undefined}
+ *//**
+ * Master volume for all instruments. Volume settings on individual instruments
+ * can still be used for relative volume between the instruments. This setting
+ * does not affect volumes set by functions in individual instruments. Can be a
+ * number between 0 and 1. Defaults to 1.
+ * @name Highcharts.EarconOptionsObject#volume
+ * @type {number|undefined}
+ *//**
+ * Callback function to call when earcon has finished playing.
+ * @name Highcharts.EarconOptionsObject#onEnd
+ * @type {Function|undefined}
  */
 
 /**
  * The Earcon class. Earcon objects represent a certain sound consisting of
  * one or more instruments playing a predefined sound.
  *
- * @class Earcon
+ * @class Highcharts.Earcon
  *
- * @param   {Object} options
+ * @param   {Highcharts.EarconOptionsObject} options
  *          Options for the Earcon instance.
- *
- * @param   {Array<EarconInstrument>} options.instruments
- *          The instruments and their options defining this earcon.
- *
- * @param   {String} [options.id]
- *          The unique ID of the Earcon. Generated if not supplied.
- *
- * @param   {number} [options.pan]
- *          Global panning of all instruments. Overrides all panning on
- *          individual instruments. Can be a number between -1 and 1.
- *
- * @param   {number} [options.volume=1]
- *          Master volume for all instruments. Volume settings on individual
- *          instruments can still be used for relative volume between the
- *          instruments. This setting does not affect volumes set by functions
- *          in individual instruments. Can be a number between 0 and 1.
- *
- * @param   {Function} [options.onEnd]
- *          Callback function to call when earcon has finished playing.
  *
  * @sample highcharts/sonification/earcon/
  *         Using earcons directly
@@ -60,11 +77,12 @@ Earcon.prototype.init = function (options) {
     this.instrumentsPlaying = {};
 };
 
+
 /**
  * Play the earcon, optionally overriding init options.
  *
- * @param   {Object} options
- *          Override existing options. Same as for Earcon.init.
+ * @param   {Highcharts.EarconOptionsObject} options
+ *          Override existing options.
  *
  * @sample highcharts/sonification/earcon/
  *         Using earcons directly

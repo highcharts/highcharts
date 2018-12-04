@@ -17,8 +17,59 @@ import utilities from 'utilities.js';
 import TimelineClasses from 'Timeline.js';
 
 // Expose on the Highcharts object
+
+/**
+ * Global classes and objects related to sonification. Requires the sonification
+ * module.
+ * @name Highcharts.sonification
+ * @type {Highcharts.SonificationObject}
+ */
+
+/**
+ * Global classes and objects related to sonification.
+ * @interface Highcharts.SonificationObject
+ *//**
+ * Note fade-out-time in milliseconds. Most notes are faded out quickly by
+ * default if there is time. This is to avoid abrupt stops which will cause
+ * perceived clicks.
+ * @name Highcharts.SonificationObject#fadeOutDuration
+ * @type {number}
+ *//**
+ * Utility functions.
+ * @name Highcharts.SonificationObject#utilities
+ * @private
+ * @type {object}
+ *//**
+ * The Instrument class.
+ * @name Highcharts.SonificationObject#Instrument
+ * @type {Function}
+ *//**
+ * Predefined instruments, given as an object with a map between the instrument
+ * name and the Highcharts.Instrument object.
+ * @name Highcharts.SonificationObject#instruments
+ * @type {Object}
+ *//**
+ * The Earcon class.
+ * @name Highcharts.SonificationObject#Earcon
+ * @type {Function}
+ *//**
+ * The TimelineEvent class.
+ * @private
+ * @name Highcharts.SonificationObject#TimelineEvent
+ * @type {Function}
+ *//**
+ * The TimelinePath class.
+ * @private
+ * @name Highcharts.SonificationObject#TimelinePath
+ * @type {Function}
+ *//**
+ * The Timeline class.
+ * @private
+ * @name Highcharts.SonificationObject#Timeline
+ * @type {Function}
+ */
 H.sonification = {
-    fadeOutDuration: 20, // Note fade-out-time in milliseconds
+    fadeOutDuration: 20,
 
     // Classes and functions
     utilities: utilities,

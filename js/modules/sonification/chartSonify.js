@@ -17,7 +17,7 @@ import utilities from 'utilities.js';
  * @private
  *
  * @param   {Highcharts.Point} point The point.
- * @param   {Function|String} timeProp The time axis data prop or the time
+ * @param   {Function|string} timeProp The time axis data prop or the time
  *          function.
  * @return  {number} The time value.
  */
@@ -35,9 +35,9 @@ function getPointTimeValue(point, timeProp) {
  * @private
  *
  * @param   {Highcharts.Series} series The series to compute on.
- * @param   {Function|String} timeProp The time axis data prop or the time
+ * @param   {Function|string} timeProp The time axis data prop or the time
  *          function.
- * @return  {Object} Object with min/max extremes for the time values.
+ * @return  {object} Object with min/max extremes for the time values.
  */
 function getTimeExtremes(series, timeProp) {
     // Compute the extremes from the visible points.
@@ -59,11 +59,11 @@ function getTimeExtremes(series, timeProp) {
  *
  * @param   {Highcharts.Chart} chart
  *          The chart to calculate extremes from.
- * @param   {Array<PointInstrumentOptions>} instruments
+ * @param   {Array<Highcharts.PointInstrumentObject>} instruments
  *          The instrument definitions used.
- * @param   {Object} [dataExtremes]
+ * @param   {object} [dataExtremes]
  *          Predefined extremes for each data prop.
- * @return  {Object}
+ * @return  {object}
  *          New extremes with data properties mapped to min/max objects.
  */
 function getExtremesForInstrumentProps(chart, instruments, dataExtremes) {
@@ -93,9 +93,12 @@ function getExtremesForInstrumentProps(chart, instruments, dataExtremes) {
  * Get earcons for the point if there are any.
  * @private
  *
- * @param {Highcharts.Point} point The point to find earcons for.
- * @param {Array<EarconConfiguration>} earconDefinitions Earcons to check.
- * @return {Array<Earcon>} Array of earcons to be played with this point.
+ * @param   {Highcharts.Point} point
+ *          The point to find earcons for.
+ * @param   {Array<Highcharts.EarconConfiguration>} earconDefinitions
+ *          Earcons to check.
+ * @return  {Array<Highcharts.Earcon>}
+ *          Array of earcons to be played with this point.
  */
 function getPointEarcons(point, earconDefinitions) {
     return earconDefinitions.reduce(
@@ -130,8 +133,10 @@ function getPointEarcons(point, earconDefinitions) {
  * instrument references are copies.
  * @private
  *
- * @param {Array<PointInstrumentOptions>} instruments The instrument options.
- * @return {Array<PointInstrumentOptions>} Array of copyed instrument options.
+ * @param   {Array<Highcharts.PointInstrumentObject>} instruments
+ *          The instrument options.
+ * @return  {Array<Highcharts.PointInstrumentObject>}
+ *          Array of copyed instrument options.
  */
 function makeInstrumentCopies(instruments) {
     return instruments.map(function (instrumentDef) {
@@ -152,7 +157,7 @@ function makeInstrumentCopies(instruments) {
  * @private
  *
  * @param {Highcharts.Series} series The series to build from.
- * @param {Object} options The options for building the TimelinePath.
+ * @param {object} options The options for building the TimelinePath.
  * @return {Highcharts.TimelinePath} A timeline path with events.
  */
 function buildTimelinePathFromSeries(series, options) {
@@ -232,49 +237,56 @@ function buildTimelinePathFromSeries(series, options) {
 
 
 /**
- * @typedef {Object} EarconConfiguration
- * @property  {Highcharts.Earcon} earcon - An Earcon instance
- * @property  {String} [onPoint] - The ID of the point to play the Earcon on.
- * @property  {Function} [condition] - A function to determine whether or not to
- *            play this earcon on a point. The function is called for every
- *            point, receiving that point as parameter. It should return either
- *            a boolean indicating whether or not to play the earcon, or a new
- *            Earcon instance - in which case the new Earcon will be played.
+ * An Earcon configuration, specifying an Earcon and when to play it.
+ *
+ * @interface Highcharts.EarconConfiguration
+ *//**
+ * An Earcon instance.
+ * @name Highcharts.EarconConfiguration#earcon
+ * @type {Highcharts.Earcon}
+ *//**
+ * The ID of the point to play the Earcon on.
+ * @name Highcharts.EarconConfiguration#onPoint
+ * @type {string|undefined}
+ *//**
+ * A function to determine whether or not to play this earcon on a point. The
+ * function is called for every point, receiving that point as parameter. It
+ * should return either a boolean indicating whether or not to play the earcon,
+ * or a new Earcon instance - in which case the new Earcon will be played.
+ * @name Highcharts.EarconConfiguration#condition
+ * @type {Function|undefined}
  */
 
+
 /**
- * Sonify a series.
- *
- * @function Highcharts.Series#sonify
- *
- * @param   {Object} options
- *          The options for sonifying this series.
- * @param   {number} options.duration
- *          The duration for playing the points. Note that points might continue
- *          to play after the duration has passed, but no new points will start
- *          playing.
- * @param   {String|Function} pointPlayTime
- *          The axis to use for when to play the points. Can be a string with a
- *          data property (e.g. `x`), or a function. If it is a function, this
- *          function receives the point as argument, and should return a numeric
- *          value. The points with the lowest numeric values are then played
- *          first, and the time between points will be proportional to the
- *          distance between the numeric values.
- * @param   {Array<PointInstrumentOptions>} options.instruments
- *          The instrument definitions for the points in this series.
- * @param   {Function} [options.onPointStart]
- *          Callback before a point is played.
- * @param   {Function} [options.onPointEnd]
- *          Callback after a point has finished playing.
- * @param   {Function} [options.onEnd]
- *          Callback after the series has played.
- * @param   {Array<EarconConfiguration>} [earcons]
- *          Earcons to add to the series.
- * @param   {Object} [options.dataExtremes]
- *          Optionally provide the minimum/maximum data values for the points.
- *          If this is not supplied, it is calculated from all points in the
- *          chart on demand. This option is supplied in the following format,
- *          as a map of point data properties to objects with min/max values:
+ * Options for sonifying a series.
+ * @interface Highcharts.SonifySeriesOptionsObject
+ *//**
+ * The duration for playing the points. Note that points might continue to play
+ * after the duration has passed, but no new points will start playing.
+ * @name Highcharts.SonifySeriesOptionsObject#duration
+ * @type {number}
+ *//**
+ * The axis to use for when to play the points. Can be a string with a data
+ * property (e.g. `x`), or a function. If it is a function, this function
+ * receives the point as argument, and should return a numeric value. The points
+ * with the lowest numeric values are then played first, and the time between
+ * points will be proportional to the distance between the numeric values.
+ * @name Highcharts.SonifySeriesOptionsObject#pointPlayTime
+ * @type {string|Function}
+ *//**
+ * The instrument definitions for the points in this series.
+ * @name Highcharts.SonifySeriesOptionsObject#instruments
+ * @type {Array<Highcharts.PointInstrumentObject>}
+ *//**
+ * Earcons to add to the series.
+ * @name Highcharts.SonifySeriesOptionsObject#earcons
+ * @type {Array<Highcharts.EarconConfiguration>|undefined}
+ *//**
+ * Optionally provide the minimum/maximum data values for the points. If this is
+ * not supplied, it is calculated from all points in the chart on demand. This
+ * option is supplied in the following format, as a map of point data properties
+ * to objects with min/max values:
  *  ```js
  *      dataExtremes: {
  *          y: {
@@ -288,6 +300,30 @@ function buildTimelinePathFromSeries(series, options) {
  *          // Properties used and not provided are calculated on demand
  *      }
  *  ```
+ * @name Highcharts.SonifySeriesOptionsObject#dataExtremes
+ * @type {object|undefined}
+ *//**
+ * Callback before a point is played.
+ * @name Highcharts.SonifySeriesOptionsObject#onPointStart
+ * @type {Function|undefined}
+ *//**
+ * Callback after a point has finished playing.
+ * @name Highcharts.SonifySeriesOptionsObject#onPointEnd
+ * @type {Function|undefined}
+ *//**
+ * Callback after the series has played.
+ * @name Highcharts.SonifySeriesOptionsObject#onEnd
+ * @type {Function|undefined}
+ */
+
+
+/**
+ * Sonify a series. Requires the `sonification` module.
+ *
+ * @function Highcharts.Series#sonify
+ *
+ * @param   {Highcharts.SonifySeriesOptionsObject} options
+ *          The options for sonifying this series.
  *
  * @sample highcharts/sonification/series-basic/
  *         Click on series to sonify
@@ -323,9 +359,9 @@ function seriesSonify(options) {
  * @private
  *
  * @param {Highcharts.Series} series The series to return options for.
- * @param {Object} dataExtremes Pre-calculated data extremes for the chart.
- * @param {Object} chartSonifyOptions Options passed in to chart.sonify.
- * @return {Object} Options for buildTimelinePathFromSeries.
+ * @param {object} dataExtremes Pre-calculated data extremes for the chart.
+ * @param {object} chartSonifyOptions Options passed in to chart.sonify.
+ * @return {object} Options for buildTimelinePathFromSeries.
  */
 function buildSeriesOptions(series, dataExtremes, chartSonifyOptions) {
     var seriesOptions = chartSonifyOptions.seriesOptions || {};
@@ -364,14 +400,14 @@ function buildSeriesOptions(series, dataExtremes, chartSonifyOptions) {
  * a chart.
  * @private
  *
- * @param   {Object} orderOptions
+ * @param   {string|Array<string|Highcharts.Earcon|Array<string|Highcharts.Earcon>>} orderOptions
  *          Order options for the sonification.
  * @param   {Highcharts.Chart} chart
  *          The chart we are sonifying.
  * @param   {Function} seriesOptionsCallback
  *          A function that takes a series as argument, and returns the series
  *          options for that series to be used with buildTimelinePathFromSeries.
- * @return  {Array<Object|Array<Object|TimelinePath>>}
+ * @return  {Array<object|Array<object|TimelinePath>>}
  *          If order is sequential, we return an array of objects to create
  *          series paths from. If order is simultaneous we return an array of
  *          an array with the same. If there is a custom order, we return
@@ -434,9 +470,9 @@ function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
  * Utility function to add a silent wait after all series.
  * @private
  *
- * @param {Array<*>} order The order of items.
+ * @param {Array<object|Array<object|TimelinePath>>} order The order of items.
  * @param {number} wait The wait in milliseconds to add.
- * @return {Array<*>} The order with waits inserted.
+ * @return {Array<object|Array<object|TimelinePath>>} The order with waits inserted.
  */
 function addAfterSeriesWaits(order, wait) {
     if (!wait) {
@@ -470,8 +506,10 @@ function addAfterSeriesWaits(order, wait) {
  * Utility function to find the total amout of wait time in the TimelinePaths.
  * @private
  *
- * @param {Array<*>} order The order of TimelinePaths/items.
- * @return {number} The total time in ms spent on wait paths between playing.
+ * @param   {Array<object|Array<object|TimelinePath>>} order
+ *          The order of TimelinePaths/items.
+ * @return  {number}
+ *          The total time in ms spent on wait paths between playing.
  */
 function getWaitTime(order) {
     return order.reduce(function (waitTime, orderDef) {
@@ -488,7 +526,7 @@ function getWaitTime(order) {
  * same time, to sync them.
  * @private
  *
- * @param {Array<TimelinePath>} paths The paths to sync.
+ * @param {Array<Highcharts.TimelinePath>} paths The paths to sync.
  */
 function syncSimultaneousPaths(paths) {
     // Find the extremes for these paths
@@ -533,8 +571,10 @@ function syncSimultaneousPaths(paths) {
  * that include series.
  * @private
  *
- * @param {Array<*>} order The order of TimelinePaths/items.
- * @return {number} The total time value span difference for all series.
+ * @param   {Array<object|Array<object|TimelinePath>>} order
+ *          The order of TimelinePaths/items.
+ * @return  {number}
+ *          The total time value span difference for all series.
  */
 function getSimulPathDurationTotal(order) {
     return order.reduce(function (durationTotal, orderDef) {
@@ -581,9 +621,12 @@ function getSeriesDurationMs(
  * TimelinePaths.
  * @private
  *
- * @param {Array<*>} order The order list.
- * @param {number} duration Total duration to aim for in milliseconds.
- * @return {Array<Array<TimelinePath>>} Array of TimelinePath objects to play.
+ * @param   {Array<object|Array<object|TimelinePath>>} order
+ *          The order list.
+ * @param   {number} duration
+ *          Total duration to aim for in milliseconds.
+ * @return  {Array<Array<Highcharts.TimelinePath>>}
+ *          Array of TimelinePath objects to play.
  */
 function buildPathsFromOrder(order, duration) {
     // Find time used for waits (custom or after series), and subtract it from
@@ -631,62 +674,63 @@ function buildPathsFromOrder(order, duration) {
 
 
 /**
- * Sonify a chart.
- *
- * @function Highcharts.Chart#sonify
- *
- * @param   {Object} options
- *          The options for sonifying this chart.
- * @param   {number} options.duration
- *          Duration for sonifying the entire chart. The duration is distributed
- *          across the different series intelligently, but does not take earcons
- *          into account. It is also possible to set the duration explicitly per
- *          series, using options.seriesOptions. Note that points may continue
- *          to play after the duration has passed, but no new points will start
- *          playing.
- * @param   {String|Array<*>} order
- *          Define the order to play the series in. This can be given as a
- *          string, or an array specifying a custom ordering. If given as a
- *          string, valid values are `sequential` - where each series is played
- *          in order - or `simultaneous`, where all series are played at once.
- *          For custom ordering, supply an array as the order. Each element in
- *          the array can be either a string with a series ID, an Earcon object,
- *          or an object with a numeric `silentWait` property designating a
- *          number of milliseconds to wait before continuing. Each element of
- *          the array will be played in order. To play elements simultaneously,
- *          group the elements in an array.
- * @param   {String|Function} pointPlayTime
- *          The axis to use for when to play the points. Can be a string with a
- *          data property (e.g. `x`), or a function. If it is a function, this
- *          function receives the point as argument, and should return a numeric
- *          value. The points with the lowest numeric values are then played
- *          first, and the time between points will be proportional to the
- *          distance between the numeric values. This option can not be
- *          overridden per series.
- * @param   {Object|Array<Object>} [options.seriesOptions]
- *          Options as given to `series.sonify` to override options per series.
- *          If the option is supplied as an array of options objects, the `id`
- *          property of the object should correspond to the series' id. If the
- *          option is supplied as a single object, the options apply to all
- *          series.
- * @param   {number} [options.afterSeriesWait]
- *          Milliseconds of silent waiting to add between series. Note that
- *          waiting time is considered part of the sonify duration.
- * @param   {Array<PointInstrumentOptions>} [options.instruments]
- *          The instrument definitions for the points in this chart.
- * @param   {Array<EarconConfiguration>} [earcons]
- *          Earcons to add to the chart.
- * @param   {Function} [options.onSeriesStart]
- *          Callback before a series is played.
- * @param   {Function} [options.onSeriesEnd]
- *          Callback after a series has finished playing.
- * @param   {Function} [options.onEnd]
- *          Callback after the chart has played.
- * @param   {Object} [options.dataExtremes]
- *          Optionally provide the minimum/maximum data values for the points.
- *          If this is not supplied, it is calculated from all points in the
- *          chart on demand. This option is supplied in the following format,
- *          as a map of point data properties to objects with min/max values:
+ * Options for sonifying a chart.
+ * @interface Highcharts.SonifyChartOptionsObject
+ *//**
+ * Duration for sonifying the entire chart. The duration is distributed across
+ * the different series intelligently, but does not take earcons into account.
+ * It is also possible to set the duration explicitly per series, using
+ * `seriesOptions`. Note that points may continue to play after the duration has
+ * passed, but no new points will start playing.
+ * @name Highcharts.SonifyChartOptionsObject#duration
+ * @type {number}
+ *//**
+ * Define the order to play the series in. This can be given as a string, or an
+ * array specifying a custom ordering. If given as a string, valid values are
+ * `sequential` - where each series is played in order - or `simultaneous`,
+ * where all series are played at once. For custom ordering, supply an array as
+ * the order. Each element in the array can be either a string with a series ID,
+ * an Earcon object, or an object with a numeric `silentWait` property
+ * designating a number of milliseconds to wait before continuing. Each element
+ * of the array will be played in order. To play elements simultaneously, group
+ * the elements in an array.
+ * @name Highcharts.SonifyChartOptionsObject#order
+ * @type {string|Array<string|Highcharts.Earcon|Array<string|Highcharts.Earcon>>}
+ *//**
+ * The axis to use for when to play the points. Can be a string with a data
+ * property (e.g. `x`), or a function. If it is a function, this function
+ * receives the point as argument, and should return a numeric value. The points
+ * with the lowest numeric values are then played first, and the time between
+ * points will be proportional to the distance between the numeric values. This
+ * option can not be overridden per series.
+ * @name Highcharts.SonifyChartOptionsObject#pointPlayTime
+ * @type {string|Function}
+ *//**
+ * Milliseconds of silent waiting to add between series. Note that waiting time
+ * is considered part of the sonify duration.
+ * @name Highcharts.SonifyChartOptionsObject#afterSeriesWait
+ * @type {number|undefined}
+ *//**
+ * Options as given to `series.sonify` to override options per series. If the
+ * option is supplied as an array of options objects, the `id` property of the
+ * object should correspond to the series' id. If the option is supplied as a
+ * single object, the options apply to all series.
+ * @name Highcharts.SonifyChartOptionsObject#seriesOptions
+ * @type {Object|Array<object>|undefined}
+ *//**
+ * The instrument definitions for the points in this chart.
+ * @name Highcharts.SonifyChartOptionsObject#instruments
+ * @type {Array<Highcharts.PointInstrumentObject>|undefined}
+ *//**
+ * Earcons to add to the chart. Note that earcons can also be added per series
+ * using `seriesOptions`.
+ * @name Highcharts.SonifyChartOptionsObject#earcons
+ * @type {Array<Highcharts.EarconConfiguration>|undefined}
+ *//**
+ * Optionally provide the minimum/maximum data values for the points. If this is
+ * not supplied, it is calculated from all points in the chart on demand. This
+ * option is supplied in the following format, as a map of point data properties
+ * to objects with min/max values:
  *  ```js
  *      dataExtremes: {
  *          y: {
@@ -700,6 +744,30 @@ function buildPathsFromOrder(order, duration) {
  *          // Properties used and not provided are calculated on demand
  *      }
  *  ```
+ * @name Highcharts.SonifyChartOptionsObject#dataExtremes
+ * @type {object|undefined}
+ *//**
+ * Callback before a series is played.
+ * @name Highcharts.SonifyChartOptionsObject#onSeriesStart
+ * @type {Function|undefined}
+ *//**
+ * Callback after a series has finished playing.
+ * @name Highcharts.SonifyChartOptionsObject#onSeriesEnd
+ * @type {Function|undefined}
+ *//**
+ * Callback after the chart has played.
+ * @name Highcharts.SonifyChartOptionsObject#onEnd
+ * @type {Function|undefined}
+ */
+
+
+/**
+ * Sonify a chart. Requires the `sonification` module.
+ *
+ * @function Highcharts.Chart#sonify
+ *
+ * @param   {Highcharts.SonifyChartOptionsObject} options
+ *          The options for sonifying this chart.
  *
  * @sample highcharts/sonification/chart-sequential/
  *         Sonify a basic chart
@@ -752,6 +820,8 @@ function chartSonify(options) {
 /**
  * Get a list of the points currently under cursor.
  *
+ * @function Highcharts.Chart#getCurrentSonifyPoints
+ *
  * @return {Array<Highcharts.Point>} The points currently under the cursor.
  */
 function getCurrentPoints() {
@@ -773,6 +843,8 @@ function getCurrentPoints() {
 /**
  * Set the cursor to a point or set of points in different series.
  *
+ * @function Highcharts.Chart#setSonifyCursor
+ *
  * @param   {Highcharts.Point|Array<Highcharts.Point>} points
  *          The point or points to set the cursor to. If setting multiple points
  *          under the cursor, the points have to be in different series that
@@ -793,6 +865,8 @@ function setCursor(points) {
 /**
  * Pause the running sonification.
  *
+ * @function Highcharts.Chart#pauseSonify
+ *
  * @param {boolean} [fadeOut=true] Fade out as we pause to avoid clicks.
  */
 function pause(fadeOut) {
@@ -808,6 +882,8 @@ function pause(fadeOut) {
  * Resume the currently running sonification. Requires series.sonify or
  * chart.sonify to have been played at some point earlier.
  *
+ * @function Highcharts.Chart#resumeSonify
+ *
  * @param {Function} onEnd Callback to call when play finished.
  */
 function resume(onEnd) {
@@ -821,6 +897,8 @@ function resume(onEnd) {
  * Play backwards from cursor. Requires series.sonify or chart.sonify to have
  * been played at some point earlier.
  *
+ * @function Highcharts.Chart#rewindSonify
+ *
  * @param {Function} onEnd Callback to call when play finished.
  */
 function rewind(onEnd) {
@@ -833,6 +911,8 @@ function rewind(onEnd) {
 /**
  * Cancel current sonification and reset cursor.
  *
+ * @function Highcharts.Chart#cancelSonify
+ *
  * @param {boolean} [fadeOut=true] Fade out as we pause to avoid clicks.
  */
 function cancel(fadeOut) {
@@ -844,6 +924,8 @@ function cancel(fadeOut) {
 /**
  * Reset cursor to start. Requires series.sonify or chart.sonify to have been
  * played at some point earlier.
+ *
+ * @function Highcharts.Chart#resetSonifyCursor
  */
 function resetCursor() {
     if (this.sonification.timeline) {
@@ -855,6 +937,8 @@ function resetCursor() {
 /**
  * Reset cursor to end. Requires series.sonify or chart.sonify to have been
  * played at some point earlier.
+ *
+ * @function Highcharts.Chart#resetSonifyCursorEnd
  */
 function resetCursorEnd() {
     if (this.sonification.timeline) {

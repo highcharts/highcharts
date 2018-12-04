@@ -13,34 +13,45 @@ import utilities from 'utilities.js';
 
 
 /**
+ * A set of options for the TimelineEvent class.
+ * @interface Highcharts.TimelineEventOptionsObject
+ * @private
+ *//**
+ * The object we want to sonify when playing the TimelineEvent. Can be any
+ * object that implements the `sonify` and `cancelSonify` functions. If this is
+ * not supplied, the TimelineEvent is considered a silent event, and the onEnd
+ * event is immediately called.
+ * @name Highcharts.TimelineEventOptionsObject#eventObject
+ * @type {*}
+ *//**
+ * Options to pass on to the eventObject when playing it.
+ * @name Highcharts.TimelineEventOptionsObject#playOptions
+ * @type {object|undefined}
+ *//**
+ * The time at which we want this event to play (in milliseconds offset). This
+ * is not used for the TimelineEvent.play function, but rather intended as a
+ * property to decide when to call TimelineEvent.play. Defaults to 0.
+ * @name Highcharts.TimelineEventOptionsObject#time
+ * @type {number|undefined}
+ *//**
+ * Unique ID for the event. Generated automatically if not supplied.
+ * @name Highcharts.TimelineEventOptionsObject#id
+ * @type {string|undefined}
+ *//**
+ * Callback called when the play has finished.
+ * @name Highcharts.TimelineEventOptionsObject#onEnd
+ * @type {Function|undefined}
+ */
+
+
+/**
  * The TimelineEvent class. Represents a sound event on a timeline.
  *
  * @private
- * @class TimelineEvent
+ * @class Highcharts.TimelineEvent
  *
- * @param   {Object} options
+ * @param   {Highcharts.TimelineEventOptionsObject} options
  *          Options for the TimelineEvent.
- *
- * @param   {*} [options.eventObject]
- *          The object we want to sonify when playing the TimelineEvent. Can be
- *          any object that implements the `sonify` and `cancelSonify`
- *          functions. If this is not supplied, the TimelineEvent is considered
- *          a silent event, and the onEnd event is immediately called.
- *
- * @param   {Object} [options.playOptions]
- *          Options to pass on to the eventObject when playing it.
- *
- * @param   {number} [options.time=0]
- *          The time at which we want this event to play (in milliseconds
- *          offset). This is not used for the TimelineEvent.play function, but
- *          rather intended as a property to decide when to call
- *          TimelineEvent.play.
- *
- * @param   {String} [options.id]
- *          Unique ID for the event. Generated automatically if not supplied.
- *
- * @param   {Function} [options.onEnd]
- *          Callback called when the play has finished.
  */
 function TimelineEvent(options) {
     this.init(options || {});
@@ -56,7 +67,7 @@ TimelineEvent.prototype.init = function (options) {
  * Play the event. Does not take the TimelineEvent.time option into account,
  * and plays the event immediately.
  *
- * @param   {Object} [options]
+ * @param   {object} [options]
  *          Options to pass in to the eventObject when playing it.
  */
 TimelineEvent.prototype.play = function (options) {
@@ -106,37 +117,50 @@ TimelineEvent.prototype.cancel = function (fadeOut) {
 
 
 /**
+ * A set of options for the TimelinePath class.
+ * @interface Highcharts.TimelinePathOptionsObject
+ * @private
+ *//**
+ * List of TimelineEvents to play on this track.
+ * @name Highcharts.TimelinePathOptionsObject#events
+ * @type {Array<Highcharts.TimelineEvent>}
+ *//**
+ * If this option is supplied, this path ignores all events and just waits for
+ * the specified number of milliseconds before calling onEnd.
+ * @name Highcharts.TimelinePathOptionsObject#silentWait
+ * @type {number|undefined}
+ *//**
+ * Unique ID for this timeline path. Automatically generated if not supplied.
+ * @name Highcharts.TimelinePathOptionsObject#id
+ * @type {string|undefined}
+ *//**
+ * Callback called before the path starts playing.
+ * @name Highcharts.TimelinePathOptionsObject#onStart
+ * @type {Function|undefined}
+ *//**
+ * Callback function to call before an event plays.
+ * @name Highcharts.TimelinePathOptionsObject#onEventStart
+ * @type {Function|undefined}
+ *//**
+ * Callback function to call after an event has stopped playing.
+ * @name Highcharts.TimelinePathOptionsObject#onEventEnd
+ * @type {Function|undefined}
+ *//**
+ * Callback called when the whole path is finished.
+ * @name Highcharts.TimelinePathOptionsObject#onEnd
+ * @type {Function|undefined}
+ */
+
+
+/**
  * The TimelinePath class. Represents a track on a timeline with a list of
  * sound events to play at certain times relative to each other.
  *
  * @private
- * @class TimelinePath
+ * @class Highcharts.TimelinePath
  *
- * @param   {Object} options
+ * @param   {Highcharts.TimelinePathOptionsObject} options
  *          Options for the TimelinePath.
- *
- * @param   {Array<TimelineEvent>} options.events
- *          List of TimelineEvents to play on this track.
- *
- * @param   {number} [options.silentWait]
- *          If this option is supplied, this path ignores all events and just
- *          waits for the specified number of milliseconds before calling onEnd.
- *
- * @param   {String} [options.id]
- *          Unique ID for this timeline path. Automatically generated if not
- *          supplied.
- *
- * @param   {Function} [options.onStart]
- *          Callback called before the path starts playing.
- *
- * @param   {Function} [options.onEventStart]
- *          Callback function to call before an event plays.
- *
- * @param   {Function} [options.onEventEnd]
- *          Callback function to call after an event has stopped playing.
- *
- * @param   {Function} [options.onEnd]
- *          Callback called when the whole path is finished.
  */
 function TimelinePath(options) {
     this.init(options);
@@ -199,7 +223,8 @@ TimelinePath.prototype.updateEventIdMap = function () {
  * Add events to the path. Should not be done while the path is playing.
  * The new events are inserted according to their time property.
  *
- * @param {Array<TimelineEvent>} newEvents The new timeline events to add.
+ * @param   {Array<Highcharts.TimelineEvent>} newEvents
+ *          The new timeline events to add.
  */
 TimelinePath.prototype.addTimelineEvents = function (newEvents) {
     this.events = this.events.concat(newEvents);
@@ -210,7 +235,7 @@ TimelinePath.prototype.addTimelineEvents = function (newEvents) {
 
 /**
  * Get the current TimelineEvent under the cursor.
- * @return {TimelineEvent} The current timeline event.
+ * @return {Highcharts.TimelineEvent} The current timeline event.
  */
 TimelinePath.prototype.getCursor = function () {
     return this.events[this.cursor];
@@ -220,7 +245,7 @@ TimelinePath.prototype.getCursor = function () {
 /**
  * Set the current TimelineEvent under the cursor.
  *
- * @param   {String} eventId
+ * @param   {string} eventId
  *          The ID of the timeline event to set as current.
  * @return  {boolean} True if there is an event with this ID in the path. False
  *          otherwise.
@@ -363,29 +388,41 @@ TimelinePath.prototype.playEvents = function (direction) {
 };
 
 
+
+/**
+ * A set of options for the Timeline class.
+ * @interface Highcharts.TimelineOptionsObject
+ * @private
+ *//**
+ * List of TimelinePaths to play. Multiple paths can be grouped together and
+ * played simultaneously by supplying an array of paths in place of a single
+ * path.
+ * @name Highcharts.TimelineOptionsObject#paths
+ * @type {Array<Highcharts.TimelinePath|Array<Highcharts.TimelinePath>>}
+ *//**
+ * Callback function to call before a path plays.
+ * @name Highcharts.TimelineOptionsObject#onPathStart
+ * @type {Function|undefined}
+ *//**
+ * Callback function to call after a path has stopped playing.
+ * @name Highcharts.TimelineOptionsObject#onPathEnd
+ * @type {Function|undefined}
+ *//**
+ * Callback called when the whole path is finished.
+ * @name Highcharts.TimelineOptionsObject#onEnd
+ * @type {Function|undefined}
+ */
+
+
 /**
  * The Timeline class. Represents a sonification timeline with a list of
  * timeline paths with events to play at certain times relative to each other.
  *
  * @private
- * @class Timeline
+ * @class Highcharts.Timeline
  *
- * @param   {Object} options
+ * @param   {Highcharts.TimelineOptionsObject} options
  *          Options for the Timeline.
- *
- * @param   {Array<TimelinePath|Array<TimelinePath>>} options.paths
- *          List of TimelinePaths to play. Multiple paths can be grouped
- *          together and played simultaneously by supplying an array of paths
- *          in place of a single path.
- *
- * @param   {Function} [options.onPathStart]
- *          Callback function to call before a path plays.
- *
- * @param   {Function} [options.onPathEnd]
- *          Callback function to call after a path has stopped playing.
- *
- * @param   {Function} [options.onEnd]
- *          Callback called when the whole timeline has reached its end.
  */
 function Timeline(options) {
     this.init(options || {});
@@ -549,7 +586,7 @@ Timeline.prototype.resetCursorEnd = function () {
  * played at the same time, this function only affects a single path (the one
  * that contains the eventId that is passed in).
  *
- * @param   {String} eventId
+ * @param   {string} eventId
  *          The ID of the timeline event to set as current.
  *
  * @return  {boolean} True if the cursor was set, false if no TimelineEvent was
@@ -569,7 +606,7 @@ Timeline.prototype.setCursor = function (eventId) {
  * the event under the cursor for each currently playing path, as an object
  * where the path ID is mapped to the TimelineEvent under that path's cursor.
  *
- * @return {Object} The TimelineEvents under each path's cursors.
+ * @return {object} The TimelineEvents under each path's cursors.
  */
 Timeline.prototype.getCursor = function () {
     return this.getCurrentPlayingPaths().reduce(function (acc, cur) {
@@ -594,7 +631,8 @@ Timeline.prototype.atStart = function () {
 /**
  * Get the current TimelinePaths being played.
  *
- * @return {Array<TimelinePath>} The TimelinePaths currently being played.
+ * @return  {Array<Highcharts.TimelinePath>}
+ *          The TimelinePaths currently being played.
  */
 Timeline.prototype.getCurrentPlayingPaths = function () {
     return H.splat(this.paths[this.cursor]);

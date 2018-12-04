@@ -20,35 +20,53 @@ var defaultOptions = {
 
 
 /**
+ * A set of options for the Instrument class.
+ * @interface Highcharts.InstrumentOptionsObject
+ *//**
+ * The type of instrument. Currently only `oscillator` is supported. Defaults
+ * to `oscillator`.
+ * @name Highcharts.InstrumentOptionsObject#type
+ * @type {string|undefined}
+ *//**
+ * The unique ID of the instrument. Generated if not supplied.
+ * @name Highcharts.InstrumentOptionsObject#id
+ * @type {string|undefined}
+ *//**
+ * When using functions to determine frequency or other parameters during
+ * playback, this options specifies how often to call the callback functions.
+ * Number given in milliseconds. Defaults to 20.
+ * @name Highcharts.InstrumentOptionsObject#playCallbackInterval
+ * @type {number|undefined}
+ *//**
+ * A list of allowed frequencies for this instrument. If trying to play a
+ * frequency not on this list, the closest frequency will be used. Set to `null`
+ * to allow all frequencies to be used. Defaults to `null`.
+ * @name Highcharts.InstrumentOptionsObject#allowedFrequencies
+ * @type {Array<number>|undefined}
+ *//**
+ * Options specific to oscillator instruments.
+ * @name Highcharts.InstrumentOptionsObject#oscillator
+ * @type {Highcharts.OscillatorOptionsObject|undefined}
+ */
+
+
+/**
+ * @interface Highcharts.OscillatorOptionsObject
+ *//**
+ * The waveform shape to use for oscillator instruments. Defaults to `sine`.
+ * @name Highcharts.OscillatorOptionsObject#waveformShape
+ * @type {string|undefined}
+ */
+
+
+/**
  * The Instrument class. Instrument objects represent an instrument capable of
  * playing a certain pitch for a specified duration.
  *
- * @class Instrument
+ * @class Highcharts.Instrument
  *
- * @param   {Object} options
+ * @param   {Highcharts.InstrumentOptionsObject} options
  *          Options for the instrument instance.
- *
- * @param   {String} [options.type='oscillator']
- *          The type of instrument. Currently only `oscillator` is supported.
- *
- * @param   {String} [options.id]
- *          The unique ID of the instrument. Generated if not supplied.
- *
- * @param   {number} [playCallbackInterval=20]
- *          When using functions to determine frequency or other parameters
- *          during playback, this options specifies how often to call the
- *          callback functions. Number given in milliseconds.
- *
- * @param   {Array<number>} [options.allowedFrequencies=null]
- *          A list of allowed frequencies for this instrument. If trying to play
- *          a frequency not on this list, the closest frequency will be used.
- *          Set to `null` to allow all frequencies to be used.
- *
- * @param   {Object} [options.oscillator]
- *          Options specific to oscillator instruments.
- *
- * @param   {String} [options.oscillator.waveformShape='sine']
- *          The waveform shape to use for oscillator instruments.
  *
  * @sample highcharts/sonification/instrument/
  *         Using Instruments directly
@@ -92,9 +110,10 @@ Instrument.prototype.init = function (options) {
 /**
  * Return a copy of an instrument. Only one instrument instance can play at a
  * time, so use this to get a new copy of the instrument that can play alongside
- * it.
+ * it. The new instrument copy will receive a new ID unless one is supplied in
+ * options.
  *
- * @param   {Object} options
+ * @param   {Highcharts.InstrumentOptionsObject} [options]
  *          Options to merge in for the copy.
  *
  * @return {Highcharts.Instrument} A new Instrument instance with the same
@@ -108,6 +127,7 @@ Instrument.prototype.copy = function (options) {
 /**
  * Init the audio context, if we do not have one.
  * @private
+ *
  * @return {boolean} True if successful, false if not.
  */
 Instrument.prototype.initAudioContext = function () {
@@ -131,7 +151,7 @@ Instrument.prototype.initAudioContext = function () {
  * Init an oscillator instrument.
  * @private
  *
- * @param   {Object} oscillatorOptions
+ * @param   {object} oscillatorOptions
  *          The oscillator options passed to Instrument.init.
  */
 Instrument.prototype.initOscillator = function (options) {
@@ -249,7 +269,7 @@ Instrument.prototype.clearPlayCallbackTimers = function () {
  * Set the current frequency being played by the instrument. The closest valid
  * frequency between the frequency limits is used.
  * @param {number} frequency The frequency to set.
- * @param {Object} [frequencyLimits] Object with maxFrequency and minFrequency
+ * @param {object} [frequencyLimits] Object with maxFrequency and minFrequency
  */
 Instrument.prototype.setFrequency = function (frequency, frequencyLimits) {
     var limits = frequencyLimits || {},
@@ -280,50 +300,62 @@ Instrument.prototype.oscillatorPlay = function (frequency) {
 
 
 /**
+ * Options for playing an instrument.
+ * @interface Highcharts.InstrumentPlayOptionsObject
+ *
+ *//**
+ * The frequency of the note to play. Can be a fixed number, or a function. The
+ * function receives one argument: the relative time of the note playing (0
+ * being the start, and 1 being the end of the note). It should return the
+ * frequency number for each point in time. The poll interval of this function
+ * is specified by the Instrument.playCallbackInterval option.
+ * @name Highcharts.InstrumentPlayOptionsObject#frequency
+ * @type {number|Function}
+ *//**
+ * The duration of the note in milliseconds.
+ * @name Highcharts.InstrumentPlayOptionsObject#duration
+ * @type {number}
+ *//**
+ * The minimum frequency to allow. If the instrument has a set of allowed
+ * frequencies, the closest frequency is used by default. Use this option to
+ * stop too low frequencies from being used.
+ * @name Highcharts.InstrumentPlayOptionsObject#minFrequency
+ * @type {number|undefined}
+ *//**
+ * The maximum frequency to allow. If the instrument has a set of allowed
+ * frequencies, the closest frequency is used by default. Use this option to
+ * stop too high frequencies from being used.
+ * @name Highcharts.InstrumentPlayOptionsObject#maxFrequency
+ * @type {number|undefined}
+ *//**
+ * The volume of the instrument. Can be a fixed number between 0 and 1, or a
+ * function. The function receives one argument: the relative time of the note
+ * playing (0 being the start, and 1 being the end of the note). It should
+ * return the volume for each point in time. The poll interval of this function
+ * is specified by the Instrument.playCallbackInterval option. Defaults to 1.
+ * @name Highcharts.InstrumentPlayOptionsObject#volume
+ * @type {number|Function|undefined}
+ *//**
+ * The panning of the instrument. Can be a fixed number between -1 and 1, or a
+ * function. The function receives one argument: the relative time of the note
+ * playing (0 being the start, and 1 being the end of the note). It should
+ * return the panning value for each point in time. The poll interval of this
+ * function is specified by the Instrument.playCallbackInterval option.
+ * Defaults to 0.
+ * @name Highcharts.InstrumentPlayOptionsObject#pan
+ * @type {number|Function|undefined}
+ *//**
+ * Callback function to be called when the play is completed.
+ * @name Highcharts.InstrumentPlayOptionsObject#onEnd
+ * @type {Function|undefined}
+ */
+
+
+/**
  * Play the instrument according to options.
  *
- * @param   {Object} options
+ * @param   {Highcharts.InstrumentPlayOptionsObject} options
  *          Options for the playback of the instrument.
- *
- * @param   {number|Function} options.frequency
- *          The frequency of the note to play. Can be a fixed number, or a
- *          function. The function receives one argument: the relative time of
- *          the note playing (0 being the start, and 1 being the end of the
- *          note). It should return the frequency number for each point in time.
- *          The poll interval of this function is specified by the
- *          Instrument.playCallbackInterval option.
- *
- * @param   {number} [options.minFrequency]
- *          The minimum frequency to allow. If the instrument has a set of
- *          allowed frequencies, the closest frequency is used by default. Use
- *          this option to stop too low frequencies from being used.
- *
- * @param   {number} [options.maxFrequency]
- *          The maximum frequency to allow. If the instrument has a set of
- *          allowed frequencies, the closest frequency is used by default. Use
- *          this option to stop too high frequencies from being used.
- *
- * @param   {number} options.duration
- *          The duration of the note in milliseconds.
- *
- * @param   {Function} [options.onEnd]
- *          Callback function to be called when the play is completed.
- *
- * @param   {number|Function} [options.volume=1]
- *          The volume of the instrument. Can be a fixed number between 0 and 1,
- *          or a function. The function receives one argument: the relative time
- *          of the note playing (0 being the start, and 1 being the end of the
- *          note). It should return the volume for each point in time. The poll
- *          interval of this function is specified by the
- *          Instrument.playCallbackInterval option.
- *
- * @param   {number|Function} [options.pan=0]
- *          The panning of the instrument. Can be a fixed number between -1 and
- *          1, or a function. The function receives one argument: the relative
- *          time of the note playing (0 being the start, and 1 being the end of
- *          the note). It should return the panning value for each point in
- *          time. The poll interval of this function is specified by the
- *          Instrument.playCallbackInterval option.
  *
  * @sample highcharts/sonification/instrument/
  *         Using Instruments directly

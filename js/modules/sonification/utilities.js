@@ -17,9 +17,9 @@ import musicalFrequencies from 'musicalFrequencies.js';
  * not used to avoid confusion with TimelineEvents.
  *
  * @private
- * @class SignalHandler
+ * @class Highcharts.SignalHandler
  *
- * @param   {Array<String>} supportedSignals
+ * @param   {Array<string>} supportedSignals
  *          List of supported signal names.
  */
 function SignalHandler(supportedSignals) {
@@ -35,7 +35,7 @@ SignalHandler.prototype.init = function (supportedSignals) {
  * Register a set of signal callbacks with this SignalHandler.
  * Multiple signal callbacks can be registered for the same signal.
  *
- * @param   {Object} signals An object that contains a mapping from the signal
+ * @param   {object} signals An object that contains a mapping from the signal
  *          name to the callbacks. Only supported events are considered.
  */
 SignalHandler.prototype.registerSignalCallbacks = function (signals) {
@@ -57,7 +57,7 @@ SignalHandler.prototype.registerSignalCallbacks = function (signals) {
  * Clear signal callbacks, optionally by name.
  *
  * @private
- * @param   {Array<String>} [signalNames] A list of signal names to clear. If
+ * @param   {Array<string>} [signalNames] A list of signal names to clear. If
  *          not supplied, all signal callbacks are removed.
  */
 SignalHandler.prototype.clearSignalCallbacks = function (signalNames) {
@@ -79,7 +79,7 @@ SignalHandler.prototype.clearSignalCallbacks = function (signalNames) {
  * registered callbacks.
  *
  * @private
- * @param   {String} signalNames Name of signal to emit.
+ * @param   {string} signalNames Name of signal to emit.
  * @param   {*} data Data to pass to the callback.
  */
 SignalHandler.prototype.emitSignal = function (signalName, data) {
@@ -124,8 +124,8 @@ var utilities = {
      * Calculate the extreme values in a chart for a data prop.
      * @private
      * @param {Highcharts.Chart} chart The chart
-     * @param {String} prop The data prop to find extremes for
-     * @return {Object} Object with min and max properties
+     * @param {string} prop The data prop to find extremes for
+     * @return {object} Object with min and max properties
      */
     calculateDataExtremes: function (chart, prop) {
         return chart.series.reduce(function (extremes, series) {
@@ -149,8 +149,8 @@ var utilities = {
      * min and max, and maps the relative value onto this axis.
      * @private
      * @param {number} value The relative data value to translate.
-     * @param {Object} dataExtremes The possible extremes for this value.
-     * @param {Object} limits Limits for the virtual axis.
+     * @param {object} dataExtremes The possible extremes for this value.
+     * @param {object} limits Limits for the virtual axis.
      * @return {number} The value mapped to the virtual axis.
      */
     virtualAxisTranslate: function (value, dataExtremes, limits) {
