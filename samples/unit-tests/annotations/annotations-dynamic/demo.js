@@ -59,7 +59,7 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         }]
     };
 
-    chart.addAnnotation(secondAnnotationOptions, false);
+    var secondAnnotation = chart.addAnnotation(secondAnnotationOptions);
 
     var thirdAnnotationOptions = {
         id: '3',
@@ -73,13 +73,50 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         }]
     };
 
-    chart.addAnnotation(thirdAnnotationOptions, false);
+    var thirdAnnotation = chart.addAnnotation(thirdAnnotationOptions);
 
     assert.ok(
-        chart.options.annotations[0] === secondAnnotationOptions &&
-        chart.options.annotations[1] === thirdAnnotationOptions &&
+        chart.options.annotations[0] === secondAnnotation.options &&
+        chart.options.annotations[1] === thirdAnnotation.options &&
         chart.options.annotations.length === 2,
         'Annotation options from the chart options are added when the annotations are added (#8393).'
+    );
+
+    thirdAnnotation.update({
+        labelOptions: {
+            format: 'custom format'
+        }
+    });
+
+    assert.strictEqual(
+        thirdAnnotation.labels[0].options.format,
+        'custom format',
+        'Correct annotations text after update (annotations.labels)'
+    );
+
+    var annotation = chart.addAnnotation({
+        shapes: [{
+            type: 'circle',
+            point: {
+                x: 4,
+                y: 123000,
+                xAxis: 0,
+                yAxis: 0
+            },
+            r: 5
+        }]
+    });
+
+    annotation.update({
+        shapes: [{
+            r: 25
+        }]
+    });
+
+    assert.strictEqual(
+        annotation.shapes[0].graphic.attr('r'),
+        25,
+        'Correct annotation size after update (annotations.shapes)'
     );
 });
 

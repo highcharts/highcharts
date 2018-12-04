@@ -2,6 +2,10 @@
 
 Highcharts.chart('container', {
 
+    chart: {
+        styledMode: true
+    },
+
     title: {
         text: 'Shadows and glow in styled mode'
     },

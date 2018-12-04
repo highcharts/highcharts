@@ -13,7 +13,6 @@ import './SvgRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
 
 var addEvent = H.addEvent,
-    each = H.each,
     merge = H.merge,
     noop = H.noop,
     defined = H.defined,
@@ -197,8 +196,6 @@ seriesType('flags', 'column'
      * @apioption plotOptions.flags.height
      */
 
-    /*= if (build.classic) { =*/
-
     /**
      * The fill color for the flags.
      *
@@ -269,8 +266,6 @@ seriesType('flags', 'column'
         fontWeight: 'bold'
     }
 
-    /*= } =*/
-
 }, /** @lends seriesTypes.flags.prototype */ {
     sorted: false,
     noSharedTooltip: true,
@@ -286,8 +281,6 @@ seriesType('flags', 'column'
      * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
      */
     init: Series.prototype.init,
-
-    /*= if (build.classic) { =*/
 
     /**
      * Get presentational attributes
@@ -320,8 +313,6 @@ seriesType('flags', 'column'
             'stroke-width': lineWidth || options.lineWidth || 0
         };
     },
-
-    /*= } =*/
 
     translate: onSeriesMixin.translate,
     getPlotBox: onSeriesMixin.getPlotBox,
@@ -391,12 +382,15 @@ seriesType('flags', 'column'
                         null,
                         null,
                         options.useHTML
-                    )
-                    /*= if (build.classic) { =*/
-                    .attr(series.pointAttribs(point))
-                    .css(merge(options.style, point.style))
-                    /*= } =*/
-                    .attr({
+                    );
+
+                    if (!chart.styledMode) {
+                        graphic
+                            .attr(series.pointAttribs(point))
+                            .css(merge(options.style, point.style));
+                    }
+
+                    graphic.attr({
                         align: shape === 'flag' ? 'left' : 'center',
                         width: options.width,
                         height: options.height,
@@ -410,9 +404,10 @@ seriesType('flags', 'column'
                         point.graphic.div.point = point;
                     }
 
-                    /*= if (build.classic) { =*/
-                    graphic.shadow(options.shadow);
-                    /*= } =*/
+                    if (!chart.styledMode) {
+                        graphic.shadow(options.shadow);
+                    }
+
                     graphic.isNew = true;
                 }
 
@@ -471,7 +466,7 @@ seriesType('flags', 'column'
 
             H.distribute(boxes, inverted ? yAxis.len : this.xAxis.len, 100);
 
-            each(points, function (point) {
+            points.forEach(function (point) {
                 var box = point.graphic && boxesMap[point.plotX];
                 if (box) {
                     point.graphic[point.graphic.isNew ? 'attr' : 'animate']({
@@ -523,7 +518,7 @@ seriesType('flags', 'column'
          * vertically stacked elements as well as tight points on the x axis.
          * #1924.
          */
-        each(points, function (point) {
+        points.forEach(function (point) {
             var graphic = point.graphic;
             if (graphic) {
                 addEvent(graphic.element, 'mouseover', function () {
@@ -538,7 +533,7 @@ seriesType('flags', 'column'
                     }
 
                     // Revert other raised points
-                    each(points, function (otherPoint) {
+                    points.forEach(function (otherPoint) {
                         if (
                             otherPoint !== point &&
                             otherPoint.raised &&
@@ -662,20 +657,16 @@ function createPinSymbol(shape) {
 createPinSymbol('circle');
 createPinSymbol('square');
 
-/*= if (build.classic) { =*/
-
 /**
  * The symbol callbacks are generated on the SVGRenderer object in all browsers.
  * Even VML browsers need this in order to generate shapes in export. Now share
  * them with the VMLRenderer.
  */
 if (Renderer === VMLRenderer) {
-    each(['flag', 'circlepin', 'squarepin'], function (shape) {
+    ['flag', 'circlepin', 'squarepin'].forEach(function (shape) {
         VMLRenderer.prototype.symbols[shape] = symbols[shape];
     });
 }
-
-/*= } =*/
 
 /**
  * A `flags` series. If the [type](#series.flags.type) option is not

@@ -14,11 +14,11 @@ import '../parts/Utilities.js';
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    each = H.each,
     isArray = H.isArray,
     objectEach = H.objectEach,
     pick = H.pick,
-    addEvent = H.addEvent;
+    addEvent = H.addEvent,
+    fireEvent = H.fireEvent;
 
 // Collect potensial overlapping data labels. Stack labels probably don't need
 // to be considered because they are usually accompanied by data labels that lie
@@ -26,11 +26,11 @@ var Chart = H.Chart,
 addEvent(Chart, 'render', function collectAndHide() {
     var labels = [];
     // Consider external label collectors
-    each(this.labelCollectors || [], function (collector) {
+    (this.labelCollectors || []).forEach(function (collector) {
         labels = labels.concat(collector());
     });
 
-    each(this.yAxis || [], function (yAxis) {
+    (this.yAxis || []).forEach(function (yAxis) {
         if (
             yAxis.options.stackLabels &&
             !yAxis.options.stackLabels.allowOverlap
@@ -43,21 +43,21 @@ addEvent(Chart, 'render', function collectAndHide() {
         }
     });
 
-    each(this.series || [], function (series) {
+    (this.series || []).forEach(function (series) {
         var dlOptions = series.options.dataLabels;
 
         if (
             series.visible &&
             !(dlOptions.enabled === false && !series._hasPointLabels)
         ) { // #3866
-            each(series.points, function (point) {
+            series.points.forEach(function (point) {
                 if (point.visible) {
                     var dataLabels = (
                         isArray(point.dataLabels) ?
                         point.dataLabels :
                         (point.dataLabel ? [point.dataLabel] : [])
                     );
-                    each(dataLabels, function (label) {
+                    dataLabels.forEach(function (label) {
                         var options = label.options;
                         label.labelrank = pick(
                             options.labelrank,
@@ -88,8 +88,9 @@ addEvent(Chart, 'render', function collectAndHide() {
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
 
-    var len = labels.length,
-        ren = this.renderer,
+    var chart = this,
+        len = labels.length,
+        ren = chart.renderer,
         label,
         i,
         j,
@@ -205,7 +206,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
     }
 
     // Hide or show
-    each(labels, function (label) {
+    labels.forEach(function (label) {
         var complete,
             newOpacity;
 
@@ -232,6 +233,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                         null,
                         complete
                     );
+                    fireEvent(chart, 'afterHideOverlappingLabels');
                 } else { // other labels, tick labels
                     label.attr({
                         opacity: newOpacity

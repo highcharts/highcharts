@@ -11,7 +11,6 @@ import './Utilities.js';
 
 var Axis = H.Axis,
     getMagnitude = H.getMagnitude,
-    map = H.map,
     normalizeTickInterval = H.normalizeTickInterval,
     pick = H.pick;
 
@@ -126,11 +125,11 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
             getMagnitude(interval)
         );
 
-        positions = map(axis.getLinearTickPositions(
+        positions = axis.getLinearTickPositions(
             interval,
             realMin,
             realMax
-        ), axis.log2lin);
+        ).map(axis.log2lin);
 
         if (!minor) {
             axis._minorAutoInterval = interval / 5;

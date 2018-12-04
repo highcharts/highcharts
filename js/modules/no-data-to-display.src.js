@@ -1,11 +1,14 @@
 /* *
- * Plugin for displaying a message when there is no data visible in chart.
  *
- * (c) 2010-2017 Highsoft AS
- * Author: Oystein Moseng
+ *  Plugin for displaying a message when there is no data visible in chart.
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Highsoft AS
+ *
+ *  Author: Oystein Moseng
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -17,8 +20,7 @@ import '../parts/Options.js';
 var seriesTypes = H.seriesTypes,
     chartPrototype = H.Chart.prototype,
     defaultOptions = H.getOptions(),
-    extend = H.extend,
-    each = H.each;
+    extend = H.extend;
 
 // Add language option
 extend(defaultOptions.lang,
@@ -109,10 +111,6 @@ defaultOptions.noData = {
         verticalAlign: 'middle'
     },
 
-    /*= if (build.classic) { =*/
-
-    // Presentational
-
     /**
      * CSS styles for the no-data label.
      *
@@ -122,21 +120,19 @@ defaultOptions.noData = {
      * @type {Highcharts.CSSObject}
      */
     style: {
-        /** @ignore-option */
+        /** @ignore */
         fontWeight: 'bold',
-        /** @ignore-option */
+        /** @ignore */
         fontSize: '12px',
-        /** @ignore-option */
+        /** @ignore */
         color: '${palette.neutralColor60}'
     }
-
-    /*= } =*/
 
 };
 
 // Define hasData function for non-cartesian seris. Returns true if the series
 // has points at all.
-each([
+[
     'bubble',
     'gauge',
     'heatmap',
@@ -144,7 +140,7 @@ each([
     'sankey',
     'treemap',
     'waterfall'
-], function (type) {
+].forEach(function (type) {
     if (seriesTypes[type]) {
         seriesTypes[type].prototype.hasData = function () {
             return !!this.points.length; // != 0
@@ -198,11 +194,11 @@ chartPrototype.showNoData = function (str) {
                 'no-data'
             );
 
-        /*= if (build.classic) { =*/
-        chart.noDataLabel
-            .attr(noDataOptions.attr)
-            .css(noDataOptions.style);
-        /*= } =*/
+        if (!chart.styledMode) {
+            chart.noDataLabel
+                .attr(noDataOptions.attr)
+                .css(noDataOptions.style);
+        }
 
         chart.noDataLabel.add();
 

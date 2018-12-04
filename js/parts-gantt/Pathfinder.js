@@ -16,7 +16,6 @@ import 'ArrowSymbols.js';
 var defined = H.defined,
     deg2rad = H.deg2rad,
     extend = H.extend,
-    each = H.each,
     addEvent = H.addEvent,
     merge = H.merge,
     pick = H.pick,
@@ -470,9 +469,11 @@ Connection.prototype = {
     renderPath: function (path, attribs, animation) {
         var connection = this,
             chart = this.chart,
+            styledMode = chart.styledMode,
             pathfinder = chart.pathfinder,
             animate = !chart.options.chart.forExport && animation !== false,
-            pathGraphic = connection.graphics && connection.graphics.path;
+            pathGraphic = connection.graphics && connection.graphics.path,
+            anim;
 
         // Add the SVG element of the pathfinder group if it doesn't exist
         if (!pathfinder.group) {
@@ -490,22 +491,21 @@ Connection.prototype = {
         // Create path if does not exist
         if (!(pathGraphic && pathGraphic.renderer)) {
             pathGraphic = chart.renderer.path()
-                /*= if (build.classic) { =*/
-                .attr({
-                    opacity: 0
-                })
-                /*= } =*/
                 .add(pathfinder.group);
+            if (!styledMode) {
+                pathGraphic.attr({
+                    opacity: 0
+                });
+            }
         }
 
         // Set path attribs and animate to the new path
         pathGraphic.attr(attribs);
-        pathGraphic[animate ? 'animate' : 'attr']({
-            /*= if (build.classic) { =*/
-            opacity: 1,
-            /*= } =*/
-            d: path
-        }, animation);
+        anim = { d: path };
+        if (!styledMode) {
+            anim.opacity = 1;
+        }
+        pathGraphic[animate ? 'animate' : 'attr'](anim, animation);
 
         // Store reference on connection
         this.graphics = this.graphics || {};
@@ -612,9 +612,10 @@ Connection.prototype = {
                     'highcharts-point-connecting-path-' + type + '-marker'
                 )
                 .attr(box)
+                .add(pathfinder.group);
 
-                /*= if (build.classic) { =*/
-                .attr({
+            if (!renderer.styledMode) {
+                connection.graphics[type].attr({
                     fill: options.color || connection.fromPoint.color,
                     stroke: options.lineColor,
                     'stroke-width': options.lineWidth,
@@ -622,9 +623,9 @@ Connection.prototype = {
                 })
                 .animate({
                     opacity: 1
-                }, point.series.options.animation)
-                /*= } =*/
-                .add(pathfinder.group);
+                }, point.series.options.animation);
+            }
+
         } else {
             connection.graphics[type].animate(box);
         }
@@ -716,13 +717,13 @@ Connection.prototype = {
             attribs = {};
 
         // Set path attribs
-        /*= if (build.classic) { =*/
-        attribs.stroke = options.lineColor || fromPoint.color;
-        attribs['stroke-width'] = options.lineWidth;
-        if (options.dashStyle) {
-            attribs.dashstyle = options.dashStyle;
+        if (!chart.styledMode) {
+            attribs.stroke = options.lineColor || fromPoint.color;
+            attribs['stroke-width'] = options.lineWidth;
+            if (options.dashStyle) {
+                attribs.dashstyle = options.dashStyle;
+            }
         }
-        /*= } =*/
 
         attribs.class = 'highcharts-point-connecting-path ' +
             'highcharts-color-' + fromPoint.colorIndex;
@@ -836,9 +837,9 @@ Pathfinder.prototype = {
 
         // Rebuild pathfinder connections from options
         pathfinder.connections = [];
-        each(chart.series, function (series) {
+        chart.series.forEach(function (series) {
             if (series.visible) {
-                each(series.points, function (point) {
+                series.points.forEach(function (point) {
                     var to,
                         connects = (
                             point.options &&
@@ -846,7 +847,7 @@ Pathfinder.prototype = {
                             H.splat(point.options.connect)
                         );
                     if (point.visible && point.isInside !== false && connects) {
-                        each(connects, function (connect) {
+                        connects.forEach(function (connect) {
                             to = chart.get(typeof connect === 'string' ?
                                 connect : connect.to
                             );
@@ -918,13 +919,13 @@ Pathfinder.prototype = {
     renderConnections: function (deferRender) {
         if (deferRender) {
             // Render after series are done animating
-            each(this.chart.series, function (series) {
+            this.chart.series.forEach(function (series) {
                 var render = function () {
                     // Find pathfinder connections belonging to this series
                     // that haven't rendered, and render them now.
                     var pathfinder = series.chart.pathfinder,
                         conns = pathfinder && pathfinder.connections || [];
-                    each(conns, function (connection) {
+                    conns.forEach(function (connection) {
                         if (
                             connection.fromPoint &&
                             connection.fromPoint.series === series
@@ -947,7 +948,7 @@ Pathfinder.prototype = {
             });
         } else {
             // Go through connections and render them
-            each(this.connections, function (connection) {
+            this.connections.forEach(function (connection) {
                 connection.render();
             });
         }
@@ -1005,7 +1006,7 @@ Pathfinder.prototype = {
             calculatedMargin =
                 options.algorithmMargin =
                 calculateObstacleMargin(obstacles);
-            each(obstacles, function (obstacle) {
+            obstacles.forEach(function (obstacle) {
                 obstacle.xMin -= calculatedMargin;
                 obstacle.xMax += calculatedMargin;
                 obstacle.yMin -= calculatedMargin;
@@ -1251,7 +1252,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 function warnLegacy(chart) {
     if (
         chart.options.pathfinder ||
-        H.reduce(chart.series, function (acc, series) {
+        chart.series.reduce(function (acc, series) {
             if (series.options) {
                 merge(true,
                     (

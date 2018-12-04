@@ -23,7 +23,6 @@ var win = H.win,
     Color = H.Color,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    each = H.each,
     extend = H.extend,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
@@ -42,7 +41,8 @@ var win = H.win,
 H.initCanvasBoost = function () {
     if (H.seriesTypes.heatmap) {
         H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
-            var ctx = this.getContext(),
+            var chart = this.chart,
+                ctx = this.getContext(),
                 inverted = this.chart.inverted,
                 xAxis = this.xAxis,
                 yAxis = this.yAxis;
@@ -50,7 +50,7 @@ H.initCanvasBoost = function () {
             if (ctx) {
 
                 // draw the columns
-                each(this.points, function (point) {
+                this.points.forEach(function (point) {
                     var plotY = point.plotY,
                         shapeArgs,
                         pointAttr;
@@ -62,11 +62,11 @@ H.initCanvasBoost = function () {
                     ) {
                         shapeArgs = point.shapeArgs;
 
-                        /*= if (build.classic) { =*/
-                        pointAttr = point.series.pointAttribs(point);
-                        /*= } else { =*/
-                        pointAttr = point.series.colorAttribs(point);
-                        /*= } =*/
+                        if (!chart.styledMode) {
+                            pointAttr = point.series.pointAttribs(point);
+                        } else {
+                            pointAttr = point.series.colorAttribs(point);
+                        }
 
                         ctx.fillStyle = pointAttr.fill;
 
@@ -147,7 +147,7 @@ H.initCanvasBoost = function () {
                 target.ctx = ctx = target.canvas.getContext('2d');
 
                 if (chart.inverted) {
-                    each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
+                    ['moveTo', 'lineTo', 'rect', 'arc'].forEach(function (fn) {
                         wrap(ctx, fn, swapXY);
                     });
                 }

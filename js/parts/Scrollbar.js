@@ -17,7 +17,6 @@ var addEvent = H.addEvent,
     defaultOptions = H.defaultOptions,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
-    each = H.each,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
@@ -131,8 +130,6 @@ var defaultScrollbarOptions = {
      */
     zIndex: 3,
 
-    /*= if (build.classic) { =*/
-
     /**
      * The background color of the scrollbar itself.
      *
@@ -241,7 +238,6 @@ var defaultScrollbarOptions = {
      *         Scrollbar styling
      */
     trackBorderWidth: 1
-    /*= } =*/
 };
 
 defaultOptions.scrollbar = merge(
@@ -343,6 +339,7 @@ Scrollbar.prototype = {
             renderer = scroller.renderer,
             options = scroller.options,
             size = scroller.size,
+            styledMode = this.chart.styledMode,
             group;
 
         // Draw the scrollbar group
@@ -361,13 +358,14 @@ Scrollbar.prototype = {
                 width: size
             }).add(group);
 
-        /*= if (build.classic) { =*/
-        scroller.track.attr({
-            fill: options.trackBackgroundColor,
-            stroke: options.trackBorderColor,
-            'stroke-width': options.trackBorderWidth
-        });
-        /*= } =*/
+        if (!styledMode) {
+            scroller.track.attr({
+                fill: options.trackBackgroundColor,
+                stroke: options.trackBorderColor,
+                'stroke-width': options.trackBorderWidth
+            });
+        }
+
         this.trackBorderWidth = scroller.track.strokeWidth();
         scroller.track.attr({
             y: -this.trackBorderWidth % 2 / 2
@@ -403,17 +401,18 @@ Scrollbar.prototype = {
             .addClass('highcharts-scrollbar-rifles')
             .add(scroller.scrollbarGroup);
 
-        /*= if (build.classic) { =*/
-        scroller.scrollbar.attr({
-            fill: options.barBackgroundColor,
-            stroke: options.barBorderColor,
-            'stroke-width': options.barBorderWidth
-        });
-        scroller.scrollbarRifles.attr({
-            stroke: options.rifleColor,
-            'stroke-width': 1
-        });
-        /*= } =*/
+        if (!styledMode) {
+            scroller.scrollbar.attr({
+                fill: options.barBackgroundColor,
+                stroke: options.barBorderColor,
+                'stroke-width': options.barBorderWidth
+            });
+            scroller.scrollbarRifles.attr({
+                stroke: options.rifleColor,
+                'stroke-width': 1
+            });
+        }
+
         scroller.scrollbarStrokeWidth = scroller.scrollbar.strokeWidth();
         scroller.scrollbarGroup.translate(
             -scroller.scrollbarStrokeWidth % 2 / 2,
@@ -517,14 +516,14 @@ Scrollbar.prototype = {
             .addClass('highcharts-scrollbar-button')
             .add(group);
 
-        /*= if (build.classic) { =*/
         // Presentational attributes
-        tempElem.attr({
-            stroke: options.buttonBorderColor,
-            'stroke-width': options.buttonBorderWidth,
-            fill: options.buttonBackgroundColor
-        });
-        /*= } =*/
+        if (!this.chart.styledMode) {
+            tempElem.attr({
+                stroke: options.buttonBorderColor,
+                'stroke-width': options.buttonBorderWidth,
+                fill: options.buttonBackgroundColor
+            });
+        }
 
         // Place the rectangle based on the rendered stroke width
         tempElem.attr(tempElem.crisp({
@@ -551,11 +550,11 @@ Scrollbar.prototype = {
             .addClass('highcharts-scrollbar-arrow')
             .add(scrollbarButtons[index]);
 
-        /*= if (build.classic) { =*/
-        tempElem.attr({
-            fill: options.buttonArrowColor
-        });
-        /*= } =*/
+        if (!this.chart.styledMode) {
+            tempElem.attr({
+                fill: options.buttonArrowColor
+            });
+        }
     },
 
     /**
@@ -902,7 +901,7 @@ Scrollbar.prototype = {
         }
 
         // Add them all
-        each(_events, function (args) {
+        _events.forEach(function (args) {
             addEvent.apply(null, args);
         });
         this._events = _events;
@@ -915,7 +914,7 @@ Scrollbar.prototype = {
      * @function Highcharts.Scrollbar#removeEvents
      */
     removeEvents: function () {
-        each(this._events, function (args) {
+        this._events.forEach(function (args) {
             removeEvent.apply(null, args);
         });
         this._events.length = 0;
@@ -935,14 +934,13 @@ Scrollbar.prototype = {
         this.removeEvents();
 
         // Destroy properties
-        each(
-            [
-                'track',
-                'scrollbarRifles',
-                'scrollbar',
-                'scrollbarGroup',
-                'group'
-            ],
+        [
+            'track',
+            'scrollbarRifles',
+            'scrollbar',
+            'scrollbarGroup',
+            'group'
+        ].forEach(
             function (prop) {
                 if (this[prop] && this[prop].destroy) {
                     this[prop] = this[prop].destroy();

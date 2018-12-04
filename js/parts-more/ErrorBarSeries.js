@@ -11,8 +11,7 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import './BoxPlotSeries.js';
 
-var each = H.each,
-    noop = H.noop,
+var noop = H.noop,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
@@ -32,8 +31,6 @@ var each = H.each,
  */
 seriesType('errorbar', 'boxplot', {
 
-    /*= if (build.classic) { =*/
-
     /**
      * The main color of the bars. This can be overridden by
      * [stemColor](#plotOptions.errorbar.stemColor) and
@@ -48,8 +45,6 @@ seriesType('errorbar', 'boxplot', {
      * @product highcharts
      */
     color: '${palette.neutralColor100}',
-
-    /*= } =*/
 
     grouping: false,
 
@@ -95,7 +90,7 @@ seriesType('errorbar', 'boxplot', {
             seriesTypes.arearange.prototype.drawDataLabels.call(this);
             // Arearange drawDataLabels does not reset point.y to high,
             // but to low after drawing (#4133)
-            each(this.data, function (point) {
+            this.data.forEach(function (point) {
                 point.y = point[valKey];
             });
         } :

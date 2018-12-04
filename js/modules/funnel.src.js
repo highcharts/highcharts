@@ -19,8 +19,7 @@ import '../parts/Series.js';
 var seriesType = Highcharts.seriesType,
     seriesTypes = Highcharts.seriesTypes,
     noop = Highcharts.noop,
-    pick = Highcharts.pick,
-    each = Highcharts.each;
+    pick = Highcharts.pick;
 
 /**
  * @private
@@ -115,9 +114,6 @@ seriesType('funnel', 'pie',
     /** @ignore */
     size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 
-    /*= if (build.classic) { =*/
-    // Presentational
-
     dataLabels: {
         connectorWidth: 1
     },
@@ -152,7 +148,6 @@ seriesType('funnel', 'pie',
             borderColor: '${palette.neutralColor100}'
         }
     }
-    /*= } =*/
 },
 
 // Properties
@@ -243,13 +238,13 @@ seriesType('funnel', 'pie',
          */
 
         // get the total sum
-        each(data, function (point) {
+        data.forEach(function (point) {
             if (!ignoreHiddenPoint || point.visible !== false) {
                 sum += point.y;
             }
         });
 
-        each(data, function (point) {
+        data.forEach(function (point) {
             // set start and end positions
             y5 = null;
             fraction = sum ? point.y / sum : 0;
@@ -369,24 +364,33 @@ seriesType('funnel', 'pie',
             x = series.getX(y, leftSide, point);
 
             // set the anchor point for data labels
-            point.labelPos = [
-                // first break of connector
-                0,
-                y,
-
-                // second break, right outside point shape
-                x + (point.labelDistance - 5) * sign,
-                y,
-
-                // landing point for connector
-                x + point.labelDistance * sign,
-                y,
-
-                // alignment
-                leftSide ? 'right' : 'left',
-                // center angle
-                0
-            ];
+            point.labelPosition = {
+                // initial position of the data label - it's utilized for
+                // finding the final position for the label
+                natural: {
+                    x: 0,
+                    y: y
+                },
+                final: {
+                    // used for generating connector path -
+                    // initialized later in drawDataLabels function
+                    // x: undefined,
+                    // y: undefined
+                },
+                // left - funnel on the left side of the data label
+                // right - funnel on the right side of the data label
+                alignment: leftSide ? 'right' : 'left',
+                connectorPosition: {
+                    breakAt: { // used in connectorShapes.fixedOffset
+                        x: x + (point.labelDistance - 5) * sign,
+                        y: y
+                    },
+                    touchingSliceAt: {
+                        x: x + point.labelDistance * sign,
+                        y: y
+                    }
+                }
+            };
         }
 
         seriesTypes.pie.prototype.drawDataLabels.call(this);

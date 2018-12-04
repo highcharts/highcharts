@@ -1,8 +1,10 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -21,14 +23,10 @@ var addEvent = H.addEvent,
     Axis = H.Axis,
     Chart = H.Chart,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     format = H.format,
-    grep = H.grep,
-    inArray = H.inArray,
     isNumber = H.isNumber,
     isString = H.isString,
-    map = H.map,
     merge = H.merge,
     pick = H.pick,
     Point = H.Point,
@@ -170,7 +168,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
         };
 
     // apply X axis options to both single and multi y axes
-    options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions, i) {
+    options.xAxis = splat(options.xAxis || {}).map(function (xAxisOptions, i) {
         return merge(
             { // defaults
                 minPadding: 0,
@@ -197,7 +195,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
     });
 
     // apply Y axis options to both single and multi y axes
-    options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions, i) {
+    options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions, i) {
         opposite = pick(yAxisOptions.opposite, true);
         return merge({ // defaults
             labels: {
@@ -349,10 +347,8 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
         uniqueAxes,
         transVal;
 
-    /**
-     * Return the other axis based on either the axis option or on related
-     * series.
-     */
+    // Return the other axis based on either the axis option or on related
+    // series.
     function getAxis(coll) {
         var otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
             opt = axis.options[otherColl];
@@ -368,7 +364,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
         }
 
         // Auto detect based on existing series
-        return map(series, function (s) {
+        return series.map(function (s) {
             return s[otherColl];
         });
     }
@@ -383,7 +379,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
 
     // Get the related axes based options.*Axis setting #2810
     axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-    each(axes2, function (A) {
+    axes2.forEach(function (A) {
         if (
             defined(A.options.id) ?
                 A.options.id.indexOf('navigator') === -1 :
@@ -409,9 +405,9 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
     uniqueAxes = axes.length ?
         [] :
         [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
-    each(axes, function (axis2) {
+    axes.forEach(function (axis2) {
         if (
-            inArray(axis2, uniqueAxes) === -1 &&
+            uniqueAxes.indexOf(axis2) === -1 &&
             // Do not draw on axis which overlap completely. #5424
             !H.find(uniqueAxes, function (unique) {
                 return unique.pos === axis2.pos && unique.len === axis2.len;
@@ -424,7 +420,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
     transVal = pick(translatedValue, axis.translate(value, null, null, old));
     if (isNumber(transVal)) {
         if (axis.horiz) {
-            each(uniqueAxes, function (axis2) {
+            uniqueAxes.forEach(function (axis2) {
                 var skip;
 
                 y1 = axis2.pos;
@@ -450,7 +446,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
                 }
             });
         } else {
-            each(uniqueAxes, function (axis2) {
+            uniqueAxes.forEach(function (axis2) {
                 var skip;
 
                 x1 = axis2.pos;
@@ -482,7 +478,18 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
         null; // #3557 getPlotLinePath in regular Highcharts also returns null
 });
 
-// Function to crisp a line with multiple segments
+/**
+ * Function to crisp a line with multiple segments
+ *
+ * @private
+ * @function Highcharts.SVGRenderer#crispPolyLine
+ *
+ * @param {Array<number>} points
+ *
+ * @param {number} width
+ *
+ * @return {Array<number>}
+ */
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
     // points format: ['M', 0, 0, 'L', 100, 0]
     // normalize to a crisp line
@@ -501,11 +508,9 @@ SVGRenderer.prototype.crispPolyLine = function (points, width) {
     }
     return points;
 };
-/*= if (build.classic) { =*/
 if (Renderer === VMLRenderer) {
     VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
 }
-/*= } =*/
 
 // Wrapper to hide the label
 wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
@@ -586,23 +591,23 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
             })
             .add(this.labelGroup);
 
-        /*= if (build.classic) { =*/
         // Presentational
-        crossLabel
-            .attr({
-                fill: options.backgroundColor ||
-                    (this.series[0] && this.series[0].color) ||
-                    '${palette.neutralColor60}',
-                stroke: options.borderColor || '',
-                'stroke-width': options.borderWidth || 0
-            })
-            .css(extend({
-                color: '${palette.backgroundColor}',
-                fontWeight: 'normal',
-                fontSize: '11px',
-                textAlign: 'center'
-            }, options.style));
-        /*= } =*/
+        if (!chart.styledMode) {
+            crossLabel
+                .attr({
+                    fill: options.backgroundColor ||
+                        (this.series[0] && this.series[0].color) ||
+                        '${palette.neutralColor60}',
+                    stroke: options.borderColor || '',
+                    'stroke-width': options.borderWidth || 0
+                })
+                .css(extend({
+                    color: '${palette.backgroundColor}',
+                    fontWeight: 'normal',
+                    fontSize: '11px',
+                    textAlign: 'center'
+                }, options.style));
+        }
     }
 
     if (horiz) {
@@ -686,15 +691,16 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     });
 });
 
-/* ****************************************************************************
- * Start value compare logic                                                  *
- *****************************************************************************/
+/* ************************************************************************** *
+ *  Start value compare logic                                                 *
+ * ************************************************************************** */
 
 /**
  * Extend series.init by adding a method to modify the y value used for plotting
  * on the y axis. This method is called both from the axis when finding dataMin
  * and dataMax, and from the series.translate method.
  *
+ * @ignore
  * @function Highcharts.Series#init
  */
 seriesProto.init = function () {
@@ -763,6 +769,7 @@ seriesProto.setCompare = function (compare) {
  * Extend series.processData by finding the first y value in the plot area,
  * used for comparing the following values
  *
+ * @ignore
  * @function Highcharts.Series#processData
  */
 seriesProto.processData = function () {
@@ -789,12 +796,10 @@ seriesProto.processData = function () {
         // against close or the pointValKey (#4922, #3112)
         if (series.pointArrayMap) {
             // Use close if present (#3112)
-            keyIndex = inArray('close', series.pointArrayMap);
+            keyIndex = series.pointArrayMap.indexOf('close');
             if (keyIndex === -1) {
-                keyIndex = inArray(
-                    series.pointValKey || 'y',
-                    series.pointArrayMap
-                );
+                keyIndex = series.pointArrayMap.indexOf(
+                    series.pointValKey || 'y');
             }
         }
 
@@ -815,9 +820,7 @@ seriesProto.processData = function () {
     }
 };
 
-/* *
- * Modify series extremes
- */
+// Modify series extremes
 wrap(seriesProto, 'getExtremes', function (proceed) {
     var extremes;
 
@@ -853,7 +856,7 @@ wrap(seriesProto, 'getExtremes', function (proceed) {
  */
 Axis.prototype.setCompare = function (compare, redraw) {
     if (!this.isXAxis) {
-        each(this.series, function (series) {
+        this.series.forEach(function (series) {
             series.setCompare(compare);
         });
         if (pick(redraw, true)) {
@@ -866,6 +869,7 @@ Axis.prototype.setCompare = function (compare, redraw) {
  * Extend the tooltip formatter by adding support for the point.change variable
  * as well as the changeDecimals option.
  *
+ * @ignore
  * @function Highcharts.Point#tooltipFormatter
  *
  * @param {string} pointFormat
@@ -884,16 +888,14 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
     return pointTooltipFormatter.apply(this, [pointFormat]);
 };
 
-/* ****************************************************************************
- * End value compare logic                                                    *
- *****************************************************************************/
+/* ************************************************************************** *
+ *  End value compare logic                                                   *
+ * ************************************************************************** */
 
 
-/* *
- * Extend the Series prototype to create a separate series clip box. This is
- * related to using multiple panes, and a future pane logic should incorporate
- * this feature (#2754).
- */
+// Extend the Series prototype to create a separate series clip box. This is
+// related to using multiple panes, and a future pane logic should incorporate
+// this feature (#2754).
 wrap(Series.prototype, 'render', function (proceed) {
     var clipHeight;
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
@@ -933,12 +935,14 @@ wrap(Series.prototype, 'render', function (proceed) {
 wrap(Chart.prototype, 'getSelectedPoints', function (proceed) {
     var points = proceed.call(this);
 
-    each(this.series, function (serie) {
+    this.series.forEach(function (serie) {
         // series.points - for grouped points (#6445)
         if (serie.hasGroupedData) {
-            points = points.concat(grep(serie.points || [], function (point) {
-                return point.selected;
-            }));
+            points = points.concat((serie.points || []).filter(
+                function (point) {
+                    return point.selected;
+                }
+            ));
         }
     });
     return points;

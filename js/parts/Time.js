@@ -61,7 +61,6 @@ import Highcharts from './Globals.js';
 
 var H = Highcharts,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     merge = H.merge,
     pick = H.pick,
@@ -850,7 +849,7 @@ Highcharts.Time.prototype = {
             // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
             // to prevent looping over dense data grouping (#6156).
             if (interval <= timeUnits.hour && tickPositions.length < 10000) {
-                each(tickPositions, function (t) {
+                tickPositions.forEach(function (t) {
                     if (
                         // Speed optimization, no need to run dateFormat unless
                         // we're on a full or half hour

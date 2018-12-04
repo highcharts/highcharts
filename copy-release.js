@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /* eslint-env node, es6 */
 /* eslint valid-jsdoc: 0, no-console: 0 */
 /* eslint func-style: ["error", "declaration", { "allowArrowFunctions": true }] */
@@ -74,6 +76,11 @@
                     throw err;
                 }
                 json = JSON.parse(json);
+                json.types = (
+                    json.main ?
+                    json.main.replace(/\.js$/, '.d.ts') :
+                    'highcharts.d.ts'
+                );
                 json.version = version;
                 json = JSON.stringify(json, null, '  ');
                 fs.writeFile('../' + releaseRepo + '/' + file + '.json', json, proceed);
@@ -103,6 +110,12 @@
                 }
             });
         });
+
+        getFilesInFolder('code/', true)
+            .filter(path => /.d.ts$/.test(path))
+            .forEach(path => {
+                mapFromTo['code/' + path] = pathTo + path;
+            });
 
         // Copy all the files to release repository
         Object.keys(mapFromTo).forEach((from) => {

@@ -15,7 +15,6 @@ var addEvent = H.addEvent,
     color = H.Color,
     columnType = H.seriesTypes.column,
     correctFloat = H.correctFloat,
-    each = H.each,
     isNumber = H.isNumber,
     isObject = H.isObject,
     merge = H.merge,
@@ -153,7 +152,7 @@ seriesType('xrange', 'column'
 
     tooltip: {
 
-        headerFormat: '<span style="font-size: 0.85em">{point.x} - {point.x2}</span><br/>',
+        headerFormat: '<span style="font-size: 10px">{point.x} - {point.x2}</span><br/>',
 
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
     },
@@ -185,7 +184,7 @@ seriesType('xrange', 'column'
             chart = this.chart;
 
         function swapAxes() {
-            each(chart.series, function (s) {
+            chart.series.forEach(function (s) {
                 var xAxis = s.xAxis;
                 s.xAxis = s.yAxis;
                 s.yAxis = xAxis;
@@ -358,7 +357,7 @@ seriesType('xrange', 'column'
      */
     translate: function () {
         columnType.prototype.translate.apply(this, arguments);
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             this.translatePoint(point);
         }, this);
     },
@@ -438,33 +437,33 @@ seriesType('xrange', 'column'
             }
 
 
-            /*= if (build.classic) { =*/
             // Presentational
-            point.graphicOriginal
-                .attr(series.pointAttribs(point, state))
-                .shadow(seriesOpts.shadow, null, cutOff);
-            if (partShapeArgs) {
-                // Ensure pfOptions is an object
-                if (!isObject(pfOptions)) {
-                    pfOptions = {};
-                }
-                if (isObject(seriesOpts.partialFill)) {
-                    pfOptions = merge(pfOptions, seriesOpts.partialFill);
-                }
-
-                fill = (
-                    pfOptions.fill ||
-                    color(point.color || series.color).brighten(-0.3).get()
-                );
-
-                point.graphicOverlay
+            if (!series.chart.styledMode) {
+                point.graphicOriginal
                     .attr(series.pointAttribs(point, state))
-                    .attr({
-                        'fill': fill
-                    })
                     .shadow(seriesOpts.shadow, null, cutOff);
+                if (partShapeArgs) {
+                    // Ensure pfOptions is an object
+                    if (!isObject(pfOptions)) {
+                        pfOptions = {};
+                    }
+                    if (isObject(seriesOpts.partialFill)) {
+                        pfOptions = merge(pfOptions, seriesOpts.partialFill);
+                    }
+
+                    fill = (
+                        pfOptions.fill ||
+                        color(point.color || series.color).brighten(-0.3).get()
+                    );
+
+                    point.graphicOverlay
+                        .attr(series.pointAttribs(point, state))
+                        .attr({
+                            'fill': fill
+                        })
+                        .shadow(seriesOpts.shadow, null, cutOff);
+                }
             }
-            /*= } =*/
 
         } else if (graphic) {
             point.graphic = graphic.destroy(); // #1269
@@ -480,7 +479,7 @@ seriesType('xrange', 'column'
             verb = series.getAnimationVerb();
 
         // Draw the columns
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             series.drawPoint(point, verb);
         });
     },
@@ -528,9 +527,11 @@ seriesType('xrange', 'column'
 
         if (series.options.colorByPoint && !point.options.color) {
             colorByPoint = getColorByCategory(series, point);
-            /*= if (build.classic) { =*/
-            point.color = colorByPoint.color;
-            /*= } =*/
+
+            if (!series.chart.styledMode) {
+                point.color = colorByPoint.color;
+            }
+
             if (!point.options.colorIndex) {
                 point.colorIndex = colorByPoint.colorIndex;
             }
@@ -605,9 +606,9 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
 
     if (axis.isXAxis) {
         dataMax = pick(axis.dataMax, -Number.MAX_VALUE);
-        each(axisSeries, function (series) {
+        axisSeries.forEach(function (series) {
             if (series.x2Data) {
-                each(series.x2Data, function (val) {
+                series.x2Data.forEach(function (val) {
                     if (val > dataMax) {
                         dataMax = val;
                         modMax = true;

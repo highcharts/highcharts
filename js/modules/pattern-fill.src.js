@@ -106,7 +106,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var wrap = H.wrap,
-    each = H.each,
     merge = H.merge,
     pick = H.pick;
 
@@ -269,7 +268,8 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
                     fill: fill
                 })
                 .add(pattern);
-        };
+        },
+        attribs;
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
@@ -279,7 +279,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
 
     // Do nothing if ID already exists
     this.defIds = this.defIds || [];
-    if (H.inArray(id, this.defIds) > -1) {
+    if (this.defIds.indexOf(id) > -1) {
         return;
     }
 
@@ -309,11 +309,14 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
         }
 
         // The pattern
-        this.createElement('path').attr({
-            'd': path.d || path,
-            'stroke': path.stroke || color,
-            'stroke-width': path.strokeWidth || 2
-        }).add(pattern);
+        attribs = {
+            'd': path.d || path
+        };
+        if (!this.styledMode) {
+            attribs.stroke = path.stroke || color;
+            attribs['stroke-width'] = path.strokeWidth || 2;
+        }
+        this.createElement('path').attr(attribs).add(pattern);
         pattern.color = color;
 
     // Image pattern
@@ -335,7 +338,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
 
     // For non-animated patterns, set opacity now
     if (!(options.image && animate) && options.opacity !== undefined) {
-        each(pattern.element.childNodes, function (child) {
+        pattern.element.childNodes.forEach(function (child) {
             child.setAttribute('opacity', options.opacity);
         });
     }
@@ -370,7 +373,7 @@ wrap(H.Series.prototype, 'getColor', function (proceed) {
 wrap(H.Series.prototype, 'render', function (proceed) {
     var isResizing = this.chart.isResizing;
     if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
-        each(this.points || [], function (point) {
+        (this.points || []).forEach(function (point) {
             var colorOptions = point.options && point.options.color;
             if (colorOptions && colorOptions.pattern) {
                 // For most points we want to recalculate the dimensions on
@@ -504,14 +507,14 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (args) {
 // resize, as the bounding boxes are not available until then.
 H.addEvent(H.Chart, 'endResize', function () {
     if (
-        H.grep(this.renderer.defIds || [], function (id) {
+        (this.renderer.defIds || []).filter(function (id) {
             return id && id.indexOf && id.indexOf('highcharts-pattern-') === 0;
         }).length
     ) {
         // We have non-default patterns to fix. Find them by looping through
         // all points.
-        each(this.series, function (series) {
-            each(series.points, function (point) {
+        this.series.forEach(function (series) {
+            series.points.forEach(function (point) {
                 var colorOptions = point.options && point.options.color;
                 if (colorOptions && colorOptions.pattern) {
                     colorOptions.pattern._width = 'defer';
@@ -531,7 +534,7 @@ H.addEvent(H.Chart, 'redraw', function () {
     var usedIds = [],
         renderer = this.renderer,
         // Get the autocomputed patterns - these are the ones we might delete
-        patterns = H.grep(renderer.defIds || [], function (pattern) {
+        patterns = (renderer.defIds || []).filter(function (pattern) {
             return pattern.indexOf &&
                 pattern.indexOf('highcharts-pattern-') === 0;
         });
@@ -539,9 +542,9 @@ H.addEvent(H.Chart, 'redraw', function () {
     if (patterns.length) {
         // Look through the DOM for usage of the patterns. This can be points,
         // series, tooltips etc.
-        each(this.renderTo.querySelectorAll(
+        this.renderTo.querySelectorAll(
             '[color^="url(#"], [fill^="url(#"], [stroke^="url(#"]'
-        ), function (node) {
+        ).forEach(function (node) {
             var id = node.getAttribute('fill') ||
                     node.getAttribute('color') ||
                     node.getAttribute('stroke');
@@ -554,8 +557,8 @@ H.addEvent(H.Chart, 'redraw', function () {
         });
 
         // Loop through the patterns that exist and see if they are used
-        each(patterns, function (id) {
-            if (H.inArray(id, usedIds) === -1) {
+        patterns.forEach(function (id) {
+            if (usedIds.indexOf(id) === -1) {
                 // Remove id from used id list
                 H.erase(renderer.defIds, id);
                 // Remove pattern element
@@ -572,7 +575,7 @@ H.addEvent(H.Chart, 'redraw', function () {
 // Add the predefined patterns
 H.Chart.prototype.callbacks.push(function (chart) {
     var colors = H.getOptions().colors;
-    each([
+    [
         'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
         'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',
         'M 3 0 L 3 10 M 8 0 L 8 10',
@@ -583,7 +586,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
         'M 10 3 L 5 3 L 5 0 M 5 10 L 5 7 L 0 7',
         'M 2 5 L 5 2 L 8 5 L 5 8 Z',
         'M 0 0 L 5 10 L 10 0'
-    ], function (pattern, i) {
+    ].forEach(function (pattern, i) {
         chart.renderer.addPattern({
             id: 'highcharts-default-pattern-' + i,
             path: pattern,

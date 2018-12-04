@@ -8,8 +8,7 @@
 
 import H from '../parts/Globals.js';
 
-var each = H.each,
-    defined = H.defined,
+var defined = H.defined,
     seriesTypes = H.seriesTypes,
     stableSort = H.stableSort;
 
@@ -122,7 +121,7 @@ var onSeriesMixin = {
         }
 
         // Add plotY position and handle stacking
-        each(points, function (point, i) {
+        points.forEach(function (point, i) {
 
             var stackIndex;
 

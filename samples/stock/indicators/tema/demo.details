@@ -1,0 +1,6 @@
+---
+ name: Highstock Demo
+ authors:
+   - Rafał Sebestjański
+ js_wrap: b
+...

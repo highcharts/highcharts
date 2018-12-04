@@ -19,9 +19,7 @@
 import H from './Globals.js';
 import './Utilities.js';
 
-var each = H.each,
-    isNumber = H.isNumber,
-    map = H.map,
+var isNumber = H.isNumber,
     merge = H.merge,
     pInt = H.pInt;
 
@@ -98,7 +96,7 @@ H.Color.prototype = {
 
         // Gradients
         if (input && input.stops) {
-            this.stops = map(input.stops, function (stop) {
+            this.stops = input.stops.map(function (stop) {
                 return new H.Color(stop[1]);
             });
 
@@ -169,7 +167,7 @@ H.Color.prototype = {
         if (this.stops) {
             ret = merge(input);
             ret.stops = [].concat(ret.stops);
-            each(this.stops, function (stop, i) {
+            this.stops.forEach(function (stop, i) {
                 ret.stops[i] = [ret.stops[i][0], stop.get(format)];
             });
 
@@ -204,7 +202,7 @@ H.Color.prototype = {
             rgba = this.rgba;
 
         if (this.stops) {
-            each(this.stops, function (stop) {
+            this.stops.forEach(function (stop) {
                 stop.brighten(alpha);
             });
 

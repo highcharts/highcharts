@@ -2,7 +2,8 @@
 Highcharts.chart('container', {
 
     chart: {
-        type: 'scatter'
+        type: 'scatter',
+        styledMode: true
     },
 
     title: {

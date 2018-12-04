@@ -35,9 +35,6 @@ seriesType('mapline', 'map'
  * @optionparent plotOptions.mapline
  */
 , {
-
-    /*= if (build.classic) { =*/
-
     /**
      * The width of the map line.
      */
@@ -49,16 +46,11 @@ seriesType('mapline', 'map'
      * @type {Highcharts.ColorString}
      */
     fillColor: 'none'
-
-    /*= } =*/
-
 }, {
 
     type: 'mapline',
 
     colorProp: 'stroke',
-
-    /*= if (build.classic) { =*/
 
     pointAttrToOptions: {
         'stroke': 'color',
@@ -90,8 +82,6 @@ seriesType('mapline', 'map'
 
         return attr;
     },
-
-    /*= } =*/
 
     drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 

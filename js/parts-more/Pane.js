@@ -11,7 +11,6 @@ import '../mixins/centered-series.js';
 import '../parts/Utilities.js';
 
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
-    each = H.each,
     extend = H.extend,
     merge = H.merge,
     splat = H.splat;
@@ -136,7 +135,19 @@ extend(Pane.prototype, {
      *        The index of the background in this.backgrounds
      */
     renderBackground: function (backgroundOptions, i) {
-        var method = 'animate';
+        var method = 'animate',
+            attribs = {
+                'class':
+                    'highcharts-pane ' + (backgroundOptions.className || '')
+            };
+
+        if (!this.chart.styledMode) {
+            extend(attribs, {
+                'fill': backgroundOptions.backgroundColor,
+                'stroke': backgroundOptions.borderColor,
+                'stroke-width': backgroundOptions.borderWidth
+            });
+        }
 
         if (!this.background[i]) {
             this.background[i] = this.chart.renderer.path()
@@ -150,14 +161,7 @@ extend(Pane.prototype, {
                 backgroundOptions.to,
                 backgroundOptions
             )
-        }).attr({
-            /*= if (build.classic) { =*/
-            'fill': backgroundOptions.backgroundColor,
-            'stroke': backgroundOptions.borderColor,
-            'stroke-width': backgroundOptions.borderWidth,
-            /*= } =*/
-            'class': 'highcharts-pane ' + (backgroundOptions.className || '')
-        });
+        }).attr(attribs);
 
     },
 
@@ -264,8 +268,6 @@ extend(Pane.prototype, {
          */
         shape: 'circle',
 
-        /*= if (build.classic) { =*/
-
         /**
          * The pixel border width of the pane background.
          *
@@ -307,8 +309,6 @@ extend(Pane.prototype, {
             ]
 
         },
-
-        /*= } =*/
 
         /** @ignore-option */
         from: -Number.MAX_VALUE, // corrected to axis min
@@ -362,7 +362,7 @@ extend(Pane.prototype, {
      * /
     destroy: function () {
         H.erase(this.chart.pane, this);
-        each(this.background, function (background) {
+        this.background.forEach(function (background) {
             background.destroy();
         });
         this.background.length = 0;
@@ -386,7 +386,7 @@ extend(Pane.prototype, {
         merge(true, this.options, options);
         this.setOptions(this.options);
         this.render();
-        each(this.chart.axes, function (axis) {
+        this.chart.axes.forEach(function (axis) {
             if (axis.pane === this) {
                 axis.pane = null;
                 axis.update({}, redraw);

@@ -1,9 +1,12 @@
 /* *
- * (c) 2016 Highsoft AS
- * Authors: Lars A. V. Cabrera
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2016-2018 Highsoft AS
+ *
+ *  Author: Lars A. V. Cabrera
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -33,6 +36,7 @@ var dateFormat = H.dateFormat,
  *
  * @augments Highcharts.Series
  */
+seriesType('gantt', 'xrange'
 
 /**
  * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
@@ -42,7 +46,7 @@ var dateFormat = H.dateFormat,
  * @product      gantt
  * @optionparent plotOptions.gantt
  */
-seriesType('gantt', 'xrange', {
+, {
     // options - default options merged with parent
 
     grouping: false,
@@ -62,9 +66,7 @@ seriesType('gantt', 'xrange', {
         }
     },
     tooltip: {
-        headerFormat: '<span style="color:{point.color};text-align:right">' +
-                            '{series.name}' +
-                        '</span><br/>',
+        headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
         pointFormat: null,
         pointFormatter: function () {
             var point = this,
@@ -80,10 +82,7 @@ seriesType('gantt', 'xrange', {
                 start,
                 end,
                 milestone = point.options.milestone,
-                dateRowStart = '<span style="font-size: 0.8em">',
-                dateRowEnd = '</span><br/>',
                 retVal = '<b>' + (point.name || point.yCategory) + '</b>';
-
             if (ttOptions.pointFormat) {
                 return point.tooltipFormatter(ttOptions.pointFormat);
             }
@@ -105,10 +104,10 @@ seriesType('gantt', 'xrange', {
             retVal += '<br/>';
 
             if (!milestone) {
-                retVal += dateRowStart + 'Start: ' + start + dateRowEnd;
-                retVal += dateRowStart + 'End: ' + end + dateRowEnd;
+                retVal += 'Start: ' + start + '<br/>';
+                retVal += 'End: ' + end + '<br/>';
             } else {
-                retVal += dateRowStart + 'Date ' + start + dateRowEnd;
+                retVal += 'Date ' + start + '<br/>';
             }
 
             return retVal;
@@ -206,12 +205,13 @@ seriesType('gantt', 'xrange', {
                     .addClass(point.getClassName(), true)
                     .add(point.group || series.group);
                 }
-                /*= if (build.classic) { =*/
+
                 // Presentational
-                point.graphic
-                    .attr(series.pointAttribs(point, state))
-                    .shadow(seriesOpts.shadow, null, cutOff);
-                /*= } =*/
+                if (!series.chart.styledMode) {
+                    point.graphic
+                        .attr(series.pointAttribs(point, state))
+                        .shadow(seriesOpts.shadow, null, cutOff);
+                }
             } else if (graphic) {
                 point.graphic = graphic.destroy(); // #1269
             }
@@ -361,7 +361,7 @@ seriesType('gantt', 'xrange', {
  * The fill of the progress indicator. Defaults to a darkened variety of the
  * main color.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @apioption series.gantt.data.completed.fill
  */
 

@@ -18,12 +18,12 @@
         "types": []
     },
     "files": [
-        "code/globals.d.ts",
         "test/typescript/globals.ts",
 
         "code/highcharts.d.ts",
         "code/highcharts.src.d.ts",
         "test/typescript/highcharts.ts",
+        "test/typescript/classes/Series.ts",
 
         "code/highcharts-3d.d.ts",
         "code/highcharts-3d.src.d.ts",
@@ -36,10 +36,6 @@
         "code/modules/accessibility.d.ts",
         "code/modules/accessibility.src.d.ts",
         "test/typescript/modules/accessibility.ts",
-
-        "code/modules/annotations.d.ts",
-        "code/modules/annotations.src.d.ts",
-        "test/typescript/modules/annotations.ts",
 
         "code/modules/arrow-symbols.d.ts",
         "code/modules/arrow-symbols.src.d.ts",
@@ -175,6 +171,10 @@
         "code/modules/stock.src.d.ts",
         "test/typescript/modules/stock.ts",
         "test/typescript/highstock.ts",
+
+        "code/modules/stock-tools.d.ts",
+        "code/modules/stock-tools.src.d.ts",
+        "test/typescript/modules/stock-tools.ts",
 
         "code/modules/streamgraph.d.ts",
         "code/modules/streamgraph.src.d.ts",

@@ -77,43 +77,44 @@ QUnit.test('Small pie and labels (#6992)', function (assert) {
 QUnit.test('Pie labels outside plot (#3163)', function (assert) {
 
     var chart = Highcharts.chart('container', {
-        chart: {
-            height: 243,
-            "type": "pie",
-            plotBackgroundColor: '#EFEFFF'
-        },
-        title: {
-            "text": null
-        },
-        series: [{
-            "name": "Value",
-            "showInLegend": true,
-            "dataLabels": {
-                "format": "{y:,f}"
+            chart: {
+                height: 243,
+                type: "pie",
+                plotBackgroundColor: '#EFEFFF'
             },
-            minSize: 150,
-            data: [{
-                name: "641397 (Description 641397)",
-                y: 46115816.00
-            }, {
-                name: "641402 (Description 641402)",
-                y: 23509037.00
-            }, {
-                name: "641396 (Description 641396)",
-                y: 18884796.00
-            }, {
-                name: "641403 (Description 641403)",
-                y: 11970798.00
+            title: {
+                text: null
+            },
+            series: [{
+                name: "Value",
+                showInLegend: true,
+                dataLabels: {
+                    format: "{y:,f}"
+                },
+                minSize: 150,
+                data: [{
+                    name: "641397 (Description 641397)",
+                    y: 46115816.00
+                }, {
+                    name: "641402 (Description 641402)",
+                    y: 23509037.00
+                }, {
+                    name: "641396 (Description 641396)",
+                    y: 18884796.00
+                }, {
+                    name: "641403 (Description 641403)",
+                    y: 11970798.00
+                }]
             }]
-        }]
-    });
-    var plotSizeY = chart.plotSizeY,
+        }),
+        plotSizeY = chart.plotSizeY,
         seriesData = chart.series[0].data,
         labelYPos = [];
 
     for (var i = 0; i < seriesData.length; i++) {
-        labelYPos.push(seriesData[i].labelPos.y);
+        labelYPos.push(seriesData[i].labelPosition.final.y);
     }
+
     function isLabelInsidePlot() {
         for (var i = 0; i < labelYPos.length; i++) {
             if (labelYPos[i] < 0) {
@@ -125,6 +126,7 @@ QUnit.test('Pie labels outside plot (#3163)', function (assert) {
         }
         return true;
     }
+
     assert.ok(
         isLabelInsidePlot(),
         "Pie label is outside of plot"

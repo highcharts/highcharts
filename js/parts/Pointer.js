@@ -108,7 +108,6 @@ var H = Highcharts,
     color = H.color,
     css = H.css,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     find = H.find,
     fireEvent = H.fireEvent,
@@ -258,7 +257,7 @@ Highcharts.Pointer.prototype = {
             yAxis: []
         };
 
-        each(this.chart.axes, function (axis) {
+        this.chart.axes.forEach(function (axis) {
             coordinates[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
                 axis: axis,
                 value: axis.toValue(e[axis.horiz ? 'chartX' : 'chartY'])
@@ -312,7 +311,7 @@ Highcharts.Pointer.prototype = {
                 }
                 return result;
             };
-        each(series, function (s) {
+        series.forEach(function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared,
                 compareX = (
                     !noSharedTooltip &&
@@ -442,7 +441,7 @@ Highcharts.Pointer.prototype = {
                 // Only search on hovered series if it has stickyTracking false
                 [hoverSeries] :
                 // Filter what series to look in.
-                H.grep(series, function (s) {
+                series.filter(function (s) {
                     return filter(s) && s.stickyTracking;
                 });
 
@@ -458,12 +457,12 @@ Highcharts.Pointer.prototype = {
         if (hoverPoint) {
             // When tooltip is shared, it displays more than one point
             if (shared && !hoverSeries.noSharedTooltip) {
-                searchSeries = H.grep(series, function (s) {
+                searchSeries = series.filter(function (s) {
                     return filter(s) && !s.noSharedTooltip;
                 });
 
                 // Get all points with the same x value as the hoverPoint
-                each(searchSeries, function (s) {
+                searchSeries.forEach(function (s) {
                     var point = find(s.points, function (p) {
                         return p.x === hoverPoint.x && !p.isNull;
                     });
@@ -552,13 +551,13 @@ Highcharts.Pointer.prototype = {
             // !(hoverSeries && hoverSeries.directTouch) &&
             (hoverPoint !== chart.hoverPoint || (tooltip && tooltip.isHidden))
         ) {
-            each(chart.hoverPoints || [], function (p) {
-                if (H.inArray(p, points) === -1) {
+            (chart.hoverPoints || []).forEach(function (p) {
+                if (points.indexOf(p) === -1) {
                     p.setState();
                 }
             });
             // Do mouseover on all points (#3919, #3985, #4410, #5622)
-            each(points || [], function (p) {
+            (points || []).forEach(function (p) {
                 p.setState('hover');
             });
             // set normal state to previous series
@@ -605,7 +604,7 @@ Highcharts.Pointer.prototype = {
         }
 
         // Issues related to crosshair #4927, #5269 #5066, #5658
-        each(chart.axes, function drawAxisCrosshair(axis) {
+        chart.axes.forEach(function drawAxisCrosshair(axis) {
             var snap = pick(axis.crosshair.snap, true),
                 point = !snap ?
                     undefined :
@@ -650,7 +649,7 @@ Highcharts.Pointer.prototype = {
         // Check if the points have moved outside the plot area (#1003, #4736,
         // #5101)
         if (allowMove && tooltipPoints) {
-            each(splat(tooltipPoints), function (point) {
+            splat(tooltipPoints).forEach(function (point) {
                 if (point.series.isCartesian && point.plotX === undefined) {
                     allowMove = false;
                 }
@@ -662,7 +661,7 @@ Highcharts.Pointer.prototype = {
             if (tooltip && tooltipPoints) {
                 tooltip.refresh(tooltipPoints);
                 if (tooltip.shared && hoverPoints) { // #8284
-                    each(hoverPoints, function (point) {
+                    hoverPoints.forEach(function (point) {
                         point.setState(point.state, true);
                         if (point.series.isCartesian) {
                             if (point.series.xAxis.crosshair) {
@@ -675,7 +674,7 @@ Highcharts.Pointer.prototype = {
                     });
                 } else if (hoverPoint) { // #2500
                     hoverPoint.setState(hoverPoint.state, true);
-                    each(chart.axes, function (axis) {
+                    chart.axes.forEach(function (axis) {
                         if (axis.crosshair) {
                             axis.drawCrosshair(null, hoverPoint);
                         }
@@ -691,7 +690,7 @@ Highcharts.Pointer.prototype = {
             }
 
             if (hoverPoints) {
-                each(hoverPoints, function (point) {
+                hoverPoints.forEach(function (point) {
                     point.setState();
                 });
             }
@@ -709,7 +708,7 @@ Highcharts.Pointer.prototype = {
             }
 
             // Remove crosshairs
-            each(chart.axes, function (axis) {
+            chart.axes.forEach(function (axis) {
                 axis.hideCrosshair();
             });
 
@@ -733,7 +732,7 @@ Highcharts.Pointer.prototype = {
             seriesAttribs;
 
         // Scale each series
-        each(chart.series, function (series) {
+        chart.series.forEach(function (series) {
             seriesAttribs = attribs || series.getPlotBox(); // #1701
             if (series.xAxis && series.xAxis.zoomEnabled && series.group) {
                 series.group.attr(seriesAttribs);
@@ -847,17 +846,20 @@ Highcharts.Pointer.prototype = {
                             0
                         )
                         .attr({
-                            /*= if (build.classic) { =*/
-                            fill: (
-                                chartOptions.selectionMarkerFill ||
-                                color('${palette.highlightColor80}')
-                                    .setOpacity(0.25).get()
-                            ),
-                            /*= } =*/
                             'class': 'highcharts-selection-marker',
                             'zIndex': 7
                         })
                         .add();
+
+                    if (!chart.styledMode) {
+                        selectionMarker.attr({
+                            fill: (
+                                chartOptions.selectionMarkerFill ||
+                                color('${palette.highlightColor80}')
+                                    .setOpacity(0.25).get()
+                            )
+                        });
+                    }
                 }
             }
 
@@ -923,7 +925,7 @@ Highcharts.Pointer.prototype = {
             if (this.hasDragged || hasPinched) {
 
                 // record each axis' min and max
-                each(chart.axes, function (axis) {
+                chart.axes.forEach(function (axis) {
                     if (
                         axis.zoomEnabled &&
                         defined(axis.min) &&

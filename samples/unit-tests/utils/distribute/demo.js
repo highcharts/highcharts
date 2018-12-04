@@ -147,7 +147,7 @@
 
     QUnit.test('Equal, unranked boxes', function (assert) {
 
-        var boxes = Highcharts.map(new Array(60), function (val, i) {
+        var boxes = new Array(60).fill(undefined).map(function (val, i) {
             return {
                 size: 20,
                 target: i * 10

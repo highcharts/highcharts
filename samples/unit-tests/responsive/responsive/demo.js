@@ -168,13 +168,25 @@ QUnit.test('Responsive on chart.update', function (assert) {
 });
 
 QUnit.test(
-    'Nested property names like series or xAxis (#6208)',
+    'Nested property names like series, xAxis or annotations (#6208, #8680)',
     function (assert) {
         var chart = Highcharts.chart('container', {
 
             chart: {
                 animation: false
             },
+
+            annotations: [{
+                labels: [{
+                    point: {
+                        xAxis: 0,
+                        yAxis: 0,
+                        x: 1,
+                        y: 3
+                    },
+                    text: 'Label'
+                }]
+            }],
 
             series: [{
                 data: [1, 4, 3],
@@ -204,6 +216,9 @@ QUnit.test(
                         },
                         series: [{
                             yAxis: 1
+                        }],
+                        annotations: [{
+                            visible: false
                         }]
                     }
                 }]
@@ -220,6 +235,11 @@ QUnit.test(
             chart.yAxis[0],
             'Initial axis'
         );
+        assert.strictEqual(
+            chart.annotations[0].graphic.visibility,
+            'visible',
+            'Initial annotation visible'
+        );
 
         chart.setSize(400);
 
@@ -232,6 +252,11 @@ QUnit.test(
             chart.series[0].yAxis,
             chart.yAxis[1],
             'Responsive axis'
+        );
+        assert.strictEqual(
+            chart.annotations[0].graphic.visibility,
+            'hidden',
+            'Initial annotation hidden'
         );
 
     }

@@ -45,7 +45,6 @@ import '../parts/Series.js';
 
 var labelDistance = 3,
     addEvent = H.addEvent,
-    each = H.each,
     extend = H.extend,
     isNumber = H.isNumber,
     pick = H.pick,
@@ -656,15 +655,15 @@ Chart.prototype.drawSeriesLabels = function () {
     chart.boxesToAvoid = [];
 
     // Build the interpolated points
-    each(labelSeries, function (series) {
+    labelSeries.forEach(function (series) {
         series.interpolatedPoints = series.getPointsOnGraph();
 
-        each(series.options.label.boxesToAvoid || [], function (box) {
+        (series.options.label.boxesToAvoid || []).forEach(function (box) {
             chart.boxesToAvoid.push(box);
         });
     });
 
-    each(chart.series, function (series) {
+    chart.series.forEach(function (series) {
 
         if (!series.xAxis && !series.yAxis) {
             return;
@@ -929,7 +928,7 @@ function drawLabels() {
     H.clearTimeout(chart.seriesLabelTimer);
 
     // Which series should have labels
-    each(chart.series, function (series) {
+    chart.series.forEach(function (series) {
         var options = series.options.label,
             label = series.labelBySeries,
             closest = label && label.closest;
@@ -943,7 +942,7 @@ function drawLabels() {
             chart.labelSeries.push(series);
 
             if (options.minFontSize && options.maxFontSize) {
-                series.sum = H.reduce(series.yData, function (pv, cv) {
+                series.sum = series.yData.reduce(function (pv, cv) {
                     return (pv || 0) + (cv || 0);
                 }, 0);
                 chart.labelSeriesMaxSum = Math.max(

@@ -145,11 +145,9 @@ var addEvent = H.addEvent,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     defined = H.defined,
-    each = H.each,
     erase = H.erase,
     extend = H.extend,
     fireEvent = H.fireEvent,
-    grep = H.grep,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isString = H.isString,
@@ -217,7 +215,7 @@ var addEvent = H.addEvent,
  * @param {Highcharts.Chart} chart
  *        The chart instance.
  *
- * @param {Highcharts.PlotSeriesOptions} options
+ * @param {Highcharts.SeriesOptions|object} options
  *        The series options.
  *//**
  * The line series is the base type and is therefor the series base prototype.
@@ -375,8 +373,17 @@ null
  * @optionparent plotOptions.series
  */
 , { // base series options
-
-    /*= if (build.classic) { =*/
+    /**
+     * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
+     * of a line graph. Round means that lines are rounded in the ends and
+     * bends.
+     *
+     * @type       {string}
+     * @validvalue ["round", "butt", "square"]
+     * @default    round
+     * @since      3.0.7
+     * @apioption  plotOptions.line.linecap
+     */
 
     /**
      * Pixel width of the graph line.
@@ -392,8 +399,6 @@ null
      * @product highcharts highstock
      */
     lineWidth: 2,
-
-    /*= } =*/
 
     /**
      * For some series, there is a limit that shuts down initial animation
@@ -550,7 +555,7 @@ null
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption plotOptions.series.color
      */
 
@@ -773,7 +778,7 @@ null
      * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/
      *         Arearange
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @apioption plotOptions.series.negativeColor
      */
@@ -1186,8 +1191,6 @@ null
      */
     marker: {
 
-        /*= if (build.classic) { =*/
-
         /**
          * The width of the point marker's outline.
          *
@@ -1214,11 +1217,9 @@ null
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         White fill
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption plotOptions.series.marker.fillColor
          */
-
-        /*= } =*/
 
         /**
          * Enable or disable the point marker. If `undefined`, the markers are
@@ -1359,7 +1360,7 @@ null
                  * `undefined`, the series' or point's fillColor for normal
                  * state is used.
                  *
-                 * @type      {Highcharts.ColorString}
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @apioption plotOptions.series.marker.states.hover.fillColor
                  */
 
@@ -1411,8 +1412,6 @@ null
                  */
                 radiusPlus: 2,
 
-                /*= if (build.classic) { =*/
-
                 /**
                  * The additional line width for a hovered point.
                  *
@@ -1424,12 +1423,7 @@ null
                  * @since 4.0.3
                  */
                 lineWidthPlus: 1
-
-                /*= } =*/
-
             },
-
-            /*= if (build.classic) { =*/
 
             /**
              * The appearance of the point marker when selected. In order to
@@ -1466,7 +1460,7 @@ null
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
                  *         Solid red discs for selected points
                  *
-                 * @type {Highcharts.ColorString}
+                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  */
                 fillColor: '${palette.neutralColor20}',
 
@@ -1489,9 +1483,6 @@ null
                  */
                 lineWidth: 2
             }
-
-            /*= } =*/
-
         }
     },
 
@@ -1865,8 +1856,6 @@ null
             return this.y === null ? '' : H.numberFormat(this.y, -1);
         },
 
-        /*= if (build.classic) { =*/
-
         /**
          * Styles for the label. The default `color` setting is `"contrast"`,
          * which is a pseudo color that Highcharts picks up and applies the
@@ -1900,21 +1889,13 @@ null
          * @since   4.1.0
          */
         style: {
-            /**
-             * @ignore
-             */
+            /** @ignore */
             fontSize: '11px',
-            /**
-             * @ignore
-             */
+            /** @ignore */
             fontWeight: 'bold',
-            /**
-             * @ignore
-             */
+            /** @ignore */
             color: 'contrast',
-            /**
-             * @ignore
-             */
+            /** @ignore */
             textOutline: '1px contrast'
         },
 
@@ -1997,7 +1978,7 @@ null
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.backgroundColor
          */
@@ -2027,8 +2008,6 @@ null
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.shadow
          */
-
-        /*= } =*/
 
         /**
          * For points with an extent, like columns or map areas, whether to
@@ -2312,8 +2291,6 @@ null
                  */
                 size: 10,
 
-                /*= if (build.classic) { =*/
-
                 /**
                  * Opacity for the halo unless a specific fill is overridden
                  * using the `attributes` setting. Note that Highcharts is only
@@ -2323,9 +2300,6 @@ null
                  * @product highcharts highstock
                  */
                 opacity: 0.25
-
-                /*= } =*/
-
             }
         },
 
@@ -2461,7 +2435,7 @@ null
      *
      * @see [fillColor](#plotOptions.area.fillColor)
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     4.1.0
      * @product   highcharts highstock
      * @apioption plotOptions.series.zones.fillColor
@@ -2512,6 +2486,9 @@ null
     parallelArrays: ['x', 'y'],
     coll: 'series',
     init: function (chart, options) {
+
+        fireEvent(this, 'init', { options: options });
+
         var series = this,
             events,
             chartSeries = chart.series,
@@ -2543,7 +2520,6 @@ null
          */
         series.options = options = series.setOptions(options);
         series.linkedSeries = [];
-
         // bind the axes
         series.bindAxes();
 
@@ -2599,7 +2575,7 @@ null
         series.getSymbol();
 
         // Set the data
-        each(series.parallelArrays, function (key) {
+        series.parallelArrays.forEach(function (key) {
             series[key + 'Data'] = [];
         });
         series.setData(options.data, false);
@@ -2679,10 +2655,10 @@ null
             axisOptions;
 
         // repeat for xAxis and yAxis
-        each(series.axisTypes || [], function (AXIS) {
+        (series.axisTypes || []).forEach(function (AXIS) {
 
             // loop through the chart's axis objects
-            each(chart[AXIS], function (axis) {
+            chart[AXIS].forEach(function (axis) {
                 axisOptions = axis.options;
 
                 // apply if the series xAxis or yAxis option mathches the number
@@ -2726,7 +2702,7 @@ null
 
             // The series needs an X and an Y axis
             if (!series[AXIS] && series.optionalAxis !== AXIS) {
-                H.error(18, true);
+                H.error(18, true, chart);
             }
 
         });
@@ -2766,7 +2742,7 @@ null
                     );
                 };
 
-        each(series.parallelArrays, fn);
+        series.parallelArrays.forEach(fn);
     },
 
     /**
@@ -2850,7 +2826,9 @@ null
             userPlotOptions = userOptions.plotOptions || {},
             typeOptions = plotOptions[this.type],
             options,
-            zones;
+            zones,
+            zone,
+            styledMode = chart.styledMode;
 
         this.userOptions = itemOptions;
 
@@ -2907,25 +2885,24 @@ null
             (options.negativeColor || options.negativeFillColor) &&
             !options.zones
         ) {
-            zones.push({
+            zone = {
                 value:
                     options[this.zoneAxis + 'Threshold'] ||
                     options.threshold ||
                     0,
-                className: 'highcharts-negative',
-                /*= if (build.classic) { =*/
-                color: options.negativeColor,
-                fillColor: options.negativeFillColor
-                /*= } =*/
-            });
+                className: 'highcharts-negative'
+            };
+            if (!styledMode) {
+                zone.color = options.negativeColor;
+                zone.fillColor = options.negativeFillColor;
+            }
+            zones.push(zone);
         }
         if (zones.length) { // Push one extra zone for the rest
             if (defined(zones[zones.length - 1].value)) {
-                zones.push({
-                    /*= if (build.classic) { =*/
+                zones.push(styledMode ? {} : {
                     color: this.color,
                     fillColor: this.fillColor
-                    /*= } =*/
                 });
             }
         }
@@ -3005,13 +2982,11 @@ null
      *
      * @function Highcharts.Series#getColor
      */
-    /*= if (!build.classic) { =*/
     getColor: function () {
-        this.getCyclic('color');
-    },
-    /*= } else { =*/
-    getColor: function () {
-        if (this.options.colorByPoint) {
+        if (this.chart.styledMode) {
+            this.getCyclic('color');
+
+        } else if (this.options.colorByPoint) {
             // #4359, selected slice got series.color even when colorByPoint was
             // set.
             this.options.color = null;
@@ -3023,7 +2998,7 @@ null
             );
         }
     },
-    /*= } =*/
+
     /**
      * Get the series' symbol based on either the options or pulled from global
      * options.
@@ -3071,27 +3046,42 @@ null
         this.xIncrement = null;
 
         // Iterate the new data
-        each(data, function (pointOptions) {
-            var x,
-                pointIndex;
+        data.forEach(function (pointOptions) {
+            var id,
+                matchingPoint,
+                x,
+                pointIndex,
+                optionsObject = (
+                    H.defined(pointOptions) &&
+                    this.pointClass.prototype.optionsToObject.call(
+                        { series: this },
+                        pointOptions
+                    )
+                ) || {};
 
             // Get the x of the new data point
-            x = (
-                H.defined(pointOptions) &&
-                this.pointClass.prototype.optionsToObject.call(
-                    { series: this },
-                    pointOptions
-                ).x
-            );
+            x = optionsObject.x;
+            id = optionsObject.id;
 
-            if (isNumber(x)) {
+            if (id || isNumber(x)) {
+                if (id) {
+                    matchingPoint = this.chart.get(id);
+                    pointIndex = matchingPoint && matchingPoint.x;
+                }
+
                 // Search for the same X in the existing data set
-                pointIndex = H.inArray(x, this.xData, lastIndex);
+                if (pointIndex === undefined && isNumber(x)) {
+                    pointIndex = this.xData.indexOf(x, lastIndex);
+                }
 
                 // Matching X not found
                 // or used already due to ununique x values (#8995),
                 // add point (but later)
-                if (pointIndex === -1 || oldData[pointIndex].touched) {
+                if (
+                    pointIndex === -1 ||
+                    pointIndex === undefined ||
+                    oldData[pointIndex].touched
+                ) {
                     pointsToAdd.push(pointOptions);
 
                 // Matching X found, update
@@ -3134,7 +3124,7 @@ null
         // If we did not find keys (x-values), and the length is the same,
         // update one-to-one
         } else if (data.length === oldData.length) {
-            each(data, function (point, i) {
+            data.forEach(function (point, i) {
                 // .update doesn't exist on a linked, hidden series (#3709)
                 if (oldData[i].update && point !== options.data[i]) {
                     oldData[i].update(point, false, null, false);
@@ -3147,7 +3137,7 @@ null
         }
 
         // Add new points
-        each(pointsToAdd, function (point) {
+        pointsToAdd.forEach(function (point) {
             this.addPoint(point, false);
         }, this);
 
@@ -3192,11 +3182,13 @@ null
      *        configuration object to set duration or easing.
      *
      * @param {boolean} [updatePoints=true]
-     *        When the updated data is the same length as the existing data, or
-     *        points can be matched by X values, points will be updated instead
-     *        of replaced. This allows updating with animation and performs
-     *        better. In this case, the original array is not passed by
-     *        reference. Set `false` to prevent.
+     *        When this is true, points will be updated instead of replaced
+     *        whenever possible. This occurs a) when the updated data is the
+     *        same length as the existing data, b) when points are matched by
+     *        their id's, or c) when points can be matched by X values. This
+     *        allows updating with animation and performs better. In this case,
+     *        the original array is not passed by reference. Set `false` to
+     *        prevent.
      */
     setData: function (data, redraw, animation, updatePoints) {
         var series = this,
@@ -3244,7 +3236,7 @@ null
             series.colorCounter = 0; // for series with colorByPoint (#1547)
 
             // Update parallel arrays
-            each(this.parallelArrays, function (key) {
+            this.parallelArrays.forEach(function (key) {
                 series[key + 'Data'].length = 0;
             });
 
@@ -3287,7 +3279,7 @@ null
                 } else {
                     // Highcharts expects configs to be numbers or arrays in
                     // turbo mode
-                    H.error(12);
+                    H.error(12, false, chart);
                 }
             } else {
                 for (i = 0; i < dataLength; i++) {
@@ -3305,7 +3297,7 @@ null
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
             if (yData && isString(yData[0])) {
-                H.error(14, true);
+                H.error(14, true, chart);
             }
 
             series.data = [];
@@ -3457,7 +3449,7 @@ null
             // data grouping and navigation in Stock charts (#725) and width
             // calculation of columns (#1900)
             } else if (distance < 0 && throwOnUnsorted) {
-                H.error(15);
+                H.error(15, false, series.chart);
                 throwOnUnsorted = false; // Only once
             }
         }
@@ -3591,10 +3583,10 @@ null
                  * in the group.
                  * - `dataGroup.length` is the amount of points in the group.
                  *
+                 * @product highstock
+                 *
                  * @name Highcharts.Point#dataGroup
                  * @type {Highcharts.SVGElement|undefined}
-                 *
-                 * @product highstock
                  */
                 point.dataGroup = series.groupMap[i];
                 if (point.dataGroup.options) {
@@ -3646,7 +3638,7 @@ null
          * @see Series.points
          *
          * @name Highcharts.Series#data
-         * @type {Array<Point>}
+         * @type {Array<Highcharts.Point>}
          */
         series.data = data;
 
@@ -3747,8 +3739,7 @@ null
      *
      * @function Highcharts.Series#translate
      *
-     * @todo
-     * Make events official: Fires the event `afterTranslate`.
+     * @fires Highcharts.Series#events:translate
      */
     translate: function () {
         if (!this.processedXData) { // hidden series
@@ -3777,11 +3768,9 @@ null
             stackIndicator,
             closestPointRangePx = Number.MAX_VALUE;
 
-        /*
-         * Plotted coordinates need to be within a limited range. Drawing too
-         * far outside the viewport causes various rendering issues (#3201,
-         * #3923, #7555).
-         */
+        // Plotted coordinates need to be within a limited range. Drawing too
+        // far outside the viewport causes various rendering issues (#3201,
+        // #3923, #7555).
         function limitedRange(val) {
             return Math.min(Math.max(-1e5, val), 1e5);
         }
@@ -3939,16 +3928,18 @@ null
     getValidPoints: function (points, insideOnly) {
         var chart = this.chart;
         // #3916, #5029, #5085
-        return grep(points || this.points || [], function isValidPoint(point) {
-            if (insideOnly && !chart.isInsidePlot(
-                point.plotX,
-                point.plotY,
-                chart.inverted
-            )) {
-                return false;
+        return (points || this.points || []).filter(
+            function isValidPoint(point) {
+                if (insideOnly && !chart.isInsidePlot(
+                    point.plotX,
+                    point.plotY,
+                    chart.inverted
+                )) {
+                    return false;
+                }
+                return !point.isNull;
             }
-            return !point.isNull;
-        });
+        );
     },
 
     /**
@@ -4096,8 +4087,7 @@ null
      * @private
      * @function Highcharts.Series#afterAnimate
      *
-     * @todo
-     * Make events official: Fires the event `afterAnimate`.
+     * @fires Highcharts.Series#event:afterAnimate
      */
     afterAnimate: function () {
         this.setClip();
@@ -4133,7 +4123,7 @@ null
             markerAttribs,
             globallyEnabled = pick(
                 seriesMarkerOptions.enabled,
-                xAxis.isRadial ? true : null,
+                !xAxis || xAxis.isRadial ? true : null,
                 // Use larger or equal as radius is null in bubbles (#6321)
                 series.closestPointRangePx >= (
                     seriesMarkerOptions.enabledThreshold *
@@ -4152,7 +4142,7 @@ null
                     globallyEnabled &&
                     pointMarkerOptions.enabled === undefined
                 ) || pointMarkerOptions.enabled;
-                isInside = point.isInside;
+                isInside = point.isInside !== false;
 
                 // only draw the point if y is defined
                 if (enabled && !point.isNull) {
@@ -4170,6 +4160,7 @@ null
                         // marker must be toggled
                         graphic[isInside ? 'show' : 'hide'](true)
                             .animate(markerAttribs);
+
                     } else if (
                         isInside &&
                         (markerAttribs.width > 0 || point.hasImage)
@@ -4202,9 +4193,8 @@ null
                         .add(markerGroup);
                     }
 
-                    /*= if (build.classic) { =*/
                     // Presentational attributes
-                    if (graphic) {
+                    if (graphic && !chart.styledMode) {
                         graphic.attr(
                             series.pointAttribs(
                                 point,
@@ -4212,7 +4202,6 @@ null
                             )
                         );
                     }
-                    /*= } =*/
 
                     if (graphic) {
                         graphic.addClass(point.getClassName(), true);
@@ -4290,8 +4279,6 @@ null
         return attribs;
 
     },
-
-    /*= if (build.classic) { =*/
 
     /**
      * Internal function to get presentational attributes for each point. Unlike
@@ -4380,16 +4367,13 @@ null
         };
     },
 
-    /*= } =*/
-
     /**
      * Clear DOM objects and free up memory.
      *
      * @private
      * @function Highcharts.Series#destroy
      *
-     * @todo
-     * Make events official: Fires the event `destroy`.
+     * @fires Highcharts.Series#event:destroy
      */
     destroy: function () {
         var series = this,
@@ -4408,7 +4392,7 @@ null
         removeEvent(series);
 
         // erase from axes
-        each(series.axisTypes || [], function (AXIS) {
+        (series.axisTypes || []).forEach(function (AXIS) {
             axis = series[AXIS];
             if (axis && axis.series) {
                 erase(axis.series, series);
@@ -4504,7 +4488,7 @@ null
         }
 
         // Build the line
-        each(points, function (point, i) {
+        points.forEach(function (point, i) {
 
             var plotX = point.plotX,
                 plotY = point.plotY,
@@ -4607,19 +4591,24 @@ null
         var series = this,
             options = this.options,
             graphPath = (this.gappedPath || this.getGraphPath).call(this),
+            styledMode = this.chart.styledMode,
             props = [[
                 'graph',
-                'highcharts-graph',
-                /*= if (build.classic) { =*/
+                'highcharts-graph'
+            ]];
+
+        // Presentational properties
+        if (!styledMode) {
+            props[0].push(
                 options.lineColor || this.color,
                 options.dashStyle
-                /*= } =*/
-            ]];
+            );
+        }
 
         props = series.getZonesGraphs(props);
 
         // Draw the graph
-        each(props, function (prop, i) {
+        props.forEach(function (prop, i) {
             var graphKey = prop[0],
                 graph = series[graphKey],
                 attribs;
@@ -4637,27 +4626,28 @@ null
                     .attr({ zIndex: 1 }) // #1069
                     .add(series.group);
 
-                /*= if (build.classic) { =*/
-                attribs = {
-                    'stroke': prop[2],
-                    'stroke-width': options.lineWidth,
-                    // Polygon series use filled graph
-                    'fill': (series.fillGraph && series.color) || 'none'
-                };
 
-                if (prop[3]) {
-                    attribs.dashstyle = prop[3];
-                } else if (options.linecap !== 'square') {
-                    attribs['stroke-linecap'] = attribs['stroke-linejoin'] =
-                        'round';
+                if (!styledMode) {
+                    attribs = {
+                        'stroke': prop[2],
+                        'stroke-width': options.lineWidth,
+                        // Polygon series use filled graph
+                        'fill': (series.fillGraph && series.color) || 'none'
+                    };
+
+                    if (prop[3]) {
+                        attribs.dashstyle = prop[3];
+                    } else if (options.linecap !== 'square') {
+                        attribs['stroke-linecap'] = attribs['stroke-linejoin'] =
+                            'round';
+                    }
+
+                    graph = series[graphKey]
+                        .attr(attribs)
+                        // Add shadow to normal series (0) or to first zone (1)
+                        // #3932
+                        .shadow((i < 2) && options.shadow);
                 }
-
-                graph = series[graphKey]
-                    .attr(attribs)
-                    // Add shadow to normal series (0) or to first zone (1)
-                    // #3932
-                    .shadow((i < 2) && options.shadow);
-                /*= } =*/
             }
 
             // Helpers for animation
@@ -4681,16 +4671,19 @@ null
      */
     getZonesGraphs: function (props) {
         // Add the zone properties if any
-        each(this.zones, function (zone, i) {
-            props.push([
+        this.zones.forEach(function (zone, i) {
+            var propset = [
                 'zone-graph-' + i,
                 'highcharts-graph highcharts-zone-graph-' + i + ' ' +
-                    (zone.className || ''),
-                /*= if (build.classic) { =*/
-                zone.color || this.color,
-                zone.dashStyle || this.options.dashStyle
-                /*= } =*/
-            ]);
+                    (zone.className || '')
+            ];
+            if (!this.chart.styledMode) {
+                propset.push(
+                    zone.color || this.color,
+                    zone.dashStyle || this.options.dashStyle
+                );
+            }
+            props.push(propset);
         }, this);
 
         return props;
@@ -4740,7 +4733,7 @@ null
 
             // Create the clips
             extremes = axis.getExtremes();
-            each(zones, function (threshold, i) {
+            zones.forEach(function (threshold, i) {
 
                 translatedFrom = reversed ?
                     (horiz ? chart.plotWidth : 0) :
@@ -4794,7 +4787,6 @@ null
                     }
                 }
 
-                /*= if (build.classic) { =*/
                 // VML SUPPPORT
                 if (inverted && renderer.isVML) {
                     if (axis.isXAxis) {
@@ -4814,7 +4806,6 @@ null
                     }
                 }
                 // END OF VML SUPPORT
-                /*= } =*/
 
                 if (clips[i]) {
                     clips[i].animate(clipAttr);
@@ -4856,7 +4847,7 @@ null
             remover;
 
         function setInvert() {
-            each(['group', 'markerGroup'], function (groupName) {
+            ['group', 'markerGroup'].forEach(function (groupName) {
                 if (series[groupName]) {
 
                     // VML/HTML needs explicit attributes for flipping
@@ -4986,8 +4977,7 @@ null
      *
      * @function Highcharts.Series#render
      *
-     * @todo
-     * Make events official: Fires the event `afterRender`.
+     * @fires Highcharts.Series#event:afterRender
      */
     render: function () {
         var series = this,
@@ -5038,11 +5028,11 @@ null
             series.applyZones();
         }
 
-/*        each(series.points, function (point) {
+        /* series.points.forEach(function (point) {
             if (point.redraw) {
                 point.redraw();
             }
-        });*/
+        }); */
 
         // draw the data labels (inn pies they go before the points)
         if (series.drawDataLabels) {
@@ -5138,9 +5128,9 @@ null
      * @private
      * @function Highcharts.Series#searchPoint
      *
-     * @param {*} e
+     * @param {object} e
      *
-     * @param {*} compareX
+     * @param {boolean} [compareX]
      *
      * @return {Highcharts.Point}
      */
@@ -5235,9 +5225,9 @@ null
      * @private
      * @function Highcharts.Series#searchKDTree
      *
-     * @param {*} point
+     * @param {object} point
      *
-     * @param {*} compareX
+     * @param {boolean} [compareX]
      *
      * @return {Highcharts.Point}
      */
@@ -5329,8 +5319,6 @@ null
  * @apioption plotOptions.line
  */
 
-/*= if (build.classic) { =*/
-
 /**
  * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
  * of a line graph. Round means that lines are rounded in the ends and
@@ -5342,8 +5330,6 @@ null
  * @since      3.0.7
  * @apioption  plotOptions.line.linecap
  */
-
-/*= } =*/
 
 /**
  * A `line` series. If the [type](#series.line.type) option is not
@@ -5435,7 +5421,7 @@ null
  * @sample {highcharts} highcharts/point/color/
  *         Mark the highest point
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts highstock gantt
  * @apioption series.line.data.color
  */

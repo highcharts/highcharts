@@ -149,8 +149,8 @@ function decorateOptions(parent, target, option, filename) {
         if (option.value.argument && option.value.argument.type === 'Literal') {
             target[index].meta.default = option.value.operator + option.value.argument.value;
 
-            if (!isNaN(target[index].meta.default) && isFinite(target[index].meta.default)) {
-                target[index].meta.default = parseInt(target[index].meta.default, 10);
+            if (isNum(target[index].meta.default)) {
+                target[index].meta.default = parseFloat(target[index].meta.default);
             }
         }
     } else if (option.value && option.value.type === 'BinaryExpression') {

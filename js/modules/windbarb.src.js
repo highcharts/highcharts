@@ -11,8 +11,7 @@
 import H from '../parts/Globals.js';
 import onSeriesMixin from '../mixins/on-series.js';
 
-var each = H.each,
-    noop = H.noop,
+var noop = H.noop,
     seriesType = H.seriesType;
 
 /**
@@ -220,7 +219,7 @@ seriesType('windbarb', 'column'
 
         onSeriesMixin.translate.call(this);
 
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var level = 0;
             // Find the beaufort level (zero based)
             for (; level < beaufortFloor.length; level++) {
@@ -241,7 +240,7 @@ seriesType('windbarb', 'column'
             inverted = chart.inverted,
             shapeOffset = this.options.vectorLength / 2;
 
-        each(this.points, function (point) {
+        this.points.forEach(function (point) {
             var plotX = point.plotX,
                 plotY = point.plotY;
 

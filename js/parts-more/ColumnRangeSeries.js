@@ -10,7 +10,6 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
 var defaultPlotOptions = H.defaultPlotOptions,
-    each = H.each,
     merge = H.merge,
     noop = H.noop,
     pick = H.pick,
@@ -100,7 +99,7 @@ seriesType('columnrange', 'arearange', merge(
         colProto.translate.apply(series);
 
         // Set plotLow and plotHigh
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var shapeArgs = point.shapeArgs,
                 minPointLength = series.options.minPointLength,
                 heightDifference,
