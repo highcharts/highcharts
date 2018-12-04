@@ -1016,7 +1016,7 @@ H.Toolbar.prototype = {
 
         // main button wrapper
         buttonWrapper = createElement(LI, {
-            className: classMapping[btnName] + ' ' + userClassName,
+            className: pick(classMapping[btnName], '') + ' ' + userClassName,
             title: lang[btnName] || btnName
         }, null, target);
 
