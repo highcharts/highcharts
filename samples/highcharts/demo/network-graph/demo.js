@@ -24,7 +24,7 @@ Highcharts.addEvent(
                     },
                     color: colors[i++]
                 };
-            } else if (nodes[link[0]].color) {
+            } else if (nodes[link[0]] && nodes[link[0]].color) {
                 nodes[link[1]] = {
                     id: link[1],
                     color: nodes[link[0]].color
@@ -50,15 +50,15 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         networkgraph: {
-            keys: ['from', 'to']
+            keys: ['from', 'to'],
+            layoutAlgorithm: {
+                enableSimulation: true
+            }
         }
     },
     series: [{
         dataLabels: {
             enabled: true
-        },
-        layoutAlgorithm: {
-            enableSimulation: true
         },
         data: [
             ['Proto Indo-European', 'Balto-Slavic'],
@@ -112,17 +112,6 @@ Highcharts.chart('container', {
             ['Proto Indo-European', 'Thracian'],
             ['Tocharian', 'Tocharian A'],
             ['Tocharian', 'Tocharian B'],
-            ['East Germanic', 'Gothic'],
-            ['Middle Low German', 'Low German'],
-            ['Middle High German', '(High) German'],
-            ['Middle High German', 'Yiddish'],
-            ['Middle English', 'English'],
-            ['Middle Dutch', 'Hollandic'],
-            ['Middle Dutch', 'Flemish'],
-            ['Middle Dutch', 'Dutch'],
-            ['Middle Dutch', 'Limburgish'],
-            ['Middle Dutch', 'Brabantian'],
-            ['Middle Dutch', 'Rhinelandic'],
             ['Anatolian', 'Hittite'],
             ['Anatolian', 'Palaic'],
             ['Anatolian', 'Luwic'],
@@ -133,6 +122,7 @@ Highcharts.chart('container', {
             ['Iranian', 'Sogdian'],
             ['Old Persian', 'Pahlavi'],
             ['Middle Persian', 'Persian'],
+            ['Hellenic', 'Greek'],
             ['Dardic', 'Dard'],
             ['Sanskrit', 'Sindhi'],
             ['Sanskrit', 'Romani'],
@@ -156,7 +146,6 @@ Highcharts.chart('container', {
             ['Latin', 'Catalan'],
             ['Latin', 'Franco-Provençal'],
             ['Latin', 'Rhaeto-Romance'],
-            ['Hellenic', 'Greek'],
             ['Brythonic', 'Welsh'],
             ['Brythonic', 'Breton'],
             ['Brythonic', 'Cornish'],
@@ -164,6 +153,17 @@ Highcharts.chart('container', {
             ['Goidelic', 'Modern Irish'],
             ['Goidelic', 'Scottish Gaelic'],
             ['Goidelic', 'Manx'],
+            ['East Germanic', 'Gothic'],
+            ['Middle Low German', 'Low German'],
+            ['Middle High German', '(High) German'],
+            ['Middle High German', 'Yiddish'],
+            ['Middle English', 'English'],
+            ['Middle Dutch', 'Hollandic'],
+            ['Middle Dutch', 'Flemish'],
+            ['Middle Dutch', 'Dutch'],
+            ['Middle Dutch', 'Limburgish'],
+            ['Middle Dutch', 'Brabantian'],
+            ['Middle Dutch', 'Rhinelandic'],
             ['Old Frisian', 'Frisian'],
             ['Middle Danish', 'Danish'],
             ['Middle Swedish', 'Swedish'],

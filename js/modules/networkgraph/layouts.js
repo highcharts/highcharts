@@ -181,26 +181,55 @@ H.extend(
             var box = this.box,
                 nodes = this.nodes,
                 nodesLength = nodes.length + 1,
-                angle = 2 * Math.PI / nodesLength;
+                angle = 2 * Math.PI / nodesLength,
+                rootNodes = nodes.filter(function (node) {
+                    return node.linksTo.length === 0;
+                }),
+                sortedNodes = [];
 
-            // Initial positions:
-            nodes.forEach(
-                function (node, index) {
-                    node.plotX = pick(
-                        node.plotX,
-                        box.width / 2 + box.width / 10 *
-                            Math.cos(index * angle)
-                    );
-                    node.plotY = pick(
-                        node.plotY,
-                        box.height / 2 + box.height / 10 *
-                            Math.sin(index * angle) * 2 - box.height / 10
-                    );
+            function addToNodes(node) {
+                node.linksFrom.forEach(function (link) {
+                    sortedNodes.push(link.toNode);
+                    addToNodes(link.toNode);
+                });
+            }
 
-                    node.dispX = 0;
-                    node.dispY = 0;
-                }
-            );
+            // Start with identified root nodes an sort the nodes by their
+            // hierarchy. In trees, this ensures that branches don't cross
+            // eachother.
+            rootNodes.forEach(function (rootNode) {
+                sortedNodes.push(rootNode);
+                addToNodes(rootNode);
+            });
+
+            // Cyclic tree, no root node found
+            if (!sortedNodes.length) {
+                sortedNodes = nodes;
+
+            // Dangling, cyclic trees
+            } else {
+                nodes.forEach(function (node) {
+                    if (sortedNodes.indexOf(node) === -1) {
+                        sortedNodes.push(node);
+                    }
+                });
+            }
+
+            // Initial positions are laid out along a small circle, appearing
+            // as a cluster in the middle
+            sortedNodes.forEach(function (node, index) {
+                node.plotX = pick(
+                    node.plotX,
+                    box.width / 2 + Math.cos(index * angle)
+                );
+                node.plotY = pick(
+                    node.plotY,
+                    box.height / 2 + Math.sin(index * angle)
+                );
+
+                node.dispX = 0;
+                node.dispY = 0;
+            });
         },
         setRandomPositions: function () {
             var box = this.box,
