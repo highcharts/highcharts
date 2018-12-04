@@ -168,14 +168,14 @@ QUnit.test('getOverlapBetweenCircles', function (assert) {
 
     assert.strictEqual(
         getOverlapBetweenCircles(3, 4, 5),
-        6.64,
-        'should return 6.64 when r1=3, r2=4 and d=5.'
+        6.64167470270706,
+        'should return 6.64167470270706 when r1=3, r2=4 and d=5.'
     );
 
     assert.strictEqual(
         getOverlapBetweenCircles(8, 6, 1),
-        113.09,
-        'should return 113.09 when r1=8, r2=6 and d=1. The circles completely overlaps.'
+        113.09733552923257,
+        'should return 113.09733552923257 when r1=8, r2=6 and d=1. The circles completely overlaps.'
     );
 
     assert.strictEqual(
@@ -199,6 +199,11 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', function (assert) {
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(3, 4, 6.64),
         5.002,
+        'should return a distance of 5.002 when r1=3, r2=4 and overlap=6.64.'
+    );
+    assert.strictEqual(
+        getDistanceBetweenCirclesByOverlap(1.1283791670955126, 0.5641895835477563, 1),
+        0.422,
         'should return a distance of 5.002 when r1=3, r2=4 and overlap=6.64.'
     );
 });
@@ -336,7 +341,7 @@ QUnit.test('loss', function (assert) {
                 value: 2
             }]
         ),
-        0,
+        0.00009108128,
         'should return a loss of 0, since overlap between A and C equals 2.'
     );
 
@@ -348,7 +353,7 @@ QUnit.test('loss', function (assert) {
                 value: 24
             }]
         ),
-        1.5876,
+        1.58641695078,
         'should return a loss of 1.5876, since overlap between B and C equals 22.74.'
     );
 
@@ -366,7 +371,7 @@ QUnit.test('loss', function (assert) {
                 value: 24
             }]
         ),
-        5.5876,
+        5.586508032059999,
         'should return a total loss of 5.5876 between A∩B, A∩C, B∩C.'
     );
 });

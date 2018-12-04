@@ -45,7 +45,7 @@ function getOverlapBetweenCircles(r1, r2, d) {
             );
         }
         // Round the result to two decimals.
-        overlap = Math.floor(overlap * 100) / 100;
+        overlap = round(overlap, 14);
     }
     return overlap;
 };

@@ -23,11 +23,11 @@ Highcharts.chart('container', {
             name: 'Euler diagrams'
         }, {
             sets: ['B'],
-            value: 2,
+            value: 1,
             name: 'Venn diagrams'
         }, {
             sets: ['A', 'B'],
-            value: 2
+            value: 1
         }]
     }],
     tooltip: {
