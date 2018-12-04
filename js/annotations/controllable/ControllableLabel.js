@@ -280,6 +280,24 @@ H.merge(
 
             controllableMixin.redraw.call(this, animation);
         },
+        /**
+         * All basic shapes don't support alignTo() method except label.
+         * For a controllable label, we need to subtract translation from
+         * options.
+         */
+        anchor: function () {
+            var anchor = controllableMixin.anchor.apply(this, arguments),
+                x = this.options.x || 0,
+                y = this.options.y || 0;
+
+            anchor.absolutePosition.x -= x;
+            anchor.absolutePosition.y -= y;
+
+            anchor.relativePosition.x -= x;
+            anchor.relativePosition.y -= y;
+
+            return anchor;
+        },
 
         /**
          * Returns the label position relative to its anchor.
