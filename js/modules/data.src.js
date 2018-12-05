@@ -854,7 +854,6 @@ Highcharts.extend(Data.prototype, {
                     pushType('string');
                 }
 
-
                 if (columns.length < column + 1) {
                     columns.push([]);
                 }
@@ -1062,6 +1061,7 @@ Highcharts.extend(Data.prototype, {
                             .trim()
                             .replace(/\//g, ' ')
                             .replace(/\-/g, ' ')
+                            .replace(/\./g, ' ')
                             .split(' ');
 
                     guessedFormat = [
