@@ -83,11 +83,14 @@ SignalHandler.prototype.clearSignalCallbacks = function (signalNames) {
  * @param   {*} data Data to pass to the callback.
  */
 SignalHandler.prototype.emitSignal = function (signalName, data) {
+    var retval;
     if (this.signals[signalName]) {
         this.signals[signalName].forEach(function (handler) {
-            handler(data);
+            var result = handler(data);
+            retval = result !== undefined ? result : retval;
         });
     }
+    return retval;
 };
 
 
