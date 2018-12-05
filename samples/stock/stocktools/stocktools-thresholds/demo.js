@@ -90,6 +90,7 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
                         });
 
                         chart.addAnnotation({
+                            langKey: 'thresholds',
                             zoneIndex: zones.length - 1,
                             type: 'infinity-line',
                             draggable: 'y',
