@@ -1278,7 +1278,7 @@ gulp.task('jsdoc-options', jsdocOptions);
  * tree-namespace.json.
  */
 function dts() {
-    return require('highcharts-declarations-generator').task();
+    return require('../highcharts-declarations-generator').task();
 }
 
 /**
