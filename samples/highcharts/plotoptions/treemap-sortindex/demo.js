@@ -18,6 +18,7 @@ Highcharts.chart('container', {
         }],
         data: [{
             id: '2012',
+            name: '2012',
             sortIndex: 0,
             color: Highcharts.getOptions().colors[0]
         }, {
@@ -34,6 +35,7 @@ Highcharts.chart('container', {
             parent: '2012'
         }, {
             id: '2013',
+            name: '2013',
             sortIndex: 1,
             color: Highcharts.getOptions().colors[1]
         }, {
@@ -50,6 +52,7 @@ Highcharts.chart('container', {
             parent: '2013'
         }, {
             id: '2014',
+            name: '2014',
             sortIndex: 2,
             color: Highcharts.getOptions().colors[2]
         }, {
@@ -66,6 +69,7 @@ Highcharts.chart('container', {
             parent: '2014'
         }, {
             id: '2015',
+            name: '2015',
             sortIndex: 2,
             color: Highcharts.getOptions().colors[3]
         }, {
