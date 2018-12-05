@@ -18,10 +18,9 @@
         "types": []
     },
     "files": [
-        "test/typescript/globals.ts",
-
         "code/highcharts.d.ts",
         "code/highcharts.src.d.ts",
+        "test/typescript/globals.ts",
         "test/typescript/highcharts.ts",
         "test/typescript/classes/Series.ts",
 
