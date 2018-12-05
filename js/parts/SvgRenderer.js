@@ -4983,16 +4983,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     text.css(textStyles);
 
                     // Update existing text and box
-                    if (box) {
-                        if ('width' in textStyles) {
-                            updateBoxSize();
-                        }
+                    if ('width' in textStyles) {
+                        updateBoxSize();
+                    }
 
-                        // Keep updated (#9400)
-                        if ('fontSize' in textStyles) {
-                            updateBoxSize();
-                            updateTextPadding();
-                        }
+                    // Keep updated (#9400)
+                    if ('fontSize' in textStyles) {
+                        updateBoxSize();
+                        updateTextPadding();
                     }
                 }
                 return baseCss.call(wrapper, styles);

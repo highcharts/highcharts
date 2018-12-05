@@ -204,4 +204,34 @@ QUnit.test('Mouse events on dataLabels with useHTML set to true.', function (ass
     );
 });
 
+QUnit.test('Wide data labels', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        series: [{
+            type: 'pie',
+            data: [
+                ['The quick brown fox jumps over the lazy dog', 1],
+                ['The quick brown fox jumps over the lazy dog', 1],
+                ['The quick brown fox jumps over the lazy dog', 1],
+                ['The quick brown fox jumps over the lazy dog', 1],
+                ['The quick brown fox jumps over the lazy dog', 1],
+                ['The quick brown fox jumps over the lazy dog', 1]
+            ]
+        }]
+    });
+
+    assert.ok(
+        chart.series[0].group.getBBox().width > 200,
+        'The pie should not be shrinked too much'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.element.textContent.indexOf('…'),
+        -1,
+        'There should be no ellipsis in the data label'
+    );
+});
+
 
