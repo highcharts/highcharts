@@ -340,10 +340,33 @@ TimelinePath.prototype.playEvents = function (direction) {
     var timelinePath = this,
         curEvent = timelinePath.events[this.cursor],
         nextEvent = timelinePath.events[this.cursor + direction],
-        timeDiff;
+        timeDiff,
+        onEnd = function (signalData) {
+            timelinePath.signalHandler.emitSignal(
+                'masterOnEnd', signalData
+            );
+            timelinePath.signalHandler.emitSignal(
+                'playOnEnd', signalData
+            );
+        };
+
+    // Store reference to path on event
+    curEvent.timelinePath = timelinePath;
+
+    // Emit event, cancel if returns false
+    if (
+        timelinePath.signalHandler.emitSignal(
+            'onEventStart', curEvent
+        ) === false
+    ) {
+        onEnd({
+            event: curEvent,
+            cancelled: true
+        });
+        return;
+    }
 
     // Play the current event
-    timelinePath.signalHandler.emitSignal('onEventStart', curEvent);
     timelinePath.eventsPlaying[curEvent.id] = curEvent;
     curEvent.play({
         onEnd: function (cancelled) {
@@ -360,12 +383,7 @@ TimelinePath.prototype.playEvents = function (direction) {
 
             // Reached end of path?
             if (!nextEvent) {
-                timelinePath.signalHandler.emitSignal(
-                    'masterOnEnd', signalData
-                );
-                timelinePath.signalHandler.emitSignal(
-                    'playOnEnd', signalData
-                );
+                onEnd(signalData);
             }
         }
     });
@@ -527,10 +545,15 @@ Timeline.prototype.playPaths = function (direction) {
 
     // Go through the paths under cursor and play them
     curPaths.forEach(function (path) {
-        // Leave a timeout to let notes fade out before next play
-        setTimeout(function () {
-            playPath(path);
-        }, H.sonification.fadeOutTime);
+        if (path) {
+            // Store reference to timeline
+            path.timeline = timeline;
+
+            // Leave a timeout to let notes fade out before next play
+            setTimeout(function () {
+                playPath(path);
+            }, H.sonification.fadeOutTime);
+        }
     });
 };
 

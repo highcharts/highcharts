@@ -259,8 +259,8 @@ function pointSonify(options) {
     signalHandler.clearSignalCallbacks();
     signalHandler.registerSignalCallbacks({ onEnd: options.onEnd });
 
-    // If we have a null point, just return
-    if (point.isNull) {
+    // If we have a null point or invisible point, just return
+    if (point.isNull || !point.visible || !point.series.visible) {
         signalHandler.emitSignal('onEnd');
         return;
     }

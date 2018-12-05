@@ -216,8 +216,23 @@ function buildTimelinePathFromSeries(series, options) {
         },
         onEventStart: function (event) {
             var eventObject = event.options && event.options.eventObject;
-            if (eventObject instanceof H.Point && options.onPointStart) {
-                options.onPointStart(event, eventObject);
+            if (eventObject instanceof H.Point) {
+                // Check for hidden series
+                if (
+                    !eventObject.series.visible &&
+                    !eventObject.series.chart.series.some(function (series) {
+                        return series.visible;
+                    })
+                ) {
+                    // We have no visible series, stop the path.
+                    event.timelinePath.timeline.pause();
+                    event.timelinePath.timeline.resetCursor();
+                    return false;
+                }
+                // Emit onPointStart
+                if (options.onPointStart) {
+                    options.onPointStart(event, eventObject);
+                }
             }
         },
         onEventEnd: function (eventData) {
@@ -418,12 +433,16 @@ function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
     var order;
     if (orderOptions === 'sequential' || orderOptions === 'simultaneous') {
         // Just add the series from the chart
-        order = chart.series.map(function (series) {
-            return {
-                series: series,
-                seriesOptions: seriesOptionsCallback(series)
-            };
-        });
+        order = chart.series.reduce(function (seriesList, series) {
+            if (series.visible) {
+                seriesList.push({
+                    series: series,
+                    seriesOptions: seriesOptionsCallback(series)
+                });
+            }
+            return seriesList;
+        }, []);
+
         // If order is simultaneous, group all series together
         if (orderOptions === 'simultaneous') {
             order = [order];
@@ -431,36 +450,50 @@ function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
     } else {
         // We have a specific order, and potentially custom items - like
         // earcons or silent waits.
-        order = orderOptions.map(function (orderDef) {
+        order = orderOptions.reduce(function (orderList, orderDef) {
             // Return set of items to play simultaneously. Could be only one.
-            return H.splat(orderDef).map(function (item) {
+            var simulItems = H.splat(orderDef).reduce(function (items, item) {
+                var itemObject;
+
                 // Is this item a series ID?
                 if (typeof item === 'string') {
                     var series = chart.get(item);
-                    return {
-                        series: series,
-                        seriesOptions: seriesOptionsCallback(series)
-                    };
-                }
+                    if (series.visible) {
+                        itemObject = {
+                            series: series,
+                            seriesOptions: seriesOptionsCallback(series)
+                        };
+                    }
 
                 // Is it an earcon? If so, just create the path.
-                if (item instanceof H.sonification.Earcon) {
+                } else if (item instanceof H.sonification.Earcon) {
                     // Path with a single event
-                    return new H.sonification.TimelinePath({
+                    itemObject = new H.sonification.TimelinePath({
                         events: [new H.sonification.TimelineEvent({
                             eventObject: item
                         })]
                     });
-                }
 
                 // Is this item a silent wait? If so, just create the path.
-                if (item.silentWait) {
-                    return new H.sonification.TimelinePath({
+                } if (item.silentWait) {
+                    itemObject = new H.sonification.TimelinePath({
                         silentWait: item.silentWait
                     });
                 }
-            });
-        });
+
+                // Add to items to play simultaneously
+                if (itemObject) {
+                    items.push(itemObject);
+                }
+                return items;
+            }, []);
+
+            // Add to order list
+            if (simulItems.length) {
+                orderList.push(simulItems);
+            }
+            return orderList;
+        }, []);
     }
     return order;
 }
