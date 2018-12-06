@@ -1241,6 +1241,27 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     exportChart: function (exportingOptions, chartOptions) {
 
+        function getFilename(s) {
+            var filename;
+
+            if (typeof s === 'string') {
+                filename = s
+                    .toLowerCase()
+                    .replace(/<\/?[^>]+(>|$)/g, '') // strip HTML tags
+                    .replace(/[\s_]+/g, '-')
+                    .replace(/[^a-z\-]/g, '') // preserve only latin and dashes
+                    .replace(/^[\-]+/g, '') // dashes in the start
+                    .replace(/[\-]+/g, '-') // dashes in a row
+                    .substr(0, 24)
+                    .replace(/[\-]+$/g, ''); // dashes in the end;
+            }
+
+            if (!filename || filename.length < 5) {
+                filename = 'chart';
+            }
+            return filename;
+        }
+
         var svg = this.getSVGForExport(exportingOptions, chartOptions);
 
         // merge the options
@@ -1248,7 +1269,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // do the post
         H.post(exportingOptions.url, {
-            filename: exportingOptions.filename || 'chart',
+            filename: exportingOptions.filename || getFilename(
+                this.userOptions.title && this.userOptions.title.text
+            ),
             type: exportingOptions.type,
             // IE8 fails to post undefined correctly, so use 0
             width: exportingOptions.width || 0,
