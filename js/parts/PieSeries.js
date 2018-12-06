@@ -127,7 +127,9 @@ seriesType('pie', 'line'
          */
 
         /**
-         * The distance from the data label to the connector.
+         * The distance from the data label to the connector. Note that data
+         * labels also have a default `padding`, so in order for the connector
+         * to touch the text, the `padding` must also be 0.
          *
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorpadding/
          *         No padding
@@ -589,6 +591,40 @@ seriesType('pie', 'line'
         this.updateTotals();
     },
 
+    // Utility for getting the x value from a given y, used for anticollision
+    // logic in data labels. Added point for using specific points' label
+    // distance.
+    getX: function (y, left, point) {
+        var center = this.center,
+            // Variable pie has individual radius
+            radius = this.radii ? this.radii[point.index] : center[2] / 2,
+            angle,
+            x;
+
+        angle = Math.asin(
+            Math.max(
+                Math.min(
+                    (
+                        (y - center[1]) /
+                        (radius + point.labelDistance)
+                    ),
+                    1
+                ),
+                -1
+            )
+        );
+        x = center[0] +
+            (left ? -1 : 1) *
+            (Math.cos(angle) * (radius + point.labelDistance)) +
+            (
+                point.labelDistance > 0 ?
+                    (left ? -1 : 1) * this.options.dataLabels.padding :
+                0
+            );
+
+        return x;
+    },
+
     /**
      * Do translation for pie slices
      *
@@ -632,24 +668,6 @@ seriesType('pie', 'line'
         if (!positions) {
             series.center = positions = series.getCenter();
         }
-
-        // Utility for getting the x value from a given y, used for
-        // anticollision logic in data labels. Added point for using specific
-        // points' label distance.
-        series.getX = function (y, left, point) {
-            angle = Math.asin(
-                Math.min(
-                    (
-                        (y - positions[1]) /
-                        (positions[2] / 2 + point.labelDistance)
-                    ),
-                    1
-                )
-            );
-            return positions[0] +
-                (left ? -1 : 1) *
-                (Math.cos(angle) * (positions[2] / 2 + point.labelDistance));
-        };
 
         // Calculate the geometry for each point
         for (i = 0; i < len; i++) {
@@ -743,9 +761,9 @@ seriesType('pie', 'line'
                 connectorPosition: {
                     breakAt: { // used in connectorShapes.fixedOffset
                         x: positions[0] + radiusX + Math.cos(angle) *
-                          finalConnectorOffset,
+                            finalConnectorOffset,
                         y: positions[1] + radiusY + Math.sin(angle) *
-                          finalConnectorOffset
+                            finalConnectorOffset
                     },
                     touchingSliceAt: { // middle of the arc
                         x: positions[0] + radiusX,
@@ -1078,12 +1096,14 @@ seriesType('pie', 'line'
     connectorShapes: {
         // only one available before v7.0.0
         fixedOffset: function (labelPosition, connectorPosition, options) {
-            var connectorPadding = options.connectorPadding,
-                breakAt = connectorPosition.breakAt,
+            var breakAt = connectorPosition.breakAt,
                 touchingSliceAt = connectorPosition.touchingSliceAt,
                 linePath = options.softConnector ? [
                     'C', // soft break
-                    labelPosition.x, // 1st control point (of the curve)
+                     // 1st control point (of the curve)
+                    labelPosition.x +
+                        // 5 gives the connector a little horizontal bend
+                        (labelPosition.alignment === 'left' ? -5 : 5),
                     labelPosition.y, //
                     2 * breakAt.x - touchingSliceAt.x, // 2nd control point
                     2 * breakAt.y - touchingSliceAt.y, //
@@ -1098,25 +1118,22 @@ seriesType('pie', 'line'
             // assemble the path
             return [
                 'M',
-                labelPosition.x +
-                    (labelPosition.alignment === 'left' ? 1 : -1) *
-                    connectorPadding,
-                labelPosition.y].concat(linePath).concat([
-                    'L',
-                    touchingSliceAt.x,
-                    touchingSliceAt.y
-                ]);
+                labelPosition.x,
+                labelPosition.y
+            ].concat(linePath).concat([
+                'L',
+                touchingSliceAt.x,
+                touchingSliceAt.y
+            ]);
         },
 
-        straight: function (labelPosition, connectorPosition, options) {
-            var connectorPadding = options.connectorPadding,
-                touchingSliceAt = connectorPosition.touchingSliceAt;
+        straight: function (labelPosition, connectorPosition) {
+            var touchingSliceAt = connectorPosition.touchingSliceAt;
 
             // direct line to the slice
-            return ['M',
-                labelPosition.x +
-                    (labelPosition.alignment === 'left' ? 1 : -1) *
-                    connectorPadding,
+            return [
+                'M',
+                labelPosition.x,
                 labelPosition.y,
                 'L',
                 touchingSliceAt.x,
@@ -1127,8 +1144,7 @@ seriesType('pie', 'line'
         crookedLine: function (labelPosition, connectorPosition,
             options) {
 
-            var connectorPadding = options.connectorPadding,
-                touchingSliceAt = connectorPosition.touchingSliceAt,
+            var touchingSliceAt = connectorPosition.touchingSliceAt,
                 series = this.series,
                 pieCenterX = series.center[0],
                 plotWidth = series.chart.plotWidth,
@@ -1154,13 +1170,14 @@ seriesType('pie', 'line'
             }
 
             // assemble the path
-            return ['M',
-                labelPosition.x + (alignment === 'left' ? 1 : -1) *
-                    connectorPadding,
-                labelPosition.y].concat(segmentWithCrook).concat(['L',
-                    touchingSliceAt.x,
-                    touchingSliceAt.y
-                ]);
+            return [
+                'M',
+                labelPosition.x,
+                labelPosition.y
+            ].concat(segmentWithCrook).concat(['L',
+                touchingSliceAt.x,
+                touchingSliceAt.y
+            ]);
 
         }
     },
