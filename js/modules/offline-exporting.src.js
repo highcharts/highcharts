@@ -295,7 +295,7 @@ Highcharts.downloadSVGLocal = function (
 
         // Workaround for the text styling. Making sure it does pick up settings
         // for parent elements.
-        textElements.forEach(function (el) {
+        [].forEach.call(textElements, function (el) {
             // Workaround for the text styling. making sure it does pick up the
             // root element
             ['font-family', 'font-size'].forEach(function (property) {
@@ -309,7 +309,7 @@ Highcharts.downloadSVGLocal = function (
             // Workaround for plotband with width, removing title from text
             // nodes
             titleElements = el.getElementsByTagName('title');
-            titleElements.forEach(function (titleElement) {
+            [].forEach.call(titleElements, function (titleElement) {
                 el.removeChild(titleElement);
             });
         });
@@ -586,7 +586,10 @@ Highcharts.Chart.prototype.exportChartLocal = function (
             } else {
                 Highcharts.downloadSVGLocal(
                     svg,
-                    options,
+                    Highcharts.extend(
+                        { filename: chart.getFilename() },
+                        options
+                    ),
                     fallbackToExportServer
                 );
             }

@@ -5,6 +5,10 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/680f5d50a47e90f53d814b53
     // Initiate the chart
     var chart = Highcharts.mapChart('container', {
 
+        chart: {
+            height: 500 // initial height
+        },
+
         title: {
             text: 'Set chart size by dragging handle'
         },
