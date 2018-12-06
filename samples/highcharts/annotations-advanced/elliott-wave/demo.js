@@ -13,7 +13,7 @@ Highcharts.chart('container', {
     },
 
     annotations: [{
-        type: 'elliott-wave',
+        type: 'elliottWave',
         typeOptions: {
             xAxis: 0,
             yAxis: 0,

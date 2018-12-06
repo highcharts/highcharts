@@ -166,7 +166,7 @@ H.extendAnnotation(Fibonacci, Tunnel, /** @lends Annotation.Fibonacci# */ {
     /**
      * A fibonacci annotation.
      *
-     * @extends annotations.crooked-line
+     * @extends annotations.crookedLine
      * @sample highcharts/annotations-advanced/fibonacci/
      *         Fibonacci
      * @optionparent annotations.fibonacci

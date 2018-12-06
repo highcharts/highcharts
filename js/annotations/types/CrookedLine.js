@@ -83,7 +83,7 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
      * @excluding labels, shapes
      * @sample highcharts/annotations-advanced/crooked-line/
      *         Crooked line
-     * @optionparent annotations.crooked-line
+     * @optionparent annotations.crookedLine
      */
     {
         /**
@@ -105,26 +105,26 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
 
             /**
              * @type {Array<Object>}
-             * @apioption annotations.crooked-line.typeOptions.points
+             * @apioption annotations.crookedLine.typeOptions.points
              */
 
             /**
              * The x position of the point.
              * @type {number}
-             * @apioption annotations.crooked-line.typeOptions.points.x
+             * @apioption annotations.crookedLine.typeOptions.points.x
              */
 
             /**
              * The y position of the point.
              * @type {number}
-             * @apioption annotations.crooked-line.typeOptions.points.y
+             * @apioption annotations.crookedLine.typeOptions.points.y
              */
 
             /**
              * @type {number}
              * @extends annotations.base.controlPointOptions
              * @excluding positioner, events
-             * @apioption annotations.crooked-line.typeOptions.points.controlPoint
+             * @apioption annotations.crookedLine.typeOptions.points.controlPoint
              */
 
             /**
@@ -178,6 +178,6 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
     }
 );
 
-Annotation.types['crooked-line'] = CrookedLine;
+Annotation.types.crookedLine = CrookedLine;
 
 export default CrookedLine;

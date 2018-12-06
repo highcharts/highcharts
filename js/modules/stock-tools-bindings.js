@@ -679,7 +679,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation({
                 langKey: 'segment',
-                type: 'crooked-line',
+                type: 'crookedLine',
                 typeOptions: {
                     points: [{
                         x: x,
@@ -713,7 +713,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation({
                 langKey: 'arrowSegment',
-                type: 'crooked-line',
+                type: 'crookedLine',
                 typeOptions: {
                     line: {
                         markerEnd: 'arrow'
@@ -750,7 +750,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation({
                 langKey: 'ray',
-                type: 'infinity-line',
+                type: 'infinityLine',
                 typeOptions: {
                     type: 'ray',
                     points: [{
@@ -785,7 +785,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation({
                 langKey: 'arrowRay',
-                type: 'infinity-line',
+                type: 'infinityLine',
                 typeOptions: {
                     type: 'ray',
                     line: {
@@ -822,7 +822,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation({
                 langKey: 'infinityLine',
-                type: 'infinity-line',
+                type: 'infinityLine',
                 typeOptions: {
                     type: 'line',
                     points: [{
@@ -857,7 +857,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation({
                 langKey: 'arrowInfinityLine',
-                type: 'infinity-line',
+                type: 'infinityLine',
                 typeOptions: {
                     type: 'line',
                     line: {
@@ -894,9 +894,9 @@ var stockToolsBindings = {
 
             this.chart.addAnnotation({
                 langKey: 'horizontalLine',
-                type: 'infinity-line',
+                type: 'infinityLine',
                 typeOptions: {
-                    type: 'horizontal-line',
+                    type: 'horizontalLine',
                     points: [{
                         x: x,
                         y: y
@@ -921,9 +921,9 @@ var stockToolsBindings = {
 
             this.chart.addAnnotation({
                 langKey: 'verticalLine',
-                type: 'infinity-line',
+                type: 'infinityLine',
                 typeOptions: {
-                    type: 'vertical-line',
+                    type: 'verticalLine',
                     points: [{
                         x: x,
                         y: y
@@ -950,7 +950,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation({
                 langKey: 'crookedLine',
-                type: 'crooked-line',
+                type: 'crookedLine',
                 typeOptions: {
                     points: [{
                         x: x,
@@ -988,7 +988,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation({
                 langKey: 'crookedLine',
-                type: 'crooked-line',
+                type: 'crookedLine',
                 typeOptions: {
                     points: [{
                         x: x,
@@ -1034,7 +1034,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation({
                 langKey: 'elliottWave',
-                type: 'elliott-wave',
+                type: 'elliottWave',
                 typeOptions: {
                     points: [{
                         x: x,
@@ -1077,7 +1077,7 @@ var stockToolsBindings = {
 
             return this.chart.addAnnotation({
                 langKey: 'elliottWave',
-                type: 'elliott-wave',
+                type: 'elliottWave',
                 typeOptions: {
                     points: [{
                         x: x,
@@ -1422,7 +1422,7 @@ var stockToolsBindings = {
 
             annotation = this.chart.addAnnotation({
                 langKey: 'verticalCounter',
-                type: 'vertical-line',
+                type: 'verticalLine',
                 typeOptions: {
                     point: {
                         x: closestPoint.x,
@@ -1470,7 +1470,7 @@ var stockToolsBindings = {
 
             annotation = this.chart.addAnnotation({
                 langKey: 'verticalLabel',
-                type: 'vertical-line',
+                type: 'verticalLine',
                 typeOptions: {
                     point: {
                         x: closestPoint.x,
@@ -1515,7 +1515,7 @@ var stockToolsBindings = {
 
             annotation = this.chart.addAnnotation({
                 langKey: 'verticalArrow',
-                type: 'vertical-line',
+                type: 'verticalLine',
                 typeOptions: {
                     point: {
                         x: closestPoint.x,
@@ -1959,7 +1959,7 @@ H.Toolbar.annotationsEditable = {
     },
     // Simple shapes:
     circle: ['shapes'],
-    'vertical-line': [],
+    verticalLine: [],
     label: ['labelOptions'],
     // Measure
     measure: ['background', 'crosshairY', 'crosshairX'],
@@ -1968,7 +1968,7 @@ H.Toolbar.annotationsEditable = {
     tunnel: ['background', 'line', 'height'],
     pitchfork: ['innerBackground', 'outerBackground'],
     // Crooked lines, elliots, arrows etc:
-    'crooked-line': []
+    crookedLine: []
 };
 
 // Define non editable fields per annotation, for example Rectangle inherits
