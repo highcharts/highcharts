@@ -11,7 +11,7 @@ Highcharts.chart('container', {
     },
 
     annotations: [{
-        type: 'infinity-line',
+        type: 'infinityLine',
         typeOptions: {
             // type: 'ray' || 'line',
             type: 'ray',
