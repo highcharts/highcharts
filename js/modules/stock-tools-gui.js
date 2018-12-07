@@ -1254,7 +1254,7 @@ H.Toolbar.prototype = {
     unselectAllButtons: function (btn) {
         var activeButtons = btn.parentNode.querySelectorAll('.' + activeClass);
 
-        activeButtons.forEach(function (activeBtn) {
+        [].forEach.call(activeButtons, function (activeBtn) {
             if (activeBtn !== btn) {
                 activeBtn.classList.remove(activeClass);
             }
