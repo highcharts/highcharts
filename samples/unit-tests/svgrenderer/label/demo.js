@@ -195,7 +195,7 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
         .add();
 
     assert.strictEqual(
-        ren.box.innerHTML.indexOf('NaN'),
+        document.getElementById('container').innerHTML.indexOf('NaN'),
         -1,
         'No NaN attribute values should be allowed'
     );

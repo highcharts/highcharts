@@ -1666,9 +1666,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     // When the text shadow shim is used, we need to hide the
                     // fake shadows to get the correct bounding box (#3872)
                     toggleTextShadowShim = this.fakeTS && function (display) {
-                        element.querySelectorAll(
+                        [].forEach.call(
+                            element.querySelectorAll(
                                 '.highcharts-text-outline'
-                            ).forEach(
+                            ),
                             function (tspan) {
                                 tspan.style.display = display;
                             }
