@@ -59,7 +59,7 @@ var chart = Highcharts.chart('container', {
         text: 'Play chart as sound'
     },
     subtitle: {
-        text: 'Best viewed in Google Chrome browser'
+        text: 'Weekly temperature averages'
     },
     yAxis: {
         title: {
