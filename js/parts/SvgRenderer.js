@@ -1916,7 +1916,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // Look for existing references to this clipPath and remove them
             // before destroying the element (#6196).
             // The upper case version is for Edge
-            ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]').forEach(
+            [].forEach.call(
+                ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
                 function (el) {
                     var clipPathAttr = el.getAttribute('clip-path'),
                         clipPathId = clipPath.element.id;
