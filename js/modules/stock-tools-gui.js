@@ -979,7 +979,7 @@ H.Toolbar.prototype = {
      *
      */
     eraseActiveButtons: function (buttons, currentButton, submenuItems) {
-        buttons.forEach(function (btn) {
+        [].forEach.call(buttons, function (btn) {
             if (btn !== currentButton) {
                 btn.classList.remove(PREFIX + 'current');
                 btn.classList.remove(PREFIX + 'active');
@@ -1219,7 +1219,9 @@ H.Toolbar.prototype = {
 
         // set class
         mainNavButton.className = '';
-        mainNavButton.classList.add(buttonWrapperClass.trim());
+        if (buttonWrapperClass) {
+            mainNavButton.classList.add(buttonWrapperClass.trim());
+        }
 
         // set icon
         mainNavButton.querySelectorAll('.' + PREFIX + 'menu-item-btn')[0]
@@ -1240,7 +1242,7 @@ H.Toolbar.prototype = {
         if (btn.className.indexOf(activeClass) >= 0) {
             btn.classList.remove(activeClass);
         } else {
-            btn.className.add(activeClass);
+            btn.classList.add(activeClass);
         }
     },
     /*
