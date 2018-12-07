@@ -7,3 +7,4 @@ At the plot line, a special sound will play to indicate a point of interest.
 
 ####  Tip
 - Try clicking a point to play the points at that x-value.
+- Hiding a series by clicking the legend items will mute that series.
