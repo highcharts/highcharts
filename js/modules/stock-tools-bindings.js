@@ -95,8 +95,8 @@ var bindingsUtils = {
      * this. For example crooked line: logic behind updating each point is the
      * same, only index changes when adding an annotation.
      *
-     * Example: Toolbar.utils.updateNthPoint(1) - will generate function that
-     * updates all consecutive points except point with index=0.
+     * Example: NavigationBindings.utils.updateNthPoint(1) - will generate
+     * function that updates all consecutive points except point with index=0.
      *
      * @private
      * @function bindingsUtils.updateNthPoint
@@ -180,8 +180,8 @@ var bindingsUtils = {
      * Method fires an event "showPopup" with config:
      * `{type, options, callback}`.
      *
-     * Example: Toolbar.utils.addFlagFromForm('url(...)') - will generate
-     * function that shows modal in GUI.
+     * Example: NavigationBindings.utils.addFlagFromForm('url(...)') - will
+     * generate function that shows modal in GUI.
      *
      * @private
      * @function bindingsUtils.addFlagFromForm
@@ -194,9 +194,10 @@ var bindingsUtils = {
      */
     addFlagFromForm: function (type) {
         return function (e) {
-            var toolbar = this,
-                chart = toolbar.chart,
-                getFieldType = toolbar.utils.getFieldType,
+            var navigation = this,
+                chart = navigation.chart,
+                toolbar = chart.toolbar,
+                getFieldType = navigation.utils.getFieldType,
                 point = bindingsUtils.attractToPoint(e, chart),
                 pointConfig = {
                     x: point.x,
@@ -214,7 +215,7 @@ var bindingsUtils = {
                                     options = point.options;
 
                                 fireEvent(
-                                    toolbar,
+                                    navigation,
                                     'showPopup',
                                     {
                                         point: point,
@@ -237,7 +238,7 @@ var bindingsUtils = {
                                         },
                                         onSubmit: function (updated) {
                                             point.update(
-                                                toolbar.fieldsToOptions(
+                                                navigation.fieldsToOptions(
                                                     updated.fields,
                                                     {}
                                                 )
@@ -250,12 +251,12 @@ var bindingsUtils = {
                     }
                 };
 
-            if (!toolbar.guiEnabled) {
+            if (!toolbar || !toolbar.guiEnabled) {
                 chart.addSeries(seriesOptions);
             }
 
             fireEvent(
-                toolbar,
+                navigation,
                 'showPopup',
                 {
                     formType: 'flag',
@@ -268,7 +269,7 @@ var bindingsUtils = {
                     },
                     // Callback on submit:
                     onSubmit: function (data) {
-                        toolbar.fieldsToOptions(
+                        navigation.fieldsToOptions(
                             data.fields,
                             seriesOptions.data[0]
                         );
@@ -279,8 +280,8 @@ var bindingsUtils = {
         };
     },
     manageIndicators: function (data) {
-        var toolbar = this,
-            chart = toolbar.chart,
+        var navigation = this,
+            chart = navigation.chart,
             seriesConfig = {
                 linkedTo: data.linkedTo,
                 type: data.type
@@ -307,7 +308,7 @@ var bindingsUtils = {
             series;
 
         if (data.actionType === 'edit') {
-            toolbar.fieldsToOptions(data.fields, seriesConfig);
+            navigation.fieldsToOptions(data.fields, seriesConfig);
             series = chart.get(data.seriesId);
 
             if (series) {
@@ -328,12 +329,12 @@ var bindingsUtils = {
 
                 if (indicatorsWithAxes.indexOf(series.type) >= 0) {
                     yAxis.remove(false);
-                    toolbar.resizeYAxes();
+                    navigation.resizeYAxes();
                 }
             }
         } else {
             seriesConfig.id = H.uniqueKey();
-            toolbar.fieldsToOptions(data.fields, seriesConfig);
+            navigation.fieldsToOptions(data.fields, seriesConfig);
 
             if (indicatorsWithAxes.indexOf(data.type) >= 0) {
                 yAxis = chart.addAxis({
@@ -351,7 +352,7 @@ var bindingsUtils = {
                     }
                 }, false, false);
                 seriesConfig.yAxis = yAxis.options.id;
-                toolbar.resizeYAxes();
+                navigation.resizeYAxes();
             }
 
             if (indicatorsWithVolume.indexOf(data.type) >= 0) {
@@ -366,10 +367,10 @@ var bindingsUtils = {
         }
 
         fireEvent(
-            toolbar,
+            navigation,
             'deselectButton',
             {
-                button: toolbar.selectedButtonElement
+                button: navigation.selectedButtonElement
             }
         );
 
@@ -430,8 +431,8 @@ function updateRectSize(event, annotation) {
  *
  * @type         {Highcharts.Dictionary<Highcharts.StockToolsBindingsObject>|*}
  * @since        7.0.0
- * @product      highstock
- * @optionparent stockTools.bindings
+ * @product      highcharts highstock
+ * @optionparent navigation.bindings
  */
 var stockToolsBindings = {
     /**
@@ -949,7 +950,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
-                langKey: 'crookedLine',
+                langKey: 'crooked3',
                 type: 'crookedLine',
                 typeOptions: {
                     points: [{
@@ -1033,7 +1034,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
-                langKey: 'elliottWave',
+                langKey: 'elliott3',
                 type: 'elliottWave',
                 typeOptions: {
                     points: [{
@@ -1076,7 +1077,7 @@ var stockToolsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY);
 
             return this.chart.addAnnotation({
-                langKey: 'elliottWave',
+                langKey: 'elliott5',
                 type: 'elliottWave',
                 typeOptions: {
                     points: [{
@@ -1778,18 +1779,20 @@ var stockToolsBindings = {
         init: function (button) {
             var series = this.chart.series[0],
                 options = series.options,
-                iconsURL = this.options.iconsURL,
                 lastVisiblePrice = options.lastVisiblePrice &&
                                 options.lastVisiblePrice.enabled,
-                lastPrice = options.lastPrice && options.lastPrice.enabled;
+                lastPrice = options.lastPrice && options.lastPrice.enabled,
+                gui = this.chart.stockToolbar;
 
-            if (this.guiEnabled) {
+            if (gui && gui.guiEnabled) {
                 if (lastPrice) {
                     button.firstChild.style['background-image'] =
-                        'url("' + iconsURL + 'current-price-show.svg")';
+                        'url("' + gui.options.iconsURL +
+                        'current-price-show.svg")';
                 } else {
                     button.firstChild.style['background-image'] =
-                        'url("' + iconsURL + 'current-price-hide.svg")';
+                        'url("' + gui.options.iconsURL +
+                        'current-price-hide.svg")';
                 }
             }
 
@@ -1826,17 +1829,20 @@ var stockToolsBindings = {
         className: 'highcharts-indicators',
         /** @ignore */
         init: function () {
-            var toolbar = this;
+            var navigation = this;
 
             fireEvent(
-                toolbar,
+                navigation,
                 'showPopup',
                 {
                     formType: 'indicators',
                     options: {},
                     // Callback on submit:
                     onSubmit: function (data) {
-                        toolbar.utils.manageIndicators.call(toolbar, data);
+                        navigation.utils.manageIndicators.call(
+                            navigation,
+                            data
+                        );
                     }
                 }
             );
@@ -1853,20 +1859,22 @@ var stockToolsBindings = {
         className: 'highcharts-toggle-annotations',
         /** @ignore */
         init: function (button) {
+            var gui = this.chart.stockToolbar;
+
             this.toggledAnnotations = !this.toggledAnnotations;
 
             (this.chart.annotations || []).forEach(function (annotation) {
                 annotation.setVisibility(!this.toggledAnnotations);
             }, this);
 
-            if (this.guiEnabled) {
+            if (gui && gui.guiEnabled) {
                 if (this.toggledAnnotations) {
                     button.firstChild.style['background-image'] =
-                        'url("' + this.options.iconsURL +
+                        'url("' + gui.options.iconsURL +
                             'annotations-hidden.svg")';
                 } else {
                     button.firstChild.style['background-image'] =
-                        'url("' + this.options.iconsURL +
+                        'url("' + gui.options.iconsURL +
                             'annotations-visible.svg")';
                 }
             }
@@ -1893,8 +1901,8 @@ var stockToolsBindings = {
         className: 'highcharts-save-chart',
         /** @ignore */
         init: function (button) {
-            var toolbar = this,
-                chart = toolbar.chart,
+            var navigation = this,
+                chart = navigation.chart,
                 annotations = [],
                 indicators = [],
                 flags = [],
@@ -1913,7 +1921,7 @@ var stockToolsBindings = {
             });
 
             chart.yAxis.forEach(function (yAxis) {
-                if (toolbar.utils.isNotNavigatorYAxis(yAxis)) {
+                if (navigation.utils.isNotNavigatorYAxis(yAxis)) {
                     yAxes.push(yAxis.options);
                 }
             });
@@ -1937,8 +1945,17 @@ var stockToolsBindings = {
     }
 };
 
+H.NavigationBindings = function (chart, options) {
+    this.chart = chart;
+    this.options = options;
+    this.eventsToUnbind = [];
+    this.container = doc.getElementsByClassName(
+        this.options.bindingsClassName
+    );
+};
+
 // Define which options from annotations should show up in edit box:
-H.Toolbar.annotationsEditable = {
+H.NavigationBindings.annotationsEditable = {
     // `typeOptions` are always available
     // Nested and shared options:
     nestedOptions: {
@@ -1973,11 +1990,11 @@ H.Toolbar.annotationsEditable = {
 
 // Define non editable fields per annotation, for example Rectangle inherits
 // options from Measure, but crosshairs are not available
-H.Toolbar.annotationsNonEditable = {
+H.NavigationBindings.annotationsNonEditable = {
     rectangle: ['crosshairX', 'crosshairY', 'label']
 };
 
-extend(H.Toolbar.prototype, {
+extend(H.NavigationBindings.prototype, {
     // Private properties added by bindings:
 
     // Active (selected) annotation that is editted through popup/forms
@@ -2001,13 +2018,85 @@ extend(H.Toolbar.prototype, {
     // Holder for user options, returned from `start` event, and passed on to
     // `step`'s' and `end`.
     // currentUserDetails: {}
+    /**
+     * Initi all events conencted to NavigationBindings.
+     *
+     * @private
+     * @function Highcharts.NavigationBindings#initEvents
+     */
+    initEvents: function () {
+        var navigation = this,
+            chart = navigation.chart,
+            bindingsContainer = navigation.container,
+            options = navigation.options;
+
+        // Shorthand object for getting events for buttons:
+        navigation.boundClassNames = {};
+
+        objectEach(options.bindings, function (value) {
+            navigation.boundClassNames[value.className] = value;
+        });
+
+        // Handle multiple containers with the same class names:
+        [].forEach.call(bindingsContainer, function (subContainer) {
+            navigation.eventsToUnbind.push(
+                addEvent(
+                    subContainer,
+                    'click',
+                    function (event) {
+                        var bindings = navigation.getButtonEvents(
+                            bindingsContainer,
+                            event
+                        );
+
+                        if (bindings) {
+                            navigation.bindingsButtonClick(
+                                bindings.button,
+                                bindings.events,
+                                event
+                            );
+                        }
+                    }
+                )
+            );
+        });
+
+        objectEach(options.events || {}, function (callback, eventName) {
+            navigation.eventsToUnbind.push(
+                addEvent(
+                    navigation,
+                    eventName,
+                    callback
+                )
+            );
+        });
+
+        navigation.eventsToUnbind.push(
+            addEvent(chart.container, 'click', function (e) {
+                if (
+                    !chart.cancelClick &&
+                    chart.isInsidePlot(
+                        e.chartX - chart.plotLeft,
+                        e.chartY - chart.plotTop
+                    )
+                ) {
+                    navigation.bindingsChartClick(this, e);
+                }
+            })
+        );
+        navigation.eventsToUnbind.push(
+            addEvent(chart.container, 'mousemove', function (e) {
+                navigation.bindingsContainerMouseMove(this, e);
+            })
+        );
+    },
 
     /**
      * Hook for click on a button, method selcts/unselects buttons,
      * then calls `bindings.init` callback.
      *
      * @private
-     * @function Highcharts.Toolbar#bindingsButtonClick
+     * @function Highcharts.NavigationBindings#bindingsButtonClick
      *
      * @param {Highcharts.HTMLDOMElement} [button]
      *        Clicked button
@@ -2019,39 +2108,40 @@ extend(H.Toolbar.prototype, {
      *        Browser's click event
      */
     bindingsButtonClick: function (button, events, clickEvent) {
-        var toolbar = this;
+        var navigation = this,
+            chart = navigation.chart;
 
-        if (toolbar.selectedButtonElement) {
+        if (navigation.selectedButtonElement) {
             fireEvent(
-                toolbar,
+                navigation,
                 'deselectButton',
-                { button: toolbar.selectedButtonElement }
+                { button: navigation.selectedButtonElement }
             );
 
-            if (toolbar.nextEvent) {
+            if (navigation.nextEvent) {
                 // Remove in-progress annotations adders:
                 if (
-                    toolbar.currentUserDetails &&
-                    toolbar.currentUserDetails.coll === 'annotations'
+                    navigation.currentUserDetails &&
+                    navigation.currentUserDetails.coll === 'annotations'
                 ) {
-                    toolbar.chart.removeAnnotation(toolbar.currentUserDetails);
+                    chart.removeAnnotation(navigation.currentUserDetails);
                 }
-                toolbar.mouseMoveEvent = toolbar.nextEvent = false;
+                navigation.mouseMoveEvent = navigation.nextEvent = false;
             }
         }
 
-        toolbar.selectedButton = events;
-        toolbar.selectedButtonElement = button;
+        navigation.selectedButton = events;
+        navigation.selectedButtonElement = button;
 
-        fireEvent(toolbar, 'selectButton', { button: button });
+        fireEvent(navigation, 'selectButton', { button: button });
 
         // Call "init" event, for example to open modal window
         if (events.init) {
-            events.init.call(toolbar, button, clickEvent);
+            events.init.call(navigation, button, clickEvent);
         }
 
         if (events.start || events.steps) {
-            toolbar.chart.renderer.boxWrapper.addClass(PREFIX + 'draw-mode');
+            chart.renderer.boxWrapper.addClass(PREFIX + 'draw-mode');
         }
     },
     /**
@@ -2060,7 +2150,7 @@ extend(H.Toolbar.prototype, {
      * When finished, calls `end` event.
      *
      * @private
-     * @function Highcharts.Toolbar#bindingsChartClick
+     * @function Highcharts.NavigationBindings#bindingsChartClick
      *
      * @param {Highcharts.Chart} chart
      *        Chart that click was performed on.
@@ -2068,94 +2158,96 @@ extend(H.Toolbar.prototype, {
      * @param {global.Event} clickEvent
      *        Browser's click event.
      */
-    bindingsChartClick: function (chart, clickEvent) {
-        var toolbar = this,
-            selectedButton = toolbar.selectedButton,
-            svgContainer = toolbar.chart.renderer.boxWrapper;
+    bindingsChartClick: function (chartContainer, clickEvent) {
+        var navigation = this,
+            chart = navigation.chart,
+            selectedButton = navigation.selectedButton,
+            svgContainer = chart.renderer.boxWrapper;
 
         if (
-            toolbar.activeAnnotation &&
+            navigation.activeAnnotation &&
             !clickEvent.activeAnnotation &&
             // Element could be removed in the child action, e.g. button
             clickEvent.target.parentNode &&
             // TO DO: Polyfill for IE11?
             !clickEvent.target.closest('.' + PREFIX + 'popup')
         ) {
-            fireEvent(toolbar, 'closePopup');
-            toolbar.deselectAnnotation();
+            fireEvent(navigation, 'closePopup');
+            navigation.deselectAnnotation();
         }
 
         if (!selectedButton || !selectedButton.start) {
             return;
         }
 
-        if (!toolbar.nextEvent) {
+
+        if (!navigation.nextEvent) {
             // Call init method:
-            toolbar.currentUserDetails = selectedButton.start.call(
-                toolbar,
+            navigation.currentUserDetails = selectedButton.start.call(
+                navigation,
                 clickEvent
             );
 
             // If steps exists (e.g. Annotations), bind them:
             if (selectedButton.steps) {
-                toolbar.stepIndex = 0;
-                toolbar.steps = true;
-                toolbar.mouseMoveEvent = toolbar.nextEvent =
-                    selectedButton.steps[toolbar.stepIndex];
+                navigation.stepIndex = 0;
+                navigation.steps = true;
+                navigation.mouseMoveEvent = navigation.nextEvent =
+                    selectedButton.steps[navigation.stepIndex];
             } else {
 
                 fireEvent(
-                    toolbar,
+                    navigation,
                     'deselectButton',
-                    { button: toolbar.selectedButtonElement }
+                    { button: navigation.selectedButtonElement }
                 );
                 svgContainer.removeClass(PREFIX + 'draw-mode');
-                toolbar.steps = false;
-                toolbar.selectedButton = null;
+                navigation.steps = false;
+                navigation.selectedButton = null;
                 // First click is also the last one:
                 if (selectedButton.end) {
                     selectedButton.end.call(
-                        toolbar,
+                        navigation,
                         clickEvent,
-                        toolbar.currentUserDetails
+                        navigation.currentUserDetails
                     );
 
                 }
             }
         } else {
 
-            toolbar.nextEvent.call(
-                toolbar,
+            navigation.nextEvent.call(
+                navigation,
                 clickEvent,
-                toolbar.currentUserDetails
+                navigation.currentUserDetails
             );
 
-            if (toolbar.steps) {
+            if (navigation.steps) {
 
-                toolbar.stepIndex++;
+                navigation.stepIndex++;
 
-                if (selectedButton.steps[toolbar.stepIndex]) {
+                if (selectedButton.steps[navigation.stepIndex]) {
                     // If we have more steps, bind them one by one:
-                    toolbar.mouseMoveEvent = toolbar.nextEvent =
-                        selectedButton.steps[toolbar.stepIndex];
+                    navigation.mouseMoveEvent = navigation.nextEvent =
+                        selectedButton.steps[navigation.stepIndex];
                 } else {
                     fireEvent(
-                        toolbar,
+                        navigation,
                         'deselectButton',
-                        { button: toolbar.selectedButtonElement }
+                        { button: navigation.selectedButtonElement }
                     );
                     svgContainer.removeClass(PREFIX + 'draw-mode');
                     // That was the last step, call end():
                     if (selectedButton.end) {
                         selectedButton.end.call(
-                            toolbar,
+                            navigation,
                             clickEvent,
-                            toolbar.currentUserDetails
+                            navigation.currentUserDetails
                         );
                     }
-                    toolbar.nextEvent = false;
-                    toolbar.mouseMoveEvent = false;
-                    toolbar.selectedButton = null;
+                    navigation.nextEvent = false;
+                    navigation.mouseMoveEvent = false;
+                    navigation.selectedButton = null;
                 }
             }
         }
@@ -2164,7 +2256,7 @@ extend(H.Toolbar.prototype, {
      * Hook for mouse move on a chart's container. It calls current step.
      *
      * @private
-     * @function Highcharts.Toolbar#bindingsContainerMouseMove
+     * @function Highcharts.NavigationBindings#bindingsContainerMouseMove
      *
      * @param {Highcharts.HTMLDOMElement} container
      *        Chart's container.
@@ -2186,7 +2278,7 @@ extend(H.Toolbar.prototype, {
      * Highcharts options object (e.g. `{ params: { period } }`).
      *
      * @private
-     * @function Highcharts.Toolbar#fieldsToOptions
+     * @function Highcharts.NavigationBindings#fieldsToOptions
      *
      * @param {object} fields
      *        Fields from popup form.
@@ -2237,13 +2329,12 @@ extend(H.Toolbar.prototype, {
     /**
      * Shorthand method to deselect an annotation.
      *
-     * @function Highcharts.Toolbar#deselectAnnotation
+     * @function Highcharts.NavigationBindings#deselectAnnotation
      */
     deselectAnnotation: function () {
         if (this.activeAnnotation) {
             this.activeAnnotation.setControlPointsVisibility(false);
             this.activeAnnotation = false;
-
         }
     },
     /**
@@ -2251,7 +2342,7 @@ extend(H.Toolbar.prototype, {
      * returned is default height and last available top place.
      *
      * @private
-     * @function Highcharts.Toolbar#getYAxisPositions
+     * @function Highcharts.NavigationBindings#getYAxisPositions
      *
      * @param {Array<Highcharts.Axis>} yAxes
      *        Array of yAxes available in the chart.
@@ -2309,7 +2400,7 @@ extend(H.Toolbar.prototype, {
      * in the middle of yAxis array, we need to bind closest yAxes back.
      *
      * @private
-     * @function Highcharts.Toolbar#getYAxisResizers
+     * @function Highcharts.NavigationBindings#getYAxisResizers
      *
      * @param {Array<Highcharts.Axis>} yAxes
      *        Array of yAxes available in the chart
@@ -2358,7 +2449,7 @@ extend(H.Toolbar.prototype, {
      * space.
      *
      * @private
-     * @function Highcharts.Toolbar#resizeYAxes
+     * @function Highcharts.NavigationBindings#resizeYAxes
      *
      * @param {number} defaultHeight
      *        Default height for yAxis
@@ -2455,7 +2546,7 @@ extend(H.Toolbar.prototype, {
      * space. Later, these positions are used in `yAxis.update({ top, height })`
      *
      * @private
-     * @function Highcharts.Toolbar#recalculateYAxisPositions
+     * @function Highcharts.NavigationBindings#recalculateYAxisPositions
      *
      * @param {Array<object>} positions
      *        Default positions of all yAxes.
@@ -2496,7 +2587,7 @@ extend(H.Toolbar.prototype, {
      * Generates API config for popup in the same format as options for
      * Annotation object.
      *
-     * @function Highcharts.Toolbar#annotationToFields
+     * @function Highcharts.NavigationBindings#annotationToFields
      *
      * @param {Highcharts.Annotation} annotation
      *        Annotations object
@@ -2506,7 +2597,7 @@ extend(H.Toolbar.prototype, {
      */
     annotationToFields: function (annotation) {
         var options = annotation.options,
-            editables = H.Toolbar.annotationsEditable,
+            editables = H.NavigationBindings.annotationsEditable,
             nestedEditables = editables.nestedOptions,
             getFieldType = this.utils.getFieldType,
             type = pick(
@@ -2517,7 +2608,7 @@ extend(H.Toolbar.prototype, {
                     options.labels[0].itemType,
                 'label'
             ),
-            nonEditables = H.Toolbar
+            nonEditables = H.NavigationBindings
                 .annotationsNonEditable[options.langKey] || [],
             visualOptions = {
                 langKey: options.langKey,
@@ -2530,7 +2621,7 @@ extend(H.Toolbar.prototype, {
          * "parent".
          *
          * @private
-         * @function Highcharts.Toolbar#annotationToFields.traverse
+         * @function Highcharts.NavigationBindings#annotationToFields.traverse
          *
          * @param {*} option
          *        Atomic type or object/array
@@ -2539,7 +2630,7 @@ extend(H.Toolbar.prototype, {
          *        Option name, for example "visible" or "x", "y"
          *
          * @param {object} allowed
-         *        Editables from H.Toolbar.annotationsEditable
+         *        Editables from H.NavigationBindings.annotationsEditable
          *
          * @param {object} parent
          *        Where new options will be assigned
@@ -2648,7 +2739,7 @@ extend(H.Toolbar.prototype, {
      * Get all class names for all parents in the element. Iterates until finds
      * main container.
      *
-     * @function Highcharts.Toolbar#getClickedClassNames
+     * @function Highcharts.NavigationBindings#getClickedClassNames
      *
      * @param {Highcharts.HTMLDOMElement}
      *        Container that event is bound to.
@@ -2692,7 +2783,7 @@ extend(H.Toolbar.prototype, {
      * Get events bound to a button. It's a custom event delegation to find all
      * events connected to the element.
      *
-     * @function Highcharts.Toolbar#getButtonEvents
+     * @function Highcharts.NavigationBindings#getButtonEvents
      *
      * @param {Highcharts.HTMLDOMElement}
      *        Container that event is bound to.
@@ -2704,15 +2795,15 @@ extend(H.Toolbar.prototype, {
      *         Oject with events (init, start, steps, and end)
      */
     getButtonEvents: function (container, event) {
-        var toolbar = this,
+        var navigation = this,
             classNames = this.getClickedClassNames(container, event),
             bindings;
 
 
         classNames.forEach(function (className) {
-            if (toolbar.boundClassNames[className[0]] && !bindings) {
+            if (navigation.boundClassNames[className[0]] && !bindings) {
                 bindings = {
-                    events: toolbar.boundClassNames[className[0]],
+                    events: navigation.boundClassNames[className[0]],
                     button: className[1]
                 };
             }
@@ -2721,93 +2812,63 @@ extend(H.Toolbar.prototype, {
         return bindings;
     },
     /**
+     * Bindings are just events, so the whole update process is simply
+     * removing old events and adding new ones.
+     *
+     * @private
+     * @function Highcharts.NavigationBindings#update
+     */
+    update: function () {
+        this.removeEvents();
+        this.initEvents();
+    },
+    /**
+     * Remove all events created in the navigation.
+     *
+     * @private
+     * @function Highcharts.NavigationBindings#removeEvents
+     */
+    removeEvents: function () {
+        this.eventsToUnbind.forEach(function (unbinder) {
+            unbinder();
+        });
+    },
+    destroy: function () {
+        this.removeEvents();
+    },
+    /**
      * General utils for bindings
      *
      * @private
-     * @name Highcharts.Toolbar#utils
+     * @name Highcharts.NavigationBindings#utils
      * @type {bindingsUtils}
      */
     utils: bindingsUtils
 });
 
-addEvent(H.Toolbar, 'afterInit', function () {
-    var toolbar = this,
-        options = toolbar.chart.options.stockTools,
-        toolbarContainer = doc.getElementsByClassName(
-            options.gui.toolbarClassName
-        );
-
-    // Shorthand object for getting events for buttons:
-    toolbar.boundClassNames = {};
-
-    objectEach(options.bindings, function (value) {
-        toolbar.boundClassNames[value.className] = value;
-    });
-
-    // Handle multiple containers with the same class names:
-    [].forEach.call(toolbarContainer, function (subContainer) {
-        toolbar.eventsToUnbind.push(
-            addEvent(
-                subContainer,
-                'click',
-                function (event) {
-                    var bindings = toolbar.getButtonEvents(
-                        toolbarContainer,
-                        event
-                    );
-
-                    if (bindings) {
-                        toolbar.bindingsButtonClick(
-                            bindings.button,
-                            bindings.events,
-                            event
-                        );
-                    }
-                }
-            )
-        );
-    });
-
-    objectEach(options.events || {}, function (callback, eventName) {
-        toolbar.eventsToUnbind.push(
-            addEvent(
-                toolbar,
-                eventName,
-                callback
-            )
-        );
-    });
-});
-
 addEvent(H.Chart, 'load', function () {
     var chart = this,
-        toolbar = chart.stockToolbar;
+        options = chart.options;
 
-    if (toolbar) {
-        toolbar.eventsToUnbind.push(
-            addEvent(chart.container, 'click', function (e) {
-                if (
-                    !chart.cancelClick &&
-                    chart.isInsidePlot(
-                        e.chartX - chart.plotLeft,
-                        e.chartY - chart.plotTop
-                    )
-                ) {
-                    toolbar.bindingsChartClick(this, e);
-                }
-            })
+    if (options && options.navigation && options.navigation.bindings) {
+        chart.navigationBindings = new H.NavigationBindings(
+            chart,
+            options.navigation
         );
-        toolbar.eventsToUnbind.push(
-            addEvent(chart.container, 'mousemove', function (e) {
-                toolbar.bindingsContainerMouseMove(this, e);
-            })
-        );
+        chart.navigationBindings.initEvents();
     }
 });
 
-addEvent(H.Toolbar, 'deselectButton', function () {
+addEvent(H.Chart, 'destroy', function () {
+    if (this.navigationBindings) {
+        this.navigationBindings.destroy();
+    }
+});
+
+addEvent(H.NavigationBindings, 'deselectButton', function () {
     this.selectedButtonElement = null;
 });
+
 
 // Show edit-annotation form:
 function selectableAnnotation(annotationType) {
@@ -2816,8 +2877,8 @@ function selectableAnnotation(annotationType) {
 
     function selectAndshowPopup(event) {
         var annotation = this,
-            toolbar = annotation.chart.stockToolbar,
-            prevAnnotation = toolbar.activeAnnotation;
+            navigation = annotation.chart.navigationBindings,
+            prevAnnotation = navigation.activeAnnotation;
 
         if (originalClick) {
             originalClick.click.call(annotation, event);
@@ -2825,29 +2886,29 @@ function selectableAnnotation(annotationType) {
 
         if (prevAnnotation !== annotation) {
             // Select current:
-            toolbar.deselectAnnotation();
+            navigation.deselectAnnotation();
 
-            toolbar.activeAnnotation = annotation;
+            navigation.activeAnnotation = annotation;
             annotation.setControlPointsVisibility(true);
 
             fireEvent(
-                toolbar,
+                navigation,
                 'showPopup',
                 {
                     annotation: annotation,
                     formType: 'annotation-toolbar',
-                    options: toolbar.annotationToFields(annotation),
+                    options: navigation.annotationToFields(annotation),
                     onSubmit: function (data) {
 
                         var config = {},
                             typeOptions;
 
                         if (data.actionType === 'remove') {
-                            toolbar.activeAnnotation = false;
-                            toolbar.chart.removeAnnotation(annotation);
+                            navigation.activeAnnotation = false;
+                            navigation.chart.removeAnnotation(annotation);
                         } else {
-                            toolbar.fieldsToOptions(data.fields, config);
-                            toolbar.deselectAnnotation();
+                            navigation.fieldsToOptions(data.fields, config);
+                            navigation.deselectAnnotation();
 
                             typeOptions = config.typeOptions;
 
@@ -2867,8 +2928,8 @@ function selectableAnnotation(annotationType) {
             );
         } else {
             // Deselect current:
-            toolbar.deselectAnnotation();
-            fireEvent(toolbar, 'closePopup');
+            navigation.deselectAnnotation();
+            fireEvent(navigation, 'closePopup');
         }
         // Let bubble event to chart.click:
         event.activeAnnotation = true;
@@ -2894,9 +2955,16 @@ if (H.Annotation) {
 }
 
 H.setOptions({
-    stockTools: {
+    navigation: {
+        /**
+         * A CSS class name where all bindings will be attached to. Multiple
+         * charts on the same page should have separate class names to prevent
+         * duplicating events.
+         *
+         * @type      {string}
+         */
+        bindingsClassName: 'bindings-wrapper',
         bindings: stockToolsBindings,
-
         /**
          * A `showPopup` event. Fired when selecting for example an annotation.
          *

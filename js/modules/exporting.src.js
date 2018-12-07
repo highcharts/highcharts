@@ -135,7 +135,10 @@ extend(defaultOptions.lang
  *
  * @optionparent navigation
  */
-defaultOptions.navigation = {
+if (!defaultOptions.navigation) {
+    defaultOptions.navigation = {};
+}
+merge(true, defaultOptions.navigation, {
 
     buttonOptions: {
 
@@ -262,7 +265,7 @@ defaultOptions.navigation = {
 
     }
 
-};
+});
 
 // Presentational attributes
 merge(true, defaultOptions.navigation

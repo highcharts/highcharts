@@ -51,9 +51,9 @@ QUnit.test('Bindings general tests', function (assert) {
     function selectButton(name) {
         var button = document.getElementsByClassName('highcharts-' + name)[0];
         // Bind annotation to the chart events:
-        chart.stockToolbar.bindingsButtonClick(
+        chart.navigationBindings.bindingsButtonClick(
             button,
-            chart.stockToolbar.boundClassNames['highcharts-' + name],
+            chart.navigationBindings.boundClassNames['highcharts-' + name],
             {
                 target: {
                     parentNode: button,
@@ -95,7 +95,7 @@ QUnit.test('Bindings general tests', function (assert) {
                 points[2].plotY + plotTop - 5
             );
             Highcharts.each(
-                chart.stockToolbar.boundClassNames['highcharts-' + name].steps,
+                chart.navigationBindings.boundClassNames['highcharts-' + name].steps,
                 function (step, index) {
                     controller.click(
                         points[4 + index].plotX + plotLeft - 5,
@@ -257,10 +257,10 @@ QUnit.test('Bindings general tests', function (assert) {
 
     // Test yAxis resizers and adding indicators:
     for (i = 0; i < 9; i++) {
-        chart.stockToolbar.selectedButtonElement = document
+        chart.navigationBindings.selectedButtonElement = document
             .getElementsByClassName('highcharts-indicators')[0];
-        chart.stockToolbar.utils.manageIndicators.call(
-            chart.stockToolbar,
+        chart.navigationBindings.utils.manageIndicators.call(
+            chart.navigationBindings,
             {
                 actionType: 'add',
                 linkedTo: 'aapl',
@@ -290,10 +290,10 @@ QUnit.test('Bindings general tests', function (assert) {
     }
 
     for (i = 9; i > 0; i--) {
-        chart.stockToolbar.selectedButtonElement = document
+        chart.navigationBindings.selectedButtonElement = document
             .getElementsByClassName('highcharts-indicators')[0];
-        chart.stockToolbar.utils.manageIndicators.call(
-            chart.stockToolbar,
+        chart.navigationBindings.utils.manageIndicators.call(
+            chart.navigationBindings,
             {
                 actionType: 'remove',
                 seriesId: chart.series[chart.series.length - 2].options.id
@@ -312,7 +312,7 @@ QUnit.test('Bindings general tests', function (assert) {
 
     // Test annotation events:
     points = chart.series[0].points;
-    chart.stockToolbar.popup.closePopup();
+    chart.stockToolbar.popup.closePopup.call(chart.stockToolbar);
     controller.click(
         points[2].plotX + plotLeft - 5,
         points[2].plotY + plotTop - 25
