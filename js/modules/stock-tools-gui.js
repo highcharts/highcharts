@@ -154,10 +154,10 @@ H.setOptions({
              * allowing unique CSS styling for each chart.
              *
              * @type      {string}
-             * @default 'stocktools-wrapper'
+             * @default 'bindings-wrapper'
              *
              */
-            className: 'stocktools-wrapper',
+            className: 'bindings-wrapper',
             /**
              * A CSS class name to apply to the container of buttons,
              * allowing unique CSS styling for each chart.
@@ -1396,45 +1396,51 @@ H.Toolbar.prototype = {
 };
 
 // Comunication with bindings:
-addEvent(H.Toolbar, 'selectButton', function (event) {
+addEvent(H.NavigationBindings, 'selectButton', function (event) {
     var button = event.button,
-        className = PREFIX + 'submenu-wrapper';
+        className = PREFIX + 'submenu-wrapper',
+        gui = this.chart.stockToolbar;
 
-    if (this.guiEnabled) {
+    if (gui && gui.guiEnabled) {
         // Unslect other active buttons
-        this.unselectAllButtons(event.button);
+        gui.unselectAllButtons(event.button);
 
         // If clicked on a submenu, select state for it's parent
         if (button.parentNode.className.indexOf(className) >= 0) {
             button = button.parentNode.parentNode;
         }
         // Set active class on the current button
-        this.selectButton(button);
+        gui.selectButton(button);
     }
 });
 
 
-addEvent(H.Toolbar, 'deselectButton', function (event) {
+addEvent(H.NavigationBindings, 'deselectButton', function (event) {
     var button = event.button,
-        className = PREFIX + 'submenu-wrapper';
+        className = PREFIX + 'submenu-wrapper',
+        gui = this.chart.stockToolbar;
 
-    if (this.guiEnabled) {
+    if (gui && gui.guiEnabled) {
         // If deselecting a button from a submenu, select state for it's parent
         if (button.parentNode.className.indexOf(className) >= 0) {
             button = button.parentNode.parentNode;
         }
-        this.selectButton(button);
+        gui.selectButton(button);
     }
 });
 
-addEvent(H.Toolbar, 'showPopup', function (config) {
-    if (this.guiEnabled) {
-        this.showForm(config.formType, config.options, config.onSubmit);
+addEvent(H.NavigationBindings, 'showPopup', function (config) {
+    var gui = this.chart.stockToolbar;
+
+    if (gui && gui.guiEnabled) {
+        gui.showForm(config.formType, config.options, config.onSubmit);
     }
 });
 
-addEvent(H.Toolbar, 'closePopup', function () {
-    if (this.guiEnabled) {
-        this.popup.closePopup();
+addEvent(H.NavigationBindings, 'closePopup', function () {
+    var gui = this.chart.stockToolbar;
+
+    if (gui && gui.guiEnabled) {
+        gui.popup.closePopup();
     }
 });
