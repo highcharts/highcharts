@@ -115,7 +115,7 @@ seriesType('map', 'scatter',
             pointFormat: '{point.name}: {point.value}<br/>'
         },
 
-        /** @ignore */
+        /** @ignore-option */
         turboThreshold: 0,
 
         /**

@@ -999,11 +999,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * The number of pixels to indent the labels per level in a treegrid
              * axis.
              *
+             * @sample gantt/treegrid-axis/demo
+             *         Indentation 10px by default.
+             * @sample gantt/treegrid-axis/indentation-0px
+             *         Indentation set to 0px.
+             *
              * @product gantt
-             * @sample  gantt/treegrid-axis/demo
-             *          Indentation 10px by default.
-             * @sample  gantt/treegrid-axis/indentation-0px
-             *          Indentation set to 0px.
              */
             indentation: 10,
 
@@ -1170,11 +1171,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @default   {"color": "#666666", "cursor": "default", "fontSize": "11px"}
              */
             style: {
-                /** @ignore */
+                /** @ignore-option */
                 color: '${palette.neutralColor60}',
-                /** @ignore */
+                /** @ignore-option */
                 cursor: 'default',
-                /** @ignore */
+                /** @ignore-option */
                 fontSize: '11px'
             }
         },
@@ -1457,12 +1458,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * axes the offset is dynamically adjusted to avoid collision, this
          * can be overridden by setting offset explicitly.
          *
-         * @sample    {highcharts} highcharts/yaxis/offset/
-         *            Y axis offset of 70
-         * @sample    {highcharts} highcharts/yaxis/offset-centered/
-         *            Axes positioned in the center of the plot
-         * @sample    {highstock} stock/xaxis/offset/
-         *            Y axis offset by 70 px
+         * @sample {highcharts} highcharts/yaxis/offset/
+         *         Y axis offset of 70
+         * @sample {highcharts} highcharts/yaxis/offset-centered/
+         *         Axes positioned in the center of the plot
+         * @sample {highstock} stock/xaxis/offset/
+         *         Y axis offset by 70 px
          *
          * @type      {number}
          * @default   0
@@ -2054,7 +2055,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @default {"color": "#666666"}
              */
             style: {
-                /** @ignore */
+                /** @ignore-option */
                 color: '${palette.neutralColor60}'
             }
         },
@@ -2399,7 +2400,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max colors
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorString}
          * @default   #003399
          * @since     4.0
          * @product   highcharts
@@ -2413,7 +2414,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/mincolor-maxcolor/
          *         Min and max color
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorString}
          * @default   #e6ebf5
          * @since     4.0
          * @product   highcharts
@@ -2471,7 +2472,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/demo/gauge-solid/
          *         True by default
          *
-         * @type      {Array<Array<number, (Highcharts.ColorString|Highcharts.GradientColorObject|HIghcharts.PatternObject)>>}
+         * @type      {Array<Array<number,Highcharts.ColorString>>}
          * @since     4.0
          * @product   highcharts
          * @apioption yAxis.stops
@@ -2883,12 +2884,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * Whether to force the axis to start on a tick. Use this option with
          * the `maxPadding` option to control the axis start.
          *
-         * @sample  {highcharts} highcharts/xaxis/startontick-false/
-         *          False by default
-         * @sample  {highcharts} highcharts/xaxis/startontick-true/
-         *          True
-         * @sample  {highstock} stock/xaxis/endontick/
-         *          False for Y axis
+         * @sample {highcharts} highcharts/xaxis/startontick-false/
+         *         False by default
+         * @sample {highcharts} highcharts/xaxis/startontick-true/
+         *         True
+         * @sample {highstock} stock/xaxis/endontick/
+         *         False for Y axis
          *
          * @since   1.2.0
          * @product highcharts highstock gantt
@@ -2924,8 +2925,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * must be clean text. The Y axis title is disabled by setting the
              * `text` option to `undefined`.
              *
-             * @sample  {highcharts} highcharts/xaxis/title-text/
-             *          Custom HTML
+             * @sample {highcharts} highcharts/xaxis/title-text/
+             *         Custom HTML
              *
              * @type    {string|null}
              * @default {highcharts} Values
@@ -3015,13 +3016,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @product highcharts
              */
             style: {
-                /** @ignore */
+                /** @ignore-option */
                 color: '${palette.neutralColor100}',
-                /** @ignore */
+                /** @ignore-option */
                 fontSize: '11px',
-                /** @ignore */
+                /** @ignore-option */
                 fontWeight: 'bold',
-                /** @ignore */
+                /** @ignore-option */
                 textOutline: '1px contrast'
             }
         },
@@ -3217,17 +3218,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * List of major ticks mapped by postition on axis.
          *
-         * @see  {@link Highcharts.Tick}
+         * @see {@link Highcharts.Tick}
          *
          * @name Highcharts.Axis#ticks
-         * @type {Object.<number, Highcharts.Tick>}
+         * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
         axis.ticks = {};
         axis.labelEdge = [];
         /**
          * List of minor ticks mapped by position on the axis.
          *
-         * @see  {@link Highcharts.Tick}
+         * @see {@link Highcharts.Tick}
          *
          * @name Highcharts.Axis#minorTicks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}

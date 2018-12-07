@@ -196,9 +196,9 @@ setOptions({  // Set default bubble legend options
                  * @type {Highcharts.CSSObject}
                  */
                 style: {
-                    /** @ignore */
+                    /** @ignore-option */
                     fontSize: 10,
-                    /** @ignore */
+                    /** @ignore-option */
                     color: undefined
                 },
                 /**
