@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import './accumulation-distribution.src.js';
 import '../parts/Utilities.js';
@@ -10,27 +17,37 @@ var EMA = H.seriesTypes.ema,
     correctFloat = H.correctFloat,
     requiredIndicator = requiredIndicatorMixin;
 
+/**
+ * The Chaikin series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.chaikin
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('chaikin', 'ema',
     /**
      * Chaikin Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`
      * and `stock/indicators/ema.js`.
      *
-     * @extends plotOptions.ema
-     * @product highstock
      * @sample {highstock} stock/indicators/chaikin
-     *                     Chaikin Oscillator
-     * @since 7.0.0
-     * @excluding
-     *             allAreas,colorAxis,joinBy,keys,stacking,
-     *             showInNavigator,navigatorOptions,pointInterval,
-     *             pointIntervalUnit,pointPlacement,pointRange,pointStart
+     *         Chaikin Oscillator
+     *
+     * @extends      plotOptions.ema
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
      * @optionparent plotOptions.chaikin
      */
     {
         /**
          * Paramters used in calculation of Chaikin Oscillator
          * series points.
+         *
          * @excluding index, period
          */
         params: {
@@ -38,21 +55,21 @@ H.seriesType('chaikin', 'ema',
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means
              * the indicator will be calculated using OHLC and volume values.
-             *
-             * @type {String}
-             * @since 7.0.0
-             * @product highstock
              */
             volumeSeriesID: 'volume',
             /**
              * Periods for Chaikin Oscillator calculations.
+             *
+             * @type    {Array<number>}
              * @default [3, 10]
-             * @type {Array}
-             * @since 7.0.0
              */
             periods: [3, 10]
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameBase: 'Chaikin Osc',
         nameComponents: ['periods'],
         init: function () {
@@ -138,24 +155,11 @@ H.seriesType('chaikin', 'ema',
  * A `Chaikin Oscillator` series. If the [type](#series.chaikin.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.chaikin
- * @excluding   data,dataParser,dataURL
- *              allAreas,colorAxis,joinBy,
- *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
- *              pointIntervalUnit,pointPlacement,pointRange,pointStart
- * @product highstock
+ * @extends   series,plotOptions.chaikin
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
+ *            navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, stacking, showInNavigator
  * @apioption series.chaikin
- */
-
-/**
- * An array of data points for the series. For the `chaikin` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.chaikin.data
  */
