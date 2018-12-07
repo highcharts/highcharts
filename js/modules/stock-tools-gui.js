@@ -1187,7 +1187,7 @@ H.Toolbar.prototype = {
             showhideBtn.style.left = '0px';
             stockToolbar.visible = visible = false;
 
-            toolbar.classList += ' ' + PREFIX + 'hide';
+            toolbar.classList.add(PREFIX + 'hide');
             showhideBtn.classList.toggle(PREFIX + 'arrow-right');
         }
 
@@ -1218,7 +1218,8 @@ H.Toolbar.prototype = {
             mainNavButton = buttonWrapper.parentNode.parentNode;
 
         // set class
-        mainNavButton.classList = buttonWrapperClass;
+        mainNavButton.className = '';
+        mainNavButton.classList.add(buttonWrapperClass.trim());
 
         // set icon
         mainNavButton.querySelectorAll('.' + PREFIX + 'menu-item-btn')[0]
@@ -1239,7 +1240,7 @@ H.Toolbar.prototype = {
         if (btn.className.indexOf(activeClass) >= 0) {
             btn.classList.remove(activeClass);
         } else {
-            btn.className += ' ' + activeClass;
+            btn.className.add(activeClass);
         }
     },
     /*
