@@ -131,10 +131,15 @@ Instrument.prototype.copy = function (options) {
  * @return {boolean} True if successful, false if not.
  */
 Instrument.prototype.initAudioContext = function () {
-    var Context = H.win.AudioContext || H.win.webkitAudioContext;
+    var Context = H.win.AudioContext || H.win.webkitAudioContext,
+        hasOldContext = !!H.audioContext;
     if (Context) {
         H.audioContext = H.audioContext || new Context();
-        if (H.audioContext && H.audioContext.state === 'running') {
+        if (
+            !hasOldContext &&
+            H.audioContext &&
+            H.audioContext.state === 'running'
+        ) {
             H.audioContext.suspend(); // Pause until we need it
         }
         return !!(
@@ -158,7 +163,6 @@ Instrument.prototype.initOscillator = function (options) {
     var ctx = H.audioContext;
     this.oscillator = ctx.createOscillator();
     this.oscillator.type = options.waveformShape;
-    this.oscillator.frequency.value = 0; // Start frequency at 0
     this.oscillator.connect(this.gainNode);
     this.oscillatorStarted = false;
 };
@@ -173,7 +177,7 @@ Instrument.prototype.initOscillator = function (options) {
  */
 Instrument.prototype.setPan = function (panValue) {
     if (this.panNode) {
-        this.panNode.pan.value = panValue;
+        this.panNode.pan.setValueAtTime(panValue, H.audioContext.currentTime);
     }
 };
 
@@ -206,7 +210,9 @@ Instrument.prototype.setGain = function (gainValue, rampTime) {
                 H.audioContext.currentTime + rampTime / 1000
             );
         } else {
-            this.gainNode.gain.value = gainValue;
+            this.gainNode.gain.setValueAtTime(
+                gainValue, H.audioContext.currentTime
+            );
         }
     }
 };
@@ -295,7 +301,26 @@ Instrument.prototype.oscillatorPlay = function (frequency) {
         this.oscillatorStarted = true;
     }
 
-    this.oscillator.frequency.value = frequency;
+    this.oscillator.frequency.setValueAtTime(
+        frequency, H.audioContext.currentTime
+    );
+};
+
+
+/**
+ * Prepare instrument before playing. Resumes the audio context and starts the
+ * oscillator.
+ * @private
+ */
+Instrument.prototype.preparePlay = function () {
+    this.setGain(0.001);
+    if (H.audioContext.state === 'suspended') {
+        H.audioContext.resume();
+    }
+    if (this.oscillator && !this.oscillatorStarted) {
+        this.oscillator.start();
+        this.oscillatorStarted = true;
+    }
 };
 
 
@@ -394,6 +419,19 @@ Instrument.prototype.play = function (options) {
         return;
     }
 
+    // If the AudioContext is suspended we have to resume it before playing
+    if (
+        H.audioContext.state === 'suspended' ||
+        this.oscillator && !this.oscillatorStarted
+    ) {
+        instrument.preparePlay();
+        // Try again in 10ms
+        setTimeout(function () {
+            instrument.play(options);
+        }, 10);
+        return;
+    }
+
     // Clear any existing play timers
     if (instrument.playCallbackTimers.length) {
         instrument.clearPlayCallbackTimers();
@@ -423,11 +461,6 @@ Instrument.prototype.play = function (options) {
             instrument.stopCallback('cancelled');
             instrument.play = instrument._play;
         }
-    }
-
-    // If the AudioContext is suspended we have to resume it before playing
-    if (H.audioContext.state === 'suspended') {
-        H.audioContext.resume();
     }
 
     // Stop the note without fadeOut if the duration is too short to hear the
