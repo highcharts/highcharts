@@ -21,7 +21,7 @@ var colProto = seriesTypes.column.prototype;
  * @extends      plotOptions.column
  * @excluding    negativeColor,softThreshold,threshold,borderRadius,crisp,
  * edgeColor,edgeWidth,zones,zoneAxis,boostThreshold,depth,groupZPadding
- * @sample       {highcharts|highstock} highcharts/demo/columnpyramid-basic/ Column pyramid
+ * @sample       {highcharts|highstock} highcharts/demo/column-pyramid/ Column pyramid
  * @sample       {highcharts|highstock} highcharts/plotoptions/columnpyramid-stacked/ Column pyramid stacked
  * @sample       {highcharts|highstock} highcharts/plotoptions/columnpyramid-inverted/ Column pyramid inverted
  * @since        7.0.0
