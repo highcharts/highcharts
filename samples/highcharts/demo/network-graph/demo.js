@@ -40,7 +40,8 @@ Highcharts.addEvent(
 
 Highcharts.chart('container', {
     chart: {
-        type: 'networkgraph'
+        type: 'networkgraph',
+        height: '100%'
     },
     title: {
         text: 'The Indo-European Laungauge Tree'
