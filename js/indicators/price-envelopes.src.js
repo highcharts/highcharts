@@ -79,7 +79,6 @@ H.seriesType('priceenvelopes', 'sma',
          * Top line options.
          *
          * @extends plotOptions.priceenvelopes.bottomLine
-         * @since   6.0.0
          */
         topLine: {
             styles: {
@@ -89,7 +88,11 @@ H.seriesType('priceenvelopes', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameComponents: ['period', 'topBand', 'bottomBand'],
         nameBase: 'Price envelopes',
         pointArrayMap: ['top', 'middle', 'bottom'],
@@ -240,17 +243,7 @@ H.seriesType('priceenvelopes', 'sma',
  *
  * @extends   series,plotOptions.priceenvelopes
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
+ * @excluding dataParser, dataURL
  * @product   highstock
  * @apioption series.priceenvelopes
- */
-
-/**
- * An array of data points for the series. For the `priceenvelopes` series type,
- * points are calculated dynamically.
- *
- * @extends   series.line.data
- * @since     6.0.0
- * @product   highstock
- * @apioption series.priceenvelopes.data
  */
