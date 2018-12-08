@@ -1,12 +1,12 @@
-/**
- * @license  @product.name@ JS v@product.version@ (@product.date@)
+/* *
  *
- * Money Flow Index indicator for Highstock
+ *  Money Flow Index indicator for Highstock
  *
- * (c) 2010-2017 Grzegorz Blachliński
+ *  (c) 2010-2018 Grzegorz Blachliński
  *
- * License: www.highcharts.com/license
- */
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -67,19 +67,19 @@ H.seriesType('mfi', 'sma',
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means
              * the indicator will be calculated using OHLC and volume values.
-             *
-             * @since 6.0.0
              */
             volumeSeriesID: 'volume',
             /**
              * Number of maximum decimals that are used in MFI calculations.
-             *
-             * @since 6.0.0
              */
             decimals: 4
 
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameBase: 'Money Flow Index',
         getValues: function (series, params) {
             var period = params.period,
@@ -185,22 +185,12 @@ H.seriesType('mfi', 'sma',
 );
 
 /**
- * A `MFI` series. If the [type](#series.mfi.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
+ * A `MFI` series. If the [type](#series.mfi.type) option is not specified, it
+ * is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.mfi
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
+ * @excluding dataParser, dataURL
  * @product   highstock
  * @apioption series.mfi
- */
-
-/**
- * An array of data points for the series. For the `mfi` series type,
- * points are calculated dynamically.
- *
- * @extends   series.line.data
- * @since     6.0.0
- * @product   highstock
- * @apioption series.mfi.data
  */
