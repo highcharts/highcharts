@@ -32,6 +32,8 @@
 import H from '../parts/Globals.js';
 
 /**
+ * The CMF series type.
+ *
  * @private
  * @class
  * @name Highcharts.seriesTypes.cmf
@@ -62,7 +64,7 @@ H.seriesType('cmf', 'sma',
         }
     },
     /**
-     * @lends Highcharts.Series
+     * @lends Highcharts.Series#
      */
     {
         nameBase: 'Chaikin Money Flow',
