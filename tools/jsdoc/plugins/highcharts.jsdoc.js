@@ -7,14 +7,15 @@
 
 "use strict";
 
-// const parseTag = require('jsdoc/tag/type').parse;
-const exec = require('child_process').execSync;
-const logger = require('jsdoc/util/logger');
 // const Doclet = require('jsdoc/doclet.js').Doclet;
 // const colors = require('colors');
+const exec = require('child_process').execSync;
 const fs = require('fs');
 const getPalette = require('highcharts-assembler/src/process.js').getPalette;
+const logger = require('jsdoc/util/logger');
+// const parseTag = require('jsdoc/tag/type').parse;
 // const path = require('path');
+const semver = require('semver')
 
 const hcRoot = process.cwd(); // __dirname + '/../../../..';
 const parseBreak = /[\n\r]+/;
@@ -362,6 +363,56 @@ function improveDescription(node) {
     if (children) {
         Object.keys(children).forEach(key => improveDescription(children[key]));
     }
+}
+
+function inferVersion(node, parent) {
+
+    // parent handling
+    if (!parent) {
+        parent = {}
+    }
+    if (!parent.doclet) {
+        parent.doclet = {};
+    }
+    if (parent.doclet.since &&
+        !semver.valid(parent.doclet.since)
+    ) {
+        parent.doclet.since += '.0';
+        if (!semver.valid(parent.doclet.since)) {
+            delete parent.doclet.since;
+        }
+    }
+    if (!parent.doclet.since) {
+        parent.doclet.since = '1.0.0';
+    }
+
+    // node handling
+    if (!node.doclet) {
+        node.doclet = {};
+    }
+    if (node.doclet.since &&
+        !semver.valid(node.doclet.since)
+    ) {
+        node.doclet.since += '.0';
+        if (!semver.valid(node.doclet.since)) {
+            delete node.doclet.since;
+        }
+    }
+    if (!node.doclet.since || 
+        semver.compare(node.doclet.since, parent.doclet.since) < 0
+    ) {
+        node.doclet.since = parent.doclet.since;
+    }
+
+    // children handling
+    const children = node.children;
+    if (!children) {
+        return;
+    }
+    Object
+        .keys(children)
+        .map(key => children[key])
+        .forEach(child => inferVersion(child, node));
 }
 
 function _inferType(node) {
@@ -764,6 +815,7 @@ Move them up before functional code for JSDoc to see them.`.yellow
         options._meta.date = (new Date()).toString();
 
         removeIgnoredOptions({children: options});
+        inferVersion({children: options});
         inferType({children: options});
         improveDescription({children: options});
 
