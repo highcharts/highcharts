@@ -1,3 +1,8 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -16,8 +21,8 @@ var pick = H.pick,
     generateMessage = requiredIndicatorMixin.generateMessage;
 
 /**
- * The parameter allows setting line series type and use OHLC indicators.
- * Data in OHLC format is required.
+ * The parameter allows setting line series type and use OHLC indicators. Data
+ * in OHLC format is required.
  *
  * @sample {highstock} stock/indicators/use-ohlc-data
  *         Plot line on Y axis
@@ -82,15 +87,12 @@ seriesType('sma', 'line',
          * set, it will be based on a technical indicator type and default
          * params.
          *
-         * @type  {string}
-         * @since 6.0.0
+         * @type {string}
          */
         name: undefined,
         tooltip: {
             /**
              * Number of decimals in indicator series.
-             *
-             * @since 6.0.0
              */
             valueDecimals: 4
         },
@@ -98,34 +100,31 @@ seriesType('sma', 'line',
          * The main series ID that indicator will be based on. Required for this
          * indicator.
          *
-         * @type  {string}
-         * @since 6.0.0
+         * @type {string}
          */
         linkedTo: undefined,
         /**
          * Paramters used in calculation of regression series' points.
-         *
-         * @since 6.0.0
          */
         params: {
             /**
              * The point index which indicator calculations will base. For
              * example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
-             *
-             * @since 6.0.0
              */
             index: 0,
             /**
              * The base period for indicator calculations. This is the number of
              * data points which are taken into account for the indicator
              * calculations.
-             *
-             * @since 6.0.0
              */
             period: 14
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    },
+    /**
+     * @lends Highcharts.Series.prototype
+     */
+    {
         bindTo: {
             series: true,
             eventName: 'updatedData'
@@ -325,26 +324,16 @@ seriesType('sma', 'line',
             });
             Series.prototype.destroy.call(this);
         }
-    });
+    }
+);
 
 /**
- * A `SMA` series. If the [type](#series.sma.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
+ * A `SMA` series. If the [type](#series.sma.type) option is not specified, it
+ * is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.sma
  * @since     6.0.0
- * @excluding data, dataParser, dataURL, useOhlcData
  * @product   highstock
+ * @excluding dataParser, dataURL, useOhlcData
  * @apioption series.sma
- */
-
-
-/**
- * An array of data points for the series. For the `SMA` series type,
- * points are calculated dynamically.
- *
- * @since     6.0.0
- * @extends   series.line.data
- * @product   highstock
- * @apioption series.sma.data
  */
