@@ -171,21 +171,6 @@
  */
 
 /**
- * The iterator callback.
- *
- * @callback Highcharts.EachCallbackFunction<T>
- *
- * @param {T} item
- *        The array item.
- *
- * @param {number} index
- *        The item's index in the array.
- *
- * @param {Array<T>} arr
- *        The array that each is being applied to.
- */
-
-/**
  * The function callback to execute when the event is fired. The `this` context
  * contains the instance, that fired the event.
  *
@@ -221,24 +206,6 @@
  * @typedef {global.HTMLElement} Highcharts.HTMLDOMElement
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
- */
-
-/**
- * Callback function to map the values in an array.
- *
- * @callback Highcharts.MapArrayCallbackFunction
- *
- * @param {*} value
- *        The value to replace.
- *
- * @param {number} index
- *        The index position of the value.
- *
- * @param {Array<*>} arr
- *        The array as a reference.
- *
- * @return {*}
- *         The new value as a replacement.
  */
 
 /**
@@ -2207,18 +2174,17 @@ H.objectEach = function (obj, fn, ctx) {
 /**
  * Iterate over an array.
  *
- * @function Highcharts.each<T>
- *
  * @deprecated
+ * @function Highcharts.each
  *
- * @param {Array<T>} arr
+ * @param {Array<*>} arr
  *        The array to iterate over.
  *
- * @param {Highcharts.EachCallbackFunction<T>} fn
+ * @param {Function} fn
  *        The iterator callback. It passes three arguments:
- *        * item - The array item.
- *        * index - The item's index in the array.
- *        * arr - The array that each is being applied to.
+ *        - `item`: The array item.
+ *        - `index`: The item's index in the array.
+ *        - `arr`: The array that each is being applied to.
  *
  * @param {*} [ctx]
  *        The context.
@@ -2227,18 +2193,17 @@ H.objectEach = function (obj, fn, ctx) {
 /**
  * Filter an array by a callback.
  *
+ * @deprecated
  * @function Highcharts.grep
  *
- * @deprecated
- *
- * @param {Array} arr
+ * @param {Array<*>} arr
  *        The array to filter.
  *
  * @param {Function} callback
  *        The callback function. The function receives the item as the first
  *        argument. Return `true` if the item is to be preserved.
  *
- * @return {Array}
+ * @return {Array<*>}
  *         A new, filtered array.
  */
 
@@ -2248,13 +2213,13 @@ H.objectEach = function (obj, fn, ctx) {
  * @deprecated
  * @function Highcharts.map
  *
- * @param {Array} arr
+ * @param {Array<*>} arr
  *        The array to map.
  *
  * @param {Function} fn
  *        The callback function. Return the new value for the new array.
  *
- * @return {Array}
+ * @return {Array<*>}
  *         A new array item with modified items.
  */
 
@@ -2284,9 +2249,9 @@ H.objectEach = function (obj, fn, ctx) {
  * the provided function.
  *
  * @deprecated
- * @function Highcharts.some<T>
+ * @function Highcharts.some
  *
- * @param {Array<T>} arr
+ * @param {Array<*>} arr
  *        The array to test
  *
  * @param {Function} fn
