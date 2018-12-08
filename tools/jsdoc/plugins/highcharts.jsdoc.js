@@ -365,30 +365,11 @@ function improveDescription(node) {
     }
 }
 
-function inferVersion(node, parent) {
-
-    // parent handling
-    if (!parent) {
-        parent = {}
-    }
-    if (!parent.doclet) {
-        parent.doclet = {};
-    }
-    if (parent.doclet.since &&
-        !semver.valid(parent.doclet.since)
+function _inferVersion(node, version) {
+    if (!node.doclet ||
+        !node.doclet.description
     ) {
-        parent.doclet.since += '.0';
-        if (!semver.valid(parent.doclet.since)) {
-            delete parent.doclet.since;
-        }
-    }
-    if (!parent.doclet.since) {
-        parent.doclet.since = '1.0.0';
-    }
-
-    // node handling
-    if (!node.doclet) {
-        node.doclet = {};
+        return;
     }
     if (node.doclet.since &&
         !semver.valid(node.doclet.since)
@@ -398,21 +379,32 @@ function inferVersion(node, parent) {
             delete node.doclet.since;
         }
     }
-    if (!node.doclet.since || 
-        semver.compare(node.doclet.since, parent.doclet.since) < 0
-    ) {
-        node.doclet.since = parent.doclet.since;
+    if (!semver.valid(version)) {
+        version = '1.0.0';
     }
+    if (!node.doclet.since ||
+        semver.compare(node.doclet.since, version) < 0
+    ) {
+        node.doclet.since = version;
+    }
+}
 
-    // children handling
+function inferVersion(node, version) {
+
+    _inferVersion(node, version);
+
     const children = node.children;
+
     if (!children) {
         return;
     }
+
     Object
         .keys(children)
         .map(key => children[key])
-        .forEach(child => inferVersion(child, node));
+        .forEach(child => inferVersion(
+            child, node.doclet && node.doclet.since
+        ));
 }
 
 function _inferType(node) {
