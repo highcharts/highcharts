@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 
 var correctFloat = H.correctFloat,
@@ -13,37 +20,48 @@ function accumulatePoints(sum, yVal, i, index, subtract) {
     return correctFloat(sum + price);
 }
 
+/**
+ * The DPO series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.dpo
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('dpo', 'sma',
     /**
-     * Detrended Price Oscillator. This series requires the `linkedTo`
-     * option to be set and should be loaded after the
-     * `stock/indicators/indicators.js`.
+     * Detrended Price Oscillator. This series requires the `linkedTo` option to
+     * be set and should be loaded after the `stock/indicators/indicators.js`.
      *
-     * @extends plotOptions.sma
-     * @product highstock
      * @sample {highstock} stock/indicators/dpo
-     *                     Detrended Price Oscillator
-     * @since 7.0.0
-     * @excluding
-     *             allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
-     *             showInNavigator,navigatorOptions,pointInterval,
-     *             pointIntervalUnit,pointPlacement,pointRange,pointStart
+     *         Detrended Price Oscillator
+     *
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking
      * @optionparent plotOptions.dpo
      */
     {
         /**
-         * Parameters used in calculation of Detrended Price Oscillator
-         * series points.
+         * Parameters used in calculation of Detrended Price Oscillator series
+         * points.
          */
         params: {
             /**
              * Period for Detrended Price Oscillator
-             * @since 7.0.0
-             * @product highstock
              */
             period: 21
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameBase: 'DPO',
         getValues: function (series, params) {
             var period = params.period,
@@ -107,24 +125,11 @@ H.seriesType('dpo', 'sma',
  * A Detrended Price Oscillator. If the [type](#series.dpo.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.dpo
- * @excluding   data,dataParser,dataURL
- *              allAreas,colorAxis,compare,compareBase,joinBy,
- *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
- *              pointIntervalUnit,pointPlacement,pointRange,pointStart
- * @product highstock
+ * @extends   series,plotOptions.dpo
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @apioption series.dpo
- */
-
-/**
- * An array of data points for the series. For the `dpo` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.dpo.data
  */
