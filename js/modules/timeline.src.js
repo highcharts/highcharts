@@ -1,6 +1,8 @@
 /**
  * @license  @product.name@ JS v@product.version@ (@product.date@)
- * Timeline series
+ *
+ * Experimental Timeline Series.
+ * Note: This API is in alpha stage and will be changed before final release.
  *
  * (c) 2010-2018 Highsoft AS
  * Author: Daniel Studencki

@@ -227,13 +227,13 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
         }
 
         // Normalize each touch
-        touches.map(function (e) {
+        [].map.call(touches, function (e) {
             return self.normalize(e);
         });
 
         // Register the touch start position
         if (e.type === 'touchstart') {
-            touches.forEach(function (e, i) {
+            [].forEach.call(touches, function (e, i) {
                 pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
             });
             lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] &&

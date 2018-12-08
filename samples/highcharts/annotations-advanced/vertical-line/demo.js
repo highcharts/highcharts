@@ -17,7 +17,7 @@ Highcharts.chart('container', {
     },
 
     annotations: [{
-        type: 'vertical-line',
+        type: 'verticalLine',
         typeOptions: {
             point: 's',
             label: {

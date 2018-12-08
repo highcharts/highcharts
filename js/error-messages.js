@@ -91,6 +91,14 @@ H.errorMessages = {
         "title": "Fallback to export server disabled",
         "text": "<h1>Fallback to export server disabled</h1><p>This happens when the offline export module encounters a chart that it can't</p><p>export successfully, and the fallback to the online export server is disabled. The offline exporting module will fail for certain browsers, and certain</p><p>features (e.g. <a href=\"https://api.highcharts.com/highcharts/exporting.allowHTML\">exporting.allowHTML</a> ), depending on the type of image exporting to. For a compatibility overview, see <a href=\"https://www.highcharts.com/docs/export-module/client-side-export\">Client Side Export</a>.</p><p>For very complex charts, it's possible that exporting fail in browsers that don't support Blob objects, due to data URL length limits. It's always recommended to define the <a href=\"https://api.highcharts.com/highcharts/exporting.error\">exporting.error</a> callback when disabling the fallback, so that details can be provided to the end-user if offline export isn't working for them.</p>"
     },
+    "29": {
+        "title": "Browser does not support WebAudio",
+        "text": "<h1>Browser does not support WebAudio</h1><p>This happens when you attempt to use the sonification module on a chart in a browser or environment that does not support the WebAudio API. This API is supported on all modern browsers, including Microsoft Edge, Google Chrome and Mozilla Firefox.</p>"
+    },
+    "30": {
+        "title": "Invalid instrument",
+        "text": "<h1>Invalid instrument</h1><p>This happens when you try to use a sonification instrument that is not valid. If you are using a predefined instrument, make sure your spelling is correct.</p>"
+    },
     "meta": {
         "files": [
             "errors/10/readme.md",
@@ -112,7 +120,9 @@ H.errorMessages = {
             "errors/25/readme.md",
             "errors/26/readme.md",
             "errors/27/readme.md",
-            "errors/28/readme.md"
+            "errors/28/readme.md",
+            "errors/29/readme.md",
+            "errors/30/readme.md"
         ],
         "version": "6.2.0"
     }

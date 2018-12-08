@@ -61,7 +61,12 @@
                     height: 14
                 });
 
-                renderer.symbol(type, 7, 10, 11, 11).add(button).attr({
+                renderer.symbol(
+                    type === 'rect' ? 'square' : type,
+                    7, 10, 11, 11
+                )
+                .add(button)
+                .attr({
                     'stroke-width': 1,
                     stroke: 'black',
                     zIndex: 1
@@ -81,11 +86,11 @@
         buttons.push(
           button('T', 4, 4),
           button(null, 4, 4 + buttonY,  'circle'),
-          button(null, 4, 4 + 2 * buttonY,  'square'),
+          button(null, 4, 4 + 2 * buttonY,  'rect'),
 
           renderer.button(' V ', 4, 4 + 3 * buttonY, function () {
               each(chart.annotations, function (annotation) {
-                  annotation.setVisible();
+                  annotation.setVisibility();
               });
           }, normalState, null).add(group)
         );
@@ -127,7 +132,7 @@
 
         if (type === 'circle') {
             options.r = 10;
-        } else if (type === 'square') {
+        } else if (type === 'rect') {
             options.width = 20;
             options.height = 20;
             options.x = -10;
@@ -157,9 +162,7 @@
     });
 }(Highcharts));
 
-
-
-var chart = Highcharts.chart('container', {
+Highcharts.chart('container', {
     subtitle: {
         text: '<ul><li>T - add a label</li><li>&#9711; - add circle</li><li>&#9634; - add square</li><li>V - toggle visibility</li></ul>',
         useHTML: true
@@ -197,12 +200,3 @@ var chart = Highcharts.chart('container', {
         }]
     }]
 });
-
-$('#btn').onclick = function () {
-    chart.addAnnotation({
-        labels: [{
-            text: 'janusz',
-            point: { x: 20, y: 20 }
-        }]
-    });
-};

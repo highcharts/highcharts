@@ -338,7 +338,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
 
     // For non-animated patterns, set opacity now
     if (!(options.image && animate) && options.opacity !== undefined) {
-        pattern.element.childNodes.forEach(function (child) {
+        [].forEach.call(pattern.element.childNodes, function (child) {
             child.setAttribute('opacity', options.opacity);
         });
     }
@@ -542,19 +542,22 @@ H.addEvent(H.Chart, 'redraw', function () {
     if (patterns.length) {
         // Look through the DOM for usage of the patterns. This can be points,
         // series, tooltips etc.
-        this.renderTo.querySelectorAll(
-            '[color^="url(#"], [fill^="url(#"], [stroke^="url(#"]'
-        ).forEach(function (node) {
-            var id = node.getAttribute('fill') ||
-                    node.getAttribute('color') ||
-                    node.getAttribute('stroke');
-            if (id) {
-                usedIds.push(id
-                    .substring(id.indexOf('url(#') + 5)
-                    .replace(')', '')
-                );
+        [].forEach.call(
+            this.renderTo.querySelectorAll(
+                '[color^="url(#"], [fill^="url(#"], [stroke^="url(#"]'
+            ),
+            function (node) {
+                var id = node.getAttribute('fill') ||
+                        node.getAttribute('color') ||
+                        node.getAttribute('stroke');
+                if (id) {
+                    usedIds.push(id
+                        .substring(id.indexOf('url(#') + 5)
+                        .replace(')', '')
+                    );
+                }
             }
-        });
+        );
 
         // Loop through the patterns that exist and see if they are used
         patterns.forEach(function (id) {

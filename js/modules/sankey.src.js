@@ -537,7 +537,8 @@ seriesType('sankey', 'column'
     }
 }, {
     getClassName: function () {
-        return 'highcharts-link ' + Point.prototype.getClassName.call(this);
+        return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
+            Point.prototype.getClassName.call(this);
     },
     isValid: function () {
         return this.isNode || typeof this.weight === 'number';

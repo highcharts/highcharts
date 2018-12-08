@@ -118,17 +118,27 @@ H.merge(
                 .attr(attrs)
                 .add(parent);
 
+            if (options.className) {
+                this.graphic.addClass(options.className);
+            }
+
             this.tracker = this.annotation.chart.renderer
                 .path(['M', 0, 0])
+                .addClass('highcharts-tracker-line')
                 .attr({
+                    zIndex: 2
+                })
+                .add(parent);
+
+            if (!this.annotation.chart.styledMode) {
+                this.tracker.attr({
                     'stroke-linejoin': 'round', // #1225
                     stroke: TRACKER_FILL,
                     fill: TRACKER_FILL,
                     'stroke-width': this.graphic.strokeWidth() +
-                        options.snap * 2,
-                    zIndex: 2
-                })
-                .add(parent);
+                        options.snap * 2
+                });
+            }
 
             controllableMixin.render.call(this);
 

@@ -284,27 +284,6 @@ seriesType('variablepie', 'pie',
                 series.center = positions = series.getCenter();
             }
 
-            // Utility for getting the x value from a given y, used for
-            // anticollision logic in data labels. Added point for using
-            // specific points' label distance.
-            series.getX = function (y, left, point) {
-                var radii = point.series.radii[point.index];
-                angle = Math.asin(
-                    Math.max(    // #7663
-                        Math.min(
-                            (y - positions[1]) /
-                            (radii + point.labelDistance),
-                            1
-                        ),
-                        -1
-                    )
-                );
-                return positions[0] +
-                    (left ? -1 : 1) *
-                    (Math.cos(angle) * (radii +
-                    point.labelDistance));
-            };
-
             // Calculate the geometry for each point
             for (i = 0; i < len; i++) {
 

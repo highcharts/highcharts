@@ -12,7 +12,7 @@ Highcharts.chart('container', {
 
     annotations: [{
         id: '1',
-        type: 'crooked-line',
+        type: 'crookedLine',
         typeOptions: {
             points: [{
                 x: 1,

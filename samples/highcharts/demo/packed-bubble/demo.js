@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
     chart: {
         type: 'packedbubble',
-        height: '80%'
+        height: '100%'
     },
     title: {
         text: 'Carbon emissions around the world (2014)'
@@ -501,5 +501,19 @@ Highcharts.chart('container', {
             name: "Korea",
             value: 610.1
         }]
-    }]
+    }],
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    layout: 'vertical'
+                }
+            }
+        }]
+    }
 });

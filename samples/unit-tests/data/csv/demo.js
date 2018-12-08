@@ -726,3 +726,31 @@ QUnit.test('Comments in CSV', function (assert) {
         }
     });
 });
+
+
+QUnit.test('Dot date format', function (assert) {
+    var data = [
+        'Date,Policy Rate',
+        '08.01.2004,8',
+        '09.01.2004,7',
+        '12.01.2004,14',
+        '13.01.2004,5'
+    ].join('\n');
+
+    Highcharts.data({
+        csv: data,
+        parsed: function () {
+            assert.deepEqual(
+                this.columns[0],
+                [
+                    'Date',
+                    Date.UTC(2004, 0, 8),
+                    Date.UTC(2004, 0, 9),
+                    Date.UTC(2004, 0, 12),
+                    Date.UTC(2004, 0, 13)
+                ],
+                'First column ok'
+            );
+        }
+    });
+});

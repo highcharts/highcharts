@@ -1668,9 +1668,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     // When the text shadow shim is used, we need to hide the
                     // fake shadows to get the correct bounding box (#3872)
                     toggleTextShadowShim = this.fakeTS && function (display) {
-                        element.querySelectorAll(
+                        [].forEach.call(
+                            element.querySelectorAll(
                                 '.highcharts-text-outline'
-                            ).forEach(
+                            ),
                             function (tspan) {
                                 tspan.style.display = display;
                             }
@@ -1918,7 +1919,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // Look for existing references to this clipPath and remove them
             // before destroying the element (#6196).
             // The upper case version is for Edge
-            ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]').forEach(
+            [].forEach.call(
+                ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
                 function (el) {
                     var clipPathAttr = el.getAttribute('clip-path'),
                         clipPathId = clipPath.element.id;
@@ -4985,16 +4987,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     text.css(textStyles);
 
                     // Update existing text and box
-                    if (box) {
-                        if ('width' in textStyles) {
-                            updateBoxSize();
-                        }
+                    if ('width' in textStyles) {
+                        updateBoxSize();
+                    }
 
-                        // Keep updated (#9400)
-                        if ('fontSize' in textStyles) {
-                            updateBoxSize();
-                            updateTextPadding();
-                        }
+                    // Keep updated (#9400)
+                    if ('fontSize' in textStyles) {
+                        updateBoxSize();
+                        updateTextPadding();
                     }
                 }
                 return baseCss.call(wrapper, styles);

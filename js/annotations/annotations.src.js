@@ -1022,7 +1022,9 @@ merge(
                     H.pick(animation, true) && item.graphic.placed
                 );
 
-                this.adjustVisibility(item);
+                if (item.points.length) {
+                    this.adjustVisibility(item);
+                }
             }
         },
 

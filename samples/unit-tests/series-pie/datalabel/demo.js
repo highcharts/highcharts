@@ -132,3 +132,106 @@ QUnit.test('Pie labels outside plot (#3163)', function (assert) {
         "Pie label is outside of plot"
     );
 });
+
+
+QUnit.test('Mouse events on dataLabels with useHTML set to true.', function (assert) {
+    var clicked = false,
+        chart = new Highcharts.Chart({
+            chart: {
+                type: 'pie',
+                renderTo: 'container'
+            },
+            series: [{
+                dataLabels: {
+                    useHTML: true
+                },
+                point: {
+                    events: {
+                        click: function () {
+                            clicked = true;
+                        }
+                    }
+                },
+                data: [
+                    ['Firefox', 44.2],
+                    ['IE7', 26.6],
+                    ['IE6', 20],
+                    ['Chrome', 3.1],
+                    ['Other', 5.4]
+                ]
+            }]
+        }),
+        points = chart.series[0].points,
+        offset = Highcharts.offset(chart.container),
+        event = $.Event('mouseover', {
+            which: 1,
+            pageX: offset.left + points[0].labelPosition.natural.x,
+            pageY: offset.top + points[0].labelPosition.natural.y
+        });
+
+    $(points[0].dataLabel.div).trigger(event);
+
+    assert.strictEqual(
+        points[0] === chart.hoverPoint,
+        true,
+        'First point hovered.'
+    );
+
+    event = $.Event('mouseover', {
+        which: 1,
+        pageX: offset.left + points[4].labelPosition.natural.x,
+        pageY: offset.top + points[4].labelPosition.natural.y
+    });
+
+    $(points[4].dataLabel.div).trigger(event);
+
+    assert.strictEqual(
+        points[4] === chart.hoverPoint,
+        true,
+        'Last point hovered.'
+    );
+
+    chart.pointer.onContainerClick({
+        pageX: offset.left + points[4].labelPosition.natural.x,
+        pageY: offset.top + points[4].labelPosition.y,
+        target: points[4].dataLabel.div
+    });
+
+    assert.strictEqual(
+        clicked,
+        true,
+        'Click event on dataLabel works.'
+    );
+});
+
+QUnit.test('Wide data labels', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        series: [{
+            type: 'pie',
+            data: [
+                ['The quick brown fox jumps over the lazy dog', 1],
+                ['The quick brown fox jumps over the lazy dog', 1],
+                ['The quick brown fox jumps over the lazy dog', 1],
+                ['The quick brown fox jumps over the lazy dog', 1],
+                ['The quick brown fox jumps over the lazy dog', 1],
+                ['The quick brown fox jumps over the lazy dog', 1]
+            ]
+        }]
+    });
+
+    assert.ok(
+        chart.series[0].group.getBBox().width > 200,
+        'The pie should not be shrinked too much'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.element.textContent.indexOf('…'),
+        -1,
+        'There should be no ellipsis in the data label'
+    );
+});
+
+
