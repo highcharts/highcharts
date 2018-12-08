@@ -3220,6 +3220,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @see {@link Highcharts.Tick}
          *
+         * @private
          * @name Highcharts.Axis#ticks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */
@@ -3230,6 +3231,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *
          * @see {@link Highcharts.Tick}
          *
+         * @private
          * @name Highcharts.Axis#minorTicks
          * @type {Highcharts.Dictionary<Highcharts.Tick>}
          */

@@ -72,7 +72,7 @@ seriesType('packedbubble', 'bubble',
          * @sample {highcharts} highcharts/plotoptions/bubble-size/
          *         Bubble size
          *
-         * @type    {umber|string}
+         * @type    {number|string}
          * @since   3.0
          * @product highcharts highstock
          */
