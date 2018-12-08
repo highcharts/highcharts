@@ -1,3 +1,8 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -9,6 +14,8 @@ var merge = H.merge,
     SMA = H.seriesTypes.sma;
 
 /**
+ * The Price Envelopes series type.
+ *
  * @private
  * @class
  * @name Highcharts.seriesTypes.priceenvelopes
@@ -41,29 +48,21 @@ H.seriesType('priceenvelopes', 'sma',
             /**
              * Percentage above the moving average that should be displayed.
              * 0.1 means 110%. Relative to the calculated value.
-             *
-             * @since 6.0.0
              */
             topBand: 0.1,
             /**
              * Percentage below the moving average that should be displayed.
              * 0.1 means 90%. Relative to the calculated value.
-             *
-             * @since 6.0.0
              */
             bottomBand: 0.1
         },
         /**
          * Bottom line options.
-         *
-         * @since 6.0.0
          */
         bottomLine: {
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @since 6.0.0
                  */
                 lineWidth: 1,
                 /**
@@ -71,8 +70,7 @@ H.seriesType('priceenvelopes', 'sma',
                  * [plotOptions.priceenvelopes.color](
                  * #plotOptions.priceenvelopes.color).
                  *
-                 * @type  {Highcharts.ColorString}
-                 * @since 6.0.0
+                 * @type {Highcharts.ColorString}
                  */
                 lineColor: undefined
             }
