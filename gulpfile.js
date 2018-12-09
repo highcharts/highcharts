@@ -345,6 +345,8 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/modules/offline-exporting.src.js',
         './js/modules/pattern-fill.src.js',
         './js/modules/sonification/*.js',
+        './js/annotations/annotations.src.js'
+        /*
         './js/annotations/eventEmitterMixin.js',
         './js/annotations/MockPoint.js',
         './js/annotations/ControlPoint.js',
@@ -354,7 +356,6 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/annotations/controllable/ControllableLabel.js',
         './js/annotations/controllable/ControllablePath.js',
         './js/annotations/controllable/ControllableRect.js',
-        './js/annotations/annotations.src.js',
         './js/annotations/types/CrookedLine.js',
         './js/annotations/types/ElliottWave.js',
         './js/annotations/types/Tunnel.js',
@@ -362,7 +363,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/annotations/types/InfinityLine.js',
         './js/annotations/types/Measure.js',
         './js/annotations/types/Pitchfork.js',
-        './js/annotations/types/VerticalLine.js'
+        './js/annotations/types/VerticalLine.js'*/
     ];
     const optionsJSDoc = {
         navOptions: {
@@ -966,8 +967,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         './js/parts-3d',
         './js/parts-more',
         './js/parts-map',
-        './js/parts-gantt',
-        './js/supplemental.docs.js'
+        './js/parts-gantt'
     ];
     const configJSDoc = {
         plugins: ['./tools/jsdoc/plugins/highcharts.jsdoc']
@@ -1264,7 +1264,7 @@ gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
-gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
+gulp.task('jsdoc', ['clean-api', 'jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
