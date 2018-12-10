@@ -811,7 +811,8 @@ H.Popup.prototype = {
             );
 
             // list all series with id
-            this.indicators.listAllSeries(
+            this.indicators.listAllSeries.call(
+                this,
                 seriesType,
                 'series',
                 chart,
@@ -819,7 +820,8 @@ H.Popup.prototype = {
             );
 
             if (fields.volumeSeriesID) {
-                this.indicators.listAllSeries(
+                this.indicators.listAllSeries.call(
+                    this,
                     seriesType,
                     'volume',
                     chart,
