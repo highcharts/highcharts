@@ -4379,10 +4379,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             axis.max = Math.max(axis.max, options.softMax);
         }
         if (isNumber(options.floor)) {
-            axis.min = Math.max(axis.min, options.floor);
+            axis.min = Math.min(
+                Math.max(axis.min, options.floor),
+                Number.MAX_VALUE
+            );
         }
         if (isNumber(options.ceiling)) {
-            axis.max = Math.min(axis.max, options.ceiling);
+            axis.max = Math.max(
+                Math.min(axis.max, options.ceiling),
+                pick(axis.userMax, -Number.MAX_VALUE)
+            );
         }
 
 
