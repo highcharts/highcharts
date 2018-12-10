@@ -1079,7 +1079,7 @@ H.setOptions({
          *
          * @type      {string}
          */
-        bindingsClassName: 'bindings-wrapper',
+        bindingsClassName: 'highcharts-bindings-wrapper',
         bindings: basicAnnotationsBindings,
         /**
          * A `showPopup` event. Fired when selecting for example an annotation.
