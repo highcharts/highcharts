@@ -24,10 +24,6 @@ var addEvent = H.addEvent,
     PREFIX = 'highcharts-',
     activeClass = PREFIX + 'active';
 
-/**
- * @optionparent    lang.stockTools.gui
- * @product         highstock
- */
 H.setOptions({
     /**
      * @optionparent lang
