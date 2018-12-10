@@ -312,26 +312,26 @@ QUnit.test('Bindings general tests', function (assert) {
 
     // Test annotation events:
     points = chart.series[0].points;
-    chart.stockToolbar.popup.closePopup.call(chart.stockToolbar);
+    chart.navigationBindings.popup.closePopup();
     controller.click(
         points[2].plotX + plotLeft - 5,
         points[2].plotY + plotTop - 25
     );
     assert.strictEqual(
-        chart.stockToolbar.popup.container.classList
+        chart.navigationBindings.popup.container.classList
             .contains('highcharts-annotation-toolbar'),
         true,
         'Annotations toolbar rendered.'
     );
 
     assert.strictEqual(
-        chart.stockToolbar.popup.container.style.display,
+        chart.navigationBindings.popup.container.style.display,
         'block',
         'Annotations toolbar visible.'
     );
 
     // Styles in Karma are not loaded!
-    chart.stockToolbar.popup.container.style.position = 'absolute';
+    chart.navigationBindings.popup.container.style.position = 'absolute';
 
     var button = document.querySelectorAll(
             '.highcharts-popup .highcharts-annotation-remove-button'
@@ -350,7 +350,7 @@ QUnit.test('Bindings general tests', function (assert) {
         'Annotation removed through popup.'
     );
     assert.strictEqual(
-        chart.stockToolbar.popup.container.style.display,
+        chart.navigationBindings.popup.container.style.display,
         'none',
         'Annotations toolbar hidden.'
     );
