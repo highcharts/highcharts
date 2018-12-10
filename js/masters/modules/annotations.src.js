@@ -9,3 +9,4 @@
 'use strict';
 import '../../annotations/annotations.src.js';
 import '../../annotations/navigationBindings.js';
+import '../../annotations/popup.js';
