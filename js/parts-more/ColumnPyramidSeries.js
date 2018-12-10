@@ -33,7 +33,7 @@ seriesType('columnpyramid', 'column'
  * Requires `highcharts-more.js`. To display horizontal pyramids,
  * set [chart.inverted](#chart.inverted) to `true`.
  *
- * @sample {highcharts|highstock} highcharts/demo/columnpyramid-basic/
+ * @sample {highcharts|highstock} highcharts/demo/column-pyramid/
  *         Column pyramid
  * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-stacked/
  *         Column pyramid stacked
