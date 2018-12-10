@@ -1166,12 +1166,16 @@ H.setOptions({
             }
         }
     },
+    /**
+     * @optionparent navigation
+     */
     navigation: {
         /**
          * A CSS class name where all bindings will be attached to. Multiple
          * charts on the same page should have separate class names to prevent
          * duplicating events.
          *
+         * @since     7.0.0
          * @type      {string}
          */
         bindingsClassName: 'highcharts-bindings-wrapper',

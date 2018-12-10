@@ -126,16 +126,16 @@ extend(defaultOptions.lang
 
 });
 
-// Buttons and menus are collected in a separate config option set called
-// 'navigation'. This can be extended later to add control buttons like zoom and
-// pan right click menus.
-/**
- * A collection of options for buttons and menus appearing in the exporting
- * module.
- *
- * @optionparent navigation
- */
 if (!defaultOptions.navigation) {
+    // Buttons and menus are collected in a separate config option set called
+    // 'navigation'. This can be extended later to add control buttons like
+    // zoom and pan right click menus.
+    /**
+     * A collection of options for buttons and menus appearing in the exporting
+     * module.
+     *
+     * @optionparent navigation
+     */
     defaultOptions.navigation = {};
 }
 merge(true, defaultOptions.navigation, {
