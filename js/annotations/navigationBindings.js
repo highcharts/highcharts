@@ -1199,6 +1199,10 @@ H.setOptions({
          * Event fired on a button click.
          *
          * @type      {Function}
+         * @sample    highcharts/annotations/gui/
+         *            Change icon in a dropddown on event
+         * @sample    highcharts/annotations/gui-buttons/
+         *            Change button class on event
          * @apioption navigation.events.selectButton
          */
 
@@ -1207,6 +1211,10 @@ H.setOptions({
          * adding an annotation.
          *
          * @type      {Function}
+         * @sample    highcharts/annotations/gui/
+         *            Change icon in a dropddown on event
+         * @sample    highcharts/annotations/gui-buttons/
+         *            Change button class on event
          * @apioption navigation.events.deselectButton
          */
 

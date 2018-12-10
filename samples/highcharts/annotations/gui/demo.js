@@ -1,5 +1,5 @@
 Highcharts.chart('container', {
-    navigationBindings: {
+    navigation: {
         events: {
             selectButton: function (event) {
                 var newClassName = event.button.className + ' highcharts-active',
