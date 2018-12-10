@@ -264,7 +264,8 @@ Highcharts.downloadSVGLocal = function (
         // Workaround for #7090, hidden elements were drawn anyway. It comes
         // down to https://github.com/yWorks/svg2pdf.js/issues/28. Check this
         // later.
-        svgElement.querySelectorAll('*[visibility="hidden"]').forEach(
+        [].forEach.call(
+            svgElement.querySelectorAll('*[visibility="hidden"]'),
             function (node) {
                 node.parentNode.removeChild(node);
             }
