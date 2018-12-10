@@ -606,7 +606,6 @@ extend(H.NavigationBindings.prototype, {
 /**
  * @type         {Highcharts.Dictionary<Highcharts.StockToolsBindingsObject>|*}
  * @since        7.0.0
- * @product      highstock
  * @optionparent navigation.bindings
  */
 var stockToolsBindings = {
@@ -616,6 +615,7 @@ var stockToolsBindings = {
      * array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-segment", "start": function() {}, "steps": [function() {}]}
      */
     segment: {
@@ -650,6 +650,7 @@ var stockToolsBindings = {
      * event in `steps` array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-arrow-segment", "start": function() {}, "steps": [function() {}]}
      */
     arrowSegment: {
@@ -687,6 +688,7 @@ var stockToolsBindings = {
      * array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-ray", "start": function() {}, "steps": [function() {}]}
      */
     ray: {
@@ -722,6 +724,7 @@ var stockToolsBindings = {
      * in `steps` array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-arrow-ray", "start": function() {}, "steps": [function() {}]}
      */
     arrowRay: {
@@ -759,6 +762,7 @@ var stockToolsBindings = {
      * A line annotation. Includes `start` and one event in `steps` array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-infinity-line", "start": function() {}, "steps": [function() {}]}
      */
     infinityLine: {
@@ -794,6 +798,7 @@ var stockToolsBindings = {
      * array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-arrow-infinity-line", "start": function() {}, "steps": [function() {}]}
      */
     arrowInfinityLine: {
@@ -831,6 +836,7 @@ var stockToolsBindings = {
      * A horizontal line annotation. Includes `start` event.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-horizontal-line", "start": function() {}}
      */
     horizontalLine: {
@@ -858,6 +864,7 @@ var stockToolsBindings = {
      * A vertical line annotation. Includes `start` event.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-vertical-line", "start": function() {}}
      */
     verticalLine: {
@@ -886,6 +893,7 @@ var stockToolsBindings = {
      * events in `steps` (for second and third points in crooked line) array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-crooked3", "start": function() {}, "steps": [function() {}, function() {}]}
      */
     // Crooked Line type annotations:
@@ -925,6 +933,7 @@ var stockToolsBindings = {
      * events in `steps` (for all consequent points in crooked line) array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-crooked3", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}]}
      */
     crooked5: {
@@ -971,6 +980,7 @@ var stockToolsBindings = {
      * events in `steps` (for second and third points) array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-elliott3", "start": function() {}, "steps": [function() {}, function() {}]}
      */
     elliott3: {
@@ -1014,6 +1024,7 @@ var stockToolsBindings = {
      * event in `steps` (for all consequent points in Elliott wave) array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-elliott3", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}]}
      */
     elliott5: {
@@ -1065,6 +1076,7 @@ var stockToolsBindings = {
      * event in `steps` array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-measure-x", "start": function() {}, "steps": [function() {}]}
      */
     measureX: {
@@ -1120,6 +1132,7 @@ var stockToolsBindings = {
      * event in `steps` array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-measure-y", "start": function() {}, "steps": [function() {}]}
      */
     measureY: {
@@ -1175,6 +1188,7 @@ var stockToolsBindings = {
      * event in `steps` array.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-measure-xy", "start": function() {}, "steps": [function() {}]}
      */
     measureXY: {
@@ -1230,6 +1244,7 @@ var stockToolsBindings = {
      * `steps` array (updates second point, then height).
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-fibonacci", "start": function() {}, "steps": [function() {}, function() {}]}
      */
     fibonacci: {
@@ -1269,6 +1284,7 @@ var stockToolsBindings = {
      * two events in `steps` array (updates second point, then height).
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-parallel-channel", "start": function() {}, "steps": [function() {}, function() {}]}
      */
     parallelChannel: {
@@ -1304,6 +1320,7 @@ var stockToolsBindings = {
      * events in `steps` array (sets second and third control points).
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-pitchfork", "start": function() {}, "steps": [function() {}, function() {}]}
      */
     pitchfork: {
@@ -1355,6 +1372,7 @@ var stockToolsBindings = {
      * incrementing counter on each add.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-vertical-counter", "start": function() {}}
      */
     verticalCounter: {
@@ -1407,6 +1425,7 @@ var stockToolsBindings = {
      * value.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-vertical-label", "start": function() {}}
      */
     verticalLabel: {
@@ -1452,6 +1471,7 @@ var stockToolsBindings = {
      * pointing from above, red when pointing from below the point.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-vertical-arrow", "start": function() {}}
      */
     verticalArrow: {
@@ -1496,6 +1516,7 @@ var stockToolsBindings = {
      * closest point and marks it with a flag with `'circlepin'` shape.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-flag-circlepin", "start": function() {}}
      */
     flagCirclepin: {
@@ -1510,6 +1531,7 @@ var stockToolsBindings = {
      * closest point and marks it with a flag with `'diamondpin'` shape.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-flag-diamondpin", "start": function() {}}
      */
     flagDiamondpin: {
@@ -1525,6 +1547,7 @@ var stockToolsBindings = {
      * `'squarepin'` shape.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-flag-squarepin", "start": function() {}}
      */
     flagSquarepin: {
@@ -1540,6 +1563,7 @@ var stockToolsBindings = {
      * shape.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-flag-simplepin", "start": function() {}}
      */
     flagSimplepin: {
@@ -1555,6 +1579,7 @@ var stockToolsBindings = {
      * changes [chart.zoomType](#chart.zoomType).
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-zoom-x", "init": function() {}}
      */
     zoomX: {
@@ -1580,6 +1605,7 @@ var stockToolsBindings = {
      * changes [chart.zoomType](#chart.zoomType).
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-zoom-y", "init": function() {}}
      */
     zoomY: {
@@ -1604,6 +1630,7 @@ var stockToolsBindings = {
      * which changes [chart.zoomType](#chart.zoomType).
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-zoom-xy", "init": function() {}}
      */
     zoomXY: {
@@ -1628,6 +1655,7 @@ var stockToolsBindings = {
      * Changes main series to `'line'` type.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-series-type-line", "init": function() {}}
      */
     seriesTypeLine: {
@@ -1650,6 +1678,7 @@ var stockToolsBindings = {
      * Changes main series to `'ohlc'` type.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-series-type-ohlc", "init": function() {}}
      */
     seriesTypeOhlc: {
@@ -1672,6 +1701,7 @@ var stockToolsBindings = {
      * Changes main series to `'candlestick'` type.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-series-type-candlestick", "init": function() {}}
      */
     seriesTypeCandlestick: {
@@ -1694,6 +1724,7 @@ var stockToolsBindings = {
      * Displays chart in fullscreen.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-full-screen", "init": function() {}}
      */
     fullScreen: {
@@ -1718,6 +1749,7 @@ var stockToolsBindings = {
      * - last price in the selected range
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-current-price-indicator", "init": function() {}}
      */
     currentPriceIndicator: {
@@ -1770,6 +1802,7 @@ var stockToolsBindings = {
      * Indicators bindings. Includes `init` event to show a popup.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-indicators", "init": function() {}}
      */
     indicators: {
@@ -1800,6 +1833,7 @@ var stockToolsBindings = {
      * Hides/shows all annotations on a chart.
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-toggle-annotations", "init": function() {}}
      */
     toggleAnnotations: {
@@ -1842,6 +1876,7 @@ var stockToolsBindings = {
      * - flags
      *
      * @type    {Highcharts.StockToolsBindingsObject}
+     * @product highstock
      * @default {"className": "highcharts-save-chart", "init": function() {}}
      */
     saveChart: {

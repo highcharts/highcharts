@@ -839,303 +839,27 @@ if (H.Annotation) {
     });
 }
 
-
-/**
- * Bindings defintions for custom HTML buttons. Each binding implements
- * simple event-driven interface:
- *
- * - `className`: classname used to bind event to
- *
- * - `init`: initial event, fired on button click
- *
- * - `start`: fired on first click on a chart
- *
- * - `steps`: array of sequential events fired one after another on each
- *   of users clicks
- *
- * - `end`: last event to be called after last step event
- *
- * @type         {Highcharts.Dictionary<Highcharts.StockToolsBindingsObject>|*}
- * @since        7.0.0
- * @product      highcharts highstock
- * @optionparent navigation.bindings
- */
-var basicAnnotationsBindings = {
-
-    /**
-     * A circle annotation bindings. Includes `start` and one event in `steps`
-     * array.
-     *
-     * @type    {Highcharts.StockToolsBindingsObject}
-     * @default {"className": "highcharts-circle-annotation", "start": function() {}, "steps": [function() {}]}
-     */
-    circleAnnotation: {
-        /** @ignore */
-        className: 'highcharts-circle-annotation',
-        /** @ignore */
-        start: function (e) {
-            var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY),
-                annotation;
-
-            annotation = this.chart.addAnnotation({
-                langKey: 'circle',
-                shapes: [{
-                    type: 'circle',
-                    point: {
-                        xAxis: 0,
-                        yAxis: 0,
-                        x: x,
-                        y: y
-                    },
-                    r: 5,
-                    controlPoints: [{
-                        positioner: function (target) {
-                            var xy = H.Annotation.MockPoint.pointToPixels(
-                                    target.points[0]
-                                ),
-                                r = target.options.r;
-
-                            return {
-                                x: xy.x + r * Math.cos(Math.PI / 4) -
-                                    this.graphic.width / 2,
-                                y: xy.y + r * Math.sin(Math.PI / 4) -
-                                    this.graphic.height / 2
-                            };
-                        },
-                        events: {
-                            // TRANSFORM RADIUS ACCORDING TO Y TRANSLATION
-                            drag: function (e, target) {
-
-                                target.setRadius(
-                                    Math.max(
-                                        target.options.r +
-                                            this.mouseMoveToTranslation(e).y /
-                                            Math.sin(Math.PI / 4),
-                                        5
-                                    )
-                                );
-
-                                target.redraw(false);
-                            }
-                        }
-                    }]
-                }]
-            });
-
-            return annotation;
-        },
-        /** @ignore */
-        steps: [
-            function (e, annotation) {
-                var point = annotation.options.shapes[0].point,
-                    x = this.chart.xAxis[0].toPixels(point.x),
-                    y = this.chart.yAxis[0].toPixels(point.y),
-                    distance = Math.max(
-                        Math.sqrt(
-                            Math.pow(x - e.chartX, 2) +
-                            Math.pow(y - e.chartY, 2)
-                        ),
-                        5
-                    );
-
-                annotation.update({
-                    shapes: [{
-                        r: distance
-                    }]
-                });
-            }
-        ]
-    },
-    /**
-     * A rectangle annotation bindings. Includes `start` and one event in
-     * `steps` array.
-     *
-     * @type    {Highcharts.StockToolsBindingsObject}
-     * @default {"className": "highcharts-rectangle-annotation", "start": function() {}, "steps": [function() {}]}
-     */
-    rectangleAnnotation: {
-        /** @ignore */
-        className: 'highcharts-rectangle-annotation',
-        /** @ignore */
-        start: function (e) {
-            var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY),
-                options = {
-                    langKey: 'rectangle',
-                    shapes: [{
-                        type: 'rect',
-                        point: {
-                            x: x,
-                            y: y,
-                            xAxis: 0,
-                            yAxis: 0
-                        },
-                        width: 5,
-                        height: 5,
-
-                        controlPoints: [{
-                            positioner: function (target) {
-                                var xy = H.Annotation.MockPoint.pointToPixels(
-                                        target.points[0]
-                                    );
-
-                                return {
-                                    x: xy.x + target.options.width - 4,
-                                    y: xy.y + target.options.height - 4
-                                };
-                            },
-                            events: {
-                                drag: function (e, target) {
-                                    var xy = this.mouseMoveToTranslation(e);
-
-                                    target.options.width = Math.max(
-                                        target.options.width + xy.x,
-                                        5
-                                    );
-                                    target.options.height = Math.max(
-                                        target.options.height + xy.y,
-                                        5
-                                    );
-
-                                    target.redraw(false);
-                                }
-                            }
-                        }]
-                    }]
-                };
-
-            return this.chart.addAnnotation(options);
-        },
-        /** @ignore */
-        steps: [
-            function (e, annotation) {
-                var xAxis = this.chart.xAxis[0],
-                    yAxis = this.chart.yAxis[0],
-                    point = annotation.options.shapes[0].point,
-                    x = xAxis.toPixels(point.x),
-                    y = yAxis.toPixels(point.y),
-                    width = Math.max(e.chartX - x, 5),
-                    height = Math.max(e.chartY - y, 5);
-
-                annotation.update({
-                    shapes: [{
-                        width: width,
-                        height: height,
-                        point: {
-                            x: point.x,
-                            y: point.y
-                        }
-                    }]
-                });
-            }
-        ]
-    },
-    /**
-     * A label annotation bindings. Includes `start` event only.
-     *
-     * @type    {Highcharts.StockToolsBindingsObject}
-     * @default {"className": "highcharts-label-annotation", "start": function() {}, "steps": [function() {}]}
-     */
-    labelAnnotation: {
-        /** @ignore */
-        className: 'highcharts-label-annotation',
-        /** @ignore */
-        start: function (e) {
-            var x = this.chart.xAxis[0].toValue(e.chartX),
-                y = this.chart.yAxis[0].toValue(e.chartY);
-
-            this.chart.addAnnotation({
-                langKey: 'label',
-                labelOptions: {
-                    format: '{y:.2f}'
-                },
-                labels: [{
-                    point: {
-                        x: x,
-                        y: y,
-                        xAxis: 0,
-                        yAxis: 0
-                    },
-                    controlPoints: [{
-                        symbol: 'triangle-down',
-                        positioner: function (target) {
-                            if (!target.graphic.placed) {
-                                return {
-                                    x: 0,
-                                    y: -9e7
-                                };
-                            }
-
-                            var xy = H.Annotation.MockPoint
-                                .pointToPixels(
-                                    target.points[0]
-                                );
-
-                            return {
-                                x: xy.x - this.graphic.width / 2,
-                                y: xy.y - this.graphic.height / 2
-                            };
-                        },
-
-                        // TRANSLATE POINT/ANCHOR
-                        events: {
-                            drag: function (e, target) {
-                                var xy = this.mouseMoveToTranslation(e);
-
-                                target.translatePoint(xy.x, xy.y);
-                                target.redraw(false);
-                            }
-                        }
-                    }, {
-                        symbol: 'square',
-                        positioner: function (target) {
-                            if (!target.graphic.placed) {
-                                return {
-                                    x: 0,
-                                    y: -9e7
-                                };
-                            }
-
-                            return {
-                                x: target.graphic.alignAttr.x -
-                                    this.graphic.width / 2,
-                                y: target.graphic.alignAttr.y -
-                                    this.graphic.height / 2
-                            };
-                        },
-
-                        // TRANSLATE POSITION WITHOUT CHANGING THE ANCHOR
-                        events: {
-                            drag: function (e, target) {
-                                var xy = this.mouseMoveToTranslation(e);
-
-                                target.translate(xy.x, xy.y);
-                                target.redraw(false);
-                            }
-                        }
-                    }],
-                    overflow: 'none',
-                    crop: true
-                }]
-            });
-        }
-    }
-};
-
-
 H.setOptions({
+    /**
+     * @optionparent lang
+     */
     lang: {
         /**
          * Configure the Popup strings in the chart. Requires the
          * `annotations.js` or `annotations-advanced.src.js` module to be
          * loaded.
          *
-         * @since 7.0.0
-         * @type {Object}
-         * @optionparent lang.navigation
+         * @since           7.0.0
+         * @type            {Object}
+         * @product         highcharts highstock
          */
         navigation: {
+            /**
+             * Translations for all field names used in popup.
+             *
+             * @product         highcharts highstock
+             * @type            {Object}
+             */
             popup: {
                 simpleShapes: 'Simple shapes',
                 lines: 'Lines',
@@ -1168,6 +892,7 @@ H.setOptions({
     },
     /**
      * @optionparent navigation
+     * @product      highcharts highstock
      */
     navigation: {
         /**
@@ -1179,7 +904,293 @@ H.setOptions({
          * @type      {string}
          */
         bindingsClassName: 'highcharts-bindings-wrapper',
-        bindings: basicAnnotationsBindings,
+        /**
+         * Bindings defintions for custom HTML buttons. Each binding implements
+         * simple event-driven interface:
+         *
+         * - `className`: classname used to bind event to
+         *
+         * - `init`: initial event, fired on button click
+         *
+         * - `start`: fired on first click on a chart
+         *
+         * - `steps`: array of sequential events fired one after another on each
+         *   of users clicks
+         *
+         * - `end`: last event to be called after last step event
+         *
+         * @type         {Highcharts.Dictionary<Highcharts.StockToolsBindingsObject>|*}
+         * @since        7.0.0
+         * @product      highcharts highstock
+         */
+        bindings: {
+            /**
+             * A circle annotation bindings. Includes `start` and one event in
+             * `steps` array.
+             *
+             * @type    {Highcharts.StockToolsBindingsObject}
+             * @default {"className": "highcharts-circle-annotation", "start": function() {}, "steps": [function() {}]}
+             */
+            circleAnnotation: {
+                /** @ignore */
+                className: 'highcharts-circle-annotation',
+                /** @ignore */
+                start: function (e) {
+                    var x = this.chart.xAxis[0].toValue(e.chartX),
+                        y = this.chart.yAxis[0].toValue(e.chartY),
+                        annotation;
+
+                    annotation = this.chart.addAnnotation({
+                        langKey: 'circle',
+                        shapes: [{
+                            type: 'circle',
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: x,
+                                y: y
+                            },
+                            r: 5,
+                            controlPoints: [{
+                                positioner: function (target) {
+                                    var xy = H.Annotation.MockPoint
+                                        .pointToPixels(
+                                            target.points[0]
+                                        ),
+                                        r = target.options.r;
+
+                                    return {
+                                        x: xy.x + r * Math.cos(Math.PI / 4) -
+                                            this.graphic.width / 2,
+                                        y: xy.y + r * Math.sin(Math.PI / 4) -
+                                            this.graphic.height / 2
+                                    };
+                                },
+                                events: {
+                                    // TRANSFORM RADIUS ACCORDING TO Y
+                                    // TRANSLATION
+                                    drag: function (e, target) {
+                                        var position = this
+                                            .mouseMoveToTranslation(e);
+
+                                        target.setRadius(
+                                            Math.max(
+                                                target.options.r +
+                                                    position.y /
+                                                    Math.sin(Math.PI / 4),
+                                                5
+                                            )
+                                        );
+
+                                        target.redraw(false);
+                                    }
+                                }
+                            }]
+                        }]
+                    });
+
+                    return annotation;
+                },
+                /** @ignore */
+                steps: [
+                    function (e, annotation) {
+                        var point = annotation.options.shapes[0].point,
+                            x = this.chart.xAxis[0].toPixels(point.x),
+                            y = this.chart.yAxis[0].toPixels(point.y),
+                            distance = Math.max(
+                                Math.sqrt(
+                                    Math.pow(x - e.chartX, 2) +
+                                    Math.pow(y - e.chartY, 2)
+                                ),
+                                5
+                            );
+
+                        annotation.update({
+                            shapes: [{
+                                r: distance
+                            }]
+                        });
+                    }
+                ]
+            },
+            /**
+             * A rectangle annotation bindings. Includes `start` and one event
+             * in `steps` array.
+             *
+             * @type    {Highcharts.StockToolsBindingsObject}
+             * @default {"className": "highcharts-rectangle-annotation", "start": function() {}, "steps": [function() {}]}
+             */
+            rectangleAnnotation: {
+                /** @ignore */
+                className: 'highcharts-rectangle-annotation',
+                /** @ignore */
+                start: function (e) {
+                    var x = this.chart.xAxis[0].toValue(e.chartX),
+                        y = this.chart.yAxis[0].toValue(e.chartY),
+                        options = {
+                            langKey: 'rectangle',
+                            shapes: [{
+                                type: 'rect',
+                                point: {
+                                    x: x,
+                                    y: y,
+                                    xAxis: 0,
+                                    yAxis: 0
+                                },
+                                width: 5,
+                                height: 5,
+
+                                controlPoints: [{
+                                    positioner: function (target) {
+                                        var xy = H.Annotation.MockPoint
+                                            .pointToPixels(
+                                                target.points[0]
+                                            );
+
+                                        return {
+                                            x: xy.x + target.options.width - 4,
+                                            y: xy.y + target.options.height - 4
+                                        };
+                                    },
+                                    events: {
+                                        drag: function (e, target) {
+                                            var xy = this
+                                                .mouseMoveToTranslation(e);
+
+                                            target.options.width = Math.max(
+                                                target.options.width + xy.x,
+                                                5
+                                            );
+                                            target.options.height = Math.max(
+                                                target.options.height + xy.y,
+                                                5
+                                            );
+
+                                            target.redraw(false);
+                                        }
+                                    }
+                                }]
+                            }]
+                        };
+
+                    return this.chart.addAnnotation(options);
+                },
+                /** @ignore */
+                steps: [
+                    function (e, annotation) {
+                        var xAxis = this.chart.xAxis[0],
+                            yAxis = this.chart.yAxis[0],
+                            point = annotation.options.shapes[0].point,
+                            x = xAxis.toPixels(point.x),
+                            y = yAxis.toPixels(point.y),
+                            width = Math.max(e.chartX - x, 5),
+                            height = Math.max(e.chartY - y, 5);
+
+                        annotation.update({
+                            shapes: [{
+                                width: width,
+                                height: height,
+                                point: {
+                                    x: point.x,
+                                    y: point.y
+                                }
+                            }]
+                        });
+                    }
+                ]
+            },
+            /**
+             * A label annotation bindings. Includes `start` event only.
+             *
+             * @type    {Highcharts.StockToolsBindingsObject}
+             * @default {"className": "highcharts-label-annotation", "start": function() {}, "steps": [function() {}]}
+             */
+            labelAnnotation: {
+                /** @ignore */
+                className: 'highcharts-label-annotation',
+                /** @ignore */
+                start: function (e) {
+                    var x = this.chart.xAxis[0].toValue(e.chartX),
+                        y = this.chart.yAxis[0].toValue(e.chartY);
+
+                    this.chart.addAnnotation({
+                        langKey: 'label',
+                        labelOptions: {
+                            format: '{y:.2f}'
+                        },
+                        labels: [{
+                            point: {
+                                x: x,
+                                y: y,
+                                xAxis: 0,
+                                yAxis: 0
+                            },
+                            controlPoints: [{
+                                symbol: 'triangle-down',
+                                positioner: function (target) {
+                                    if (!target.graphic.placed) {
+                                        return {
+                                            x: 0,
+                                            y: -9e7
+                                        };
+                                    }
+
+                                    var xy = H.Annotation.MockPoint
+                                        .pointToPixels(
+                                            target.points[0]
+                                        );
+
+                                    return {
+                                        x: xy.x - this.graphic.width / 2,
+                                        y: xy.y - this.graphic.height / 2
+                                    };
+                                },
+
+                                // TRANSLATE POINT/ANCHOR
+                                events: {
+                                    drag: function (e, target) {
+                                        var xy = this.mouseMoveToTranslation(e);
+
+                                        target.translatePoint(xy.x, xy.y);
+                                        target.redraw(false);
+                                    }
+                                }
+                            }, {
+                                symbol: 'square',
+                                positioner: function (target) {
+                                    if (!target.graphic.placed) {
+                                        return {
+                                            x: 0,
+                                            y: -9e7
+                                        };
+                                    }
+
+                                    return {
+                                        x: target.graphic.alignAttr.x -
+                                            this.graphic.width / 2,
+                                        y: target.graphic.alignAttr.y -
+                                            this.graphic.height / 2
+                                    };
+                                },
+
+                                // TRANSLATE POSITION WITHOUT CHANGING THE
+                                // ANCHOR
+                                events: {
+                                    drag: function (e, target) {
+                                        var xy = this.mouseMoveToTranslation(e);
+
+                                        target.translate(xy.x, xy.y);
+                                        target.redraw(false);
+                                    }
+                                }
+                            }],
+                            overflow: 'none',
+                            crop: true
+                        }]
+                    });
+                }
+            }
+        },
         /**
          * A `showPopup` event. Fired when selecting for example an annotation.
          *

@@ -24,88 +24,142 @@ var addEvent = H.addEvent,
     PREFIX = 'highcharts-',
     activeClass = PREFIX + 'active';
 
-var guiLangpack = {
-    simpleShapes: 'Simple shapes',
-    lines: 'Lines',
-    crookedLines: 'Crooked lines',
-    measure: 'Measure',
-    advanced: 'Advanced',
-    toggleAnnotations: 'Toggle annotations',
-    verticalLabels: 'Vertical labels',
-    flags: 'Flags',
-    zoomChange: 'Zoom change',
-    typeChange: 'Type change',
-    indicators: 'Indicators',
-    currentPriceIndicator: 'Current Price Indicators',
-    saveChart: 'Save chart',
-    circle: 'Circle',
-    rectangle: 'Rectangle',
-    label: 'Label',
-    flagCirclepin: 'Flag circle',
-    flagDiamondpin: 'Flag diamond',
-    flagSquarepin: 'Flag square',
-    flagSimplepin: 'Flag simple',
-    segment: 'Segment',
-    arrowSegment: 'Arrow segment',
-    ray: 'Ray',
-    arrowRay: 'Arrow ray',
-    line: 'Line',
-    arrowLine: 'Arrow line',
-    horizontalLine: 'Horizontal line',
-    verticalLine: 'Vertical line',
-    crooked3: 'Crooked 3 line',
-    crooked5: 'Crooked 5 line',
-    elliott3: 'Elliott 3 line',
-    elliott5: 'Elliott 5 line',
-    verticalCounter: 'Vertical counter',
-    verticalLabel: 'Vertical label',
-    verticalArrow: 'Vertical arrow',
-    fibonacci: 'Fibonacci',
-    pitchfork: 'Pitchfork',
-    parallelChannel: 'Parallel channel',
-    infinityLine: 'Infinity line',
-    measureXY: 'Measure XY',
-    measureX: 'Measure X',
-    measureY: 'Measure Y',
-    zoomX: 'Zoom X',
-    zoomY: 'Zoom Y',
-    zoomXY: 'Zooom XY',
-    fullScreen: 'Fullscreen',
-    typeOHLC: 'OHLC',
-    typeLine: 'Line',
-    typeCandlestick: 'Candlestick',
-    addButton: 'add',
-    saveButton: 'save',
-    editButton: 'edit',
-    removeButton: 'remove',
-    series: 'Series',
-    volume: 'Volume'
-};
-
+/**
+ * @optionparent    lang.stockTools.gui
+ * @product         highstock
+ */
 H.setOptions({
+    /**
+     * @optionparent lang
+     */
     lang: {
         /**
-         * Configure the stockTools gui strings in the chart. Requires the
-         * [stockTools module]() to be loaded. For a description of the module
-         * and information on its features, see [Highcharts StockTools]().
+         * Configure the stockTools GUI titles(hints) in the chart. Requires
+         * the `stock-tools.js` module to be loaded.
          *
-         * @since 7.0.0
-         * @type {Object}
-         * @optionparent lang.stockTools
+         * @product         highstock
+         * @since           7.0.0
+         * @type            {Object}
          */
         stockTools: {
-            gui: guiLangpack
+            gui: {
+                // Main buttons:
+                simpleShapes: 'Simple shapes',
+                lines: 'Lines',
+                crookedLines: 'Crooked lines',
+                measure: 'Measure',
+                advanced: 'Advanced',
+                toggleAnnotations: 'Toggle annotations',
+                verticalLabels: 'Vertical labels',
+                flags: 'Flags',
+                zoomChange: 'Zoom change',
+                typeChange: 'Type change',
+                saveChart: 'Save chart',
+                indicators: 'Indicators',
+                currentPriceIndicator: 'Current Price Indicators',
+
+                // Other features:
+                zoomX: 'Zoom X',
+                zoomY: 'Zoom Y',
+                zoomXY: 'Zooom XY',
+                fullScreen: 'Fullscreen',
+                typeOHLC: 'OHLC',
+                typeLine: 'Line',
+                typeCandlestick: 'Candlestick',
+
+                // Basic shapes:
+                circle: 'Circle',
+                label: 'Label',
+                rectangle: 'Rectangle',
+
+                // Flags:
+                flagCirclepin: 'Flag circle',
+                flagDiamondpin: 'Flag diamond',
+                flagSquarepin: 'Flag square',
+                flagSimplepin: 'Flag simple',
+
+                // Measures:
+                measureXY: 'Measure XY',
+                measureX: 'Measure X',
+                measureY: 'Measure Y',
+
+                // Segment, ray and line:
+                segment: 'Segment',
+                arrowSegment: 'Arrow segment',
+                ray: 'Ray',
+                arrowRay: 'Arrow ray',
+                line: 'Line',
+                arrowLine: 'Arrow line',
+                horizontalLine: 'Horizontal line',
+                verticalLine: 'Vertical line',
+                infinityLine: 'Infinity line',
+
+                // Crooked lines:
+                crooked3: 'Crooked 3 line',
+                crooked5: 'Crooked 5 line',
+                elliott3: 'Elliott 3 line',
+                elliott5: 'Elliott 5 line',
+
+                // Counters:
+                verticalCounter: 'Vertical counter',
+                verticalLabel: 'Vertical label',
+                verticalArrow: 'Vertical arrow',
+
+                // Advanced:
+                fibonacci: 'Fibonacci',
+                pitchfork: 'Pitchfork',
+                parallelChannel: 'Parallel channel'
+            }
         },
         navigation: {
-            popup: merge(guiLangpack, {
+            popup: {
+                // Annotations:
+                circle: 'Circle',
+                rectangle: 'Rectangle',
+                label: 'Label',
+                segment: 'Segment',
+                arrowSegment: 'Arrow segment',
+                ray: 'Ray',
+                arrowRay: 'Arrow ray',
+                line: 'Line',
+                arrowLine: 'Arrow line',
+                horizontalLine: 'Horizontal line',
+                verticalLine: 'Vertical line',
+                crooked3: 'Crooked 3 line',
+                crooked5: 'Crooked 5 line',
+                elliott3: 'Elliott 3 line',
+                elliott5: 'Elliott 5 line',
+                verticalCounter: 'Vertical counter',
+                verticalLabel: 'Vertical label',
+                verticalArrow: 'Vertical arrow',
+                fibonacci: 'Fibonacci',
+                pitchfork: 'Pitchfork',
+                parallelChannel: 'Parallel channel',
+                infinityLine: 'Infinity line',
+                measureXY: 'Measure XY',
+                measureX: 'Measure X',
+                measureY: 'Measure Y',
+
+                // Flags:
+                flags: 'Flags',
+
+                // GUI elements:
+                addButton: 'add',
+                saveButton: 'save',
+                editButton: 'edit',
+                removeButton: 'remove',
+                series: 'Series',
+                volume: 'Volume',
                 connector: 'Connector',
+
+                // Field names:
                 innerBackground: 'Inner background',
                 outerBackground: 'Outer background',
                 crosshairX: 'Crosshair X',
                 crosshairY: 'Crosshair Y',
                 tunnel: 'Tunnel',
                 background: 'Background'
-            })
+            }
         }
     },
     /**
