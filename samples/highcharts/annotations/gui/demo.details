@@ -1,7 +1,6 @@
 ---
- name: Highcharts Annotations Demo
+ name: Highcharts Demo
  authors:
-   - Sebastian Domas
+   - Paweł Fus
  js_wrap: b
- requiresManualTesting: true
 ...

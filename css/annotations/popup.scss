@@ -4,6 +4,26 @@ $version: "7.0.0";
 $button-background-color: #f7f7f7;
 $button-hover-color: #e6ebf5;
 
+
+.highcharts-popup.highcharts-annotation-toolbar {
+  right: 10%;
+  left: auto;
+  height: 40px;
+  padding-right: 40px;
+  width: auto;
+}
+
+.highcharts-popup.highcharts-annotation-toolbar button {
+  margin-top:0px;
+}
+
+.highcharts-popup.highcharts-annotation-toolbar > span {
+  display:block;
+  float:left;
+  padding: 12px;
+}
+
+
 .highcharts-popup {
   background-color: #fff;
   color: #666;

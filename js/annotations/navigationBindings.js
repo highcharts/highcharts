@@ -52,6 +52,26 @@ var bindingsUtils = {
                 }
             }
         });
+    },
+
+    /**
+     * Get field type according to value
+     *
+     * @private
+     * @function bindingsUtils.getFieldType
+     *
+     * @param {*} value
+     *        Atomic type (one of: string, number, boolean)
+     *
+     * @return {string}
+     *         Field type (one of: text, number, checkbox)
+     */
+    getFieldType: function (value) {
+        return {
+            string: 'text',
+            number: 'number',
+            boolean: 'checkbox'
+        }[typeof value];
     }
 };
 
@@ -1071,6 +1091,47 @@ var basicAnnotationsBindings = {
 
 
 H.setOptions({
+    lang: {
+        /**
+         * Configure the Popup strings in the chart. Requires the
+         * `annotations.js` or `annotations-advanced.src.js` module to be
+         * loaded.
+         *
+         * @since 7.0.0
+         * @type {Object}
+         * @optionparent lang.navigation
+         */
+        navigation: {
+            popup: {
+                simpleShapes: 'Simple shapes',
+                lines: 'Lines',
+                circle: 'Circle',
+                rectangle: 'Rectangle',
+                label: 'Label',
+                shapeOptions: 'Shape options',
+                typeOptions: 'Details',
+                fill: 'Fill',
+                format: 'Text',
+                strokeWidth: 'Line width',
+                stroke: 'Line color',
+                title: 'Title',
+                name: 'Name',
+                labelOptions: 'Label options',
+                labels: 'Labels',
+                backgroundColor: 'Background color',
+                backgroundColors: 'Background colors',
+                borderColor: 'Border color',
+                borderRadius: 'Border radius',
+                borderWidth: 'Border width',
+                style: 'Style',
+                padding: 'Padding',
+                fontSize: 'Font size',
+                color: 'Color',
+                height: 'Height',
+                shapes: 'Shape options'
+            }
+        }
+    },
     navigation: {
         /**
          * A CSS class name where all bindings will be attached to. Multiple
