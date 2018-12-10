@@ -782,9 +782,6 @@ H.Toolbar = function (options, langOptions, chart) {
     // General events collection which should be removed upon destroy/update:
     this.eventsToUnbind = [];
 
-    // add popup to main container
-    this.popup = new H.Popup(chart.container);
-
     if (this.guiEnabled) {
         this.createHTML();
 
@@ -1258,17 +1255,6 @@ H.Toolbar.prototype = {
         });
     },
     /*
-     * Show popup.
-     *
-     * @param {String} - type of popup (indicator, annotation)
-     * @param {Object} - options
-     * @param {Function} - callback called when user clicks on button in popup
-     *
-     */
-    showForm: function (type, options, callback) {
-        H.Popup.prototype.showForm(type, this.chart, options, callback);
-    },
-    /*
      * Add space for toolbar.
      *
      */
@@ -1426,21 +1412,5 @@ addEvent(H.NavigationBindings, 'deselectButton', function (event) {
             button = button.parentNode.parentNode;
         }
         gui.selectButton(button);
-    }
-});
-
-addEvent(H.NavigationBindings, 'showPopup', function (config) {
-    var gui = this.chart.stockToolbar;
-
-    if (gui && gui.guiEnabled) {
-        gui.showForm(config.formType, config.options, config.onSubmit);
-    }
-});
-
-addEvent(H.NavigationBindings, 'closePopup', function () {
-    var gui = this.chart.stockToolbar;
-
-    if (gui && gui.guiEnabled) {
-        gui.popup.closePopup();
     }
 });

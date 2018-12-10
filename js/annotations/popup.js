@@ -245,7 +245,7 @@ H.Popup.prototype = {
      */
     showPopup: function () {
 
-        var popupDiv = this.popup.container,
+        var popupDiv = this.container,
             toolbarClass = PREFIX + 'annotation-toolbar',
             popupCloseBtn = popupDiv
                             .querySelectorAll('.' + PREFIX + 'popup-close')[0];
@@ -283,10 +283,10 @@ H.Popup.prototype = {
      */
     showForm: function (type, chart, options, callback) {
 
-        this.popup = chart.stockToolbar.popup;
+        this.popup = chart.navigationBindings.popup;
 
         // show blank popup
-        this.showPopup.call(this);
+        this.showPopup();
 
         // indicator form
         if (type === 'indicators') {
@@ -1044,3 +1044,24 @@ H.Popup.prototype = {
         }
     }
 };
+
+addEvent(H.NavigationBindings, 'showPopup', function (config) {
+    if (!this.popup) {
+        // Add popup to main container
+        this.popup = new H.Popup(this.chart.container);
+    }
+
+    this.popup.showForm(
+        config.formType,
+        this.chart,
+        config.options,
+        config.onSubmit
+    );
+});
+
+addEvent(H.NavigationBindings, 'closePopup', function () {
+    if (this.popup) {
+        this.popup.closePopup();
+    }
+});
+
