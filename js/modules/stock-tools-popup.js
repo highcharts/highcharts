@@ -481,10 +481,11 @@ H.Popup.prototype = {
                         titleName = lang[option] || option;
 
                         if (!titleName.match(indexFilter)) {
-                            createElement(SPAN, {
-                                className: PREFIX + 'annotation-title',
-                                innerHTML: titleName
-                            }, null, parentDiv);
+                            storage.push([
+                                true,
+                                titleName,
+                                parentDiv
+                            ]);
                         }
 
                         addFormFields.call(
@@ -514,7 +515,14 @@ H.Popup.prototype = {
                 });
 
                 storage.forEach(function (genInput) {
-                    addInput.apply(genInput[0], genInput.splice(1));
+                    if (genInput[0] === true) {
+                        createElement(SPAN, {
+                            className: PREFIX + 'annotation-title',
+                            innerHTML: genInput[1]
+                        }, null, genInput[2]);
+                    } else {
+                        addInput.apply(genInput[0], genInput.splice(1));
+                    }
                 });
             }
         }
