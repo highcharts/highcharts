@@ -159,11 +159,11 @@ addEvent(Chart, 'init', function (e) {
             // Disable boost
             {
                 boost: {
-                    seriesThreshold: Number.MAX_SAFE_INTEGER
+                    seriesThreshold: Number.MAX_VALUE
                 },
                 plotOptions: {
                     series: {
-                        boostThreshold: Number.MAX_SAFE_INTEGER
+                        boostThreshold: Number.MAX_VALUE
                     }
                 }
             }

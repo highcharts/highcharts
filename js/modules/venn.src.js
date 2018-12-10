@@ -338,7 +338,7 @@ function getMarginFromCircles(point, internal, external) {
     var margin = internal.reduce(function (margin, circle) {
         var m = circle.r - getDistanceBetweenPoints(point, circle);
         return (m <= margin) ? m : margin;
-    }, Number.MAX_SAFE_INTEGER);
+    }, Number.MAX_VALUE);
 
     margin = external.reduce(function (margin, circle) {
         var m = getDistanceBetweenPoints(point, circle) - circle.r;
@@ -386,7 +386,7 @@ var getLabelPosition = function getLabelPosition(internal, external) {
         }, best);
     }, {
         point: undefined,
-        margin: -Number.MAX_SAFE_INTEGER
+        margin: -Number.MAX_VALUE
     }).point;
 
     // Use nelder mead to optimize the initial label position.
@@ -534,8 +534,8 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
             return relation.sets.length === 1;
         }).forEach(function (relation) {
             mapOfIdToCircles[relation.sets[0]] = relation.circle = {
-                x: Number.MAX_SAFE_INTEGER,
-                y: Number.MAX_SAFE_INTEGER,
+                x: Number.MAX_VALUE,
+                y: Number.MAX_VALUE,
                 r: Math.sqrt(relation.value / Math.PI)
             };
         });
@@ -639,7 +639,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
             // Return resulting coordinates.
             return best;
         }, {
-            loss: Number.MAX_SAFE_INTEGER,
+            loss: Number.MAX_VALUE,
             coordinates: undefined
         });
 

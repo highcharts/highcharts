@@ -154,7 +154,7 @@ var bindingsUtils = {
     attractToPoint: function (e, chart) {
         var x = chart.xAxis[0].toValue(e.chartX),
             y = chart.yAxis[0].toValue(e.chartY),
-            distX = Number.MAX_SAFE_INTEGER, // IE?
+            distX = Number.MAX_VALUE,
             closestPoint;
 
         chart.series.forEach(function (series) {
