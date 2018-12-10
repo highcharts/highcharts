@@ -114,6 +114,7 @@ H.NavigationBindings.annotationsEditable = {
     fibonacci: [],
     tunnel: ['background', 'line', 'height'],
     pitchfork: ['innerBackground', 'outerBackground'],
+    rect: ['shapes'],
     // Crooked lines, elliots, arrows etc:
     crookedLine: []
 };
@@ -938,8 +939,6 @@ var basicAnnotationsBindings = {
                         5
                     );
 
-                // TO DO: Is update broken?
-                // annotation.options.shapes[0].r = distance;
                 annotation.update({
                     shapes: [{
                         r: distance
@@ -964,37 +963,72 @@ var basicAnnotationsBindings = {
                 y = this.chart.yAxis[0].toValue(e.chartY),
                 options = {
                     langKey: 'rectangle',
-                    type: 'measure',
-                    typeOptions: {
+                    shapes: [{
+                        type: 'rect',
                         point: {
                             x: x,
                             y: y,
                             xAxis: 0,
                             yAxis: 0
                         },
-                        background: {
-                            width: 0,
-                            height: 0,
-                            strokeWidth: 0,
-                            stroke: '#ffffff'
-                        },
-                        crosshairX: {
-                            enabled: false
-                        },
-                        crosshairY: {
-                            enabled: false
-                        },
-                        label: {
-                            enabled: false
-                        }
-                    }
+                        width: 5,
+                        height: 5,
+
+                        controlPoints: [{
+                            positioner: function (target) {
+                                var xy = H.Annotation.MockPoint.pointToPixels(
+                                        target.points[0]
+                                    );
+
+                                return {
+                                    x: xy.x + target.options.width - 4,
+                                    y: xy.y + target.options.height - 4
+                                };
+                            },
+                            events: {
+                                drag: function (e, target) {
+                                    var xy = this.mouseMoveToTranslation(e);
+
+                                    target.options.width = Math.max(
+                                        target.options.width + xy.x,
+                                        5
+                                    );
+                                    target.options.height = Math.max(
+                                        target.options.height + xy.y,
+                                        5
+                                    );
+
+                                    target.redraw(false);
+                                }
+                            }
+                        }]
+                    }]
                 };
 
             return this.chart.addAnnotation(options);
         },
         /** @ignore */
         steps: [
-            bindingsUtils.updateRectSize
+            function (e, annotation) {
+                var xAxis = this.chart.xAxis[0],
+                    yAxis = this.chart.yAxis[0],
+                    point = annotation.options.shapes[0].point,
+                    x = xAxis.toPixels(point.x),
+                    y = yAxis.toPixels(point.y),
+                    width = Math.max(e.chartX - x, 5),
+                    height = Math.max(e.chartY - y, 5);
+
+                annotation.update({
+                    shapes: [{
+                        width: width,
+                        height: height,
+                        point: {
+                            x: point.x,
+                            y: point.y
+                        }
+                    }]
+                });
+            }
         ]
     },
     /**
