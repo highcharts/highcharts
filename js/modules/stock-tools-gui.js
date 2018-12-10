@@ -154,10 +154,10 @@ H.setOptions({
              * allowing unique CSS styling for each chart.
              *
              * @type      {string}
-             * @default 'bindings-wrapper'
+             * @default 'highcharts-bindings-wrapper'
              *
              */
-            className: 'bindings-wrapper',
+            className: 'highcharts-bindings-wrapper',
             /**
              * A CSS class name to apply to the container of buttons,
              * allowing unique CSS styling for each chart.
