@@ -4,6 +4,11 @@ Highcharts.setOptions({
             gui: {
                 thresholds: 'Click on a chart to add an alarm-line which will change color of the series'
             }
+        },
+        navigation: {
+            popup: {
+                thresholds: 'Color threshold'
+            }
         }
     }
 });
@@ -62,7 +67,9 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
                         symbol: 'horizontal-line.svg'
                     }
                 }
-            },
+            }
+        },
+        navigation: {
             bindings: {
                 thresholds: {
                     className: 'highcharts-threshold-annotation',
