@@ -102,7 +102,7 @@ H.extendAnnotation(VerticalLine, null, /** @lends Annotation.VerticalLine# */ {
     /**
      * A vertical line annotation.
      *
-     * @extends annotations.base
+     * @extends annotations.crooked-line
      * @excluding labels, shapes, controlPointOptions
      * @sample highcharts/annotations-advanced/vertical-line/
      *         Vertical line
@@ -118,7 +118,7 @@ H.extendAnnotation(VerticalLine, null, /** @lends Annotation.VerticalLine# */ {
             /**
              * Label options.
              *
-             * @extends annotations.base.labelOptions
+             * @extends annotations.crooked-line.labelOptions
              */
             label: {
                 offset: -40,
@@ -137,7 +137,7 @@ H.extendAnnotation(VerticalLine, null, /** @lends Annotation.VerticalLine# */ {
             /**
              * Connector options.
              *
-             * @extends annotations.base.shapeOptions
+             * @extends annotations.crooked-line.shapeOptions
              * @excluding height, r, type, width
              */
             connector: {

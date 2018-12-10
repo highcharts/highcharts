@@ -42,7 +42,7 @@ H.extendAnnotation(ElliottWave, CrookedLine, /** Annotation.CrookedLine# */ {
         typeOptions: {
             /**
              * @type {Object}
-             * @extends annotations.base.labelOptions
+             * @extends annotations.crooked-line.labelOptions
              * @apioption annotations.crooked-line.typeOptions.points.label
              */
 

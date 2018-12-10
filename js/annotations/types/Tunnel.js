@@ -148,7 +148,6 @@ H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
              * Background options.
              *
              * @type {Object}
-             * @extends annotations.base.shapes
              * @excluding height, point, points, r, type, width, markerEnd,
              *            markerStart
              */
@@ -169,7 +168,7 @@ H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
              * Options for the control point which controls
              * the annotation's height.
              *
-             * @extends annotations.base.controlPointOptions
+             * @extends annotations.crooked-line.controlPointOptions
              * @excluding positioner, events
              */
             heightControlPoint: {
@@ -204,7 +203,7 @@ H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
         },
 
         /**
-         * @extends annotations.base.controlPointOptions
+         * @extends annotations.crooked-line.controlPointOptions
          * @excluding positioner, events
          */
         controlPointOptions: {

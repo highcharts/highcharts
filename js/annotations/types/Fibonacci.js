@@ -215,7 +215,7 @@ H.extendAnnotation(Fibonacci, Tunnel, /** @lends Annotation.Fibonacci# */ {
              * An array with options for the labels.
              *
              * @type {Array<Object>}
-             * @extends annotations.base.labelOptions
+             * @extends annotations.crooked-line.labelOptions
              * @apioption annotations.fibonacci.typeOptions.labels
              */
             labels: []

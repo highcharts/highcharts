@@ -79,7 +79,6 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
     /**
      * A crooked line annotation.
      *
-     * @extends annotations.base
      * @excluding labels, shapes
      * @sample highcharts/annotations-advanced/crooked-line/
      *         Crooked line
@@ -122,7 +121,6 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
 
             /**
              * @type {number}
-             * @extends annotations.base.controlPointOptions
              * @excluding positioner, events
              * @apioption annotations.crooked-line.typeOptions.points.controlPoint
              */
@@ -131,7 +129,6 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
              * Line options.
              *
              * @type {Object}
-             * @extends annotations.base.shapes
              * @excluding height, point, points, r, type, width
              */
             line: {
@@ -140,7 +137,6 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
         },
 
         /**
-         * @extends annotations.base.controlPointOptions
          * @excluding positioner, events
          */
         controlPointOptions: {
