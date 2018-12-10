@@ -1,8 +1,10 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -14,18 +16,21 @@ var addEvent = H.addEvent,
     each = H.each;
 
 setOptions({
+    /**
+     * @optionparent chart
+     */
     chart: {
-      /**
-       * Whether to display errors on the chart. When `false`, the errors will
-       * be shown only in the console. Requires `debugger.js` module.
-       *
-       * @type {Boolean}
-       * @default true
-       * @sample highcharts/chart/display-errors/
-       *         Show errors on chart
-       * @since 7.0.0
-       * @apioption chart.displayErrors
-       */
+        /**
+         * Whether to display errors on the chart. When `false`, the errors will
+         * be shown only in the console.
+         *
+         * Requires `debugger.js` module.
+         *
+         * @sample highcharts/chart/display-errors/
+         *         Show errors on chart
+         *
+         * @since 7.0.0
+         */
         displayErrors: true
     }
 });

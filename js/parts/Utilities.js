@@ -1,17 +1,19 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 /**
  * Reference to the global SVGElement class as a workaround for a name conflict
  * in the Highcharts namespace.
  *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
+ *
  * @global
  * @typedef {global.SVGElement} GlobalSVGElement
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
  */
 
 /**
@@ -21,6 +23,10 @@
  *
  * @interface Highcharts.AnimationOptionsObject
  *//**
+ * A callback function to exectute when the animation finishes.
+ * @name Highcharts.AnimationOptionsObject#complete
+ * @type {Function|undefined}
+ *//**
  * The animation duration in milliseconds.
  * @name Highcharts.AnimationOptionsObject#duration
  * @type {number}
@@ -28,10 +34,6 @@
  * The name of an easing function as defined on the `Math` object.
  * @name Highcharts.AnimationOptionsObject#easing
  * @type {string|undefined}
- *//**
- * A callback function to exectute when the animation finishes.
- * @name Highcharts.AnimationOptionsObject#complete
- * @type {Function|undefined}
  *//**
  * A callback function to execute on each step of each attribute or CSS property
  * that's being animated. The first argument contains information about the
@@ -136,12 +138,12 @@
  * @name Highcharts.CSSObject#textOverflow
  * @type {string|undefined}
  *//**
- * Animated transition of selected element properties.
- * @name Highcharts.CSSObject#transition
- * @type {string|undefined}
- *//**
  * Top spacing of the element relative to the parent element.
  * @name Highcharts.CSSObject#top
+ * @type {string|undefined}
+ *//**
+ * Animated transition of selected element properties.
+ * @name Highcharts.CSSObject#transition
  * @type {string|undefined}
  *//**
  * Line break style of the element text.
@@ -169,25 +171,12 @@
  */
 
 /**
- * The iterator callback.
- *
- * @callback Highcharts.EachCallbackFunction<T>
- *
- * @param {T} item
- *        The array item.
- *
- * @param {number} index
- *        The item's index in the array.
- *
- * @param {Array<T>} arr
- *        The array that each is being applied to.
- */
-
-/**
  * The function callback to execute when the event is fired. The `this` context
  * contains the instance, that fired the event.
  *
- * @callback Highcharts.EventCallbackFunction
+ * @callback Highcharts.EventCallbackFunction<T>
+ *
+ * @param {T} this
  *
  * @param {Highcharts.Dictionary<*>} [eventArguments]
  *        Event arguments.
@@ -217,24 +206,6 @@
  * @typedef {global.HTMLElement} Highcharts.HTMLDOMElement
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
- */
-
-/**
- * Callback function to map the values in an array.
- *
- * @callback Highcharts.MapArrayCallbackFunction
- *
- * @param {*} value
- *        The value to replace.
- *
- * @param {number} index
- *        The index position of the value.
- *
- * @param {Array<*>} arr
- *        The array as a reference.
- *
- * @return {*}
- *         The new value as a replacement.
  */
 
 /**
@@ -2203,18 +2174,17 @@ H.objectEach = function (obj, fn, ctx) {
 /**
  * Iterate over an array.
  *
- * @function Highcharts.each<T>
- *
  * @deprecated
+ * @function Highcharts.each
  *
- * @param {Array<T>} arr
+ * @param {Array<*>} arr
  *        The array to iterate over.
  *
- * @param {Highcharts.EachCallbackFunction<T>} fn
+ * @param {Function} fn
  *        The iterator callback. It passes three arguments:
- *        * item - The array item.
- *        * index - The item's index in the array.
- *        * arr - The array that each is being applied to.
+ *        - `item`: The array item.
+ *        - `index`: The item's index in the array.
+ *        - `arr`: The array that each is being applied to.
  *
  * @param {*} [ctx]
  *        The context.
@@ -2223,45 +2193,43 @@ H.objectEach = function (obj, fn, ctx) {
 /**
  * Filter an array by a callback.
  *
+ * @deprecated
  * @function Highcharts.grep
  *
- * @deprecated
- *
- * @param {Array} arr
+ * @param {Array<*>} arr
  *        The array to filter.
  *
  * @param {Function} callback
  *        The callback function. The function receives the item as the first
  *        argument. Return `true` if the item is to be preserved.
  *
- * @return {Array}
+ * @return {Array<*>}
  *         A new, filtered array.
  */
 
 /**
  * Map an array by a callback.
  *
+ * @deprecated
  * @function Highcharts.map
  *
- * @deprecated
- *
- * @param {Array} arr
+ * @param {Array<*>} arr
  *        The array to map.
  *
  * @param {Function} fn
  *        The callback function. Return the new value for the new array.
  *
- * @return {Array}
+ * @return {Array<*>}
  *         A new array item with modified items.
  */
 
 /**
  * Reduce an array to a single value.
  *
- * @function Highcharts.reduce
  * @deprecated
+ * @function Highcharts.reduce
  *
- * @param {Array<*>} arr
+ * @param {Array} arr
  *        The array to reduce.
  *
  * @param {Function} fn
@@ -2280,10 +2248,10 @@ H.objectEach = function (obj, fn, ctx) {
  * Test whether at least one element in the array passes the test implemented by
  * the provided function.
  *
- * @function Highcharts.some
  * @deprecated
+ * @function Highcharts.some
  *
- * @param {Array} arr
+ * @param {Array<*>} arr
  *        The array to test
  *
  * @param {Function} fn
@@ -2313,16 +2281,16 @@ H.objectEach({
 /**
  * Add an event listener.
  *
- * @function Highcharts.addEvent
+ * @function Highcharts.addEvent<T>
  *
- * @param {*} el
+ * @param {T} el
  *        The element or object to add a listener to. It can be a
  *        {@link HTMLDOMElement}, an {@link SVGElement} or any other object.
  *
  * @param {string} type
  *        The event type.
  *
- * @param {Highcharts.EventCallbackFunction} fn
+ * @param {Highcharts.EventCallbackFunction<T>} fn
  *        The function callback to execute when the event is fired.
  *
  * @param {Highcharts.Dictionary<*>} options
@@ -2384,16 +2352,16 @@ H.addEvent = function (el, type, fn, options) {
 /**
  * Remove an event that was added with {@link Highcharts#addEvent}.
  *
- * @function Highcharts.removeEvent
+ * @function Highcharts.removeEvent<T>
  *
- * @param {*} el
+ * @param {T} el
  *        The element to remove events on.
  *
  * @param {string} [type]
  *        The type of events to remove. If undefined, all events are removed
  *        from the element.
  *
- * @param {Function} [fn]
+ * @param {Highcharts.EventCallbackFunction<T>} [fn]
  *        The specific callback to remove. If undefined, all events that match
  *        the element and optionally the type are removed.
  */

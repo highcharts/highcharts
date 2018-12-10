@@ -1,8 +1,10 @@
-/**
- * (c) 2010-2017 Kacper Madej
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Kacper Madej
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -46,8 +48,6 @@ seriesType('zigzag', 'sma',
              *
              * For example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
-             *
-             * @since 6.0.0
              */
             lowIndex: 2,
             /**
@@ -56,8 +56,6 @@ seriesType('zigzag', 'sma',
              *
              * For example using OHLC data, index=1 means the indicator will be
              * calculated using High values.
-             *
-             * @since 6.0.0
              */
             highIndex: 1,
             /**
@@ -65,12 +63,14 @@ seriesType('zigzag', 'sma',
              *
              * For example deviation=1 means the indicator will ignore all price
              * movements less than 1%.
-             *
-             * @since 6.0.0
              */
             deviation: 1
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameComponents: ['deviation'],
         nameSuffixes: ['%'],
         nameBase: 'Zig Zag',
@@ -213,13 +213,7 @@ seriesType('zigzag', 'sma',
  *
  * @extends   series,plotOptions.zigzag
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
  * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.zigzag
- */
-
-/**
- * @extends   series.sma.data
- * @product   highstock
- * @apioption series.zigzag.data
  */

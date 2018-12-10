@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
@@ -23,32 +30,41 @@ function getExtremeIndexInArray(arr, extreme) {
     return valueIndex;
 }
 
+/**
+ * The Aroon series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.aroon
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('aroon', 'sma',
     /**
      * Aroon. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
      *
-     * @extends plotOptions.sma
-     * @product highstock
      * @sample {highstock} stock/indicators/aroon
-     *                     Aroon
-     * @since 7.0.0
-     * @excluding
-     *             allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
-     *             showInNavigator,navigatorOptions,pointInterval,
-     *             pointIntervalUnit,pointPlacement,pointRange,pointStart
+     *         Aroon
+     *
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking
      * @optionparent plotOptions.aroon
      */
     {
         /**
          * Paramters used in calculation of aroon series points.
+         *
          * @excluding periods, index
          */
         params: {
             /**
              * Period for Aroon indicator
-             * @since 7.0.0
-             * @product highstock
              */
             period: 25
         },
@@ -60,26 +76,21 @@ H.seriesType('aroon', 'sma',
         },
         /**
          * aroonDown line options.
-         * @product highstock
          */
         aroonDown: {
             /**
              * Styles for an aroonDown line.
-             * @product highstock
              */
             styles: {
                 /**
                  * Pixel width of the line.
-                 * @product highstock
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line. If not set, it's inherited from
-                 * [plotOptions.aroon.color](
-                 * #plotOptions.aroon.color).
+                 * [plotOptions.aroon.color](#plotOptions.aroon.color).
                  *
                  * @type {Highcharts.ColorString}
-                 * @product highstock
                  */
                 lineColor: undefined
             }
@@ -87,7 +98,11 @@ H.seriesType('aroon', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ H.merge(multipleLinesMixin, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    H.merge(multipleLinesMixin, {
         nameBase: 'Aroon',
         pointArrayMap: ['y', 'aroonDown'],
         pointValKey: 'y',
@@ -146,24 +161,11 @@ H.seriesType('aroon', 'sma',
  * A Aroon indicator. If the [type](#series.aroon.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.aroon
- * @excluding   data,dataParser,dataURL
- *              allAreas,colorAxis,compare,compareBase,joinBy,
- *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
- *              pointIntervalUnit,pointPlacement,pointRange,pointStart
- * @product highstock
+ * @extends   series,plotOptions.aroon
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @apioption series.aroon
- */
-
-/**
- * An array of data points for the series. For the `aroon` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.aroon.data
  */

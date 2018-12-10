@@ -1,3 +1,9 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -10,22 +16,31 @@ var SMA = H.seriesTypes.sma,
     merge = H.merge,
     correctFloat = H.correctFloat;
 
+/**
+ * The Keltner Channels series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.keltnerchannels
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('keltnerchannels', 'sma',
     /**
-     * Keltner Channels. This series requires the `linkedTo`
-     * option to be set and should be loaded after the
-     * `stock/indicators/indicators.js`, `stock/indicators/atr.js`, and
-     * `stock/ema/.js`.
+     * Keltner Channels. This series requires the `linkedTo` option to be set
+     * and should be loaded after the `stock/indicators/indicators.js`,
+     * `stock/indicators/atr.js`, and `stock/ema/.js`.
      *
-     * @extends plotOptions.sma
-     * @product highstock
      * @sample {highstock} stock/indicators/keltner-channels
-     *        Keltner Channels
-     * @excluding
-     *        allAreas, colorAxis, compare, compareBase, joinBy, keys, stacking,
-     *        showInNavigator, navigatorOptions, pointInterval,
-     *        pointIntervalUnit, pointPlacement, pointRange, pointStart
-     * @since 7.0.0
+     *         Keltner Channels
+     *
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart,showInNavigator,
+     *               stacking
      * @optionparent plotOptions.keltnerchannels
      */
     {
@@ -33,14 +48,10 @@ H.seriesType('keltnerchannels', 'sma',
             period: 20,
             /**
              * The ATR period.
-             *
-             * @type {Number}
              */
             periodATR: 10,
             /**
              * The ATR multiplier.
-             *
-             * @type {Number}
              */
             multiplierATR: 2
         },
@@ -56,15 +67,11 @@ H.seriesType('keltnerchannels', 'sma',
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line. If not set, it's inherited from
                  * `plotOptions.keltnerchannels.color`
-                 *
-                 * @type {String}
                  */
                 lineColor: undefined
             }
@@ -90,7 +97,11 @@ H.seriesType('keltnerchannels', 'sma',
             approximation: 'averages'
         },
         lineWidth: 1
-    }, /** @lends Highcharts.Series.prototype */ merge(multipleLinesMixin, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    merge(multipleLinesMixin, {
         pointArrayMap: ['top', 'middle', 'bottom'],
         pointValKey: 'middle',
         nameBase: 'Keltner Channels',
@@ -169,24 +180,12 @@ H.seriesType('keltnerchannels', 'sma',
  * A Keltner Channels indicator. If the [type](#series.keltnerchannels.type)
  * option is not specified, it is inherited from[chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.keltnerchannels
- * @excluding
- *          allAreas,colorAxis,compare,compareBase,data,dataParser,dataURL,
- *          joinBy,keys,stacking,showInNavigator,navigatorOptions,pointInterval,
- *          pointIntervalUnit,pointPlacement,pointRange,pointStart
- * @product highstock
+ * @extends      series,plotOptions.keltnerchannels
+ * @since        7.0.0
+ * @product      highstock
+ * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ *               joinBy, keys, navigatorOptions, pointInterval,
+ *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
+ *               stacking, showInNavigator
  * @optionparent series.keltnerchannels
- */
-
-/**
- * An array of data points for the series. For the `keltnerchannels`
- * series type, points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.keltnerchannels.data
  */

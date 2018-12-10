@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import requiredIndicator from '../mixins/indicator-required.js';
@@ -7,12 +14,14 @@ var correctFloat = H.correctFloat,
     TEMA = H.seriesTypes.tema;
 
 /**
-* The TRIX series Type
-*
-* @constructor seriesTypes.trix
-* @augments seriesTypes.tema
-*/
-
+ * The TRIX series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.trix
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('trix', 'tema',
     /**
      * Normalized average true range indicator (NATR). This series requires
@@ -21,17 +30,23 @@ H.seriesType('trix', 'tema',
      * Requires https://code.highcharts.com/stock/indicators/ema.js
      * and https://code.highcharts.com/stock/indicators/tema.js.
      *
-     * @extends plotOptions.tema
-     * @product highstock
-     * @sample {highstock} stock/indicators/trix TRIX indicator
-     * @excluding
-     *      allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
-     *      showInNavigator,navigatorOptions,pointInterval,
-     *      pointIntervalUnit,pointPlacement,pointRange,pointStart,joinBy
-     * @since 7.0.0
+     * @sample {highstock} stock/indicators/trix
+     *         TRIX indicator
+     *
+     * @extends      plotOptions.tema
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking
      * @optionparent plotOptions.trix
      */
-    {}, {
+    {},
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         init: function () {
             var args = arguments,
                 ctx = this;
@@ -62,27 +77,18 @@ H.seriesType('trix', 'tema',
 
             return TRIXPoint;
         }
-    });
+    }
+);
 
 /**
- * A `TRIX` series. If the [type](#series.tema.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
+ * A `TRIX` series. If the [type](#series.tema.type) option is not specified, it
+ * is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.tema
- * @excluding
- *          allAreas,colorAxis,compare,compareBase,data,dataParser,dataURL,
- *          joinBy,keys,stacking,showInNavigator,navigatorOptions,pointInterval,
- *          pointIntervalUnit,pointPlacement,pointRange,pointStart,joinBy
- * @product highstock
+ * @extends   series,plotOptions.tema
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @apioption series.trix
- */
-
-/**
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.sma.data
- * @product highstock
- * @apioption series.trix.data
  */

@@ -1,3 +1,8 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -12,6 +17,8 @@ function toFixed(a, n) {
 }
 
 /**
+ * The RSI series type.
+ *
  * @private
  * @class
  * @name Highcharts.seriesTypes.rsi
@@ -40,12 +47,14 @@ H.seriesType('rsi', 'sma',
             period: 14,
             /**
              * Number of maximum decimals that are used in RSI calculations.
-             *
-             * @since 6.0.0
              */
             decimals: 4
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         getValues: function (series, params) {
             var period = params.period,
                 xVal = series.xData,
@@ -146,17 +155,7 @@ H.seriesType('rsi', 'sma',
  *
  * @extends   series,plotOptions.rsi
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
  * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.rsi
- */
-
-/**
- * An array of data points for the series. For the `rsi` series type,
- * points are calculated dynamically.
- *
- * @extends   series.line.data
- * @since     6.0.0
- * @product   highstock
- * @apioption series.rsi.data
  */

@@ -1,3 +1,9 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -23,21 +29,31 @@ function getPointLB(low, base) {
     return low * (correctFloat(1 - 2 * base));
 }
 
+/**
+ * The ABands series type
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.abands
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('abands', 'sma',
     /**
      * Acceleration bands (ABANDS). This series requires the `linkedTo` option
      * to be set and should be loaded after the
      * `stock/indicators/indicators.js`.
      *
-     * @extends plotOptions.sma
-     * @product highstock
      * @sample {highstock} stock/indicators/acceleration-bands
-     *        Acceleration Bands
-     * @excluding
-     *        allAreas, colorAxis, compare, compareBase, joinBy, keys, stacking,
-     *        showInNavigator, navigatorOptions, pointInterval,
-     *        pointIntervalUnit, pointPlacement, pointRange, pointStart, joinBy
-     * @since 7.0.0
+     *         Acceleration Bands
+     *
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking,
      * @optionparent plotOptions.abands
      */
     {
@@ -46,7 +62,6 @@ H.seriesType('abands', 'sma',
             /**
              * The algorithms factor value used to calculate bands.
              *
-             * @type {Number}
              * @product highstock
              */
             factor: 0.001,
@@ -57,8 +72,6 @@ H.seriesType('abands', 'sma',
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
                  */
                 lineWidth: 1
             }
@@ -67,8 +80,6 @@ H.seriesType('abands', 'sma',
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
                  */
                 lineWidth: 1
             }
@@ -76,7 +87,11 @@ H.seriesType('abands', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ merge(multipleLinesMixin, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    merge(multipleLinesMixin, {
         pointArrayMap: ['top', 'middle', 'bottom'],
         pointValKey: 'middle',
         nameBase: 'Acceleration Bands',
@@ -168,28 +183,15 @@ H.seriesType('abands', 'sma',
 );
 
 /**
- * An Acceleration bands indicator. If the [type](#series.pc.type) option
- * is not specified, it is inherited from[chart.type](#chart.type).
+ * An Acceleration bands indicator. If the [type](#series.pc.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.abands
- * @excluding
- *          allAreas, colorAxis, compare, compareBase, data, dataParser,
- *          dataURLjoinBy, keys, stacking, showInNavigator, navigatorOptions,
- *          pointInterval, pointIntervalUnit, pointPlacement, pointRange,
- *          pointStart, joinBy
- * @product highstock
+ * @extends      series,plotOptions.abands
+ * @since        7.0.0
+ * @product      highstock
+ * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ *               joinBy, keys, navigatorOptions, pointInterval,
+ *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
+ *               stacking, showInNavigator,
  * @optionparent series.abands
- */
-
-/**
- * An array of data points for the series. For the `abands` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.abands.data
  */

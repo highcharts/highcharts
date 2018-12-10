@@ -1,10 +1,12 @@
-/**
- * (c) 2009-2018 Øystein Moseng
+/* *
  *
- * Utility functions for sonification.
+ *  (c) 2009-2018 Øystein Moseng
  *
- * License: www.highcharts.com/license
- */
+ *  Utility functions for sonification.
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -16,11 +18,14 @@ import musicalFrequencies from 'musicalFrequencies.js';
  * provides an interface to register them, and emit signals. The word "event" is
  * not used to avoid confusion with TimelineEvents.
  *
- * @private
- * @class Highcharts.SignalHandler
+ * @requires module:modules/sonification
  *
- * @param   {Array<string>} supportedSignals
- *          List of supported signal names.
+ * @private
+ * @class
+ * @name Highcharts.SignalHandler
+ *
+ * @param {Array<string>} supportedSignals
+ *        List of supported signal names.
  */
 function SignalHandler(supportedSignals) {
     this.init(supportedSignals || []);
@@ -34,9 +39,9 @@ SignalHandler.prototype.init = function (supportedSignals) {
 /**
  * Register a set of signal callbacks with this SignalHandler.
  * Multiple signal callbacks can be registered for the same signal.
- *
- * @param   {object} signals An object that contains a mapping from the signal
- *          name to the callbacks. Only supported events are considered.
+ * @private
+ * @param {object} signals - An object that contains a mapping from the signal
+ * name to the callbacks. Only supported events are considered.
  */
 SignalHandler.prototype.registerSignalCallbacks = function (signals) {
     var signalHandler = this;
@@ -55,10 +60,9 @@ SignalHandler.prototype.registerSignalCallbacks = function (signals) {
 
 /**
  * Clear signal callbacks, optionally by name.
- *
  * @private
- * @param   {Array<string>} [signalNames] A list of signal names to clear. If
- *          not supplied, all signal callbacks are removed.
+ * @param {Array<string>} [signalNames] - A list of signal names to clear. If
+ * not supplied, all signal callbacks are removed.
  */
 SignalHandler.prototype.clearSignalCallbacks = function (signalNames) {
     var signalHandler = this;
@@ -77,10 +81,9 @@ SignalHandler.prototype.clearSignalCallbacks = function (signalNames) {
 /**
  * Emit a signal. Does nothing if the signal does not exist, or has no
  * registered callbacks.
- *
  * @private
- * @param   {string} signalNames Name of signal to emit.
- * @param   {*} data Data to pass to the callback.
+ * @param {string} signalNames - Name of signal to emit.
+ * @param {*} data - Data to pass to the callback.
  */
 SignalHandler.prototype.emitSignal = function (signalName, data) {
     var retval;
@@ -106,13 +109,11 @@ var utilities = {
      * Get a musical scale by specifying the semitones from 1-12 to include.
      *  1: C, 2: C#, 3: D, 4: D#, 5: E, 6: F,
      *  7: F#, 8: G, 9: G#, 10: A, 11: Bb, 12: B
-     *
      * @private
-     * @param {Array<number>} semitones Array of semitones from 1-12 to include
-     *      in the scale. Duplicate entries are ignored.
-     *
+     * @param {Array<number>} semitones - Array of semitones from 1-12 to
+     * include in the scale. Duplicate entries are ignored.
      * @return {Array<number>} Array of frequencies from C0 to C8 that are
-     *  included in this scale.
+     * included in this scale.
      */
     getMusicalScale: function (semitones) {
         return musicalFrequencies.filter(function (freq, i) {
@@ -126,8 +127,8 @@ var utilities = {
     /**
      * Calculate the extreme values in a chart for a data prop.
      * @private
-     * @param {Highcharts.Chart} chart The chart
-     * @param {string} prop The data prop to find extremes for
+     * @param {Highcharts.Chart} chart - The chart
+     * @param {string} prop - The data prop to find extremes for
      * @return {object} Object with min and max properties
      */
     calculateDataExtremes: function (chart, prop) {
@@ -151,9 +152,9 @@ var utilities = {
      * Translate a value on a virtual axis. Creates a new, virtual, axis with a
      * min and max, and maps the relative value onto this axis.
      * @private
-     * @param {number} value The relative data value to translate.
-     * @param {object} dataExtremes The possible extremes for this value.
-     * @param {object} limits Limits for the virtual axis.
+     * @param {number} value - The relative data value to translate.
+     * @param {object} dataExtremes - The possible extremes for this value.
+     * @param {object} limits - Limits for the virtual axis.
      * @return {number} The value mapped to the virtual axis.
      */
     virtualAxisTranslate: function (value, dataExtremes, limits) {

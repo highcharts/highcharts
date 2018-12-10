@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
@@ -9,35 +16,41 @@ var AROON = H.seriesTypes.aroon,
 /**
  * The Aroon Oscillator series type.
  *
- * @constructor seriesTypes.aroonoscillator
- * @augments seriesTypes.aroon
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.aroonoscillator
+ *
+ * @augments Highcharts.Series
  */
 H.seriesType('aroonoscillator', 'aroon',
     /**
-     * Aroon Oscillator. This series requires the `linkedTo` option to be
-     * set and should be loaded after the `stock/indicators/indicators.js`
-     * and `stock/indicators/aroon.js`.
+     * Aroon Oscillator. This series requires the `linkedTo` option to be set
+     * and should be loaded after the `stock/indicators/indicators.js` and
+     * `stock/indicators/aroon.js`.
      *
-     * @extends plotOptions.aroon
-     * @product highstock
      * @sample {highstock} stock/indicators/aroon-oscillator
-     *                        Aroon Oscillator
-     * @since 7.0.0
-     * @excluding
-     *             allAreas,aroonDown,colorAxis,compare,compareBase,joinBy,
-     *             keys,stacking,showInNavigator,navigatorOptions,pointInterval,
-     *             pointIntervalUnit,pointPlacement,pointRange,pointStart
+     *         Aroon Oscillator
+     *
+     * @extends      plotOptions.aroon
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, aroonDown, colorAxis, compare, compareBase,
+     *               joinBy, keys, navigatorOptions, pointInterval,
+     *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
+     *               showInNavigator, stacking
      * @optionparent plotOptions.aroonoscillator
      */
     {
         /**
          * Paramters used in calculation of aroon oscillator series points.
+         *
          * @excluding periods, index
          */
         params: {
             /**
              * Period for Aroon Oscillator
-             * @since 7.0.0
+             *
+             * @since   7.0.0
              * @product highstock
              */
             period: 25
@@ -45,7 +58,11 @@ H.seriesType('aroonoscillator', 'aroon',
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b>: {point.y}'
         }
-    }, /** @lends Highcharts.Series.prototype */ H.merge(multipleLinesMixin, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    H.merge(multipleLinesMixin, {
         nameBase: 'Aroon Oscillator',
         pointArrayMap: ['y'],
         pointValKey: 'y',
@@ -98,21 +115,12 @@ H.seriesType('aroonoscillator', 'aroon',
  * An `Aroon Oscillator` series. If the [type](#series.aroonoscillator.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.aroonoscillator
- * @excluding   data,dataParser,dataURL
- *              allAreas,aroonDown,colorAxis,compare,compareBase,joinBy,
- *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
- *              pointIntervalUnit,pointPlacement,pointRange,pointStart
- * @product highstock
+ * @extends   series,plotOptions.aroonoscillator
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, aroonDown, colorAxis, compare, compareBase, dataParser,
+ *            dataURL, joinBy, keys, navigatorOptions, pointInterval,
+ *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
+ *            showInNavigator, stacking
  * @apioption series.aroonoscillator
- */
-
-/**
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.aroon.data
- * @product highstock
- * @apioption series.aroonoscillator.data
  */

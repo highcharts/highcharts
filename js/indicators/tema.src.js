@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
@@ -9,31 +16,39 @@ var isArray = H.isArray,
     correctFloat = H.correctFloat;
 
 /**
-* The TEMA series Type
-*
-* @constructor seriesTypes.tema
-* @augments seriesTypes.ema
-*/
-
+ * The TEMA series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.tema
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('tema', 'ema',
     /**
      * Normalized average true range indicator (NATR). This series requires
      * `linkedTo` option to be set and should be loaded after the
      * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
      *
-     * Requires https://code.highcharts.com/stock/indicators/ema.js.
+     * Requires `https://code.highcharts.com/stock/indicators/ema.js`.
      *
-     * @extends plotOptions.ema
-     * @product highstock
-     * @sample {highstock} stock/indicators/tema TEMA indicator
-     * @excluding
-     *      allAreas,colorAxis,compare,compareBase,joinBy,keys,stacking,
-     *      showInNavigator,navigatorOptions,pointInterval,
-     *      pointIntervalUnit,pointPlacement,pointRange,pointStart,joinBy
-     * @since 7.0.0
+     * @sample {highstock} stock/indicators/tema
+     *         TEMA indicator
+     *
+     * @extends      plotOptions.ema
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking
      * @optionparent plotOptions.tema
      */
-    {}, {
+    {},
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         init: function () {
             var args = arguments,
                 ctx = this;
@@ -211,27 +226,18 @@ H.seriesType('tema', 'ema',
                 yData: yDataTema
             };
         }
-    });
+    }
+);
 
 /**
  * A `TEMA` series. If the [type](#series.ema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.ema
- * @excluding
- *          allAreas,colorAxis,compare,compareBase,data,dataParser,dataURL,
- *          joinBy,keys,stacking,showInNavigator,navigatorOptions,pointInterval,
- *          pointIntervalUnit,pointPlacement,pointRange,pointStart,joinBy
- * @product highstock
+ * @extends   series,plotOptions.ema
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @apioption series.tema
- */
-
-/**
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.sma.data
- * @product highstock
- * @apioption series.tema.data
  */

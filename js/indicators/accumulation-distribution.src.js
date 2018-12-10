@@ -1,3 +1,8 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -53,7 +58,11 @@ seriesType('ad', 'sma',
              */
             volumeSeriesID: 'volume'
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameComponents: false,
         nameBase: 'Accumulation/Distribution',
         getValues: function (series, params) {
@@ -115,14 +124,7 @@ seriesType('ad', 'sma',
  *
  * @extends   series,plotOptions.ad
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
+ * @excluding dataParser, dataURL
  * @product   highstock
  * @apioption series.ad
- */
-
-/**
- * @extends   series.sma.data
- * @since     6.0.0
- * @product   highstock
- * @apioption series.ad.data
  */

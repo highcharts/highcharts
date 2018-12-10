@@ -1,12 +1,15 @@
-/**
- * (c) 2009-2018 Øystein Moseng
+/* *
  *
- * Sonification module for Highcharts
+ *  (c) 2009-2018 Øystein Moseng
  *
- * License: www.highcharts.com/license
- */
+ *  Sonification module for Highcharts
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
+
 import H from '../../parts/Globals.js';
 import Instrument from 'Instrument.js';
 import instruments from 'instrumentDefinitions.js';
@@ -19,14 +22,19 @@ import TimelineClasses from 'Timeline.js';
 // Expose on the Highcharts object
 
 /**
- * Global classes and objects related to sonification. Requires the sonification
- * module.
+ * Global classes and objects related to sonification.
+ *
+ * @requires module:modules/sonification
+ *
  * @name Highcharts.sonification
  * @type {Highcharts.SonificationObject}
  */
 
 /**
  * Global classes and objects related to sonification.
+ *
+ * @requires module:modules/sonification
+ *
  * @interface Highcharts.SonificationObject
  *//**
  * Note fade-out-time in milliseconds. Most notes are faded out quickly by

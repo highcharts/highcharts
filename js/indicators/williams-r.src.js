@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import reduceArrayMixin from '../mixins/reduce-array.js';
@@ -6,20 +13,29 @@ import reduceArrayMixin from '../mixins/reduce-array.js';
 var isArray = H.isArray,
     getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 
+/**
+ * The Williams %R series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.williamsr
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('williamsr', 'sma',
     /**
      * Williams %R. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
      *
-     * @extends plotOptions.sma
-     * @product highstock
      * @sample {highstock} stock/indicators/williams-r
-     *                     Williams %R
-     * @since 7.0.0
-     * @excluding
-     *             allAreas,colorAxis,joinBy,keys,stacking,
-     *             showInNavigator,navigatorOptions,pointInterval,
-     *             pointIntervalUnit,pointPlacement,pointRange,pointStart
+     *         Williams %R
+     *
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
      * @optionparent plotOptions.williamsr
      */
     {
@@ -30,12 +46,14 @@ H.seriesType('williamsr', 'sma',
         params: {
             /**
              * Period for Williams %R oscillator
-             * @since 7.0.0
-             * @product highstock
              */
             period: 14
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameBase: 'Williams %R',
         getValues: function (series, params) {
             var period = params.period,
@@ -98,24 +116,11 @@ H.seriesType('williamsr', 'sma',
  * A `Williams %R Oscillator` series. If the [type](#series.williamsr.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.williamsr
- * @excluding   data,dataParser,dataURL
- *              allAreas,colorAxis,joinBy,
- *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
- *              pointIntervalUnit,pointPlacement,pointRange,pointStart
- * @product highstock
+ * @extends   series,plotOptions.williamsr
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
+ *            navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @apioption series.williamsr
- */
-
-/**
- * An array of data points for the series. For the `williams-r` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.williamsr.data
  */

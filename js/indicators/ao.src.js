@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -6,20 +13,29 @@ var correctFloat = H.correctFloat,
     isArray = H.isArray,
     noop = H.noop;
 
+/**
+ * The AO series type
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.ao
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('ao', 'sma',
     /**
      * Awesome Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`
      *
-     * @extends plotOptions.sma
-     * @product highstock
      * @sample {highstock} stock/indicators/ao
-     *                     Awesome
-     * @since 7.0.0
-     * @excluding
-     *             allAreas,colorAxis,joinBy,keys,stacking,
-     *             showInNavigator,navigatorOptions,params,pointInterval,
-     *             pointIntervalUnit,pointPlacement,pointRange,pointStart
+     *         Awesome
+     *
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               params, pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
      * @optionparent plotOptions.ao
      */
     {
@@ -29,9 +45,9 @@ H.seriesType('ao', 'sma',
          * takes precedence and the `greaterBarColor` is ignored.
          *
          * @sample {highstock} stock/indicators/ao/
-         *          greaterBarColor
+         *         greaterBarColor
          *
-         * @type {Highcharts.ColorString}
+         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
         greaterBarColor: '#06B535',
@@ -41,9 +57,9 @@ H.seriesType('ao', 'sma',
          * takes precedence and the `lowerBarColor` is ignored.
          *
          * @sample {highstock} stock/indicators/ao/
-         *          lowerBarColor
+         *         lowerBarColor
          *
-         * @type {Highcharts.ColorString}
+         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
         lowerBarColor: '#F21313',
@@ -57,7 +73,11 @@ H.seriesType('ao', 'sma',
                 }
             }
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameBase: 'AO',
         nameComponents: false,
 
@@ -174,24 +194,11 @@ H.seriesType('ao', 'sma',
  * An `AO` series. If the [type](#series.ao.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.ao
- * @excluding   data,dataParser,dataURL
- *              allAreas,colorAxis,joinBy,
- *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
- *              pointIntervalUnit,pointPlacement,pointRange,pointStart
- * @product highstock
+ * @extends   series,plotOptions.ao
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
+ *            navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @apioption series.ao
- */
-
-/**
- * An array of data points for the series. For the `ao` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.ao.data
  */

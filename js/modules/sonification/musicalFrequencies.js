@@ -1,10 +1,12 @@
-/**
- * (c) 2009-2018 Øystein Moseng
+/* *
  *
- * List of musical frequencies from C0 to C8.
+ *  (c) 2009-2018 Øystein Moseng
  *
- * License: www.highcharts.com/license
- */
+ *  List of musical frequencies from C0 to C8.
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 

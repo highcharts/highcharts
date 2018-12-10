@@ -7,14 +7,15 @@
 
 "use strict";
 
-const parseTag = require('jsdoc/tag/type').parse;
+// const Doclet = require('jsdoc/doclet.js').Doclet;
+// const colors = require('colors');
 const exec = require('child_process').execSync;
-const logger = require('jsdoc/util/logger');
-const Doclet = require('jsdoc/doclet.js').Doclet;
-const colors = require('colors');
 const fs = require('fs');
 const getPalette = require('highcharts-assembler/src/process.js').getPalette;
-const path = require('path');
+const logger = require('jsdoc/util/logger');
+// const parseTag = require('jsdoc/tag/type').parse;
+// const path = require('path');
+const semver = require('semver')
 
 const hcRoot = process.cwd(); // __dirname + '/../../../..';
 const parseBreak = /[\n\r]+/;
@@ -180,39 +181,31 @@ function appendComment(node, lines) {
     node.event = 'jsdocCommentFound';
 }
 
-function nodeVisitor(node, e, parser, currentSourceName) {
-    var exp,
-        args,
-        target,
+function nodeVisitor(node, e, _, currentSourceName) {
+    var target,
         parent,
-        comment,
         properties,
         fullPath,
         s,
-        rawComment,
-        shouldIgnore = false
+        rawComment
     ;
 
     if (node.highcharts && node.highcharts.isOption) {
-
-        shouldIgnore = (e.comment || '').indexOf('@ignore-option') > 0;
-
-        if (shouldIgnore) {
+        node.ignored = (
+            node.ignored ||
+            (e.comment || '').indexOf('@ignore-option') > 0
+        );
+        if (node.ignored) {
             removeOption(node.highcharts.fullname);
         } else if ((e.comment || '').indexOf('@apioption') < 0) {
-            appendComment(e, [
-            '@optionparent ' + node.highcharts.fullname
-            ]);
+            appendComment(e, ['@optionparent ' + node.highcharts.fullname]);
         } else if ((e.comment || '').indexOf('@apioption tooltip') >= 0) {
             console.error(e.comment);
         }
-
         return;
     }
 
-    if (!node.leadingComments ||
-        node.leadingComments.length === 0
-    ) {
+    if ((node.leadingComments || []).length === 0) {
         return;
     }
 
@@ -322,6 +315,26 @@ function isStr (what) {
     return (typeof what === 'string' || what instanceof String);
 };
 
+function removeIgnoredOptions(node) {
+
+    if (!node.children) {
+        return;
+    }
+
+    Object
+        .keys(node.children)
+        .forEach(childName => {
+            const childNode = node.children[childName];
+            if (childNode.doclet &&
+                childNode.doclet.ignored
+            ) {
+                delete node.children[childName];
+            } else {
+                removeIgnoredOptions(childNode);
+            }
+        });
+}
+
 function improveDescription(node) {
 
     let description = (node.doclet && node.doclet.description);
@@ -352,7 +365,49 @@ function improveDescription(node) {
     }
 }
 
-function inferType(node) {
+function _inferVersion(node, version) {
+    if (!node.doclet ||
+        !node.doclet.description
+    ) {
+        return;
+    }
+    if (node.doclet.since &&
+        !semver.valid(node.doclet.since)
+    ) {
+        node.doclet.since += '.0';
+        if (!semver.valid(node.doclet.since)) {
+            delete node.doclet.since;
+        }
+    }
+    if (!semver.valid(version)) {
+        version = '1.0.0';
+    }
+    if (!node.doclet.since ||
+        semver.compare(node.doclet.since, version) < 0
+    ) {
+        node.doclet.since = version;
+    }
+}
+
+function inferVersion(node, version) {
+
+    _inferVersion(node, version);
+
+    const children = node.children;
+
+    if (!children) {
+        return;
+    }
+
+    Object
+        .keys(children)
+        .map(key => children[key])
+        .forEach(child => inferVersion(
+            child, node.doclet && node.doclet.since
+        ));
+}
+
+function _inferType(node) {
     var defVal;
 
     node.doclet = node.doclet || {};
@@ -403,6 +458,29 @@ function inferType(node) {
         node.doclet.type.names.push('*');
     }
 
+}
+
+function inferType(obj) {
+    _inferType(obj);
+
+    if (obj.meta && obj.meta.filename) {
+        // Remove user-identifiable info in filename
+        obj.meta.filename = obj.meta.filename.substr(
+            obj.meta.filename.indexOf('highcharts')
+        );
+    }
+
+    // Infer types
+    if (obj.children) {
+        Object.keys(obj.children).forEach(name => {
+            // work around #8260:
+            if (name === '' || name === 'undefined') {
+                delete obj.children[name];
+            } else if (name[0] !== '_') {
+                inferType(obj.children[name]);
+            }
+        });
+    }
 }
 
 function augmentOption(path, obj) {
@@ -535,11 +613,7 @@ function sortNodes (node) {
 exports.defineTags = function (dictionary) {
     dictionary.defineTag('apioption', {
         onTagged: function (doclet, tagObj) {
-
-            if (doclet.ignored) {
-                return removeOption(tagObj.value);
-            }
-
+            if (doclet.ignored) removeOption(tagObj.value);
             augmentOption(tagObj.value, doclet);
         }
     });
@@ -579,8 +653,6 @@ exports.defineTags = function (dictionary) {
     dictionary.defineTag('optionparent', {
         onTagged: function (doclet, tagObj) {
             if (doclet.ignored) return removeOption(tagObj.value);
-
-            //doclet.fullname = tagObj.value;
             augmentOption(tagObj.value, doclet);
         }
     });
@@ -713,9 +785,8 @@ exports.handlers = {
         )) {
             console.error(
 `Warning: Detected ${match.length} cases of a comment followed by } in
-${e.filename}.
-This may lead to loose doclets not being parsed into the API. Move them up
-before functional code for JSDoc to see them.`.yellow
+${e.filename}. This may lead to loose doclets not being parsed into the API.
+Move them up before functional code for JSDoc to see them.`.yellow
             );
         }
 
@@ -735,30 +806,9 @@ before functional code for JSDoc to see them.`.yellow
         options._meta.branch = exec('git rev-parse --abbrev-ref HEAD', {cwd: process.cwd()}).toString().trim();
         options._meta.date = (new Date()).toString();
 
-        function inferTypeForTree(obj) {
-            inferType(obj);
-
-            if (obj.meta && obj.meta.filename) {
-                // Remove user-identifiable info in filename
-                obj.meta.filename = obj.meta.filename.substr(
-                    obj.meta.filename.indexOf('highcharts')
-                );
-            }
-
-            // Infer types
-            if (obj.children) {
-                Object.keys(obj.children).forEach(name => {
-                    // work around #8260:
-                    if (name === '' || name === 'undefined') {
-                        delete obj.children[name];
-                    } else if (name[0] !== '_') {
-                        inferTypeForTree(obj.children[name]);
-                    }
-                });
-            }
-        }
-
-        inferTypeForTree({children: options});
+        removeIgnoredOptions({children: options});
+        inferVersion({children: options});
+        inferType({children: options});
         improveDescription({children: options});
 
         function addSeriesTypeDescription(type) {
@@ -795,8 +845,14 @@ Highcharts.chart('container', {
 });
 </pre>
             `;
-            options.plotOptions.children[node].doclet.description += s;
-            if (options.series.children[node]) {
+            if (options.plotOptions.children[node] &&
+                options.plotOptions.children[node].doclet.description
+            ) {
+                options.plotOptions.children[node].doclet.description += s;
+            }
+            if (options.series.children[node] &&
+                options.series.children[node].doclet.description
+            ) {
                 options.series.children[node].doclet.description += s;
             }
         }

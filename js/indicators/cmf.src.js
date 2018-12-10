@@ -1,11 +1,14 @@
-/**
- * (c) 2010-2017 Highsoft AS
- * Author: Sebastian Domas
+/* *
  *
- * Chaikin Money Flow indicator for Highstock
+ *  (c) 2010-2018 Highsoft AS
  *
- * License: www.highcharts.com/license
- */
+ *  Author: Sebastian Domas
+ *
+ *  Chaikin Money Flow indicator for Highstock
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 /**
  * @private
@@ -29,6 +32,8 @@
 import H from '../parts/Globals.js';
 
 /**
+ * The CMF series type.
+ *
  * @private
  * @class
  * @name Highcharts.seriesTypes.cmf
@@ -57,17 +62,18 @@ H.seriesType('cmf', 'sma',
              */
             volumeSeriesID: 'volume'
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameBase: 'Chaikin Money Flow',
         /**
          * Checks if the series and volumeSeries are accessible, number of
          * points.x is longer than period, is series has OHLC data
-         *
-         * @function Highcharts.seriesTypes.cmf#isValid
-         *
-         * @returns {boolean}
-         *          True if series is valid and can be computed, otherwise
-         *          false.
+         * @private
+         * @return {boolean} True if series is valid and can be computed,
+         * otherwise false.
          */
         isValid: function () {
             var chart = this.chart,
@@ -101,13 +107,10 @@ H.seriesType('cmf', 'sma',
 
         /**
          * Returns indicator's data.
-         *
-         * @function Highcharts.seriesTypes.cmf#getValues
-         *
-         * @returns {boolean|Highcharts.CmfValuesObject}
-         *          Returns false if the indicator is not valid, otherwise
-         *          returns Values object
-        **/
+         * @private
+         * @return {boolean|Highcharts.CmfValuesObject} Returns false if the
+         * indicator is not valid, otherwise returns Values object.
+         */
         getValues: function (series, params) {
             if (!this.isValid()) {
                 return false;
@@ -122,23 +125,14 @@ H.seriesType('cmf', 'sma',
         },
 
         /**
-         * @function Highcharts.seriesTypes.cmf#getMoneyFlow
-         *
-         * @param {Array<number>} xData
-         *        x timestamp values
-         *
-         * @param {Array<number>} seriesYData
-         *        yData of basic series
-         *
-         * @param {Array<number>} volumeSeriesYData
-         *        yData of volume series
-         *
-         * @param {number} period
-         *        indicator's param
-         *
-         * @return {Highcharts.CmfValuesObject}
-         *         object containing computed money flow data
-        **/
+         * @private
+         * @param {Array<number>} xData - x timestamp values
+         * @param {Array<number>} seriesYData - yData of basic series
+         * @param {Array<number>} volumeSeriesYData - yData of volume series
+         * @param {number} period - indicator's param
+         * @return {Highcharts.CmfValuesObject} object containing computed money
+         * flow data
+         */
         getMoneyFlow: function (xData, seriesYData, volumeSeriesYData, period) {
             var len = seriesYData.length,
                 moneyFlowVolume = [],
@@ -154,18 +148,10 @@ H.seriesType('cmf', 'sma',
             /**
              * Calculates money flow volume, changes i, nullIndex vars from
              * upper scope!
-             *
              * @private
-             * @function getMoneyFlowVolume
-             *
-             * @param {Array<number>} ohlc
-             *        OHLC point
-             *
-             * @param {number} volume
-             *        Volume point's y value
-             *
-             * @return {number}
-             *         volume * moneyFlowMultiplier
+             * @param {Array<number>} ohlc - OHLC point
+             * @param {number} volume - Volume point's y value
+             * @return {number} - volume * moneyFlowMultiplier
              **/
             function getMoneyFlowVolume(ohlc, volume) {
                 var high = ohlc[1],
@@ -182,19 +168,10 @@ H.seriesType('cmf', 'sma',
 
                 /**
                  * @private
-                 * @function getMoneyFlowMultiplier
-                 *
-                 * @param {number} h
-                 *        High value
-                 *
-                 * @param {number} l
-                 *        Low value
-                 *
-                 * @param {number} c
-                 *        Close value
-                 *
-                 * @return {number}
-                 *         calculated multiplier for the point
+                 * @param {number} h - High value
+                 * @param {number} l - Low value
+                 * @param {number} c - Close value
+                 * @return {number} calculated multiplier for the point
                  **/
                 function getMoneyFlowMultiplier(h, l, c) {
                     return ((c - l) - (h - c)) / (h - l);
@@ -263,17 +240,7 @@ H.seriesType('cmf', 'sma',
  *
  * @extends   series,plotOptions.cmf
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
  * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.cmf
- */
-
-/**
- * An array of data points for the series. For the `CMF` series type,
- * points are calculated dynamically.
- *
- * @extends   series.line.data
- * @since     6.0.0
- * @product   highstock
- * @apioption series.cmf.data
  */
