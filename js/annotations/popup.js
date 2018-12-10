@@ -64,6 +64,8 @@ H.Popup.prototype = {
             className: PREFIX + 'popup'
         }, null, parentDiv);
 
+        this.lang = this.getLangpack();
+
         // add close button
         this.addCloseBtn.call(this);
     },
@@ -314,11 +316,7 @@ H.Popup.prototype = {
      * @return {Object} - elements translations.
      */
     getLangpack: function () {
-        var defaultOptions = H.getOptions();
-
-        return defaultOptions &&
-                defaultOptions.lang &&
-                defaultOptions.lang.stockTools.gui;
+        return H.getOptions().lang.navigation.popup;
     },
     annotations: {
         /*
@@ -332,7 +330,7 @@ H.Popup.prototype = {
          */
         addToolbar: function (chart, options, callback) {
             var _self = this,
-                lang = this.getLangpack(),
+                lang = this.lang,
                 popupDiv = this.popup.container,
                 showForm = this.showForm,
                 toolbarClass = PREFIX + 'annotation-toolbar',
@@ -399,7 +397,7 @@ H.Popup.prototype = {
          */
         addForm: function (chart, options, callback, isInit) {
             var popupDiv = this.popup.container,
-                lang = this.getLangpack(),
+                lang = this.lang,
                 bottomRow,
                 lhsCol;
 
@@ -461,7 +459,7 @@ H.Popup.prototype = {
             var _self = this,
                 addFormFields = this.annotations.addFormFields,
                 addInput = this.addInput,
-                lang = chart.stockToolbar.lang,
+                lang = this.lang,
                 parentFullName,
                 titleName;
 
@@ -499,7 +497,7 @@ H.Popup.prototype = {
                         );
                     } else {
                         storage.push([
-                            chart.stockToolbar,
+                            _self,
                             parentFullName,
                             'annotation',
                             parentDiv,
@@ -541,7 +539,7 @@ H.Popup.prototype = {
 
             var tabsContainers,
                 indicators = this.indicators,
-                lang = this.getLangpack(),
+                lang = this.lang,
                 buttonParentDiv;
 
             // add tabs
@@ -721,7 +719,7 @@ H.Popup.prototype = {
          */
         listAllSeries: function (type, optionName, chart, parentDiv) {
             var selectName = PREFIX + optionName + '-type-' + type,
-                lang = chart.stockToolbar && chart.stockToolbar.lang,
+                lang = this.lang,
                 selectBox,
                 seriesOptions;
 
@@ -875,7 +873,7 @@ H.Popup.prototype = {
                         parentFullName !== 'params.volumeSeriesID'
                     ) {
                     addInput.call(
-                        chart.stockToolbar,
+                        _self,
                         parentFullName,
                         type,
                         parentDiv,
@@ -943,7 +941,7 @@ H.Popup.prototype = {
         addMenuItem: function (tabName, disableTab) {
             var popupDiv = this.popup.container,
                 className = PREFIX + 'tab-item',
-                lang = this.getLangpack(),
+                lang = this.lang,
                 menuItem;
 
             if (disableTab === 0) {

@@ -70,7 +70,7 @@ bindingsUtils.addFlagFromForm = function (type) {
         var navigation = this,
             chart = navigation.chart,
             toolbar = chart.toolbar,
-            getFieldType = navigation.utils.getFieldType,
+            getFieldType = bindingsUtils.getFieldType,
             point = bindingsUtils.attractToPoint(e, chart),
             pointConfig = {
                 x: point.x,
@@ -299,27 +299,6 @@ bindingsUtils.attractToPoint = function (e, chart) {
         xAxis: closestPoint.series.xAxis.index || 0,
         yAxis: closestPoint.series.yAxis.index || 0
     };
-};
-
-
-/**
- * Get field type according to value
- *
- * @private
- * @function bindingsUtils.getFieldType
- *
- * @param {*} value
- *        Atomic type (one of: string, number, boolean)
- *
- * @return {string}
- *         Field type (one of: text, number, checkbox)
- */
-bindingsUtils.getFieldType = function (value) {
-    return {
-        string: 'text',
-        number: 'number',
-        boolean: 'checkbox'
-    }[typeof value];
 };
 
 /**
