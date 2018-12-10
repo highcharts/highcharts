@@ -52,19 +52,26 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             textWidth = pick(
                 isSettingWidth && styles.width,
                 undefined
-            );
+            ),
+            doTransform;
 
         if (isSettingWidth) {
             delete styles.width;
             wrapper.textWidth = textWidth;
-            wrapper.htmlUpdateTransform();
+            doTransform = true;
         }
+
         if (styles && styles.textOverflow === 'ellipsis') {
             styles.whiteSpace = 'nowrap';
             styles.overflow = 'hidden';
         }
         wrapper.styles = extend(wrapper.styles, styles);
         css(wrapper.element, styles);
+
+        // Now that all styles are applied, to the transform
+        if (doTransform) {
+            wrapper.htmlUpdateTransform();
+        }
 
         return wrapper;
     },
