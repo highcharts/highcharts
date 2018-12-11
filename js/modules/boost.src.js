@@ -525,6 +525,13 @@ function shouldForceChartSeriesBoosting(chart) {
                 continue;
             }
 
+            // Don't count heatmap series as they are handled differently.
+            // In the future we should make the heatmap/treemap path compatible
+            // with forcing. See #9636.
+            if (series.type === 'heatmap') {
+                continue;
+            }
+
             if (boostableMap[series.type]) {
                 ++canBoostCount;
             }
