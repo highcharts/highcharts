@@ -522,7 +522,7 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
  * An array of data points for the series. For the `packedbubble` series type,
  * points can be given in the following ways:
  *
- * 1. An array of `y` values.
+ * 1. An array of `value` values.
  *    ```js
  *    data: [5, 1, 20]
  *    ```
@@ -533,11 +533,11 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
  *    is not available.
  *    ```js
  *    data: [{
- *        y: 1,
+ *        value: 1,
  *        name: "Point2",
  *        color: "#00FF00"
  *    }, {
- *        y: 5,
+ *        value: 5,
  *        name: "Point1",
  *        color: "#FF00FF"
  *    }]
@@ -548,9 +548,17 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
  *
  * @type      {Array<number|*>}
  * @extends   series.line.data
- * @excluding marker
+ * @excluding marker,x,y
  * @product   highcharts
  * @apioption series.packedbubble.data
+ */
+
+/**
+ * The value of a bubble. The bubble's size proportional to its `value`.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.packedbubble.data.weight
  */
 
 /**
