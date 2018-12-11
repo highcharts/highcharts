@@ -1,4 +1,10 @@
 Highcharts.chart('container', {
+    title: {
+        text: 'Chart with Annotations GUI'
+    },
+    subtitle: {
+        text: 'Use the buttons to add or edit annotations'
+    },
     navigation: {
         events: {
             selectButton: function (event) {

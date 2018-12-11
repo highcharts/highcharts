@@ -905,7 +905,7 @@ H.setOptions({
          */
         bindingsClassName: 'highcharts-bindings-wrapper',
         /**
-         * Bindings defintions for custom HTML buttons. Each binding implements
+         * Bindings definitions for custom HTML buttons. Each binding implements
          * simple event-driven interface:
          *
          * - `className`: classname used to bind event to
@@ -920,6 +920,8 @@ H.setOptions({
          * - `end`: last event to be called after last step event
          *
          * @type         {Highcharts.Dictionary<Highcharts.StockToolsBindingsObject>|*}
+         * @sample       stock/stocktools/stocktools-thresholds
+         *               Custom bindings in Highstock
          * @since        7.0.0
          * @product      highcharts highstock
          */
