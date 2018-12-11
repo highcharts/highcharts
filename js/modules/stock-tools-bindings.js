@@ -176,7 +176,20 @@ bindingsUtils.manageIndicators = function (data) {
             'mfi',
             'roc',
             'rsi',
-            'vwap'
+            'vwap',
+            'ao',
+            'aroon',
+            'aroonoscillator',
+            'trix',
+            'apo',
+            'dpo',
+            'ppo',
+            'natr',
+            'williamsr',
+            'linearRegression',
+            'linearRegressionSlope',
+            'linearRegressionIntercept',
+            'linearRegressionAngle'
         ],
         yAxis,
         series;
