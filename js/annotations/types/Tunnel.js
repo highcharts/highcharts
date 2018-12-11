@@ -138,6 +138,7 @@ H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
      * @extends annotations.crookedLine
      * @sample highcharts/annotations-advanced/tunnel/
      *         Tunnel
+     * @product highstock
      * @optionparent annotations.tunnel
      */
     {

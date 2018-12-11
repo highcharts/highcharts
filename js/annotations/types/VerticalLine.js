@@ -106,6 +106,7 @@ H.extendAnnotation(VerticalLine, null, /** @lends Annotation.VerticalLine# */ {
      * @excluding labels, shapes, controlPointOptions
      * @sample highcharts/annotations-advanced/vertical-line/
      *         Vertical line
+     * @product highstock
      * @optionparent annotations.verticalLine
      */
     {

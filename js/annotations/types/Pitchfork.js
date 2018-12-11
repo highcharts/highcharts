@@ -169,6 +169,7 @@ H.extendAnnotation(Pitchfork, InfinityLine, {
      * @extends annotations.infinityLine
      * @sample highcharts/annotations-advanced/pitchfork/
      *         Pitchfork
+     * @product highstock
      * @optionparent annotations.pitchfork
      */
     {

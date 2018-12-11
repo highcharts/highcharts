@@ -174,6 +174,9 @@ H.extendAnnotation(
  * @extends annotations.crookedLine
  * @sample highcharts/annotations-advanced/infinity-line/
  *         Infinity Line
+ *
+ * @product highstock
+ *
  * @apioption annotations.infinityLine
  */
 

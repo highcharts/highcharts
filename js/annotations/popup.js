@@ -64,6 +64,8 @@ H.Popup.prototype = {
             className: PREFIX + 'popup'
         }, null, parentDiv);
 
+        this.lang = this.getLangpack();
+
         // add close button
         this.addCloseBtn.call(this);
     },
@@ -245,7 +247,7 @@ H.Popup.prototype = {
      */
     showPopup: function () {
 
-        var popupDiv = this.popup.container,
+        var popupDiv = this.container,
             toolbarClass = PREFIX + 'annotation-toolbar',
             popupCloseBtn = popupDiv
                             .querySelectorAll('.' + PREFIX + 'popup-close')[0];
@@ -283,10 +285,10 @@ H.Popup.prototype = {
      */
     showForm: function (type, chart, options, callback) {
 
-        this.popup = chart.stockToolbar.popup;
+        this.popup = chart.navigationBindings.popup;
 
         // show blank popup
-        this.showPopup.call(this);
+        this.showPopup();
 
         // indicator form
         if (type === 'indicators') {
@@ -314,11 +316,7 @@ H.Popup.prototype = {
      * @return {Object} - elements translations.
      */
     getLangpack: function () {
-        var defaultOptions = H.getOptions();
-
-        return defaultOptions &&
-                defaultOptions.lang &&
-                defaultOptions.lang.stockTools.gui;
+        return H.getOptions().lang.navigation.popup;
     },
     annotations: {
         /*
@@ -332,7 +330,7 @@ H.Popup.prototype = {
          */
         addToolbar: function (chart, options, callback) {
             var _self = this,
-                lang = this.getLangpack(),
+                lang = this.lang,
                 popupDiv = this.popup.container,
                 showForm = this.showForm,
                 toolbarClass = PREFIX + 'annotation-toolbar',
@@ -399,7 +397,7 @@ H.Popup.prototype = {
          */
         addForm: function (chart, options, callback, isInit) {
             var popupDiv = this.popup.container,
-                lang = this.getLangpack(),
+                lang = this.lang,
                 bottomRow,
                 lhsCol;
 
@@ -461,7 +459,7 @@ H.Popup.prototype = {
             var _self = this,
                 addFormFields = this.annotations.addFormFields,
                 addInput = this.addInput,
-                lang = chart.stockToolbar.lang,
+                lang = this.lang,
                 parentFullName,
                 titleName;
 
@@ -481,10 +479,11 @@ H.Popup.prototype = {
                         titleName = lang[option] || option;
 
                         if (!titleName.match(indexFilter)) {
-                            createElement(SPAN, {
-                                className: PREFIX + 'annotation-title',
-                                innerHTML: titleName
-                            }, null, parentDiv);
+                            storage.push([
+                                true,
+                                titleName,
+                                parentDiv
+                            ]);
                         }
 
                         addFormFields.call(
@@ -498,7 +497,7 @@ H.Popup.prototype = {
                         );
                     } else {
                         storage.push([
-                            chart.stockToolbar,
+                            _self,
                             parentFullName,
                             'annotation',
                             parentDiv,
@@ -514,7 +513,14 @@ H.Popup.prototype = {
                 });
 
                 storage.forEach(function (genInput) {
-                    addInput.apply(genInput[0], genInput.splice(1));
+                    if (genInput[0] === true) {
+                        createElement(SPAN, {
+                            className: PREFIX + 'annotation-title',
+                            innerHTML: genInput[1]
+                        }, null, genInput[2]);
+                    } else {
+                        addInput.apply(genInput[0], genInput.splice(1));
+                    }
                 });
             }
         }
@@ -533,7 +539,7 @@ H.Popup.prototype = {
 
             var tabsContainers,
                 indicators = this.indicators,
-                lang = this.getLangpack(),
+                lang = this.lang,
                 buttonParentDiv;
 
             // add tabs
@@ -713,7 +719,7 @@ H.Popup.prototype = {
          */
         listAllSeries: function (type, optionName, chart, parentDiv) {
             var selectName = PREFIX + optionName + '-type-' + type,
-                lang = chart.stockToolbar && chart.stockToolbar.lang,
+                lang = this.lang,
                 selectBox,
                 seriesOptions;
 
@@ -805,7 +811,8 @@ H.Popup.prototype = {
             );
 
             // list all series with id
-            this.indicators.listAllSeries(
+            this.indicators.listAllSeries.call(
+                this,
                 seriesType,
                 'series',
                 chart,
@@ -813,7 +820,8 @@ H.Popup.prototype = {
             );
 
             if (fields.volumeSeriesID) {
-                this.indicators.listAllSeries(
+                this.indicators.listAllSeries.call(
+                    this,
                     seriesType,
                     'volume',
                     chart,
@@ -867,7 +875,7 @@ H.Popup.prototype = {
                         parentFullName !== 'params.volumeSeriesID'
                     ) {
                     addInput.call(
-                        chart.stockToolbar,
+                        _self,
                         parentFullName,
                         type,
                         parentDiv,
@@ -935,7 +943,7 @@ H.Popup.prototype = {
         addMenuItem: function (tabName, disableTab) {
             var popupDiv = this.popup.container,
                 className = PREFIX + 'tab-item',
-                lang = this.getLangpack(),
+                lang = this.lang,
                 menuItem;
 
             if (disableTab === 0) {
@@ -1036,3 +1044,24 @@ H.Popup.prototype = {
         }
     }
 };
+
+addEvent(H.NavigationBindings, 'showPopup', function (config) {
+    if (!this.popup) {
+        // Add popup to main container
+        this.popup = new H.Popup(this.chart.container);
+    }
+
+    this.popup.showForm(
+        config.formType,
+        this.chart,
+        config.options,
+        config.onSubmit
+    );
+});
+
+addEvent(H.NavigationBindings, 'closePopup', function () {
+    if (this.popup) {
+        this.popup.closePopup();
+    }
+});
+
