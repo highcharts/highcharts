@@ -437,7 +437,7 @@ extend(H.NavigationBindings.prototype, {
             }
 
             // Remove empty strings or values like 0
-            if (value !== '') {
+            if (value !== '' && value !== 'undefined') {
                 path.forEach(function (name, index) {
                     var nextName = pick(path[index + 1], '');
 
