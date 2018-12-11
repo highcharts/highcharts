@@ -1,0 +1,8 @@
+.outer-container {
+	padding: 10px;
+	overflow: hidden;
+	background: white;
+}
+#container {
+	height: 800px;
+}
