@@ -15,6 +15,154 @@
           </div>
           <div class="changelog-container">
             <p class="release-header" style="position: relative">
+              <a id="highcharts-v7.0.0" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v7.0.0">Highcharts Basic v7.0.0 (2018-12-11)</a>
+            </p>
+            <ul>
+              <li>Added
+                <a href="https://www.highcharts.com/demo/sonification">sonification</a> to the accessibility features.</li>
+              <li>Added
+                <a href="https://api.highcharts.com/highcharts/legend.bubbleLegend">bubble legends</a>, legend items descibinb the scale of the bubbles.</li>
+              <li>Added feature to match points by id when running setData.</li>
+              <li>Added new series type
+                <a href="https://www.highcharts.com/demo/network-graph">force directed graph or network graph</a>.</li>
+              <li>Added new series type
+                <a href="https://www.highcharts.com/demo/packed-bubble">packed bubble</a>.</li>
+              <li>Added new series type
+                <a href="https://www.highcharts.com/demo/cylinder">3D cylinder</a>.</li>
+              <li>Added new series type
+                <a href="https://www.highcharts.com/demo/venn-diagram">venn diagram</a>.</li>
+              <li>Added new series type
+                <a href="https://www.highcharts.com/demo/pyramid">pyramid chart</a>.</li>
+              <li>Added editor features for annotations, allowing annotations to be added, updated and removed through a GUI.</li>
+              <li>Added debug module for making chart errors visible in the chart.</li>
+              <li>Default exported chart name is now based on the chart title.</li>
+              <li>Added option
+                <a href="https://api.highcharts.com/highcharts/chart.styledMode">chart.styledMode</a> to replace the previous separate build of styled mode files.</li>
+              <li>Added options to align pie chart data labels to the edges of the chart.</li>
+            </ul>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+                <div id="heading-7-0-0-upgrade-notes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#7-0-0-upgrade-notes" data-toggle="collapse" data-parent="#accordion"> Upgrade notes</a>
+                  </h4>
+                </div>
+                <div id="7-0-0-upgrade-notes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>If the
+                        <a href="https://api.highcharts.com/highcharts/chart.height">chart.height</a> setting is higher than the CSS height of the container, the chart will now be clipped. This is a consequence of adapting the chart to table cells and flex layouts.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+                <div id="heading-7-0-0-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#7-0-0-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="7-0-0-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Corrected chart width for sub-pixel container width. Prevented overflow in flex-grids and table cells.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/2617">#2617</a>, wrong number of pages in legend with
+                        <a href="https://api.highcharts.com/highcharts/legend.maxHeight">legend.maxHeight</a> in some cases.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/5293">#5293</a>, <code>pointBreak</code> event for broken-axis module was not working for columnrange series type in case highcharts-more was loaded before broken-axis module.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/5857">#5857</a>, drilling down column charts to more than the <code>cropThreshold</code> caused lost categories on the X axis.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8105">#8105</a>, split tooltip header couldn&#39;t be removed by options.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8680">#8680</a>, responsive rules were not applied on annotations.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8818">#8818</a>, shared tooltips in boost with column series.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9046">#9046</a>, force boost check now takes
+                        <a href="https://api.highcharts.com/highcharts/plotOptions.series.visible">plotOptions.series.visible</a> into account.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9121">#9121</a>, overlapping text labels with useHTML and styled mode.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9150">#9150</a>, heatmap points were misplaced when using boost module without WebGL.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9156">#9156</a>, export data download failed on iOS.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9197">#9197</a>, no series animation on calling <code>Chart.update</code> with repeated options.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9200">#9200</a>, errors in the console with small height and zones or negative colors.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9211">#9211</a>, inverted heatmap in boost mode had wrong size when WebGL was disabled.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9226">#9226</a>, Wrong number of series with indexex after update.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9247">#9247</a>, console error on empty data labels in area range.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9248">#9248</a>, on series hide/show yAxis extremes were not updated.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9252">#9252</a>, added missing
+                        <a href="https://api.highcharts.com/highcharts/annotations.id">annotations.id</a> documentation.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9258">#9258</a>, remove use of id in default treemap data labels.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9270">#9270</a>, series were removed from configuration options when invoking stock, map or gantt charts.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9278">#9278</a>, drag and drop failing on mobile.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9289">#9289</a>, avoid animating drilldown in wordcloud.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9291">#9291</a>, correctly rounded default dataLablels for xrange series type.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9298">#9298</a>, zooming problems with drag and drop.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9300">#9300</a>, JS error when updating sankey series before it had been redrawn.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9301">#9301</a>, regression in
+                        <a href="https://api.highcharts.com/highcharts/tooltip.headerFormat">tooltip.headerFormat</a> for xrange series.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9375">#9375</a>, invalid attribute on SVG elements in solid gauge series.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9400">#9400</a>, tooltip box border issues when defining font size inline.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9410">#9410</a>, when using step in boost, the first point was wrong.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9481">#9481</a>, annotations attached to hidden points were visible.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9485">#9485</a>, selected state was not preserved after drilling down and up.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9487">#9487</a>, category axis didn&#39;t update when more data than the <code>cropThreshold</code>. Closed
+                        <a href="https://github.com/highcharts/highcharts/issues/6926">#6926</a>.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9504">#9504</a>, some links rendered broken on inverted Sankey diagram.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9525">#9525</a>, wrong number of points after update zoomed chart.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9533">#9533</a>, printing chart via the export menu failed when <code>scrollablePlotArea</code> was active.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9537">#9537</a>, ellipsis not applied to X axis labels when <code>useHTML</code> was true.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9562">#9562</a>, wrong categories and data to axis mapping with <code>uniqueNames</code> and drilldown.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9565">#9565</a>, dot delimiter on dates in CSV caused the format deduction to fail.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9618">#9618</a>, <code>setExtremes</code> should trump <code>axis.ceiling</code>.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9623">#9623</a>, 3D pie chart didn&#39;t hide when rendering inside a div with <code>visibility: hide</code>.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9166">#9166</a>, off-screen markers clamped to plot width in boost.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9206">#9206</a>, draggable points did not work with dynamic series.</li>
+                      <li>Fixed issue with a11y module sometimes throwing exception on init.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header" style="position: relative">
               <a id="highcharts-v6.2.0" style="position: absolute; top: -60px"></a>
               <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v6.2.0">Highcharts Basic v6.2.0 (2018-10-17)</a>
             </p>
@@ -6315,6 +6463,71 @@
           </div>
           <div class="changelog-container">
             <p class="release-header" style="position: relative">
+              <a id="highstock-v7.0.0" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highstock-v7.0.0">Highstock v7.0.0 (2018-12-11)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.0.0 above also apply to Highstock 7.0.0.</li>
+              <li>Added new technical indicators: Arroon, Arroon Oscillator, Absolute Price Oscillator, Williamis %R, NATR (Normalized Average True Range), Linear regression indicator, Linear regression intercept, Linear regression angle, Linear regression
+                slope, Keltner channels, Price Channel, Acceleration Bands, Triple EMA, Double EMA, TRIX, Percentage Price oscillator, Super trend, Chaikin oscillator, Awesome Oscillator, Detrended price.</li>
+              <li>Added
+                <a href="https://www.highcharts.com/stock/demo/depth-chart">depth chart</a> demo.</li>
+              <li>Added
+                <a href="https://www.highcharts.com/stock/demo/stock-tools-gui">Stock Tools</a>, a new range of features moving Highstock in the direction of full featured trading dashboards. The module adds a toolbar with controls for:</li>
+              <li>Add, update or remove indicators for the chart series.</li>
+              <li>Drawing custom annotations like text, lines, arrows etc.</li>
+              <li>Parallel channel, pitchfork annotations, Elliot waves and Fibonacci retracements.</li>
+              <li>A measure tool, displaying information about the measured area, including things like the amount of points, time range etc.</li>
+              <li>Infinity line, controlled by two points, allowing projection of a trend forward in time.</li>
+              <li>Full screen mode.</li>
+              <li>Chart type toggle (OHLC, candlestick, line etc.).</li>
+              <li>Current price indicator with label.</li>
+            </ul>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+                <div id="hs-heading-7-0-0-upgrade-notes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#hs-7-0-0-upgrade-notes" data-toggle="collapse" data-parent="#accordion"> Upgrade notes</a>
+                  </h4>
+                </div>
+                <div id="hs-7-0-0-upgrade-notes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Indicators that depend on another indicator now require the depencency to be loaded manually. Otherwise an error will be thrown. For example MACD requires EMA, that means the EMA indicator should be loaded first.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+                <div id="hs-heading-7-0-0-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#hs-7-0-0-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hs-7-0-0-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/4710">#4710</a>, range selector didn&#39;t update on clicking the chart after changing input.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8951">#8951</a>, improved ema efficiency, index changed.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9102">#9102</a>, hardcoded stochastic series name.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9160">#9160</a>,
+                        <a href="https://api.highcharts.com/highstock/xAxis.overscroll">xAxis.overscroll</a> rendered too many labels.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9285">#9285</a>, reset zoom button was permanently disabled by navigator or rangeSelector despite dynamic updates.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9299">#9299</a>, avoid hiding flags with box position equal to 0.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header" style="position: relative">
               <a id="highstock-v6.2.0" style="position: absolute; top: -60px"></a>
               <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highstock-v6.2.0">Highstock v6.2.0 (2018-10-17)</a>
             </p>
@@ -9106,6 +9319,13 @@
           </div>
           <div class="changelog-container">
             <p class="release-header" style="position: relative">
+              <a id="highmaps-v7.0.0" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highmaps-v7.0.0">Highmaps v7.0.0 (2018-12-11)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.0.0 above also apply to Highmaps 7.0.0.</li>
+            </ul>
+            <p class="release-header" style="position: relative">
               <a id="highmaps-v6.2.0" style="position: absolute; top: -60px"></a>
               <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highmaps-v6.2.0">Highmaps v6.2.0 (2018-10-17)</a>
             </p>
@@ -10077,6 +10297,35 @@
             <h2 id="highcharts-gantt">Highcharts Gantt</h2>
           </div>
           <div class="changelog-container">
+            <p class="release-header" style="position: relative">
+              <a id="highcharts-gantt-v7.0.0" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-gantt-v7.0.0">Highcharts Gantt v7.0.0 (2018-12-11)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.0.0 above also apply to Highcharts Gantt 7.0.0.</li>
+            </ul>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+
+                <div id="hg-heading-7-0-0-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#hg-7-0-0-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hg-7-0-0-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9216">#9216</a>, larger default width for exported Gantt charts.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9496">#9496</a>, exporting data to CSV/XLS did not work in Gantt.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
             <p class="release-header" style="position: relative">
               <a id="highcharts-gantt-v6.2.0" style="position: absolute; top: -60px"></a>
               <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-gantt-v6.2.0">Highcharts Gantt v6.2.0 (2018-10-17)</a>
