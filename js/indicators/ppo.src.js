@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
@@ -8,39 +15,53 @@ var EMA = H.seriesTypes.ema,
     correctFloat = H.correctFloat,
     requiredIndicator = requiredIndicatorMixin;
 
+/**
+ * The PPO series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.ppo
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('ppo', 'ema',
     /**
      * Percentage Price Oscillator. This series requires the
      * `linkedTo` option to be set and should be loaded after the
      * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
      *
-     * @extends plotOptions.ema
-     * @product highstock
      * @sample {highstock} stock/indicators/ppo
-     *                     Percentage Price Oscillator
-     * @since 7.0.0
-     * @excluding
-     *             allAreas,colorAxis,joinBy,keys,stacking,
-     *             showInNavigator,navigatorOptions,pointInterval,
-     *             pointIntervalUnit,pointPlacement,pointRange,pointStart
+     *         Percentage Price Oscillator
+     *
+     * @extends      plotOptions.ema
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
      * @optionparent plotOptions.ppo
      */
     {
         /**
-         * Paramters used in calculation of Percentage Price Oscillator
-         * series points.
+         * Paramters used in calculation of Percentage Price Oscillator series
+         * points.
+         *
          * @excluding period
          */
         params: {
             /**
              * Periods for Percentage Price Oscillator calculations.
+             *
+             * @type    {Array<number>}
              * @default [12, 26]
-             * @type {Array}
-             * @since 7.0.0
              */
             periods: [12, 26]
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    },
+    /**
+     * @lends Highcharts.Series.prototype
+     */
+    {
         nameBase: 'PPO',
         nameComponents: ['periods'],
         init: function () {
@@ -119,24 +140,11 @@ H.seriesType('ppo', 'ema',
  * A `Percentage Price Oscillator` series. If the [type](#series.ppo.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.ppo
- * @excluding   data,dataParser,dataURL
- *              allAreas,colorAxis,joinBy,
- *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
- *              pointIntervalUnit,pointPlacement,pointRange,pointStart
- * @product highstock
+ * @extends   series,plotOptions.ppo
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
+ *            navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @apioption series.ppo
- */
-
-/**
- * An array of data points for the series. For the `ppo` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.ppo.data
  */

@@ -126,16 +126,19 @@ extend(defaultOptions.lang
 
 });
 
-// Buttons and menus are collected in a separate config option set called
-// 'navigation'. This can be extended later to add control buttons like zoom and
-// pan right click menus.
-/**
- * A collection of options for buttons and menus appearing in the exporting
- * module.
- *
- * @optionparent navigation
- */
-defaultOptions.navigation = {
+if (!defaultOptions.navigation) {
+    // Buttons and menus are collected in a separate config option set called
+    // 'navigation'. This can be extended later to add control buttons like
+    // zoom and pan right click menus.
+    /**
+     * A collection of options for buttons and menus appearing in the exporting
+     * module.
+     *
+     * @optionparent navigation
+     */
+    defaultOptions.navigation = {};
+}
+merge(true, defaultOptions.navigation, {
 
     buttonOptions: {
 
@@ -262,7 +265,7 @@ defaultOptions.navigation = {
 
     }
 
-};
+});
 
 // Presentational attributes
 merge(true, defaultOptions.navigation
@@ -1216,6 +1219,40 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     },
 
     /**
+     * Get the default file name used for exported charts. By default it creates
+     * a file name based on the chart title.
+     *
+     * @function Highcharts.Chart#getFilename
+     *
+     * @return {string} A file name without extension.
+     */
+    getFilename: function () {
+        var s = this.userOptions.title && this.userOptions.title.text,
+            filename = this.options.exporting.filename;
+
+        if (filename) {
+            return filename;
+        }
+
+        if (typeof s === 'string') {
+            filename = s
+                .toLowerCase()
+                .replace(/<\/?[^>]+(>|$)/g, '') // strip HTML tags
+                .replace(/[\s_]+/g, '-')
+                .replace(/[^a-z0-9\-]/g, '') // preserve only latin
+                .replace(/^[\-]+/g, '') // dashes in the start
+                .replace(/[\-]+/g, '-') // dashes in a row
+                .substr(0, 24)
+                .replace(/[\-]+$/g, ''); // dashes in the end;
+        }
+
+        if (!filename || filename.length < 5) {
+            filename = 'chart';
+        }
+        return filename;
+    },
+
+    /**
      * Exporting module required. Submit an SVG version of the chart to a server
      * along with some parameters for conversion.
      *
@@ -1248,7 +1285,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // do the post
         H.post(exportingOptions.url, {
-            filename: exportingOptions.filename || 'chart',
+            filename: exportingOptions.filename || this.getFilename(),
             type: exportingOptions.type,
             // IE8 fails to post undefined correctly, so use 0
             width: exportingOptions.width || 0,

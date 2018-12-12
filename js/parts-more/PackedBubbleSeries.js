@@ -1,8 +1,10 @@
-/**
- * (c) 2010-2018 Grzegorz Blachlinski, Sebastian Bochan
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Grzegorz Blachlinski, Sebastian Bochan
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -17,49 +19,58 @@ import '../parts/Series.js';
 var seriesType = H.seriesType,
     defined = H.defined;
 
-
 /**
- * A packed bubble series is a two dimensional series type, where each point
- * renders a value in X, Y position. Each point is drawn as a bubble
- * where the bubbles don't overlap with each other and the radius
- * of the bubble related to the value.
- * Requires `highcharts-more.js`.
+ * Packed bubble series
  *
- * @extends plotOptions.bubble
- * @excluding minSize,maxSize,connectNulls,keys,sizeByAbsoluteValue,
- * step,zMin,zMax,sizeBy,connectEnds
- * @product highcharts
- * @sample {highcharts} highcharts/demo/packed-bubble/
- *         Packed-bubble chart
- * @since 7.0.0
- * @optionparent plotOptions.packedbubble
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.packedbubble
+ *
+ * @augments Highcharts.Series
+ *
+ * @requires modules:highcharts-more
  */
-
 seriesType('packedbubble', 'bubble',
+
+    /**
+     * A packed bubble series is a two dimensional series type, where each point
+     * renders a value in X, Y position. Each point is drawn as a bubble where
+     * the bubbles don't overlap with each other and the radius of the bubble
+     * related to the value. Requires `highcharts-more.js`.
+     *
+     * @sample {highcharts} highcharts/demo/packed-bubble/
+     *         Packed-bubble chart
+     *
+     * @extends      plotOptions.bubble
+     * @since        7.0.0
+     * @product      highcharts
+     * @excluding    connectEnds, connectNulls, keys, sizeByAbsoluteValue, step,
+     *               zMax, zMin
+     * @optionparent plotOptions.packedbubble
+     */
     {
         /**
          * Minimum bubble size. Bubbles will automatically size between the
-         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * `minSize` and `maxSize` to reflect the value of each bubble.
          * Can be either pixels (when no unit is given), or a percentage of
          * the smallest one of the plot width and height.
          *
-         * @type    {Number|String}
-         * @sample  {highcharts} highcharts/plotoptions/bubble-size/ Bubble size
-         * @since   3.0
-         * @product highcharts highstock
+         * @sample {highcharts} highcharts/plotoptions/bubble-size/
+         *         Bubble size
+         *
+         * @type    {number|string}
          */
         minSize: '10%',
         /**
          * Maximum bubble size. Bubbles will automatically size between the
-         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * `minSize` and `maxSize` to reflect the value of each bubble.
          * Can be either pixels (when no unit is given), or a percentage of
          * the smallest one of the plot width and height.
          *
-         * @type    {Number|String}
-         * @sample  {highcharts} highcharts/plotoptions/bubble-size/
-         *          Bubble size
-         * @since   3.0
-         * @product highcharts highstock
+         * @sample {highcharts} highcharts/plotoptions/bubble-size/
+         *         Bubble size
+         *
+         * @type    {number|string}
          */
         maxSize: '100%',
         sizeBy: 'radius',
@@ -74,10 +85,9 @@ seriesType('packedbubble', 'bubble',
         axisTypes: [],
         /**
          * Create a single array of all points from all series
-         *
+         * @private
          * @param {Array} Array of all series objects
          * @return {Array} Returns the array of all points.
-         *
          */
         accumulateAllPoints: function (series) {
 
@@ -105,10 +115,8 @@ seriesType('packedbubble', 'bubble',
 
             return allDataPoints;
         },
-        /**
-         * Extend the base translate method to handle bubble size,
-         * and correct positioning them
-         */
+        // Extend the base translate method to handle bubble size, and correct
+        // positioning them.
         translate: function () {
 
             var positions, // calculated positions of bubbles in bubble array
@@ -158,11 +166,10 @@ seriesType('packedbubble', 'bubble',
         },
         /**
          * Check if two bubbles overlaps.
-         * @param {Array} first bubble
-         * @param {Array} second bubble
-         *
-         * @return {Boolean} overlap or not
-         *
+         * @private
+         * @param {Array} bubble1 first bubble
+         * @param {Array} bubble2 second bubble
+         * @return {boolean} overlap or not
          */
         checkOverlap: function (bubble1, bubble2) {
             var diffX = bubble1[0] - bubble2[0], // diff of X center values
@@ -174,18 +181,17 @@ seriesType('packedbubble', 'bubble',
                 Math.abs(sumRad)
             ) < -0.001;
         },
-        /* Function that is adding one bubble based on positions and sizes
+        /**
+         * Function that is adding one bubble based on positions and sizes
          * of two other bubbles, lastBubble is the last added bubble,
          * newOrigin is the bubble for positioning new bubbles.
          * nextBubble is the curently added bubble for which we are
          * calculating positions
-         *
-         * @param {Array} The closest last bubble
-         * @param {Array} New bubble
-         * @param {Array} The closest next bubble
-         *
+         * @private
+         * @param {Array} lastBubble The closest last bubble
+         * @param {Array} newOrigin New bubble
+         * @param {Array} nextBubble The closest next bubble
          * @return {Array} Bubble with correct positions
-         *
          */
         positionBubble: function (lastBubble, newOrigin, nextBubble) {
             var sqrt = Math.sqrt,
@@ -237,16 +243,13 @@ seriesType('packedbubble', 'bubble',
             ]; // the same as described before
         },
         /**
-         * This is the main function responsible
-         * for positioning all of the bubbles
+         * This is the main function responsible for positioning all of the
+         * bubbles.
          * allDataPoints - bubble array, in format [pixel x value,
-         * pixel y value, radius,
-         * related series index, related point index]
-         *
-         * @param {Array} All points from all series
-         *
+         * pixel y value, radius, related series index, related point index]
+         * @private
+         * @param {Array} allDataPoints All points from all series
          * @return {Array} Positions of all bubbles
-         *
          */
         placeBubbles: function (allDataPoints) {
 
@@ -313,16 +316,13 @@ seriesType('packedbubble', 'bubble',
                 ); // calculate initial bubble position
 
                 if (checkOverlap(calculatedBubble, bubblePos[stage][0])) {
-                    /* if new bubble is overlapping with first bubble
-                     * in current level (stage)
-                     */
-
+                    // if new bubble is overlapping with first bubble in
+                    // current level (stage)
                     bubblePos.push([]);
                     k = 0;
-                    /* reset index of bubble, used for positioning the bubbles
-                     * around it, we are starting from first bubble in next
-                     * stage because we are changing level to higher
-                     */
+                    // reset index of bubble, used for positioning the bubbles
+                    // around it, we are starting from first bubble in next
+                    // stage because we are changing level to higher
                     bubblePos[stage + 1].push(
                       positionBubble(
                         bubblePos[stage][j],
@@ -337,11 +337,10 @@ seriesType('packedbubble', 'bubble',
                     stage > 1 && bubblePos[stage - 1][k + 1] &&
                     checkOverlap(calculatedBubble, bubblePos[stage - 1][k + 1])
                 ) {
-                    /* if new bubble is overlapping with one of the previous
-                     * stage bubbles, it means that - bubble, used for
-                     * positioning the bubbles around it has changed
-                     * so we need to recalculate it
-                     */
+                    // If new bubble is overlapping with one of the previous
+                    // stage bubbles, it means that - bubble, used for
+                    // positioning the bubbles around it has changed so we need
+                    // to recalculate it.
                     k++;
                     bubblePos[stage].push(
                       positionBubble(bubblePos[stage][j],
@@ -374,6 +373,7 @@ seriesType('packedbubble', 'bubble',
          * The comparison of bBox and the size of plotArea
          * (later it may be also the size set by customer) is giving the
          * value how to recalculate the radius so it will match the size
+         * @private
          */
         resizeRadius: function () {
 
@@ -419,12 +419,10 @@ seriesType('packedbubble', 'bubble',
                 }
                 this.placeBubbles(positions);
             } else {
-                /** if no radius recalculation is needed, we need to position
-                 * the whole bubbles in center of chart plotarea
-                 * for this, we are adding two parameters,
-                 * diffY and diffX, that are related to differences
-                 * between the initial center and the bounding box
-                 */
+                // If no radius recalculation is needed, we need to position the
+                // whole bubbles in center of chart plotarea for this, we are
+                // adding two parameters, diffY and diffX, that are related to
+                // differences between the initial center and the bounding box.
                 chart.diffY = chartHeight / 2 +
                     plotTop - minY - (maxY - minY) / 2;
                 chart.diffX = chartWidth / 2 +
@@ -432,9 +430,7 @@ seriesType('packedbubble', 'bubble',
             }
         },
 
-        /**
-         * Calculate radius of bubbles in series.
-         */
+        // Calculate radius of bubbles in series.
         getPointRadius: function () { // bubbles array
 
             var series = this,
@@ -512,9 +508,8 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
  * A `packedbubble` series. If the [type](#series.packedbubble.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding dataParser,dataURL,stack
+ * @excluding dataParser, dataURL, stack
  * @product   highcharts highstock
  * @apioption series.packedbubble
  */
@@ -523,39 +518,46 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
  * An array of data points for the series. For the `packedbubble` series type,
  * points can be given in the following ways:
  *
- * 1.  An array of `y` values.
+ * 1. An array of `value` values.
+ *    ```js
+ *    data: [5, 1, 20]
+ *    ```
  *
- *  ```js
- *     data: [5, 1, 20]
- *  ```
+ * 2. An array of objects with named values. The objects are point configuration
+ *    objects as seen below. If the total number of data points exceeds the
+ *    series' [turboThreshold](#series.packedbubble.turboThreshold), this option
+ *    is not available.
+ *    ```js
+ *    data: [{
+ *        value: 1,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        value: 5,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data points
- * exceeds the series' [turboThreshold](#series.packedbubble.turboThreshold),
- * this option is not available.
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
  *
- *  ```js
- *     data: [{
- *         y: 1,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         y: 5,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
- *
- * @type      {Array<Object|Array>}
+ * @type      {Array<number|*>}
  * @extends   series.line.data
- * @excluding marker
- * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
+ * @excluding marker,x,y
  * @product   highcharts
  * @apioption series.packedbubble.data
  */
 
 /**
- * @excluding enabled,enabledThreshold,height,radius,width
+ * The value of a bubble. The bubble's size proportional to its `value`.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.packedbubble.data.weight
+ */
+
+/**
+ * @excluding enabled, enabledThreshold, height, radius, width
  * @apioption series.packedbubble.marker
  */

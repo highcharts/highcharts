@@ -106,22 +106,6 @@ wrap(
     }
 );
 
-wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    if (this.chart.is3d()) {
-        this.points.forEach(function (point) {
-            var graphic = point.graphic;
-
-            // #4584 Check if has graphic - null points don't have it
-            if (graphic) {
-                // Hide null or 0 points (#3006, 3650)
-                graphic[point.y && point.visible ? 'show' : 'hide']();
-            }
-        });
-    }
-});
-
 wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
     if (this.chart.is3d()) {
         var series = this,

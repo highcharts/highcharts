@@ -761,22 +761,6 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 
 
 /**
- * Get the filename for a chart that is being downloaded
- *
- * @private
- * @return {String} The filename.
- */
-Highcharts.Chart.prototype.getFilename = function () {
-    if (this.options.exporting.filename) {
-        return this.options.exporting.filename;
-    }
-    return this.title && this.title.textStr ?
-        this.title.textStr.replace(/ /g, '-').toLowerCase() :
-        'chart';
-};
-
-
-/**
  * Get a blob object from content, if blob is supported
  *
  * @private

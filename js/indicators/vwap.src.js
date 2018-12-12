@@ -1,10 +1,12 @@
-/**
- * (c) 2010-2017 Paweł Dalek
+/* *
  *
- * Volume Weighted Average Price (VWAP) indicator for Highstock
+ *  (c) 2010-2018 Paweł Dalek
  *
- * License: www.highcharts.com/license
- */
+ *  Volume Weighted Average Price (VWAP) indicator for Highstock
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -47,20 +49,21 @@ seriesType('vwap', 'sma',
              * The id of volume series which is mandatory. For example using
              * OHLC data, volumeSeriesID='volume' means the indicator will be
              * calculated using OHLC and volume values.
-             *
-             * @since 6.0.0
              */
             volumeSeriesID: 'volume'
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         /**
          * Returns the final values of the indicator ready to be presented on a
          * chart
-         *
-         * @function Highcharts.seriesTypes.vwap#getValues
-         *
-         * @return {object}
-         *         Object containing computed VWAP
+         * @private
+         * @param {Highcharts.Series} series - series for indicator
+         * @param {object} params - params
+         * @return {object} - computed VWAP
          **/
         getValues: function (series, params) {
             var indicator = this,
@@ -98,27 +101,15 @@ seriesType('vwap', 'sma',
         /**
          * Main algorithm used to calculate Volume Weighted Average Price (VWAP)
          * values
-         *
-         * @function Highcharts.seriesTypes.vwap#calculateVWAPValues
-         *
-         * @param {boolean} isOHLC
-         *        says if data has OHLC format
-         *
-         * @param {Array<number>} xValues
-         *        array of timestamps
-         *
-         * @param {Array<number|Array<number,number,number,number>>} yValues
-         *        array of yValues, can be an array of a four arrays (OHLC) or
-         *        array of values (line)
-         *
-         * @param {Array<*>} volumeSeries
-         *        volume series
-         *
-         * @param {number} period
-         *        number of points to be calculated
-         *
-         * @return {object}
-         *         Object contains computed VWAP
+         * @private
+         * @param {boolean} isOHLC - says if data has OHLC format
+         * @param {Array<number>} xValues - array of timestamps
+         * @param {Array<number|Array<number,number,number,number>>} yValues -
+         * array of yValues, can be an array of a four arrays (OHLC) or array of
+         * values (line)
+         * @param {Array<*>} volumeSeries - volume series
+         * @param {number} period - number of points to be calculated
+         * @return {object} - Object contains computed VWAP
          **/
         calculateVWAPValues: function (
             isOHLC,
@@ -192,13 +183,7 @@ seriesType('vwap', 'sma',
  *
  * @extends   series,plotOptions.vwap
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
  * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.vwap
- */
-
-/**
- * @extends   series.sma.data
- * @product   highstock
- * @apioption series.vwap.data
  */

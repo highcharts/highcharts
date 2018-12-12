@@ -196,14 +196,17 @@ Chart.prototype.applyFixed = function () {
             '.highcharts-title',
             '.highcharts-legend-checkbox'
         ]).forEach(function (className) {
-            container.querySelectorAll(className).forEach(function (elem) {
-                (
-                    elem.namespaceURI === fixedRenderer.SVG_NS ?
-                        fixedRenderer.box :
-                        fixedRenderer.box.parentNode
-                ).appendChild(elem);
-                elem.style.pointerEvents = 'auto';
-            });
+            [].forEach.call(
+                container.querySelectorAll(className),
+                function (elem) {
+                    (
+                        elem.namespaceURI === fixedRenderer.SVG_NS ?
+                            fixedRenderer.box :
+                            fixedRenderer.box.parentNode
+                    ).appendChild(elem);
+                    elem.style.pointerEvents = 'auto';
+                }
+            );
         });
     }
 

@@ -8,6 +8,7 @@ const glob = require('glob');
 const gulp = require('gulp');
 const argv = require('yargs').argv;
 const fs = require('fs');
+const yaml = require('js-yaml');
 const {
     join,
     relative,
@@ -226,6 +227,39 @@ gulp.task('test', done => {
 
     };
 
+    // Check that each demo.details has the correct js_wrap setting required for
+    // it to display correctly on jsFiddle.
+    const checkJSWrap = () => {
+        glob(
+            'samples/+(highcharts|stock|maps|gantt)/**/demo.html',
+            (err, files) => {
+                if (err) {
+                    throw err;
+                }
+                let errors = 0;
+                files.forEach(f => {
+                    let detailsFile = f.replace(/\.html$/, '.details');
+
+                    try {
+                        let details = yaml.safeLoad(
+                            fs.readFileSync(detailsFile, 'utf-8')
+                        );
+                        if (details.js_wrap !== 'b') {
+                            console.log(`js_wrap not found: ${detailsFile}`.red);
+                            errors++;
+                        }
+                    } catch (e) {
+                        console.log(`File not found: ${detailsFile}`.red);
+                        errors++;
+                    }
+                });
+                if (errors) {
+                    throw 'Missing js_wrap setting';
+                }
+            }
+        );
+    };
+
 
     if (argv.help) {
         console.log(
@@ -261,6 +295,7 @@ Available arguments for 'gulp test':
     }
 
     checkSamplesConsistency();
+    checkJSWrap();
 
     if (shouldRun()) {
 
@@ -345,6 +380,8 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/modules/offline-exporting.src.js',
         './js/modules/pattern-fill.src.js',
         './js/modules/sonification/*.js',
+        './js/annotations/annotations.src.js'
+        /*
         './js/annotations/eventEmitterMixin.js',
         './js/annotations/MockPoint.js',
         './js/annotations/ControlPoint.js',
@@ -354,7 +391,6 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/annotations/controllable/ControllableLabel.js',
         './js/annotations/controllable/ControllablePath.js',
         './js/annotations/controllable/ControllableRect.js',
-        './js/annotations/annotations.src.js',
         './js/annotations/types/CrookedLine.js',
         './js/annotations/types/ElliottWave.js',
         './js/annotations/types/Tunnel.js',
@@ -362,7 +398,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/annotations/types/InfinityLine.js',
         './js/annotations/types/Measure.js',
         './js/annotations/types/Pitchfork.js',
-        './js/annotations/types/VerticalLine.js'
+        './js/annotations/types/VerticalLine.js'*/
     ];
     const optionsJSDoc = {
         navOptions: {
@@ -966,8 +1002,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         './js/parts-3d',
         './js/parts-more',
         './js/parts-map',
-        './js/parts-gantt',
-        './js/supplemental.docs.js'
+        './js/parts-gantt'
     ];
     const configJSDoc = {
         plugins: ['./tools/jsdoc/plugins/highcharts.jsdoc']
@@ -1264,7 +1299,7 @@ gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
-gulp.task('jsdoc', ['jsdoc-namespace'], jsdoc);
+gulp.task('jsdoc', ['clean-api', 'jsdoc-namespace'], jsdoc);
 gulp.task('styles', styles);
 gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
 gulp.task('jsdoc-options', jsdocOptions);
@@ -1280,7 +1315,7 @@ gulp.task('jsdoc-options', jsdocOptions);
  * tree-namespace.json.
  */
 function dts() {
-    return require('highcharts-declarations-generator').task();
+    return require('../highcharts-declarations-generator').task();
 }
 
 /**

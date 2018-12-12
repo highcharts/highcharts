@@ -1,21 +1,27 @@
-/**
-* (c) 2016 Highsoft AS
-* Authors: Jon Arild Nygard
-*
-* Layout algorithm by Ben Frederickson:
-* https://www.benfrederickson.com/better-venn-diagrams/
-*
-* License: www.highcharts.com/license
-*
-* This is an experimental Highcharts module which enables visualization
-* of a Venn Diagram.
-*/
+/* *
+ *
+ *  (c) 2016-2018 Highsoft AS
+ *
+ *  Authors: Jon Arild Nygard
+ *
+ *  Layout algorithm by Ben Frederickson:
+ *  https://www.benfrederickson.com/better-venn-diagrams/
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  This is an experimental Highcharts module which enables visualization of a
+ *  Venn Diagram.
+ *
+ * */
+
 'use strict';
+
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
 import geometryCircles from '../mixins/geometry-circles.js';
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
+
 var color = H.Color,
     extend = H.extend,
     getAreaOfIntersectionBetweenCircles =
@@ -43,11 +49,10 @@ var objectValues = function objectValues(obj) {
 
 /**
  * Calculates the area of overlap between a list of circles.
- *
- * TODO: add support for calculating overlap between more than 2 circles.
- *
- * @param {array} circles List of circles with their given positions.
- * @returns {number} Returns the area of overlap between all the circles.
+ * @private
+ * @todo add support for calculating overlap between more than 2 circles.
+ * @param {Array<object>} circles List of circles with their given positions.
+ * @return {number} Returns the area of overlap between all the circles.
  */
 var getOverlapBetweenCircles = function getOverlapBetweenCircles(circles) {
     var overlap = 0;
@@ -71,10 +76,10 @@ var getOverlapBetweenCircles = function getOverlapBetweenCircles(circles) {
 /**
  * Calculates the difference between the desired overlap and the actual overlap
  * between two circles.
- *
+ * @private
  * @param {object} mapOfIdToCircle Map from id to circle.
- * @param {array} relations List of relations to calculate the loss of.
- * @returns {number} Returns the loss between positions of the circles for the
+ * @param {Array<object>} relations List of relations to calculate the loss of.
+ * @return {number} Returns the loss between positions of the circles for the
  * given relations.
  */
 var loss = function loss(mapOfIdToCircle, relations) {
@@ -107,12 +112,12 @@ var loss = function loss(mapOfIdToCircle, relations) {
  * the values in the array before returning the result to compare with the value
  * that is searched for.
  * Useful to find a value that will give a result that meets some requirement.
- *
- * @param {array} arr The array to search for.
+ * @private
+ * @param {Array<number>} arr The array to search for.
  * @param {*} value The value that is wanted to find.
- * @param {function} fn The higher order function to operate on the values in
+ * @param {Function} fn The higher order function to operate on the values in
  * the array.
- * @returns {number} Returns the index of the matching value, or -1 if the value
+ * @return {number} Returns the index of the matching value, or -1 if the value
  * was not found.
  */
 var binarySearch = function binarySearch(arr, value, fn) {
@@ -135,13 +140,12 @@ var binarySearch = function binarySearch(arr, value, fn) {
 
 /**
  * Creates a list that contains a sequence of numbers ranging from start to end.
- *
- * TODO: add unit tests.
- *
+ * @private
+ * @todo add unit tests.
  * @param {number} start The smallest number in the list.
  * @param {number} end The largest number in the list.
  * @param {number} [step=1] The increment between the values in the sequence.
- * @returns {array} Returns the sequence of numbers in the range from start to
+ * @return {Array<number>} Returns the sequence of numbers in the range from start to
  * end.
  */
 var range = function range(start, end, step) {
@@ -158,11 +162,11 @@ var range = function range(start, end, step) {
  * circles too get the desired overlap.
  * Currently there is no known formula to calculate the distance from the area
  * of overlap, which makes the binary search a preferred method.
- *
+ * @private
  * @param {number} r1 Radius of the first circle.
  * @param {number} r2 Radiues of the second circle.
  * @param {number} overlap The wanted overlap between the two circles.
- * @returns {number} Returns the distance needed to get the wanted overlap
+ * @return {number} Returns the distance needed to get the wanted overlap
  * between the two circles.
  */
 var getDistanceBetweenCirclesByOverlap =
@@ -188,13 +192,12 @@ var isSet = function (x) {
 
 /**
  * Finds an optimal position for a given point.
- *
- * TODO: add unit tests.
- * TODO: add constraints to optimize the algorithm.
- *
- * @param {function} fn The function to test a point.
- * @param {array} initial The initial point to optimize.
- * @returns {array} Returns the opimized position of a point.
+ * @private
+ * @todo add unit tests.
+ * @todo add constraints to optimize the algorithm.
+ * @param {Function} fn The function to test a point.
+ * @param {Array<*>} initial The initial point to optimize.
+ * @return {Array<*>} Returns the opimized position of a point.
  */
 var nelderMead = function nelderMead(fn, initial) {
     var maxIterations = 100,
@@ -323,13 +326,12 @@ var nelderMead = function nelderMead(fn, initial) {
  * Calculates a margin for a point based on the iternal and external circles.
  * The margin describes if the point is well placed within the internal circles,
  * and away from the external
- *
- * TODO: add unit tests.
- *
+ * @private
+ * @todo add unit tests.
  * @param {object} point The point to evaluate.
- * @param {array} internal The internal circles.
- * @param {array} external The external circles.
- * @returns {number} Returns the margin.
+ * @param {Array<object>} internal The internal circles.
+ * @param {Array<object>} external The external circles.
+ * @return {number} Returns the margin.
  */
 var getMarginFromCircles =
 function getMarginFromCircles(point, internal, external) {
@@ -350,13 +352,12 @@ function getMarginFromCircles(point, internal, external) {
  * Finds the optimal label position by looking for a position that has a low
  * distance from the internal circles, and as large possible distane to the
  * external circles.
- *
- * TODO: Optimize the intial position.
- * TODO: Add unit tests.
- *
- * @param {array} internal Internal circles.
- * @param {array} external External circles.
- * @returns {object} Returns the found position.
+ * @private
+ * @todo Optimize the intial position.
+ * @todo Add unit tests.
+ * @param {Array<object>} internal Internal circles.
+ * @param {Array<object>} external External circles.
+ * @return {object} Returns the found position.
  */
 var getLabelPosition = function getLabelPosition(internal, external) {
     // Get the best label position within the internal circles.
@@ -419,12 +420,11 @@ var getLabelPosition = function getLabelPosition(internal, external) {
 
 /**
  * Calulates data label positions for a list of relations.
- *
- * TODO: add unit tests
- * NOTE: may be better suited as a part of the layout function.
- *
- * @param {array} relations The list of relations.
- * @returns {object} Returns a map from id to the data label position.
+ * @private
+ * @todo add unit tests
+ * @todo NOTE: may be better suited as a part of the layout function.
+ * @param {Array<object>} relations The list of relations.
+ * @return {object} Returns a map from id to the data label position.
  */
 var getLabelPositions = function getLabelPositions(relations) {
     var singleSets = relations.filter(isSet);
@@ -458,17 +458,15 @@ var getLabelPositions = function getLabelPositions(relations) {
 };
 
 /**
- * Takes an array of relations and adds the properties totalOverlap and
- * overlapping to each set.
- * The property totalOverlap is the sum of value for each relation where this
- * set is included.
- * The property overlapping is a map of how much this set is overlapping another
- * set.
+ * Takes an array of relations and adds the properties `totalOverlap` and
+ * `overlapping` to each set. The property `totalOverlap` is the sum of value
+ * for each relation where this set is included. The property `overlapping` is
+ * a map of how much this set is overlapping another set.
  * NOTE: This algorithm ignores relations consisting of more than 2 sets.
- *
- * @param {array} relations The list of relations that should be sorted.
- * @returns {array} Returns the modified input relations with added properties
- * totalOverlap and overlapping.
+ * @private
+ * @param {Array<object>} relations The list of relations that should be sorted.
+ * @return {Array<object>} Returns the modified input relations with added
+ * properties `totalOverlap` and `overlapping`.
  */
 var addOverlapToSets = function addOverlapToSets(relations) {
     // Calculate the amount of overlap per set.
@@ -508,10 +506,10 @@ var addOverlapToSets = function addOverlapToSets(relations) {
 
 /**
  * Takes two sets and finds the one with the largest total overlap.
- *
+ * @private
  * @param {object} a The first set to compare.
  * @param {object} b The second set to compare.
- * @returns {number} Returns 0 if a and b are equal, <0 if a is greater, >0 if b
+ * @return {number} Returns 0 if a and b are equal, <0 if a is greater, >0 if b
  * is greater.
  */
 var sortByTotalOverlap = function sortByTotalOverlap(a, b) {
@@ -521,10 +519,10 @@ var sortByTotalOverlap = function sortByTotalOverlap(a, b) {
 /**
  * Uses a greedy approach to position all the sets. Works well with a small
  * number of sets, and are in these cases a good choice aesthetically.
- *
- * @param {Array} relations List of the overlap between two or more sets, or the
- * size of a single set.
- * @returns List of circles and their calculated positions.
+ * @private
+ * @param {Array<object>} relations List of the overlap between two or more
+ * sets, or the size of a single set.
+ * @return {Array<object>} List of circles and their calculated positions.
  */
 var layoutGreedyVenn = function layoutGreedyVenn(relations) {
     var positionedSets = [],
@@ -545,10 +543,9 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
     /**
      * Takes a set and updates the position, and add the set to the list of
      * positioned sets.
-     *
+     * @private
      * @param {object} set The set to add to its final position.
      * @param {object} coordinates The coordinates to position the set at.
-     * @returns {undefined} Returns undefined.
      */
     var positionSet = function positionSet(set, coordinates) {
         var circle = set.circle;
@@ -656,12 +653,11 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
 
 /**
  * Calculates the positions of all the sets in the venn diagram.
- *
- * TODO: Add support for constrained MDS.
- *
- * @param {Array} relations List of the overlap between two or more sets, or the
+ * @private
+ * @todo Add support for constrained MDS.
+ * @param {Array<object>} relations List of the overlap between two or more sets, or the
  * size of a single set.
- * @returns List of circles and their calculated positions.
+ * @return {Arrat<object>} List of circles and their calculated positions.
  */
 var layout = function (relations) {
     var mapOfIdToShape = {};
@@ -712,13 +708,13 @@ var isValidSet = function (x) {
 };
 
 /**
- * Prepares the venn data so that it is usable for the layout function.
- * Filter out sets, or intersections that includes sets, that are missing in the
- * data or has (value < 1).
- * Adds missing relations between sets in the data as value = 0.
- *
- * @param {Array} data The raw input data.
- * @returns {Array} Returns an array of valid venn data.
+ * Prepares the venn data so that it is usable for the layout function. Filter
+ * out sets, or intersections that includes sets, that are missing in the data
+ * or has (value < 1). Adds missing relations between sets in the data as
+ * value = 0.
+ * @private
+ * @param {Array<object>} data The raw input data.
+ * @return {Array<object>} Returns an array of valid venn data.
  */
 var processVennData = function processVennData(data) {
     var d = isArray(data) ? data : [];
@@ -763,16 +759,14 @@ var processVennData = function processVennData(data) {
 };
 
 /**
- * getScale - Calculates the proper scale to fit the cloud inside the plotting
- *            area.
- *
- * TODO: add unit test
- *
- * @param  {number} targetWidth  Width of target area.
- * @param  {number} targetHeight Height of target area.
- * @param  {object} field The playing field.
- * @param  {Series} series Series object.
- * @returns {object} Returns the value to scale the playing field up to the size
+ * Calculates the proper scale to fit the cloud inside the plotting area.
+ * @private
+ * @todo add unit test
+ * @param {number} targetWidth  Width of target area.
+ * @param {number} targetHeight Height of target area.
+ * @param {object} field The playing field.
+ * @param {Highcharts.Series} series Series object.
+ * @return {object} Returns the value to scale the playing field up to the size
  * of the target area, and center of x and y.
  */
 var getScale = function getScale(targetWidth, targetHeight, field) {
@@ -792,14 +786,13 @@ var getScale = function getScale(targetWidth, targetHeight, field) {
 };
 
 /**
- * updateFieldBoundaries - If a circle is outside a give field, then the
- * boundaries of the field is adjusted accordingly. Modifies the field object
- * which is passed as the first parameter.
- *
- * NOTE: Copied from wordcloud, can probably be unified.
- *
- * @param  {object} field The bounding box of a playing field.
- * @param  {object} placement The bounding box for a placed point.
+ * If a circle is outside a give field, then the boundaries of the field is
+ * adjusted accordingly. Modifies the field object which is passed as the first
+ * parameter.
+ * @private
+ * @todo NOTE: Copied from wordcloud, can probably be unified.
+ * @param {object} field The bounding box of a playing field.
+ * @param {object} placement The bounding box for a placed point.
  * @return {object} Returns a modified field object.
  */
 var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
@@ -831,16 +824,18 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
  * them. The venn diagram is a special case of Euler diagrams, which can also
  * be displayed by this series type.
  *
- * @extends plotOptions.scatter
- * @sample {highcharts} highcharts/demo/venn-diagram/ Venn diagram
- * @sample {highcharts} highcharts/demo/euler-diagram/ Euler diagram
- * @excluding connectEnds, connectNulls, cropThreshold, findNearestPointBy,
- *            getExtremesFromAll, label, linecap, lineWidth, linkedTo, marker,
- *            negativeColor, pointInterval, pointIntervalUnit, pointPlacement,
- *            pointStart, softThreshold, stacking, steps, threshold, xAxis,
- *            yAxis, zoneAxis, zones
+ * @sample {highcharts} highcharts/demo/venn-diagram/
+ *         Venn diagram
+ * @sample {highcharts} highcharts/demo/euler-diagram/
+ *         Euler diagram
  *
- * @product highcharts
+ * @extends      plotOptions.scatter
+ * @excluding    connectEnds, connectNulls, cropThreshold, findNearestPointBy,
+ *               getExtremesFromAll, label, linecap, lineWidth, linkedTo,
+ *               marker, negativeColor, pointInterval, pointIntervalUnit,
+ *               pointPlacement, pointStart, softThreshold, stacking, steps,
+ *               threshold, xAxis, yAxis, zoneAxis, zones
+ * @product      highcharts
  * @optionparent plotOptions.venn
  */
 var vennOptions = {
@@ -968,7 +963,7 @@ var vennSeries = {
     },
     /**
      * Draw the graphics for each point.
-     * @returns {undefined}
+     * @private
      */
     drawPoints: function () {
         var series = this,
@@ -996,17 +991,16 @@ var vennSeries = {
                 renderer: renderer,
                 shapeType: shapeArgs && shapeArgs.d ? 'path' : 'circle'
             });
-
         });
 
     },
     /**
      * Calculates the style attributes for a point. The attributes can vary
      * depending on the state of the point.
-     *
+     * @private
      * @param {object} point The point which will get the resulting attributes.
      * @param {string} state The state of the point.
-     * @returns {object} Returns the calculated attributes.
+     * @return {object} Returns the calculated attributes.
      */
     pointAttribs: function (point, state) {
         var series = this,
@@ -1031,7 +1025,6 @@ var vennSeries = {
             'dashstyle': options.borderDashStyle
         };
     },
-
     animate: function (init) {
         if (!init) {
             var series = this,
@@ -1072,7 +1065,6 @@ var vennSeries = {
             series.animate = null;
         }
     },
-
     utils: {
         addOverlapToSets: addOverlapToSets,
         binarySearch: binarySearch,
@@ -1102,62 +1094,76 @@ var vennPoint = {
  * A `venn` series. If the [type](#series.venn.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @extends series,plotOptions.venn
+ * @extends   series,plotOptions.venn
  * @excluding connectEnds, connectNulls, cropThreshold, dataParser, dataURL,
  *            findNearestPointBy, getExtremesFromAll, label, linecap, lineWidth,
  *            linkedTo, marker, negativeColor, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointStart, softThreshold, stack, stacking, steps,
  *            threshold, xAxis, yAxis, zoneAxis, zones
- * @product highcharts
+ * @product   highcharts
  * @apioption series.venn
  */
 
 /**
- * @type {Array<Object|Number>}
- * @extends series.scatter.data
+ * @type      {Array<*>}
+ * @extends   series.scatter.data
  * @excluding marker, x, y
- * @product highcharts
+ * @product   highcharts
  * @apioption series.venn.data
  */
 
 /**
-* The name of the point. Used in data labels and tooltip. If name is not defined
-* then it will default to the joined values in [sets](#series.venn.sets).
-*
-* @type {Number}
-* @default undefined
-* @since next
-* @sample {highcharts} highcharts/demo/venn-diagram/ Venn diagram
-* @sample {highcharts} highcharts/demo/euler-diagram/ Euler diagram
-* @product highcharts
-* @apioption series.venn.data.name
-*/
+ * The name of the point. Used in data labels and tooltip. If name is not
+ * defined then it will default to the joined values in
+ * [sets](#series.venn.sets).
+ *
+ * @sample {highcharts} highcharts/demo/venn-diagram/
+ *         Venn diagram
+ * @sample {highcharts} highcharts/demo/euler-diagram/
+ *         Euler diagram
+ *
+ * @type      {number}
+ * @since     7.0.0
+ * @product   highcharts
+ * @apioption series.venn.data.name
+ */
 
 /**
-* The value of the point, resulting in a relative area of the circle, or area of
-* overlap between two sets in the venn or euler diagram.
-*
-* @type {Number}
-* @default undefined
-* @since next
-* @sample {highcharts} highcharts/demo/venn-diagram/ Venn diagram
-* @sample {highcharts} highcharts/demo/euler-diagram/ Euler diagram
-* @product highcharts
-* @apioption series.venn.data.value
-*/
+ * The value of the point, resulting in a relative area of the circle, or area
+ * of overlap between two sets in the venn or euler diagram.
+ *
+ * @sample {highcharts} highcharts/demo/venn-diagram/
+ *         Venn diagram
+ * @sample {highcharts} highcharts/demo/euler-diagram/
+ *         Euler diagram
+ *
+ * @type      {number}
+ * @since     7.0.0
+ * @product   highcharts
+ * @apioption series.venn.data.value
+ */
 
 /**
-* The set or sets the options will be applied to. If a single entry is defined,
-* then it will create a new set. If more than one entry is defined, then it will
-* define the overlap between the sets in the array.
-*
-* @type {Array}
-* @default undefined
-* @since next
-* @sample {highcharts} highcharts/demo/venn-diagram/ Venn diagram
-* @sample {highcharts} highcharts/demo/euler-diagram/ Euler diagram
-* @product highcharts
-* @apioption series.venn.data.sets
-*/
+ * The set or sets the options will be applied to. If a single entry is defined,
+ * then it will create a new set. If more than one entry is defined, then it
+ * will define the overlap between the sets in the array.
+ *
+ * @sample {highcharts} highcharts/demo/venn-diagram/
+ *         Venn diagram
+ * @sample {highcharts} highcharts/demo/euler-diagram/
+ *         Euler diagram
+ *
+ * @type      {Array<string>}
+ * @since     7.0.0
+ * @product   highcharts
+ * @apioption series.venn.data.sets
+ */
+
+/**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.venn
+ *
+ * @augments Highcharts.Series
+ */
 seriesType('venn', 'scatter', vennOptions, vennSeries, vennPoint);

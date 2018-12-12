@@ -3,7 +3,7 @@ import H from '../../parts/Globals.js';
 import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
-    CrookedLine = Annotation.types['crooked-line'];
+    CrookedLine = Annotation.types.crookedLine;
 
 /**
  * @class
@@ -36,7 +36,8 @@ H.extendAnnotation(ElliottWave, CrookedLine, /** Annotation.CrookedLine# */ {
      * @extends annotations.crookedLine
      * @sample highcharts/annotations-advanced/elliott-wave/
      *         Elliott wave
-     * @optionparent annotations.elliott-wave
+     * @product highstock
+     * @optionparent annotations.elliottWave
      */
     {
         typeOptions: {
@@ -67,6 +68,6 @@ H.extendAnnotation(ElliottWave, CrookedLine, /** Annotation.CrookedLine# */ {
         }
     });
 
-Annotation.types['elliott-wave'] = ElliottWave;
+Annotation.types.elliottWave = ElliottWave;
 
 export default ElliottWave;

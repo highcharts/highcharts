@@ -3,7 +3,7 @@
  *
  * All technical indicators for Highstock
  *
- * (c) 2010-2017 Pawel Fus
+ * (c) 2010-2018 Pawel Fus
  *
  * License: www.highcharts.com/license
  */

@@ -660,6 +660,7 @@ H.extendAnnotation(Measure, null, /** @lends Annotation.Measure# */ {
      * @excluding labels, labelOptions, shapes, shapeOptions
      * @sample highcharts/annotations-advanced/measure/
      *         Measure
+     * @product highstock
      * @optionparent annotations.measure
      */
     {

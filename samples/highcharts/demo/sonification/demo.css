@@ -1,15 +1,12 @@
 #container {
-	min-width: 500px;
+	min-width: 320px;
 	max-width: 900px;
 	height: 500px;
 	margin: 0 auto
 }
 
 #controls {
-    width: 500px;
     margin: 0 auto;
+    text-align: center;
 }
 
-#controls button, #controls input {
-    width: 20%;
-}

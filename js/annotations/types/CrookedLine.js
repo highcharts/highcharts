@@ -175,6 +175,6 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
     }
 );
 
-Annotation.types['crooked-line'] = CrookedLine;
+Annotation.types.crookedLine = CrookedLine;
 
 export default CrookedLine;

@@ -1,3 +1,9 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -8,25 +14,35 @@ import multipleLinesMixin from '../mixins/multipe-lines.js';
 var getArrayExtremes = reduceArrayMixin.getArrayExtremes,
     merge = H.merge;
 
+/**
+ * The Price Channel series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.pc
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('pc', 'sma',
     /**
      * Price channel (PC). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/price-channel Price Channel
-     * @excluding
-     *        allAreas, colorAxis, compare, compareBase, joinBy, keys, stacking,
-     *        showInNavigator, navigatorOptions, pointInterval,
-     *        pointIntervalUnit, pointPlacement, pointRange, pointStart, joinBy
-     * @since 7.0.0
+     * @sample {highstock} stock/indicators/price-channel
+     *         Price Channel
+     *
+     * @extends      plotOptions.sma
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking
      * @optionparent plotOptions.pc
      */
     {
         /**
-         * @excluding
-         *    index
+         * @excluding index
          */
         params: {
             period: 20
@@ -38,14 +54,11 @@ H.seriesType('pc', 'sma',
                  * Color of the top line. If not set, it's inherited from
                  * [plotOptions.pc.color](#plotOptions.pc.color).
                  *
-                 * @type {String}
-                 * @product highstock
+                 * @type {Highcharts.ColorString}
                  */
                 lineColor: '${palette.colors}'.split(' ')[2],
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
                  */
                 lineWidth: 1
             }
@@ -56,14 +69,11 @@ H.seriesType('pc', 'sma',
                  * Color of the bottom line. If not set, it's inherited from
                  * [plotOptions.pc.color](#plotOptions.pc.color).
                  *
-                 * @type {String}
-                 * @product highstock
+                 * @type {Highcharts.ColorString}
                  */
                 lineColor: '${palette.colors}'.split(' ')[8],
                 /**
                  * Pixel width of the line.
-                 *
-                 * @type {Number}
                  */
                 lineWidth: 1
             }
@@ -71,7 +81,11 @@ H.seriesType('pc', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ merge(multipleLinesMixin, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    merge(multipleLinesMixin, {
         pointArrayMap: ['top', 'middle', 'bottom'],
         pointValKey: 'middle',
         nameBase: 'Price Channel',
@@ -122,25 +136,12 @@ H.seriesType('pc', 'sma',
  * A Price channel indicator. If the [type](#series.pc.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.pc
- * @excluding
- *          allAreas, colorAxis, compare, compareBase, data, dataParser,
- *          dataURLjoinBy, keys, stacking, showInNavigator, navigatorOptions,
- *          pointInterval, pointIntervalUnit, pointPlacement, pointRange,
- *          pointStart, joinBy
- * @product highstock
+ * @extends      series,plotOptions.pc
+ * @since        7.0.0
+ * @product      highstock
+ * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ *               joinBy, keys, navigatorOptions, pointInterval,
+ *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
+ *               showInNavigator, stacking
  * @optionparent series.pc
- */
-
-/**
- * An array of data points for the series. For the `pc` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.pc.data
  */

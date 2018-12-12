@@ -1,3 +1,8 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -12,6 +17,8 @@ var merge = H.merge,
     getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 
 /**
+ * The Stochastic series type.
+ *
  * @private
  * @class
  * @name Highcharts.seriesTypes.stochastic
@@ -27,11 +34,11 @@ H.seriesType('stochastic', 'sma',
      *         Stochastic oscillator
      *
      * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @since        6.0.0
-     * @product      highstock
      * @optionparent plotOptions.stochastic
      */
     {
@@ -44,7 +51,6 @@ H.seriesType('stochastic', 'sma',
              *
              * @type    {Array<number,number>}
              * @default [14, 3]
-             * @since   6.0.0
              */
             periods: [14, 3]
         },
@@ -56,29 +62,22 @@ H.seriesType('stochastic', 'sma',
         },
         /**
          * Smoothed line options.
-         *
-         * @since 6.0.0
          */
         smoothedLine: {
             /**
              * Styles for a smoothed line.
-             *
-             * @since 6.0.0
              */
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @since 6.0.0
                  */
                 lineWidth: 1,
                 /**
                  * Color of the line. If not set, it's inherited from
-                 * [plotOptions.stochastic.color](
-                 * #plotOptions.stochastic.color).
+                 * [plotOptions.stochastic.color
+                 * ](#plotOptions.stochastic.color).
                  *
-                 * @type  {Highcharts.ColorString}
-                 * @since 6.0.0
+                 * @type {Highcharts.ColorString}
                  */
                 lineColor: undefined
             }
@@ -86,7 +85,11 @@ H.seriesType('stochastic', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, /** @lends Highcharts.Series.prototype */ H.merge(multipleLinesMixin, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    H.merge(multipleLinesMixin, {
         nameComponents: ['periods'],
         nameBase: 'Stochastic',
         pointArrayMap: ['y', 'smoothed'],
@@ -180,20 +183,9 @@ H.seriesType('stochastic', 'sma',
  *
  * @extends   series,plotOptions.stochastic
  * @since     6.0.0
- * @excluding allAreas, colorAxis, data, dataParser, dataURL, joinBy, keys,
- * ,          navigatorOptions, pointInterval, pointIntervalUnit,
- *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @product   highstock
+ * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
+ *            navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @apioption series.stochastic
  */
-
-/**
- * An array of data points for the series. For the `stochastic` series type,
- * points are calculated dynamically.
- *
- * @extends   series.line.data
- * @since     6.0.0
- * @product   highstock
- * @apioption series.stochastic.data
- */
-

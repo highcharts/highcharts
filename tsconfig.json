@@ -18,10 +18,9 @@
         "types": []
     },
     "files": [
-        "test/typescript/globals.ts",
-
         "code/highcharts.d.ts",
         "code/highcharts.src.d.ts",
+        "test/typescript/globals.ts",
         "test/typescript/highcharts.ts",
         "test/typescript/classes/Series.ts",
 
@@ -220,8 +219,23 @@
         "code/indicators/indicators.src.d.ts",
         "test/typescript/indicators/indicators.ts",
 
+        "code/indicators/acceleration-bands.d.ts",
+        "code/indicators/acceleration-bands.src.d.ts",
+
         "code/indicators/accumulation-distribution.d.ts",
         "code/indicators/accumulation-distribution.src.d.ts",
+
+        "code/indicators/ao.d.ts",
+        "code/indicators/ao.src.d.ts",
+
+        "code/indicators/apo.d.ts",
+        "code/indicators/apo.src.d.ts",
+
+        "code/indicators/aroon-oscillator.d.ts",
+        "code/indicators/aroon-oscillator.src.d.ts",
+
+        "code/indicators/aroon.d.ts",
+        "code/indicators/aroon.src.d.ts",
 
         "code/indicators/atr.d.ts",
         "code/indicators/atr.src.d.ts",
@@ -232,14 +246,26 @@
         "code/indicators/cci.d.ts",
         "code/indicators/cci.src.d.ts",
 
+        "code/indicators/chaikin.d.ts",
+        "code/indicators/chaikin.src.d.ts",
+
         "code/indicators/cmf.d.ts",
         "code/indicators/cmf.src.d.ts",
+
+        "code/indicators/dema.d.ts",
+        "code/indicators/dema.src.d.ts",
+
+        "code/indicators/dpo.d.ts",
+        "code/indicators/dpo.src.d.ts",
 
         "code/indicators/ema.d.ts",
         "code/indicators/ema.src.d.ts",
 
         "code/indicators/ichimoku-kinko-hyo.d.ts",
         "code/indicators/ichimoku-kinko-hyo.src.d.ts",
+
+        "code/indicators/keltner-channels.d.ts",
+        "code/indicators/keltner-channels.src.d.ts",
 
         "code/indicators/macd.d.ts",
         "code/indicators/macd.src.d.ts",
@@ -250,8 +276,17 @@
         "code/indicators/momentum.d.ts",
         "code/indicators/momentum.src.d.ts",
 
+        "code/indicators/natr.d.ts",
+        "code/indicators/natr.src.d.ts",
+
         "code/indicators/pivot-points.d.ts",
         "code/indicators/pivot-points.src.d.ts",
+
+        "code/indicators/ppo.d.ts",
+        "code/indicators/ppo.src.d.ts",
+
+        "code/indicators/price-channel.d.ts",
+        "code/indicators/price-channel.src.d.ts",
 
         "code/indicators/price-envelopes.d.ts",
         "code/indicators/price-envelopes.src.d.ts",
@@ -268,11 +303,23 @@
         "code/indicators/stochastic.d.ts",
         "code/indicators/stochastic.src.d.ts",
 
+        "code/indicators/supertrend.d.ts",
+        "code/indicators/supertrend.src.d.ts",
+
+        "code/indicators/tema.d.ts",
+        "code/indicators/tema.src.d.ts",
+
+        "code/indicators/trix.d.ts",
+        "code/indicators/trix.src.d.ts",
+
         "code/indicators/volume-by-price.d.ts",
         "code/indicators/volume-by-price.src.d.ts",
 
         "code/indicators/vwap.d.ts",
         "code/indicators/vwap.src.d.ts",
+
+        "code/indicators/williams-r.d.ts",
+        "code/indicators/williams-r.src.d.ts",
 
         "code/indicators/wma.d.ts",
         "code/indicators/wma.src.d.ts",

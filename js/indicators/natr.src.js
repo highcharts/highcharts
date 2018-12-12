@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -7,8 +14,11 @@ var ATR = H.seriesTypes.atr;
 /**
  * The NATR series type.
  *
- * @constructor seriesTypes.natr
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.natr
+ *
+ * @augments Highcharts.Series
  */
 H.seriesType('natr', 'sma',
     /**
@@ -16,17 +26,23 @@ H.seriesType('natr', 'sma',
      * `linkedTo` option to be set and should be loaded after the
      * `stock/indicators/indicators.js` and `stock/indicators/atr.js`.
      *
-     * @extends plotOptions.atr
-     * @product highstock
-     * @sample {highstock} stock/indicators/natr NATR indicator
-     * @since 7.0.0
+     * @sample {highstock} stock/indicators/natr
+     *         NATR indicator
+     *
+     * @extends      plotOptions.atr
+     * @since        7.0.0
+     * @product      highstock
      * @optionparent plotOptions.natr
      */
     {
         tooltip: {
             valueSuffix: '%'
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         requiredIndicators: ['atr'],
         getValues: function (series, params) {
             var atrData = ATR.prototype.getValues.apply(this, arguments),
@@ -47,21 +63,12 @@ H.seriesType('natr', 'sma',
     });
 
 /**
- * A `NATR` series. If the [type](#series.natr.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
+ * A `NATR` series. If the [type](#series.natr.type) option is not specified, it
+ * is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.natr
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.natr
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.natr
- */
-
-/**
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.atr.data
- * @product highstock
- * @apioption series.natr.data
  */

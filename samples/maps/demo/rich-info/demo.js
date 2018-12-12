@@ -141,28 +141,16 @@ $.ajax({
                     });
                 }
 
-                $.each(points, function (i) {
-                    // Update
-                    if (countryChart.series[i]) {
-                        /*$.each(countries[this.code3].data, function (pointI, value) {
-                            countryChart.series[i].points[pointI].update(value, false);
-                        });*/
-                        countryChart.series[i].update({
-                            name: this.name,
-                            data: countries[this.code3].data,
-                            type: points.length > 1 ? 'line' : 'area'
-                        }, false);
-                    } else {
-                        countryChart.addSeries({
-                            name: this.name,
-                            data: countries[this.code3].data,
-                            type: points.length > 1 ? 'line' : 'area'
-                        }, false);
-                    }
+                countryChart.series.slice(0).forEach(function (s) {
+                    s.remove(false);
                 });
-                while (countryChart.series.length > points.length) {
-                    countryChart.series[countryChart.series.length - 1].remove(false);
-                }
+                points.forEach(function (p) {
+                    countryChart.addSeries({
+                        name: p.name,
+                        data: countries[p.code3].data,
+                        type: points.length > 1 ? 'line' : 'area'
+                    }, false);
+                });
                 countryChart.redraw();
 
             } else {

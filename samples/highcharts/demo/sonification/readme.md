@@ -6,5 +6,5 @@ Notice how the two series get closer to each other as the year progresses toward
 At the plot line, a special sound will play to indicate a point of interest.
 
 ####  Tip
-- This demo is best viewed in Chrome, as the technology is still in an experimental stage.
 - Try clicking a point to play the points at that x-value.
+- Hiding a series by clicking the legend items will mute that series.

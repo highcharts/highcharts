@@ -1,3 +1,8 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -26,6 +31,8 @@ function destroyExtraLabels(point, functionName) {
 }
 
 /**
+ * The Pivot Points series type.
+ *
  * @private
  * @class
  * @name Highcharts.seriesTypes.pivotpoints
@@ -55,8 +62,6 @@ H.seriesType('pivotpoints', 'sma',
              * Algorithm used to calculate ressistance and support lines based
              * on pivot points. Implemented algorithms: `'standard'`,
              * `'fibonacci'` and `'camarilla'`
-             *
-             * @since 6.0.0
              */
             algorithm: 'standard'
         },
@@ -71,7 +76,11 @@ H.seriesType('pivotpoints', 'sma',
         dataGrouping: {
             approximation: 'averages'
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameBase: 'Pivot Points',
         pointArrayMap: ['R4', 'R3', 'R2', 'R1', 'P', 'S1', 'S2', 'S3', 'S4'],
         pointValKey: 'P',
@@ -319,7 +328,11 @@ H.seriesType('pivotpoints', 'sma',
 
             return avg;
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Point#
+     */
+    {
         // Destroy labels:
         // This method is called when cropping data:
         destroyElements: function () {
@@ -338,17 +351,7 @@ H.seriesType('pivotpoints', 'sma',
  *
  * @extends   series,plotOptions.pivotpoints
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
  * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.pivotpoints
- */
-
-/**
- * An array of data points for the series. For the `pivotpoints` series type,
- * points are calculated dynamically.
- *
- * @extends   series.line.data
- * @since     6.0.0
- * @product   highstock
- * @apioption series.pivotpoints.data
  */

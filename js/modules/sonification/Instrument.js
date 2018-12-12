@@ -1,26 +1,19 @@
-/**
- * (c) 2009-2018 Øystein Moseng
+/* *
  *
- * Instrument class for sonification module.
+ *  (c) 2009-2018 Øystein Moseng
  *
- * License: www.highcharts.com/license
- */
-
-'use strict';
-import H from '../../parts/Globals.js';
-
-// Default options for Instrument constructor
-var defaultOptions = {
-    type: 'oscillator',
-    playCallbackInterval: 20,
-    oscillator: {
-        waveformShape: 'sine'
-    }
-};
+ *  Instrument class for sonification module.
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 
 /**
  * A set of options for the Instrument class.
+ *
+ * @requires module:modules/sonification
+ *
  * @interface Highcharts.InstrumentOptionsObject
  *//**
  * The type of instrument. Currently only `oscillator` is supported. Defaults
@@ -51,258 +44,11 @@ var defaultOptions = {
 
 
 /**
- * @interface Highcharts.OscillatorOptionsObject
- *//**
- * The waveform shape to use for oscillator instruments. Defaults to `sine`.
- * @name Highcharts.OscillatorOptionsObject#waveformShape
- * @type {string|undefined}
- */
-
-
-/**
- * The Instrument class. Instrument objects represent an instrument capable of
- * playing a certain pitch for a specified duration.
- *
- * @class Highcharts.Instrument
- *
- * @param   {Highcharts.InstrumentOptionsObject} options
- *          Options for the instrument instance.
- *
- * @sample highcharts/sonification/instrument/
- *         Using Instruments directly
- * @sample highcharts/sonification/instrument-advanced/
- *         Using callbacks for instrument parameters
- */
-function Instrument(options) {
-    this.init(options);
-}
-Instrument.prototype.init = function (options) {
-    if (!this.initAudioContext()) {
-        H.error(29);
-        return;
-    }
-    this.options = H.merge(defaultOptions, options);
-    this.id = this.options.id = options && options.id || H.uniqueKey();
-
-    // Init the audio nodes
-    var ctx = H.audioContext;
-    this.gainNode = ctx.createGain();
-    this.setGain(0);
-    this.panNode = ctx.createStereoPanner && ctx.createStereoPanner();
-    if (this.panNode) {
-        this.setPan(0);
-        this.gainNode.connect(this.panNode);
-        this.panNode.connect(ctx.destination);
-    } else {
-        this.gainNode.connect(ctx.destination);
-    }
-
-    // Oscillator initialization
-    if (this.options.type === 'oscillator') {
-        this.initOscillator(this.options.oscillator);
-    }
-
-    // Init timer list
-    this.playCallbackTimers = [];
-};
-
-
-/**
- * Return a copy of an instrument. Only one instrument instance can play at a
- * time, so use this to get a new copy of the instrument that can play alongside
- * it. The new instrument copy will receive a new ID unless one is supplied in
- * options.
- *
- * @param   {Highcharts.InstrumentOptionsObject} [options]
- *          Options to merge in for the copy.
- *
- * @return {Highcharts.Instrument} A new Instrument instance with the same
- *  options.
- */
-Instrument.prototype.copy = function (options) {
-    return new Instrument(H.merge(this.options, { id: null }, options));
-};
-
-
-/**
- * Init the audio context, if we do not have one.
- * @private
- *
- * @return {boolean} True if successful, false if not.
- */
-Instrument.prototype.initAudioContext = function () {
-    var Context = H.win.AudioContext || H.win.webkitAudioContext;
-    if (Context) {
-        H.audioContext = H.audioContext || new Context();
-        if (H.audioContext && H.audioContext.state === 'running') {
-            H.audioContext.suspend(); // Pause until we need it
-        }
-        return !!(
-            H.audioContext &&
-            H.audioContext.createOscillator &&
-            H.audioContext.createGain
-        );
-    }
-    return false;
-};
-
-
-/**
- * Init an oscillator instrument.
- * @private
- *
- * @param   {object} oscillatorOptions
- *          The oscillator options passed to Instrument.init.
- */
-Instrument.prototype.initOscillator = function (options) {
-    var ctx = H.audioContext;
-    this.oscillator = ctx.createOscillator();
-    this.oscillator.type = options.waveformShape;
-    this.oscillator.frequency.value = 0; // Start frequency at 0
-    this.oscillator.connect(this.gainNode);
-    this.oscillatorStarted = false;
-};
-
-
-/**
- * Set pan position.
- * @private
- *
- * @param   {number} panValue
- *          The pan position to set for the instrument.
- */
-Instrument.prototype.setPan = function (panValue) {
-    if (this.panNode) {
-        this.panNode.pan.value = panValue;
-    }
-};
-
-
-/**
- * Set gain level. A maximum of 1.2 is allowed before we emit a warning. The
- * actual volume is not set above this level regardless of input.
- * @private
- *
- * @param   {number} gainValue
- *          The gain level to set for the instrument.
- * @param   {number} [rampTime=0]
- *          Gradually change the gain level, time given in milliseconds.
- */
-Instrument.prototype.setGain = function (gainValue, rampTime) {
-    if (this.gainNode) {
-        if (gainValue > 1.2) {
-            console.warn( // eslint-disable-line
-                'Highcharts sonification warning: ' +
-                'Volume of instrument set too high.'
-            );
-            gainValue = 1.2;
-        }
-        if (rampTime) {
-            this.gainNode.gain.setValueAtTime(
-                this.gainNode.gain.value, H.audioContext.currentTime
-            );
-            this.gainNode.gain.linearRampToValueAtTime(
-                gainValue,
-                H.audioContext.currentTime + rampTime / 1000
-            );
-        } else {
-            this.gainNode.gain.value = gainValue;
-        }
-    }
-};
-
-
-/**
- * Cancel ongoing gain ramps.
- * @private
- */
-Instrument.prototype.cancelGainRamp = function () {
-    if (this.gainNode) {
-        this.gainNode.gain.cancelScheduledValues(0);
-    }
-};
-
-
-/**
- * Get the closest valid frequency for this instrument.
- * @private
- *
- * @param   {number} frequency
- *          The target frequency.
- * @param   {number} [min]
- *          Minimum frequency to return.
- * @param   {number} [max]
- *          Maximum frequency to return.
- *
- * @return {number} The closest valid frequency to the input frequency.
- */
-Instrument.prototype.getValidFrequency = function (frequency, min, max) {
-    var validFrequencies = this.options.allowedFrequencies,
-        maximum = H.pick(max, Infinity),
-        minimum = H.pick(min, -Infinity);
-    return !validFrequencies || !validFrequencies.length ?
-            // No valid frequencies for this instrument, return the target
-            frequency :
-            // Use the valid frequencies and return the closest match
-            validFrequencies.reduce(function (acc, cur) {
-                // Find the closest allowed value
-                return Math.abs(cur - frequency) < Math.abs(acc - frequency) &&
-                    cur < maximum && cur > minimum ?
-                    cur : acc;
-            }, Infinity);
-};
-
-
-/**
- * Clear existing play callback timers.
- * @private
- */
-Instrument.prototype.clearPlayCallbackTimers = function () {
-    this.playCallbackTimers.forEach(function (timer) {
-        clearInterval(timer);
-    });
-    this.playCallbackTimers = [];
-};
-
-
-/**
- * Set the current frequency being played by the instrument. The closest valid
- * frequency between the frequency limits is used.
- * @param {number} frequency The frequency to set.
- * @param {object} [frequencyLimits] Object with maxFrequency and minFrequency
- */
-Instrument.prototype.setFrequency = function (frequency, frequencyLimits) {
-    var limits = frequencyLimits || {},
-        validFrequency = this.getValidFrequency(
-            frequency, limits.min, limits.max
-        );
-    if (this.options.type === 'oscillator') {
-        this.oscillatorPlay(validFrequency);
-    }
-};
-
-
-/**
- * Play oscillator instrument.
- * @private
- *
- * @param   {number} frequency
- *          The frequency to play.
- */
-Instrument.prototype.oscillatorPlay = function (frequency) {
-    if (!this.oscillatorStarted) {
-        this.oscillator.start();
-        this.oscillatorStarted = true;
-    }
-
-    this.oscillator.frequency.value = frequency;
-};
-
-
-/**
  * Options for playing an instrument.
- * @interface Highcharts.InstrumentPlayOptionsObject
  *
+ * @requires module:modules/sonification
+ *
+ * @interface Highcharts.InstrumentPlayOptionsObject
  *//**
  * The frequency of the note to play. Can be a fixed number, or a function. The
  * function receives one argument: the relative time of the note playing (0
@@ -352,15 +98,299 @@ Instrument.prototype.oscillatorPlay = function (frequency) {
 
 
 /**
- * Play the instrument according to options.
+ * @requires module:modules/sonification
  *
- * @param   {Highcharts.InstrumentPlayOptionsObject} options
- *          Options for the playback of the instrument.
+ * @interface Highcharts.OscillatorOptionsObject
+ *//**
+ * The waveform shape to use for oscillator instruments. Defaults to `sine`.
+ * @name Highcharts.OscillatorOptionsObject#waveformShape
+ * @type {string|undefined}
+ */
+
+
+'use strict';
+
+import H from '../../parts/Globals.js';
+
+// Default options for Instrument constructor
+var defaultOptions = {
+    type: 'oscillator',
+    playCallbackInterval: 20,
+    oscillator: {
+        waveformShape: 'sine'
+    }
+};
+
+
+/**
+ * The Instrument class. Instrument objects represent an instrument capable of
+ * playing a certain pitch for a specified duration.
  *
  * @sample highcharts/sonification/instrument/
  *         Using Instruments directly
  * @sample highcharts/sonification/instrument-advanced/
  *         Using callbacks for instrument parameters
+ *
+ * @requires module:modules/sonification
+ *
+ * @class
+ * @name Highcharts.Instrument
+ *
+ * @param {Highcharts.InstrumentOptionsObject} options
+ *        Options for the instrument instance.
+ */
+function Instrument(options) {
+    this.init(options);
+}
+Instrument.prototype.init = function (options) {
+    if (!this.initAudioContext()) {
+        H.error(29);
+        return;
+    }
+    this.options = H.merge(defaultOptions, options);
+    this.id = this.options.id = options && options.id || H.uniqueKey();
+
+    // Init the audio nodes
+    var ctx = H.audioContext;
+    this.gainNode = ctx.createGain();
+    this.setGain(0);
+    this.panNode = ctx.createStereoPanner && ctx.createStereoPanner();
+    if (this.panNode) {
+        this.setPan(0);
+        this.gainNode.connect(this.panNode);
+        this.panNode.connect(ctx.destination);
+    } else {
+        this.gainNode.connect(ctx.destination);
+    }
+
+    // Oscillator initialization
+    if (this.options.type === 'oscillator') {
+        this.initOscillator(this.options.oscillator);
+    }
+
+    // Init timer list
+    this.playCallbackTimers = [];
+};
+
+
+/**
+ * Return a copy of an instrument. Only one instrument instance can play at a
+ * time, so use this to get a new copy of the instrument that can play alongside
+ * it. The new instrument copy will receive a new ID unless one is supplied in
+ * options.
+ *
+ * @function Highcharts.Instrument#copy
+ *
+ * @param {Highcharts.InstrumentOptionsObject} [options]
+ *        Options to merge in for the copy.
+ *
+ * @return {Highcharts.Instrument}
+ *         A new Instrument instance with the same options.
+ */
+Instrument.prototype.copy = function (options) {
+    return new Instrument(H.merge(this.options, { id: null }, options));
+};
+
+
+/**
+ * Init the audio context, if we do not have one.
+ * @private
+ * @return {boolean} True if successful, false if not.
+ */
+Instrument.prototype.initAudioContext = function () {
+    var Context = H.win.AudioContext || H.win.webkitAudioContext,
+        hasOldContext = !!H.audioContext;
+    if (Context) {
+        H.audioContext = H.audioContext || new Context();
+        if (
+            !hasOldContext &&
+            H.audioContext &&
+            H.audioContext.state === 'running'
+        ) {
+            H.audioContext.suspend(); // Pause until we need it
+        }
+        return !!(
+            H.audioContext &&
+            H.audioContext.createOscillator &&
+            H.audioContext.createGain
+        );
+    }
+    return false;
+};
+
+
+/**
+ * Init an oscillator instrument.
+ * @private
+ * @param {object} oscillatorOptions - The oscillator options passed to
+ * Highcharts.Instrument#init.
+ */
+Instrument.prototype.initOscillator = function (options) {
+    var ctx = H.audioContext;
+    this.oscillator = ctx.createOscillator();
+    this.oscillator.type = options.waveformShape;
+    this.oscillator.connect(this.gainNode);
+    this.oscillatorStarted = false;
+};
+
+
+/**
+ * Set pan position.
+ * @private
+ * @param {number} panValue - The pan position to set for the instrument.
+ */
+Instrument.prototype.setPan = function (panValue) {
+    if (this.panNode) {
+        this.panNode.pan.setValueAtTime(panValue, H.audioContext.currentTime);
+    }
+};
+
+
+/**
+ * Set gain level. A maximum of 1.2 is allowed before we emit a warning. The
+ * actual volume is not set above this level regardless of input.
+ * @private
+ * @param {number} gainValue - The gain level to set for the instrument.
+ * @param {number} [rampTime=0] - Gradually change the gain level, time given in
+ * milliseconds.
+ */
+Instrument.prototype.setGain = function (gainValue, rampTime) {
+    if (this.gainNode) {
+        if (gainValue > 1.2) {
+            console.warn( // eslint-disable-line
+                'Highcharts sonification warning: ' +
+                'Volume of instrument set too high.'
+            );
+            gainValue = 1.2;
+        }
+        if (rampTime) {
+            this.gainNode.gain.setValueAtTime(
+                this.gainNode.gain.value, H.audioContext.currentTime
+            );
+            this.gainNode.gain.linearRampToValueAtTime(
+                gainValue,
+                H.audioContext.currentTime + rampTime / 1000
+            );
+        } else {
+            this.gainNode.gain.setValueAtTime(
+                gainValue, H.audioContext.currentTime
+            );
+        }
+    }
+};
+
+
+/**
+ * Cancel ongoing gain ramps.
+ * @private
+ */
+Instrument.prototype.cancelGainRamp = function () {
+    if (this.gainNode) {
+        this.gainNode.gain.cancelScheduledValues(0);
+    }
+};
+
+
+/**
+ * Get the closest valid frequency for this instrument.
+ * @private
+ * @param {number} frequency - The target frequency.
+ * @param {number} [min] - Minimum frequency to return.
+ * @param {number} [max] - Maximum frequency to return.
+ * @return {number} The closest valid frequency to the input frequency.
+ */
+Instrument.prototype.getValidFrequency = function (frequency, min, max) {
+    var validFrequencies = this.options.allowedFrequencies,
+        maximum = H.pick(max, Infinity),
+        minimum = H.pick(min, -Infinity);
+    return !validFrequencies || !validFrequencies.length ?
+            // No valid frequencies for this instrument, return the target
+            frequency :
+            // Use the valid frequencies and return the closest match
+            validFrequencies.reduce(function (acc, cur) {
+                // Find the closest allowed value
+                return Math.abs(cur - frequency) < Math.abs(acc - frequency) &&
+                    cur < maximum && cur > minimum ?
+                    cur : acc;
+            }, Infinity);
+};
+
+
+/**
+ * Clear existing play callback timers.
+ * @private
+ */
+Instrument.prototype.clearPlayCallbackTimers = function () {
+    this.playCallbackTimers.forEach(function (timer) {
+        clearInterval(timer);
+    });
+    this.playCallbackTimers = [];
+};
+
+
+/**
+ * Set the current frequency being played by the instrument. The closest valid
+ * frequency between the frequency limits is used.
+ * @param {number} frequency - The frequency to set.
+ * @param {object} [frequencyLimits] - Object with maxFrequency and minFrequency
+ */
+Instrument.prototype.setFrequency = function (frequency, frequencyLimits) {
+    var limits = frequencyLimits || {},
+        validFrequency = this.getValidFrequency(
+            frequency, limits.min, limits.max
+        );
+    if (this.options.type === 'oscillator') {
+        this.oscillatorPlay(validFrequency);
+    }
+};
+
+
+/**
+ * Play oscillator instrument.
+ * @private
+ * @param {number} frequency - The frequency to play.
+ */
+Instrument.prototype.oscillatorPlay = function (frequency) {
+    if (!this.oscillatorStarted) {
+        this.oscillator.start();
+        this.oscillatorStarted = true;
+    }
+
+    this.oscillator.frequency.setValueAtTime(
+        frequency, H.audioContext.currentTime
+    );
+};
+
+
+/**
+ * Prepare instrument before playing. Resumes the audio context and starts the
+ * oscillator.
+ * @private
+ */
+Instrument.prototype.preparePlay = function () {
+    this.setGain(0.001);
+    if (H.audioContext.state === 'suspended') {
+        H.audioContext.resume();
+    }
+    if (this.oscillator && !this.oscillatorStarted) {
+        this.oscillator.start();
+        this.oscillatorStarted = true;
+    }
+};
+
+
+/**
+ * Play the instrument according to options.
+ *
+ * @sample highcharts/sonification/instrument/
+ *         Using Instruments directly
+ * @sample highcharts/sonification/instrument-advanced/
+ *         Using callbacks for instrument parameters
+ *
+ * @function Highcharts.Instrument#play
+ *
+ * @param {Highcharts.InstrumentPlayOptionsObject} options
+ *        Options for the playback of the instrument.
  */
 Instrument.prototype.play = function (options) {
     var instrument = this,
@@ -394,6 +424,19 @@ Instrument.prototype.play = function (options) {
         return;
     }
 
+    // If the AudioContext is suspended we have to resume it before playing
+    if (
+        H.audioContext.state === 'suspended' ||
+        this.oscillator && !this.oscillatorStarted
+    ) {
+        instrument.preparePlay();
+        // Try again in 10ms
+        setTimeout(function () {
+            instrument.play(options);
+        }, 10);
+        return;
+    }
+
     // Clear any existing play timers
     if (instrument.playCallbackTimers.length) {
         instrument.clearPlayCallbackTimers();
@@ -423,11 +466,6 @@ Instrument.prototype.play = function (options) {
             instrument.stopCallback('cancelled');
             instrument.play = instrument._play;
         }
-    }
-
-    // If the AudioContext is suspended we have to resume it before playing
-    if (H.audioContext.state === 'suspended') {
-        H.audioContext.resume();
     }
 
     // Stop the note without fadeOut if the duration is too short to hear the
@@ -466,6 +504,8 @@ Instrument.prototype.play = function (options) {
 /**
  * Mute an instrument that is playing. If the instrument is not currently
  * playing, this function does nothing.
+ *
+ * @function Highcharts.Instrument#mute
  */
 Instrument.prototype.mute = function () {
     this.setGain(0.0001, H.sonification.fadeOutDuration * 0.8);
@@ -475,14 +515,16 @@ Instrument.prototype.mute = function () {
 /**
  * Stop the instrument playing.
  *
- * @param   {boolean} immediately
- *          Whether to do the stop immediately or fade out.
+ * @function Highcharts.Instrument#stop
  *
- * @param   {Function} onStopped
- *          Callback function to be called when the stop is completed.
+ * @param {boolean} immediately
+ *        Whether to do the stop immediately or fade out.
  *
- * @param   {*} callbackData
- *          Data to send to the onEnd callback functions.
+ * @param {Function} onStopped
+ *        Callback function to be called when the stop is completed.
+ *
+ * @param {*} callbackData
+ *        Data to send to the onEnd callback functions.
  */
 Instrument.prototype.stop = function (immediately, onStopped, callbackData) {
     var instr = this,

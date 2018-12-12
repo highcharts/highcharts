@@ -1,10 +1,12 @@
-/**
- * (c) 2009-2018 Øystein Moseng
+/* *
  *
- * Earcons for the sonification module in Highcharts.
+ *  (c) 2009-2018 Øystein Moseng
  *
- * License: www.highcharts.com/license
- */
+ *  Earcons for the sonification module in Highcharts.
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -12,6 +14,9 @@ import H from '../../parts/Globals.js';
 
 /**
  * Define an Instrument and the options for playing it.
+ *
+ * @requires module:modules/sonification
+ *
  * @interface Highcharts.EarconInstrument
  *//**
  * An instrument instance or the name of the instrument in the
@@ -27,6 +32,9 @@ import H from '../../parts/Globals.js';
 
 /**
  * Options for an Earcon.
+ *
+ * @requires module:modules/sonification
+ *
  * @interface Highcharts.EarconOptionsObject
  *//**
  * The instruments and their options defining this earcon.
@@ -58,13 +66,16 @@ import H from '../../parts/Globals.js';
  * The Earcon class. Earcon objects represent a certain sound consisting of
  * one or more instruments playing a predefined sound.
  *
- * @class Highcharts.Earcon
- *
- * @param   {Highcharts.EarconOptionsObject} options
- *          Options for the Earcon instance.
- *
  * @sample highcharts/sonification/earcon/
  *         Using earcons directly
+ *
+ * @requires module:modules/sonification
+ *
+ * @class
+ * @name Highcharts.Earcon
+ *
+ * @param {Highcharts.EarconOptionsObject} options
+ *        Options for the Earcon instance.
  */
 function Earcon(options) {
     this.init(options || {});
@@ -81,11 +92,13 @@ Earcon.prototype.init = function (options) {
 /**
  * Play the earcon, optionally overriding init options.
  *
- * @param   {Highcharts.EarconOptionsObject} options
- *          Override existing options.
- *
  * @sample highcharts/sonification/earcon/
  *         Using earcons directly
+ *
+ * @function Highcharts.Earcon#sonify
+ *
+ * @param {Highcharts.EarconOptionsObject} options
+ *        Override existing options.
  */
 Earcon.prototype.sonify = function (options) {
     var playOptions = H.merge(this.options, options);
@@ -148,8 +161,11 @@ Earcon.prototype.sonify = function (options) {
 /**
  * Cancel any current sonification of the Earcon. Calls onEnd functions.
  *
- * @param   {boolean} [fadeOut=false] Whether or not to fade out as we stop. If
- *          false, the earcon is cancelled synchronously.
+ * @function Highcharts.Earcon#cancelSonify
+ *
+ * @param {boolean} [fadeOut=false]
+ *        Whether or not to fade out as we stop. If false, the earcon is
+ *        cancelled synchronously.
  */
 Earcon.prototype.cancelSonify = function (fadeOut) {
     var playing = this.instrumentsPlaying,

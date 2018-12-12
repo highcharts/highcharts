@@ -1,3 +1,8 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -19,6 +24,8 @@ function createPointObj(mainSeries, index, close) {
 }
 
 /**
+ * The Supertrend series type.
+ *
  * @private
  * @class
  * @name Highcharts.seriesTypes.supertrend
@@ -38,31 +45,26 @@ H.seriesType('supertrend', 'sma',
      * @since        7.0.0
      * @product      highstock
      * @excluding    allAreas, color, negativeColor, colorAxis, joinBy, keys,
-     *               stacking, showInNavigator, navigatorOptions, pointInterval,
-     *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
-     *               threshold
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking, threshold
      * @optionparent plotOptions.supertrend
      */
     {
         /**
          * Paramters used in calculation of Supertrend indicator series points.
          *
-         * @since     7.0.0
          * @excluding index
          */
         params: {
             /**
              * Multiplier for Supertrend Indicator.
-             *
-             * @since 7.0.0
              */
             multiplier: 3,
             /**
              * The base period for indicator Supertrend Indicator calculations.
              * This is the number of data points which are taken into account
              * for the indicator calculations.
-             *
-             * @since 7.0.0
              */
             period: 10
         },
@@ -72,8 +74,7 @@ H.seriesType('supertrend', 'sma',
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with risingTrendColor
          *
-         * @type  {Highcharts.ColorString}
-         * @since 7.0.0
+         * @type {Highcharts.ColorString}
          */
         risingTrendColor: '${palette.indicatorPositiveLine}',
         /**
@@ -82,8 +83,7 @@ H.seriesType('supertrend', 'sma',
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with fallingTrendColor
          *
-         * @type  {Highcharts.ColorString}
-         * @since 7.0.0
+         * @type {Highcharts.ColorString}
          */
         fallingTrendColor: '${palette.indicatorNegativeLine}',
         /**
@@ -91,23 +91,18 @@ H.seriesType('supertrend', 'sma',
          *
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with changeTrendLine
-         *
-         * @since 7.0.0
          */
         changeTrendLine: {
             styles: {
                 /**
                  * Pixel width of the line.
-                 *
-                 * @since 7.0.0
                  */
                 lineWidth: 1,
 
                 /**
                  * Color of the line.
                  *
-                 * @type  {Highcharts.ColorString}
-                 * @since 7.0.0
+                 * @type {Highcharts.ColorString}
                  */
                 lineColor: '${palette.neutralColor80}',
 
@@ -122,14 +117,19 @@ H.seriesType('supertrend', 'sma',
                  *          Long dashes
                  *
                  * @since      7.0.0
-                 * @validvalue ["Dash","DashDot","Dot","LongDash","LongDashDot",
-                 *             "LongDashDotDot","ShortDash","ShortDashDot",
-                 *             "ShortDashDotDot","ShortDot","Solid"]
+                 * @validvalue ["Dash", "DashDot", "Dot", "LongDash",
+                 *             "LongDashDot", "LongDashDotDot", "ShortDash",
+                 *             "ShortDashDot", "ShortDashDotDot", "ShortDot",
+                 *             "Solid"]
                  */
                 dashStyle: 'LongDash'
             }
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    },
+    /**
+     * @lends Highcharts.Series.prototype
+     */
+    {
         nameBase: 'Supertrend',
         nameComponents: ['multiplier', 'period'],
         requiredIndicators: ['atr'],
@@ -524,15 +524,4 @@ H.seriesType('supertrend', 'sma',
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            showInNavigator, stacking, threshold
  * @apioption series.supertrend
- */
-
-/**
- * An array of data points for the series. For the `supertrend` series type,
- * points are calculated dynamically.
- *
- * @extends   series.line.data
- * @type      {Array<Array<number|string>|*>}
- * @since     7.0.0
- * @product   highstock
- * @apioption series.supertrend.data
  */

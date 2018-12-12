@@ -28,7 +28,7 @@ var addEvent = H.addEvent,
  *
  * @extends      plotOptions.line
  * @product      highcharts
- * @sample       highcharts/demo/networkgraph/
+ * @sample       highcharts/demo/network-graph/
  *               Networkgraph
  * @since        7.0.0
  * @excluding    boostThreshold, animation, animationLimit, connectEnds,
@@ -103,7 +103,7 @@ seriesType('networkgraph', 'line', {
          * implementation. All nodes are animated as the forces applies on
          * them.
          *
-         * @sample       highcharts/demo/networkgraph/
+         * @sample       highcharts/demo/network-graph/
          *               Live simulation enabled
          */
         enableSimulation: false,

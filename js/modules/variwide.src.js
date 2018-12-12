@@ -57,10 +57,10 @@ seriesType('variwide', 'column'
 }, {
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z'],
-    processData: function () {
+    processData: function (force) {
         this.totalZ = 0;
         this.relZ = [];
-        seriesTypes.column.prototype.processData.call(this);
+        seriesTypes.column.prototype.processData.call(this, force);
 
         (this.xAxis.reversed ?
                 this.zData.slice().reverse() :

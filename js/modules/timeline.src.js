@@ -1,13 +1,18 @@
-/**
- * @license  @product.name@ JS v@product.version@ (@product.date@)
- * Timeline series
+/* *
  *
- * (c) 2010-2018 Highsoft AS
- * Author: Daniel Studencki
+ *  Experimental Timeline Series.
+ *  Note: This API is in alpha stage and will be changed before final release.
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Highsoft AS
+ *
+ *  Author: Daniel Studencki
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
@@ -19,32 +24,36 @@ var addEvent = H.addEvent,
     pick = H.pick,
     Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType,
+    undocumentedSeriesType = H.seriesType,
     wrap = H.wrap;
 
-/**
+/* *
  * The timeline series type.
  *
- * @constructor seriesTypes.timeline
- * @augments Series
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.timeline
+ *
+ * @augments Highcharts.Series
  */
+undocumentedSeriesType('timeline', 'line'
 
-/**
+/* *
  * The timeline series presents given events along a drawn line.
  *
  * @sample highcharts/series-timeline/alternate-labels Timeline series
  *
- * @extends plotOptions.line
- * @excluding animationLimit,boostThreshold,connectEnds,connectNulls,
- *          cropThreshold,dashStyle,findNearestPointBy,getExtremesFromAll,
- *          lineWidth,negativeColor,pointInterval,pointIntervalUnit,
- *          pointPlacement,pointStart,softThreshold,stacking,step,threshold,
- *          turboThreshold,zoneAxis,zones
- * @product highcharts
- * @since 7.0.0
+ * @extends      plotOptions.line
+ * @since        7.0.0
+ * @product      highcharts
+ * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
+ *               cropThreshold, dashStyle, findNearestPointBy,
+ *               getExtremesFromAll, lineWidth, negativeColor, pointInterval,
+ *               pointIntervalUnit, pointPlacement, pointStart, softThreshold,
+ *               stacking, step, threshold, turboThreshold, zoneAxis, zones
  * @optionparent plotOptions.timeline
  */
-seriesType('timeline', 'line', {
+, {
     colorByPoint: true,
     stickyTracking: false,
     ignoreHiddenPoint: true,
@@ -66,7 +75,7 @@ seriesType('timeline', 'line', {
     dataLabels: {
         enabled: true,
         allowOverlap: true,
-        /**
+        /* *
          * The width of the line connecting the data label to the point.
          *
          *
@@ -79,7 +88,7 @@ seriesType('timeline', 'line', {
          *         Custom connector width and color
          */
         connectorWidth: 1,
-        /**
+        /* *
          * The color of the line connecting the data label to the point.
          *
          * In styled mode, the connector stroke is given in the
@@ -91,7 +100,7 @@ seriesType('timeline', 'line', {
          */
         connectorColor: '${palette.neutralColor100}',
         backgroundColor: '${palette.backgroundColor}',
-        /**
+        /* *
          * @type      {Highcharts.FormatterCallbackFunction<object>}
          * @default function () {
          *   var format;
@@ -127,7 +136,7 @@ seriesType('timeline', 'line', {
         },
         borderWidth: 1,
         borderColor: '${palette.neutralColor60}',
-        /**
+        /* *
          * A pixel value defining the distance between the data label
          * and the point. Negative numbers puts the label on top
          * of the point.
@@ -136,7 +145,7 @@ seriesType('timeline', 'line', {
          * @default 100
          */
         distance: 100,
-        /**
+        /* *
          * Whether to position data labels alternately. For example, if
          * [distance](#plotOptions.timeline.dataLabels.distance) is set
          * equal to `100`, then the first data label 's distance will be
@@ -156,16 +165,16 @@ seriesType('timeline', 'line', {
         symbol: 'square',
         height: 15
     }
-}, /** @lends seriesTypes.timeline.prototype */ {
+}
+/* *
+ * @lends Highcharts.Series#
+ */
+, {
     requireSorting: false,
     trackerGroups: ['markerGroup', 'dataLabelsGroup'],
-    /**
-     * Use a simple symbol from LegendSymbolMixin
-     */
+    // Use a simple symbol from LegendSymbolMixin
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-    /**
-     * Use a group of trackers from TrackerMixin
-     */
+    // Use a group of trackers from TrackerMixin
     drawTracker: TrackerMixin.drawTrackerPoint,
     init: function () {
         var series = this;
@@ -485,7 +494,11 @@ seriesType('timeline', 'line', {
         extend(series.xAxis.options, timelineXAxis);
         extend(series.yAxis.options, timelineYAxis);
     }
-}, {
+}
+/* *
+ * @lends Highcharts.Point#
+ */
+, {
     init: function () {
         var point = Point.prototype.init.apply(this, arguments);
         point.name = pick(point.name, point.date, 'Event');
@@ -623,8 +636,8 @@ seriesType('timeline', 'line', {
     }
 });
 
-// Hide/show connector related with a specific data label, after
-// overlapping detected.
+// Hide/show connector related with a specific data label, after overlapping
+// detected.
 addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
     var series = this.series,
         dataLabel,
@@ -650,23 +663,23 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
         }
     });
 });
-/**
+
+/* *
  * The `timeline` series. If the [type](#series.timeline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @extends series,plotOptions.timeline
+ * @extends   series,plotOptions.timeline
  * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
  *            cropThreshold, dashStyle, dataParser, dataURL, findNearestPointBy,
  *            getExtremesFromAll, lineWidth, negativeColor,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointStart,
  *            softThreshold, stacking, stack, step, threshold, turboThreshold,
  *            zoneAxis, zones
- * @product highcharts
+ * @product   highcharts
  * @apioption series.timeline
  */
 
-/**
+/* *
  * An array of data points for the series. For the `timeline` series type,
  * points can be given with three general parameters, `date`, `label`,
  * and `description`:
@@ -684,35 +697,36 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
  * }]
  * ```
  *
- * @type {Array<Object|Number>}
- * @extends series.line.data
- * @excluding marker,x,y
  * @sample {highcharts} highcharts/series-timeline/alternate-labels
  *         Alternate labels
- * @product highcharts
+ *
+ * @type      {Array<number|*>}
+ * @extends   series.line.data
+ * @excluding marker, x, y
+ * @product   highcharts
  * @apioption series.timeline.data
  */
 
-/**
+/* *
  * The date of event.
  *
- * @type {String}
- * @product highcharts
+ * @type      {string}
+ * @product   highcharts
  * @apioption series.timeline.data.date
  */
 
-/**
+/* *
  * The label of event.
  *
- * @type {String}
- * @product highcharts
+ * @type      {string}
+ * @product   highcharts
  * @apioption series.timeline.data.label
  */
 
-/**
+/* *
  * The description of event. This description will be shown in tooltip.
  *
- * @type {String}
- * @product highcharts
+ * @type      {string}
+ * @product   highcharts
  * @apioption series.timeline.data.description
  */

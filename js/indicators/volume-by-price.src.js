@@ -1,10 +1,12 @@
-/**
- * (c) 2010-2017 Paweł Dalek
+/* *
  *
- * Volume By Price (VBP) indicator for Highstock
+ *  (c) 2010-2018 Paweł Dalek
  *
- * License: www.highcharts.com/license
- */
+ *  Volume By Price (VBP) indicator for Highstock
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -73,78 +75,59 @@ seriesType('vbp', 'sma',
         params: {
             /**
              * The number of price zones.
-             *
-             * @since 6.0.0
              */
             ranges: 12,
             /**
              * The id of volume series which is mandatory. For example using
              * OHLC data, volumeSeriesID='volume' means the indicator will be
              * calculated using OHLC and volume values.
-             *
-             * @since 6.0.0
              */
             volumeSeriesID: 'volume'
         },
         /**
          * The styles for lines which determine price zones.
-         *
-         * @since 6.0.0
          */
         zoneLines: {
             /**
              * Enable/disable zone lines.
-             *
-             * @since 6.0.0
              */
             enabled: true,
             styles: {
                 /**
                  * Color of zone lines.
                  *
-                 * @type  {Highcharts.ColorString}
-                 * @since 6.0.0
+                 * @type {Highcharts.ColorString}
                  */
                 color: '#0A9AC9',
                 /**
                  * The dash style of zone lines.
-                 *
-                 * @since 6.0.0
                  */
                 dashStyle: 'LongDash',
                 /**
                  * Pixel width of zone lines.
-                 *
-                 * @since 6.0.0
                  */
                 lineWidth: 1
             }
         },
         /**
          * The styles for bars when volume is divided into positive/negative.
-         *
-         * @since 6.0.0
          */
         volumeDivision: {
             /**
              * Option to control if volume is divided.
-             *
-             * @since 6.0.0
              */
             enabled: true,
             styles: {
                 /**
                  * Color of positive volume bars.
                  *
-                 * @type  {Highcharts.ColorString}
-                 * @since 6.0.0
+                 * @type {Highcharts.ColorString}
                  */
                 positiveColor: 'rgba(144, 237, 125, 0.8)',
                 /**
                  * Color of negative volume bars.
                  *
-                 * @type  {Highcharts.ColorString}
-                 * @since 6.0.0
+                 * @type {Highcharts.ColorString}
                  */
                 negativeColor: 'rgba(244, 91, 91, 0.8)'
             }
@@ -168,7 +151,11 @@ seriesType('vbp', 'sma',
                 fontSize: '7px'
             }
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameBase: 'Volume by Price',
         bindTo: {
             series: false,
@@ -657,7 +644,11 @@ seriesType('vbp', 'sma',
                     .add(indicator.group);
             }
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Point#
+     */
+    {
         // Required for destroying negative part of volume
         destroy: function () {
             if (this.negativeGraphic) {
@@ -674,13 +665,7 @@ seriesType('vbp', 'sma',
  *
  * @extends   series,plotOptions.vbp
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
  * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.vbp
- */
-
-/**
- * @extends   series.sma.data
- * @product   highstock
- * @apioption series.vbp.data
  */

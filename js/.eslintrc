@@ -40,6 +40,7 @@
             "anonymous": "always",
             "named": "never"
         }], /*JSLint style*/
+        "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "quotes": [2, "single"],
         "spaced-comment": ["error", "always", { "markers": ["="] }],
         "require-jsdoc": 0,

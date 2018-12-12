@@ -40,7 +40,7 @@ var poiTime = Date.UTC(2018, 4, 6),
                         return time * 1760 + 440;
                     },
                     volume: 0.1,
-                    duration: 150
+                    duration: 200
                 }
             }]
         }),
@@ -59,7 +59,7 @@ var chart = Highcharts.chart('container', {
         text: 'Play chart as sound'
     },
     subtitle: {
-        text: 'Best viewed in Google Chrome browser'
+        text: 'Weekly temperature averages'
     },
     yAxis: {
         title: {
@@ -135,8 +135,11 @@ var chart = Highcharts.chart('container', {
 
 // Utility function that highlights a point
 function highlightPoint(event, point) {
-    var chart = point.series.chart;
-    if (!point.isNull) {
+    var chart = point.series.chart,
+        hasVisibleSeries = chart.series.some(function (series) {
+            return series.visible;
+        });
+    if (!point.isNull && hasVisibleSeries) {
         point.onMouseOver(); // Show the hover marker and tooltip
     } else {
         if (chart.tooltip) {
@@ -170,9 +173,11 @@ document.getElementById('play').onclick = function () {
                 instruments: nyInstruments,
                 onPointStart: highlightPoint
             }],
-            // Reset cursor on end
+            // Delete timeline on end
             onEnd: function () {
-                chart.resetSonifyCursor();
+                if (chart.sonification.timeline) {
+                    delete chart.sonification.timeline;
+                }
             }
         });
     } else {
@@ -183,8 +188,5 @@ document.getElementById('pause').onclick = function () {
     chart.pauseSonify();
 };
 document.getElementById('rewind').onclick = function () {
-    if (!chart.sonification.timeline || chart.sonification.timeline.atStart()) {
-        chart.resetSonifyCursorEnd();
-    }
     chart.rewindSonify();
 };

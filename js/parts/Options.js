@@ -1090,7 +1090,7 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/renderto-jquery/
          *         Object reference through jQuery
          *
-         * @type      {string|Highcharts.SVGDOMElement}
+         * @type      {string|Highcharts.HTMLDOMElement}
          * @apioption chart.renderTo
          */
 

@@ -371,7 +371,7 @@ seriesType('funnel', 'pie',
                     x: 0,
                     y: y
                 },
-                final: {
+                'final': {
                     // used for generating connector path -
                     // initialized later in drawDataLabels function
                     // x: undefined,

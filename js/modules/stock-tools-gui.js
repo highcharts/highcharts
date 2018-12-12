@@ -25,18 +25,21 @@ var addEvent = H.addEvent,
     activeClass = PREFIX + 'active';
 
 H.setOptions({
+    /**
+     * @optionparent lang
+     */
     lang: {
         /**
-         * Configure the stockTools gui strings in the chart. Requires the
-         * [stockTools module]() to be loaded. For a description of the module
-         * and information on its features, see [Highcharts StockTools]().
+         * Configure the stockTools GUI titles(hints) in the chart. Requires
+         * the `stock-tools.js` module to be loaded.
          *
-         * @since 7.0.0
-         * @type {Object}
-         * @optionparent lang.stockTools
+         * @product         highstock
+         * @since           7.0.0
+         * @type            {Object}
          */
         stockTools: {
             gui: {
+                // Main buttons:
                 simpleShapes: 'Simple shapes',
                 lines: 'Lines',
                 crookedLines: 'Crooked lines',
@@ -47,16 +50,69 @@ H.setOptions({
                 flags: 'Flags',
                 zoomChange: 'Zoom change',
                 typeChange: 'Type change',
+                saveChart: 'Save chart',
                 indicators: 'Indicators',
                 currentPriceIndicator: 'Current Price Indicators',
-                saveChart: 'Save chart',
+
+                // Other features:
+                zoomX: 'Zoom X',
+                zoomY: 'Zoom Y',
+                zoomXY: 'Zooom XY',
+                fullScreen: 'Fullscreen',
+                typeOHLC: 'OHLC',
+                typeLine: 'Line',
+                typeCandlestick: 'Candlestick',
+
+                // Basic shapes:
                 circle: 'Circle',
-                rectangle: 'Rectangle',
                 label: 'Label',
+                rectangle: 'Rectangle',
+
+                // Flags:
                 flagCirclepin: 'Flag circle',
                 flagDiamondpin: 'Flag diamond',
                 flagSquarepin: 'Flag square',
                 flagSimplepin: 'Flag simple',
+
+                // Measures:
+                measureXY: 'Measure XY',
+                measureX: 'Measure X',
+                measureY: 'Measure Y',
+
+                // Segment, ray and line:
+                segment: 'Segment',
+                arrowSegment: 'Arrow segment',
+                ray: 'Ray',
+                arrowRay: 'Arrow ray',
+                line: 'Line',
+                arrowLine: 'Arrow line',
+                horizontalLine: 'Horizontal line',
+                verticalLine: 'Vertical line',
+                infinityLine: 'Infinity line',
+
+                // Crooked lines:
+                crooked3: 'Crooked 3 line',
+                crooked5: 'Crooked 5 line',
+                elliott3: 'Elliott 3 line',
+                elliott5: 'Elliott 5 line',
+
+                // Counters:
+                verticalCounter: 'Vertical counter',
+                verticalLabel: 'Vertical label',
+                verticalArrow: 'Vertical arrow',
+
+                // Advanced:
+                fibonacci: 'Fibonacci',
+                pitchfork: 'Pitchfork',
+                parallelChannel: 'Parallel channel'
+            }
+        },
+        navigation: {
+            popup: {
+                // Annotations:
+                circle: 'Circle',
+                rectangle: 'Rectangle',
+                label: 'Label',
                 segment: 'Segment',
                 arrowSegment: 'Arrow segment',
                 ray: 'Ray',
@@ -79,46 +135,26 @@ H.setOptions({
                 measureXY: 'Measure XY',
                 measureX: 'Measure X',
                 measureY: 'Measure Y',
-                zoomX: 'Zoom X',
-                zoomY: 'Zoom Y',
-                zoomXY: 'Zooom XY',
-                fullScreen: 'Fullscreen',
-                typeOHLC: 'OHLC',
-                typeLine: 'Line',
-                typeCandlestick: 'Candlestick',
-                fill: 'Fill',
-                format: 'Text',
-                strokeWidth: 'Line width',
-                stroke: 'Line color',
-                title: 'Title',
-                name: 'Name',
-                labelOptions: 'Label options',
-                labels: 'Labels',
-                backgroundColor: 'Background color',
-                backgroundColors: 'Background colors',
-                borderColor: 'Border color',
-                borderRadius: 'Border radius',
-                borderWidth: 'Border width',
-                style: 'Style',
-                padding: 'Padding',
-                fontSize: 'Font size',
-                color: 'Color',
-                connector: 'Connector',
-                shapeOptions: 'Shape options',
-                typeOptions: 'Details',
-                innerBackground: 'Inner background',
-                outerBackground: 'Outer background',
-                height: 'Height',
-                crosshairX: 'Crosshair X',
-                crosshairY: 'Crosshair Y',
-                tunnel: 'Tunnel',
-                background: 'Background',
+
+                // Flags:
+                flags: 'Flags',
+
+                // GUI elements:
                 addButton: 'add',
                 saveButton: 'save',
                 editButton: 'edit',
                 removeButton: 'remove',
                 series: 'Series',
-                volume: 'Volume'
+                volume: 'Volume',
+                connector: 'Connector',
+
+                // Field names:
+                innerBackground: 'Inner background',
+                outerBackground: 'Outer background',
+                crosshairX: 'Crosshair X',
+                crosshairY: 'Crosshair Y',
+                tunnel: 'Tunnel',
+                background: 'Background'
             }
         }
     },
@@ -154,10 +190,10 @@ H.setOptions({
              * allowing unique CSS styling for each chart.
              *
              * @type      {string}
-             * @default 'stocktools-wrapper'
+             * @default 'highcharts-bindings-wrapper'
              *
              */
-            className: 'stocktools-wrapper',
+            className: 'highcharts-bindings-wrapper',
             /**
              * A CSS class name to apply to the container of buttons,
              * allowing unique CSS styling for each chart.
@@ -782,9 +818,6 @@ H.Toolbar = function (options, langOptions, chart) {
     // General events collection which should be removed upon destroy/update:
     this.eventsToUnbind = [];
 
-    // add popup to main container
-    this.popup = new H.Popup(chart.container);
-
     if (this.guiEnabled) {
         this.createHTML();
 
@@ -979,7 +1012,7 @@ H.Toolbar.prototype = {
      *
      */
     eraseActiveButtons: function (buttons, currentButton, submenuItems) {
-        buttons.forEach(function (btn) {
+        [].forEach.call(buttons, function (btn) {
             if (btn !== currentButton) {
                 btn.classList.remove(PREFIX + 'current');
                 btn.classList.remove(PREFIX + 'active');
@@ -1187,7 +1220,7 @@ H.Toolbar.prototype = {
             showhideBtn.style.left = '0px';
             stockToolbar.visible = visible = false;
 
-            toolbar.classList += ' ' + PREFIX + 'hide';
+            toolbar.classList.add(PREFIX + 'hide');
             showhideBtn.classList.toggle(PREFIX + 'arrow-right');
         }
 
@@ -1218,7 +1251,10 @@ H.Toolbar.prototype = {
             mainNavButton = buttonWrapper.parentNode.parentNode;
 
         // set class
-        mainNavButton.classList = buttonWrapperClass;
+        mainNavButton.className = '';
+        if (buttonWrapperClass) {
+            mainNavButton.classList.add(buttonWrapperClass.trim());
+        }
 
         // set icon
         mainNavButton.querySelectorAll('.' + PREFIX + 'menu-item-btn')[0]
@@ -1239,7 +1275,7 @@ H.Toolbar.prototype = {
         if (btn.className.indexOf(activeClass) >= 0) {
             btn.classList.remove(activeClass);
         } else {
-            btn.className += ' ' + activeClass;
+            btn.classList.add(activeClass);
         }
     },
     /*
@@ -1251,22 +1287,11 @@ H.Toolbar.prototype = {
     unselectAllButtons: function (btn) {
         var activeButtons = btn.parentNode.querySelectorAll('.' + activeClass);
 
-        activeButtons.forEach(function (activeBtn) {
+        [].forEach.call(activeButtons, function (activeBtn) {
             if (activeBtn !== btn) {
                 activeBtn.classList.remove(activeClass);
             }
         });
-    },
-    /*
-     * Show popup.
-     *
-     * @param {String} - type of popup (indicator, annotation)
-     * @param {Object} - options
-     * @param {Function} - callback called when user clicks on button in popup
-     *
-     */
-    showForm: function (type, options, callback) {
-        H.Popup.prototype.showForm(type, this.chart, options, callback);
     },
     /*
      * Add space for toolbar.
@@ -1396,45 +1421,35 @@ H.Toolbar.prototype = {
 };
 
 // Comunication with bindings:
-addEvent(H.Toolbar, 'selectButton', function (event) {
+addEvent(H.NavigationBindings, 'selectButton', function (event) {
     var button = event.button,
-        className = PREFIX + 'submenu-wrapper';
+        className = PREFIX + 'submenu-wrapper',
+        gui = this.chart.stockToolbar;
 
-    if (this.guiEnabled) {
+    if (gui && gui.guiEnabled) {
         // Unslect other active buttons
-        this.unselectAllButtons(event.button);
+        gui.unselectAllButtons(event.button);
 
         // If clicked on a submenu, select state for it's parent
         if (button.parentNode.className.indexOf(className) >= 0) {
             button = button.parentNode.parentNode;
         }
         // Set active class on the current button
-        this.selectButton(button);
+        gui.selectButton(button);
     }
 });
 
 
-addEvent(H.Toolbar, 'deselectButton', function (event) {
+addEvent(H.NavigationBindings, 'deselectButton', function (event) {
     var button = event.button,
-        className = PREFIX + 'submenu-wrapper';
+        className = PREFIX + 'submenu-wrapper',
+        gui = this.chart.stockToolbar;
 
-    if (this.guiEnabled) {
+    if (gui && gui.guiEnabled) {
         // If deselecting a button from a submenu, select state for it's parent
         if (button.parentNode.className.indexOf(className) >= 0) {
             button = button.parentNode.parentNode;
         }
-        this.selectButton(button);
-    }
-});
-
-addEvent(H.Toolbar, 'showPopup', function (config) {
-    if (this.guiEnabled) {
-        this.showForm(config.formType, config.options, config.onSubmit);
-    }
-});
-
-addEvent(H.Toolbar, 'closePopup', function () {
-    if (this.guiEnabled) {
-        this.popup.closePopup();
+        gui.selectButton(button);
     }
 });

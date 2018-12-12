@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
@@ -7,39 +14,54 @@ var EMA = H.seriesTypes.ema,
     error = H.error,
     requiredIndicator = requiredIndicatorMixin;
 
+/**
+ * The APO series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.apo
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType('apo', 'ema',
     /**
      * Absolute Price Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`
      * and `stock/indicators/ema.js`.
      *
-     * @extends plotOptions.ema
-     * @product highstock
      * @sample {highstock} stock/indicators/apo
-     *                     Absolute Price Oscillator
-     * @since 7.0.0
-     * @excluding
-     *             allAreas,colorAxis,joinBy,keys,stacking,
-     *             showInNavigator,navigatorOptions,pointInterval,
-     *             pointIntervalUnit,pointPlacement,pointRange,pointStart
+     *         Absolute Price Oscillator
+     *
+     * @extends      plotOptions.ema
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
      * @optionparent plotOptions.apo
      */
     {
         /**
          * Paramters used in calculation of Absolute Price Oscillator
          * series points.
+         *
          * @excluding period
          */
         params: {
             /**
              * Periods for Absolute Price Oscillator calculations.
+             *
+             * @type    {Array<number>}
              * @default [10, 20]
-             * @type {Array}
-             * @since 7.0.0
+             * @since   7.0.0
              */
             periods: [10, 20]
         }
-    }, /** @lends Highcharts.Series.prototype */ {
+    },
+    /**
+     * @lends Highcharts.Series.prototype
+     */
+    {
         nameBase: 'APO',
         nameComponents: ['periods'],
         init: function () {
@@ -111,27 +133,14 @@ H.seriesType('apo', 'ema',
 );
 
 /**
- * An `Absolute Price Oscillator` series. If the [type](#series.apo.type)
- * option is not specified, it is inherited from [chart.type](#chart.type).
+ * An `Absolute Price Oscillator` series. If the [type](#series.apo.type) option
+ * is not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 7.0.0
- * @extends series,plotOptions.apo
- * @excluding   data,dataParser,dataURL
- *              allAreas,colorAxis,joinBy,
- *              keys,stacking,showInNavigator,navigatorOptions,pointInterval,
- *              pointIntervalUnit,pointPlacement,pointRange,pointStart
- * @product highstock
+ * @extends   series,plotOptions.apo
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
+ *            navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @apioption series.apo
- */
-
-/**
- * An array of data points for the series. For the `apo` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 7.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.apo.data
  */

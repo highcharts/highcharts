@@ -1,10 +1,12 @@
-/**
- * (c) 2009-2018 Øystein Moseng
+/* *
  *
- * Instrument definitions for sonification module.
+ *  (c) 2009-2018 Øystein Moseng
  *
- * License: www.highcharts.com/license
- */
+ *  Instrument definitions for sonification module.
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 

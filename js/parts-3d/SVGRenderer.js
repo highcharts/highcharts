@@ -838,12 +838,12 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         this.side1.hide();
         this.side2.hide();
     };
-    wrapper.show = function () {
-        this.top.show();
-        this.out.show();
-        this.inn.show();
-        this.side1.show();
-        this.side2.show();
+    wrapper.show = function (inherit) {
+        this.top.show(inherit);
+        this.out.show(inherit);
+        this.inn.show(inherit);
+        this.side1.show(inherit);
+        this.side2.show(inherit);
     };
     return wrapper;
 };

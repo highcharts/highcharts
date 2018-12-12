@@ -4,7 +4,7 @@ import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint,
-    CrookedLine = Annotation.types['crooked-line'];
+    CrookedLine = Annotation.types.crookedLine;
 
 /**
  * @class
@@ -96,7 +96,7 @@ var edgePoint = function (startIndex, endIndex) {
             points = annotation.points,
             type = annotation.options.typeOptions.type;
 
-        if (type === 'horizontal-line') {
+        if (type === 'horizontalLine') {
             // Horizontal line has only one point,
             // make a copy of it:
             points = [
@@ -112,8 +112,8 @@ var edgePoint = function (startIndex, endIndex) {
                     }
                 )
             ];
-        } else if (type === 'vertical-line') {
-            // The same for vertical-line type:
+        } else if (type === 'verticalLine') {
+            // The same for verticalLine type:
             points = [
                 points[0],
                 new MockPoint(
@@ -150,7 +150,7 @@ H.extendAnnotation(
                     InfinityLine.endEdgePoint
                 ];
 
-            if (typeOptions.type.match(/line/g)) {
+            if (typeOptions.type.match(/Line/g)) {
                 points[0] = InfinityLine.startEdgePoint;
             }
 
@@ -174,9 +174,12 @@ H.extendAnnotation(
  * @extends annotations.crookedLine
  * @sample highcharts/annotations-advanced/infinity-line/
  *         Infinity Line
- * @apioption annotations.infinity-line
+ *
+ * @product highstock
+ *
+ * @apioption annotations.infinityLine
  */
 
-Annotation.types['infinity-line'] = InfinityLine;
+Annotation.types.infinityLine = InfinityLine;
 
 export default InfinityLine;

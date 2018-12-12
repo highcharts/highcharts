@@ -4,7 +4,7 @@ import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint,
-    InfinityLine = Annotation.types['infinity-line'];
+    InfinityLine = Annotation.types.infinityLine;
 
 /**
  * @class
@@ -166,9 +166,10 @@ H.extendAnnotation(Pitchfork, InfinityLine, {
     /**
      * A pitchfork annotation.
      *
-     * @extends annotations.infinity-line
+     * @extends annotations.infinityLine
      * @sample highcharts/annotations-advanced/pitchfork/
      *         Pitchfork
+     * @product highstock
      * @optionparent annotations.pitchfork
      */
     {

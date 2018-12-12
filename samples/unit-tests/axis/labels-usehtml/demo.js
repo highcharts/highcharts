@@ -422,7 +422,7 @@ QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
         },
 
         xAxis: {
-            categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            categories: ['JanuaryJanuary', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             labels: {
                 rotation: 0,
                 useHTML: true
@@ -438,5 +438,10 @@ QUnit.test('Ellipsis on single-word labels (#9537)', function (assert) {
         chart.xAxis[0].ticks[0].label.element.style.width,
         '',
         'The element should have a width'
+    );
+
+    assert.ok(
+        parseFloat(chart.xAxis[0].ticks[0].label.element.style.left) >= chart.plotLeft,
+        'The label should be within the tick bounds'
     );
 });

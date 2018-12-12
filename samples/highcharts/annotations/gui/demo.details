@@ -1,7 +1,8 @@
 ---
- name: Highcharts Annotations Demo
+ name: Highcharts Demo
  authors:
-   - Sebastian Domas
+   - Paweł Fus
+ resources:
+   - https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css
  js_wrap: b
- requiresManualTesting: true
 ...

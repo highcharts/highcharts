@@ -2,7 +2,7 @@
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Annotations module
  *
- * (c) 2009-2017 Torstein Honsi
+ * (c) 2009-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -16,3 +16,5 @@ import '../../annotations/types/Fibonacci.js';
 import '../../annotations/types/Pitchfork.js';
 import '../../annotations/types/VerticalLine.js';
 import '../../annotations/types/Measure.js';
+import '../../annotations/navigationBindings.js';
+import '../../annotations/popup.js';

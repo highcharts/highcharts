@@ -1,8 +1,10 @@
-/**
- * (c) 2010-2017 Kacper Madej
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2018 Kacper Madej
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -14,13 +16,12 @@ var seriesType = H.seriesType,
 
 // Utils:
 function populateAverage(xVal, yVal, i, period, index) {
-    /**
-     * Calculated as:
-     * (Closing Price [today] - Closing Price [n days ago]) /
-     * Closing Price [n days ago] * 100
-     *
-     * Return y as null when avoiding division by zero
-     */
+    /* Calculated as:
+
+       (Closing Price [today] - Closing Price [n days ago]) /
+        Closing Price [n days ago] * 100
+
+       Return y as null when avoiding division by zero */
     var nDaysAgoY,
         rocY;
 
@@ -76,7 +77,11 @@ seriesType('roc', 'sma',
             index: 3,
             period: 9
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameBase: 'Rate of Change',
         getValues: function (series, params) {
             var period = params.period,
@@ -116,7 +121,8 @@ seriesType('roc', 'sma',
                 yData: yData
             };
         }
-    });
+    }
+);
 
 /**
  * A `ROC` series. If the [type](#series.wma.type) option is not
@@ -135,13 +141,7 @@ seriesType('roc', 'sma',
  *
  * @extends   series,plotOptions.roc
  * @since     6.0.0
- * @excluding data, dataParser, dataURL
  * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.roc
- */
-
-/**
- * @extends   series.sma.data
- * @product   highstock
- * @apioption series.roc.data
  */

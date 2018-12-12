@@ -3,7 +3,7 @@ import H from '../../parts/Globals.js';
 import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
-    CrookedLine = Annotation.types['crooked-line'],
+    CrookedLine = Annotation.types.crookedLine,
     ControlPoint = Annotation.ControlPoint,
     MockPoint = Annotation.MockPoint;
 
@@ -138,6 +138,7 @@ H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
      * @extends annotations.crookedLine
      * @sample highcharts/annotations-advanced/tunnel/
      *         Tunnel
+     * @product highstock
      * @optionparent annotations.tunnel
      */
     {

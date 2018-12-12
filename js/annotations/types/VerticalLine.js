@@ -106,7 +106,8 @@ H.extendAnnotation(VerticalLine, null, /** @lends Annotation.VerticalLine# */ {
      * @excluding labels, shapes, controlPointOptions
      * @sample highcharts/annotations-advanced/vertical-line/
      *         Vertical line
-     * @optionparent annotations.vertical-line
+     * @product highstock
+     * @optionparent annotations.verticalLine
      */
     {
         typeOptions: {
@@ -147,6 +148,6 @@ H.extendAnnotation(VerticalLine, null, /** @lends Annotation.VerticalLine# */ {
         }
     });
 
-Annotation.types['vertical-line'] = VerticalLine;
+Annotation.types.verticalLine = VerticalLine;
 
 export default VerticalLine;
