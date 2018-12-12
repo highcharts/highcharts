@@ -52,6 +52,7 @@ $button-hover-color: #e6ebf5;
   position: absolute;
   left: 0px;
   top: 0px;
+  padding: 10px;
 }
 
 .highcharts-bindings-wrapper .highcharts-submenu-wrapper {
@@ -244,7 +245,6 @@ $button-hover-color: #e6ebf5;
   cursor: pointer;
   width: 10px;
   height: 10px;
-  left: 43px;
   background-color: $button-background-color;
   background-image: url("https://code.highcharts.com/gfx/#{$version}/stock-icons/arrow-right.svg");
   background-size: cover;
