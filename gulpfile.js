@@ -8,6 +8,7 @@ const glob = require('glob');
 const gulp = require('gulp');
 const argv = require('yargs').argv;
 const fs = require('fs');
+const yaml = require('js-yaml');
 const {
     join,
     relative,
@@ -226,6 +227,39 @@ gulp.task('test', done => {
 
     };
 
+    // Check that each demo.details has the correct js_wrap setting required for
+    // it to display correctly on jsFiddle.
+    const checkJSWrap = () => {
+        glob(
+            'samples/+(highcharts|stock|maps|gantt)/**/demo.html',
+            (err, files) => {
+                if (err) {
+                    throw err;
+                }
+                let errors = 0;
+                files.forEach(f => {
+                    let detailsFile = f.replace(/\.html$/, '.details');
+
+                    try {
+                        let details = yaml.safeLoad(
+                            fs.readFileSync(detailsFile, 'utf-8')
+                        );
+                        if (details.js_wrap !== 'b') {
+                            console.log(`js_wrap not found: ${detailsFile}`.red);
+                            errors++;
+                        }
+                    } catch (e) {
+                        console.log(`File not found: ${detailsFile}`.red);
+                        errors++;
+                    }
+                });
+                if (errors) {
+                    throw 'Missing js_wrap setting';
+                }
+            }
+        );
+    };
+
 
     if (argv.help) {
         console.log(
@@ -261,6 +295,7 @@ Available arguments for 'gulp test':
     }
 
     checkSamplesConsistency();
+    checkJSWrap();
 
     if (shouldRun()) {
 
