@@ -82,6 +82,7 @@ H.extendAnnotation(CrookedLine, null, /** @lends Annotation.CrookedLine# */ {
      * @excluding labels, shapes
      * @sample highcharts/annotations-advanced/crooked-line/
      *         Crooked line
+     * @product highstock
      * @optionparent annotations.crookedLine
      */
     {
