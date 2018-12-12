@@ -36,12 +36,8 @@
 }
 /* end temporary */
 
-.outer-container {
-	padding: 10px;
-	overflow: hidden;
-	background: white;
-}
 #container {
 	max-height: 800px;
 	height: 75vh;
+	border: 1px dotted gray;
 }
