@@ -747,7 +747,7 @@ seriesType('pie', 'line'
                     y: positions[1] + radiusY + Math.sin(angle) *
                       point.labelDistance
                 },
-                final: {
+                'final': {
                     // used for generating connector path -
                     // initialized later in drawDataLabels function
                     // x: undefined,

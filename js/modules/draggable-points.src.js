@@ -912,7 +912,7 @@ var defaultGuideBoxOptions = {
      *
      * @since 6.2.0
      */
-    default: {
+    'default': {
         /**
          * CSS class name of the guide box in this state. Defaults to
          * `highcharts-drag-box-default`.

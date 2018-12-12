@@ -68,9 +68,9 @@ var bindingsUtils = {
      */
     getFieldType: function (value) {
         return {
-            string: 'text',
-            number: 'number',
-            boolean: 'checkbox'
+            'string': 'text',
+            'number': 'number',
+            'boolean': 'checkbox'
         }[typeof value];
     }
 };
