@@ -51,6 +51,9 @@
                 <div id="7-0-0-upgrade-notes" class="panel-collapse collapse">
                   <div class="panel-body">
                     <ul>
+                      <li>Polyfills are now needed for support in IE 6-8. Before including the <code>highcharts.js</code> file, load <code>modules/oldie-polyfills.js</code> in a conditional comment. Alternatively you can use your own polyfills or a third
+                        party library. See
+                        <a href="https://www.highcharts.com/docs/getting-started/system-requirements#oldie">System Requirements</a>.</li>
                       <li>If the
                         <a href="https://api.highcharts.com/highcharts/chart.height">chart.height</a> setting is higher than the CSS height of the container, the chart will now be clipped. This is a consequence of adapting the chart to table cells and flex layouts.</li>
                     </ul>
