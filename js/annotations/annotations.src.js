@@ -172,6 +172,7 @@ merge(
          *
          * @private
          * @type {Object}
+         * @ignore-options base, annotations.crookedLine
          * @sample highcharts/annotations/basic/
          *         Basic annotations
          * @sample highcharts/demo/annotations/
@@ -183,7 +184,7 @@ merge(
          * @sample {highstock} stock/annotations/fibonacci-retracements
          *         Custom annotation, Fibonacci retracement
          * @since 6.0.0
-         * @optionparent annotations.base
+         * @optionparent annotations.crookedLine
          */
         defaultOptions: {
             /**
@@ -289,7 +290,7 @@ merge(
                  * @sample highcharts/annotations/label-position/
                  *         Set labels position
                  * @default undefined
-                 * @apioption annotations.base.labelOptions.distance
+                 * @apioption annotations.crookedLine.labelOptions.distance
                  */
 
                 /**
@@ -301,7 +302,7 @@ merge(
                  * @sample highcharts/annotations/label-text/
                  *         Set labels text
                  * @default undefined
-                 * @apioption annotations.base.labelOptions.format
+                 * @apioption annotations.crookedLine.labelOptions.format
                  */
 
                 /**
@@ -312,7 +313,7 @@ merge(
                  * @sample highcharts/annotations/label-text/
                  *         Set labels text
                  * @default undefined
-                 * @apioption annotations.base.labelOptions.text
+                 * @apioption annotations.crookedLine.labelOptions.text
                  */
 
                 /**
@@ -434,8 +435,8 @@ merge(
              * [labelOptions](annotations.labelOptions.html).
              *
              * @type {Array<Object>}
-             * @extends annotations.base.labelOptions
-             * @apioption annotations.base.labels
+             * @extends annotations.crookedLine.labelOptions
+             * @apioption annotations.crookedLine.labels
              */
 
             /**
@@ -448,7 +449,7 @@ merge(
              * @type {string|MockPointOptions}
              * @sample highcharts/annotations/mock-point/
              *         Attach annotation to a mock point
-             * @apioption annotations.base.labels.point
+             * @apioption annotations.crookedLine.labels.point
              */
 
             /**
@@ -456,7 +457,7 @@ merge(
              * or chart pixel coordinates.
              *
              * @type {number}
-             * @apioption annotations.base.labels.point.x
+             * @apioption annotations.crookedLine.labels.point.x
              */
 
             /**
@@ -464,7 +465,7 @@ merge(
              * or chart pixel coordinates.
              *
              * @type {number}
-             * @apioption annotations.base.labels.point.y
+             * @apioption annotations.crookedLine.labels.point.y
              */
 
             /**
@@ -475,7 +476,7 @@ merge(
              * x coordinate refers to the chart pixels.
              *
              * @type {number|string}
-             * @apioption annotations.base.labels.point.xAxis
+             * @apioption annotations.crookedLine.labels.point.xAxis
              */
 
             /**
@@ -486,7 +487,7 @@ merge(
              * y coordinate refers to the chart pixels.
              *
              * @type {number|string}
-             * @apioption annotations.base.labels.point.yAxis
+             * @apioption annotations.crookedLine.labels.point.yAxis
              */
 
 
@@ -497,8 +498,8 @@ merge(
              * [shapeOptions](annotations.shapeOptions.html).
              *
              * @type {Array<Object>}
-             * @extends annotations.base.shapeOptions
-             * @apioption annotations.base.shapes
+             * @extends annotations.crookedLine.shapeOptions
+             * @apioption annotations.crookedLine.shapes
              */
 
             /**
@@ -509,8 +510,8 @@ merge(
              * properties and optionally axes.
              *
              * @type {string|MockPointOptions}
-             * @extends annotations.base.labels.point
-             * @apioption annotations.base.shapes.point
+             * @extends annotations.crookedLine.labels.point
+             * @apioption annotations.crookedLine.shapes.point
              */
 
             /**
@@ -520,7 +521,7 @@ merge(
              *
              * @type {Array<string|Highcharts.MockPoint.Options>}
              * @see [annotations.shapes.point](annotations.shapes.point.html)
-             * @apioption annotations.base.shapes.points
+             * @apioption annotations.crookedLine.shapes.points
              */
 
             /**
@@ -532,7 +533,7 @@ merge(
              * @see [defs.markers](defs.markers.html)
              * @sample highcharts/annotations/custom-markers/
              *         Define a custom marker for annotations
-             * @apioption annotations.base.shapes.markerEnd
+             * @apioption annotations.crookedLine.shapes.markerEnd
              */
 
             /**
@@ -544,7 +545,7 @@ merge(
              * @see [defs.markers](defs.markers.html)
              * @sample {highcharts} highcharts/annotations/custom-markers/
              *         Define a custom marker for annotations
-             * @apioption annotations.base.shapes.markerStart
+             * @apioption annotations.crookedLine.shapes.markerStart
              */
 
 
@@ -562,7 +563,7 @@ merge(
                  * @type {number}
                  * @sample highcharts/annotations/shape/
                  *         Basic shape annotation
-                 * @apioption annotations.base.shapeOptions.width
+                 * @apioption annotations.crookedLine.shapeOptions.width
                  **/
 
                 /**
@@ -571,7 +572,7 @@ merge(
                  * @type {number}
                  * @sample highcharts/annotations/shape/
                  *         Basic shape annotation
-                 * @apioption annotations.base.shapeOptions.height
+                 * @apioption annotations.crookedLine.shapeOptions.height
                  */
 
                 /**
@@ -607,7 +608,7 @@ merge(
                  * @sample highcharts/annotations/shape/
                  *         Basic shape annotation
                  * @default 'rect'
-                 * @apioption annotations.base.shapeOptions.type
+                 * @apioption annotations.crookedLine.shapeOptions.type
                  */
 
                 /**
@@ -632,7 +633,7 @@ merge(
              * by options in a specific control point.
              *
              * @type {Annotation.ControlPoint.Options}
-             * @apioption annotations.base.controlPointOptions
+             * @apioption annotations.crookedLine.controlPointOptions
              */
             controlPointOptions: {
                 symbol: 'circle',
@@ -647,7 +648,7 @@ merge(
 
                 /**
                  * @function {Annotation.ControlPoint.Positioner}
-                 * @apioption annotations.base.controlPointOptions.positioner
+                 * @apioption annotations.crookedLine.controlPointOptions.positioner
                  */
 
 
