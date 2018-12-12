@@ -1227,6 +1227,7 @@ H.Toolbar.prototype = {
             toolbar.classList.add(PREFIX + 'hide');
             showhideBtn.classList.toggle(PREFIX + 'arrow-right');
         } else {
+            showhideBtn.style.top = H.getStyle(toolbar, 'padding-top') + 'px';
             showhideBtn.style.left = wrapper.offsetWidth +
                                     H.getStyle(toolbar, 'padding-left') + 'px';
         }
@@ -1307,7 +1308,7 @@ H.Toolbar.prototype = {
     setToolbarSpace: function () {
         var chart = this.chart,
             marginLeft = chart.options.chart.marginLeft || 0,
-            spacingLeft = chart.spacing[3] || 0,
+            spacingLeft = chart.options.chart.spacing[3] || 0,
             stockToolbar = chart.stockToolbar,
             toolbarWidth = this.listWrapper.offsetWidth;
 
@@ -1316,7 +1317,9 @@ H.Toolbar.prototype = {
         }
 
         if (stockToolbar.visible) {
-            this.chart.options.chart.marginLeft = marginLeft + toolbarWidth;
+            this.chart.options.chart.marginLeft = marginLeft +
+                                                spacingLeft +
+                                                toolbarWidth;
         }
 
         this.chart.isDirtyBox = true;
