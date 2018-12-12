@@ -176,7 +176,7 @@ H.extendAnnotation(Pitchfork, InfinityLine, {
             /**
              * Inner background options.
              *
-             * @extends annotations.crooked-line.shapeOptions
+             * @extends annotations.crookedLine.shapeOptions
              * @excluding height, r, type, width
              */
             innerBackground: {
@@ -186,7 +186,7 @@ H.extendAnnotation(Pitchfork, InfinityLine, {
             /**
              * Outer background options.
              *
-             * @extends annotations.crooked-line.shapeOptions
+             * @extends annotations.crookedLine.shapeOptions
              * @excluding height, r, type, width
              */
             outerBackground: {

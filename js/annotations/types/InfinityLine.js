@@ -171,7 +171,7 @@ H.extendAnnotation(
 /**
  * An infinity line annotation.
  *
- * @extends annotations.crooked-line
+ * @extends annotations.crookedLine
  * @sample highcharts/annotations-advanced/infinity-line/
  *         Infinity Line
  * @apioption annotations.infinity-line

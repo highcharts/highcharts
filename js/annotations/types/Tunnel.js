@@ -135,7 +135,7 @@ H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
     /**
      * A tunnel annotation.
      *
-     * @extends annotations.crooked-line
+     * @extends annotations.crookedLine
      * @sample highcharts/annotations-advanced/tunnel/
      *         Tunnel
      * @optionparent annotations.tunnel
@@ -168,7 +168,7 @@ H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
              * Options for the control point which controls
              * the annotation's height.
              *
-             * @extends annotations.crooked-line.controlPointOptions
+             * @extends annotations.crookedLine.controlPointOptions
              * @excluding positioner, events
              */
             heightControlPoint: {
@@ -203,7 +203,7 @@ H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
         },
 
         /**
-         * @extends annotations.crooked-line.controlPointOptions
+         * @extends annotations.crookedLine.controlPointOptions
          * @excluding positioner, events
          */
         controlPointOptions: {
