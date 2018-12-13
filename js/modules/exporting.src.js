@@ -686,7 +686,7 @@ defaultOptions.exporting = {
      * See [navigation.buttonOptions](#navigation.buttonOptions) for general
      * options.
      *
-     * @type {Highcharts.Dictionary<*>}
+     * @type {Highcharts.Dictionary<Highcharts.ExportingButtonsContextButtonOptions>}
      */
     buttons: {
 
