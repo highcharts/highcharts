@@ -135,7 +135,34 @@ gulp.task('test', done => {
         return mtimeMs;
     };
 
+    // Get the checksum of all code excluding comments. An idea for smarter
+    // checks. If the check sum hasn't changed since last test run, there's no
+    // need to run tests again.
+    /*
+    const getCodeHash = (pattern) => {
+        const crypto = require('crypto');
+        let hashes = [];
+        glob.sync(pattern).forEach(file => {
+            let s = fs.readFileSync(file, 'utf8');
+            if (typeof s === 'string') {
+                s = s.replace(/\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$/gm, '');
+                s = crypto.createHash('md5').update(s).digest('hex');
+                hashes.push(s);
+            }
+
+        });
+        let hash = crypto
+            .createHash('md5')
+            .update(hashes.toString())
+            .digest('hex');
+        return hash;
+    };
+    */
+
     const shouldRun = () => {
+
+        // console.log(getCodeHash(__dirname + '/js/**/*.js'));
+
         let lastBuildMTime = getModifiedTime(__dirname + '/code/**/*.js');
         let sourceMTime = getModifiedTime(__dirname + '/js/**/*.js');
         let unitTestsMTime = getModifiedTime(__dirname + '/samples/unit-tests/**/*.*');
