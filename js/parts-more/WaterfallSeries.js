@@ -15,10 +15,44 @@ import '../parts/Point.js';
 var correctFloat = H.correctFloat,
     isNumber = H.isNumber,
     pick = H.pick,
+    each = H.each,
+    objectEach = H.objectEach,
+    arrayMin = H.arrayMin,
+    arrayMax = H.arrayMax,
+    addEvent = H.addEvent,
+    Axis = H.Axis,
+    Chart = H.Chart,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
+
+addEvent(Axis, 'afterInit', function () {
+    if (!this.isXAxis) {
+        this.waterfallStacks = {};
+    }
+});
+
+addEvent(Chart, 'beforeRedraw', function () {
+    var axes = this.axes,
+        series = this.series,
+        i = series.length,
+        hasStackedSeries;
+
+    while (i--) {
+        if (series[i].options.stacking) {
+            hasStackedSeries = true;
+        }
+    }
+
+    if (hasStackedSeries) {
+        each(axes, function (axis) {
+            if (!axis.isXAxis) {
+                axis.waterfallStacks = {};
+            }
+        });
+    }
+});
 
 /**
  * A waterfall chart displays sequentially introduced positive or negative
@@ -121,8 +155,7 @@ seriesType('waterfall', 'column', {
 
     // After generating points, set y-values for all sums.
     generatePoints: function () {
-        var previousIntermediate = this.options.threshold,
-            point,
+        var point,
             len,
             i,
             y;
@@ -134,11 +167,8 @@ seriesType('waterfall', 'column', {
             y = this.processedYData[i];
             // override point value for sums
             // #3710 Update point does not propagate to sum
-            if (point.isSum) {
+            if (point.isIntermediateSum || point.isSum) {
                 point.y = correctFloat(y);
-            } else if (point.isIntermediateSum) {
-                point.y = correctFloat(y - previousIntermediate); // #3840
-                previousIntermediate = y;
             }
         }
     },
@@ -153,7 +183,6 @@ seriesType('waterfall', 'column', {
             points,
             point,
             shapeArgs,
-            stack,
             y,
             yValue,
             previousY,
@@ -163,8 +192,13 @@ seriesType('waterfall', 'column', {
             halfMinPointLength = minPointLength / 2,
             threshold = options.threshold,
             stacking = options.stacking,
-            stackIndicator,
-            tooltipY;
+            tooltipY,
+            actualStack = yAxis.waterfallStacks[series.stackKey],
+            actualStackX,
+            total,
+            pointY,
+            yPos,
+            hPos;
 
         // run column series translate
         seriesTypes.column.prototype.translate.apply(series);
@@ -178,61 +212,111 @@ seriesType('waterfall', 'column', {
             yValue = series.processedYData[i];
             shapeArgs = point.shapeArgs;
 
-            // get current stack
-            stack = stacking &&
-                yAxis.stacks[
-                    (series.negStacks && yValue < threshold ? '-' : '') +
-                        series.stackKey
-                ];
-            stackIndicator = series.getStackIndicator(
-                stackIndicator,
-                point.x,
-                series.index
-            );
-            range = pick(
-                stack && stack[point.x].points[stackIndicator.key],
-                [0, yValue]
-            );
+            range = [0, yValue];
+            pointY = point.y;
 
-            // up points
-            y = Math.max(previousY, previousY + point.y) + range[0];
-            shapeArgs.y = yAxis.translate(y, 0, 1, 0, 1);
+            // code responsible for correct positions of stacked points
+            // starts here
+            if (stacking) {
+                if (actualStack) {
+                    actualStackX = actualStack[i];
 
-            // sum points
-            if (point.isSum) {
-                shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);
-                shapeArgs.height = Math.min(
-                        yAxis.translate(range[0], 0, 1, 0, 1),
-                        yAxis.len
-                    ) - shapeArgs.y; // #4256
+                    if (stacking === 'overlap') {
+                        total = actualStackX.threshold + actualStackX.total;
+                        actualStackX.total -= pointY;
 
-            } else if (point.isIntermediateSum) {
-                shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);
-                shapeArgs.height = Math.min(
-                        yAxis.translate(previousIntermediate, 0, 1, 0, 1),
-                        yAxis.len
-                    ) - shapeArgs.y;
-                previousIntermediate = range[1];
+                        y = pointY >= 0 ? total : total - pointY;
+                    } else {
+                        if (pointY >= 0) {
+                            total = actualStackX.threshold +
+                                actualStackX.posTotal;
 
-            // If it's not the sum point, update previous stack end position
-            // and get shape height (#3886)
+                            actualStackX.posTotal -= pointY;
+                            y = total;
+                        } else {
+                            total = actualStackX.threshold +
+                                actualStackX.negTotal;
+
+                            actualStackX.negTotal -= pointY;
+                            y = total - pointY;
+                        }
+                    }
+
+                    if (!point.isSum) {
+                        // the connectorThreshold property is later used in
+                        // getCrispPath function to draw a connector line in a
+                        // correct place
+                        actualStackX.connectorThreshold =
+                            actualStackX.threshold + actualStackX.stackTotal;
+                    }
+
+                    if (yAxis.reversed) {
+                        yPos = (pointY >= 0) ? (y - pointY) : (y + pointY);
+                        hPos = y;
+                    } else {
+                        yPos = y;
+                        hPos = y - pointY;
+                    }
+
+                    point.below = yPos <= pick(threshold, 0);
+
+                    shapeArgs.y = yAxis.translate(yPos, 0, 1, 0, 1);
+                    shapeArgs.height = Math.abs(shapeArgs.y -
+                        yAxis.translate(hPos, 0, 1, 0, 1));
+                }
             } else {
-                shapeArgs.height = yValue > 0 ?
-                    yAxis.translate(previousY, 0, 1, 0, 1) - shapeArgs.y :
-                    yAxis.translate(previousY, 0, 1, 0, 1) -
-                        yAxis.translate(previousY - yValue, 0, 1, 0, 1);
+                // up points
+                y = Math.max(previousY, previousY + pointY) + range[0];
+                shapeArgs.y = yAxis.translate(y, 0, 1, 0, 1);
 
-                previousY += stack && stack[point.x] ?
-                    stack[point.x].total :
-                    yValue;
+                // sum points
+                if (point.isSum) {
+                    shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);
+                    shapeArgs.height = Math.min(
+                            yAxis.translate(range[0], 0, 1, 0, 1),
+                            yAxis.len
+                        ) - shapeArgs.y; // #4256
 
-                point.below = previousY < pick(threshold, 0);
-            }
+                } else if (point.isIntermediateSum) {
+                    if (pointY >= 0) {
+                        yPos = range[1] + previousIntermediate;
+                        hPos = previousIntermediate;
+                    } else {
+                        yPos = previousIntermediate;
+                        hPos = range[1] + previousIntermediate;
+                    }
 
-            // #3952 Negative sum or intermediate sum not rendered correctly
-            if (shapeArgs.height < 0) {
-                shapeArgs.y += shapeArgs.height;
-                shapeArgs.height *= -1;
+                    if (yAxis.reversed) {
+                        yPos ^= hPos;
+                        hPos ^= yPos;
+                        yPos ^= hPos;
+                    }
+
+                    shapeArgs.y = yAxis.translate(yPos, 0, 1, 0, 1);
+                    shapeArgs.height = Math.abs(shapeArgs.y - Math.min(
+                            yAxis.translate(hPos, 0, 1, 0, 1),
+                            yAxis.len
+                        ));
+
+                    previousIntermediate += range[1];
+
+                // If it's not the sum point, update previous stack end position
+                // and get shape height (#3886)
+                } else {
+                    shapeArgs.height = yValue > 0 ?
+                        yAxis.translate(previousY, 0, 1, 0, 1) - shapeArgs.y :
+                        yAxis.translate(previousY, 0, 1, 0, 1) -
+                            yAxis.translate(previousY - yValue, 0, 1, 0, 1);
+
+                    previousY += yValue;
+                    point.below = previousY < pick(threshold, 0);
+                }
+
+                // #3952 Negative sum or intermediate sum not rendered correctly
+                if (shapeArgs.height < 0) {
+                    shapeArgs.y += shapeArgs.height;
+                    shapeArgs.height *= -1;
+                }
             }
 
             point.plotY = shapeArgs.y = Math.round(shapeArgs.y) -
@@ -275,7 +359,7 @@ seriesType('waterfall', 'column', {
             options = series.options,
             yData = series.yData,
             // #3710 Update point does not propagate to sum
-            points = series.options.data,
+            points = options.data,
             point,
             dataLength = yData.length,
             threshold = options.threshold || 0,
@@ -286,7 +370,7 @@ seriesType('waterfall', 'column', {
             y,
             i;
 
-        sum = subSum = dataMin = dataMax = threshold;
+        sum = subSum = dataMin = dataMax = 0;
 
         for (i = 0; i < dataLength; i++) {
             y = yData[i];
@@ -296,6 +380,7 @@ seriesType('waterfall', 'column', {
                 yData[i] = correctFloat(sum);
             } else if (y === 'intermediateSum' || point.isIntermediateSum) {
                 yData[i] = correctFloat(subSum);
+                subSum = 0;
             } else {
                 sum += y;
                 subSum += y;
@@ -307,8 +392,8 @@ seriesType('waterfall', 'column', {
         Series.prototype.processData.call(this, force);
 
         // Record extremes only if stacking was not set:
-        if (!series.options.stacking) {
-            series.dataMin = dataMin;
+        if (!options.stacking) {
+            series.dataMin = dataMin + threshold;
             series.dataMax = dataMax;
         }
     },
@@ -359,12 +444,19 @@ seriesType('waterfall', 'column', {
     getCrispPath: function () {
 
         var data = this.data,
+            yAxis = this.yAxis,
             length = data.length,
             lineWidth = this.graph.strokeWidth() + this.borderWidth,
             normalizer = Math.round(lineWidth) % 2 / 2,
             reversedXAxis = this.xAxis.reversed,
             reversedYAxis = this.yAxis.reversed,
+            stacking = this.options.stacking,
             path = [],
+            prevStack,
+            prevStackX,
+            prevPoint,
+            yPos,
+            isPos,
             prevArgs,
             pointArgs,
             i,
@@ -372,20 +464,36 @@ seriesType('waterfall', 'column', {
 
         for (i = 1; i < length; i++) {
             pointArgs = data[i].shapeArgs;
+            prevPoint = data[i - 1];
             prevArgs = data[i - 1].shapeArgs;
+            prevStack = yAxis.waterfallStacks[this.stackKey];
+            isPos = prevPoint.y > 0 ? -prevArgs.height : 0;
 
-            d = [
-                'M',
-                prevArgs.x + (reversedXAxis ? 0 : prevArgs.width),
-                prevArgs.y + data[i - 1].minPointLengthOffset + normalizer,
-                'L',
-                pointArgs.x + (reversedXAxis ? prevArgs.width : 0),
-                prevArgs.y + data[i - 1].minPointLengthOffset + normalizer
-            ];
+            if (prevStack) {
+                prevStackX = prevStack[i - 1];
+
+                // y position of the connector is different when series are
+                // stacked, yAxis is reversed and it also depends on point's
+                // value
+                yPos = stacking ?
+                (yAxis.translate(prevStackX.connectorThreshold, 0, 1, 0, 1) +
+                    (reversedYAxis ? isPos : 0)) : prevArgs.y +
+                    prevPoint.minPointLengthOffset + normalizer;
+
+                d = [
+                    'M',
+                    prevArgs.x + (reversedXAxis ? 0 : prevArgs.width),
+                    yPos,
+                    'L',
+                    pointArgs.x + (reversedXAxis ? pointArgs.width : 0),
+                    yPos
+                ];
+            }
 
             if (
-                (data[i - 1].y < 0 && !reversedYAxis) ||
-                (data[i - 1].y > 0 && reversedYAxis)
+                !stacking &&
+                (prevPoint.y < 0 && !reversedYAxis) ||
+                (prevPoint.y > 0 && reversedYAxis)
             ) {
                 d[2] += prevArgs.height;
                 d[5] += prevArgs.height;
@@ -410,21 +518,73 @@ seriesType('waterfall', 'column', {
     setStackedPoints: function () {
         var series = this,
             options = series.options,
-            stackedYLength,
-            i;
+            waterfallStacks = series.yAxis.waterfallStacks,
+            seriesThreshold = options.threshold,
+            stackThreshold = seriesThreshold || 0,
+            interSum = seriesThreshold || 0,
+            stackKey = series.stackKey,
+            xData = series.xData,
+            xLength = xData.length,
+            actualStack,
+            actualStackX,
+            posTotal,
+            negTotal,
+            xPoint,
+            yVal,
+            x;
 
-        Series.prototype.setStackedPoints.apply(series, arguments);
+        // code responsible for creating stacks for waterfall series
+        if (series.visible || !series.chart.options.chart.ignoreHiddenSeries) {
+            if (!waterfallStacks[stackKey]) {
+                waterfallStacks[stackKey] = {};
+            }
 
-        stackedYLength = series.stackedYData ? series.stackedYData.length : 0;
+            actualStack = waterfallStacks[stackKey];
 
-        // Start from the second point:
-        for (i = 1; i < stackedYLength; i++) {
-            if (
-                !options.data[i].isSum &&
-                !options.data[i].isIntermediateSum
-            ) {
-                // Sum previous stacked data as waterfall can grow up/down:
-                series.stackedYData[i] += series.stackedYData[i - 1];
+            for (var i = 0; i < xLength; i++) {
+                x = xData[i];
+
+                if (!actualStack[x]) {
+                    actualStack[x] = {
+                        negTotal: 0,
+                        posTotal: 0,
+                        total: 0,
+                        stackTotal: 0,
+                        threshold: 0,
+                        stackState: [stackThreshold]
+                    };
+                }
+
+                actualStackX = actualStack[x];
+                yVal = series.yData[i];
+
+                if (yVal >= 0) {
+                    actualStackX.posTotal += yVal;
+                } else {
+                    actualStackX.negTotal += yVal;
+                }
+
+                // points do not exist yet, so raw data is used
+                xPoint = options.data[i];
+                posTotal = actualStackX.posTotal;
+                negTotal = actualStackX.negTotal;
+
+                if (xPoint && xPoint.isIntermediateSum) {
+                    stackThreshold ^= interSum;
+                    interSum ^= stackThreshold;
+                    stackThreshold ^= interSum;
+                } else if (xPoint && xPoint.isSum) {
+                    stackThreshold = seriesThreshold;
+                }
+
+                actualStackX.stackTotal = posTotal + negTotal;
+                actualStackX.total = actualStackX.stackTotal;
+                actualStackX.threshold = stackThreshold;
+
+                actualStackX.stackState[0] = stackThreshold;
+                actualStackX.stackState.push(actualStackX.stackTotal);
+
+                stackThreshold += actualStackX.stackTotal;
             }
         }
     },
@@ -432,8 +592,48 @@ seriesType('waterfall', 'column', {
     // Extremes for a non-stacked series are recorded in processData.
     // In case of stacking, use Series.stackedYData to calculate extremes.
     getExtremes: function () {
-        if (this.options.stacking) {
-            return Series.prototype.getExtremes.apply(this, arguments);
+        var stacking = this.options.stacking,
+            yAxis,
+            waterfallStacks,
+            stackedYNeg,
+            stackedYPos,
+            states,
+            firstState;
+
+        if (stacking) {
+            yAxis = this.yAxis;
+            waterfallStacks = yAxis.waterfallStacks;
+            stackedYNeg = this.stackedYNeg = [];
+            stackedYPos = this.stackedYPos = [];
+
+            // the visible y range can be different when stacking is set to
+            // overlap and different when it's set to normal
+            if (stacking === 'overlap') {
+                objectEach(waterfallStacks[this.stackKey], function (stackX) {
+
+                    states = [];
+                    each(stackX.stackState, function (state, stateIndex) {
+                        firstState = stackX.stackState[0];
+
+                        if (stateIndex) {
+                            states.push(state + firstState);
+                        } else {
+                            states.push(firstState);
+                        }
+                    });
+
+                    stackedYNeg.push(arrayMin(states));
+                    stackedYPos.push(arrayMax(states));
+                });
+            } else {
+                objectEach(waterfallStacks[this.stackKey], function (stackX) {
+                    stackedYNeg.push(stackX.negTotal + stackX.threshold);
+                    stackedYPos.push(stackX.posTotal + stackX.threshold);
+                });
+            }
+
+            this.dataMin = arrayMin(stackedYNeg);
+            this.dataMax = arrayMax(stackedYPos);
         }
     }
 

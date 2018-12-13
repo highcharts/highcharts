@@ -960,8 +960,9 @@ null
      * Whether to stack the values of each series on top of each other. Possible
      * values are `undefined` to disable, `"normal"` to stack by value or
      * `"percent"`. When stacking is enabled, data must be sorted in ascending
-     * X order. A special stacking option is with the streamgraph series type,
-     * where the stacking option is set to `"stream"`.
+     * X order. There are also two special stacking options. The first one is
+     * reserved for streamgraph series type, where the stacking option is
+     * set to `"stream"` and `"overlap"` prepared for waterfall series type.
      *
      * @see [yAxis.reversedStacks](#yAxis.reversedStacks)
      *
