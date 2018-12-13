@@ -76,7 +76,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#addSeries
      *
-     * @param {Highcharts.SeriesOptions} options
+     * @param {Highcharts.SeriesOptionsType} options
      *        The config options for the series.
      *
      * @param {boolean} [redraw=true]
@@ -1004,7 +1004,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *
      * @function Highcharts.Series#update
      *
-     * @param {Highcharts.SeriesOptions} options
+     * @param {Highcharts.SeriesOptionsType} options
      *        New options that will be merged with the series' existing options.
      *
      * @param {boolean} [redraw=true]

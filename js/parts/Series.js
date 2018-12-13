@@ -215,7 +215,7 @@ var addEvent = H.addEvent,
  * @param {Highcharts.Chart} chart
  *        The chart instance.
  *
- * @param {Highcharts.SeriesOptions|object} options
+ * @param {Highcharts.SeriesOptionsType|object} options
  *        The series options.
  *//**
  * The line series is the base type and is therefor the series base prototype.
