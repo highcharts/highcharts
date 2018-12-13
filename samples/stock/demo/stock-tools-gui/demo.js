@@ -81,6 +81,18 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
             name: 'AAPL Volume',
             data: volume,
             yAxis: 1
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 800
+                },
+                chartOptions: {
+                    rangeSelector: {
+                        inputEnabled: false
+                    }
+                }
+            }]
+        }
     });
 });

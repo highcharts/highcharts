@@ -16,3 +16,5 @@ import '../../annotations/types/Fibonacci.js';
 import '../../annotations/types/Pitchfork.js';
 import '../../annotations/types/VerticalLine.js';
 import '../../annotations/types/Measure.js';
+import '../../annotations/navigationBindings.js';
+import '../../annotations/popup.js';

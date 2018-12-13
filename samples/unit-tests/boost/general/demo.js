@@ -162,3 +162,49 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         );
     }
 );
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Series update with shared tooltip (#9572)',
+    function (assert) {
+        var i = 0,
+            chart,
+            controller;
+
+        assert.expect(0);
+
+        function getData() {
+            i++;
+            return [
+                ["Time", "2018-11-28", "2018-11-29", "2018-11-30"],
+                ["s1", 1, i, 1],
+                ["s2", 2, i, 2]
+            ];
+        }
+
+        chart = Highcharts.chart('container', {
+            data: {
+                columns: getData()
+            },
+            chart: {
+                width: 600
+            },
+            series: [{
+                boostThreshold: 1
+            }, {
+            }],
+            tooltip: {
+                shared: true
+            }
+        });
+
+        controller = new TestController(chart);
+        controller.moveTo(300, 200);
+        chart.update({
+            data: {
+                columns: getData()
+            },
+            series: [{}, {}],
+            tooltip: {}
+        });
+    }
+);

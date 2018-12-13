@@ -656,10 +656,11 @@ H.extendAnnotation(Measure, null, /** @lends Annotation.Measure# */ {
     /**
      * A measure annotation.
      *
-     * @extends annotations.base
+     * @extends annotations.crookedLine
      * @excluding labels, labelOptions, shapes, shapeOptions
      * @sample highcharts/annotations-advanced/measure/
      *         Measure
+     * @product highstock
      * @optionparent annotations.measure
      */
     {

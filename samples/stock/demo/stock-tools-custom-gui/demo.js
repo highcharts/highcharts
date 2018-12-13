@@ -150,7 +150,7 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
             height: '20%',
             offset: 0
         }],
-        stockTools: {
+        navigationBindings: {
             events: {
                 selectButton: function (event) {
                     var newClassName = event.button.className + ' highcharts-active',
@@ -202,7 +202,9 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
                     this.indicatorsPopupContainer.style.display = 'none';
                     this.annotationsPopupContainer.style.display = 'none';
                 }
-            },
+            }
+        },
+        stockTools: {
             gui: {
                 enabled: false
             }
@@ -218,6 +220,18 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
             name: 'AAPL Volume',
             data: volume,
             yAxis: 1
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 800
+                },
+                chartOptions: {
+                    rangeSelector: {
+                        inputEnabled: false
+                    }
+                }
+            }]
+        }
     });
 });

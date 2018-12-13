@@ -8,6 +8,5 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/stock-tools-gui.js';
 import '../../modules/stock-tools-bindings.js';
-import '../../modules/stock-tools-popup.js';
+import '../../modules/stock-tools-gui.js';

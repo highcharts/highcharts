@@ -169,6 +169,8 @@ H.extendAnnotation(Fibonacci, Tunnel, /** @lends Annotation.Fibonacci# */ {
      * @extends annotations.crookedLine
      * @sample highcharts/annotations-advanced/fibonacci/
      *         Fibonacci
+     *
+     * @product highstock
      * @optionparent annotations.fibonacci
      */
     {
@@ -215,7 +217,7 @@ H.extendAnnotation(Fibonacci, Tunnel, /** @lends Annotation.Fibonacci# */ {
              * An array with options for the labels.
              *
              * @type {Array<Object>}
-             * @extends annotations.base.labelOptions
+             * @extends annotations.crookedLine.labelOptions
              * @apioption annotations.fibonacci.typeOptions.labels
              */
             labels: []
