@@ -391,6 +391,12 @@ var charts = H.charts,
  *
  * @param {boolean} [stop=false]
  *        Whether to throw an error or just log a warning in the console.
+ *
+ * @param {Highcharts.Chart} [chart]
+ *        Reference to the chart that causes the error. Used in 'debugger'
+ *        module to display errors directly on the chart.
+ *        Important note: This argument is undefined for errors that lack
+ *        access to the Chart instance.
  */
 H.error = function (code, stop, chart) {
     var msg = H.isNumber(code) ?
