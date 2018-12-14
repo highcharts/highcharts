@@ -2516,7 +2516,7 @@ null
          * {@link Series#update}.
          *
          * @name Highcharts.Series#options
-         * @type {Highcharts.PlotSeriesOptions}
+         * @type {Highcharts.SeriesOptionsType}
          */
         series.options = options = series.setOptions(options);
         series.linkedSeries = [];
@@ -2811,10 +2811,10 @@ null
      *
      * @function Highcharts.Series#setOptions
      *
-     * @param {Highcharts.PlotSeriesOptions} itemOptions
+     * @param {Highcharts.SeriesOptionsType} itemOptions
      *        The series options.
      *
-     * @return {Highcharts.PlotSeriesOptions}
+     * @return {Highcharts.SeriesOptionsType}
      *
      * @fires Highcharts.Series#event:afterSetOptions
      */
