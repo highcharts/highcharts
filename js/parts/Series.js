@@ -2923,7 +2923,7 @@ null
      *         The series name.
      */
     getName: function () {
-        return this.name || 'Series ' + (this.index + 1);
+        return pick(this.options.name, 'Series ' + (this.index + 1)); // #4119
     },
 
     /**
