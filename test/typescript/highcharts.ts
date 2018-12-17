@@ -1,5 +1,21 @@
+/* *
+ *
+ *  Test cases for highcharts.d.ts
+ *
+ *  (c) 2018 Highsoft AS. All rights reserved.
+ *
+ * */
+
 import * as Highcharts from "highcharts";
 
+test_seriesBar();
+test_seriesColumn();
+test_seriesLine();
+test_seriesPie();
+
+/**
+ * Tests Highcharts.seriesTypes.bar in a common use case.
+ */
 function test_seriesBar() {
     Highcharts.chart('container', {
         chart: {
@@ -71,6 +87,9 @@ function test_seriesBar() {
     });
 }
 
+/**
+ * Tests Highcharts.seriesTypes.column in a common use case.
+ */
 function test_seriesColumn() {
     Highcharts.chart('container', {
         chart: {
@@ -139,6 +158,9 @@ function test_seriesColumn() {
     });
 }
 
+/**
+ * Tests Highcharts.seriesTypes.line in a common use case.
+ */
 function test_seriesLine() {
     Highcharts.chart('container', {
         title: {
@@ -203,6 +225,9 @@ function test_seriesLine() {
     });
 }
 
+/**
+ * Tests Highcharts.seriesTypes.pie in a common use case.
+ */
 function test_seriesPie() {
     Highcharts.chart('container', {
         chart: {

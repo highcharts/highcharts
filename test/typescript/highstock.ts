@@ -1,5 +1,18 @@
+/* *
+ *
+ *  Test cases for highstock.d.ts
+ *
+ *  (c) 2018 Highsoft AS. All rights reserved.
+ *
+ * */
+
 import * as Highcharts from 'highcharts/highstock';
 
+test_seriesLine();
+
+/**
+ * Tests Highcharts.seriesTypes.line in a simple use case.
+ */
 function test_seriesLine() {
     Highcharts.stockChart('container', {
         chart: {
