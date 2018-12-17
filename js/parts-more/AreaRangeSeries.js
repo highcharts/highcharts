@@ -1,10 +1,8 @@
 /* *
+ * (c) 2010-2018 Torstein Honsi
  *
- *  (c) 2010-2018 Torstein Honsi
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 'use strict';
 
@@ -652,22 +650,20 @@ seriesType('arearange', 'area', {
  *     should be of length 2\. Then the `x` value is automatically calculated,
  *     either starting at 0 and incremented by 1, or from `pointStart`
  *     and `pointInterval` given in the series options.
- *
- *  ```js
+ *     ```js
  *     data: [
  *         [0, 8, 3],
  *         [1, 1, 1],
  *         [2, 6, 8]
  *     ]
- *  ```
+ *     ```
  *
  * 2.  An array of objects with named values. The following snippet shows only a
  *     few settings, see the complete options set below. If the total number of
  *     data points exceeds the series'
  *     [turboThreshold](#series.arearange.turboThreshold),
  *     this option is not available.
- *
- *  ```js
+ *     ```js
  *     data: [{
  *         x: 1,
  *         low: 9,
@@ -681,10 +677,8 @@ seriesType('arearange', 'area', {
  *         name: "Point1",
  *         color: "#FF00FF"
  *     }]
- *  ```
+ *     ```
  *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
  *         Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
@@ -694,7 +688,7 @@ seriesType('arearange', 'area', {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<Array<(number|string),number,number>|*>}
+ * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.line.data
  * @excluding marker, y
  * @product   highcharts highstock
