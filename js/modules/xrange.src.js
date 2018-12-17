@@ -102,7 +102,7 @@ seriesType('xrange', 'column'
      * The fill color to be used for partial fills. Defaults to a darker shade
      * of the point color.
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product   highcharts highstock gantt
      * @apioption plotOptions.xrange.partialFill.fill
      */
@@ -642,35 +642,26 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  *
  * 1. An array of objects with named values. The objects are point configuration
  *    objects as seen below.
- *
  *    ```js
- *        data: [{
- *            x: Date.UTC(2017, 0, 1),
- *            x2: Date.UTC(2017, 0, 3),
- *            name: "Test",
- *            y: 0,
- *            color: "#00FF00"
- *        }, {
- *            x: Date.UTC(2017, 0, 4),
- *            x2: Date.UTC(2017, 0, 5),
- *            name: "Deploy",
- *            y: 1,
- *            color: "#FF0000"
- *        }]
+ *    data: [{
+ *        x: Date.UTC(2017, 0, 1),
+ *        x2: Date.UTC(2017, 0, 3),
+ *        name: "Test",
+ *        y: 0,
+ *        color: "#00FF00"
+ *    }, {
+ *        x: Date.UTC(2017, 0, 4),
+ *        x2: Date.UTC(2017, 0, 5),
+ *        name: "Deploy",
+ *        y: 1,
+ *        color: "#FF0000"
+ *    }]
  *    ```
  *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/
- *         Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *         Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/
- *         Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<number>|*>}
+ * @type      {Array<*>}
  * @extends   series.line.data
  * @product   highcharts highstock gantt
  * @apioption series.xrange.data
