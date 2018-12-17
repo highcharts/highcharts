@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -509,61 +509,58 @@ seriesType('boxplot', 'column', {
  * An array of data points for the series. For the `boxplot` series
  * type, points can be given in the following ways:
  *
- * 1.  An array of arrays with 6 or 5 values. In this case, the values
- * correspond to `x,low,q1,median,q3,high`. If the first value is a
- * string, it is applied as the name of the point, and the `x` value
- * is inferred. The `x` value can also be omitted, in which case the
- * inner arrays should be of length 5\. Then the `x` value is automatically
- * calculated, either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options.
+ * 1. An array of arrays with 6 or 5 values. In this case, the values correspond
+ *    to `x,low,q1,median,q3,high`. If the first value is a string, it is
+ *    applied as the name of the point, and the `x` value is inferred. The `x`
+ *    value can also be omitted, in which case the inner arrays should be of
+ *    length 5. Then the `x` value is automatically calculated, either starting
+ *    at 0 and incremented by 1, or from `pointStart` and `pointInterval` given
+ *    in the series options.
+ *    ```js
+ *    data: [
+ *        [0, 3, 0, 10, 3, 5],
+ *        [1, 7, 8, 7, 2, 9],
+ *        [2, 6, 9, 5, 1, 3]
+ *    ]
+ *    ```
  *
- *  ```js
- *     data: [
- *         [0, 3, 0, 10, 3, 5],
- *         [1, 7, 8, 7, 2, 9],
- *         [2, 6, 9, 5, 1, 3]
- *     ]
- *  ```
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.boxplot.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        low: 4,
+ *        q1: 9,
+ *        median: 9,
+ *        q3: 1,
+ *        high: 10,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        x: 1,
+ *        low: 5,
+ *        q1: 7,
+ *        median: 3,
+ *        q3: 6,
+ *        high: 2,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.boxplot.turboThreshold),
- * this option is not available.
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
  *
- *  ```js
- *     data: [{
- *         x: 1,
- *         low: 4,
- *         q1: 9,
- *         median: 9,
- *         q3: 1,
- *         high: 10,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         x: 1,
- *         low: 5,
- *         q1: 7,
- *         median: 3,
- *         q3: 6,
- *         high: 2,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
- *
- * @sample    {highcharts} highcharts/chart/reflow-true/
- *            Numerical values
- * @sample    {highcharts} highcharts/series/data-array-of-arrays/
- *            Arrays of numeric x and y
- * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *            Arrays of datetime x and y
- * @sample    {highcharts} highcharts/series/data-array-of-name-value/
- *            Arrays of point.name and y
- * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
- *
- * @type      {Array<Array<number>|*>}
+ * @type      {Array<Array<(number|string),number,number,number,number>|Array<(number|string),number,number,number,number,number>|*>}
  * @extends   series.line.data
  * @excluding marker
  * @product   highcharts
