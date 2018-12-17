@@ -411,7 +411,6 @@ seriesType('variablepie', 'pie',
  *
  * 1. An array of arrays with 2 values. In this case, the numerical values will
  *    be interpreted as `y, z` options. Example:
- *
  *    ```js
  *    data: [
  *        [40, 75],
@@ -425,7 +424,6 @@ seriesType('variablepie', 'pie',
  *    data points exceeds the series'
  *    [turboThreshold](#series.variablepie.turboThreshold), this option is not
  *    available.
- *
  *    ```js
  *    data: [{
  *        y: 1,
@@ -440,8 +438,6 @@ seriesType('variablepie', 'pie',
  *    }]
  *    ```
  *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
  *         Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
@@ -451,7 +447,7 @@ seriesType('variablepie', 'pie',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|*>}
+ * @type      {Array<Array<(number|string),number>|*>}
  * @extends   series.pie.data
  * @excluding marker, x
  * @product   highcharts
