@@ -47,7 +47,7 @@ $button-hover-color: #e6ebf5;
 .highcharts-menu-wrapper {
   float: left;
   width: 40px;
-  height: calc(100% - 30px);
+  height: calc(100% - 50px);
   overflow: hidden;
   position: absolute;
   left: 0px;
@@ -69,8 +69,8 @@ $button-hover-color: #e6ebf5;
   text-align: center;
   width: 40px;
   position: absolute;
-  left: 0%;
-  bottom: 2px;
+  left: 10px;
+  bottom: 10px;
   font-size: 1.5em;
 }
 
