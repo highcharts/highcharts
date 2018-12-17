@@ -248,8 +248,8 @@ function parseErrorsDirectory (directoryPath) {
 
             let parsedErrors = {
                 meta: {
-                    files: [],
-                    version: require(rootPath  + '/package.json').version
+                    files: []
+                    //, version: require(rootPath  + '/package.json').version
                 }
             };
 
@@ -290,7 +290,12 @@ function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
                 oldErrorsJson[error].text === parsedErrors[error].text &&
                 oldErrorsJson[error].enduser === parsedErrors[error].enduser
             ));
-        if (same) {
+        const version = require(rootPath  + '/package.json').version;
+
+        if (same &&
+            (!oldErrorsJson.meta.version ||
+            oldErrorsJson.meta.version === version)
+        ) {
             return Promise.resolve();
         }
     }
