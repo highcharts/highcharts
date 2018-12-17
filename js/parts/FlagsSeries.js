@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -682,21 +682,22 @@ if (Renderer === VMLRenderer) {
  * An array of data points for the series. For the `flags` series type,
  * points can be given in the following ways:
  *
- * 1.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.flags.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *     x: 1,
- *     title: "A",
- *     text: "First event"
- * }, {
- *     x: 1,
- *     title: "B",
- *     text: "Second event"
- * }]</pre>
+ * 1. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.flags.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        title: "A",
+ *        text: "First event"
+ *    }, {
+ *        x: 1,
+ *        title: "B",
+ *        text: "Second event"
+ *    }]
+ *    ```
  *
  * @type      {Array<*>}
  * @extends   series.line.data
@@ -709,7 +710,7 @@ if (Renderer === VMLRenderer) {
  * The fill color of an individual flag. By default it inherits from
  * the series color.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highstock
  * @apioption series.flags.data.fillColor
  */
