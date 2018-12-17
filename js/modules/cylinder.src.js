@@ -1,10 +1,8 @@
 /* *
+ * (c) 2010-2018 Kacper Madej
  *
- *  (c) 2010-2018 Kacper Madej
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 'use strict';
 
@@ -53,7 +51,8 @@ seriesType('cylinder', 'column',
     {},
     {}, /** @lends Highcharts.seriesTypes.cylinder#pointClass# */ {
         shapeType: 'cylinder'
-    });
+    }
+);
 
 /**
  * A `cylinder` series. If the [type](#series.cylinder.type) option is not
@@ -121,7 +120,7 @@ seriesType('cylinder', 'column',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<number>|*>}
+ * @type      {Array<number|Array<(number|string),number>|*>}
  * @extends   series.column.data
  * @product   highcharts highstock
  * @apioption series.cylinder.data
