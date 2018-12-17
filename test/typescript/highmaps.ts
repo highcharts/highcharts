@@ -1,39 +1,31 @@
-import * as Highmaps from 'highcharts/highmaps';
+/* *
+ *
+ *  Test cases for highmaps.d.ts
+ *
+ *  (c) 2018 Highsoft AS. All rights reserved.
+ *
+ * */
 
-function test_simple() {
-    Highmaps.mapChart('container', {
-        series: [{
-          	type: 'map',
-            data: [{
-                value: 100,
-                name: 'a'
-            }, {
-                value: 150,
-                name: 'b'
-            }],
-            joinBy: 'id',
-            mapData: [{
-                path: ['M', 0, 0, 'L', 10, 0, 10, 10, 0, 10, 'Z'],
-                name: 'a',
-            }, {
-                path: ['M', 20, 20, 'L', 30, 20, 15, 15, 20, 30, 'Z'],
-                name: 'b'
-            }]
-        }]
-    });
-}
+import * as Highcharts from 'highcharts/highmaps';
 
+test_series();
+test_simple();
+
+/**
+ * Tests Highcharts.seriesTypes.map, Highcharts.seriesTypes.mapline, and
+ * Highcharts.seriesTypes.mappoint in a complex use case.
+ */
 function test_series() {
-    const defaultOptions = Highmaps.getOptions();
+    const defaultOptions = Highcharts.getOptions();
     const tooltipFormatter = function(
-        this: Highmaps.TooltipFormatterContextObject
+        this: Highcharts.TooltipFormatterContextObject
     ) {
         const point = this.point as any; // @todo make id, lat, lon public
         return point.id + (
             point.lat ? `<br>Lat:${point.lat} Lon: ${point.lon}` : ''
         );
     };
-    Highmaps.mapChart('container', {
+    Highcharts.mapChart('container', {
         title: {
             text: 'Highmaps simple flight routes demo'
         },
@@ -60,7 +52,7 @@ function test_series() {
         series: [{
             // Use the gb-all map with no data as a basemap
             type: 'map',
-            mapData: Highmaps.maps['countries/gb/gb-all'],
+            mapData: Highcharts.maps['countries/gb/gb-all'],
             name: 'Basemap',
             borderColor: '#707070',
             nullColor: 'rgba(200, 200, 200, 0.3)',
@@ -68,7 +60,7 @@ function test_series() {
         }, {
             name: 'Separators',
             type: 'mapline',
-            data: Highmaps.geojson(Highmaps.maps['countries/gb/gb-all'], 'mapline'),
+            data: Highcharts.geojson(Highcharts.maps['countries/gb/gb-all'], 'mapline'),
             color: '#707070',
             showInLegend: false,
             enableMouseTracking: false
@@ -122,6 +114,32 @@ function test_series() {
                     x: 5,
                     verticalAlign: 'middle'
                 }
+            }]
+        }]
+    });
+}
+
+/**
+ * Tests Highcharts.seriesTypes.map in a simple use case.
+ */
+function test_simple() {
+    Highcharts.mapChart('container', {
+        series: [{
+          	type: 'map',
+            data: [{
+                value: 100,
+                name: 'a'
+            }, {
+                value: 150,
+                name: 'b'
+            }],
+            joinBy: 'id',
+            mapData: [{
+                path: ['M', 0, 0, 'L', 10, 0, 10, 10, 0, 10, 'Z'],
+                name: 'a',
+            }, {
+                path: ['M', 20, 20, 'L', 30, 20, 15, 15, 20, 30, 'Z'],
+                name: 'b'
             }]
         }]
     });

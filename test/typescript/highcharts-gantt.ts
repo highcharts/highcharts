@@ -8,6 +8,8 @@
 
 import * as Highcharts from 'highcharts/highcharts-gantt';
 
+test_Gantt();
+
 /**
  * Tests Highcharts.seriesTypes.gantt in a complex use case.
  *

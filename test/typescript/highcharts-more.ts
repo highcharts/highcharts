@@ -11,6 +11,8 @@ import HighchartsMore from 'highcharts/highcharts-more';
 
 HighchartsMore(Highcharts);
 
+test_AreaRange();
+
 /**
  * Tests Highcharts.seriesTypes.arearange in a complex use case.
  *
