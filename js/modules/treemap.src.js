@@ -51,7 +51,8 @@ var seriesType = H.seriesType,
             recursive(next, func, context);
         }
     },
-    updateRootId = mixinTreeSeries.updateRootId;
+    updateRootId = mixinTreeSeries.updateRootId,
+    defined = H.defined;
 
 /**
  * @private
@@ -1167,7 +1168,25 @@ seriesType('treemap', 'scatter'
     },
 
     // Over the alignment method by setting z index
-    alignDataLabel: function (point) {
+    alignDataLabel: function (point, dataLabel, labelOptions) {
+        var style = labelOptions.style;
+
+        // #8160: Prevent the label from exceeding the point's
+        // boundaries in treemaps by applying ellipsis overflow.
+        // The issue was happening when datalabel's text contained a
+        // long sequence of characters without a whitespace.
+        if (!defined(style.textOverflow) && isNumber(style.width) &&
+          dataLabel.text &&
+          (labelOptions.useHTML ?
+          dataLabel.text.element.scrollWidth :
+          dataLabel.text.getBBox(true).width) > style.width) {
+            dataLabel.css({
+                textOverflow: 'ellipsis',
+                width: style.width += 'px' // unit (px) is required
+                                           // when useHTML is true
+            });
+        }
+
         seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
         if (point.dataLabel) {
             // point.node.zIndex could be undefined (#6956)

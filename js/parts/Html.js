@@ -56,7 +56,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             doTransform;
 
         if (isSettingWidth) {
-            delete styles.width;
+            // delete styles.width; // #8160:
             wrapper.textWidth = textWidth;
             doTransform = true;
         }
