@@ -1,15 +1,12 @@
 /* *
+ * Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  This is an experimental Highcharts module which enables visualization of a
- *  word cloud.
+ * (c) 2016-2018 Highsoft AS
  *
- *  (c) 2016 Highsoft AS
+ * Authors: Jon Arild Nygard
  *
- *  Authors: Jon Arild Nygard
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 'use strict';
 
@@ -1011,12 +1008,11 @@ var wordCloudPoint = {
  *
  * 1. An array of arrays with 2 values. In this case, the values correspond to
  *    `name,weight`.
- *
  *    ```js
- *        data: [
- *            ['Lorem', 4],
- *            ['Ipsum', 1]
- *        ]
+ *    data: [
+ *        ['Lorem', 4],
+ *        ['Ipsum', 1]
+ *    ]
  *    ```
  *
  * 2. An array of objects with named values. The following snippet shows only a
@@ -1024,15 +1020,14 @@ var wordCloudPoint = {
  *    data points exceeds the series'
  *    [turboThreshold](#series.arearange.turboThreshold), this option is not
  *    available.
- *
  *    ```js
- *        data: [{
- *            name: "Lorem",
- *            weight: 4
- *        }, {
- *            name: "Ipsum",
- *            weight: 1
- *        }]
+ *    data: [{
+ *        name: "Lorem",
+ *        weight: 4
+ *    }, {
+ *        name: "Ipsum",
+ *        weight: 1
+ *    }]
  *    ```
  *
  * @type      {Array<Array<string,number>|*>}
