@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -58,6 +58,28 @@ seriesType('pie', 'line'
  * @optionparent plotOptions.pie
  */
 , {
+
+    /**
+     * @excluding legendItemClick
+     * @apioption plotOptions.pie.events
+     */
+
+    /**
+     * Fires when the checkbox next to the point name in the legend is clicked.
+     * One parameter, event, is passed to the function. The state of the
+     * checkbox is found by event.checked. The checked item is found by
+     * event.item. Return false to prevent the default action which is to
+     * toggle the select state of the series.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-events-checkboxclick/
+     *         Alert checkbox status
+     *
+     * @type      {Function}
+     * @since     1.2.0
+     * @product   highcharts
+     * @context   Highcharts.Point
+     * @apioption plotOptions.pie.events.checkboxClick
+     */
 
     /**
      * The center of the pie chart relative to the plot area. Can be percentages
@@ -1254,38 +1276,11 @@ seriesType('pie', 'line'
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|*>}
+ * @type      {Array<number|Array<string,number>|*>}
  * @extends   series.line.data
  * @excluding marker, x
  * @product   highcharts
  * @apioption series.pie.data
- */
-
-/**
- * Fires when the checkbox next to the point name in the legend is clicked.
- * One parameter, event, is passed to the function. The state of the
- * checkbox is found by event.checked. The checked item is found by
- * event.item. Return false to prevent the default action which is to
- * toggle the select state of the series.
- *
- * @sample {highcharts} highcharts/plotoptions/series-events-checkboxclick/
- *         Alert checkbox status
- *
- * @type      {Function}
- * @since     1.2.0
- * @product   highcharts
- * @context   Highcharts.Point
- * @apioption plotOptions.pie.events.checkboxClick
- */
-
-/**
- * Not applicable to pies, as the legend item is per point. See point.
- * events.
- *
- * @type      {Function}
- * @since     1.2.0
- * @product   highcharts
- * @apioption plotOptions.pie.events.legendItemClick
  */
 
 /**
@@ -1321,4 +1316,9 @@ seriesType('pie', 'line'
  * @type      {boolean}
  * @product   highcharts
  * @apioption series.pie.data.sliced
+ */
+
+/**
+ * @excluding legendItemClick
+ * @apioption series.pie.events
  */
