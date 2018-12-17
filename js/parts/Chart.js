@@ -2196,9 +2196,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.getAxes();
 
         // Initialize the series
-        (options.series || []).forEach(function (serieOptions) {
-            chart.initSeries(serieOptions);
-        });
+        (H.isArray(options.series) ? options.series : []).forEach(
+            function (serieOptions) {
+                chart.initSeries(serieOptions);
+            }
+        );
 
         chart.linkSeries();
 
