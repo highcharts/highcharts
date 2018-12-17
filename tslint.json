@@ -3,7 +3,6 @@
     "rules": {
         "array-type": false,
         "file-name-casing": false,
-        "max-line-length": false,
         "unified-signatures": false
     }
 }
