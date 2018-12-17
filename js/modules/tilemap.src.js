@@ -664,50 +664,46 @@ seriesType('tilemap', 'heatmap'
  * An array of data points for the series. For the `tilemap` series
  * type, points can be given in the following ways:
  *
- * 1.  An array of arrays with 3 or 2 values. In this case, the values
- * correspond to `x,y,value`. If the first value is a string, it is
- * applied as the name of the point, and the `x` value is inferred.
- * The `x` value can also be omitted, in which case the inner arrays
- * should be of length 2\. Then the `x` value is automatically calculated,
- * either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options.
+ * 1. An array of arrays with 3 or 2 values. In this case, the values correspond
+ *    to `x,y,value`. If the first value is a string, it is applied as the name
+ *    of the point, and the `x` value is inferred. The `x` value can also be
+ *    omitted, in which case the inner arrays should be of length 2\. Then the
+ *    `x` value is automatically calculated, either starting at 0 and
+ *    incremented by 1, or from `pointStart` and `pointInterval` given in the
+ *    series options.
+ *    ```js
+ *    data: [
+ *        [0, 9, 7],
+ *        [1, 10, 4],
+ *        [2, 6, 3]
+ *    ]
+ *    ```
  *
- *  ```js
- *     data: [
- *         [0, 9, 7],
- *         [1, 10, 4],
- *         [2, 6, 3]
- *     ]
- *  ```
- *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.tilemap.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         x: 1,
- *         y: 3,
- *         value: 10,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         x: 1,
- *         y: 7,
- *         value: 10,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
+ * 2. An array of objects with named values. The objects are point configuration
+ *    objects as seen below. If the total number of data points exceeds the
+ *    series' [turboThreshold](#series.tilemap.turboThreshold), this option is
+ *    not available.
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        y: 3,
+ *        value: 10,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        x: 1,
+ *        y: 7,
+ *        value: 10,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
  * Note that for some [tileShapes](#plotOptions.tilemap.tileShape) the grid
  * coordinates are offset.
  *
  * @sample maps/series/tilemap-gridoffset
  *         Offset grid coordinates
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
  *         Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
@@ -717,7 +713,7 @@ seriesType('tilemap', 'heatmap'
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<Array<number>|*>}
+ * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.heatmap.data
  * @excluding marker
  * @product   highcharts highmaps
