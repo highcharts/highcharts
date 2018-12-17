@@ -1,10 +1,8 @@
 /* *
+ * (c) 2010-2018 Torstein Honsi
  *
- *  (c) 2010-2018 Torstein Honsi
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 'use strict';
 
@@ -565,7 +563,7 @@ seriesType('area', 'line'
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<number|string>|*>}
+ * @type      {Array<number|Array<(number|string),number>|*>}
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.area.data
