@@ -1,12 +1,10 @@
 /* *
+ * (c) 2014-2018 Highsoft AS
  *
- *  (c) 2014-2018 Highsoft AS
+ * Authors: Jon Arild Nygard / Oystein Moseng
  *
- *  Authors: Jon Arild Nygard / Oystein Moseng
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 'use strict';
 
@@ -1534,12 +1532,6 @@ seriesType('treemap', 'scatter'
  *
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/
- *         Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *         Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/
- *         Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
