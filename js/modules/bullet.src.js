@@ -1,10 +1,8 @@
 /* *
+ * (c) 2010-2018 Kacper Madej
  *
- *  (c) 2010-2018 Kacper Madej
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 'use strict';
 
@@ -287,44 +285,43 @@ seriesType('bullet', 'column'
  * An array of data points for the series. For the `bullet` series type,
  * points can be given in the following ways:
  *
- * 1.  An array of arrays with 3 or 2 values. In this case, the values
- * correspond to `x,y,target`. If the first value is a string,
- * it is applied as the name of the point, and the `x` value is inferred.
- * The `x` value can also be omitted, in which case the inner arrays
- * should be of length 2\. Then the `x` value is automatically calculated,
- * either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options.
+ * 1. An array of arrays with 3 or 2 values. In this case, the values correspond
+ *    to `x,y,target`. If the first value is a string, it is applied as the name
+ *    of the point, and the `x` value is inferred. The `x` value can also be
+ *    omitted, in which case the inner arrays should be of length 2\. Then the
+ *    `x` value is automatically calculated, either starting at 0 and
+ *    incremented by 1, or from `pointStart` and `pointInterval` given in the
+ *    series options.
+ *    ```js
+ *    data: [
+ *        [0, 40, 75],
+ *        [1, 50, 50],
+ *        [2, 60, 40]
+ *    ]
+ *    ```
  *
- *  ```js
- *     data: [
- *         [0, 40, 75],
- *         [1, 50, 50],
- *         [2, 60, 40]
- *     ]
- *  ```
- *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.bullet.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         x: 0,
- *         y: 40,
- *         target: 75,
- *         name: "Point1",
- *         color: "#00FF00"
- *     }, {
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.bullet.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        x: 0,
+ *        y: 40,
+ *        target: 75,
+ *        name: "Point1",
+ *        color: "#00FF00"
+ *    }, {
  *         x: 1,
- *         y: 60,
- *         target: 40,
- *         name: "Point2",
- *         color: "#FF00FF"
- *     }]
- *  ```
+ *        y: 60,
+ *        target: 40,
+ *        name: "Point2",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
- * @type      {Array<number|Array<number,string>|*>}
+ * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.column.data
  * @since     6.0.0
  * @product   highcharts
