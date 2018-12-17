@@ -780,8 +780,13 @@ addEvent(H.Chart, 'afterGetContainer', function (options) {
 });
 
 addEvent(H.Chart, 'getMargins', function () {
-    if (this.stockToolbar && this.stockToolbar.listWrapper) {
-        this.plotLeft += this.stockToolbar.listWrapper.offsetWidth || 0;
+    var offsetWidth = (
+        this.stockToolbar &&
+        this.stockToolbar.listWrapper &&
+        this.stockToolbar.listWrapper.offsetWidth
+    );
+    if (offsetWidth && offsetWidth < this.plotWidth) {
+        this.plotLeft += offsetWidth;
     }
 });
 
