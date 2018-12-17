@@ -123,7 +123,6 @@ H.errorMessages = {
             "errors/28/readme.md",
             "errors/29/readme.md",
             "errors/30/readme.md"
-        ],
-        "version": "7.0.0"
+        ]
     }
 };
