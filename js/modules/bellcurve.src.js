@@ -1,7 +1,6 @@
-/**
- * @license  @product.name@ JS v@product.version@ (@product.date@)
+/* *
+ * (c) 2010-2018 Highsoft AS
  *
- * (c) 2010-2017 Highsoft AS
  * Author: Sebastian Domas
  *
  * License: www.highcharts.com/license
@@ -19,11 +18,9 @@ var seriesType = H.seriesType,
     merge = H.merge;
 
 
-/** ****************************************************************************
- *
- * BELL CURVE
- *
- ******************************************************************************/
+/* ************************************************************************** *
+ *  BELL CURVE                                                                *
+ * ************************************************************************** */
 
 function mean(data) {
     var length = data.length,
@@ -57,7 +54,7 @@ function normalDensity(x, mean, standardDeviation) {
 }
 
 
-/* *
+/**
  * Bell curve class
  *
  * @private
@@ -65,8 +62,10 @@ function normalDensity(x, mean, standardDeviation) {
  * @name Highcharts.seriesTypes.bellcurve
  *
  * @augments Highcharts.Series
- * @mixes    DerivedSeriesMixin
+ *
+ * @mixes DerivedSeriesMixin
  */
+seriesType('bellcurve', 'areaspline'
 
 /**
  * A bell curve is an areaspline series which represents the probability density
@@ -84,7 +83,7 @@ function normalDensity(x, mean, standardDeviation) {
  *               pointIntervalUnit
  * @optionparent plotOptions.bellcurve
  */
-seriesType('bellcurve', 'areaspline', {
+, {
    /**
     * This option allows to define the length of the bell curve. A unit of the
     * length of the bell curve is standard deviation.
@@ -169,15 +168,4 @@ seriesType('bellcurve', 'areaspline', {
  *
  * @type      {number|string}
  * @apioption series.bellcurve.baseSeries
- */
-
-/**
- * An array of data points for the series. For the `bellcurve` series type,
- * points are calculated dynamically.
- *
- * @type      {Array<number|Array<number|string>|*>}
- * @extends   series.areaspline.data
- * @since     6.0.0
- * @product   highcharts
- * @apioption series.bellcurve.data
  */
