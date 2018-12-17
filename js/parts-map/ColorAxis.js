@@ -438,6 +438,12 @@ if (!H.ColorAxis) {
              */
 
             /**
+             * @product   highcharts highmaps
+             * @excluding afterBreaks, pointBreak, pointInBreak
+             * @apioption colorAxis.events
+             */
+
+            /**
              * Fires when the legend item belonging to the colorAxis is clicked.
              * One parameter, `event`, is passed to the function.
              *
