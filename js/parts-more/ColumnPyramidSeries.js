@@ -1,10 +1,8 @@
 /* *
+ * (c) 2010-2018 Sebastian Bochan
  *
- *  (c) 2010-2018 Sebastian Bochan
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 'use strict';
 
@@ -282,7 +280,7 @@ seriesType('columnpyramid', 'column'
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<number|string>|*>}
+ * @type      {Array<number|Array<(number|string),number>|*>}
  * @extends   series.line.data
  * @excluding marker
  * @product   highcharts highstock
