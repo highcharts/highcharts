@@ -284,14 +284,13 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (
  * An array of data points for the series. For the `variwide` series type,
  * points can be given in the following ways:
  *
- * 1. An array of arrays with 3 or 2 values. In this case, the values
- *    correspond to `x,y,z`. If the first value is a string, it is applied as
- *    the name of the point, and the `x` value is inferred. The `x` value can
- *    also be omitted, in which case the inner arrays should be of length 2.
- *    Then the `x` value is automatically calculated, either starting at 0 and
+ * 1. An array of arrays with 3 or 2 values. In this case, the values correspond
+ *    to `x,y,z`. If the first value is a string, it is applied as the name of
+ *    the point, and the `x` value is inferred. The `x` value can also be
+ *    omitted, in which case the inner arrays should be of length 2. Then the
+ *    `x` value is automatically calculated, either starting at 0 and
  *    incremented by 1, or from `pointStart` and `pointInterval` given in the
  *    series options.
- *
  *    ```js
  *       data: [
  *           [0, 1, 2],
@@ -305,7 +304,6 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (
  *    data points exceeds the series'
  *    [turboThreshold](#series.variwide.turboThreshold), this option is not
  *    available.
- *
  *    ```js
  *       data: [{
  *           x: 1,
@@ -322,8 +320,6 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (
  *       }]
  *    ```
  *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
  *         Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
@@ -333,7 +329,7 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<Array<number>|*>}
+ * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.line.data
  * @excluding marker
  * @product   highcharts
