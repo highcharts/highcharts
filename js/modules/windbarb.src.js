@@ -356,7 +356,7 @@ seriesType('windbarb', 'column'
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<number>|*>}
+ * @type      {Array<Array<(number|string),number,number>|*>}
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.windbarb.data
