@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -580,39 +580,33 @@ seriesType('gauge', 'line', {
  * An array of data points for the series. For the `gauge` series type,
  * points can be given in the following ways:
  *
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. Example:
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `y` options. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
  *
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
- *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.gauge.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *     y: 6,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     y: 8,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.gauge.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        y: 6,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        y: 8,
+ *        name: "Point1",
+ *       color: "#FF00FF"
+ *    }]
+ *    ```
  *
  * The typical gauge only contains a single data value.
  *
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/
- *         Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *         Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/
- *         Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
