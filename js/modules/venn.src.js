@@ -1,18 +1,15 @@
 /* *
+ * Experimental Highcharts module which enables visualization of a Venn Diagram.
  *
- *  (c) 2016-2018 Highsoft AS
+ * (c) 2016-2018 Highsoft AS
  *
- *  Authors: Jon Arild Nygard
+ * Authors: Jon Arild Nygard
  *
- *  Layout algorithm by Ben Frederickson:
- *  https://www.benfrederickson.com/better-venn-diagrams/
+ * Layout algorithm by Ben Frederickson:
+ * https://www.benfrederickson.com/better-venn-diagrams/
  *
- *  License: www.highcharts.com/license
- *
- *  This is an experimental Highcharts module which enables visualization of a
- *  Venn Diagram.
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 'use strict';
 
