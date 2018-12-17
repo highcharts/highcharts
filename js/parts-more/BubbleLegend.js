@@ -723,7 +723,7 @@ H.BubbleLegend.prototype = {
                 maxLabel = labelSize;
             }
         });
-        return maxLabel;
+        return maxLabel || {};
     },
 
     /**
