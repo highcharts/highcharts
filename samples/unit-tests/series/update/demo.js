@@ -614,3 +614,11 @@ QUnit.test('Z index changed after update (#3094)', function (assert) {
         "Data label should be visible"
     );
 });
+
+QUnit.test('Wrong type for series config (#9680)', function (assert) {
+    assert.expect(0);
+
+    Highcharts.chart('container', {
+        series: {}
+    });
+});

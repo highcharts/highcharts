@@ -2196,7 +2196,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.getAxes();
 
         // Initialize the series
-        (H.isArray(options.series) ? options.series : []).forEach(
+        (H.isArray(options.series) ? options.series : []).forEach( // #9680
             function (serieOptions) {
                 chart.initSeries(serieOptions);
             }
