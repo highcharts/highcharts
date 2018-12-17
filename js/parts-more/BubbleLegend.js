@@ -1,12 +1,10 @@
 /* *
+ * (c) 2010-2018 Highsoft AS
  *
- *  (c) 2010-2018 Highsoft AS
+ * Author: Paweł Potaczek
  *
- *  Author: Paweł Potaczek
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 /**
  * @interface Highcharts.LegendBubbleLegendFormatterContextObject

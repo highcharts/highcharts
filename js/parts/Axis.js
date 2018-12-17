@@ -1,10 +1,8 @@
 /* *
+ * (c) 2010-2018 Torstein Honsi
  *
- *  (c) 2010-2018 Torstein Honsi
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 /**
  * @callback Highcharts.AxisEventCallbackFunction
