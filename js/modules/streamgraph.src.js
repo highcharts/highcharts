@@ -125,7 +125,7 @@ seriesType('streamgraph', 'areaspline'
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<number|string>|*>}
+ * @type      {Array<number|Array<(number|string),number>|*>}
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.streamgraph.data
