@@ -1164,6 +1164,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @param {Highcharts.XAxisOptions|Highcharts.YAxisOptions|Highcharts.ZAxisOptions} options
      *        The new options that will be merged in with existing options on
      *        the axis.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after the axis is altered. If doing
+     *        more operations on the chart, it is a good idea to set redraw to
+     *        false and call {@link Chart#redraw} after.
      */
     update: function (options, redraw) {
         var chart = this.chart,

@@ -144,10 +144,12 @@ Highcharts.Legend.prototype = {
      *        Legend options.
      *
      * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after the axis is altered. If doing
+     *        more operations on the chart, it is a good idea to set redraw to
+     *        false and call {@link Chart#redraw} after.
      *        Whether to redraw the chart.
      *
-     * @todo
-     * Make events official: Fires the event `afterUpdate`.
+     * @fires Highcharts.Legends#event:afterUpdate
      */
     update: function (options, redraw) {
         var chart = this.chart;

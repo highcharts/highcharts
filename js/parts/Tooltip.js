@@ -303,6 +303,7 @@ H.Tooltip.prototype = {
      * @function Highcharts.Tooltip#update
      *
      * @param {Highcharts.TooltipOptions} options
+     *        The tooltip options to update.
      */
     update: function (options) {
         this.destroy();
