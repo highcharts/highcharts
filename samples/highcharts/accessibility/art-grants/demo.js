@@ -227,7 +227,7 @@ Highcharts.chart('container', {
             },
             enableMouseTracking: false,
             skipKeyboardNavigation: true,
-            includeInCSVExport: false,
+            includeInDataExport: false,
             exposeElementToA11y: true,
             linkedTo: ':previous',
             dataLabels: {
