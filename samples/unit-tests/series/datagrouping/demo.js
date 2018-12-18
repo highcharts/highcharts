@@ -34,8 +34,18 @@ QUnit.test('General dataGrouping options', function (assert) {
             data: [
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             ]
+        }, {
+            type: 'scatter',
+            data: [[1, 1]]
         }]
     });
+
+    assert.strictEqual(
+        chart.series[0].points[0].y > 1,
+        true,
+        'Scatter doesn\'t prevent dataGrouping when ' +
+            '`plotOptions.series.dataGrouping` is set (#9693)'
+    );
 
     assert.strictEqual(
         chart.series[0].points[0].y,
