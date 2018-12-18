@@ -35,28 +35,28 @@ var addEvent = H.addEvent,
     setAnimation = H.setAnimation,
     splat = H.splat;
 
+
 // Remove settings that have not changed, to avoid unnecessary rendering or
 // computing (#9197)
 H.cleanRecursively = function (newer, older) {
-    var total = 0,
-        removed = 0;
+    var result = {};
     objectEach(newer, function (val, key) {
+        var ob;
+
+        // Dive into objects
         if (isObject(newer[key], true) && older[key]) {
-            if (H.cleanRecursively(newer[key], older[key])) {
-                delete newer[key];
+            ob = H.cleanRecursively(newer[key], older[key]);
+            if (Object.keys(ob).length) {
+                result[key] = ob;
             }
-        } else if (
-            !isObject(newer[key]) &&
-            newer[key] === older[key]
-        ) {
-            delete newer[key];
-            removed++;
+
+        // Arrays or primitives are copied directly
+        } else if (isObject(newer[key]) || newer[key] !== older[key]) {
+            result[key] = newer[key];
         }
-        total++;
     });
 
-    // Return true if all sub nodes are removed
-    return total === removed;
+    return result;
 };
 
 // Extend the Chart prototype for dynamic methods
@@ -404,7 +404,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         fireEvent(chart, 'update', { options: options });
 
-        H.cleanRecursively(options, chart.options);
+        options = H.cleanRecursively(options, chart.options);
 
         // If the top-level chart option is present, some special updates are
         // required
@@ -1016,7 +1016,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      */
     update: function (newOptions, redraw) {
 
-        H.cleanRecursively(newOptions, this.userOptions);
+        newOptions = H.cleanRecursively(newOptions, this.userOptions);
 
         var series = this,
             chart = series.chart,
