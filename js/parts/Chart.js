@@ -26,6 +26,11 @@
  *
  * @param {Highcharts.TitleOptions} titleOptions
  *        Options to modify.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart after the title is altered. If doing more
+ *        operations on the chart, it is a good idea to set redraw to false and
+ *        call {@link Chart#redraw} after.
  */
 
 /**
@@ -42,6 +47,11 @@
  *
  * @param {Highcharts.SubtitleOptions} subtitleOptions
  *        Options to modify.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart after the subtitle is altered. If doing
+ *        more operations on the chart, it is a good idea to set redraw to false
+ *        and call {@link Chart#redraw} after.
  */
 
 'use strict';
