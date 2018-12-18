@@ -964,7 +964,7 @@ Axis.prototype.getGroupPixelWidth = function () {
         if (dgOptions) {
             groupPixelWidth = Math.max(
                 groupPixelWidth,
-                dgOptions.groupPixelWidth
+                pick(dgOptions.groupPixelWidth, 2) // #9693
             );
 
         }
