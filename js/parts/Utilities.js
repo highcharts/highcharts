@@ -183,6 +183,18 @@
  */
 
 /**
+ * The event options for adding function callback.
+ *
+ * @interface Highcharts.EventOptionsObject
+ *//**
+ * The order the event handler should be called. This opens for having one
+ * handler be called before another, independent of in which order they were
+ * added.
+ * @name Highcharts.EventOptionsObject#order
+ * @type {number}
+ */
+
+/**
  * Formats data as a string. Usually the data is accessible throught the `this`
  * keyword.
  *
@@ -2293,13 +2305,8 @@ H.objectEach({
  * @param {Highcharts.EventCallbackFunction<T>} fn
  *        The function callback to execute when the event is fired.
  *
- * @param {Highcharts.Dictionary<*>} options
- *        Event options
- *
- * @param {number} options.order
- *        The order the event handler should be called. This opens for having
- *        one handler be called before another, independent of in which order
- *        they were added.
+ * @param {Highcharts.EventOptionsObject} [options]
+ *        Options for adding the event.
  *
  * @return {Function}
  *         A callback function to remove the added event.
