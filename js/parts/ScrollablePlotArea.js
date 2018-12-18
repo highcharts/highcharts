@@ -162,6 +162,7 @@ Chart.prototype.applyFixed = function () {
             this.fixedDiv,
             this.renderTo.firstChild
         );
+        this.renderTo.style.overflow = 'visible';
 
         this.fixedRenderer = fixedRenderer = new H.Renderer(
             this.fixedDiv,
