@@ -5894,17 +5894,23 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     textHeightOvershoot, // right
                     fontMetrics.f, // bottom
                     -textHeightOvershoot // left
-                ][this.side];
+                ][this.side],
+            titlePosition = {
+                x: horiz ?
+                    alongAxis + xOption :
+                    offAxis + (opposite ? this.width : 0) + offset + xOption,
+                y: horiz ?
+                    offAxis + yOption - (opposite ? this.height : 0) + offset :
+                    alongAxis + yOption
+            };
 
+        fireEvent(
+            this,
+            'afterGetTitlePosition',
+            { titlePosition: titlePosition }
+        );
 
-        return {
-            x: horiz ?
-                alongAxis + xOption :
-                offAxis + (opposite ? this.width : 0) + offset + xOption,
-            y: horiz ?
-                offAxis + yOption - (opposite ? this.height : 0) + offset :
-                alongAxis + yOption
-        };
+        return titlePosition;
     },
 
     /**

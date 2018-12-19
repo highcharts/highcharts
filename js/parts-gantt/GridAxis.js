@@ -385,7 +385,7 @@ H.addEvent(Axis, 'afterTickSize', function (e) {
     }
 });
 
-wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
+H.addEvent(Axis, 'afterGetTitlePosition', function (e) {
     var axis = this,
         options = axis.options,
         gridOptions = (options && isObject(options.grid)) ? options.grid : {};
@@ -418,23 +418,19 @@ wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
                 (tickSize[0] / 2) +
                 (axis.side === axisSide.bottom ? titleFontSize : 0);
 
-        return {
-            x: horiz ?
-                axisLeft - titleWidth / 2 - titleMargin + xOption :
-                offAxis + (opposite ? axisWidth : 0) + offset + xOption,
-            y: horiz ?
-                (
-                    offAxis -
-                    (opposite ? axisHeight : 0) +
-                    (opposite ? titleFontSize : -titleFontSize) / 2 +
-                    offset +
-                    yOption
-                ) :
-                axisTop - titleMargin + yOption
-        };
+        e.titlePosition.x = horiz ?
+            axisLeft - titleWidth / 2 - titleMargin + xOption :
+            offAxis + (opposite ? axisWidth : 0) + offset + xOption;
+        e.titlePosition.y = horiz ?
+            (
+                offAxis -
+                (opposite ? axisHeight : 0) +
+                (opposite ? titleFontSize : -titleFontSize) / 2 +
+                offset +
+                yOption
+            ) :
+            axisTop - titleMargin + yOption;
     }
-
-    return proceed.apply(this, argsToArray(arguments));
 });
 
 // Avoid altering tickInterval when reserving space.
