@@ -5167,6 +5167,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 options[prefix + 'Width'],
                 prefix === 'tick' && this.isXAxis ? 1 : 0 // X axis default 1
             ),
+            e,
             tickSize;
 
         if (tickWidth && tickLength) {
@@ -5177,9 +5178,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             tickSize = [tickLength, tickWidth];
         }
 
-        fireEvent(this, 'afterTickSize', { tickSize: tickSize });
+        e = { tickSize: tickSize };
+        fireEvent(this, 'afterTickSize', e);
 
-        return tickSize;
+        return e.tickSize;
 
     },
 

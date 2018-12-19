@@ -379,8 +379,7 @@ H.addEvent(Axis, 'afterTickSize', function (e) {
         if (isArray(e.tickSize)) {
             e.tickSize[0] = distance;
         } else {
-            e.tickSize.length = 0;
-            e.tickSize.push(distance);
+            e.tickSize = [distance];
         }
     }
 });
