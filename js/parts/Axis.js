@@ -4660,6 +4660,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             roundedMax = tickPositions[tickPositions.length - 1],
             minPointOffset = this.minPointOffset || 0;
 
+        fireEvent(this, 'trimTicks');
+
         if (!this.isLinked) {
             if (startOnTick && roundedMin !== -Infinity) { // #6502
                 this.min = roundedMin;

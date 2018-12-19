@@ -9,7 +9,8 @@
 
 import H from '../parts/Globals.js';
 
-var argsToArray = function (args) {
+var addEvent = H.addEvent,
+    argsToArray = function (args) {
         return Array.prototype.slice.call(args, 1);
     },
     dateFormat = H.dateFormat,
@@ -235,7 +236,7 @@ wrap(Axis.prototype, 'autoLabelAlign',
     }
 );
 
-H.addEvent(
+addEvent(
     Tick,
     'afterGetLabelPosition',
     /**
@@ -363,7 +364,7 @@ H.addEvent(
 
 // Draw vertical axis ticks extra long to create cell floors and roofs.
 // Overrides the tickLength for vertical axes.
-H.addEvent(Axis, 'afterTickSize', function (e) {
+addEvent(Axis, 'afterTickSize', function (e) {
     var axis = this,
         dimensions = axis.maxLabelDimensions,
         options = axis.options,
@@ -384,7 +385,7 @@ H.addEvent(Axis, 'afterTickSize', function (e) {
     }
 });
 
-H.addEvent(Axis, 'afterGetTitlePosition', function (e) {
+addEvent(Axis, 'afterGetTitlePosition', function (e) {
     var axis = this,
         options = axis.options,
         gridOptions = (options && isObject(options.grid)) ? options.grid : {};
@@ -445,7 +446,7 @@ wrap(Axis.prototype, 'unsquish', function (proceed) {
     return proceed.apply(this, argsToArray(arguments));
 });
 
-H.addEvent(Axis, 'afterSetOptions',
+addEvent(Axis, 'afterSetOptions',
     /**
      * Creates a left and right wall on horizontal axes:
      *
@@ -638,7 +639,7 @@ H.addEvent(Axis, 'afterSetOptions',
     }
 );
 
-H.addEvent(
+addEvent(
     Axis,
     'afterSetAxisTranslation',
     function () {
@@ -681,7 +682,9 @@ H.addEvent(
 
 // @todo Does this function do what the drawing says? Seems to affect ticks and
 //       not the labels directly?
-wrap(Axis.prototype, 'trimTicks',
+addEvent(
+    Axis,
+    'trimTicks',
     /**
      * Makes tick labels which are usually ignored in a linked axis displayed if
      * they are within range of linkedParent.min.
@@ -699,12 +702,8 @@ wrap(Axis.prototype, 'trimTicks',
      * ```
      *
      * @private
-     * @function
-     *
-     * @param {Function} proceed
-     *        the original function
      */
-    function (proceed) {
+    function () {
         var axis = this,
             options = axis.options,
             gridOptions = (
@@ -737,8 +736,6 @@ wrap(Axis.prototype, 'trimTicks',
                 tickPositions[tickPositions.length - 1] = max;
             }
         }
-
-        proceed.apply(axis, argsToArray(arguments));
     }
 );
 
