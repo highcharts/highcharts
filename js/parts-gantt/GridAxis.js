@@ -235,30 +235,17 @@ wrap(Axis.prototype, 'autoLabelAlign',
     }
 );
 
-wrap(Tick.prototype, 'getLabelPosition',
+H.addEvent(
+    Tick,
+    'afterGetLabelPosition',
     /**
      * Center tick labels in cells.
      *
      * @private
-     * @function
-     *
-     * @param {Function} proceed
-     *        the original function
-     *
-     * @return {object}
-     *         an object containing x and y positions for the tick
      */
-    function (
-        proceed,
-        x,
-        y,
-        label,
-        horiz,
-        labelOpts,
-        tickmarkOffset,
-        index
-    ) {
+    function (e) {
         var tick = this,
+            label = tick.label,
             axis = tick.axis,
             reversed = axis.reversed,
             chart = axis.chart,
@@ -266,15 +253,17 @@ wrap(Tick.prototype, 'getLabelPosition',
             gridOptions = (
                 (options && isObject(options.grid)) ? options.grid : {}
             ),
+            labelOpts = axis.options.labels,
             align = labelOpts.align,
             // verticalAlign is currently not supported for axis.labels.
             verticalAlign = 'middle', // labelOpts.verticalAlign,
             side = axisSide[axis.side],
+            tickmarkOffset = e.tickmarkOffset,
             tickPositions = axis.tickPositions,
             tickPos = tick.pos - tickmarkOffset,
             nextTickPos = (
-                isNumber(tickPositions[index + 1]) ?
-                tickPositions[index + 1] - tickmarkOffset :
+                isNumber(tickPositions[e.index + 1]) ?
+                tickPositions[e.index + 1] - tickmarkOffset :
                 axis.max + tickmarkOffset
             ),
             tickSize = axis.tickSize('tick', true),
@@ -283,7 +272,6 @@ wrap(Tick.prototype, 'getLabelPosition',
             labelHeight,
             lblMetrics,
             lines,
-            result,
             bottom,
             top,
             left,
@@ -291,6 +279,7 @@ wrap(Tick.prototype, 'getLabelPosition',
 
         // Only center tick labels in grid axes
         if (gridOptions.enabled === true) {
+
             // Calculate top and bottom positions of the cell.
             if (side === 'top') {
                 bottom = axis.top + axis.offset;
@@ -326,22 +315,20 @@ wrap(Tick.prototype, 'getLabelPosition',
             tick.slotWidth = right - left;
 
             // Calculate the positioning of the label based on alignment.
-            result = {
-                x: (
-                    align === 'left' ?
-                    left :
-                    align === 'right' ?
-                    right :
-                    left + ((right - left) / 2) // default to center
-                ),
-                y: (
-                    verticalAlign === 'top' ?
-                    top :
-                    verticalAlign === 'bottom' ?
-                    bottom :
-                    top + ((bottom - top) / 2) // default to middle
-                )
-            };
+            e.pos.x = (
+                align === 'left' ?
+                left :
+                align === 'right' ?
+                right :
+                left + ((right - left) / 2) // default to center
+            );
+            e.pos.y = (
+                verticalAlign === 'top' ?
+                top :
+                verticalAlign === 'bottom' ?
+                bottom :
+                top + ((bottom - top) / 2) // default to middle
+            );
 
             lblMetrics = chart.renderer.fontMetrics(
                 labelOpts.style.fontSize,
@@ -353,7 +340,7 @@ wrap(Tick.prototype, 'getLabelPosition',
             // Would be better to have a setter or similar for this.
             if (!labelOpts.useHTML) {
                 lines = Math.round(labelHeight / lblMetrics.h);
-                result.y += (
+                e.pos.y += (
                     // Center the label
                     // TODO: why does this actually center the label?
                     ((lblMetrics.b - (lblMetrics.h - lblMetrics.f)) / 2) +
@@ -361,7 +348,7 @@ wrap(Tick.prototype, 'getLabelPosition',
                     -(((lines - 1) * lblMetrics.h) / 2)
                 );
             } else {
-                result.y += (
+                e.pos.y += (
                     // Readjust yCorr in htmlUpdateTransform
                     lblMetrics.b +
                     // Adjust for height of html label
@@ -369,11 +356,8 @@ wrap(Tick.prototype, 'getLabelPosition',
                 );
             }
 
-            result.x += (axis.horiz && labelOpts.x || 0);
-        } else {
-            result = proceed.apply(tick, argsToArray(arguments));
+            e.pos.x += (axis.horiz && labelOpts.x || 0);
         }
-        return result;
     }
 );
 

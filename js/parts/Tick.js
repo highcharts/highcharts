@@ -395,6 +395,7 @@ H.Tick.prototype = {
         index,
         step
     ) {
+
         var axis = this.axis,
             transA = axis.transA,
             reversed = axis.reversed,
@@ -449,7 +450,11 @@ H.Tick.prototype = {
         pos.x = x;
         pos.y = Math.round(y);
 
-        fireEvent(this, 'afterGetLabelPosition', { pos: pos });
+        fireEvent(
+            this,
+            'afterGetLabelPosition',
+            { pos: pos, tickmarkOffset: tickmarkOffset, index: index }
+        );
 
         return pos;
     },
