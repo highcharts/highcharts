@@ -639,28 +639,10 @@ H.addEvent(Axis, 'afterSetOptions',
     }
 );
 
-wrap(Axis.prototype, 'setAxisTranslation',
-    /**
-     * Ensures a left wall on horizontal axes with series inheriting from
-     * column. ColumnSeries normally sets pointRange to null, resulting in Axis
-     * to select other values for point ranges. This enforces the above
-     * Axis.setOptions() override.
-     * ```
-     *                  _________________________
-     * Enforce this:    ___|_____|_____|_____|__|
-     *                  ^
-     *                  _________________________
-     * To be this:      |_____|_____|_____|_____|
-     *                  ^
-     * ```
-     *
-     * @private
-     * @function
-     *
-     * @param {Function} proceed
-     *        the original function
-     */
-    function (proceed) {
+H.addEvent(
+    Axis,
+    'afterSetScale',
+    function () {
         var axis = this,
             options = axis.options,
             gridOptions = (
@@ -695,8 +677,6 @@ wrap(Axis.prototype, 'setAxisTranslation',
                 }
             }
         }
-
-        proceed.apply(axis, argsToArray(arguments));
     }
 );
 
