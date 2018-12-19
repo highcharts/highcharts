@@ -640,7 +640,7 @@ H.addEvent(Axis, 'afterSetOptions',
 
 H.addEvent(
     Axis,
-    'afterSetScale',
+    'afterSetAxisTranslation',
     function () {
         var axis = this,
             options = axis.options,
