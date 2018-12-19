@@ -361,24 +361,13 @@ H.addEvent(
     }
 );
 
-/**
- * Draw vertical axis ticks extra long to create cell floors and roofs.
- * Overrides the tickLength for vertical axes.
- *
- * @private
- * @function
- *
- * @param {Function} proceed
- *        the original function
- *
- * @returns {Array<number>}
- */
-wrap(Axis.prototype, 'tickSize', function (proceed) {
+// Draw vertical axis ticks extra long to create cell floors and roofs.
+// Overrides the tickLength for vertical axes.
+H.addEvent(Axis, 'afterTickSize', function (e) {
     var axis = this,
         dimensions = axis.maxLabelDimensions,
         options = axis.options,
         gridOptions = (options && isObject(options.grid)) ? options.grid : {},
-        retVal = proceed.apply(axis, argsToArray(arguments)),
         labelPadding,
         distance;
 
@@ -387,13 +376,13 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
         distance = labelPadding +
             (axis.horiz ? dimensions.height : dimensions.width);
 
-        if (isArray(retVal)) {
-            retVal[0] = distance;
+        if (isArray(e.tickSize)) {
+            e.tickSize[0] = distance;
         } else {
-            retVal = [distance];
+            e.tickSize.length = 0;
+            e.tickSize.push(distance);
         }
     }
-    return retVal;
 });
 
 wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
