@@ -50,8 +50,7 @@ var addEvent = H.addEvent,
     merge = H.merge,
     pick = H.pick,
     pInt = H.pInt,
-    splat = H.splat,
-    wrap = H.wrap;
+    splat = H.splat;
 
 /* ****************************************************************************
  * Start Range Selector code                                                  *
@@ -1887,7 +1886,7 @@ addEvent(Chart, 'afterGetContainer', function () {
     }
 });
 
-wrap(Chart.prototype, 'render', function (proceed, options, callback) {
+addEvent(Chart, 'beforeRender', function () {
 
     var chart = this,
         axes = chart.axes,
@@ -1914,8 +1913,6 @@ wrap(Chart.prototype, 'render', function (proceed, options, callback) {
             }
         }
     }
-
-    proceed.call(this, options, callback);
 
 });
 
@@ -1972,7 +1969,7 @@ addEvent(Chart, 'update', function (e) {
 
 });
 
-wrap(Chart.prototype, 'redraw', function (proceed, options, callback) {
+addEvent(Chart, 'render', function () {
     var chart = this,
         rangeSelector = chart.rangeSelector,
         verticalAlign;
@@ -1988,8 +1985,6 @@ wrap(Chart.prototype, 'redraw', function (proceed, options, callback) {
             this.extraTopMargin = true;
         }
     }
-
-    proceed.call(this, options, callback);
 });
 
 addEvent(Chart, 'getMargins', function () {

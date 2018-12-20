@@ -3752,6 +3752,7 @@ H.Series = H.seriesType('line',
                 plotY,
                 lastPlotX,
                 stackIndicator,
+                zoneAxis = this.zoneAxis || 'y',
                 closestPointRangePx = Number.MAX_VALUE;
 
             // Plotted coordinates need to be within a limited range. Drawing
@@ -3882,7 +3883,13 @@ H.Series = H.seriesType('line',
                     ) :
                     plotX; // #1514, #5383, #5518
 
-                point.negative = point.y < (threshold || 0);
+                // Negative points. For bubble charts, this means negative z
+                // values (#9728)
+                point.negative = point[zoneAxis] < (
+                    options[zoneAxis + 'Threshold'] ||
+                    threshold ||
+                    0
+                );
 
                 // some API data
                 point.category = (
