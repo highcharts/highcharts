@@ -787,7 +787,7 @@ seriesType('ikh', 'sma',
                     SSB = (pointSSB.high + pointSSB.low) / 2;
                 }
 
-                CS = yVal[i][0];
+                CS = yVal[i][3];
 
                 date = xVal[i];
 
@@ -803,9 +803,9 @@ seriesType('ikh', 'sma',
                 IKH[i + period][1] = KS;
                 IKH[i + period][2] = UNDEFINED;
 
-                if (i >= period) {
-                    IKH[i - period][2] = CS;
-                } else {
+                IKH[i][2] = CS;
+
+                if (i <= period) {
                     IKH[i + period][3] = UNDEFINED;
                     IKH[i + period][4] = UNDEFINED;
                 }
