@@ -353,6 +353,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * adding and removing items from the collection. Read more under the
      * parameter description below.
      *
+     * Note that when changing series data, `chart.update` may mutate the passed
+     * data options.
+     *
      * See also the
      * [responsive option set](https://api.highcharts.com/highcharts/responsive).
      * Switching between `responsive.rules` basically runs `chart.update` under
@@ -996,6 +999,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * removed, and it is initiated from scratch. Therefore, this method is more
      * performance expensive than some other utility methods like {@link
      * Series#setData} or {@link Series#setVisible}.
+     *
+     * Note that `Series.update` may mutate the passed `data` options.
      *
      * @sample highcharts/members/series-update/
      *         Updating series options
