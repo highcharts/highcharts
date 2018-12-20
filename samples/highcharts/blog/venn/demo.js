@@ -1,11 +1,11 @@
 Highcharts.chart('container', {
     chart: {
-        backgroundColor: "#f2f2f2"
+        backgroundColor: "#f2f2f2",
+        height: '100%'
     },
     plotOptions: {
         venn: {
             dataLabels: {
-                useHTML: true,
                 enabled: true,
                 style: {
                     textOutline: false,
@@ -29,8 +29,6 @@ Highcharts.chart('container', {
             value: 4,
             color: '#bee175',
             dataLabels: {
-                enabled: true,
-                useHTML: true,
                 x: -20,
                 y: 10
             }
@@ -39,8 +37,6 @@ Highcharts.chart('container', {
             value: 4,
             color: "#ff3232",
             dataLabels: {
-                enabled: true,
-                useHTML: true,
                 x: 0,
                 y: 0,
                 style: {
@@ -52,42 +48,34 @@ Highcharts.chart('container', {
             value: 4,
             color: "#b3e5fc",
             dataLabels: {
-                enabled: true,
-                useHTML: true,
-                x: -80,
-                y: 30
+                x: -40,
+                y: 10
             }
         }, {
             sets: ['Great Power Great Responsibility', 'Wears Red Suit'],
             value: 1,
             name: 'Spider Man',
             dataLabels: {
-                enabled: true,
-                useHTML: true,
                 color: "white",
                 x: -20,
-                y: 50
+                y: 30
             }
         }, {
             sets: ['Great Power Great Responsibility', 'Knows If You Have Been Naughty Or Nice'],
             value: 1,
             name: 'GOD',
             dataLabels: {
-                enabled: true,
-                useHTML: true,
                 color: "white",
-                x: -50,
-                y: -40
+                x: -20,
+                y: -20
             }
         }, {
             sets: ['Wears Red Suit', 'Knows If You Have Been Naughty Or Nice'],
             value: 1,
             name: 'Spanish Inquisition',
             dataLabels: {
-                enabled: true,
-                useHTML: true,
                 color: "white",
-                x: 50,
+                x: 20,
                 y: 20
             }
         }, {
@@ -96,13 +84,31 @@ Highcharts.chart('container', {
             name: 'Santa',
             dataLabels: {
                 color: "white",
-                useHTML: true,
                 x: 0,
-                y: -40
+                y: -20
             }
         }]
     }],
     title: {
         text: null
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 650
+            },
+            chartOptions: {
+                plotOptions: {
+                    venn: {
+                        dataLabels: {
+                            style: {
+                                fontSize: '14px',
+                                width: '100px'
+                            }
+                        }
+                    }
+                }
+            }
+        }]
     }
 });
