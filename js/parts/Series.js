@@ -2654,57 +2654,60 @@ null
             chart = series.chart,
             axisOptions;
 
-        // repeat for xAxis and yAxis
-        (series.axisTypes || []).forEach(function (AXIS) {
+        fireEvent(this, 'bindAxes', null, function () {
 
-            // loop through the chart's axis objects
-            chart[AXIS].forEach(function (axis) {
-                axisOptions = axis.options;
+            // repeat for xAxis and yAxis
+            (series.axisTypes || []).forEach(function (AXIS) {
 
-                // apply if the series xAxis or yAxis option mathches the number
-                // of the axis, or if undefined, use the first axis
-                if (
-                    seriesOptions[AXIS] === axisOptions.index ||
-                    (
-                        seriesOptions[AXIS] !== undefined &&
-                        seriesOptions[AXIS] === axisOptions.id
-                    ) ||
-                    (
-                        seriesOptions[AXIS] === undefined &&
-                        axisOptions.index === 0
-                    )
-                ) {
+                // loop through the chart's axis objects
+                chart[AXIS].forEach(function (axis) {
+                    axisOptions = axis.options;
 
-                    // register this series in the axis.series lookup
-                    series.insert(axis.series);
+                    // apply if the series xAxis or yAxis option mathches the
+                    // number of the axis, or if undefined, use the first axis
+                    if (
+                        seriesOptions[AXIS] === axisOptions.index ||
+                        (
+                            seriesOptions[AXIS] !== undefined &&
+                            seriesOptions[AXIS] === axisOptions.id
+                        ) ||
+                        (
+                            seriesOptions[AXIS] === undefined &&
+                            axisOptions.index === 0
+                        )
+                    ) {
 
-                    // set this series.xAxis or series.yAxis reference
-                    /**
-                     * Read only. The unique xAxis object associated with the
-                     * series.
-                     *
-                     * @name Highcharts.Series#xAxis
-                     * @type {Highcharts.Axis}
-                     */
-                    /**
-                     * Read only. The unique yAxis object associated with the
-                     * series.
-                     *
-                     * @name Highcharts.Series#yAxis
-                     * @type {Highcharts.Axis}
-                     */
-                    series[AXIS] = axis;
+                        // register this series in the axis.series lookup
+                        series.insert(axis.series);
 
-                    // mark dirty for redraw
-                    axis.isDirty = true;
+                        // set this series.xAxis or series.yAxis reference
+                        /**
+                         * Read only. The unique xAxis object associated with
+                         * the series.
+                         *
+                         * @name Highcharts.Series#xAxis
+                         * @type {Highcharts.Axis}
+                         */
+                        /**
+                         * Read only. The unique yAxis object associated with
+                         * the series.
+                         *
+                         * @name Highcharts.Series#yAxis
+                         * @type {Highcharts.Axis}
+                         */
+                        series[AXIS] = axis;
+
+                        // mark dirty for redraw
+                        axis.isDirty = true;
+                    }
+                });
+
+                // The series needs an X and an Y axis
+                if (!series[AXIS] && series.optionalAxis !== AXIS) {
+                    H.error(18, true, chart);
                 }
+
             });
-
-            // The series needs an X and an Y axis
-            if (!series[AXIS] && series.optionalAxis !== AXIS) {
-                H.error(18, true, chart);
-            }
-
         });
     },
 
