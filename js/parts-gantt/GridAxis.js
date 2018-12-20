@@ -873,8 +873,9 @@ wrap(Axis.prototype, 'render',
 );
 
 // Wraps axis init to draw cell walls on vertical axes.
-wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+addEvent(Axis, 'afterInit', function (e) {
     var axis = this,
+        userOptions = this.userOptions,
         gridOptions = (
             (userOptions && isObject(userOptions.grid)) ?
             userOptions.grid :
@@ -884,6 +885,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
         column,
         columnIndex,
         i;
+
     function applyGridOptions(axis) {
         var options = axis.options,
             // TODO: Consider using cell margins defined in % of font size?
@@ -945,7 +947,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
                 delete columnOptions.grid.columns; // Prevent recursion
 
-                column = new Axis(chart, columnOptions);
+                column = new Axis(axis.chart, columnOptions);
                 column.isColumn = true;
                 column.columnIndex = columnIndex;
 
@@ -971,13 +973,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
                 columnIndex++;
             }
+            e.preventDefault();
         } else {
-            // Call original Axis.init()
-            proceed.apply(axis, argsToArray(arguments));
             applyGridOptions(axis);
         }
-    } else {
-        // Call original Axis.init()
-        proceed.apply(axis, argsToArray(arguments));
     }
 });
