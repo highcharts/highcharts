@@ -91,6 +91,8 @@
                 <div id="7-0-0-upgrade-notes" class="panel-collapse collapse">
                   <div class="panel-body">
                     <ul>
+                      <li>If you use styled mode, the setup has changed. Instead of loading files from the <code>code.highcharts.com/js</code> folder, use the base JavaScript files, but set the
+                        <a href="https://api.highcharts.com/highcharts/chart.styledMode">chart.styledMode</a> option to true.</li>
                       <li>Polyfills are now needed for support in IE 6-8. Before including the <code>highcharts.js</code> file, load <code>modules/oldie-polyfills.js</code> in a conditional comment. Alternatively you can use your own polyfills or a third
                         party library. See
                         <a href="https://www.highcharts.com/docs/getting-started/system-requirements#oldie">System Requirements</a>.</li>
