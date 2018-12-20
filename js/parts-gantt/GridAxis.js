@@ -210,32 +210,6 @@ H.dateFormats = {
     }
 };
 
-wrap(Axis.prototype, 'autoLabelAlign',
-    /**
-     * If chart is stockChart, always return 'left' to avoid labels being placed
-     * inside chart. Stock charts place yAxis labels inside by default.
-     *
-     * @private
-     * @function
-     *
-     * @param {Function} proceed
-     *        the original function
-     *
-     * @return {string}
-     *         'left' if stockChart, or auto calculated alignment
-     */
-    function (proceed) {
-        var axis = this,
-            retVal;
-        if (axis.chart.isStock) {
-            retVal = 'left';
-        } else {
-            retVal = proceed.apply(axis, argsToArray(arguments));
-        }
-        return retVal;
-    }
-);
-
 addEvent(
     Tick,
     'afterGetLabelPosition',

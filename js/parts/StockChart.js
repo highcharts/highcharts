@@ -285,12 +285,13 @@ H.StockChart = H.stockChart = function (a, b, c) {
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
-wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+addEvent(Axis, 'autoLabelAlign', function (e) {
     var chart = this.chart,
         options = this.options,
         panes = chart._labelPanes = chart._labelPanes || {},
         key,
         labelOptions = this.options.labels;
+
     if (this.chart.options.isStock && this.coll === 'yAxis') {
         key = options.top + ',' + options.height;
         // do it only for the first Y axis of each pane
@@ -302,10 +303,11 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
                 labelOptions.align = 'right';
             }
             panes[key] = this;
-            return 'right';
+            e.align = 'right';
+
+            e.preventDefault();
         }
     }
-    return proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 // Clear axis from label panes (#6071)

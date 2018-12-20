@@ -541,16 +541,13 @@ if (!H.radialAxisExtended) {
 
     });
 
-    /* *
-     * Wrap auto label align to avoid setting axis-wide rotation on radial axes
-     * (#4920)
-     * @param   {Function} proceed
-     * @returns {String} Alignment
-     */
-    wrap(axisProto, 'autoLabelAlign', function (proceed) {
-        if (!this.isRadial) {
-            return proceed.apply(this, [].slice.call(arguments, 1));
-        } // else return undefined
+    // Wrap auto label align to avoid setting axis-wide rotation on radial axes
+    // (#4920)
+    addEvent(Axis, 'autoLabelAlign', function (e) {
+        if (this.isRadial) {
+            e.align = undefined;
+            e.preventDefault();
+        }
     });
 
     // Add special cases within the Tick class' methods for radial axes.

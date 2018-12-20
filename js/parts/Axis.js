@@ -5143,17 +5143,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @return {string} Can be `center`, `left` or `right`.
      */
     autoLabelAlign: function (rotation) {
-        var ret,
-            angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360;
+        var angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360,
+            evt = { align: 'center' };
 
-        if (angle > 15 && angle < 165) {
-            ret = 'right';
-        } else if (angle > 195 && angle < 345) {
-            ret = 'left';
-        } else {
-            ret = 'center';
-        }
-        return ret;
+        fireEvent(this, 'autoLabelAlign', evt, function (e) {
+
+            if (angle > 15 && angle < 165) {
+                e.align = 'right';
+            } else if (angle > 195 && angle < 345) {
+                e.align = 'left';
+            }
+        });
+
+        return evt.align;
     },
 
     /**
