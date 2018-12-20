@@ -33,7 +33,7 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "node tools/validate-commit-msg.js ${GIT_PARAMS}",
+      "commit-msg": "node tools/validate-commit-msg.js ${HUSKY_GIT_PARAMS}",
       "pre-commit": "lint-staged && gulp scripts && gulp test",
       "post-merge": "gulp styles && gulp scripts && npm test"
     }
