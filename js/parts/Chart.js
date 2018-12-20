@@ -859,12 +859,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     0,
                     chartTitleOptions.useHTML
                 )
-                .attr({
-                    align: chartTitleOptions.align,
-                    'class': 'highcharts-' + name,
-                    zIndex: chartTitleOptions.zIndex || 4
-                })
-                .add();
+                    .attr({
+                        align: chartTitleOptions.align,
+                        'class': 'highcharts-' + name,
+                        zIndex: chartTitleOptions.zIndex || 4
+                    })
+                    .add();
 
                 // Update methods, shortcut to Chart.setTitle
                 chart[name].update = function (o) {
@@ -1820,7 +1820,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             value =
                 optionsChart[key] || // It is set in the options
                 (klass && klass.prototype[key]); // The default series class
-                    // requires it
+            // requires it
 
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
@@ -1918,9 +1918,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     x,
                     y
                 )
-                .attr({ zIndex: 2 })
-                .css(style)
-                .add();
+                    .attr({ zIndex: 2 })
+                    .css(style)
+                    .add();
 
             });
         }
@@ -2061,16 +2061,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 0,
                 0
             )
-            .addClass('highcharts-credits')
-            .on('click', function () {
-                if (credits.href) {
-                    win.location.href = credits.href;
-                }
-            })
-            .attr({
-                align: credits.position.align,
-                zIndex: 8
-            });
+                .addClass('highcharts-credits')
+                .on('click', function () {
+                    if (credits.href) {
+                        win.location.href = credits.href;
+                    }
+                })
+                .attr({
+                    align: credits.position.align,
+                    zIndex: 8
+                });
 
 
             if (!chart.styledMode) {

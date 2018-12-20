@@ -395,16 +395,16 @@ Highcharts.Legend.prototype = {
                  * @type {Highcharts.SVGElement}
                  */
                 this.title = this.chart.renderer.label(
-                        titleOptions.text,
-                        padding - 3,
-                        padding - 4,
-                        null,
-                        null,
-                        null,
-                        options.useHTML,
-                        null,
-                        'legend-title'
-                    )
+                    titleOptions.text,
+                    padding - 3,
+                    padding - 4,
+                    null,
+                    null,
+                    null,
+                    options.useHTML,
+                    null,
+                    'legend-title'
+                )
                     .attr({ zIndex: 1 });
 
                 if (!this.chart.styledMode) {
@@ -492,11 +492,11 @@ Highcharts.Legend.prototype = {
 
             // Generate the list item text and add it to the group
             item.legendItem = li = renderer.text(
-                    '',
-                    ltr ? symbolWidth + symbolPadding : -symbolPadding,
-                    legend.baseline || 0,
-                    useHTML
-                );
+                '',
+                ltr ? symbolWidth + symbolPadding : -symbolPadding,
+                legend.baseline || 0,
+                useHTML
+            );
 
             if (!chart.styledMode) {
                 // merge to prevent modifying original (#1021)
@@ -507,7 +507,7 @@ Highcharts.Legend.prototype = {
                 align: ltr ? 'left' : 'right',
                 zIndex: 2
             })
-            .add(item.legendGroup);
+                .add(item.legendGroup);
 
             // Get the baseline for the first item - the font size is equal for
             // all
@@ -589,9 +589,9 @@ Highcharts.Legend.prototype = {
                 this.chart.spacingBox.width - 2 * padding - options.x
             ),
             itemWidth = (
-                    options.alignColumns &&
+                options.alignColumns &&
                     this.totalItemWidth > maxLegendWidth
-                ) ?
+            ) ?
                 this.maxItemWidth :
                 item.itemWidth;
 
@@ -1268,10 +1268,10 @@ H.LegendSymbolMixin = {
             symbolHeight,
             pick(legend.options.symbolRadius, symbolHeight / 2)
         )
-        .addClass('highcharts-point')
-        .attr({
-            zIndex: 3
-        }).add(item.legendGroup);
+            .addClass('highcharts-point')
+            .attr({
+                zIndex: 3
+            }).add(item.legendGroup);
 
     },
 
@@ -1319,9 +1319,9 @@ H.LegendSymbolMixin = {
             symbolWidth,
             verticalCenter
         ])
-        .addClass('highcharts-graph')
-        .attr(attr)
-        .add(legendItemGroup);
+            .addClass('highcharts-graph')
+            .attr(attr)
+            .add(legendItemGroup);
 
         // Draw the marker
         if (markerOptions && markerOptions.enabled !== false && symbolWidth) {
@@ -1349,8 +1349,8 @@ H.LegendSymbolMixin = {
                 2 * radius,
                 markerOptions
             )
-            .addClass('highcharts-point')
-            .add(legendItemGroup);
+                .addClass('highcharts-point')
+                .add(legendItemGroup);
             legendSymbol.isMarker = true;
         }
     }

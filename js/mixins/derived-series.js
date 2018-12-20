@@ -127,9 +127,9 @@ var derivedSeriesMixin = {
         );
 
         derivedSeries.eventRemovers.push(
-        updatedDataRemover,
-        destroyRemover
-      );
+            updatedDataRemover,
+            destroyRemover
+        );
     },
 
     /**

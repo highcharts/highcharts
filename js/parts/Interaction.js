@@ -182,16 +182,16 @@ TrackerMixin = H.TrackerMixin = {
         } else if (series.graph) { // create
 
             series.tracker = renderer.path(trackerPath)
-            .attr({
-                visibility: series.visible ? 'visible' : 'hidden',
-                zIndex: 2
-            })
-            .addClass(
-                trackByArea ?
-                    'highcharts-tracker-area' :
-                    'highcharts-tracker-line'
-            )
-            .add(series.group);
+                .attr({
+                    visibility: series.visible ? 'visible' : 'hidden',
+                    zIndex: 2
+                })
+                .addClass(
+                    trackByArea ?
+                        'highcharts-tracker-area' :
+                        'highcharts-tracker-line'
+                )
+                .add(series.group);
 
             if (!chart.styledMode) {
                 series.tracker.attr({
@@ -292,51 +292,53 @@ extend(Legend.prototype, {
                 legendItem.css(legend.options.itemHoverStyle);
             }
         })
-        .on('mouseout', function () {
-            if (!legend.styledMode) {
-                legendItem.css(
-                    merge(
-                        item.visible ?
-                            legend.itemStyle :
-                            legend.itemHiddenStyle
-                    )
-                );
-            }
+            .on('mouseout', function () {
+                if (!legend.styledMode) {
+                    legendItem.css(
+                        merge(
+                            item.visible ?
+                                legend.itemStyle :
+                                legend.itemHiddenStyle
+                        )
+                    );
+                }
 
-            // A CSS class to dim or hide other than the hovered series
-            boxWrapper.removeClass(activeClass);
+                // A CSS class to dim or hide other than the hovered series
+                boxWrapper.removeClass(activeClass);
 
-            item.setState();
-        })
-        .on('click', function (event) {
-            var strLegendItemClick = 'legendItemClick',
-                fnLegendItemClick = function () {
-                    if (item.setVisible) {
-                        item.setVisible();
-                    }
+                item.setState();
+            })
+            .on('click', function (event) {
+                var strLegendItemClick = 'legendItemClick',
+                    fnLegendItemClick = function () {
+                        if (item.setVisible) {
+                            item.setVisible();
+                        }
+                    };
+
+                // A CSS class to dim or hide other than the hovered series.
+                // Event handling in iOS causes the activeClass to be added
+                // prior to click in some cases (#7418).
+                boxWrapper.removeClass(activeClass);
+
+                // Pass over the click/touch event. #4.
+                event = {
+                    browserEvent: event
                 };
 
-            // A CSS class to dim or hide other than the hovered series. Event
-            // handling in iOS causes the activeClass to be added prior to click
-            // in some cases (#7418).
-            boxWrapper.removeClass(activeClass);
-
-            // Pass over the click/touch event. #4.
-            event = {
-                browserEvent: event
-            };
-
-            // click the name or symbol
-            if (item.firePointEvent) { // point
-                item.firePointEvent(
-                    strLegendItemClick,
-                    event,
-                    fnLegendItemClick
-                );
-            } else {
-                fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
-            }
-        });
+                // click the name or symbol
+                if (item.firePointEvent) { // point
+                    item.firePointEvent(
+                        strLegendItemClick,
+                        event,
+                        fnLegendItemClick
+                    );
+                } else {
+                    fireEvent(
+                        item, strLegendItemClick, event, fnLegendItemClick
+                    );
+                }
+            });
     },
 
     /**
@@ -402,13 +404,13 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
         fireEvent(this, 'beforeShowResetZoom', null, function () {
             chart.resetZoomButton = chart.renderer.button(
-                    lang.resetZoom,
-                    null,
-                    null,
-                    zoomOut,
-                    theme,
-                    states && states.hover
-                )
+                lang.resetZoom,
+                null,
+                null,
+                zoomOut,
+                theme,
+                states && states.hover
+            )
                 .attr({
                     align: btnOptions.position.align,
                     title: lang.resetZoomTitle
@@ -867,7 +869,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                                 markerAttribs.width,
                                 markerAttribs.height
                             )
-                            .add(series.markerGroup);
+                                .add(series.markerGroup);
                         stateMarkerGraphic.currentSymbol = newSymbol;
                     }
 

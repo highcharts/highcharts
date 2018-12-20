@@ -56,8 +56,8 @@ function rotate3D(x, y, z, angles) {
 // needed also outside of perspective() function (#8042).
 H.perspective3D = function (coordinate, origin, distance) {
     var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
-    distance / (coordinate.z + origin.z + distance) :
-    1;
+        distance / (coordinate.z + origin.z + distance) :
+        1;
     return {
         x: coordinate.x * projection,
         y: coordinate.y * projection

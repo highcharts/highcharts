@@ -202,16 +202,16 @@ seriesType('waterfall', 'column', {
             if (point.isSum) {
                 shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);
                 shapeArgs.height = Math.min(
-                        yAxis.translate(range[0], 0, 1, 0, 1),
-                        yAxis.len
-                    ) - shapeArgs.y; // #4256
+                    yAxis.translate(range[0], 0, 1, 0, 1),
+                    yAxis.len
+                ) - shapeArgs.y; // #4256
 
             } else if (point.isIntermediateSum) {
                 shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);
                 shapeArgs.height = Math.min(
-                        yAxis.translate(previousIntermediate, 0, 1, 0, 1),
-                        yAxis.len
-                    ) - shapeArgs.y;
+                    yAxis.translate(previousIntermediate, 0, 1, 0, 1),
+                    yAxis.len
+                ) - shapeArgs.y;
                 previousIntermediate = range[1];
 
             // If it's not the sum point, update previous stack end position
@@ -337,10 +337,10 @@ seriesType('waterfall', 'column', {
         }
 
         attr = seriesTypes.column.prototype.pointAttribs.call(
-                this,
-                point,
-                state
-            );
+            this,
+            point,
+            state
+        );
 
         // The dashStyle option in waterfall applies to the graph, not
         // the points

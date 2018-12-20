@@ -247,7 +247,7 @@ H.seriesType('pivotpoints', 'sma',
 
                 lastPP = PP.push(
                     [endTimestamp]
-                    .concat(avg)
+                        .concat(avg)
                 );
 
                 xData.push(endTimestamp);

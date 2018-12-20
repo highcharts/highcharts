@@ -408,7 +408,7 @@ defaultOptions.drilldown = {
  * @apioption chart.events.drilldown
  */
 
- /**
+/**
  * Fires when drilling up from a drilldown series.
  *
  * @type      {Highcharts.DrillupCallbackFunction}
@@ -453,15 +453,15 @@ defaultOptions.drilldown = {
  */
 H.SVGRenderer.prototype.Element.prototype.fadeIn = function (animation) {
     this
-    .attr({
-        opacity: 0.1,
-        visibility: 'inherit'
-    })
-    .animate({
-        opacity: pick(this.newOpacity, 1) // newOpacity used in maps
-    }, animation || {
-        duration: 250
-    });
+        .attr({
+            opacity: 0.1,
+            visibility: 'inherit'
+        })
+        .animate({
+            opacity: pick(this.newOpacity, 1) // newOpacity used in maps
+        }, animation || {
+            duration: 250
+        });
 };
 
 /**
@@ -654,22 +654,22 @@ Chart.prototype.showDrillUpButton = function () {
             states && states.hover,
             states && states.select
         )
-        .addClass('highcharts-drillup-button')
-        .attr({
-            align: buttonOptions.position.align,
-            zIndex: 7
-        })
-        .add()
-        .align(
-            buttonOptions.position,
-            false,
-            buttonOptions.relativeTo || 'plotBox'
-        );
+            .addClass('highcharts-drillup-button')
+            .attr({
+                align: buttonOptions.position.align,
+                zIndex: 7
+            })
+            .add()
+            .align(
+                buttonOptions.position,
+                false,
+                buttonOptions.relativeTo || 'plotBox'
+            );
     } else {
         this.drillUpButton.attr({
             text: backText
         })
-        .align();
+            .align();
     }
 };
 
@@ -789,7 +789,7 @@ Chart.prototype.drillUp = function () {
         this.drillUpButton.attr({
             text: this.getDrilldownBackText()
         })
-        .align();
+            .align();
     }
 
     this.ddDupes.length = []; // #3315

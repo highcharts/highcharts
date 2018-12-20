@@ -131,7 +131,7 @@ H.seriesType('mfi', 'sma',
                 // Calculate if up or down
                 oldTypicalPrice = newTypicalPrice;
                 newTypicalPrice = calculateTypicalPrice(yVal[range]);
-                isUp = newTypicalPrice >= oldTypicalPrice ? true : false;
+                isUp = newTypicalPrice >= oldTypicalPrice;
                 // Calculate raw money flow
                 rawMoneyFlow = calculateRawMoneyFlow(
                     newTypicalPrice,
@@ -150,7 +150,7 @@ H.seriesType('mfi', 'sma',
                     // Calculate if up or down
                     oldTypicalPrice = newTypicalPrice;
                     newTypicalPrice = calculateTypicalPrice(yVal[i]);
-                    isUp = newTypicalPrice > oldTypicalPrice ? true : false;
+                    isUp = newTypicalPrice > oldTypicalPrice;
                     // Calculate raw money flow
                     rawMoneyFlow = calculateRawMoneyFlow(
                         newTypicalPrice,

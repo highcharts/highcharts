@@ -99,9 +99,9 @@ H.merge(
                 showPath = point.series.visible;
             }
 
-            return showPath ? this.chart.renderer.crispLine(
-                    d, this.graphic.strokeWidth()
-                ) : null;
+            return showPath ?
+                this.chart.renderer.crispLine(d, this.graphic.strokeWidth()) :
+                null;
         },
 
         shouldBeDrawn: function () {

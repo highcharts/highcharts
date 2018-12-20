@@ -191,8 +191,7 @@ TimelinePath.prototype.init = function (options) {
     this.eventsPlaying = {};
 
     // Handle silent wait, otherwise use events from options
-    this.events =
-        options.silentWait ?
+    this.events = options.silentWait ?
         [
             new TimelineEvent({ time: 0 }),
             new TimelineEvent({ time: options.silentWait })

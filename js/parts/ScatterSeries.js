@@ -25,7 +25,7 @@ var Series = H.Series,
  */
 seriesType('scatter', 'line'
 
-/**
+    /**
  * A scatter plot uses cartesian coordinates to display values for two
  * variables for a set of data.
  *
@@ -37,9 +37,9 @@ seriesType('scatter', 'line'
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */
-, {
+    , {
 
-    /**
+        /**
      * The width of the line connecting the data points.
      *
      * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/
@@ -49,16 +49,16 @@ seriesType('scatter', 'line'
      *
      * @product highcharts highstock
      */
-    lineWidth: 0,
+        lineWidth: 0,
 
-    findNearestPointBy: 'xy',
+        findNearestPointBy: 'xy',
 
-    marker: {
+        marker: {
 
-        enabled: true // Overrides auto-enabling in line series (#3647)
-    },
+            enabled: true // Overrides auto-enabling in line series (#3647)
+        },
 
-    /**
+        /**
      * Sticky tracking of mouse events. When true, the `mouseOut` event
      * on a series isn't triggered until the mouse moves over another series,
      * or out of the plot area. When false, the `mouseOut` event on a series
@@ -73,7 +73,7 @@ seriesType('scatter', 'line'
      * @apioption plotOptions.scatter.stickyTracking
      */
 
-    /**
+        /**
      * A configuration object for the tooltip rendering of each single
      * series. Properties are inherited from [tooltip](#tooltip).
      * Overridable properties are `headerFormat`, `pointFormat`, `yDecimals`,
@@ -83,31 +83,31 @@ seriesType('scatter', 'line'
      *
      * @product highcharts highstock
      */
-    tooltip: {
-        headerFormat:
+        tooltip: {
+            headerFormat:
             '<span style="color:{point.color}">\u25CF</span> ' +
             '<span style="font-size: 10px"> {series.name}</span><br/>',
-        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
-    }
+            pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+        }
 
-// Prototype members
-}, {
-    sorted: false,
-    requireSorting: false,
-    noSharedTooltip: true,
-    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    takeOrdinalPosition: false, // #2342
+        // Prototype members
+    }, {
+        sorted: false,
+        requireSorting: false,
+        noSharedTooltip: true,
+        trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
+        takeOrdinalPosition: false, // #2342
 
-    /**
+        /**
      * @private
      * @function Highcharts.seriesTypes.scatter#drawGraph
      */
-    drawGraph: function () {
-        if (this.options.lineWidth) {
-            Series.prototype.drawGraph.call(this);
+        drawGraph: function () {
+            if (this.options.lineWidth) {
+                Series.prototype.drawGraph.call(this);
+            }
         }
-    }
-});
+    });
 
 /**
  * A `scatter` series. If the [type](#series.scatter.type) option is

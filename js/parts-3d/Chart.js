@@ -1612,7 +1612,8 @@ Chart.prototype.get3dFrame = function () {
         var pickEdge = function (edges, axis, mult) {
             if (edges.length === 0) {
                 return null;
-            } else if (edges.length === 1) {
+            }
+            if (edges.length === 1) {
                 return edges[0];
             }
             var best = 0,
@@ -1686,8 +1687,8 @@ H.Fx.prototype.matrixSetter = function () {
     var interpolated;
     if (this.pos < 1 &&
             (H.isArray(this.start) || H.isArray(this.end))) {
-        var start = this.start || [ 1, 0, 0, 1, 0, 0];
-        var end = this.end || [ 1, 0, 0, 1, 0, 0];
+        var start = this.start || [1, 0, 0, 1, 0, 0];
+        var end = this.end || [1, 0, 0, 1, 0, 0];
         interpolated = [];
         for (var i = 0; i < 6; i++) {
             interpolated.push(this.pos * end[i] + (1 - this.pos) * start[i]);

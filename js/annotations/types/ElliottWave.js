@@ -14,22 +14,25 @@ function ElliottWave() {
     CrookedLine.apply(this, arguments);
 }
 
-H.extendAnnotation(ElliottWave, CrookedLine, /** Annotation.CrookedLine# */ {
-    addLabels: function () {
-        this.getPointsOptions().forEach(function (point, i) {
-            var label = this.initLabel(H.merge(
-                point.label, {
-                    text: this.options.typeOptions.labels[i],
-                    point: function (target) {
-                        return target.annotation.points[i];
+H.extendAnnotation(ElliottWave, CrookedLine,
+    /** Annotation.CrookedLine# */
+    {
+        addLabels: function () {
+            this.getPointsOptions().forEach(function (point, i) {
+                var label = this.initLabel(H.merge(
+                    point.label, {
+                        text: this.options.typeOptions.labels[i],
+                        point: function (target) {
+                            return target.annotation.points[i];
+                        }
                     }
-                }
-            ), false);
+                ), false);
 
-            point.label = label.options;
-        }, this);
-    }
-},
+                point.label = label.options;
+            }, this);
+        }
+    },
+
     /**
      * An elliott wave annotation.
      *

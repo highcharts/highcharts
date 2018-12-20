@@ -730,7 +730,7 @@ Highcharts.Time.prototype = {
                                 time.get('Date', minDate) / count
                             )
                         )
-                    );
+                );
             }
 
             if (interval >= timeUnits.month) { // month

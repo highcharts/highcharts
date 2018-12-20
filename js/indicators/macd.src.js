@@ -338,7 +338,7 @@ seriesType('macd', 'sma',
                     defined(longEMA[i - 1][1]) &&
                     defined(shortEMA[i + params.shortPeriod + 1]) &&
                     defined(shortEMA[i + params.shortPeriod + 1][0])
-                    ) {
+                ) {
                     MACD.push([
                         shortEMA[i + params.shortPeriod + 1][0],
                         0,

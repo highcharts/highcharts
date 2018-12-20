@@ -22,8 +22,8 @@ var setTreeValues = function setTreeValues(tree, options) {
         nodeRoot = mapIdToNode[idRoot],
         levelIsConstant = (
             isBoolean(options.levelIsConstant) ?
-            options.levelIsConstant :
-            true
+                options.levelIsConstant :
+                true
         ),
         points = options.points,
         point = points[tree.i],
@@ -177,8 +177,8 @@ var getLevelOptions = function getLevelOptions(params) {
                     options = merge({}, item);
                     levelIsConstant = (
                         isBoolean(options.levelIsConstant) ?
-                        options.levelIsConstant :
-                        defaults.levelIsConstant
+                            options.levelIsConstant :
+                            defaults.levelIsConstant
                     );
                     // Delete redundant properties.
                     delete options.levelIsConstant;

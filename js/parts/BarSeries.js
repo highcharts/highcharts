@@ -64,9 +64,9 @@ seriesType('bar', 'column',
      */
     null
 
-, {
-    inverted: true
-});
+    , {
+        inverted: true
+    });
 
 
 /**

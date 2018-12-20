@@ -1857,7 +1857,7 @@ Navigator.prototype = {
                     }
                     return true;
                 }
-            );
+                );
 
         // Go through each base series and merge the options to create new
         // series
@@ -1930,35 +1930,35 @@ Navigator.prototype = {
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions = H.splat(chartNavigatorSeriesOptions);
             chartNavigatorSeriesOptions
-            .forEach(function (userSeriesOptions, i) {
-                navSeriesMixin.name =
+                .forEach(function (userSeriesOptions, i) {
+                    navSeriesMixin.name =
                     'Navigator ' + (navigatorSeries.length + 1);
-                mergedNavSeriesOptions = merge(
-                    defaultOptions.navigator.series,
-                    {
+                    mergedNavSeriesOptions = merge(
+                        defaultOptions.navigator.series,
+                        {
                         // Since we don't have a base series to pull color from,
                         // try to fake it by using color from series with same
                         // index. Otherwise pull from the colors array. We need
                         // an explicit color as otherwise updates will increment
                         // color counter and we'll get a new color for each
                         // update of the nav series.
-                        color: chart.series[i] &&
+                            color: chart.series[i] &&
                             !chart.series[i].options.isInternal &&
                             chart.series[i].color ||
                             chart.options.colors[i] ||
                             chart.options.colors[0]
-                    },
-                    navSeriesMixin,
-                    userSeriesOptions
-                );
-                mergedNavSeriesOptions.data = userSeriesOptions.data;
-                if (mergedNavSeriesOptions.data) {
-                    navigator.hasNavigatorData = true;
-                    navigatorSeries.push(
-                        chart.initSeries(mergedNavSeriesOptions)
+                        },
+                        navSeriesMixin,
+                        userSeriesOptions
                     );
-                }
-            });
+                    mergedNavSeriesOptions.data = userSeriesOptions.data;
+                    if (mergedNavSeriesOptions.data) {
+                        navigator.hasNavigatorData = true;
+                        navigatorSeries.push(
+                            chart.initSeries(mergedNavSeriesOptions)
+                        );
+                    }
+                });
         }
 
         if (addEvents) {

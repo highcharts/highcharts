@@ -61,7 +61,7 @@ extend(Axis.prototype, {
                     if (!keep) {
                         keep = pick(
                             breaks[i].showPoints,
-                            this.isXAxis ? false : true
+                            !this.isXAxis
                         );
                     }
                 }
@@ -264,8 +264,11 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
                 breakArrayT.sort(function (a, b) {
                     return (
                         (a.value === b.value) ?
-                        (a.move === 'in' ? 0 : 1) - (b.move === 'in' ? 0 : 1) :
-                        a.value - b.value
+                            (
+                                (a.move === 'in' ? 0 : 1) -
+                                (b.move === 'in' ? 0 : 1)
+                            ) :
+                            a.value - b.value
                     );
                 });
 

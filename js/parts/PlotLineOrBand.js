@@ -260,11 +260,11 @@ H.PlotLineOrBand.prototype = {
              * @type {Highcharts.SVGElement}
              */
             plotLine.label = label = renderer.text(
-                    optionsLabel.text,
-                    0,
-                    0,
-                    optionsLabel.useHTML
-                )
+                optionsLabel.text,
+                0,
+                0,
+                optionsLabel.useHTML
+            )
                 .attr(attribs)
                 .add();
 

@@ -1063,8 +1063,8 @@ if (!svg) {
                         // the meanings of opacity and o:opacity2 are reversed.
                         markup = ['<fill colors="' + colors.join(',') +
                             '" opacity="', opacity2, '" o:opacity2="',
-                            opacity1, '" type="', fillType, '" ', fillAttr,
-                            'focus="100%" method="any" />'];
+                        opacity1, '" type="', fillType, '" ', fillAttr,
+                        'focus="100%" method="any" />'];
                         createElement(
                             renderer.prepVML(markup),
                             null,
@@ -1126,7 +1126,7 @@ if (!svg) {
                         fillAttr = 'angle="' + (90 - Math.atan(
                             (y2 - y1) / // y vector
                             (x2 - x1) // x vector
-                            ) * 180 / Math.PI) + '"';
+                        ) * 180 / Math.PI) + '"';
 
                         addFillNode();
 

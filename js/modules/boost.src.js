@@ -895,9 +895,7 @@ function GLShader(gl) {
      */
     function stringToProgram(str, type) {
         var t = type === 'vertex' ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER,
-            shader = gl.createShader(t)
-        ;
-
+            shader = gl.createShader(t);
         gl.shaderSource(shader, str);
         gl.compileShader(shader);
 
@@ -920,9 +918,7 @@ function GLShader(gl) {
      */
     function createShader() {
         var v = stringToProgram(vertShade, 'vertex'),
-            f = stringToProgram(fragShade, 'fragment')
-        ;
-
+            f = stringToProgram(fragShade, 'fragment');
         if (!v || !f) {
             shaderProgram = false;
             handleErrors();
@@ -997,8 +993,8 @@ function GLShader(gl) {
         if (gl && shaderProgram) {
             var u = uLocations[name] = uLocations[name] ||
                                        gl.getUniformLocation(
-                                          shaderProgram,
-                                          name
+                                           shaderProgram,
+                                           name
                                        );
             gl.uniform1f(u, val);
         }
@@ -1064,7 +1060,7 @@ function GLShader(gl) {
                 Math.max(
                     zCalcMin,
                     seriesOptions.displayNegative === false ?
-                    seriesOptions.zThreshold : -Number.MAX_VALUE
+                        seriesOptions.zThreshold : -Number.MAX_VALUE
                 )
             ));
 
@@ -1683,7 +1679,8 @@ function GLRenderer(postRenderCallback) {
                     if (a.node) {
                         if (a.node.levelDynamic > b.node.levelDynamic) {
                             return 1;
-                        } else if (a.node.levelDynamic < b.node.levelDynamic) {
+                        }
+                        if (a.node.levelDynamic < b.node.levelDynamic) {
                             return -1;
                         }
                     }
@@ -2269,10 +2266,10 @@ function GLRenderer(postRenderCallback) {
                     s.series.xAxis.isRadial ? true : null,
                     s.series.closestPointRangePx >
                         2 * ((
-                                options.marker ?
+                            options.marker ?
                                 options.marker.radius :
                                 10
-                            ) || 10)
+                        ) || 10)
                 ),
                 fillColor,
                 shapeTexture = textureHandles[
@@ -2294,7 +2291,7 @@ function GLRenderer(postRenderCallback) {
 
             if (chart.styledMode) {
                 fillColor = (
-                   s.series.markerGroup &&
+                    s.series.markerGroup &&
                     s.series.markerGroup.getStyle('fill')
                 );
 
@@ -2757,8 +2754,8 @@ function createAndAttachRenderer(chart, series) {
                 width,
                 height
             )
-            .addClass('highcharts-boost-canvas')
-            .add(targetGroup);
+                .addClass('highcharts-boost-canvas')
+                .add(targetGroup);
 
             target.boostClear = function () {
                 target.renderTarget.attr({ href: '' });
@@ -2961,15 +2958,15 @@ H.eachAsync = function (arr, fn, finalFunc, chunkSize, i, noTimeout) {
  */
 Series.prototype.getPoint = function (boostPoint) {
     var point = boostPoint,
-        xData = this.xData || this.options.xData || this.processedXData || false
-    ;
-
+        xData = (
+            this.xData || this.options.xData || this.processedXData || false
+        );
     if (boostPoint && !(boostPoint instanceof this.pointClass)) {
         point = (new this.pointClass()).init( // eslint-disable-line new-cap
-                    this,
-                    this.options.data[boostPoint.i],
-                    xData ? xData[boostPoint.i] : undefined
-                );
+            this,
+            this.options.data[boostPoint.i],
+            xData ? xData[boostPoint.i] : undefined
+        );
 
         point.category = point.x;
 

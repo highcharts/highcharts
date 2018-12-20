@@ -687,7 +687,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
                             'scope="col"' +
                             (rowspan > 1 ?
                                 ' valign="top" rowspan="' + rowspan + '"' :
-                            ''),
+                                ''),
                             cur
                         );
                     }
@@ -714,12 +714,12 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
     // Add table caption
     if (options.exporting.tableCaption !== false) {
         html += '<caption class="highcharts-table-caption">' + pick(
-                options.exporting.tableCaption,
-                (
-                    options.title.text ?
+            options.exporting.tableCaption,
+            (
+                options.title.text ?
                     htmlencode(options.title.text) :
                     'Chart'
-                )) +
+            )) +
                 '</caption>';
     }
 

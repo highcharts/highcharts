@@ -155,7 +155,8 @@ H.Tick.prototype = {
 
             tick.label = label =
                 defined(str) && labelOptions.enabled ?
-                    chart.renderer.text(
+                    chart.renderer
+                        .text(
                             str,
                             0,
                             0,

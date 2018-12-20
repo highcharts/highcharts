@@ -95,23 +95,23 @@ var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
             childStart = child.start,
             childEnd = (
                 child.milestone === true ?
-                childStart :
-                child.end
+                    childStart :
+                    child.end
             );
 
         // Start should be the lowest child.start.
         start = (
             (!isNumber(start) || childStart < start) ?
-            childStart :
-            start
+                childStart :
+                start
         );
 
         // End should be the largest child.end.
         // If child is milestone, then use start as end.
         end = (
             (!isNumber(end) || childEnd > end) ?
-            childEnd :
-            end
+                childEnd :
+                end
         );
 
         descendants = descendants + 1 + node.descendants;

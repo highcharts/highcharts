@@ -103,8 +103,8 @@ H.CenteredSeriesMixin = {
                     // difference must be less than 360 degrees
                     (end - startAngle) < 360
                 ) ?
-                end :
-                startAngle + 360
+                    end :
+                    startAngle + 360
             ),
             correction = -90;
         return {

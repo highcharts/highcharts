@@ -365,8 +365,8 @@ function calculateObstacleMargin(obstacles) {
             if (xOverlap && yOverlap) {
                 return (
                     margin ?
-                    distance(a, b, Math.floor(margin / 2)) :
-                    Infinity
+                        distance(a, b, Math.floor(margin / 2)) :
+                        Infinity
                 );
             }
 
@@ -537,8 +537,8 @@ Connection.prototype = {
             renderer = chart.renderer,
             point = (
                 type === 'start' ?
-                connection.fromPoint :
-                connection.toPoint
+                    connection.fromPoint :
+                    connection.toPoint
             ),
             anchor = point.getPathfinderAnchorPoint(options),
             markerVector,
@@ -606,8 +606,8 @@ Connection.prototype = {
 
             // Create new marker element
             connection.graphics[type] = renderer.symbol(
-                    options.symbol
-                )
+                options.symbol
+            )
                 .addClass(
                     'highcharts-point-connecting-path-' + type + '-marker'
                 )
@@ -621,9 +621,9 @@ Connection.prototype = {
                     'stroke-width': options.lineWidth,
                     opacity: 0
                 })
-                .animate({
-                    opacity: 1
-                }, point.series.options.animation);
+                    .animate({
+                        opacity: 1
+                    }, point.series.options.animation);
             }
 
         } else {
@@ -691,8 +691,8 @@ Connection.prototype = {
                     margin: options.algorithmMargin
                 },
                 startDirectionX: pathfinder.getAlgorithmStartDirection(
-                                options.startMarker
-                            )
+                    options.startMarker
+                )
             }, options)
         );
     },

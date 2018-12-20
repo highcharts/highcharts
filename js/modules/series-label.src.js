@@ -185,7 +185,7 @@ H.setOptions({
  */
 function ccw(x1, y1, x2, y2, x3, y3) {
     var cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
-    return cw > 0 ? true : cw < 0 ? false : true;
+    return cw > 0 ? true : !(cw < 0);
 }
 
 /**
@@ -536,15 +536,15 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
                 ) {
                     // If any of the box sides intersect with the line, return.
                     if (boxIntersectLine(
-                            x,
-                            y,
-                            bBox.width,
-                            bBox.height,
-                            points[j - 1].chartX,
-                            points[j - 1].chartY,
-                            points[j].chartX,
-                            points[j].chartY
-                        )) {
+                        x,
+                        y,
+                        bBox.width,
+                        bBox.height,
+                        points[j - 1].chartX,
+                        points[j - 1].chartY,
+                        points[j].chartX,
+                        points[j].chartY
+                    )) {
                         return false;
                     }
 

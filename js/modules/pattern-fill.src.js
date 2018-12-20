@@ -227,7 +227,7 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
             bBox.aspectWidth ?
                 Math.abs(bBox.aspectWidth - bBox.width) / 2 :
                 0
-            );
+        );
     }
     if (!pattern.height) {
         pattern._y = pattern.y || 0;
@@ -235,7 +235,7 @@ H.Point.prototype.calculatePatternDimensions = function (pattern) {
             bBox.aspectHeight ?
                 Math.abs(bBox.aspectHeight - bBox.height) / 2 :
                 0
-            );
+        );
     }
 };
 

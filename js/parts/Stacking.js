@@ -108,7 +108,7 @@ H.StackItem.prototype = {
             formatOption = options.format,
             str = formatOption ?
                 format(formatOption, this, chart.time) :
-                options.formatter.call(this);  // format the text in the label
+                options.formatter.call(this); // format the text in the label
 
         // Change the text to reflect the new total and set visibility to hidden
         // in case the serie is hidden
@@ -214,11 +214,11 @@ H.StackItem.prototype = {
         return { // this is the box for the complete stack
             x: inverted ? (neg ? y : y - h) : x,
             y: inverted ?
-                    axisPos - x - xWidth :
-                    (neg ?
-                        (axisPos - y - h) :
-                        axisPos - y
-                    ),
+                axisPos - x - xWidth :
+                (neg ?
+                    (axisPos - y - h) :
+                    axisPos - y
+                ),
             width: inverted ? h : xWidth,
             height: inverted ? xWidth : h
         };

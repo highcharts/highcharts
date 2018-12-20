@@ -278,8 +278,8 @@ Highcharts.Point.prototype = {
             var isLastKey = arr.length - 1 === i;
             result[key] = (
                 isLastKey ?
-                value :
-                (H.isObject(result[key], true) ? result[key] : {})
+                    value :
+                    (H.isObject(result[key], true) ? result[key] : {})
             );
             return result[key];
         }, object);
