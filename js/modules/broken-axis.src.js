@@ -13,16 +13,11 @@ import '../parts/Series.js';
 
 var addEvent = H.addEvent,
     pick = H.pick,
-    wrap = H.wrap,
     extend = H.extend,
     isArray = H.isArray,
     fireEvent = H.fireEvent,
     Axis = H.Axis,
     Series = H.Series;
-
-function stripArguments() {
-    return Array.prototype.slice.call(arguments, 1);
-}
 
 extend(Axis.prototype, {
     isInBreak: function (brk, val) {
@@ -319,9 +314,7 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
     }
 };
 
-wrap(Series.prototype, 'generatePoints', function (proceed) {
-
-    proceed.apply(this, stripArguments(arguments));
+addEvent(Series, 'afterGeneratePoints', function () {
 
     var series = this,
         xAxis = series.xAxis,
@@ -357,11 +350,10 @@ wrap(Series.prototype, 'generatePoints', function (proceed) {
 
 });
 
-function drawPointsWrapped(proceed) {
-    proceed.apply(this);
+addEvent(Series, 'afterRender', function drawPointsWrapped() {
     this.drawBreaks(this.xAxis, ['x']);
     this.drawBreaks(this.yAxis, pick(this.pointArrayMap, ['y']));
-}
+});
 
 H.Series.prototype.drawBreaks = function (axis, keys) {
     var series = this,
@@ -520,5 +512,3 @@ H.Series.prototype.gappedPath = function () {
     return this.getGraphPath(points);
 };
 
-wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);
-wrap(H.Series.prototype, 'drawPoints', drawPointsWrapped);
