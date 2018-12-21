@@ -24,12 +24,10 @@ var addEvent = H.addEvent,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     erase = H.erase,
-    error = H.error,
     extend = H.extend,
     hasTouch = H.hasTouch,
     isArray = H.isArray,
     isNumber = H.isNumber,
-    isObject = H.isObject,
     isTouchDevice = H.isTouchDevice,
     merge = H.merge,
     pick = H.pick,
@@ -2447,26 +2445,6 @@ addEvent(Chart, 'afterUpdate', function () {
         this.scroller = this.navigator = new Navigator(this);
     }
 
-});
-
-// Pick up badly formatted point options to addPoint
-wrap(Series.prototype, 'addPoint', function (
-    proceed,
-    options,
-    redraw,
-    shift,
-    animation
-) {
-    var turboThreshold = this.options.turboThreshold;
-    if (
-        turboThreshold &&
-        this.xData.length > turboThreshold &&
-        isObject(options, true) &&
-        this.chart.navigator
-    ) {
-        error(20, true, this.chart);
-    }
-    proceed.call(this, options, redraw, shift, animation);
 });
 
 // Handle adding new series
