@@ -35,7 +35,6 @@ var addEvent = H.addEvent,
     Scrollbar = H.Scrollbar,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    wrap = H.wrap,
 
     units = [].concat(defaultDataGroupingUnits), // copy
     defaultSeriesType,
@@ -2280,22 +2279,21 @@ H.Navigator = Navigator;
  * because X axis zooming is already allowed by the Navigator and Range
  * selector.
  */
-wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
+addEvent(Axis, 'zoom', function (e) {
     var chart = this.chart,
         chartOptions = chart.options,
         zoomType = chartOptions.chart.zoomType,
         pinchType = chartOptions.chart.pinchType,
         previousZoom,
         navigator = chartOptions.navigator,
-        rangeSelector = chartOptions.rangeSelector,
-        ret;
+        rangeSelector = chartOptions.rangeSelector;
 
     if (this.isXAxis && ((navigator && navigator.enabled) ||
             (rangeSelector && rangeSelector.enabled))) {
 
         // For y only zooming, ignore the X axis completely
         if (zoomType === 'y') {
-            ret = false;
+            e.zoomed = false;
 
         // For xy zooming, record the state of the zoom before zoom selection,
         // then when the reset button is pressed, revert to this state. This
@@ -2310,17 +2308,19 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
         ) {
 
             previousZoom = this.previousZoom;
-            if (defined(newMin)) {
+            if (defined(e.newMin)) {
                 this.previousZoom = [this.min, this.max];
             } else if (previousZoom) {
-                newMin = previousZoom[0];
-                newMax = previousZoom[1];
+                e.newMin = previousZoom[0];
+                e.newMax = previousZoom[1];
                 delete this.previousZoom;
             }
         }
 
     }
-    return ret !== undefined ? ret : proceed.call(this, newMin, newMax);
+    if (e.zoomed !== undefined) {
+        e.preventDefault();
+    }
 });
 
 /**

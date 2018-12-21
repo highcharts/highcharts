@@ -5001,47 +5001,57 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             dataMax = this.dataMax,
             options = this.options,
             min = Math.min(dataMin, pick(options.min, dataMin)),
-            max = Math.max(dataMax, pick(options.max, dataMax));
+            max = Math.max(dataMax, pick(options.max, dataMax)),
+            evt = { newMin: newMin, newMax: newMax };
 
-        if (newMin !== this.min || newMax !== this.max) { // #5790
+        fireEvent(this, 'zoom', evt, function (e) {
 
-            // Prevent pinch zooming out of range. Check for defined is for
-            // #1946. #1734.
-            if (!this.allowZoomOutside) {
-                // #6014, sometimes newMax will be smaller than min (or newMin
-                // will be larger than max).
-                if (defined(dataMin)) {
-                    if (newMin < min) {
-                        newMin = min;
+            // Use e.newMin and e.newMax - event handlers may have altered them
+            var newMin = e.newMin,
+                newMax = e.newMax;
+
+            if (newMin !== this.min || newMax !== this.max) { // #5790
+
+                // Prevent pinch zooming out of range. Check for defined is for
+                // #1946. #1734.
+                if (!this.allowZoomOutside) {
+                    // #6014, sometimes newMax will be smaller than min (or
+                    // newMin will be larger than max).
+                    if (defined(dataMin)) {
+                        if (newMin < min) {
+                            newMin = min;
+                        }
+                        if (newMin > max) {
+                            newMin = max;
+                        }
                     }
-                    if (newMin > max) {
-                        newMin = max;
+                    if (defined(dataMax)) {
+                        if (newMax < min) {
+                            newMax = min;
+                        }
+                        if (newMax > max) {
+                            newMax = max;
+                        }
                     }
                 }
-                if (defined(dataMax)) {
-                    if (newMax < min) {
-                        newMax = min;
-                    }
-                    if (newMax > max) {
-                        newMax = max;
-                    }
-                }
+
+                // In full view, displaying the reset zoom button is not
+                // required
+                this.displayBtn = newMin !== undefined || newMax !== undefined;
+
+                // Do it
+                this.setExtremes(
+                    newMin,
+                    newMax,
+                    false,
+                    undefined,
+                    { trigger: 'zoom' }
+                );
             }
+            e.zoomed = true;
+        });
 
-            // In full view, displaying the reset zoom button is not required
-            this.displayBtn = newMin !== undefined || newMax !== undefined;
-
-            // Do it
-            this.setExtremes(
-                newMin,
-                newMax,
-                false,
-                undefined,
-                { trigger: 'zoom' }
-            );
-        }
-
-        return true;
+        return evt.zoomed;
     },
 
     // Update the axis metrics.
