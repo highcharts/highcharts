@@ -515,10 +515,7 @@ if (Renderer === VMLRenderer) {
 }
 
 // Wrapper to hide the label
-wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
-
-    proceed.call(this, i);
-
+addEvent(Axis, 'afterHideCrosshair', function () {
     if (this.crossLabel) {
         this.crossLabel = this.crossLabel.hide();
     }

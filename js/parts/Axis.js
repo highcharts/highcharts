@@ -6394,6 +6394,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         if (this.cross) {
             this.cross.hide();
         }
+        fireEvent(this, 'afterHideCrosshair');
     }
 }); // end Axis
 
