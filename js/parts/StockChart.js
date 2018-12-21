@@ -926,22 +926,6 @@ addEvent(Series, 'render', function () {
     }
 });
 
-wrap(Chart.prototype, 'getSelectedPoints', function (proceed) {
-    var points = proceed.call(this);
-
-    this.series.forEach(function (serie) {
-        // series.points - for grouped points (#6445)
-        if (serie.hasGroupedData) {
-            points = points.concat((serie.points || []).filter(
-                function (point) {
-                    return point.selected;
-                }
-            ));
-        }
-    });
-    return points;
-});
-
 addEvent(Chart, 'update', function (e) {
     var options = e.options;
     // Use case: enabling scrollbar from a disabled state.
