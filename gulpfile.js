@@ -44,7 +44,7 @@ const ProgressBar = require('./tools/progress-bar.js');
 const buildESModules = () => {
     const {
         buildModules
-    } = require('../highcharts-assembler/src/build.js');
+    } = require('highcharts-assembler/src/build.js');
     buildModules({
         base: './js/',
         output: './code/',
@@ -1333,7 +1333,7 @@ gulp.task('jsdoc-options', jsdocOptions);
 
 /* *
  *
- *  TypeScript Declarations
+ *  TypeScript
  *
  * */
 
@@ -1352,8 +1352,30 @@ function dtsLint() {
     return commandLine('npx dtslint --onlyTestTsNext');
 }
 
+/**
+ * Compiles TypeScript code into the js folder.
+ */
+function tsc() {
+    return commandLine('npx tsc --project ts');
+}
+
+/**
+ * Lint test of TypeScript code.
+ */
+function tslint() {
+    return commandLine('npx tslint --project ts');
+}
+
 gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], dts);
 gulp.task('dtslint', ['update', 'dts'], dtsLint);
+gulp.task('tsc', tsc);
+gulp.task('tslint', tslint);
+
+/* *
+ *
+ *  Core Functionality
+ *
+ * */
 
 /**
  * Updates node packages.
