@@ -533,7 +533,7 @@ QUnit.test(
 
         assert.strictEqual(
             chart.series[0].hcEvents.updatedData.length,
-            1,
+            0,
             'Update of adaptToUpdatedData should remove all related events (#8038)'
         );
 
