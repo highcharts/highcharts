@@ -1176,7 +1176,25 @@ seriesType('treemap', 'scatter'
         },
 
         // Over the alignment method by setting z index
-        alignDataLabel: function (point) {
+        alignDataLabel: function (point, dataLabel, labelOptions) {
+            var style = labelOptions.style;
+
+            // #8160: Prevent the label from exceeding the point's
+            // boundaries in treemaps by applying ellipsis overflow.
+            // The issue was happening when datalabel's text contained a
+            // long sequence of characters without a whitespace.
+            if (
+                !H.defined(style.textOverflow) &&
+                dataLabel.text &&
+                dataLabel.getBBox().width > dataLabel.text.textWidth
+            ) {
+                dataLabel.css({
+                    textOverflow: 'ellipsis',
+                    // unit (px) is required when useHTML is true
+                    width: style.width += 'px'
+                });
+            }
+
             seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
             if (point.dataLabel) {
             // point.node.zIndex could be undefined (#6956)
