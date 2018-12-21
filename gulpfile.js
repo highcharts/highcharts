@@ -1261,8 +1261,11 @@ const jsdocNamespace = () => {
 
     const jsdoc3 = require('gulp-jsdoc3');
 
+    const dtsPath = 'test/typescript';
+
     const codeFiles = JSON
-        .parse(fs.readFileSync('tsconfig.json')).files
+        .parse(fs.readFileSync(join(dtsPath, 'tsconfig.json'))).files
+        .map(file => join(dtsPath, file))
         .filter(file => (
             file.indexOf('test') !== 0 &&
             !file.indexOf('global.d.ts') >= 0 &&
@@ -1349,7 +1352,7 @@ function dts() {
  * Test TypeScript declarations in the code folder using tsconfig.json.
  */
 function dtsLint() {
-    return commandLine('npx dtslint --onlyTestTsNext');
+    return commandLine('cd test/typescript && npx dtslint --onlyTestTsNext');
 }
 
 /**
