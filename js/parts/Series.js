@@ -5054,8 +5054,8 @@ H.Series = H.seriesType('line',
                 series.animate(true);
             }
 
-            // SVGRenderer needs to know this before drawing elements
-            // (#1089, #1795)
+            // SVGRenderer needs to know this before drawing elements (#1089,
+            // #1795)
             group.inverted = series.isCartesian ? inverted : false;
 
             // draw the graph if any
@@ -5094,7 +5094,8 @@ H.Series = H.seriesType('line',
 
             // Initial clipping, must be defined after inverting groups for VML.
             // Applies to columns etc. (#3839).
-            if (options.clip !== false &&
+            if (
+                options.clip !== false &&
                 !series.sharedClipKey &&
                 !hasRendered
             ) {
@@ -5115,7 +5116,7 @@ H.Series = H.seriesType('line',
                 }, animDuration);
             }
 
-            // means data is in accordance with what you see
+            // Means data is in accordance with what you see
             series.isDirty = false;
 
             // (See #322) series.isDirty = series.isDirtyData = false; // means

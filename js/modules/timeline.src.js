@@ -237,7 +237,7 @@ undocumentedSeriesType('timeline', 'line',
                             );
                         };
 
-                        // Initiate the targetPosition field within data label
+                        // Initialize the targetPosition field within data label
                         // object. It's necessary because there is need to know
                         // expected position of specific data label, when
                         // aligning connectors. This field is overrided inside
