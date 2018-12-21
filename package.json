@@ -29,13 +29,13 @@
     "testall": "gulp test --all --browsers all",
     "jsdoc": "gulp jsdoc --watch",
     "dts": "gulp dts",
-    "dtslint": "gulp dtslint"
+    "dtslint": "gulp dtslint",
+    "post-merge": "gulp styles && gulp scripts && npm test"
   },
   "husky": {
     "hooks": {
       "commit-msg": "node tools/validate-commit-msg.js ${HUSKY_GIT_PARAMS}",
-      "pre-commit": "lint-staged && gulp scripts && gulp test",
-      "post-merge": "gulp styles && gulp scripts && npm test"
+      "pre-commit": "lint-staged && gulp scripts && gulp test"
     }
   },
   "devDependencies": {
