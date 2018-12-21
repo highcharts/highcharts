@@ -602,8 +602,8 @@ RangeSelector.prototype = {
             rangeOptions = rangeSelector.buttonOptions[i],
             baseAxis = chart.xAxis[0],
             unionExtremes = (
-                    chart.scroller && chart.scroller.getUnionExtremes()
-                ) || baseAxis || {},
+                chart.scroller && chart.scroller.getUnionExtremes()
+            ) || baseAxis || {},
             dataMin = unionExtremes.dataMin,
             dataMax = unionExtremes.dataMax,
             newMin,
@@ -1145,9 +1145,9 @@ RangeSelector.prototype = {
 
         // Create the text label
         this[name + 'Label'] = label = renderer.label(
-                lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'],
-                this.inputGroup.offset
-            )
+            lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'],
+            this.inputGroup.offset
+        )
             .addClass('highcharts-range-label')
             .attr({
                 padding: 2
@@ -1374,10 +1374,10 @@ RangeSelector.prototype = {
                 renderer.g('range-selector-buttons').add(group);
 
             rangeSelector.zoomText = renderer.text(
-                    lang.rangeSelectorZoom,
-                    0,
-                    15
-                )
+                lang.rangeSelectorZoom,
+                0,
+                15
+            )
                 .add(buttonGroup);
 
             if (!chart.styledMode) {
@@ -1391,34 +1391,34 @@ RangeSelector.prototype = {
             rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
 
                 buttons[i] = renderer.button(
-                        rangeOptions.text,
-                        0,
-                        0,
-                        function () {
+                    rangeOptions.text,
+                    0,
+                    0,
+                    function () {
 
-                            // extract events from button object and call
-                            var buttonEvents = (
-                                    rangeOptions.events &&
+                        // extract events from button object and call
+                        var buttonEvents = (
+                                rangeOptions.events &&
                                     rangeOptions.events.click
-                                ),
-                                callDefaultEvent;
+                            ),
+                            callDefaultEvent;
 
-                            if (buttonEvents) {
-                                callDefaultEvent =
+                        if (buttonEvents) {
+                            callDefaultEvent =
                                     buttonEvents.call(rangeOptions);
-                            }
+                        }
 
-                            if (callDefaultEvent !== false) {
-                                rangeSelector.clickButton(i);
-                            }
+                        if (callDefaultEvent !== false) {
+                            rangeSelector.clickButton(i);
+                        }
 
-                            rangeSelector.isActive = true;
-                        },
-                        buttonTheme,
-                        states && states.hover,
-                        states && states.select,
-                        states && states.disabled
-                    )
+                        rangeSelector.isActive = true;
+                    },
+                    buttonTheme,
+                    states && states.hover,
+                    states && states.select,
+                    states && states.disabled
+                )
                     .attr({
                         'text-align': 'center'
                     })
@@ -1467,8 +1467,8 @@ RangeSelector.prototype = {
 
         // detect collisiton with exporting
         if
-            (
-                navButtonOptions &&
+        (
+            navButtonOptions &&
                 this.titleCollision(chart) &&
                 verticalAlign === 'top' &&
                 buttonPosition.align === 'right' &&
@@ -1476,7 +1476,7 @@ RangeSelector.prototype = {
                     (buttonPosition.y + buttonGroup.getBBox().height - 12) <
                     ((navButtonOptions.y || 0) + navButtonOptions.height)
                 )
-            ) {
+        ) {
             exportingX = -40;
         }
 
@@ -1507,8 +1507,8 @@ RangeSelector.prototype = {
 
             // detect collision with exporting
             if
-                (
-                    navButtonOptions &&
+            (
+                navButtonOptions &&
                     this.titleCollision(chart) &&
                     verticalAlign === 'top' &&
                     inputPosition.align === 'right' &&
@@ -1520,7 +1520,7 @@ RangeSelector.prototype = {
                             chart.spacing[0]
                         )
                     )
-                ) {
+            ) {
                 exportingX = -40;
             } else {
                 exportingX = 0;
@@ -1560,7 +1560,7 @@ RangeSelector.prototype = {
             buttonGroupWidth = buttonGroup.getBBox().width + 20;
 
             if (
-                    (inputPosition.align === buttonPosition.align) ||
+                (inputPosition.align === buttonPosition.align) ||
                     (
                         (buttonGroupX + buttonGroupWidth > inputGroupX) &&
                         (inputGroupX + inputGroupWidth > buttonGroupX) &&
@@ -1569,7 +1569,7 @@ RangeSelector.prototype = {
                             (inputPositionY + inputGroup.getBBox().height)
                         )
                     )
-                ) {
+            ) {
 
                 inputGroup.attr({
                     translateX: inputGroup.alignAttr.translateX +

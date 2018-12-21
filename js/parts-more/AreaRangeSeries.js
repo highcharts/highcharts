@@ -711,7 +711,7 @@ seriesType('arearange', 'area', {
  * @apioption series.arearange.data.low
  */
 
- /**
+/**
  * @excluding x, y
  * @product   highcharts highstock
  * @apioption series.arearange.dataLabels

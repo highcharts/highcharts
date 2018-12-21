@@ -525,13 +525,13 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
                 'http://www.w3.org/1999/xlink',
                 'href'
             ), 'image/png', { imageElement: el }, options.scale,
-                embeddedSuccess,
-                // Tainted canvas
-                failCallback,
-                // No canvas support
-                failCallback,
-                // Failed to load source
-                failCallback
+            embeddedSuccess,
+            // Tainted canvas
+            failCallback,
+            // No canvas support
+            failCallback,
+            // Failed to load source
+            failCallback
             );
         }
     } catch (e) {

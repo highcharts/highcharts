@@ -576,24 +576,20 @@ addEvent(
                         point.series.options.draggable
                     ) {
                         point.series.onMouseDown(point, event);
-                        unbinders.push(
-                             addEvent(
-                                chart.container,
-                                'mousemove',
-                                function (e) {
-                                    return point.series.onMouseMove(point, e);
-                                }
-                            )
-                        );
-                        unbinders.push(
-                             addEvent(
-                                chart.container.ownerDocument,
-                                'mouseup',
-                                function (e) {
-                                    return point.series.onMouseUp(point, e);
-                                }
-                            )
-                        );
+                        unbinders.push(addEvent(
+                            chart.container,
+                            'mousemove',
+                            function (e) {
+                                return point.series.onMouseMove(point, e);
+                            }
+                        ));
+                        unbinders.push(addEvent(
+                            chart.container.ownerDocument,
+                            'mouseup',
+                            function (e) {
+                                return point.series.onMouseUp(point, e);
+                            }
+                        ));
                     }
                 }
             )

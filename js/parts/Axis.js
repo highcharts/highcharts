@@ -3162,8 +3162,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @type {number}
          */
         axis.side = userOptions.side || (axis.horiz ?
-                (axis.opposite ? 0 : 2) : // top : bottom
-                (axis.opposite ? 1 : 3));  // right : left
+            (axis.opposite ? 0 : 2) : // top : bottom
+            (axis.opposite ? 1 : 3));  // right : left
 
         axis.setOptions(userOptions);
 
@@ -4177,16 +4177,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             } else {
                 axis.series.forEach(function (series) {
                     var seriesPointRange = hasCategories ?
-                        1 :
-                        (
-                            isXAxis ?
-                                pick(
-                                    series.options.pointRange,
-                                    closestPointRange,
-                                    0
-                                ) :
-                                (axis.axisPointRange || 0)
-                        ), // #2806
+                            1 :
+                            (
+                                isXAxis ?
+                                    pick(
+                                        series.options.pointRange,
+                                        closestPointRange,
+                                        0
+                                    ) :
+                                    (axis.axisPointRange || 0)
+                            ), // #2806
                         pointPlacement = series.options.pointPlacement;
 
                     pointRange = Math.max(pointRange, seriesPointRange);
@@ -5580,12 +5580,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 0,
                 axisTitleOptions.useHTML
             )
-            .attr({
-                zIndex: 7,
-                rotation: axisTitleOptions.rotation || 0,
-                align: textAlign
-            })
-            .addClass('highcharts-axis-title');
+                .attr({
+                    zIndex: 7,
+                    rotation: axisTitleOptions.rotation || 0,
+                    align: textAlign
+                })
+                .addClass('highcharts-axis-title');
 
             // #7814, don't mutate style option
             if (!styledMode) {
@@ -6151,8 +6151,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 coll === alternateBands ||
                     !chart.hasRendered ||
                     !delay ?
-                        0 :
-                        delay
+                    0 :
+                    delay
             );
         });
 

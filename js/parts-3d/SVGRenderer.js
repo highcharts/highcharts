@@ -513,7 +513,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
      */
     pickShape = function (path1, path2) {
         var ret = [
-                [], -1
+            [], -1
         ];
         path1 = path1.map(mapPath);
         path2 = path2.map(mapPath);

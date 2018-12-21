@@ -67,7 +67,7 @@ H.seriesType('dema', 'ema',
             index,
             i,
             xVal
-          ) {
+        ) {
 
             return EMAindicator.prototype.calculateEma(
                 xVal || [],
@@ -119,7 +119,7 @@ H.seriesType('dema', 'ema',
                     period,
                     index,
                     yVal
-            );
+                );
 
             // first point
             SMA = accumulatePeriodPoints / period;

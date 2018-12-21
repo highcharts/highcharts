@@ -116,10 +116,10 @@ var controllableMixin = {
         var plotBox = point.series.getPlotBox(),
 
             box = point.mock ?
-            point.toAnchor() :
-            H.Tooltip.prototype.getAnchor.call({
-                chart: point.series.chart
-            }, point),
+                point.toAnchor() :
+                H.Tooltip.prototype.getAnchor.call({
+                    chart: point.series.chart
+                }, point),
 
             anchor = {
                 x: box[0] + (this.options.x || 0),

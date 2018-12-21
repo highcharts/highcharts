@@ -534,12 +534,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     }
 
     var chart = this.chart,
-        options = this.options.crosshair.label,        // the label's options
-        horiz = this.horiz,                            // axis orientation
-        opposite = this.opposite,                    // axis position
-        left = this.left,                            // left position
-        top = this.top,                                // top position
-        crossLabel = this.crossLabel,                // the svgElement
+        options = this.options.crosshair.label, // the label's options
+        horiz = this.horiz, // axis orientation
+        opposite = this.opposite, // axis position
+        left = this.left, // left position
+        top = this.top, // top position
+        crossLabel = this.crossLabel, // the svgElement
         posx,
         posy,
         crossBox,
@@ -572,7 +572,8 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
 
     // If the label does not exist yet, create it.
     if (!crossLabel) {
-        crossLabel = this.crossLabel = chart.renderer.label(
+        crossLabel = this.crossLabel = chart.renderer
+            .label(
                 null,
                 null,
                 null,

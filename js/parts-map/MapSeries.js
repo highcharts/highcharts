@@ -1222,7 +1222,7 @@ seriesType('map', 'scatter',
  * @apioption series.map.data.labelrank
  */
 
- /**
+/**
  * The relative mid point of an area, used to place the data label.
  * Ranges from 0 to 1\. When `mapData` is used, middleX can be defined
  * there.

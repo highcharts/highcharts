@@ -232,7 +232,7 @@ H.Popup.prototype = {
 
         if (volumeTo) {
             fieldsOutput.fields['params.volumeSeriesID'] = volumeTo
-                                                        .getAttribute('value');
+                .getAttribute('value');
         }
 
         return fieldsOutput;
@@ -250,7 +250,7 @@ H.Popup.prototype = {
         var popupDiv = this.container,
             toolbarClass = PREFIX + 'annotation-toolbar',
             popupCloseBtn = popupDiv
-                            .querySelectorAll('.' + PREFIX + 'popup-close')[0];
+                .querySelectorAll('.' + PREFIX + 'popup-close')[0];
 
         // reset content
         popupDiv.innerHTML = '';
@@ -310,7 +310,7 @@ H.Popup.prototype = {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }
     },
-     /*
+    /*
      * Return lang definitions for popup.
      *
      * @return {Object} - elements translations.
@@ -467,7 +467,7 @@ H.Popup.prototype = {
 
                 // create name like params.styles.fontSize
                 parentFullName = parentNode !== '' ?
-                                    parentNode + '.' + option : option;
+                    parentNode + '.' + option : option;
 
                 if (isObject(value)) {
                     if (
@@ -547,7 +547,7 @@ H.Popup.prototype = {
 
             // get all tabs content divs
             tabsContainers = this.popup.container
-                        .querySelectorAll('.' + PREFIX + 'tab-item-content');
+                .querySelectorAll('.' + PREFIX + 'tab-item-content');
 
             // ADD tab
             this.addColsContainer(tabsContainers[0]);
@@ -559,7 +559,7 @@ H.Popup.prototype = {
             );
 
             buttonParentDiv = tabsContainers[0]
-                        .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0];
+                .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0];
 
             this.addButton.call(
                 this,
@@ -580,7 +580,7 @@ H.Popup.prototype = {
             );
 
             buttonParentDiv = tabsContainers[1]
-                        .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0];
+                .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0];
 
             this.addButton.call(
                 this,
@@ -611,13 +611,13 @@ H.Popup.prototype = {
         addIndicatorList: function (chart, parentDiv, listType) {
             var _self = this,
                 lhsCol = parentDiv
-                        .querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0],
+                    .querySelectorAll('.' + PREFIX + 'popup-lhs-col')[0],
                 rhsCol = parentDiv
-                        .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0],
+                    .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0],
                 defaultOptions = H.getOptions(),
                 isEdit = listType === 'edit',
                 series = isEdit ? chart.series : // EDIT mode
-                                defaultOptions.plotOptions, // ADD mode
+                    defaultOptions.plotOptions, // ADD mode
                 addFormFields = this.indicators.addFormFields,
                 rhsColWrapper,
                 indicatorList,
@@ -637,10 +637,10 @@ H.Popup.prototype = {
                 if (
                     serie.params ||
                     seriesOptions && seriesOptions.params
-                    ) {
+                ) {
 
                     var indicatorNameType = _self.indicators
-                                                    .getNameType(serie, value);
+                        .getNameType(serie, value);
 
                     item = createElement(LI, {
                         className: PREFIX + 'indicator-list',
@@ -664,10 +664,10 @@ H.Popup.prototype = {
                                 name: PREFIX + 'id-' + indicatorNameType.type,
                                 value: serie.options.id
                             }, null, rhsColWrapper)
-                            .setAttribute(
-                                PREFIX + 'data-series-id',
-                                serie.options.id
-                            );
+                                .setAttribute(
+                                    PREFIX + 'data-series-id',
+                                    serie.options.id
+                                );
                         }
                     });
                 }
@@ -754,7 +754,7 @@ H.Popup.prototype = {
                     !seriesOptions.params &&
                     seriesOptions.id &&
                     seriesOptions.id !== PREFIX + 'navigator-series'
-                    ) {
+                ) {
                     createElement(
                         OPTION,
                         {
@@ -871,9 +871,9 @@ H.Popup.prototype = {
                         parentDiv
                     );
                 } else if (
-                        // skip volume field which is created by addFormFields
-                        parentFullName !== 'params.volumeSeriesID'
-                    ) {
+                // skip volume field which is created by addFormFields
+                    parentFullName !== 'params.volumeSeriesID'
+                ) {
                     addInput.call(
                         _self,
                         parentFullName,
@@ -899,7 +899,7 @@ H.Popup.prototype = {
                 if (
                     serie.params ||
                     seriesOptions && seriesOptions.params
-                    ) {
+                ) {
                     counter++;
                 }
             });
@@ -1020,7 +1020,7 @@ H.Popup.prototype = {
          */
         selectTab: function (tab, index) {
             var allTabs = this.popup.container
-                        .querySelectorAll('.' + PREFIX + 'tab-item-content');
+                .querySelectorAll('.' + PREFIX + 'tab-item-content');
 
             tab.className += ' ' + PREFIX + 'tab-item-active';
             allTabs[index].className += ' ' + PREFIX + 'tab-item-show';
@@ -1032,9 +1032,9 @@ H.Popup.prototype = {
         deselectAll: function () {
             var popupDiv = this.popup.container,
                 tabs = popupDiv
-                        .querySelectorAll('.' + PREFIX + 'tab-item'),
+                    .querySelectorAll('.' + PREFIX + 'tab-item'),
                 tabsContent = popupDiv
-                        .querySelectorAll('.' + PREFIX + 'tab-item-content'),
+                    .querySelectorAll('.' + PREFIX + 'tab-item-content'),
                 i;
 
             for (i = 0; i < tabs.length; i++) {

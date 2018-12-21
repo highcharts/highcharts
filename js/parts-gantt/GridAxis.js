@@ -238,8 +238,8 @@ addEvent(
             tickPos = tick.pos - tickmarkOffset,
             nextTickPos = (
                 isNumber(tickPositions[e.index + 1]) ?
-                tickPositions[e.index + 1] - tickmarkOffset :
-                axis.max + tickmarkOffset
+                    tickPositions[e.index + 1] - tickmarkOffset :
+                    axis.max + tickmarkOffset
             ),
             tickSize = axis.tickSize('tick', true),
             tickWidth = isArray(tickSize) ? tickSize[0] : 0,
@@ -292,17 +292,17 @@ addEvent(
             // Calculate the positioning of the label based on alignment.
             e.pos.x = (
                 align === 'left' ?
-                left :
-                align === 'right' ?
-                right :
-                left + ((right - left) / 2) // default to center
+                    left :
+                    align === 'right' ?
+                        right :
+                        left + ((right - left) / 2) // default to center
             );
             e.pos.y = (
                 verticalAlign === 'top' ?
-                top :
-                verticalAlign === 'bottom' ?
-                bottom :
-                top + ((bottom - top) / 2) // default to middle
+                    top :
+                    verticalAlign === 'bottom' ?
+                        bottom :
+                        top + ((bottom - top) / 2) // default to middle
             );
 
             lblMetrics = chart.renderer.fontMetrics(
@@ -853,8 +853,8 @@ addEvent(Axis, 'init', function (e) {
         userOptions = e.userOptions,
         gridOptions = (
             (userOptions && isObject(userOptions.grid)) ?
-            userOptions.grid :
-            {}
+                userOptions.grid :
+                {}
         ),
         columnOptions,
         column,

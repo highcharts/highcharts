@@ -458,8 +458,8 @@ H.Fx.prototype = {
                 startVal = parseFloat(start[i]);
                 ret[i] =
                     isNaN(startVal) ? // a letter instruction like M or L
-                            end[i] :
-                            now * (parseFloat(end[i] - startVal)) + startVal;
+                        end[i] :
+                        now * (parseFloat(end[i] - startVal)) + startVal;
 
             }
         // If animation is finished or length not matching, land on right value
@@ -868,10 +868,9 @@ H.merge = function () {
             H.objectEach(original, function (value, key) {
 
                 // Copy the contents of objects, but not arrays or DOM nodes
-                if (
-                        H.isObject(value, true) &&
-                        !H.isClass(value) &&
-                        !H.isDOMElement(value)
+                if (H.isObject(value, true) &&
+                    !H.isClass(value) &&
+                    !H.isDOMElement(value)
                 ) {
                     copy[key] = doCopy(copy[key] || {}, value);
 
@@ -1308,12 +1307,12 @@ H.extendClass = function (parent, members) {
  */
 H.pad = function (number, length, padder) {
     return new Array(
-            (length || 2) +
-            1 -
-            String(number)
-                .replace('-', '')
-                .length
-        ).join(padder || 0) + number;
+        (length || 2) +
+        1 -
+        String(number)
+            .replace('-', '')
+            .length
+    ).join(padder || 0) + number;
 };
 
 /**
@@ -2007,7 +2006,9 @@ H.getStyle = function (el, prop, toInt) {
                 H.getStyle(el, 'padding-right')
             )
         );
-    } else if (prop === 'height') {
+    }
+
+    if (prop === 'height') {
         return Math.max(
             0, // #8377
             Math.min(el.offsetHeight, el.scrollHeight) -

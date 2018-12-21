@@ -89,10 +89,10 @@ H.Color.prototype = {
             len;
 
         this.input = input = this.names[
-                                input && input.toLowerCase ?
-                                    input.toLowerCase() :
-                                    ''
-                            ] || input;
+            input && input.toLowerCase ?
+                input.toLowerCase() :
+                ''
+        ] || input;
 
         // Gradients
         if (input && input.stops) {

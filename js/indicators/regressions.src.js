@@ -130,7 +130,7 @@ seriesType('linearRegression', 'sma',
             }
 
             slope = formulaDenominator ?
-              formulaNumerator / formulaDenominator : 0; // don't divide by 0
+                formulaNumerator / formulaDenominator : 0; // don't divide by 0
 
             return {
                 slope: slope,
@@ -221,14 +221,14 @@ seriesType('linearRegression', 'sma',
                 periodXData = xData.slice(periodStart, periodEnd);
                 periodYData = yData.slice(periodStart, periodEnd);
                 periodTransformedXData = this.transformXData(periodXData,
-                  xAxisUnit);
+                    xAxisUnit);
 
                 lineParameters = this.getRegressionLineParameters(
-                  periodTransformedXData, periodYData
+                    periodTransformedXData, periodYData
                 );
 
                 endPointY = this.getEndPointY(lineParameters,
-                periodTransformedXData[periodTransformedXData.length - 1]);
+                    periodTransformedXData[periodTransformedXData.length - 1]);
 
                 indicatorData.values.push({
                     regressionLineParameters: lineParameters,
@@ -388,7 +388,7 @@ seriesType('linearRegressionAngle', 'linearRegression',
     {
         nameBase: 'Linear Regression Angle Indicator',
 
-       /**
+        /**
         * Convert a slope of a line to angle (in degrees) between
         * the line and x axis
         * @private

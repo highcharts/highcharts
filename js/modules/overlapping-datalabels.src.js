@@ -54,8 +54,8 @@ addEvent(Chart, 'render', function collectAndHide() {
                 if (point.visible) {
                     var dataLabels = (
                         isArray(point.dataLabels) ?
-                        point.dataLabels :
-                        (point.dataLabel ? [point.dataLabel] : [])
+                            point.dataLabels :
+                            (point.dataLabel ? [point.dataLabel] : [])
                     );
                     dataLabels.forEach(function (label) {
                         var options = label.options;

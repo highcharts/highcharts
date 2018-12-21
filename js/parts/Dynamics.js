@@ -695,9 +695,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
             seriesOptions.data[i] = (
-                    isObject(seriesOptions.data[i], true) ||
+                isObject(seriesOptions.data[i], true) ||
                     isObject(options, true)
-                ) ?
+            ) ?
                 point.options :
                 pick(options, seriesOptions.data[i]);
 

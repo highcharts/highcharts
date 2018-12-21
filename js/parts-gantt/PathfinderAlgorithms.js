@@ -385,7 +385,7 @@ var algorithms = {
             extractedEndPoint,
             endSegments = [],
             forceObstacleBreak = false, // Used in clearPathTo to keep track of
-                                    // when to force break through an obstacle.
+            // when to force break through an obstacle.
 
             // Boundaries to stay within. If beyond soft boundary, prefer to
             // change direction ASAP. If at hard max, always change immediately.
@@ -531,8 +531,8 @@ var algorithms = {
                 // If it's a small difference, pick the one leading towards dest
                 // point. Otherwise pick the shortest distance
                 useMax = abs(minDistance - maxDistance) < 10 ?
-                        fromPoint[dir] < toPoint[dir] :
-                        maxDistance < minDistance;
+                    fromPoint[dir] < toPoint[dir] :
+                    maxDistance < minDistance;
 
             // Check if we hit any obstacles trying to go around in either
             // direction.
@@ -636,13 +636,14 @@ var algorithms = {
                             envelopingObstacle[dir + 'Max']
                         ) / 2
                     ) :
-                    min(
-                        envelopingObstacle[dir + 'Min'] + obstacleMargin - 1,
-                        (
-                            secondEnvelopingObstacle[dir + 'Max'] +
-                            envelopingObstacle[dir + 'Min']
-                        ) / 2
-                    );
+                        min((
+                            envelopingObstacle[dir + 'Min'] + obstacleMargin - 1
+                        ), (
+                            (
+                                secondEnvelopingObstacle[dir + 'Max'] +
+                                envelopingObstacle[dir + 'Min']
+                            ) / 2
+                        ));
 
                     // We are not going anywhere. If this happens for the first
                     // time, do nothing. Otherwise, try to go to the extreme of

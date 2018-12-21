@@ -43,7 +43,8 @@ function getAccelerationFactor(dir, pDir, eP, pEP, pAcc, inc, maxAcc, initAcc) {
     if (dir === pDir) {
         if (dir === 1 && (eP > pEP)) {
             return (pAcc === maxAcc) ? maxAcc : toFixed(pAcc + inc, 2);
-        } else if (dir === -1 && (eP < pEP)) {
+        }
+        if (dir === -1 && (eP < pEP)) {
             return (pAcc === maxAcc) ? maxAcc : toFixed(pAcc + inc, 2);
         }
         return pAcc;

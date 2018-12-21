@@ -237,8 +237,8 @@ var expand = function (axis, node) {
 var toggleCollapse = function (axis, node) {
     return (
         isCollapsed(axis, node) ?
-        expand(axis, node) :
-        collapse(axis, node)
+            expand(axis, node) :
+            collapse(axis, node)
     );
 };
 var renderLabelIcon = function (tick, params) {
@@ -263,8 +263,8 @@ var renderLabelIcon = function (tick, params) {
             width,
             height
         ))
-        .addClass('highcharts-label-icon')
-        .add(params.group);
+            .addClass('highcharts-label-icon')
+            .add(params.group);
     }
 
     // Set the new position, and show or hide
@@ -371,8 +371,8 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
                 parentNode = mapOfIdToNode[node.parent],
                 parentGridNode = (
                     isObject(parentNode) ?
-                    mapOfPosToGridNode[parentNode.pos] :
-                    null
+                        mapOfPosToGridNode[parentNode.pos] :
+                        null
                 ),
                 hasSameName = function (x) {
                     return x.name === name;
@@ -636,8 +636,8 @@ override(GridAxis.prototype, {
             labelOptions = options && options.labels,
             indentation = (
                 labelOptions && isNumber(labelOptions.indentation) ?
-                options.labels.indentation :
-                0
+                    options.labels.indentation :
+                    0
             ),
             retVal = proceed.apply(axis, argsToArray(arguments)),
             isTreeGrid = axis.options.type === 'treegrid',
@@ -767,13 +767,13 @@ override(GridAxisTick.prototype, {
         if (isTreeGrid) {
             symbolOptions = (
                 lbOptions && isObject(lbOptions.symbol) ?
-                lbOptions.symbol :
-                {}
+                    lbOptions.symbol :
+                    {}
             );
             indentation = (
                 lbOptions && isNumber(lbOptions.indentation) ?
-                lbOptions.indentation :
-                0
+                    lbOptions.indentation :
+                    0
             );
             mapOfPosToGridNode = axis.mapOfPosToGridNode;
             node = mapOfPosToGridNode && mapOfPosToGridNode[pos];
@@ -801,8 +801,8 @@ override(GridAxisTick.prototype, {
             ),
             symbolOptions = (
                 labelOptions && isObject(labelOptions.symbol) ?
-                labelOptions.symbol :
-                {}
+                    labelOptions.symbol :
+                    {}
             ),
             node = mapOfPosToGridNode && mapOfPosToGridNode[pos],
             level = node && node.depth,

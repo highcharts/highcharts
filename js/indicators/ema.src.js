@@ -128,14 +128,14 @@ seriesType('ema', 'sma',
             // Calculate value one-by-one for each period in visible data
             for (i = period; i < yValLen + 1; i++) {
                 EMAPoint = this.calculateEma(
-                        xVal,
-                        yVal,
-                        i,
-                        EMApercent,
-                        calEMA,
-                        index,
-                        SMA
-                    );
+                    xVal,
+                    yVal,
+                    i,
+                    EMApercent,
+                    calEMA,
+                    index,
+                    SMA
+                );
                 EMA.push(EMAPoint);
                 xData.push(EMAPoint[0]);
                 yData.push(EMAPoint[1]);

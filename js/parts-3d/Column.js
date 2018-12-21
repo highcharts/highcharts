@@ -201,8 +201,8 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                                     point.plotY +
                                     (
                                         point.negative ?
-                                        -point.height :
-                                        point.height
+                                            -point.height :
+                                            point.height
                                     );
                             }
                         }

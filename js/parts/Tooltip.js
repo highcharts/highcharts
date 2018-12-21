@@ -241,7 +241,8 @@ H.Tooltip.prototype = {
             if (this.split) {
                 this.label = renderer.g('tooltip');
             } else {
-                this.label = renderer.label(
+                this.label = renderer
+                    .label(
                         '',
                         0,
                         0,
@@ -875,7 +876,8 @@ H.Tooltip.prototype = {
                         attribs['stroke-width'] = options.borderWidth;
                     }
 
-                    owner.tt = tt = ren.label(
+                    owner.tt = tt = ren
+                        .label(
                             null,
                             null,
                             null,

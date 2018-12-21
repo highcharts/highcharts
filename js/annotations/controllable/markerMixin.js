@@ -117,8 +117,8 @@ var markerMixin = {
             defs = chart.options.defs,
             fill = itemOptions.fill,
             color = H.defined(fill) && fill !== 'none' ?
-            fill :
-            itemOptions.stroke,
+                fill :
+                itemOptions.stroke,
 
             setMarker = function (markerType) {
                 var markerId = itemOptions[markerType],

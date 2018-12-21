@@ -195,7 +195,7 @@ merge(
              */
             visible: true,
 
-             /**
+            /**
              * Allow an annotation to be draggable by a user. Possible
              * values are `"x"`, `"xy"`, `"y"` and `""` (disabled).
              *
@@ -834,8 +834,8 @@ merge(
                 .attr({
                     zIndex: this.options.zIndex,
                     visibility: this.options.visible ?
-                    'visible' :
-                    'hidden'
+                        'visible' :
+                        'hidden'
                 })
                 .add();
 
@@ -960,12 +960,12 @@ merge(
          **/
         initShape: function (shapeOptions) {
             var options = merge(
-                this.options.shapeOptions,
-                {
-                    controlPointOptions: this.options.controlPointOptions
-                },
-                shapeOptions
-            ),
+                    this.options.shapeOptions,
+                    {
+                        controlPointOptions: this.options.controlPointOptions
+                    },
+                    shapeOptions
+                ),
                 shape = new Annotation.shapesMap[options.type](
                     this,
                     options
@@ -985,12 +985,12 @@ merge(
          **/
         initLabel: function (labelOptions) {
             var options = merge(
-                this.options.labelOptions,
-                {
-                    controlPointOptions: this.options.controlPointOptions
-                },
-                labelOptions
-            ),
+                    this.options.labelOptions,
+                    {
+                        controlPointOptions: this.options.controlPointOptions
+                    },
+                    labelOptions
+                ),
                 label = new ControllableLabel(
                     this,
                     options
@@ -1073,8 +1073,8 @@ merge(
         renderItem: function (item) {
             item.render(
                 item.itemType === 'label' ?
-                this.labelsGroup :
-                this.shapesGroup
+                    this.labelsGroup :
+                    this.shapesGroup
             );
         }
     });

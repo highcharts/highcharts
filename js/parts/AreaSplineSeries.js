@@ -43,12 +43,12 @@ seriesType('areaspline', 'spline',
      * @apioption plotOptions.areaspline
      */
     defaultPlotOptions.area
-, {
-    getStackPoints: areaProto.getStackPoints,
-    getGraphPath: areaProto.getGraphPath,
-    drawGraph: areaProto.drawGraph,
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle
-});
+    , {
+        getStackPoints: areaProto.getStackPoints,
+        getGraphPath: areaProto.getGraphPath,
+        drawGraph: areaProto.drawGraph,
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle
+    });
 
 /**
  * A `areaspline` series. If the [type](#series.areaspline.type) option

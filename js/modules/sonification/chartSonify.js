@@ -466,8 +466,10 @@ function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
                         })]
                     });
 
+                }
+
                 // Is this item a silent wait? If so, just create the path.
-                } if (item.silentWait) {
+                if (item.silentWait) {
                     itemObject = new H.sonification.TimelinePath({
                         silentWait: item.silentWait
                     });
@@ -656,30 +658,30 @@ function buildPathsFromOrder(order, duration) {
     // Go through the order list and convert the items
     return order.reduce(function (allPaths, orderDef) {
         var simultaneousPaths = H.splat(orderDef).reduce(
-                function (simulPaths, item) {
-                    if (item instanceof H.sonification.TimelinePath) {
-                        // This item is already a path object
-                        simulPaths.push(item);
-                    } else if (item.series) {
-                        // We have a series.
-                        // We need to set the duration of the series
-                        item.seriesOptions.duration =
-                            item.seriesOptions.duration || getSeriesDurationMs(
-                                item.seriesOptions.timeExtremes.max -
-                                item.seriesOptions.timeExtremes.min,
-                                totalUsedDuration,
-                                totalAvailableDurationMs
-                            );
+            function (simulPaths, item) {
+                if (item instanceof H.sonification.TimelinePath) {
+                    // This item is already a path object
+                    simulPaths.push(item);
+                } else if (item.series) {
+                    // We have a series.
+                    // We need to set the duration of the series
+                    item.seriesOptions.duration =
+                        item.seriesOptions.duration || getSeriesDurationMs(
+                            item.seriesOptions.timeExtremes.max -
+                            item.seriesOptions.timeExtremes.min,
+                            totalUsedDuration,
+                            totalAvailableDurationMs
+                        );
 
-                        // Add the path
-                        simulPaths.push(buildTimelinePathFromSeries(
-                            item.series,
-                            item.seriesOptions
-                        ));
-                    }
-                    return simulPaths;
-                }, []
-            );
+                    // Add the path
+                    simulPaths.push(buildTimelinePathFromSeries(
+                        item.series,
+                        item.seriesOptions
+                    ));
+                }
+                return simulPaths;
+            }, []
+        );
 
         // Add in the simultaneous paths
         allPaths.push(simultaneousPaths);

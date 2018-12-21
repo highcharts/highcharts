@@ -160,7 +160,7 @@ var addEvent = H.addEvent,
  * @apioption plotOptions.series.dataGrouping.groupPixelWidth
  */
 
- /**
+/**
  * By default only points within the visible range are grouped. Enabling this
  * option will force data grouping to calculate all grouped points for a given
  * dataset. That option prevents for example a column series from calculating
@@ -463,10 +463,10 @@ var seriesProto = Series.prototype,
         range: function (low, high) {
             low = approximations.low(low);
             high = approximations.high(high);
-
             if (isNumber(low) || isNumber(high)) {
                 return [low, high];
-            } else if (low === null && high === null) {
+            }
+            if (low === null && high === null) {
                 return null;
             }
             // else, return is undefined
@@ -544,9 +544,9 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
         // when a new group is entered, summarize and initiate
         // the previous group
         while ((
-                    groupPositions[pos + 1] !== undefined &&
+            groupPositions[pos + 1] !== undefined &&
                     xData[i] >= groupPositions[pos + 1]
-                ) || i === dataLength) { // get the last group
+        ) || i === dataLength) { // get the last group
 
             // get group x and y
             pointX = groupPositions[pos];

@@ -33,7 +33,7 @@ function getOverlapBetweenCircles(r1, r2, d) {
             // equals the area of the smallest circle.
             overlap = Math.PI * Math.min(r1Square, r2Square);
         } else {
-                // d^2 - r^2 + R^2 / 2d
+            // d^2 - r^2 + R^2 / 2d
             var x = (r1Square - r2Square + d * d) / (2 * d),
                 // y^2 = R^2 - x^2
                 y = Math.sqrt(r1Square - x * x);
@@ -169,9 +169,9 @@ function isPointOutsideAllCircles(point, circles) {
 var getAreaOfIntersectionBetweenCircles =
 function getAreaOfIntersectionBetweenCircles(circles) {
     var intersectionPoints = getCirclesIntersectionPoints(circles)
-        .filter(function (p) {
-            return isPointInsideAllCircles(p, circles);
-        }),
+            .filter(function (p) {
+                return isPointInsideAllCircles(p, circles);
+            }),
         result;
 
     if (intersectionPoints.length > 1) {
