@@ -35,8 +35,7 @@ var VMLRenderer,
     svg = H.svg,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
-    win = H.win,
-    wrap = H.wrap;
+    win = H.win;
 
 
 /**
@@ -93,13 +92,12 @@ if (!svg) {
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    wrap(H.SVGRenderer.prototype, 'text', function (proceed) {
-        return proceed.apply(
-            this,
-            Array.prototype.slice.call(arguments, 1)
-        ).css({
-            position: 'absolute'
-        });
+    H.addEvent(SVGElement, 'afterInit', function () {
+        if (this.element.nodeName === 'text') {
+            this.css({
+                position: 'absolute'
+            });
+        }
     });
 
     /**

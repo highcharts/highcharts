@@ -28,21 +28,12 @@ var addEvent = H.addEvent,
 /* ****************************************************************************
  * Start ordinal axis logic                                                   *
  *****************************************************************************/
-
-wrap(Series.prototype, 'init', function (proceed) {
-    var series = this,
-        xAxis;
-
-    // call the original function
-    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
-    xAxis = series.xAxis;
+addEvent(Series, 'updatedData', function () {
+    var xAxis = this.xAxis;
 
     // Destroy the extended ordinal index on updated data
     if (xAxis && xAxis.options.ordinal) {
-        addEvent(series, 'updatedData', function () {
-            delete xAxis.ordinalIndex;
-        });
+        delete xAxis.ordinalIndex;
     }
 });
 

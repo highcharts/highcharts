@@ -736,10 +736,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     getSelectedPoints: function () {
         var points = [];
         this.series.forEach(function (serie) {
-            // series.data - for points outside of viewed range (#6445)
-            points = points.concat((serie.data || []).filter(function (point) {
-                return point.selected;
-            }));
+            // For one-to-one points inspect series.data in order to retrieve
+            // points outside the visible range (#6445). For grouped data,
+            // inspect the generated series.points.
+            points = points.concat(
+                (serie[serie.hasGroupedData ? 'points' : 'data'] || []).filter(
+                    function (point) {
+                        return point.selected;
+                    }
+                )
+            );
         });
         return points;
     },

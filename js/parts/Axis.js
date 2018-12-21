@@ -3155,8 +3155,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         axis.opposite = userOptions.opposite; // needed in setOptions
 
         /**
-         * The side on which the axis is rendered. 0 is top, 1 is right, 2 is
-         * bottom and 3 is left.
+         * The side on which the axis is rendered. 0 is top, 1 is right, 2
+         * is bottom and 3 is left.
          *
          * @name Highcharts.Axis#side
          * @type {number}
@@ -3173,7 +3173,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             isDatetimeAxis = type === 'datetime';
 
         axis.labelFormatter = options.labels.formatter ||
-            axis.defaultLabelFormatter; // can be overwritten by dynamic format
+            // can be overwritten by dynamic format
+            axis.defaultLabelFormatter;
 
 
         // Flag, stagger lines or not
@@ -3709,6 +3710,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
             skip,
             transB = axis.transB,
+            evt,
             /**
              * Check if x is between a and b. If not, either move to a/b
              * or skip, depending on the force parameter.
@@ -3724,35 +3726,47 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 return x;
             };
 
-        translatedValue = pick(
-            translatedValue,
-            axis.translate(value, null, null, old)
-        );
-        // Keep the translated value within sane bounds, and avoid Infinity to
-        // fail the isNumber test (#7709).
-        translatedValue = Math.min(Math.max(-1e5, translatedValue), 1e5);
+        evt = {
+            value: value,
+            lineWidth: lineWidth,
+            old: old,
+            force: force,
+            translatedValue: translatedValue
+        };
+        fireEvent(this, 'getPlotLinePath', evt, function (e) {
 
-
-        x1 = x2 = Math.round(translatedValue + transB);
-        y1 = y2 = Math.round(cHeight - translatedValue - transB);
-        if (!isNumber(translatedValue)) { // no min or max
-            skip = true;
-            force = false; // #7175, don't force it when path is invalid
-        } else if (axis.horiz) {
-            y1 = axisTop;
-            y2 = cHeight - axis.bottom;
-            x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
-        } else {
-            x1 = axisLeft;
-            x2 = cWidth - axis.right;
-            y1 = y2 = between(y1, axisTop, axisTop + axis.height);
-        }
-        return skip && !force ?
-            null :
-            chart.renderer.crispLine(
-                ['M', x1, y1, 'L', x2, y2],
-                lineWidth || 1
+            translatedValue = pick(
+                translatedValue,
+                axis.translate(value, null, null, old)
             );
+            // Keep the translated value within sane bounds, and avoid Infinity
+            // to fail the isNumber test (#7709).
+            translatedValue = Math.min(Math.max(-1e5, translatedValue), 1e5);
+
+
+            x1 = x2 = Math.round(translatedValue + transB);
+            y1 = y2 = Math.round(cHeight - translatedValue - transB);
+            if (!isNumber(translatedValue)) { // no min or max
+                skip = true;
+                force = false; // #7175, don't force it when path is invalid
+            } else if (axis.horiz) {
+                y1 = axisTop;
+                y2 = cHeight - axis.bottom;
+                x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
+            } else {
+                x1 = axisLeft;
+                x2 = cWidth - axis.right;
+                y1 = y2 = between(y1, axisTop, axisTop + axis.height);
+            }
+            e.path = skip && !force ?
+                null :
+                chart.renderer.crispLine(
+                    ['M', x1, y1, 'L', x2, y2],
+                    lineWidth || 1
+                );
+        });
+
+        return evt.path;
     },
 
     /**
@@ -4988,47 +5002,57 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             dataMax = this.dataMax,
             options = this.options,
             min = Math.min(dataMin, pick(options.min, dataMin)),
-            max = Math.max(dataMax, pick(options.max, dataMax));
+            max = Math.max(dataMax, pick(options.max, dataMax)),
+            evt = { newMin: newMin, newMax: newMax };
 
-        if (newMin !== this.min || newMax !== this.max) { // #5790
+        fireEvent(this, 'zoom', evt, function (e) {
 
-            // Prevent pinch zooming out of range. Check for defined is for
-            // #1946. #1734.
-            if (!this.allowZoomOutside) {
-                // #6014, sometimes newMax will be smaller than min (or newMin
-                // will be larger than max).
-                if (defined(dataMin)) {
-                    if (newMin < min) {
-                        newMin = min;
+            // Use e.newMin and e.newMax - event handlers may have altered them
+            var newMin = e.newMin,
+                newMax = e.newMax;
+
+            if (newMin !== this.min || newMax !== this.max) { // #5790
+
+                // Prevent pinch zooming out of range. Check for defined is for
+                // #1946. #1734.
+                if (!this.allowZoomOutside) {
+                    // #6014, sometimes newMax will be smaller than min (or
+                    // newMin will be larger than max).
+                    if (defined(dataMin)) {
+                        if (newMin < min) {
+                            newMin = min;
+                        }
+                        if (newMin > max) {
+                            newMin = max;
+                        }
                     }
-                    if (newMin > max) {
-                        newMin = max;
+                    if (defined(dataMax)) {
+                        if (newMax < min) {
+                            newMax = min;
+                        }
+                        if (newMax > max) {
+                            newMax = max;
+                        }
                     }
                 }
-                if (defined(dataMax)) {
-                    if (newMax < min) {
-                        newMax = min;
-                    }
-                    if (newMax > max) {
-                        newMax = max;
-                    }
-                }
+
+                // In full view, displaying the reset zoom button is not
+                // required
+                this.displayBtn = newMin !== undefined || newMax !== undefined;
+
+                // Do it
+                this.setExtremes(
+                    newMin,
+                    newMax,
+                    false,
+                    undefined,
+                    { trigger: 'zoom' }
+                );
             }
+            e.zoomed = true;
+        });
 
-            // In full view, displaying the reset zoom button is not required
-            this.displayBtn = newMin !== undefined || newMax !== undefined;
-
-            // Do it
-            this.setExtremes(
-                newMin,
-                newMax,
-                false,
-                undefined,
-                { trigger: 'zoom' }
-            );
-        }
-
-        return true;
+        return evt.zoomed;
     },
 
     // Update the axis metrics.
@@ -5143,17 +5167,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @return {string} Can be `center`, `left` or `right`.
      */
     autoLabelAlign: function (rotation) {
-        var ret,
-            angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360;
+        var angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360,
+            evt = { align: 'center' };
 
-        if (angle > 15 && angle < 165) {
-            ret = 'right';
-        } else if (angle > 195 && angle < 345) {
-            ret = 'left';
-        } else {
-            ret = 'center';
-        }
-        return ret;
+        fireEvent(this, 'autoLabelAlign', evt, function (e) {
+
+            if (angle > 15 && angle < 165) {
+                e.align = 'right';
+            } else if (angle > 195 && angle < 345) {
+                e.align = 'left';
+            }
+        });
+
+        return evt.align;
     },
 
     /**
@@ -6392,6 +6418,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         if (this.cross) {
             this.cross.hide();
         }
+        fireEvent(this, 'afterHideCrosshair');
     }
 }); // end Axis
 

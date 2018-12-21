@@ -24,8 +24,7 @@ var addEvent = H.addEvent,
     pick = H.pick,
     Point = H.Point,
     Series = H.Series,
-    undocumentedSeriesType = H.seriesType,
-    wrap = H.wrap;
+    undocumentedSeriesType = H.seriesType;
 
 /* *
  * The timeline series type.
@@ -223,24 +222,24 @@ undocumentedSeriesType('timeline', 'line'
                     dataLabel = point.dataLabel;
 
                     if (dataLabel) {
-                    // Within this wrap method is necessary to save the current
-                    // animation params, because the data label target position
-                    // (after animation) is needed to align connectors.
-                        wrap(dataLabel, 'animate', function (proceed, params) {
+                        // Within this wrap method is necessary to save the current
+                        // animation params, because the data label target position
+                        // (after animation) is needed to align connectors.
+                        dataLabel.animate = function (params) {
                             if (this.targetPosition) {
                                 this.targetPosition = params;
                             }
-                            return proceed.apply(
+                            return H.SVGElement.prototype.animate.apply(
                                 this,
-                                Array.prototype.slice.call(arguments, 1)
+                                arguments
                             );
-                        });
+                        };
 
                         // Initiate the targetPosition field within data label
                         // object. It's necessary because there is need to know
-                        // expected position of specific data label, when
-                        // aligning connectors. This field is overrided inside
-                        // of SVGElement.animate() wrapped  method.
+                        // expected position of specific data label, when aligning
+                        // connectors. This field is overrided inside of
+                        // SVGElement.animate() wrapped  method.
                         if (!dataLabel.targetPosition) {
                             dataLabel.targetPosition = {};
                         }

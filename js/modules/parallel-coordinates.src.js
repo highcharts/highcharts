@@ -16,7 +16,6 @@ import '../parts/Series.js';
 // Extensions for parallel coordinates plot.
 var Axis = H.Axis,
     Chart = H.Chart,
-    SeriesProto = H.Series.prototype,
     ChartProto = Chart.prototype,
     AxisProto = H.Axis.prototype;
 
@@ -325,7 +324,7 @@ extend(AxisProto, /** @lends Highcharts.Axis.prototype */ {
 
 // Bind each series to each yAxis. yAxis needs a reference to all series to
 // calculate extremes.
-wrap(SeriesProto, 'bindAxes', function (proceed) {
+addEvent(H.Series, 'bindAxes', function (e) {
     if (this.chart.hasParallelCoordinates) {
         var series = this;
         this.chart.axes.forEach(function (axis) {
@@ -334,8 +333,8 @@ wrap(SeriesProto, 'bindAxes', function (proceed) {
         });
         series.xAxis = this.chart.xAxis[0];
         series.yAxis = this.chart.yAxis[0];
-    } else {
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+        e.preventDefault();
     }
 });
 

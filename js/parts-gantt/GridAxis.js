@@ -210,32 +210,6 @@ H.dateFormats = {
     }
 };
 
-wrap(Axis.prototype, 'autoLabelAlign',
-    /**
-     * If chart is stockChart, always return 'left' to avoid labels being placed
-     * inside chart. Stock charts place yAxis labels inside by default.
-     *
-     * @private
-     * @function
-     *
-     * @param {Function} proceed
-     *        the original function
-     *
-     * @return {string}
-     *         'left' if stockChart, or auto calculated alignment
-     */
-    function (proceed) {
-        var axis = this,
-            retVal;
-        if (axis.chart.isStock) {
-            retVal = 'left';
-        } else {
-            retVal = proceed.apply(axis, argsToArray(arguments));
-        }
-        return retVal;
-    }
-);
-
 addEvent(
     Tick,
     'afterGetLabelPosition',
@@ -873,8 +847,10 @@ wrap(Axis.prototype, 'render',
 );
 
 // Wraps axis init to draw cell walls on vertical axes.
-wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+addEvent(Axis, 'init', function (e) {
     var axis = this,
+        chart = axis.chart,
+        userOptions = e.userOptions,
         gridOptions = (
             (userOptions && isObject(userOptions.grid)) ?
                 userOptions.grid :
@@ -884,7 +860,8 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
         column,
         columnIndex,
         i;
-    function applyGridOptions(axis) {
+
+    function applyGridOptions() {
         var options = axis.options,
             // TODO: Consider using cell margins defined in % of font size?
             // 25 is optimal height for default fontSize (11px)
@@ -945,7 +922,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
                 delete columnOptions.grid.columns; // Prevent recursion
 
-                column = new Axis(chart, columnOptions);
+                column = new Axis(axis.chart, columnOptions);
                 column.isColumn = true;
                 column.columnIndex = columnIndex;
 
@@ -971,13 +948,13 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
                 columnIndex++;
             }
+            // This axis should not be shown, instead the column axes take over
+            addEvent(this, 'afterInit', function () {
+                H.erase(chart.axes, this);
+                H.erase(chart[axis.coll], this);
+            });
         } else {
-            // Call original Axis.init()
-            proceed.apply(axis, argsToArray(arguments));
-            applyGridOptions(axis);
+            addEvent(this, 'afterInit', applyGridOptions);
         }
-    } else {
-        // Call original Axis.init()
-        proceed.apply(axis, argsToArray(arguments));
     }
 });

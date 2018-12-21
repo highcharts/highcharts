@@ -2600,6 +2600,7 @@ H.Series = H.seriesType('line',
                 }
                 i = i + 1;
 
+
             // Or just push it to the end
             } else {
                 collection.push(this);
@@ -2622,65 +2623,68 @@ H.Series = H.seriesType('line',
                 chart = series.chart,
                 axisOptions;
 
-            // repeat for xAxis and yAxis
-            (series.axisTypes || []).forEach(function (AXIS) {
+            fireEvent(this, 'bindAxes', null, function () {
 
-                // loop through the chart's axis objects
-                chart[AXIS].forEach(function (axis) {
-                    axisOptions = axis.options;
+                // repeat for xAxis and yAxis
+                (series.axisTypes || []).forEach(function (AXIS) {
 
-                    // apply if the series xAxis or yAxis option mathches the
-                    // number of the axis, or if undefined, use the first axis
-                    if (
-                        seriesOptions[AXIS] === axisOptions.index ||
-                        (
-                            seriesOptions[AXIS] !== undefined &&
-                            seriesOptions[AXIS] === axisOptions.id
-                        ) ||
-                        (
-                            seriesOptions[AXIS] === undefined &&
-                            axisOptions.index === 0
-                        )
-                    ) {
+                    // loop through the chart's axis objects
+                    chart[AXIS].forEach(function (axis) {
+                        axisOptions = axis.options;
 
-                        // register this series in the axis.series lookup
-                        series.insert(axis.series);
+                        // apply if the series xAxis or yAxis option mathches the
+                        // number of the axis, or if undefined, use the first axis
+                        if (
+                            seriesOptions[AXIS] === axisOptions.index ||
+                            (
+                                seriesOptions[AXIS] !== undefined &&
+                                seriesOptions[AXIS] === axisOptions.id
+                            ) ||
+                            (
+                                seriesOptions[AXIS] === undefined &&
+                                axisOptions.index === 0
+                            )
+                        ) {
 
-                        // set this series.xAxis or series.yAxis reference
-                        /**
-                         * Read only. The unique xAxis object associated with
-                         * the series.
-                         *
-                         * @name Highcharts.Series#xAxis
-                         * @type {Highcharts.Axis}
-                         */
-                        /**
-                         * Read only. The unique yAxis object associated with
-                         * the series.
-                         *
-                         * @name Highcharts.Series#yAxis
-                         * @type {Highcharts.Axis}
-                         */
-                        series[AXIS] = axis;
+                            // register this series in the axis.series lookup
+                            series.insert(axis.series);
 
-                        // mark dirty for redraw
-                        axis.isDirty = true;
+                            // set this series.xAxis or series.yAxis reference
+                            /**
+                             * Read only. The unique xAxis object associated with
+                             * the series.
+                             *
+                             * @name Highcharts.Series#xAxis
+                             * @type {Highcharts.Axis}
+                             */
+                            /**
+                             * Read only. The unique yAxis object associated with
+                             * the series.
+                             *
+                             * @name Highcharts.Series#yAxis
+                             * @type {Highcharts.Axis}
+                             */
+                            series[AXIS] = axis;
+
+                            // mark dirty for redraw
+                            axis.isDirty = true;
+                        }
+                    });
+
+                    // The series needs an X and an Y axis
+                    if (!series[AXIS] && series.optionalAxis !== AXIS) {
+                        H.error(18, true, chart);
                     }
+
                 });
-
-                // The series needs an X and an Y axis
-                if (!series[AXIS] && series.optionalAxis !== AXIS) {
-                    H.error(18, true, chart);
-                }
-
             });
         },
 
         /**
-         * For simple series types like line and column, the data values are
-         * held in arrays like xData and yData for quick lookup to find extremes
-         * and more. For multidimensional series like bubble and map, this can
-         * be extended with arrays like zData and valueData by adding to the
+         * For simple series types like line and column, the data values are held in
+         * arrays like xData and yData for quick lookup to find extremes and more.
+         * For multidimensional series like bubble and map, this can be extended
+         * with arrays like zData and valueData by adding to the
          * `series.parallelArrays` array.
          *
          * @private
@@ -2701,8 +2705,8 @@ H.Series = H.seriesType('line',
                             point[key];
                         series[key + 'Data'][i] = val;
                     } :
-                    // Apply the method specified in i with the following
-                    // arguments as arguments
+                    // Apply the method specified in i with the following arguments
+                    // as arguments
                     function (key) {
                         Array.prototype[i].apply(
                             series[key + 'Data'],
@@ -3666,8 +3670,8 @@ H.Series = H.seriesType('line',
                 xMax = xExtremes.max,
                 validValue,
                 withinRange,
-                // Handle X outside the viewed area. This does not work with
-                // non-sorted data like scatter (#7639).
+                // Handle X outside the viewed area. This does not work with non-
+                // sorted data like scatter (#7639).
                 shoulder = this.requireSorting ? 1 : 0,
                 x,
                 y,
@@ -3682,8 +3686,8 @@ H.Series = H.seriesType('line',
                 x = xData[i];
                 y = yData[i];
 
-                // For points within the visible range, including the first
-                // point outside the visible range (#7061), consider y extremes.
+                // For points within the visible range, including the first point
+                // outside the visible range (#7061), consider y extremes.
                 validValue = (
                     (isNumber(y, true) || isArray(y)) &&
                     (!yAxis.positiveValuesOnly || (y.length || y > 0))
@@ -3715,6 +3719,8 @@ H.Series = H.seriesType('line',
 
             this.dataMin = arrayMin(activeYData);
             this.dataMax = arrayMax(activeYData);
+
+            fireEvent(this, 'afterGetExtremes');
         },
 
         /**
@@ -4970,6 +4976,7 @@ H.Series = H.seriesType('line',
             return group;
         },
 
+
         /**
          * Get the translation and scale for the plot area of this series.
          *
@@ -4996,9 +5003,9 @@ H.Series = H.seriesType('line',
         },
 
         /**
-         * Render the graph and markers. Called internally when first rendering
-         * and later when redrawing the chart. This function can be extended in
-         * plugins, but normally shouldn't be called directly.
+         * Render the graph and markers. Called internally when first rendering and
+         * later when redrawing the chart. This function can be extended in plugins,
+         * but normally shouldn't be called directly.
          *
          * @function Highcharts.Series#render
          *
@@ -5022,6 +5029,8 @@ H.Series = H.seriesType('line',
                 chartSeriesGroup = chart.seriesGroup,
                 inverted = chart.inverted;
 
+            fireEvent(this, 'render');
+
             // the group
             group = series.plotGroup(
                 'group',
@@ -5044,8 +5053,7 @@ H.Series = H.seriesType('line',
                 series.animate(true);
             }
 
-            // SVGRenderer needs to know this before drawing elements (#1089,
-            // #1795)
+            // SVGRenderer needs to know this before drawing elements (#1089, #1795)
             group.inverted = series.isCartesian ? inverted : false;
 
             // draw the graph if any
@@ -5084,10 +5092,7 @@ H.Series = H.seriesType('line',
 
             // Initial clipping, must be defined after inverting groups for VML.
             // Applies to columns etc. (#3839).
-            if (options.clip !== false &&
-                !series.sharedClipKey &&
-                !hasRendered
-            ) {
+            if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
                 group.clip(chart.clipRect);
             }
 
@@ -5097,17 +5102,15 @@ H.Series = H.seriesType('line',
             }
 
             // Call the afterAnimate function on animation complete (but don't
-            // overwrite the animation.complete option which should be available
-            // to the user).
+            // overwrite the animation.complete option which should be available to
+            // the user).
             if (!hasRendered) {
                 series.animationTimeout = syncTimeout(function () {
                     series.afterAnimate();
                 }, animDuration);
             }
 
-            // means data is in accordance with what you see
-            series.isDirty = false;
-
+            series.isDirty = false; // means data is in accordance with what you see
             // (See #322) series.isDirty = series.isDirtyData = false; // means
             // data is in accordance with what you see
             series.hasRendered = true;

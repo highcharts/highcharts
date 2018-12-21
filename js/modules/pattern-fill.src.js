@@ -105,7 +105,8 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var wrap = H.wrap,
+var addEvent = H.addEvent,
+    wrap = H.wrap,
     merge = H.merge,
     pick = H.pick;
 
@@ -370,7 +371,7 @@ wrap(H.Series.prototype, 'getColor', function (proceed) {
 
 
 // Calculate pattern dimensions on points that have their own pattern.
-wrap(H.Series.prototype, 'render', function (proceed) {
+addEvent(H.Series, 'render', function () {
     var isResizing = this.chart.isResizing;
     if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
         (this.points || []).forEach(function (point) {
@@ -396,13 +397,12 @@ wrap(H.Series.prototype, 'render', function (proceed) {
             }
         });
     }
-    return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
 
 
 // Merge series color options to points
-wrap(H.Point.prototype, 'applyOptions', function (proceed) {
-    var point = proceed.apply(this, Array.prototype.slice.call(arguments, 1)),
+addEvent(H.Point, 'afterInit', function () {
+    var point = this,
         colorOptions = point.options.color;
 
     // Only do this if we have defined a specific color on this point. Otherwise
@@ -420,7 +420,6 @@ wrap(H.Point.prototype, 'applyOptions', function (proceed) {
             point.series.options.color, colorOptions
         );
     }
-    return point;
 });
 
 

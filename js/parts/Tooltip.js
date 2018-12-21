@@ -1178,40 +1178,46 @@ H.Tooltip.prototype = {
                 xAxis.options.type === 'datetime' &&
                 isNumber(labelConfig.key)
             ),
-            formatString = tooltipOptions[footOrHead + 'Format'];
+            formatString = tooltipOptions[footOrHead + 'Format'],
+            evt = { isFooter: isFooter, labelConfig: labelConfig };
 
-        // Guess the best date format based on the closest point distance (#568,
-        // #3418)
-        if (isDateTime && !xDateFormat) {
-            xDateFormat = this.getXDateFormat(
-                labelConfig,
-                tooltipOptions,
-                xAxis
-            );
-        }
+        H.fireEvent(this, 'headerFormatter', evt, function (e) {
 
-        // Insert the footer date format if any
-        if (isDateTime && xDateFormat) {
-            ((labelConfig.point && labelConfig.point.tooltipDateKeys) ||
-                    ['key']).forEach(
-                function (key) {
-                    formatString = formatString.replace(
-                        '{point.' + key + '}',
-                        '{point.' + key + ':' + xDateFormat + '}'
-                    );
-                }
-            );
-        }
+            // Guess the best date format based on the closest point distance
+            // (#568, #3418)
+            if (isDateTime && !xDateFormat) {
+                xDateFormat = this.getXDateFormat(
+                    labelConfig,
+                    tooltipOptions,
+                    xAxis
+                );
+            }
 
-        // Replace default header style with class name
-        if (series.chart.styledMode) {
-            formatString = this.styledModeFormat(formatString);
-        }
+            // Insert the footer date format if any
+            if (isDateTime && xDateFormat) {
+                ((labelConfig.point && labelConfig.point.tooltipDateKeys) ||
+                        ['key']).forEach(
+                    function (key) {
+                        formatString = formatString.replace(
+                            '{point.' + key + '}',
+                            '{point.' + key + ':' + xDateFormat + '}'
+                        );
+                    }
+                );
+            }
 
-        return format(formatString, {
-            point: labelConfig,
-            series: series
-        }, this.chart.time);
+            // Replace default header style with class name
+            if (series.chart.styledMode) {
+                formatString = this.styledModeFormat(formatString);
+            }
+
+            e.text = format(formatString, {
+                point: labelConfig,
+                series: series
+            }, this.chart.time);
+
+        });
+        return evt.text;
     },
 
     /**
