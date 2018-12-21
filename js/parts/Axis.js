@@ -3709,6 +3709,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
             skip,
             transB = axis.transB,
+            evt,
             /**
              * Check if x is between a and b. If not, either move to a/b
              * or skip, depending on the force parameter.
@@ -3724,35 +3725,47 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 return x;
             };
 
-        translatedValue = pick(
-            translatedValue,
-            axis.translate(value, null, null, old)
-        );
-        // Keep the translated value within sane bounds, and avoid Infinity to
-        // fail the isNumber test (#7709).
-        translatedValue = Math.min(Math.max(-1e5, translatedValue), 1e5);
+        evt = {
+            value: value,
+            lineWidth: lineWidth,
+            old: old,
+            force: force,
+            translatedValue: translatedValue
+        };
+        fireEvent(this, 'getPlotLinePath', evt, function (e) {
 
-
-        x1 = x2 = Math.round(translatedValue + transB);
-        y1 = y2 = Math.round(cHeight - translatedValue - transB);
-        if (!isNumber(translatedValue)) { // no min or max
-            skip = true;
-            force = false; // #7175, don't force it when path is invalid
-        } else if (axis.horiz) {
-            y1 = axisTop;
-            y2 = cHeight - axis.bottom;
-            x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
-        } else {
-            x1 = axisLeft;
-            x2 = cWidth - axis.right;
-            y1 = y2 = between(y1, axisTop, axisTop + axis.height);
-        }
-        return skip && !force ?
-            null :
-            chart.renderer.crispLine(
-                ['M', x1, y1, 'L', x2, y2],
-                lineWidth || 1
+            translatedValue = pick(
+                translatedValue,
+                axis.translate(value, null, null, old)
             );
+            // Keep the translated value within sane bounds, and avoid Infinity
+            // to fail the isNumber test (#7709).
+            translatedValue = Math.min(Math.max(-1e5, translatedValue), 1e5);
+
+
+            x1 = x2 = Math.round(translatedValue + transB);
+            y1 = y2 = Math.round(cHeight - translatedValue - transB);
+            if (!isNumber(translatedValue)) { // no min or max
+                skip = true;
+                force = false; // #7175, don't force it when path is invalid
+            } else if (axis.horiz) {
+                y1 = axisTop;
+                y2 = cHeight - axis.bottom;
+                x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
+            } else {
+                x1 = axisLeft;
+                x2 = cWidth - axis.right;
+                y1 = y2 = between(y1, axisTop, axisTop + axis.height);
+            }
+            e.path = skip && !force ?
+                null :
+                chart.renderer.crispLine(
+                    ['M', x1, y1, 'L', x2, y2],
+                    lineWidth || 1
+                );
+        });
+
+        return evt.path;
     },
 
     /**

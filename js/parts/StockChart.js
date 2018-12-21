@@ -35,7 +35,6 @@ var addEvent = H.addEvent,
     splat = H.splat,
     SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer,
-    wrap = H.wrap,
 
     seriesProto = Series.prototype,
     seriesInit = seriesProto.init,
@@ -321,14 +320,7 @@ addEvent(Axis, 'destroy', function () {
 });
 
 // Override getPlotLinePath to allow for multipane charts
-wrap(Axis.prototype, 'getPlotLinePath', function (
-    proceed,
-    value,
-    lineWidth,
-    old,
-    force,
-    translatedValue
-) {
+addEvent(Axis, 'getPlotLinePath', function (e) {
     var axis = this,
         series = (
             this.isLinked && !this.series ?
@@ -347,6 +339,9 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
         axes = [], // #3416 need a default array
         axes2,
         uniqueAxes,
+        translatedValue = e.translatedValue,
+        value = e.value,
+        force = e.force,
         transVal;
 
     // Return the other axis based on either the axis option or on related
@@ -372,112 +367,117 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
     }
 
     // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
-    if (axis.coll !== 'xAxis' && axis.coll !== 'yAxis') {
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    }
+    if (axis.coll === 'xAxis' || axis.coll === 'yAxis') {
 
-    // Get the related axes based on series
-    axes = getAxis(axis.coll);
+        e.preventDefault();
 
-    // Get the related axes based options.*Axis setting #2810
-    axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-    axes2.forEach(function (A) {
-        if (
-            defined(A.options.id) ?
-                A.options.id.indexOf('navigator') === -1 :
-                true
-        ) {
-            var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
-                rax = (
-                    defined(A.options[a]) ?
-                        chart[a][A.options[a]] :
-                        chart[a][0]
-                );
+        // Get the related axes based on series
+        axes = getAxis(axis.coll);
 
-            if (axis === rax) {
-                axes.push(A);
+        // Get the related axes based options.*Axis setting #2810
+        axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
+        axes2.forEach(function (A) {
+            if (
+                defined(A.options.id) ?
+                    A.options.id.indexOf('navigator') === -1 :
+                    true
+            ) {
+                var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
+                    rax = (
+                        defined(A.options[a]) ?
+                            chart[a][A.options[a]] :
+                            chart[a][0]
+                    );
+
+                if (axis === rax) {
+                    axes.push(A);
+                }
+            }
+        });
+
+
+        // Remove duplicates in the axes array. If there are no axes in the axes
+        // array, we are adding an axis without data, so we need to populate
+        // this with grid lines (#2796).
+        uniqueAxes = axes.length ?
+            [] :
+            [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
+        axes.forEach(function (axis2) {
+            if (
+                uniqueAxes.indexOf(axis2) === -1 &&
+                // Do not draw on axis which overlap completely. #5424
+                !H.find(uniqueAxes, function (unique) {
+                    return unique.pos === axis2.pos && unique.len === axis2.len;
+                })
+            ) {
+                uniqueAxes.push(axis2);
+            }
+        });
+
+        transVal = pick(
+            translatedValue,
+            axis.translate(value, null, null, e.old)
+        );
+        if (isNumber(transVal)) {
+            if (axis.horiz) {
+                uniqueAxes.forEach(function (axis2) {
+                    var skip;
+
+                    y1 = axis2.pos;
+                    y2 = y1 + axis2.len;
+                    x1 = x2 = Math.round(transVal + axis.transB);
+
+                    // outside plot area
+                    if (
+                        force !== 'pass' &&
+                        (x1 < axisLeft || x1 > axisLeft + axis.width)
+                    ) {
+                        if (force) {
+                            x1 = x2 = Math.min(
+                                Math.max(axisLeft, x1),
+                                axisLeft + axis.width
+                            );
+                        } else {
+                            skip = true;
+                        }
+                    }
+                    if (!skip) {
+                        result.push('M', x1, y1, 'L', x2, y2);
+                    }
+                });
+            } else {
+                uniqueAxes.forEach(function (axis2) {
+                    var skip;
+
+                    x1 = axis2.pos;
+                    x2 = x1 + axis2.len;
+                    y1 = y2 = Math.round(axisTop + axis.height - transVal);
+
+                    // outside plot area
+                    if (
+                        force !== 'pass' &&
+                        (y1 < axisTop || y1 > axisTop + axis.height)
+                    ) {
+                        if (force) {
+                            y1 = y2 = Math.min(
+                                Math.max(axisTop, y1),
+                                axis.top + axis.height
+                            );
+                        } else {
+                            skip = true;
+                        }
+                    }
+                    if (!skip) {
+                        result.push('M', x1, y1, 'L', x2, y2);
+                    }
+                });
             }
         }
-    });
-
-
-    // Remove duplicates in the axes array. If there are no axes in the axes
-    // array, we are adding an axis without data, so we need to populate this
-    // with grid lines (#2796).
-    uniqueAxes = axes.length ?
-        [] :
-        [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
-    axes.forEach(function (axis2) {
-        if (
-            uniqueAxes.indexOf(axis2) === -1 &&
-            // Do not draw on axis which overlap completely. #5424
-            !H.find(uniqueAxes, function (unique) {
-                return unique.pos === axis2.pos && unique.len === axis2.len;
-            })
-        ) {
-            uniqueAxes.push(axis2);
-        }
-    });
-
-    transVal = pick(translatedValue, axis.translate(value, null, null, old));
-    if (isNumber(transVal)) {
-        if (axis.horiz) {
-            uniqueAxes.forEach(function (axis2) {
-                var skip;
-
-                y1 = axis2.pos;
-                y2 = y1 + axis2.len;
-                x1 = x2 = Math.round(transVal + axis.transB);
-
-                // outside plot area
-                if (
-                    force !== 'pass' &&
-                    (x1 < axisLeft || x1 > axisLeft + axis.width)
-                ) {
-                    if (force) {
-                        x1 = x2 = Math.min(
-                            Math.max(axisLeft, x1),
-                            axisLeft + axis.width
-                        );
-                    } else {
-                        skip = true;
-                    }
-                }
-                if (!skip) {
-                    result.push('M', x1, y1, 'L', x2, y2);
-                }
-            });
-        } else {
-            uniqueAxes.forEach(function (axis2) {
-                var skip;
-
-                x1 = axis2.pos;
-                x2 = x1 + axis2.len;
-                y1 = y2 = Math.round(axisTop + axis.height - transVal);
-
-                // outside plot area
-                if (
-                    force !== 'pass' &&
-                    (y1 < axisTop || y1 > axisTop + axis.height)
-                ) {
-                    if (force) {
-                        y1 = y2 = Math.min(
-                            Math.max(axisTop, y1),
-                            axis.top + axis.height
-                        );
-                    } else {
-                        skip = true;
-                    }
-                }
-                if (!skip) {
-                    result.push('M', x1, y1, 'L', x2, y2);
-                }
-            });
-        }
+        e.path = result.length > 0 ?
+            renderer.crispPolyLine(result, e.lineWidth || 1) :
+            // #3557 getPlotLinePath in regular Highcharts also returns null
+            null;
     }
-    return result.length > 0 ?
-        renderer.crispPolyLine(result, lineWidth || 1) :
-        null; // #3557 getPlotLinePath in regular Highcharts also returns null
 });
 
 /**
