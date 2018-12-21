@@ -3734,6 +3734,8 @@ null
 
         this.dataMin = arrayMin(activeYData);
         this.dataMax = arrayMax(activeYData);
+
+        fireEvent(this, 'afterGetExtremes');
     },
 
     /**
