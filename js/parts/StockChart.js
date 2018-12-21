@@ -891,7 +891,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 // Extend the Series prototype to create a separate series clip box. This is
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
-wrap(Series.prototype, 'render', function (proceed) {
+addEvent(Series, 'render', function () {
     var clipHeight;
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
     // if the series type handles clipping in the animate method (#2975).
@@ -924,7 +924,6 @@ wrap(Series.prototype, 'render', function (proceed) {
             this.clipBox.height = clipHeight;
         }
     }
-    proceed.call(this);
 });
 
 wrap(Chart.prototype, 'getSelectedPoints', function (proceed) {

@@ -5011,6 +5011,8 @@ null
             chartSeriesGroup = chart.seriesGroup,
             inverted = chart.inverted;
 
+        fireEvent(this, 'render');
+
         // the group
         group = series.plotGroup(
             'group',
