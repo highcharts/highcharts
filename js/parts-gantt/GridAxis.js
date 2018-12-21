@@ -847,9 +847,10 @@ wrap(Axis.prototype, 'render',
 );
 
 // Wraps axis init to draw cell walls on vertical axes.
-addEvent(Axis, 'afterInit', function (e) {
+addEvent(Axis, 'init', function (e) {
     var axis = this,
-        userOptions = this.userOptions,
+        chart = axis.chart,
+        userOptions = e.userOptions,
         gridOptions = (
             (userOptions && isObject(userOptions.grid)) ?
             userOptions.grid :
@@ -860,7 +861,7 @@ addEvent(Axis, 'afterInit', function (e) {
         columnIndex,
         i;
 
-    function applyGridOptions(axis) {
+    function applyGridOptions() {
         var options = axis.options,
             // TODO: Consider using cell margins defined in % of font size?
             // 25 is optimal height for default fontSize (11px)
@@ -947,9 +948,13 @@ addEvent(Axis, 'afterInit', function (e) {
 
                 columnIndex++;
             }
-            e.preventDefault();
+            // This axis should not be shown, instead the column axes take over
+            addEvent(this, 'afterInit', function () {
+                H.erase(chart.axes, this);
+                H.erase(chart[axis.coll], this);
+            });
         } else {
-            applyGridOptions(axis);
+            addEvent(this, 'afterInit', applyGridOptions);
         }
     }
 });

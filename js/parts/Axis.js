@@ -3155,8 +3155,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         axis.opposite = userOptions.opposite; // needed in setOptions
 
         /**
-         * The side on which the axis is rendered. 0 is top, 1 is right, 2 is
-         * bottom and 3 is left.
+         * The side on which the axis is rendered. 0 is top, 1 is right, 2
+         * is bottom and 3 is left.
          *
          * @name Highcharts.Axis#side
          * @type {number}
@@ -3173,7 +3173,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             isDatetimeAxis = type === 'datetime';
 
         axis.labelFormatter = options.labels.formatter ||
-            axis.defaultLabelFormatter; // can be overwritten by dynamic format
+            // can be overwritten by dynamic format
+            axis.defaultLabelFormatter;
 
 
         // Flag, stagger lines or not
