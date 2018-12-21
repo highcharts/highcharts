@@ -452,6 +452,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          * @type {Highcharts.SVGRenderer}
          */
         this.renderer = renderer;
+
+        H.fireEvent(this, 'afterInit');
     },
 
     /**
