@@ -292,7 +292,7 @@ bindingsUtils.updateHeight = function (e, annotation) {
 bindingsUtils.attractToPoint = function (e, chart) {
     var x = chart.xAxis[0].toValue(e.chartX),
         y = chart.yAxis[0].toValue(e.chartY),
-        distX = Number.MAX_SAFE_INTEGER, // IE?
+        distX = Number.MAX_VALUE,
         closestPoint;
 
     chart.series.forEach(function (series) {
@@ -398,13 +398,13 @@ extend(H.NavigationBindings.prototype, {
 
         positions = yAxes.map(function (yAxis) {
             var height = isPercentage(yAxis.options.height) ?
-                        parseFloat(yAxis.options.height) / 100 :
-                        yAxis.height / plotHeight,
+                    parseFloat(yAxis.options.height) / 100 :
+                    yAxis.height / plotHeight,
                 top = isPercentage(yAxis.options.top) ?
-                        parseFloat(yAxis.options.top) / 100 :
-                        correctFloat(
-                            yAxis.top - yAxis.chart.plotTop
-                        ) / plotHeight;
+                    parseFloat(yAxis.options.top) / 100 :
+                    correctFloat(
+                        yAxis.top - yAxis.chart.plotTop
+                    ) / plotHeight;
 
             // New yAxis does not contain "height" info yet
             if (!isNumber(height)) {

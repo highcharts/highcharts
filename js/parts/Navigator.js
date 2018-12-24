@@ -24,12 +24,10 @@ var addEvent = H.addEvent,
     defined = H.defined,
     destroyObjectProperties = H.destroyObjectProperties,
     erase = H.erase,
-    error = H.error,
     extend = H.extend,
     hasTouch = H.hasTouch,
     isArray = H.isArray,
     isNumber = H.isNumber,
-    isObject = H.isObject,
     isTouchDevice = H.isTouchDevice,
     merge = H.merge,
     pick = H.pick,
@@ -37,7 +35,6 @@ var addEvent = H.addEvent,
     Scrollbar = H.Scrollbar,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    wrap = H.wrap,
 
     units = [].concat(defaultDataGroupingUnits), // copy
     defaultSeriesType,
@@ -1857,7 +1854,7 @@ Navigator.prototype = {
                     }
                     return true;
                 }
-            );
+                );
 
         // Go through each base series and merge the options to create new
         // series
@@ -1930,35 +1927,35 @@ Navigator.prototype = {
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions = H.splat(chartNavigatorSeriesOptions);
             chartNavigatorSeriesOptions
-            .forEach(function (userSeriesOptions, i) {
-                navSeriesMixin.name =
+                .forEach(function (userSeriesOptions, i) {
+                    navSeriesMixin.name =
                     'Navigator ' + (navigatorSeries.length + 1);
-                mergedNavSeriesOptions = merge(
-                    defaultOptions.navigator.series,
-                    {
+                    mergedNavSeriesOptions = merge(
+                        defaultOptions.navigator.series,
+                        {
                         // Since we don't have a base series to pull color from,
                         // try to fake it by using color from series with same
                         // index. Otherwise pull from the colors array. We need
                         // an explicit color as otherwise updates will increment
                         // color counter and we'll get a new color for each
                         // update of the nav series.
-                        color: chart.series[i] &&
+                            color: chart.series[i] &&
                             !chart.series[i].options.isInternal &&
                             chart.series[i].color ||
                             chart.options.colors[i] ||
                             chart.options.colors[0]
-                    },
-                    navSeriesMixin,
-                    userSeriesOptions
-                );
-                mergedNavSeriesOptions.data = userSeriesOptions.data;
-                if (mergedNavSeriesOptions.data) {
-                    navigator.hasNavigatorData = true;
-                    navigatorSeries.push(
-                        chart.initSeries(mergedNavSeriesOptions)
+                        },
+                        navSeriesMixin,
+                        userSeriesOptions
                     );
-                }
-            });
+                    mergedNavSeriesOptions.data = userSeriesOptions.data;
+                    if (mergedNavSeriesOptions.data) {
+                        navigator.hasNavigatorData = true;
+                        navigatorSeries.push(
+                            chart.initSeries(mergedNavSeriesOptions)
+                        );
+                    }
+                });
         }
 
         if (addEvents) {
@@ -2282,22 +2279,21 @@ H.Navigator = Navigator;
  * because X axis zooming is already allowed by the Navigator and Range
  * selector.
  */
-wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
+addEvent(Axis, 'zoom', function (e) {
     var chart = this.chart,
         chartOptions = chart.options,
         zoomType = chartOptions.chart.zoomType,
         pinchType = chartOptions.chart.pinchType,
         previousZoom,
         navigator = chartOptions.navigator,
-        rangeSelector = chartOptions.rangeSelector,
-        ret;
+        rangeSelector = chartOptions.rangeSelector;
 
     if (this.isXAxis && ((navigator && navigator.enabled) ||
             (rangeSelector && rangeSelector.enabled))) {
 
         // For y only zooming, ignore the X axis completely
         if (zoomType === 'y') {
-            ret = false;
+            e.zoomed = false;
 
         // For xy zooming, record the state of the zoom before zoom selection,
         // then when the reset button is pressed, revert to this state. This
@@ -2312,17 +2308,19 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
         ) {
 
             previousZoom = this.previousZoom;
-            if (defined(newMin)) {
+            if (defined(e.newMin)) {
                 this.previousZoom = [this.min, this.max];
             } else if (previousZoom) {
-                newMin = previousZoom[0];
-                newMax = previousZoom[1];
+                e.newMin = previousZoom[0];
+                e.newMax = previousZoom[1];
                 delete this.previousZoom;
             }
         }
 
     }
-    return ret !== undefined ? ret : proceed.call(this, newMin, newMax);
+    if (e.zoomed !== undefined) {
+        e.preventDefault();
+    }
 });
 
 /**
@@ -2447,26 +2445,6 @@ addEvent(Chart, 'afterUpdate', function () {
         this.scroller = this.navigator = new Navigator(this);
     }
 
-});
-
-// Pick up badly formatted point options to addPoint
-wrap(Series.prototype, 'addPoint', function (
-    proceed,
-    options,
-    redraw,
-    shift,
-    animation
-) {
-    var turboThreshold = this.options.turboThreshold;
-    if (
-        turboThreshold &&
-        this.xData.length > turboThreshold &&
-        isObject(options, true) &&
-        this.chart.navigator
-    ) {
-        error(20, true, this.chart);
-    }
-    proceed.call(this, options, redraw, shift, animation);
 });
 
 // Handle adding new series

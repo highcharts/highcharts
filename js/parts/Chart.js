@@ -26,6 +26,11 @@
  *
  * @param {Highcharts.TitleOptions} titleOptions
  *        Options to modify.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart after the title is altered. If doing more
+ *        operations on the chart, it is a good idea to set redraw to false and
+ *        call {@link Chart#redraw} after.
  */
 
 /**
@@ -42,6 +47,11 @@
  *
  * @param {Highcharts.SubtitleOptions} subtitleOptions
  *        Options to modify.
+ *
+ * @param {boolean} [redraw=true]
+ *        Whether to redraw the chart after the subtitle is altered. If doing
+ *        more operations on the chart, it is a good idea to set redraw to false
+ *        and call {@link Chart#redraw} after.
  */
 
 'use strict';
@@ -726,10 +736,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     getSelectedPoints: function () {
         var points = [];
         this.series.forEach(function (serie) {
-            // series.data - for points outside of viewed range (#6445)
-            points = points.concat((serie.data || []).filter(function (point) {
-                return point.selected;
-            }));
+            // For one-to-one points inspect series.data in order to retrieve
+            // points outside the visible range (#6445). For grouped data,
+            // inspect the generated series.points.
+            points = points.concat(
+                (serie[serie.hasGroupedData ? 'points' : 'data'] || []).filter(
+                    function (point) {
+                        return point.selected;
+                    }
+                )
+            );
         });
         return points;
     },
@@ -849,12 +865,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     0,
                     chartTitleOptions.useHTML
                 )
-                .attr({
-                    align: chartTitleOptions.align,
-                    'class': 'highcharts-' + name,
-                    zIndex: chartTitleOptions.zIndex || 4
-                })
-                .add();
+                    .attr({
+                        align: chartTitleOptions.align,
+                        'class': 'highcharts-' + name,
+                        zIndex: chartTitleOptions.zIndex || 4
+                    })
+                    .add();
 
                 // Update methods, shortcut to Chart.setTitle
                 chart[name].update = function (o) {
@@ -1301,7 +1317,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#reflow
      *
-     * @param {global.Event} e
+     * @param {global.Event} [e]
      *        Event arguments. Used primarily when the function is called
      *        internally as a response to window resize.
      */
@@ -1810,7 +1826,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             value =
                 optionsChart[key] || // It is set in the options
                 (klass && klass.prototype[key]); // The default series class
-                    // requires it
+            // requires it
 
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
@@ -1908,9 +1924,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     x,
                     y
                 )
-                .attr({ zIndex: 2 })
-                .css(style)
-                .add();
+                    .attr({ zIndex: 2 })
+                    .css(style)
+                    .add();
 
             });
         }
@@ -2051,16 +2067,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 0,
                 0
             )
-            .addClass('highcharts-credits')
-            .on('click', function () {
-                if (credits.href) {
-                    win.location.href = credits.href;
-                }
-            })
-            .attr({
-                align: credits.position.align,
-                zIndex: 8
-            });
+                .addClass('highcharts-credits')
+                .on('click', function () {
+                    if (credits.href) {
+                        win.location.href = credits.href;
+                    }
+                })
+                .attr({
+                    align: credits.position.align,
+                    zIndex: 8
+                });
 
 
             if (!chart.styledMode) {
@@ -2196,9 +2212,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.getAxes();
 
         // Initialize the series
-        (options.series || []).forEach(function (serieOptions) {
-            chart.initSeries(serieOptions);
-        });
+        (H.isArray(options.series) ? options.series : []).forEach( // #9680
+            function (serieOptions) {
+                chart.initSeries(serieOptions);
+            }
+        );
 
         chart.linkSeries();
 

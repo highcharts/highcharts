@@ -446,12 +446,6 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  *
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/
- *         Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *         Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/
- *         Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *

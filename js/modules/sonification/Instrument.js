@@ -304,15 +304,15 @@ Instrument.prototype.getValidFrequency = function (frequency, min, max) {
         maximum = H.pick(max, Infinity),
         minimum = H.pick(min, -Infinity);
     return !validFrequencies || !validFrequencies.length ?
-            // No valid frequencies for this instrument, return the target
-            frequency :
-            // Use the valid frequencies and return the closest match
-            validFrequencies.reduce(function (acc, cur) {
-                // Find the closest allowed value
-                return Math.abs(cur - frequency) < Math.abs(acc - frequency) &&
-                    cur < maximum && cur > minimum ?
-                    cur : acc;
-            }, Infinity);
+        // No valid frequencies for this instrument, return the target
+        frequency :
+        // Use the valid frequencies and return the closest match
+        validFrequencies.reduce(function (acc, cur) {
+            // Find the closest allowed value
+            return Math.abs(cur - frequency) < Math.abs(acc - frequency) &&
+                cur < maximum && cur > minimum ?
+                cur : acc;
+        }, Infinity);
 };
 
 

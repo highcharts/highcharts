@@ -9,7 +9,8 @@
 
 import H from '../parts/Globals.js';
 
-var argsToArray = function (args) {
+var addEvent = H.addEvent,
+    argsToArray = function (args) {
         return Array.prototype.slice.call(args, 1);
     },
     dateFormat = H.dateFormat,
@@ -209,56 +210,17 @@ H.dateFormats = {
     }
 };
 
-wrap(Axis.prototype, 'autoLabelAlign',
-    /**
-     * If chart is stockChart, always return 'left' to avoid labels being placed
-     * inside chart. Stock charts place yAxis labels inside by default.
-     *
-     * @private
-     * @function
-     *
-     * @param {Function} proceed
-     *        the original function
-     *
-     * @return {string}
-     *         'left' if stockChart, or auto calculated alignment
-     */
-    function (proceed) {
-        var axis = this,
-            retVal;
-        if (axis.chart.isStock) {
-            retVal = 'left';
-        } else {
-            retVal = proceed.apply(axis, argsToArray(arguments));
-        }
-        return retVal;
-    }
-);
-
-wrap(Tick.prototype, 'getLabelPosition',
+addEvent(
+    Tick,
+    'afterGetLabelPosition',
     /**
      * Center tick labels in cells.
      *
      * @private
-     * @function
-     *
-     * @param {Function} proceed
-     *        the original function
-     *
-     * @return {object}
-     *         an object containing x and y positions for the tick
      */
-    function (
-        proceed,
-        x,
-        y,
-        label,
-        horiz,
-        labelOpts,
-        tickmarkOffset,
-        index
-    ) {
+    function (e) {
         var tick = this,
+            label = tick.label,
             axis = tick.axis,
             reversed = axis.reversed,
             chart = axis.chart,
@@ -266,16 +228,18 @@ wrap(Tick.prototype, 'getLabelPosition',
             gridOptions = (
                 (options && isObject(options.grid)) ? options.grid : {}
             ),
+            labelOpts = axis.options.labels,
             align = labelOpts.align,
             // verticalAlign is currently not supported for axis.labels.
             verticalAlign = 'middle', // labelOpts.verticalAlign,
             side = axisSide[axis.side],
+            tickmarkOffset = e.tickmarkOffset,
             tickPositions = axis.tickPositions,
             tickPos = tick.pos - tickmarkOffset,
             nextTickPos = (
-                isNumber(tickPositions[index + 1]) ?
-                tickPositions[index + 1] - tickmarkOffset :
-                axis.max + tickmarkOffset
+                isNumber(tickPositions[e.index + 1]) ?
+                    tickPositions[e.index + 1] - tickmarkOffset :
+                    axis.max + tickmarkOffset
             ),
             tickSize = axis.tickSize('tick', true),
             tickWidth = isArray(tickSize) ? tickSize[0] : 0,
@@ -283,7 +247,6 @@ wrap(Tick.prototype, 'getLabelPosition',
             labelHeight,
             lblMetrics,
             lines,
-            result,
             bottom,
             top,
             left,
@@ -291,6 +254,7 @@ wrap(Tick.prototype, 'getLabelPosition',
 
         // Only center tick labels in grid axes
         if (gridOptions.enabled === true) {
+
             // Calculate top and bottom positions of the cell.
             if (side === 'top') {
                 bottom = axis.top + axis.offset;
@@ -326,22 +290,20 @@ wrap(Tick.prototype, 'getLabelPosition',
             tick.slotWidth = right - left;
 
             // Calculate the positioning of the label based on alignment.
-            result = {
-                x: (
-                    align === 'left' ?
+            e.pos.x = (
+                align === 'left' ?
                     left :
                     align === 'right' ?
-                    right :
-                    left + ((right - left) / 2) // default to center
-                ),
-                y: (
-                    verticalAlign === 'top' ?
+                        right :
+                        left + ((right - left) / 2) // default to center
+            );
+            e.pos.y = (
+                verticalAlign === 'top' ?
                     top :
                     verticalAlign === 'bottom' ?
-                    bottom :
-                    top + ((bottom - top) / 2) // default to middle
-                )
-            };
+                        bottom :
+                        top + ((bottom - top) / 2) // default to middle
+            );
 
             lblMetrics = chart.renderer.fontMetrics(
                 labelOpts.style.fontSize,
@@ -353,7 +315,7 @@ wrap(Tick.prototype, 'getLabelPosition',
             // Would be better to have a setter or similar for this.
             if (!labelOpts.useHTML) {
                 lines = Math.round(labelHeight / lblMetrics.h);
-                result.y += (
+                e.pos.y += (
                     // Center the label
                     // TODO: why does this actually center the label?
                     ((lblMetrics.b - (lblMetrics.h - lblMetrics.f)) / 2) +
@@ -361,7 +323,7 @@ wrap(Tick.prototype, 'getLabelPosition',
                     -(((lines - 1) * lblMetrics.h) / 2)
                 );
             } else {
-                result.y += (
+                e.pos.y += (
                     // Readjust yCorr in htmlUpdateTransform
                     lblMetrics.b +
                     // Adjust for height of html label
@@ -369,32 +331,18 @@ wrap(Tick.prototype, 'getLabelPosition',
                 );
             }
 
-            result.x += (axis.horiz && labelOpts.x || 0);
-        } else {
-            result = proceed.apply(tick, argsToArray(arguments));
+            e.pos.x += (axis.horiz && labelOpts.x || 0);
         }
-        return result;
     }
 );
 
-/**
- * Draw vertical axis ticks extra long to create cell floors and roofs.
- * Overrides the tickLength for vertical axes.
- *
- * @private
- * @function
- *
- * @param {Function} proceed
- *        the original function
- *
- * @returns {Array<number>}
- */
-wrap(Axis.prototype, 'tickSize', function (proceed) {
+// Draw vertical axis ticks extra long to create cell floors and roofs.
+// Overrides the tickLength for vertical axes.
+addEvent(Axis, 'afterTickSize', function (e) {
     var axis = this,
         dimensions = axis.maxLabelDimensions,
         options = axis.options,
         gridOptions = (options && isObject(options.grid)) ? options.grid : {},
-        retVal = proceed.apply(axis, argsToArray(arguments)),
         labelPadding,
         distance;
 
@@ -403,16 +351,15 @@ wrap(Axis.prototype, 'tickSize', function (proceed) {
         distance = labelPadding +
             (axis.horiz ? dimensions.height : dimensions.width);
 
-        if (isArray(retVal)) {
-            retVal[0] = distance;
+        if (isArray(e.tickSize)) {
+            e.tickSize[0] = distance;
         } else {
-            retVal = [distance];
+            e.tickSize = [distance];
         }
     }
-    return retVal;
 });
 
-wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
+addEvent(Axis, 'afterGetTitlePosition', function (e) {
     var axis = this,
         options = axis.options,
         gridOptions = (options && isObject(options.grid)) ? options.grid : {};
@@ -445,23 +392,19 @@ wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
                 (tickSize[0] / 2) +
                 (axis.side === axisSide.bottom ? titleFontSize : 0);
 
-        return {
-            x: horiz ?
-                axisLeft - titleWidth / 2 - titleMargin + xOption :
-                offAxis + (opposite ? axisWidth : 0) + offset + xOption,
-            y: horiz ?
-                (
-                    offAxis -
-                    (opposite ? axisHeight : 0) +
-                    (opposite ? titleFontSize : -titleFontSize) / 2 +
-                    offset +
-                    yOption
-                ) :
-                axisTop - titleMargin + yOption
-        };
+        e.titlePosition.x = horiz ?
+            axisLeft - titleWidth / 2 - titleMargin + xOption :
+            offAxis + (opposite ? axisWidth : 0) + offset + xOption;
+        e.titlePosition.y = horiz ?
+            (
+                offAxis -
+                (opposite ? axisHeight : 0) +
+                (opposite ? titleFontSize : -titleFontSize) / 2 +
+                offset +
+                yOption
+            ) :
+            axisTop - titleMargin + yOption;
     }
-
-    return proceed.apply(this, argsToArray(arguments));
 });
 
 // Avoid altering tickInterval when reserving space.
@@ -477,7 +420,7 @@ wrap(Axis.prototype, 'unsquish', function (proceed) {
     return proceed.apply(this, argsToArray(arguments));
 });
 
-H.addEvent(Axis, 'afterSetOptions',
+addEvent(Axis, 'afterSetOptions',
     /**
      * Creates a left and right wall on horizontal axes:
      *
@@ -670,28 +613,10 @@ H.addEvent(Axis, 'afterSetOptions',
     }
 );
 
-wrap(Axis.prototype, 'setAxisTranslation',
-    /**
-     * Ensures a left wall on horizontal axes with series inheriting from
-     * column. ColumnSeries normally sets pointRange to null, resulting in Axis
-     * to select other values for point ranges. This enforces the above
-     * Axis.setOptions() override.
-     * ```
-     *                  _________________________
-     * Enforce this:    ___|_____|_____|_____|__|
-     *                  ^
-     *                  _________________________
-     * To be this:      |_____|_____|_____|_____|
-     *                  ^
-     * ```
-     *
-     * @private
-     * @function
-     *
-     * @param {Function} proceed
-     *        the original function
-     */
-    function (proceed) {
+addEvent(
+    Axis,
+    'afterSetAxisTranslation',
+    function () {
         var axis = this,
             options = axis.options,
             gridOptions = (
@@ -726,14 +651,14 @@ wrap(Axis.prototype, 'setAxisTranslation',
                 }
             }
         }
-
-        proceed.apply(axis, argsToArray(arguments));
     }
 );
 
 // @todo Does this function do what the drawing says? Seems to affect ticks and
 //       not the labels directly?
-wrap(Axis.prototype, 'trimTicks',
+addEvent(
+    Axis,
+    'trimTicks',
     /**
      * Makes tick labels which are usually ignored in a linked axis displayed if
      * they are within range of linkedParent.min.
@@ -751,12 +676,8 @@ wrap(Axis.prototype, 'trimTicks',
      * ```
      *
      * @private
-     * @function
-     *
-     * @param {Function} proceed
-     *        the original function
      */
-    function (proceed) {
+    function () {
         var axis = this,
             options = axis.options,
             gridOptions = (
@@ -789,8 +710,6 @@ wrap(Axis.prototype, 'trimTicks',
                 tickPositions[tickPositions.length - 1] = max;
             }
         }
-
-        proceed.apply(axis, argsToArray(arguments));
     }
 );
 
@@ -928,18 +847,21 @@ wrap(Axis.prototype, 'render',
 );
 
 // Wraps axis init to draw cell walls on vertical axes.
-wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+addEvent(Axis, 'init', function (e) {
     var axis = this,
+        chart = axis.chart,
+        userOptions = e.userOptions,
         gridOptions = (
             (userOptions && isObject(userOptions.grid)) ?
-            userOptions.grid :
-            {}
+                userOptions.grid :
+                {}
         ),
         columnOptions,
         column,
         columnIndex,
         i;
-    function applyGridOptions(axis) {
+
+    function applyGridOptions() {
         var options = axis.options,
             // TODO: Consider using cell margins defined in % of font size?
             // 25 is optimal height for default fontSize (11px)
@@ -1000,7 +922,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
                 delete columnOptions.grid.columns; // Prevent recursion
 
-                column = new Axis(chart, columnOptions);
+                column = new Axis(axis.chart, columnOptions);
                 column.isColumn = true;
                 column.columnIndex = columnIndex;
 
@@ -1026,13 +948,13 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
                 columnIndex++;
             }
+            // This axis should not be shown, instead the column axes take over
+            addEvent(this, 'afterInit', function () {
+                H.erase(chart.axes, this);
+                H.erase(chart[axis.coll], this);
+            });
         } else {
-            // Call original Axis.init()
-            proceed.apply(axis, argsToArray(arguments));
-            applyGridOptions(axis);
+            addEvent(this, 'afterInit', applyGridOptions);
         }
-    } else {
-        // Call original Axis.init()
-        proceed.apply(axis, argsToArray(arguments));
     }
 });

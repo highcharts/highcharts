@@ -377,7 +377,9 @@ Highcharts.Pointer.prototype = {
                 chartX: plotX + xAxis.pos,
                 chartY: point.plotY + yAxis.pos
             };
-        } else if (shapeArgs && shapeArgs.x && shapeArgs.y) {
+        }
+
+        if (shapeArgs && shapeArgs.x && shapeArgs.y) {
             // E.g. pies do not have axes
             return {
                 chartX: shapeArgs.x,
@@ -658,7 +660,7 @@ Highcharts.Pointer.prototype = {
 
         // Just move the tooltip, #349
         if (allowMove) {
-            if (tooltip && tooltipPoints) {
+            if (tooltip && tooltipPoints && tooltipPoints.length) {
                 tooltip.refresh(tooltipPoints);
                 if (tooltip.shared && hoverPoints) { // #8284
                     hoverPoints.forEach(function (point) {
@@ -845,11 +847,11 @@ Highcharts.Pointer.prototype = {
                             zoomVert ? 1 : plotHeight,
                             0
                         )
-                        .attr({
-                            'class': 'highcharts-selection-marker',
-                            'zIndex': 7
-                        })
-                        .add();
+                            .attr({
+                                'class': 'highcharts-selection-marker',
+                                'zIndex': 7
+                            })
+                            .add();
 
                     if (!chart.styledMode) {
                         selectionMarker.attr({
@@ -951,7 +953,7 @@ Highcharts.Pointer.prototype = {
                                         selectionLeft + selectionWidth :
                                         selectionTop + selectionHeight
                                 ) - minPixelPadding
-                                );
+                            );
 
                         selectionData[axis.coll].push({
                             axis: axis,

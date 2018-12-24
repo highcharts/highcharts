@@ -1,10 +1,8 @@
 /* *
+ * (c) 2010-2018 Torstein Honsi
  *
- *  (c) 2010-2018 Torstein Honsi
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 'use strict';
 
@@ -45,12 +43,12 @@ seriesType('areaspline', 'spline',
      * @apioption plotOptions.areaspline
      */
     defaultPlotOptions.area
-, {
-    getStackPoints: areaProto.getStackPoints,
-    getGraphPath: areaProto.getGraphPath,
-    drawGraph: areaProto.drawGraph,
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle
-});
+    , {
+        getStackPoints: areaProto.getStackPoints,
+        getGraphPath: areaProto.getGraphPath,
+        drawGraph: areaProto.drawGraph,
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle
+    });
 
 /**
  * A `areaspline` series. If the [type](#series.areaspline.type) option
@@ -117,7 +115,7 @@ seriesType('areaspline', 'spline',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<number|string|Date>|*>}
+ * @type      {Array<number|Array<(number|string),number>|*>}
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.areaspline.data

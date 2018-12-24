@@ -70,7 +70,7 @@ H.seriesType('trix', 'tema',
                 var TRIXPoint = [
                     xVal[i - 3],
                     EMAlevels.prevLevel3 !== 0 ?
-                      correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
+                        correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
                       EMAlevels.prevLevel3 * 100 : null
                 ];
             }

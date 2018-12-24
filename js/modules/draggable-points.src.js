@@ -647,8 +647,8 @@ if (seriesTypes.arearange) {
         // Use a circle covering the marker as drag handle
         arearangeHandleFormatter = function (point) {
             var radius = point.graphic ?
-                    point.graphic.getBBox().width / 2 + 1 :
-                    4;
+                point.graphic.getBBox().width / 2 + 1 :
+                4;
             return [
                 'M', 0 - radius, 0,
                 'a', radius, radius, 0, 1, 0, radius * 2, 0,
@@ -1316,9 +1316,9 @@ function isPointMovable(point) {
     // We can only move the point if draggableX/Y is set, even if all the
     // individual prop options are set.
     return (
-            seriesDragDropOptions.draggableX && hasMovableX ||
+        seriesDragDropOptions.draggableX && hasMovableX ||
             seriesDragDropOptions.draggableY && hasMovableY
-        ) &&
+    ) &&
         !(
             pointDragDropOptions &&
             pointDragDropOptions.draggableX === false &&
@@ -1643,12 +1643,14 @@ function getNewPoints(dragDropData, newPos) {
     (resizeProp ? // If resizing).forEach(only update the point we are resizing
         [point] :
         dragDropData.groupedPoints).forEach(
-    function (p) {
-        hashmap[p.id] = {
-            point: p,
-            newValues: p.getDropValues(dragDropData.origin, newPos, updateProps)
-        };
-    });
+        function (p) {
+            hashmap[p.id] = {
+                point: p,
+                newValues: p.getDropValues(
+                    dragDropData.origin, newPos, updateProps
+                )
+            };
+        });
     return hashmap;
 }
 
@@ -1989,7 +1991,7 @@ H.Series.prototype.getGuideBox = function (points) {
  */
 function mouseOut(point) {
     var chart = point.series && point.series.chart,
-        dragDropData = chart.dragDropData;
+        dragDropData = chart && chart.dragDropData;
     if (
         chart &&
         chart.dragHandles &&
@@ -2141,7 +2143,7 @@ H.Point.prototype.showDragHandles = function () {
             // If cursor is not set explicitly, use axis direction
             handleAttrs.cursor = handleOptions.cursor ||
                 (val.axis === 'x') !== !!chart.inverted ?
-                    'ew-resize' : 'ns-resize';
+                'ew-resize' : 'ns-resize';
 
             // Create and add the handle element if it doesn't exist
             handle = chart.dragHandles[handleSide];

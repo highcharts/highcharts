@@ -1077,7 +1077,7 @@ Annotation.prototype = {
         this.shapesGroup = renderer.g('annotation-shapes').add(group);
 
         this.labelsGroup = renderer.g('annotation-labels').attr({
-      // hideOverlappingLabels requires translation
+            // hideOverlappingLabels requires translation
             translateX: 0,
             translateY: 0
         }).add(group);
@@ -1215,8 +1215,8 @@ Annotation.prototype = {
             if (style.color === 'contrast') {
                 style.color = this.chart.renderer.getContrast(
                     this.shapesWithoutBackground.indexOf(options.shape) > -1 ?
-                    '#FFFFFF' :
-                    options.backgroundColor
+                        '#FFFFFF' :
+                        options.backgroundColor
                 );
             }
             label.css(style).shadow(options.shadow);

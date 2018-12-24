@@ -35,8 +35,7 @@ var VMLRenderer,
     svg = H.svg,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
-    win = H.win,
-    wrap = H.wrap;
+    win = H.win;
 
 
 /**
@@ -93,13 +92,12 @@ if (!svg) {
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    wrap(H.SVGRenderer.prototype, 'text', function (proceed) {
-        return proceed.apply(
-            this,
-            Array.prototype.slice.call(arguments, 1)
-        ).css({
-            position: 'absolute'
-        });
+    H.addEvent(SVGElement, 'afterInit', function () {
+        if (this.element.nodeName === 'text') {
+            this.css({
+                position: 'absolute'
+            });
+        }
     });
 
     /**
@@ -1063,8 +1061,8 @@ if (!svg) {
                         // the meanings of opacity and o:opacity2 are reversed.
                         markup = ['<fill colors="' + colors.join(',') +
                             '" opacity="', opacity2, '" o:opacity2="',
-                            opacity1, '" type="', fillType, '" ', fillAttr,
-                            'focus="100%" method="any" />'];
+                        opacity1, '" type="', fillType, '" ', fillAttr,
+                        'focus="100%" method="any" />'];
                         createElement(
                             renderer.prepVML(markup),
                             null,
@@ -1126,7 +1124,7 @@ if (!svg) {
                         fillAttr = 'angle="' + (90 - Math.atan(
                             (y2 - y1) / // y vector
                             (x2 - x1) // x vector
-                            ) * 180 / Math.PI) + '"';
+                        ) * 180 / Math.PI) + '"';
 
                         addFillNode();
 

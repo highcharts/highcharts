@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2018 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -144,7 +144,7 @@ seriesType('map', 'scatter',
          *
          * @type      {Highcharts.ColorString}
          * @default   '#cccccc'
-         * @product   highmaps highcharts
+         * @product   highmaps
          * @apioption plotOptions.series.borderColor
          */
         borderColor: '${palette.neutralColor20}',
@@ -158,7 +158,9 @@ seriesType('map', 'scatter',
          * @sample maps/plotoptions/series-border/
          *         Borders demo
          *
-         * @product   highmaps highcharts
+         * @type      {number}
+         * @default   1
+         * @product   highmaps
          * @apioption plotOptions.series.borderWidth
          */
         borderWidth: 1,
@@ -1220,7 +1222,7 @@ seriesType('map', 'scatter',
  * @apioption series.map.data.labelrank
  */
 
- /**
+/**
  * The relative mid point of an area, used to place the data label.
  * Ranges from 0 to 1\. When `mapData` is used, middleX can be defined
  * there.

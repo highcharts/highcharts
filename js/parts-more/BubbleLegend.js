@@ -1,12 +1,10 @@
 /* *
+ * (c) 2010-2018 Highsoft AS
  *
- *  (c) 2010-2018 Highsoft AS
+ * Author: Paweł Potaczek
  *
- *  Author: Paweł Potaczek
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 /**
  * @interface Highcharts.LegendBubbleLegendFormatterContextObject
@@ -242,7 +240,7 @@ setOptions({  // Set default bubble legend options
              * @type {Array<*>}
              */
             ranges: {
-               /**
+                /**
                 * Range size value, similar to bubble Z data.
                 */
                 value: undefined,
@@ -656,7 +654,7 @@ H.BubbleLegend.prototype = {
             renderer
                 .path(renderer.crispLine(
                     ['M', posX, posY, 'L', posX + connectorLength, posY],
-                     options.connectorWidth)
+                    options.connectorWidth)
                 )
                 .attr(
                     styledMode ? {} : range.connectorStyle
@@ -723,7 +721,7 @@ H.BubbleLegend.prototype = {
                 maxLabel = labelSize;
             }
         });
-        return maxLabel;
+        return maxLabel || {};
     },
 
     /**
@@ -745,7 +743,7 @@ H.BubbleLegend.prototype = {
 
         return format ? H.format(format, range) :
             formatter ? formatter.call(range) :
-            numberFormat(range.value, 1);
+                numberFormat(range.value, 1);
     },
 
     /**
@@ -877,13 +875,13 @@ H.BubbleLegend.prototype = {
             calculatedSize = ((plotSize + lastLineHeight - fontMetrics.h / 2) *
                maxSize / 100) / (maxSize / 100 + 1);
 
-           // Get maxPxSize from bubble series if calculated bubble legend
-           // size will not affect to bubbles series.
+            // Get maxPxSize from bubble series if calculated bubble legend
+            // size will not affect to bubbles series.
             if (
-               (horizontal && plotSizeY - calculatedSize >=
+                (horizontal && plotSizeY - calculatedSize >=
                plotSizeX) || (!horizontal && plotSizeX -
                calculatedSize >= plotSizeY)
-           ) {
+            ) {
                 calculatedSize = maxPxSize;
             }
         }
@@ -943,7 +941,7 @@ addEvent(H.Legend, 'afterGetAllItems', function (e) {
     if (bubbleLegend && bubbleLegend.ranges && bubbleLegend.ranges.length) {
         // Allow change the way of calculating ranges in update
         if (options.ranges.length) {
-            options.autoRanges = options.ranges[0].autoRanges ? true : false;
+            options.autoRanges = !!options.ranges[0].autoRanges;
         }
         // Update bubbleLegend dimensions in each redraw
         legend.destroyItem(bubbleLegend);
@@ -1053,7 +1051,7 @@ Legend.prototype.retranslateItems = function (lines) {
 
         if (movementX || (rtl && item.ranges)) {
             movementX = rtl ? orgTranslateX - item.options.maxSize / 2 :
-            orgTranslateX + movementX;
+                orgTranslateX + movementX;
 
             item.legendGroup.attr({ translateX: movementX });
         }

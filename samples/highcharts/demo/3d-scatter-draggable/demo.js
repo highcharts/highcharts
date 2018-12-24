@@ -1,6 +1,6 @@
 // Give the points a 3D feel by adding a radial gradient
 Highcharts.setOptions({
-    colors: $.map(Highcharts.getOptions().colors, function (color) {
+    colors: Highcharts.getOptions().colors.map(function (color) {
         return {
             radialGradient: {
                 cx: 0.4,
@@ -101,7 +101,8 @@ var chart = new Highcharts.Chart({
             posY = eStart.chartY,
             alpha = chart.options.chart.options3d.alpha,
             beta = chart.options.chart.options3d.beta,
-            sensitivity = 5; // lower is more sensitive
+            sensitivity = 5,  // lower is more sensitive
+            handlers = [];
 
         function drag(e) {
             // Get e.chartX and e.chartY
@@ -117,11 +118,21 @@ var chart = new Highcharts.Chart({
             }, undefined, undefined, false);
         }
 
-        chart.unbindDragMouse = H.addEvent(document, 'mousemove', drag);
-        chart.unbindDragTouch = H.addEvent(document, 'touchmove', drag);
+        function unbindAll() {
+            handlers.forEach(function (unbind) {
+                if (unbind) {
+                    unbind();
+                }
+            });
+            handlers.length = 0;
+        }
 
-        H.addEvent(document, 'mouseup', chart.unbindDragMouse);
-        H.addEvent(document, 'touchend', chart.unbindDragTouch);
+        handlers.push(H.addEvent(document, 'mousemove', drag));
+        handlers.push(H.addEvent(document, 'touchmove', drag));
+
+
+        handlers.push(H.addEvent(document, 'mouseup', unbindAll));
+        handlers.push(H.addEvent(document, 'touchend', unbindAll));
     }
     H.addEvent(chart.container, 'mousedown', dragStart);
     H.addEvent(chart.container, 'touchstart', dragStart);

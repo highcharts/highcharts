@@ -641,7 +641,7 @@ seriesType('vbp', 'sma',
                         'dashstyle': zonesStyles.dashStyle,
                         'zIndex': indicator.group.zIndex + 0.1
                     })
-                    .add(indicator.group);
+                        .add(indicator.group);
             }
         }
     },

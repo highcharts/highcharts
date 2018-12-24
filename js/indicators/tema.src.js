@@ -136,9 +136,9 @@ H.seriesType('tema', 'ema',
             // Accumulate first N-points
             accumulatePeriodPoints =
               EMAindicator.prototype.accumulatePeriodPoints(
-                period,
-                index,
-                yVal
+                  period,
+                  index,
+                  yVal
               );
 
             // first point
@@ -204,10 +204,10 @@ H.seriesType('tema', 'ema',
                             SMA
                         )[1];
                         TEMAPoint = this.getPoint(
-                          xVal,
-                          tripledPeriod,
-                          EMAlevels,
-                          i
+                            xVal,
+                            tripledPeriod,
+                            EMAlevels,
+                            i
                         );
                         // Make sure that point exists (for TRIX oscillator)
                         if (TEMAPoint) {

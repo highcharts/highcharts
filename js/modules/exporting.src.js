@@ -79,52 +79,52 @@ extend(defaultOptions.lang
 /**
  * @optionparent lang
  */
-, {
+    , {
 
-    /**
+        /**
      * Exporting module only. The text for the menu item to print the chart.
      *
      * @since 3.0.1
      */
-    printChart: 'Print chart',
+        printChart: 'Print chart',
 
-    /**
+        /**
      * Exporting module only. The text for the PNG download menu item.
      *
      * @since 2.0
      */
-    downloadPNG: 'Download PNG image',
+        downloadPNG: 'Download PNG image',
 
-    /**
+        /**
      * Exporting module only. The text for the JPEG download menu item.
      *
      * @since 2.0
      */
-    downloadJPEG: 'Download JPEG image',
+        downloadJPEG: 'Download JPEG image',
 
-    /**
+        /**
      * Exporting module only. The text for the PDF download menu item.
      *
      * @since 2.0
      */
-    downloadPDF: 'Download PDF document',
+        downloadPDF: 'Download PDF document',
 
-    /**
+        /**
      * Exporting module only. The text for the SVG download menu item.
      *
      * @since 2.0
      */
-    downloadSVG: 'Download SVG vector image',
+        downloadSVG: 'Download SVG vector image',
 
-    /**
+        /**
      * Exporting module menu. The tooltip title for the context menu holding
      * print and export menu items.
      *
      * @since 3.0
      */
-    contextButtonTitle: 'Chart context menu'
+        contextButtonTitle: 'Chart context menu'
 
-});
+    });
 
 if (!defaultOptions.navigation) {
     // Buttons and menus are collected in a separate config option set called
@@ -270,15 +270,15 @@ merge(true, defaultOptions.navigation, {
 // Presentational attributes
 merge(true, defaultOptions.navigation
 
-/**
+    /**
  * A collection of options for buttons and menus appearing in the exporting
  * module.
  *
  * @optionparent navigation
  */
-, {
+    , {
 
-    /**
+        /**
      * CSS styles for the popup menu appearing by default when the export icon
      * is clicked. This menu is rendered in HTML.
      *
@@ -292,25 +292,25 @@ merge(true, defaultOptions.navigation
      * @default {"border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0"}
      * @since   2.0
      */
-    menuStyle: {
+        menuStyle: {
 
-        /**
+            /**
          * @ignore
          */
-        border: '1px solid ${palette.neutralColor40}',
+            border: '1px solid ${palette.neutralColor40}',
 
-        /**
+            /**
          * @ignore
          */
-        background: '${palette.backgroundColor}',
+            background: '${palette.backgroundColor}',
 
-        /**
+            /**
          * @ignore
          */
-        padding: '5px 0'
-    },
+            padding: '5px 0'
+        },
 
-    /**
+        /**
      * CSS styles for the individual items within the popup menu appearing by
      * default when the export icon is clicked. The menu items are rendered in
      * HTML. Font size defaults to `11px` on desktop and `14px` on touch
@@ -326,35 +326,35 @@ merge(true, defaultOptions.navigation
      * @default {"padding": "0.5em 1em", "color": "#333333", "background": "none", "fontSize": "11px/14px", "transition": "background 250ms, color 250ms"}
      * @since   2.0
      */
-    menuItemStyle: {
+        menuItemStyle: {
 
-        /**
+            /**
          * @ignore
          */
-        padding: '0.5em 1em',
+            padding: '0.5em 1em',
 
-        /**
+            /**
          * @ignore
          */
-        color: '${palette.neutralColor80}',
+            color: '${palette.neutralColor80}',
 
-        /**
+            /**
          * @ignore
          */
-        background: 'none',
+            background: 'none',
 
-        /**
+            /**
          * @ignore
          */
-        fontSize: isTouchDevice ? '14px' : '11px',
+            fontSize: isTouchDevice ? '14px' : '11px',
 
-        /**
+            /**
          * @ignore
          */
-        transition: 'background 250ms, color 250ms'
-    },
+            transition: 'background 250ms, color 250ms'
+        },
 
-    /**
+        /**
      * CSS styles for the hover state of the individual items within the popup
      * menu appearing by default when the export icon is clicked. The menu items
      * are rendered in HTML.
@@ -369,28 +369,28 @@ merge(true, defaultOptions.navigation
      * @default {"background": "#335cad", "color": "#ffffff"}
      * @since   2.0
      */
-    menuItemHoverStyle: {
+        menuItemHoverStyle: {
 
-        /**
+            /**
          * @ignore
          */
-        background: '${palette.highlightColor80}',
+            background: '${palette.highlightColor80}',
 
-        /**
+            /**
          * @ignore
          */
-        color: '${palette.backgroundColor}'
-    },
+            color: '${palette.backgroundColor}'
+        },
 
-    /**
+        /**
      * A collection of options for buttons appearing in the exporting module.
      *
      * In styled mode, the buttons are styled with the
      * `.highcharts-contextbutton` and `.highcharts-button-symbol` classes.
      */
-    buttonOptions: {
+        buttonOptions: {
 
-        /**
+            /**
          * Fill color for the symbol within the button.
          *
          * @sample highcharts/navigation/buttonoptions-symbolfill/
@@ -399,9 +399,9 @@ merge(true, defaultOptions.navigation
          * @type  {Highcharts.ColorString}
          * @since 2.0
          */
-        symbolFill: '${palette.neutralColor60}',
+            symbolFill: '${palette.neutralColor60}',
 
-        /**
+            /**
          * The color of the symbol's stroke or line.
          *
          * @sample highcharts/navigation/buttonoptions-symbolstroke/
@@ -410,9 +410,9 @@ merge(true, defaultOptions.navigation
          * @type  {Highcharts.ColorString}
          * @since 2.0
          */
-        symbolStroke: '${palette.neutralColor60}',
+            symbolStroke: '${palette.neutralColor60}',
 
-        /**
+            /**
          * The pixel stroke width of the symbol on the button.
          *
          * @sample highcharts/navigation/buttonoptions-height/
@@ -420,9 +420,9 @@ merge(true, defaultOptions.navigation
          *
          * @since 2.0
          */
-        symbolStrokeWidth: 3,
+            symbolStrokeWidth: 3,
 
-        /**
+            /**
          * A configuration object for the button theme. The object accepts
          * SVG properties like `stroke-width`, `stroke` and `fill`. Tri-state
          * button styles are supported by the `states.hover` and `states.select`
@@ -433,32 +433,32 @@ merge(true, defaultOptions.navigation
          *
          * @since 3.0
          */
-        theme: {
+            theme: {
 
-            /**
+                /**
              * The default fill exists only to capture hover events.
              * @type {Highcharts.ColorString}
              * @apioption navigation.buttonOptions.theme.fill
              * @default ${palette.backgroundColor}
              */
 
-            /**
+                /**
              * Default stroke for the buttons.
              * @type {Highcharts.ColorString}
              * @apioption navigation.buttonOptions.theme.stroke
              * @default none
              */
 
-            /**
+                /**
              * Padding for the button.
              */
-            padding: 5
+                padding: 5
+
+            }
 
         }
 
-    }
-
-});
+    });
 
 
 // Add the export related options
@@ -686,7 +686,7 @@ defaultOptions.exporting = {
      * See [navigation.buttonOptions](#navigation.buttonOptions) for general
      * options.
      *
-     * @type {Highcharts.Dictionary<*>}
+     * @type {Highcharts.Dictionary<Highcharts.ExportingButtonsContextButtonOptions>}
      */
     buttons: {
 
@@ -2028,10 +2028,10 @@ symbols.menuball = function (x, y, width, height) {
         h = (height / 3) - 2;
 
     path = path.concat(
-                this.circle(width - h, y, h, h),
-                this.circle(width - h, y + h + 4, h, h),
-                this.circle(width - h, y + 2 * (h + 4), h, h)
-            );
+        this.circle(width - h, y, h, h),
+        this.circle(width - h, y + h + 4, h, h),
+        this.circle(width - h, y + 2 * (h + 4), h, h)
+    );
     return path;
 };
 

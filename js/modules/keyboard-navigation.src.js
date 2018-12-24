@@ -54,11 +54,11 @@ H.extend(H.SVGElement.prototype, {
             bb.height + 2 * pad,
             style && style.borderRadius
         )
-        .addClass('highcharts-focus-border')
-        .attr({
-            zIndex: 99
-        })
-        .add(this.parentGroup);
+            .addClass('highcharts-focus-border')
+            .attr({
+                zIndex: 99
+            })
+            .add(this.parentGroup);
 
         if (!this.renderer.styledMode) {
             this.focusBorder.attr({
@@ -339,10 +339,7 @@ KeyboardNavigationModule.prototype = {
         this.keyCodeMap.forEach(function (codeSet) {
             if (codeSet[0].indexOf(keyCode) > -1) {
                 found = true;
-                handled = codeSet[1].call(navModule, keyCode, e) === false ?
-                    // If explicitly returning false, we haven't handled it
-                    false :
-                    true;
+                handled = codeSet[1].call(navModule, keyCode, e) !== false;
             }
         });
         // Default tab handler, move to next/prev module
@@ -551,7 +548,7 @@ H.Axis.prototype.panStep = function (direction, granularity) {
  */
 H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
     var focusBorderOptions = this.options.accessibility
-                .keyboardNavigation.focusBorder,
+            .keyboardNavigation.focusBorder,
         browserFocusElement = focusElement || svgElement;
     // Set browser focus if possible
     if (
@@ -1070,8 +1067,8 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
                 // Normal mode, move between series
                 var highlightMethod = chart.highlightedPoint &&
                         chart.highlightedPoint.series.keyboardMoveVertical ?
-                        'highlightAdjacentPointVertical' :
-                        'highlightAdjacentSeries';
+                    'highlightAdjacentPointVertical' :
+                    'highlightAdjacentSeries';
                 chart[highlightMethod](down);
                 return true;
             }],
@@ -1379,10 +1376,10 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
             // Enter/Spacebar
             [[13, 32], function () {
                 var legendElement = chart.legend.allItems[
-                        chart.highlightedLegendItemIx
-                    ].legendItem.element;
+                    chart.highlightedLegendItemIx
+                ].legendItem.element;
                 fakeClickEvent(
-                     !chart.legend.options.useHTML ? // #8561
+                    !chart.legend.options.useHTML ? // #8561
                         legendElement.parentNode : legendElement
                 );
             }]

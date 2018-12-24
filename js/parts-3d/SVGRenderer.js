@@ -28,7 +28,6 @@ var animObject = H.animObject,
     pick = H.pick,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
-    wrap = H.wrap,
 
     dFactor,
     element3dMethods,
@@ -77,47 +76,6 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
     ];
 }
 
-/* @merge v6.2
-
-     if (!build.classic) {
-
-// Override the SVGRenderer initiator to add definitions used by brighter and
-// darker faces of the cuboids.
-wrap(SVGRenderer.prototype, 'init', function (proceed) {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    each([{
-        name: 'darker',
-        slope: 0.6
-    }, {
-        name: 'brighter',
-        slope: 1.4
-    }], function (cfg) {
-        this.definition({
-            tagName: 'filter',
-            id: 'highcharts-' + cfg.name,
-            children: [{
-                tagName: 'feComponentTransfer',
-                children: [{
-                    tagName: 'feFuncR',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncG',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncB',
-                    type: 'linear',
-                    slope: cfg.slope
-                }]
-            }]
-        });
-    }, this);
-});
-
-*/
-
 SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
 
@@ -161,7 +119,7 @@ SVGRenderer.prototype.face3d = function (args) {
     ret.insidePlotArea = false;
     ret.enabled = true;
 
-    wrap(ret, 'attr', function (proceed, hash) {
+    ret.attr = function (hash) {
         if (
             typeof hash === 'object' &&
             (
@@ -193,10 +151,10 @@ SVGRenderer.prototype.face3d = function (args) {
             hash.d = path;
             hash.visibility = visibility;
         }
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.attr.apply(this, arguments);
+    };
 
-    wrap(ret, 'animate', function (proceed, params) {
+    ret.animate = function (params) {
         if (
             typeof params === 'object' &&
             (
@@ -229,8 +187,8 @@ SVGRenderer.prototype.face3d = function (args) {
             this.attr('visibility', visibility);
         }
 
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.animate.apply(this, arguments);
+    };
 
     return ret.attr(args);
 };
@@ -260,36 +218,31 @@ SVGRenderer.prototype.polyhedron = function (args) {
         return destroy.call(this);
     };
 
-    wrap(
-        result,
-        'attr',
-        function (proceed, hash, val, complete, continueAnimation) {
-            if (typeof hash === 'object' && defined(hash.faces)) {
-                while (result.faces.length > hash.faces.length) {
-                    result.faces.pop().destroy();
-                }
-                while (result.faces.length < hash.faces.length) {
-                    result.faces.push(renderer.face3d().add(result));
-                }
-                for (var i = 0; i < hash.faces.length; i++) {
-                    if (renderer.styledMode) {
-                        delete hash.faces[i].fill;
-                    }
-                    result.faces[i].attr(
-                        hash.faces[i],
-                        null,
-                        complete,
-                        continueAnimation
-                    );
-                }
-                delete hash.faces;
+    result.attr = function (hash, val, complete, continueAnimation) {
+        if (typeof hash === 'object' && defined(hash.faces)) {
+            while (result.faces.length > hash.faces.length) {
+                result.faces.pop().destroy();
             }
-            return proceed.apply(this, [].slice.call(arguments, 1));
+            while (result.faces.length < hash.faces.length) {
+                result.faces.push(renderer.face3d().add(result));
+            }
+            for (var i = 0; i < hash.faces.length; i++) {
+                if (renderer.styledMode) {
+                    delete hash.faces[i].fill;
+                }
+                result.faces[i].attr(
+                    hash.faces[i],
+                    null,
+                    complete,
+                    continueAnimation
+                );
+            }
+            delete hash.faces;
         }
+        return SVGElement.prototype.attr.apply(this, arguments);
+    };
 
-    );
-
-    wrap(result, 'animate', function (proceed, params, duration, complete) {
+    result.animate = function (params, duration, complete) {
         if (params && params.faces) {
             while (result.faces.length > params.faces.length) {
                 result.faces.pop().destroy();
@@ -302,8 +255,8 @@ SVGRenderer.prototype.polyhedron = function (args) {
             }
             delete params.faces;
         }
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.animate.apply(this, arguments);
+    };
 
     return result.attr(args);
 };
@@ -560,7 +513,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
      */
     pickShape = function (path1, path2) {
         var ret = [
-                [], -1
+            [], -1
         ];
         path1 = path1.map(mapPath);
         path2 = path2.map(mapPath);
@@ -756,7 +709,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     );
 
     // Override attr to remove shape attributes and use those to set child paths
-    wrap(wrapper, 'attr', function (proceed, params) {
+    wrapper.attr = function (params) {
         var ca;
         if (typeof params === 'object') {
             ca = suckOutCustom(params);
@@ -765,12 +718,12 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
                 wrapper.setPaths(wrapper.attribs);
             }
         }
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.attr.apply(wrapper, arguments);
+    };
 
     // Override the animate function by sucking out custom parameters related to
     // the shapes directly, and update the shapes from the animation step.
-    wrap(wrapper, 'animate', function (proceed, params, animation, complete) {
+    wrapper.animate = function (params, animation, complete) {
         var ca,
             from = this.attribs,
             to,
@@ -817,8 +770,13 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
             }
             animation = anim; // Only when duration (#5572)
         }
-        return proceed.call(this, params, animation, complete);
-    });
+        return SVGElement.prototype.animate.call(
+            this,
+            params,
+            animation,
+            complete
+        );
+    };
 
     // destroy all children
     wrapper.destroy = function () {

@@ -1,18 +1,15 @@
 /* *
+ * Experimental Highcharts module which enables visualization of a Venn Diagram.
  *
- *  (c) 2016-2018 Highsoft AS
+ * (c) 2016-2018 Highsoft AS
  *
- *  Authors: Jon Arild Nygard
+ * Authors: Jon Arild Nygard
  *
- *  Layout algorithm by Ben Frederickson:
- *  https://www.benfrederickson.com/better-venn-diagrams/
+ * Layout algorithm by Ben Frederickson:
+ * https://www.benfrederickson.com/better-venn-diagrams/
  *
- *  License: www.highcharts.com/license
- *
- *  This is an experimental Highcharts module which enables visualization of a
- *  Venn Diagram.
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 'use strict';
 
@@ -338,7 +335,7 @@ function getMarginFromCircles(point, internal, external) {
     var margin = internal.reduce(function (margin, circle) {
         var m = circle.r - getDistanceBetweenPoints(point, circle);
         return (m <= margin) ? m : margin;
-    }, Number.MAX_SAFE_INTEGER);
+    }, Number.MAX_VALUE);
 
     margin = external.reduce(function (margin, circle) {
         var m = getDistanceBetweenPoints(point, circle) - circle.r;
@@ -374,19 +371,19 @@ var getLabelPosition = function getLabelPosition(internal, external) {
             { x: circle.x, y: circle.y - d }
         ]
         // Iterate the given points and return the one with the largest margin.
-        .reduce(function (best, point) {
-            var margin = getMarginFromCircles(point, internal, external);
+            .reduce(function (best, point) {
+                var margin = getMarginFromCircles(point, internal, external);
 
-            // If the margin better than the current best, then update best.
-            if (best.margin < margin) {
-                best.point = point;
-                best.margin = margin;
-            }
-            return best;
-        }, best);
+                // If the margin better than the current best, then update best.
+                if (best.margin < margin) {
+                    best.point = point;
+                    best.margin = margin;
+                }
+                return best;
+            }, best);
     }, {
         point: undefined,
-        margin: -Number.MAX_SAFE_INTEGER
+        margin: -Number.MAX_VALUE
     }).point;
 
     // Use nelder mead to optimize the initial label position.
@@ -534,8 +531,8 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
             return relation.sets.length === 1;
         }).forEach(function (relation) {
             mapOfIdToCircles[relation.sets[0]] = relation.circle = {
-                x: Number.MAX_SAFE_INTEGER,
-                y: Number.MAX_SAFE_INTEGER,
+                x: Number.MAX_VALUE,
+                y: Number.MAX_VALUE,
                 r: Math.sqrt(relation.value / Math.PI)
             };
         });
@@ -576,72 +573,75 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
             overlapping = set.overlapping;
 
         var bestPosition = positionedSets
-        .reduce(function (best, positionedSet, i) {
-            var positionedCircle = positionedSet.circle,
-                overlap = overlapping[positionedSet.sets[0]];
+            .reduce(function (best, positionedSet, i) {
+                var positionedCircle = positionedSet.circle,
+                    overlap = overlapping[positionedSet.sets[0]];
 
-            // Calculate the distance between the sets to get the correct
-            // overlap
-            var distance = getDistanceBetweenCirclesByOverlap(
-                radius,
-                positionedCircle.r,
-                overlap
-            );
+                // Calculate the distance between the sets to get the correct
+                // overlap
+                var distance = getDistanceBetweenCirclesByOverlap(
+                    radius,
+                    positionedCircle.r,
+                    overlap
+                );
 
-            // Create a list of possible coordinates calculated from distance.
-            var possibleCoordinates = [
-                { x: positionedCircle.x + distance, y: positionedCircle.y },
-                { x: positionedCircle.x - distance, y: positionedCircle.y },
-                { x: positionedCircle.x, y: positionedCircle.y + distance },
-                { x: positionedCircle.x, y: positionedCircle.y - distance }
-            ];
+                // Create a list of possible coordinates calculated from
+                // distance.
+                var possibleCoordinates = [
+                    { x: positionedCircle.x + distance, y: positionedCircle.y },
+                    { x: positionedCircle.x - distance, y: positionedCircle.y },
+                    { x: positionedCircle.x, y: positionedCircle.y + distance },
+                    { x: positionedCircle.x, y: positionedCircle.y - distance }
+                ];
 
-            // If there are more circles overlapping, then add the intersection
-            // points as possible positions.
-            positionedSets.slice(i + 1).forEach(function (positionedSet2) {
-                var positionedCircle2 = positionedSet2.circle,
-                    overlap2 = overlapping[positionedSet2.sets[0]],
-                    distance2 = getDistanceBetweenCirclesByOverlap(
-                        radius,
-                        positionedCircle2.r,
-                        overlap2
+                // If there are more circles overlapping, then add the
+                // intersection points as possible positions.
+                positionedSets.slice(i + 1).forEach(function (positionedSet2) {
+                    var positionedCircle2 = positionedSet2.circle,
+                        overlap2 = overlapping[positionedSet2.sets[0]],
+                        distance2 = getDistanceBetweenCirclesByOverlap(
+                            radius,
+                            positionedCircle2.r,
+                            overlap2
+                        );
+
+                    // Add intersections to list of coordinates.
+                    possibleCoordinates = possibleCoordinates.concat(
+                        getCircleCircleIntersection({
+                            x: positionedCircle.x,
+                            y: positionedCircle.y,
+                            r: distance2
+                        }, {
+                            x: positionedCircle2.x,
+                            y: positionedCircle2.y,
+                            r: distance2
+                        })
+                    );
+                });
+
+                // Iterate all suggested coordinates and find the best one.
+                possibleCoordinates.forEach(function (coordinates) {
+                    circle.x = coordinates.x;
+                    circle.y = coordinates.y;
+
+                    // Calculate loss for the suggested coordinates.
+                    var currentLoss = loss(
+                        mapOfIdToCircles, relationsWithTwoSets
                     );
 
-                // Add intersections to list of coordinates.
-                possibleCoordinates = possibleCoordinates.concat(
-                    getCircleCircleIntersection({
-                        x: positionedCircle.x,
-                        y: positionedCircle.y,
-                        r: distance2
-                    }, {
-                        x: positionedCircle2.x,
-                        y: positionedCircle2.y,
-                        r: distance2
-                    })
-                );
+                    // If the loss is better, then use these new coordinates.
+                    if (currentLoss < best.loss) {
+                        best.loss = currentLoss;
+                        best.coordinates = coordinates;
+                    }
+                });
+
+                // Return resulting coordinates.
+                return best;
+            }, {
+                loss: Number.MAX_VALUE,
+                coordinates: undefined
             });
-
-            // Iterate all suggested coordinates and find the best one.
-            possibleCoordinates.forEach(function (coordinates) {
-                circle.x = coordinates.x;
-                circle.y = coordinates.y;
-
-                // Calculate loss for the suggested coordinates.
-                var currentLoss = loss(mapOfIdToCircles, relationsWithTwoSets);
-
-                // If the loss is better, then use these new coordinates.
-                if (currentLoss < best.loss) {
-                    best.loss = currentLoss;
-                    best.coordinates = coordinates;
-                }
-            });
-
-            // Return resulting coordinates.
-            return best;
-        }, {
-            loss: Number.MAX_SAFE_INTEGER,
-            coordinates: undefined
-        });
 
         // Add the set to its final position.
         positionSet(set, bestPosition.coordinates);
@@ -893,13 +893,13 @@ var vennSeries = {
 
         // Calculate the scale, and center of the plot area.
         var field = Object.keys(mapOfIdToShape)
-            .filter(function (key) {
-                var shape = mapOfIdToShape[key];
-                return shape && isNumber(shape.r);
-            })
-            .reduce(function (field, key) {
-                return updateFieldBoundaries(field, mapOfIdToShape[key]);
-            }, { top: 0, bottom: 0, left: 0, right: 0 }),
+                .filter(function (key) {
+                    var shape = mapOfIdToShape[key];
+                    return shape && isNumber(shape.r);
+                })
+                .reduce(function (field, key) {
+                    return updateFieldBoundaries(field, mapOfIdToShape[key]);
+                }, { top: 0, bottom: 0, left: 0, right: 0 }),
             scaling = getScale(chart.plotWidth, chart.plotHeight, field),
             scale = scaling.scale,
             centerX = scaling.centerX,
@@ -934,7 +934,7 @@ var vennSeries = {
                         }
                         return path.concat(arr);
                     }, [])
-                    .join(' ');
+                        .join(' ');
                     shapeArgs = {
                         d: d
                     };

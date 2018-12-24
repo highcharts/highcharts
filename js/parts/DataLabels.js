@@ -370,8 +370,8 @@ Series.prototype.drawDataLabels = function () {
                                     point.labelDistance
                                 ) < 0 ||
                                 !!seriesOptions.stacking ?
-                                    point.contrastColor :
-                                    '${palette.neutralColor100}';
+                                point.contrastColor :
+                                '${palette.neutralColor100}';
                         }
                         if (seriesOptions.cursor) {
                             style.cursor = seriesOptions.cursor;
@@ -781,7 +781,7 @@ if (seriesTypes.pie) {
         ) {
             var dataLabelWidth = dataLabel.getBBox().width;
             return half ? dataLabelWidth + plotLeft :
-                    plotWidth - dataLabelWidth - plotLeft;
+                plotWidth - dataLabelWidth - plotLeft;
         },
 
         // Connectors of each side end in the same x position. Labels are
@@ -1017,7 +1017,7 @@ if (seriesTypes.pie) {
                         break;
                     case 'plotEdges':
                         x = dataLabelPositioners.alignToPlotEdges(dataLabel,
-                             i, plotWidth, plotLeft);
+                            i, plotWidth, plotLeft);
                         break;
                     default:
                         x = dataLabelPositioners.radialDistributionX(series,
@@ -1169,8 +1169,8 @@ if (seriesTypes.pie) {
      *
      * @return {Highcharts.PathObject}
      */
-     // TODO: depracated - remove it
-     /*
+    // TODO: depracated - remove it
+    /*
     seriesTypes.pie.prototype.connectorPath = function (labelPos) {
         var x = labelPos.x,
             y = labelPos.y;

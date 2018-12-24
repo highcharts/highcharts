@@ -19,7 +19,7 @@ $(function () {
                     ]
                 }]
             }).highcharts(),
-            clipID = chart.series[0].group.attr("clip-path"),
+            clipID = chart.series[0].group.attr("clip-path").replace(/"/g, ''),
             clipElement = document.querySelectorAll(clipID.substring(4, clipID.length - 1) + ' rect')[0],
             clip = {
                 width: clipElement.getAttribute("width"),

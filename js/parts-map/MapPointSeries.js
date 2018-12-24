@@ -62,8 +62,10 @@ seriesType('mappoint', 'scatter',
             var mergedOptions = (
                 options.lat !== undefined &&
                 options.lon !== undefined ?
-                merge(options, this.series.chart.fromLatLonToPoint(options)) :
-                options
+                    merge(
+                        options, this.series.chart.fromLatLonToPoint(options)
+                    ) :
+                    options
             );
             return Point.prototype.applyOptions.call(this, mergedOptions, x);
         }

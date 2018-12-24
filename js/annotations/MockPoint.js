@@ -227,10 +227,10 @@ H.extend(MockPoint.prototype, /** @lends Annotation.MockPoint# */ {
 
         this.series[axisName] =
             axisOptions instanceof H.Axis ?
-            axisOptions :
-            H.defined(axisOptions) ?
-            chart[axisName][axisOptions] || chart.get(axisOptions) :
-            null;
+                axisOptions :
+                H.defined(axisOptions) ?
+                    chart[axisName][axisOptions] || chart.get(axisOptions) :
+                    null;
     },
 
     /**

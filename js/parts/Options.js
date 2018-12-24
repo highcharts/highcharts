@@ -2932,7 +2932,7 @@ H.defaultOptions = {
          * @apioption  tooltip.shape
          */
 
-         /**
+        /**
          * The name of a symbol to use for the border around the tooltip
          * header. Applies only when [tooltip.split](#tooltip.split) is
          * enabled.

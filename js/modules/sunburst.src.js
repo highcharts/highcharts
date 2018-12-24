@@ -168,8 +168,8 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
                 isObject(options.levelSize) &&
                 isNumber(options.levelSize.value)
             ) ?
-            options.levelSize.value :
-            0
+                options.levelSize.value :
+                0
         ),
         innerRadius = parent.r,
         outerRadius = innerRadius + radius,
@@ -203,13 +203,13 @@ var getDlOptions = function getDlOptions(params) {
         shape = isObject(params.shapeArgs) ? params.shapeArgs : {},
         optionsPoint = (
             isObject(params.optionsPoint) ?
-            params.optionsPoint.dataLabels :
-            {}
+                params.optionsPoint.dataLabels :
+                {}
         ),
         optionsLevel = (
             isObject(params.level) ?
-            params.level.dataLabels :
-            {}
+                params.level.dataLabels :
+                {}
         ),
         options = merge({
             style: {}
@@ -333,17 +333,17 @@ var getAnimation = function getAnimation(shape, params) {
                 };
             } else if (shapeRoot) {
                 to = (shapeRoot.end <= shapeExisting.start) ?
-                {
-                    innerR: innerR,
-                    r: innerR,
-                    start: radians.end,
-                    end: radians.end
-                } : {
-                    innerR: innerR,
-                    r: innerR,
-                    start: radians.start,
-                    end: radians.start
-                };
+                    {
+                        innerR: innerR,
+                        r: innerR,
+                        start: radians.end,
+                        end: radians.end
+                    } : {
+                        innerR: innerR,
+                        r: innerR,
+                        start: radians.start,
+                        end: radians.start
+                    };
             }
         }
     }
@@ -634,8 +634,8 @@ var sunburstSeries = {
             optionsChart = chart && chart.options && chart.options.chart || {},
             animation = (
                 isBoolean(optionsChart.animation) ?
-                optionsChart.animation :
-                true
+                    optionsChart.animation :
+                    true
             ),
             positions = series.center,
             center = {
@@ -772,17 +772,17 @@ var sunburstSeries = {
                 isCircle = (values.innerR === 0 && radians > twoPi),
                 center = (
                     isCircle ?
-                    { x: values.x, y: values.y } :
-                    getEndPoint(values.x, values.y, angle, radius)
+                        { x: values.x, y: values.y } :
+                        getEndPoint(values.x, values.y, angle, radius)
                 ),
                 val = (
                     child.val ?
-                    (
-                        child.childrenTotal > child.val ?
-                        child.childrenTotal :
-                        child.val
-                    ) :
-                    child.childrenTotal
+                        (
+                            child.childrenTotal > child.val ?
+                                child.childrenTotal :
+                                child.val
+                        ) :
+                        child.childrenTotal
                 );
             // The inner arc length is a convenience for data label filters.
             if (this.points[child.i]) {
@@ -974,7 +974,7 @@ var sunburstPoint = {
  * @apioption series.treemap.data.parent
  */
 
- /**
+/**
   * Whether to display a slice offset from the center. When a sunburst point is
   * sliced, its children are also offset.
   *

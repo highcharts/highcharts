@@ -452,6 +452,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          * @type {Highcharts.SVGRenderer}
          */
         this.renderer = renderer;
+
+        H.fireEvent(this, 'afterInit');
     },
 
     /**
@@ -1623,11 +1625,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         rad = rotation * deg2rad;
 
         fontSize = renderer.styledMode ? (
-                element &&
-                SVGElement.prototype.getStyle.call(element, 'font-size')
-            ) : (
-                styles && styles.fontSize
-            );
+            element &&
+            SVGElement.prototype.getStyle.call(element, 'font-size')
+        ) : (
+            styles && styles.fontSize
+        );
 
         // Avoid undefined and null (#7316)
         if (defined(textStr)) {
@@ -1649,8 +1651,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 fontSize,
                 wrapper.textWidth, // #7874, also useHTML
                 styles && styles.textOverflow // #5968
-            ]
-            .join(',');
+            ].join(',');
 
         }
 
@@ -2026,9 +2027,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             shadowElementOpacity = (shadowOptions.opacity || 0.15) /
                 shadowWidth;
             transform = this.parentInverted ?
-                    '(-1,-1)' :
-                    '(' + pick(shadowOptions.offsetX, 1) + ', ' +
-                        pick(shadowOptions.offsetY, 1) + ')';
+                '(-1,-1)' :
+                '(' + pick(shadowOptions.offsetX, 1) + ', ' +
+                pick(shadowOptions.offsetY, 1) + ')';
             for (i = 1; i <= shadowWidth; i++) {
                 shadow = element.cloneNode(0);
                 strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
@@ -2607,17 +2608,17 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
          */
         // #24, #672, #1070
         this.url = (
-                (isFirefox || isWebKit) &&
-                doc.getElementsByTagName('base').length
-            ) ?
-                win.location.href
-                    .split('#')[0] // remove the hash
-                    .replace(/<[^>]*>/g, '') // wing cut HTML
-                    // escape parantheses and quotes
-                    .replace(/([\('\)])/g, '\\$1')
-                    // replace spaces (needed for Safari only)
-                    .replace(/ /g, '%20') :
-                '';
+            (isFirefox || isWebKit) &&
+            doc.getElementsByTagName('base').length
+        ) ?
+            win.location.href
+                .split('#')[0] // remove the hash
+                .replace(/<[^>]*>/g, '') // wing cut HTML
+                // escape parantheses and quotes
+                .replace(/([\('\)])/g, '\\$1')
+                // replace spaces (needed for Safari only)
+                .replace(/ /g, '%20') :
+            '';
 
         // Add description
         desc = this.createElement('desc').add();
@@ -3145,7 +3146,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
             if (hasMarkup) {
                 lines = renderer.styledMode ? (
-                    textStr.replace(
+                    textStr
+                        .replace(
                             /<(b|strong)>/g,
                             '<span class="highcharts-strong">'
                         )
@@ -3153,7 +3155,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                             /<(i|em)>/g,
                             '<span class="highcharts-emphasized">'
                         )
-                    ) : (
+                ) : (
                     textStr
                         .replace(
                             /<(b|strong)>/g,
@@ -3163,7 +3165,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                             /<(i|em)>/g,
                             '<span style="font-style:italic">'
                         )
-                    );
+                );
 
                 lines = lines
                     .replace(/<a/g, '<span')
@@ -3568,7 +3570,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 label.state = curState = state;
             }
             // Update visuals
-            label.removeClass(
+            label
+                .removeClass(
                     /highcharts-button-(normal|hover|pressed|disabled)/
                 )
                 .addClass(
@@ -3577,18 +3580,19 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 );
 
             if (!styledMode) {
-                label.attr([
-                    normalState,
-                    hoverState,
-                    pressedState,
-                    disabledState
-                ][state || 0])
-                .css([
-                    normalStyle,
-                    hoverStyle,
-                    pressedStyle,
-                    disabledStyle
-                ][state || 0]);
+                label
+                    .attr([
+                        normalState,
+                        hoverState,
+                        pressedState,
+                        disabledState
+                    ][state || 0])
+                    .css([
+                        normalStyle,
+                        hoverStyle,
+                        pressedStyle,
+                        disabledStyle
+                    ][state || 0]);
             }
         };
 
@@ -3713,8 +3717,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     circle: function (x, y, r) {
         var attribs = (
                 isObject(x) ?
-                x :
-                x === undefined ? {} : { x: x, y: y, r: r }
+                    x :
+                    x === undefined ? {} : { x: x, y: y, r: r }
             ),
             wrapper = this.createElement('circle');
 
@@ -4406,7 +4410,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     anchorX, y + h + arrowLength,
                     anchorX - halfDistance, y + h,
                     x + r, y + h
-                    );
+                );
 
             } else if ( // replace top
                 anchorY &&

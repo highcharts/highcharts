@@ -72,3 +72,28 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Negative values (#9678)', function (assert) {
+
+    assert.expect(0); // Only expect it not to fail
+    Highcharts.chart('container', {
+
+        chart: {
+            type: 'bubble'
+        },
+
+        legend: {
+            bubbleLegend: {
+                enabled: true
+            }
+        },
+
+        series: [{
+            data: [
+                { x: 1, y: 1, z: -1 },
+                { x: 2, y: 2, z: -2 }
+            ]
+        }]
+
+    });
+});

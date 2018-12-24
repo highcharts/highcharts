@@ -1,4 +1,4 @@
-$version: "7.0.0";
+$version: "7.0.1";
 
 // Colors for buttons.
 $button-background-color: #f7f7f7;
@@ -33,6 +33,10 @@ $button-hover-color: #e6ebf5;
 
 .highcharts-draw-mode { cursor: crosshair; }
 
+.highcharts-bindings-wrapper * {
+  box-sizing: content-box;
+}
+
 .highcharts-bindings-wrapper {
   width: 40px;
   height: 100%;
@@ -47,11 +51,12 @@ $button-hover-color: #e6ebf5;
 .highcharts-menu-wrapper {
   float: left;
   width: 40px;
-  height: calc(100% - 30px);
+  height: calc(100% - 50px);
   overflow: hidden;
   position: absolute;
   left: 0px;
   top: 0px;
+  padding: 10px;
 }
 
 .highcharts-bindings-wrapper .highcharts-submenu-wrapper {
@@ -68,8 +73,8 @@ $button-hover-color: #e6ebf5;
   text-align: center;
   width: 40px;
   position: absolute;
-  left: 0%;
-  bottom: 2px;
+  left: 10px;
+  bottom: 10px;
   font-size: 1.5em;
 }
 
@@ -244,7 +249,6 @@ $button-hover-color: #e6ebf5;
   cursor: pointer;
   width: 10px;
   height: 10px;
-  left: 43px;
   background-color: $button-background-color;
   background-image: url("https://code.highcharts.com/gfx/#{$version}/stock-icons/arrow-right.svg");
   background-size: cover;

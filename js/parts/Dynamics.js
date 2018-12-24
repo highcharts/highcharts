@@ -35,28 +35,28 @@ var addEvent = H.addEvent,
     setAnimation = H.setAnimation,
     splat = H.splat;
 
+
 // Remove settings that have not changed, to avoid unnecessary rendering or
 // computing (#9197)
 H.cleanRecursively = function (newer, older) {
-    var total = 0,
-        removed = 0;
+    var result = {};
     objectEach(newer, function (val, key) {
+        var ob;
+
+        // Dive into objects
         if (isObject(newer[key], true) && older[key]) {
-            if (H.cleanRecursively(newer[key], older[key])) {
-                delete newer[key];
+            ob = H.cleanRecursively(newer[key], older[key]);
+            if (Object.keys(ob).length) {
+                result[key] = ob;
             }
-        } else if (
-            !isObject(newer[key]) &&
-            newer[key] === older[key]
-        ) {
-            delete newer[key];
-            removed++;
+
+        // Arrays or primitives are copied directly
+        } else if (isObject(newer[key]) || newer[key] !== older[key]) {
+            result[key] = newer[key];
         }
-        total++;
     });
 
-    // Return true if all sub nodes are removed
-    return total === removed;
+    return result;
 };
 
 // Extend the Chart prototype for dynamic methods
@@ -76,7 +76,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#addSeries
      *
-     * @param {Highcharts.SeriesOptions} options
+     * @param {Highcharts.SeriesOptionsType} options
      *        The config options for the series.
      *
      * @param {boolean} [redraw=true]
@@ -353,6 +353,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * adding and removing items from the collection. Read more under the
      * parameter description below.
      *
+     * Note that when changing series data, `chart.update` may mutate the passed
+     * data options.
+     *
      * See also the
      * [responsive option set](https://api.highcharts.com/highcharts/responsive).
      * Switching between `responsive.rules` basically runs `chart.update` under
@@ -404,7 +407,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         fireEvent(chart, 'update', { options: options });
 
-        H.cleanRecursively(options, chart.options);
+        options = H.cleanRecursively(options, chart.options);
 
         // If the top-level chart option is present, some special updates are
         // required
@@ -692,9 +695,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
             seriesOptions.data[i] = (
-                    isObject(seriesOptions.data[i], true) ||
+                isObject(seriesOptions.data[i], true) ||
                     isObject(options, true)
-                ) ?
+            ) ?
                 point.options :
                 pick(options, seriesOptions.data[i]);
 
@@ -997,6 +1000,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * performance expensive than some other utility methods like {@link
      * Series#setData} or {@link Series#setVisible}.
      *
+     * Note that `Series.update` may mutate the passed `data` options.
+     *
      * @sample highcharts/members/series-update/
      *         Updating series options
      * @sample maps/members/series-update/
@@ -1004,7 +1009,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *
      * @function Highcharts.Series#update
      *
-     * @param {Highcharts.SeriesOptions} options
+     * @param {Highcharts.SeriesOptionsType} options
      *        New options that will be merged with the series' existing options.
      *
      * @param {boolean} [redraw=true]
@@ -1016,7 +1021,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      */
     update: function (newOptions, redraw) {
 
-        H.cleanRecursively(newOptions, this.userOptions);
+        newOptions = H.cleanRecursively(newOptions, this.userOptions);
 
         var series = this,
             chart = series.chart,
@@ -1164,6 +1169,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @param {Highcharts.XAxisOptions|Highcharts.YAxisOptions|Highcharts.ZAxisOptions} options
      *        The new options that will be merged in with existing options on
      *        the axis.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after the axis is altered. If doing
+     *        more operations on the chart, it is a good idea to set redraw to
+     *        false and call {@link Chart#redraw} after.
      */
     update: function (options, redraw) {
         var chart = this.chart,

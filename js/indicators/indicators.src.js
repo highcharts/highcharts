@@ -40,7 +40,7 @@ addEvent(H.Series, 'init', function (eventOptions) {
     if (
         options.useOhlcData &&
         options.id !== 'highcharts-navigator-series'
-        ) {
+    ) {
 
         if (dataGrouping && dataGrouping.enabled) {
             dataGrouping.approximation = 'ohlc';

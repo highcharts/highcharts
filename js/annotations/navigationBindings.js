@@ -956,9 +956,9 @@ H.setOptions({
                             controlPoints: [{
                                 positioner: function (target) {
                                     var xy = H.Annotation.MockPoint
-                                        .pointToPixels(
-                                            target.points[0]
-                                        ),
+                                            .pointToPixels(
+                                                target.points[0]
+                                            ),
                                         r = target.options.r;
 
                                     return {

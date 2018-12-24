@@ -250,12 +250,12 @@ H.merge(
 
             label.attr({
                 text: text ?
-                H.format(
-                    text,
-                    point.getLabelConfig(),
-                    this.annotation.chart.time
-                ) :
-                options.formatter.call(point, this)
+                    H.format(
+                        text,
+                        point.getLabelConfig(),
+                        this.annotation.chart.time
+                    ) :
+                    options.formatter.call(point, this)
             });
 
             anchor = this.anchor(point);

@@ -132,6 +132,7 @@ H.setOptions({
                 pitchfork: 'Pitchfork',
                 parallelChannel: 'Parallel channel',
                 infinityLine: 'Infinity line',
+                measure: 'Measure',
                 measureXY: 'Measure XY',
                 measureX: 'Measure X',
                 measureY: 'Measure Y',
@@ -778,6 +779,17 @@ addEvent(H.Chart, 'afterGetContainer', function (options) {
     H.Chart.prototype.setStockTools.call(this, options);
 });
 
+addEvent(H.Chart, 'getMargins', function () {
+    var offsetWidth = (
+        this.stockToolbar &&
+        this.stockToolbar.listWrapper &&
+        this.stockToolbar.listWrapper.offsetWidth
+    );
+    if (offsetWidth && offsetWidth < this.plotWidth) {
+        this.plotLeft += offsetWidth;
+    }
+});
+
 addEvent(H.Chart, 'destroy', function () {
     if (this.stockToolbar) {
         this.stockToolbar.destroy();
@@ -850,7 +862,7 @@ H.extend(H.Chart.prototype, {
         this.stockToolbar = new H.Toolbar(guiOptions, langOptions, this);
 
         if (this.stockToolbar.guiEnabled) {
-            this.stockToolbar.setToolbarSpace();
+            this.isDirtyBox = true;
         }
     }
 });
@@ -931,7 +943,7 @@ H.Toolbar.prototype = {
 
             // hide menu
             if (buttonWrapper.className.indexOf(PREFIX + 'current') >= 0) {
-                menuWrapper.style.width = '40px';
+                menuWrapper.style.width = menuWrapper.startWidth + 'px';
                 buttonWrapper.classList.remove(PREFIX + 'current');
                 submenuWrapper.style.display = 'none';
             } else {
@@ -960,7 +972,10 @@ H.Toolbar.prototype = {
                 });
 
                 buttonWrapper.className += ' ' + PREFIX + 'current';
-                menuWrapper.style.width = '83px';
+                menuWrapper.startWidth = wrapper.offsetWidth;
+                menuWrapper.style.width = menuWrapper.startWidth +
+                                    H.getStyle(menuWrapper, 'padding-left') +
+                                    submenuWrapper.offsetWidth + 3 + 'px';
             }
         });
     },
@@ -992,14 +1007,14 @@ H.Toolbar.prototype = {
 
             addEvent(submenuBtn.mainButton, 'click', function () {
                 _self.switchSymbol(this, buttonWrapper, true);
-                menuWrapper.style.width = '40px';
+                menuWrapper.style.width = menuWrapper.startWidth + 'px';
                 submenuWrapper.style.display = 'none';
             });
         });
 
-                // select first submenu item
+        // select first submenu item
         firstSubmenuItem = submenuWrapper
-                .querySelectorAll('li > .' + PREFIX + 'menu-item-btn')[0];
+            .querySelectorAll('li > .' + PREFIX + 'menu-item-btn')[0];
 
         // replace current symbol, in main button, with submenu's button style
         _self.switchSymbol(firstSubmenuItem, false);
@@ -1222,6 +1237,12 @@ H.Toolbar.prototype = {
 
             toolbar.classList.add(PREFIX + 'hide');
             showhideBtn.classList.toggle(PREFIX + 'arrow-right');
+        } else {
+            showhideBtn.style.top = H.getStyle(toolbar, 'padding-top') + 'px';
+            showhideBtn.style.left = (
+                wrapper.offsetWidth +
+                H.getStyle(toolbar, 'padding-left')
+            ) + 'px';
         }
 
         // toggle menu
@@ -1294,27 +1315,6 @@ H.Toolbar.prototype = {
         });
     },
     /*
-     * Add space for toolbar.
-     *
-     */
-    setToolbarSpace: function () {
-        var chart = this.chart,
-            marginLeft = chart.options.chart.marginLeft || 0,
-            spacingLeft = chart.spacing[3] || 0,
-            stockToolbar = chart.stockToolbar;
-
-        if (!stockToolbar.visible && stockToolbar.placed) {
-            this.chart.options.chart.marginLeft = marginLeft + spacingLeft;
-        }
-
-        if (stockToolbar.visible) {
-            // 50 - width of toolbar
-            this.chart.options.chart.marginLeft = marginLeft + 50;
-        }
-
-        this.chart.isDirtyBox = true;
-    },
-    /*
      * Verify if chart is in iframe.
      *
      * @return {Object} - elements translations.
@@ -1332,12 +1332,7 @@ H.Toolbar.prototype = {
      */
     destroy: function () {
         var stockToolsDiv = this.wrapper,
-            parent = stockToolsDiv && stockToolsDiv.parentNode,
-            chartOptions = this.chart.options,
-            visible = this.chart.stockToolbar.visible,
-            placed = this.chart.stockToolbar.placed,
-            spacingLeft = this.chart.spacing[3] || 0,
-            marginLeft = chartOptions.chart.marginLeft || 0;
+            parent = stockToolsDiv && stockToolsDiv.parentNode;
 
         this.eventsToUnbind.forEach(function (unbinder) {
             unbinder();
@@ -1346,16 +1341,6 @@ H.Toolbar.prototype = {
         // Remove the empty element
         if (parent) {
             parent.removeChild(stockToolsDiv);
-        }
-
-        if (this.guiEnabled) {
-            // remove extra space if toolbar was added
-            if (visible) {
-                // 50 - width of toolbar
-                this.chart.options.chart.marginLeft = marginLeft - 50;
-            } else if (placed) {
-                this.chart.options.chart.marginLeft = marginLeft - spacingLeft;
-            }
         }
 
         // delete stockToolbar reference

@@ -224,8 +224,8 @@ H.setOptions({
                 ) && {} || chart.getAxesDescription();
 
             return '<div>' + chart.langFormat(
-                        'accessibility.navigationHint', formatContext
-                    ) + '</div><h3>' +
+                'accessibility.navigationHint', formatContext
+            ) + '</div><h3>' +
                     (
                         options.title.text ?
                             htmlencode(options.title.text) :
@@ -239,16 +239,16 @@ H.setOptions({
                             ''
                     ) +
                     '</h3><h4>' + chart.langFormat(
-                        'accessibility.longDescriptionHeading', formatContext
-                    ) + '</h4><div>' +
+                'accessibility.longDescriptionHeading', formatContext
+            ) + '</h4><div>' +
                     (
                         options.chart.description || chart.langFormat(
                             'accessibility.noDescription', formatContext
                         )
                     ) +
                     '</div><h4>' + chart.langFormat(
-                        'accessibility.structureHeading', formatContext
-                    ) + '</h4><div>' +
+                'accessibility.structureHeading', formatContext
+            ) + '</h4><div>' +
                     (
                         options.chart.typeDescription ||
                         chart.getTypeDescription()
@@ -279,7 +279,7 @@ H.setOptions({
  * @apioption chart.description
  */
 
- /**
+/**
  * A text description of the chart type.
  *
  * If the Accessibility module is loaded, this will be included in the
@@ -439,12 +439,12 @@ H.Series.prototype.buildSeriesInfoString = function () {
         );
 
     return summary + (description ? ' ' + description : '') + (
-            chart.yAxis.length > 1 && this.yAxis ?
-                ' ' + yAxisInfo : ''
-        ) + (
-            chart.xAxis.length > 1 && this.xAxis ?
-                ' ' + xAxisInfo : ''
-        );
+        chart.yAxis.length > 1 && this.yAxis ?
+            ' ' + yAxisInfo : ''
+    ) + (
+        chart.xAxis.length > 1 && this.xAxis ?
+            ' ' + xAxisInfo : ''
+    );
 };
 
 
@@ -597,7 +597,9 @@ H.Chart.prototype.getTypeDescription = function () {
         return this.langFormat(
             'accessibility.chartTypes.emptyChart', formatContext
         );
-    } else if (firstType === 'map') {
+    }
+
+    if (firstType === 'map') {
         return mapTitle ?
             this.langFormat(
                 'accessibility.chartTypes.mapTypeDescription',
@@ -607,7 +609,9 @@ H.Chart.prototype.getTypeDescription = function () {
                 'accessibility.chartTypes.unknownMap',
                 formatContext
             );
-    } else if (this.types.length > 1) {
+    }
+
+    if (this.types.length > 1) {
         return this.langFormat(
             'accessibility.chartTypes.combinationChart', formatContext
         );
@@ -791,9 +795,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
     // Add SVG title tag if it is set
     if (svgContainerTitle.length) {
         titleElement = doc.createElementNS(
-                'http://www.w3.org/2000/svg',
-                'title'
-            );
+            'http://www.w3.org/2000/svg',
+            'title'
+        );
         titleElement.textContent = svgContainerTitle;
         titleElement.id = titleId;
         descElement.parentNode.insertBefore(titleElement, descElement);

@@ -1,6 +1,9 @@
 QUnit.test('Bindings general tests', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
+            chart: {
+                width: 800
+            },
             yAxis: {
                 labels: {
                     align: 'left'

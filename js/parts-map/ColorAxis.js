@@ -438,6 +438,12 @@ if (!H.ColorAxis) {
              */
 
             /**
+             * @product   highcharts highmaps
+             * @excluding afterBreaks, pointBreak, pointInBreak
+             * @apioption colorAxis.events
+             */
+
+            /**
              * Fires when the legend item belonging to the colorAxis is clicked.
              * One parameter, `event`, is passed to the function.
              *
@@ -615,10 +621,10 @@ if (!H.ColorAxis) {
                 // Fake length for disabled legend to avoid tick issues
                 // and such (#5205)
                 this.len = (
-                        this.horiz ?
-                            legendOptions.symbolWidth :
-                            legendOptions.symbolHeight
-                    ) || this.defaultLegendLength;
+                    this.horiz ?
+                        legendOptions.symbolWidth :
+                        legendOptions.symbolHeight
+                ) || this.defaultLegendLength;
             }
         },
 
@@ -742,8 +748,10 @@ if (!H.ColorAxis) {
             grad = horiz ? [one, 0, zero, 0] : [0, zero, 0, one]; // #3190
             this.legendColor = {
                 linearGradient: {
-                    x1: grad[0], y1: grad[1],
-                    x2: grad[2], y2: grad[3]
+                    x1: grad[0],
+                    y1: grad[1],
+                    x2: grad[2],
+                    y2: grad[3]
                 },
                 stops: this.stops
             };

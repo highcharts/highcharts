@@ -103,7 +103,7 @@ function decorateOptions(parent, target, option, filename) {
         return;
     }
 
-    index = option.key.name;
+    index = (option.key.name || option.key.value); // `value` for literal keys
 
     if (parent && parent.length > 0) {
         parent += '.';
@@ -241,7 +241,7 @@ function nodeVisitor(node, e, _, currentSourceName) {
             s.forEach(function (p, i) {
                 // p = p.trim();
 
-                fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p
+                fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p;
 
                 target[p] = target[p] || {};
 
