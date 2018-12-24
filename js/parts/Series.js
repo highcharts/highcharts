@@ -982,9 +982,9 @@ null
      *         Bar
      * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-area/
      *         Area
-     * @sample {highcharts} highcharts/plotoptions/series-stacking-waterfall-normal
+     * @sample {highcharts} highcharts/plotoptions/series-waterfall-with-normal-stacking
      *         Column
-     * @sample {highcharts} highcharts/plotoptions/series-stacking-waterfall-overlap
+     * @sample {highcharts} highcharts/plotoptions/series-waterfall-with-overlap-stacking
      *         Column
      * @sample {highstock} stock/plotoptions/stacking/
      *         Area

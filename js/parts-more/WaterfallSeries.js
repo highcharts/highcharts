@@ -15,7 +15,6 @@ import '../parts/Point.js';
 var correctFloat = H.correctFloat,
     isNumber = H.isNumber,
     pick = H.pick,
-    each = H.each,
     objectEach = H.objectEach,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax,
@@ -36,21 +35,17 @@ addEvent(Axis, 'afterInit', function () {
 addEvent(Chart, 'beforeRedraw', function () {
     var axes = this.axes,
         series = this.series,
-        i = series.length,
-        hasStackedSeries;
+        i = series.length;
 
     while (i--) {
         if (series[i].options.stacking) {
-            hasStackedSeries = true;
+            axes.forEach(function (axis) {
+                if (!axis.isXAxis) {
+                    axis.waterfallStacks = {};
+                }
+            });
+            i = 0;
         }
-    }
-
-    if (hasStackedSeries) {
-        each(axes, function (axis) {
-            if (!axis.isXAxis) {
-                axis.waterfallStacks = {};
-            }
-        });
     }
 });
 
@@ -287,6 +282,7 @@ seriesType('waterfall', 'column', {
                     }
 
                     if (yAxis.reversed) {
+                        // swapping values
                         yPos ^= hPos;
                         hPos ^= yPos;
                         yPos ^= hPos;
@@ -570,6 +566,7 @@ seriesType('waterfall', 'column', {
                 negTotal = actualStackX.negTotal;
 
                 if (xPoint && xPoint.isIntermediateSum) {
+                    // swapping values
                     stackThreshold ^= interSum;
                     interSum ^= stackThreshold;
                     stackThreshold ^= interSum;
@@ -612,7 +609,7 @@ seriesType('waterfall', 'column', {
                 objectEach(waterfallStacks[this.stackKey], function (stackX) {
 
                     states = [];
-                    each(stackX.stackState, function (state, stateIndex) {
+                    stackX.stackState.forEach(function (state, stateIndex) {
                         firstState = stackX.stackState[0];
 
                         if (stateIndex) {
