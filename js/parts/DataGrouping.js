@@ -852,7 +852,9 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
 
         // set variables
         currentDataGrouping = series.currentDataGrouping;
-        dateTimeLabelFormats = dataGroupingOptions.dateTimeLabelFormats;
+        dateTimeLabelFormats = dataGroupingOptions.dateTimeLabelFormats ||
+            // Fallback to commonOptions (#9693)
+            commonOptions.dateTimeLabelFormats;
 
         // if we have grouped data, use the grouping information to get the
         // right format
@@ -969,7 +971,8 @@ Axis.prototype.getGroupPixelWidth = function () {
         if (dgOptions) {
             groupPixelWidth = Math.max(
                 groupPixelWidth,
-                pick(dgOptions.groupPixelWidth, 2) // #9693
+                // Fallback to commonOptions (#9693)
+                pick(dgOptions.groupPixelWidth, commonOptions.groupPixelWidth)
             );
 
         }
