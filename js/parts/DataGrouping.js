@@ -652,12 +652,18 @@ seriesProto.processData = function () {
         skip,
         lastDataGrouping = this.currentDataGrouping,
         currentDataGrouping,
-        croppedData;
+        croppedData,
+        revertRequireSorting = false;
 
     // Run base method
     series.forceCrop = groupingEnabled; // #334
     series.groupPixelWidth = null; // #2110
     series.hasProcessed = true; // #2692
+
+    // Data needs to be sorted for dataGrouping
+    if (groupingEnabled && !series.requireSorting) {
+        series.requireSorting = revertRequireSorting = true;
+    }
 
     // Skip if processData returns false or if grouping is disabled (in that
     // order)
@@ -665,6 +671,12 @@ seriesProto.processData = function () {
         baseProcessData.apply(series, arguments) === false ||
         !groupingEnabled
     );
+
+    // Revert original requireSorting value if changed
+    if (revertRequireSorting) {
+        series.requireSorting = false;
+    }
+
     if (!skip) {
         series.destroyGroupedData();
 
@@ -935,12 +947,7 @@ addEvent(Series, 'afterSetOptions', function (e) {
             this.userOptions.dataGrouping
         );
     }
-
-    if (this.chart.options.isStock) {
-        this.requireSorting = true;
-    }
 });
-
 
 // When resetting the scale reset the hasProccessed flag to avoid taking
 // previous data grouping of neighbour series into accound when determining
