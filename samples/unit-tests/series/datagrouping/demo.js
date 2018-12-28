@@ -40,11 +40,9 @@ QUnit.test('General dataGrouping options', function (assert) {
         }]
     });
 
-    assert.strictEqual(
+    assert.ok(
         chart.series[0].points[0].y > 1,
-        true,
-        'Scatter doesn\'t prevent dataGrouping when ' +
-            '`plotOptions.series.dataGrouping` is set (#9693)'
+        'Scatter doesn\'t prevent dataGrouping when `plotOptions.series.dataGrouping` is set (#9693)'
     );
 
     assert.strictEqual(
@@ -180,33 +178,60 @@ QUnit.test('dataGrouping approximations', function (assert) {
 
 });
 
-QUnit.test('Hidden series shouldn\'t have `undefined`-points in a series.points array (#6709).', function (assert) {
-    var chart = Highcharts.stockChart('container', {
-        chart: {
-            width: 400
-        },
-        plotOptions: {
-            series: {
-                dataGrouping: {
-                    forced: true,
-                    units: [
-                        ['millisecond', [10]]
-                    ]
+QUnit.test('dataGrouping and multiple series', function (assert) {
+    var realError,
+        hadError = false,
+        chart = Highcharts.stockChart('container', {
+            chart: {
+                width: 400,
+                type: 'column',
+                events: {
+                    beforeRender: function () {
+                        realError = Highcharts.error;
+                        Highcharts.error = function () {
+                            hadError = true;
+                        };
+                    }
                 }
-            }
-        },
-        series: [{
-            data: [0, 5, 40]
-        }, {
-            type: 'column',
-            data: [2, 2, 2]
-        }]
-    });
+            },
+            plotOptions: {
+                column: {
+                    dataGrouping: {
+                        forced: true,
+                        units: [
+                            ['millisecond', [10]]
+                        ]
+                    }
+                }
+            },
+            series: [{
+                data: [0, 5, 40]
+            }, {
+                data: [2, 2, 2]
+            }, {
+                type: 'scatter',
+                data: [
+                    [2, 7],
+                    [0, 7]
+                ]
+            }]
+        }, function () {
+            // clean up
+            Highcharts.error = realError;
+        });
+
+    assert.ok(
+        !hadError,
+        'No Highcharts error (#6989)'
+    );
+
     chart.series[1].hide();
     assert.ok(
         chart.series[1].points === null,
-        'Points array is nullified for a hidden series.'
+        'Points array is nullified for a hidden series. Hidden series shouldn\'t have `undefined`-points in a series.points array (#6709).'
     );
+
+
 });
 
 
