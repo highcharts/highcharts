@@ -1623,7 +1623,7 @@ var stockToolsBindings = {
      */
     zoomY: {
         /** @ignore */
-        className: 'highcharts-highcharts-zoom-y',
+        className: 'highcharts-zoom-y',
         /** @ignore */
         init: function (button) {
             this.chart.update({
