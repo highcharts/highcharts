@@ -37,18 +37,16 @@ var bindingsUtils = {
      */
     updateRectSize: function (event, annotation) {
         var options = annotation.options.typeOptions,
-            xStart = this.chart.xAxis[0].toPixels(options.point.x),
-            yStart = this.chart.yAxis[0].toPixels(options.point.y),
-            x = event.chartX,
-            y = event.chartY,
-            width = x - xStart,
-            height = y - yStart;
+            x = this.chart.xAxis[0].toValue(event.chartX),
+            y = this.chart.yAxis[0].toValue(event.chartY),
+            width = x - options.point.x,
+            height = options.point.y - y;
 
         annotation.update({
             typeOptions: {
                 background: {
-                    width: width + 'px',
-                    height: height + 'px'
+                    width: width,
+                    height: height
                 }
             }
         });
@@ -972,8 +970,9 @@ H.setOptions({
                                     // TRANSFORM RADIUS ACCORDING TO Y
                                     // TRANSLATION
                                     drag: function (e, target) {
-                                        var position = this
-                                            .mouseMoveToTranslation(e);
+                                        var annotation = target.annotation,
+                                            position = this
+                                                .mouseMoveToTranslation(e);
 
                                         target.setRadius(
                                             Math.max(
@@ -983,6 +982,10 @@ H.setOptions({
                                                 5
                                             )
                                         );
+
+                                        annotation.options.shapes[0] =
+                                            annotation.userOptions.shapes[0] =
+                                            target.options;
 
                                         target.redraw(false);
                                     }
@@ -1056,8 +1059,9 @@ H.setOptions({
                                     },
                                     events: {
                                         drag: function (e, target) {
-                                            var xy = this
-                                                .mouseMoveToTranslation(e);
+                                            var annotation = target.annotation,
+                                                xy = this
+                                                    .mouseMoveToTranslation(e);
 
                                             target.options.width = Math.max(
                                                 target.options.width + xy.x,
@@ -1067,6 +1071,11 @@ H.setOptions({
                                                 target.options.height + xy.y,
                                                 5
                                             );
+
+                                            annotation.options.shapes[0] =
+                                                target.options;
+                                            annotation.userOptions.shapes[0] =
+                                                target.options;
 
                                             target.redraw(false);
                                         }
@@ -1154,6 +1163,10 @@ H.setOptions({
                                         var xy = this.mouseMoveToTranslation(e);
 
                                         target.translatePoint(xy.x, xy.y);
+
+                                        target.annotation.labels[0].options =
+                                            target.options;
+
                                         target.redraw(false);
                                     }
                                 }
@@ -1182,6 +1195,10 @@ H.setOptions({
                                         var xy = this.mouseMoveToTranslation(e);
 
                                         target.translate(xy.x, xy.y);
+
+                                        target.annotation.labels[0].options =
+                                            target.options;
+
                                         target.redraw(false);
                                     }
                                 }

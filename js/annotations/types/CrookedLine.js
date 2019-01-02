@@ -170,6 +170,12 @@ H.extendAnnotation(CrookedLine, null,
                             this.index
                         );
 
+                        // Update options:
+                        target.options.typeOptions.points[this.index].x =
+                            target.points[this.index].x;
+                        target.options.typeOptions.points[this.index].y =
+                            target.points[this.index].y;
+
                         target.redraw(false);
                     }
                 }

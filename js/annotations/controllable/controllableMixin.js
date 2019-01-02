@@ -18,13 +18,15 @@ var controllableMixin = {
      *
      * @param {Annotation} annotation - an annotation instance
      * @param {Object} options - options specific for controllable
+     * @param {number} index - index of the controllable element
      **/
-    init: function (annotation, options) {
+    init: function (annotation, options, index) {
         this.annotation = annotation;
         this.chart = annotation.chart;
         this.options = options;
         this.points = [];
         this.controlPoints = [];
+        this.index = index;
 
         this.linkPoints();
         this.addControlPoints();
