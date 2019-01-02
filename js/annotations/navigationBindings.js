@@ -729,7 +729,7 @@ extend(H.NavigationBindings.prototype, {
     utils: bindingsUtils
 });
 
-addEvent(H.Chart, 'load', function () {
+H.Chart.prototype.initNavigationBindings = function () {
     var chart = this,
         options = chart.options;
 
@@ -740,11 +740,23 @@ addEvent(H.Chart, 'load', function () {
         );
         chart.navigationBindings.initEvents();
     }
+};
+
+addEvent(H.Chart, 'load', function () {
+    this.initNavigationBindings();
 });
 
 addEvent(H.Chart, 'destroy', function () {
     if (this.navigationBindings) {
         this.navigationBindings.destroy();
+    }
+});
+
+addEvent(H.Chart, 'afterUpdate', function () {
+    if (this.navigationBindings) {
+        this.navigationBindings.update();
+    } else {
+        this.initNavigationBindings();
     }
 });
 
