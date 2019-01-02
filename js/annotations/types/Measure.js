@@ -302,6 +302,7 @@ H.extendAnnotation(Measure, null,
 
             // background shape
             var bckShape = this.shapes[2];
+
             if (selectType === 'x') {
                 if (cpIndex === 0) {
                     bckShape.translatePoint(dx, 0, 0);
@@ -327,6 +328,13 @@ H.extendAnnotation(Measure, null,
             this.calculations.updateStartPoints
                 .call(this, false, true, cpIndex, dx, dy);
 
+            this.options.typeOptions.background.height = Math.abs(
+                this.startYMax - this.startYMin
+            );
+
+            this.options.typeOptions.background.width = Math.abs(
+                this.startXMax - this.startXMin
+            );
         },
         /**
          * Redraw event which render elements and update start points
@@ -362,6 +370,9 @@ H.extendAnnotation(Measure, null,
             this.shapes.forEach(function (item) {
                 item.translate(dx, dy);
             });
+
+            this.options.typeOptions.point.x = this.startXMin;
+            this.options.typeOptions.point.y = this.startYMin;
         },
         calculations: {
             /*

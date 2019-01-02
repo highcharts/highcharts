@@ -703,7 +703,7 @@ merge(
 
         addShapes: function () {
             (this.options.shapes || []).forEach(function (shapeOptions, i) {
-                var shape = this.initShape(shapeOptions);
+                var shape = this.initShape(shapeOptions, i);
 
                 this.options.shapes[i] = shape.options;
             }, this);
@@ -711,7 +711,7 @@ merge(
 
         addLabels: function () {
             (this.options.labels || []).forEach(function (labelOptions, i) {
-                var label = this.initLabel(labelOptions);
+                var label = this.initLabel(labelOptions, i);
 
                 this.options.labels[i] = label.options;
             }, this);
@@ -937,6 +937,7 @@ merge(
                     this.userOptions,
                     userOptions
                 ),
+                userOptionsIndex = chart.annotations.indexOf(this),
                 options = H.merge(true, this.userOptions, userOptions);
 
             options.labels = labelsAndShapes.labels;
@@ -944,6 +945,9 @@ merge(
 
             this.destroy();
             this.constructor(chart, options);
+
+            // Update options in chart options, used in exporting (#9767):
+            chart.options.annotations[userOptionsIndex] = options;
 
             this.redraw();
         },
@@ -958,7 +962,7 @@ merge(
          *
          * @param {Object} shapeOptions - a confg object for a single shape
          **/
-        initShape: function (shapeOptions) {
+        initShape: function (shapeOptions, index) {
             var options = merge(
                     this.options.shapeOptions,
                     {
@@ -968,7 +972,8 @@ merge(
                 ),
                 shape = new Annotation.shapesMap[options.type](
                     this,
-                    options
+                    options,
+                    index
                 );
 
             shape.itemType = 'shape';
@@ -983,7 +988,7 @@ merge(
          *
          * @param {Object} labelOptions
          **/
-        initLabel: function (labelOptions) {
+        initLabel: function (labelOptions, index) {
             var options = merge(
                     this.options.labelOptions,
                     {
@@ -993,7 +998,8 @@ merge(
                 ),
                 label = new ControllableLabel(
                     this,
-                    options
+                    options,
+                    index
                 );
 
             label.itemType = 'label';

@@ -14,9 +14,11 @@ import MockPoint from './../MockPoint.js';
  *
  * @param {Highcharts.Annotation} annotation an annotation instance
  * @param {Object} options a label's options
+ * @param {number} index of the label
  **/
-function ControllableLabel(annotation, options) {
-    this.init(annotation, options);
+function ControllableLabel(annotation, options, index) {
+    this.init(annotation, options, index);
+    this.collection = 'labels';
 }
 
 /**
@@ -193,8 +195,16 @@ H.merge(
          * @param {number} dy translation for y coordinate
          **/
         translate: function (dx, dy) {
+            var annotationOptions = this.annotation.userOptions,
+                labelOptions = annotationOptions[this.collection][this.index];
+
+            // Local options:
             this.options.x += dx;
             this.options.y += dy;
+
+            // Options stored in chart:
+            labelOptions.x = this.options.x;
+            labelOptions.y = this.options.y;
         },
 
         render: function (parent) {
