@@ -983,9 +983,9 @@ H.Series = H.seriesType('line',
          * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-area/
          *         Area
          * @sample {highcharts} highcharts/plotoptions/series-waterfall-with-normal-stacking
-         *         Column
+         *         Waterfall with normal stacking
          * @sample {highcharts} highcharts/plotoptions/series-waterfall-with-overlap-stacking
-         *         Column
+         *         Waterfall with overlap stacking
          * @sample {highstock} stock/plotoptions/stacking/
          *         Area
          *
