@@ -713,3 +713,84 @@ QUnit.test('Column pointrange (#2806)', function (assert) {
     );
 
 });
+
+// Highcharts 7.0.1, Issue #9238
+// Yaxis label hidden despite enough space
+QUnit.test('Correction for X axis labels (#9238)', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            marginLeft: 100,
+            height: 72
+        },
+        title: {
+            text: ''
+        },
+        credits: {
+            enabled: false
+        },
+        legend: {
+            enabled: false
+        },
+        xAxis: [{
+            visible: true,
+            labels: {
+                enabled: false
+            }
+        }],
+        yAxis: {
+            categories: [
+                "First label",
+                "Second label"
+            ],
+            title: {
+                text: ''
+            },
+            startOnTick: false,
+            endOnTick: false
+        },
+        series: [{
+            data: [{
+                x: 8,
+                y: 0
+            }]
+        }, {
+            data: [{
+                x: -88,
+                y: 1
+            }]
+        }]
+      });
+
+    assert.strictEqual(
+        chart.yAxis[0].labelGroup.element.childNodes.length,
+        2,
+        'There should be 2 labels on the yAxis when axis labels are disabled.'
+    );
+
+    chart.update({
+        xAxis: [{
+            visible: false
+        }, {
+            visible: true
+        }],
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].labelGroup.element.childNodes.length,
+        2,
+        'There should be 2 labels on the yAxis when additional axis does not have series linked to it.'
+    );
+
+    chart.update({
+        xAxis: [{
+            visible: false
+        }, {
+            visible: true,
+            labels: {
+                enabled: false
+            }
+        }]
+    });
+
+});
