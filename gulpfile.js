@@ -15,6 +15,7 @@ const {
     sep
 } = require('path');
 const {
+    buildModules,
     getFilesInFolder
 } = require('highcharts-assembler/src/build.js');
 const {
@@ -42,9 +43,6 @@ const ProgressBar = require('./tools/progress-bar.js');
  * @return {undefined}
  */
 const buildESModules = () => {
-    const {
-        buildModules
-    } = require('../highcharts-assembler/src/build.js');
     buildModules({
         base: './js/',
         output: './code/',
