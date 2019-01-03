@@ -1008,7 +1008,28 @@ addEvent(Axis, 'afterInit', function () {
                 from = unitedMin + range * (1 - this.to);
             }
 
-            axis.setExtremes(from, to, true, false, e);
+            if (
+                pick(
+                    this.options.liveRedraw,
+                    H.svg && !H.isTouchDevice && !this.chart.isBoosting
+                ) ||
+                // Mouseup always should change extremes
+                e.DOMType === 'mouseup' ||
+                // Internal events
+                !defined(e.DOMType)
+            ) {
+                axis.setExtremes(
+                    from,
+                    to,
+                    true,
+                    e.DOMType !== 'mousemove',
+                    e
+                );
+            } else {
+                // When live redraw is disabled, don't change extremes
+                // Only change the position of the scollbar thumb
+                this.setRange(this.from, this.to);
+            }
         });
     }
 });
