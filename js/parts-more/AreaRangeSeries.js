@@ -451,7 +451,7 @@ seriesType('arearange', 'area', {
             while (i--) {
                 point = data[i];
                 if (point) {
-                    point.dataLabels = [point.dataLabel, point.dataLabelUpper]
+                    point.dataLabels = [point.dataLabelUpper, point.dataLabel]
                         .filter(function (label) {
                             return !!label;
                         });
