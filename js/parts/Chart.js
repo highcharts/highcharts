@@ -1943,10 +1943,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             axes = chart.axes,
             renderer = chart.renderer,
             options = chart.options,
+            correction = 0, // correction for X axis labels
+            xAxes = chart.xAxis,
             tempWidth,
             tempHeight,
             redoHorizontal,
-            redoVertical;
+            redoVertical,
+            xAxis,
+            i;
 
         // Title
         chart.setTitle();
@@ -1970,9 +1974,25 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Record preliminary dimensions for later comparison
         tempWidth = chart.plotWidth;
-        // 21 is the most common correction for X axis labels
+
+        for (i = 0; i < xAxes.length; i++) {
+            xAxis = xAxes[i];
+
+            // #9238 make correction only if X axis labels are visible
+            if (
+                xAxis.visible &&
+                xAxis.options.labels.enabled &&
+                xAxis.series.length
+            ) {
+                // 21 is the most common correction for X axis labels
+                correction = 21;
+                i = xAxes.length;
+            }
+        }
+
         // use Math.max to prevent negative plotHeight
-        tempHeight = chart.plotHeight = Math.max(chart.plotHeight - 21, 0);
+        chart.plotHeight = Math.max(chart.plotHeight - correction, 0);
+        tempHeight = chart.plotHeight;
 
         // Get margins by pre-rendering axes
         axes.forEach(function (axis) {
