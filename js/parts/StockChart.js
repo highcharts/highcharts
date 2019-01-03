@@ -893,7 +893,8 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
 addEvent(Series, 'render', function () {
-    var clipHeight;
+    var clipHeight,
+        globalAnimation;
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
     // if the series type handles clipping in the animate method (#2975).
     if (
@@ -915,14 +916,23 @@ addEvent(Series, 'render', function () {
 
         // On redrawing, resizing etc, update the clip rectangle
         } else if (this.chart[this.sharedClipKey]) {
-            this.chart[this.sharedClipKey].attr({
+            globalAnimation = this.chart.renderer.globalAnimation;
+
+            // animate in case resize is done during initial animation
+            this.chart[this.sharedClipKey].animate({
                 width: this.xAxis.len,
                 height: clipHeight
-            });
-        // #3111
-        } else if (this.clipBox) {
-            this.clipBox.width = this.xAxis.len;
-            this.clipBox.height = clipHeight;
+            }, globalAnimation);
+
+            // also change markers clip animation for consistency
+            // (marker clip rects should exist only on chart init)
+            if (
+                this.chart[this.sharedClipKey + 'm']
+            ) {
+                this.chart[this.sharedClipKey + 'm'].animate({
+                    width: this.xAxis.len
+                }, globalAnimation);
+            }
         }
     }
 });
