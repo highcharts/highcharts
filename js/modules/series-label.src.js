@@ -702,7 +702,7 @@ Chart.prototype.drawSeriesLabels = function () {
         if (series.visible && !series.isSeriesBoosting && points) {
             if (!label) {
                 series.labelBySeries = label = chart.renderer
-                    .label(series.name, 0, -9999, 'connector')
+                    .label(series.name, 0, -9999, 'connector', null, null, false, false, 'label-series-' + series.index)
                     .css(extend({
                         color: onArea ?
                             chart.renderer.getContrast(series.color) :
