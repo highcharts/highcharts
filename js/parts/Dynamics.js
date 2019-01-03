@@ -407,11 +407,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         fireEvent(chart, 'update', { options: options });
 
+        // If there are responsive rules in action, undo the responsive rules
+        // before we apply the updated options and replay the responsive rules
+        // on top from the chart.redraw function (#9617).
+        if (!options.isResponsiveOptions) {
+            chart.setResponsive(false, true);
+        }
+
         options = H.cleanRecursively(options, chart.options);
 
         // If the top-level chart option is present, some special updates are
         // required
         optionsChart = options.chart;
+
         if (optionsChart) {
 
             merge(true, chart.options.chart, optionsChart);

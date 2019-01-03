@@ -149,15 +149,19 @@ var Chart = H.Chart,
  * @private
  * @function Highcharts.Chart#setResponsive
  *
- * @param {boolean} [redraw=true]
+ * @param  {boolean} [redraw=true]
+ * @param  {Array} [reset=false]
+ *         Reset by un-applying all rules. Chart.update resets all rules before
+ *         applying updated options.
  */
-Chart.prototype.setResponsive = function (redraw) {
+Chart.prototype.setResponsive = function (redraw, reset) {
     var options = this.options.responsive,
         ruleIds = [],
         currentResponsive = this.currentResponsive,
-        currentRuleIds;
+        currentRuleIds,
+        undoOptions;
 
-    if (options && options.rules) {
+    if (!reset && options && options.rules) {
         options.rules.forEach(function (rule) {
             if (rule._id === undefined) {
                 rule._id = H.uniqueKey();
@@ -173,11 +177,11 @@ Chart.prototype.setResponsive = function (redraw) {
             return rule._id === ruleId;
         }).chartOptions;
     }));
+    mergedOptions.isResponsiveOptions = true;
 
     // Stringified key for the rules that currently apply.
     ruleIds = ruleIds.toString() || undefined;
     currentRuleIds = currentResponsive && currentResponsive.ruleIds;
-
 
     // Changes in what rules apply
     if (ruleIds !== currentRuleIds) {
@@ -190,10 +194,12 @@ Chart.prototype.setResponsive = function (redraw) {
 
         if (ruleIds) {
             // Get undo-options for matching rules
+            undoOptions = this.currentOptions(mergedOptions);
+            undoOptions.isResponsiveOptions = true;
             this.currentResponsive = {
                 ruleIds: ruleIds,
                 mergedOptions: mergedOptions,
-                undoOptions: this.currentOptions(mergedOptions)
+                undoOptions: undoOptions
             };
 
             this.update(mergedOptions, redraw);
