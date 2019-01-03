@@ -952,6 +952,13 @@ seriesType('column', 'line'
                     } else {
                         attr.translateY = translatedThreshold;
                     }
+
+                    // apply finnal clipping (used in Highstock) (#7083)
+                    // animation is done by scaleY, so cliping is for panes
+                    if (series.clipBox) {
+                        series.setClip();
+                    }
+
                     series.group.attr(attr);
 
                 } else { // run the animation
