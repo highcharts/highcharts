@@ -30,8 +30,8 @@ QUnit.test('addOverlapToRelations', function (assert) {
     assert.deepEqual(
         set.overlapping,
         {
-            'B': 1,
-            'C': 2
+            B: 1,
+            C: 2
         },
         'should set the property overlapping on set A to include a map from id of overlapping set to the amount of overlap.'
     );
@@ -45,8 +45,8 @@ QUnit.test('addOverlapToRelations', function (assert) {
     assert.deepEqual(
         set.overlapping,
         {
-            'A': 1,
-            'C': 3
+            A: 1,
+            C: 3
         },
         'should set the property overlapping on set B to include a map from id of overlapping set to the amount of overlap.'
     );
@@ -60,8 +60,8 @@ QUnit.test('addOverlapToRelations', function (assert) {
     assert.deepEqual(
         set.overlapping,
         {
-            'A': 2,
-            'B': 3
+            A: 2,
+            B: 3
         },
         'should set the property overlapping on set C to include a map from id of overlapping set to the amount of overlap.'
     );
@@ -114,7 +114,7 @@ QUnit.test('getAreaOfIntersectionBetweenCircles', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getAreaOfIntersectionBetweenCircles =
             vennPrototype.utils.geometryCircles
-            .getAreaOfIntersectionBetweenCircles;
+                .getAreaOfIntersectionBetweenCircles;
 
     assert.deepEqual(
         getAreaOfIntersectionBetweenCircles([
@@ -164,7 +164,7 @@ QUnit.test('getOverlapBetweenCircles', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getOverlapBetweenCircles =
             vennPrototype.utils.geometryCircles
-            .getOverlapBetweenCircles;
+                .getOverlapBetweenCircles;
 
     assert.strictEqual(
         getOverlapBetweenCircles(3, 4, 5),
@@ -209,7 +209,7 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', function (assert) {
         getDistanceBetweenCirclesByOverlap(25.2313252202016, 25.2313252202016, 1000),
         20.39195704296693,
         'should return a distance of 20.39195704296693 when r1=r2=25.2313252202016 and overlap=1000.'
-    )
+    );
 });
 
 QUnit.test('getDistanceBetweenPoints', function (assert) {
@@ -320,9 +320,9 @@ QUnit.test('loss', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         loss = vennPrototype.utils.loss,
         map = {
-            'A': { x: 0, y: 0, r: 3 },
-            'B': { x: 6, y: 0, r: 3 },
-            'C': { x: 5.074, y: 0, r: 3 }
+            A: { x: 0, y: 0, r: 3 },
+            B: { x: 6, y: 0, r: 3 },
+            C: { x: 5.074, y: 0, r: 3 }
         };
 
     assert.strictEqual(
