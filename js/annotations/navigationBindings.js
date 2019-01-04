@@ -5,10 +5,12 @@
  */
 'use strict';
 import H from '../parts/Globals.js';
+import chartNavigationMixin from '../mixins/navigation.js';
 
 var doc = H.doc,
     addEvent = H.addEvent,
     pick = H.pick,
+    merge = H.merge,
     extend = H.extend,
     isNumber = H.isNumber,
     fireEvent = H.fireEvent,
@@ -217,6 +219,23 @@ extend(H.NavigationBindings.prototype, {
             addEvent(chart.container, 'mousemove', function (e) {
                 navigation.bindingsContainerMouseMove(this, e);
             })
+        );
+    },
+
+    /**
+     * Common chart.update() delegation, shared between bindings and exporting.
+     *
+     * @private
+     * @function Highcharts.NavigationBindings#initUpdate
+     */
+    initUpdate: function () {
+        var navigation = this;
+
+        chartNavigationMixin.addUpdate(
+            function (options) {
+                navigation.update(options);
+            },
+            this.chart
         );
     },
 
@@ -701,7 +720,8 @@ extend(H.NavigationBindings.prototype, {
      * @private
      * @function Highcharts.NavigationBindings#update
      */
-    update: function () {
+    update: function (options) {
+        this.options = merge(true, this.options, options);
         this.removeEvents();
         this.initEvents();
     },
@@ -739,6 +759,7 @@ H.Chart.prototype.initNavigationBindings = function () {
             options.navigation
         );
         chart.navigationBindings.initEvents();
+        chart.navigationBindings.initUpdate();
     }
 };
 
@@ -749,14 +770,6 @@ addEvent(H.Chart, 'load', function () {
 addEvent(H.Chart, 'destroy', function () {
     if (this.navigationBindings) {
         this.navigationBindings.destroy();
-    }
-});
-
-addEvent(H.Chart, 'afterUpdate', function () {
-    if (this.navigationBindings) {
-        this.navigationBindings.update();
-    } else {
-        this.initNavigationBindings();
     }
 });
 

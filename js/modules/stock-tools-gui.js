@@ -775,15 +775,15 @@ H.setOptions({
 });
 
 // Run HTML generator
-addEvent(H.Chart, 'afterGetContainer', function (options) {
-    H.Chart.prototype.setStockTools.call(this, options);
+addEvent(H.Chart, 'afterGetContainer', function () {
+    this.setStockTools();
 });
 
 addEvent(H.Chart, 'getMargins', function () {
     var offsetWidth = (
-        this.stockToolbar &&
-        this.stockToolbar.listWrapper &&
-        this.stockToolbar.listWrapper.offsetWidth
+        this.stockTools &&
+        this.stockTools.listWrapper &&
+        this.stockTools.listWrapper.offsetWidth
     );
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
@@ -791,23 +791,15 @@ addEvent(H.Chart, 'getMargins', function () {
 });
 
 addEvent(H.Chart, 'destroy', function () {
-    if (this.stockToolbar) {
-        this.stockToolbar.destroy();
+    if (this.stockTools) {
+        this.stockTools.destroy();
     }
 });
 
 addEvent(H.Chart, 'redraw', function () {
-    if (this.stockToolbar && this.stockToolbar.guiEnabled) {
-        this.stockToolbar.redraw();
+    if (this.stockTools && this.stockTools.guiEnabled) {
+        this.stockTools.redraw();
     }
-});
-
-addEvent(H.Chart, 'update', function (options) {
-    if (this.stockToolbar) {
-        this.stockToolbar.destroy();
-    }
-
-    H.Chart.prototype.setStockTools.call(this, options);
 });
 
 /*
@@ -851,17 +843,15 @@ H.extend(H.Chart.prototype, {
     setStockTools: function (options) {
         var chartOptions = this.options,
             lang = chartOptions.lang,
-            paramOptionsGui = options.options && options.options.stockTools,
             guiOptions = merge(
                 chartOptions.stockTools && chartOptions.stockTools.gui,
-                paramOptionsGui && paramOptionsGui.gui,
-                options.stockTools && options.stockTools.gui
+                options && options.gui
             ),
             langOptions = lang.stockTools && lang.stockTools.gui;
 
-        this.stockToolbar = new H.Toolbar(guiOptions, langOptions, this);
+        this.stockTools = new H.Toolbar(guiOptions, langOptions, this);
 
-        if (this.stockToolbar.guiEnabled) {
+        if (this.stockTools.guiEnabled) {
             this.isDirtyBox = true;
         }
     }
@@ -1327,6 +1317,21 @@ H.Toolbar.prototype = {
         }
     },
     /*
+     * Update GUI with given options.
+     *
+     * @param {Object} - general options for Stock Tools
+     */
+    update: function (options) {
+        merge(true, this.chart.options.stockTools, options);
+        this.destroy();
+        this.chart.setStockTools(options);
+
+        // If Stock Tools are updated, then bindings should be updated too:
+        if (this.chart.navigationBindings) {
+            this.chart.navigationBindings.update();
+        }
+    },
+    /*
      * Destroy all HTML GUI elements.
      *
      */
@@ -1342,9 +1347,6 @@ H.Toolbar.prototype = {
         if (parent) {
             parent.removeChild(stockToolsDiv);
         }
-
-        // delete stockToolbar reference
-        delete this.chart.stockToolbar;
 
         // redraw
         this.chart.isDirtyBox = true;
@@ -1409,7 +1411,7 @@ H.Toolbar.prototype = {
 addEvent(H.NavigationBindings, 'selectButton', function (event) {
     var button = event.button,
         className = PREFIX + 'submenu-wrapper',
-        gui = this.chart.stockToolbar;
+        gui = this.chart.stockTools;
 
     if (gui && gui.guiEnabled) {
         // Unslect other active buttons
@@ -1428,7 +1430,7 @@ addEvent(H.NavigationBindings, 'selectButton', function (event) {
 addEvent(H.NavigationBindings, 'deselectButton', function (event) {
     var button = event.button,
         className = PREFIX + 'submenu-wrapper',
-        gui = this.chart.stockToolbar;
+        gui = this.chart.stockTools;
 
     if (gui && gui.guiEnabled) {
         // If deselecting a button from a submenu, select state for it's parent
