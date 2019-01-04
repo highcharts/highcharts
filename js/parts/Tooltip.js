@@ -216,10 +216,12 @@ H.Tooltip.prototype = {
      */
     getLabel: function () {
 
-        var renderer = this.chart.renderer,
+        var tooltip = this,
+            renderer = this.chart.renderer,
             styledMode = this.chart.styledMode,
             options = this.options,
-            container;
+            container,
+            set;
 
         if (!this.label) {
 
@@ -277,14 +279,16 @@ H.Tooltip.prototype = {
             }
 
             if (this.outside) {
-                this.label.attr({
-                    x: this.distance,
-                    y: this.distance
-                });
-                this.label.xSetter = function (value) {
+                set = {
+                    x: this.label.xSetter,
+                    y: this.label.ySetter
+                };
+                this.label.xSetter = function (value, key) {
+                    set[key].call(this.label, tooltip.distance);
                     container.style.left = value + 'px';
                 };
-                this.label.ySetter = function (value) {
+                this.label.ySetter = function (value, key) {
+                    set[key].call(this.label, tooltip.distance);
                     container.style.top = value + 'px';
                 };
             }
@@ -989,7 +993,7 @@ H.Tooltip.prototype = {
                 visibility: box.pos === undefined ? 'hidden' : 'inherit',
                 x: (rightAligned || point.isHeader || options.positioner ?
                     box.x :
-                    point.plotX + chart.plotLeft + pick(options.distance, 16)),
+                    point.plotX + chart.plotLeft + tooltip.distance),
                 y: box.pos + distributionBoxTop,
                 anchorX: point.isHeader ?
                     point.plotX + chart.plotLeft :
