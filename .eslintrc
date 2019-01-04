@@ -28,7 +28,6 @@ rules:
     no-var: 0 // @todo
     node/no-unsupported-features/es-syntax: 0 // @todo
     object-curly-spacing: [2, "always"]
-    object-shorthand: [2, "never"]
     operator-assignment: 0 // @todo
     operator-linebreak: [2, "after"]
     padding-line-between-statements: 0 // @todo
