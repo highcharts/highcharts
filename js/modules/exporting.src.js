@@ -51,6 +51,7 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Chart.js';
+import chartNavigationMixin from '../mixins/navigation.js';
 
 // create shortcuts
 var defaultOptions = H.defaultOptions,
@@ -2084,13 +2085,22 @@ addEvent(Chart, 'init', function () {
             chart.redraw();
         }
     }
-    ['exporting', 'navigation'].forEach(function (prop) {
-        chart[prop] = {
-            update: function (options, redraw) {
-                update(prop, options, redraw);
-            }
-        };
-    });
+
+    chart.exporting = {
+        update: function (options, redraw) {
+            update('exporting', options, redraw);
+        }
+    };
+
+    // Register update() method for navigation. Can not be set the same way as
+    // for exporting, becuase navigation options are shared with bindigs which
+    // has separate update() logic.
+    chartNavigationMixin.addUpdate(
+        function (options, redraw) {
+            update('navigation', options, redraw);
+        },
+        chart
+    );
 });
 
 Chart.prototype.callbacks.push(function (chart) {

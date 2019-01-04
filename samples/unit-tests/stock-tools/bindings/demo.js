@@ -359,7 +359,13 @@ QUnit.test('Bindings general tests', function (assert) {
     );
 
     // #9740:
-    chart.update({}, true, false, false);
+    chart.update({
+        stockTools: {
+            gui: {
+                buttons: ['toggleAnnotations']
+            }
+        }
+    }, true);
 
     selectButton('toggle-annotations');
 
