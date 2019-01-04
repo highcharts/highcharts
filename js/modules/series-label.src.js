@@ -703,6 +703,11 @@ Chart.prototype.drawSeriesLabels = function () {
             if (!label) {
                 series.labelBySeries = label = chart.renderer
                     .label(series.name, 0, -9999, 'connector')
+                    .addClass(
+                        'highcharts-series-label ' +
+                        'highcharts-series-label-' + series.index + ' ' +
+                        (series.options.className || '')
+                    )
                     .css(extend({
                         color: onArea ?
                             chart.renderer.getContrast(series.color) :
