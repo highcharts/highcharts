@@ -1975,20 +1975,18 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Record preliminary dimensions for later comparison
         tempWidth = chart.plotWidth;
 
-        for (i = 0; i < xAxes.length; i++) {
-            xAxis = xAxes[i];
-
-            // #9238 make correction only if X axis labels are visible
+        axes.some(function (axis) {
             if (
-                xAxis.visible &&
-                xAxis.options.labels.enabled &&
-                xAxis.series.length
+                axis.horiz &&
+                axis.visible &&
+                axis.options.labels.enabled &&
+                axis.series.length
             ) {
                 // 21 is the most common correction for X axis labels
                 correction = 21;
-                i = xAxes.length;
+                return true;
             }
-        }
+        });
 
         // use Math.max to prevent negative plotHeight
         chart.plotHeight = Math.max(chart.plotHeight - correction, 0);
