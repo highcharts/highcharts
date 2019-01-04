@@ -876,6 +876,7 @@ var vennSeries = {
     isCartesian: false,
     axisTypes: [],
     directTouch: true,
+    pointArrayMap: ['value'],
     translate: function () {
 
         var chart = this.chart;
