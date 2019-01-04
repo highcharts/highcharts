@@ -7,7 +7,7 @@ QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator', functi
                 min: 3,
                 max: 3.05,
                 events: {
-                    afterSetExtremes: function () {
+                    afterSetExtremes() {
                         counter++;
                     }
                 }
@@ -54,8 +54,8 @@ QUnit.test('#1716 - very small range in navigator and scrollbar events', functio
         options = {
             xAxis: {
                 minRange: 0.000001,
-                min: min,
-                max: max
+                min,
+                max
             },
             rangeSelector: {
                 enabled: false
@@ -92,7 +92,7 @@ QUnit.test('Scrollbar.liverRedraw option', function (assert) {
         chart = Highcharts.stockChart('container', {
             chart: {
                 events: {
-                    redraw: function () {
+                    redraw() {
                         iterator++;
                     }
                 }
