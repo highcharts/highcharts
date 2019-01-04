@@ -168,9 +168,10 @@ var range = function range(start, end, step) {
  */
 var getDistanceBetweenCirclesByOverlap =
 function getDistanceBetweenCirclesByOverlap(r1, r2, overlap) {
-    var error = 0.01,
-        maxDistance = r1 + r2,
-        list = range(0, maxDistance, 0.001),
+    var maxDistance = r1 + r2,
+        error = maxDistance / 100, // Allow 1% error
+        interval = maxDistance / 10000, // Use a list with 10000 values
+        list = range(0, maxDistance, interval),
         index = binarySearch(list, 0, function (x) {
             var actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x),
                 diff = overlap - actualOverlap;
