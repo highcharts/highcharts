@@ -93,7 +93,7 @@ H.setOptions({
                  * and draw a connector line to the graph. Setting this option
                  * to true may decrease the performance significantly, since the
                  * algorithm with systematically search for open spaces in the
-                 * while plot area. Visually, it may also result in a more
+                 * whole plot area. Visually, it may also result in a more
                  * cluttered chart, though more of the series will be labeled.
                  */
                 connectorAllowed: false,
@@ -766,7 +766,8 @@ Chart.prototype.drawSeriesLabels = function () {
                         best = series.checkClearPoint(
                             x,
                             y,
-                            bBox
+                            bBox,
+                            true
                         );
                     }
                     if (best) {
@@ -780,7 +781,8 @@ Chart.prototype.drawSeriesLabels = function () {
                         best = series.checkClearPoint(
                             x,
                             y,
-                            bBox
+                            bBox,
+                            true
                         );
                     }
                     if (best) {
@@ -794,7 +796,8 @@ Chart.prototype.drawSeriesLabels = function () {
                         best = series.checkClearPoint(
                             x,
                             y,
-                            bBox
+                            bBox,
+                            true
                         );
                     }
                     if (best) {
@@ -808,7 +811,8 @@ Chart.prototype.drawSeriesLabels = function () {
                         best = series.checkClearPoint(
                             x,
                             y,
-                            bBox
+                            bBox,
+                            true
                         );
                     }
                     if (best) {
