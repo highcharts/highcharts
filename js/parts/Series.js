@@ -961,7 +961,8 @@ H.Series = H.seriesType('line',
          * value or `"percent"`. When stacking is enabled, data must be sorted
          * in ascending X order. A special stacking option is with the
          * streamgraph series type, where the stacking option is set to
-         * `"stream"`.
+         * `"stream"`. The second one is `"overlap"`, which only applies to
+         * waterfall series.
          *
          * @see [yAxis.reversedStacks](#yAxis.reversedStacks)
          *
@@ -981,6 +982,10 @@ H.Series = H.seriesType('line',
          *         Bar
          * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-area/
          *         Area
+         * @sample {highcharts} highcharts/plotoptions/series-waterfall-with-normal-stacking
+         *         Waterfall with normal stacking
+         * @sample {highcharts} highcharts/plotoptions/series-waterfall-with-overlap-stacking
+         *         Waterfall with overlap stacking
          * @sample {highstock} stock/plotoptions/stacking/
          *         Area
          *
