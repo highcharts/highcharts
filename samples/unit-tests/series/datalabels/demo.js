@@ -157,6 +157,7 @@ QUnit.test(
             plotOptions: {
                 series: {
                     dataLabels: {
+                        allowOverlap: true,
                         enabled: true,
                         padding: 0,
                         defer: false

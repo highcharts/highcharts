@@ -469,7 +469,8 @@ if (!H.radialAxisExtended) {
 
     // Actions before axis init.
     addEvent(Axis, 'init', function (e) {
-        var chart = this.chart,
+        var axis = this,
+            chart = this.chart,
             angular = chart.angular,
             polar = chart.polar,
             isX = this.isXAxis,
@@ -501,6 +502,24 @@ if (!H.radialAxisExtended) {
             this.isRadial = true;
             chart.inverted = false;
             chartOptions.chart.zoomType = null;
+
+            // Prevent overlapping axis labels (#9761)
+            chart.labelCollectors.push(function () {
+                if (
+                    axis.isRadial &&
+                    axis.tickPositions &&
+                    // undocumented option for now, but working
+                    axis.options.labels.allowOverlap !== true
+                ) {
+                    return axis.tickPositions
+                        .map(function (pos) {
+                            return axis.ticks[pos].label;
+                        })
+                        .filter(function (label) {
+                            return Boolean(label);
+                        });
+                }
+            });
         } else {
             this.isRadial = false;
         }
