@@ -136,6 +136,7 @@ defaultOptions.noData = {
     'bubble',
     'gauge',
     'heatmap',
+    'networkgraph',
     'pie',
     'sankey',
     'treemap',
