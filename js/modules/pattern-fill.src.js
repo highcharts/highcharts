@@ -1,7 +1,7 @@
 /* *
  * Module for using patterns or images as point fills.
  *
- * (c) 2010-2018 Highsoft AS
+ * (c) 2010-2019 Highsoft AS
  * Author: Torstein Hønsi, Øystein Moseng
  *
  * License: www.highcharts.com/license

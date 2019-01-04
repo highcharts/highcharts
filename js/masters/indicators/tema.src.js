@@ -3,7 +3,7 @@
  *
  * Indicator series type for Highstock
  *
- * (c) 2010-2018 Rafal Sebestjanski
+ * (c) 2010-2019 Rafal Sebestjanski
  *
  * License: www.highcharts.com/license
  */

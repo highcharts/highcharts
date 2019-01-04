@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Daniel Studencki
+ * (c) 2010-2019 Daniel Studencki
  *
  * License: www.highcharts.com/license
  */

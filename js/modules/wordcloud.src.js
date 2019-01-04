@@ -1,7 +1,7 @@
 /* *
  * Experimental Highcharts module which enables visualization of a word cloud.
  *
- * (c) 2016-2018 Highsoft AS
+ * (c) 2016-2019 Highsoft AS
  *
  * Authors: Jon Arild Nygard
  *

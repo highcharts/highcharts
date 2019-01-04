@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2018 Highsoft AS
+ *  (c) 2010-2019 Highsoft AS
  *
  *  Author: Sebastian Domas
  *

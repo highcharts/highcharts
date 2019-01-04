@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2018 Highsoft AS
+ * (c) 2009-2019 Highsoft AS
  * Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
  * License: www.highcharts.com/license

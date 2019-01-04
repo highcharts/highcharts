@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2018 Øystein Moseng
+ *  (c) 2009-2019 Øystein Moseng
  *
  *  List of musical frequencies from C0 to C8.
  *

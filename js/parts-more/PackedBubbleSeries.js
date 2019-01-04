@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Grzegorz Blachlinski, Sebastian Bochan
+ * (c) 2010-2019 Grzegorz Blachlinski, Sebastian Bochan
  *
  * License: www.highcharts.com/license
  */

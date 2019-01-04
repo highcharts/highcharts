@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * Simple polyfills for array functions in old IE browsers (6, 7 and 8) in
  * Highcharts v7+. These polyfills are sufficient for Highcharts to work, but

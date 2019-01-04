@@ -1,5 +1,5 @@
 /* *
- * (c) 2009-2018 Torstein Honsi
+ * (c) 2009-2019 Torstein Honsi
  *
  * SVG map parser. This file requires data.js.
  *

@@ -1,7 +1,7 @@
 /**
  * Networkgraph series
  *
- * (c) 2010-2018 Paweł Fus
+ * (c) 2010-2019 Paweł Fus
  *
  * License: www.highcharts.com/license
  */

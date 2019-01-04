@@ -2,7 +2,7 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2018 Paweł Fus
+ *  (c) 2009-2019 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *

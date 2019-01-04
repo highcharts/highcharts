@@ -1,7 +1,7 @@
 /**
  * Data module
  *
- * (c) 2012-2018 Torstein Honsi
+ * (c) 2012-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

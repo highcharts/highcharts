@@ -1,7 +1,7 @@
 /* *
  * Mixin for downloading content in the browser
  *
- * (c) 2018 Oystein Moseng
+ * (c) 2015-2019 Oystein Moseng
  *
  * License: www.highcharts.com/license
  */
