@@ -1036,13 +1036,13 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // must use user options when changing type because series.options
             // is merged in with type specific plotOptions
             oldOptions = series.userOptions,
-            oldType = series.oldType || series.type,
+            initialType = series.initialType || series.type,
             newType = (
                 newOptions.type ||
                 oldOptions.type ||
                 chart.options.chart.type
             ),
-            proto = seriesTypes[oldType].prototype,
+            initialSeriesProto = seriesTypes[initialType].prototype,
             n,
             groups = [
                 'group',
@@ -1108,11 +1108,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // methods and properties from the new type prototype (#2270,
             // #3719).
             series.remove(false, null, false);
-            for (n in proto) {
+            for (n in initialSeriesProto) {
                 series[n] = undefined;
             }
-            if (seriesTypes[newType || oldType]) {
-                extend(series, seriesTypes[newType || oldType].prototype);
+            if (seriesTypes[newType || initialType]) {
+                extend(series, seriesTypes[newType || initialType].prototype);
             } else {
                 H.error(17, true, chart);
             }
@@ -1136,7 +1136,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             }
 
 
-            series.oldType = oldType;
+            series.initialType = initialType;
             chart.linkSeries(); // Links are lost in series.remove (#3028)
 
         }
