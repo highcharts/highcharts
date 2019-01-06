@@ -2808,7 +2808,8 @@ H.Series = H.seriesType('line',
                 zone,
                 styledMode = chart.styledMode;
 
-            this.userOptions = itemOptions;
+            // use copy to prevent undetected changes (#9762)
+            this.userOptions = merge(itemOptions);
 
             // General series options take precedence over type options because
             // otherwise, default type options like column.animation would be
