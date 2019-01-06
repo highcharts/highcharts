@@ -268,9 +268,9 @@ seriesType('waterfall', 'column', {
                 if (point.isSum) {
                     shapeArgs.y = yAxis.translate(range[1], 0, 1, 0, 1);
                     shapeArgs.height = Math.min(
-                            yAxis.translate(range[0], 0, 1, 0, 1),
-                            yAxis.len
-                        ) - shapeArgs.y; // #4256
+                        yAxis.translate(range[0], 0, 1, 0, 1),
+                        yAxis.len
+                    ) - shapeArgs.y; // #4256
 
                 } else if (point.isIntermediateSum) {
                     if (pointY >= 0) {
@@ -290,9 +290,9 @@ seriesType('waterfall', 'column', {
 
                     shapeArgs.y = yAxis.translate(yPos, 0, 1, 0, 1);
                     shapeArgs.height = Math.abs(shapeArgs.y - Math.min(
-                            yAxis.translate(hPos, 0, 1, 0, 1),
-                            yAxis.len
-                        ));
+                        yAxis.translate(hPos, 0, 1, 0, 1),
+                        yAxis.len
+                    ));
 
                     previousIntermediate += range[1];
 
@@ -448,6 +448,7 @@ seriesType('waterfall', 'column', {
             reversedYAxis = this.yAxis.reversed,
             stacking = this.options.stacking,
             path = [],
+            connectorThreshold,
             prevStack,
             prevStackX,
             prevPoint,
@@ -471,10 +472,15 @@ seriesType('waterfall', 'column', {
                 // y position of the connector is different when series are
                 // stacked, yAxis is reversed and it also depends on point's
                 // value
-                yPos = stacking ?
-                (yAxis.translate(prevStackX.connectorThreshold, 0, 1, 0, 1) +
-                    (reversedYAxis ? isPos : 0)) : prevArgs.y +
-                    prevPoint.minPointLengthOffset + normalizer;
+                if (stacking) {
+                    connectorThreshold = prevStackX.connectorThreshold;
+
+                    yPos = (yAxis.translate(connectorThreshold, 0, 1, 0, 1) +
+                    (reversedYAxis ? isPos : 0));
+                } else {
+                    yPos = prevArgs.y + prevPoint.minPointLengthOffset +
+                    normalizer;
+                }
 
                 d = [
                     'M',
