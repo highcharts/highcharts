@@ -174,7 +174,6 @@ function getScale(chart, depth) {
 }
 
 
-
 H.wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
     return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });

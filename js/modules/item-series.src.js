@@ -148,4 +148,3 @@ seriesType('item', 'column', {
 H.SVGRenderer.prototype.symbols.rect = function (x, y, w, h, options) {
     return H.SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
 };
-

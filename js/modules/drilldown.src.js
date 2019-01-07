@@ -376,7 +376,6 @@ defaultOptions.drilldown = {
 };
 
 
-
 /**
  * Fires when a drilldown point is clicked, before the new series is added. This
  * event is also utilized for async drilldown, where the seriesOptions are not

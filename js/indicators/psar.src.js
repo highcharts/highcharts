@@ -94,7 +94,6 @@ function getPSAR(pdir, sDir, PSAR, pACCMulti, sLow, pLow, pHigh, sHigh, pEP) {
 }
 
 
-
 /**
  * The Parabolic SAR series type.
  *

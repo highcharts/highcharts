@@ -152,7 +152,6 @@ wrap(Axis.prototype, 'getTimeTicks', function (
     groupPositions.info = info;
 
 
-
     // Don't show ticks within a gap in the ordinal axis, where the space between
     // two points is greater than a portion of the tick pixel interval
     if (findHigherRanks && defined(tickPixelIntervalOption)) { // check for squashed ticks

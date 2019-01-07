@@ -140,4 +140,3 @@ addEvent(H.Series, 'afterRender', function () {
 
     }
 });
-

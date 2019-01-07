@@ -271,7 +271,6 @@ H.wrap(H.Tick.prototype, 'getLabelPosition', function (
 });
 
 
-
 /**
  * A `variwide` series. If the [type](#series.variwide.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).

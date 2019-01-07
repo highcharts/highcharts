@@ -495,7 +495,6 @@ seriesType('treemap', 'scatter'
         }
 
 
-
         // Prototype members
     }, {
         pointArrayMap: ['value'],

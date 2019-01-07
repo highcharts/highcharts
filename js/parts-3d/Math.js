@@ -201,4 +201,3 @@ H.shapeArea = function (vertexes) {
 H.shapeArea3d = function (vertexes, chart, insidePlotArea) {
     return H.shapeArea(H.perspective(vertexes, chart, insidePlotArea));
 };
-

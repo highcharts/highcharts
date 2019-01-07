@@ -819,7 +819,6 @@ H.Fx.prototype = {
 }; // End of Fx prototype
 
 
-
 /**
  * Utility function to deep merge two or more objects and return a third object.
  * The merge function can also be used with a single object argument to create a
@@ -1378,7 +1377,6 @@ H.wrap = function (obj, method, func) {
         return ret;
     };
 };
-
 
 
 /**

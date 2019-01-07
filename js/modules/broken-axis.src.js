@@ -514,4 +514,3 @@ H.Series.prototype.gappedPath = function () {
     // Call base method
     return this.getGraphPath(points);
 };
-

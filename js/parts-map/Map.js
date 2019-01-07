@@ -323,9 +323,6 @@ H.splitPath = function (path) {
 H.maps = {};
 
 
-
-
-
 // Create symbols for the zoom buttons
 function selectiveRoundedRect(
     x,

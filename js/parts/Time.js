@@ -877,4 +877,3 @@ Highcharts.Time.prototype = {
     }
 
 }; // end of Time
-

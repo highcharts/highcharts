@@ -448,4 +448,3 @@ seriesType(
  * @product   highcharts highmaps
  * @apioption series.heatmap.data.pointPadding
  */
-

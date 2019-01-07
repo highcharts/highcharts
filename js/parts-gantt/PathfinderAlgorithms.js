@@ -150,7 +150,6 @@ function limitObstacleToBounds(obstacle, bounds) {
 }
 
 
-
 // Define the available pathfinding algorithms.
 // Algorithms take up to 3 arguments: starting point, ending point, and an
 // options object.

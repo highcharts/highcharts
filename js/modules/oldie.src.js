@@ -1544,5 +1544,3 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
     discardElement(measuringSpan); // #2463
     return offsetWidth;
 };
-
-

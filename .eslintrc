@@ -13,7 +13,6 @@ rules:
     no-console: 2
     no-debugger: 2
     no-else-return: 2
-    no-multiple-empty-lines: 0 // @todo
     no-nested-ternary: 0
     no-param-reassign: 0 // @todo
     no-restricted-properties: 0 // @todo

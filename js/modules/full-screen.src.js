@@ -38,6 +38,3 @@ H.FullScreen.prototype = {
         }
     }
 };
-
-
-

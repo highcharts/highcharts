@@ -1064,4 +1064,3 @@ addEvent(H.NavigationBindings, 'closePopup', function () {
         this.popup.closePopup();
     }
 });
-

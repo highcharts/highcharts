@@ -80,7 +80,6 @@ seriesType('polygon', 'scatter', {
 });
 
 
-
 /**
  * A `polygon` series. If the [type](#series.polygon.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

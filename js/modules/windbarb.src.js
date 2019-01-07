@@ -303,7 +303,6 @@ seriesType('windbarb', 'column'
     });
 
 
-
 /**
  * A `windbarb` series. If the [type](#series.windbarb.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).

@@ -2095,7 +2095,6 @@ Highcharts.extend(Data.prototype, {
             }
 
 
-
             // Do the callback
             chartOptions = {
                 series: series

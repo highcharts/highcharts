@@ -3261,7 +3261,6 @@ Series.prototype.destroyGraphics = function () {
 };
 
 
-
 /**
  * Returns true if the current browser supports webgl
  *
@@ -3345,7 +3344,6 @@ if (!H.hasWebGLSupport()) {
 
     // /////////////////////////////////////////////////////////////////////////
     // GL-SPECIFIC WRAPPINGS FOLLOWS
-
 
 
     H.extend(Series.prototype, {
