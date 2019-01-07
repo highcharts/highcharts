@@ -113,12 +113,9 @@ seriesType('waterfall', 'column', {
      * In styled mode, the stroke dash-array can be set with the
      * `.highcharts-graph` class.
      *
-     * @type       {string}
-     * @since      3.0
-     * @validvalue ["Dash", "DashDot", "Dot", "LongDash", "LongDashDot",
-     *             "LongDashDotDot", "ShortDash", "ShortDashDot",
-     *             "ShortDashDotDot", "ShortDot", "Solid"]
-     * @product    highcharts
+     * @type    {Highcharts.DashStyleType}
+     * @since   3.0
+     * @product highcharts
      */
     dashStyle: 'Dot',
 

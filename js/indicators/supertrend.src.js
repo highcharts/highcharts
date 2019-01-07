@@ -112,15 +112,12 @@ H.seriesType('supertrend', 'sma',
                  * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
                  *
                  * @sample {highcharts} highcharts/yaxis/gridlinedashstyle/
-                 *          Long dashes
+                 *         Long dashes
                  * @sample {highstock} stock/xaxis/gridlinedashstyle/
-                 *          Long dashes
+                 *         Long dashes
                  *
-                 * @since      7.0.0
-                 * @validvalue ["Dash", "DashDot", "Dot", "LongDash",
-                 *             "LongDashDot", "LongDashDotDot", "ShortDash",
-                 *             "ShortDashDot", "ShortDashDotDot", "ShortDot",
-                 *             "Solid"]
+                 * @type  {Highcharts.DashStyleType}
+                 * @since 7.0.0
                  */
                 dashStyle: 'LongDash'
             }

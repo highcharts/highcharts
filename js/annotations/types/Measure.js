@@ -729,14 +729,10 @@ H.extendAnnotation(Measure, null,
                  * values, see
                  * [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
                  *
-                 * @type       {string}
-                 * @default    dash
-                 * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
-                 *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash",
-                 *             "DashDot", "LongDashDot", "LongDashDotDot"]
-                 *
+                 * @type    {Highcharts.DashStyleType}
+                 * @default Dash
                  */
-                dashStyle: 'dash',
+                dashStyle: 'Dash',
                 /**
                  * The marker-end defines the arrowhead that will be drawn
                  * at the final vertex of the given crosshair's path.
@@ -764,12 +760,9 @@ H.extendAnnotation(Measure, null,
                  * The dash or dot style of the crosshair's line. For possible
                  * values, see [this demonstration](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
                  *
-                 * @type       {string}
-                 * @default    Dash
-                 * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
-                 *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash",
-                 *             "DashDot", "LongDashDot", "LongDashDotDot"]
-                 * @apioption  annotations.measure.typeOptions.crosshairY.dashStyle
+                 * @type      {Highcharts.DashStyleType}
+                 * @default   Dash
+                 * @apioption annotations.measure.typeOptions.crosshairY.dashStyle
                  *
                  */
                 dashStyle: 'Dash',

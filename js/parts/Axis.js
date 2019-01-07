@@ -463,13 +463,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/crosshair-dashed/
          *         Dashed X axis crosshair
          *
-         * @type       {string}
-         * @default    Solid
-         * @since      4.1
-         * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
-         *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
-         *             "LongDashDot", "LongDashDotDot"]
-         * @apioption  xAxis.crosshair.dashStyle
+         * @type      {Highcharts.DashStyleType}
+         * @default   Solid
+         * @since     4.1
+         * @apioption xAxis.crosshair.dashStyle
          */
 
         /**
@@ -829,13 +826,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/gridlinedashstyle/
          *         Long dashes
          *
-         * @type       {string}
-         * @default    Solid
-         * @since      1.2
-         * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
-         *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
-         *             "LongDashDot", "LongDashDotDot"]
-         * @apioption  xAxis.gridLineDashStyle
+         * @type      {Highcharts.DashStyleType}
+         * @default   Solid
+         * @since     1.2
+         * @apioption xAxis.gridLineDashStyle
          */
 
         /**
@@ -1285,13 +1279,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/minorgridlinedashstyle/
          *         Long dashes on minor grid lines
          *
-         * @type       {string}
-         * @default    Solid
-         * @since      1.2
-         * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
-         *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash",
-         *             "DashDot", "LongDashDot", "LongDashDotDot"]
-         * @apioption  xAxis.minorGridLineDashStyle
+         * @type      {Highcharts.DashStyleType}
+         * @default   Solid
+         * @since     1.2
+         * @apioption xAxis.minorGridLineDashStyle
          */
 
         /**
