@@ -1041,7 +1041,7 @@ merge(
          * @param {Annotation.Label|Annotation.Shape} item
          */
 
-        adjustVisibility: function (item) {  // #9481
+        adjustVisibility: function (item) { // #9481
             var hasVisiblePoints = false,
                 label = item.graphic;
 

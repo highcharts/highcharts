@@ -190,7 +190,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                 series.data.forEach(function (point) {
                     if (point.y !== null) {
                         point.height = point.shapeArgs.height;
-                        point.shapey = point.shapeArgs.y;    // #2968
+                        point.shapey = point.shapeArgs.y; // #2968
                         point.shapeArgs.height = 1;
                         if (!reversed) {
                             if (point.stackY) {
@@ -213,7 +213,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                 series.data.forEach(function (point) {
                     if (point.y !== null) {
                         point.shapeArgs.height = point.height;
-                        point.shapeArgs.y = point.shapey;    // #2968
+                        point.shapeArgs.y = point.shapey; // #2968
                         // null value do not have a graphic
                         if (point.graphic) {
                             point.graphic.animate(

@@ -246,7 +246,7 @@ function boxIntersectLine(x, y, w, h, x1, y1, x2, y2) {
         intersectLine(x, y, x + w, y, x1, y1, x2, y2) || // top of label
         intersectLine(x + w, y, x + w, y + h, x1, y1, x2, y2) || // right
         intersectLine(x, y + h, x + w, y + h, x1, y1, x2, y2) || // bottom
-        intersectLine(x, y, x, y + h, x1, y1, x2, y2)   // left of label
+        intersectLine(x, y, x, y + h, x1, y1, x2, y2) // left of label
     );
 }
 

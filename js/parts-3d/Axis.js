@@ -170,7 +170,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
     ];
 
     var pathSegments = [];
-    if (!this.horiz) {  // Y-Axis
+    if (!this.horiz) { // Y-Axis
         if (frame.front.visible) {
             pathSegments.push(pArr[0], pArr[2]);
         }
@@ -183,7 +183,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
         if (frame.right.visible) {
             pathSegments.push(pArr[2], pArr[3]);
         }
-    } else if (this.isZAxis) {  // Z-Axis
+    } else if (this.isZAxis) { // Z-Axis
         if (frame.left.visible) {
             pathSegments.push(pArr[0], pArr[2]);
         }
@@ -196,7 +196,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
         if (frame.bottom.visible) {
             pathSegments.push(pArr[2], pArr[3]);
         }
-    } else {  // X-Axis
+    } else { // X-Axis
         if (frame.front.visible) {
             pathSegments.push(pArr[0], pArr[2]);
         }
@@ -286,7 +286,7 @@ function fix3dPosition(axis, pos, isTitle) {
     pos = axis.swapZ({ x: pos.x, y: pos.y, z: 0 });
 
 
-    if (axis.isZAxis) {  // Z Axis
+    if (axis.isZAxis) { // Z Axis
         if (axis.opposite) {
             if (frame.axes.z.top === null) {
                 return {};
@@ -306,7 +306,7 @@ function fix3dPosition(axis, pos, isTitle) {
             vecX = frame.axes.z.bottom.xDir;
             reverseFlap = !frame.bottom.frontFacing;
         }
-    } else if (axis.horiz) {  // X Axis
+    } else if (axis.horiz) { // X Axis
         if (axis.opposite) {
             if (frame.axes.x.top === null) {
                 return {};
@@ -326,7 +326,7 @@ function fix3dPosition(axis, pos, isTitle) {
             vecX = frame.axes.x.bottom.xDir;
             reverseFlap = !frame.bottom.frontFacing;
         }
-    } else {  // Y Axis
+    } else { // Y Axis
         if (axis.opposite) {
             if (frame.axes.y.right === null) {
                 return {};
@@ -354,9 +354,9 @@ function fix3dPosition(axis, pos, isTitle) {
 
     } else if (positionMode === 'flap') {
         // Labels are be rotated around the axis direction to face the screen
-        if (!axis.horiz) {  // Y Axis
+        if (!axis.horiz) { // Y Axis
             vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
-        } else {  // X and Z Axis
+        } else { // X and Z Axis
             var sin = Math.sin(alpha);
             var cos = Math.cos(alpha);
             if (axis.opposite) {
@@ -369,9 +369,9 @@ function fix3dPosition(axis, pos, isTitle) {
         }
     } else if (positionMode === 'ortho') {
         // Labels will be rotated to be ortogonal to the axis
-        if (!axis.horiz) {  // Y Axis
+        if (!axis.horiz) { // Y Axis
             vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
-        } else {  // X and Z Axis
+        } else { // X and Z Axis
             var sina = Math.sin(alpha);
             var cosa = Math.cos(alpha);
             var sinb = Math.sin(beta);
@@ -390,12 +390,12 @@ function fix3dPosition(axis, pos, isTitle) {
             }
             vecY = { x: scale * vecY.x, y: scale * vecY.y, z: scale * vecY.z };
         }
-    } else {  // positionMode  == 'offset'
+    } else { // positionMode  == 'offset'
         // Labels will be skewd to maintain vertical / horizontal offsets from
         // axis
-        if (!axis.horiz) {  // Y Axis
+        if (!axis.horiz) { // Y Axis
             vecX = { x: Math.cos(beta), y: 0, z: Math.sin(beta) };
-        } else {  // X and Z Axis
+        } else { // X and Z Axis
             vecY = {
                 x: Math.sin(beta) * Math.sin(alpha),
                 y: Math.cos(alpha),

@@ -460,7 +460,7 @@ Series.prototype.drawDataLabels = function () {
                         dataLabel.addClass(
                             ' highcharts-data-label-color-' + point.colorIndex +
                             ' ' + (labelOptions.className || '') +
-                            (   // #3398
+                            ( // #3398
                                 labelOptions.useHTML ?
                                     ' highcharts-tracker' :
                                     ''
@@ -839,7 +839,7 @@ if (seriesTypes.pie) {
             // divide the points into right and left halves for anti collision
             halves = [
                 [], // right
-                []  // left
+                [] // left
             ],
             x,
             y,

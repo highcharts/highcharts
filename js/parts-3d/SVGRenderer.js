@@ -819,16 +819,16 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
         beta = shapeArgs.beta; // beta rotation of the chart
 
     // Derived Variables
-    var cs = Math.cos(start),        // cosinus of the start angle
-        ss = Math.sin(start),        // sinus of the start angle
-        ce = Math.cos(end),            // cosinus of the end angle
-        se = Math.sin(end),            // sinus of the end angle
-        rx = r * Math.cos(beta),        // x-radius
-        ry = r * Math.cos(alpha),    // y-radius
-        irx = ir * Math.cos(beta),    // x-radius (inner)
-        iry = ir * Math.cos(alpha),    // y-radius (inner)
-        dx = d * Math.sin(beta),        // distance between top and bottom in x
-        dy = d * Math.sin(alpha);    // distance between top and bottom in y
+    var cs = Math.cos(start), // cosinus of the start angle
+        ss = Math.sin(start), // sinus of the start angle
+        ce = Math.cos(end), // cosinus of the end angle
+        se = Math.sin(end), // sinus of the end angle
+        rx = r * Math.cos(beta), // x-radius
+        ry = r * Math.cos(alpha), // y-radius
+        irx = ir * Math.cos(beta), // x-radius (inner)
+        iry = ir * Math.cos(alpha), // y-radius (inner)
+        dx = d * Math.sin(beta), // distance between top and bottom in x
+        dy = d * Math.sin(alpha); // distance between top and bottom in y
 
     // TOP
     var top = ['M', cx + (rx * cs), cy + (ry * ss)];

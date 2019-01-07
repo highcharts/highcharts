@@ -209,7 +209,7 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
             this.unitLength = null;
             if (this.isBroken) {
                 var breaks = axis.options.breaks,
-                    breakArrayT = [],    // Temporary one
+                    breakArrayT = [], // Temporary one
                     breakArray = [],
                     length = 0,
                     inBrk,

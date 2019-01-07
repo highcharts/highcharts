@@ -517,7 +517,7 @@ seriesType('column', 'line'
                     ) &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos
-                    ) {  // #642, #2086
+                    ) { // #642, #2086
                         if (otherOptions.stacking) {
                             stackKey = otherSeries.stackKey;
                             if (stackGroups[stackKey] === undefined) {
@@ -644,7 +644,7 @@ seriesType('column', 'line'
                 series.closestPointRange * series.xAxis.transA < 2,
                 borderWidth = series.borderWidth = pick(
                     options.borderWidth,
-                    dense ? 0 : 1  // #3635
+                    dense ? 0 : 1 // #3635
                 ),
                 yAxis = series.yAxis,
                 threshold = options.threshold,

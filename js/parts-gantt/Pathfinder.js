@@ -1077,7 +1077,7 @@ Pathfinder.prototype = {
 
         return xCenter ?
             (yCenter ? undef : false) : // x is centered
-            (yCenter ? true : undef);   // x is off-center
+            (yCenter ? true : undef); // x is off-center
     }
 };
 

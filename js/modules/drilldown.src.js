@@ -722,7 +722,7 @@ Chart.prototype.drillUp = function () {
 
             // Get the lower series by reference or id
             oldSeries = level.lowerSeries;
-            if (!oldSeries.chart) {  // #2786
+            if (!oldSeries.chart) { // #2786
                 seriesI = chartSeries.length; // #2919
                 while (seriesI--) {
                     if (

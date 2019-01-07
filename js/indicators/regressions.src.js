@@ -198,7 +198,7 @@ seriesType('linearRegression', 'sma',
                 periodStart,
                 periodEnd,
                 indicatorData = { // format required to be returned
-                    xData: [],    // by getValues() method
+                    xData: [], // by getValues() method
                     yData: [],
                     values: []
                 },

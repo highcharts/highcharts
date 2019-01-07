@@ -44,7 +44,7 @@ var Series = H.Series,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax;
 
-setOptions({  // Set default bubble legend options
+setOptions({ // Set default bubble legend options
     legend: {
         /**
          * The bubble legend is an additional element in legend which presents
@@ -215,13 +215,13 @@ setOptions({  // Set default bubble legend options
              * specified, the `minSize` and the `maxSize` are calculated from
              * bubble series.
              */
-            maxSize: 60,  // Number
+            maxSize: 60, // Number
             /**
              * Minimum bubble legend range size. If values for ranges are not
              * specified, the `minSize` and the `maxSize` are calculated from
              * bubble series.
              */
-            minSize: 10,  // Number
+            minSize: 10, // Number
             /**
              * The position of the bubble legend in the legend.
              * @sample highcharts/bubble-legend/connectorandlabels/
@@ -616,7 +616,7 @@ H.BubbleLegend.prototype = {
 
         // Set options for centered labels
         if (labelsAlign === 'center') {
-            connectorLength = 0;  // do not use connector
+            connectorLength = 0; // do not use connector
             options.connectorDistance = 0;
             range.labelStyle.align = 'center';
         }
@@ -1006,7 +1006,7 @@ Legend.prototype.getLinesHeights = function () {
             // for bubbleLegend
             items[i].itemHeight = items[i].legendItemHeight;
         }
-        if (  // Line break
+        if ( // Line break
             items[i] === items[length - 1] ||
             items[i + 1] &&
             items[i]._legendItemPos[1] !==

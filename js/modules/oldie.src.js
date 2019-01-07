@@ -1436,7 +1436,7 @@ if (!svg) {
                     x + radius * cosStart, // start x
                     y + radius * sinStart, // start y
                     x + radius * cosEnd, // end x
-                    y + radius * sinEnd  // end y
+                    y + radius * sinEnd // end y
                 ];
 
                 if (options.open && !innerRadius) {
@@ -1488,9 +1488,9 @@ if (!svg) {
                     x + w, // right
                     y + h, // bottom
                     x + w, // start x
-                    y + h / 2,     // start y
+                    y + h / 2, // start y
                     x + w, // end x
-                    y + h / 2,     // end y
+                    y + h / 2, // end y
                     'e' // close
                 ];
             },

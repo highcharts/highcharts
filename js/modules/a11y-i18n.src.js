@@ -408,7 +408,7 @@ H.setOptions({
                 boxplotMultiple: 'Boxplot with {numSeries} data series.',
                 bubbleSingle: 'Bubble chart with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
                 bubbleMultiple: 'Bubble chart with {numSeries} data series.'
-            },  /* eslint-enable max-len */
+            }, /* eslint-enable max-len */
 
             /**
          * Axis description format strings.
@@ -421,7 +421,7 @@ H.setOptions({
                 xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#names.forEach(-1), }and {names[-1]}',
                 yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}.',
                 yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#names.forEach(-1), }and {names[-1]}'
-            },  /* eslint-enable max-len */
+            }, /* eslint-enable max-len */
 
             /**
          * Exporting menu format strings for accessibility module.
@@ -483,7 +483,7 @@ H.setOptions({
                     maplineCombination: '{name}, series {ix} of {numSeries}. Line with {numPoints} data {#plural(numPoints, points, point)}.',
                     mapbubble: '{name}, bubble series {ix} of {numSeries} with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
                     mapbubbleCombination: '{name}, series {ix} of {numSeries}. Bubble series with {numPoints} {#plural(numPoints, bubbles, bubble)}.'
-                },  /* eslint-enable max-len */
+                }, /* eslint-enable max-len */
 
                 /**
              * User supplied description text. This is added after the main

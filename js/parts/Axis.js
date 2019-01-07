@@ -3163,7 +3163,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
         axis.side = userOptions.side || (axis.horiz ?
             (axis.opposite ? 0 : 2) : // top : bottom
-            (axis.opposite ? 1 : 3));  // right : left
+            (axis.opposite ? 1 : 3)); // right : left
 
         axis.setOptions(userOptions);
 
@@ -4347,7 +4347,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 Math.max(axis.dataMin, axis.minFromRange()); // #618, #6773
             axis.userMax = hardMax = axis.max;
 
-            axis.range = null;  // don't use it when running setExtremes
+            axis.range = null; // don't use it when running setExtremes
         }
 
         // Hook for Highstock Scroller. Consider combining with beforePadding.

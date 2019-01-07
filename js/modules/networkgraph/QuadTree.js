@@ -12,7 +12,7 @@ import H from '../../parts/Globals.js';
 var QuadTreeNode = H.QuadTreeNode = function (box) {
     this.box = box;
     this.nodes = []; // Array of 4 -> quad
-    this.children = [];  // Deferred leafs
+    this.children = []; // Deferred leafs
     this.mass = 1;
     this.centerX = 0;
     this.centerY = 0;

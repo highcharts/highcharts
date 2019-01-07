@@ -262,7 +262,7 @@ seriesType(
 
                     // crisp vector coordinates
                     crispCorr = (graphic.strokeWidth() % 2) / 2;
-                    crispX = Math.round(point.plotX) - crispCorr;  // #2596
+                    crispX = Math.round(point.plotX) - crispCorr; // #2596
                     halfWidth = Math.round(point.shapeArgs.width / 2);
 
                     // the vertical stem
