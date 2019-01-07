@@ -45,8 +45,7 @@ addEvent(Series, 'updatedData', function () {
  * each segment then concatenize them. This method is used from both data
  * grouping logic and X axis tick position logic.
  */
-wrap(Axis.prototype, 'getTimeTicks', function (
-    proceed,
+Axis.prototype.getTimeTicks = function (
     normalizedInterval,
     min,
     max,
@@ -77,7 +76,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (
         positions.length < 3 ||
         min === undefined
     ) {
-        return proceed.call(this, normalizedInterval, min, max, startOfWeek);
+        return time.getTimeTicks.apply(time, arguments);
     }
 
     // Analyze the positions array to split it into segments on gaps larger than 5 times
@@ -99,7 +98,12 @@ wrap(Axis.prototype, 'getTimeTicks', function (
             // function. The interval will be the same regardless of how long the segment is.
             if (positions[end] > lastGroupPosition) { // #1475
 
-                segmentPositions = proceed.call(this, normalizedInterval, positions[start], positions[end], startOfWeek);
+                segmentPositions = time.getTimeTicks(
+                    normalizedInterval,
+                    positions[start],
+                    positions[end],
+                    startOfWeek
+                );
 
                 // Prevent duplicate groups, for example for multiple segments within one larger time frame (#1475)
                 while (segmentPositions.length && segmentPositions[0] <= lastGroupPosition) {
@@ -216,7 +220,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (
         }
     }
     return groupPositions;
-});
+};
 
 // Extend the Axis prototype
 extend(Axis.prototype, /** @lends Axis.prototype */ {
