@@ -2093,7 +2093,7 @@ addEvent(Chart, 'init', function () {
     };
 
     // Register update() method for navigation. Can not be set the same way as
-    // for exporting, becuase navigation options are shared with bindigs which
+    // for exporting, because navigation options are shared with bindings which
     // has separate update() logic.
     chartNavigationMixin.addUpdate(
         function (options, redraw) {
