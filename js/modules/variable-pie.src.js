@@ -152,6 +152,7 @@ seriesType('variablepie', 'pie',
             ['minPointSize', 'maxPointSize'].forEach(function (prop) {
                 var length = seriesOptions[prop],
                     isPercent = /%$/.test(length);
+
                 length = parseInt(length, 10);
                 extremes[prop] = isPercent ?
                     smallestSize * length / 100 :

@@ -14,6 +14,7 @@ var correctFloat = H.correctFloat,
 // Utils
 function accumulatePoints(sum, yVal, i, index, subtract) {
     var price = pick(yVal[i][index], yVal[i]);
+
     if (subtract) {
         return correctFloat(sum - price);
     }

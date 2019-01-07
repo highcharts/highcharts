@@ -1016,6 +1016,7 @@ Annotation.prototype = {
      */
     init: function () {
         var anno = this;
+
         (this.options.labels || []).forEach(this.initLabel, this);
         (this.options.shapes || []).forEach(this.initShape, this);
 
@@ -1211,6 +1212,7 @@ Annotation.prototype = {
 
         if (!this.chart.styledMode) {
             var style = options.style;
+
             if (style.color === 'contrast') {
                 style.color = this.chart.renderer.getContrast(
                     this.shapesWithoutBackground.indexOf(options.shape) > -1 ?

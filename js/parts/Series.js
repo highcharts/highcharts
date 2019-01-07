@@ -2711,6 +2711,7 @@ H.Series = H.seriesType(
                         var val = key === 'y' && series.toYData ?
                             series.toYData(point) :
                             point[key];
+
                         series[key + 'Data'][i] = val;
                     } :
                     // Apply the method specified in i with the following
@@ -2990,6 +2991,7 @@ H.Series = H.seriesType(
          */
         getSymbol: function () {
             var seriesMarkerOption = this.options.marker;
+
             this.getCyclic(
                 'symbol',
                 seriesMarkerOption.symbol,
@@ -3542,6 +3544,7 @@ H.Series = H.seriesType(
 
             if (!data && !hasGroupedData) {
                 var arr = [];
+
                 arr.length = dataOptions.length;
                 data = series.data = arr;
             }
@@ -3948,6 +3951,7 @@ H.Series = H.seriesType(
          */
         getValidPoints: function (points, insideOnly) {
             var chart = this.chart;
+
             // #3916, #5029, #5085
             return (points || this.points || []).filter(
                 function isValidPoint(point) {
@@ -4708,6 +4712,7 @@ H.Series = H.seriesType(
                     'highcharts-graph highcharts-zone-graph-' + i + ' ' +
                         (zone.className || '')
                 ];
+
                 if (!this.chart.styledMode) {
                     propset.push(
                         zone.color || this.color,

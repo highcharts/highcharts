@@ -306,6 +306,7 @@ H.setOptions({
  */
 function reverseChildNodes(node) {
     var i = node.childNodes.length;
+
     while (i--) {
         node.appendChild(node.childNodes[i]);
     }
@@ -537,6 +538,7 @@ H.Axis.prototype.getDescription = function () {
 // Whenever adding or removing series, keep track of types present in chart
 addEvent(H.Series, 'afterInit', function () {
     var chart = this.chart;
+
     if (chart.options.accessibility.enabled) {
         chart.types = chart.types || [];
 
@@ -686,6 +688,7 @@ H.Chart.prototype.getAxesDescription = function () {
  */
 H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
     var exportList = this.exportDivElements;
+
     if (exportList) {
         // Set tabindex on the menu items to allow focusing by script
         // Set role to give screen readers a chance to pick up the contents
@@ -824,6 +827,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
         // Set event handler on button
         var button = chart.exportSVGElements[0].element,
             oldExportCallback = button.onclick;
+
         button.onclick = function () {
             oldExportCallback.apply(
                 this,

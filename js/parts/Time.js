@@ -399,6 +399,7 @@ Highcharts.Time.prototype = {
      */
     makeTime: function (year, month, date, hours, minutes, seconds) {
         var d, offset, newOffset;
+
         if (this.useUTC) {
             d = this.Date.UTC.apply(0, arguments);
             offset = this.getTimezoneOffset(d);
@@ -797,6 +798,7 @@ Highcharts.Time.prototype = {
 
             // Iterate and add tick positions at appropriate values
             var t = minDate.getTime();
+
             i = 1;
             while (t < max) {
                 tickPositions.push(t);

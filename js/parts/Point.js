@@ -274,8 +274,10 @@ Highcharts.Point.prototype = {
      */
     setNestedProperty: function (object, value, key) {
         var nestedKeys = key.split('.');
+
         nestedKeys.reduce(function (result, key, i, arr) {
             var isLastKey = arr.length - 1 === i;
+
             result[key] = (
                 isLastKey ?
                     value :
@@ -474,6 +476,7 @@ Highcharts.Point.prototype = {
             ],
             prop,
             i = 6;
+
         while (i--) {
             prop = props[i];
             if (point[prop]) {

@@ -265,6 +265,7 @@ function pointSonify(options) {
     var signalHandler = point.sonification.signalHandler =
         point.sonification.signalHandler ||
         new utilities.SignalHandler(['onEnd']);
+
     signalHandler.clearSignalCallbacks();
     signalHandler.registerSignalCallbacks({ onEnd: options.onEnd });
 
@@ -365,6 +366,7 @@ function pointSonify(options) {
 function pointCancelSonify(fadeOut) {
     var playing = this.sonification && this.sonification.instrumentsPlaying,
         instrIds = playing && Object.keys(playing);
+
     if (instrIds && instrIds.length) {
         instrIds.forEach(function (instr) {
             playing[instr].stop(!fadeOut, null, 'cancelled');
@@ -379,4 +381,5 @@ var pointSonifyFunctions = {
     pointSonify: pointSonify,
     pointCancelSonify: pointCancelSonify
 };
+
 export default pointSonifyFunctions;

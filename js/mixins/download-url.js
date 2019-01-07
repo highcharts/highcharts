@@ -19,6 +19,7 @@ var win = Highcharts.win,
 // Convert base64 dataURL to Blob if supported, otherwise returns undefined
 Highcharts.dataURLtoBlob = function (dataURL) {
     var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
+
     if (
         parts &&
         parts.length > 3 &&

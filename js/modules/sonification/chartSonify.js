@@ -128,6 +128,7 @@ function getTimeExtremes(series, timeProp) {
     // Compute the extremes from the visible points.
     return series.points.reduce(function (acc, point) {
         var value = getPointTimeValue(point, timeProp);
+
         acc.min = Math.min(acc.min, value);
         acc.max = Math.max(acc.max, value);
         return acc;
@@ -156,6 +157,7 @@ function getExtremesForInstrumentProps(chart, instruments, dataExtremes) {
                 var value = instrumentDefinition.instrumentMapping[
                     instrumentParameter
                 ];
+
                 if (typeof value === 'string' && !newExtremes[value]) {
                     // This instrument parameter is mapped to a data prop.
                     // If we don't have predefined data extremes, find them.
@@ -184,6 +186,7 @@ function getPointEarcons(point, earconDefinitions) {
         function (earcons, earconDefinition) {
             var cond,
                 earcon = earconDefinition.earcon;
+
             if (earconDefinition.condition) {
                 // We have a condition. This overrides onPoint
                 cond = earconDefinition.condition(point);
@@ -222,6 +225,7 @@ function makeInstrumentCopies(instruments) {
             copy = (typeof instrument === 'string' ?
                 H.sonification.instruments[instrument] :
                 instrument).copy();
+
         return H.merge(instrumentDef, { instrument: copy });
     });
 }
@@ -261,6 +265,7 @@ function buildTimelinePathFromSeries(series, options) {
         timelineEvents = series.points.reduce(function (events, point) {
             var earcons = getPointEarcons(point, options.earcons || []),
                 time = pointToTime(point);
+
             return events.concat(
                 // Event object for point
                 new H.sonification.TimelineEvent({
@@ -292,6 +297,7 @@ function buildTimelinePathFromSeries(series, options) {
         },
         onEventStart: function (event) {
             var eventObject = event.options && event.options.eventObject;
+
             if (eventObject instanceof H.Point) {
                 // Check for hidden series
                 if (
@@ -314,6 +320,7 @@ function buildTimelinePathFromSeries(series, options) {
         onEventEnd: function (eventData) {
             var eventObject = eventData.event && eventData.event.options &&
                     eventData.event.options.eventObject;
+
             if (eventObject instanceof H.Point && options.onPointEnd) {
                 options.onPointEnd(eventData.event, eventObject);
             }
@@ -375,6 +382,7 @@ function seriesSonify(options) {
  */
 function buildSeriesOptions(series, dataExtremes, chartSonifyOptions) {
     var seriesOptions = chartSonifyOptions.seriesOptions || {};
+
     return H.merge(
         {
             // Calculated dataExtremes for chart
@@ -423,6 +431,7 @@ function buildSeriesOptions(series, dataExtremes, chartSonifyOptions) {
  */
 function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
     var order;
+
     if (orderOptions === 'sequential' || orderOptions === 'simultaneous') {
         // Just add the series from the chart
         order = chart.series.reduce(function (seriesList, series) {
@@ -450,6 +459,7 @@ function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
                 // Is this item a series ID?
                 if (typeof item === 'string') {
                     var series = chart.get(item);
+
                     if (series.visible) {
                         itemObject = {
                             series: series,
@@ -507,6 +517,7 @@ function addAfterSeriesWaits(order, wait) {
 
     return order.reduce(function (newOrder, orderDef, i) {
         var simultaneousPaths = H.splat(orderDef);
+
         newOrder.push(simultaneousPaths);
 
         // Go through the simultaneous paths and see if there is a series there
@@ -538,6 +549,7 @@ function addAfterSeriesWaits(order, wait) {
 function getWaitTime(order) {
     return order.reduce(function (waitTime, orderDef) {
         var def = H.splat(orderDef);
+
         return waitTime + (
             def.length === 1 && def[0].options && def[0].options.silentWait || 0
         );
@@ -555,6 +567,7 @@ function syncSimultaneousPaths(paths) {
     // Find the extremes for these paths
     var extremes = paths.reduce(function (extremes, path) {
         var events = path.events;
+
         if (events && events.length) {
             extremes.min = Math.min(events[0].time, extremes.min);
             extremes.max = Math.max(
@@ -572,6 +585,7 @@ function syncSimultaneousPaths(paths) {
         var events = path.events,
             hasEvents = events && events.length,
             eventsToAdd = [];
+
         if (!(hasEvents && events[0].time <= extremes.min)) {
             eventsToAdd.push(new H.sonification.TimelineEvent({
                 time: extremes.min
@@ -603,6 +617,7 @@ function getSimulPathDurationTotal(order) {
             function (maxPathDuration, item) {
                 var timeExtremes = item.series && item.seriesOptions &&
                         item.seriesOptions.timeExtremes;
+
                 return timeExtremes ?
                     Math.max(
                         maxPathDuration, timeExtremes.max - timeExtremes.min
@@ -851,6 +866,7 @@ function chartSonify(options) {
  */
 function getCurrentPoints() {
     var cursorObj;
+
     if (this.sonification.timeline) {
         cursorObj = this.sonification.timeline.getCursor(); // Cursor per pathID
         return Object.keys(cursorObj).map(function (path) {
@@ -879,6 +895,7 @@ function getCurrentPoints() {
  */
 function setCursor(points) {
     var timeline = this.sonification.timeline;
+
     if (timeline) {
         H.splat(points).forEach(function (point) {
             // We created the events with the ID of the points, which makes
@@ -1003,4 +1020,5 @@ var chartSonifyFunctions = {
     resetCursor: resetCursor,
     resetCursorEnd: resetCursorEnd
 };
+
 export default chartSonifyFunctions;

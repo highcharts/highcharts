@@ -637,6 +637,7 @@ H.Tick.prototype = {
             show = true,
             x = xy.x,
             y = xy.y;
+
         if (label && isNumber(x)) {
             label.xy = xy = tick.getLabelPosition(
                 x,

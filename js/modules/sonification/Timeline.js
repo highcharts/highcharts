@@ -93,6 +93,7 @@ TimelineEvent.prototype.play = function (options) {
         playOptions.onEnd = masterOnEnd || playOnEnd || playOptionsOnEnd ?
             function () {
                 var args = arguments;
+
                 [masterOnEnd, playOnEnd, playOptionsOnEnd].forEach(
                     function (onEnd) {
                         if (onEnd) {
@@ -270,6 +271,7 @@ TimelinePath.prototype.getCursor = function () {
  */
 TimelinePath.prototype.setCursor = function (eventId) {
     var ix = this.eventIdMap[eventId];
+
     if (ix !== undefined) {
         this.cursor = ix;
         return true;
@@ -696,4 +698,5 @@ var timelineClasses = {
     TimelinePath: TimelinePath,
     Timeline: Timeline
 };
+
 export default timelineClasses;

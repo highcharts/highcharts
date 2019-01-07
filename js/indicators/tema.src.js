@@ -92,6 +92,7 @@ H.seriesType('tema', 'ema',
                   3 * EMAlevels.level2 + EMAlevels.level3
                 )
             ];
+
             return TEMAPoint;
         },
         getValues: function (series, params) {

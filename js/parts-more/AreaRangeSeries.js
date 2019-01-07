@@ -156,6 +156,7 @@ seriesType('arearange', 'area', {
                 point.rectPlotX,
                 this.yAxis.len - point.plotHigh
             );
+
         point.plotHighX = xy.x - chart.plotLeft;
         point.plotHigh = xy.y - chart.plotTop;
         point.plotLowX = point.plotX;

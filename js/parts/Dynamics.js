@@ -40,6 +40,7 @@ var addEvent = H.addEvent,
 // computing (#9197)
 H.cleanRecursively = function (newer, older) {
     var result = {};
+
     objectEach(newer, function (val, key) {
         var ob;
 
@@ -531,6 +532,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         defined(newOptions.id) &&
                         chart.get(newOptions.id)
                     ) || chart[coll][indexMap ? indexMap[i] : i];
+
                     if (item && item.coll === coll) {
                         item.update(newOptions, false);
 

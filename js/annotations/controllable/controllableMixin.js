@@ -277,6 +277,7 @@ var controllableMixin = {
     transform: function (transformation, cx, cy, p1, p2) {
         if (this.chart.inverted) {
             var temp = cx;
+
             cx = cy;
             cy = temp;
         }

@@ -5,6 +5,7 @@ var getAngleBetweenPoints = geometry.getAngleBetweenPoints,
 
 var round = function round(x, decimals) {
     var a = Math.pow(10, decimals);
+
     return Math.round(x * a) / a;
 };
 
@@ -103,6 +104,7 @@ var getCirclesIntersectionPoints = function getIntersectionPoints(circles) {
         var additional = arr.slice(i + 1)
             .reduce(function (points, c2, j) {
                 var indexes = [i, j + i + 1];
+
                 return points.concat(
                     getCircleCircleIntersection(c1, c2)
                         .map(function (p) {
@@ -111,6 +113,7 @@ var getCirclesIntersectionPoints = function getIntersectionPoints(circles) {
                         })
                 );
             }, []);
+
         return points.concat(additional);
     }, []);
 };
@@ -244,6 +247,7 @@ function getAreaOfIntersectionBetweenCircles(circles) {
                 // If we find an arc then add it to the list and update p2.
                 if (arc) {
                     var r = arc.r;
+
                     data.arcs.push(
                         ['A', r, r, 0, arc.largeArc, 1, arc.x, arc.y]
                     );

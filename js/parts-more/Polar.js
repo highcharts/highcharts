@@ -286,6 +286,7 @@ if (!H.polarExtended) {
                 this.hasClipCircleSetter = Boolean(
                     H.addEvent(this, 'afterRender', function () {
                         var circ;
+
                         if (chart.polar) {
                             circ = this.yAxis.center;
                             this.group.clip(

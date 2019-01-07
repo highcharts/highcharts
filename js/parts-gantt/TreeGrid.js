@@ -42,6 +42,7 @@ var argsToArray = function (args) {
 var override = function (obj, methods) {
     var method,
         func;
+
     for (method in methods) {
         if (methods.hasOwnProperty(method)) {
             func = methods[method];
@@ -87,6 +88,7 @@ var getTickPositions = function (axis) {
     return Object.keys(axis.mapOfPosToGridNode).reduce(
         function (arr, key) {
             var pos = +key;
+
             if (
                 axis.min <= pos &&
                 axis.max >= pos &&
@@ -121,6 +123,7 @@ var getTickPositions = function (axis) {
 var isCollapsed = function (axis, node) {
     var breaks = (axis.options.breaks || []),
         obj = getBreakFromNode(node, axis.max);
+
     return breaks.some(function (b) {
         return b.from === obj.from && b.to === obj.to;
     });
@@ -147,6 +150,7 @@ var isCollapsed = function (axis, node) {
 var collapse = function (axis, node) {
     var breaks = (axis.options.breaks || []),
         obj = getBreakFromNode(node, axis.max);
+
     breaks.push(obj);
     return breaks;
 };
@@ -171,6 +175,7 @@ var collapse = function (axis, node) {
 var expand = function (axis, node) {
     var breaks = (axis.options.breaks || []),
         obj = getBreakFromNode(node, axis.max);
+
     // Remove the break from the axis breaks array.
     return breaks.reduce(function (arr, b) {
         if (b.to !== obj.to || b.from !== obj.from) {
@@ -271,6 +276,7 @@ var onTickHover = function (label) {
 };
 var onTickHoverExit = function (label, options) {
     var css = defined(options.style) ? options.style : {};
+
     label.removeClass('highcharts-treegrid-node-active');
 
     if (!label.renderer.styledMode) {
@@ -320,6 +326,7 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
             var gridNode = mapOfPosToGridNode[node.pos],
                 height = 0,
                 descendants = 0;
+
             gridNode.children.forEach(function (child) {
                 descendants += child.descendants + 1;
                 height = Math.max(child.height + 1, height);
@@ -408,6 +415,7 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
 
             nodes.forEach(function (node) {
                 var data = node.data;
+
                 if (isObject(data)) {
                     // Update point
                     data.y = start + data.seriesIndex;
@@ -461,6 +469,7 @@ override(GridAxis.prototype, {
         var axis = this,
             removeFoundExtremesEvent,
             isTreeGrid = userOptions.type === 'treegrid';
+
         // Set default and forced options for TreeGrid
         if (isTreeGrid) {
             userOptions = merge({
@@ -578,6 +587,7 @@ override(GridAxis.prototype, {
                     H.addEvent(axis, 'foundExtremes', function () {
                         axis.collapsedNodes.forEach(function (node) {
                             var breaks = collapse(axis, node);
+
                             axis.setBreaks(breaks, false);
                         });
                         removeFoundExtremesEvent();
@@ -865,6 +875,7 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
             pos = tick.pos,
             node = axis.mapOfPosToGridNode[pos],
             breaks = collapse(axis, node);
+
         axis.setBreaks(breaks, pick(redraw, true));
     },
     /**
@@ -885,6 +896,7 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
             pos = tick.pos,
             node = axis.mapOfPosToGridNode[pos],
             breaks = expand(axis, node);
+
         axis.setBreaks(breaks, pick(redraw, true));
     },
     /**
@@ -906,6 +918,7 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
             pos = tick.pos,
             node = axis.mapOfPosToGridNode[pos],
             breaks = toggleCollapse(axis, node);
+
         axis.setBreaks(breaks, pick(redraw, true));
     }
 });

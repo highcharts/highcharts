@@ -125,6 +125,7 @@ addEvent(Chart, 'init', function (e) {
         defaultyAxis = splat(options.yAxis || {}),
         yAxisLength = defaultyAxis.length,
         newYAxes = [];
+
     /**
      * Flag used in parallel coordinates plot to check if chart has ||-coords
      * (parallel coords).
@@ -179,6 +180,7 @@ addEvent(Chart, 'init', function (e) {
 // Initialize parallelCoordinates
 addEvent(Chart, 'update', function (e) {
     var options = e.options;
+
     if (options.chart) {
         if (defined(options.chart.parallelCoordinates)) {
             this.hasParallelCoordinates = options.chart.parallelCoordinates;
@@ -277,6 +279,7 @@ addEvent(Axis, 'getSeriesExtremes', function (e) {
     if (this.chart && this.chart.hasParallelCoordinates && !this.isXAxis) {
         var index = this.parallelPosition,
             currentPoints = [];
+
         this.series.forEach(function (series) {
             if (series.visible && defined(series.yData[index])) {
                 // We need to use push() beacause of null points
@@ -308,6 +311,7 @@ extend(AxisProto, /** @lends Highcharts.Axis.prototype */ {
     setParallelPosition: function (axisPosition, options) {
         var fraction = (this.parallelPosition + 0.5) /
             (this.chart.parallelInfo.counter + 1);
+
         if (this.chart.polar) {
             options.angle = 360 * fraction;
         } else {
@@ -327,6 +331,7 @@ extend(AxisProto, /** @lends Highcharts.Axis.prototype */ {
 addEvent(H.Series, 'bindAxes', function (e) {
     if (this.chart.hasParallelCoordinates) {
         var series = this;
+
         this.chart.axes.forEach(function (axis) {
             series.insert(axis.series);
             axis.isDirty = true;

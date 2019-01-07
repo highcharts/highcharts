@@ -597,6 +597,7 @@ H.initCanvasBoost = function () {
             }, function () {
                 var loadingDiv = chart.loadingDiv,
                     loadingShown = chart.loadingShown;
+
                 stroke();
 
                 // if (series.boostCopy || series.chart.boostCopy) {

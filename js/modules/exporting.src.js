@@ -987,6 +987,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Move HTML into a foreignObject
         if (options && options.exporting && options.exporting.allowHTML) {
             var html = svg.match(/<\/svg>(.*?$)/);
+
             if (html && html[1]) {
                 html = '<foreignObject x="0" y="0" ' +
                             'width="' + options.chart.width + '" ' +
@@ -1145,6 +1146,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (chartOptions) {
             ['xAxis', 'yAxis', 'series'].forEach(function (coll) {
                 var collOptions = {};
+
                 if (chartOptions[coll]) {
                     collOptions[coll] = chartOptions[coll];
                     chartCopy.update(collOptions);
@@ -1588,6 +1590,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             symbol,
             button,
             symbolSize = btnOptions.symbolSize || 12;
+
         if (!chart.btnCount) {
             chart.btnCount = 0;
         }
@@ -2021,6 +2024,7 @@ symbols.menu = function (x, y, width, height) {
         'M', x, y + height - 1.5,
         'L', x + width, y + height - 1.5
     ];
+
     return arr;
 };
 
@@ -2078,6 +2082,7 @@ Chart.prototype.renderExporting = function () {
 // function.
 addEvent(Chart, 'init', function () {
     var chart = this;
+
     function update(prop, options, redraw) {
         chart.isDirtyExporting = true;
         merge(true, chart.options[prop], options);

@@ -431,6 +431,7 @@ Highcharts.Legend.prototype = {
      */
     setText: function (item) {
         var options = this.options;
+
         item.legendItem.attr({
             text: options.labelFormat ?
                 H.format(options.labelFormat, item, this.chart.time) :
@@ -655,6 +656,7 @@ Highcharts.Legend.prototype = {
      */
     getAllItems: function () {
         var allItems = [];
+
         this.chart.series.forEach(function (series) {
             var seriesOptions = series && series.options;
 

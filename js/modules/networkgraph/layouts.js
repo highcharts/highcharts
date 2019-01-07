@@ -267,6 +267,7 @@ H.extend(
             // input. For the initial positions
             function unrandom(n) {
                 var rand = n * n / Math.PI;
+
                 rand = rand - Math.floor(rand);
                 return rand;
             }

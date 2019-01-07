@@ -35,6 +35,7 @@ H.NodesMixin = {
             node.getSum = function () {
                 var sumTo = 0,
                     sumFrom = 0;
+
                 node.linksTo.forEach(function (link) {
                     sumTo += link.weight;
                 });
@@ -46,6 +47,7 @@ H.NodesMixin = {
             // Get the offset in weight values of a point/link.
             node.offset = function (point, coll) {
                 var offset = 0;
+
                 for (var i = 0; i < node[coll].length; i++) {
                     if (node[coll][i] === point) {
                         return offset;
@@ -58,6 +60,7 @@ H.NodesMixin = {
             // outgoing.
             node.hasShape = function () {
                 var outgoing = 0;
+
                 node.linksTo.forEach(function (link) {
                     if (link.outgoing) {
                         outgoing++;

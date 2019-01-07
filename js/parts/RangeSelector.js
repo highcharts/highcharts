@@ -681,6 +681,7 @@ RangeSelector.prototype = {
                     chart.series.forEach(function (series) {
                         // reassign it to the last item
                         var xData = series.xData;
+
                         dataMin = Math.min(xData[0], dataMin);
                         dataMax = Math.max(xData[xData.length - 1], dataMax);
                     });
@@ -899,6 +900,7 @@ RangeSelector.prototype = {
                 // Disable the All button if we're already showing all
                 isAllButAlreadyShowingAll = false,
                 isSameRange = range === actualRange;
+
             // Months and years have a variable range so we check the extremes
             if (
                 (type === 'month' || type === 'year') &&
@@ -1091,6 +1093,7 @@ RangeSelector.prototype = {
                     chartAxis,
                 dataMin = dataAxis.dataMin,
                 dataMax = dataAxis.dataMax;
+
             if (value !== input.previousValue) {
                 input.previousValue = value;
                 // If the value isn't parsed directly to a value by the
@@ -1285,6 +1288,7 @@ RangeSelector.prototype = {
             startOfYear = useUTC ?
                 time.Date.UTC(year, 0, 1) : // eslint-disable-line new-cap
                 +new time.Date(year, 0, 1);
+
         min = Math.max(dataMin || 0, startOfYear);
         now = now.getTime();
         return {

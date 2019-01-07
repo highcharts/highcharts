@@ -35,6 +35,7 @@ if (VMLRenderer) {
 
     VMLRenderer.prototype.arc3d = function (shapeArgs) {
         var result = SVGRenderer.prototype.arc3d.call(this, shapeArgs);
+
         result.css({ zIndex: result.zIndex });
         return result;
     };

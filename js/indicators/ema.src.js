@@ -62,6 +62,7 @@ seriesType('ema', 'sma',
             var sum = 0,
                 i = 0,
                 y = 0;
+
             while (i < period) {
                 y = index < 0 ? yVal[i] : yVal[i][index];
                 sum = sum + y;

@@ -40,6 +40,7 @@ function findLastObstacleBefore(obstacles, xMin, startIx) {
         min = xMin - 0.0000001, // Make sure we include all obstacles at xMin
         cursor,
         cmp;
+
     while (left <= right) {
         cursor = (right + left) >> 1;
         cmp = min - obstacles[cursor].xMin;
@@ -96,6 +97,7 @@ function pointWithinObstacle(obstacle, point) {
  */
 function findObstacleFromPoint(obstacles, point) {
     var i = findLastObstacleBefore(obstacles, point.x + 1) + 1;
+
     while (i--) {
         if (obstacles[i].xMax >= point.x &&
             // optimization using lazy evaluation
@@ -120,6 +122,7 @@ function findObstacleFromPoint(obstacles, point) {
  */
 function pathFromSegments(segments) {
     var path = [];
+
     if (segments.length) {
         path.push('M', segments[0].start.x, segments[0].start.y);
         for (var i = 0; i < segments.length; ++i) {
@@ -229,6 +232,7 @@ var algorithms = {
                 x: from.x,
                 y: from.y
             };
+
             point[fromKey] = to[toKey || fromKey] + (offset || 0);
             return point;
         }
@@ -237,6 +241,7 @@ var algorithms = {
         function getMeOut(obstacle, point, direction) {
             var useMax = abs(point[direction] - obstacle[direction + 'Min']) >
                         abs(point[direction] - obstacle[direction + 'Max']);
+
             return copyFromPoint(
                 point,
                 direction,

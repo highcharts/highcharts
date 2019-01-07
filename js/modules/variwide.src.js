@@ -127,6 +127,7 @@ seriesType('variwide', 'column'
             // Temporarily disable crisping when computing original shapeArgs
             var crispOption = this.options.crisp,
                 xAxis = this.xAxis;
+
             this.options.crisp = false;
 
             seriesTypes.column.prototype.translate.call(this);
@@ -221,10 +222,12 @@ addEvent(H.Axis, 'afterDrawCrosshair', function (e) {
 // On a vertical axis, apply anti-collision logic to the labels.
 addEvent(H.Axis, 'afterRender', function () {
     var axis = this;
+
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(function () {
             return axis.tickPositions.map(function (pos, i) {
                 var label = axis.ticks[pos].label;
+
                 label.labelrank = axis.zData[i];
                 return label;
             });

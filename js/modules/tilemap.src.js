@@ -21,6 +21,7 @@ var seriesType = H.seriesType,
     // Utility func to get padding definition from tile size division
     tilePaddingFromTileSize = function (series, xDiv, yDiv) {
         var options = series.options;
+
         return {
             xPad: (options.colsize || 1) / -xDiv,
             yPad: (options.rowsize || 1) / -yDiv
@@ -41,6 +42,7 @@ H.tileShapeTypes = {
                 return [];
             }
             var hexagon = this.tileEdges;
+
             return [
                 'M', hexagon.x2 - size, hexagon.y1 + size,
                 'L', hexagon.x3 + size, hexagon.y1 + size,
@@ -173,6 +175,7 @@ H.tileShapeTypes = {
                 return [];
             }
             var diamond = this.tileEdges;
+
             return [
                 'M', diamond.x2, diamond.y1 + size,
                 'L', diamond.x3 + size, diamond.y2,

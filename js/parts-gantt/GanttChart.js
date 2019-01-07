@@ -51,6 +51,7 @@ H.ganttChart = function (renderTo, options, callback) {
         defaultOptions = H.getOptions(),
         defaultLinkedTo,
         userOptions = options;
+
     options = arguments[hasRenderToArg ? 1 : 0];
 
     // If user hasn't defined axes as array, make it into an array and add a

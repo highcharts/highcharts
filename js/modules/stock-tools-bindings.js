@@ -1267,6 +1267,7 @@ var stockToolsBindings = {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
+
             return this.chart.addAnnotation({
                 langKey: 'fibonacci',
                 type: 'fibonacci',

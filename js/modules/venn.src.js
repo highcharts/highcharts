@@ -81,6 +81,7 @@ var getOverlapBetweenCircles = function getOverlapBetweenCircles(circles) {
  */
 var loss = function loss(mapOfIdToCircle, relations) {
     var precision = 10e10;
+
     // Iterate all the relations and calculate their individual loss.
     return relations.reduce(function (totalLoss, relation) {
         var loss = 0;
@@ -96,6 +97,7 @@ var loss = function loss(mapOfIdToCircle, relations) {
             );
 
             var diff = wantedOverlap - actualOverlap;
+
             loss = Math.round((diff * diff) * precision) / precision;
         }
 
@@ -151,6 +153,7 @@ var range = function range(start, end, step) {
         range = Array.apply(0, Array(length)).map(function (_, i) {
             return i * s;
         });
+
     return range;
 };
 
@@ -175,6 +178,7 @@ function getDistanceBetweenCirclesByOverlap(r1, r2, overlap) {
         index = binarySearch(list, 0, function (x) {
             var actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x),
                 diff = overlap - actualOverlap;
+
             // If the difference is below accepted error then return overlap to
             // confirm we have found the right value.
             return (Math.abs(diff) < error) ? 0 : diff;
@@ -225,6 +229,7 @@ var nelderMead = function nelderMead(fn, initial) {
         // Create a set of extra points based on the initial.
         for (var i = 0; i < n; ++i) {
             var point = initial.slice();
+
             point[i] = point[i] ? point[i] * 1.05 : 0.001;
             point.fx = fn(point);
             simplex[i + 1] = point;
@@ -240,8 +245,10 @@ var nelderMead = function nelderMead(fn, initial) {
 
     var shrinkSimplex = function (simplex) {
         var best = simplex[0];
+
         return simplex.map(function (point) {
             var p = weightedSum(1 - pShrink, best, pShrink, point);
+
             p.fx = fn(p);
             return p;
         });
@@ -264,6 +271,7 @@ var nelderMead = function nelderMead(fn, initial) {
 
     var getPoint = function (centroid, worst, a, b) {
         var point = weightedSum(a, centroid, b, worst);
+
         point.fx = fn(point);
         return point;
     };
@@ -286,6 +294,7 @@ var nelderMead = function nelderMead(fn, initial) {
         if (reflected.fx < simplex[0].fx) {
             // If reflected point is the best, then possibly expand.
             var expanded = getPoint(centroid, worst, 1 + pExp, -pExp);
+
             simplex = updateSimplex(
                 simplex,
                 (expanded.fx < reflected.fx) ? expanded : reflected
@@ -294,6 +303,7 @@ var nelderMead = function nelderMead(fn, initial) {
             // If the reflected point is worse than the second worse, then
             // contract.
             var contracted;
+
             if (reflected.fx > worst.fx) {
                 // If the reflected is worse than the worst point, do a
                 // contraction
@@ -335,11 +345,13 @@ var getMarginFromCircles =
 function getMarginFromCircles(point, internal, external) {
     var margin = internal.reduce(function (margin, circle) {
         var m = circle.r - getDistanceBetweenPoints(point, circle);
+
         return (m <= margin) ? m : margin;
     }, Number.MAX_VALUE);
 
     margin = external.reduce(function (margin, circle) {
         var m = getDistanceBetweenPoints(point, circle) - circle.r;
+
         return (m <= margin) ? m : margin;
     }, margin);
 
@@ -426,6 +438,7 @@ var getLabelPosition = function getLabelPosition(internal, external) {
  */
 var getLabelPositions = function getLabelPositions(relations) {
     var singleSets = relations.filter(isSet);
+
     return relations.reduce(function (map, relation) {
         if (relation.value) {
             var sets = relation.sets,
@@ -476,6 +489,7 @@ var addOverlapToSets = function addOverlapToSets(relations) {
         // Sum up the amount of overlap for each set.
         .reduce(function (map, relation) {
             var sets = relation.sets;
+
             sets.forEach(function (set, i, arr) {
                 if (!isObject(map[set])) {
                     map[set] = {
@@ -495,6 +509,7 @@ var addOverlapToSets = function addOverlapToSets(relations) {
         // Extend the set with the calculated properties.
         .forEach(function (set) {
             var properties = mapOfIdToProps[set.sets[0]];
+
             extend(set, properties);
         });
 
@@ -547,6 +562,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
      */
     var positionSet = function positionSet(set, coordinates) {
         var circle = set.circle;
+
         circle.x = coordinates.x;
         circle.y = coordinates.y;
         positionedSets.push(set);
@@ -688,12 +704,14 @@ var layout = function (relations) {
 
 var isValidRelation = function (x) {
     var map = {};
+
     return (
         isObject(x) &&
         (isNumber(x.value) && x.value > -1) &&
         (isArray(x.sets) && x.sets.length > 0) &&
         !x.sets.some(function (set) {
             var invalid = false;
+
             if (!map[set] && isString(set)) {
                 map[set] = true;
             } else {
@@ -741,6 +759,7 @@ var processVennData = function processVennData(data) {
 
     validSets.reduce(function (combinations, set, i, arr) {
         var remaining = arr.slice(i + 1);
+
         remaining.forEach(function (set2) {
             combinations.push(set + ',' + set2);
         });
@@ -751,6 +770,7 @@ var processVennData = function processVennData(data) {
                 sets: combination.split(','),
                 value: 0
             };
+
             mapOfIdToRelation[combination] = obj;
         }
     });
@@ -897,6 +917,7 @@ var vennSeries = {
         var field = Object.keys(mapOfIdToShape)
                 .filter(function (key) {
                     var shape = mapOfIdToShape[key];
+
                     return shape && isNumber(shape.r);
                 })
                 .reduce(function (field, key) {
@@ -937,6 +958,7 @@ var vennSeries = {
                         return path.concat(arr);
                     }, [])
                         .join(' ');
+
                     shapeArgs = {
                         d: d
                     };
@@ -980,6 +1002,7 @@ var vennSeries = {
         points.forEach(function (point) {
             var attribs,
                 shapeArgs = point.shapeArgs;
+
             // Add point attribs
             if (!chart.styledMode) {
                 attribs = series.pointAttribs(point, point.state);
@@ -1034,6 +1057,7 @@ var vennSeries = {
 
             series.points.forEach(function (point) {
                 var args = point.shapeArgs;
+
                 if (point.graphic && args) {
                     var attr = {},
                         animate = {};

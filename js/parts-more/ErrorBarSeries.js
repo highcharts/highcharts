@@ -87,6 +87,7 @@ seriesType('errorbar', 'boxplot', {
     drawDataLabels: seriesTypes.arearange ?
         function () {
             var valKey = this.pointValKey;
+
             seriesTypes.arearange.prototype.drawDataLabels.call(this);
             // Arearange drawDataLabels does not reset point.y to high,
             // but to low after drawing (#4133)

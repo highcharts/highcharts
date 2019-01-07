@@ -181,6 +181,7 @@ if (seriesTypes.bubble) {
         }, {
             applyOptions: function (options, x) {
                 var point;
+
                 if (
                     options &&
                 options.lat !== undefined &&

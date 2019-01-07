@@ -74,6 +74,7 @@ function intersectsAnyWord(point, points) {
         lastCollidedWith = point.lastCollidedWith,
         isIntersecting = function (p) {
             var result = isRectanglesIntersecting(rect, p.rect);
+
             if (result && (point.rotation % 90 || p.roation % 90)) {
                 result = isPolygonsColliding(
                     polygon,
@@ -98,6 +99,7 @@ function intersectsAnyWord(point, points) {
     if (!intersects) {
         intersects = !!find(points, function (p) {
             var result = isIntersecting(p);
+
             if (result) {
                 point.lastCollidedWith = p;
             }
@@ -131,6 +133,7 @@ function archimedeanSpiral(attempt, params) {
         result = false,
         maxDelta = (field.width * field.width) + (field.height * field.height),
         t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
+
     // Emergency brake. TODO make spiralling logic more foolproof.
     if (attempt <= 10000) {
         result = {
@@ -169,6 +172,7 @@ function squareSpiral(attempt) {
             return typeof x === 'boolean';
         },
         result = false;
+
     t -= 1;
     if (attempt <= 10000) {
         if (isBoolean(result) && a >= m - t) {
@@ -224,6 +228,7 @@ function squareSpiral(attempt) {
 function rectangularSpiral(attempt, params) {
     var result = squareSpiral(attempt, params),
         field = params.field;
+
     if (result) {
         result.x *= field.ratioX;
         result.y *= field.ratioY;
@@ -270,6 +275,7 @@ function getScale(targetWidth, targetHeight, field) {
         width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
         scaleX = width > 0 ? 1 / width * targetWidth : 1,
         scaleY = height > 0 ? 1 / height * targetHeight : 1;
+
     return Math.min(scaleX, scaleY);
 }
 
@@ -304,6 +310,7 @@ function getPlayingField(
     var info = data.reduce(function (obj, point) {
             var dimensions = point.dimensions,
                 x = Math.max(dimensions.width, dimensions.height);
+
             // Find largest height.
             obj.maxHeight = Math.max(obj.maxHeight, dimensions.height);
             // Find largest width.
@@ -328,6 +335,7 @@ function getPlayingField(
         ),
         ratioX = targetWidth > targetHeight ? targetWidth / targetHeight : 1,
         ratioY = targetHeight > targetWidth ? targetHeight / targetWidth : 1;
+
     return {
         width: x * ratioX,
         height: x * ratioY,
@@ -435,6 +443,7 @@ function outsidePlayingField(rect, field) {
         top: -(field.height / 2),
         bottom: field.height / 2
     };
+
     return !(
         playingField.left < rect.left &&
         playingField.right > rect.right &&
@@ -474,6 +483,7 @@ function intersectionTesting(point, options) {
         },
         // Make a copy to update values during intersection testing.
         rect = point.rect = extend({}, rectangle);
+
     point.polygon = polygon;
     point.rotation = options.rotation;
 
@@ -709,6 +719,7 @@ var wordCloudSeries = {
             title: null,
             tickPositions: []
         };
+
         Series.prototype.bindAxes.call(this);
         extend(this.yAxis.options, wordcloudAxis);
         extend(this.xAxis.options, wordcloudAxis);
@@ -752,6 +763,7 @@ var wordCloudSeries = {
         var weight = isNumber(relativeWeight) ? relativeWeight : 0,
             max = isNumber(maxFontSize) ? maxFontSize : 1,
             min = isNumber(minFontSize) ? minFontSize : 1;
+
         return Math.floor(Math.max(min, weight * max));
     },
     drawPoints: function () {
@@ -932,6 +944,7 @@ var wordCloudSeries = {
     },
     hasData: function () {
         var series = this;
+
         return (
             isObject(series) &&
             series.visible === true &&
@@ -946,6 +959,7 @@ var wordCloudSeries = {
         random: function (point, options) {
             var field = options.field,
                 r = options.rotation;
+
             return {
                 x: getRandomPosition(field.width) - (field.width / 2),
                 y: getRandomPosition(field.height) - (field.height / 2),
@@ -954,6 +968,7 @@ var wordCloudSeries = {
         },
         center: function (point, options) {
             var r = options.rotation;
+
             return {
                 x: 0,
                 y: 0,
@@ -988,6 +1003,7 @@ var wordCloudSeries = {
             height = yAxis ? yAxis.len : chart.plotHeight,
             x = xAxis ? xAxis.left : chart.plotLeft,
             y = yAxis ? yAxis.top : chart.plotTop;
+
         return {
             translateX: x + (width / 2),
             translateY: y + (height / 2),
@@ -1002,6 +1018,7 @@ var wordCloudPoint = {
     draw: drawPoint,
     shouldDraw: function shouldDraw() {
         var point = this;
+
         return !point.isNull;
     },
     weight: 1

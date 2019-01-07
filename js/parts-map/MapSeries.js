@@ -502,6 +502,7 @@ seriesType(
             if (data) {
                 data.forEach(function (val, i) {
                     var ix = 0;
+
                     if (isNumber(val)) {
                         data[i] = {
                             value: val

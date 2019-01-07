@@ -182,6 +182,7 @@ seriesType(
      */
         init: function () {
             var options;
+
             seriesTypes.scatter.prototype.init.apply(this, arguments);
 
             options = this.options;
@@ -322,6 +323,7 @@ seriesType(
                 return [];
             }
             var rect = this.shapeArgs;
+
             return [
                 'M', rect.x - size, rect.y - size,
                 'L', rect.x - size, rect.y + rect.height + size,

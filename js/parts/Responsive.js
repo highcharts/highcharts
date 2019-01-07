@@ -177,6 +177,7 @@ Chart.prototype.setResponsive = function (redraw, reset) {
             return rule._id === ruleId;
         }).chartOptions;
     }));
+
     mergedOptions.isResponsiveOptions = true;
 
     // Stringified key for the rules that currently apply.
@@ -260,6 +261,7 @@ Chart.prototype.currentOptions = function (options) {
      */
     function getCurrent(options, curr, ret, depth) {
         var i;
+
         H.objectEach(options, function (val, key) {
             if (!depth && ['series', 'xAxis', 'yAxis'].indexOf(key) > -1) {
                 val = splat(val);

@@ -661,6 +661,7 @@ Scrollbar.prototype = {
      */
     initEvents: function () {
         var scroller = this;
+
         /**
          * Event handler for the mouse move event.
          */
@@ -741,6 +742,7 @@ Scrollbar.prototype = {
         scroller.buttonToMinClick = function (e) {
             var range = correctFloat(scroller.to - scroller.from) *
                 scroller.options.step;
+
             scroller.updatePosition(
                 correctFloat(scroller.from - range),
                 correctFloat(scroller.to - range)
@@ -755,6 +757,7 @@ Scrollbar.prototype = {
 
         scroller.buttonToMaxClick = function (e) {
             var range = (scroller.to - scroller.from) * scroller.options.step;
+
             scroller.updatePosition(scroller.from + range, scroller.to + range);
             fireEvent(scroller, 'changed', {
                 from: scroller.from,

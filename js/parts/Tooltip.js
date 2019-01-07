@@ -147,6 +147,7 @@ H.Tooltip.prototype = {
     cleanSplit: function (force) {
         this.chart.series.forEach(function (series) {
             var tt = series && series.tt;
+
             if (tt) {
                 if (!tt.isActive || force) {
                     series.tt = tt.destroy();
@@ -169,6 +170,7 @@ H.Tooltip.prototype = {
     applyFilter: function () {
 
         var chart = this.chart;
+
         chart.renderer.definition({
             tagName: 'filter',
             id: 'drop-shadow-' + chart.index,
@@ -408,6 +410,7 @@ H.Tooltip.prototype = {
      */
     hide: function (delay) {
         var tooltip = this;
+
         // disallow duplicate timers (#1728, #1766)
         H.clearTimeout(this.hideTimer);
         delay = pick(delay, this.options.hideDelay, 500);
@@ -622,6 +625,7 @@ H.Tooltip.prototype = {
              */
             swap = function (count) {
                 var temp = first;
+
                 first = second;
                 second = temp;
                 swapped = count;
@@ -975,6 +979,7 @@ H.Tooltip.prototype = {
                     box.size,
                     box.point
                 );
+
                 box.x = boxPosition.x;
                 box.align = 0; // 0-align to the top, 1-align to the bottom
                 box.target = boxPosition.y;
@@ -1083,6 +1088,7 @@ H.Tooltip.prototype = {
                 day: 3
             },
             lastN = 'millisecond'; // for sub-millisecond data, #4223
+
         for (n in timeUnits) {
 
             // If the range is exactly one week and we're looking at a
@@ -1239,6 +1245,7 @@ H.Tooltip.prototype = {
     bodyFormatter: function (items) {
         return items.map(function (item) {
             var tooltipOptions = item.series.tooltipOptions;
+
             return (
                 tooltipOptions[
                     (item.point.formatPrefix || 'point') + 'Formatter'

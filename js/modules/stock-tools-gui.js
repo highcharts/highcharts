@@ -785,6 +785,7 @@ addEvent(H.Chart, 'getMargins', function () {
         this.stockTools.listWrapper &&
         this.stockTools.listWrapper.offsetWidth
     );
+
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
     }

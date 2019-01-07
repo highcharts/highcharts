@@ -161,6 +161,7 @@ seriesType('linearRegression', 'sma',
          */
         transformXData: function (xData, xAxisUnit) {
             var xOffset = xData[0];
+
             return xData.map(function (xValue) {
                 return (xValue - xOffset) / xAxisUnit;
             });

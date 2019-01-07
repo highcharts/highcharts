@@ -272,6 +272,7 @@ H.seriesType('pivotpoints', 'sma',
                 low = Infinity,
                 close = values[values.length - 1][3],
                 pivot;
+
             values.forEach(function (p) {
                 high = Math.max(high, p[1]);
                 low = Math.min(low, p[2]);

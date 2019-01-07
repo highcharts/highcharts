@@ -154,6 +154,7 @@ seriesType('waterfall', 'column', {
             len,
             i,
             y;
+
         // Parent call:
         seriesTypes.column.prototype.generatePoints.apply(this);
 

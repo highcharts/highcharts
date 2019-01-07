@@ -59,6 +59,7 @@ var columnRangeOptions = {
         }
     }
 };
+
 /**
  * The ColumnRangeSeries class
  *

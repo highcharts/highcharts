@@ -896,6 +896,7 @@ function GLShader(gl) {
     function stringToProgram(str, type) {
         var t = type === 'vertex' ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER,
             shader = gl.createShader(t);
+
         gl.shaderSource(shader, str);
         gl.compileShader(shader);
 
@@ -919,6 +920,7 @@ function GLShader(gl) {
     function createShader() {
         var v = stringToProgram(vertShade, 'vertex'),
             f = stringToProgram(fragShade, 'fragment');
+
         if (!v || !f) {
             shaderProgram = false;
             handleErrors();
@@ -996,6 +998,7 @@ function GLShader(gl) {
                                            shaderProgram,
                                            name
                                        );
+
             gl.uniform1f(u, val);
         }
     }
@@ -2961,6 +2964,7 @@ Series.prototype.getPoint = function (boostPoint) {
         xData = (
             this.xData || this.options.xData || this.processedXData || false
         );
+
     if (boostPoint && !(boostPoint instanceof this.pointClass)) {
         point = (new this.pointClass()).init( // eslint-disable-line new-cap
             this,

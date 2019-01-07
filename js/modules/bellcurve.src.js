@@ -39,6 +39,7 @@ function standardDeviation(data, average) {
 
     sum = data.reduce(function (sum, value) {
         var diff = value - average;
+
         return (sum += diff * diff);
     }, 0);
 
@@ -47,6 +48,7 @@ function standardDeviation(data, average) {
 
 function normalDensity(x, mean, standardDeviation) {
     var translation = x - mean;
+
     return Math.exp(
         -(translation * translation) /
         (2 * standardDeviation * standardDeviation)

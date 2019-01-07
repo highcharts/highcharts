@@ -71,6 +71,7 @@ Chart.prototype.adjustHeight = function () {
                 axis.series.forEach(function (series) {
                     var clipRect =
                         series.sharedClipKey && chart[series.sharedClipKey];
+
                     if (clipRect) {
                         clipRect.attr({
                             height: chart.plotHeight

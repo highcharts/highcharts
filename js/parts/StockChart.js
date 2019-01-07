@@ -497,6 +497,7 @@ SVGRenderer.prototype.crispPolyLine = function (points, width) {
     // points format: ['M', 0, 0, 'L', 100, 0]
     // normalize to a crisp line
     var i;
+
     for (i = 0; i < points.length; i = i + 6) {
         if (points[i + 1] === points[i + 4]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
@@ -831,6 +832,7 @@ addEvent(Series, 'afterGetExtremes', function () {
             this.modifyValue(this.dataMin),
             this.modifyValue(this.dataMax)
         ];
+
         this.dataMin = arrayMin(extremes);
         this.dataMax = arrayMax(extremes);
     }
@@ -898,6 +900,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 // this feature (#2754).
 addEvent(Series, 'render', function () {
     var clipHeight;
+
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
     // if the series type handles clipping in the animate method (#2975).
     if (
@@ -940,6 +943,7 @@ addEvent(Series, 'render', function () {
 
 addEvent(Chart, 'update', function (e) {
     var options = e.options;
+
     // Use case: enabling scrollbar from a disabled state.
     // Scrollbar needs to be initialized from a controller, Navigator in this
     // case (#6615)

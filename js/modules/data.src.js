@@ -693,6 +693,7 @@ Highcharts.extend(Data.prototype, {
         });
 
         var globalPointArrayMap = getPointArrayMap(globalType);
+
         if (globalPointArrayMap === undefined) {
             globalPointArrayMap = ['y'];
         }
@@ -2132,6 +2133,7 @@ Highcharts.extend(Data.prototype, {
      */
     update: function (options, redraw) {
         var chart = this.chart;
+
         if (options) {
             // Set the complete handler
             options.afterComplete = function (dataOptions) {
@@ -2311,6 +2313,7 @@ SeriesBuilder.prototype.read = function (columns, rowIndex) {
     // Then, build an array or point based on the readers names.
     builder.readers.forEach(function (reader) {
         var value = columns[reader.columnIndex][rowIndex];
+
         if (pointIsArray) {
             point.push(value);
         } else {
@@ -2403,6 +2406,7 @@ SeriesBuilder.prototype.getReferencedColumnIndexes = function () {
  */
 SeriesBuilder.prototype.hasReader = function (configName) {
     var i, columnReader;
+
     for (i = 0; i < this.readers.length; i = i + 1) {
         columnReader = this.readers[i];
         if (columnReader.configName === configName) {

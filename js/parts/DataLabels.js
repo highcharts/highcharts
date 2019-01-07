@@ -139,6 +139,7 @@ H.distribute = function (boxes, len, maxDistance) {
     i = 0;
     boxes.some(function (box) {
         var posInCompositeBox = 0;
+
         if (box.targets.some(function () {
             origBoxes[i].pos = box.pos + posInCompositeBox;
 
@@ -210,6 +211,7 @@ Series.prototype.drawDataLabels = function () {
             op,
             prop,
             val;
+
         if (filter) {
             op = filter.operator;
             prop = point[filter.property];
@@ -237,6 +239,7 @@ Series.prototype.drawDataLabels = function () {
     function mergeArrays(one, two) {
         var res = [],
             i;
+
         if (isArray(one) && !isArray(two)) {
             res = one.map(function (el) {
                 return merge(el, two);
@@ -780,6 +783,7 @@ if (seriesTypes.pie) {
             plotLeft
         ) {
             var dataLabelWidth = dataLabel.getBBox().width;
+
             return half ? dataLabelWidth + plotLeft :
                 plotWidth - dataLabelWidth - plotLeft;
         },
@@ -1209,6 +1213,7 @@ if (seriesTypes.pie) {
         this.points.forEach(function (point) {
             var dataLabel = point.dataLabel,
                 _pos;
+
             if (dataLabel && point.visible) {
                 _pos = dataLabel._pos;
                 if (_pos) {

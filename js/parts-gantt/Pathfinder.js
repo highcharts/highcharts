@@ -846,6 +846,7 @@ Pathfinder.prototype = {
                             point.options.connect &&
                             H.splat(point.options.connect)
                         );
+
                     if (point.visible && point.isInside !== false && connects) {
                         connects.forEach(function (connect) {
                             to = chart.get(
@@ -926,6 +927,7 @@ Pathfinder.prototype = {
                     // that haven't rendered, and render them now.
                     var pathfinder = series.chart.pathfinder,
                         conns = pathfinder && pathfinder.connections || [];
+
                     conns.forEach(function (connection) {
                         if (
                             connection.fromPoint &&
@@ -939,6 +941,7 @@ Pathfinder.prototype = {
                         delete series.pathfinderRemoveRenderEvent;
                     }
                 };
+
                 if (series.options.animation === false) {
                     render();
                 } else {
@@ -974,6 +977,7 @@ Pathfinder.prototype = {
             series = this.chart.series,
             margin = pick(options.algorithmMargin, 0),
             calculatedMargin;
+
         for (var i = 0, sLen = series.length; i < sLen; ++i) {
             if (series[i].visible) {
                 for (
@@ -1146,6 +1150,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
      */
     getRadiansToVector: function (v1, v2) {
         var box;
+
         if (!defined(v2)) {
             box = getPointBB(this);
             v2 = {
@@ -1280,6 +1285,7 @@ function warnLegacy(chart) {
 // Initialize Pathfinder for charts
 H.Chart.prototype.callbacks.push(function (chart) {
     var options = chart.options;
+
     if (options.connectors.enabled !== false) {
         warnLegacy(chart);
         this.pathfinder = new Pathfinder(this);

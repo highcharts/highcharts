@@ -69,6 +69,7 @@ seriesType(
                     ) :
                     options
             );
+
             return Point.prototype.applyOptions.call(this, mergedOptions, x);
         }
     }

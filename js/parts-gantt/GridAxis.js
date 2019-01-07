@@ -198,6 +198,7 @@ H.dateFormats = {
         var d = new Date(timestamp),
             yearStart,
             weekNo;
+
         d.setHours(0, 0, 0, 0);
         d.setDate(d.getDate() - (d.getDay() || 7));
         yearStart = new Date(d.getFullYear(), 0, 1);

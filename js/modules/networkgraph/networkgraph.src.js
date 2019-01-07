@@ -432,6 +432,7 @@ seriesType('networkgraph', 'line', {
 }, {
     getDegree: function () {
         var deg = this.isNode ? this.linksFrom.length + this.linksTo.length : 0;
+
         return deg === 0 ? 1 : deg;
     },
     // Links:

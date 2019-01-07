@@ -221,6 +221,7 @@ seriesType('windbarb', 'column'
 
             this.points.forEach(function (point) {
                 var level = 0;
+
                 // Find the beaufort level (zero based)
                 for (; level < beaufortFloor.length; level++) {
                     if (beaufortFloor[level] > point.value) {

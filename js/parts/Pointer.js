@@ -311,6 +311,7 @@ Highcharts.Pointer.prototype = {
                 }
                 return result;
             };
+
         series.forEach(function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared,
                 compareX = (
@@ -321,6 +322,7 @@ Highcharts.Pointer.prototype = {
                     coordinates,
                     compareX
                 );
+
             if (
                 // Check that we actually found a point on the series.
                 isObject(point, true) &&
@@ -468,6 +470,7 @@ Highcharts.Pointer.prototype = {
                     var point = find(s.points, function (p) {
                         return p.x === hoverPoint.x && !p.isNull;
                     });
+
                     if (isObject(point)) {
                         /*
                         * Boost returns a minimal point. Convert it to a usable
@@ -598,6 +601,7 @@ Highcharts.Pointer.prototype = {
                 'mousemove',
                 function (e) {
                     var chart = charts[H.hoverChartIndex];
+
                     if (chart) {
                         chart.pointer.onDocumentMouseMove(e);
                     }
@@ -1076,6 +1080,7 @@ Highcharts.Pointer.prototype = {
      */
     onContainerMouseLeave: function (e) {
         var chart = charts[H.hoverChartIndex];
+
         // #4886, MS Touch end fires mouseleave but with no related target
         if (chart && (e.relatedTarget || e.toElement)) {
             chart.pointer.reset();
@@ -1145,6 +1150,7 @@ Highcharts.Pointer.prototype = {
      */
     inClass: function (element, className) {
         var elemClassName;
+
         while (element) {
             elemClassName = attr(element, 'class');
             if (elemClassName) {

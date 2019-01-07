@@ -40,6 +40,7 @@ addEvent(Chart, 'afterInit', function () {
             var type = s.type ||
                 options.chart.type ||
                 options.chart.defaultSeriesType;
+
             if (type === 'scatter') {
                 s.type = 'scatter3d';
             }
@@ -1331,6 +1332,7 @@ Chart.prototype.get3dFrame = function () {
         zp = options3d.depth,
         faceOrientation = function (vertexes) {
             var area = H.shapeArea3d(vertexes, chart);
+
             // Give it 0.5 squared-pixel as a margin for rounding errors.
             if (area > 0.5) {
                 return 1;
@@ -1407,11 +1409,14 @@ Chart.prototype.get3dFrame = function () {
     var getFaceOptions = function (sources, faceOrientation, defaultVisible) {
         var faceAttrs = ['size', 'color', 'visible'];
         var options = {};
+
         for (var i = 0; i < faceAttrs.length; i++) {
             var attr = faceAttrs[i];
+
             for (var j = 0; j < sources.length; j++) {
                 if (typeof sources[j] === 'object') {
                     var val = sources[j][attr];
+
                     if (val !== undefined && val !== null) {
                         options[attr] = val;
                         break;
@@ -1420,6 +1425,7 @@ Chart.prototype.get3dFrame = function () {
             }
         }
         var isVisible = defaultVisible;
+
         if (options.visible === true || options.visible === false) {
             isVisible = options.visible;
         } else if (options.visible === 'auto') {
@@ -1503,6 +1509,7 @@ Chart.prototype.get3dFrame = function () {
         };
 
         var yEdges = [];
+
         if (isValidEdge(ret.left, ret.front)) {
             yEdges.push({
                 y: (ym + yp) / 2,
@@ -1537,6 +1544,7 @@ Chart.prototype.get3dFrame = function () {
         }
 
         var xBottomEdges = [];
+
         if (isValidEdge(ret.bottom, ret.front)) {
             xBottomEdges.push({
                 x: (xm + xp) / 2,
@@ -1555,6 +1563,7 @@ Chart.prototype.get3dFrame = function () {
         }
 
         var xTopEdges = [];
+
         if (isValidEdge(ret.top, ret.front)) {
             xTopEdges.push({
                 x: (xm + xp) / 2,
@@ -1573,6 +1582,7 @@ Chart.prototype.get3dFrame = function () {
         }
 
         var zBottomEdges = [];
+
         if (isValidEdge(ret.bottom, ret.left)) {
             zBottomEdges.push({
                 z: (zm + zp) / 2,
@@ -1591,6 +1601,7 @@ Chart.prototype.get3dFrame = function () {
         }
 
         var zTopEdges = [];
+
         if (isValidEdge(ret.top, ret.left)) {
             zTopEdges.push({
                 z: (zm + zp) / 2,
@@ -1617,6 +1628,7 @@ Chart.prototype.get3dFrame = function () {
             }
             var best = 0,
                 projections = perspective(edges, chart, false);
+
             for (var i = 1; i < projections.length; i++) {
                 if (
                     mult * projections[i][axis] >
@@ -1635,6 +1647,7 @@ Chart.prototype.get3dFrame = function () {
             }
             return edges[best];
         };
+
         ret.axes = {
             y: {
                 'left': pickEdge(yEdges, 'x', -1),
@@ -1684,10 +1697,12 @@ Chart.prototype.get3dFrame = function () {
 // Animation setter for matrix property.
 H.Fx.prototype.matrixSetter = function () {
     var interpolated;
+
     if (this.pos < 1 &&
             (H.isArray(this.start) || H.isArray(this.end))) {
         var start = this.start || [1, 0, 0, 1, 0, 0];
         var end = this.end || [1, 0, 0, 1, 0, 0];
+
         interpolated = [];
         for (var i = 0; i < 6; i++) {
             interpolated.push(this.pos * end[i] + (1 - this.pos) * start[i]);

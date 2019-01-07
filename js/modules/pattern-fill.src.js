@@ -355,6 +355,7 @@ H.SVGRenderer.prototype.addPattern = function (options, animation) {
 // Make sure we have a series color
 wrap(H.Series.prototype, 'getColor', function (proceed) {
     var oldColor = this.options.color;
+
     // Temporarely remove color options to get defaults
     if (oldColor && oldColor.pattern && !oldColor.pattern.color) {
         delete this.options.color;
@@ -373,9 +374,11 @@ wrap(H.Series.prototype, 'getColor', function (proceed) {
 // Calculate pattern dimensions on points that have their own pattern.
 addEvent(H.Series, 'render', function () {
     var isResizing = this.chart.isResizing;
+
     if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
         (this.points || []).forEach(function (point) {
             var colorOptions = point.options && point.options.color;
+
             if (colorOptions && colorOptions.pattern) {
                 // For most points we want to recalculate the dimensions on
                 // render, where we have the shape args and bbox. But if we
@@ -515,6 +518,7 @@ H.addEvent(H.Chart, 'endResize', function () {
         this.series.forEach(function (series) {
             series.points.forEach(function (point) {
                 var colorOptions = point.options && point.options.color;
+
                 if (colorOptions && colorOptions.pattern) {
                     colorOptions.pattern._width = 'defer';
                     colorOptions.pattern._height = 'defer';
@@ -549,6 +553,7 @@ H.addEvent(H.Chart, 'redraw', function () {
                 var id = node.getAttribute('fill') ||
                         node.getAttribute('color') ||
                         node.getAttribute('stroke');
+
                 if (id) {
                     usedIds.push(id
                         .substring(id.indexOf('url(#') + 5)
@@ -577,6 +582,7 @@ H.addEvent(H.Chart, 'redraw', function () {
 // Add the predefined patterns
 H.Chart.prototype.callbacks.push(function (chart) {
     var colors = H.getOptions().colors;
+
     [
         'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
         'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',

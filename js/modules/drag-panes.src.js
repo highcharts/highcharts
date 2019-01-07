@@ -181,6 +181,7 @@ var hasTouch = H.hasTouch,
             y: 0
         }
     };
+
 merge(true, Axis.prototype.defaultYAxisOptions, resizerOptions);
 
 /**

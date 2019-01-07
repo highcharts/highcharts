@@ -263,6 +263,7 @@ Axis.prototype.buildStacks = function () {
         reversedStacks = pick(this.options.reversedStacks, true),
         len = axisSeries.length,
         i;
+
     if (!this.isXAxis) {
         this.usePercentage = false;
         i = len;
@@ -320,6 +321,7 @@ Axis.prototype.renderStackTotals = function () {
 Axis.prototype.resetStacks = function () {
     var axis = this,
         stacks = axis.stacks;
+
     if (!axis.isXAxis) {
         objectEach(stacks, function (type) {
             objectEach(type, function (stack, key) {
@@ -556,6 +558,7 @@ Series.prototype.modifyStacks = function () {
  */
 Series.prototype.percentStacker = function (pointExtremes, stack, i) {
     var totalFactor = stack.total ? 100 / stack.total : 0;
+
     // Y bottom value
     pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor);
     // Y value

@@ -55,6 +55,7 @@ TrackerMixin = H.TrackerMixin = {
             pointer = chart.pointer,
             onMouseOver = function (e) {
                 var point = pointer.getPointFromEvent(e);
+
                 // undefined on graph in scatterchart
                 if (point !== undefined) {
                     pointer.isDirectTouch = true;
@@ -361,6 +362,7 @@ extend(Legend.prototype, {
 
         addEvent(item.checkbox, 'click', function (event) {
             var target = event.target;
+
             fireEvent(
                 item.series || item,
                 'checkboxClick',
@@ -688,6 +690,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             series = point.series,
             chart = series.chart,
             pointer = chart.pointer;
+
         e = e ?
             pointer.normalize(e) :
             // In cases where onMouseOver is called directly without an event
@@ -706,6 +709,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
     onMouseOut: function () {
         var point = this,
             chart = point.series.chart;
+
         point.firePointEvent('mouseOut');
         (chart.hoverPoints || []).forEach(function (p) {
             p.setState();

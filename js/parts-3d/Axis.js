@@ -138,6 +138,7 @@ merge(true, Axis.prototype.defaultOptions, extendedOptions);
 
 addEvent(Axis, 'afterSetOptions', function () {
     var options;
+
     if (this.chart.is3d && this.chart.is3d() && this.coll !== 'colorAxis') {
         options = this.options;
         options.tickWidth = pick(options.tickWidth, 0);
@@ -170,6 +171,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
     ];
 
     var pathSegments = [];
+
     if (!this.horiz) { // Y-Axis
         if (frame.front.visible) {
             pathSegments.push(pArr[0], pArr[2]);
@@ -359,6 +361,7 @@ function fix3dPosition(axis, pos, isTitle) {
         } else { // X and Z Axis
             var sin = Math.sin(alpha);
             var cos = Math.cos(alpha);
+
             if (axis.opposite) {
                 sin = -sin;
             }
@@ -377,6 +380,7 @@ function fix3dPosition(axis, pos, isTitle) {
             var sinb = Math.sin(beta);
             var cosb = Math.cos(beta);
             var vecZ = { x: sinb * cosa, y: -sina, z: -cosa * cosb };
+
             vecY = {
                 x: vecX.y * vecZ.z - vecX.z * vecZ.y,
                 y: vecX.z * vecZ.x - vecX.x * vecZ.z,
@@ -385,6 +389,7 @@ function fix3dPosition(axis, pos, isTitle) {
             var scale = 1 / Math.sqrt(
                 vecY.x * vecY.x + vecY.y * vecY.y + vecY.z * vecY.z
             );
+
             if (reverseFlap) {
                 scale = -scale;
             }
@@ -416,6 +421,7 @@ function fix3dPosition(axis, pos, isTitle) {
             { x: pos.x + vecX.x, y: pos.y + vecX.y, z: pos.z + vecX.z },
             { x: pos.x + vecY.x, y: pos.y + vecY.y, z: pos.z + vecY.z }
         ], axis.chart)) < 0;
+
         if (isMirrored) {
             vecX = { x: -vecX.x, y: -vecX.y, z: -vecX.z };
         }
@@ -464,6 +470,7 @@ addEvent(Tick, 'afterGetLabelPosition', function (e) {
 
 wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
     var pos = proceed.apply(this, [].slice.call(arguments, 1));
+
     return fix3dPosition(this, pos, true);
 });
 
@@ -492,6 +499,7 @@ Z-AXIS
 Axis.prototype.swapZ = function (p, insidePlotArea) {
     if (this.isZAxis) {
         var plotLeft = insidePlotArea ? 0 : this.chart.plotLeft;
+
         return {
             x: plotLeft + p.z,
             y: p.y,
@@ -584,6 +592,7 @@ addEvent(Chart, 'afterGetAxes', function () {
         // Z-Axis is shown horizontally, so it's kind of a X-Axis
         axisOptions.isX = true;
         var zAxis = new ZAxis(chart, axisOptions);
+
         zAxis.setScale();
     });
 });

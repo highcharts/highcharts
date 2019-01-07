@@ -86,6 +86,7 @@ wrap(
     'haloPath',
     function (proceed) {
         var args = arguments;
+
         return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);
     }
 );
@@ -111,6 +112,7 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
         var series = this,
             chart = series.chart,
             options3d = chart.options.chart.options3d;
+
         series.data.forEach(function (point) {
             var shapeArgs = point.shapeArgs,
                 r = shapeArgs.r,

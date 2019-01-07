@@ -40,6 +40,7 @@ var extend = H.extend,
 var getListOfParents = function (data, ids) {
     var listOfParents = data.reduce(function (prev, curr) {
             var parent = pick(curr.parent, '');
+
             if (prev[parent] === undefined) {
                 prev[parent] = [];
             }
@@ -51,6 +52,7 @@ var getListOfParents = function (data, ids) {
     // If parent does not exist, hoist parent to root of tree.
     parents.forEach(function (parent, list) {
         var children = listOfParents[parent];
+
         if ((parent !== '') && (ids.indexOf(parent) === -1)) {
             children.forEach(function (child) {
                 list[''].push(child);
@@ -143,6 +145,7 @@ var getTree = function (data, options) {
             return d.id;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);
+
     return getNode('', null, 1, null, mapOfIdToChildren, options);
 };
 

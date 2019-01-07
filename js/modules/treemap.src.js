@@ -43,6 +43,7 @@ var seriesType = H.seriesType,
     // @todo Similar to reduce, this function is likely redundant
     recursive = function (item, func, context) {
         var next;
+
         context = context || this;
         next = func.call(context, item);
         if (next !== false) {
@@ -183,6 +184,7 @@ seriesType('treemap', 'scatter'
             formatter: function () {
                 var point = this && this.point ? this.point : {},
                     name = isString(point.name) ? point.name : '';
+
                 return name;
             },
             inside: true
@@ -524,6 +526,7 @@ seriesType('treemap', 'scatter'
                 ids = isArray(existingIds) ? existingIds : [],
                 listOfParents = arr.reduce(function (prev, curr, i) {
                     var parent = pick(curr.parent, '');
+
                     if (prev[parent] === undefined) {
                         prev[parent] = [];
                     }
@@ -697,6 +700,7 @@ seriesType('treemap', 'scatter'
             childrenValues = series[algorithm](area, children);
             children.forEach(function (child, index) {
                 var values = childrenValues[index];
+
                 child.values = merge(values, {
                     val: child.childrenTotal,
                     direction: (alternate ? 1 - area.direction : area.direction)
@@ -715,6 +719,7 @@ seriesType('treemap', 'scatter'
             var series = this,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis;
+
             series.points.forEach(function (point) {
                 var node = point.node,
                     values = node.pointValues,
@@ -881,6 +886,7 @@ seriesType('treemap', 'scatter'
                 keep,
                 i = 0,
                 end = group.elArr.length - 1;
+
             if (last) {
                 gW = group.nW;
                 gH = group.nH;
@@ -949,6 +955,7 @@ seriesType('treemap', 'scatter'
                     direction,
                     plot
                 );
+
             // Loop through and calculate all areas
             children.forEach(function (child) {
                 pTot =
@@ -989,6 +996,7 @@ seriesType('treemap', 'scatter'
                 pY,
                 pW,
                 pH;
+
             children.forEach(function (child) {
                 pTot =
                     (parent.width * parent.height) * (child.val / parent.val);
@@ -1067,6 +1075,7 @@ seriesType('treemap', 'scatter'
             recursive(series.nodeMap[series.rootNode], function (node) {
                 var next = false,
                     p = node.parent;
+
                 node.visible = true;
                 if (p || p === '') {
                     next = series.nodeMap[p];
@@ -1078,6 +1087,7 @@ seriesType('treemap', 'scatter'
                 series.nodeMap[series.rootNode].children,
                 function (children) {
                     var next = false;
+
                     children.forEach(function (child) {
                         child.visible = true;
                         if (child.children.length) {
@@ -1142,6 +1152,7 @@ seriesType('treemap', 'scatter'
                 }),
                 options,
                 level;
+
             points.forEach(function (point) {
                 level = mapOptionsToLevel[point.node.level];
                 // Set options to new object to avoid problems with scope
@@ -1272,6 +1283,7 @@ seriesType('treemap', 'scatter'
 
             points.forEach(function (point) {
                 var groupKey = 'level-group-' + point.node.levelDynamic;
+
                 if (!series[groupKey]) {
                     series[groupKey] = series.chart.renderer.g(groupKey)
                         .attr({
@@ -1316,6 +1328,7 @@ seriesType('treemap', 'scatter'
             var series = this,
                 point = event.point,
                 drillId = point && point.drillId;
+
             // If a drill id is returned, add click event and cursor.
             if (isString(drillId)) {
                 point.setState(''); // Remove hover
@@ -1337,6 +1350,7 @@ seriesType('treemap', 'scatter'
         drillToByGroup: function (point) {
             var series = this,
                 drillId = false;
+
             if ((point.node.level - series.nodeMap[series.rootNode].level) ===
                 1 &&
                 !point.node.isLeaf
@@ -1361,6 +1375,7 @@ seriesType('treemap', 'scatter'
             var series = this,
                 drillId = false,
                 nodeParent;
+
             if ((point.node.parent !== series.rootNode) &&
                 point.node.isLeaf
             ) {
@@ -1377,6 +1392,7 @@ seriesType('treemap', 'scatter'
         drillUp: function () {
             var series = this,
                 node = series.nodeMap[series.rootNode];
+
             if (node && isString(node.parent)) {
                 series.drillToNode(node.parent);
             }
@@ -1385,6 +1401,7 @@ seriesType('treemap', 'scatter'
             var series = this,
                 nodeMap = series.nodeMap,
                 node = nodeMap[id];
+
             series.idPreviousRoot = series.rootNode;
             series.rootNode = id;
             if (id === '') {
@@ -1468,6 +1485,7 @@ seriesType('treemap', 'scatter'
                 title: null,
                 tickPositions: []
             };
+
             Series.prototype.bindAxes.call(this);
             H.extend(this.yAxis.options, treeAxis);
             H.extend(this.xAxis.options, treeAxis);

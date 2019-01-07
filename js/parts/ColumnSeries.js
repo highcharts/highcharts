@@ -509,6 +509,7 @@ seriesType('column', 'line'
                     var otherOptions = otherSeries.options,
                         otherYAxis = otherSeries.yAxis,
                         columnIndex;
+
                     if (
                         otherSeries.type === series.type &&
                     (

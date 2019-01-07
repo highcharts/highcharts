@@ -525,6 +525,7 @@ if (!H.ColorAxis) {
                 colorCount = chart.options.chart.colorCount,
                 options = this.options,
                 len = userOptions.dataClasses.length;
+
             this.dataClasses = dataClasses = [];
             this.legendItems = [];
 
@@ -826,6 +827,7 @@ if (!H.ColorAxis) {
         getSeriesExtremes: function () {
             var series = this.series,
                 i = series.length;
+
             this.dataMin = Infinity;
             this.dataMax = -Infinity;
             while (i--) {

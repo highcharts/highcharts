@@ -470,6 +470,7 @@ seriesType(
 
                 points.forEach(function (point) {
                     var box = point.graphic && boxesMap[point.plotX];
+
                     if (box) {
                         point.graphic[
                             point.graphic.isNew ? 'attr' : 'animate'
@@ -525,6 +526,7 @@ seriesType(
          */
             points.forEach(function (point) {
                 var graphic = point.graphic;
+
                 if (graphic) {
                     addEvent(graphic.element, 'mouseover', function () {
 

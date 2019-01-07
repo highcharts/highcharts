@@ -501,6 +501,7 @@ undocumentedSeriesType('timeline', 'line'
                         enabled: false
                     }
                 };
+
             Series.prototype.bindAxes.call(series);
             extend(series.xAxis.options, timelineXAxis);
             extend(series.yAxis.options, timelineYAxis);
@@ -512,6 +513,7 @@ undocumentedSeriesType('timeline', 'line'
     , {
         init: function () {
             var point = Point.prototype.init.apply(this, arguments);
+
             point.name = pick(point.name, point.date, 'Event');
             point.y = 1;
 

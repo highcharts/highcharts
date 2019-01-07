@@ -164,4 +164,5 @@ var onSeriesMixin = {
         this.onSeries = onSeries;
     }
 };
+
 export default onSeriesMixin;

@@ -15,6 +15,7 @@ if (!Array.prototype.forEach) {
     Array.prototype.forEach = function (fn, ctx) {
         var i = 0,
             len = this.length;
+
         for (; i < len; i++) {
             if (
                 this[i] !== undefined && // added check
@@ -96,6 +97,7 @@ if (!Array.prototype.reduce) {
             i = arguments.length > 1 ? 0 : 1,
             accumulator = arguments.length > 1 ? initialValue : this[0],
             len = this.length;
+
         for (; i < len; ++i) {
             accumulator = func.call(context, accumulator, this[i], i, this);
         }
@@ -108,6 +110,7 @@ if (!Object.keys) {
         var result = [],
             hasOwnProperty = Object.prototype.hasOwnProperty,
             prop;
+
         for (prop in obj) {
             if (hasOwnProperty.call(obj, prop)) {
                 result.push(prop);

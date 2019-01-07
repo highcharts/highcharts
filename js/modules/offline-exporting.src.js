@@ -69,6 +69,7 @@ Highcharts.svgToDataUrl = function (svg) {
         nav.userAgent.indexOf('WebKit') > -1 &&
         nav.userAgent.indexOf('Chrome') < 0
     );
+
     try {
         // Safari requires data URI since it doesn't allow navigation to blob
         // URLs. Firefox has an issue with Blobs and internal references,
@@ -134,6 +135,7 @@ Highcharts.imageToDataUrl = function (
                 var canvas = doc.createElement('canvas'),
                     ctx = canvas.getContext && canvas.getContext('2d'),
                     dataURL;
+
                 try {
                     if (!ctx) {
                         noCanvasSupportCallback(
@@ -285,6 +287,7 @@ Highcharts.downloadSVGLocal = function (
             // container.
             setStylePropertyFromParents = function (el, propName) {
                 var curParent = el;
+
                 while (curParent && curParent !== dummySVGContainer) {
                     if (curParent.style[propName]) {
                         el.style[propName] = curParent.style[propName];

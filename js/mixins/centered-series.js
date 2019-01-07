@@ -107,6 +107,7 @@ H.CenteredSeriesMixin = {
                     startAngle + 360
             ),
             correction = -90;
+
         return {
             start: deg2rad * (startAngle + correction),
             end: deg2rad * (endAngle + correction)

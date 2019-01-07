@@ -402,6 +402,7 @@ H.error = function (code, stop, chart) {
     var msg = H.isNumber(code) ?
         'Highcharts error #' + code + ': www.highcharts.com/errors/' + code :
         code;
+
     if (chart) {
         H.fireEvent(chart, 'displayError', { code: code });
     }
@@ -660,6 +661,7 @@ H.Fx.prototype = {
         function sixify(arr) {
             var isOperator,
                 nextIsOperator;
+
             i = arr.length;
             while (i--) {
 
@@ -717,6 +719,7 @@ H.Fx.prototype = {
          */
         function append(arr, other) {
             var i = (fullLength - arr.length) / numParams;
+
             while (i > 0 && i--) {
 
                 // Pull out the slice that is going to be appended or inserted.
@@ -948,6 +951,7 @@ H.isString = function (s) {
  */
 H.isArray = function (obj) {
     var str = Object.prototype.toString.call(obj);
+
     return str === '[object Array]' || str === '[object Array Iterator]';
 };
 
@@ -997,6 +1001,7 @@ H.isDOMElement = function (obj) {
  */
 H.isClass = function (obj) {
     var c = obj && obj.constructor;
+
     return !!(
         H.isObject(obj, true) &&
         !H.isDOMElement(obj) &&
@@ -1033,6 +1038,7 @@ H.isNumber = function (n) {
  */
 H.erase = function (arr, item) {
     var i = arr.length;
+
     while (i--) {
         if (arr[i] === item) {
             arr.splice(i, 1);
@@ -1176,6 +1182,7 @@ H.clearTimeout = function (id) {
  */
 H.extend = function (a, b) {
     var n;
+
     if (!a) {
         a = {};
     }
@@ -1202,6 +1209,7 @@ H.pick = function () {
         i,
         arg,
         length = args.length;
+
     for (i = 0; i < length; i++) {
         arg = args[i];
         if (arg !== undefined && arg !== null) {
@@ -1256,6 +1264,7 @@ H.css = function (el, styles) {
 H.createElement = function (tag, attribs, styles, parent, nopad) {
     var el = doc.createElement(tag),
         css = H.css;
+
     if (attribs) {
         H.extend(el, attribs);
     }
@@ -1288,6 +1297,7 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
  */
 H.extendClass = function (parent, members) {
     var object = function () {};
+
     object.prototype = new parent(); // eslint-disable-line new-cap
     H.extend(object.prototype, members);
     return object;
@@ -1363,11 +1373,13 @@ H.relativeLength = function (value, base, offset) {
  */
 H.wrap = function (obj, method, func) {
     var proceed = obj[method];
+
     obj[method] = function () {
         var args = Array.prototype.slice.call(arguments),
             outerArgs = arguments,
             ctx = this,
             ret;
+
         ctx.proceed = function () {
             proceed.apply(ctx, arguments.length ? arguments : outerArgs);
         };
@@ -1755,6 +1767,7 @@ H.destroyObjectProperties = function (obj, except) {
  */
 H.discardElement = function (element) {
     var garbageBin = H.garbageBin;
+
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
         garbageBin = H.createElement('div');
@@ -2418,6 +2431,7 @@ H.removeEvent = function (el, type, fn) {
 
     ['protoEvents', 'hcEvents'].forEach(function (coll) {
         var eventCollection = el[coll];
+
         if (eventCollection) {
             if (type) {
                 events = eventCollection[type] || [];

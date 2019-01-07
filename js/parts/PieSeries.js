@@ -845,6 +845,7 @@ seriesType('pie', 'line',
                     if (!chart.styledMode) {
                     // Put the shadow behind all points
                         var shadowGroup = point.shadowGroup;
+
                         if (shadow && !shadowGroup) {
                             shadowGroup = point.shadowGroup = renderer
                                 .g('shadow')

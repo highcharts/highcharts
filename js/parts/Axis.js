@@ -4129,6 +4129,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                 series.data.forEach(function (point, i) { // #9487
                     var x;
+
                     if (
                         point &&
                         point.options &&
@@ -5216,6 +5217,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     // Return the size of the labels.
     labelMetrics: function () {
         var index = this.tickPositions && this.tickPositions[0] || 0;
+
         return this.chart.renderer.fontMetrics(
             this.options.labels.style && this.options.labels.style.fontSize,
             this.ticks[index] && this.ticks[index].label
@@ -5243,6 +5245,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // collision
             getStep = function (spaceNeeded) {
                 var step = spaceNeeded / (slotSize || 1);
+
                 step = step > 1 ? Math.ceil(step) : 1;
                 return correctFloat(step * tickInterval);
             };
@@ -6169,6 +6172,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         if (axisTitle && showAxis) {
             var titleXy = axis.getTitlePosition();
+
             if (isNumber(titleXy.y)) {
                 axisTitle[axisTitle.isNew ? 'attr' : 'animate'](titleXy);
                 axisTitle.isNew = false;

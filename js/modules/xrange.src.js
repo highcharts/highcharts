@@ -140,6 +140,7 @@ seriesType('xrange', 'column'
             formatter: function () {
                 var point = this.point,
                     amount = point.partialFill;
+
                 if (isObject(amount)) {
                     amount = amount.amount;
                 }
@@ -186,6 +187,7 @@ seriesType('xrange', 'column'
             function swapAxes() {
                 chart.series.forEach(function (s) {
                     var xAxis = s.xAxis;
+
                     s.xAxis = s.yAxis;
                     s.yAxis = xAxis;
                 });

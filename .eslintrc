@@ -21,9 +21,8 @@ rules:
     no-useless-escape: 0 // @todo: Useful but a bit risky to change. 54 errors.
     no-var: 0 // Not yet
     object-curly-spacing: [2, "always"]
-    operator-assignment: 0 // @todo
+    operator-assignment: 0 // Could be nice, but the change is somewhat error prone.
     operator-linebreak: [2, "after"]
-    padding-line-between-statements: 0 // @todo
     prefer-arrow-callback: 0 // @todo
     prefer-rest-params: 0 // @todo
     prefer-spread: 0 // @todo

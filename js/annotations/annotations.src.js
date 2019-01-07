@@ -62,6 +62,7 @@ var merge = H.merge,
  */
 var Annotation = H.Annotation = function (chart, options) {
     var labelsAndShapes;
+
     /**
      * The chart that the annotation belongs to.
      *

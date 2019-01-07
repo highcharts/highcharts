@@ -44,6 +44,7 @@ var addEvent = H.addEvent,
     // Consider making this a global utility method.
     numExt = function (extreme) {
         var numbers = [].filter.call(arguments, isNumber);
+
         if (numbers.length) {
             return Math[extreme].apply(0, numbers);
         }
@@ -892,6 +893,7 @@ Navigator.prototype = {
 
                 if (!chart.styledMode) {
                     var handlesOptions = navigatorOptions.handles;
+
                     navigator.handles[index]
                         .attr({
                             fill: handlesOptions.backgroundColor,
@@ -923,6 +925,7 @@ Navigator.prototype = {
         // Destroy and rebuild navigator
         this.destroy();
         var chartOptions = this.chart.options;
+
         merge(true, chartOptions.navigator, this.options, options);
         this.init(this.chart);
     },
@@ -1174,6 +1177,7 @@ Navigator.prototype = {
     getPartsEvents: function (eventName) {
         var navigator = this,
             events = [];
+
         ['shades', 'handles'].forEach(function (name) {
             navigator[name].forEach(function (navigatorItem, index) {
                 events.push(
@@ -1499,6 +1503,7 @@ Navigator.prototype = {
      */
     removeBaseSeriesEvents: function () {
         var baseSeries = this.baseSeries || [];
+
         if (this.navigatorEnabled && baseSeries[0]) {
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
                 baseSeries.forEach(function (series) {
@@ -1834,6 +1839,7 @@ Navigator.prototype = {
             navigatorSeries = navigator.series =
                 (navigator.series || []).filter(function (navSeries) {
                     var base = navSeries.baseSeries;
+
                     if (baseSeries.indexOf(base) < 0) { // Not in array
                         // If there is still a base series connected to this
                         // series, remove event handler and reference.
@@ -1895,6 +1901,7 @@ Navigator.prototype = {
                 // navigator options from base series (#4923).
                 var navigatorSeriesData =
                     baseNavigatorOptions.data || userNavOptions.data;
+
                 navigator.hasNavigatorData =
                     navigator.hasNavigatorData || !!navigatorSeriesData;
                 mergedNavSeriesOptions.data =
@@ -2211,6 +2218,7 @@ Navigator.prototype = {
                         navigator = chart.navigator,
                         marginName = navigator.opposite ?
                             'plotTop' : 'marginBottom';
+
                     if (chart.inverted) {
                         marginName = navigator.opposite ?
                             'marginRight' : 'plotLeft';
@@ -2348,6 +2356,7 @@ addEvent(Chart, 'beforeShowResetZoom', function () {
 // Initialize navigator for stock charts
 addEvent(Chart, 'beforeRender', function () {
     var options = this.options;
+
     if (options.navigator.enabled || options.scrollbar.enabled) {
         this.scroller = this.navigator = new Navigator(this);
     }

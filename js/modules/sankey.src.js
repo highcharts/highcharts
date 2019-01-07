@@ -175,6 +175,7 @@ seriesType('sankey', 'column'
 
             column.sum = function () {
                 var sum = 0;
+
                 this.forEach(function (node) {
                     sum += node.getSum();
                 });
@@ -183,6 +184,7 @@ seriesType('sankey', 'column'
             // Get the offset in pixels of a node inside the column.
             column.offset = function (node, factor) {
                 var offset = 0;
+
                 for (var i = 0; i < column.length; i++) {
                     if (column[i] === node) {
                         return offset + (node.options.offset || 0);
@@ -194,6 +196,7 @@ seriesType('sankey', 'column'
             // Get the column height in pixels.
             column.top = function (factor) {
                 var height = 0;
+
                 for (var i = 0; i < column.length; i++) {
                     if (i > 0) {
                         height += nodePadding;
@@ -210,6 +213,7 @@ seriesType('sankey', 'column'
         // incoming and outgoing links.
         createNodeColumns: function () {
             var columns = [];
+
             this.nodes.forEach(function (node) {
                 var fromColumn = -1,
                     i,
@@ -525,6 +529,7 @@ seriesType('sankey', 'column'
         // the points.
         render: function () {
             var points = this.points;
+
             this.points = this.points.concat(this.nodes);
             H.seriesTypes.column.prototype.render.call(this);
             this.points = points;

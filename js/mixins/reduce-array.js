@@ -49,4 +49,5 @@ var reduceArrayMixin = {
         }, [Number.MAX_VALUE, -Number.MAX_VALUE]);
     }
 };
+
 export default reduceArrayMixin;

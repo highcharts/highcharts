@@ -103,6 +103,7 @@ wrap(
         lastValidTouch
     ) {
         var xBigger;
+
         proceed.call(
             this,
             pinchDown,

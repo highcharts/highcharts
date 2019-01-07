@@ -622,6 +622,7 @@ Chart.prototype.applyDrilldown = function () {
 Chart.prototype.getDrilldownBackText = function () {
     var drilldownLevels = this.drilldownLevels,
         lastLevel;
+
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
         lastLevel = drilldownLevels[drilldownLevels.length - 1];
         lastLevel.series = lastLevel.seriesOptions;
@@ -695,6 +696,7 @@ Chart.prototype.drillUp = function () {
         oldExtremes,
         addSeries = function (seriesOptions) {
             var addedSeries;
+
             chartSeries.forEach(function (series) {
                 if (series.options._ddSeriesId === seriesOptions._ddSeriesId) {
                     addedSeries = series;
@@ -797,6 +799,7 @@ Chart.prototype.drillUp = function () {
 // Add update function to be called internally from Chart.update (#7600)
 Chart.prototype.callbacks.push(function () {
     var chart = this;
+
     chart.drilldown = {
         update: function (options, redraw) {
             H.merge(true, chart.options.drilldown, options);
@@ -1111,6 +1114,7 @@ H.Point.prototype.doDrilldown = function (
     }, function (e) {
         var chart = e.point.series && e.point.series.chart,
             seriesOptions = e.seriesOptions;
+
         if (chart && seriesOptions) {
             if (_holdRedraw) {
                 chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
@@ -1276,6 +1280,7 @@ var applyCursorCSS = function (element, cursor, addClass, styledMode) {
 // Mark the trackers with a pointer
 H.addEvent(H.Series, 'afterDrawTracker', function () {
     var styledMode = this.chart.styledMode;
+
     this.points.forEach(function (point) {
         if (point.drilldown && point.graphic) {
             applyCursorCSS(point.graphic, 'pointer', true, styledMode);
@@ -1286,6 +1291,7 @@ H.addEvent(H.Series, 'afterDrawTracker', function () {
 
 H.addEvent(H.Point, 'afterSetState', function () {
     var styledMode = this.series.chart.styledMode;
+
     if (this.drilldown && this.series.halo && this.state === 'hover') {
         applyCursorCSS(this.series.halo, 'pointer', true, styledMode);
     } else if (this.series.halo) {

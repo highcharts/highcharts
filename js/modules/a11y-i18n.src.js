@@ -62,6 +62,7 @@ function formatExtendedStatement(statement, ctx) {
             eachArguments = eachStatement.split(','),
             lenArg = Number(eachArguments[1]),
             len;
+
         result = '';
         arr = ctx[eachArguments[0]];
         if (arr) {
@@ -83,6 +84,7 @@ function formatExtendedStatement(statement, ctx) {
             pluralStatement = statement.substring(pluralStart + 8, pluralEnd),
             pluralArguments = pluralStatement.split(','),
             num = Number(ctx[pluralArguments[0]]);
+
         switch (num) {
         case 0:
             result = pick(pluralArguments[4], pluralArguments[1]);
@@ -104,6 +106,7 @@ function formatExtendedStatement(statement, ctx) {
         var arrayName = statement.substring(0, indexStart),
             ix = Number(statement.substring(indexStart + 1, indexEnd)),
             val;
+
         arr = ctx[arrayName];
         if (!isNaN(ix) && arr) {
             if (ix < 0) {
@@ -205,6 +208,7 @@ H.i18nFormat = function (formatString, context, time) {
             var str = sourceStr.slice(offset || 0),
                 startBracket = str.indexOf('{'),
                 endBracket = str.indexOf('}');
+
             if (startBracket > -1 && endBracket > startBracket) {
                 return {
                     statement: str.substring(startBracket + 1, endBracket),
@@ -281,6 +285,7 @@ H.Chart.prototype.langFormat = function (langKey, context, time) {
     var keys = langKey.split('.'),
         formatString = this.options.lang,
         i = 0;
+
     for (; i < keys.length; ++i) {
         formatString = formatString && formatString[keys[i]];
     }

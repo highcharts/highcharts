@@ -45,4 +45,5 @@ var requiredIndicatorMixin = {
             indicatorType;
     }
 };
+
 export default requiredIndicatorMixin;

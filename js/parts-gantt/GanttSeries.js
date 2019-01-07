@@ -83,6 +83,7 @@ seriesType('gantt', 'xrange'
                     end,
                     milestone = point.options.milestone,
                     retVal = '<b>' + (point.name || point.yCategory) + '</b>';
+
                 if (ttOptions.pointFormat) {
                     return point.tooltipFormatter(ttOptions.pointFormat);
                 }

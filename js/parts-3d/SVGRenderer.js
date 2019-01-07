@@ -32,6 +32,7 @@ var animObject = H.animObject,
     dFactor,
     element3dMethods,
     cuboidMethods;
+
 /*
     EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 */
@@ -42,6 +43,7 @@ dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
     var result = [],
         arcAngle = end - start;
+
     if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
         result = result.concat(
             curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy)
@@ -115,6 +117,7 @@ SVGRenderer.prototype.toLineSegments = function (points) {
 SVGRenderer.prototype.face3d = function (args) {
     var renderer = this,
         ret = this.createElement('path');
+
     ret.vertexes = [];
     ret.insidePlotArea = false;
     ret.enabled = true;
@@ -350,6 +353,7 @@ cuboidMethods = H.merge(element3dMethods, {
         // Resolve setting attributes by string name
         if (typeof args === 'string' && typeof val !== 'undefined') {
             var key = args;
+
             args = {};
             args[key] = val;
         }
@@ -515,6 +519,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         var ret = [
             [], -1
         ];
+
         path1 = path1.map(mapPath);
         path2 = path2.map(mapPath);
         if (H.shapeArea(path1) < 0) {
@@ -631,6 +636,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     wrapper.onAdd = function () {
         var parent = wrapper.parentGroup,
             className = wrapper.attr('class');
+
         wrapper.top.add(wrapper);
 
         // These faces are added outside the wrapper group because the z index
@@ -648,6 +654,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     ['addClass', 'removeClass'].forEach(function (fn) {
         wrapper[fn] = function () {
             var args = arguments;
+
             ['top', 'out', 'inn', 'side1', 'side2'].forEach(function (face) {
                 wrapper[face][fn].apply(wrapper[face], args);
             });
@@ -711,6 +718,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     // Override attr to remove shape attributes and use those to set child paths
     wrapper.attr = function (params) {
         var ca;
+
         if (typeof params === 'object') {
             ca = suckOutCustom(params);
             if (ca) {
@@ -832,6 +840,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 
     // TOP
     var top = ['M', cx + (rx * cs), cy + (ry * ss)];
+
     top = top.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
     top = top.concat([
         'L', cx + (irx * ce), cy + (iry * se)
@@ -872,6 +881,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     // startAngle
 
     var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
+
     out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 
     // When shape is wide, it can cross both, (c) and (d) edges, when using
@@ -927,6 +937,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 
     // INSIDE
     var inn = ['M', cx + (irx * cs), cy + (iry * ss)];
+
     inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
     inn = inn.concat([
         'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy

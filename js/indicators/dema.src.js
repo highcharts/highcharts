@@ -101,6 +101,7 @@ H.seriesType('dema', 'ema',
                 EMAvalues = [],
                 i,
                 DEMAPoint;
+
             series.EMApercent = (2 / (period + 1));
 
             // Check period, if bigger than EMA points length, skip

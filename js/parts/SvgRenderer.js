@@ -480,6 +480,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         var animOptions = H.animObject(
             pick(options, this.renderer.globalAnimation, true)
         );
+
         if (animOptions.duration !== 0) {
             // allows using a callback with the global animation without
             // overwriting it
@@ -604,6 +605,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     gradientObject.stops = [];
                     stops.forEach(function (stop) {
                         var stopObject;
+
                         if (stop[1].indexOf('rgba') === 0) {
                             colorObject = H.color(stop[1]);
                             stopColor = colorObject.get('rgb');
@@ -960,6 +962,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     addClass: function (className, replace) {
         var currentClassName = this.attr('class') || '';
+
         if (currentClassName.indexOf(className) === -1) {
             if (!replace) {
                 className =
@@ -1402,6 +1405,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     invert: function (inverted) {
         var wrapper = this;
+
         wrapper.inverted = inverted;
         wrapper.updateTransform();
         return wrapper;
@@ -1483,6 +1487,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     toFront: function () {
         var element = this.element;
+
         element.parentNode.appendChild(element);
         return this;
     },
@@ -1810,6 +1815,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     fadeOut: function (duration) {
         var elemWrapper = this;
+
         elemWrapper.animate({
             opacity: 0
         }, {
@@ -1887,6 +1893,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     safeRemoveChild: function (element) {
         var parentNode = element.parentNode;
+
         if (parentNode) {
             parentNode.removeChild(element);
         }
@@ -1925,6 +1932,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 function (el) {
                     var clipPathAttr = el.getAttribute('clip-path'),
                         clipPathId = clipPath.element.id;
+
                     // Include the closing paranthesis in the test to rule out
                     // id's from 10 and above (#6550). Edge puts quotes inside
                     // the url, others not.
@@ -2203,6 +2211,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     alignSetter: function (value) {
         var convert = { left: 'start', center: 'middle', right: 'end' };
+
         this.alignValue = value;
         this.element.setAttribute('text-anchor', convert[value]);
     },
@@ -2228,6 +2237,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     titleSetter: function (value) {
         var titleNode = this.element.getElementsByTagName('title')[0];
+
         if (!titleNode) {
             titleNode = doc.createElementNS(this.SVG_NS, 'title');
             this.element.appendChild(titleNode);
@@ -2652,6 +2662,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // for. This doesn't seem to work inside iframes though (like in
         // jsFiddle).
         var subPixelFix, rect;
+
         if (isFirefox && container.getBoundingClientRect) {
             subPixelFix = function () {
                 css(container, { left: 0, top: 0 });
@@ -2691,6 +2702,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         function recurse(config, parent) {
             var ret;
+
             splat(config).forEach(function (item) {
                 var node = ren.createElement(item.tagName),
                     attr = {};
@@ -2788,6 +2800,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     destroy: function () {
         var renderer = this,
             rendererDefs = renderer.defs;
+
         renderer.box = null;
         renderer.boxWrapper = renderer.boxWrapper.destroy();
 
@@ -2827,6 +2840,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     createElement: function (nodeName) {
         var wrapper = new this.Element();
+
         wrapper.init(this, nodeName);
         return wrapper;
     },
@@ -2920,6 +2934,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 // break for ellipsis, concatenatedEnd is used for word-by-word
                 // break for word wrapping.
                 var end = concatenatedEnd || charEnd;
+
                 if (lengths[end] === undefined) {
                     // Modern browsers
                     if (tspan.getSubStringLength) {
@@ -3187,6 +3202,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 var spans,
                     spanNo = 0,
                     lineLength = 0;
+
                 line = line
                     // Trim to prevent useless/costly process on the spaces
                     // (#5258)
@@ -3675,6 +3691,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var attribs = this.styledMode ? {} : {
             fill: 'none'
         };
+
         if (isArray(path)) {
             attribs.d = path;
         } else if (isObject(path)) { // attributes
@@ -3932,6 +3949,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     g: function (name) {
         var elem = this.createElement('g');
+
         return name ? elem.attr({ 'class': 'highcharts-' + name }) : elem;
     },
 
@@ -4137,6 +4155,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     var attribs = {},
                         imgSize = this['img' + key],
                         trans = key === 'width' ? 'translateX' : 'translateY';
+
                     this[key] = value;
                     if (defined(imgSize)) {
                         if (this.element) {
@@ -4545,6 +4564,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     tspan,
                     parentVal = element.getAttribute(key),
                     i;
+
                 for (i = 0; i < tspans.length; i++) {
                     tspan = tspans[i];
                     // If the x values are equal, the tspan represents a
@@ -4631,6 +4651,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     rotCorr: function (baseline, rotation, alterY) {
         var y = baseline;
+
         if (rotation && alterY) {
             y = Math.max(y * Math.cos(rotation * deg2rad), 4);
         }
@@ -4987,6 +5008,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             css: function (styles) {
                 if (styles) {
                     var textStyles = {};
+
                     // Create a copy to avoid altering the original object
                     // (#537)
                     styles = merge(styles);
@@ -5048,6 +5070,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 boxAttr = null;
             }
         };
+
         if (!styledMode) {
             /**
              * Apply the shadow to the box.

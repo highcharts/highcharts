@@ -401,6 +401,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     orderSeries: function (fromIndex) {
         var series = this.series,
             i = fromIndex || 0;
+
         for (; i < series.length; i++) {
             if (series[i]) {
                 series[i].index = i;
@@ -580,6 +581,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
                 // Fire 'afterSetExtremes' only if extremes are set
                 var key = axis.min + ',' + axis.max;
+
                 if (axis.extKey !== key) { // #821, #4452
                     axis.extKey = key;
 
@@ -735,6 +737,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     getSelectedPoints: function () {
         var points = [];
+
         this.series.forEach(function (serie) {
             // For one-to-one points inspect series.data in order to retrieve
             // points outside the visible range (#6445). For grouped data,
@@ -1013,6 +1016,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     temporaryDisplay: function (revert) {
         var node = this.renderTo,
             tempStyle;
+
         if (!revert) {
             while (node && node.style) {
 
@@ -1865,6 +1869,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Apply new links
         chartSeries.forEach(function (series) {
             var linkedTo = series.options.linkedTo;
+
             if (isString(linkedTo)) {
                 if (linkedTo === ':previous') {
                     linkedTo = chart.series[series.index - 1];
@@ -1909,6 +1914,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     renderLabels: function () {
         var chart = this,
             labels = chart.options.labels;
+
         if (labels.items) {
             labels.items.forEach(function (label) {
                 var style = extend(labels.style, label.style),

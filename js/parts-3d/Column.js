@@ -262,6 +262,7 @@ wrap(
     function (proceed, vis) {
         var series = this,
             pointVis;
+
         if (series.chart.is3d()) {
             series.data.forEach(function (point) {
                 point.visible = point.options.visible = vis =
@@ -293,6 +294,7 @@ addEvent(Series, 'afterInit', function () {
             var stacks = this.chart.retrieveStacks(stacking),
                 stack = seriesOptions.stack || 0,
                 i; // position within the stack
+
             for (i = 0; i < stacks[stack].series.length; i++) {
                 if (stacks[stack].series[i] === this) {
                     break;
@@ -348,6 +350,7 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
             point = args[1];
 
         var pos = ({ x: alignTo.x, y: alignTo.y, z: series.z });
+
         pos = perspective([pos], chart, true)[0];
         alignTo.x = pos.x;
         // #7103 If point is outside of plotArea, hide data label.
@@ -368,6 +371,7 @@ wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) { // #3946
             y: stackBox.y,
             z: 0
         });
+
         pos = H.perspective([pos], chart, true)[0];
         stackBox.x = pos.x;
         stackBox.y = pos.y;

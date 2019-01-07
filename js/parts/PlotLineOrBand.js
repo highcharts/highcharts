@@ -1008,6 +1008,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             options = this.options,
             userOptions = this.userOptions,
             i = plotLinesAndBands.length;
+
         while (i--) {
             if (plotLinesAndBands[i].id === id) {
                 plotLinesAndBands[i].destroy();

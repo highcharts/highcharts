@@ -219,6 +219,7 @@ chartPrototype.showNoData = function (str) {
  */
 chartPrototype.hideNoData = function () {
     var chart = this;
+
     if (chart.noDataLabel) {
         chart.noDataLabel = chart.noDataLabel.destroy();
     }

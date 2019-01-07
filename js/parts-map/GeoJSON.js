@@ -322,6 +322,7 @@ H.geojson = function (geojson, hType, series) {
         polygonToPath = function (polygon) {
             var i,
                 len = polygon.length;
+
             path.push('M');
             for (i = 0; i < len; i++) {
                 if (i === 1) {

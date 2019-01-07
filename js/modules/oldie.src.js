@@ -206,6 +206,7 @@ if (!svg) {
      */
     H.addEventListenerPolyfill = function (type, fn) {
         var el = this;
+
         function wrappedFn(e) {
             e.target = e.srcElement || win; // #2820
             fn.call(el, e);
@@ -561,6 +562,7 @@ if (!svg) {
             // simplest possible event model for internal use
             this.element['on' + eventType] = function () {
                 var evt = win.event;
+
                 evt.target = evt.srcElement;
                 handler(evt);
             };
@@ -708,6 +710,7 @@ if (!svg) {
                     null,
                     element
                 );
+
             strokeElem[key] = value || 'solid';
             // Because changing stroke-width will change the dash length and
             // cause an epileptic effect
@@ -716,6 +719,7 @@ if (!svg) {
         dSetter: function (value, key, element) {
             var i,
                 shadows = this.shadows;
+
             value = value || [];
             // Used in getter for animation
             this.d = value.join && value.join(' ');
@@ -735,6 +739,7 @@ if (!svg) {
         },
         fillSetter: function (value, key, element) {
             var nodeName = element.nodeName;
+
             if (nodeName === 'SPAN') { // text color
                 element.style.color = value;
             } else if (nodeName !== 'IMG') { // #1336
@@ -759,6 +764,7 @@ if (!svg) {
         opacitySetter: noop,
         rotationSetter: function (value, key, element) {
             var style = element.style;
+
             this[key] = style[key] = value; // style is for #1873
 
             // Correction for the 1x1 size of the shape container. Used in gauge
@@ -1198,6 +1204,7 @@ if (!svg) {
             } else {
                 // 'stroke' or 'fill' node
                 var propNodes = elem.getElementsByTagName(prop);
+
                 if (propNodes.length) {
                     propNodes[0].opacity = 1;
                     propNodes[0].type = 'solid';
@@ -1268,6 +1275,7 @@ if (!svg) {
                 // subpixel precision down to 0.1 (width and height = 1px)
                 coordsize: '10 10'
             };
+
             if (isArray(path)) {
                 attr.d = path;
             } else if (isObject(path)) { // attributes
@@ -1291,6 +1299,7 @@ if (!svg) {
          */
         circle: function (x, y, r) {
             var circle = this.symbol('circle');
+
             if (isObject(x)) {
                 r = x.r;
                 y = x.y;

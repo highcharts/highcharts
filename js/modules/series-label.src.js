@@ -185,6 +185,7 @@ H.setOptions({
  */
 function ccw(x1, y1, x2, y2, x3, y3) {
     var cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
+
     return cw > 0 ? true : !(cw < 0);
 }
 
@@ -874,6 +875,7 @@ Chart.prototype.drawSeriesLabels = function () {
                         anim = {
                             opacity: 1
                         };
+
                     // ... unless we're just moving a short distance
                     if (dist <= 10) {
                         anim = {
@@ -898,6 +900,7 @@ Chart.prototype.drawSeriesLabels = function () {
                         chartX: best.x,
                         chartY: best.y
                     }, true);
+
                     label.closest = [
                         closest,
                         best.x - closest.plotX,

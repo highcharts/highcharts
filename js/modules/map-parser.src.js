@@ -232,6 +232,7 @@ H.extend(H.Data.prototype, {
 
             var i,
                 path;
+
             point.path = path =
                 mapProto.translatePath.call(fakeSeries, point.path, true);
             i = path.length;
@@ -288,6 +289,7 @@ H.extend(H.Data.prototype, {
 
         function getTranslate(elem) {
             var ctm = elem.getCTM();
+
             if (!isNaN(ctm.f)) {
                 return ctm;
             }
