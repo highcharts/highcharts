@@ -5710,8 +5710,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             if (pick(
                 labelOptions.reserveSpace,
                 axis.labelAlign === 'center' ? true : null,
-                axis.reserveSpaceDefault)
-            ) {
+                axis.reserveSpaceDefault
+            )) {
                 tickPositions.forEach(function (pos) {
                     // get the highest offset
                     labelOffset = Math.max(

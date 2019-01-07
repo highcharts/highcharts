@@ -602,7 +602,8 @@ H.Tick.prototype = {
                     tickSize[0],
                     mark.strokeWidth() * reverseCrisp,
                     axis.horiz,
-                    renderer),
+                    renderer
+                ),
                 opacity: opacity
             });
 

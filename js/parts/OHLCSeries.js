@@ -24,7 +24,9 @@ var Point = H.Point,
  * @augments Highcharts.seriesTypes.column
  */
 
-seriesType('ohlc', 'column'
+seriesType(
+    'ohlc',
+    'column'
 
     /**
  * An OHLC chart is a style of financial chart used to describe price

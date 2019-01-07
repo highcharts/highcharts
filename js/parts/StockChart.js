@@ -196,30 +196,31 @@ H.StockChart = H.stockChart = function (a, b, c) {
     // apply Y axis options to both single and multi y axes
     options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions, i) {
         opposite = pick(yAxisOptions.opposite, true);
-        return merge({ // defaults
-            labels: {
-                y: -2
+        return merge(
+            { // defaults
+                labels: {
+                    y: -2
+                },
+                opposite: opposite,
+
+                /**
+                 * @default {highcharts} true
+                 * @default {highstock} false
+                 * @apioption yAxis.showLastLabel
+                 */
+                showLastLabel: !!(
+                    // #6104, show last label by default for category axes
+                    yAxisOptions.categories ||
+                    yAxisOptions.type === 'category'
+                ),
+
+                title: {
+                    text: null
+                }
             },
-            opposite: opposite,
-
-            /**
-             * @default {highcharts} true
-             * @default {highstock} false
-             * @apioption yAxis.showLastLabel
-             */
-            showLastLabel: !!(
-                // #6104, show last label by default for category axes
-                yAxisOptions.categories ||
-                yAxisOptions.type === 'category'
-            ),
-
-            title: {
-                text: null
-            }
-        },
-        defaultOptions.yAxis, // #3802
-        defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
-        yAxisOptions // user options
+            defaultOptions.yAxis, // #3802
+            defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
+            yAxisOptions // user options
         );
     });
 
@@ -579,9 +580,11 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
                 null,
                 options.shape || 'callout'
             )
-            .addClass('highcharts-crosshair-label' + (
-                this.series[0] &&
-                ' highcharts-color-' + this.series[0].colorIndex)
+            .addClass(
+                'highcharts-crosshair-label' + (
+                    this.series[0] &&
+                    ' highcharts-color-' + this.series[0].colorIndex
+                )
             )
             .attr({
                 align: options.align || align,
@@ -799,7 +802,8 @@ seriesProto.processData = function () {
             keyIndex = series.pointArrayMap.indexOf('close');
             if (keyIndex === -1) {
                 keyIndex = series.pointArrayMap.indexOf(
-                    series.pointValKey || 'y');
+                    series.pointValKey || 'y'
+                );
             }
         }
 

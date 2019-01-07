@@ -728,7 +728,8 @@ seriesProto.processData = function () {
                         processedYData,
                         groupPositions,
                         dataGroupingOptions.approximation
-                    ]),
+                    ]
+                ),
                 groupedXData = groupedData[0],
                 groupedYData = groupedData[1];
 

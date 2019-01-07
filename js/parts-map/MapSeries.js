@@ -55,7 +55,9 @@ var colorPointMixin = H.colorPointMixin,
  *
  * @augments Highcharts.Series
  */
-seriesType('map', 'scatter',
+seriesType(
+    'map',
+    'scatter',
     /**
      * The map series is used for basic choropleth maps, where each map area has
      * a color based on its value.

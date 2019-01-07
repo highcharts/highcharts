@@ -654,8 +654,8 @@ H.BubbleLegend.prototype = {
             renderer
                 .path(renderer.crispLine(
                     ['M', posX, posY, 'L', posX + connectorLength, posY],
-                    options.connectorWidth)
-                )
+                    options.connectorWidth
+                ))
                 .attr(
                     styledMode ? {} : range.connectorStyle
                 )

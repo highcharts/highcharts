@@ -31,7 +31,9 @@ var colorPointMixin = H.colorPointMixin,
  *
  * @augments Highcharts.Series
  */
-seriesType('heatmap', 'scatter'
+seriesType(
+    'heatmap',
+    'scatter'
 
     /**
  * A heatmap is a graphical representation of data where the individual values

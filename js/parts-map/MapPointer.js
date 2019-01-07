@@ -58,8 +58,8 @@ extend(Pointer.prototype, {
         delta = e.detail || -(e.wheelDelta / 120);
         if (chart.isInsidePlot(
             e.chartX - chart.plotLeft,
-            e.chartY - chart.plotTop)
-        ) {
+            e.chartY - chart.plotTop
+        )) {
             chart.mapZoom(
                 Math.pow(
                     chart.options.mapNavigation.mouseWheelSensitivity,

@@ -28,7 +28,9 @@ var seriesType = H.seriesType,
  *
  * @requires modules:highcharts-more
  */
-seriesType('packedbubble', 'bubble',
+seriesType(
+    'packedbubble',
+    'bubble',
 
     /**
      * A packed bubble series is a two dimensional series type, where each point
@@ -342,10 +344,12 @@ seriesType('packedbubble', 'bubble',
                     // to recalculate it.
                     k++;
                     bubblePos[stage].push(
-                        positionBubble(bubblePos[stage][j],
+                        positionBubble(
+                            bubblePos[stage][j],
                             bubblePos[stage - 1][k],
                             sortedArr[i]
-                        ));
+                        )
+                    );
                     // (last added bubble, previous stage bubble, new bubble)
                     j++;
                 } else { // simply add calculated bubble

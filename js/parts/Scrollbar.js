@@ -383,8 +383,8 @@ Scrollbar.prototype = {
                 r: options.barBorderRadius || 0
             }).add(scroller.scrollbarGroup);
 
-        scroller.scrollbarRifles = renderer.path(
-            swapXY([
+        scroller.scrollbarRifles = renderer
+            .path(swapXY([
                 'M',
                 -3, size / 4,
                 'L',

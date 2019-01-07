@@ -4357,7 +4357,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     anchorY > y + safeDistance &&
                     anchorY < y + h - safeDistance
                 ) {
-                    path.splice(13, 3,
+                    path.splice(
+                        13,
+                        3,
                         'L', x + w, anchorY - halfDistance,
                         x + w + arrowLength, anchorY,
                         x + w, anchorY + halfDistance,
@@ -4366,7 +4368,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
                 // Simple connector
                 } else {
-                    path.splice(13, 3,
+                    path.splice(
+                        13,
+                        3,
                         'L', x + w, h / 2,
                         anchorX, anchorY,
                         x + w, h / 2,
@@ -4382,7 +4386,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     anchorY > y + safeDistance &&
                     anchorY < y + h - safeDistance
                 ) {
-                    path.splice(33, 3,
+                    path.splice(
+                        33,
+                        3,
                         'L', x, anchorY + halfDistance,
                         x - arrowLength, anchorY,
                         x, anchorY - halfDistance,
@@ -4391,7 +4397,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
                 // Simple connector
                 } else {
-                    path.splice(33, 3,
+                    path.splice(
+                        33,
+                        3,
                         'L', x, h / 2,
                         anchorX, anchorY,
                         x, h / 2,
@@ -4405,7 +4413,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 anchorX > x + safeDistance &&
                 anchorX < x + w - safeDistance
             ) {
-                path.splice(23, 3,
+                path.splice(
+                    23,
+                    3,
                     'L', anchorX + halfDistance, y + h,
                     anchorX, y + h + arrowLength,
                     anchorX - halfDistance, y + h,
@@ -4418,7 +4428,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 anchorX > x + safeDistance &&
                 anchorX < x + w - safeDistance
             ) {
-                path.splice(3, 3,
+                path.splice(
+                    3,
+                    3,
                     'L', anchorX - halfDistance, y,
                     anchorX, y - arrowLength,
                     anchorX + halfDistance, y,

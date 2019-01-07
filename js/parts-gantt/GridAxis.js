@@ -420,7 +420,9 @@ wrap(Axis.prototype, 'unsquish', function (proceed) {
     return proceed.apply(this, argsToArray(arguments));
 });
 
-addEvent(Axis, 'afterSetOptions',
+addEvent(
+    Axis,
+    'afterSetOptions',
     /**
      * Creates a left and right wall on horizontal axes:
      *
@@ -713,7 +715,9 @@ addEvent(
     }
 );
 
-wrap(Axis.prototype, 'render',
+wrap(
+    Axis.prototype,
+    'render',
     /**
      * Draw an extra line on the far side of the outermost axis,
      * creating floor/roof/wall of a grid. And some padding.

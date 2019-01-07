@@ -848,8 +848,9 @@ Pathfinder.prototype = {
                         );
                     if (point.visible && point.isInside !== false && connects) {
                         connects.forEach(function (connect) {
-                            to = chart.get(typeof connect === 'string' ?
-                                connect : connect.to
+                            to = chart.get(
+                                typeof connect === 'string' ?
+                                    connect : connect.to
                             );
                             if (
                                 to instanceof H.Point &&
@@ -1254,7 +1255,8 @@ function warnLegacy(chart) {
         chart.options.pathfinder ||
         chart.series.reduce(function (acc, series) {
             if (series.options) {
-                merge(true,
+                merge(
+                    true,
                     (
                         series.options.connectors = series.options.connectors ||
                         {}
@@ -1264,7 +1266,8 @@ function warnLegacy(chart) {
             return acc || series.options && series.options.pathfinder;
         }, false)
     ) {
-        merge(true,
+        merge(
+            true,
             (chart.options.connectors = chart.options.connectors || {}),
             chart.options.pathfinder
         );

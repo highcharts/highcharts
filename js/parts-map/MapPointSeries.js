@@ -23,7 +23,9 @@ var merge = H.merge,
  *
  * @augments Highcharts.Series
  */
-seriesType('mappoint', 'scatter',
+seriesType(
+    'mappoint',
+    'scatter',
     /**
      * A mappoint series is a special form of scatter series where the points
      * can be laid out in map coordinates on top of a map.

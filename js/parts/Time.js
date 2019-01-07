@@ -690,7 +690,8 @@ Highcharts.Time.prototype = {
             ); // #3652, #3654
 
             if (interval >= timeUnits.second) { // second
-                time.set('Seconds',
+                time.set(
+                    'Seconds',
                     minDate,
                     interval >= timeUnits.minute ?
                         0 : // #3935
@@ -699,7 +700,9 @@ Highcharts.Time.prototype = {
             }
 
             if (interval >= timeUnits.minute) { // minute
-                time.set('Minutes', minDate,
+                time.set(
+                    'Minutes',
+                    minDate,
                     interval >= timeUnits.hour ?
                         0 :
                         count * Math.floor(time.get('Minutes', minDate) / count)

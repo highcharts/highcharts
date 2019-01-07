@@ -616,7 +616,8 @@ var algorithms = {
                 // If we crashed into another obstacle doing this, we put the
                 // waypoint between them instead
                 secondEnvelopingObstacle = findObstacleFromPoint(
-                    chartObstacles, envelopWaypoint);
+                    chartObstacles, envelopWaypoint
+                );
                 if (secondEnvelopingObstacle > -1) {
                     secondEnvelopingObstacle = chartObstacles[
                         secondEnvelopingObstacle

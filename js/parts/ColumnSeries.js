@@ -965,8 +965,7 @@ seriesType('column', 'line'
                     translateStart = series.group.attr(translateProp);
                     series.group.animate(
                         { scaleY: 1 },
-                        extend(animObject(series.options.animation
-                        ), {
+                        extend(animObject(series.options.animation), {
                             // Do the scale synchronously to ensure smooth
                             // updating (#5030, #7228)
                             step: function (val, fx) {
@@ -976,7 +975,8 @@ seriesType('column', 'line'
                             fx.pos * (yAxis.pos - translateStart);
                                 series.group.attr(attr);
                             }
-                        }));
+                        })
+                    );
 
                     // delete this function to allow it only once
                     series.animate = null;

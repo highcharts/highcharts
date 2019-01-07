@@ -1853,8 +1853,7 @@ Navigator.prototype = {
                         return false;
                     }
                     return true;
-                }
-                );
+                });
 
         // Go through each base series and merge the options to create new
         // series

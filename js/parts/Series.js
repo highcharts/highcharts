@@ -226,7 +226,8 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-H.Series = H.seriesType('line',
+H.Series = H.seriesType(
+    'line',
 
     /**
      * Series options for specific data and the data itself. In TypeScript you

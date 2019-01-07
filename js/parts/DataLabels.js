@@ -1124,7 +1124,8 @@ if (seriesTypes.pie) {
 
                         if (isNew) {
                             point.connector = connector = chart.renderer.path()
-                                .addClass('highcharts-data-label-connector ' +
+                                .addClass(
+                                    'highcharts-data-label-connector ' +
                                     ' highcharts-color-' + point.colorIndex +
                                     (
                                         point.className ?

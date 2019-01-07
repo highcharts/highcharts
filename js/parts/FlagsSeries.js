@@ -33,7 +33,9 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-seriesType('flags', 'column'
+seriesType(
+    'flags',
+    'column'
 
     /**
  * Flags are used to mark events in stock charts. They can be added on the
@@ -497,7 +499,8 @@ seriesType('flags', 'column'
                     // for HTML
                         proceed.apply(this, [].slice.call(arguments, 1)),
                         // and for SVG
-                        [].slice.call(arguments, 1));
+                        [].slice.call(arguments, 1)
+                    );
                 });
             }
 
@@ -593,7 +596,8 @@ seriesType('flags', 'column'
      */
         invertGroups: noop
 
-    });
+    }
+);
 
 // create the flag icon with anchor
 symbols.flag = function (x, y, w, h, options) {
