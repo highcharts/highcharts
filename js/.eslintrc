@@ -38,6 +38,7 @@
         "object-curly-spacing": [2, "always"],
         "object-shorthand": ["error", "never"],     /* Closure Compiler chokes on it */
         "prefer-rest-params": 0,
+        "prefer-spread": 0,
         "space-before-function-paren": [2, {
             "anonymous": "always",
             "named": "never"

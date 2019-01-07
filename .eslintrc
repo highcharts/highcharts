@@ -24,8 +24,7 @@ rules:
     operator-assignment: 0 // Could be nice, but the change is somewhat error prone.
     operator-linebreak: [2, "after"]
     prefer-arrow-callback: 0 // Not supported in Highcharts, too early for tests and samples.
-    prefer-spread: 0 // @todo
-    prefer-template: 0 // @todo
+    prefer-template: 0 // Will probably create a lot of noise in samples
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
     strict: 0
     valid-jsdoc: ["error", { prefer: { "returns": "return"}}]
