@@ -336,8 +336,10 @@ seriesType('networkgraph', 'line', {
         this.points = points;
 
         points.forEach(function (point) {
-            point.renderLink();
-            point.redrawLink();
+            if (point.fromNode && point.toNode) {
+                point.renderLink();
+                point.redrawLink();
+            }
         });
 
         if (hoverPoint && hoverPoint.series === this) {
@@ -505,10 +507,12 @@ addEvent(seriesTypes.networkgraph, 'updatedData', function () {
 });
 
 addEvent(seriesTypes.networkgraph.prototype.pointClass, 'remove', function () {
-    if (this.isNode && this.series.layout) {
-        this.series.layout.removeNode(this);
-    } else {
-        this.series.layout.removeLink(this);
+    if (this.series.layout) {
+        if (this.isNode) {
+            this.series.layout.removeNode(this);
+        } else {
+            this.series.layout.removeLink(this);
+        }
     }
 });
 
@@ -562,38 +566,40 @@ addEvent(
         var chart = this,
             unbinders = [];
 
-        unbinders.push(
-            addEvent(
-                chart.container,
-                'mousedown',
-                function (event) {
-                    var point = chart.hoverPoint;
+        if (chart.container) {
+            unbinders.push(
+                addEvent(
+                    chart.container,
+                    'mousedown',
+                    function (event) {
+                        var point = chart.hoverPoint;
 
-                    if (
-                        point &&
-                        point.series &&
-                        point.series.isNetworkgraph &&
-                        point.series.options.draggable
-                    ) {
-                        point.series.onMouseDown(point, event);
-                        unbinders.push(addEvent(
-                            chart.container,
-                            'mousemove',
-                            function (e) {
-                                return point.series.onMouseMove(point, e);
-                            }
-                        ));
-                        unbinders.push(addEvent(
-                            chart.container.ownerDocument,
-                            'mouseup',
-                            function (e) {
-                                return point.series.onMouseUp(point, e);
-                            }
-                        ));
+                        if (
+                            point &&
+                            point.series &&
+                            point.series.isNetworkgraph &&
+                            point.series.options.draggable
+                        ) {
+                            point.series.onMouseDown(point, event);
+                            unbinders.push(addEvent(
+                                chart.container,
+                                'mousemove',
+                                function (e) {
+                                    return point.series.onMouseMove(point, e);
+                                }
+                            ));
+                            unbinders.push(addEvent(
+                                chart.container.ownerDocument,
+                                'mouseup',
+                                function (e) {
+                                    return point.series.onMouseUp(point, e);
+                                }
+                            ));
+                        }
                     }
-                }
-            )
-        );
+                )
+            );
+        }
 
         addEvent(chart, 'destroy', function () {
             unbinders.forEach(function (unbind) {

@@ -358,28 +358,30 @@ H.extend(
                 k = this.k;
 
             links.forEach(function (link) {
-                var distanceXY = layout.getDistXY(
-                        link.fromNode,
-                        link.toNode
-                    ),
-                    distanceR = layout.vectorLength(distanceXY),
-                    force = options.attractiveForce.call(
-                        layout, distanceR, k
-                    );
+                if (link.fromNode && link.toNode) {
+                    var distanceXY = layout.getDistXY(
+                            link.fromNode,
+                            link.toNode
+                        ),
+                        distanceR = layout.vectorLength(distanceXY),
+                        force = options.attractiveForce.call(
+                            layout, distanceR, k
+                        );
 
-                if (distanceR !== 0) {
-                    if (!link.fromNode.fixedPosition) {
-                        link.fromNode.dispX -= (distanceXY.x / distanceR) *
-                            force;
-                        link.fromNode.dispY -= (distanceXY.y / distanceR) *
-                            force;
-                    }
+                    if (distanceR !== 0) {
+                        if (!link.fromNode.fixedPosition) {
+                            link.fromNode.dispX -= (distanceXY.x / distanceR) *
+                                force;
+                            link.fromNode.dispY -= (distanceXY.y / distanceR) *
+                                force;
+                        }
 
-                    if (!link.toNode.fixedPosition) {
-                        link.toNode.dispX += (distanceXY.x / distanceR) *
-                            force;
-                        link.toNode.dispY += (distanceXY.y / distanceR) *
-                            force;
+                        if (!link.toNode.fixedPosition) {
+                            link.toNode.dispX += (distanceXY.x / distanceR) *
+                                force;
+                            link.toNode.dispY += (distanceXY.y / distanceR) *
+                                force;
+                        }
                     }
                 }
             });
