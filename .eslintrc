@@ -18,7 +18,6 @@ rules:
     no-restricted-properties: 0 // Complains about .substr and .substring. Not yet.
     no-self-assign: 0 // @todo Ask Pawel
     no-unmodified-loop-condition: 0
-    no-useless-call: 0 // @todo
     no-useless-escape: 0 // @todo
     no-var: 0 // @todo
     node/no-unsupported-features/es-syntax: 0 // @todo

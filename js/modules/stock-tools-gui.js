@@ -922,7 +922,7 @@ H.Toolbar.prototype = {
         }, null, buttonWrapper);
 
         // create submenu buttons and select the first one
-        this.addSubmenuItems.call(this, buttonWrapper, button);
+        this.addSubmenuItems(buttonWrapper, button);
 
         // show / hide submenu
         addEvent(submenuArrow, 'click', function (e) {

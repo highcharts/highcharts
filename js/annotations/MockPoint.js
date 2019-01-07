@@ -196,7 +196,7 @@ H.extend(MockPoint.prototype, /** @lends Annotation.MockPoint# */ {
      */
     getOptions: function () {
         return this.hasDynamicOptions() ?
-            this.options.call(this, this.target) :
+            this.options(this.target) :
             this.options;
     },
 

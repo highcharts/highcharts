@@ -451,7 +451,7 @@ H.extendAnnotation(Measure, null,
                 this.bins = calc.bins.call(this);
 
                 if (resize) {
-                    this.resize.call(this, 0, 0);
+                    this.resize(0, 0);
                 }
 
             },

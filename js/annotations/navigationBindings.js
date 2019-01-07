@@ -364,8 +364,7 @@ extend(H.NavigationBindings.prototype, {
             }
         } else {
 
-            navigation.nextEvent.call(
-                navigation,
+            navigation.nextEvent(
                 clickEvent,
                 navigation.currentUserDetails
             );
@@ -414,8 +413,7 @@ extend(H.NavigationBindings.prototype, {
      */
     bindingsContainerMouseMove: function (container, moveEvent) {
         if (this.mouseMoveEvent) {
-            this.mouseMoveEvent.call(
-                this,
+            this.mouseMoveEvent(
                 moveEvent,
                 this.currentUserDetails
             );

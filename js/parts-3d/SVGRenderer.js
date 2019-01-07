@@ -337,7 +337,7 @@ element3dMethods = {
     // Destroy all parts
     destroyParts: function () {
         this.processParts(null, null, 'destroy');
-        return this.originalDestroy.call(this);
+        return this.originalDestroy();
     }
 };
 

@@ -67,7 +67,7 @@ H.Popup.prototype = {
         this.lang = this.getLangpack();
 
         // add close button
-        this.addCloseBtn.call(this);
+        this.addCloseBtn();
     },
     /*
      * Create HTML element and attach click event (close popup).
@@ -83,7 +83,7 @@ H.Popup.prototype = {
         }, null, this.container);
 
         addEvent(closeBtn, 'click', function () {
-            _self.closePopup.call(_self);
+            _self.closePopup();
         });
     },
     /*
@@ -355,8 +355,7 @@ H.Popup.prototype = {
             }, null, popupDiv);
 
             // add buttons
-            button = this.addButton.call(
-                this,
+            button = this.addButton(
                 popupDiv,
                 lang.removeButton || 'remove',
                 'remove',
@@ -366,8 +365,7 @@ H.Popup.prototype = {
 
             button.className += ' ' + PREFIX + 'annotation-remove-button';
 
-            button = this.addButton.call(
-                this,
+            button = this.addButton(
                 popupDiv,
                 lang.editButton || 'edit',
                 'edit',
@@ -426,8 +424,7 @@ H.Popup.prototype = {
                 true
             );
 
-            this.addButton.call(
-                this,
+            this.addButton(
                 bottomRow,
                 isInit ?
                     (lang.addButton || 'add') :
@@ -561,8 +558,7 @@ H.Popup.prototype = {
             buttonParentDiv = tabsContainers[0]
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0];
 
-            this.addButton.call(
-                this,
+            this.addButton(
                 buttonParentDiv,
                 lang.addButton || 'add',
                 'add',
@@ -582,16 +578,14 @@ H.Popup.prototype = {
             buttonParentDiv = tabsContainers[1]
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col')[0];
 
-            this.addButton.call(
-                this,
+            this.addButton(
                 buttonParentDiv,
                 lang.saveButton || 'save',
                 'edit',
                 callback,
                 buttonParentDiv
             );
-            this.addButton.call(
-                this,
+            this.addButton(
                 buttonParentDiv,
                 lang.removeButton || 'remove',
                 'remove',

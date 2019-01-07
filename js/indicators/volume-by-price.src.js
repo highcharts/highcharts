@@ -372,8 +372,7 @@ seriesType('vbp', 'sma',
                     );
                     point.pointWidth = barWidth;
 
-                    point.shapeArgs = indicator.crispCol.apply(
-                        indicator,
+                    point.shapeArgs = indicator.crispCol(
                         [barX, barY, barWidth, barHeight]
                     );
 
