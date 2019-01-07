@@ -22,7 +22,6 @@ rules:
     no-self-compare: 0 // @todo
     no-throw-literal: 0 // @todo
     no-unmodified-loop-condition: 0
-    no-unused-vars: 0 // @todo
     no-useless-call: 0 // @todo
     no-useless-escape: 0 // @todo
     no-var: 0 // @todo

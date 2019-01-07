@@ -1944,13 +1944,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             renderer = chart.renderer,
             options = chart.options,
             correction = 0, // correction for X axis labels
-            xAxes = chart.xAxis,
             tempWidth,
             tempHeight,
             redoHorizontal,
-            redoVertical,
-            xAxis,
-            i;
+            redoVertical;
 
         // Title
         chart.setTitle();

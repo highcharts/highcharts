@@ -50,40 +50,6 @@ var override = function (obj, methods) {
     }
 };
 
-/**
- * getCategoriesFromTree - getCategories based on a tree
- *
- * @private
- * @function getCategoriesFromTree
- *
- * @param {object} tree
- *        Root of tree to collect categories from
- *
- * @return {Array<string>}
- *         Array of categories
- */
-var getCategoriesFromTree = function (tree) {
-    var categories = [];
-    if (tree.data) {
-        categories.push(tree.data.name);
-    }
-    tree.children.forEach(function (child) {
-        categories = categories.concat(getCategoriesFromTree(child));
-    });
-    return categories;
-};
-
-var mapTickPosToNode = function (node, categories) {
-    var map = {},
-        name = node.data && node.data.name,
-        pos = categories.indexOf(name);
-    map[pos] = node;
-    node.children.forEach(function (child) {
-        extend(map, mapTickPosToNode(child, categories));
-    });
-    return map;
-};
-
 var getBreakFromNode = function (node, max) {
     var from = node.collapseStart,
         to = node.collapseEnd;
