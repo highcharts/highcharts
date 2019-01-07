@@ -162,6 +162,12 @@
  */
 
 /**
+ * All possible dash styles.
+ *
+ * @typedef {"Dash"|"DashDot"|"Dot"|"LongDash"|"LongDashDot"|"LongDashDotDot"|"ShortDash"|"ShortDashDot"|"ShortDashDotDot"|"ShortDot"|"Solid"} Highcharts.DashStyleType
+ */
+
+/**
  * Generic dictionary in TypeScript notation.
  *
  * @interface Highcharts.Dictionary<T>
