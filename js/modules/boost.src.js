@@ -2452,7 +2452,7 @@ function GLRenderer(postRenderCallback) {
      */
     function setSize(w, h) {
         // Skip if there's no change, or if we have no valid shader
-        if ((width === w && h === h) || !shader) {
+        if ((width === w && height === h) || !shader) {
             return;
         }
 
