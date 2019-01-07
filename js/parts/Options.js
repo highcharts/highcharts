@@ -1385,7 +1385,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/chart/backgroundcolor-gradient/
          *         Gradient
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         backgroundColor: '${palette.backgroundColor}',
 
