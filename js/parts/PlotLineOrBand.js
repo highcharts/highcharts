@@ -598,13 +598,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @type       {string}
-     * @default    Solid
-     * @since      1.2
-     * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
-     *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
-     *             "LongDashDot", "LongDashDotDot"]
-     * @apioption  xAxis.plotLines.dashStyle
+     * @type      {Highcharts.DashStyleType}
+     * @default   Solid
+     * @since     1.2
+     * @apioption xAxis.plotLines.dashStyle
      */
 
     /**

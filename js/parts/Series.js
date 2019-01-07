@@ -630,13 +630,10 @@ H.Series = H.seriesType(
          * @sample {highmaps} maps/plotoptions/series-dashstyle/
          *         Dotted borders on a map
          *
-         * @type       {string}
-         * @default    Solid
-         * @since      2.1
-         * @validvalue ["Dash","DashDot","Dot","LongDash","LongDashDot",
-         *             "LongDashDotDot","ShortDash","ShortDashDot",
-         *             "ShortDashDotDot","ShortDot","Solid"]
-         * @apioption  plotOptions.series.dashStyle
+         * @type      {Highcharts.DashStyleType}
+         * @default   Solid
+         * @since     2.1
+         * @apioption plotOptions.series.dashStyle
          */
 
         /**

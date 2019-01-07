@@ -178,14 +178,11 @@ seriesType('boxplot', 'column', {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type       {string}
-     * @default    Solid
-     * @since      3.0
-     * @product    highcharts
-     * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
-     *              "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
-     *              "LongDashDot", "LongDashDotDot"]
-     * @apioption  plotOptions.boxplot.stemDashStyle
+     * @type      {Highcharts.DashStyleType}
+     * @default   Solid
+     * @since     3.0
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.stemDashStyle
      */
 
     /**
