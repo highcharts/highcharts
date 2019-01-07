@@ -1,5 +1,9 @@
 QUnit.test('Network Graph', function (assert) {
-    var chart = Highcharts.chart('container', {});
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'networkgraph'
+        }
+    });
 
     assert.notStrictEqual(
         chart.container.querySelector('.highcharts-no-data'),
@@ -23,8 +27,7 @@ QUnit.test('Network Graph', function (assert) {
             ['C', 'D'],
 
             ['D', 'A']
-        ],
-        type: 'networkgraph'
+        ]
     });
 
     assert.strictEqual(
@@ -39,4 +42,14 @@ QUnit.test('Network Graph', function (assert) {
         'No-data label should NOT display when there is data (#9801)'
     );
 
+    chart.addSeries({
+        keys: ['from', 'to'],
+        data: [
+            ['1', '2'],
+            ['2', '1'],
+            ['3', '1']
+        ]
+    });
+
+    assert.ok(true, 'No errors in cyclical graphs (#9803)');
 });

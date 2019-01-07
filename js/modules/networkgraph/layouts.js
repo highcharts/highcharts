@@ -212,12 +212,16 @@ H.extend(
                 rootNodes = nodes.filter(function (node) {
                     return node.linksTo.length === 0;
                 }),
-                sortedNodes = [];
+                sortedNodes = [],
+                visitedNodes = {};
 
             function addToNodes(node) {
                 node.linksFrom.forEach(function (link) {
-                    sortedNodes.push(link.toNode);
-                    addToNodes(link.toNode);
+                    if (!visitedNodes[link.toNode.id]) {
+                        visitedNodes[link.toNode.id] = true;
+                        sortedNodes.push(link.toNode);
+                        addToNodes(link.toNode);
+                    }
                 });
             }
 
