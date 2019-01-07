@@ -15,7 +15,6 @@ rules:
     no-nested-ternary: 0
     no-param-reassign: 0 // Would be useful, but takes some work
     no-restricted-properties: 0 // Complains about .substr and .substring. Not yet.
-    no-self-assign: 0 // @todo Ask Pawel
     no-unmodified-loop-condition: 0
     no-useless-escape: 0 // @todo: Useful but a bit risky to change. 54 errors.
     no-var: 0 // Not yet
