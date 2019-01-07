@@ -76,7 +76,7 @@ Highcharts.downloadURL = function (dataURL, filename) {
     if (isEdgeBrowser || dataURL.length > 2000000) {
         dataURL = Highcharts.dataURLtoBlob(dataURL);
         if (!dataURL) {
-            throw 'Failed to convert to blob';
+            throw new Error('Failed to convert to blob');
         }
     }
 
@@ -92,7 +92,7 @@ Highcharts.downloadURL = function (dataURL, filename) {
         try {
             windowRef = win.open(dataURL, 'chart');
             if (windowRef === undefined || windowRef === null) {
-                throw 'Failed to open window';
+                throw new Error('Failed to open window');
             }
         } catch (e) {
             // window.open failed, trying location.href

@@ -14,11 +14,10 @@ rules:
     no-debugger: 2
     no-else-return: 2
     no-nested-ternary: 0
-    no-param-reassign: 0 // @todo
-    no-restricted-properties: 0 // @todo
-    no-self-assign: 0 // @todo
-    no-self-compare: 0 // @todo
-    no-throw-literal: 0 // @todo
+    no-param-reassign: 0 // Would be useful, but takes some work
+    no-restricted-properties: 0 // Complains about .substr and .substring. Not yet.
+    no-self-assign: 0 // @todo Ask Øystein
+    no-self-compare: 0 // @todo Ask Christer
     no-unmodified-loop-condition: 0
     no-useless-call: 0 // @todo
     no-useless-escape: 0 // @todo
