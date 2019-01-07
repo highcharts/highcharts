@@ -24,7 +24,9 @@ var isArray = H.isArray,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('tema', 'ema',
+H.seriesType(
+    'tema',
+    'ema',
     /**
      * Normalized average true range indicator (NATR). This series requires
      * `linkedTo` option to be set and should be loaded after the
@@ -88,8 +90,9 @@ H.seriesType('tema', 'ema',
         ) {
             var TEMAPoint = [
                 xVal[i - 3],
-                correctFloat(3 * EMAlevels.level1 -
-                  3 * EMAlevels.level2 + EMAlevels.level3
+                correctFloat(
+                    3 * EMAlevels.level1 -
+                    3 * EMAlevels.level2 + EMAlevels.level3
                 )
             ];
 

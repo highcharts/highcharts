@@ -51,7 +51,9 @@ function populateAverage(xVal, yVal, i, period, index) {
  *
  * @augments Highcharts.Series
  */
-seriesType('roc', 'sma',
+seriesType(
+    'roc',
+    'sma',
     /**
      * Rate of change indicator (ROC). The indicator value for each point
      * is defined as:

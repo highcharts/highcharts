@@ -34,7 +34,9 @@ var charts = H.charts,
   *
   * @augments Highcharts.Series
   */
-seriesType('cylinder', 'column',
+seriesType(
+    'cylinder',
+    'column',
     /**
      * A cylinder graph is a variation of a 3d column graph. The cylinder graph
      * features cylindrical points.

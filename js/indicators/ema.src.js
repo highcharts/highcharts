@@ -22,7 +22,9 @@ var isArray = H.isArray,
  *
  * @augments Highcharts.Series
  */
-seriesType('ema', 'sma',
+seriesType(
+    'ema',
+    'sma',
     /**
      * Exponential moving average indicator (EMA). This series requires the
      * `linkedTo` option to be set.

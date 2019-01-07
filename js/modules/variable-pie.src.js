@@ -27,7 +27,9 @@ var pick = H.pick,
  *
  * @augments Highcharts.Series
  */
-seriesType('variablepie', 'pie',
+seriesType(
+    'variablepie',
+    'pie',
     /**
      * A variable pie series is a two dimensional series type, where each point
      * renders an Y and Z value.  Each point is drawn as a pie slice where the
@@ -258,7 +260,8 @@ seriesType('variablepie', 'pie',
                 startAngleRad = Math.PI / 180 * (startAngle - 90),
                 endAngleRad = Math.PI / 180 * (pick(
                     options.endAngle,
-                    startAngle + 360) - 90),
+                    startAngle + 360
+                ) - 90),
                 circ = endAngleRad - startAngleRad, // 2 * Math.PI,
                 points = series.points,
                 // the x component of the radius vector for a given point

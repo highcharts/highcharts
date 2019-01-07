@@ -622,7 +622,9 @@ function getSimulPathDurationTotal(order) {
                     Math.max(
                         maxPathDuration, timeExtremes.max - timeExtremes.min
                     ) : maxPathDuration;
-            }, 0);
+            },
+            0
+        );
     }, 0);
 }
 

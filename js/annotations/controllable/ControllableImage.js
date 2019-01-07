@@ -95,6 +95,7 @@ H.merge(
             // Options stored in chart:
             shapeOptions.point = this.options.point;
         }
-    });
+    }
+);
 
 export default ControllableImage;

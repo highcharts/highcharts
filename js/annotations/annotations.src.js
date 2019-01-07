@@ -1083,7 +1083,8 @@ merge(
                     this.shapesGroup
             );
         }
-    });
+    }
+);
 
 /**
  * An object uses for mapping between a shape type and a constructor.

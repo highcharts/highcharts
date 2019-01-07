@@ -103,7 +103,9 @@ function getPSAR(pdir, sDir, PSAR, pACCMulti, sLow, pLow, pHigh, sHigh, pEP) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('psar', 'sma',
+H.seriesType(
+    'psar',
+    'sma',
     /**
      * Parabolic SAR. This series requires `linkedTo`
      * option to be set and should be loaded

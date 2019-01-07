@@ -5,7 +5,6 @@ rules:
     camelcase: [2, {"properties": "always"}]
     comma-dangle: [2, "never"]
     dot-location: [2, "property"]
-    function-paren-newline: 0 // @todo: Nicer looking. Should do it manually. 74 remaining.
     lines-around-comment: 0
     max-len: 2
     newline-after-var: 0

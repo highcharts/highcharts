@@ -22,7 +22,9 @@ var merge = H.merge,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('priceenvelopes', 'sma',
+H.seriesType(
+    'priceenvelopes',
+    'sma',
     /**
      * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations.
      * This series requires the `linkedTo` option to be set and should be loaded

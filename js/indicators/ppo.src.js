@@ -24,7 +24,9 @@ var EMA = H.seriesTypes.ema,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('ppo', 'ema',
+H.seriesType(
+    'ppo',
+    'ema',
     /**
      * Percentage Price Oscillator. This series requires the
      * `linkedTo` option to be set and should be loaded after the

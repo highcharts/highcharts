@@ -59,7 +59,9 @@ var seriesType = H.seriesType,
  *
  * @augments Highcharts.Series
  */
-seriesType('treemap', 'scatter'
+seriesType(
+    'treemap',
+    'scatter'
 
     /**
  * A treemap displays hierarchical data using nested rectangles. The data can be

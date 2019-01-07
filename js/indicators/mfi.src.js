@@ -44,7 +44,9 @@ function calculateRawMoneyFlow(typicalPrice, volume) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('mfi', 'sma',
+H.seriesType(
+    'mfi',
+    'sma',
     /**
      * Money Flow Index. This series requires `linkedTo` option to be set and
      * should be loaded after the `stock/indicators/indicators.js` file.

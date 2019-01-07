@@ -1668,7 +1668,8 @@ function getNewPoints(dragDropData, newPos) {
                     dragDropData.origin, newPos, updateProps
                 )
             };
-        });
+        }
+    );
     return hashmap;
 }
 
@@ -2181,7 +2182,9 @@ H.Point.prototype.showDragHandles = function () {
             handle.translate(pos.x, pos.y).attr(handleAttrs);
 
             // Add events
-            addEvents(handle.element, ['touchstart', 'mousedown'],
+            addEvents(
+                handle.element,
+                ['touchstart', 'mousedown'],
                 function (e) {
                     onResizeHandleMouseDown(
                         getNormalizedEvent(e, chart), point, key
@@ -2192,7 +2195,9 @@ H.Point.prototype.showDragHandles = function () {
                 chart.dragDropData = chart.dragDropData || {};
                 chart.dragDropData.isHoveringHandle = point.id;
             });
-            addEvents(chart.dragHandles.group.element, ['touchend', 'mouseout'],
+            addEvents(
+                chart.dragHandles.group.element,
+                ['touchend', 'mouseout'],
                 function () {
                     onResizeHandleMouseOut(point);
                 }
@@ -2567,7 +2572,9 @@ function addDragDropEvents(chart) {
         addEvent(container, 'mouseleave', function (e) {
             mouseUp(getNormalizedEvent(e, chart), chart);
         });
-        chart.unbindDragDropMouseUp = addEvents(doc, ['mouseup', 'touchend'],
+        chart.unbindDragDropMouseUp = addEvents(
+            doc,
+            ['mouseup', 'touchend'],
             function (e) {
                 mouseUp(getNormalizedEvent(e, chart), chart);
             }

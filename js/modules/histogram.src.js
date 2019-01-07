@@ -154,7 +154,8 @@ seriesType('histogram', 'column', {
         fitToBin = fitToBinLeftClosed(
             frequencies.map(function (elem) {
                 return parseFloat(elem);
-            }));
+            })
+        );
 
         baseData.forEach(function (y) {
             var x = correctFloat(fitToBin(y));

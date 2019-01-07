@@ -15,7 +15,9 @@ function CrookedLine() {
     Annotation.apply(this, arguments);
 }
 
-H.extendAnnotation(CrookedLine, null,
+H.extendAnnotation(
+    CrookedLine,
+    null,
     /** @lends Annotation.CrookedLine# */
     {
         /**

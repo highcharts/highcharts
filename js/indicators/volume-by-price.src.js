@@ -54,7 +54,9 @@ var abs = Math.abs,
  *
  * @augments Highcharts.Series
  */
-seriesType('vbp', 'sma',
+seriesType(
+    'vbp',
+    'sma',
     /**
      * Volume By Price indicator.
      *

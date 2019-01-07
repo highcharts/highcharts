@@ -290,7 +290,8 @@ H.tileShapeTypes = {
         },
         haloPath: function (size) {
             return H.seriesTypes.scatter.prototype.pointClass.prototype.haloPath
-                .call(this,
+                .call(
+                    this,
                     size + (size && this.radius)
                 );
         },
@@ -570,7 +571,8 @@ seriesType('tilemap', 'heatmap'
         // Set tile shape object on series
         setOptions: function () {
         // Call original function
-            var ret = H.seriesTypes.heatmap.prototype.setOptions.apply(this,
+            var ret = H.seriesTypes.heatmap.prototype.setOptions.apply(
+                this,
                 Array.prototype.slice.call(arguments)
             );
 
@@ -580,7 +582,8 @@ seriesType('tilemap', 'heatmap'
 
         // Use the shape's defined data label alignment function
         alignDataLabel: function () {
-            return this.tileShape.alignDataLabel.apply(this,
+            return this.tileShape.alignDataLabel.apply(
+                this,
                 Array.prototype.slice.call(arguments)
             );
         },
@@ -632,7 +635,8 @@ seriesType('tilemap', 'heatmap'
 
         // Use translate from tileShape
         translate: function () {
-            return this.tileShape.translate.apply(this,
+            return this.tileShape.translate.apply(
+                this,
                 Array.prototype.slice.call(arguments)
             );
         }
@@ -646,7 +650,8 @@ seriesType('tilemap', 'heatmap'
      * @return {Highcharts.SVGPathArray}
      */
         haloPath: function () {
-            return this.series.tileShape.haloPath.apply(this,
+            return this.series.tileShape.haloPath.apply(
+                this,
                 Array.prototype.slice.call(arguments)
             );
         }

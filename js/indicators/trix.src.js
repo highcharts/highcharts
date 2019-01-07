@@ -22,7 +22,9 @@ var correctFloat = H.correctFloat,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('trix', 'tema',
+H.seriesType(
+    'trix',
+    'tema',
     /**
      * Normalized average true range indicator (NATR). This series requires
      * `linkedTo` option to be set.

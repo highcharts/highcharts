@@ -701,7 +701,8 @@ H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
         });
         // Set accessibility properties on parent div
         exportList[0].parentNode.setAttribute('role', 'menu');
-        exportList[0].parentNode.setAttribute('aria-label',
+        exportList[0].parentNode.setAttribute(
+            'aria-label',
             this.langFormat(
                 'accessibility.exporting.chartMenuLabel', { chart: this }
             )
@@ -848,7 +849,8 @@ H.Chart.prototype.callbacks.push(function (chart) {
 
         // Set props on group
         chart.exportingGroup.element.setAttribute('role', 'region');
-        chart.exportingGroup.element.setAttribute('aria-label',
+        chart.exportingGroup.element.setAttribute(
+            'aria-label',
             chart.langFormat(
                 'accessibility.exporting.exportRegionLabel', { chart: chart }
             )

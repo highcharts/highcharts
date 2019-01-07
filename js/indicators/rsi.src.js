@@ -25,7 +25,9 @@ function toFixed(a, n) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('rsi', 'sma',
+H.seriesType(
+    'rsi',
+    'sma',
     /**
      * Relative strength index (RSI) technical indicator. This series
      * requires the `linkedTo` option to be set and should be loaded after

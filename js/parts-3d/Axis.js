@@ -248,7 +248,8 @@ wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
                 'L', fromPath[i + 4], fromPath[i + 5],
                 'L', toPath[i + 4], toPath[i + 5],
                 'L', toPath[i + 1], toPath[i + 2],
-                'Z');
+                'Z'
+            );
         }
     }
 
@@ -656,9 +657,11 @@ wrap(Axis.prototype, 'getSlotWidth', function (proceed, tick) {
         // calculated, then return difference between the first and the second
         // label. If there is no next label position calculated, return the
         // difference between the first grid line and left 3d frame.
-        slotWidth = Math.abs(prevLabelPos ?
-            labelPos.x - prevLabelPos.x : nextLabelPos ?
-                nextLabelPos.x - labelPos.x : firstGridLine.x - frame3DLeft.x
+        slotWidth = Math.abs(
+            prevLabelPos ?
+                labelPos.x - prevLabelPos.x : nextLabelPos ?
+                    nextLabelPos.x - labelPos.x :
+                    firstGridLine.x - frame3DLeft.x
         );
         return slotWidth;
     }

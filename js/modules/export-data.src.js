@@ -725,8 +725,8 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
                 options.title.text ?
                     htmlencode(options.title.text) :
                     'Chart'
-            )) +
-                '</caption>';
+            )
+        ) + '</caption>';
     }
 
     // Find longest row

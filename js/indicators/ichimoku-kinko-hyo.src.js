@@ -136,7 +136,9 @@ H.approximations['ichimoku-averages'] = function () {
  *
  * @augments Highcharts.Series
  */
-seriesType('ikh', 'sma',
+seriesType(
+    'ikh',
+    'sma',
     /**
      * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
      * set.
@@ -641,7 +643,8 @@ seriesType('ikh', 'sma',
                             indicator[areaName] = indicator.graph;
                             indicator.graphCollection.push(areaName);
                         }
-                    });
+                    }
+                );
 
             } else {
                 // When user set only senkouSpan style.fill property

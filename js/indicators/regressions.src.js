@@ -23,7 +23,9 @@ var seriesType = H.seriesType,
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegression', 'sma',
+seriesType(
+    'linearRegression',
+    'sma',
     /**
      * Linear regression indicator. This series requires `linkedTo` option to be
      * set.
@@ -268,7 +270,9 @@ seriesType('linearRegression', 'sma',
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegressionSlope', 'linearRegression',
+seriesType(
+    'linearRegressionSlope',
+    'linearRegression',
     /**
      * Linear regression slope indicator. This series requires `linkedTo`
      * option to be set.
@@ -316,7 +320,9 @@ seriesType('linearRegressionSlope', 'linearRegression',
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegressionIntercept', 'linearRegression',
+seriesType(
+    'linearRegressionIntercept',
+    'linearRegression',
     /**
      * Linear regression intercept indicator. This series requires `linkedTo`
      * option to be set.
@@ -364,7 +370,9 @@ seriesType('linearRegressionIntercept', 'linearRegression',
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegressionAngle', 'linearRegression',
+seriesType(
+    'linearRegressionAngle',
+    'linearRegression',
     /**
      * Linear regression angle indicator. This series requires `linkedTo`
      * option to be set.

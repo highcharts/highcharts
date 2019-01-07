@@ -30,7 +30,9 @@ function accumulatePoints(sum, yVal, i, index, subtract) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('dpo', 'sma',
+H.seriesType(
+    'dpo',
+    'sma',
     /**
      * Detrended Price Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`.

@@ -93,7 +93,8 @@ H.initCanvasBoost = function () {
             } else {
                 this.chart.showLoading(
                     'Your browser doesn\'t support HTML5 canvas, <br>' +
-                    'please use a modern browser');
+                    'please use a modern browser'
+                );
 
                 // Uncomment this to provide low-level (slow) support in oldIE.
                 // It will cause script errors on charts with more than a few

@@ -24,7 +24,9 @@ var isArray = H.isArray,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('dema', 'ema',
+H.seriesType(
+    'dema',
+    'ema',
     /**
      * Normalized average true range indicator (NATR). This series requires
      * `linkedTo` option to be set and should be loaded after the

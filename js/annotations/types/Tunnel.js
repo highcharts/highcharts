@@ -20,7 +20,9 @@ function Tunnel() {
     CrookedLine.apply(this, arguments);
 }
 
-H.extendAnnotation(Tunnel, CrookedLine,
+H.extendAnnotation(
+    Tunnel,
+    CrookedLine,
     /** @lends Annotation.Tunnel# */
     {
         getPointsOptions: function () {

@@ -26,7 +26,9 @@ var EMA = H.seriesTypes.ema,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('chaikin', 'ema',
+H.seriesType(
+    'chaikin',
+    'ema',
     /**
      * Chaikin Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`

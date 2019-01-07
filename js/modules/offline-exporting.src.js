@@ -524,17 +524,20 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
         // Go through the images we want to embed
         for (i = 0, l = images.length; i < l; ++i) {
             el = images[i];
-            Highcharts.imageToDataUrl(el.getAttributeNS(
-                'http://www.w3.org/1999/xlink',
-                'href'
-            ), 'image/png', { imageElement: el }, options.scale,
-            embeddedSuccess,
-            // Tainted canvas
-            failCallback,
-            // No canvas support
-            failCallback,
-            // Failed to load source
-            failCallback
+            Highcharts.imageToDataUrl(
+                el.getAttributeNS(
+                    'http://www.w3.org/1999/xlink',
+                    'href'
+                ),
+                'image/png',
+                { imageElement: el }, options.scale,
+                embeddedSuccess,
+                // Tainted canvas
+                failCallback,
+                // No canvas support
+                failCallback,
+                // Failed to load source
+                failCallback
             );
         }
     } catch (e) {

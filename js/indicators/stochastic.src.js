@@ -25,7 +25,9 @@ var merge = H.merge,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('stochastic', 'sma',
+H.seriesType(
+    'stochastic',
+    'sma',
     /**
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.

@@ -645,7 +645,8 @@ if (!svg) {
                         '" />'
                     ];
 
-                    shadow = createElement(renderer.prepVML(markup),
+                    shadow = createElement(
+                        renderer.prepVML(markup),
                         null, {
                             left: pInt(elemStyle.left) +
                                 pick(shadowOptions.offsetX, 1),

@@ -25,7 +25,9 @@ var SMA = H.seriesTypes.sma,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('keltnerchannels', 'sma',
+H.seriesType(
+    'keltnerchannels',
+    'sma',
     /**
      * Keltner Channels. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js`,

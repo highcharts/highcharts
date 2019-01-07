@@ -152,7 +152,8 @@ var animObject = H.animObject,
     ddSeriesId = 1;
 
 // Add language
-extend(defaultOptions.lang,
+extend(
+    defaultOptions.lang,
     /**
      * @optionparent lang
      */

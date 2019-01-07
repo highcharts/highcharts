@@ -23,7 +23,9 @@ var seriesType = H.seriesType,
  *
  * @augments Highcharts.Series
  */
-seriesType('zigzag', 'sma',
+seriesType(
+    'zigzag',
+    'sma',
     /**
      * Zig Zag indicator.
      *

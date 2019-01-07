@@ -1476,7 +1476,9 @@ H.Chart.prototype.addExitAnchor = function () {
     });
 
     chart.renderTo.appendChild(chart.tabExitAnchor);
-    return addEvent(chart.tabExitAnchor, 'focus',
+    return addEvent(
+        chart.tabExitAnchor,
+        'focus',
         function (ev) {
             var e = ev || win.event,
                 curModule;

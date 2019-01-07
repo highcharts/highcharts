@@ -32,7 +32,9 @@ function createPointObj(mainSeries, index, close) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('supertrend', 'sma',
+H.seriesType(
+    'supertrend',
+    'sma',
     /**
      * Supertrend indicator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` and

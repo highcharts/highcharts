@@ -555,9 +555,10 @@ H.addEvent(H.Chart, 'redraw', function () {
                         node.getAttribute('stroke');
 
                 if (id) {
-                    usedIds.push(id
-                        .substring(id.indexOf('url(#') + 5)
-                        .replace(')', '')
+                    usedIds.push(
+                        id
+                            .substring(id.indexOf('url(#') + 5)
+                            .replace(')', '')
                     );
                 }
             }

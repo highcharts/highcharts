@@ -22,7 +22,9 @@ var isArray = H.isArray,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('williamsr', 'sma',
+H.seriesType(
+    'williamsr',
+    'sma',
     /**
      * Williams %R. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.
