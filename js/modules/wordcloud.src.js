@@ -713,6 +713,18 @@ var wordCloudSeries = {
         extend(this.yAxis.options, wordcloudAxis);
         extend(this.xAxis.options, wordcloudAxis);
     },
+
+    pointAttribs: function (point, state) {
+        var attribs = H.seriesTypes.column.prototype
+            .pointAttribs.call(this, point, state);
+
+        delete attribs.stroke;
+        delete attribs['stroke-width'];
+
+        return attribs;
+
+    },
+
     /**
      * Calculates the fontSize of a word based on its weight.
      *
@@ -812,8 +824,7 @@ var wordCloudSeries = {
                     options.minFontSize
                 ),
                 css = extend({
-                    fontSize: fontSize + 'px',
-                    fill: point.color
+                    fontSize: fontSize + 'px'
                 }, options.style),
                 placement = placementStrategy(point, {
                     data: data,
@@ -821,14 +832,17 @@ var wordCloudSeries = {
                     placed: placed,
                     rotation: rotation
                 }),
-                attr = {
-                    align: 'center',
-                    'alignment-baseline': 'middle',
-                    x: placement.x,
-                    y: placement.y,
-                    text: point.name,
-                    rotation: placement.rotation
-                },
+                attr = extend(
+                    series.pointAttribs(point, point.selected && 'select'),
+                    {
+                        align: 'center',
+                        'alignment-baseline': 'middle',
+                        x: placement.x,
+                        y: placement.y,
+                        text: point.name,
+                        rotation: placement.rotation
+                    }
+                ),
                 polygon = getPolygon(
                     placement.x,
                     placement.y,

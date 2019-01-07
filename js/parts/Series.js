@@ -2289,7 +2289,9 @@ H.Series = H.seriesType('line',
              * @product   highmaps
              */
             select: {
-                // marker: {}
+                animation: {
+                    duration: 0
+                }
             }
         },
 
