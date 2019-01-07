@@ -160,11 +160,9 @@ QUnit.test('getCenterOfPoints', function (assert) {
     );
 });
 
-QUnit.test('getOverlapBetweenCircles', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        getOverlapBetweenCircles =
-            vennPrototype.utils.geometryCircles
-                .getOverlapBetweenCircles;
+QUnit.test('getOverlapBetweenCircles', assert => {
+    var { prototype: vennPrototype } = Highcharts.seriesTypes.venn,
+        { getOverlapBetweenCircles } = vennPrototype.utils.geometryCircles;
 
     assert.strictEqual(
         getOverlapBetweenCircles(3, 4, 5),
@@ -176,6 +174,12 @@ QUnit.test('getOverlapBetweenCircles', function (assert) {
         getOverlapBetweenCircles(8, 6, 1),
         113.09733552923257,
         'should return 113.09733552923257 when r1=8, r2=6 and d=1. The circles completely overlaps.'
+    );
+
+    assert.strictEqual(
+        getOverlapBetweenCircles(2.5231325220201604, 3.0901936161855166, 0.7011044346618891),
+        19.68884261304518,
+        'should return 19.68884261304518 when r1=2.5231325220201604, r2=3.0901936161855166 and d=0.7011044346618891.'
     );
 
     assert.strictEqual(
@@ -275,6 +279,23 @@ QUnit.test('getCirclesIntersectionPoints', function (assert) {
             { x: 0, y: 3, indexes: [0, 2] }
         ],
         'should return a list of all the intersection points between the circles.'
+    );
+});
+
+QUnit.test('getCircularSegmentArea', assert => {
+    var { prototype: vennPrototype } = Highcharts.seriesTypes.venn,
+        { getCircularSegmentArea } = vennPrototype.utils.geometryCircles;
+
+    assert.strictEqual(
+        getCircularSegmentArea(1, 1),
+        Math.PI / 2,
+        'should return PI/2 when r=1 and h=1 and circle area is equal to PI.'
+    );
+
+    assert.strictEqual(
+        getCircularSegmentArea(1, 2),
+        Math.PI,
+        'should return PI when r=1 and h=2 and circle area is equal to PI.'
     );
 });
 

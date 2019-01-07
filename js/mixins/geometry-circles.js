@@ -10,6 +10,19 @@ var round = function round(x, decimals) {
 };
 
 /**
+ * Calculates the area of a circular segment based on the radius of the circle
+ * and the height of the segment.
+ * See http://mathworld.wolfram.com/CircularSegment.html
+ *
+ * @param {number} r The radius of the circle.
+ * @param {number} h The height of the circular segment.
+ * @returns {number} Returns the area of the circular segment.
+ */
+var getCircularSegmentArea = function getCircularSegmentArea(r, h) {
+    return r * r * Math.acos(1 - h / r) - (r - h) * Math.sqrt(h * (2 * r - h));
+};
+
+/**
  * Calculates the area of overlap between two circles based on their radiuses
  * and the distance between them.
  * See http://mathworld.wolfram.com/Circle-CircleIntersection.html
@@ -34,15 +47,14 @@ function getOverlapBetweenCircles(r1, r2, d) {
             // equals the area of the smallest circle.
             overlap = Math.PI * Math.min(r1Square, r2Square);
         } else {
-            // d^2 - r^2 + R^2 / 2d
-            var x = (r1Square - r2Square + d * d) / (2 * d),
-                // y^2 = R^2 - x^2
-                y = Math.sqrt(r1Square - x * x);
+            // Height of first triangle segment.
+            var d1 = (r1Square - r2Square + d * d) / (2 * d),
+                // Height of second triangle segment.
+                d2 = d - d1;
 
             overlap = (
-                r1Square * Math.asin(y / r1) +
-                r2Square * Math.asin(y / r2) -
-                y * (x + Math.sqrt(x * x + r2Square - r1Square))
+                getCircularSegmentArea(r1, r1 - d1) +
+                getCircularSegmentArea(r2, r2 - (d - d1))
             );
         }
         // Round the result to two decimals.
@@ -277,6 +289,7 @@ var geometryCircles = {
     getAreaOfIntersectionBetweenCircles: getAreaOfIntersectionBetweenCircles,
     getCircleCircleIntersection: getCircleCircleIntersection,
     getCirclesIntersectionPoints: getCirclesIntersectionPoints,
+    getCircularSegmentArea: getCircularSegmentArea,
     getOverlapBetweenCircles: getOverlapBetweenCircles,
     isPointInsideCircle: isPointInsideCircle,
     isPointInsideAllCircles: isPointInsideAllCircles,
