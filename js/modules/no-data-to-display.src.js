@@ -161,9 +161,10 @@ defaultOptions.noData = {
  */
 H.Series.prototype.hasData = function () {
     return (
-        this.visible &&
+        (this.visible &&
         this.dataMax !== undefined &&
-        this.dataMin !== undefined // #3703
+        this.dataMin !== undefined) || // #3703
+        (this.visible && this.yData.length > 0) // #9758
     );
 };
 
