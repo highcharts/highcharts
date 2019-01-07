@@ -37,6 +37,7 @@
         "node/no-unsupported-features/es-syntax": 0,
         "object-curly-spacing": [2, "always"],
         "object-shorthand": ["error", "never"],     /* Closure Compiler chokes on it */
+        "prefer-rest-params": 0,
         "space-before-function-paren": [2, {
             "anonymous": "always",
             "named": "never"
