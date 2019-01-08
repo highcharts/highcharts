@@ -56,7 +56,7 @@ defaultOptions.mapNavigation = {
         /**
          * The alignment of the navigation buttons.
          *
-         * @validvalue ["left", "center", "right"]
+         * @type {Highcharts.AlignType}
          */
         align: 'left',
 
@@ -64,7 +64,7 @@ defaultOptions.mapNavigation = {
          * The vertical alignment of the buttons. Individual alignment can
          * be adjusted by each button's `y` offset.
          *
-         * @validvalue ["top", "middle", "bottom"]
+         * @type {Highcharts.VerticalAlignType}
          */
         verticalAlign: 'top',
 

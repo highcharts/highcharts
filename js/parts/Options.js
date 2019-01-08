@@ -964,6 +964,7 @@ H.defaultOptions = {
              * @sample {highmaps} highcharts/chart/resetzoombutton-position/
              *         Above the plot area
              *
+             * @type  {Highcharts.AlignObject}
              * @since 2.2
              */
             position: {
@@ -981,9 +982,8 @@ H.defaultOptions = {
                 /**
                  * The vertical alignment of the button.
                  *
-                 * @type       {string}
+                 * @type       {Highcharts.VerticalAlignType}
                  * @default    top
-                 * @validvalue ["top", "middle", "bottom"]
                  * @apioption  chart.resetZoomButton.position.verticalAlign
                  */
 
@@ -1516,10 +1516,9 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/title-verticalalign/
          *         Chart title in bottom right corner
          *
-         * @type       {string}
-         * @since      2.1
-         * @validvalue ["top", "middle", "bottom"]
-         * @apioption  title.verticalAlign
+         * @type      {Highcharts.VerticalAlignType}
+         * @since     2.1
+         * @apioption title.verticalAlign
          */
 
         /**
@@ -1579,8 +1578,8 @@ H.defaultOptions = {
          *         Aligned to the plot area (x = 50px = margin left - spacing
          *         left)
          *
-         * @since      2.0
-         * @validvalue ["left", "center", "right"]
+         * @type  {Highcharts.AlignType}
+         * @since 2.0
          */
         align: 'center',
 
@@ -1679,10 +1678,9 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/subtitle-footnote
          *         Footnote at the bottom right of plot area
          *
-         * @type       {string}
-         * @since      2.1
-         * @validvalue ["top", "middle", "bottom"]
-         * @apioption  subtitle.verticalAlign
+         * @type      {Highcharts.VerticalAlignType}
+         * @since     2.1
+         * @apioption subtitle.verticalAlign
          */
 
         /**
@@ -1734,8 +1732,8 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/subtitle-footnote
          *         Footnote at bottom right of plot area
          *
-         * @since      2.0
-         * @validvalue ["left", "center", "right"]
+         * @type  {Highcharts.AlignType}
+         * @since 2.0
          */
         align: 'center',
 
@@ -1899,8 +1897,8 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/alignment/
          *         Legend alignment
          *
-         * @since      2.0
-         * @validvalue ["left", "center", "right"]
+         * @type  {Highcharts.AlignType}
+         * @since 2.0
          */
         align: 'center',
 
@@ -2521,8 +2519,8 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/alignment/
          *         Legend alignment
          *
-         * @since      2.0
-         * @validvalue ["top", "middle", "bottom"]
+         * @type  {Highcharts.VerticalAlignType}
+         * @since 2.0
          */
         verticalAlign: 'bottom',
 
@@ -3391,6 +3389,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/credits/customized/
          *         Left aligned
          *
+         * @type  {Highcharts.AlignObject}
          * @since 2.1
          */
         position: {
@@ -3398,7 +3397,7 @@ H.defaultOptions = {
             /**
              * Horizontal alignment of the credits.
              *
-             * @validvalue ["left", "center", "right"]
+             * @type {Highcharts.AlignType}
              */
             align: 'right',
 
@@ -3410,7 +3409,7 @@ H.defaultOptions = {
             /**
              * Vertical alignment of the credits.
              *
-             * @validvalue ["top", "middle", "bottom"]
+             * @type {Highcharts.VerticalAlignType}
              */
             verticalAlign: 'bottom',
 

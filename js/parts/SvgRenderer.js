@@ -7,6 +7,12 @@
  * */
 
 /**
+ * The horizontal alignment of an element.
+ *
+ * @typedef {"center"|"left"|"right"} Highcharts.AlignType
+ */
+
+/**
  * Options to align the element relative to the chart or another box.
  *
  * @interface Highcharts.AlignObject
@@ -14,14 +20,14 @@
  * Horizontal alignment. Can be one of `left`, `center` and `right`.
  *
  * @name Highcharts.AlignObject#align
- * @type {string|undefined}
+ * @type {Highcharts.AlignType|undefined}
  *
  * @default left
  *//**
  * Vertical alignment. Can be one of `top`, `middle` and `bottom`.
  *
  * @name Highcharts.AlignObject#verticalAlign
- * @type {string|undefined}
+ * @type {Highcharts.VerticalAlignType|undefined}
  *
  * @default top
  *//**
@@ -174,6 +180,20 @@
  * End vertical position of the gradient. Float ranges 0-1.
  *
  * @name Highcharts.LinearGradientColorObject#y2
+ * @type {number}
+ */
+
+/**
+ * An object containing `x` and `y` properties for the position of an element.
+ *
+ * @interface Highcharts.PositionObject
+ *//**
+ * X position of the element.
+ * @name Highcharts.PositionObject#x
+ * @type {number}
+ *//**
+ * Y position of the element.
+ * @name Highcharts.PositionObject#y
  * @type {number}
  */
 
@@ -339,6 +359,12 @@
  *
  * @name Highcharts.SymbolOptionsObject#start
  * @type {number}
+ */
+
+/**
+ * The vertical alignment of an element.
+ *
+ * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignType
  */
 
 'use strict';

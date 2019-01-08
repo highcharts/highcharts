@@ -340,6 +340,7 @@ defaultOptions.drilldown = {
          * Positioning options for the button within the `relativeTo` box.
          * Available properties are `x`, `y`, `align` and `verticalAlign`.
          *
+         * @type    {Highcharts.AlignObject}
          * @since   3.0.8
          * @product highcharts highmaps
          */
@@ -348,18 +349,16 @@ defaultOptions.drilldown = {
             /**
              * Vertical alignment of the button.
              *
-             * @type       {string}
-             * @default    top
-             * @product    highcharts highmaps
-             * @validvalue ["top", "middle", "bottom"]
-             * @apioption  drilldown.drillUpButton.position.verticalAlign
+             * @type      {Highcharts.VerticalAlignType}
+             * @default   top
+             * @product   highcharts highmaps
+             * @apioption drilldown.drillUpButton.position.verticalAlign
              */
 
             /**
              * Horizontal alignment.
              *
-             * @type       {string}
-             * @validvalue ["left", "center", "right"]
+             * @type {Highcharts.AlignType}
              */
             align: 'right',
 
