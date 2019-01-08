@@ -226,6 +226,14 @@
  */
 
 /**
+ * Enable or disable preallocation.
+ *
+ * @type      {boolean}
+ * @default   false
+ * @apioption boost.usePreallocated
+ */
+
+/**
  * Set the point threshold for when a series should enter boost mode.
  *
  * Setting it to e.g. 2000 will cause the series to enter boost mode when there
