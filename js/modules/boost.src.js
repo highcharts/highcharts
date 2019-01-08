@@ -255,6 +255,15 @@
  * @apioption boost.allowForce
  */
 
+/**
+ * Sets the blending mode in the boost module.
+ *
+ * @type       {string}
+ * @default    undefined
+ * @validvalue ["add", "mult", "darken"]
+ * @apioption  plotOptions.series.boostBlending
+ */
+
 /* global Float32Array */
 
 'use strict';
