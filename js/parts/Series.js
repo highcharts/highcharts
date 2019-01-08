@@ -2379,7 +2379,7 @@ H.Series = H.seriesType(
          *
          * @see [series color](#plotOptions.series.color)
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     4.1.0
          * @product   highcharts highstock
          * @apioption plotOptions.series.zones.color
@@ -2393,7 +2393,7 @@ H.Series = H.seriesType(
          * @sample {highcharts|highstock} highcharts/series/color-zones-dashstyle-dot/
          *         Dashed line indicates prognosis
          *
-         * @type      {string}
+         * @type      {Highcharts.DashStyleType}
          * @since     4.1.0
          * @product   highcharts highstock
          * @apioption plotOptions.series.zones.dashStyle

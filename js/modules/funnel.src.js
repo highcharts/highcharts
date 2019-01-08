@@ -136,7 +136,7 @@ seriesType('funnel', 'pie',
             /**
              * A specific color for the selected point.
              *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             color: '${palette.neutralColor20}',
 

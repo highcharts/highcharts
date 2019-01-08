@@ -248,7 +248,7 @@ extend(defaultOptions, {
             /**
              * The fill for the handle.
              *
-             * @type    {Highcharts.ColorString}
+             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product highstock
              */
             backgroundColor: '${palette.neutralColor5}',
@@ -274,7 +274,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/navigator/maskfill/
          *         Blue, semi transparent mask
          *
-         * @type    {Highcharts.ColorString}
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default rgba(102,133,194,0.3)
          * @product highstock
          */

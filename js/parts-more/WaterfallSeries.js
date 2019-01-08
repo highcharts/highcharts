@@ -67,6 +67,11 @@ addEvent(Chart, 'beforeRedraw', function () {
 seriesType('waterfall', 'column', {
 
     /**
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @apioption plotOptions.waterfall.color
+     */
+
+    /**
      * The color used specifically for positive point columns. When not
      * specified, the general series color is used.
      *
@@ -77,7 +82,7 @@ seriesType('waterfall', 'column', {
      * @sample {highcharts} highcharts/demo/waterfall/
      *         Waterfall
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product   highcharts
      * @apioption plotOptions.waterfall.upColor
      */
