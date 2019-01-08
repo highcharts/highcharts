@@ -180,7 +180,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#showLoading
      *
-     * @param {string} str
+     * @param {string} [str]
      *        An optional text to show in the loading label instead of the
      *        default one. The default text is set in
      *        [lang.loading](http://api.highcharts.com/highcharts/lang.loading).
