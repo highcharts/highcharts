@@ -327,6 +327,39 @@ seriesType('sankey', 'column'
                 point.name = point.name || point.options.id;
 
             }, this);
+
+            // Order the nodes, starting with the root node(s) (#9818)
+            function order(node, level) {
+                node.level = level;
+                node.linksFrom.forEach(function (link) {
+                    order(link.toNode, level + 1);
+                });
+            }
+            this.nodes
+                // Identify the root node(s)
+                .filter(function (node) {
+                    return node.linksTo.length === 0;
+                })
+                // Start by the root node(s) and recursively set the level on
+                // all following nodes.
+                .forEach(function (node) {
+                    order(node, 0);
+                });
+            this.nodes.sort(function (a, b) {
+                return a.level - b.level;
+            });
+
+        },
+
+        // Destroy all nodes on setting new data
+        setData: function () {
+            if (this.nodes) {
+                this.nodes.forEach(function (node) {
+                    node.destroy();
+                });
+                this.nodes.length = 0;
+            }
+            H.Series.prototype.setData.apply(this, arguments);
         },
 
         // Run pre-translation by generating the nodeColumns.
