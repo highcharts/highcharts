@@ -414,7 +414,7 @@ QUnit.test('Sankey and unordered data', assert => {
         1,
         'There should be only one item in the first (root) column'
     );
-/*
+
     chart.series[0].setData([
         [480, 481, 1],
         [481, 482, 1],
@@ -427,12 +427,12 @@ QUnit.test('Sankey and unordered data', assert => {
         [477, 478, 1],
         [478, 479, 1],
         [479, 480, 1]
-   ]);
+    ]);
 
     assert.strictEqual(
         chart.series[0].nodeColumns[0].length,
         1,
         'There should be only one item in the first (root) column'
     );
-    */
+
 });
