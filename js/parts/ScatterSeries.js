@@ -39,7 +39,7 @@ seriesType(
      * @product      highcharts highstock
      * @optionparent plotOptions.scatter
      */
-    , {
+    {
 
         /**
          * The width of the line connecting the data points.

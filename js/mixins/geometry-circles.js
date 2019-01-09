@@ -54,7 +54,7 @@ function getOverlapBetweenCircles(r1, r2, d) {
 
             overlap = (
                 getCircularSegmentArea(r1, r1 - d1) +
-                getCircularSegmentArea(r2, r2 - (d - d1))
+                getCircularSegmentArea(r2, r2 - d2)
             );
         }
         // Round the result to two decimals.
