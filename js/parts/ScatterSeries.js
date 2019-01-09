@@ -113,6 +113,10 @@ seriesType(
 );
 
 // Optionally add the jitter effect
+// @todo
+// - API docs
+// - Tutorial docs
+// - Sample with box plot, find correct setting for width
 H.addEvent(Series, 'afterTranslate', function () {
     if (!(this instanceof H.seriesTypes.scatter)) {
         return;
