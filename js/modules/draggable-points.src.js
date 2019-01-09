@@ -6,15 +6,16 @@
  */
 
 /**
- * Function callback to execute while series points are dragged.
+ * Function callback to execute while series points are dragged. Return false to
+ * stop the default drag action.
  *
  * @callback Highcharts.SeriesPointDragCallbackFunction
  *
- * @param {Highcharts.SeriesPointDragEventObject} e
- *        Event arguments.
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
  *
- * @return {boolean}
- *         Return false to stop the default drag action.
+ * @param {Highcharts.SeriesPointDragEventObject} event
+ *        Event arguments.
  */
 
 /**
@@ -62,7 +63,10 @@
  *
  * @callback Highcharts.SeriesPointDragStartCallbackFunction
  *
- * @param {Highcharts.SeriesPointDragStartEventObject} e
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.SeriesPointDragStartEventObject} event
  *        Event arguments.
  */
 
@@ -83,7 +87,10 @@
  *
  * @callback Highcharts.SeriesPointDropCallbackFunction
  *
- * @param {Highcharts.SeriesPointDropEventObject} e
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.SeriesPointDropEventObject} event
  *        Event arguments.
  */
 
