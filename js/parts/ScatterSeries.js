@@ -112,6 +112,36 @@ seriesType(
     }
 );
 
+// Optionally add the jitter effect
+H.addEvent(Series, 'afterTranslate', function () {
+    if (!(this instanceof H.seriesTypes.scatter)) {
+        return;
+    }
+    var series = this,
+        jitter = this.options.jitter;
+
+    if (jitter) {
+        this.points.forEach(function (point) {
+            ['x', 'y'].forEach(function (dim) {
+                var offset,
+                    axis;
+                if (jitter[dim]) {
+                    axis = series[dim + 'Axis'];
+                    if (axis && !axis.isLog) {
+                        offset = 2 * jitter[dim] * (0.5 - Math.random());
+
+                        // If we want pixel jitter, skip this
+                        offset *= axis.transA;
+
+                        // Modify plotX and plotY
+                        point['plot' + dim.toUpperCase()] += offset;
+                    }
+                }
+            });
+        });
+    }
+});
+
 /**
  * A `scatter` series. If the [type](#series.scatter.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
