@@ -180,7 +180,7 @@ extend(H.defaultOptions, {
              * Set the color of the connector markers. By default this is the
              * same as the connector color.
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since     6.2.0
              * @apioption connectors.marker.color
              */

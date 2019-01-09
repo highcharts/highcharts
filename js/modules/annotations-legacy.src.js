@@ -610,7 +610,7 @@ Annotation.prototype = {
              * @sample highcharts/annotations/label-presentation/
              *         Set labels graphic options
              *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             backgroundColor: 'rgba(0, 0, 0, 0.75)',
 
@@ -979,7 +979,7 @@ Annotation.prototype = {
              * @sample highcharts/annotations/shape/
              *         Basic shape annotation
              *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             fill: 'rgba(0, 0, 0, 0.75)',
 

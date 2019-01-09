@@ -204,32 +204,12 @@ H.setOptions({
                  * @since   6.0.3
                  */
                 style: {
-
-                    /**
-                     * Color of the focus border.
-                     *
-                     * @ignore
-                     * @type  {Highcharts.ColorString}
-                     * @since 6.0.3
-                    */
+                    /** @ignore-option */
                     color: '${palette.highlightColor80}',
-
-                    /**
-                     * Line width of the focus border.
-                     *
-                     * @ignore
-                     * @since 6.0.3
-                    */
+                    /** @ignore-option */
                     lineWidth: 2,
-
-                    /**
-                     * Border radius of the focus border.
-                     *
-                     * @ignore
-                     * @since 6.0.3
-                    */
+                    /** @ignore-option */
                     borderRadius: 3
-
                 },
 
                 /**

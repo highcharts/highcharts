@@ -97,7 +97,7 @@ seriesType(
          * @sample maps/demo/all-areas-as-null/
          *         Null color
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         nullColor: '${palette.neutralColor3}',
 
@@ -227,7 +227,7 @@ seriesType(
                  * @sample maps/plotoptions/series-states-hover/
                  *         Hover options
                  *
-                 * @type      {Highcharts.ColorString}
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product   highmaps
                  * @apioption plotOptions.series.states.hover.color
                  */
@@ -1172,7 +1172,7 @@ seriesType(
  * Individual color for the point. By default the color is either used
  * to denote the value, or pulled from the global `colors` array.
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highmaps
  * @apioption series.map.data.color
  */

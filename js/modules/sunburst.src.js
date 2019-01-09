@@ -457,7 +457,7 @@ var sunburstOptions = {
     /**
      * Can set a `color` on all points which lies on the same level.
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption plotOptions.sunburst.levels.color
      */
 

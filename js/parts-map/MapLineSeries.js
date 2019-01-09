@@ -23,28 +23,28 @@ var seriesType = H.seriesType,
 seriesType('mapline', 'map'
 
     /**
- * A mapline series is a special case of the map series where the value colors
- * are applied to the strokes rather than the fills. It can also be used for
- * freeform drawing, like dividers, in the map.
- *
- * @sample maps/demo/mapline-mappoint/
- *         Mapline and map-point chart
- *
- * @extends      plotOptions.map
- * @product      highmaps
- * @optionparent plotOptions.mapline
- */
-    , {
-    /**
-     * The width of the map line.
+     * A mapline series is a special case of the map series where the value
+     * colors are applied to the strokes rather than the fills. It can also be
+     * used for freeform drawing, like dividers, in the map.
+     *
+     * @sample maps/demo/mapline-mappoint/
+     *         Mapline and map-point chart
+     *
+     * @extends      plotOptions.map
+     * @product      highmaps
+     * @optionparent plotOptions.mapline
      */
+    , {
+        /**
+         * The width of the map line.
+         */
         lineWidth: 1,
 
         /**
-     * Fill color for the map line shapes
-     *
-     * @type {Highcharts.ColorString}
-     */
+         * Fill color for the map line shapes
+         *
+         * @type {Highcharts.ColorString}
+         */
         fillColor: 'none'
     }, {
 

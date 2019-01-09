@@ -734,7 +734,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * The fill color to be used for partial fills. Defaults to a darker shade
  * of the point color.
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts highstock gantt
  * @apioption series.xrange.data.partialFill.fill
  */

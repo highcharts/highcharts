@@ -57,7 +57,7 @@ seriesType('area', 'line',
          * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
          *         Gradient
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product   highcharts highstock
          * @apioption plotOptions.area.fillColor
          */
@@ -109,7 +109,7 @@ seriesType('area', 'line',
      * @sample {highcharts} highcharts/css/series-negative-color/
      *         Negative color in styled mode
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.area.negativeFillColor

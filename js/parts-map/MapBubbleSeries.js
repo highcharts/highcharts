@@ -49,7 +49,7 @@ if (seriesTypes.bubble) {
          * @sample {highmaps} maps/plotoptions/mapbubble-color/
          *         Pink bubbles
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption plotOptions.mapbubble.color
          */
 
@@ -86,7 +86,7 @@ if (seriesTypes.bubble) {
          * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/
          *         Negative color below a threshold
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption plotOptions.mapbubble.negativeColor
          */
 

@@ -951,7 +951,7 @@ var defaultGuideBoxOptions = {
         /**
          * Guide box fill color.
          *
-         * @type  {Highcharts.ColorString}
+         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 6.2.0
          */
         color: 'rgba(0, 0, 0, 0.1)',
@@ -1013,7 +1013,7 @@ var defaultDragHandleOptions = {
     /**
      * The fill color of the drag handles.
      *
-     * @type  {Highcharts.ColorString}
+     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since 6.2.0
      */
     color: '#fff',

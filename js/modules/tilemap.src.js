@@ -735,7 +735,7 @@ seriesType('tilemap', 'heatmap'
  * explicitly, as we use the color to denote the `value`. Options for
  * this are set in the [colorAxis](#colorAxis) configuration.
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts highmaps
  * @apioption series.tilemap.data.color
  */
