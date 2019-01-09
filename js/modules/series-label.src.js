@@ -925,14 +925,13 @@ Chart.prototype.drawSeriesLabels = function () {
  * @private
  * @function drawLabels
  */
-function drawLabels() {
+function drawLabels(e) {
 
     var chart = this,
         delay = Math.max(
             H.animObject(chart.renderer.globalAnimation).duration,
             250
-        ),
-        initial = !chart.hasRendered;
+        );
 
     chart.labelSeries = [];
     chart.labelSeriesMaxSum = 0;
@@ -964,7 +963,7 @@ function drawLabels() {
             }
 
             // The labels are processing heavy, wait until the animation is done
-            if (initial) {
+            if (e.type === 'load') {
                 delay = Math.max(
                     delay,
                     H.animObject(series.options.animation).duration
@@ -992,4 +991,7 @@ function drawLabels() {
     }, chart.renderer.forExport ? 0 : delay);
 
 }
-addEvent(Chart, 'render', drawLabels);
+
+// Leave both events, we handle animation differently (#9815)
+addEvent(Chart, 'load', drawLabels);
+addEvent(Chart, 'redraw', drawLabels);
