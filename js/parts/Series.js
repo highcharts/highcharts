@@ -2379,7 +2379,7 @@ H.Series = H.seriesType(
          *
          * @see [series color](#plotOptions.series.color)
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     4.1.0
          * @product   highcharts highstock
          * @apioption plotOptions.series.zones.color
@@ -2393,7 +2393,7 @@ H.Series = H.seriesType(
          * @sample {highcharts|highstock} highcharts/series/color-zones-dashstyle-dot/
          *         Dashed line indicates prognosis
          *
-         * @type      {string}
+         * @type      {Highcharts.DashStyleType}
          * @since     4.1.0
          * @product   highcharts highstock
          * @apioption plotOptions.series.zones.dashStyle
@@ -5199,7 +5199,7 @@ H.Series = H.seriesType(
                 plotY: inverted ?
                     yAxis.len - e.chartX + yAxis.pos :
                     e.chartY - yAxis.pos
-            }, compareX);
+            }, compareX, e);
         },
 
         /**
@@ -5211,7 +5211,7 @@ H.Series = H.seriesType(
          * @private
          * @function Highcharts.Series#buildKDTree
          */
-        buildKDTree: function () {
+        buildKDTree: function (e) {
 
             // Prevent multiple k-d-trees from being built simultaneously
             // (#6235)
@@ -5271,8 +5271,13 @@ H.Series = H.seriesType(
             }
             delete series.kdTree;
 
-            // For testing tooltips, don't build async
-            syncTimeout(startRecursive, series.options.kdNow ? 0 : 1);
+            // For testing tooltips, don't build async. Also if touchstart, we
+            // may be dealing with click events on mobile, so don't delay
+            // (#6817).
+            syncTimeout(
+                startRecursive,
+                series.options.kdNow || (e && e.type === 'touchstart') ? 0 : 1
+            );
         },
 
         /**
@@ -5285,7 +5290,7 @@ H.Series = H.seriesType(
          *
          * @return {Highcharts.Point}
          */
-        searchKDTree: function (point, compareX) {
+        searchKDTree: function (point, compareX, e) {
             var series = this,
                 kdX = this.kdAxisArray[0],
                 kdY = this.kdAxisArray[1],
@@ -5353,7 +5358,7 @@ H.Series = H.seriesType(
             }
 
             if (!this.kdTree && !this.buildingKdTree) {
-                this.buildKDTree();
+                this.buildKDTree(e);
             }
 
             if (this.kdTree) {

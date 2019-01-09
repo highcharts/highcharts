@@ -595,7 +595,7 @@ seriesType('sankey', 'column'
 /**
  * The color of the auto generated node.
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts
  * @apioption series.sankey.nodes.color
  */
@@ -686,7 +686,7 @@ seriesType('sankey', 'column'
  * the points, so when setting a specific link color, consider setting the
  * `fillOpacity` to 1.
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts
  * @apioption series.sankey.data.color
  */

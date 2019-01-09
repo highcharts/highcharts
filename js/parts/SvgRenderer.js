@@ -137,12 +137,10 @@
  *//**
  * Holds an object that defines the start position and the end position relative
  * to the shape.
- *
  * @name Highcharts.GradientColorObject#linearGradient
  * @type {Highcharts.LinearGradientColorObject|undefined}
  *//**
  * Holds an object that defines the center position and the radius.
- *
  * @name Highcharts.GradientColorObject#radialGradient
  * @type {Highcharts.RadialGradientColorObject|undefined}
  *//**
@@ -150,7 +148,6 @@
  * start of the gradient and 1 is the end of the gradient. Multiple stops can be
  * applied. The second item is the color for each stop. This color can also be
  * given in the rgba format.
- *
  * @name Highcharts.GradientColorObject#stops
  * @type {Array<Array<number,Highcharts.ColorString>>|undefined}
  */
@@ -163,22 +160,18 @@
  * @interface Highcharts.LinearGradientColorObject
  *//**
  * Start horizontal position of the gradient. Float ranges 0-1.
- *
  * @name Highcharts.LinearGradientColorObject#x1
  * @type {number}
  *//**
  * End horizontal position of the gradient. Float ranges 0-1.
- *
  * @name Highcharts.LinearGradientColorObject#x2
  * @type {number}
  *//**
  * Start vertical position of the gradient. Float ranges 0-1.
- *
  * @name Highcharts.LinearGradientColorObject#y1
  * @type {number}
  *//**
  * End vertical position of the gradient. Float ranges 0-1.
- *
  * @name Highcharts.LinearGradientColorObject#y2
  * @type {number}
  */
@@ -203,17 +196,14 @@
  * @interface Highcharts.RadialGradientColorObject
  *//**
  * Center horizontal position relative to the shape. Float ranges 0-1.
- *
  * @name Highcharts.RadialGradientColorObject#cx
  * @type {number}
  *//**
  * Center vertical position relative to the shape. Float ranges 0-1.
- *
  * @name Highcharts.RadialGradientColorObject#cy
  * @type {number}
  *//**
  * Radius relative to the shape. Float ranges 0-1.
- *
  * @name Highcharts.RadialGradientColorObject#r
  * @type {number}
  */
@@ -224,22 +214,18 @@
  * @interface Highcharts.RectangleObject
  *//**
  * Height of the rectangle.
- *
  * @name Highcharts.RectangleObject#height
  * @type {number}
  *//**
  * Width of the rectangle.
- *
  * @name Highcharts.RectangleObject#width
  * @type {number}
  *//**
  * Horizontal position of the rectangle.
- *
  * @name Highcharts.RectangleObject#x
  * @type {number}
  *//**
  * Vertical position of the rectangle.
- *
  * @name Highcharts.RectangleObject#y
  * @type {number}
  */
@@ -250,38 +236,30 @@
  * @interface Highcharts.ShadowOptionsObject
  *//**
  * The shadow color.
- *
- * @name Highcharts.ShadowOptionsObject#color
- * @type {string|undefined}
- *
+ * @name    Highcharts.ShadowOptionsObject#color
+ * @type    {string|undefined}
  * @default ${palette.neutralColor100}
  *//**
  * The horizontal offset from the element.
  *
- * @name Highcharts.ShadowOptionsObject#offsetX
- * @type {number|undefined}
- *
+ * @name    Highcharts.ShadowOptionsObject#offsetX
+ * @type    {number|undefined}
  * @default 1
  *//**
  * The vertical offset from the element.
- *
- * @name Highcharts.ShadowOptionsObject#offsetY
- * @type {number|undefined}
- *
+ * @name    Highcharts.ShadowOptionsObject#offsetY
+ * @type    {number|undefined}
  * @default 1
  *//**
  * The shadow opacity.
  *
- * @name Highcharts.ShadowOptionsObject#opacity
- * @type {number|undefined}
- *
+ * @name    Highcharts.ShadowOptionsObject#opacity
+ * @type    {number|undefined}
  * @default 0.15
  *//**
  * The shadow width or distance from the element.
- *
- * @name Highcharts.ShadowOptionsObject#width
- * @type {number|undefined}
- *
+ * @name    Highcharts.ShadowOptionsObject#width
+ * @type    {number|undefined}
  * @default 3
  */
 
@@ -506,6 +484,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         var animOptions = H.animObject(
             pick(options, this.renderer.globalAnimation, true)
         );
+
+        // When the page is hidden save resources in the background by not
+        // running animation at all (#9749).
+        if (pick(doc.hidden, doc.msHidden, doc.webkitHidden, false)) {
+            animOptions.duration = 0;
+        }
 
         if (animOptions.duration !== 0) {
             // allows using a callback with the global animation without

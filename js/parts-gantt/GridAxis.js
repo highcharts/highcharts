@@ -716,9 +716,9 @@ addEvent(
     }
 );
 
-wrap(
-    Axis.prototype,
-    'render',
+addEvent(
+    Axis,
+    'afterRender',
     /**
      * Draw an extra line on the far side of the outermost axis,
      * creating floor/roof/wall of a grid. And some padding.
@@ -737,7 +737,7 @@ wrap(
      * @param {Function} proceed
      *        the original function
      */
-    function (proceed) {
+    function () {
         var axis = this,
             options = axis.options,
             gridOptions = ((
@@ -773,10 +773,6 @@ wrap(
             if (axis.rightWall) {
                 axis.rightWall.destroy();
             }
-
-            // Call original Axis.render() to obtain axis.axisLine and
-            // axis.axisGroup
-            proceed.apply(axis);
 
             axisGroupBox = axis.axisGroup.getBBox();
 
@@ -845,8 +841,6 @@ wrap(
                 }
             }
 
-        } else {
-            proceed.apply(axis);
         }
     }
 );

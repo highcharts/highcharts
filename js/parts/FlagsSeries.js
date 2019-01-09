@@ -38,107 +38,107 @@ seriesType(
     'column'
 
     /**
- * Flags are used to mark events in stock charts. They can be added on the
- * timeline, or attached to a specific series.
- *
- * @sample stock/demo/flags-general/
- *         Flags on a line series
- *
- * @extends      plotOptions.column
- * @excluding    animation, borderColor, borderRadius, borderWidth,
- *               colorByPoint, dataGrouping, pointPadding, pointWidth,
- *               turboThreshold
- * @product      highstock
- * @optionparent plotOptions.flags
- */
+     * Flags are used to mark events in stock charts. They can be added on the
+     * timeline, or attached to a specific series.
+     *
+     * @sample stock/demo/flags-general/
+     *         Flags on a line series
+     *
+     * @extends      plotOptions.column
+     * @excluding    animation, borderColor, borderRadius, borderWidth,
+     *               colorByPoint, dataGrouping, pointPadding, pointWidth,
+     *               turboThreshold
+     * @product      highstock
+     * @optionparent plotOptions.flags
+     */
     , {
 
         /**
-     * In case the flag is placed on a series, on what point key to place
-     * it. Line and columns have one key, `y`. In range or OHLC-type series,
-     * however, the flag can optionally be placed on the `open`, `high`,
-     *  `low` or `close` key.
-     *
-     * @sample {highstock} stock/plotoptions/flags-onkey/
-     *         Range series, flag on high
-     *
-     * @type       {string}
-     * @default    y
-     * @since      4.2.2
-     * @product    highstock
-     * @validvalue ["y", "open", "high", "low", "close"]
-     * @apioption  plotOptions.flags.onKey
-     */
+         * In case the flag is placed on a series, on what point key to place
+         * it. Line and columns have one key, `y`. In range or OHLC-type series,
+         * however, the flag can optionally be placed on the `open`, `high`,
+         *  `low` or `close` key.
+         *
+         * @sample {highstock} stock/plotoptions/flags-onkey/
+         *         Range series, flag on high
+         *
+         * @type       {string}
+         * @default    y
+         * @since      4.2.2
+         * @product    highstock
+         * @validvalue ["y", "open", "high", "low", "close"]
+         * @apioption  plotOptions.flags.onKey
+         */
 
         /**
-     * The id of the series that the flags should be drawn on. If no id
-     * is given, the flags are drawn on the x axis.
-     *
-     * @sample {highstock} stock/plotoptions/flags/
-     *         Flags on series and on x axis
-     *
-     * @type      {string}
-     * @product   highstock
-     * @apioption plotOptions.flags.onSeries
-     */
+         * The id of the series that the flags should be drawn on. If no id
+         * is given, the flags are drawn on the x axis.
+         *
+         * @sample {highstock} stock/plotoptions/flags/
+         *         Flags on series and on x axis
+         *
+         * @type      {string}
+         * @product   highstock
+         * @apioption plotOptions.flags.onSeries
+         */
 
         pointRange: 0, // #673
 
         /**
-     * Whether the flags are allowed to overlap sideways. If `false`, the flags
-     * are moved sideways using an algorithm that seeks to place every flag as
-     * close as possible to its original position.
-     *
-     * @sample {highstock} stock/plotoptions/flags-allowoverlapx
-     *         Allow sideways overlap
-     *
-     * @since 6.0.4
-     */
+         * Whether the flags are allowed to overlap sideways. If `false`, the
+         * flags are moved sideways using an algorithm that seeks to place every
+         * flag as close as possible to its original position.
+         *
+         * @sample {highstock} stock/plotoptions/flags-allowoverlapx
+         *         Allow sideways overlap
+         *
+         * @since 6.0.4
+         */
         allowOverlapX: false,
 
         /**
-     * The shape of the marker. Can be one of "flag", "circlepin", "squarepin",
-     * or an image of the format `url(/path-to-image.jpg)`. Individual
-     * shapes can also be set for each point.
-     *
-     * @sample {highstock} stock/plotoptions/flags/
-     *         Different shapes
-     *
-     * @product    highstock
-     * @validvalue ["flag", "circlepin", "squarepin"]
-     */
+         * The shape of the marker. Can be one of "flag", "circlepin",
+         * "squarepin", or an image of the format `url(/path-to-image.jpg)`.
+         * Individual shapes can also be set for each point.
+         *
+         * @sample {highstock} stock/plotoptions/flags/
+         *         Different shapes
+         *
+         * @product    highstock
+         * @validvalue ["flag", "circlepin", "squarepin"]
+         */
         shape: 'flag',
 
         /**
-     * When multiple flags in the same series fall on the same value, this
-     * number determines the vertical offset between them.
-     *
-     * @sample {highstock} stock/plotoptions/flags-stackdistance/
-     *         A greater stack distance
-     *
-     * @product highstock
-     */
+         * When multiple flags in the same series fall on the same value, this
+         * number determines the vertical offset between them.
+         *
+         * @sample {highstock} stock/plotoptions/flags-stackdistance/
+         *         A greater stack distance
+         *
+         * @product highstock
+         */
         stackDistance: 12,
 
         /**
-     * Text alignment for the text inside the flag.
-     *
-     * @since      5.0.0
-     * @product    highstock
-     * @validvalue ["left", "center", "right"]
-     */
+         * Text alignment for the text inside the flag.
+         *
+         * @since      5.0.0
+         * @product    highstock
+         * @validvalue ["left", "center", "right"]
+         */
         textAlign: 'center',
 
         /**
-     * Specific tooltip options for flag series. Flag series tooltips are
-     * different from most other types in that a flag doesn't have a data
-     * value, so the tooltip rather displays the `text` option for each
-     * point.
-     *
-     * @extends   plotOptions.series.tooltip
-     * @excluding changeDecimals, valueDecimals, valuePrefix, valueSuffix
-     * @product   highstock
-     */
+         * Specific tooltip options for flag series. Flag series tooltips are
+         * different from most other types in that a flag doesn't have a data
+         * value, so the tooltip rather displays the `text` option for each
+         * point.
+         *
+         * @extends   plotOptions.series.tooltip
+         * @excluding changeDecimals, valueDecimals, valuePrefix, valueSuffix
+         * @product   highstock
+         */
         tooltip: {
             pointFormat: '{point.text}<br/>'
         },
@@ -146,125 +146,125 @@ seriesType(
         threshold: null,
 
         /**
-     * The text to display on each flag. This can be defined on series level,
-     *  or individually for each point. Defaults to `"A"`.
-     *
-     * @type      {string}
-     * @default   A
-     * @product   highstock
-     * @apioption plotOptions.flags.title
-     */
+         * The text to display on each flag. This can be defined on series
+         * level, or individually for each point. Defaults to `"A"`.
+         *
+         * @type      {string}
+         * @default   A
+         * @product   highstock
+         * @apioption plotOptions.flags.title
+         */
 
         /**
-     * The y position of the top left corner of the flag relative to either
-     * the series (if onSeries is defined), or the x axis. Defaults to
-     * `-30`.
-     *
-     * @product highstock
-     */
+         * The y position of the top left corner of the flag relative to either
+         * the series (if onSeries is defined), or the x axis. Defaults to
+         * `-30`.
+         *
+         * @product highstock
+         */
         y: -30,
 
         /**
-     * Whether to use HTML to render the flag texts. Using HTML allows for
-     * advanced formatting, images and reliable bi-directional text rendering.
-     * Note that exported images won't respect the HTML, and that HTML
-     * won't respect Z-index settings.
-     *
-     * @type      {boolean}
-     * @default   false
-     * @since     1.3
-     * @product   highstock
-     * @apioption plotOptions.flags.useHTML
-     */
+         * Whether to use HTML to render the flag texts. Using HTML allows for
+         * advanced formatting, images and reliable bi-directional text
+         * rendering. Note that exported images won't respect the HTML, and that
+         * HTML won't respect Z-index settings.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since     1.3
+         * @product   highstock
+         * @apioption plotOptions.flags.useHTML
+         */
 
         /**
-     * Fixed width of the flag's shape. By default, width is autocalculated
-     * according to the flag's title.
-     *
-     * @sample {highstock} stock/demo/flags-shapes/
-     *         Flags with fixed width
-     *
-     * @type      {number}
-     * @product   highstock
-     * @apioption plotOptions.flags.width
-     */
+         * Fixed width of the flag's shape. By default, width is autocalculated
+         * according to the flag's title.
+         *
+         * @sample {highstock} stock/demo/flags-shapes/
+         *         Flags with fixed width
+         *
+         * @type      {number}
+         * @product   highstock
+         * @apioption plotOptions.flags.width
+         */
 
         /**
-     * Fixed height of the flag's shape. By default, height is autocalculated
-     * according to the flag's title.
-     *
-     * @type      {number}
-     * @product   highstock
-     * @apioption plotOptions.flags.height
-     */
+         * Fixed height of the flag's shape. By default, height is
+         * autocalculated according to the flag's title.
+         *
+         * @type      {number}
+         * @product   highstock
+         * @apioption plotOptions.flags.height
+         */
 
         /**
-     * The fill color for the flags.
-     *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject}
-     * @product highstock
-     */
+         * The fill color for the flags.
+         *
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @product highstock
+         */
         fillColor: '${palette.backgroundColor}',
 
         /**
-     * The color of the line/border of the flag.
-     *
-     * In styled mode, the stroke is set in the
-     * `.highcharts-flag-series.highcharts-point` rule.
-     *
-     * @type      {Highcharts.ColorString}
-     * @default   #000000
-     * @product   highstock
-     * @apioption plotOptions.flags.lineColor
-     */
+         * The color of the line/border of the flag.
+         *
+         * In styled mode, the stroke is set in the
+         * `.highcharts-flag-series.highcharts-point` rule.
+         *
+         * @type      {Highcharts.ColorString}
+         * @default   #000000
+         * @product   highstock
+         * @apioption plotOptions.flags.lineColor
+         */
 
         /**
-     * The pixel width of the flag's line/border.
-     *
-     * @product highstock
-     */
+         * The pixel width of the flag's line/border.
+         *
+         * @product highstock
+         */
         lineWidth: 1,
 
         states: {
 
             /**
-         * @extends plotOptions.column.states.hover
-         * @product highstock
-         */
+             * @extends plotOptions.column.states.hover
+             * @product highstock
+             */
             hover: {
 
                 /**
-             * The color of the line/border of the flag.
-             *
-             * @type    {Highcharts.ColorString}
-             * @product highstock
-             */
+                 * The color of the line/border of the flag.
+                 *
+                 * @type    {Highcharts.ColorString}
+                 * @product highstock
+                 */
                 lineColor: '${palette.neutralColor100}',
 
                 /**
-             * The fill or background color of the flag.
-             *
-             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject}
-             * @product highstock
-             */
+                 * The fill or background color of the flag.
+                 *
+                 * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @product highstock
+                 */
                 fillColor: '${palette.highlightColor20}'
             }
         },
 
         /**
-     * The text styles of the flag.
-     *
-     * In styled mode, the styles are set in the
-     * `.highcharts-flag-series .highcharts-point` rule.
-     *
-     * @type    {Highcharts.CSSObject}
-     * @default {"fontSize": "11px", "fontWeight": "bold"}
-     * @product highstock
-     */
+         * The text styles of the flag.
+         *
+         * In styled mode, the styles are set in the
+         * `.highcharts-flag-series .highcharts-point` rule.
+         *
+         * @type    {Highcharts.CSSObject}
+         * @default {"fontSize": "11px", "fontWeight": "bold"}
+         * @product highstock
+         */
         style: {
-        /** @ignore */
+            /** @ignore-option */
             fontSize: '11px',
-            /** @ignore */
+            /** @ignore-option */
             fontWeight: 'bold'
         }
 
@@ -277,25 +277,25 @@ seriesType(
         forceCrop: true,
 
         /**
-     * Inherit the initialization from base Series.
-     *
-     * @private
-     * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
-     */
+         * Inherit the initialization from base Series.
+         *
+         * @private
+         * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
+         */
         init: Series.prototype.init,
 
         /**
-     * Get presentational attributes
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#pointAttribs
-     *
-     * @param {Highcharts.Point} point
-     *
-     * @param {string} [state]
-     *
-     * @return {Highcharts.SVGAttributes}
-     */
+         * Get presentational attributes
+         *
+         * @private
+         * @function Highcharts.seriesTypes.flags#pointAttribs
+         *
+         * @param {Highcharts.Point} point
+         *
+         * @param {string} [state]
+         *
+         * @return {Highcharts.SVGAttributes}
+         */
         pointAttribs: function (point, state) {
             var options = this.options,
                 color = (point && point.color) || this.color,
@@ -320,11 +320,11 @@ seriesType(
         getPlotBox: onSeriesMixin.getPlotBox,
 
         /**
-     * Draw the markers.
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#drawPoints
-     */
+         * Draw the markers.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.flags#drawPoints
+         */
         drawPoints: function () {
             var series = this,
                 points = series.points,
@@ -508,11 +508,12 @@ seriesType(
         },
 
         /**
-     * Extend the column trackers with listeners to expand and contract stacks.
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#drawTracker
-     */
+         * Extend the column trackers with listeners to expand and contract
+         * stacks.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.flags#drawTracker
+         */
         drawTracker: function () {
             var series = this,
                 points = series.points;
@@ -520,10 +521,10 @@ seriesType(
             TrackerMixin.drawTrackerPoint.apply(this);
 
             /* *
-         * Bring each stacked flag up on mouse over, this allows readability of
-         * vertically stacked elements as well as tight points on the x axis.
-         * #1924.
-         */
+            * Bring each stacked flag up on mouse over, this allows readability
+            * of vertically stacked elements as well as tight points on the x
+            * axis. #1924.
+            */
             points.forEach(function (point) {
                 var graphic = point.graphic;
 
@@ -558,13 +559,13 @@ seriesType(
         },
 
         /**
-     * Disable animation, but keep clipping (#8546).
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#animate
-     *
-     * @param {boolean} [init]
-     */
+         * Disable animation, but keep clipping (#8546).
+         *
+         * @private
+         * @function Highcharts.seriesTypes.flags#animate
+         *
+         * @param {boolean} [init]
+         */
         animate: function (init) {
             if (init) {
                 this.setClip();
@@ -574,9 +575,9 @@ seriesType(
         },
 
         /**
-     * @private
-     * @function Highcharts.seriesTypes.flags#setClip
-     */
+         * @private
+         * @function Highcharts.seriesTypes.flags#setClip
+         */
         setClip: function () {
             Series.prototype.setClip.apply(this, arguments);
             if (this.options.clip !== false && this.sharedClipKey) {
@@ -585,17 +586,17 @@ seriesType(
         },
 
         /**
-     * @private
-     * @function Highcharts.seriesTypes.flags#buildKDTree
-     */
+         * @private
+         * @function Highcharts.seriesTypes.flags#buildKDTree
+         */
         buildKDTree: noop,
 
         /**
-     * Don't invert the flag marker group (#4960).
-     *
-     * @private
-     * @function Highcharts.seriesTypes.flags#invertGroups
-     */
+         * Don't invert the flag marker group (#4960).
+         *
+         * @private
+         * @function Highcharts.seriesTypes.flags#invertGroups
+         */
         invertGroups: noop
 
     }
@@ -619,9 +620,7 @@ symbols.flag = function (x, y, w, h, options) {
     );
 };
 
-/*
- * Create the circlepin and squarepin icons with anchor
- */
+// Create the circlepin and squarepin icons with anchor
 function createPinSymbol(shape) {
     symbols[shape + 'pin'] = function (x, y, w, h, options) {
 

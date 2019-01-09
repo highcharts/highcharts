@@ -82,373 +82,367 @@ seriesType('pie', 'line',
          */
 
         /**
-     * The center of the pie chart relative to the plot area. Can be percentages
-     * or pixel values. The default behaviour (as of 3.0) is to center
-     * the pie so that all slices and data labels are within the plot area.
-     * As a consequence, the pie may actually jump around in a chart with
-     * dynamic values, as the data labels move. In that case, the center
-     * should be explicitly set, for example to `["50%", "50%"]`.
-     *
-     * @sample {highcharts} highcharts/plotoptions/pie-center/
-     *         Centered at 100, 100
-     *
-     * @type    {Array<number|string|null>}
-     * @default [null, null]
-     * @product highcharts
-     */
+         * The center of the pie chart relative to the plot area. Can be
+         * percentages or pixel values. The default behaviour (as of 3.0) is to
+         * center the pie so that all slices and data labels are within the plot
+         * area. As a consequence, the pie may actually jump around in a chart
+         * with dynamic values, as the data labels move. In that case, the
+         * center should be explicitly set, for example to `["50%", "50%"]`.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-center/
+         *         Centered at 100, 100
+         *
+         * @type    {Array<number|string|null>}
+         * @default [null, null]
+         * @product highcharts
+         */
         center: [null, null],
 
         /**
-     * @product highcharts
-     */
+         * @product highcharts
+         */
         clip: false,
 
-        /**
-     * @ignore
-     */
+        /** @ignore */
         colorByPoint: true, // always true for pies
 
         /**
-     * A series specific or series type specific color set to use instead
-     * of the global [colors](#colors).
-     *
-     * @sample {highcharts} highcharts/demo/pie-monochrome/
-     *         Set default colors for all pies
-     *
-     * @type      {Array<Highcharts.ColorString>}
-     * @since     3.0
-     * @product   highcharts
-     * @apioption plotOptions.pie.colors
-     */
+         * A series specific or series type specific color set to use instead
+         * of the global [colors](#colors).
+         *
+         * @sample {highcharts} highcharts/demo/pie-monochrome/
+         *         Set default colors for all pies
+         *
+         * @type      {Array<Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject>}
+         * @since     3.0
+         * @product   highcharts
+         * @apioption plotOptions.pie.colors
+         */
 
         /**
-     * @extends   plotOptions.series.dataLabels
-     * @excluding align, allowOverlap, staggerLines, step
-     * @product   highcharts
-     */
+         * @extends   plotOptions.series.dataLabels
+         * @excluding align, allowOverlap, staggerLines, step
+         * @product   highcharts
+         */
         dataLabels: {
 
             allowOverlap: true,
 
             /**
-         * The color of the line connecting the data label to the pie slice.
-         * The default color is the same as the point's color.
-         *
-         * In styled mode, the connector stroke is given in the
-         * `.highcharts-data-label-connector` class.
-         *
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorcolor/
-         *         Blue connectors
-         * @sample {highcharts} highcharts/css/pie-point/
-         *         Styled connectors
-         *
-         * @type      {Highcharts.ColorString}
-         * @since     2.1
-         * @product   highcharts
-         * @apioption plotOptions.pie.dataLabels.connectorColor
-         */
+             * The color of the line connecting the data label to the pie slice.
+             * The default color is the same as the point's color.
+             *
+             * In styled mode, the connector stroke is given in the
+             * `.highcharts-data-label-connector` class.
+             *
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorcolor/
+             *         Blue connectors
+             * @sample {highcharts} highcharts/css/pie-point/
+             *         Styled connectors
+             *
+             * @type      {Highcharts.ColorString}
+             * @since     2.1
+             * @product   highcharts
+             * @apioption plotOptions.pie.dataLabels.connectorColor
+             */
 
             /**
-         * The distance from the data label to the connector. Note that data
-         * labels also have a default `padding`, so in order for the connector
-         * to touch the text, the `padding` must also be 0.
-         *
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorpadding/
-         *         No padding
-         *
-         * @since     2.1
-         * @product   highcharts
-         * @apioption plotOptions.pie.dataLabels.connectorPadding
-         */
+             * The distance from the data label to the connector. Note that data
+             * labels also have a default `padding`, so in order for the
+             * connector to touch the text, the `padding` must also be 0.
+             *
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorpadding/
+             *         No padding
+             *
+             * @since     2.1
+             * @product   highcharts
+             * @apioption plotOptions.pie.dataLabels.connectorPadding
+             */
             connectorPadding: 5,
 
             /**
-         * The width of the line connecting the data label to the pie slice.
-         *
-         *
-         * In styled mode, the connector stroke width is given in the
-         * `.highcharts-data-label-connector` class.
-         *
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorwidth-disabled/
-         *         Disable the connector
-         * @sample {highcharts} highcharts/css/pie-point/
-         *         Styled connectors
-         *
-         * @type      {number}
-         * @default   1
-         * @since     2.1
-         * @product   highcharts
-         * @apioption plotOptions.pie.dataLabels.connectorWidth
-         */
+             * The width of the line connecting the data label to the pie slice.
+             *
+             *
+             * In styled mode, the connector stroke width is given in the
+             * `.highcharts-data-label-connector` class.
+             *
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorwidth-disabled/
+             *         Disable the connector
+             * @sample {highcharts} highcharts/css/pie-point/
+             *         Styled connectors
+             *
+             * @type      {number}
+             * @default   1
+             * @since     2.1
+             * @product   highcharts
+             * @apioption plotOptions.pie.dataLabels.connectorWidth
+             */
 
             /**
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow
-         *         Long labels truncated with an ellipsis
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap
-         *         Long labels are wrapped
-         *
-         * @type      {Highcharts.CSSObject}
-         * @apioption plotOptions.pie.dataLabels.style
-         */
+             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow
+             *         Long labels truncated with an ellipsis
+             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap
+             *         Long labels are wrapped
+             *
+             * @type      {Highcharts.CSSObject}
+             * @apioption plotOptions.pie.dataLabels.style
+             */
 
             /**
-         * The distance of the data label from the pie's edge. Negative numbers
-         * put the data label on top of the pie slices. Connectors are only
-         * shown for data labels outside the pie.
-         *
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-distance/
-         *         Data labels on top of the pie
-         *
-         * @since   2.1
-         * @product highcharts
-         */
+             * The distance of the data label from the pie's edge. Negative
+             * numbers put the data label on top of the pie slices. Connectors
+             * are only shown for data labels outside the pie.
+             *
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-distance/
+             *         Data labels on top of the pie
+             *
+             * @since   2.1
+             * @product highcharts
+             */
             distance: 30,
 
             /**
-         * Enable or disable the data labels.
-         *
-         * @since   2.1
-         * @product highcharts
-         */
+             * Enable or disable the data labels.
+             *
+             * @since   2.1
+             * @product highcharts
+             */
             enabled: true,
 
             /**
-         * @type      {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
-         * @default   function () { return this.point.name; }
-         * @apioption plotOptions.pie.dataLabels.formatter
-         */
+             * @type      {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
+             * @default   function () { return this.point.name; }
+             * @apioption plotOptions.pie.dataLabels.formatter
+             */
             formatter: function () { // #2945
                 return this.point.isNull ? undefined : this.point.name;
             },
 
             /**
-         * Whether to render the connector as a soft arc or a line with sharp
-         * break. Works only if `connectorShape` equals to `fixedOffset`.
-         *
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-true/
-         *         Soft
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-false/
-         *         Non soft
-         *
-         * @type      {number}
-         * @since     2.1.7
-         * @product   highcharts
-         * @apioption plotOptions.pie.dataLabels.softConnector
-         */
+             * Whether to render the connector as a soft arc or a line with
+             * sharp break. Works only if `connectorShape` equals to
+             * `fixedOffset`.
+             *
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-true/
+             *         Soft
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-softconnector-false/
+             *         Non soft
+             *
+             * @type      {number}
+             * @since     2.1.7
+             * @product   highcharts
+             * @apioption plotOptions.pie.dataLabels.softConnector
+             */
             softConnector: true,
 
             /**
-          * Alignment method for data labels. Possible values are:
-          * `'toPlotEdges'` (each label touches the nearest vertical edge of
-          * the plot area) or `'connectors'` (connectors have the same x
-          * position and the widest label of each half (left & right) touches
-          * the nearest vertical edge of the plot area).
-          *
-          * @type {String}
-          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-connectors/ alignTo: connectors
-          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-plotedges/ alignTo: plotEdges
-          * @since 7.0.0
-          * @default undefined
-          * @product highcharts
-          * @apioption plotOptions.pie.dataLabels.alignTo
-          */
+             * Alignment method for data labels. Possible values are:
+             * `'toPlotEdges'` (each label touches the nearest vertical edge of
+             * the plot area) or `'connectors'` (connectors have the same x
+             * position and the widest label of each half (left & right) touches
+             * the nearest vertical edge of the plot area).
+             *
+             * @type {String}
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-connectors/ alignTo: connectors
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-alignto-plotedges/ alignTo: plotEdges
+             * @since 7.0.0
+             * @default undefined
+             * @product highcharts
+             * @apioption plotOptions.pie.dataLabels.alignTo
+             */
 
             x: 0,
 
             /**
-         * Specifies the method that is used to generate the connector path.
-         * Highcharts provides 3 built-in connector shapes: `'fixedOffset'`
-         * (default), `'straight'` and `'crookedLine'`. Using `'crookedLine'`
-         * has the most sense (in most of the cases) when `'alignTo'` is set.
-         *
-         * Users can provide their own method by passing a function instead of
-         * a String. 3 arguments are passed to the callback:
-         *
-         * <ol>
-         *  <li>
-         *   Object that holds the information about the coordinates of the
-         *   label (`x` & `y` properties) and how the label is located in
-         *   relation to the pie (`alignment` property). `alignment` can by one
-         *   of the following:
-         *   `'left'` (pie on the left side of the data label),
-         *   `'right'` (pie on the right side of the data label) or
-         *   `'center'` (data label overlaps the pie).
-         *  </li>
-         *  <li>
-         *   Object that holds the information about the position of the
-         *   connector. Its `touchingSliceAt`  porperty tells the position of
-         *   the place where the connector touches the slice.
-         *  </li>
-         *  <li>
-         *   Data label options
-         *  </li>
-         * </ol>
-         *
-         * The function has to return an SVG path definition in array form
-         * (see the example).
-         *
-         * @type {String|Function}
-         * @since 7.0.0
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-string/ connectorShape is a String
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-function/ connectorShape is a function
-         * @product highcharts
-         * @apioption plotOptions.pie.dataLabels.connectorShape
-         */
+             * Specifies the method that is used to generate the connector path.
+             * Highcharts provides 3 built-in connector shapes: `'fixedOffset'`
+             * (default), `'straight'` and `'crookedLine'`. Using
+             * `'crookedLine'` has the most sense (in most of the cases) when
+             * `'alignTo'` is set.
+             *
+             * Users can provide their own method by passing a function instead
+             * of a String. 3 arguments are passed to the callback:
+             *
+             * - Object that holds the information about the coordinates of the
+             *   label (`x` & `y` properties) and how the label is located in
+             *   relation to the pie (`alignment` property). `alignment` can by
+             *   one of the following:
+             *   `'left'` (pie on the left side of the data label),
+             *   `'right'` (pie on the right side of the data label) or
+             *   `'center'` (data label overlaps the pie).
+             * - Object that holds the information about the position of the
+             *   connector. Its `touchingSliceAt`  porperty tells the position
+             *   of the place where the connector touches the slice.
+             * - Data label options
+             *
+             * The function has to return an SVG path definition in array form
+             * (see the example).
+             *
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-string/
+             *         connectorShape is a String
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-connectorshape-function/
+             *         connectorShape is a function
+             *
+             * @type      {string|Function}
+             * @since     7.0.0
+             * @product   highcharts
+             * @apioption plotOptions.pie.dataLabels.connectorShape
+             */
             connectorShape: 'fixedOffset',
 
             /**
-         * Works only if `connectorShape` is `'crookedLine'`. It defines how far
-         * from the vertical plot edge the coonnector path should be crooked.
-         *
-         * @type {String}
-         * @since 7.0.0
-         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-crookdistance/ crookDistance set to 90%
-         * @product highcharts
-         * @apioption plotOptions.pie.dataLabels.crookDistance
-         */
+             * Works only if `connectorShape` is `'crookedLine'`. It defines how
+             * far from the vertical plot edge the coonnector path should be
+             * crooked.
+             *
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-crookdistance/
+             *         crookDistance set to 90%
+             *
+             * @type      {string}
+             * @since     7.0.0
+             * @product   highcharts
+             * @apioption plotOptions.pie.dataLabels.crookDistance
+             */
             crookDistance: '70%'
         },
 
         /**
-     * The end angle of the pie in degrees where 0 is top and 90 is right.
-     * Defaults to `startAngle` plus 360.
-     *
-     * @sample {highcharts} highcharts/demo/pie-semi-circle/
-     *         Semi-circle donut
-     *
-     * @type      {number}
-     * @since     1.3.6
-     * @product   highcharts
-     * @apioption plotOptions.pie.endAngle
-     */
+         * The end angle of the pie in degrees where 0 is top and 90 is right.
+         * Defaults to `startAngle` plus 360.
+         *
+         * @sample {highcharts} highcharts/demo/pie-semi-circle/
+         *         Semi-circle donut
+         *
+         * @type      {number}
+         * @since     1.3.6
+         * @product   highcharts
+         * @apioption plotOptions.pie.endAngle
+         */
 
         /**
-     * Equivalent to [chart.ignoreHiddenSeries](#chart.ignoreHiddenSeries),
-     * this option tells whether the series shall be redrawn as if the
-     * hidden point were `null`.
-     *
-     * The default value changed from `false` to `true` with Highcharts
-     * 3.0.
-     *
-     * @sample {highcharts} highcharts/plotoptions/pie-ignorehiddenpoint/
-     *         True, the hiddden point is ignored
-     *
-     * @since   2.3.0
-     * @product highcharts
-     */
+         * Equivalent to [chart.ignoreHiddenSeries](#chart.ignoreHiddenSeries),
+         * this option tells whether the series shall be redrawn as if the
+         * hidden point were `null`.
+         *
+         * The default value changed from `false` to `true` with Highcharts
+         * 3.0.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-ignorehiddenpoint/
+         *         True, the hiddden point is ignored
+         *
+         * @since   2.3.0
+         * @product highcharts
+         */
         ignoreHiddenPoint: true,
 
         /**
-     * The size of the inner diameter for the pie. A size greater than 0
-     * renders a donut chart. Can be a percentage or pixel value. Percentages
-     * are relative to the pie size. Pixel values are given as integers.
-     *
-     *
-     * Note: in Highcharts < 4.1.2, the percentage was relative to the plot
-     * area, not the pie size.
-     *
-     * @sample {highcharts} highcharts/plotoptions/pie-innersize-80px/
-     *         80px inner size
-     * @sample {highcharts} highcharts/plotoptions/pie-innersize-50percent/
-     *         50% of the plot area
-     * @sample {highcharts} highcharts/demo/3d-pie-donut/
-     *         3D donut
-     *
-     * @type      {number|string}
-     * @default   0
-     * @since     2.0
-     * @product   highcharts
-     * @apioption plotOptions.pie.innerSize
-     */
+         * The size of the inner diameter for the pie. A size greater than 0
+         * renders a donut chart. Can be a percentage or pixel value.
+         * Percentages are relative to the pie size. Pixel values are given as
+         * integers.
+         *
+         *
+         * Note: in Highcharts < 4.1.2, the percentage was relative to the plot
+         * area, not the pie size.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-innersize-80px/
+         *         80px inner size
+         * @sample {highcharts} highcharts/plotoptions/pie-innersize-50percent/
+         *         50% of the plot area
+         * @sample {highcharts} highcharts/demo/3d-pie-donut/
+         *         3D donut
+         *
+         * @type      {number|string}
+         * @default   0
+         * @since     2.0
+         * @product   highcharts
+         * @apioption plotOptions.pie.innerSize
+         */
 
-        /**
-     * @ignore
-     */
+        /** @ignore-option */
         legendType: 'point',
 
-        /**
-     * @ignore
-     */
+        /** @ignore-option */
         marker: null, // point options are specified in the base options
 
         /**
-     * The minimum size for a pie in response to auto margins. The pie will
-     * try to shrink to make room for data labels in side the plot area,
-     *  but only to this size.
-     *
-     * @type      {number}
-     * @default   80
-     * @since     3.0
-     * @product   highcharts
-     * @apioption plotOptions.pie.minSize
-     */
+         * The minimum size for a pie in response to auto margins. The pie will
+         * try to shrink to make room for data labels in side the plot area,
+         *  but only to this size.
+         *
+         * @type      {number}
+         * @default   80
+         * @since     3.0
+         * @product   highcharts
+         * @apioption plotOptions.pie.minSize
+         */
 
         /**
-     * The diameter of the pie relative to the plot area. Can be a percentage
-     * or pixel value. Pixel values are given as integers. The default
-     * behaviour (as of 3.0) is to scale to the plot area and give room
-     * for data labels within the plot area.
-     * [slicedOffset](#plotOptions.pie.slicedOffset) is also included
-     * in the default size calculation. As a consequence, the size
-     * of the pie may vary when points are updated and data labels more
-     * around. In that case it is best to set a fixed value, for example
-     * `"75%"`.
-     *
-     * @sample {highcharts} highcharts/plotoptions/pie-size/
-     *         Smaller pie
-     *
-     * @type    {number|string|null}
-     * @product highcharts
-     */
+         * The diameter of the pie relative to the plot area. Can be a
+         * percentage or pixel value. Pixel values are given as integers. The
+         * default behaviour (as of 3.0) is to scale to the plot area and give
+         * room for data labels within the plot area.
+         * [slicedOffset](#plotOptions.pie.slicedOffset) is also included in the
+         * default size calculation. As a consequence, the size of the pie may
+         * vary when points are updated and data labels more around. In that
+         * case it is best to set a fixed value, for example `"75%"`.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-size/
+         *         Smaller pie
+         *
+         * @type    {number|string|null}
+         * @product highcharts
+         */
         size: null,
 
         /**
-     * Whether to display this particular series or series type in the
-     * legend. Since 2.1, pies are not shown in the legend by default.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-showinlegend/
-     *         One series in the legend, one hidden
-     *
-     * @product highcharts
-     */
+         * Whether to display this particular series or series type in the
+         * legend. Since 2.1, pies are not shown in the legend by default.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-showinlegend/
+         *         One series in the legend, one hidden
+         *
+         * @product highcharts
+         */
         showInLegend: false,
 
         /**
-     * If a point is sliced, moved out from the center, how many pixels
-     * should it be moved?.
-     *
-     * @sample {highcharts} highcharts/plotoptions/pie-slicedoffset-20/
-     *         20px offset
-     *
-     * @product highcharts
-     */
+         * If a point is sliced, moved out from the center, how many pixels
+         * should it be moved?.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-slicedoffset-20/
+         *         20px offset
+         *
+         * @product highcharts
+         */
         slicedOffset: 10,
 
         /**
-     * The start angle of the pie slices in degrees where 0 is top and 90
-     * right.
-     *
-     * @sample {highcharts} highcharts/plotoptions/pie-startangle-90/
-     *         Start from right
-     *
-     * @type      {number}
-     * @default   0
-     * @since     2.3.4
-     * @product   highcharts
-     * @apioption plotOptions.pie.startAngle
-     */
+         * The start angle of the pie slices in degrees where 0 is top and 90
+         * right.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-startangle-90/
+         *         Start from right
+         *
+         * @type      {number}
+         * @default   0
+         * @since     2.3.4
+         * @product   highcharts
+         * @apioption plotOptions.pie.startAngle
+         */
 
         /**
-     * Sticky tracking of mouse events. When true, the `mouseOut` event
-     * on a series isn't triggered until the mouse moves over another series,
-     * or out of the plot area. When false, the `mouseOut` event on a
-     * series is triggered when the mouse leaves the area around the series'
-     * graph or markers. This also implies the tooltip. When `stickyTracking`
-     * is false and `tooltip.shared` is false, the tooltip will be hidden
-     * when moving the mouse between series.
-     *
-     * @product highcharts
-     */
+         * Sticky tracking of mouse events. When true, the `mouseOut` event
+         * on a series isn't triggered until the mouse moves over another
+         * series, or out of the plot area. When false, the `mouseOut` event on
+         * a series is triggered when the mouse leaves the area around the
+         * series'  graph or markers. This also implies the tooltip. When
+         * `stickyTracking` is false and `tooltip.shared` is false, the tooltip
+         * will be hidden when moving the mouse between series.
+         *
+         * @product highcharts
+         */
         stickyTracking: false,
 
         tooltip: {

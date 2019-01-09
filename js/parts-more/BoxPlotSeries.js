@@ -77,7 +77,7 @@ seriesType('boxplot', 'column', {
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #ffffff
      * @since   3.0
      * @product highcharts

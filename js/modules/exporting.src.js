@@ -270,189 +270,160 @@ merge(true, defaultOptions.navigation, {
 
 // Presentational attributes
 merge(true, defaultOptions.navigation
-
     /**
- * A collection of options for buttons and menus appearing in the exporting
- * module.
- *
- * @optionparent navigation
- */
+     * A collection of options for buttons and menus appearing in the exporting
+     * module.
+     *
+     * @optionparent navigation
+     */
     , {
 
         /**
-     * CSS styles for the popup menu appearing by default when the export icon
-     * is clicked. This menu is rendered in HTML.
-     *
-     * @see In styled mode, the menu is styled with the `.highcharts-menu`
-     *      class.
-     *
-     * @sample highcharts/navigation/menustyle/
-     *         Light gray menu background
-     *
-     * @type    {Highcharts.CSSObject}
-     * @default {"border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0"}
-     * @since   2.0
-     */
+         * CSS styles for the popup menu appearing by default when the export
+         * icon is clicked. This menu is rendered in HTML.
+         *
+         * @see In styled mode, the menu is styled with the `.highcharts-menu`
+         *      class.
+         *
+         * @sample highcharts/navigation/menustyle/
+         *         Light gray menu background
+         *
+         * @type    {Highcharts.CSSObject}
+         * @default {"border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0"}
+         * @since   2.0
+         */
         menuStyle: {
-
-            /**
-         * @ignore
-         */
+            /** @ignore-option */
             border: '1px solid ${palette.neutralColor40}',
-
-            /**
-         * @ignore
-         */
+            /** @ignore-option */
             background: '${palette.backgroundColor}',
-
-            /**
-         * @ignore
-         */
+            /** @ignore-option */
             padding: '5px 0'
         },
 
         /**
-     * CSS styles for the individual items within the popup menu appearing by
-     * default when the export icon is clicked. The menu items are rendered in
-     * HTML. Font size defaults to `11px` on desktop and `14px` on touch
-     * devices.
-     *
-     * @see In styled mode, the menu items are styled with the
-     *      `.highcharts-menu-item` class.
-     *
-     * @sample {highcharts} highcharts/navigation/menuitemstyle/
-     *         Add a grey stripe to the left
-     *
-     * @type    {Highcharts.CSSObject}
-     * @default {"padding": "0.5em 1em", "color": "#333333", "background": "none", "fontSize": "11px/14px", "transition": "background 250ms, color 250ms"}
-     * @since   2.0
-     */
+         * CSS styles for the individual items within the popup menu appearing
+         * by default when the export icon is clicked. The menu items are
+         * rendered in HTML. Font size defaults to `11px` on desktop and `14px`
+         * on touch devices.
+         *
+         * @see In styled mode, the menu items are styled with the
+         *      `.highcharts-menu-item` class.
+         *
+         * @sample {highcharts} highcharts/navigation/menuitemstyle/
+         *         Add a grey stripe to the left
+         *
+         * @type    {Highcharts.CSSObject}
+         * @default {"padding": "0.5em 1em", "color": "#333333", "background": "none", "fontSize": "11px/14px", "transition": "background 250ms, color 250ms"}
+         * @since   2.0
+         */
         menuItemStyle: {
-
-            /**
-         * @ignore
-         */
+            /** @ignore-option */
             padding: '0.5em 1em',
-
-            /**
-         * @ignore
-         */
+            /** @ignore-option */
             color: '${palette.neutralColor80}',
-
-            /**
-         * @ignore
-         */
+            /** @ignore-option */
             background: 'none',
-
-            /**
-         * @ignore
-         */
+            /** @ignore-option */
             fontSize: isTouchDevice ? '14px' : '11px',
-
-            /**
-         * @ignore
-         */
+            /** @ignore-option */
             transition: 'background 250ms, color 250ms'
         },
 
         /**
-     * CSS styles for the hover state of the individual items within the popup
-     * menu appearing by default when the export icon is clicked. The menu items
-     * are rendered in HTML.
-     *
-     * @see In styled mode, the menu items are styled with the
-     *      `.highcharts-menu-item` class.
-     *
-     * @sample highcharts/navigation/menuitemhoverstyle/
-     *         Bold text on hover
-     *
-     * @type    {Highcharts.CSSObject}
-     * @default {"background": "#335cad", "color": "#ffffff"}
-     * @since   2.0
-     */
+         * CSS styles for the hover state of the individual items within the
+         * popup menu appearing by default when the export icon is clicked. The
+         * menu items are rendered in HTML.
+         *
+         * @see In styled mode, the menu items are styled with the
+         *      `.highcharts-menu-item` class.
+         *
+         * @sample highcharts/navigation/menuitemhoverstyle/
+         *         Bold text on hover
+         *
+         * @type    {Highcharts.CSSObject}
+         * @default {"background": "#335cad", "color": "#ffffff"}
+         * @since   2.0
+         */
         menuItemHoverStyle: {
-
-            /**
-         * @ignore
-         */
+            /** @ignore-option */
             background: '${palette.highlightColor80}',
-
-            /**
-         * @ignore
-         */
+            /** @ignore-option */
             color: '${palette.backgroundColor}'
         },
 
         /**
-     * A collection of options for buttons appearing in the exporting module.
-     *
-     * In styled mode, the buttons are styled with the
-     * `.highcharts-contextbutton` and `.highcharts-button-symbol` classes.
-     */
+         * A collection of options for buttons appearing in the exporting
+         * module.
+         *
+         * In styled mode, the buttons are styled with the
+         * `.highcharts-contextbutton` and `.highcharts-button-symbol` classes.
+         */
         buttonOptions: {
 
             /**
-         * Fill color for the symbol within the button.
-         *
-         * @sample highcharts/navigation/buttonoptions-symbolfill/
-         *         Blue symbol stroke for one of the buttons
-         *
-         * @type  {Highcharts.ColorString}
-         * @since 2.0
-         */
+             * Fill color for the symbol within the button.
+             *
+             * @sample highcharts/navigation/buttonoptions-symbolfill/
+             *         Blue symbol stroke for one of the buttons
+             *
+             * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since 2.0
+             */
             symbolFill: '${palette.neutralColor60}',
 
             /**
-         * The color of the symbol's stroke or line.
-         *
-         * @sample highcharts/navigation/buttonoptions-symbolstroke/
-         *         Blue symbol stroke
-         *
-         * @type  {Highcharts.ColorString}
-         * @since 2.0
-         */
+             * The color of the symbol's stroke or line.
+             *
+             * @sample highcharts/navigation/buttonoptions-symbolstroke/
+             *         Blue symbol stroke
+             *
+             * @type  {Highcharts.ColorString}
+             * @since 2.0
+             */
             symbolStroke: '${palette.neutralColor60}',
 
             /**
-         * The pixel stroke width of the symbol on the button.
-         *
-         * @sample highcharts/navigation/buttonoptions-height/
-         *         Bigger buttons
-         *
-         * @since 2.0
-         */
+             * The pixel stroke width of the symbol on the button.
+             *
+             * @sample highcharts/navigation/buttonoptions-height/
+             *         Bigger buttons
+             *
+             * @since 2.0
+             */
             symbolStrokeWidth: 3,
 
             /**
-         * A configuration object for the button theme. The object accepts
-         * SVG properties like `stroke-width`, `stroke` and `fill`. Tri-state
-         * button styles are supported by the `states.hover` and `states.select`
-         * objects.
-         *
-         * @sample highcharts/navigation/buttonoptions-theme/
-         *         Theming the buttons
-         *
-         * @since 3.0
-         */
+             * A configuration object for the button theme. The object accepts
+             * SVG properties like `stroke-width`, `stroke` and `fill`.
+             * Tri-state button styles are supported by the `states.hover` and
+             * `states.select` objects.
+             *
+             * @sample highcharts/navigation/buttonoptions-theme/
+             *         Theming the buttons
+             *
+             * @since 3.0
+             */
             theme: {
 
                 /**
-             * The default fill exists only to capture hover events.
-             * @type {Highcharts.ColorString}
-             * @apioption navigation.buttonOptions.theme.fill
-             * @default ${palette.backgroundColor}
-             */
+                 * The default fill exists only to capture hover events.
+                 *
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @default   ${palette.backgroundColor}
+                 * @apioption navigation.buttonOptions.theme.fill
+                 */
 
                 /**
-             * Default stroke for the buttons.
-             * @type {Highcharts.ColorString}
-             * @apioption navigation.buttonOptions.theme.stroke
-             * @default none
-             */
+                 * Default stroke for the buttons.
+                 * @type      {Highcharts.ColorString}
+                 * @default   none
+                 * @apioption navigation.buttonOptions.theme.stroke
+                 */
 
                 /**
-             * Padding for the button.
-             */
+                 * Padding for the button.
+                 */
                 padding: 5
 
             }

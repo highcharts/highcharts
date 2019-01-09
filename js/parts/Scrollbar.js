@@ -136,7 +136,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     barBackgroundColor: '${palette.neutralColor20}',
 
@@ -161,7 +161,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     buttonArrowColor: '${palette.neutralColor80}',
 
@@ -171,7 +171,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     buttonBackgroundColor: '${palette.neutralColor10}',
 
@@ -196,7 +196,7 @@ var defaultScrollbarOptions = {
     /**
      * The color of the small rifles in the middle of the scrollbar.
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     rifleColor: '${palette.neutralColor80}',
 
@@ -206,7 +206,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     trackBackgroundColor: '${palette.neutralColor5}',
 

@@ -23,32 +23,34 @@ var Series = H.Series,
  *
  * @augments Highcharts.Series
  */
-seriesType('scatter', 'line'
+seriesType(
+    'scatter',
+    'line',
 
     /**
- * A scatter plot uses cartesian coordinates to display values for two
- * variables for a set of data.
- *
- * @sample {highcharts} highcharts/demo/scatter/
- *         Scatter plot
- *
- * @extends      plotOptions.line
- * @excluding    pointPlacement, shadow, useOhlcData
- * @product      highcharts highstock
- * @optionparent plotOptions.scatter
- */
-    , {
+     * A scatter plot uses cartesian coordinates to display values for two
+     * variables for a set of data.
+     *
+     * @sample {highcharts} highcharts/demo/scatter/
+     *         Scatter plot
+     *
+     * @extends      plotOptions.line
+     * @excluding    pointPlacement, shadow, useOhlcData
+     * @product      highcharts highstock
+     * @optionparent plotOptions.scatter
+     */
+    {
 
         /**
-     * The width of the line connecting the data points.
-     *
-     * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/
-     *         0 by default
-     * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/
-     *         1px
-     *
-     * @product highcharts highstock
-     */
+         * The width of the line connecting the data points.
+         *
+         * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-none/
+         *         0 by default
+         * @sample {highcharts} highcharts/plotoptions/scatter-linewidth-1/
+         *         1px
+         *
+         * @product highcharts highstock
+         */
         lineWidth: 0,
 
         findNearestPointBy: 'xy',
@@ -59,30 +61,30 @@ seriesType('scatter', 'line'
         },
 
         /**
-     * Sticky tracking of mouse events. When true, the `mouseOut` event
-     * on a series isn't triggered until the mouse moves over another series,
-     * or out of the plot area. When false, the `mouseOut` event on a series
-     * is triggered when the mouse leaves the area around the series' graph
-     * or markers. This also implies the tooltip. When `stickyTracking`
-     * is false and `tooltip.shared` is false, the tooltip will be hidden
-     * when moving the mouse between series.
-     *
-     * @type      {boolean}
-     * @default   false
-     * @product   highcharts highstock
-     * @apioption plotOptions.scatter.stickyTracking
-     */
+         * Sticky tracking of mouse events. When true, the `mouseOut` event
+         * on a series isn't triggered until the mouse moves over another
+         * series, or out of the plot area. When false, the `mouseOut` event on
+         * a series is triggered when the mouse leaves the area around the
+         * series' graph or markers. This also implies the tooltip. When
+         * `stickyTracking` is false and `tooltip.shared` is false, the tooltip
+         * will be hidden when moving the mouse between series.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @product   highcharts highstock
+         * @apioption plotOptions.scatter.stickyTracking
+         */
 
         /**
-     * A configuration object for the tooltip rendering of each single
-     * series. Properties are inherited from [tooltip](#tooltip).
-     * Overridable properties are `headerFormat`, `pointFormat`, `yDecimals`,
-     * `xDateFormat`, `yPrefix` and `ySuffix`. Unlike other series, in
-     * a scatter plot the series.name by default shows in the headerFormat
-     * and point.x and point.y in the pointFormat.
-     *
-     * @product highcharts highstock
-     */
+         * A configuration object for the tooltip rendering of each single
+         * series. Properties are inherited from [tooltip](#tooltip).
+         * Overridable properties are `headerFormat`, `pointFormat`,
+         * `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`. Unlike other
+         * series, in a scatter plot the series.name by default shows in the
+         * headerFormat and point.x and point.y in the pointFormat.
+         *
+         * @product highcharts highstock
+         */
         tooltip: {
             headerFormat:
             '<span style="color:{point.color}">\u25CF</span> ' +
@@ -99,15 +101,16 @@ seriesType('scatter', 'line'
         takeOrdinalPosition: false, // #2342
 
         /**
-     * @private
-     * @function Highcharts.seriesTypes.scatter#drawGraph
-     */
+         * @private
+         * @function Highcharts.seriesTypes.scatter#drawGraph
+         */
         drawGraph: function () {
             if (this.options.lineWidth) {
                 Series.prototype.drawGraph.call(this);
             }
         }
-    });
+    }
+);
 
 /**
  * A `scatter` series. If the [type](#series.scatter.type) option is

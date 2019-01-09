@@ -86,7 +86,7 @@ seriesType('bullet', 'column'
          *
          * In styled mode, use class `highcharts-bullet-target` instead.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     6.0.0
          * @product   highcharts
          * @apioption plotOptions.bullet.targetOptions.color

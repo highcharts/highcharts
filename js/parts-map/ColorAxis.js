@@ -137,7 +137,7 @@ if (!H.ColorAxis) {
              * @sample {highmaps} maps/demo/data-class-two-ranges/
              *         Explicit colors
              *
-             * @type      {Highcharts.ColorString}
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product   highcharts highmaps
              * @apioption colorAxis.dataClasses.color
              */
@@ -323,7 +323,7 @@ if (!H.ColorAxis) {
                 /**
                  * The color of the marker.
                  *
-                 * @type    {Highcharts.ColorString}
+                 * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highcharts highmaps
                  */
                 color: '${palette.neutralColor40}'
