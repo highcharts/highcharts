@@ -360,17 +360,17 @@ seriesType('column', 'line'
         dataLabels: {
 
             /**
-             * @type       {string|null}
+             * @type {Highcharts.AlignType|null}
              */
             align: null, // auto
 
             /**
-             * @type       {string|null}
+             * @type {Highcharts.VerticalAlignType|null}
              */
             verticalAlign: null, // auto
 
             /**
-             * @type       {number|null}
+             * @type {number|null}
              */
             y: null
         },

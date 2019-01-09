@@ -257,20 +257,6 @@
  */
 
 /**
- * An object containing `x` and `y` properties for the position of an element.
- *
- * @interface Highcharts.PositionObject
- *//**
- * X position of the element.
- * @name Highcharts.PositionObject#x
- * @type {number}
- *//**
- * Y position of the element.
- * @name Highcharts.PositionObject#y
- * @type {number}
- */
-
-/**
  * If a number is given, it defines the pixel length. If a percentage string is
  * given, like for example `'50%'`, the setting defines a length relative to a
  * base size, for example the size of a container.

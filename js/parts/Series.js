@@ -1647,7 +1647,7 @@ H.Series = H.seriesType(
              * @sample {highcharts} highcharts/plotoptions/series-datalabels-align-left/
              *         Left aligned
              *
-             * @validvalue ["left", "center", "right"]
+             * @type {Highcharts.AlignType}
              */
             align: 'center',
 
@@ -2027,8 +2027,8 @@ H.Series = H.seriesType(
              * instance in a column chart, the label is above positive values
              * and below negative values.
              *
-             * @since      2.3.3
-             * @validvalue ["top", "middle", "bottom"]
+             * @type  {Highcharts.VerticalAlignType}
+             * @since 2.3.3
              */
             verticalAlign: 'bottom', // above singular point
 

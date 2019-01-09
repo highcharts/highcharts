@@ -245,8 +245,8 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/vertical-align-bottom/
          *         Bottom
          *
-         * @since      6.0.0
-         * @validvalue ["top", "middle", "bottom"]
+         * @type  {Highcharts.VerticalAlignType}
+         * @since 6.0.0
          */
         verticalAlign: 'top',
 
@@ -431,8 +431,8 @@ extend(defaultOptions, {
              * @sample {highstock} stock/rangeselector/input-button-position/
              *         Alignment
              *
-             * @since      6.0.0
-             * @validvalue ["left", "center", "right"]
+             * @type  {Highcharts.AlignType}
+             * @since 6.0.0
              */
             align: 'right',
 
