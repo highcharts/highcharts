@@ -126,7 +126,7 @@ var addEvent = H.addEvent,
  *        chart object will not be finished synchronously. As a consequence,
  *        code that relies on the newly built Chart object should always run in
  *        the callback. Defining a
- *        [chart.event.load](https://api.highcharts.com/highstock/chart.events.load)
+ *        [chart.events.load](https://api.highcharts.com/highstock/chart.events.load)
  *        handler is equivalent.
  *
  * @return {Highcharts.Chart}

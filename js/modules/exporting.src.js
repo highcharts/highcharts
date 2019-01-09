@@ -7,6 +7,32 @@
  */
 
 /**
+ * Gets fired after a chart is printed through the context menu item or the
+ * Chart.print method.
+ *
+ * @callback Highcharts.ExportingAfterPrintCallbackFunction
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart on which the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
+ * Gets fired before a chart is printed through the context menu item or the
+ * Chart.print method.
+ *
+ * @callback Highcharts.ExportingBeforePrintCallbackFunction
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart on which the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
  * Function to call if the offline-exporting module fails to export a chart on
  * the client side.
  *
@@ -910,7 +936,7 @@ defaultOptions.exporting = {
  * @sample highcharts/chart/events-beforeprint-afterprint/
  *         Rescale the chart to print
  *
- * @type      {Function}
+ * @type      {Highcharts.ExportingAfterPrintCallbackFunction}
  * @since     4.1.0
  * @context   Highcharts.Chart
  * @apioption chart.events.afterPrint
@@ -923,7 +949,7 @@ defaultOptions.exporting = {
  * @sample highcharts/chart/events-beforeprint-afterprint/
  *         Rescale the chart to print
  *
- * @type      {Function}
+ * @type      {Highcharts.ExportingBeforePrintCallbackFunction}
  * @since     4.1.0
  * @context   Highcharts.Chart
  * @apioption chart.events.beforePrint

@@ -5,11 +5,135 @@
  */
 
 /**
+ * Gets fired when a series is added to the chart after load time, using the
+ * `addSeries` method. Returning `false` prevents the series from being added.
+ *
+ * @callback Highcharts.ChartAddSeriesCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {Highcharts.ChartAddSeriesEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Conaints common event information. Through the `options` property you can
+ * access the series options that were passed to the `addSeries` method.
+ *
+ * @interface Highcharts.ChartAddSeriesEventObject
+ *//**
+ * The series options that were passed to the `addSeries` method.
+ * @name Highcharts.ChartAddSeriesEventObject#options
+ * @type {Highcharts.SeriesOptionsType}
+ *//**
+ * Prevents the default behaviour of the event.
+ * @name Highcharts.DrilldownEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * The event target.
+ * @name Highcharts.DrilldownEventObject#target
+ * @type {Highcharts.Chart}
+ *//**
+ * The event type.
+ * @name Highcharts.DrilldownEventObject#type
+ * @type {"drilldown"}
+ */
+
+/**
+ * Gets fired when clicking on the plot background.
+ *
+ * @callback Highcharts.ChartClickCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {Highcharts.PointerEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Contains an axes of the clicked spot.
+ *
+ * @interface Highcharts.ChartClickEventAxisObject
+ *//**
+ * Axis at the clicked spot.
+ * @name Highcharts.ChartClickEventAxisObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * Axis value at the clicked spot.
+ * @name Highcharts.ChartClickEventAxisObject#value
+ * @type {number}
+ */
+
+/**
+ * Contains information about the clicked spot on the chart. Remember the unit
+ * of a datetime axis is milliseconds since 1970-01-01 00:00:00.
+ *
+ * @interface Highcharts.ChartClickEventObject
+ * @extends Highcharts.PointerEventObject
+ *//**
+ * Information about the x-axis on the clicked spot.
+ * @name Highcharts.ChartClickEventObject#xAxis
+ * @type {Array<Highcharts.ChartClickEventAxisObject>}
+ *//**
+ * Information about the y-axis on the clicked spot.
+ * @name Highcharts.ChartClickEventObject#yAxis
+ * @type {Array<Highcharts.ChartClickEventAxisObject>}
+ *//**
+ * Information about the z-axis on the clicked spot.
+ * @name Highcharts.ChartClickEventObject#zAxis
+ * @type {Array<Highcharts.ChartClickEventAxisObject>|undefined}
+ */
+
+/**
+ * Gets fired when the chart is finished loading.
+ *
+ * @callback Highcharts.ChartLoadCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
+ * Fires when the chart is redrawn, either after a call to `chart.redraw()` or
+ * after an axis, series or point is modified with the `redraw` option set to
+ * `true`.
+ *
+ * @callback Highcharts.ChartRedrawCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
+ * Gets fired after initial load of the chart (directly after the `load` event),
+ * and after each redraw (directly after the `redraw` event).
+ *
+ * @callback Highcharts.ChartRenderCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
  * Gets fired when an area of the chart has been selected. The default action
  * for the selection event is to zoom the chart to the selected area. It can be
  * prevented by calling `event.preventDefault()` or return false.
  *
  * @callback Highcharts.ChartSelectionCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occured.
  *
  * @param {global.Event} event
  *        Event informations
@@ -510,19 +634,19 @@ H.defaultOptions = {
          */
 
         /**
-         * Fires when a series is added to the chart after load time, using
-         * the `addSeries` method. One parameter, `event`, is passed to the
-         * function, containing common event information.
-         * Through `event.options` you can access the series options that was
-         * passed to the `addSeries` method. Returning false prevents the series
-         * from being added.
+         * Fires when a series is added to the chart after load time, using the
+         * `addSeries` method. One parameter, `event`, is passed to the
+         * function, containing common event information. Through
+         * `event.options` you can access the series options that were passed to
+         * the `addSeries` method. Returning false prevents the series from
+         * being added.
          *
          * @sample {highcharts} highcharts/chart/events-addseries/
          *         Alert on add series
          * @sample {highstock} stock/chart/events-addseries/
          *         Alert on add series
          *
-         * @type      {Function}
+         * @type      {Highcharts.ChartAddSeriesCallbackFunction}
          * @since     1.2.0
          * @context   Highcharts.Chart
          * @apioption chart.events.addSeries
@@ -558,7 +682,7 @@ H.defaultOptions = {
          * @sample {highmaps} highcharts/chart/events-container/
          *         Alternatively, attach event to container
          *
-         * @type      {Function}
+         * @type      {Highcharts.ChartClickCallbackFunction}
          * @since     1.2.0
          * @context   Highcharts.Chart
          * @apioption chart.events.click
@@ -581,7 +705,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/chart/events-load/
          *         Add series on chart load
          *
-         * @type      {Function}
+         * @type      {Highcharts.ChartLoadCallbackFunction}
          * @context   Highcharts.Chart
          * @apioption chart.events.load
          */
@@ -589,8 +713,8 @@ H.defaultOptions = {
         /**
          * Fires when the chart is redrawn, either after a call to
          * `chart.redraw()` or after an axis, series or point is modified with
-         * the `redraw` option set to true. One parameter, `event`, is passed to
-         * the function, containing common event information.
+         * the `redraw` option set to `true`. One parameter, `event`, is passed
+         * to the function, containing common event information.
          *
          * @sample {highcharts} highcharts/chart/events-redraw/
          *         Alert on chart redraw
@@ -600,7 +724,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/chart/events-redraw/
          *         Set subtitle on chart redraw
          *
-         * @type      {Function}
+         * @type      {Highcharts.ChartRedrawCallbackFunction}
          * @since     1.2.0
          * @context   Highcharts.Chart
          * @apioption chart.events.redraw
@@ -610,7 +734,7 @@ H.defaultOptions = {
          * Fires after initial load of the chart (directly after the `load`
          * event), and after each redraw (directly after the `redraw` event).
          *
-         * @type      {Function}
+         * @type      {Highcharts.ChartRenderCallbackFunction}
          * @since     5.0.7
          * @context   Highcharts.Chart
          * @apioption chart.events.render
