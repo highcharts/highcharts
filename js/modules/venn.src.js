@@ -35,7 +35,6 @@ var color = H.Color,
     isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles,
     isString = H.isString,
     merge = H.merge,
-    round = geometryCircles.round,
     seriesType = H.seriesType;
 
 var objectValues = function objectValues(obj) {
@@ -107,61 +106,62 @@ var loss = function loss(mapOfIdToCircle, relations) {
 };
 
 /**
- * A binary search function that takes an higher order function to opererate on
- * the values in the array before returning the result to compare with the value
- * that is searched for.
- * Useful to find a value that will give a result that meets some requirement.
- * @private
- * @param {Array<number>} arr The array to search for.
- * @param {*} value The value that is wanted to find.
- * @param {Function} fn The higher order function to operate on the values in
- * the array.
- * @return {number} Returns the index of the matching value, or -1 if the value
- * was not found.
+ * Finds the root of a given function. The root is the input value needed for
+ * a function to return 0.
+ *
+ * See https://en.wikipedia.org/wiki/Bisection_method#Algorithm
+ *
+ * TODO: Add unit tests.
+ *
+ * @param {function} f The function to find the root of.
+ * @param {number} a The lowest number in the search range.
+ * @param {number} b The highest number in the search range.
+ * @param {number} [tolerance=1e-10] The allowed difference between the returned
+ * value and root.
+ * @param {number} [maxIterations=100] The maximum iterations allowed.
  */
-var binarySearch = function binarySearch(arr, value, fn) {
-    var start = 0,
-        stop = arr.length - 1,
-        middle = Math.floor((start + stop) / 2),
-        res;
+var bisect = function bisect(f, a, b, tolerance, maxIterations) {
+    var fA = f(a),
+        fB = f(b),
+        nMax = maxIterations || 100,
+        tol = tolerance || 1e-10,
+        delta = b - a,
+        n = 1,
+        x, fX;
 
-    while ((res = fn(arr[middle], value)) !== value && start < stop) {
-        if (value < res) {
-            stop = middle - 1;
-        } else {
-            start = middle + 1;
-        }
-        middle = Math.floor((start + stop) / 2);
+    if (a >= b) {
+        throw new Error('a must be smaller than b.');
+    } else if (fA * fB > 0) {
+        throw new Error('f(a) and f(b) must have opposite signs.');
     }
 
-    return res === value ? middle : -1;
+    if (fA === 0) {
+        x = a;
+    } else if (fB === 0) {
+        x = b;
+    } else {
+        while (n++ <= nMax && fX !== 0 && delta > tol) {
+            delta = (b - a) / 2;
+            x = a + delta;
+            fX = f(x);
+
+            // Update low and high for next search interval.
+            if (fA * fX > 0) {
+                a = x;
+            } else {
+                b = x;
+            }
+        }
+    }
+
+    return x;
 };
 
 /**
- * Creates a list that contains a sequence of numbers ranging from start to end.
- * @private
- * @todo add unit tests.
- * @param {number} start The smallest number in the list.
- * @param {number} end The largest number in the list.
- * @param {number} [step=1] The increment between the values in the sequence.
- * @return {Array<number>} Returns the sequence of numbers in the range from start to
- * end.
- */
-var range = function range(start, end, step) {
-    var s = step || 1,
-        length = Math.round((start + end) / s),
-        range = Array.apply(0, Array(length)).map(function (_, i) {
-            return i * s;
-        });
-
-    return range;
-};
-
-/**
- * Uses binary search to make a best guess of the ideal distance between two
- * circles too get the desired overlap.
+ * Uses the bisection method to make a best guess of the ideal distance between
+ * two circles too get the desired overlap.
  * Currently there is no known formula to calculate the distance from the area
- * of overlap, which makes the binary search a preferred method.
+ * of overlap, which makes the bisection method preferred.
  * @private
  * @param {number} r1 Radius of the first circle.
  * @param {number} r2 Radiues of the second circle.
@@ -172,20 +172,17 @@ var range = function range(start, end, step) {
 var getDistanceBetweenCirclesByOverlap =
 function getDistanceBetweenCirclesByOverlap(r1, r2, overlap) {
     var maxDistance = r1 + r2,
-        error = maxDistance / 100, // Allow 1% error
-        interval = maxDistance / 10000, // Use a list with 10000 values
-        list = range(0, maxDistance, interval),
-        index = binarySearch(list, 0, function (x) {
-            var actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x),
-                diff = overlap - actualOverlap;
+        distance = maxDistance;
 
-            // If the difference is below accepted error then return overlap to
-            // confirm we have found the right value.
-            return (Math.abs(diff) < error) ? 0 : diff;
-        });
+    if (overlap > 0) {
+        distance = bisect(function (x) {
+            var actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x);
 
-    // Round the resulting value to have two decimals.
-    return round(list[index], 14);
+            // Return the differance between wanted and actual overlap.
+            return overlap - actualOverlap;
+        }, 0, maxDistance);
+    }
+    return distance;
 };
 
 var isSet = function (x) {
@@ -1093,7 +1090,6 @@ var vennSeries = {
     },
     utils: {
         addOverlapToSets: addOverlapToSets,
-        binarySearch: binarySearch,
         geometry: geometry,
         geometryCircles: geometryCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
