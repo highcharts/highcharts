@@ -158,22 +158,6 @@ if (!H.polarExtended) {
     };
 
     /**
-     * Wrap the buildKDTree function so that it searches by angle (clientX) in
-     * case of shared tooltip, and by two dimensional distance in case of
-     * non-shared.
-     */
-    wrap(seriesProto, 'buildKDTree', function (proceed) {
-        if (this.chart.polar) {
-            if (this.kdByAngle) {
-                this.searchPoint = this.searchPointByAngle;
-            } else {
-                this.options.findNearestPointBy = 'xy';
-            }
-        }
-        proceed.apply(this);
-    });
-
-    /**
      * Translate a point's plotX and plotY from the internal angle and radius
      * measures to true plotX, plotY coordinates
      */
@@ -267,9 +251,18 @@ if (!H.polarExtended) {
             i;
 
         if (chart.polar) {
-            // Postprocess plot coordinates
-            this.kdByAngle = chart.tooltip && chart.tooltip.shared;
 
+            // Prepare k-d-tree handling. It searches by angle (clientX) in
+            // case of shared tooltip, and by two dimensional distance in case
+            // of non-shared.
+            this.kdByAngle = chart.tooltip && chart.tooltip.shared;
+            if (this.kdByAngle) {
+                this.searchPoint = this.searchPointByAngle;
+            } else {
+                this.options.findNearestPointBy = 'xy';
+            }
+
+            // Postprocess plot coordinates
             if (!this.preventPostTranslate) {
                 points = this.points;
                 i = points.length;

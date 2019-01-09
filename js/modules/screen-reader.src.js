@@ -885,13 +885,13 @@ H.Chart.prototype.callbacks.push(function (chart) {
     chart.addScreenReaderRegion(hiddenSectionId, tableId);
 
     // Add ID and summary attr to table HTML
-    H.wrap(chart, 'getTable', function (proceed) {
-        return proceed.apply(this, Array.prototype.slice.call(arguments, 1))
+    addEvent(chart, 'afterGetTable', function (e) {
+        e.html = e.html
             .replace(
-                '<table>',
-                '<table id="' + tableId + '" summary="' + chart.langFormat(
+                '<table ',
+                '<table summary="' + chart.langFormat(
                     'accessibility.tableSummary', { chart: chart }
-                ) + '">'
+                ) + '"'
             );
     });
 });
