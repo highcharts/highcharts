@@ -481,6 +481,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             pick(options, this.renderer.globalAnimation, true)
         );
 
+        // When the page is hidden save resources in the background by not
+        // running animation at all (#9749).
+        if (pick(doc.hidden, doc.msHidden, doc.webkitHidden, false)) {
+            animOptions.duration = 0;
+        }
+
         if (animOptions.duration !== 0) {
             // allows using a callback with the global animation without
             // overwriting it
