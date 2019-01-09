@@ -4,6 +4,7 @@ QUnit.test('Network Graph', function (assert) {
             type: 'networkgraph'
         }
     });
+    var point;
 
     assert.notStrictEqual(
         chart.container.querySelector('.highcharts-no-data'),
@@ -27,6 +28,12 @@ QUnit.test('Network Graph', function (assert) {
             ['C', 'D'],
 
             ['D', 'A']
+        ],
+        nodes: [
+            {
+                id: 'D',
+                color: '#FF0000'
+            }
         ]
     });
 
@@ -43,13 +50,39 @@ QUnit.test('Network Graph', function (assert) {
     );
 
     chart.addSeries({
-        keys: ['from', 'to'],
+        keys: ['from', 'to', 'width', 'color', 'dashStyle'],
         data: [
             ['1', '2'],
-            ['2', '1'],
+            ['2', '1', '2', '#FF0000', 'dot'],
             ['3', '1']
         ]
     });
 
     assert.ok(true, 'No errors in cyclical graphs (#9803)');
+
+    assert.strictEqual(
+        chart.series[0].nodes[3].graphic.element.getAttribute('fill'),
+        '#FF0000',
+        'Custom series.nodes.color is correct'
+    );
+
+    point = chart.series[1].points[1];
+
+    assert.strictEqual(
+        point.graphic.element.getAttribute('stroke'),
+        '#FF0000',
+        'Custom series.data.color is correct (#9798)'
+    );
+
+    assert.strictEqual(
+        point.graphic.element.getAttribute('stroke-width'),
+        '2',
+        'Custom series.data.width is correct (#9798)'
+    );
+
+    assert.strictEqual(
+        point.graphic.element.getAttribute('stroke-dasharray'),
+        '2,6',
+        'Custom series.data.dashStyle is correct (#9798)'
+    );
 });
