@@ -23,7 +23,9 @@ var Series = H.Series,
  *
  * @augments Highcharts.Series
  */
-seriesType('scatter', 'line'
+seriesType(
+    'scatter',
+    'line',
 
     /**
  * A scatter plot uses cartesian coordinates to display values for two
@@ -37,7 +39,7 @@ seriesType('scatter', 'line'
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
  */
-    , {
+    {
 
         /**
      * The width of the line connecting the data points.
@@ -107,7 +109,8 @@ seriesType('scatter', 'line'
                 Series.prototype.drawGraph.call(this);
             }
         }
-    });
+    }
+);
 
 /**
  * A `scatter` series. If the [type](#series.scatter.type) option is
