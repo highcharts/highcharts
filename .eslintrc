@@ -23,6 +23,7 @@ rules:
     operator-linebreak: [2, "after"]
     padding-line-between-statements: 0 // Annoying in samples and tools. If we want it, do --fix.
     prefer-arrow-callback: 0 // Not supported in Highcharts, too early for tests and samples.
+    prefer-spread: 0 // Too early for samples
     prefer-template: 0 // Will probably create a lot of noise in samples
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
     strict: 0

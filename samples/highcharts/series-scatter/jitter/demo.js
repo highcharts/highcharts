@@ -1,16 +1,26 @@
 // Generate test data with discrete X values and continuous Y values.
-function getTestData() {
-    var data = [];
-    for (var x = 0; x < 5; x++) {
-        var off = 0.2 + 0.2 * Math.random();
-        for (var i = 0; i < 200; i++) {
-            data.push([x, off + (Math.random() - 0.5) * (Math.random() - 0.5)]);
-        }
+function getTestData(x) {
+    var data = [],
+        off = 0.2 + 0.2 * Math.random(),
+        i;
+    for (i = 0; i < 200; i++) {
+        data.push([x, off + (Math.random() - 0.5) * (Math.random() - 0.5)]);
     }
     return data;
 }
 
+// Make all the colors semi-transparent so we can see overlapping dots
+var colors = Highcharts.getOptions().colors.map(function (color) {
+    return Highcharts.color(color).setOpacity(0.5).get();
+});
+
 Highcharts.chart('container', {
+    chart: {
+        type: 'scatter'
+    },
+
+    colors: colors,
+
     title: {
         text: 'Scatter chart with jitter'
     },
@@ -25,18 +35,36 @@ Highcharts.chart('container', {
             text: 'Measurements'
         }
     },
-    series: [{
-        name: 'Experiments',
-        data: getTestData(),
-        showInLegend: false,
-        type: 'scatter',
-        color: 'rgba(100, 100, 255, 0.5)',
-        jitter: {
-            x: 0.2,
-            y: 0
-        },
-        marker: {
-            radius: 2
+    plotOptions: {
+        scatter: {
+            showInLegend: false,
+            jitter: {
+                x: 0.2,
+                y: 0
+            },
+            marker: {
+                radius: 2,
+                symbol: 'circle'
+            },
+            tooltip: {
+                pointFormat: 'Measurement: {point.y:.3f}'
+            }
         }
+    },
+    series: [{
+        name: 'Run 1',
+        data: getTestData(0)
+    }, {
+        name: 'Run 2',
+        data: getTestData(1)
+    }, {
+        name: 'Run 3',
+        data: getTestData(2)
+    }, {
+        name: 'Run 4',
+        data: getTestData(3)
+    }, {
+        name: 'Run 5',
+        data: getTestData(4)
     }]
 });

@@ -116,7 +116,6 @@ seriesType(
 // @todo
 // - API docs
 // - Tutorial docs
-// - Sample with box plot, find correct setting for width
 H.addEvent(Series, 'afterTranslate', function () {
     if (!(this instanceof H.seriesTypes.scatter)) {
         return;
@@ -139,6 +138,7 @@ H.addEvent(Series, 'afterTranslate', function () {
 
                         // Modify plotX and plotY
                         point['plot' + dim.toUpperCase()] += offset;
+                        point.clientX = point.plotX; // For tooltip k-d-tree
                     }
                 }
             });
