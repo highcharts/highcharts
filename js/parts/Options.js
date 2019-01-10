@@ -2481,12 +2481,19 @@ H.defaultOptions = {
          */
 
         /**
-         * The width of the legend box.
+         * The width of the legend box. If a number is set, it translates to
+         * pixels. Since v7.0.2 it allows setting a percent string of the full
+         * chart width, for example `40%`.
+         *
+         * Defaults to the full chart width from legends below or above the
+         * chart, half the chart width for legends to the left and right.
          *
          * @sample {highcharts} highcharts/legend/width/
          *         Aligned to the plot area
+         * @sample {highcharts} highcharts/legend/width-percent/
+         *         A percent of the chart width
          *
-         * @type      {number}
+         * @type      {number|string}
          * @since     2.0
          * @apioption legend.width
          */
