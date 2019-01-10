@@ -3392,6 +3392,9 @@ H.Series = H.seriesType(
                 yData = this.yData,
                 pointArrayMap = series.pointArrayMap,
                 valueCount = pointArrayMap && pointArrayMap.length,
+                keys = options.keys,
+                indexOfX = 0,
+                indexOfY = 1,
                 updatedData;
 
             data = data || [];
@@ -3457,10 +3460,18 @@ H.Series = H.seriesType(
                                 yData[i] = pt.slice(1, valueCount + 1);
                             }
                         } else { // [x, y]
+                            if (keys) {
+                                indexOfX = keys.indexOf('x');
+                                indexOfY = keys.indexOf('y');
+
+                                indexOfX = indexOfX >= 0 ? indexOfX : 0;
+                                indexOfY = indexOfY >= 0 ? indexOfY : 1;
+                            }
+
                             for (i = 0; i < dataLength; i++) {
                                 pt = data[i];
-                                xData[i] = pt[0];
-                                yData[i] = pt[1];
+                                xData[i] = pt[indexOfX];
+                                yData[i] = pt[indexOfY];
                             }
                         }
                     } else {
