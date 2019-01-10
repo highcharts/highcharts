@@ -1,5 +1,5 @@
 QUnit.test(
-    'Legend symbol marker should not exceed symbolHeight (#6202)',
+    'Legend width',
     function (assert) {
 
         var chart = Highcharts.chart('container', {
@@ -48,5 +48,27 @@ QUnit.test(
             chart.legend.legendWidth < 300,
             'The default legend width should not exceed half the chart width'
         );
+
+        chart.legend.update({
+            title: {
+                text: `This legend is long and caused overflow to both sides,
+which aside from being bad as of itself had an additional side-effect of
+cropping the legend as well.`
+            }
+        });
+
+        assert.ok(
+            chart.legend.legendWidth < 300,
+            'The default legend width should not exceed half the chart width'
+        );
+
+        chart.legend.update({
+            verticalAlign: 'bottom'
+        });
+        assert.ok(
+            chart.legend.legendWidth > 300,
+            'The legend has redrawn'
+        );
+
     }
 );

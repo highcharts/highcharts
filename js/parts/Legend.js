@@ -414,6 +414,13 @@ Highcharts.Legend.prototype = {
                 this.title.add(this.group);
             }
 
+            // Set the max title width (#7253)
+            if (!titleOptions.width) {
+                this.title.css({
+                    width: this.maxLegendWidth + 'px'
+                });
+            }
+
             bBox = this.title.getBBox();
             titleHeight = bBox.height;
             this.offsetWidth = bBox.width; // #1717
