@@ -4801,7 +4801,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     // threshold (#3965)
                     if (
                         tickPositions.length % 2 ||
-                        this.min === threshold
+                        this.min === threshold ||
+                        // #9841
+                        this.max > tickPositions[tickPositions.length - 1]
                     ) {
                         // to the end
                         tickPositions.push(correctFloat(
