@@ -68,10 +68,8 @@ const compileSingleStyle = fileName => {
 const styles = () => {
     const promisesCopyGfx = getFilesInFolder('./gfx', true)
         .map(path => copyFile(join('./gfx', path), join('./code/gfx', path)));
-
     const promisesCompileStyles = getFilesInFolder('./css', true)
         .map(file => compileSingleStyle(file));
-
     const promises = [].concat(promisesCopyGfx, promisesCompileStyles);
     return Promise.all(promises).then(() => {
         console.log('Built CSS files from SASS.'.cyan);
@@ -1354,13 +1352,13 @@ gulp.task('dtslint', ['update', 'dts'], dtsLint);
  */
 function update() {
 
-    const config = (
+    const dependencies = (
         require(join(__dirname, 'package.json')).devDependencies || {}
     );
 
     const latestKeys = Object
-        .keys(config)
-        .filter(key => config[key] === 'latest');
+        .keys(dependencies)
+        .filter(key => dependencies[key] === 'latest');
 
     return new Promise((resolve, reject) => {
 
@@ -1373,19 +1371,19 @@ function update() {
             try {
 
                 const json = JSON.parse(stdout);
-                const outdated = Object
+                const outdatedKeys = Object
                     .keys(json)
                     .filter(key => latestKeys.indexOf(key) > -1);
 
-                if (outdated.length) {
+                if (outdatedKeys.length) {
 
                     console.log(
                         '[' + colors.gray(toTimeString(new Date())) + ']',
                         'Installing outdated packages:',
-                        outdated.join(' ')
+                        outdatedKeys.join(' ')
                     );
 
-                    commandLine('npm i ' + latestKeys.join(' ') + ' --no-save')
+                    commandLine('npm i ' + outdatedKeys.join(' ') + ' --no-save')
                         .then(resolve)
                         .catch(reject);
                 }
@@ -1399,6 +1397,28 @@ function update() {
 }
 
 gulp.task('update', update);
+
+/**
+ * Tests whether the code is in sync with source.
+ *
+ * @return {boolean}
+ *         True, if code is out of sync.
+ */
+function shouldBuild() {
+    const getModifiedTime = fsPattern => {
+        let modifyTime = 0;
+        glob.sync(fsPattern)
+            .forEach(file => {
+                modifyTime = Math.max(modifyTime, fs.statSync(file).mtimeMs);
+            });
+        return modifyTime;
+    };
+    const buildPath = join(__dirname, '..', 'code', '**', '*.js');
+    const sourcePath = join(__dirname, '..', 'js', '**', '*.js');
+    const latestBuildTime = getModifiedTime(buildPath);
+    const latestSourceTime = getModifiedTime(sourcePath);
+    return (latestBuildTime < latestSourceTime);
+}
 
 /**
  * Gulp task to run the building process of distribution files. By default it
@@ -1423,7 +1443,14 @@ gulp.task('scripts', ['update'], () => {
         fnFirstBuild,
         mapOfWatchFn
     } = getBuildScripts(options);
-    fnFirstBuild();
+    if (shouldBuild() ||
+        (argv.force && !argv.watch)
+    ) {
+        fnFirstBuild();
+        console.log('Built JS files from modules.'.cyan);
+    } else {
+        console.log('✓'.green, 'Code up to date.'.gray);
+    }
     if (options.watch) {
         Object.keys(mapOfWatchFn).forEach(key => {
             const fn = mapOfWatchFn[key];
@@ -1486,8 +1513,12 @@ gulp.task('default', () => {
             watcher = null;
             // Run styles and build all files.
             styles().then(() => {
-                fnFirstBuild();
-                console.log(msgBuildAll);
+                if (shouldBuild()) {
+                    fnFirstBuild();
+                    console.log(msgBuildAll);
+                } else {
+                    console.log('✓'.green, 'Code up to date.'.gray);
+                }
                 // Start watcher again.
                 watcher = gulp.watch(watchlist, onChange);
             });
@@ -1500,8 +1531,12 @@ gulp.task('default', () => {
         }
     };
     return styles().then(() => {
-        fnFirstBuild();
-        console.log(msgBuildAll);
+        if (shouldBuild()) {
+            fnFirstBuild();
+            console.log(msgBuildAll);
+        } else {
+            console.log('✓'.green, 'Code up to date.'.gray);
+        }
         // Start watching source files.
         watcher = gulp.watch(watchlist, onChange);
     });
