@@ -5258,7 +5258,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     var score;
 
                     if (
-                        rot === rotationOption ||
+                        rot === rotationOption && // #9835
                         (rot && rot >= -90 && rot <= 90)
                     ) { // #3891
 
