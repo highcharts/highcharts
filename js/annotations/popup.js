@@ -82,8 +82,10 @@ H.Popup.prototype = {
             className: PREFIX + 'popup-close'
         }, null, this.container);
 
-        addEvent(closeBtn, 'click', function () {
-            _self.closePopup();
+        ['click', 'touchstart'].forEach(function (eventName) {
+            addEvent(closeBtn, eventName, function () {
+                _self.closePopup();
+            });
         });
     },
     /*
@@ -180,12 +182,14 @@ H.Popup.prototype = {
             innerHTML: label
         }, null, parentDiv);
 
-        addEvent(button, 'click', function () {
-            closePopup.call(_self);
+        ['click', 'touchstart'].forEach(function (eventName) {
+            addEvent(button, eventName, function () {
+                closePopup.call(_self);
 
-            return callback(
-                getFields(fieldsDiv, type)
-            );
+                return callback(
+                    getFields(fieldsDiv, type)
+                );
+            });
         });
 
         return button;
@@ -634,35 +638,38 @@ H.Popup.prototype = {
                 ) {
 
                     var indicatorNameType = _self.indicators
-                        .getNameType(serie, value);
+                            .getNameType(serie, value),
+                        indicatorType = indicatorNameType.type;
 
                     item = createElement(LI, {
                         className: PREFIX + 'indicator-list',
                         innerHTML: indicatorNameType.name
                     }, null, indicatorList);
 
-                    addEvent(item, 'click', function () {
+                    ['click', 'touchstart'].forEach(function (eventName) {
+                        addEvent(item, eventName, function () {
 
-                        addFormFields.call(
-                            _self,
-                            chart,
-                            isEdit ? serie : series[indicatorNameType.type],
-                            indicatorNameType.type,
-                            rhsColWrapper
-                        );
+                            addFormFields.call(
+                                _self,
+                                chart,
+                                isEdit ? serie : series[indicatorType],
+                                indicatorNameType.type,
+                                rhsColWrapper
+                            );
 
-                        // add hidden input with series.id
-                        if (isEdit && serie.options) {
-                            createElement(INPUT, {
-                                type: 'hidden',
-                                name: PREFIX + 'id-' + indicatorNameType.type,
-                                value: serie.options.id
-                            }, null, rhsColWrapper)
-                                .setAttribute(
-                                    PREFIX + 'data-series-id',
-                                    serie.options.id
-                                );
-                        }
+                            // add hidden input with series.id
+                            if (isEdit && serie.options) {
+                                createElement(INPUT, {
+                                    type: 'hidden',
+                                    name: PREFIX + 'id-' + indicatorType,
+                                    value: serie.options.id
+                                }, null, rhsColWrapper)
+                                    .setAttribute(
+                                        PREFIX + 'data-series-id',
+                                        serie.options.id
+                                    );
+                            }
+                        });
                     });
                 }
             });
@@ -997,11 +1004,13 @@ H.Popup.prototype = {
                     return;
                 }
 
-                addEvent(tab, 'click', function () {
+                ['click', 'touchstart'].forEach(function (eventName) {
+                    addEvent(tab, eventName, function () {
 
-                    // reset class on other elements
-                    _self.tabs.deselectAll.call(_self);
-                    _self.tabs.selectTab.call(_self, this, i);
+                        // reset class on other elements
+                        _self.tabs.deselectAll.call(_self);
+                        _self.tabs.selectTab.call(_self, this, i);
+                    });
                 });
             });
         },
