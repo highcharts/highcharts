@@ -151,9 +151,6 @@ seriesType(
 );
 
 // Optionally add the jitter effect
-// @todo
-// - API docs
-// - Tutorial docs
 H.addEvent(Series, 'afterTranslate', function () {
     if (!(this instanceof H.seriesTypes.scatter)) {
         return;
@@ -176,7 +173,7 @@ H.addEvent(Series, 'afterTranslate', function () {
             ['x', 'y'].forEach(function (dim, j) {
                 var offset,
                     axis;
-                if (jitter[dim]) {
+                if (jitter[dim] && !point.isNull) {
                     axis = series[dim + 'Axis'];
                     if (axis && !axis.isLog) {
                         offset = 2 * jitter[dim] *
