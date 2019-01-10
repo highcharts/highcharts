@@ -159,17 +159,28 @@ H.addEvent(Series, 'afterTranslate', function () {
         return;
     }
     var series = this,
-        jitter = this.options.jitter;
+        jitter = this.options.jitter,
+        len = this.points.length;
+
+    // Return a repeatable, pseudo-random number based on an integer seed
+    function unrandom(seed) {
+        var n = seed || 1.1, // otherwise 0 would output 0
+            rand = n * n / Math.PI;
+
+        rand = rand % 1;
+        return rand;
+    }
 
     if (jitter) {
-        this.points.forEach(function (point) {
-            ['x', 'y'].forEach(function (dim) {
+        this.points.forEach(function (point, i) {
+            ['x', 'y'].forEach(function (dim, j) {
                 var offset,
                     axis;
                 if (jitter[dim]) {
                     axis = series[dim + 'Axis'];
                     if (axis && !axis.isLog) {
-                        offset = 2 * jitter[dim] * (0.5 - Math.random());
+                        offset = 2 * jitter[dim] *
+                            (0.5 - unrandom(i + j * len));
 
                         // If we want pixel jitter, skip this
                         offset *= axis.transA;
