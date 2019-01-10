@@ -3038,7 +3038,7 @@ H.defaultOptions = {
          * @sample {highstock} stock/tooltip/split-positioner/
          *         Split tooltip with fixed positions
          *
-         * @type      {Function}
+         * @type      {Highcharts.TooltipPositionerCallbackFunction}
          * @since     2.2.4
          * @apioption tooltip.positioner
          */

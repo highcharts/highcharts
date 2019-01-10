@@ -4,6 +4,49 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * A callback function to place the tooltip in a specific position.
+ *
+ * @callback Highcharts.TooltipPositionerCallbackFunction
+ *
+ * @param {number} labelWidth
+ *        Width of the tooltip.
+ *
+ * @param {number} labelHeight
+ *        Height of the tooltip.
+ *
+ * @param {Highcharts.TooltipPositionerPointObject} point
+ *        Point information for positioning a tooltip.
+ *
+ * @return {Highcharts.PositionObject}
+ *         New position for the tooltip.
+ */
+
+/**
+ * Point information for positioning a tooltip.
+ *
+ * @interface Highcharts.TooltipPositionerPointObject
+ *//**
+ * If `tooltip.split` option is enabled and positioner is called for each of the
+ * boxes separately, this property indicates the call on the xAxis header, which
+ * is not a point itself.
+ * @name Highcharts.TooltipPositionerPointObject#isHeader
+ * @type {boolean}
+ *//**
+ * @name Highcharts.TooltipPositionerPointObject#negative
+ * @type {boolean}
+ *//**
+ * The reference point relative to the plot area. Add chart.plotLeft to get the
+ * full coordinates.
+ * @name Highcharts.TooltipPositionerPointObject#plotX
+ * @type {number}
+ *//**
+ * The reference point relative to the plot area. Add chart.plotTop to get the
+ * full coordinates.
+ * @name Highcharts.TooltipPositionerPointObject#plotY
+ * @type {number}
+ */
+
 'use strict';
 
 import H from './Globals.js';
