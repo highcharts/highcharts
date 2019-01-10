@@ -102,7 +102,7 @@ seriesType(
         /**
          * Determines which one of `open`, `high`, `low`, `close` values should
          * be represented as `point.y`, which is later used to set dataLabel
-         * position.
+         * position and [compare](#plotOptions.series.compare).
          *
          * @sample {highstock} stock/plotoptions/ohlc-pointvalkey/
          *         Possible values
