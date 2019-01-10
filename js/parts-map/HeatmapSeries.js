@@ -46,10 +46,10 @@ seriesType(
      *
      * @extends      plotOptions.scatter
      * @excluding    animationLimit, connectEnds, connectNulls, dashStyle,
-     *               findNearestPointBy, getExtremesFromAll, linecap, lineWidth,
-     *               marker, pointInterval, pointIntervalUnit, pointRange,
-     *               pointStart, shadow, softThreshold, stacking, step,
-     *               threshold
+     *               findNearestPointBy, getExtremesFromAll, jitter, linecap,
+     *               lineWidth, marker, pointInterval, pointIntervalUnit,
+     *               pointRange, pointStart, shadow, softThreshold, stacking,
+     *               step, threshold
      * @product      highcharts highmaps
      * @optionparent plotOptions.heatmap
      */

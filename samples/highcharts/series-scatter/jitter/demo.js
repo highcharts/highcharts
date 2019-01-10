@@ -39,7 +39,7 @@ Highcharts.chart('container', {
         scatter: {
             showInLegend: false,
             jitter: {
-                x: 0.2,
+                x: 0.24,
                 y: 0
             },
             marker: {

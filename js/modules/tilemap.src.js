@@ -491,7 +491,7 @@ seriesType('tilemap', 'heatmap'
  *
  * @extends      plotOptions.heatmap
  * @since        6.0.0
- * @excluding    joinBy, shadow, allAreas, mapData, data
+ * @excluding    jitter, joinBy, shadow, allAreas, mapData, data
  * @product      highcharts highmaps
  * @optionparent plotOptions.tilemap
  */

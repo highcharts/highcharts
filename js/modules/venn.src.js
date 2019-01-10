@@ -852,10 +852,10 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, circle) {
  *
  * @extends      plotOptions.scatter
  * @excluding    connectEnds, connectNulls, cropThreshold, findNearestPointBy,
- *               getExtremesFromAll, label, linecap, lineWidth, linkedTo,
- *               marker, negativeColor, pointInterval, pointIntervalUnit,
- *               pointPlacement, pointStart, softThreshold, stacking, steps,
- *               threshold, xAxis, yAxis, zoneAxis, zones
+ *               getExtremesFromAll, jitter, label, linecap, lineWidth,
+ *               linkedTo, marker, negativeColor, pointInterval,
+ *               pointIntervalUnit, pointPlacement, pointStart, softThreshold,
+ *               stacking, steps, threshold, xAxis, yAxis, zoneAxis, zones
  * @product      highcharts
  * @optionparent plotOptions.venn
  */
