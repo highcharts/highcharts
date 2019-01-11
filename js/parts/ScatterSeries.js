@@ -146,60 +146,64 @@ seriesType(
             if (this.options.lineWidth) {
                 Series.prototype.drawGraph.call(this);
             }
+        },
+
+        // Optionally add the jitter effect
+        applyJitter: function () {
+            var series = this,
+                jitter = this.options.jitter,
+                len = this.points.length;
+
+            // Return a repeatable, pseudo-random number based on an integer
+            // seed
+            function unrandom(seed) {
+                var rand = Math.sin(seed) * 10000;
+                return rand - Math.floor(rand);
+            }
+
+            if (jitter) {
+                this.points.forEach(function (point, i) {
+                    ['x', 'y'].forEach(function (dim, j) {
+                        var axis,
+                            plotProp = 'plot' + dim.toUpperCase(),
+                            min,
+                            max,
+                            translatedJitter;
+                        if (jitter[dim] && !point.isNull) {
+                            axis = series[dim + 'Axis'];
+                            translatedJitter = jitter[dim] * axis.transA;
+                            if (axis && !axis.isLog) {
+
+                                // Identify the outer bounds of the jitter range
+                                min = Math.max(
+                                    0,
+                                    point[plotProp] - translatedJitter
+                                );
+                                max = Math.min(
+                                    axis.len,
+                                    point[plotProp] + translatedJitter
+                                );
+
+                                // Find a random position within this range
+                                point[plotProp] = min +
+                                    (max - min) * unrandom(i + j * len);
+
+                                // Update clientX for the tooltip k-d-tree
+                                if (dim === 'x') {
+                                    point.clientX = point.plotX;
+                                }
+                            }
+                        }
+                    });
+                });
+            }
         }
     }
 );
 
-// Optionally add the jitter effect
 H.addEvent(Series, 'afterTranslate', function () {
-    if (!(this instanceof H.seriesTypes.scatter)) {
-        return;
-    }
-    var series = this,
-        jitter = this.options.jitter,
-        len = this.points.length;
-
-    // Return a repeatable, pseudo-random number based on an integer seed
-    function unrandom(seed) {
-        var rand = Math.sin(seed) * 10000;
-        return rand - Math.floor(rand);
-    }
-
-    if (jitter) {
-        this.points.forEach(function (point, i) {
-            ['x', 'y'].forEach(function (dim, j) {
-                var axis,
-                    plotProp = 'plot' + dim.toUpperCase(),
-                    min,
-                    max,
-                    translatedJitter;
-                if (jitter[dim] && !point.isNull) {
-                    axis = series[dim + 'Axis'];
-                    translatedJitter = jitter[dim] * axis.transA;
-                    if (axis && !axis.isLog) {
-
-                        // Identify the outer bounds of the jitter range
-                        min = Math.max(
-                            0,
-                            point[plotProp] - translatedJitter
-                        );
-                        max = Math.min(
-                            axis.len,
-                            point[plotProp] + translatedJitter
-                        );
-
-                        // Find a random position within this range
-                        point[plotProp] = min +
-                            (max - min) * unrandom(i + j * len);
-
-                        // Update clientX for the tooltip k-d-tree
-                        if (dim === 'x') {
-                            point.clientX = point.plotX;
-                        }
-                    }
-                }
-            });
-        });
+    if (this.applyJitter) {
+        this.applyJitter();
     }
 });
 
