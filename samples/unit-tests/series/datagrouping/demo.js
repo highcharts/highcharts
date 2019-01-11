@@ -395,3 +395,23 @@ QUnit.test('Data groupind, keys and turboThreshold', function (assert) {
         'Correct yData (#8544).'
     );
 });
+
+QUnit.test('Data grouping and adding points with data labels', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            dataGrouping: {
+                forced: true
+            },
+            data: [1, 2]
+        }]
+    });
+
+    chart.series[0].addPoint({ y: 4, dataLabels: { enabled: true } });
+    chart.series[0].addPoint({ y: 5, dataLabels: { enabled: true } });
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        4,
+        'Correct number of points and no errors (#9770).'
+    );
+});
