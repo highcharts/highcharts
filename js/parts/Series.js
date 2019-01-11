@@ -3803,6 +3803,8 @@ H.Series = H.seriesType(
                     if (point.dataGroup.options) {
                         point.options = point.dataGroup.options;
                         extend(point, point.dataGroup.options);
+                        // Collision of props and options (#9770)
+                        delete point.dataLabels;
                     }
                 }
                 if (point) { // #6279
