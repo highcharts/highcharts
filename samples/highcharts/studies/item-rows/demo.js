@@ -13,6 +13,7 @@
         'pie',
         // Options
         {
+            itemPadding: 0.1,
             layout: 'vertical',
             marker: merge(
                 H.defaultOptions.plotOptions.line.marker,
@@ -85,13 +86,16 @@
                             pointMarkerOptions.symbol ||
                             seriesMarkerOptions.symbol
                         ),
-                        radius = Highcharts.pick(
+                        r = Highcharts.pick(
                             pointMarkerOptions.radius,
                             seriesMarkerOptions.radius
                         ),
-                        size = H.defined(radius) ? 2 * radius : commonSize,
+                        size = H.defined(r) ? 2 * r : commonSize,
+                        padding = size * options.itemPadding,
                         x,
-                        y;
+                        y,
+                        width,
+                        height;
 
                     point.graphics = graphics = point.graphics || {};
                     pointAttr = point.pointAttr ?
@@ -123,17 +127,16 @@
                                 y = cellHeight * (i % rows);
                             }
 
+                            x += padding;
+                            y += padding;
+                            width = Math.round(size - 2 * padding);
+                            height = width;
+
                             if (series.options.crisp) {
                                 x = Math.round(x) - crisp;
                                 y = Math.round(y) + crisp;
                             }
-                            attr = {
-                                x: x,
-                                y: y,
-                                width: Math.round(size),
-                                height: Math.round(size),
-                                r: radius
-                            };
+                            attr = { x, y, width, height, r };
 
 
                             if (graphics[val]) {
@@ -174,7 +177,8 @@
 Highcharts.chart('container', {
 
     chart: {
-        type: 'item'
+        type: 'item',
+        plotBorderWidth: 1
     },
 
     title: {
