@@ -4188,7 +4188,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // padding does not apply.
                         minPointOffset = Math.max(
                             minPointOffset,
-                            isString(pointPlacement) ? 0 : seriesPointRange / 2
+                            isXAxis && isString(pointPlacement) ?
+                                0 : seriesPointRange / 2
                         );
 
                         // Determine the total padding needed to the length of
@@ -4196,7 +4197,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // series' pointPlacement is 'on', no padding is added.
                         pointRangePadding = Math.max(
                             pointRangePadding,
-                            pointPlacement === 'on' ? 0 : seriesPointRange
+                            isXAxis &&  pointPlacement === 'on' ?
+                                0 : seriesPointRange
                         );
                     }
                 });
