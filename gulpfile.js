@@ -1413,11 +1413,11 @@ function shouldBuild() {
             });
         return modifyTime;
     };
-    const buildPath = join(__dirname, '..', 'code', '**', '*.js');
-    const sourcePath = join(__dirname, '..', 'js', '**', '*.js');
+    const buildPath = join(__dirname, 'code', '**', '*.js');
+    const sourcePath = join(__dirname, 'js', '**', '*.js');
     const latestBuildTime = getModifiedTime(buildPath);
     const latestSourceTime = getModifiedTime(sourcePath);
-    return (latestBuildTime < latestSourceTime);
+    return (latestBuildTime <= latestSourceTime);
 }
 
 /**
@@ -1444,9 +1444,12 @@ gulp.task('scripts', ['update'], () => {
         mapOfWatchFn
     } = getBuildScripts(options);
     if (shouldBuild() ||
-        (argv.force && !argv.watch)
+        (argv.force && !argv.watch) ||
+        process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS
     ) {
+        process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS = true;
         fnFirstBuild();
+        delete process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS;
         console.log('Built JS files from modules.'.cyan);
     } else {
         console.log('✓'.green, 'Code up to date.'.gray);
