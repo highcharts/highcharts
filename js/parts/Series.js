@@ -5353,6 +5353,12 @@ H.Series = H.seriesType('line',
             }
         },
 
+        /**
+         * @private
+         * @function Highcharts.Series#pointPlacementToXValue
+         *
+         * @return {number}
+         */
         pointPlacementToXValue: function () {
 
             var series = this,
