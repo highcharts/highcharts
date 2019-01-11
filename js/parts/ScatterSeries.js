@@ -162,7 +162,7 @@ H.addEvent(Series, 'afterTranslate', function () {
     // Return a repeatable, pseudo-random number based on an integer seed
     function unrandom(seed) {
         var n = seed || 1.1, // otherwise 0 would output 0
-            rand = n * n / Math.PI;
+            rand = Math.pow(n, 4) / Math.PI;
 
         rand = rand % 1;
         return rand;
@@ -171,20 +171,34 @@ H.addEvent(Series, 'afterTranslate', function () {
     if (jitter) {
         this.points.forEach(function (point, i) {
             ['x', 'y'].forEach(function (dim, j) {
-                var offset,
-                    axis;
+                var axis,
+                    plotProp = 'plot' + dim.toUpperCase(),
+                    min,
+                    max,
+                    translatedJitter;
                 if (jitter[dim] && !point.isNull) {
                     axis = series[dim + 'Axis'];
+                    translatedJitter = jitter[dim] * axis.transA;
                     if (axis && !axis.isLog) {
-                        offset = 2 * jitter[dim] *
-                            (0.5 - unrandom(i + j * len));
 
-                        // If we want pixel jitter, skip this
-                        offset *= axis.transA;
+                        // Identify the outer bounds of the jitter range
+                        min = Math.max(
+                            0,
+                            point[plotProp] - translatedJitter
+                        );
+                        max = Math.min(
+                            axis.len,
+                            point[plotProp] + translatedJitter
+                        );
 
-                        // Modify plotX and plotY
-                        point['plot' + dim.toUpperCase()] += offset;
-                        point.clientX = point.plotX; // For tooltip k-d-tree
+                        // Find a random position within this range
+                        point[plotProp] = min +
+                            (max - min) * unrandom(i + j * len);
+
+                        // Update clientX for the tooltip k-d-tree
+                        if (dim === 'x') {
+                            point.clientX = point.plotX;
+                        }
                     }
                 }
             });
