@@ -16,7 +16,6 @@ const {
     sep
 } = require('path');
 const {
-    buildModules,
     getFilesInFolder
 } = require('highcharts-assembler/src/build.js');
 const {
@@ -44,6 +43,9 @@ const ProgressBar = require('./tools/progress-bar.js');
  * @return {undefined}
  */
 const buildESModules = () => {
+    const {
+        buildModules
+    } = require('highcharts-assembler/src/build.js');
     buildModules({
         base: './js/',
         output: './code/',
@@ -1253,8 +1255,11 @@ const jsdocNamespace = () => {
 
     const jsdoc3 = require('gulp-jsdoc3');
 
+    const dtsPath = 'test/typescript';
+
     const codeFiles = JSON
-        .parse(fs.readFileSync('tsconfig.json')).files
+        .parse(fs.readFileSync(join(dtsPath, 'tsconfig.json'))).files
+        .map(file => join(dtsPath, file))
         .filter(file => (
             file.indexOf('test') !== 0 &&
             !file.indexOf('global.d.ts') >= 0 &&
@@ -1325,7 +1330,7 @@ gulp.task('jsdoc-options', jsdocOptions);
 
 /* *
  *
- *  TypeScript Declarations
+ *  TypeScript
  *
  * */
 
@@ -1344,8 +1349,30 @@ function dtsLint() {
     return commandLine('cd test/typescript && npx dtslint --onlyTestTsNext');
 }
 
+/**
+ * Compiles TypeScript code into the js folder.
+ */
+function tsc() {
+    return commandLine('npx tsc --project ts');
+}
+
+/**
+ * Lint test of TypeScript code.
+ */
+function tslint() {
+    return commandLine('npx tslint --project ts');
+}
+
 gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], dts);
 gulp.task('dtslint', ['update', 'dts'], dtsLint);
+gulp.task('tsc', tsc);
+gulp.task('tslint', tslint);
+
+/* *
+ *
+ *  Core Functionality
+ *
+ * */
 
 /**
  * Updates node packages.
