@@ -1128,8 +1128,8 @@ H.splat = function (obj) {
  * @param {number} delay
  *        Delay in milliseconds.
  *
- * @param {*} [context]
- *        The context.
+ * @param {*} [parameter]
+ *        An optional parameter to send to the function callback.
  *
  * @return {number}
  *         An identifier for the timeout that can later be cleared with
