@@ -13,6 +13,7 @@
         'pie',
         // Options
         {
+            layout: 'vertical',
             marker: merge(
                 H.defaultOptions.plotOptions.line.marker,
                 {
@@ -114,8 +115,13 @@
 
                         for (var val = 0; val < point.y; val++) {
 
-                            x = cellWidth * (i % cols);
-                            y = cellHeight * Math.floor(i / cols);
+                            if (options.layout === 'horizontal') {
+                                x = cellWidth * (i % cols);
+                                y = cellHeight * Math.floor(i / cols);
+                            } else {
+                                x = cellWidth * Math.floor(i / rows);
+                                y = cellHeight * (i % rows);
+                            }
 
                             if (series.options.crisp) {
                                 x = Math.round(x) - crisp;
@@ -168,8 +174,7 @@
 Highcharts.chart('container', {
 
     chart: {
-        type: 'item',
-        plotBorderWidth: 1
+        type: 'item'
     },
 
     title: {
@@ -182,16 +187,17 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'Representatives',
+        keys: ['name', 'y', 'color'],
         data: [
-            ['Arbeiderpartiet', 49],
-            ['Høyre', 45],
-            ['Fremskrittspartiet', 27],
-            ['Senterpartiet', 19],
-            ['Sosialistisk Venstreparti', 11],
-            ['Kristelig Folkeparti', 8],
-            ['Venstre', 8],
-            ['Miljøpartiet De Grønne', 1],
-            ['Rødt', 1]
+            ['Rødt', 1, '#851914'],
+            ['Sosialistisk Venstreparti', 11, '#B0185B'],
+            ['Arbeiderpartiet', 49, '#C6191D'],
+            ['Senterpartiet', 19, '#5CA92E'],
+            ['Miljøpartiet De Grønne', 1, '#024B26'],
+            ['Kristelig Folkeparti', 8, '#F9B234'],
+            ['Venstre', 8, '#036766'],
+            ['Høyre', 45, '#4677BA'],
+            ['Fremskrittspartiet', 27, '#262955']
         ]
     }]
 
