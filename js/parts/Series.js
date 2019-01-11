@@ -3049,7 +3049,7 @@ H.Series = H.seriesType(
                 if (id || isNumber(x)) {
                     if (id) {
                         matchingPoint = this.chart.get(id);
-                        pointIndex = matchingPoint && matchingPoint.x;
+                        pointIndex = matchingPoint && matchingPoint.index;
                     }
 
                     // Search for the same X in the existing data set
