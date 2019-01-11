@@ -4610,7 +4610,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var lineHeight,
             baseline;
 
-        if (this.styledMode) {
+        if (this.styledMode || !/px/.test(fontSize)) {
             fontSize = elem && SVGElement.prototype.getStyle.call(
                 elem,
                 'font-size'
@@ -4626,10 +4626,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // Handle different units
         if (/px/.test(fontSize)) {
             fontSize = pInt(fontSize);
-        } else if (/em/.test(fontSize)) {
-            // The em unit depends on parent items
-            fontSize = parseFloat(fontSize) *
-                (elem ? this.fontMetrics(null, elem.parentNode).f : 16);
         } else {
             fontSize = 12;
         }
