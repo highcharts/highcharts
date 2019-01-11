@@ -871,6 +871,8 @@ H.Series = H.seriesType('line',
          *         Between in a column chart
          * @sample {highcharts|highstock} highcharts/plotoptions/series-pointplacement-numeric/
          *         Numeric placement for custom layout
+         * @sample {highcharts|highstock} maps/plotoptions/heatmap-pointplacement/
+         *         Placement in heatmap
          *
          * @type      {string|number}
          * @since     2.3.0
@@ -3749,10 +3751,10 @@ H.Series = H.seriesType('line',
                 dataLength = points.length,
                 hasModifyValue = !!series.modifyValue,
                 i,
-                pointPlacement = options.pointPlacement,
-                dynamicallyPlaced =
-                    pointPlacement === 'between' ||
-                    isNumber(pointPlacement),
+                pointPlacement = series.pointPlacementToXValue(), // #7860
+                dynamicallyPlaced = isNumber(pointPlacement),
+                // pointPlacement === 'between' ||
+                // isNumber(pointPlacement),
                 threshold = options.threshold,
                 stackThreshold = options.startFromThreshold ? threshold : 0,
                 plotX,
@@ -3770,12 +3772,12 @@ H.Series = H.seriesType('line',
             }
 
             // Point placement is relative to each series pointRange (#5889)
-            if (pointPlacement === 'between') {
-                pointPlacement = 0.5;
-            }
-            if (isNumber(pointPlacement)) {
-                pointPlacement *= pick(options.pointRange || xAxis.pointRange);
-            }
+            // if (pointPlacement === 'between') {
+            //     pointPlacement = 0.5;
+            // }
+            // if (isNumber(pointPlacement)) {
+            //   pointPlacement *= pick(options.pointRange || xAxis.pointRange);
+            // }
 
             // Translate each point
             for (i = 0; i < dataLength; i++) {
@@ -5349,8 +5351,24 @@ H.Series = H.seriesType('line',
             if (this.kdTree) {
                 return _search(point, this.kdTree, kdDimensions, kdDimensions);
             }
-        }
+        },
 
+        pointPlacementToXValue: function () {
+
+            var series = this,
+                pointPlacement = series.options.pointPlacement;
+
+            // Point placement is relative to each series pointRange (#5889)
+            if (pointPlacement === 'between') {
+                pointPlacement = 0.5;
+            }
+            if (isNumber(pointPlacement)) {
+                pointPlacement *=
+                    pick(series.options.pointRange || series.xAxis.pointRange);
+            }
+
+            return pointPlacement;
+        }
     }
 ); // end Series prototype
 

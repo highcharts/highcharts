@@ -201,7 +201,8 @@ seriesType('heatmap', 'scatter'
                 seriesPointPadding = options.pointPadding || 0,
                 between = function (x, a, b) {
                     return Math.min(Math.max(a, x), b);
-                };
+                },
+                pointPlacement = series.pointPlacementToXValue(); // #7860
 
             series.generatePoints();
 
@@ -211,14 +212,24 @@ seriesType('heatmap', 'scatter'
                     x1 = between(
                         Math.round(
                             xAxis.len -
-                        xAxis.translate(point.x - xPad, 0, 1, 0, 1)
+                        xAxis.translate(point.x - xPad,
+                            0,
+                            1,
+                            0,
+                            1,
+                            -pointPlacement)
                         ),
                         -xAxis.len, 2 * xAxis.len
                     ),
                     x2 = between(
                         Math.round(
                             xAxis.len -
-                        xAxis.translate(point.x + xPad, 0, 1, 0, 1)
+                        xAxis.translate(point.x + xPad,
+                            0,
+                            1,
+                            0,
+                            1,
+                            -pointPlacement)
                         ),
                         -xAxis.len, 2 * xAxis.len
                     ),
@@ -446,4 +457,3 @@ seriesType('heatmap', 'scatter'
  * @product   highcharts highmaps
  * @apioption series.heatmap.data.pointPadding
  */
-
