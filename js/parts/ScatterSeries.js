@@ -161,11 +161,8 @@ H.addEvent(Series, 'afterTranslate', function () {
 
     // Return a repeatable, pseudo-random number based on an integer seed
     function unrandom(seed) {
-        var n = seed || 1.1, // otherwise 0 would output 0
-            rand = Math.pow(n, 4) / Math.PI;
-
-        rand = rand % 1;
-        return rand;
+        var rand = Math.sin(seed) * 10000;
+        return rand - Math.floor(rand);
     }
 
     if (jitter) {
