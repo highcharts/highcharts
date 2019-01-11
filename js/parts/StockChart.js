@@ -797,15 +797,11 @@ seriesProto.processData = function () {
         length = processedYData.length;
 
         // For series with more than one value (range, OHLC etc), compare
-        // against close or the pointValKey (#4922, #3112)
+        // against close or the pointValKey (#4922, #3112, #9854)
         if (series.pointArrayMap) {
-            // Use close if present (#3112) or pointValKey if defined (#9854)
-            keyIndex = series.pointArrayMap.indexOf(series.options.pointValKey);
-            if (keyIndex === -1) {
-                keyIndex = series.pointArrayMap.indexOf(
-                    series.pointValKey || 'y'
-                );
-            }
+            keyIndex = series.pointArrayMap.indexOf(
+                series.options.pointValKey || series.pointValKey || 'y'
+            );
         }
 
         // find the first value for comparison
