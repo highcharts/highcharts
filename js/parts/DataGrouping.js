@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2018 Torstein Honsi
+ *  (c) 2010-2019 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -27,8 +27,7 @@ var addEvent = H.addEvent,
     pick = H.pick,
     Point = H.Point,
     Series = H.Series,
-    Tooltip = H.Tooltip,
-    wrap = H.wrap;
+    Tooltip = H.Tooltip;
 
 /* ************************************************************************** *
  *  Start data grouping module                                                *
@@ -161,7 +160,7 @@ var addEvent = H.addEvent,
  * @apioption plotOptions.series.dataGrouping.groupPixelWidth
  */
 
- /**
+/**
  * By default only points within the visible range are grouped. Enabling this
  * option will force data grouping to calculate all grouped points for a given
  * dataset. That option prevents for example a column series from calculating
@@ -464,10 +463,10 @@ var seriesProto = Series.prototype,
         range: function (low, high) {
             low = approximations.low(low);
             high = approximations.high(high);
-
             if (isNumber(low) || isNumber(high)) {
                 return [low, high];
-            } else if (low === null && high === null) {
+            }
+            if (low === null && high === null) {
                 return null;
             }
             // else, return is undefined
@@ -545,9 +544,9 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
         // when a new group is entered, summarize and initiate
         // the previous group
         while ((
-                    groupPositions[pos + 1] !== undefined &&
+            groupPositions[pos + 1] !== undefined &&
                     xData[i] >= groupPositions[pos + 1]
-                ) || i === dataLength) { // get the last group
+        ) || i === dataLength) { // get the last group
 
             // get group x and y
             pointX = groupPositions[pos];
@@ -652,12 +651,18 @@ seriesProto.processData = function () {
         skip,
         lastDataGrouping = this.currentDataGrouping,
         currentDataGrouping,
-        croppedData;
+        croppedData,
+        revertRequireSorting = false;
 
     // Run base method
     series.forceCrop = groupingEnabled; // #334
     series.groupPixelWidth = null; // #2110
     series.hasProcessed = true; // #2692
+
+    // Data needs to be sorted for dataGrouping
+    if (groupingEnabled && !series.requireSorting) {
+        series.requireSorting = revertRequireSorting = true;
+    }
 
     // Skip if processData returns false or if grouping is disabled (in that
     // order)
@@ -665,6 +670,12 @@ seriesProto.processData = function () {
         baseProcessData.apply(series, arguments) === false ||
         !groupingEnabled
     );
+
+    // Revert original requireSorting value if changed
+    if (revertRequireSorting) {
+        series.requireSorting = false;
+    }
+
     if (!skip) {
         series.destroyGroupedData();
 
@@ -717,7 +728,8 @@ seriesProto.processData = function () {
                         processedYData,
                         groupPositions,
                         dataGroupingOptions.approximation
-                    ]),
+                    ]
+                ),
                 groupedXData = groupedData[0],
                 groupedYData = groupedData[1];
 
@@ -820,13 +832,10 @@ addEvent(Point, 'update', function () {
 
 // Extend the original method, make the tooltip's header reflect the grouped
 // range.
-wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
-    proceed,
-    labelConfig,
-    isFooter
-) {
+addEvent(Tooltip, 'headerFormatter', function (e) {
     var tooltip = this,
         time = this.chart.time,
+        labelConfig = e.labelConfig,
         series = labelConfig.series,
         options = series.options,
         tooltipOptions = series.tooltipOptions,
@@ -839,7 +848,7 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
         labelFormats,
         formattedKey,
         formatString = tooltipOptions[
-            (isFooter ? 'footer' : 'header') + 'Format'
+            (e.isFooter ? 'footer' : 'header') + 'Format'
         ];
 
     // apply only to grouped series
@@ -852,7 +861,9 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
 
         // set variables
         currentDataGrouping = series.currentDataGrouping;
-        dateTimeLabelFormats = dataGroupingOptions.dateTimeLabelFormats;
+        dateTimeLabelFormats = dataGroupingOptions.dateTimeLabelFormats ||
+            // Fallback to commonOptions (#9693)
+            commonOptions.dateTimeLabelFormats;
 
         // if we have grouped data, use the grouping information to get the
         // right format
@@ -890,7 +901,7 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
         }
 
         // return the replaced format
-        return format(
+        e.text = format(
             formatString, {
                 point: extend(labelConfig.point, { key: formattedKey }),
                 series: series
@@ -898,10 +909,9 @@ wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (
             time
         );
 
-    }
+        e.preventDefault();
 
-    // else, fall back to the regular formatter
-    return proceed.call(tooltip, labelConfig, isFooter);
+    }
 });
 
 // Destroy grouped data on series destroy
@@ -933,12 +943,7 @@ addEvent(Series, 'afterSetOptions', function (e) {
             this.userOptions.dataGrouping
         );
     }
-
-    if (this.chart.options.isStock) {
-        this.requireSorting = true;
-    }
 });
-
 
 // When resetting the scale reset the hasProccessed flag to avoid taking
 // previous data grouping of neighbour series into accound when determining
@@ -969,7 +974,8 @@ Axis.prototype.getGroupPixelWidth = function () {
         if (dgOptions) {
             groupPixelWidth = Math.max(
                 groupPixelWidth,
-                dgOptions.groupPixelWidth
+                // Fallback to commonOptions (#9693)
+                pick(dgOptions.groupPixelWidth, commonOptions.groupPixelWidth)
             );
 
         }
@@ -1049,7 +1055,6 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
         this.chart.redraw();
     }
 };
-
 
 
 /* ************************************************************************** *

@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2018 Torstein Honsi
+ * (c) 2009-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -13,16 +13,11 @@ import '../parts/Series.js';
 
 var addEvent = H.addEvent,
     pick = H.pick,
-    wrap = H.wrap,
     extend = H.extend,
     isArray = H.isArray,
     fireEvent = H.fireEvent,
     Axis = H.Axis,
     Series = H.Series;
-
-function stripArguments() {
-    return Array.prototype.slice.call(arguments, 1);
-}
 
 extend(Axis.prototype, {
     isInBreak: function (brk, val) {
@@ -61,7 +56,7 @@ extend(Axis.prototype, {
                     if (!keep) {
                         keep = pick(
                             breaks[i].showPoints,
-                            this.isXAxis ? false : true
+                            !this.isXAxis
                         );
                     }
                 }
@@ -214,7 +209,7 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
             this.unitLength = null;
             if (this.isBroken) {
                 var breaks = axis.options.breaks,
-                    breakArrayT = [],    // Temporary one
+                    breakArrayT = [], // Temporary one
                     breakArray = [],
                     length = 0,
                     inBrk,
@@ -264,8 +259,11 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
                 breakArrayT.sort(function (a, b) {
                     return (
                         (a.value === b.value) ?
-                        (a.move === 'in' ? 0 : 1) - (b.move === 'in' ? 0 : 1) :
-                        a.value - b.value
+                            (
+                                (a.move === 'in' ? 0 : 1) -
+                                (b.move === 'in' ? 0 : 1)
+                            ) :
+                            a.value - b.value
                     );
                 });
 
@@ -319,9 +317,7 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
     }
 };
 
-wrap(Series.prototype, 'generatePoints', function (proceed) {
-
-    proceed.apply(this, stripArguments(arguments));
+addEvent(Series, 'afterGeneratePoints', function () {
 
     var series = this,
         xAxis = series.xAxis,
@@ -357,11 +353,10 @@ wrap(Series.prototype, 'generatePoints', function (proceed) {
 
 });
 
-function drawPointsWrapped(proceed) {
-    proceed.apply(this);
+addEvent(Series, 'afterRender', function drawPointsWrapped() {
     this.drawBreaks(this.xAxis, ['x']);
     this.drawBreaks(this.yAxis, pick(this.pointArrayMap, ['y']));
-}
+});
 
 H.Series.prototype.drawBreaks = function (axis, keys) {
     var series = this,
@@ -519,6 +514,3 @@ H.Series.prototype.gappedPath = function () {
     // Call base method
     return this.getGraphPath(points);
 };
-
-wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);
-wrap(H.Series.prototype, 'drawPoints', drawPointsWrapped);

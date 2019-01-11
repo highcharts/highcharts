@@ -5,10 +5,12 @@
  */
 'use strict';
 import H from '../parts/Globals.js';
+import chartNavigationMixin from '../mixins/navigation.js';
 
 var doc = H.doc,
     addEvent = H.addEvent,
     pick = H.pick,
+    merge = H.merge,
     extend = H.extend,
     isNumber = H.isNumber,
     fireEvent = H.fireEvent,
@@ -37,18 +39,16 @@ var bindingsUtils = {
      */
     updateRectSize: function (event, annotation) {
         var options = annotation.options.typeOptions,
-            xStart = this.chart.xAxis[0].toPixels(options.point.x),
-            yStart = this.chart.yAxis[0].toPixels(options.point.y),
-            x = event.chartX,
-            y = event.chartY,
-            width = x - xStart,
-            height = y - yStart;
+            x = this.chart.xAxis[0].toValue(event.chartX),
+            y = this.chart.yAxis[0].toValue(event.chartY),
+            width = x - options.point.x,
+            height = options.point.y - y;
 
         annotation.update({
             typeOptions: {
                 background: {
-                    width: width + 'px',
-                    height: height + 'px'
+                    width: width,
+                    height: height
                 }
             }
         });
@@ -223,6 +223,23 @@ extend(H.NavigationBindings.prototype, {
     },
 
     /**
+     * Common chart.update() delegation, shared between bindings and exporting.
+     *
+     * @private
+     * @function Highcharts.NavigationBindings#initUpdate
+     */
+    initUpdate: function () {
+        var navigation = this;
+
+        chartNavigationMixin.addUpdate(
+            function (options) {
+                navigation.update(options);
+            },
+            this.chart
+        );
+    },
+
+    /**
      * Hook for click on a button, method selcts/unselects buttons,
      * then calls `bindings.init` callback.
      *
@@ -347,8 +364,7 @@ extend(H.NavigationBindings.prototype, {
             }
         } else {
 
-            navigation.nextEvent.call(
-                navigation,
+            navigation.nextEvent(
                 clickEvent,
                 navigation.currentUserDetails
             );
@@ -397,8 +413,7 @@ extend(H.NavigationBindings.prototype, {
      */
     bindingsContainerMouseMove: function (container, moveEvent) {
         if (this.mouseMoveEvent) {
-            this.mouseMoveEvent.call(
-                this,
+            this.mouseMoveEvent(
                 moveEvent,
                 this.currentUserDetails
             );
@@ -703,7 +718,8 @@ extend(H.NavigationBindings.prototype, {
      * @private
      * @function Highcharts.NavigationBindings#update
      */
-    update: function () {
+    update: function (options) {
+        this.options = merge(true, this.options, options);
         this.removeEvents();
         this.initEvents();
     },
@@ -731,7 +747,7 @@ extend(H.NavigationBindings.prototype, {
     utils: bindingsUtils
 });
 
-addEvent(H.Chart, 'load', function () {
+H.Chart.prototype.initNavigationBindings = function () {
     var chart = this,
         options = chart.options;
 
@@ -741,7 +757,12 @@ addEvent(H.Chart, 'load', function () {
             options.navigation
         );
         chart.navigationBindings.initEvents();
+        chart.navigationBindings.initUpdate();
     }
+};
+
+addEvent(H.Chart, 'load', function () {
+    this.initNavigationBindings();
 });
 
 addEvent(H.Chart, 'destroy', function () {
@@ -956,9 +977,9 @@ H.setOptions({
                             controlPoints: [{
                                 positioner: function (target) {
                                     var xy = H.Annotation.MockPoint
-                                        .pointToPixels(
-                                            target.points[0]
-                                        ),
+                                            .pointToPixels(
+                                                target.points[0]
+                                            ),
                                         r = target.options.r;
 
                                     return {
@@ -972,8 +993,9 @@ H.setOptions({
                                     // TRANSFORM RADIUS ACCORDING TO Y
                                     // TRANSLATION
                                     drag: function (e, target) {
-                                        var position = this
-                                            .mouseMoveToTranslation(e);
+                                        var annotation = target.annotation,
+                                            position = this
+                                                .mouseMoveToTranslation(e);
 
                                         target.setRadius(
                                             Math.max(
@@ -983,6 +1005,10 @@ H.setOptions({
                                                 5
                                             )
                                         );
+
+                                        annotation.options.shapes[0] =
+                                            annotation.userOptions.shapes[0] =
+                                            target.options;
 
                                         target.redraw(false);
                                     }
@@ -1056,8 +1082,9 @@ H.setOptions({
                                     },
                                     events: {
                                         drag: function (e, target) {
-                                            var xy = this
-                                                .mouseMoveToTranslation(e);
+                                            var annotation = target.annotation,
+                                                xy = this
+                                                    .mouseMoveToTranslation(e);
 
                                             target.options.width = Math.max(
                                                 target.options.width + xy.x,
@@ -1067,6 +1094,11 @@ H.setOptions({
                                                 target.options.height + xy.y,
                                                 5
                                             );
+
+                                            annotation.options.shapes[0] =
+                                                target.options;
+                                            annotation.userOptions.shapes[0] =
+                                                target.options;
 
                                             target.redraw(false);
                                         }
@@ -1154,6 +1186,10 @@ H.setOptions({
                                         var xy = this.mouseMoveToTranslation(e);
 
                                         target.translatePoint(xy.x, xy.y);
+
+                                        target.annotation.labels[0].options =
+                                            target.options;
+
                                         target.redraw(false);
                                     }
                                 }
@@ -1182,6 +1218,10 @@ H.setOptions({
                                         var xy = this.mouseMoveToTranslation(e);
 
                                         target.translate(xy.x, xy.y);
+
+                                        target.annotation.labels[0].options =
+                                            target.options;
+
                                         target.redraw(false);
                                     }
                                 }

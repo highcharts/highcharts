@@ -226,6 +226,25 @@
  */
 
 /**
+ * Enable or disable pre-allocation of vertex buffers.
+ *
+ * Enabling this will make it so that the binary data arrays required for
+ * storing the series data will be allocated prior to transforming the data
+ * to a WebGL-compatible format.
+ *
+ * This saves a copy operation on the order of O(n) and so is significantly more
+ * performant. However, this is currently an experimental option, and may cause
+ * visual artifacts with some datasets.
+ *
+ * As such, care should be taken when using this setting to make sure that
+ * it doesn't cause any rendering glitches with the given use-case.
+ *
+ * @type      {boolean}
+ * @default   false
+ * @apioption boost.usePreallocated
+ */
+
+/**
  * Set the point threshold for when a series should enter boost mode.
  *
  * Setting it to e.g. 2000 will cause the series to enter boost mode when there
@@ -895,8 +914,7 @@ function GLShader(gl) {
      */
     function stringToProgram(str, type) {
         var t = type === 'vertex' ? gl.VERTEX_SHADER : gl.FRAGMENT_SHADER,
-            shader = gl.createShader(t)
-        ;
+            shader = gl.createShader(t);
 
         gl.shaderSource(shader, str);
         gl.compileShader(shader);
@@ -920,8 +938,7 @@ function GLShader(gl) {
      */
     function createShader() {
         var v = stringToProgram(vertShade, 'vertex'),
-            f = stringToProgram(fragShade, 'fragment')
-        ;
+            f = stringToProgram(fragShade, 'fragment');
 
         if (!v || !f) {
             shaderProgram = false;
@@ -997,9 +1014,10 @@ function GLShader(gl) {
         if (gl && shaderProgram) {
             var u = uLocations[name] = uLocations[name] ||
                                        gl.getUniformLocation(
-                                          shaderProgram,
-                                          name
+                                           shaderProgram,
+                                           name
                                        );
+
             gl.uniform1f(u, val);
         }
     }
@@ -1064,7 +1082,7 @@ function GLShader(gl) {
                 Math.max(
                     zCalcMin,
                     seriesOptions.displayNegative === false ?
-                    seriesOptions.zThreshold : -Number.MAX_VALUE
+                        seriesOptions.zThreshold : -Number.MAX_VALUE
                 )
             ));
 
@@ -1683,7 +1701,8 @@ function GLRenderer(postRenderCallback) {
                     if (a.node) {
                         if (a.node.levelDynamic > b.node.levelDynamic) {
                             return 1;
-                        } else if (a.node.levelDynamic < b.node.levelDynamic) {
+                        }
+                        if (a.node.levelDynamic < b.node.levelDynamic) {
                             return -1;
                         }
                     }
@@ -2269,10 +2288,10 @@ function GLRenderer(postRenderCallback) {
                     s.series.xAxis.isRadial ? true : null,
                     s.series.closestPointRangePx >
                         2 * ((
-                                options.marker ?
+                            options.marker ?
                                 options.marker.radius :
                                 10
-                            ) || 10)
+                        ) || 10)
                 ),
                 fillColor,
                 shapeTexture = textureHandles[
@@ -2294,7 +2313,7 @@ function GLRenderer(postRenderCallback) {
 
             if (chart.styledMode) {
                 fillColor = (
-                   s.series.markerGroup &&
+                    s.series.markerGroup &&
                     s.series.markerGroup.getStyle('fill')
                 );
 
@@ -2455,7 +2474,7 @@ function GLRenderer(postRenderCallback) {
      */
     function setSize(w, h) {
         // Skip if there's no change, or if we have no valid shader
-        if ((width === w && h === h) || !shader) {
+        if ((width === w && height === h) || !shader) {
             return;
         }
 
@@ -2757,8 +2776,8 @@ function createAndAttachRenderer(chart, series) {
                 width,
                 height
             )
-            .addClass('highcharts-boost-canvas')
-            .add(targetGroup);
+                .addClass('highcharts-boost-canvas')
+                .add(targetGroup);
 
             target.boostClear = function () {
                 target.renderTarget.attr({ href: '' });
@@ -2961,15 +2980,16 @@ H.eachAsync = function (arr, fn, finalFunc, chunkSize, i, noTimeout) {
  */
 Series.prototype.getPoint = function (boostPoint) {
     var point = boostPoint,
-        xData = this.xData || this.options.xData || this.processedXData || false
-    ;
+        xData = (
+            this.xData || this.options.xData || this.processedXData || false
+        );
 
     if (boostPoint && !(boostPoint instanceof this.pointClass)) {
         point = (new this.pointClass()).init( // eslint-disable-line new-cap
-                    this,
-                    this.options.data[boostPoint.i],
-                    xData ? xData[boostPoint.i] : undefined
-                );
+            this,
+            this.options.data[boostPoint.i],
+            xData ? xData[boostPoint.i] : undefined
+        );
 
         point.category = point.x;
 
@@ -3264,7 +3284,6 @@ Series.prototype.destroyGraphics = function () {
 };
 
 
-
 /**
  * Returns true if the current browser supports webgl
  *
@@ -3348,7 +3367,6 @@ if (!H.hasWebGLSupport()) {
 
     // /////////////////////////////////////////////////////////////////////////
     // GL-SPECIFIC WRAPPINGS FOLLOWS
-
 
 
     H.extend(Series.prototype, {

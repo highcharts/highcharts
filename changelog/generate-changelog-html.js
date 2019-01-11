@@ -55,7 +55,7 @@ var replaceString = require('replace-string');
         if (typeof textToken !== 'undefined') {
             var issues = textToken.match(/#[0-9]+/g);
             if (issues !== null) {
-                issues.forEach((issue) => {
+                issues.forEach(issue => {
                     var issued = issue.substring(1),
                         issueLink = 'https://github.com/highcharts/highcharts/issues/' + issued,
                         formatIssue = '[' + issue + '](' + issueLink + ')';
@@ -79,7 +79,7 @@ var replaceString = require('replace-string');
             if (index === 0) {
                 changelogTitle = token.text.split(' ');
 
-                let date = changelogTitle[changelogTitle.length - 1];
+                const date = changelogTitle[changelogTitle.length - 1];
                 if (date !== '()') {
                     changelog.header.date = date;
                 }
@@ -140,8 +140,8 @@ var replaceString = require('replace-string');
 
     function featureHTMLStructure() {
         if (changelog.features) {
-            let version = changelog.header.version.split('-').join('.');
-            let id = changelog.header.name + '-v' + version;
+            const version = changelog.header.version.split('-').join('.');
+            const id = changelog.header.name + '-v' + version;
             return (
                 `<p class="release-header" style="position: relative">
                     <a id="${id}" style="position: absolute; top: -60px"></a>
@@ -219,7 +219,7 @@ var replaceString = require('replace-string');
     }
 
     function writeContentToNewHTMLFile() {
-        var outputFile = './' + process.argv[2] + '.html';
+        var outputFile = './' + (process.argv[2] || 'changelog') + '.html';
         fs.writeFile(outputFile, pretty(htmlContent), function (err) {
             if (err) {
                 throw err;
@@ -242,7 +242,7 @@ var replaceString = require('replace-string');
         changelog.header.offset = product.offset;
         htmlContent += productHeaderHTMLStructure(product);
         var sortedDir = getSortedDirFiles(fs.readdirSync('./' + product.name));
-        sortedDir.forEach((file) => {
+        sortedDir.forEach(file => {
             var content = fs.readFileSync('./' + product.name + '/' + file, 'utf8');
             sortMarkdownFileContent(content);
             changelog.header.version = formatVersionNumber(file);

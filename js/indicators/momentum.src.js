@@ -30,7 +30,9 @@ function populateAverage(points, xVal, yVal, i, period) {
  *
  * @augments Highcharts.Series
  */
-seriesType('momentum', 'sma',
+seriesType(
+    'momentum',
+    'sma',
     /**
      * Momentum. This series requires `linkedTo` option to be set.
      *

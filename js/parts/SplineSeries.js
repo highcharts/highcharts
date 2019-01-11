@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,114 +23,116 @@ var pick = H.pick,
  *
  * @augments Highcarts.Series
  */
-seriesType('spline', 'line'
-
-/**
- * A spline series is a special type of line series, where the segments
- * between the data points are smoothed.
- *
- * @sample {highcharts} highcharts/demo/spline-irregular-time/
- *         Spline chart
- * @sample {highstock} stock/demo/spline/
- *         Spline chart
- *
- * @extends      plotOptions.series
- * @excluding    step
- * @product      highcharts highstock
- * @optionparent plotOptions.spline
- */
-, {
-
-}, /** @lends seriesTypes.spline.prototype */ {
-
+seriesType(
+    'spline',
+    'line',
     /**
-     * Get the spline segment from a given point's previous neighbour to the
-     * given point.
+     * A spline series is a special type of line series, where the segments
+     * between the data points are smoothed.
      *
-     * @private
-     * @function Highcharts.seriesTypes.spline#getPointSpline
+     * @sample {highcharts} highcharts/demo/spline-irregular-time/
+     *         Spline chart
+     * @sample {highstock} stock/demo/spline/
+     *         Spline chart
      *
-     * @param {Array<Highcharts.Point>}
-     *
-     * @param {Highcharts.Point} point
-     *
-     * @param {number} i
-     *
-     * @return {Highcharts.SVGPathArray}
+     * @extends      plotOptions.series
+     * @excluding    step
+     * @product      highcharts highstock
+     * @optionparent plotOptions.spline
      */
-    getPointSpline: function (points, point, i) {
-        var
-            // 1 means control points midway between points, 2 means 1/3 from
-            // the point, 3 is 1/4 etc
-            smoothing = 1.5,
-            denom = smoothing + 1,
-            plotX = point.plotX,
-            plotY = point.plotY,
-            lastPoint = points[i - 1],
-            nextPoint = points[i + 1],
-            leftContX,
-            leftContY,
-            rightContX,
-            rightContY,
-            ret;
+    {
+    },
+    /** @lends seriesTypes.spline.prototype */ {
+        /**
+         * Get the spline segment from a given point's previous neighbour to the
+         * given point.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.spline#getPointSpline
+         *
+         * @param {Array<Highcharts.Point>}
+         *
+         * @param {Highcharts.Point} point
+         *
+         * @param {number} i
+         *
+         * @return {Highcharts.SVGPathArray}
+         */
+        getPointSpline: function (points, point, i) {
+            var
+                // 1 means control points midway between points, 2 means 1/3
+                // from the point, 3 is 1/4 etc
+                smoothing = 1.5,
+                denom = smoothing + 1,
+                plotX = point.plotX,
+                plotY = point.plotY,
+                lastPoint = points[i - 1],
+                nextPoint = points[i + 1],
+                leftContX,
+                leftContY,
+                rightContX,
+                rightContY,
+                ret;
 
-        function doCurve(otherPoint) {
-            return otherPoint &&
-                !otherPoint.isNull &&
-                otherPoint.doCurve !== false &&
-                !point.isCliff; // #6387, area splines next to null
-        }
-
-        // Find control points
-        if (doCurve(lastPoint) && doCurve(nextPoint)) {
-            var lastX = lastPoint.plotX,
-                lastY = lastPoint.plotY,
-                nextX = nextPoint.plotX,
-                nextY = nextPoint.plotY,
-                correction = 0;
-
-            leftContX = (smoothing * plotX + lastX) / denom;
-            leftContY = (smoothing * plotY + lastY) / denom;
-            rightContX = (smoothing * plotX + nextX) / denom;
-            rightContY = (smoothing * plotY + nextY) / denom;
-
-            // Have the two control points make a straight line through main
-            // point
-            if (rightContX !== leftContX) { // #5016, division by zero
-                correction = ((rightContY - leftContY) * (rightContX - plotX)) /
-                    (rightContX - leftContX) + plotY - rightContY;
+            function doCurve(otherPoint) {
+                return otherPoint &&
+                    !otherPoint.isNull &&
+                    otherPoint.doCurve !== false &&
+                    !point.isCliff; // #6387, area splines next to null
             }
 
-            leftContY += correction;
-            rightContY += correction;
+            // Find control points
+            if (doCurve(lastPoint) && doCurve(nextPoint)) {
+                var lastX = lastPoint.plotX,
+                    lastY = lastPoint.plotY,
+                    nextX = nextPoint.plotX,
+                    nextY = nextPoint.plotY,
+                    correction = 0;
 
-            // to prevent false extremes, check that control points are between
-            // neighbouring points' y values
-            if (leftContY > lastY && leftContY > plotY) {
-                leftContY = Math.max(lastY, plotY);
-                // mirror of left control point
-                rightContY = 2 * plotY - leftContY;
-            } else if (leftContY < lastY && leftContY < plotY) {
-                leftContY = Math.min(lastY, plotY);
-                rightContY = 2 * plotY - leftContY;
+                leftContX = (smoothing * plotX + lastX) / denom;
+                leftContY = (smoothing * plotY + lastY) / denom;
+                rightContX = (smoothing * plotX + nextX) / denom;
+                rightContY = (smoothing * plotY + nextY) / denom;
+
+                // Have the two control points make a straight line through main
+                // point
+                if (rightContX !== leftContX) { // #5016, division by zero
+                    correction = (
+                        ((rightContY - leftContY) * (rightContX - plotX)) /
+                        (rightContX - leftContX) + plotY - rightContY
+                    );
+                }
+
+                leftContY += correction;
+                rightContY += correction;
+
+                // to prevent false extremes, check that control points are
+                // between neighbouring points' y values
+                if (leftContY > lastY && leftContY > plotY) {
+                    leftContY = Math.max(lastY, plotY);
+                    // mirror of left control point
+                    rightContY = 2 * plotY - leftContY;
+                } else if (leftContY < lastY && leftContY < plotY) {
+                    leftContY = Math.min(lastY, plotY);
+                    rightContY = 2 * plotY - leftContY;
+                }
+                if (rightContY > nextY && rightContY > plotY) {
+                    rightContY = Math.max(nextY, plotY);
+                    leftContY = 2 * plotY - rightContY;
+                } else if (rightContY < nextY && rightContY < plotY) {
+                    rightContY = Math.min(nextY, plotY);
+                    leftContY = 2 * plotY - rightContY;
+                }
+
+                // record for drawing in next point
+                point.rightContX = rightContX;
+                point.rightContY = rightContY;
+
+
             }
-            if (rightContY > nextY && rightContY > plotY) {
-                rightContY = Math.max(nextY, plotY);
-                leftContY = 2 * plotY - rightContY;
-            } else if (rightContY < nextY && rightContY < plotY) {
-                rightContY = Math.min(nextY, plotY);
-                leftContY = 2 * plotY - rightContY;
-            }
 
-            // record for drawing in next point
-            point.rightContX = rightContX;
-            point.rightContY = rightContY;
-
-
-        }
-
-        // Visualize control points for debugging
-        /*
+            // Visualize control points for debugging
+            /*
         if (leftContX) {
             this.chart.renderer.circle(
                     leftContX + this.chart.plotLeft,
@@ -177,21 +179,22 @@ seriesType('spline', 'line'
                 })
                 .add();
         }
-        // */
-        ret = [
-            'C',
-            pick(lastPoint.rightContX, lastPoint.plotX),
-            pick(lastPoint.rightContY, lastPoint.plotY),
-            pick(leftContX, plotX),
-            pick(leftContY, plotY),
-            plotX,
-            plotY
-        ];
-        // reset for updating series later
-        lastPoint.rightContX = lastPoint.rightContY = null;
-        return ret;
+            // */
+            ret = [
+                'C',
+                pick(lastPoint.rightContX, lastPoint.plotX),
+                pick(lastPoint.rightContY, lastPoint.plotY),
+                pick(leftContX, plotX),
+                pick(leftContY, plotY),
+                plotX,
+                plotY
+            ];
+            // reset for updating series later
+            lastPoint.rightContX = lastPoint.rightContY = null;
+            return ret;
+        }
     }
-});
+);
 
 /**
  * A `spline` series. If the [type](#series.spline.type) option is

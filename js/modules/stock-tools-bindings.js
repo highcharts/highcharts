@@ -2,7 +2,7 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2018 Paweł Fus
+ *  (c) 2009-2019 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -398,13 +398,13 @@ extend(H.NavigationBindings.prototype, {
 
         positions = yAxes.map(function (yAxis) {
             var height = isPercentage(yAxis.options.height) ?
-                        parseFloat(yAxis.options.height) / 100 :
-                        yAxis.height / plotHeight,
+                    parseFloat(yAxis.options.height) / 100 :
+                    yAxis.height / plotHeight,
                 top = isPercentage(yAxis.options.top) ?
-                        parseFloat(yAxis.options.top) / 100 :
-                        correctFloat(
-                            yAxis.top - yAxis.chart.plotTop
-                        ) / plotHeight;
+                    parseFloat(yAxis.options.top) / 100 :
+                    correctFloat(
+                        yAxis.top - yAxis.chart.plotTop
+                    ) / plotHeight;
 
             // New yAxis does not contain "height" info yet
             if (!isNumber(height)) {
@@ -1267,6 +1267,7 @@ var stockToolsBindings = {
         start: function (e) {
             var x = this.chart.xAxis[0].toValue(e.chartX),
                 y = this.chart.yAxis[0].toValue(e.chartY);
+
             return this.chart.addAnnotation({
                 langKey: 'fibonacci',
                 type: 'fibonacci',
@@ -1623,7 +1624,7 @@ var stockToolsBindings = {
      */
     zoomY: {
         /** @ignore */
-        className: 'highcharts-highcharts-zoom-y',
+        className: 'highcharts-zoom-y',
         /** @ignore */
         init: function (button) {
             this.chart.update({

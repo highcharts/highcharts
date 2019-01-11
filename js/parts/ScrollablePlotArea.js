@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  *
@@ -74,6 +74,7 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
                         axis.getPlotLinePath = function () {
                             var right = this.right,
                                 path;
+
                             this.right = right - axis.chart.scrollablePixels;
                             path = H.Axis.prototype.getPlotLinePath.apply(
                                 this,
@@ -231,6 +232,7 @@ Chart.prototype.applyFixed = function () {
     // Set scroll position
     if (firstTime) {
         var options = this.options.chart.scrollablePlotArea;
+
         if (options.scrollPositionX) {
             this.scrollingContainer.scrollLeft =
                 this.scrollablePixels * options.scrollPositionX;

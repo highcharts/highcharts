@@ -1,7 +1,7 @@
 /* eslint-disable */
 /* *
  * Error information for the debugger module
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  * License: www.highcharts.com/license
  */
 
@@ -123,7 +123,6 @@ H.errorMessages = {
             "errors/28/readme.md",
             "errors/29/readme.md",
             "errors/30/readme.md"
-        ],
-        "version": "6.2.0"
+        ]
     }
 };

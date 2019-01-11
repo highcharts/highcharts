@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * Extension to the VML Renderer
  *
@@ -35,6 +35,7 @@ if (VMLRenderer) {
 
     VMLRenderer.prototype.arc3d = function (shapeArgs) {
         var result = SVGRenderer.prototype.arc3d.call(this, shapeArgs);
+
         result.css({ zIndex: result.zIndex });
         return result;
     };

@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -103,10 +103,11 @@ H.CenteredSeriesMixin = {
                     // difference must be less than 360 degrees
                     (end - startAngle) < 360
                 ) ?
-                end :
-                startAngle + 360
+                    end :
+                    startAngle + 360
             ),
             correction = -90;
+
         return {
             start: deg2rad * (startAngle + correction),
             end: deg2rad * (endAngle + correction)

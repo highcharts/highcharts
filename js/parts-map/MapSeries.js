@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -55,7 +55,9 @@ var colorPointMixin = H.colorPointMixin,
  *
  * @augments Highcharts.Series
  */
-seriesType('map', 'scatter',
+seriesType(
+    'map',
+    'scatter',
     /**
      * The map series is used for basic choropleth maps, where each map area has
      * a color based on its value.
@@ -95,7 +97,7 @@ seriesType('map', 'scatter',
          * @sample maps/demo/all-areas-as-null/
          *         Null color
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         nullColor: '${palette.neutralColor3}',
 
@@ -225,7 +227,7 @@ seriesType('map', 'scatter',
                  * @sample maps/plotoptions/series-states-hover/
                  *         Hover options
                  *
-                 * @type      {Highcharts.ColorString}
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product   highmaps
                  * @apioption plotOptions.series.states.hover.color
                  */
@@ -500,6 +502,7 @@ seriesType('map', 'scatter',
             if (data) {
                 data.forEach(function (val, i) {
                     var ix = 0;
+
                     if (isNumber(val)) {
                         data[i] = {
                             value: val
@@ -1169,7 +1172,7 @@ seriesType('map', 'scatter',
  * Individual color for the point. By default the color is either used
  * to denote the value, or pulled from the global `colors` array.
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highmaps
  * @apioption series.map.data.color
  */
@@ -1222,7 +1225,7 @@ seriesType('map', 'scatter',
  * @apioption series.map.data.labelrank
  */
 
- /**
+/**
  * The relative mid point of an area, used to place the data label.
  * Ranges from 0 to 1\. When `mapData` is used, middleX can be defined
  * there.

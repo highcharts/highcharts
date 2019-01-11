@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -40,6 +40,7 @@ var addEvent = H.addEvent,
 // computing (#9197)
 H.cleanRecursively = function (newer, older) {
     var result = {};
+
     objectEach(newer, function (val, key) {
         var ob;
 
@@ -179,7 +180,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#showLoading
      *
-     * @param {string} str
+     * @param {string} [str]
      *        An optional text to show in the loading label instead of the
      *        default one. The default text is set in
      *        [lang.loading](http://api.highcharts.com/highcharts/lang.loading).
@@ -353,6 +354,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * adding and removing items from the collection. Read more under the
      * parameter description below.
      *
+     * Note that when changing series data, `chart.update` may mutate the passed
+     * data options.
+     *
      * See also the
      * [responsive option set](https://api.highcharts.com/highcharts/responsive).
      * Switching between `responsive.rules` basically runs `chart.update` under
@@ -404,11 +408,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         fireEvent(chart, 'update', { options: options });
 
+        // If there are responsive rules in action, undo the responsive rules
+        // before we apply the updated options and replay the responsive rules
+        // on top from the chart.redraw function (#9617).
+        if (!options.isResponsiveOptions) {
+            chart.setResponsive(false, true);
+        }
+
         options = H.cleanRecursively(options, chart.options);
 
         // If the top-level chart option is present, some special updates are
         // required
         optionsChart = options.chart;
+
         if (optionsChart) {
 
             merge(true, chart.options.chart, optionsChart);
@@ -520,6 +532,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         defined(newOptions.id) &&
                         chart.get(newOptions.id)
                     ) || chart[coll][indexMap ? indexMap[i] : i];
+
                     if (item && item.coll === coll) {
                         item.update(newOptions, false);
 
@@ -692,9 +705,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
             seriesOptions.data[i] = (
-                    isObject(seriesOptions.data[i], true) ||
+                isObject(seriesOptions.data[i], true) ||
                     isObject(options, true)
-                ) ?
+            ) ?
                 point.options :
                 pick(options, seriesOptions.data[i]);
 
@@ -997,6 +1010,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * performance expensive than some other utility methods like {@link
      * Series#setData} or {@link Series#setVisible}.
      *
+     * Note that `Series.update` may mutate the passed `data` options.
+     *
      * @sample highcharts/members/series-update/
      *         Updating series options
      * @sample maps/members/series-update/
@@ -1023,13 +1038,13 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // must use user options when changing type because series.options
             // is merged in with type specific plotOptions
             oldOptions = series.userOptions,
-            oldType = series.oldType || series.type,
+            initialType = series.initialType || series.type,
             newType = (
                 newOptions.type ||
                 oldOptions.type ||
                 chart.options.chart.type
             ),
-            proto = seriesTypes[oldType].prototype,
+            initialSeriesProto = seriesTypes[initialType].prototype,
             n,
             groups = [
                 'group',
@@ -1095,11 +1110,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // methods and properties from the new type prototype (#2270,
             // #3719).
             series.remove(false, null, false);
-            for (n in proto) {
+            for (n in initialSeriesProto) {
                 series[n] = undefined;
             }
-            if (seriesTypes[newType || oldType]) {
-                extend(series, seriesTypes[newType || oldType].prototype);
+            if (seriesTypes[newType || initialType]) {
+                extend(series, seriesTypes[newType || initialType].prototype);
             } else {
                 H.error(17, true, chart);
             }
@@ -1123,7 +1138,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             }
 
 
-            series.oldType = oldType;
+            series.initialType = initialType;
             chart.linkSeries(); // Links are lost in series.remove (#3028)
 
         }

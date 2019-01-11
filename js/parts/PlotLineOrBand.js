@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -260,11 +260,11 @@ H.PlotLineOrBand.prototype = {
              * @type {Highcharts.SVGElement}
              */
             plotLine.label = label = renderer.text(
-                    optionsLabel.text,
-                    0,
-                    0,
-                    optionsLabel.useHTML
-                )
+                optionsLabel.text,
+                0,
+                0,
+                optionsLabel.useHTML
+            )
                 .attr(attribs)
                 .add();
 
@@ -357,7 +357,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotbands/
      *         Plot band on Y axis
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption xAxis.plotBands.color
      */
 
@@ -447,7 +447,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotbands-label/
      *         Plot band with labels
      *
-     * @type      {string}
+     * @type      {Highcharts.AlignType}
      * @default   center
      * @since     2.1
      * @apioption xAxis.plotBands.label.align
@@ -496,9 +496,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotbands-label-rotation/
      *         Vertical text in center position but text-aligned left
      *
-     * @type       {string}
+     * @type       {Highcharts.AlignType}
      * @since      2.1
-     * @validvalue ["center", "left", "right"]
      * @apioption  xAxis.plotBands.label.textAlign
      */
 
@@ -521,10 +520,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotbands-label/
      *         Plot band with labels
      *
-     * @type       {string}
+     * @type       {Highcharts.VerticalAlignType}
      * @default    top
      * @since      2.1
-     * @validvalue ["bottom", "middle",  "top"]
      * @apioption  xAxis.plotBands.label.verticalAlign
      */
 
@@ -598,13 +596,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @type       {string}
-     * @default    Solid
-     * @since      1.2
-     * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
-     *             "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
-     *             "LongDashDot", "LongDashDotDot"]
-     * @apioption  xAxis.plotLines.dashStyle
+     * @type      {Highcharts.DashStyleType}
+     * @default   Solid
+     * @since     1.2
+     * @apioption xAxis.plotLines.dashStyle
      */
 
     /**
@@ -684,10 +679,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @type       {string}
+     * @type       {Highcharts.AlignType}
      * @default    left
      * @since      2.1
-     * @validvalue ["center", "left", "right"]
      * @apioption  xAxis.plotLines.label.align
      */
 
@@ -734,7 +728,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotlines-label-textalign/
      *         Text label in bottom position
      *
-     * @type      {string}
+     * @type      {Highcharts.AlignType}
      * @since     2.1
      * @apioption xAxis.plotLines.label.textAlign
      */
@@ -756,7 +750,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotlines-label-verticalalign-middle/
      *         Vertically centered label
      *
-     * @type       {string}
+     * @type       {Highcharts.VerticalAlignType}
      * @default    {highcharts} top
      * @default    {highstock} top
      * @since      2.1
@@ -1008,6 +1002,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             options = this.options,
             userOptions = this.userOptions,
             i = plotLinesAndBands.length;
+
         while (i--) {
             if (plotLinesAndBands[i].id === id) {
                 plotLinesAndBands[i].destroy();

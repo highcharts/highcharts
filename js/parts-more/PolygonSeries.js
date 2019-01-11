@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -32,7 +32,7 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  *
  * @extends      plotOptions.scatter
  * @since        4.1.0
- * @excluding    softThreshold, threshold
+ * @excluding    jitter, softThreshold, threshold
  * @product      highcharts highstock
  * @optionparent plotOptions.polygon
  */
@@ -78,7 +78,6 @@ seriesType('polygon', 'scatter', {
     drawTracker: Series.prototype.drawTracker,
     setStackedPoints: noop // No stacking points on polygons (#5310)
 });
-
 
 
 /**

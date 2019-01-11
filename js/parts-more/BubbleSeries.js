@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -167,7 +167,7 @@ seriesType('bubble', 'scatter', {
      * @sample {highcharts} highcharts/plotoptions/bubble-negative/
      *         Negative bubbles
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.bubble.negativeColor

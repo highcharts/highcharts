@@ -38,7 +38,9 @@ function getPointLB(low, base) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('abands', 'sma',
+H.seriesType(
+    'abands',
+    'sma',
     /**
      * Acceleration bands (ABANDS). This series requires the `linkedTo` option
      * to be set and should be loaded after the

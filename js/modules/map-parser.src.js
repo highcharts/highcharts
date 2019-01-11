@@ -1,5 +1,5 @@
 /* *
- * (c) 2009-2018 Torstein Honsi
+ * (c) 2009-2019 Torstein Honsi
  *
  * SVG map parser. This file requires data.js.
  *
@@ -232,6 +232,7 @@ H.extend(H.Data.prototype, {
 
             var i,
                 path;
+
             point.path = path =
                 mapProto.translatePath.call(fakeSeries, point.path, true);
             i = path.length;
@@ -288,6 +289,7 @@ H.extend(H.Data.prototype, {
 
         function getTranslate(elem) {
             var ctm = elem.getCTM();
+
             if (!isNaN(ctm.f)) {
                 return ctm;
             }

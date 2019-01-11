@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -39,7 +39,7 @@ seriesType('errorbar', 'boxplot', {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #000000
      * @since   3.0
      * @product highcharts
@@ -87,6 +87,7 @@ seriesType('errorbar', 'boxplot', {
     drawDataLabels: seriesTypes.arearange ?
         function () {
             var valKey = this.pointValKey;
+
             seriesTypes.arearange.prototype.drawDataLabels.call(this);
             // Arearange drawDataLabels does not reset point.y to high,
             // but to low after drawing (#4133)

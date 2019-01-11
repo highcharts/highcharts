@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2018 Øystein Moseng
+ *  (c) 2009-2019 Øystein Moseng
  *
  *  Instrument class for sonification module.
  *
@@ -152,6 +152,7 @@ Instrument.prototype.init = function (options) {
 
     // Init the audio nodes
     var ctx = H.audioContext;
+
     this.gainNode = ctx.createGain();
     this.setGain(0);
     this.panNode = ctx.createStereoPanner && ctx.createStereoPanner();
@@ -200,6 +201,7 @@ Instrument.prototype.copy = function (options) {
 Instrument.prototype.initAudioContext = function () {
     var Context = H.win.AudioContext || H.win.webkitAudioContext,
         hasOldContext = !!H.audioContext;
+
     if (Context) {
         H.audioContext = H.audioContext || new Context();
         if (
@@ -227,6 +229,7 @@ Instrument.prototype.initAudioContext = function () {
  */
 Instrument.prototype.initOscillator = function (options) {
     var ctx = H.audioContext;
+
     this.oscillator = ctx.createOscillator();
     this.oscillator.type = options.waveformShape;
     this.oscillator.connect(this.gainNode);
@@ -303,16 +306,17 @@ Instrument.prototype.getValidFrequency = function (frequency, min, max) {
     var validFrequencies = this.options.allowedFrequencies,
         maximum = H.pick(max, Infinity),
         minimum = H.pick(min, -Infinity);
+
     return !validFrequencies || !validFrequencies.length ?
-            // No valid frequencies for this instrument, return the target
-            frequency :
-            // Use the valid frequencies and return the closest match
-            validFrequencies.reduce(function (acc, cur) {
-                // Find the closest allowed value
-                return Math.abs(cur - frequency) < Math.abs(acc - frequency) &&
-                    cur < maximum && cur > minimum ?
-                    cur : acc;
-            }, Infinity);
+        // No valid frequencies for this instrument, return the target
+        frequency :
+        // Use the valid frequencies and return the closest match
+        validFrequencies.reduce(function (acc, cur) {
+            // Find the closest allowed value
+            return Math.abs(cur - frequency) < Math.abs(acc - frequency) &&
+                cur < maximum && cur > minimum ?
+                cur : acc;
+        }, Infinity);
 };
 
 
@@ -339,6 +343,7 @@ Instrument.prototype.setFrequency = function (frequency, frequencyLimits) {
         validFrequency = this.getValidFrequency(
             frequency, limits.min, limits.max
         );
+
     if (this.options.type === 'oscillator') {
         this.oscillatorPlay(validFrequency);
     }
@@ -402,10 +407,12 @@ Instrument.prototype.play = function (options) {
             var target = options.duration,
                 currentDurationIx = 0,
                 callbackInterval = instrument.options.playCallbackInterval;
+
             if (typeof value === 'function') {
                 var timer = setInterval(function () {
                     currentDurationIx++;
                     var curTime = currentDurationIx * callbackInterval / target;
+
                     if (curTime >= 1) {
                         instrument[setter](value(1), setterData);
                         clearInterval(timer);
@@ -413,6 +420,7 @@ Instrument.prototype.play = function (options) {
                         instrument[setter](value(curTime), setterData);
                     }
                 }, callbackInterval);
+
                 instrument.playCallbackTimers.push(timer);
             } else {
                 instrument[setter](value, setterData);
@@ -478,6 +486,7 @@ Instrument.prototype.play = function (options) {
         delete instrument.stopTimeout;
         instrument.stop(immediate);
     };
+
     if (duration) {
         instrument.stopTimeout = setTimeout(
             onStop,
@@ -550,6 +559,7 @@ Instrument.prototype.stop = function (immediately, onStopped, callbackData) {
                 instr.stopCallback(callbackData);
             }
         };
+
     // Clear any existing timers
     if (instr.playCallbackTimers.length) {
         instr.clearPlayCallbackTimers();

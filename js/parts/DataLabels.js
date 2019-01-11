@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -139,6 +139,7 @@ H.distribute = function (boxes, len, maxDistance) {
     i = 0;
     boxes.some(function (box) {
         var posInCompositeBox = 0;
+
         if (box.targets.some(function () {
             origBoxes[i].pos = box.pos + posInCompositeBox;
 
@@ -210,6 +211,7 @@ Series.prototype.drawDataLabels = function () {
             op,
             prop,
             val;
+
         if (filter) {
             op = filter.operator;
             prop = point[filter.property];
@@ -237,6 +239,7 @@ Series.prototype.drawDataLabels = function () {
     function mergeArrays(one, two) {
         var res = [],
             i;
+
         if (isArray(one) && !isArray(two)) {
             res = one.map(function (el) {
                 return merge(el, two);
@@ -370,8 +373,8 @@ Series.prototype.drawDataLabels = function () {
                                     point.labelDistance
                                 ) < 0 ||
                                 !!seriesOptions.stacking ?
-                                    point.contrastColor :
-                                    '${palette.neutralColor100}';
+                                point.contrastColor :
+                                '${palette.neutralColor100}';
                         }
                         if (seriesOptions.cursor) {
                             style.cursor = seriesOptions.cursor;
@@ -460,7 +463,7 @@ Series.prototype.drawDataLabels = function () {
                         dataLabel.addClass(
                             ' highcharts-data-label-color-' + point.colorIndex +
                             ' ' + (labelOptions.className || '') +
-                            (   // #3398
+                            ( // #3398
                                 labelOptions.useHTML ?
                                     ' highcharts-tracker' :
                                     ''
@@ -780,8 +783,9 @@ if (seriesTypes.pie) {
             plotLeft
         ) {
             var dataLabelWidth = dataLabel.getBBox().width;
+
             return half ? dataLabelWidth + plotLeft :
-                    plotWidth - dataLabelWidth - plotLeft;
+                plotWidth - dataLabelWidth - plotLeft;
         },
 
         // Connectors of each side end in the same x position. Labels are
@@ -839,7 +843,7 @@ if (seriesTypes.pie) {
             // divide the points into right and left halves for anti collision
             halves = [
                 [], // right
-                []  // left
+                [] // left
             ],
             x,
             y,
@@ -1017,7 +1021,7 @@ if (seriesTypes.pie) {
                         break;
                     case 'plotEdges':
                         x = dataLabelPositioners.alignToPlotEdges(dataLabel,
-                             i, plotWidth, plotLeft);
+                            i, plotWidth, plotLeft);
                         break;
                     default:
                         x = dataLabelPositioners.radialDistributionX(series,
@@ -1124,7 +1128,8 @@ if (seriesTypes.pie) {
 
                         if (isNew) {
                             point.connector = connector = chart.renderer.path()
-                                .addClass('highcharts-data-label-connector ' +
+                                .addClass(
+                                    'highcharts-data-label-connector ' +
                                     ' highcharts-color-' + point.colorIndex +
                                     (
                                         point.className ?
@@ -1169,8 +1174,8 @@ if (seriesTypes.pie) {
      *
      * @return {Highcharts.PathObject}
      */
-     // TODO: depracated - remove it
-     /*
+    // TODO: depracated - remove it
+    /*
     seriesTypes.pie.prototype.connectorPath = function (labelPos) {
         var x = labelPos.x,
             y = labelPos.y;
@@ -1208,6 +1213,7 @@ if (seriesTypes.pie) {
         this.points.forEach(function (point) {
             var dataLabel = point.dataLabel,
                 _pos;
+
             if (dataLabel && point.visible) {
                 _pos = dataLabel._pos;
                 if (_pos) {

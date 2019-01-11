@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -23,7 +23,9 @@ var merge = H.merge,
  *
  * @augments Highcharts.Series
  */
-seriesType('mappoint', 'scatter',
+seriesType(
+    'mappoint',
+    'scatter',
     /**
      * A mappoint series is a special form of scatter series where the points
      * can be laid out in map coordinates on top of a map.
@@ -62,9 +64,12 @@ seriesType('mappoint', 'scatter',
             var mergedOptions = (
                 options.lat !== undefined &&
                 options.lon !== undefined ?
-                merge(options, this.series.chart.fromLatLonToPoint(options)) :
-                options
+                    merge(
+                        options, this.series.chart.fromLatLonToPoint(options)
+                    ) :
+                    options
             );
+
             return Point.prototype.applyOptions.call(this, mergedOptions, x);
         }
     }

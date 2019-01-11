@@ -40,7 +40,7 @@ addEvent(H.Series, 'init', function (eventOptions) {
     if (
         options.useOhlcData &&
         options.id !== 'highcharts-navigator-series'
-        ) {
+    ) {
 
         if (dataGrouping && dataGrouping.enabled) {
             dataGrouping.approximation = 'ohlc';
@@ -64,7 +64,9 @@ addEvent(H.Series, 'init', function (eventOptions) {
  *
  * @augments Highcharts.Series
  */
-seriesType('sma', 'line',
+seriesType(
+    'sma',
+    'line',
     /**
      * Simple moving average indicator (SMA). This series requires `linkedTo`
      * option to be set.

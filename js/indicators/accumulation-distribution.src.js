@@ -101,7 +101,6 @@ seriesType('ad', 'sma',
 
                 if (len > 0) {
                     ADPoint[1] += AD[len - 1][1];
-                    ADPoint[1] = ADPoint[1];
                 }
 
                 AD.push(ADPoint);

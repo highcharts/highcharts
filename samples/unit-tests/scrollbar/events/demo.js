@@ -7,7 +7,7 @@ QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator', functi
                 min: 3,
                 max: 3.05,
                 events: {
-                    afterSetExtremes: function () {
+                    afterSetExtremes() {
                         counter++;
                     }
                 }
@@ -54,8 +54,8 @@ QUnit.test('#1716 - very small range in navigator and scrollbar events', functio
         options = {
             xAxis: {
                 minRange: 0.000001,
-                min: min,
-                max: max
+                min,
+                max
             },
             rangeSelector: {
                 enabled: false
@@ -84,4 +84,54 @@ QUnit.test('#1716 - very small range in navigator and scrollbar events', functio
         );
         done();
     }, 5);
+});
+
+
+QUnit.test('Scrollbar.liverRedraw option', function (assert) {
+    var iterator = 0,
+        chart = Highcharts.stockChart('container', {
+            chart: {
+                events: {
+                    redraw() {
+                        iterator++;
+                    }
+                }
+            },
+            xAxis: {
+                scrollbar: {
+                    enabled: true,
+                    liveRedraw: false
+                },
+                min: 3
+            },
+            navigator: {
+                height: 15
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5]
+            }]
+        }),
+        controller = TestController(chart),
+        scrollbar = chart.xAxis[0].scrollbar,
+        group = scrollbar.group,
+        scrollbarWidth = group.getBBox(true).width;
+
+    controller.mouseDown(
+        group.translateX + scrollbarWidth - 25,
+        group.translateY + 5
+    );
+    controller.mouseMove(
+        group.translateX + scrollbarWidth - 55,
+        group.translateY + 5
+    );
+    controller.mouseUp(
+        group.translateX + scrollbarWidth - 55,
+        group.translateY + 5
+    );
+
+    assert.strictEqual(
+        iterator,
+        1,
+        'Scrollbar redraws chart only once when liveRedraw is disabled (#9235).'
+    );
 });

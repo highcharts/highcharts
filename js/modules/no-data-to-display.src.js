@@ -2,7 +2,7 @@
  *
  *  Plugin for displaying a message when there is no data visible in chart.
  *
- *  (c) 2010-2018 Highsoft AS
+ *  (c) 2010-2019 Highsoft AS
  *
  *  Author: Oystein Moseng
  *
@@ -23,7 +23,8 @@ var seriesTypes = H.seriesTypes,
     extend = H.extend;
 
 // Add language option
-extend(defaultOptions.lang,
+extend(
+    defaultOptions.lang,
     /**
      * @optionparent lang
      */
@@ -82,6 +83,7 @@ defaultOptions.noData = {
     /**
      * The position of the no-data label, relative to the plot area.
      *
+     * @type  {Highcharts.AlignObject}
      * @since 3.0.8
      */
     position: {
@@ -99,14 +101,14 @@ defaultOptions.noData = {
         /**
          * Horizontal alignment of the label.
          *
-         * @validvalue ["left", "center", "right"]
+         * @type {Highcharts.AlignType}
          */
         align: 'center',
 
         /**
          * Vertical alignment of the label.
          *
-         * @validvalue ["top", "middle", "bottom"]
+         * @type {Highcharts.VerticalAlignType}
          */
         verticalAlign: 'middle'
     },
@@ -136,6 +138,7 @@ defaultOptions.noData = {
     'bubble',
     'gauge',
     'heatmap',
+    'networkgraph',
     'pie',
     'sankey',
     'treemap',
@@ -159,9 +162,12 @@ defaultOptions.noData = {
  */
 H.Series.prototype.hasData = function () {
     return (
-        this.visible &&
-        this.dataMax !== undefined &&
-        this.dataMin !== undefined // #3703
+        (
+            this.visible &&
+            this.dataMax !== undefined &&
+            this.dataMin !== undefined
+        ) || // #3703
+        (this.visible && this.yData && this.yData.length > 0) // #9758
     );
 };
 
@@ -218,6 +224,7 @@ chartPrototype.showNoData = function (str) {
  */
 chartPrototype.hideNoData = function () {
     var chart = this;
+
     if (chart.noDataLabel) {
         chart.noDataLabel = chart.noDataLabel.destroy();
     }

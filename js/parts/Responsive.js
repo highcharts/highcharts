@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -149,15 +149,19 @@ var Chart = H.Chart,
  * @private
  * @function Highcharts.Chart#setResponsive
  *
- * @param {boolean} [redraw=true]
+ * @param  {boolean} [redraw=true]
+ * @param  {Array} [reset=false]
+ *         Reset by un-applying all rules. Chart.update resets all rules before
+ *         applying updated options.
  */
-Chart.prototype.setResponsive = function (redraw) {
+Chart.prototype.setResponsive = function (redraw, reset) {
     var options = this.options.responsive,
         ruleIds = [],
         currentResponsive = this.currentResponsive,
-        currentRuleIds;
+        currentRuleIds,
+        undoOptions;
 
-    if (options && options.rules) {
+    if (!reset && options && options.rules) {
         options.rules.forEach(function (rule) {
             if (rule._id === undefined) {
                 rule._id = H.uniqueKey();
@@ -174,10 +178,11 @@ Chart.prototype.setResponsive = function (redraw) {
         }).chartOptions;
     }));
 
+    mergedOptions.isResponsiveOptions = true;
+
     // Stringified key for the rules that currently apply.
     ruleIds = ruleIds.toString() || undefined;
     currentRuleIds = currentResponsive && currentResponsive.ruleIds;
-
 
     // Changes in what rules apply
     if (ruleIds !== currentRuleIds) {
@@ -190,10 +195,12 @@ Chart.prototype.setResponsive = function (redraw) {
 
         if (ruleIds) {
             // Get undo-options for matching rules
+            undoOptions = this.currentOptions(mergedOptions);
+            undoOptions.isResponsiveOptions = true;
             this.currentResponsive = {
                 ruleIds: ruleIds,
                 mergedOptions: mergedOptions,
-                undoOptions: this.currentOptions(mergedOptions)
+                undoOptions: undoOptions
             };
 
             this.update(mergedOptions, redraw);
@@ -254,6 +261,7 @@ Chart.prototype.currentOptions = function (options) {
      */
     function getCurrent(options, curr, ret, depth) {
         var i;
+
         H.objectEach(options, function (val, key) {
             if (!depth && ['series', 'xAxis', 'yAxis'].indexOf(key) > -1) {
                 val = splat(val);

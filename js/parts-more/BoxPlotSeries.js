@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -77,7 +77,7 @@ seriesType('boxplot', 'column', {
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #ffffff
      * @since   3.0
      * @product highcharts
@@ -178,14 +178,11 @@ seriesType('boxplot', 'column', {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type       {string}
-     * @default    Solid
-     * @since      3.0
-     * @product    highcharts
-     * @validvalue ["Solid", "ShortDash", "ShortDot", "ShortDashDot",
-     *              "ShortDashDotDot", "Dot", "Dash" ,"LongDash", "DashDot",
-     *              "LongDashDot", "LongDashDotDot"]
-     * @apioption  plotOptions.boxplot.stemDashStyle
+     * @type      {Highcharts.DashStyleType}
+     * @default   Solid
+     * @since     3.0
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.stemDashStyle
      */
 
     /**
@@ -411,19 +408,21 @@ seriesType('boxplot', 'column', {
                 // The stem
                 crispCorr = (point.stem.strokeWidth() % 2) / 2;
                 crispX = left + halfWidth + crispCorr;
-                point.stem[verb]({ d: [
+                point.stem[verb]({
+                    d: [
                     // stem up
-                    'M',
-                    crispX, q3Plot,
-                    'L',
-                    crispX, highPlot,
+                        'M',
+                        crispX, q3Plot,
+                        'L',
+                        crispX, highPlot,
 
-                    // stem down
-                    'M',
-                    crispX, q1Plot,
-                    'L',
-                    crispX, lowPlot
-                ] });
+                        // stem down
+                        'M',
+                        crispX, q1Plot,
+                        'L',
+                        crispX, lowPlot
+                    ]
+                });
 
                 // The box
                 if (doQuartiles) {
@@ -432,19 +431,21 @@ seriesType('boxplot', 'column', {
                     q3Plot = Math.floor(q3Plot) + crispCorr;
                     left += crispCorr;
                     right += crispCorr;
-                    point.box[verb]({ d: [
-                        'M',
-                        left, q3Plot,
-                        'L',
-                        left, q1Plot,
-                        'L',
-                        right, q1Plot,
-                        'L',
-                        right, q3Plot,
-                        'L',
-                        left, q3Plot,
-                        'z'
-                    ] });
+                    point.box[verb]({
+                        d: [
+                            'M',
+                            left, q3Plot,
+                            'L',
+                            left, q1Plot,
+                            'L',
+                            right, q1Plot,
+                            'L',
+                            right, q3Plot,
+                            'L',
+                            left, q3Plot,
+                            'z'
+                        ]
+                    });
                 }
 
                 // The whiskers
@@ -455,23 +456,25 @@ seriesType('boxplot', 'column', {
                     pointWiskerLength = (/%$/).test(whiskerLength) ?
                         halfWidth * parseFloat(whiskerLength) / 100 :
                         whiskerLength / 2;
-                    point.whiskers[verb]({ d: [
+                    point.whiskers[verb]({
+                        d: [
                         // High whisker
-                        'M',
-                        crispX - pointWiskerLength,
-                        highPlot,
-                        'L',
-                        crispX + pointWiskerLength,
-                        highPlot,
+                            'M',
+                            crispX - pointWiskerLength,
+                            highPlot,
+                            'L',
+                            crispX + pointWiskerLength,
+                            highPlot,
 
-                        // Low whisker
-                        'M',
-                        crispX - pointWiskerLength,
-                        lowPlot,
-                        'L',
-                        crispX + pointWiskerLength,
-                        lowPlot
-                    ] });
+                            // Low whisker
+                            'M',
+                            crispX - pointWiskerLength,
+                            lowPlot,
+                            'L',
+                            crispX + pointWiskerLength,
+                            lowPlot
+                        ]
+                    });
                 }
 
                 // The median
@@ -479,14 +482,16 @@ seriesType('boxplot', 'column', {
                 crispCorr = (point.medianShape.strokeWidth() % 2) / 2;
                 medianPlot = medianPlot + crispCorr;
 
-                point.medianShape[verb]({ d: [
-                    'M',
-                    left,
-                    medianPlot,
-                    'L',
-                    right,
-                    medianPlot
-                ] });
+                point.medianShape[verb]({
+                    d: [
+                        'M',
+                        left,
+                        medianPlot,
+                        'L',
+                        right,
+                        medianPlot
+                    ]
+                });
             }
         });
 

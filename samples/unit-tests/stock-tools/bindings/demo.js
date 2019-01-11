@@ -358,6 +358,25 @@ QUnit.test('Bindings general tests', function (assert) {
         'Annotations toolbar hidden.'
     );
 
+    // #9740:
+    chart.update({
+        stockTools: {
+            gui: {
+                buttons: ['toggleAnnotations']
+            }
+        }
+    }, true);
+
+    selectButton('toggle-annotations');
+
+    assert.strictEqual(
+        chart.annotations[0].options.visible,
+        false,
+        'After chart.update() events are correctly bound.'
+    );
+    // Restore default button state:
+    selectButton('toggle-annotations');
+
     // Restore details:
     if (qunitContainer) {
         qunitContainer.style.display = 'block';

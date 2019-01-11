@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -43,12 +43,12 @@ seriesType('areaspline', 'spline',
      * @apioption plotOptions.areaspline
      */
     defaultPlotOptions.area
-, {
-    getStackPoints: areaProto.getStackPoints,
-    getGraphPath: areaProto.getGraphPath,
-    drawGraph: areaProto.drawGraph,
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle
-});
+    , {
+        getStackPoints: areaProto.getStackPoints,
+        getGraphPath: areaProto.getGraphPath,
+        drawGraph: areaProto.drawGraph,
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle
+    });
 
 /**
  * A `areaspline` series. If the [type](#series.areaspline.type) option

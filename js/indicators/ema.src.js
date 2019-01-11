@@ -22,7 +22,9 @@ var isArray = H.isArray,
  *
  * @augments Highcharts.Series
  */
-seriesType('ema', 'sma',
+seriesType(
+    'ema',
+    'sma',
     /**
      * Exponential moving average indicator (EMA). This series requires the
      * `linkedTo` option to be set.
@@ -62,6 +64,7 @@ seriesType('ema', 'sma',
             var sum = 0,
                 i = 0,
                 y = 0;
+
             while (i < period) {
                 y = index < 0 ? yVal[i] : yVal[i][index];
                 sum = sum + y;
@@ -128,14 +131,14 @@ seriesType('ema', 'sma',
             // Calculate value one-by-one for each period in visible data
             for (i = period; i < yValLen + 1; i++) {
                 EMAPoint = this.calculateEma(
-                        xVal,
-                        yVal,
-                        i,
-                        EMApercent,
-                        calEMA,
-                        index,
-                        SMA
-                    );
+                    xVal,
+                    yVal,
+                    i,
+                    EMApercent,
+                    calEMA,
+                    index,
+                    SMA
+                );
                 EMA.push(EMAPoint);
                 xData.push(EMAPoint[0]);
                 yData.push(EMAPoint[1]);

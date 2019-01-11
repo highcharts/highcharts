@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -115,7 +115,7 @@ var candlestickOptions = {
      * @sample {highstock} highcharts/css/candlestick/
      *         Colors in styled mode
      *
-     * @type    {Highcharts.ColorString}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #ffffff
      * @product highstock
      */

@@ -62,6 +62,7 @@ var merge = H.merge,
  */
 var Annotation = H.Annotation = function (chart, options) {
     var labelsAndShapes;
+
     /**
      * The chart that the annotation belongs to.
      *
@@ -195,7 +196,7 @@ merge(
              */
             visible: true,
 
-             /**
+            /**
              * Allow an annotation to be draggable by a user. Possible
              * values are `"x"`, `"xy"`, `"y"` and `""` (disabled).
              *
@@ -491,7 +492,6 @@ merge(
              */
 
 
-
             /**
              * An array of shapes for the annotation. For options that apply to
              * multiple shapes, then can be added to the
@@ -703,7 +703,7 @@ merge(
 
         addShapes: function () {
             (this.options.shapes || []).forEach(function (shapeOptions, i) {
-                var shape = this.initShape(shapeOptions);
+                var shape = this.initShape(shapeOptions, i);
 
                 this.options.shapes[i] = shape.options;
             }, this);
@@ -711,7 +711,7 @@ merge(
 
         addLabels: function () {
             (this.options.labels || []).forEach(function (labelOptions, i) {
-                var label = this.initLabel(labelOptions);
+                var label = this.initLabel(labelOptions, i);
 
                 this.options.labels[i] = label.options;
             }, this);
@@ -834,8 +834,8 @@ merge(
                 .attr({
                     zIndex: this.options.zIndex,
                     visibility: this.options.visible ?
-                    'visible' :
-                    'hidden'
+                        'visible' :
+                        'hidden'
                 })
                 .add();
 
@@ -937,6 +937,7 @@ merge(
                     this.userOptions,
                     userOptions
                 ),
+                userOptionsIndex = chart.annotations.indexOf(this),
                 options = H.merge(true, this.userOptions, userOptions);
 
             options.labels = labelsAndShapes.labels;
@@ -944,6 +945,9 @@ merge(
 
             this.destroy();
             this.constructor(chart, options);
+
+            // Update options in chart options, used in exporting (#9767):
+            chart.options.annotations[userOptionsIndex] = options;
 
             this.redraw();
         },
@@ -958,17 +962,18 @@ merge(
          *
          * @param {Object} shapeOptions - a confg object for a single shape
          **/
-        initShape: function (shapeOptions) {
+        initShape: function (shapeOptions, index) {
             var options = merge(
-                this.options.shapeOptions,
-                {
-                    controlPointOptions: this.options.controlPointOptions
-                },
-                shapeOptions
-            ),
+                    this.options.shapeOptions,
+                    {
+                        controlPointOptions: this.options.controlPointOptions
+                    },
+                    shapeOptions
+                ),
                 shape = new Annotation.shapesMap[options.type](
                     this,
-                    options
+                    options,
+                    index
                 );
 
             shape.itemType = 'shape';
@@ -983,17 +988,18 @@ merge(
          *
          * @param {Object} labelOptions
          **/
-        initLabel: function (labelOptions) {
+        initLabel: function (labelOptions, index) {
             var options = merge(
-                this.options.labelOptions,
-                {
-                    controlPointOptions: this.options.controlPointOptions
-                },
-                labelOptions
-            ),
+                    this.options.labelOptions,
+                    {
+                        controlPointOptions: this.options.controlPointOptions
+                    },
+                    labelOptions
+                ),
                 label = new ControllableLabel(
                     this,
-                    options
+                    options,
+                    index
                 );
 
             label.itemType = 'label';
@@ -1035,7 +1041,7 @@ merge(
          * @param {Annotation.Label|Annotation.Shape} item
          */
 
-        adjustVisibility: function (item) {  // #9481
+        adjustVisibility: function (item) { // #9481
             var hasVisiblePoints = false,
                 label = item.graphic;
 
@@ -1073,11 +1079,12 @@ merge(
         renderItem: function (item) {
             item.render(
                 item.itemType === 'label' ?
-                this.labelsGroup :
-                this.shapesGroup
+                    this.labelsGroup :
+                    this.shapesGroup
             );
         }
-    });
+    }
+);
 
 /**
  * An object uses for mapping between a shape type and a constructor.

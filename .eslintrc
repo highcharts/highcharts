@@ -1,20 +1,30 @@
 extends:
-    "./tools/eslint-default-config.yml"
+    "./node_modules/eslint-config-eslint/default.yml"
 
 rules:
     camelcase: [2, {"properties": "always"}]
     comma-dangle: [2, "never"]
     dot-location: [2, "property"]
     lines-around-comment: 0
+    max-len: 2
     newline-after-var: 0
     no-alert: 2
     no-console: 2
     no-debugger: 2
     no-else-return: 2
     no-nested-ternary: 0
+    no-param-reassign: 0 // Would be useful, but takes some work
+    no-restricted-properties: 0 // Complains about .substr and .substring. Not yet.
     no-unmodified-loop-condition: 0
+    no-useless-escape: 0 // @todo: Useful but a bit risky to change. 54 errors.
+    no-var: 0 // Not yet
     object-curly-spacing: [2, "always"]
+    operator-assignment: 0 // Could be nice, but the change is somewhat error prone.
     operator-linebreak: [2, "after"]
+    padding-line-between-statements: 0 // Annoying in samples and tools. If we want it, do --fix.
+    prefer-arrow-callback: 0 // Not supported in Highcharts, too early for tests and samples.
+    prefer-spread: 0 // Too early for samples
+    prefer-template: 0 // Will probably create a lot of noise in samples
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
     strict: 0
     valid-jsdoc: ["error", { prefer: { "returns": "return"}}]

@@ -157,6 +157,7 @@ QUnit.test(
             plotOptions: {
                 series: {
                     dataLabels: {
+                        allowOverlap: true,
                         enabled: true,
                         padding: 0,
                         defer: false
@@ -260,7 +261,9 @@ QUnit.test(
     function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
-                type: 'arearange'
+                type: 'arearange',
+                width: 600,
+                height: 400
             },
             series: [{
                 data: [
@@ -290,6 +293,33 @@ QUnit.test(
             'Data labels should only exist inside given range'
         );
 
+        var dlPositions = [
+            chart.series[0].points[1].dataLabel.translateX,
+            chart.series[0].points[1].dataLabelUpper.translateX
+        ];
+        chart.setSize(500);
+        assert.strictEqual(
+            typeof dlPositions[0],
+            'number',
+            'Comparing real numbers...'
+        );
+        assert.strictEqual(
+            typeof dlPositions[1],
+            'number',
+            'Comparing real numbers...'
+        );
+        assert.notEqual(
+            chart.series[0].points[1].dataLabel.translateX,
+            dlPositions[0],
+            'Data label has moved (#9247)'
+        );
+        assert.notEqual(
+            chart.series[0].points[1].dataLabelUpper.translateX,
+            dlPositions[1],
+            'Data label has moved (#9247)'
+        );
+
+        // We should be able to destroy without errors
         chart.destroy();
     }
 );

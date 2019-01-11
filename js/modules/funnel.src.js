@@ -1,7 +1,7 @@
 /* *
  * Highcharts funnel module
  *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -136,7 +136,7 @@ seriesType('funnel', 'pie',
             /**
              * A specific color for the selected point.
              *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             color: '${palette.neutralColor20}',
 

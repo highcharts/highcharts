@@ -39,7 +39,9 @@ function getExtremeIndexInArray(arr, extreme) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('aroon', 'sma',
+H.seriesType(
+    'aroon',
+    'sma',
     /**
      * Aroon. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.

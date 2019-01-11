@@ -23,7 +23,9 @@ var getArrayExtremes = reduceArrayMixin.getArrayExtremes,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('pc', 'sma',
+H.seriesType(
+    'pc',
+    'sma',
     /**
      * Price channel (PC). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js`.

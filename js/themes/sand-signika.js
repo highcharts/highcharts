@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  *
@@ -18,8 +18,7 @@ Highcharts.createElement('link', {
 }, null, document.getElementsByTagName('head')[0]);
 
 // Add the background image to the container
-Highcharts.wrap(Highcharts.Chart.prototype, 'getContainer', function (proceed) {
-    proceed.call(this);
+Highcharts.addEvent(Highcharts.Chart, 'afterGetContainer', function () {
     this.container.style.background =
         'url(https://www.highcharts.com/samples/graphics/sand.png)';
 });

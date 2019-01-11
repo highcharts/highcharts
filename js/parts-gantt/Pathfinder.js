@@ -180,7 +180,7 @@ extend(H.defaultOptions, {
              * Set the color of the connector markers. By default this is the
              * same as the connector color.
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since     6.2.0
              * @apioption connectors.marker.color
              */
@@ -201,11 +201,15 @@ extend(H.defaultOptions, {
 
             /**
              * Horizontal alignment of the markers relative to the points.
+             *
+             * @type {Highcharts.AlignType}
              */
             align: 'center',
 
             /**
              * Vertical alignment of the markers relative to the points.
+             *
+             * @type {Highcharts.VerticalAlignType}
              */
             verticalAlign: 'middle',
 
@@ -365,8 +369,8 @@ function calculateObstacleMargin(obstacles) {
             if (xOverlap && yOverlap) {
                 return (
                     margin ?
-                    distance(a, b, Math.floor(margin / 2)) :
-                    Infinity
+                        distance(a, b, Math.floor(margin / 2)) :
+                        Infinity
                 );
             }
 
@@ -537,8 +541,8 @@ Connection.prototype = {
             renderer = chart.renderer,
             point = (
                 type === 'start' ?
-                connection.fromPoint :
-                connection.toPoint
+                    connection.fromPoint :
+                    connection.toPoint
             ),
             anchor = point.getPathfinderAnchorPoint(options),
             markerVector,
@@ -606,8 +610,8 @@ Connection.prototype = {
 
             // Create new marker element
             connection.graphics[type] = renderer.symbol(
-                    options.symbol
-                )
+                options.symbol
+            )
                 .addClass(
                     'highcharts-point-connecting-path-' + type + '-marker'
                 )
@@ -621,9 +625,9 @@ Connection.prototype = {
                     'stroke-width': options.lineWidth,
                     opacity: 0
                 })
-                .animate({
-                    opacity: 1
-                }, point.series.options.animation);
+                    .animate({
+                        opacity: 1
+                    }, point.series.options.animation);
             }
 
         } else {
@@ -691,8 +695,8 @@ Connection.prototype = {
                     margin: options.algorithmMargin
                 },
                 startDirectionX: pathfinder.getAlgorithmStartDirection(
-                                options.startMarker
-                            )
+                    options.startMarker
+                )
             }, options)
         );
     },
@@ -846,10 +850,12 @@ Pathfinder.prototype = {
                             point.options.connect &&
                             H.splat(point.options.connect)
                         );
+
                     if (point.visible && point.isInside !== false && connects) {
                         connects.forEach(function (connect) {
-                            to = chart.get(typeof connect === 'string' ?
-                                connect : connect.to
+                            to = chart.get(
+                                typeof connect === 'string' ?
+                                    connect : connect.to
                             );
                             if (
                                 to instanceof H.Point &&
@@ -925,6 +931,7 @@ Pathfinder.prototype = {
                     // that haven't rendered, and render them now.
                     var pathfinder = series.chart.pathfinder,
                         conns = pathfinder && pathfinder.connections || [];
+
                     conns.forEach(function (connection) {
                         if (
                             connection.fromPoint &&
@@ -938,6 +945,7 @@ Pathfinder.prototype = {
                         delete series.pathfinderRemoveRenderEvent;
                     }
                 };
+
                 if (series.options.animation === false) {
                     render();
                 } else {
@@ -973,6 +981,7 @@ Pathfinder.prototype = {
             series = this.chart.series,
             margin = pick(options.algorithmMargin, 0),
             calculatedMargin;
+
         for (var i = 0, sLen = series.length; i < sLen; ++i) {
             if (series[i].visible) {
                 for (
@@ -1076,7 +1085,7 @@ Pathfinder.prototype = {
 
         return xCenter ?
             (yCenter ? undef : false) : // x is centered
-            (yCenter ? true : undef);   // x is off-center
+            (yCenter ? true : undef); // x is off-center
     }
 };
 
@@ -1145,6 +1154,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
      */
     getRadiansToVector: function (v1, v2) {
         var box;
+
         if (!defined(v2)) {
             box = getPointBB(this);
             v2 = {
@@ -1254,7 +1264,8 @@ function warnLegacy(chart) {
         chart.options.pathfinder ||
         chart.series.reduce(function (acc, series) {
             if (series.options) {
-                merge(true,
+                merge(
+                    true,
                     (
                         series.options.connectors = series.options.connectors ||
                         {}
@@ -1264,7 +1275,8 @@ function warnLegacy(chart) {
             return acc || series.options && series.options.pathfinder;
         }, false)
     ) {
-        merge(true,
+        merge(
+            true,
             (chart.options.connectors = chart.options.connectors || {}),
             chart.options.pathfinder
         );
@@ -1277,6 +1289,7 @@ function warnLegacy(chart) {
 // Initialize Pathfinder for charts
 H.Chart.prototype.callbacks.push(function (chart) {
     var options = chart.options;
+
     if (options.connectors.enabled !== false) {
         warnLegacy(chart);
         this.pathfinder = new Pathfinder(this);

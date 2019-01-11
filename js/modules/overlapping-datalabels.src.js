@@ -2,7 +2,7 @@
  * Highcharts module to hide overlapping data labels. This module is included in
  * Highcharts.
  *
- * (c) 2009-2018 Torstein Honsi
+ * (c) 2009-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -25,6 +25,7 @@ var Chart = H.Chart,
 // inside the columns.
 addEvent(Chart, 'render', function collectAndHide() {
     var labels = [];
+
     // Consider external label collectors
     (this.labelCollectors || []).forEach(function (collector) {
         labels = labels.concat(collector());
@@ -54,11 +55,13 @@ addEvent(Chart, 'render', function collectAndHide() {
                 if (point.visible) {
                     var dataLabels = (
                         isArray(point.dataLabels) ?
-                        point.dataLabels :
-                        (point.dataLabel ? [point.dataLabel] : [])
+                            point.dataLabels :
+                            (point.dataLabel ? [point.dataLabel] : [])
                     );
+
                     dataLabels.forEach(function (label) {
                         var options = label.options;
+
                         label.labelrank = pick(
                             options.labelrank,
                             point.labelrank,

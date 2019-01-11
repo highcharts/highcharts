@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -86,7 +86,13 @@ seriesType('arearange', 'area', {
      */
     dataLabels: {
 
+        /**
+         * @type {Highcharts.AlignType|null}
+         */
         align: null,
+        /**
+         * @type {Highcharts.VerticalAlignType|null}
+         */
         verticalAlign: null,
 
         /**
@@ -156,6 +162,7 @@ seriesType('arearange', 'area', {
                 point.rectPlotX,
                 this.yAxis.len - point.plotHigh
             );
+
         point.plotHighX = xy.x - chart.plotLeft;
         point.plotHigh = xy.y - chart.plotTop;
         point.plotLowX = point.plotX;
@@ -451,7 +458,7 @@ seriesType('arearange', 'area', {
             while (i--) {
                 point = data[i];
                 if (point) {
-                    point.dataLabels = [point.dataLabel, point.dataLabelUpper]
+                    point.dataLabels = [point.dataLabelUpper, point.dataLabel]
                         .filter(function (label) {
                             return !!label;
                         });
@@ -711,7 +718,7 @@ seriesType('arearange', 'area', {
  * @apioption series.arearange.data.low
  */
 
- /**
+/**
  * @excluding x, y
  * @product   highcharts highstock
  * @apioption series.arearange.dataLabels

@@ -51,54 +51,58 @@ VerticalLine.connectorSecondPoint = function (target) {
     };
 };
 
-H.extendAnnotation(VerticalLine, null, /** @lends Annotation.VerticalLine# */ {
-    getPointsOptions: function () {
-        return [ this.options.typeOptions.point ];
-    },
+H.extendAnnotation(VerticalLine, null,
 
-    addShapes: function () {
-        var typeOptions = this.options.typeOptions,
-            connector = this.initShape(
-                H.merge(typeOptions.connector, {
-                    type: 'path',
-                    points: [
-                        VerticalLine.connectorFirstPoint,
-                        VerticalLine.connectorSecondPoint
-                    ]
-                }),
-                false
+    /** @lends Annotation.VerticalLine# */
+    {
+        getPointsOptions: function () {
+            return [this.options.typeOptions.point];
+        },
+
+        addShapes: function () {
+            var typeOptions = this.options.typeOptions,
+                connector = this.initShape(
+                    H.merge(typeOptions.connector, {
+                        type: 'path',
+                        points: [
+                            VerticalLine.connectorFirstPoint,
+                            VerticalLine.connectorSecondPoint
+                        ]
+                    }),
+                    false
+                );
+
+            typeOptions.connector = connector.options;
+        },
+
+        addLabels: function () {
+            var typeOptions = this.options.typeOptions,
+                labelOptions = typeOptions.label,
+                x = 0,
+                y = labelOptions.offset,
+                verticalAlign = labelOptions.offset < 0 ? 'bottom' : 'top',
+                align = 'center';
+
+            if (this.chart.inverted) {
+                x = labelOptions.offset;
+                y = 0;
+                verticalAlign = 'middle';
+                align = labelOptions.offset < 0 ? 'right' : 'left';
+            }
+
+            var label = this.initLabel(
+                H.merge(labelOptions, {
+                    verticalAlign: verticalAlign,
+                    align: align,
+                    x: x,
+                    y: y
+                })
             );
 
-        typeOptions.connector = connector.options;
+            typeOptions.label = label.options;
+        }
     },
 
-    addLabels: function () {
-        var typeOptions = this.options.typeOptions,
-            labelOptions = typeOptions.label,
-            x = 0,
-            y = labelOptions.offset,
-            verticalAlign = labelOptions.offset < 0 ? 'bottom' : 'top',
-            align = 'center';
-
-        if (this.chart.inverted) {
-            x = labelOptions.offset;
-            y = 0;
-            verticalAlign = 'middle';
-            align = labelOptions.offset < 0 ? 'right' : 'left';
-        }
-
-        var label = this.initLabel(
-            H.merge(labelOptions, {
-                verticalAlign: verticalAlign,
-                align: align,
-                x: x,
-                y: y
-            })
-        );
-
-        typeOptions.label = label.options;
-    }
-},
     /**
      * A vertical line annotation.
      *

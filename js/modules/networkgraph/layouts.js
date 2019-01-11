@@ -1,7 +1,7 @@
 /**
  * Networkgraph series
  *
- * (c) 2010-2018 Paweł Fus
+ * (c) 2010-2019 Paweł Fus
  *
  * License: www.highcharts.com/license
  */
@@ -212,12 +212,16 @@ H.extend(
                 rootNodes = nodes.filter(function (node) {
                     return node.linksTo.length === 0;
                 }),
-                sortedNodes = [];
+                sortedNodes = [],
+                visitedNodes = {};
 
             function addToNodes(node) {
                 node.linksFrom.forEach(function (link) {
-                    sortedNodes.push(link.toNode);
-                    addToNodes(link.toNode);
+                    if (!visitedNodes[link.toNode.id]) {
+                        visitedNodes[link.toNode.id] = true;
+                        sortedNodes.push(link.toNode);
+                        addToNodes(link.toNode);
+                    }
                 });
             }
 
@@ -267,6 +271,7 @@ H.extend(
             // input. For the initial positions
             function unrandom(n) {
                 var rand = n * n / Math.PI;
+
                 rand = rand - Math.floor(rand);
                 return rand;
             }
@@ -358,28 +363,30 @@ H.extend(
                 k = this.k;
 
             links.forEach(function (link) {
-                var distanceXY = layout.getDistXY(
-                        link.fromNode,
-                        link.toNode
-                    ),
-                    distanceR = layout.vectorLength(distanceXY),
-                    force = options.attractiveForce.call(
-                        layout, distanceR, k
-                    );
+                if (link.fromNode && link.toNode) {
+                    var distanceXY = layout.getDistXY(
+                            link.fromNode,
+                            link.toNode
+                        ),
+                        distanceR = layout.vectorLength(distanceXY),
+                        force = options.attractiveForce.call(
+                            layout, distanceR, k
+                        );
 
-                if (distanceR !== 0) {
-                    if (!link.fromNode.fixedPosition) {
-                        link.fromNode.dispX -= (distanceXY.x / distanceR) *
-                            force;
-                        link.fromNode.dispY -= (distanceXY.y / distanceR) *
-                            force;
-                    }
+                    if (distanceR !== 0) {
+                        if (!link.fromNode.fixedPosition) {
+                            link.fromNode.dispX -= (distanceXY.x / distanceR) *
+                                force;
+                            link.fromNode.dispY -= (distanceXY.y / distanceR) *
+                                force;
+                        }
 
-                    if (!link.toNode.fixedPosition) {
-                        link.toNode.dispX += (distanceXY.x / distanceR) *
-                            force;
-                        link.toNode.dispY += (distanceXY.y / distanceR) *
-                            force;
+                        if (!link.toNode.fixedPosition) {
+                            link.toNode.dispX += (distanceXY.x / distanceR) *
+                                force;
+                            link.toNode.dispY += (distanceXY.y / distanceR) *
+                                force;
+                        }
                     }
                 }
             });

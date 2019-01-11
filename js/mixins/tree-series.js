@@ -22,8 +22,8 @@ var setTreeValues = function setTreeValues(tree, options) {
         nodeRoot = mapIdToNode[idRoot],
         levelIsConstant = (
             isBoolean(options.levelIsConstant) ?
-            options.levelIsConstant :
-            true
+                options.levelIsConstant :
+                true
         ),
         points = options.points,
         point = points[tree.i],
@@ -31,6 +31,7 @@ var setTreeValues = function setTreeValues(tree, options) {
         childrenTotal = 0,
         children = [],
         value;
+
     extend(tree, {
         levelDynamic: tree.level - (levelIsConstant ? 0 : nodeRoot.level),
         name: pick(point && point.name, ''),
@@ -45,6 +46,7 @@ var setTreeValues = function setTreeValues(tree, options) {
     // First give the children some values
     tree.children.forEach(function (child, i) {
         var newOptions = extend({}, options);
+
         extend(newOptions, {
             index: i,
             siblings: tree.children.length,
@@ -85,8 +87,10 @@ var getColor = function getColor(node, options) {
         colorIndexByPoint,
         color,
         colorIndex;
+
     function variation(color) {
         var colorVariation = level && level.colorVariation;
+
         if (colorVariation) {
             if (colorVariation.key === 'brightness') {
                 return H.color(color).brighten(
@@ -162,6 +166,7 @@ var getLevelOptions = function getLevelOptions(params) {
         from,
         to,
         levels;
+
     if (isObject(params)) {
         result = {};
         from = isNumber(params.from) ? params.from : 1;
@@ -173,12 +178,13 @@ var getLevelOptions = function getLevelOptions(params) {
                 var level,
                     levelIsConstant,
                     options;
+
                 if (isObject(item) && isNumber(item.level)) {
                     options = merge({}, item);
                     levelIsConstant = (
                         isBoolean(options.levelIsConstant) ?
-                        options.levelIsConstant :
-                        defaults.levelIsConstant
+                            options.levelIsConstant :
+                            defaults.levelIsConstant
                     );
                     // Delete redundant properties.
                     delete options.levelIsConstant;
@@ -222,6 +228,7 @@ var getLevelOptions = function getLevelOptions(params) {
 var updateRootId = function (series) {
     var rootId,
         options;
+
     if (isObject(series)) {
         // Get the series options.
         options = isObject(series.options) ? series.options : {};

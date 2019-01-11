@@ -131,7 +131,14 @@ var eventEmitterMixin = {
      * @param {Object} e event
      */
     onMouseUp: function () {
+        var chart = this.chart,
+            annotation = this.target || this,
+            annotationsOptions = chart.options.annotations,
+            index = chart.annotations.indexOf(annotation);
+
         this.removeDocEvents();
+
+        annotationsOptions[index] = annotation.options;
     },
 
     /**

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2018 Kamil Kulig
+ *  (c) 2010-2019 Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *
@@ -23,7 +23,9 @@ var seriesType = H.seriesType,
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegression', 'sma',
+seriesType(
+    'linearRegression',
+    'sma',
     /**
      * Linear regression indicator. This series requires `linkedTo` option to be
      * set.
@@ -67,9 +69,9 @@ seriesType('linearRegression', 'sma',
              * // base series:
              *
              * data: [
-             *   [Date.UTC(2018, 0, 1), 1],
-             *   [Date.UTC(2018, 0, 2), 3],
-             *   [Date.UTC(2018, 0, 3), 5]
+             *   [Date.UTC(2019, 0, 1), 1],
+             *   [Date.UTC(2019, 0, 2), 3],
+             *   [Date.UTC(2019, 0, 3), 5]
              * ]
              *
              * // This will produce one point in the indicator series that has a
@@ -130,7 +132,7 @@ seriesType('linearRegression', 'sma',
             }
 
             slope = formulaDenominator ?
-              formulaNumerator / formulaDenominator : 0; // don't divide by 0
+                formulaNumerator / formulaDenominator : 0; // don't divide by 0
 
             return {
                 slope: slope,
@@ -161,6 +163,7 @@ seriesType('linearRegression', 'sma',
          */
         transformXData: function (xData, xAxisUnit) {
             var xOffset = xData[0];
+
             return xData.map(function (xValue) {
                 return (xValue - xOffset) / xAxisUnit;
             });
@@ -198,7 +201,7 @@ seriesType('linearRegression', 'sma',
                 periodStart,
                 periodEnd,
                 indicatorData = { // format required to be returned
-                    xData: [],    // by getValues() method
+                    xData: [], // by getValues() method
                     yData: [],
                     values: []
                 },
@@ -221,14 +224,14 @@ seriesType('linearRegression', 'sma',
                 periodXData = xData.slice(periodStart, periodEnd);
                 periodYData = yData.slice(periodStart, periodEnd);
                 periodTransformedXData = this.transformXData(periodXData,
-                  xAxisUnit);
+                    xAxisUnit);
 
                 lineParameters = this.getRegressionLineParameters(
-                  periodTransformedXData, periodYData
+                    periodTransformedXData, periodYData
                 );
 
                 endPointY = this.getEndPointY(lineParameters,
-                periodTransformedXData[periodTransformedXData.length - 1]);
+                    periodTransformedXData[periodTransformedXData.length - 1]);
 
                 indicatorData.values.push({
                     regressionLineParameters: lineParameters,
@@ -267,7 +270,9 @@ seriesType('linearRegression', 'sma',
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegressionSlope', 'linearRegression',
+seriesType(
+    'linearRegressionSlope',
+    'linearRegression',
     /**
      * Linear regression slope indicator. This series requires `linkedTo`
      * option to be set.
@@ -315,7 +320,9 @@ seriesType('linearRegressionSlope', 'linearRegression',
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegressionIntercept', 'linearRegression',
+seriesType(
+    'linearRegressionIntercept',
+    'linearRegression',
     /**
      * Linear regression intercept indicator. This series requires `linkedTo`
      * option to be set.
@@ -363,7 +370,9 @@ seriesType('linearRegressionIntercept', 'linearRegression',
  *
  * @augments Highcharts.Series
  */
-seriesType('linearRegressionAngle', 'linearRegression',
+seriesType(
+    'linearRegressionAngle',
+    'linearRegression',
     /**
      * Linear regression angle indicator. This series requires `linkedTo`
      * option to be set.
@@ -388,7 +397,7 @@ seriesType('linearRegressionAngle', 'linearRegression',
     {
         nameBase: 'Linear Regression Angle Indicator',
 
-       /**
+        /**
         * Convert a slope of a line to angle (in degrees) between
         * the line and x axis
         * @private

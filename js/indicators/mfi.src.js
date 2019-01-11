@@ -2,7 +2,7 @@
  *
  *  Money Flow Index indicator for Highstock
  *
- *  (c) 2010-2018 Grzegorz Blachliński
+ *  (c) 2010-2019 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -44,7 +44,9 @@ function calculateRawMoneyFlow(typicalPrice, volume) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('mfi', 'sma',
+H.seriesType(
+    'mfi',
+    'sma',
     /**
      * Money Flow Index. This series requires `linkedTo` option to be set and
      * should be loaded after the `stock/indicators/indicators.js` file.
@@ -131,7 +133,7 @@ H.seriesType('mfi', 'sma',
                 // Calculate if up or down
                 oldTypicalPrice = newTypicalPrice;
                 newTypicalPrice = calculateTypicalPrice(yVal[range]);
-                isUp = newTypicalPrice >= oldTypicalPrice ? true : false;
+                isUp = newTypicalPrice >= oldTypicalPrice;
                 // Calculate raw money flow
                 rawMoneyFlow = calculateRawMoneyFlow(
                     newTypicalPrice,
@@ -150,7 +152,7 @@ H.seriesType('mfi', 'sma',
                     // Calculate if up or down
                     oldTypicalPrice = newTypicalPrice;
                     newTypicalPrice = calculateTypicalPrice(yVal[i]);
-                    isUp = newTypicalPrice > oldTypicalPrice ? true : false;
+                    isUp = newTypicalPrice > oldTypicalPrice;
                     // Calculate raw money flow
                     rawMoneyFlow = calculateRawMoneyFlow(
                         newTypicalPrice,

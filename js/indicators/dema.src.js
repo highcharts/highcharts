@@ -24,7 +24,9 @@ var isArray = H.isArray,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('dema', 'ema',
+H.seriesType(
+    'dema',
+    'ema',
     /**
      * Normalized average true range indicator (NATR). This series requires
      * `linkedTo` option to be set and should be loaded after the
@@ -67,7 +69,7 @@ H.seriesType('dema', 'ema',
             index,
             i,
             xVal
-          ) {
+        ) {
 
             return EMAindicator.prototype.calculateEma(
                 xVal || [],
@@ -101,6 +103,7 @@ H.seriesType('dema', 'ema',
                 EMAvalues = [],
                 i,
                 DEMAPoint;
+
             series.EMApercent = (2 / (period + 1));
 
             // Check period, if bigger than EMA points length, skip
@@ -119,7 +122,7 @@ H.seriesType('dema', 'ema',
                     period,
                     index,
                     yVal
-            );
+                );
 
             // first point
             SMA = accumulatePeriodPoints / period;

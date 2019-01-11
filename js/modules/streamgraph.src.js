@@ -1,7 +1,7 @@
 /* *
  * Streamgraph module
  *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -22,7 +22,7 @@ var seriesType = H.seriesType;
  */
 seriesType('streamgraph', 'areaspline'
 
-/**
+    /**
  * A streamgraph is a type of stacked area graph which is displaced around a
  * central axis, resulting in a flowing, organic shape.
  *
@@ -34,29 +34,29 @@ seriesType('streamgraph', 'areaspline'
  * @product      highcharts highstock
  * @optionparent plotOptions.streamgraph
  */
-, {
-    fillOpacity: 1,
-    lineWidth: 0,
-    marker: {
-        enabled: false
-    },
-    stacking: 'stream'
-// Prototype functions
-}, {
-    negStacks: false,
+    , {
+        fillOpacity: 1,
+        lineWidth: 0,
+        marker: {
+            enabled: false
+        },
+        stacking: 'stream'
+        // Prototype functions
+    }, {
+        negStacks: false,
 
-    // Modifier function for stream stacks. It simply moves the point up or down
-    // in order to center the full stack vertically.
-    streamStacker: function (pointExtremes, stack, i) {
+        // Modifier function for stream stacks. It simply moves the point up or
+        // down in order to center the full stack vertically.
+        streamStacker: function (pointExtremes, stack, i) {
         // Y bottom value
-        pointExtremes[0] -= stack.total / 2;
-        // Y value
-        pointExtremes[1] -= stack.total / 2;
+            pointExtremes[0] -= stack.total / 2;
+            // Y value
+            pointExtremes[1] -= stack.total / 2;
 
-        // Record the Y data for use when getting axis extremes
-        this.stackedYData[i] = pointExtremes;
-    }
-});
+            // Record the Y data for use when getting axis extremes
+            this.stackedYData[i] = pointExtremes;
+        }
+    });
 
 
 /**

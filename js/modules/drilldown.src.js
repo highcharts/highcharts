@@ -152,7 +152,8 @@ var animObject = H.animObject,
     ddSeriesId = 1;
 
 // Add language
-extend(defaultOptions.lang,
+extend(
+    defaultOptions.lang,
     /**
      * @optionparent lang
      */
@@ -339,6 +340,7 @@ defaultOptions.drilldown = {
          * Positioning options for the button within the `relativeTo` box.
          * Available properties are `x`, `y`, `align` and `verticalAlign`.
          *
+         * @type    {Highcharts.AlignObject}
          * @since   3.0.8
          * @product highcharts highmaps
          */
@@ -347,18 +349,16 @@ defaultOptions.drilldown = {
             /**
              * Vertical alignment of the button.
              *
-             * @type       {string}
-             * @default    top
-             * @product    highcharts highmaps
-             * @validvalue ["top", "middle", "bottom"]
-             * @apioption  drilldown.drillUpButton.position.verticalAlign
+             * @type      {Highcharts.VerticalAlignType}
+             * @default   top
+             * @product   highcharts highmaps
+             * @apioption drilldown.drillUpButton.position.verticalAlign
              */
 
             /**
              * Horizontal alignment.
              *
-             * @type       {string}
-             * @validvalue ["left", "center", "right"]
+             * @type {Highcharts.AlignType}
              */
             align: 'right',
 
@@ -374,7 +374,6 @@ defaultOptions.drilldown = {
         }
     }
 };
-
 
 
 /**
@@ -408,7 +407,7 @@ defaultOptions.drilldown = {
  * @apioption chart.events.drilldown
  */
 
- /**
+/**
  * Fires when drilling up from a drilldown series.
  *
  * @type      {Highcharts.DrillupCallbackFunction}
@@ -453,15 +452,15 @@ defaultOptions.drilldown = {
  */
 H.SVGRenderer.prototype.Element.prototype.fadeIn = function (animation) {
     this
-    .attr({
-        opacity: 0.1,
-        visibility: 'inherit'
-    })
-    .animate({
-        opacity: pick(this.newOpacity, 1) // newOpacity used in maps
-    }, animation || {
-        duration: 250
-    });
+        .attr({
+            opacity: 0.1,
+            visibility: 'inherit'
+        })
+        .animate({
+            opacity: pick(this.newOpacity, 1) // newOpacity used in maps
+        }, animation || {
+            duration: 250
+        });
 };
 
 /**
@@ -623,6 +622,7 @@ Chart.prototype.applyDrilldown = function () {
 Chart.prototype.getDrilldownBackText = function () {
     var drilldownLevels = this.drilldownLevels,
         lastLevel;
+
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
         lastLevel = drilldownLevels[drilldownLevels.length - 1];
         lastLevel.series = lastLevel.seriesOptions;
@@ -654,22 +654,22 @@ Chart.prototype.showDrillUpButton = function () {
             states && states.hover,
             states && states.select
         )
-        .addClass('highcharts-drillup-button')
-        .attr({
-            align: buttonOptions.position.align,
-            zIndex: 7
-        })
-        .add()
-        .align(
-            buttonOptions.position,
-            false,
-            buttonOptions.relativeTo || 'plotBox'
-        );
+            .addClass('highcharts-drillup-button')
+            .attr({
+                align: buttonOptions.position.align,
+                zIndex: 7
+            })
+            .add()
+            .align(
+                buttonOptions.position,
+                false,
+                buttonOptions.relativeTo || 'plotBox'
+            );
     } else {
         this.drillUpButton.attr({
             text: backText
         })
-        .align();
+            .align();
     }
 };
 
@@ -696,6 +696,7 @@ Chart.prototype.drillUp = function () {
         oldExtremes,
         addSeries = function (seriesOptions) {
             var addedSeries;
+
             chartSeries.forEach(function (series) {
                 if (series.options._ddSeriesId === seriesOptions._ddSeriesId) {
                     addedSeries = series;
@@ -722,7 +723,7 @@ Chart.prototype.drillUp = function () {
 
             // Get the lower series by reference or id
             oldSeries = level.lowerSeries;
-            if (!oldSeries.chart) {  // #2786
+            if (!oldSeries.chart) { // #2786
                 seriesI = chartSeries.length; // #2919
                 while (seriesI--) {
                     if (
@@ -789,7 +790,7 @@ Chart.prototype.drillUp = function () {
         this.drillUpButton.attr({
             text: this.getDrilldownBackText()
         })
-        .align();
+            .align();
     }
 
     this.ddDupes.length = []; // #3315
@@ -798,6 +799,7 @@ Chart.prototype.drillUp = function () {
 // Add update function to be called internally from Chart.update (#7600)
 Chart.prototype.callbacks.push(function () {
     var chart = this;
+
     chart.drilldown = {
         update: function (options, redraw) {
             H.merge(true, chart.options.drilldown, options);
@@ -1112,6 +1114,7 @@ H.Point.prototype.doDrilldown = function (
     }, function (e) {
         var chart = e.point.series && e.point.series.chart,
             seriesOptions = e.seriesOptions;
+
         if (chart && seriesOptions) {
             if (_holdRedraw) {
                 chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
@@ -1277,6 +1280,7 @@ var applyCursorCSS = function (element, cursor, addClass, styledMode) {
 // Mark the trackers with a pointer
 H.addEvent(H.Series, 'afterDrawTracker', function () {
     var styledMode = this.chart.styledMode;
+
     this.points.forEach(function (point) {
         if (point.drilldown && point.graphic) {
             applyCursorCSS(point.graphic, 'pointer', true, styledMode);
@@ -1287,6 +1291,7 @@ H.addEvent(H.Series, 'afterDrawTracker', function () {
 
 H.addEvent(H.Point, 'afterSetState', function () {
     var styledMode = this.series.chart.styledMode;
+
     if (this.drilldown && this.series.halo && this.state === 'hover') {
         applyCursorCSS(this.series.halo, 'pointer', true, styledMode);
     } else if (this.series.halo) {

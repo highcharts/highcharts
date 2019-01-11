@@ -24,7 +24,9 @@ var isArray = H.isArray,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('tema', 'ema',
+H.seriesType(
+    'tema',
+    'ema',
     /**
      * Normalized average true range indicator (NATR). This series requires
      * `linkedTo` option to be set and should be loaded after the
@@ -88,10 +90,12 @@ H.seriesType('tema', 'ema',
         ) {
             var TEMAPoint = [
                 xVal[i - 3],
-                correctFloat(3 * EMAlevels.level1 -
-                  3 * EMAlevels.level2 + EMAlevels.level3
+                correctFloat(
+                    3 * EMAlevels.level1 -
+                    3 * EMAlevels.level2 + EMAlevels.level3
                 )
             ];
+
             return TEMAPoint;
         },
         getValues: function (series, params) {
@@ -136,9 +140,9 @@ H.seriesType('tema', 'ema',
             // Accumulate first N-points
             accumulatePeriodPoints =
               EMAindicator.prototype.accumulatePeriodPoints(
-                period,
-                index,
-                yVal
+                  period,
+                  index,
+                  yVal
               );
 
             // first point
@@ -204,10 +208,10 @@ H.seriesType('tema', 'ema',
                             SMA
                         )[1];
                         TEMAPoint = this.getPoint(
-                          xVal,
-                          tripledPeriod,
-                          EMAlevels,
-                          i
+                            xVal,
+                            tripledPeriod,
+                            EMAlevels,
+                            i
                         );
                         // Make sure that point exists (for TRIX oscillator)
                         if (TEMAPoint) {

@@ -17,9 +17,11 @@ var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  *
  * @param {Highcharts.Annotation}
  * @param {Object} options a path's options object
+ * @param {number} index of the path
  **/
-function ControllablePath(annotation, options) {
-    this.init(annotation, options);
+function ControllablePath(annotation, options, index) {
+    this.init(annotation, options, index);
+    this.collection = 'shapes';
 }
 
 /**
@@ -99,9 +101,9 @@ H.merge(
                 showPath = point.series.visible;
             }
 
-            return showPath ? this.chart.renderer.crispLine(
-                    d, this.graphic.strokeWidth()
-                ) : null;
+            return showPath ?
+                this.chart.renderer.crispLine(d, this.graphic.strokeWidth()) :
+                null;
         },
 
         shouldBeDrawn: function () {

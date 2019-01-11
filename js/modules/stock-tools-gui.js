@@ -775,39 +775,32 @@ H.setOptions({
 });
 
 // Run HTML generator
-addEvent(H.Chart, 'afterGetContainer', function (options) {
-    H.Chart.prototype.setStockTools.call(this, options);
+addEvent(H.Chart, 'afterGetContainer', function () {
+    this.setStockTools();
 });
 
 addEvent(H.Chart, 'getMargins', function () {
     var offsetWidth = (
-        this.stockToolbar &&
-        this.stockToolbar.listWrapper &&
-        this.stockToolbar.listWrapper.offsetWidth
+        this.stockTools &&
+        this.stockTools.listWrapper &&
+        this.stockTools.listWrapper.offsetWidth
     );
+
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
     }
 });
 
 addEvent(H.Chart, 'destroy', function () {
-    if (this.stockToolbar) {
-        this.stockToolbar.destroy();
+    if (this.stockTools) {
+        this.stockTools.destroy();
     }
 });
 
 addEvent(H.Chart, 'redraw', function () {
-    if (this.stockToolbar && this.stockToolbar.guiEnabled) {
-        this.stockToolbar.redraw();
+    if (this.stockTools && this.stockTools.guiEnabled) {
+        this.stockTools.redraw();
     }
-});
-
-addEvent(H.Chart, 'update', function (options) {
-    if (this.stockToolbar) {
-        this.stockToolbar.destroy();
-    }
-
-    H.Chart.prototype.setStockTools.call(this, options);
 });
 
 /*
@@ -851,17 +844,15 @@ H.extend(H.Chart.prototype, {
     setStockTools: function (options) {
         var chartOptions = this.options,
             lang = chartOptions.lang,
-            paramOptionsGui = options.options && options.options.stockTools,
             guiOptions = merge(
                 chartOptions.stockTools && chartOptions.stockTools.gui,
-                paramOptionsGui && paramOptionsGui.gui,
-                options.stockTools && options.stockTools.gui
+                options && options.gui
             ),
             langOptions = lang.stockTools && lang.stockTools.gui;
 
-        this.stockToolbar = new H.Toolbar(guiOptions, langOptions, this);
+        this.stockTools = new H.Toolbar(guiOptions, langOptions, this);
 
-        if (this.stockToolbar.guiEnabled) {
+        if (this.stockTools.guiEnabled) {
             this.isDirtyBox = true;
         }
     }
@@ -894,11 +885,13 @@ H.Toolbar.prototype = {
                 button.buttonWrapper.className += ' ' + PREFIX + 'disabled-btn';
             }
 
-            addEvent(button.buttonWrapper, 'click', function () {
-                _self.eraseActiveButtons(
-                    allButtons,
-                    button.buttonWrapper
-                );
+            ['click', 'touchstart'].forEach(function (eventName) {
+                addEvent(button.buttonWrapper, eventName, function () {
+                    _self.eraseActiveButtons(
+                        allButtons,
+                        button.buttonWrapper
+                    );
+                });
             });
 
             if (isArray(defs[btnName].items)) {
@@ -932,51 +925,55 @@ H.Toolbar.prototype = {
         }, null, buttonWrapper);
 
         // create submenu buttons and select the first one
-        this.addSubmenuItems.call(this, buttonWrapper, button);
+        this.addSubmenuItems(buttonWrapper, button);
 
         // show / hide submenu
-        addEvent(submenuArrow, 'click', function (e) {
+        ['click', 'touchstart'].forEach(function (eventName) {
+            addEvent(submenuArrow, eventName, function (e) {
 
-            e.stopPropagation();
-            // Erase active class on all other buttons
-            _self.eraseActiveButtons(allButtons, buttonWrapper);
+                e.stopPropagation();
+                // Erase active class on all other buttons
+                _self.eraseActiveButtons(allButtons, buttonWrapper);
 
-            // hide menu
-            if (buttonWrapper.className.indexOf(PREFIX + 'current') >= 0) {
-                menuWrapper.style.width = menuWrapper.startWidth + 'px';
-                buttonWrapper.classList.remove(PREFIX + 'current');
-                submenuWrapper.style.display = 'none';
-            } else {
-                // show menu
-                // to calculate height of element
-                submenuWrapper.style.display = 'block';
+                // hide menu
+                if (buttonWrapper.className.indexOf(PREFIX + 'current') >= 0) {
+                    menuWrapper.style.width = menuWrapper.startWidth + 'px';
+                    buttonWrapper.classList.remove(PREFIX + 'current');
+                    submenuWrapper.style.display = 'none';
+                } else {
+                    // show menu
+                    // to calculate height of element
+                    submenuWrapper.style.display = 'block';
 
-                topMargin = submenuWrapper.offsetHeight -
-                            buttonWrapper.offsetHeight - 3;
+                    topMargin = submenuWrapper.offsetHeight -
+                                buttonWrapper.offsetHeight - 3;
 
-                // calculate if submenu is in the box, if yes, reset top margin
-                if (
-                    // cut on the bottom
-                    !(submenuWrapper.offsetHeight + buttonWrapper.offsetTop >
-                    wrapper.offsetHeight &&
-                    // cut on the top
-                    buttonWrapper.offsetTop > topMargin)
-                ) {
-                    topMargin = 0;
-                }
+                    // calculate position of submenu in the box
+                    // if submenu is inside, reset top margin
+                    if (
+                        // cut on the bottom
+                        !(submenuWrapper.offsetHeight +
+                            buttonWrapper.offsetTop >
+                        wrapper.offsetHeight &&
+                        // cut on the top
+                        buttonWrapper.offsetTop > topMargin)
+                    ) {
+                        topMargin = 0;
+                    }
 
-                // apply calculated styles
-                css(submenuWrapper, {
-                    top: -topMargin + 'px',
-                    left: buttonWidth + 3 + 'px'
-                });
+                    // apply calculated styles
+                    css(submenuWrapper, {
+                        top: -topMargin + 'px',
+                        left: buttonWidth + 3 + 'px'
+                    });
 
-                buttonWrapper.className += ' ' + PREFIX + 'current';
-                menuWrapper.startWidth = wrapper.offsetWidth;
-                menuWrapper.style.width = menuWrapper.startWidth +
+                    buttonWrapper.className += ' ' + PREFIX + 'current';
+                    menuWrapper.startWidth = wrapper.offsetWidth;
+                    menuWrapper.style.width = menuWrapper.startWidth +
                                     H.getStyle(menuWrapper, 'padding-left') +
                                     submenuWrapper.offsetWidth + 3 + 'px';
-            }
+                }
+            });
         });
     },
     /*
@@ -1005,10 +1002,12 @@ H.Toolbar.prototype = {
                 lang
             );
 
-            addEvent(submenuBtn.mainButton, 'click', function () {
-                _self.switchSymbol(this, buttonWrapper, true);
-                menuWrapper.style.width = menuWrapper.startWidth + 'px';
-                submenuWrapper.style.display = 'none';
+            ['click', 'touchstart'].forEach(function (eventName) {
+                addEvent(submenuBtn.mainButton, eventName, function () {
+                    _self.switchSymbol(this, buttonWrapper, true);
+                    menuWrapper.style.width = menuWrapper.startWidth + 'px';
+                    submenuWrapper.style.display = 'none';
+                });
             });
         });
 
@@ -1129,25 +1128,28 @@ H.Toolbar.prototype = {
      */
     scrollButtons: function () {
         var targetY = 0,
-            wrapper = this.wrapper,
-            toolbar = this.toolbar,
+            _self = this,
+            wrapper = _self.wrapper,
+            toolbar = _self.toolbar,
             step = 0.1 * wrapper.offsetHeight; // 0.1 = 10%
 
-        addEvent(this.arrowUp, 'click', function () {
-            if (targetY > 0) {
-                targetY -= step;
-                toolbar.style['margin-top'] = -targetY + 'px';
-            }
-        });
+        ['click', 'touchstart'].forEach(function (eventName) {
+            addEvent(_self.arrowUp, eventName, function () {
+                if (targetY > 0) {
+                    targetY -= step;
+                    toolbar.style['margin-top'] = -targetY + 'px';
+                }
+            });
 
-        addEvent(this.arrowDown, 'click', function () {
-            if (
-                wrapper.offsetHeight + targetY <=
-                toolbar.offsetHeight + step
-            ) {
-                targetY += step;
-                toolbar.style['margin-top'] = -targetY + 'px';
-            }
+            addEvent(_self.arrowDown, eventName, function () {
+                if (
+                    wrapper.offsetHeight + targetY <=
+                    toolbar.offsetHeight + step
+                ) {
+                    targetY += step;
+                    toolbar.style['margin-top'] = -targetY + 'px';
+                }
+            });
         });
     },
     /*
@@ -1246,14 +1248,16 @@ H.Toolbar.prototype = {
         }
 
         // toggle menu
-        addEvent(showhideBtn, 'click', function () {
-            chart.update({
-                stockTools: {
-                    gui: {
-                        visible: !visible,
-                        placed: true
+        ['click', 'touchstart'].forEach(function (eventName) {
+            addEvent(showhideBtn, eventName, function () {
+                chart.update({
+                    stockTools: {
+                        gui: {
+                            visible: !visible,
+                            placed: true
+                        }
                     }
-                }
+                });
             });
         });
     },
@@ -1327,6 +1331,21 @@ H.Toolbar.prototype = {
         }
     },
     /*
+     * Update GUI with given options.
+     *
+     * @param {Object} - general options for Stock Tools
+     */
+    update: function (options) {
+        merge(true, this.chart.options.stockTools, options);
+        this.destroy();
+        this.chart.setStockTools(options);
+
+        // If Stock Tools are updated, then bindings should be updated too:
+        if (this.chart.navigationBindings) {
+            this.chart.navigationBindings.update();
+        }
+    },
+    /*
      * Destroy all HTML GUI elements.
      *
      */
@@ -1342,9 +1361,6 @@ H.Toolbar.prototype = {
         if (parent) {
             parent.removeChild(stockToolsDiv);
         }
-
-        // delete stockToolbar reference
-        delete this.chart.stockToolbar;
 
         // redraw
         this.chart.isDirtyBox = true;
@@ -1409,7 +1425,7 @@ H.Toolbar.prototype = {
 addEvent(H.NavigationBindings, 'selectButton', function (event) {
     var button = event.button,
         className = PREFIX + 'submenu-wrapper',
-        gui = this.chart.stockToolbar;
+        gui = this.chart.stockTools;
 
     if (gui && gui.guiEnabled) {
         // Unslect other active buttons
@@ -1428,7 +1444,7 @@ addEvent(H.NavigationBindings, 'selectButton', function (event) {
 addEvent(H.NavigationBindings, 'deselectButton', function (event) {
     var button = event.button,
         className = PREFIX + 'submenu-wrapper',
-        gui = this.chart.stockToolbar;
+        gui = this.chart.stockTools;
 
     if (gui && gui.guiEnabled) {
         // If deselecting a button from a submenu, select state for it's parent

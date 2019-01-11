@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -29,6 +29,7 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
         hasPointerEvent = !!win.PointerEvent,
         getWebkitTouches = function () {
             var fake = [];
+
             fake.item = function (i) {
                 return this[i];
             };
@@ -43,6 +44,7 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
         },
         translateMSPointer = function (e, method, wktype, func) {
             var p;
+
             if (
                 (
                     e.pointerType === 'touch' ||

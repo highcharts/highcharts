@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -136,7 +136,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     barBackgroundColor: '${palette.neutralColor20}',
 
@@ -161,7 +161,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     buttonArrowColor: '${palette.neutralColor80}',
 
@@ -171,7 +171,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     buttonBackgroundColor: '${palette.neutralColor10}',
 
@@ -196,7 +196,7 @@ var defaultScrollbarOptions = {
     /**
      * The color of the small rifles in the middle of the scrollbar.
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     rifleColor: '${palette.neutralColor80}',
 
@@ -206,7 +206,7 @@ var defaultScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString}
+     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     trackBackgroundColor: '${palette.neutralColor5}',
 
@@ -383,8 +383,8 @@ Scrollbar.prototype = {
                 r: options.barBorderRadius || 0
             }).add(scroller.scrollbarGroup);
 
-        scroller.scrollbarRifles = renderer.path(
-            swapXY([
+        scroller.scrollbarRifles = renderer
+            .path(swapXY([
                 'M',
                 -3, size / 4,
                 'L',
@@ -661,6 +661,7 @@ Scrollbar.prototype = {
      */
     initEvents: function () {
         var scroller = this;
+
         /**
          * Event handler for the mouse move event.
          */
@@ -741,6 +742,7 @@ Scrollbar.prototype = {
         scroller.buttonToMinClick = function (e) {
             var range = correctFloat(scroller.to - scroller.from) *
                 scroller.options.step;
+
             scroller.updatePosition(
                 correctFloat(scroller.from - range),
                 correctFloat(scroller.to - range)
@@ -755,6 +757,7 @@ Scrollbar.prototype = {
 
         scroller.buttonToMaxClick = function (e) {
             var range = (scroller.to - scroller.from) * scroller.options.step;
+
             scroller.updatePosition(scroller.from + range, scroller.to + range);
             fireEvent(scroller, 'changed', {
                 from: scroller.from,
@@ -1008,7 +1011,28 @@ addEvent(Axis, 'afterInit', function () {
                 from = unitedMin + range * (1 - this.to);
             }
 
-            axis.setExtremes(from, to, true, false, e);
+            if (
+                pick(
+                    this.options.liveRedraw,
+                    H.svg && !H.isTouchDevice && !this.chart.isBoosting
+                ) ||
+                // Mouseup always should change extremes
+                e.DOMType === 'mouseup' ||
+                // Internal events
+                !defined(e.DOMType)
+            ) {
+                axis.setExtremes(
+                    from,
+                    to,
+                    true,
+                    e.DOMType !== 'mousemove',
+                    e
+                );
+            } else {
+                // When live redraw is disabled, don't change extremes
+                // Only change the position of the scollbar thumb
+                this.setRange(this.from, this.to);
+            }
         });
     }
 });

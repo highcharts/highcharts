@@ -1,7 +1,7 @@
 /**
  * Data module
  *
- * (c) 2012-2018 Torstein Honsi
+ * (c) 2012-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -693,6 +693,7 @@ Highcharts.extend(Data.prototype, {
         });
 
         var globalPointArrayMap = getPointArrayMap(globalType);
+
         if (globalPointArrayMap === undefined) {
             globalPointArrayMap = ['y'];
         }
@@ -885,7 +886,9 @@ Highcharts.extend(Data.prototype, {
                     // The rest of the row is a comment
                     push();
                     return;
-                } else if (c === '"') {
+                }
+
+                if (c === '"') {
                     read(++i);
 
                     while (i < columnStr.length) {
@@ -933,8 +936,7 @@ Highcharts.extend(Data.prototype, {
                     c,
                     cn,
                     cl,
-                    token = ''
-                    ;
+                    token = '';
 
 
                 // We should be able to detect dateformats within 13 rows
@@ -950,7 +952,9 @@ Highcharts.extend(Data.prototype, {
                     if (c === '#') {
                         // Skip the rest of the line - it's a comment
                         return;
-                    } else if (c === '"') {
+                    }
+
+                    if (c === '"') {
                         if (inStr) {
                             if (cl !== '"' && cn !== '"') {
                                 while (cn === ' ' && j < columnStr.length) {
@@ -1058,11 +1062,11 @@ Highcharts.extend(Data.prototype, {
                     data[i] && data[i].length
                 ) {
                     thing = data[i]
-                            .trim()
-                            .replace(/\//g, ' ')
-                            .replace(/\-/g, ' ')
-                            .replace(/\./g, ' ')
-                            .split(' ');
+                        .trim()
+                        .replace(/\//g, ' ')
+                        .replace(/\-/g, ' ')
+                        .replace(/\./g, ' ')
+                        .split(' ');
 
                     guessedFormat = [
                         '',
@@ -1778,8 +1782,7 @@ Highcharts.extend(Data.prototype, {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
             parser: function (match) {
                 var year = +match[3],
-                    d = new Date()
-                ;
+                    d = new Date();
 
                 if (year > (d.getFullYear() - 2000)) {
                     year += 1900;
@@ -2093,7 +2096,6 @@ Highcharts.extend(Data.prototype, {
             }
 
 
-
             // Do the callback
             chartOptions = {
                 series: series
@@ -2131,6 +2133,7 @@ Highcharts.extend(Data.prototype, {
      */
     update: function (options, redraw) {
         var chart = this.chart;
+
         if (options) {
             // Set the complete handler
             options.afterComplete = function (dataOptions) {
@@ -2310,6 +2313,7 @@ SeriesBuilder.prototype.read = function (columns, rowIndex) {
     // Then, build an array or point based on the readers names.
     builder.readers.forEach(function (reader) {
         var value = columns[reader.columnIndex][rowIndex];
+
         if (pointIsArray) {
             point.push(value);
         } else {
@@ -2402,6 +2406,7 @@ SeriesBuilder.prototype.getReferencedColumnIndexes = function () {
  */
 SeriesBuilder.prototype.hasReader = function (configName) {
     var i, columnReader;
+
     for (i = 0; i < this.readers.length; i = i + 1) {
         columnReader = this.readers[i];
         if (columnReader.configName === configName) {

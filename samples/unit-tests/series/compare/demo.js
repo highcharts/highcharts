@@ -70,3 +70,32 @@ QUnit.test('Compare with one invalid series (#5814)', function (assert) {
         'First points overlap'
     );
 });
+
+QUnit.test('Compare with the correct compareValue', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+
+        plotOptions: {
+            series: {
+                compare: 'percent'
+            }
+        },
+
+        series: [{
+            type: 'ohlc',
+            pointValKey: 'open',
+            data: [
+                [0, 10, 20, 30, 50],
+                [1, 4, 6, 8, 5],
+                [3, 60, 5, 12, 2]
+            ]
+        }]
+    });
+
+    var series = chart.series[0];
+
+    assert.strictEqual(
+        series.compareValue,
+        series.points[0][series.options.pointValKey],
+        'compareValue is correct'
+    );
+});

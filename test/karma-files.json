@@ -33,6 +33,7 @@
 	"code/modules/histogram-bellcurve.src.js",
 	"code/modules/bullet.src.js",
 	"code/modules/funnel.src.js",
+	"code/modules/networkgraph.src.js",
 	"code/modules/pareto.src.js",
 	"code/modules/pattern-fill.src.js",
 	"code/modules/price-indicator.src.js",

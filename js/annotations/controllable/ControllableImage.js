@@ -13,9 +13,11 @@ import ControllableLabel from './ControllableLabel.js';
  *
  * @param {Highcharts.Annotation} annotation - an annotation instance
  * @param {Object} options a controllable's options
+ * @param {number} index of the image
  **/
-function ControllableImage(annotation, options) {
-    this.init(annotation, options);
+function ControllableImage(annotation, options, index) {
+    this.init(annotation, options, index);
+    this.collection = 'shapes';
 }
 
 /**
@@ -85,8 +87,15 @@ H.merge(
         },
 
         translate: function (dx, dy) {
+            var annotationOptions = this.annotation.userOptions,
+                shapeOptions = annotationOptions[this.collection][this.index];
+
             this.translatePoint(dx, dy, 0);
+
+            // Options stored in chart:
+            shapeOptions.point = this.options.point;
         }
-    });
+    }
+);
 
 export default ControllableImage;

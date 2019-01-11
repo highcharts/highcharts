@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Highsoft AS
+ * (c) 2010-2019 Highsoft AS
  *
  * Author: Paweł Potaczek
  *
@@ -44,7 +44,7 @@ var Series = H.Series,
     arrayMin = H.arrayMin,
     arrayMax = H.arrayMax;
 
-setOptions({  // Set default bubble legend options
+setOptions({ // Set default bubble legend options
     legend: {
         /**
          * The bubble legend is an additional element in legend which presents
@@ -215,13 +215,13 @@ setOptions({  // Set default bubble legend options
              * specified, the `minSize` and the `maxSize` are calculated from
              * bubble series.
              */
-            maxSize: 60,  // Number
+            maxSize: 60, // Number
             /**
              * Minimum bubble legend range size. If values for ranges are not
              * specified, the `minSize` and the `maxSize` are calculated from
              * bubble series.
              */
-            minSize: 10,  // Number
+            minSize: 10, // Number
             /**
              * The position of the bubble legend in the legend.
              * @sample highcharts/bubble-legend/connectorandlabels/
@@ -240,9 +240,9 @@ setOptions({  // Set default bubble legend options
              * @type {Array<*>}
              */
             ranges: {
-               /**
-                * Range size value, similar to bubble Z data.
-                */
+                /**
+                 * Range size value, similar to bubble Z data.
+                 */
                 value: undefined,
                 /**
                  * The color of the border for individual range.
@@ -616,7 +616,7 @@ H.BubbleLegend.prototype = {
 
         // Set options for centered labels
         if (labelsAlign === 'center') {
-            connectorLength = 0;  // do not use connector
+            connectorLength = 0; // do not use connector
             options.connectorDistance = 0;
             range.labelStyle.align = 'center';
         }
@@ -654,8 +654,8 @@ H.BubbleLegend.prototype = {
             renderer
                 .path(renderer.crispLine(
                     ['M', posX, posY, 'L', posX + connectorLength, posY],
-                     options.connectorWidth)
-                )
+                    options.connectorWidth
+                ))
                 .attr(
                     styledMode ? {} : range.connectorStyle
                 )
@@ -743,7 +743,7 @@ H.BubbleLegend.prototype = {
 
         return format ? H.format(format, range) :
             formatter ? formatter.call(range) :
-            numberFormat(range.value, 1);
+                numberFormat(range.value, 1);
     },
 
     /**
@@ -875,13 +875,13 @@ H.BubbleLegend.prototype = {
             calculatedSize = ((plotSize + lastLineHeight - fontMetrics.h / 2) *
                maxSize / 100) / (maxSize / 100 + 1);
 
-           // Get maxPxSize from bubble series if calculated bubble legend
-           // size will not affect to bubbles series.
+            // Get maxPxSize from bubble series if calculated bubble legend
+            // size will not affect to bubbles series.
             if (
-               (horizontal && plotSizeY - calculatedSize >=
+                (horizontal && plotSizeY - calculatedSize >=
                plotSizeX) || (!horizontal && plotSizeX -
                calculatedSize >= plotSizeY)
-           ) {
+            ) {
                 calculatedSize = maxPxSize;
             }
         }
@@ -941,7 +941,7 @@ addEvent(H.Legend, 'afterGetAllItems', function (e) {
     if (bubbleLegend && bubbleLegend.ranges && bubbleLegend.ranges.length) {
         // Allow change the way of calculating ranges in update
         if (options.ranges.length) {
-            options.autoRanges = options.ranges[0].autoRanges ? true : false;
+            options.autoRanges = !!options.ranges[0].autoRanges;
         }
         // Update bubbleLegend dimensions in each redraw
         legend.destroyItem(bubbleLegend);
@@ -1006,7 +1006,7 @@ Legend.prototype.getLinesHeights = function () {
             // for bubbleLegend
             items[i].itemHeight = items[i].legendItemHeight;
         }
-        if (  // Line break
+        if ( // Line break
             items[i] === items[length - 1] ||
             items[i + 1] &&
             items[i]._legendItemPos[1] !==
@@ -1051,7 +1051,7 @@ Legend.prototype.retranslateItems = function (lines) {
 
         if (movementX || (rtl && item.ranges)) {
             movementX = rtl ? orgTranslateX - item.options.maxSize / 2 :
-            orgTranslateX + movementX;
+                orgTranslateX + movementX;
 
             item.legendGroup.attr({ translateX: movementX });
         }

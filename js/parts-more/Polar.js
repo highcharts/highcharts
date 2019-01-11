@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -158,22 +158,6 @@ if (!H.polarExtended) {
     };
 
     /**
-     * Wrap the buildKDTree function so that it searches by angle (clientX) in
-     * case of shared tooltip, and by two dimensional distance in case of
-     * non-shared.
-     */
-    wrap(seriesProto, 'buildKDTree', function (proceed) {
-        if (this.chart.polar) {
-            if (this.kdByAngle) {
-                this.searchPoint = this.searchPointByAngle;
-            } else {
-                this.options.findNearestPointBy = 'xy';
-            }
-        }
-        proceed.apply(this);
-    });
-
-    /**
      * Translate a point's plotX and plotY from the internal angle and radius
      * measures to true plotX, plotY coordinates
      */
@@ -267,9 +251,18 @@ if (!H.polarExtended) {
             i;
 
         if (chart.polar) {
-            // Postprocess plot coordinates
-            this.kdByAngle = chart.tooltip && chart.tooltip.shared;
 
+            // Prepare k-d-tree handling. It searches by angle (clientX) in
+            // case of shared tooltip, and by two dimensional distance in case
+            // of non-shared.
+            this.kdByAngle = chart.tooltip && chart.tooltip.shared;
+            if (this.kdByAngle) {
+                this.searchPoint = this.searchPointByAngle;
+            } else {
+                this.options.findNearestPointBy = 'xy';
+            }
+
+            // Postprocess plot coordinates
             if (!this.preventPostTranslate) {
                 points = this.points;
                 i = points.length;
@@ -286,6 +279,7 @@ if (!H.polarExtended) {
                 this.hasClipCircleSetter = Boolean(
                     H.addEvent(this, 'afterRender', function () {
                         var circ;
+
                         if (chart.polar) {
                             circ = this.yAxis.center;
                             this.group.clip(

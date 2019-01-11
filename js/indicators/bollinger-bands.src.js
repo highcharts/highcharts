@@ -41,7 +41,9 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('bb', 'sma',
+H.seriesType(
+    'bb',
+    'sma',
     /**
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.

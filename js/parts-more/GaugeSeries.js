@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -219,7 +219,7 @@ seriesType('gauge', 'line', {
      * @sample {highcharts} highcharts/plotoptions/gauge-dial/
      *         Dial options demonstrated
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   #000000
      * @since     2.3.0
      * @product   highcharts
@@ -333,7 +333,7 @@ seriesType('gauge', 'line', {
      * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
      *         Pivot options demonstrated
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default   #000000
      * @since     2.3.0
      * @product   highcharts

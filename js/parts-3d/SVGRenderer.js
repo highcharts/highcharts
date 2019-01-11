@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * Extensions to the SVGRenderer class to enable 3D shapes
  *
@@ -28,11 +28,11 @@ var animObject = H.animObject,
     pick = H.pick,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
-    wrap = H.wrap,
 
     dFactor,
     element3dMethods,
     cuboidMethods;
+
 /*
     EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 */
@@ -43,6 +43,7 @@ dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
     var result = [],
         arcAngle = end - start;
+
     if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
         result = result.concat(
             curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy)
@@ -76,47 +77,6 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
         cy + (ry * Math.sin(end)) + dy
     ];
 }
-
-/* @merge v6.2
-
-     if (!build.classic) {
-
-// Override the SVGRenderer initiator to add definitions used by brighter and
-// darker faces of the cuboids.
-wrap(SVGRenderer.prototype, 'init', function (proceed) {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    each([{
-        name: 'darker',
-        slope: 0.6
-    }, {
-        name: 'brighter',
-        slope: 1.4
-    }], function (cfg) {
-        this.definition({
-            tagName: 'filter',
-            id: 'highcharts-' + cfg.name,
-            children: [{
-                tagName: 'feComponentTransfer',
-                children: [{
-                    tagName: 'feFuncR',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncG',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncB',
-                    type: 'linear',
-                    slope: cfg.slope
-                }]
-            }]
-        });
-    }, this);
-});
-
-*/
 
 SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
@@ -157,11 +117,12 @@ SVGRenderer.prototype.toLineSegments = function (points) {
 SVGRenderer.prototype.face3d = function (args) {
     var renderer = this,
         ret = this.createElement('path');
+
     ret.vertexes = [];
     ret.insidePlotArea = false;
     ret.enabled = true;
 
-    wrap(ret, 'attr', function (proceed, hash) {
+    ret.attr = function (hash) {
         if (
             typeof hash === 'object' &&
             (
@@ -193,10 +154,10 @@ SVGRenderer.prototype.face3d = function (args) {
             hash.d = path;
             hash.visibility = visibility;
         }
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.attr.apply(this, arguments);
+    };
 
-    wrap(ret, 'animate', function (proceed, params) {
+    ret.animate = function (params) {
         if (
             typeof params === 'object' &&
             (
@@ -229,8 +190,8 @@ SVGRenderer.prototype.face3d = function (args) {
             this.attr('visibility', visibility);
         }
 
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.animate.apply(this, arguments);
+    };
 
     return ret.attr(args);
 };
@@ -260,36 +221,31 @@ SVGRenderer.prototype.polyhedron = function (args) {
         return destroy.call(this);
     };
 
-    wrap(
-        result,
-        'attr',
-        function (proceed, hash, val, complete, continueAnimation) {
-            if (typeof hash === 'object' && defined(hash.faces)) {
-                while (result.faces.length > hash.faces.length) {
-                    result.faces.pop().destroy();
-                }
-                while (result.faces.length < hash.faces.length) {
-                    result.faces.push(renderer.face3d().add(result));
-                }
-                for (var i = 0; i < hash.faces.length; i++) {
-                    if (renderer.styledMode) {
-                        delete hash.faces[i].fill;
-                    }
-                    result.faces[i].attr(
-                        hash.faces[i],
-                        null,
-                        complete,
-                        continueAnimation
-                    );
-                }
-                delete hash.faces;
+    result.attr = function (hash, val, complete, continueAnimation) {
+        if (typeof hash === 'object' && defined(hash.faces)) {
+            while (result.faces.length > hash.faces.length) {
+                result.faces.pop().destroy();
             }
-            return proceed.apply(this, [].slice.call(arguments, 1));
+            while (result.faces.length < hash.faces.length) {
+                result.faces.push(renderer.face3d().add(result));
+            }
+            for (var i = 0; i < hash.faces.length; i++) {
+                if (renderer.styledMode) {
+                    delete hash.faces[i].fill;
+                }
+                result.faces[i].attr(
+                    hash.faces[i],
+                    null,
+                    complete,
+                    continueAnimation
+                );
+            }
+            delete hash.faces;
         }
+        return SVGElement.prototype.attr.apply(this, arguments);
+    };
 
-    );
-
-    wrap(result, 'animate', function (proceed, params, duration, complete) {
+    result.animate = function (params, duration, complete) {
         if (params && params.faces) {
             while (result.faces.length > params.faces.length) {
                 result.faces.pop().destroy();
@@ -302,8 +258,8 @@ SVGRenderer.prototype.polyhedron = function (args) {
             }
             delete params.faces;
         }
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.animate.apply(this, arguments);
+    };
 
     return result.attr(args);
 };
@@ -384,7 +340,7 @@ element3dMethods = {
     // Destroy all parts
     destroyParts: function () {
         this.processParts(null, null, 'destroy');
-        return this.originalDestroy.call(this);
+        return this.originalDestroy();
     }
 };
 
@@ -397,6 +353,7 @@ cuboidMethods = H.merge(element3dMethods, {
         // Resolve setting attributes by string name
         if (typeof args === 'string' && typeof val !== 'undefined') {
             var key = args;
+
             args = {};
             args[key] = val;
         }
@@ -560,8 +517,9 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
      */
     pickShape = function (path1, path2) {
         var ret = [
-                [], -1
+            [], -1
         ];
+
         path1 = path1.map(mapPath);
         path2 = path2.map(mapPath);
         if (H.shapeArea(path1) < 0) {
@@ -678,6 +636,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     wrapper.onAdd = function () {
         var parent = wrapper.parentGroup,
             className = wrapper.attr('class');
+
         wrapper.top.add(wrapper);
 
         // These faces are added outside the wrapper group because the z index
@@ -695,6 +654,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     ['addClass', 'removeClass'].forEach(function (fn) {
         wrapper[fn] = function () {
             var args = arguments;
+
             ['top', 'out', 'inn', 'side1', 'side2'].forEach(function (face) {
                 wrapper[face][fn].apply(wrapper[face], args);
             });
@@ -756,8 +716,9 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     );
 
     // Override attr to remove shape attributes and use those to set child paths
-    wrap(wrapper, 'attr', function (proceed, params) {
+    wrapper.attr = function (params) {
         var ca;
+
         if (typeof params === 'object') {
             ca = suckOutCustom(params);
             if (ca) {
@@ -765,12 +726,12 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
                 wrapper.setPaths(wrapper.attribs);
             }
         }
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.attr.apply(wrapper, arguments);
+    };
 
     // Override the animate function by sucking out custom parameters related to
     // the shapes directly, and update the shapes from the animation step.
-    wrap(wrapper, 'animate', function (proceed, params, animation, complete) {
+    wrapper.animate = function (params, animation, complete) {
         var ca,
             from = this.attribs,
             to,
@@ -817,8 +778,13 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
             }
             animation = anim; // Only when duration (#5572)
         }
-        return proceed.call(this, params, animation, complete);
-    });
+        return SVGElement.prototype.animate.call(
+            this,
+            params,
+            animation,
+            complete
+        );
+    };
 
     // destroy all children
     wrapper.destroy = function () {
@@ -861,19 +827,20 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
         beta = shapeArgs.beta; // beta rotation of the chart
 
     // Derived Variables
-    var cs = Math.cos(start),        // cosinus of the start angle
-        ss = Math.sin(start),        // sinus of the start angle
-        ce = Math.cos(end),            // cosinus of the end angle
-        se = Math.sin(end),            // sinus of the end angle
-        rx = r * Math.cos(beta),        // x-radius
-        ry = r * Math.cos(alpha),    // y-radius
-        irx = ir * Math.cos(beta),    // x-radius (inner)
-        iry = ir * Math.cos(alpha),    // y-radius (inner)
-        dx = d * Math.sin(beta),        // distance between top and bottom in x
-        dy = d * Math.sin(alpha);    // distance between top and bottom in y
+    var cs = Math.cos(start), // cosinus of the start angle
+        ss = Math.sin(start), // sinus of the start angle
+        ce = Math.cos(end), // cosinus of the end angle
+        se = Math.sin(end), // sinus of the end angle
+        rx = r * Math.cos(beta), // x-radius
+        ry = r * Math.cos(alpha), // y-radius
+        irx = ir * Math.cos(beta), // x-radius (inner)
+        iry = ir * Math.cos(alpha), // y-radius (inner)
+        dx = d * Math.sin(beta), // distance between top and bottom in x
+        dy = d * Math.sin(alpha); // distance between top and bottom in y
 
     // TOP
     var top = ['M', cx + (rx * cs), cy + (ry * ss)];
+
     top = top.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
     top = top.concat([
         'L', cx + (irx * ce), cy + (iry * se)
@@ -914,6 +881,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     // startAngle
 
     var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
+
     out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 
     // When shape is wide, it can cross both, (c) and (d) edges, when using
@@ -969,6 +937,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 
     // INSIDE
     var inn = ['M', cx + (irx * cs), cy + (iry * ss)];
+
     inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
     inn = inn.concat([
         'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy

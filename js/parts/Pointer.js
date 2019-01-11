@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -279,13 +279,14 @@ Highcharts.Pointer.prototype = {
      * @param {boolean} shared
      *        Whether it is a shared tooltip or not.
      *
-     * @param {Highcharts.PointerCoordinatesObject} coordinates
-     *        Chart coordinates of the pointer.
+     * @param {Highcharts.PointerEventObject} e
+     *        The pointer event object, containing chart coordinates of the
+     *        pointer.
      *
      * @return {Point|undefined}
      *         The point closest to given coordinates.
      */
-    findNearestKDPoint: function (series, shared, coordinates) {
+    findNearestKDPoint: function (series, shared, e) {
         var closest,
             sort = function (p1, p2) {
                 var isCloserX = p1.distX - p2.distX,
@@ -311,6 +312,7 @@ Highcharts.Pointer.prototype = {
                 }
                 return result;
             };
+
         series.forEach(function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared,
                 compareX = (
@@ -318,9 +320,10 @@ Highcharts.Pointer.prototype = {
                     s.options.findNearestPointBy.indexOf('y') < 0
                 ),
                 point = s.searchPoint(
-                    coordinates,
+                    e,
                     compareX
                 );
+
             if (
                 // Check that we actually found a point on the series.
                 isObject(point, true) &&
@@ -377,7 +380,9 @@ Highcharts.Pointer.prototype = {
                 chartX: plotX + xAxis.pos,
                 chartY: point.plotY + yAxis.pos
             };
-        } else if (shapeArgs && shapeArgs.x && shapeArgs.y) {
+        }
+
+        if (shapeArgs && shapeArgs.x && shapeArgs.y) {
             // E.g. pies do not have axes
             return {
                 chartX: shapeArgs.x,
@@ -407,8 +412,8 @@ Highcharts.Pointer.prototype = {
      * @param {boolean} shared
      *        Whether it is a shared tooltip or not.
      *
-     * @param {Highcharts.PointerCoordinatesObject} coordinates
-     *        Chart coordinates of the pointer.
+     * @param {Highcharts.PointerEventObject} e
+     *        The triggering event, containing chart coordinates of the pointer.
      *
      * @return {*}
      *         Object containing resulting hover data: hoverPoint, hoverSeries,
@@ -420,13 +425,11 @@ Highcharts.Pointer.prototype = {
         series,
         isDirectTouch,
         shared,
-        coordinates,
-        params
+        e
     ) {
         var hoverPoint,
             hoverPoints = [],
             hoverSeries = existingHoverSeries,
-            isBoosting = params && params.isBoosting,
             useExisting = !!(isDirectTouch && existingHoverPoint),
             notSticky = hoverSeries && !hoverSeries.stickyTracking,
             filter = function (s) {
@@ -448,7 +451,7 @@ Highcharts.Pointer.prototype = {
         // Use existing hovered point or find the one closest to coordinates.
         hoverPoint = useExisting ?
             existingHoverPoint :
-            this.findNearestKDPoint(searchSeries, shared, coordinates);
+            this.findNearestKDPoint(searchSeries, shared, e);
 
         // Assign hover series
         hoverSeries = hoverPoint && hoverPoint.series;
@@ -466,12 +469,13 @@ Highcharts.Pointer.prototype = {
                     var point = find(s.points, function (p) {
                         return p.x === hoverPoint.x && !p.isNull;
                     });
+
                     if (isObject(point)) {
                         /*
                         * Boost returns a minimal point. Convert it to a usable
                         * point for tooltip and states.
                         */
-                        if (isBoosting) {
+                        if (s.chart.isBoosting) {
                             point = s.getPoint(point);
                         }
                         hoverPoints.push(point);
@@ -525,8 +529,7 @@ Highcharts.Pointer.prototype = {
                 series,
                 isDirectTouch,
                 shared,
-                e,
-                { isBoosting: chart.isBoosting }
+                e
             ),
             useSharedTooltip,
             followPointer,
@@ -596,6 +599,7 @@ Highcharts.Pointer.prototype = {
                 'mousemove',
                 function (e) {
                     var chart = charts[H.hoverChartIndex];
+
                     if (chart) {
                         chart.pointer.onDocumentMouseMove(e);
                     }
@@ -845,11 +849,11 @@ Highcharts.Pointer.prototype = {
                             zoomVert ? 1 : plotHeight,
                             0
                         )
-                        .attr({
-                            'class': 'highcharts-selection-marker',
-                            'zIndex': 7
-                        })
-                        .add();
+                            .attr({
+                                'class': 'highcharts-selection-marker',
+                                'zIndex': 7
+                            })
+                            .add();
 
                     if (!chart.styledMode) {
                         selectionMarker.attr({
@@ -951,7 +955,7 @@ Highcharts.Pointer.prototype = {
                                         selectionLeft + selectionWidth :
                                         selectionTop + selectionHeight
                                 ) - minPixelPadding
-                                );
+                            );
 
                         selectionData[axis.coll].push({
                             axis: axis,
@@ -1074,6 +1078,7 @@ Highcharts.Pointer.prototype = {
      */
     onContainerMouseLeave: function (e) {
         var chart = charts[H.hoverChartIndex];
+
         // #4886, MS Touch end fires mouseleave but with no related target
         if (chart && (e.relatedTarget || e.toElement)) {
             chart.pointer.reset();
@@ -1143,6 +1148,7 @@ Highcharts.Pointer.prototype = {
      */
     inClass: function (element, className) {
         var elemClassName;
+
         while (element) {
             elemClassName = attr(element, 'class');
             if (elemClassName) {

@@ -39,7 +39,9 @@ function destroyExtraLabels(point, functionName) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('pivotpoints', 'sma',
+H.seriesType(
+    'pivotpoints',
+    'sma',
     /**
      * Pivot points indicator. This series requires the `linkedTo` option to be
      * set and should be loaded after `stock/indicators/indicators.js` file.
@@ -247,7 +249,7 @@ H.seriesType('pivotpoints', 'sma',
 
                 lastPP = PP.push(
                     [endTimestamp]
-                    .concat(avg)
+                        .concat(avg)
                 );
 
                 xData.push(endTimestamp);
@@ -272,6 +274,7 @@ H.seriesType('pivotpoints', 'sma',
                 low = Infinity,
                 close = values[values.length - 1][3],
                 pivot;
+
             values.forEach(function (p) {
                 high = Math.max(high, p[1]);
                 low = Math.min(low, p[2]);

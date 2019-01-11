@@ -18,13 +18,15 @@ var controllableMixin = {
      *
      * @param {Annotation} annotation - an annotation instance
      * @param {Object} options - options specific for controllable
+     * @param {number} index - index of the controllable element
      **/
-    init: function (annotation, options) {
+    init: function (annotation, options, index) {
         this.annotation = annotation;
         this.chart = annotation.chart;
         this.options = options;
         this.points = [];
         this.controlPoints = [];
+        this.index = index;
 
         this.linkPoints();
         this.addControlPoints();
@@ -116,10 +118,10 @@ var controllableMixin = {
         var plotBox = point.series.getPlotBox(),
 
             box = point.mock ?
-            point.toAnchor() :
-            H.Tooltip.prototype.getAnchor.call({
-                chart: point.series.chart
-            }, point),
+                point.toAnchor() :
+                H.Tooltip.prototype.getAnchor.call({
+                    chart: point.series.chart
+                }, point),
 
             anchor = {
                 x: box[0] + (this.options.x || 0),
@@ -275,6 +277,7 @@ var controllableMixin = {
     transform: function (transformation, cx, cy, p1, p2) {
         if (this.chart.inverted) {
             var temp = cx;
+
             cx = cy;
             cy = temp;
         }
