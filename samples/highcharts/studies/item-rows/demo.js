@@ -23,6 +23,7 @@
                     radius: null
                 }
             ),
+            // Overrides innerSize
             rows: undefined,
             showInLegend: true,
             startAngle: undefined
@@ -63,7 +64,9 @@
                     itemCount = Number.MAX_VALUE,
                     finalItemCount,
                     rows,
-                    testRows = [];
+                    testRows,
+                    // How many rows (arcs) should be used
+                    rowFraction = (diameter - innerSize) / diameter;
 
                 // Increase the itemSize until we find the best fit
                 while (itemCount > this.total) {
@@ -75,12 +78,23 @@
                     itemCount = 0;
 
                     // Now rows is the last successful run
-                    rows = testRows.slice(0);
-                    testRows.length = 0;
+                    rows = testRows;
+                    testRows = [];
 
                     itemSize++;
-                    rowCount = Math.floor((diameter - innerSize) / itemSize / 2);
-                    for (row = rowCount; row >= 0; row--) {
+
+                    // Total number of rows (arcs) from the center to the
+                    // perimeter
+                    rowCount = diameter / itemSize / 2;
+
+                    if (this.options.rows) {
+                        innerSize = ((rowCount - this.options.rows) / rowCount) * diameter;
+                        rowCount = this.options.rows;
+                    } else {
+                        rowCount = Math.floor(rowCount * rowFraction);
+                    }
+
+                    for (row = rowCount; row > 0; row--) {
                         rowRadius = (innerSize + (row / rowCount) *
                             (diameter - innerSize)) / 2;
                         rowLength = fullAngle * rowRadius;
@@ -98,7 +112,7 @@
                         overshoot--;
                     }
                 }
-                while (overshoot) {
+                while (overshoot > 0) {
                     rows.forEach(removeCol);
                 }
 
@@ -327,6 +341,7 @@ Highcharts.chart('container', {
             ['Høyre', 45, '#4677BA'],
             ['Fremskrittspartiet', 27, '#262955']
         ],
+
         // Circular options
         center: ['50%', '88%'],
         size: '180%',
