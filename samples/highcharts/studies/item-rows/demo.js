@@ -1,3 +1,74 @@
+document.addEventListener('DOMContentLoaded', function () {
+
+    Highcharts.chart('container', {
+
+        chart: {
+            type: 'item'
+        },
+
+        title: {
+            text: 'Highcharts item chart'
+        },
+
+        subtitle: {
+            text: 'Parliament visualization'
+        },
+
+        legend: {
+            labelFormat: '{name} <span style="opacity: 0.4">{y}</span>'
+        },
+
+        series: [{
+            name: 'Representatives',
+            keys: ['name', 'y', 'color', 'label'],
+            data: [
+                ['Rødt', 1, '#851914', 'R'],
+                ['Sosialistisk Venstreparti', 11, '#B0185B', 'SV'],
+                ['Arbeiderpartiet', 49, '#C6191D', 'AP'],
+                ['Senterpartiet', 19, '#5CA92E', 'SP'],
+                ['Miljøpartiet De Grønne', 1, '#024B26', 'MDG'],
+                ['Kristelig Folkeparti', 8, '#F9B234', 'KrF'],
+                ['Venstre', 8, '#036766', 'V'],
+                ['Høyre', 45, '#4677BA', 'H'],
+                ['Fremskrittspartiet', 27, '#262955', 'FrP']
+            ],
+            data1: [
+                ['Conservative', 318],
+                ['Labour', 262],
+                ['Scottish National Party', 35],
+                ['Liberal Democrat', 12],
+                ['Democratic Unionist Party', 10],
+                ['Sinn Fein', 7],
+                ['Plaid Cymru', 4],
+                ['Green Party', 1],
+                ['Others', 1]
+            ],
+            data2: [
+                ['The Left', 69, '#BE3075', 'DIE LINKE'],
+                ['Social Democratic Party', 153, '#EB001F', 'SPD'],
+                ['Alliance 90/The Greens', 67, '#64A12D', 'GRÜNE'],
+                ['Free Democratic Party', 80, '#FFED00', 'FDP'],
+                ['Christian Democratic Union', 200, '#000000', 'CDU'],
+                ['Christian Social Union in Bavaria', 46, '#008AC5', 'CSU'],
+                ['Alternative for Germany', 94, '#009EE0', 'AfD']
+            ],
+
+            dataLabels: {
+                enabled: true,
+                format: '{point.label}'
+            },
+
+            // Circular options
+            center: ['50%', '88%'],
+            size: '170%',
+            startAngle: -100,
+            endAngle: 100
+        }]
+
+    });
+});
+
+
 /**
  * This is a study for an item series without axes, where point values signify
  * the number of items. Items are laid out in a sequence within the plot area.
@@ -106,15 +177,39 @@
                     }
                 }
 
+                // We now have more slots than we have total items. Loop over
+                // the rows and remove the last slot until the count is correct.
+                // For each iteration we sort the last slot by the angle, and
+                // remove those with the highest angles.
                 var overshoot = finalItemCount - this.total;
-                function removeCol(row) {
+                function cutOffRow(item) {
                     if (overshoot > 0) {
-                        row.colCount--;
+                        item.row.colCount--;
                         overshoot--;
                     }
                 }
                 while (overshoot > 0) {
-                    rows.forEach(removeCol);
+                    rows
+                        // Return a simplified representation of the angle of
+                        // the last slot within each row.
+                        .map(function (row) {
+                            return {
+                                angle: row.colCount / row.rowLength,
+                                row: row
+                            };
+                        })
+                        // Sort by the angles...
+                        .sort(function (a, b) {
+                            return b.angle - a.angle;
+                        })
+                        // ...so that we can ignore the items with the lowest
+                        // angles...
+                        .slice(
+                            0,
+                            Math.min(overshoot, Math.ceil(rows.length / 2))
+                        )
+                        // ...and remove the ones with the highest angles
+                        .forEach(cutOffRow);
                 }
 
                 rows.forEach(function (row) {
@@ -194,7 +289,7 @@
                         })
                         .add(this.group);
                 });
-                */
+                //*/
 
                 this.points.forEach(function (point) {
                     var attr,
@@ -308,6 +403,7 @@
                     this.group.animate({
                         opacity: 1
                     }, this.options.animation);
+                    this.animate = null;
                 }
             }
         },
@@ -332,49 +428,3 @@
 
 }(Highcharts));
 
-Highcharts.chart('container', {
-
-    chart: {
-        type: 'item'
-    },
-
-    title: {
-        text: 'Highcharts item chart'
-    },
-
-    subtitle: {
-        text: 'Norwegian Parliament 2018'
-    },
-
-    legend: {
-        labelFormat: '{name} <span style="opacity: 0.4">{y}</span>'
-    },
-
-    series: [{
-        name: 'Representatives',
-        keys: ['name', 'y', 'color', 'label'],
-        data: [
-            ['Rødt', 1, '#851914', 'R'],
-            ['Sosialistisk Venstreparti', 11, '#B0185B', 'SV'],
-            ['Arbeiderpartiet', 49, '#C6191D', 'AP'],
-            ['Senterpartiet', 19, '#5CA92E', 'SP'],
-            ['Miljøpartiet De Grønne', 1, '#024B26', 'MDG'],
-            ['Kristelig Folkeparti', 8, '#F9B234', 'KrF'],
-            ['Venstre', 8, '#036766', 'V'],
-            ['Høyre', 45, '#4677BA', 'H'],
-            ['Fremskrittspartiet', 27, '#262955', 'FrP']
-        ],
-
-        dataLabels: {
-            enabled: true,
-            format: '{point.label}'
-        },
-
-        // Circular options
-        center: ['50%', '88%'],
-        size: '170%',
-        startAngle: -100,
-        endAngle: 100
-    }]
-
-});
