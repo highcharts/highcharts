@@ -233,7 +233,8 @@
                     if (!point.isNull && point.visible) {
 
                         if (!point.graphic) {
-                            point.graphic = renderer.g('point').add(series.group);
+                            point.graphic = renderer.g('point')
+                                .add(series.group);
                         }
 
                         for (var val = 0; val < point.y; val++) {
@@ -296,7 +297,19 @@
                 // else, it's just a dot chart with no natural place to put the
                 // data labels
             },
-            animate: H.noop
+
+            // Fade in the whole chart
+            animate: function (init) {
+                if (init) {
+                    this.group.attr({
+                        opacity: 0
+                    });
+                } else {
+                    this.group.animate({
+                        opacity: 1
+                    }, this.options.animation);
+                }
+            }
         },
         // Point class
         {
