@@ -4,7 +4,8 @@
  */
 (function (H) {
     var extend = H.extend,
-        merge = H.merge;
+        merge = H.merge,
+        piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
     Highcharts.seriesType(
         'item',
         // Inherits pie as the most tested non-cartesian series with individual
@@ -96,7 +97,7 @@
 
                     for (row = rowCount; row > 0; row--) {
                         rowRadius = (innerSize + (row / rowCount) *
-                            (diameter - innerSize)) / 2;
+                            (diameter - innerSize - itemSize)) / 2;
                         rowLength = fullAngle * rowRadius;
                         colCount = Math.ceil(rowLength / itemSize);
                         testRows.push({ rowRadius, rowLength, colCount });
@@ -229,7 +230,7 @@
                         delete pointAttr['stroke-width'];
                     }
 
-                    if (point.y !== null) {
+                    if (!point.isNull && point.visible) {
 
                         if (!point.graphic) {
                             point.graphic = renderer.g('point').add(series.group);
@@ -281,14 +282,20 @@
                     H.objectEach(graphics, function (graphic, key) {
                         if (!graphic.isActive) {
                             graphic.destroy();
-                            delete graphic[key];
+                            delete graphics[key];
                         } else {
                             graphic.isActive = false;
                         }
                     });
                 });
             },
-            drawDataLabels: H.noop,
+            drawDataLabels: function () {
+                if (this.center) {
+                    H.seriesTypes.pie.prototype.drawDataLabels.call(this);
+                }
+                // else, it's just a dot chart with no natural place to put the
+                // data labels
+            },
             animate: H.noop
         },
         // Point class
@@ -303,7 +310,10 @@
                         );
                     }
                 }, this);
-            }
+            },
+            connectorShapes: piePoint.connectorShapes,
+            getConnectorPath: piePoint.getConnectorPath,
+            setVisible: piePoint.setVisible
         }
     );
 
@@ -329,22 +339,27 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'Representatives',
-        keys: ['name', 'y', 'color'],
+        keys: ['name', 'y', 'color', 'label'],
         data: [
-            ['Rødt', 1, '#851914'],
-            ['Sosialistisk Venstreparti', 11, '#B0185B'],
-            ['Arbeiderpartiet', 49, '#C6191D'],
-            ['Senterpartiet', 19, '#5CA92E'],
-            ['Miljøpartiet De Grønne', 1, '#024B26'],
-            ['Kristelig Folkeparti', 8, '#F9B234'],
-            ['Venstre', 8, '#036766'],
-            ['Høyre', 45, '#4677BA'],
-            ['Fremskrittspartiet', 27, '#262955']
+            ['Rødt', 1, '#851914', 'R'],
+            ['Sosialistisk Venstreparti', 11, '#B0185B', 'SV'],
+            ['Arbeiderpartiet', 49, '#C6191D', 'AP'],
+            ['Senterpartiet', 19, '#5CA92E', 'SP'],
+            ['Miljøpartiet De Grønne', 1, '#024B26', 'MDG'],
+            ['Kristelig Folkeparti', 8, '#F9B234', 'KrF'],
+            ['Venstre', 8, '#036766', 'V'],
+            ['Høyre', 45, '#4677BA', 'H'],
+            ['Fremskrittspartiet', 27, '#262955', 'FrP']
         ],
+
+        dataLabels: {
+            enabled: true,
+            format: '{point.label}'
+        },
 
         // Circular options
         center: ['50%', '88%'],
-        size: '180%',
+        size: '170%',
         startAngle: -100,
         endAngle: 100
     }]
