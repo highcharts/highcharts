@@ -13,6 +13,8 @@
         'pie',
         // Options
         {
+            endAngle: undefined,
+            innerSize: '40%',
             itemPadding: 0.1,
             layout: 'vertical',
             marker: merge(
@@ -22,12 +24,104 @@
                 }
             ),
             rows: undefined,
-            showInLegend: true
+            showInLegend: true,
+            startAngle: undefined
         },
         // Prototype members
         {
             translate: function () {
-                this.generatePoints();
+                if (!this.slots) {
+                    this.slots = [];
+                }
+                if (
+                    H.isNumber(this.options.startAngle) &&
+                    H.isNumber(this.options.endAngle)
+                ) {
+                    H.seriesTypes.pie.prototype.translate.call(this);
+                    this.slots = this.getSlots();
+                } else {
+                    this.generatePoints();
+                }
+            },
+
+            // Get the semi-circular slots
+            getSlots: function () {
+                var [centerX, centerY, diameter, innerSize] = this.center,
+                    row,
+                    slots = this.slots,
+                    x,
+                    y,
+                    rowRadius,
+                    rowLength,
+                    colCount,
+                    increment,
+                    angle,
+                    col,
+                    itemSize = 0,
+                    rowCount,
+                    fullAngle = this.endAngleRad - this.startAngleRad,
+                    itemCount = Number.MAX_VALUE,
+                    finalItemCount,
+                    rows,
+                    testRows = [];
+
+                // Increase the itemSize until we find the best fit
+                while (itemCount > this.total) {
+
+                    finalItemCount = itemCount;
+
+                    // Reset
+                    slots.length = 0;
+                    itemCount = 0;
+
+                    // Now rows is the last successful run
+                    rows = testRows.slice(0);
+                    testRows.length = 0;
+
+                    itemSize++;
+                    rowCount = Math.floor((diameter - innerSize) / itemSize / 2);
+                    for (row = rowCount; row >= 0; row--) {
+                        rowRadius = (innerSize + (row / rowCount) *
+                            (diameter - innerSize)) / 2;
+                        rowLength = fullAngle * rowRadius;
+                        colCount = Math.ceil(rowLength / itemSize);
+                        testRows.push({ rowRadius, rowLength, colCount });
+
+                        itemCount += colCount + 1;
+                    }
+                }
+
+                var overshoot = finalItemCount - this.total;
+                function removeCol(row) {
+                    if (overshoot > 0) {
+                        row.colCount--;
+                        overshoot--;
+                    }
+                }
+                while (overshoot) {
+                    rows.forEach(removeCol);
+                }
+
+                rows.forEach(function (row) {
+                    var rowRadius = row.rowRadius,
+                        colCount = row.colCount;
+                    increment = colCount ? fullAngle / colCount : 0;
+                    for (col = 0; col <= colCount; col += 1) {
+                        angle = this.startAngleRad + col * increment;
+                        x = centerX + Math.cos(angle) * rowRadius;
+                        y = centerY + Math.sin(angle) * rowRadius;
+                        slots.push({ x, y, angle });
+                    }
+                }, this);
+
+                // Sort by angle
+                slots.sort(function (a, b) {
+                    return a.angle - b.angle;
+                });
+
+                this.itemSize = itemSize;
+                return slots;
+
             },
 
             getRows: function () {
@@ -75,7 +169,17 @@
                     cols = Math.ceil(this.total / rows),
                     cellWidth = this.chart.plotWidth / cols,
                     cellHeight = this.chart.plotHeight / rows,
-                    commonSize = Math.min(cellWidth, cellHeight);
+                    itemSize = this.itemSize || Math.min(cellWidth, cellHeight);
+
+                /*
+                this.slots.forEach(slot => {
+                    this.chart.renderer.circle(slot.x, slot.y, 6)
+                        .attr({
+                            fill: 'silver'
+                        })
+                        .add(this.group);
+                });
+                */
 
                 this.points.forEach(function (point) {
                     var attr,
@@ -90,7 +194,7 @@
                             pointMarkerOptions.radius,
                             seriesMarkerOptions.radius
                         ),
-                        size = H.defined(r) ? 2 * r : commonSize,
+                        size = H.defined(r) ? 2 * r : itemSize,
                         padding = size * options.itemPadding,
                         x,
                         y,
@@ -119,7 +223,15 @@
 
                         for (var val = 0; val < point.y; val++) {
 
-                            if (options.layout === 'horizontal') {
+                            // Semi-circle
+                            if (series.center) {
+
+                                // Fill up the slots from left to right
+                                var slot = series.slots.shift();
+                                x = slot.x - itemSize / 2;
+                                y = slot.y - itemSize / 2;
+
+                            } else if (options.layout === 'horizontal') {
                                 x = cellWidth * (i % cols);
                                 y = cellHeight * Math.floor(i / cols);
                             } else {
@@ -202,7 +314,12 @@ Highcharts.chart('container', {
             ['Venstre', 8, '#036766'],
             ['Høyre', 45, '#4677BA'],
             ['Fremskrittspartiet', 27, '#262955']
-        ]
+        ],
+        // Circular options
+        center: ['50%', '88%'],
+        size: '180%',
+        startAngle: -100,
+        endAngle: 100
     }]
 
 });
