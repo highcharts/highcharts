@@ -279,18 +279,26 @@
         },
         // Point class
         {
-            haloPath: function () {
-                return 'M 0 0';
+            setState: function (state) {
+                // Make this data stand out by setting the opacity of the others
+                this.series.points.forEach(function (otherPoint) {
+                    if (otherPoint !== this) {
+                        otherPoint.graphic.animate(
+                            { opacity: state === 'hover' ? 0.1 : 1 },
+                            this.series.options.states[state || 'normal'].animation
+                        );
+                    }
+                }, this);
             }
         }
     );
+
 }(Highcharts));
 
 Highcharts.chart('container', {
 
     chart: {
-        type: 'item',
-        plotBorderWidth: 1
+        type: 'item'
     },
 
     title: {
@@ -299,6 +307,10 @@ Highcharts.chart('container', {
 
     subtitle: {
         text: 'Norwegian Parliament 2018'
+    },
+
+    legend: {
+        labelFormat: '{name} <span style="opacity: 0.4">{y}</span>'
     },
 
     series: [{
