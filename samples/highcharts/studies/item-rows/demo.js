@@ -22,15 +22,13 @@ document.addEventListener('DOMContentLoaded', function () {
             name: 'Representatives',
             keys: ['name', 'y', 'color', 'label'],
             data: [
-                ['Rødt', 1, '#851914', 'R'],
-                ['Sosialistisk Venstreparti', 11, '#B0185B', 'SV'],
-                ['Arbeiderpartiet', 49, '#C6191D', 'AP'],
-                ['Senterpartiet', 19, '#5CA92E', 'SP'],
-                ['Miljøpartiet De Grønne', 1, '#024B26', 'MDG'],
-                ['Kristelig Folkeparti', 8, '#F9B234', 'KrF'],
-                ['Venstre', 8, '#036766', 'V'],
-                ['Høyre', 45, '#4677BA', 'H'],
-                ['Fremskrittspartiet', 27, '#262955', 'FrP']
+                ['The Left', 69, '#BE3075', 'DIE LINKE'],
+                ['Social Democratic Party', 153, '#EB001F', 'SPD'],
+                ['Alliance 90/The Greens', 67, '#64A12D', 'GRÜNE'],
+                ['Free Democratic Party', 80, '#FFED00', 'FDP'],
+                ['Christian Democratic Union', 200, '#000000', 'CDU'],
+                ['Christian Social Union in Bavaria', 46, '#008AC5', 'CSU'],
+                ['Alternative for Germany', 94, '#009EE0', 'AfD']
             ],
             dataLabels: {
                 enabled: true,
@@ -129,13 +127,13 @@ document.getElementById('circle').addEventListener('click', function () {
     });
 });
 
-document.getElementById('rows').addEventListener('click', function () {
+document.getElementById('rows').addEventListener('change', function () {
     Highcharts.charts[0].series[0].update({
         rows: Number(this.value)
     });
 });
 
-document.getElementById('innersize').addEventListener('click', function () {
+document.getElementById('innersize').addEventListener('change', function () {
     Highcharts.charts[0].series[0].update({
         innerSize: this.value + '%'
     });
@@ -209,6 +207,7 @@ document.getElementById('innersize').addEventListener('click', function () {
                     finalItemCount,
                     rows,
                     testRows,
+                    rowsOption = this.options.rows,
                     // How many rows (arcs) should be used
                     rowFraction = (diameter - innerSize) / diameter;
 
@@ -231,9 +230,21 @@ document.getElementById('innersize').addEventListener('click', function () {
                     // perimeter
                     rowCount = diameter / itemSize / 2;
 
-                    if (this.options.rows) {
-                        innerSize = ((rowCount - this.options.rows) / rowCount) * diameter;
-                        rowCount = this.options.rows;
+                    if (rowsOption) {
+                        innerSize = ((rowCount - rowsOption) / rowCount) * diameter;
+
+                        if (innerSize >= 0) {
+                            rowCount = rowsOption;
+
+                        // If innerSize is negative, we are trying to set too
+                        // many rows in the rows option, so fall back to
+                        // treating it as innerSize 0
+                        } else {
+                            innerSize = 0;
+                            rowFraction = 1;
+                        }
+
+
                     } else {
                         rowCount = Math.floor(rowCount * rowFraction);
                     }
