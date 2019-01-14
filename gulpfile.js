@@ -1356,6 +1356,9 @@ function update() {
         require(join(__dirname, 'package.json')).devDependencies || {}
     );
 
+    const githubKeys = Object
+        .keys(dependencies)
+        .filter(key => dependencies[key].indexOf('github:') === 0);
     const latestKeys = Object
         .keys(dependencies)
         .filter(key => dependencies[key] === 'latest');
@@ -1375,20 +1378,36 @@ function update() {
                     .keys(json)
                     .filter(key => latestKeys.indexOf(key) > -1);
 
-                if (outdatedKeys.length) {
-
-                    console.log(
-                        '[' + colors.gray(toTimeString(new Date())) + ']',
-                        'Installing outdated packages:',
-                        outdatedKeys.join(' ')
-                    );
-
-                    commandLine('npm i ' + outdatedKeys.join(' ') + ' --no-save')
-                        .then(resolve)
-                        .catch(reject);
+                if (outdatedKeys.length === 0) {
+                    resolve();
+                    return;
                 }
 
-                resolve();
+                Promise
+                    .resolve()
+                    .then(() => {
+                        console.log(
+                            '[' + colors.gray(toTimeString(new Date())) + ']',
+                            'Updating outdated packages:',
+                            outdatedKeys.join(' ')
+                        );
+                        return commandLine(
+                            'npm i ' + outdatedKeys.join(' ') + ' --no-save'
+                        );
+                    })
+                    .then(() => {
+                        console.info(
+                            '[' + colors.gray(toTimeString(new Date())) + ']',
+                            'Updating github-hosted packages:',
+                            githubKeys.join(' ')
+                        );
+                        return commandLine(
+                            'npm i ' + githubKeys.join(' ') + ' --no-save'
+                        );
+                    })
+                    .then(resolve)
+                    .catch(reject);
+
             } catch (e) {
                 reject(e);
             }
@@ -1549,7 +1568,7 @@ gulp.task('default', () => {
  * Create distribution files
  */
 gulp.task('dist', () => Promise.resolve()
-    .then(gulpify('update', update))
+    .then(gulpify('update', () => commandLine('npm i --no-save')))
     .then(gulpify('cleanCode', cleanCode))
     .then(gulpify('styles', styles))
     .then(gulpify('scripts', getBuildScripts({}).fnFirstBuild))
