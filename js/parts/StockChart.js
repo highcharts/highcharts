@@ -126,7 +126,7 @@ var addEvent = H.addEvent,
  *        chart object will not be finished synchronously. As a consequence,
  *        code that relies on the newly built Chart object should always run in
  *        the callback. Defining a
- *        [chart.event.load](https://api.highcharts.com/highstock/chart.events.load)
+ *        [chart.events.load](https://api.highcharts.com/highstock/chart.events.load)
  *        handler is equivalent.
  *
  * @return {Highcharts.Chart}
@@ -797,15 +797,11 @@ seriesProto.processData = function () {
         length = processedYData.length;
 
         // For series with more than one value (range, OHLC etc), compare
-        // against close or the pointValKey (#4922, #3112)
+        // against close or the pointValKey (#4922, #3112, #9854)
         if (series.pointArrayMap) {
-            // Use close if present (#3112)
-            keyIndex = series.pointArrayMap.indexOf('close');
-            if (keyIndex === -1) {
-                keyIndex = series.pointArrayMap.indexOf(
-                    series.pointValKey || 'y'
-                );
-            }
+            keyIndex = series.pointArrayMap.indexOf(
+                series.options.pointValKey || series.pointValKey || 'y'
+            );
         }
 
         // find the first value for comparison

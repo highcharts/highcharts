@@ -1,12 +1,11 @@
-
 QUnit.test('Series.setData with updatePoints', function (assert) {
 
     var chart = Highcharts
-        .chart('container', {
-            series: [{
-                data: [1, 3, 2, 4]
-            }]
-        }),
+            .chart('container', {
+                series: [{
+                    data: [1, 3, 2, 4]
+                }]
+            }),
         s = chart.series[0];
 
 
@@ -277,6 +276,28 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         }),
         [true, true, true],
         'All points with id should be mapped'
+    );
+
+    // Id's and X values are set, X values change (#9861)
+    scatterS.setData([{
+        x: 0.9,
+        y: 1,
+        id: 'first'
+    }, {
+        x: 2.1,
+        y: 2,
+        id: 'second'
+    }, {
+        x: 3.1,
+        y: 3,
+        id: 'third'
+    }]);
+    assert.deepEqual(
+        scatterS.points.map(function (p) {
+            return p.wasThere;
+        }),
+        [true, true, true],
+        'All points with id should be mapped, no errors'
     );
 
     // Pie series, no X

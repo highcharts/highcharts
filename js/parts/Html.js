@@ -22,8 +22,7 @@ var attr = H.attr,
     pInt = H.pInt,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
-    win = H.win,
-    wrap = H.wrap;
+    win = H.win;
 
 // Extend SvgElement for useHTML option.
 extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
@@ -336,15 +335,15 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 // These properties are set as attributes on the SVG group, and
                 // as identical CSS properties on the div. (#3542)
                 ['opacity', 'visibility'].forEach(function (prop) {
-                    wrap(element, prop + 'Setter', function (
-                        proceed,
+                    element[prop + 'Setter'] = function (
                         value,
                         key,
                         elem
                     ) {
-                        proceed.call(this, value, key, elem);
+                        SVGElement.prototype[prop + 'Setter']
+                            .call(this, value, key, elem);
                         style[key] = value;
-                    });
+                    };
                 });
                 element.addedSetters = true;
             },

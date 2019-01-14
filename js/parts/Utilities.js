@@ -257,20 +257,6 @@
  */
 
 /**
- * An object containing `x` and `y` properties for the position of an element.
- *
- * @interface Highcharts.PositionObject
- *//**
- * X position of the element.
- * @name Highcharts.PositionObject#x
- * @type {number}
- *//**
- * Y position of the element.
- * @name Highcharts.PositionObject#y
- * @type {number}
- */
-
-/**
  * If a number is given, it defines the pixel length. If a percentage string is
  * given, like for example `'50%'`, the setting defines a length relative to a
  * base size, for example the size of a container.
@@ -1142,8 +1128,8 @@ H.splat = function (obj) {
  * @param {number} delay
  *        Delay in milliseconds.
  *
- * @param {*} [context]
- *        The context.
+ * @param {*} [parameter]
+ *        An optional parameter to send to the function callback.
  *
  * @return {number}
  *         An identifier for the timeout that can later be cleared with
@@ -2021,7 +2007,12 @@ H.getStyle = function (el, prop, toInt) {
                 Math.min(
                     el.offsetWidth,
                     el.scrollWidth,
-                    el.getBoundingClientRect ?
+                    (
+                        el.getBoundingClientRect &&
+                        // #9871, getBoundingClientRect doesn't handle
+                        // transforms, so avoid that
+                        H.getStyle(el, 'transform', false) === 'none'
+                    ) ?
                         Math.floor(el.getBoundingClientRect().width) : // #6427
                         Infinity
                 ) -
@@ -2735,7 +2726,7 @@ if (win.jQuery) {
      * @param {Highcharts.ChartCallbackFunction} [callback]
      *        Function to run when the chart has loaded and and all external
      *        images are loaded. Defining a
-     *        [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
+     *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
      *        handler is equivalent.
      *
      * @return {JQuery}

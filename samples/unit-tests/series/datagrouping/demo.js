@@ -1,4 +1,3 @@
-
 QUnit.test('General dataGrouping options', function (assert) {
     var chart = Highcharts.stockChart('container', {
         chart: {
@@ -365,5 +364,54 @@ QUnit.test('Data groupind and extremes change', function (assert) {
         chart.xAxis[0].getExtremes().min,
         min,
         'User defined minimum is applied on a chart (#8335).'
+    );
+});
+
+QUnit.test('Data groupind, keys and turboThreshold', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            keys: ['x', 'a', 'y'],
+            turboThreshold: 1,
+            dataGrouping: {
+                forced: true
+            },
+            data: (function () {
+                var d = [];
+
+                for (var i = 0; i < 10; i++) {
+                    d.push([
+                        i, 10, 1000
+                    ]);
+                }
+
+                return d;
+            }())
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].yData[0],
+        1000,
+        'Correct yData (#8544).'
+    );
+});
+
+QUnit.test('Data grouping and adding points with data labels', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            dataGrouping: {
+                forced: true
+            },
+            data: [1, 2]
+        }]
+    });
+
+    chart.series[0].addPoint({ y: 4, dataLabels: { enabled: true } });
+    chart.series[0].addPoint({ y: 5, dataLabels: { enabled: true } });
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        4,
+        'Correct number of points and no errors (#9770).'
     );
 });

@@ -447,7 +447,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotbands-label/
      *         Plot band with labels
      *
-     * @type      {string}
+     * @type      {Highcharts.AlignType}
      * @default   center
      * @since     2.1
      * @apioption xAxis.plotBands.label.align
@@ -496,9 +496,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotbands-label-rotation/
      *         Vertical text in center position but text-aligned left
      *
-     * @type       {string}
+     * @type       {Highcharts.AlignType}
      * @since      2.1
-     * @validvalue ["center", "left", "right"]
      * @apioption  xAxis.plotBands.label.textAlign
      */
 
@@ -521,10 +520,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotbands-label/
      *         Plot band with labels
      *
-     * @type       {string}
+     * @type       {Highcharts.VerticalAlignType}
      * @default    top
      * @since      2.1
-     * @validvalue ["bottom", "middle",  "top"]
      * @apioption  xAxis.plotBands.label.verticalAlign
      */
 
@@ -681,10 +679,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @type       {string}
+     * @type       {Highcharts.AlignType}
      * @default    left
      * @since      2.1
-     * @validvalue ["center", "left", "right"]
      * @apioption  xAxis.plotLines.label.align
      */
 
@@ -731,7 +728,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotlines-label-textalign/
      *         Text label in bottom position
      *
-     * @type      {string}
+     * @type      {Highcharts.AlignType}
      * @since     2.1
      * @apioption xAxis.plotLines.label.textAlign
      */
@@ -753,7 +750,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotlines-label-verticalalign-middle/
      *         Vertically centered label
      *
-     * @type       {string}
+     * @type       {Highcharts.VerticalAlignType}
      * @default    {highcharts} top
      * @default    {highstock} top
      * @since      2.1

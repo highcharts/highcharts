@@ -2761,11 +2761,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-align-right/
          *         Aligned to the right
          *
-         * @type       {string}
-         * @since      2.1.5
-         * @product    highcharts
-         * @validvalue ["left", "center", "right"]
-         * @apioption  yAxis.stackLabels.align
+         * @type      {Highcharts.AlignType}
+         * @since     2.1.5
+         * @product   highcharts
+         * @apioption yAxis.stackLabels.align
          */
 
         /**
@@ -2803,11 +2802,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-textalign-left/
          *         Label in center position but text-aligned left
          *
-         * @type       {string}
-         * @since      2.1.5
-         * @product    highcharts
-         * @validvalue ["left", "center", "right"]
-         * @apioption  yAxis.stackLabels.textAlign
+         * @type      {Highcharts.AlignType}
+         * @since     2.1.5
+         * @product   highcharts
+         * @apioption yAxis.stackLabels.textAlign
          */
 
         /**
@@ -2834,11 +2832,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-bottom/
          *         Vertically aligned bottom
          *
-         * @type       {string}
-         * @since      2.1.5
-         * @product    highcharts
-         * @validvalue ["top", "middle", "bottom"]
-         * @apioption  yAxis.stackLabels.verticalAlign
+         * @type      {Highcharts.VerticalAlignType}
+         * @since     2.1.5
+         * @product   highcharts
+         * @apioption yAxis.stackLabels.verticalAlign
          */
 
         /**
@@ -4804,7 +4801,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     // threshold (#3965)
                     if (
                         tickPositions.length % 2 ||
-                        this.min === threshold
+                        this.min === threshold ||
+                        // #9841
+                        this.max > tickPositions[tickPositions.length - 1]
                     ) {
                         // to the end
                         tickPositions.push(correctFloat(
@@ -5261,7 +5260,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     var score;
 
                     if (
-                        rot === rotationOption ||
+                        rot === rotationOption && // #9835
                         (rot && rot >= -90 && rot <= 90)
                     ) { // #3891
 

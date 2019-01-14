@@ -180,7 +180,7 @@ extend(H.defaultOptions, {
              * Set the color of the connector markers. By default this is the
              * same as the connector color.
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since     6.2.0
              * @apioption connectors.marker.color
              */
@@ -201,11 +201,15 @@ extend(H.defaultOptions, {
 
             /**
              * Horizontal alignment of the markers relative to the points.
+             *
+             * @type {Highcharts.AlignType}
              */
             align: 'center',
 
             /**
              * Vertical alignment of the markers relative to the points.
+             *
+             * @type {Highcharts.VerticalAlignType}
              */
             verticalAlign: 'middle',
 

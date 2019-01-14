@@ -4,6 +4,7 @@
 
 'use strict';
 const colors = require('colors');
+const exec = require('child_process').exec;
 const glob = require('glob');
 const gulp = require('gulp');
 const argv = require('yargs').argv;
@@ -55,21 +56,20 @@ const sassRender = promisify(sass.render);
 const compileSingleStyle = fileName => {
     const input = './css/' + fileName;
     const output = './code/css/' + fileName.replace('.scss', '.css');
-    return sassRender(
-        {
+    return Promise
+        .resolve()
+        .then(() => sassRender({
             file: input,
             outputStyle: 'expanded'
-        })
+        }))
         .then(result => writeFilePromise(output, result.css));
 };
 
 const styles = () => {
     const promisesCopyGfx = getFilesInFolder('./gfx', true)
         .map(path => copyFile(join('./gfx', path), join('./code/gfx', path)));
-
     const promisesCompileStyles = getFilesInFolder('./css', true)
         .map(file => compileSingleStyle(file));
-
     const promises = [].concat(promisesCopyGfx, promisesCompileStyles);
     return Promise.all(promises).then(() => {
         console.log('Built CSS files from SASS.'.cyan);
@@ -119,7 +119,7 @@ const lintSamples = () => {
 /**
  * Run the test suite.
  */
-gulp.task('test', done => {
+gulp.task('test', ['styles', 'scripts'], done => {
 
     const lastRunFile = __dirname + '/test/last-run.json';
 
@@ -186,9 +186,11 @@ gulp.task('test', done => {
         }
 
         if (lastBuildMTime < sourceMTime) {
-            throw '\n✖'.red + ' The files have not been built since ' +
+            throw new Error(
+                '\n✖'.red + ' The files have not been built since ' +
                 'the last source code changes. Run ' + 'gulp'.italic +
-                ' and try again.';
+                ' and try again.'
+            );
         } else if (
             sourceMTime < lastSuccessfulRun &&
             unitTestsMTime < lastSuccessfulRun
@@ -240,7 +242,7 @@ gulp.task('test', done => {
                     console.log(` - ./samples/${product}/demo/${sample}`.red);
                 });
 
-                throw 'Missing sample in index.htm';
+                throw new Error('Missing sample in index.htm');
             }
 
             if (missingFolders.length) {
@@ -249,7 +251,7 @@ gulp.task('test', done => {
                     console.log(` - ./samples/${product}/demo/${sample}`.red);
                 });
 
-                throw 'Missing demo';
+                throw new Error('Missing demo');
             }
         });
 
@@ -282,7 +284,7 @@ gulp.task('test', done => {
                     }
                 });
                 if (errors) {
-                    throw 'Missing js_wrap setting';
+                    throw new Error('Missing js_wrap setting');
                 }
             }
         );
@@ -316,8 +318,7 @@ Available arguments for 'gulp test':
     Example: 'gulp test --tests unit-tests/chart/*' runs all tests in the chart
     directory.
 
-`
-        );
+`);
         return;
     }
 
@@ -740,10 +741,10 @@ const gulpify = (name, task) => {
         typeof value === 'object' &&
         typeof value.then === 'function'
     );
-    return function () {
+    return function (...args) {
         const d1 = new Date();
         console.log('[' + colors.gray(toTimeString(d1)) + '] Starting \'' + colors.cyan(name) + '\'...');
-        let result = task.apply(null, Array.from(arguments));
+        let result = task(...args);
         if (!isPromise(result)) {
             result = Promise.resolve(result);
         }
@@ -757,24 +758,21 @@ const gulpify = (name, task) => {
 /**
  * Executes a single terminal command and returns when finished.
  * Outputs stdout to the console.
- * @param  {string} command Command to execute in terminal
+ * @param {string} command Command to execute in terminal
  * @return {string} Returns all output to the terminal in the form of a string.
  */
-const commandLine = command => {
-    const exec = require('child_process').exec;
-    return new Promise((resolve, reject) => {
-        const cli = exec(command, (error, stdout) => {
-            if (error) {
-                console.log(error);
-                reject(error);
-            } else {
-                console.log('Command finished: ' + command);
-                resolve(stdout);
-            }
-        });
-        cli.stdout.on('data', data => console.log(data.toString()));
+const commandLine = command => new Promise((resolve, reject) => {
+    const cli = exec(command, (error, stdout) => {
+        if (error) {
+            console.log(error);
+            reject(error);
+        } else {
+            console.log('Command finished: ' + command);
+            resolve(stdout);
+        }
     });
-};
+    cli.stdout.on('data', data => console.log(data.toString()));
+});
 
 const filesize = () => {
     const sourceFolder = './code/';
@@ -829,17 +827,15 @@ const filesize = () => {
                     compiled: compiled.length
                 };
                 return o;
-            }, obj)
-        );
+            }, obj
+        ));
 
     return runFileSize({}, 'new')
         .then(obj => commandLine('git stash')
-            .then(() => obj) // Pass obj to next function
-        )
+            .then(() => obj)) // Pass obj to next function
         .then(obj => runFileSize(obj, 'head'))
         .then(obj => commandLine('git stash apply && git stash drop')
-            .then(() => obj) // Pass obj to next function
-        )
+            .then(() => obj)) // Pass obj to next function
         .then(obj => {
             const keys = Object.keys(obj);
             keys.forEach(key => {
@@ -876,8 +872,7 @@ const getDirectories = path => fs
     .readdirSync(path)
     .filter(file => fs
         .lstatSync(path + file)
-        .isDirectory()
-    );
+        .isDirectory());
 
 const replaceAll = (str, search, replace) => str.split(search).join(replace);
 
@@ -1104,20 +1099,19 @@ const uploadAPIDocs = () => {
                     .map(e => relative(sourceFolder, e.from)
                         // Make path command line friendly.
                         .split(sep)
-                        .join('/')
-                    );
+                        .join('/'));
                 commands.push(`gulp upload-api --tags ${tag} --files ${erroredFiles.join(',')}`);
             }
-        })
-    ).then(() => {
-        if (commands.length) {
-            console.log([
-                '',
-                colors.red('Some of the uploads failed, please run the following command to retry:'),
-                commands.join(' && ')
-            ].join('\n'));
-        }
-    });
+        }))
+        .then(() => {
+            if (commands.length) {
+                console.log([
+                    '',
+                    colors.red('Some of the uploads failed, please run the following command to retry:'),
+                    commands.join(' && ')
+                ].join('\n'));
+            }
+        });
 };
 
 const startServer = () => {
@@ -1357,10 +1351,74 @@ gulp.task('dtslint', ['update', 'dts'], dtsLint);
  * Updates node packages.
  */
 function update() {
-    return commandLine('npm i');
+
+    const dependencies = (
+        require(join(__dirname, 'package.json')).devDependencies || {}
+    );
+
+    const latestKeys = Object
+        .keys(dependencies)
+        .filter(key => dependencies[key] === 'latest');
+
+    return new Promise((resolve, reject) => {
+
+        console.log(
+            '[' + colors.gray(toTimeString(new Date())) + ']',
+            'Searching for outdated packages...'
+        );
+
+        exec('npm outdated --json', (error, stdout) => {
+            try {
+
+                const json = JSON.parse(stdout);
+                const outdatedKeys = Object
+                    .keys(json)
+                    .filter(key => latestKeys.indexOf(key) > -1);
+
+                if (outdatedKeys.length) {
+
+                    console.log(
+                        '[' + colors.gray(toTimeString(new Date())) + ']',
+                        'Installing outdated packages:',
+                        outdatedKeys.join(' ')
+                    );
+
+                    commandLine('npm i ' + outdatedKeys.join(' ') + ' --no-save')
+                        .then(resolve)
+                        .catch(reject);
+                }
+
+                resolve();
+            } catch (e) {
+                reject(e);
+            }
+        });
+    });
 }
 
 gulp.task('update', update);
+
+/**
+ * Tests whether the code is in sync with source.
+ *
+ * @return {boolean}
+ *         True, if code is out of sync.
+ */
+function shouldBuild() {
+    const getModifiedTime = fsPattern => {
+        let modifyTime = 0;
+        glob.sync(fsPattern)
+            .forEach(file => {
+                modifyTime = Math.max(modifyTime, fs.statSync(file).mtimeMs);
+            });
+        return modifyTime;
+    };
+    const buildPath = join(__dirname, 'code', '**', '*.js');
+    const sourcePath = join(__dirname, 'js', '**', '*.js');
+    const latestBuildTime = getModifiedTime(buildPath);
+    const latestSourceTime = getModifiedTime(sourcePath);
+    return (latestBuildTime <= latestSourceTime);
+}
 
 /**
  * Gulp task to run the building process of distribution files. By default it
@@ -1385,7 +1443,17 @@ gulp.task('scripts', ['update'], () => {
         fnFirstBuild,
         mapOfWatchFn
     } = getBuildScripts(options);
-    fnFirstBuild();
+    if (shouldBuild() ||
+        (argv.force && !argv.watch) ||
+        process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS
+    ) {
+        process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS = true;
+        fnFirstBuild();
+        delete process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS;
+        console.log('Built JS files from modules.'.cyan);
+    } else {
+        console.log('✓'.green, 'Code up to date.'.gray);
+    }
     if (options.watch) {
         Object.keys(mapOfWatchFn).forEach(key => {
             const fn = mapOfWatchFn[key];
@@ -1448,8 +1516,12 @@ gulp.task('default', () => {
             watcher = null;
             // Run styles and build all files.
             styles().then(() => {
-                fnFirstBuild();
-                console.log(msgBuildAll);
+                if (shouldBuild()) {
+                    fnFirstBuild();
+                    console.log(msgBuildAll);
+                } else {
+                    console.log('✓'.green, 'Code up to date.'.gray);
+                }
                 // Start watcher again.
                 watcher = gulp.watch(watchlist, onChange);
             });
@@ -1462,8 +1534,12 @@ gulp.task('default', () => {
         }
     };
     return styles().then(() => {
-        fnFirstBuild();
-        console.log(msgBuildAll);
+        if (shouldBuild()) {
+            fnFirstBuild();
+            console.log(msgBuildAll);
+        } else {
+            console.log('✓'.green, 'Code up to date.'.gray);
+        }
         // Start watching source files.
         watcher = gulp.watch(watchlist, onChange);
     });
@@ -1488,8 +1564,7 @@ gulp.task('dist', () => Promise.resolve()
     .then(gulpify('jsdoc-options', jsdocOptions))
     .then(gulpify('dts', dts))
     .then(gulpify('dtsLint', dtsLint))
-    .then(gulpify('ant-dist', antDist))
-);
+    .then(gulpify('ant-dist', antDist)));
 
 gulp.task('browserify', function () {
     const browserify = require('browserify');

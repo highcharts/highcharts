@@ -289,7 +289,7 @@ var extendedOptions = {
                 /**
                  * The color of the panel.
                  *
-                 * @type      {Highcharts.ColorString}
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @default   transparent
                  * @since     4.0
                  * @product   highcharts
@@ -1734,7 +1734,7 @@ H.Fx.prototype.matrixSetter = function () {
  * The color of the panel.
  *
  * @deprecated
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @default   transparent
  * @since     4.0
  * @product   highcharts

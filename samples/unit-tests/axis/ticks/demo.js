@@ -17,9 +17,7 @@ QUnit.test('Ticks for a single point.', function (assert) {
     );
 
     chart.yAxis[0].update({
-        tickPositioner: function () {
-            return;
-        }
+        tickPositioner: function () {}
     });
 
     assert.strictEqual(
@@ -75,6 +73,22 @@ QUnit.test('Ticks for a single point.', function (assert) {
         chart.xAxis[0].tickPositions.length,
         1,
         'no doulbed tick for a small plot height (#7339)'
+    );
+});
+
+QUnit.test('The tickAmount option', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 2]
+        }],
+        xAxis: {
+            tickAmount: 5
+        }
+    });
+
+    assert.ok(
+        chart.xAxis[0].max > 1,
+        'The axis extreme should be greater than the max value (#9841)'
     );
 });
 

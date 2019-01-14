@@ -79,37 +79,6 @@ QUnit.test('addOverlapToRelations', function (assert) {
     );
 });
 
-QUnit.test('binarySearch', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        binarySearch = vennPrototype.utils.binarySearch,
-        arr = [1, 3, 5, 8, 10, 12, 16],
-        noError = function (x) {
-            return x;
-        },
-        allowError = function (x, value) {
-            // Allow an error of 1
-            return (Math.abs(value - x) <= 1) ? value : x;
-        };
-
-    assert.strictEqual(
-        binarySearch(arr, 12, noError),
-        5,
-        'should return index 5 when looking for 12.'
-    );
-
-    assert.strictEqual(
-        binarySearch(arr, 4, noError),
-        -1,
-        'should return index -1 since 4 does not exist in the array.'
-    );
-
-    assert.strictEqual(
-        binarySearch(arr, 7, allowError),
-        3,
-        'should return index 3 when looking for 7, since fn allows an error of 1 which accepts 8.'
-    );
-});
-
 QUnit.test('getAreaOfIntersectionBetweenCircles', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getAreaOfIntersectionBetweenCircles =
@@ -195,24 +164,29 @@ QUnit.test('getOverlapBetweenCircles', assert => {
     );
 });
 
-QUnit.test('getDistanceBetweenCirclesByOverlap', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        getDistanceBetweenCirclesByOverlap =
-            vennPrototype.utils.getDistanceBetweenCirclesByOverlap;
+QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
+    var { prototype: vennPrototype } = Highcharts.seriesTypes.venn,
+        { getDistanceBetweenCirclesByOverlap } = vennPrototype.utils;
+
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(3, 4, 6.64),
-        5.0029,
-        'should return a distance of 5.0029 when r1=3, r2=4 and overlap=6.64.'
+        5.0003489085283945,
+        'should return a distance of 5.0003489085283945 when r1=3, r2=4 and overlap=6.64.'
     );
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(1.1283791670955126, 0.5641895835477563, 1),
-        0.42297293078575,
-        'should return a distance of 0.42297293078575 when r1=1.1283791670955126, r2=0.5641895835477563 and overlap=1.'
+        0,
+        'should return a distance of 0 when r1=1.1283791670955126, r2=0.5641895835477563 and overlap=1. The circles completely overlap.'
     );
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(25.2313252202016, 25.2313252202016, 1000),
-        20.39195704296693,
-        'should return a distance of 20.39195704296693 when r1=r2=25.2313252202016 and overlap=1000.'
+        20.385535837223518,
+        'should return a distance of 20.385535837223518 when r1=r2=25.2313252202016 and overlap=1000.'
+    );
+    assert.strictEqual(
+        getDistanceBetweenCirclesByOverlap(600, 300, 250000),
+        387.2988213671704,
+        'should return a distance of 387.2988213671704 when r1=600, r2=300 and overlap=250000.'
     );
 });
 
@@ -270,6 +244,7 @@ QUnit.test('getCirclesIntersectionPoints', function (assert) {
             { x: 5, y: 0, r: 3 },
             { x: -3, y: 3, r: 3 }
         ];
+
     assert.deepEqual(
         getCirclesIntersectionPoints(circles),
         [

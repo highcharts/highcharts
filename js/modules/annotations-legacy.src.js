@@ -590,7 +590,7 @@ Annotation.prototype = {
              * @sample highcharts/annotations/label-position/
              *         Set labels position
              *
-             * @validvalue ["left", "center", "right"]
+             * @type {Highcharts.AlignType}
              */
             align: 'center',
 
@@ -610,7 +610,7 @@ Annotation.prototype = {
              * @sample highcharts/annotations/label-presentation/
              *         Set labels graphic options
              *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             backgroundColor: 'rgba(0, 0, 0, 0.75)',
 
@@ -784,7 +784,7 @@ Annotation.prototype = {
              * @sample highcharts/annotations/label-position/
              *         Set labels position
              *
-             * @validvalue ["top", "middle", "bottom"]
+             * @type {Highcharts.VerticalAlignType}
              */
             verticalAlign: 'bottom',
 
@@ -979,7 +979,7 @@ Annotation.prototype = {
              * @sample highcharts/annotations/shape/
              *         Basic shape annotation
              *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             fill: 'rgba(0, 0, 0, 0.75)',
 

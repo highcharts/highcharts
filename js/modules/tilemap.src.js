@@ -428,11 +428,11 @@ H.tileShapeTypes = {
 // Extension to add pixel padding for series. Uses getSeriesPixelPadding on each
 // series and adds the largest padding required. If no series has this function
 // defined, we add nothing.
-H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
+H.addEvent(H.Axis, 'afterSetAxisTranslation', function () {
 
-    // We need to run the original func first, so that we know the translation
-    // formula to use for computing the padding
-    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    if (this.recomputingForTilemap) {
+        return;
+    }
 
     var axis = this,
         // Find which series' padding to use
@@ -456,7 +456,9 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
     if (seriesPadding.padding) {
         // Recompute translation with new axis length now (minus padding)
         axis.len -= lengthPadding;
-        proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
+        axis.recomputingForTilemap = true;
+        axis.setAxisTranslation();
+        delete axis.recomputingForTilemap;
         axis.minPixelPadding += seriesPadding.padding;
         axis.len += lengthPadding;
     }
@@ -489,7 +491,7 @@ seriesType('tilemap', 'heatmap'
  *
  * @extends      plotOptions.heatmap
  * @since        6.0.0
- * @excluding    joinBy, shadow, allAreas, mapData, data
+ * @excluding    jitter, joinBy, shadow, allAreas, mapData, data
  * @product      highcharts highmaps
  * @optionparent plotOptions.tilemap
  */
@@ -733,7 +735,7 @@ seriesType('tilemap', 'heatmap'
  * explicitly, as we use the color to denote the `value`. Options for
  * this are set in the [colorAxis](#colorAxis) configuration.
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts highmaps
  * @apioption series.tilemap.data.color
  */

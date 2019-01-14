@@ -592,7 +592,7 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
  *         HTML representation of the data.
  */
 Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
-    var html = '<table>',
+    var html = '<table id="highcharts-data-table-' + this.index + '">',
         options = this.options,
         decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
         useMultiLevelHeaders = pick(
@@ -762,7 +762,11 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
     });
     html += '</tbody></table>';
 
-    return html;
+    var e = { html: html };
+
+    Highcharts.fireEvent(this, 'afterGetTable', e);
+
+    return e.html;
 };
 
 

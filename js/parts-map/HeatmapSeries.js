@@ -36,93 +36,93 @@ seriesType(
     'scatter'
 
     /**
- * A heatmap is a graphical representation of data where the individual values
- * contained in a matrix are represented as colors.
- *
- * @sample highcharts/demo/heatmap/
- *         Simple heatmap
- * @sample highcharts/demo/heatmap-canvas/
- *         Heavy heatmap
- *
- * @extends      plotOptions.scatter
- * @excluding    animationLimit, connectEnds, connectNulls, dashStyle,
- *               findNearestPointBy, getExtremesFromAll, linecap, lineWidth,
- *               marker, pointInterval, pointIntervalUnit, pointRange,
- *               pointStart, shadow, softThreshold, stacking, step,
- *               threshold
- * @product      highcharts highmaps
- * @optionparent plotOptions.heatmap
- */
+     * A heatmap is a graphical representation of data where the individual
+     * values contained in a matrix are represented as colors.
+     *
+     * @sample highcharts/demo/heatmap/
+     *         Simple heatmap
+     * @sample highcharts/demo/heatmap-canvas/
+     *         Heavy heatmap
+     *
+     * @extends      plotOptions.scatter
+     * @excluding    animationLimit, connectEnds, connectNulls, dashStyle,
+     *               findNearestPointBy, getExtremesFromAll, jitter, linecap,
+     *               lineWidth, marker, pointInterval, pointIntervalUnit,
+     *               pointRange, pointStart, shadow, softThreshold, stacking,
+     *               step, threshold
+     * @product      highcharts highmaps
+     * @optionparent plotOptions.heatmap
+     */
     , {
 
         /**
-     * Animation is disabled by default on the heatmap series.
-     */
+         * Animation is disabled by default on the heatmap series.
+         */
         animation: false,
 
         /**
-     * The border width for each heat map item.
-     */
+         * The border width for each heat map item.
+         */
         borderWidth: 0,
 
         /**
-     * Padding between the points in the heatmap.
-     *
-     * @type      {number}
-     * @default   0
-     * @since     6.0
-     * @apioption plotOptions.heatmap.pointPadding
-     */
+         * Padding between the points in the heatmap.
+         *
+         * @type      {number}
+         * @default   0
+         * @since     6.0
+         * @apioption plotOptions.heatmap.pointPadding
+         */
 
         /**
-     * The main color of the series. In heat maps this color is rarely used,
-     * as we mostly use the color to denote the value of each point. Unless
-     * options are set in the [colorAxis](#colorAxis), the default value
-     * is pulled from the [options.colors](#colors) array.
-     *
-     * @type      {Highcharts.ColorString}
-     * @since     4.0
-     * @product   highcharts
-     * @apioption plotOptions.heatmap.color
-     */
+         * The main color of the series. In heat maps this color is rarely used,
+         * as we mostly use the color to denote the value of each point. Unless
+         * options are set in the [colorAxis](#colorAxis), the default value
+         * is pulled from the [options.colors](#colors) array.
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @since     4.0
+         * @product   highcharts
+         * @apioption plotOptions.heatmap.color
+         */
 
         /**
-     * The column size - how many X axis units each column in the heatmap
-     * should span.
-     *
-     * @sample {highcharts} maps/demo/heatmap/
-     *         One day
-     * @sample {highmaps} maps/demo/heatmap/
-     *         One day
-     *
-     * @type      {number}
-     * @default   1
-     * @since     4.0
-     * @product   highcharts highmaps
-     * @apioption plotOptions.heatmap.colsize
-     */
+         * The column size - how many X axis units each column in the heatmap
+         * should span.
+         *
+         * @sample {highcharts} maps/demo/heatmap/
+         *         One day
+         * @sample {highmaps} maps/demo/heatmap/
+         *         One day
+         *
+         * @type      {number}
+         * @default   1
+         * @since     4.0
+         * @product   highcharts highmaps
+         * @apioption plotOptions.heatmap.colsize
+         */
 
         /**
-     * The row size - how many Y axis units each heatmap row should span.
-     *
-     * @sample {highcharts} maps/demo/heatmap/
-     *         1 by default
-     * @sample {highmaps} maps/demo/heatmap/
-     *         1 by default
-     *
-     * @type      {number}
-     * @default   1
-     * @since     4.0
-     * @product   highcharts highmaps
-     * @apioption plotOptions.heatmap.rowsize
-     */
+         * The row size - how many Y axis units each heatmap row should span.
+         *
+         * @sample {highcharts} maps/demo/heatmap/
+         *         1 by default
+         * @sample {highmaps} maps/demo/heatmap/
+         *         1 by default
+         *
+         * @type      {number}
+         * @default   1
+         * @since     4.0
+         * @product   highcharts highmaps
+         * @apioption plotOptions.heatmap.rowsize
+         */
 
         /**
-     * The color applied to null points. In styled mode, a general CSS class is
-     * applied instead.
-     *
-     * @type {Highcharts.ColorString}
-     */
+         * The color applied to null points. In styled mode, a general CSS class
+         * is applied instead.
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         */
         nullColor: '${palette.neutralColor3}',
 
         dataLabels: {
@@ -409,7 +409,7 @@ seriesType(
  * explicitly, as we use the color to denote the `value`. Options for
  * this are set in the [colorAxis](#colorAxis) configuration.
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts highmaps
  * @apioption series.heatmap.data.color
  */

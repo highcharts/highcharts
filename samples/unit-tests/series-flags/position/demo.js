@@ -33,12 +33,12 @@ QUnit.test('Flags on inverted chart', function (assert) {
     );
 });
 
-QUnit.test('Flags should be properly placed on xAxis when yAxis.top is set.', function (assert) {
+QUnit.test('Positioning of flags on yAxis', function (assert) {
     var top = 80,
         chart = $('#container').highcharts('StockChart', {
             yAxis: {
                 top: top,
-                height: '10%'
+                height: '20%'
             },
             series: [{
                 data: [10, 20, 15, 13, 15, 11, 15]
@@ -52,9 +52,9 @@ QUnit.test('Flags should be properly placed on xAxis when yAxis.top is set.', fu
         }).highcharts();
 
     assert.strictEqual(
-        chart.series[1].points[0].plotY + top,
-        chart.plotHeight + chart.plotTop,
-        'Flag properly placed.'
+        chart.series[1].points[0].plotY,
+        chart.yAxis[0].len,
+        'The flag should be placed on the bottom of its yAxis'
     );
 });
 
@@ -66,14 +66,14 @@ QUnit.test('#2049 - Flag series on grouped columns.', function (assert) {
             },
             series: [{
                 data: [
-                  [0, 50.245666000100002],
-                  [1, 22.0]
+                    [0, 50.245666000100002],
+                    [1, 22.0]
                 ],
                 id: 'left'
             }, {
                 data: [
-                  [0, 55.0],
-                  [1, 22.0]
+                    [0, 55.0],
+                    [1, 22.0]
                 ],
                 id: 'right'
             }, {

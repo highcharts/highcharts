@@ -1,7 +1,7 @@
 /* eslint-disable */
 /* eslint-env node,es6 */
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  *
@@ -309,7 +309,7 @@ function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
                 '/* eslint-disable */\n' +
                 '/* *\n' +
                 ' * Error information for the debugger module\n' +
-                ' * (c) 2010-2018 Torstein Honsi\n' +
+                ' * (c) 2010-2019 Torstein Honsi\n' +
                 ' * License: www.highcharts.com/license\n' +
                 ' */\n\n' +
                 '// DO NOT EDIT!\n' +
