@@ -761,7 +761,7 @@ const gulpify = (name, task) => {
  * Executes a single terminal command and returns when finished.
  * Outputs stdout to the console.
  * @param {string} command Command to execute in terminal
- * @return {string} Returns all output to the terminal in the form of a string.
+ * @return {Promise} Returns all output to the terminal in the form of a string.
  */
 const commandLine = command => new Promise((resolve, reject) => {
     const cli = exec(command, (error, stdout) => {
@@ -1354,14 +1354,14 @@ function dtsLint() {
  */
 function tsc() {
     const path = join('ts', 'masters');
-    return Promise.all(
-        fs
-            .readdirSync(path)
-            .filter(file => /tsconfig\-\w+\.json/.test(file))
-            .map(file => commandLine(
-                'npx tsc --build ' + join(path, file) + ' --verbose'
-            ))
-    );
+    return Promise
+        .all(
+            glob.sync(join(path, 'tsconfig-*.json'))
+                .map(file => commandLine(
+                    'npx tsc --build ' + file + ' --verbose'
+                ))
+        )
+        .then(require('./tools/convert-tsmodule'));
 }
 
 /**
