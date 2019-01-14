@@ -19,6 +19,7 @@ var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     merge = H.merge,
     extend = H.extend,
+    error = H.error,
     noop = H.noop,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
@@ -1073,7 +1074,7 @@ seriesType(
                 rootId !== '' &&
             (!rootNode || !rootNode.children.length)
             ) {
-                series.drillToNode('', false);
+                series.setRootNode('', false);
                 rootId = series.rootNode;
                 rootNode = series.nodeMap[rootId];
             }
@@ -1319,7 +1320,7 @@ seriesType(
                 }, this);
             }
 
-            // If drillToNode is allowed, set a point cursor on clickables & add
+            // If setRootNode is allowed, set a point cursor on clickables & add
             // drillId to point
             if (series.options.allowDrillToNode) {
                 points.forEach(function (point) {
@@ -1340,7 +1341,7 @@ seriesType(
             // If a drill id is returned, add click event and cursor.
             if (isString(drillId)) {
                 point.setState(''); // Remove hover
-                series.drillToNode(drillId);
+                series.setRootNode(drillId);
             }
         },
         /**
@@ -1404,10 +1405,24 @@ seriesType(
                 node = series.nodeMap[series.rootNode];
 
             if (node && isString(node.parent)) {
-                series.drillToNode(node.parent);
+                series.setRootNode(node.parent);
             }
         },
+        // TODO remove this function at a suitable version.
         drillToNode: function (id, redraw) {
+            error(
+                'WARNING: treemap.drillToNode has been renamed to treemap.' +
+                'setRootNode, and will be removed in the next major version.'
+            );
+            this.setRootNode(id, redraw);
+        },
+        /**
+         * Sets a new root node for the series.
+         *
+         * @param {string} id The id of the new root node.
+         * @param {boolean} redraw Wether to redraw the chart or not.
+         */
+        setRootNode: function (id, redraw) {
             var series = this,
                 nodeMap = series.nodeMap,
                 node = nodeMap[id];
