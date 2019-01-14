@@ -117,7 +117,7 @@ QUnit.test('seriesTypes.treemap.drillUp', function (assert) {
     var drillUp = Highcharts.seriesTypes.treemap.prototype.drillUp,
         series = {
             rootNode: '',
-            drillToNode: function (id) {
+            setRootNode: function (id) {
                 this.rootNode = id;
             },
             nodeMap: {
@@ -149,8 +149,8 @@ QUnit.test('seriesTypes.treemap.drillUp', function (assert) {
     );
 });
 
-QUnit.test('seriesTypes.treemap.drillToNode', function (assert) {
-    var drillToNode = Highcharts.seriesTypes.treemap.prototype.drillToNode,
+QUnit.test('seriesTypes.treemap.setRootNode', assert => {
+    var { setRootNode } = Highcharts.seriesTypes.treemap.prototype,
         series = {
             chart: {
                 redraw: function () {
@@ -172,7 +172,7 @@ QUnit.test('seriesTypes.treemap.drillToNode', function (assert) {
                 this.drillUpButton.name = name;
             }
         };
-    drillToNode.call(series, 'A');
+    setRootNode.call(series, 'A');
     assert.strictEqual(
         series.rootNode,
         'A',
@@ -190,7 +190,7 @@ QUnit.test('seriesTypes.treemap.drillToNode', function (assert) {
     );
 
     series.chart.redrawed = undefined;
-    drillToNode.call(series, '', false);
+    setRootNode.call(series, '', false);
     assert.strictEqual(
         series.rootNode,
         '',
@@ -211,7 +211,7 @@ QUnit.test('seriesTypes.treemap.drillToNode', function (assert) {
 QUnit.test('seriesTypes.treemap.onClickDrillToNode', function (assert) {
     var onClickDrillToNode = Highcharts.seriesTypes.treemap.prototype.onClickDrillToNode,
         series = {
-            drillToNode: function (id) {
+            setRootNode: function (id) {
                 this.rootNode = id;
             }
         },
