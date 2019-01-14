@@ -5231,12 +5231,23 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             step,
             bestScore = Number.MAX_VALUE,
             autoRotation,
+            range = this.max - this.min,
             // Return the multiple of tickInterval that is needed to avoid
             // collision
             getStep = function (spaceNeeded) {
                 var step = spaceNeeded / (slotSize || 1);
 
                 step = step > 1 ? Math.ceil(step) : 1;
+
+                // Guard for very small or negative angles (#9835)
+                if (
+                    step * tickInterval > range &&
+                    spaceNeeded !== Infinity &&
+                    slotSize !== Infinity
+                ) {
+                    step = Math.ceil(range / tickInterval);
+                }
+
                 return correctFloat(step * tickInterval);
             };
 
@@ -5260,7 +5271,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     var score;
 
                     if (
-                        rot === rotationOption && // #9835
+                        rot === rotationOption ||
                         (rot && rot >= -90 && rot <= 90)
                     ) { // #3891
 
