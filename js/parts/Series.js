@@ -3753,8 +3753,6 @@ H.Series = H.seriesType('line',
                 i,
                 pointPlacement = series.pointPlacementToXValue(), // #7860
                 dynamicallyPlaced = isNumber(pointPlacement),
-                // pointPlacement === 'between' ||
-                // isNumber(pointPlacement),
                 threshold = options.threshold,
                 stackThreshold = options.startFromThreshold ? threshold : 0,
                 plotX,
@@ -3770,14 +3768,6 @@ H.Series = H.seriesType('line',
             function limitedRange(val) {
                 return Math.min(Math.max(-1e5, val), 1e5);
             }
-
-            // Point placement is relative to each series pointRange (#5889)
-            // if (pointPlacement === 'between') {
-            //     pointPlacement = 0.5;
-            // }
-            // if (isNumber(pointPlacement)) {
-            //   pointPlacement *= pick(options.pointRange || xAxis.pointRange);
-            // }
 
             // Translate each point
             for (i = 0; i < dataLength; i++) {
