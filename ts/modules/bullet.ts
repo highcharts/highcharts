@@ -6,14 +6,9 @@
  *
  * */
 
-/* eslint-disable */
-
 'use strict';
 
-import Highcharts from '../parts/Globals.js';
-const H = Highcharts as any;
-
-import '../parts/Utilities.js';
+import * as H from 'highcharts';
 
 let pick = H.pick,
     isNumber = H.isNumber,

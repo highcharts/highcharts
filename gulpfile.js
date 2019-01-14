@@ -1353,7 +1353,15 @@ function dtsLint() {
  * Compiles TypeScript code into the js folder.
  */
 function tsc() {
-    return commandLine('npx tsc --project ts');
+    const path = join('ts', 'masters');
+    return Promise.all(
+        fs
+            .readdirSync(path)
+            .filter(file => /tsconfig\-\w+\.json/.test(file))
+            .map(file => commandLine(
+                'npx tsc --build ' + join(path, file) + ' --verbose'
+            ))
+    );
 }
 
 /**
