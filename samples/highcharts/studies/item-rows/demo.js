@@ -473,11 +473,18 @@ document.getElementById('innersize').addEventListener('change', function () {
                 });
             },
             drawDataLabels: function () {
-                if (this.center) {
+                if (this.center && this.slots) {
                     H.seriesTypes.pie.prototype.drawDataLabels.call(this);
-                }
+
                 // else, it's just a dot chart with no natural place to put the
                 // data labels
+                } else {
+                    this.points.forEach(function (point) {
+                        if (point.dataLabel) {
+                            point.dataLabel = point.dataLabel.destroy();
+                        }
+                    });
+                }
             },
 
             // Fade in the whole chart
