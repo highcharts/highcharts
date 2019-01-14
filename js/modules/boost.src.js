@@ -275,11 +275,11 @@
  */
 
 /**
- * Sets the blending mode in the boost module.
+ * Sets the color blending in the boost module.
  *
  * @type       {string}
  * @default    undefined
- * @validvalue ["add", "mult", "darken"]
+ * @validvalue ["add", "multiply", "darken"]
  * @apioption  plotOptions.series.boostBlending
  */
 
@@ -2358,7 +2358,9 @@ function GLRenderer(postRenderCallback) {
                 gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
                 gl.blendEquation(gl.FUNC_ADD);
 
-            } else if (options.boostBlending === 'mult') {
+            } else if (options.boostBlending === 'mult' ||
+                options.boostBlending === 'multiply'
+            ) {
                 gl.blendFunc(gl.DST_COLOR, gl.ZERO);
 
             } else if (options.boostBlending === 'darken') {
