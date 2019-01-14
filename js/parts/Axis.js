@@ -4784,26 +4784,29 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      */
     adjustTickAmount: function () {
-        var tickInterval = this.tickInterval,
-            tickPositions = this.tickPositions,
-            tickAmount = this.tickAmount,
-            finalTickAmt = this.finalTickAmt,
+        var axis = this,
+            axisOptions = axis.options,
+            tickInterval = axis.tickInterval,
+            tickPositions = axis.tickPositions,
+            tickAmount = axis.tickAmount,
+            finalTickAmt = axis.finalTickAmt,
             currentTickAmount = tickPositions && tickPositions.length,
-            threshold = pick(this.threshold, this.softThreshold ? 0 : null),
-            i,
-            len;
+            threshold = pick(axis.threshold, axis.softThreshold ? 0 : null),
+            min,
+            len,
+            i;
 
-        if (this.hasData()) {
+        if (axis.hasData()) {
             if (currentTickAmount < tickAmount) {
+                min = axis.min;
+
                 while (tickPositions.length < tickAmount) {
 
                     // Extend evenly for both sides unless we're on the
                     // threshold (#3965)
                     if (
                         tickPositions.length % 2 ||
-                        this.min === threshold ||
-                        // #9841
-                        this.max > tickPositions[tickPositions.length - 1]
+                        min === threshold
                     ) {
                         // to the end
                         tickPositions.push(correctFloat(
@@ -4817,14 +4820,20 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         ));
                     }
                 }
-                this.transA *= (currentTickAmount - 1) / (tickAmount - 1);
-                this.min = tickPositions[0];
-                this.max = tickPositions[tickPositions.length - 1];
+                axis.transA *= (currentTickAmount - 1) / (tickAmount - 1);
+
+                // Do not crop when ticks are not extremes (#9841)
+                axis.min = axisOptions.startOnTick ?
+                    tickPositions[0] :
+                    Math.min(axis.min, tickPositions[0]);
+                axis.max = axisOptions.endOnTick ?
+                    tickPositions[tickPositions.length - 1] :
+                    Math.max(axis.max, tickPositions[tickPositions.length - 1]);
 
             // We have too many ticks, run second pass to try to reduce ticks
             } else if (currentTickAmount > tickAmount) {
-                this.tickInterval *= 2;
-                this.setTickPositions();
+                axis.tickInterval *= 2;
+                axis.setTickPositions();
             }
 
             // The finalTickAmt property is set in getTickAmount
@@ -4840,7 +4849,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         tickPositions.splice(i, 1);
                     }
                 }
-                this.finalTickAmt = undefined;
+                axis.finalTickAmt = undefined;
             }
         }
     },
