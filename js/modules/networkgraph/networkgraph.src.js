@@ -114,6 +114,24 @@ seriesType('networkgraph', 'line', {
          */
         type: 'reingold-fruchterman',
         /**
+         * Integration type. Available options are `'euler'` and `'verlet'`.
+         * Integration determines how forces are applied on particles. In Euler
+         * integration, force is applied direct as `newPosition += velocity;`.
+         * In Verlet integration, new position is based on a previous posittion
+         * without velocity: `newPosition += previousPosition - newPosition`.
+         *
+         * Note that different integrations give different results as forces
+         * are different.
+         *
+         * In Highcharts v7.0.x only `'euler'` integrations was supported.
+         *
+         * @since       7.1.0
+         * @sample      highcharts/series-networkgraph/forces/
+         *              Custom forces with Euler integration
+         * @validvalue  ["euler", "verlet"]
+         */
+        integration: 'verlet',
+        /**
          * Max number of iterations before algorithm will stop. In general,
          * algorithm should find positions sooner, but when rendering huge
          * number of nodes, it is recommended to increase this value as
@@ -124,7 +142,7 @@ seriesType('networkgraph', 'line', {
          * Gravitational const used in the barycenter force of the algorithm.
          *
          * @sample      highcharts/series-networkgraph/forces/
-         *              Custom forces
+         *              Custom forces with Euler integration
          */
         gravitationalConstant: 0.0625,
         /**
@@ -375,9 +393,11 @@ seriesType('networkgraph', 'line', {
             plotX: point.plotX,
             plotY: point.plotY
         };
+
+        point.inDragMode = true;
     },
     onMouseMove: function (point, event) {
-        if (point.fixedPosition) {
+        if (point.fixedPosition && point.inDragMode) {
             var series = this,
                 chart = series.chart,
                 normalizedEvent = chart.pointer.normalize(event),
@@ -420,7 +440,10 @@ seriesType('networkgraph', 'line', {
     onMouseUp: function (point) {
         if (point.fixedPosition) {
             this.layout.run();
-            delete point.fixedPosition;
+            point.inDragMode = false;
+            if (!this.options.fixedDraggable) {
+                delete point.fixedPosition;
+            }
         }
     },
     destroy: function () {

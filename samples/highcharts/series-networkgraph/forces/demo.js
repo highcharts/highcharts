@@ -26,6 +26,7 @@ Highcharts.chart('container', {
             repulsiveForce: function (d, k) {
                 return k;
             },
+            integration: 'euler',
             gravitationalConstant: 25
         },
         nodes: [{
@@ -633,4 +634,3 @@ Highcharts.chart('container', {
         data: []
     }]
 });
-
