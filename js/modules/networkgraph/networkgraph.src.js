@@ -199,6 +199,7 @@ seriesType('networkgraph', 'line', {
     },
     showInLegend: false
 }, {
+    forces: ['barycenter', 'repulsive', 'attractive'],
     isNetworkgraph: true,
     drawGraph: null,
     isCartesian: false,

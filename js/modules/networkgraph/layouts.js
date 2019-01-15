@@ -46,6 +46,8 @@ H.extend(
                 options = this.options,
                 step = 0;
 
+            layout.forces = series[0] && series[0].forces || [];
+
             if (layout.initialRendering) {
                 layout.initPositions();
 
@@ -59,14 +61,9 @@ H.extend(
             function localLayout() {
                 step++;
 
-                // Barycenter forces:
-                layout.applyBarycenterForces(layout.temperature);
-
-                // Repulsive forces:
-                layout.applyRepulsiveForces(layout.temperature);
-
-                // Attractive forces:
-                layout.applyAttractiveForces(layout.temperature);
+                layout.forces.forEach(function (forceName) {
+                    layout[forceName + 'Forces'](layout.temperature);
+                });
 
                 // Limit to the plotting area and cool down:
                 layout.applyLimits(layout.temperature);
@@ -331,7 +328,7 @@ H.extend(
                 Array.prototype.slice.call(arguments, 1)
             );
         },
-        applyBarycenterForces: function () {
+        barycenterForces: function () {
             this.getBarycenter();
             this.force('barycenter');
         },
@@ -354,7 +351,7 @@ H.extend(
 
             return this.barycenter;
         },
-        applyRepulsiveForces: function () {
+        repulsiveForces: function () {
             var layout = this,
                 nodes = layout.nodes,
                 options = layout.options,
@@ -392,12 +389,11 @@ H.extend(
                 });
             });
         },
-        applyAttractiveForces: function () {
+        attractiveForces: function () {
             var layout = this,
-                links = layout.links,
-                options = this.options;
+                options = layout.options;
 
-            links.forEach(function (link) {
+            layout.links.forEach(function (link) {
                 if (link.fromNode && link.toNode) {
                     var distanceXY = layout.getDistXY(
                             link.fromNode,
@@ -420,107 +416,18 @@ H.extend(
                 }
             });
         },
-        applyLimits: function (temperature) {
+        applyLimits: function () {
             var layout = this,
-                options = layout.options,
-                nodes = layout.nodes,
-                box = layout.box,
-                distanceR;
+                nodes = layout.nodes;
 
             nodes.forEach(function (node) {
                 if (node.fixedPosition) {
                     return;
                 }
 
-                // Friction:
-                if (options.integration === 'euler') {
-                    node.dispX += node.dispX * options.friction;
-                    node.dispY += node.dispY * options.friction;
+                layout.integration.integrate(layout, node);
 
-                    distanceR = node.temperature = layout.vectorLength({
-                        x: node.dispX,
-                        y: node.dispY
-                    });
-                } else {
-                    distanceR = 1;
-                }
-
-                // Place nodes:
-                if (distanceR !== 0) {
-                    if (options.integration === 'verlet') {
-                        /*
-                        Verlet without velocity:
-
-                            x(n+1) = 2 * x(n) - x(n-1) + A(T) * deltaT ^ 2
-
-                        where:
-                            - x(n+1) - new position
-                            - x(n) - current position
-                            - x(n-1) - previous position
-
-                        Assuming A(t) = 0 (no acceleration) and (deltaT = 1) we
-                        get:
-
-                            x(n+1) = x(n) + (x(n) - x(n-1))
-
-                        where:
-                            - (x(n) - x(n-1)) - position change
-
-                        TO DO:
-                        Consider Verlet with velocity to support additional
-                        forces. Or even Time-Corrected Verlet by Jonathan
-                        "lonesock" Dummer
-                        */
-                        var prevX = node.prevX,
-                            prevY = node.prevY,
-                            diffX = (node.plotX - prevX),
-                            diffY = (node.plotY - prevY);
-
-                        // Store for the next iteration:
-                        node.prevX = node.plotX;
-                        node.prevY = node.plotY;
-
-                        // Update positions, apply friction:
-                        node.plotX += diffX * -options.friction;
-                        node.plotY += diffY * -options.friction;
-
-                        node.temperature = layout.vectorLength({
-                            x: diffX,
-                            y: diffY
-                        });
-
-                    } else {
-                        /*
-                        Euler:
-                        Basic form: x(n+1) = x(n) + v(n)
-
-                        With Rengoild-Fruchterman we get:
-
-                            x(n+1) = x(n) +
-                                v(n) / length(v(n)) *
-                                min(v(n), temperature(n))
-
-                        where:
-                            x(n+1) - next position
-                            x(n) - current position
-                            v(n) - velocity (comes from net force)
-                            temperature(n) - current temperature
-
-                        Issues:
-                            Oscillations when force vector has the same
-                            magnitude but opposite direction in the next step.
-
-                        Actually "min(v(n), temperature(n))" replaces
-                        simulated annealing.
-                        */
-                        node.plotX += node.dispX / distanceR *
-                            Math.min(Math.abs(node.dispX), temperature);
-                        node.plotY += node.dispY / distanceR *
-                            Math.min(Math.abs(node.dispY), temperature);
-
-                    }
-                }
-                layout.applyLimitBox(node, box);
+                layout.applyLimitBox(node, layout.box);
 
                 // Reset displacement:
                 node.dispX = 0;

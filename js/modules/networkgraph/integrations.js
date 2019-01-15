@@ -51,6 +51,48 @@ H.networkgraphIntegrations = {
                 link.toNode.plotX += translatedX;
                 link.toNode.plotY += translatedY;
             }
+        },
+        integrate: function (layout, node) {
+            /*
+            Verlet without velocity:
+
+                x(n+1) = 2 * x(n) - x(n-1) + A(T) * deltaT ^ 2
+
+            where:
+                - x(n+1) - new position
+                - x(n) - current position
+                - x(n-1) - previous position
+
+            Assuming A(t) = 0 (no acceleration) and (deltaT = 1) we
+            get:
+
+                x(n+1) = x(n) + (x(n) - x(n-1))
+
+            where:
+                - (x(n) - x(n-1)) - position change
+
+            TO DO:
+            Consider Verlet with velocity to support additional
+            forces. Or even Time-Corrected Verlet by Jonathan
+            "lonesock" Dummer
+            */
+            var prevX = node.prevX,
+                prevY = node.prevY,
+                diffX = (node.plotX - prevX),
+                diffY = (node.plotY - prevY);
+
+            // Store for the next iteration:
+            node.prevX = node.plotX;
+            node.prevY = node.plotY;
+
+            // Update positions, apply friction:
+            node.plotX += diffX * -layout.options.friction;
+            node.plotY += diffY * -layout.options.friction;
+
+            node.temperature = layout.vectorLength({
+                x: diffX,
+                y: diffY
+            });
         }
     },
     euler: {
@@ -87,6 +129,47 @@ H.networkgraphIntegrations = {
             if (!link.toNode.fixedPosition) {
                 link.toNode.dispX += translatedX;
                 link.toNode.dispY += translatedY;
+            }
+        },
+        integrate: function (layout, node) {
+            var distanceR;
+            /*
+            Euler:
+            Basic form: x(n+1) = x(n) + v(n)
+
+            With Rengoild-Fruchterman we get:
+
+                x(n+1) = x(n) +
+                    v(n) / length(v(n)) *
+                    min(v(n), temperature(n))
+
+            where:
+                x(n+1) - next position
+                x(n) - current position
+                v(n) - velocity (comes from net force)
+                temperature(n) - current temperature
+
+            Issues:
+                Oscillations when force vector has the same
+                magnitude but opposite direction in the next step.
+
+            Actually "min(v(n), temperature(n))" replaces
+            simulated annealing.
+            */
+
+            node.dispX += node.dispX * layout.options.friction;
+            node.dispY += node.dispY * layout.options.friction;
+
+            distanceR = node.temperature = layout.vectorLength({
+                x: node.dispX,
+                y: node.dispY
+            });
+
+            if (distanceR !== 0) {
+                node.plotX += node.dispX / distanceR *
+                    Math.min(Math.abs(node.dispX), layout.temperature);
+                node.plotY += node.dispY / distanceR *
+                    Math.min(Math.abs(node.dispY), layout.temperature);
             }
         }
     }
