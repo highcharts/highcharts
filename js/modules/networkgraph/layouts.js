@@ -8,6 +8,7 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
+import 'integrations.js';
 
 var pick = H.pick,
     defined = H.defined;
@@ -27,6 +28,8 @@ H.layouts = {
         };
 
         this.setInitialRendering(true);
+
+        this.integration = H.networkgraphIntegrations[options.integration];
     }
 };
 
@@ -322,39 +325,15 @@ H.extend(
                 }
             );
         },
+        force: function (name) {
+            this.integration[name].apply(
+                this,
+                Array.prototype.slice.call(arguments, 1)
+            );
+        },
         applyBarycenterForces: function () {
-            var gravitationalConstant = this.options.gravitationalConstant,
-                barycenter = this.getBarycenter(),
-                xFactor = barycenter.xFactor,
-                yFactor = barycenter.yFactor;
-
-            // Apply forces:
-            if (this.options.integration === 'verlet') {
-                // To consider:
-                xFactor = (xFactor - (this.box.left + this.box.width) / 2) *
-                    gravitationalConstant;
-                yFactor = (yFactor - (this.box.top + this.box.height) / 2) *
-                    gravitationalConstant;
-
-                this.nodes.forEach(function (node) {
-                    if (!node.fixedPosition) {
-                        node.plotX -= xFactor;
-                        node.plotY -= yFactor;
-                    }
-                });
-            } else {
-                this.nodes.forEach(function (node) {
-                    if (!node.fixedPosition) {
-                        var degree = node.getDegree(),
-                            phi = degree * (1 + degree / 2);
-
-                        node.dispX += (xFactor - node.plotX) *
-                            gravitationalConstant * phi;
-                        node.dispY += (yFactor - node.plotY) *
-                            gravitationalConstant * phi;
-                    }
-                });
-            }
+            this.getBarycenter();
+            this.force('barycenter');
         },
         getBarycenter: function () {
             var nodesLength = this.nodes.length,
@@ -379,20 +358,15 @@ H.extend(
             var layout = this,
                 nodes = layout.nodes,
                 options = layout.options,
-                k = this.k,
                 force,
                 distanceR,
-                distanceXY,
-                translatedX,
-                translatedY;
+                distanceXY;
 
             nodes.forEach(function (node) {
                 nodes.forEach(function (repNode) {
                     if (
                         // Node can not repulse itself:
                         node !== repNode &&
-                        // Only close nodes affect each other:
-                        /* layout.getDistR(node, repNode) < 2 * k && */
                         // Not dragged:
                         !node.fixedPosition
                     ) {
@@ -402,27 +376,16 @@ H.extend(
 
                         if (distanceR !== 0) {
                             force = options.repulsiveForce.call(
-                                layout, distanceR, k
+                                layout, distanceR, layout.k
                             );
 
-                            if (options.integration === 'verlet') {
-                                translatedX = distanceR >= k ? 0 :
-                                    distanceXY.x * (k - distanceR) /
-                                        distanceR * layout.diffTemperature / 2;
-                                translatedY = distanceR >= k ? 0 :
-                                    distanceXY.y * (k - distanceR) /
-                                        distanceR * layout.diffTemperature / 2;
-                                node.plotX += translatedX;
-                                node.plotY += translatedY;
-                            } else {
-                                translatedX = (distanceXY.x / distanceR) *
-                                    force;
-                                translatedY = (distanceXY.y / distanceR) *
-                                    force;
-                                node.dispX += translatedX;
-                                node.dispY += translatedY;
-                            }
-
+                            layout.force(
+                                'repulsive',
+                                node,
+                                force,
+                                distanceXY,
+                                distanceR
+                            );
 
                         }
                     }
@@ -432,12 +395,7 @@ H.extend(
         applyAttractiveForces: function () {
             var layout = this,
                 links = layout.links,
-                options = this.options,
-                k = this.k,
-                verletIntegration = options.integration === 'verlet',
-                factor,
-                translatedX,
-                translatedY;
+                options = this.options;
 
             links.forEach(function (link) {
                 if (link.fromNode && link.toNode) {
@@ -447,42 +405,17 @@ H.extend(
                         ),
                         distanceR = layout.vectorLength(distanceXY),
                         force = options.attractiveForce.call(
-                            layout, distanceR, k
+                            layout, distanceR, layout.k
                         );
 
-
                     if (distanceR !== 0) {
-                        if (verletIntegration) {
-                            factor = (k - distanceR) / distanceR * 0.5 *
-                                layout.diffTemperature;
-                            translatedX = -distanceXY.x * factor;
-                            translatedY = -distanceXY.y * factor;
-                        } else {
-                            translatedX = (distanceXY.x / distanceR) * force;
-                            translatedY = (distanceXY.y / distanceR) * force;
-                        }
-
-                        if (!link.fromNode.fixedPosition) {
-                            if (verletIntegration) {
-                                link.fromNode.plotX -= translatedX;
-                                link.fromNode.plotY -= translatedY;
-                            } else {
-                                // Euler:
-                                link.fromNode.dispX -= translatedX;
-                                link.fromNode.dispY -= translatedY;
-                            }
-                        }
-
-                        if (!link.toNode.fixedPosition) {
-                            if (verletIntegration) {
-                                link.toNode.plotX += translatedX;
-                                link.toNode.plotY += translatedY;
-                            } else {
-                                // Euler:
-                                link.toNode.dispX += translatedX;
-                                link.toNode.dispY += translatedY;
-                            }
-                        }
+                        layout.force(
+                            'attractive',
+                            link,
+                            force,
+                            distanceXY,
+                            distanceR
+                        );
                     }
                 }
             });
