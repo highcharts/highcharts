@@ -3871,6 +3871,8 @@ H.Series = H.seriesType(
              * @type {Array<Highcharts.Point>}
              */
             series.points = points;
+
+            fireEvent(this, 'afterGeneratePoints');
         },
 
         /**
