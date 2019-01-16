@@ -1349,32 +1349,10 @@ function dtsLint() {
     return commandLine('cd test/typescript && npx dtslint --onlyTestTsNext');
 }
 
-/**
- * Compiles TypeScript code into the js folder.
- */
-function tsc() {
-    const path = join('ts', 'masters');
-    return Promise
-        .all(
-            glob.sync(join(path, 'tsconfig-*.json'))
-                .map(file => commandLine(
-                    'npx tsc --build ' + file + ' --verbose'
-                ))
-        )
-        .then(require('./tools/convert-tsmodule'));
-}
-
-/**
- * Lint test of TypeScript code.
- */
-function tslint() {
-    return commandLine('npx tslint --project ts');
-}
-
 gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], dts);
 gulp.task('dtslint', ['update', 'dts'], dtsLint);
-gulp.task('tsc', tsc);
-gulp.task('tslint', tslint);
+gulp.task('tsc', () => require('./tools/gulptasks/tsc')());
+gulp.task('tslint', ['tsc'], () => require('./tools/gulptasks/tslint')());
 
 /* *
  *

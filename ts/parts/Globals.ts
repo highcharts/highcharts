@@ -6,6 +6,8 @@
  *
  * */
 
+/* eslint-disable */
+
 /**
  * Reference to the global SVGElement class as a workaround for a name conflict
  * in the Highcharts namespace.
@@ -18,13 +20,16 @@
 
 'use strict';
 
+declare const win: any;
+
+const glob = (typeof win === 'undefined' ? window : win) as any;
+
 namespace Highcharts {
 
     export const product = '@product.name@';
     export const version = '@product.version@';
 
-    export const glob = (global || window) as any;
-    // export const win = glob;
+    export const win = glob;
 
     export const userAgent = (
         (glob.navigator && glob.navigator.userAgent) || ''
@@ -75,10 +80,8 @@ namespace Highcharts {
     export const charts = [];
 }
 
-let H = Highcharts;
-
-if (Highcharts.glob.Highcharts) {
-    H = Highcharts.glob.Highcharts.error(16, true);
+if (glob.Highcharts) {
+    glob.Highcharts.error(16, true);
 }
 
-export default H;
+export default Highcharts as any;

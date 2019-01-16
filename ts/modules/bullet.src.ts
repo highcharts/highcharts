@@ -6,9 +6,11 @@
  *
  * */
 
+/* eslint-disable */
+
 'use strict';
 
-import * as H from 'highcharts';
+import H from '../parts/Globals.js';
 
 let pick = H.pick,
     isNumber = H.isNumber,
@@ -76,7 +78,7 @@ seriesType('bullet', 'column',
              * @product   highcharts
              * @apioption plotOptions.bullet.targetOptions.borderColor
              */
-            borderColor: undefined as (H.ColorString|undefined),
+            borderColor: undefined as any,
 
             /**
              * The color of the rectangle representing the target. When not set,
@@ -93,7 +95,7 @@ seriesType('bullet', 'column',
              * @product   highcharts
              * @apioption plotOptions.bullet.targetOptions.color
              */
-            color: undefined as (H.ColorString|H.GradientColorObject|undefined),
+            color: undefined as any,
 
             /**
              * The border width of the rectangle representing the target.
