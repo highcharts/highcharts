@@ -1352,67 +1352,51 @@ gulp.task('dtslint', ['update', 'dts'], dtsLint);
  */
 function update() {
 
-    const dependencies = (
-        require(join(__dirname, 'package.json')).devDependencies || {}
-    );
+    const configurationPath = join('node_modules', '_update.json');
+    const now = (new Date()).getTime();
 
-    const githubKeys = Object
-        .keys(dependencies)
-        .filter(key => dependencies[key].indexOf('github:') === 0);
-    const latestKeys = Object
-        .keys(dependencies)
-        .filter(key => dependencies[key] === 'latest');
+    let configuration = {
+        checkFrequency: 'weekly',
+        lastCheck: 0
+    };
 
-    return new Promise((resolve, reject) => {
+    if (fs.existsSync(configurationPath)) {
+        configuration = JSON.parse(fs.readFileSync(configurationPath));
+    }
+
+    let minimumTime = now;
+
+    switch (configuration.checkFrequency) {
+        default:
+        case 'weekly':
+            minimumTime -= Date.UTC(1970, 0, 8);
+            break;
+        case 'monthly':
+            minimumTime -= Date.UTC(1970, 0, 29);
+            break;
+        case 'daily':
+            minimumTime -= Date.UTC(1970, 0, 2);
+            break;
+        case 'hourly':
+            minimumTime -= Date.UTC(1970, 0, 1, 1);
+            break;
+    }
+
+    if (configuration.lastCheck <= minimumTime) {
+
+        configuration.lastCheck = now;
+
+        fs.writeFileSync(configurationPath, JSON.stringify(configuration));
 
         console.log(
             '[' + colors.gray(toTimeString(new Date())) + ']',
-            'Searching for outdated packages...'
+            'Updating packages...'
         );
 
-        exec('npm outdated --json', (error, stdout) => {
-            try {
+        return commandLine('npm i');
+    }
 
-                const json = JSON.parse(stdout);
-                const outdatedKeys = Object
-                    .keys(json)
-                    .filter(key => latestKeys.indexOf(key) > -1);
-
-                if (outdatedKeys.length === 0) {
-                    resolve();
-                    return;
-                }
-
-                Promise
-                    .resolve()
-                    .then(() => {
-                        console.log(
-                            '[' + colors.gray(toTimeString(new Date())) + ']',
-                            'Updating outdated packages:',
-                            outdatedKeys.join(' ')
-                        );
-                        return commandLine(
-                            'npm i ' + outdatedKeys.join(' ') + ' --no-save'
-                        );
-                    })
-                    .then(() => {
-                        console.info(
-                            '[' + colors.gray(toTimeString(new Date())) + ']',
-                            'Updating github-hosted packages:',
-                            githubKeys.join(' ')
-                        );
-                        return commandLine(
-                            'npm i ' + githubKeys.join(' ') + ' --no-save'
-                        );
-                    })
-                    .then(resolve)
-                    .catch(reject);
-
-            } catch (e) {
-                reject(e);
-            }
-        });
-    });
+    return Promise.resolve();
 }
 
 gulp.task('update', update);
