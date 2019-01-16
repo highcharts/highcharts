@@ -699,9 +699,7 @@ RangeSelector.prototype = {
             // point and extremes data (things like pointStart and pointInterval
             // are missing), so we delay the process (#942)
             } else {
-                addEvent(chart, 'beforeRender', function () {
-                    rangeSelector.clickButton(i);
-                });
+                rangeSelector.deferredYTDClick = i;
                 return;
             }
         } else if (type === 'all' && baseAxis) {
@@ -1898,6 +1896,11 @@ addEvent(Chart, 'beforeRender', function () {
         verticalAlign;
 
     if (rangeSelector) {
+
+        if (isNumber(rangeSelector.deferredYTDClick)) {
+            rangeSelector.clickButton(rangeSelector.deferredYTDClick);
+            delete rangeSelector.deferredYTDClick;
+        }
 
         axes.forEach(function (axis) {
             axis.updateNames();
