@@ -72,6 +72,31 @@ seriesType('networkgraph', 'line', {
     draggable: true,
     layoutAlgorithm: {
         /**
+         * Repulsive force applied on a node. Passed are two arguments:
+         * - `d` - which is current distance between two nodes
+         * - `k` - which is desired distance between two nodes
+         *
+         * @apioption   plotOptions.networkgraph.layoutAlgorithm.repulsiveForce
+         * @sample      highcharts/series-networkgraph/forces/
+         *              Custom forces
+         * @type        {Function}
+         * @default function (d, k) { return k * k / d; }
+         */
+
+        /**
+         * Attraction force applied on a node which is conected to another node
+         * by a link. Passed are two arguments:
+         * - `d` - which is current distance between two nodes
+         * - `k` - which is desired distance between two nodes
+         *
+         * @apioption   plotOptions.networkgraph.layoutAlgorithm.attractiveForce
+         * @sample      highcharts/series-networkgraph/forces/
+         *              Custom forces
+         * @type        {Function}
+         * @default function (d, k) { return k * k / d; }
+         */
+
+        /**
          * Ideal length (px) of the link between two nodes. When not defined,
          * length is calculated as:
          * `Math.pow(availableWidth * availableHeight / nodesLength, 0.4);`
@@ -149,53 +174,7 @@ seriesType('networkgraph', 'line', {
          * Friction applied on forces to prevent nodes rushing to fast to the
          * desired positions.
          */
-        friction: -0.981,
-        /**
-         * Repulsive force applied on a node. Passed are two arguments:
-         * - `d` - which is current distance between two nodes
-         * - `k` - which is desired distance between two nodes
-         *
-         * @sample      highcharts/series-networkgraph/forces/
-         *              Custom forces
-         * @type        {Function}
-         * @default function (d, k) { return k * k / d; }
-         */
-        repulsiveForce: function (d, k) {
-            /*
-            basic, not recommended:
-            return k / d;
-            */
-
-            /*
-            standard:
-            return k * k / d;
-            */
-
-            /*
-            grid-variant:
-            return k * k / d * (2 * k - d > 0 ? 1 : 0);
-            */
-
-            return k * k / d;
-        },
-        /**
-         * Attraction force applied on a node which is conected to another node
-         * by a link. Passed are two arguments:
-         * - `d` - which is current distance between two nodes
-         * - `k` - which is desired distance between two nodes
-         *
-         * @sample      highcharts/series-networkgraph/forces/
-         *              Custom forces
-         * @type        {Function}
-         * @default function (d, k) { return k * k / d; }
-         */
-        attractiveForce: function (d, k) {
-            /*
-            basic, not recommended:
-            return d / k;
-            */
-            return d * d / k;
-        }
+        friction: -0.981
     },
     showInLegend: false
 }, {

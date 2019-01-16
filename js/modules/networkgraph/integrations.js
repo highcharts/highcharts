@@ -11,6 +11,14 @@ import H from '../../parts/Globals.js';
 
 H.networkgraphIntegrations = {
     verlet: {
+        attractiveForceFunction: function (distanceR, k) {
+            return (k - distanceR) / distanceR * 0.5 * this.diffTemperature;
+        },
+        repulsiveForceFunction: function (distanceR, k) {
+            // Used in API:
+            return distanceR >= k ? 0 : (k - distanceR) /
+                    distanceR * this.diffTemperature * 0.5;
+        },
         barycenter: function () {
             var gravitationalConstant = this.options.gravitationalConstant,
                 xFactor = this.barycenter.xFactor,
@@ -29,19 +37,13 @@ H.networkgraphIntegrations = {
                 }
             });
         },
-        repulsive: function (node, force, distanceXY, distanceR) {
-            node.plotX += distanceR >= this.k ? 0 :
-                distanceXY.x * (this.k - distanceR) /
-                    distanceR * this.diffTemperature / 2;
-            node.plotY += distanceR >= this.k ? 0 :
-                distanceXY.y * (this.k - distanceR) /
-                    distanceR * this.diffTemperature / 2;
+        repulsive: function (node, force, distanceXY) {
+            node.plotX += distanceXY.x * force;
+            node.plotY += distanceXY.y * force;
         },
-        attractive: function (link, force, distanceXY, distanceR) {
-            var factor = (this.k - distanceR) / distanceR * 0.5 *
-                    this.diffTemperature,
-                translatedX = -distanceXY.x * factor,
-                translatedY = -distanceXY.y * factor;
+        attractive: function (link, force, distanceXY) {
+            var translatedX = -distanceXY.x * force,
+                translatedY = -distanceXY.y * force;
 
             if (!link.fromNode.fixedPosition) {
                 link.fromNode.plotX -= translatedX;
@@ -96,6 +98,31 @@ H.networkgraphIntegrations = {
         }
     },
     euler: {
+        attractiveForceFunction: function (d, k) {
+            /*
+            basic, not recommended:
+            return d / k;
+            */
+            return d * d / k;
+        },
+        repulsiveForceFunction: function (d, k) {
+            /*
+            basic, not recommended:
+            return k / d;
+            */
+
+            /*
+            standard:
+            return k * k / d;
+            */
+
+            /*
+            grid-variant:
+            return k * k / d * (2 * k - d > 0 ? 1 : 0);
+            */
+
+            return k * k / d;
+        },
         barycenter: function () {
             var gravitationalConstant = this.options.gravitationalConstant,
                 xFactor = this.barycenter.xFactor,

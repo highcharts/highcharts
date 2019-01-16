@@ -30,6 +30,16 @@ H.layouts = {
         this.setInitialRendering(true);
 
         this.integration = H.networkgraphIntegrations[options.integration];
+
+        this.attractiveForce = pick(
+            options.attractiveForce,
+            this.integration.attractiveForceFunction
+        );
+
+        this.repulsiveForce = pick(
+            options.repulsiveForce,
+            this.integration.repulsiveForceFunction
+        );
     }
 };
 
@@ -354,7 +364,6 @@ H.extend(
         repulsiveForces: function () {
             var layout = this,
                 nodes = layout.nodes,
-                options = layout.options,
                 force,
                 distanceR,
                 distanceXY;
@@ -367,14 +376,11 @@ H.extend(
                         // Not dragged:
                         !node.fixedPosition
                     ) {
-
                         distanceXY = layout.getDistXY(node, repNode);
                         distanceR = layout.vectorLength(distanceXY);
 
                         if (distanceR !== 0) {
-                            force = options.repulsiveForce.call(
-                                layout, distanceR, layout.k
-                            );
+                            force = layout.repulsiveForce(distanceR, layout.k);
 
                             layout.force(
                                 'repulsive',
@@ -391,20 +397,21 @@ H.extend(
         },
         attractiveForces: function () {
             var layout = this,
-                options = layout.options;
+                distanceXY,
+                distanceR,
+                force;
 
             layout.links.forEach(function (link) {
                 if (link.fromNode && link.toNode) {
-                    var distanceXY = layout.getDistXY(
-                            link.fromNode,
-                            link.toNode
-                        ),
-                        distanceR = layout.vectorLength(distanceXY),
-                        force = options.attractiveForce.call(
-                            layout, distanceR, layout.k
-                        );
+                    distanceXY = layout.getDistXY(
+                        link.fromNode,
+                        link.toNode
+                    );
+                    distanceR = layout.vectorLength(distanceXY);
 
                     if (distanceR !== 0) {
+                        force = layout.attractiveForce(distanceR, layout.k);
+
                         layout.force(
                             'attractive',
                             link,
