@@ -2007,7 +2007,12 @@ H.getStyle = function (el, prop, toInt) {
                 Math.min(
                     el.offsetWidth,
                     el.scrollWidth,
-                    el.getBoundingClientRect ?
+                    (
+                        el.getBoundingClientRect &&
+                        // #9871, getBoundingClientRect doesn't handle
+                        // transforms, so avoid that
+                        H.getStyle(el, 'transform', false) === 'none'
+                    ) ?
                         Math.floor(el.getBoundingClientRect().width) : // #6427
                         Infinity
                 ) -

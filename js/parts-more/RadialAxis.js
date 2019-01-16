@@ -513,7 +513,7 @@ if (!H.radialAxisExtended) {
                 ) {
                     return axis.tickPositions
                         .map(function (pos) {
-                            return axis.ticks[pos].label;
+                            return axis.ticks[pos] && axis.ticks[pos].label;
                         })
                         .filter(function (label) {
                             return Boolean(label);

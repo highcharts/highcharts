@@ -1071,6 +1071,8 @@ H.Series = H.seriesType(
          *         Between in a column chart
          * @sample {highcharts|highstock} highcharts/plotoptions/series-pointplacement-numeric/
          *         Numeric placement for custom layout
+         * @sample {highcharts|highstock} maps/plotoptions/heatmap-pointplacement/
+         *         Placement in heatmap
          *
          * @type      {string|number}
          * @since     2.3.0
@@ -3803,6 +3805,8 @@ H.Series = H.seriesType(
                     if (point.dataGroup.options) {
                         point.options = point.dataGroup.options;
                         extend(point, point.dataGroup.options);
+                        // Collision of props and options (#9770)
+                        delete point.dataLabels;
                     }
                 }
                 if (point) { // #6279
@@ -3867,6 +3871,8 @@ H.Series = H.seriesType(
              * @type {Array<Highcharts.Point>}
              */
             series.points = points;
+
+            fireEvent(this, 'afterGeneratePoints');
         },
 
         /**
@@ -3970,10 +3976,8 @@ H.Series = H.seriesType(
                 dataLength = points.length,
                 hasModifyValue = !!series.modifyValue,
                 i,
-                pointPlacement = options.pointPlacement,
-                dynamicallyPlaced =
-                    pointPlacement === 'between' ||
-                    isNumber(pointPlacement),
+                pointPlacement = series.pointPlacementToXValue(), // #7860
+                dynamicallyPlaced = isNumber(pointPlacement),
                 threshold = options.threshold,
                 stackThreshold = options.startFromThreshold ? threshold : 0,
                 plotX,
@@ -3988,14 +3992,6 @@ H.Series = H.seriesType(
             // (#3201, #3923, #7555).
             function limitedRange(val) {
                 return Math.min(Math.max(-1e5, val), 1e5);
-            }
-
-            // Point placement is relative to each series pointRange (#5889)
-            if (pointPlacement === 'between') {
-                pointPlacement = 0.5;
-            }
-            if (isNumber(pointPlacement)) {
-                pointPlacement *= pick(options.pointRange || xAxis.pointRange);
             }
 
             // Translate each point
@@ -5577,8 +5573,30 @@ H.Series = H.seriesType(
             if (this.kdTree) {
                 return _search(point, this.kdTree, kdDimensions, kdDimensions);
             }
-        }
+        },
 
+        /**
+         * @private
+         * @function Highcharts.Series#pointPlacementToXValue
+         *
+         * @return {number}
+         */
+        pointPlacementToXValue: function () {
+
+            var series = this,
+                pointPlacement = series.options.pointPlacement;
+
+            // Point placement is relative to each series pointRange (#5889)
+            if (pointPlacement === 'between') {
+                pointPlacement = 0.5;
+            }
+            if (isNumber(pointPlacement)) {
+                pointPlacement *=
+                    pick(series.options.pointRange || series.xAxis.pointRange);
+            }
+
+            return pointPlacement;
+        }
     }
 ); // end Series prototype
 
