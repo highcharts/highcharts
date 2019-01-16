@@ -21,6 +21,7 @@ var seriesType = H.seriesType,
     extend = H.extend,
     error = H.error,
     noop = H.noop,
+    fireEvent = H.fireEvent,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     isArray = H.isArray,
@@ -1405,7 +1406,11 @@ seriesType(
                 node = series.nodeMap[series.rootNode];
 
             if (node && isString(node.parent)) {
-                series.setRootNode(node.parent);
+                series.setRootNode(
+                    node.parent,
+                    true,
+                    { trigger: 'drillUpButton' }
+                );
             }
         },
         // TODO remove this function at a suitable version.
@@ -1420,24 +1425,66 @@ seriesType(
          * Sets a new root node for the series.
          *
          * @param {string} id The id of the new root node.
-         * @param {boolean} redraw Wether to redraw the chart or not.
+         * @param {boolean} [redraw=true] Wether to redraw the chart or not.
+         * @param {object} [eventArguments] Arguments to be accessed in
+         * event handler.
+         * @param {string} [eventArguments.newRootId] Id of the new root.
+         * @param {string} [eventArguments.previousRootId] Id of the previous
+         * root.
+         * @param {boolean} [eventArguments.redraw] Wether to redraw the
+         * chart after.
+         * @param {object} [eventArguments.series] The series to update the root
+         * of.
+         * @param {string} [eventArguments.trigger] The action which
+         * triggered the event. Undefined if the setRootNode is called
+         * directly.
          */
-        setRootNode: function (id, redraw) {
+        setRootNode: function (id, redraw, eventArguments) {
             var series = this,
-                nodeMap = series.nodeMap,
-                node = nodeMap[id];
+                eventArgs = extend({
+                    newRootId: id,
+                    previousRootId: series.rootNode,
+                    redraw: pick(redraw, true),
+                    series: series
+                }, eventArguments);
 
-            series.idPreviousRoot = series.rootNode;
-            series.rootNode = id;
-            if (id === '') {
-                series.drillUpButton = series.drillUpButton.destroy();
-            } else {
-                series.showDrillUpButton((node && node.name || id));
-            }
-            this.isDirty = true; // Force redraw
-            if (pick(redraw, true)) {
-                this.chart.redraw();
-            }
+            /**
+             * The default functionality of the setRootNode event.
+             * @param {object} args The event arguments.
+             * @param {string} args.newRootId Id of the new root.
+             * @param {string} args.previousRootId Id of the previous root.
+             * @param {boolean} args.redraw Wether to redraw the chart after.
+             * @param {object} args.series The series to update the root of.
+             * @param {string} [args.trigger=undefined] The action which
+             * triggered the event. Undefined if the setRootNode is called
+             * directly.
+             */
+            var defaultFn = function (args) {
+                var series = args.series,
+                    newRootId = args.newRootId,
+                    nodeMap = series.nodeMap,
+                    node = nodeMap[newRootId];
+
+                // Store previous and new root ids on the series.
+                series.idPreviousRoot = args.previousRootId;
+                series.rootNode = newRootId;
+
+                // Remove or update the drill up button.
+                if (newRootId === '') {
+                    series.drillUpButton = series.drillUpButton.destroy();
+                } else {
+                    series.showDrillUpButton((node && node.name || newRootId));
+                }
+
+                // Redraw the chart
+                series.isDirty = true; // Force redraw
+                if (args.redraw) {
+                    series.chart.redraw();
+                }
+            };
+
+            // Fire setRootNode event.
+            fireEvent(series, 'setRootNode', eventArgs, defaultFn);
         },
         showDrillUpButton: function (name) {
             var series = this,
