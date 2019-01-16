@@ -1367,6 +1367,9 @@ H.defaultOptions = {
          * The default series type for the chart. Can be any of the chart types
          * listed under [plotOptions](#plotOptions).
          *
+         * In TypeScript instead the `type` option must always be set in the
+         * series.
+         *
          * @sample {highcharts} highcharts/chart/type-bar/
          *         Bar
          * @sample {highstock} stock/chart/type/

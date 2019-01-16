@@ -515,6 +515,8 @@ H.Series = H.seriesType(
      * chart is a combination of series types, there is no need to set it on the
      * series level.
      *
+     * In TypeScript instead the `type` option must always be set.
+     *
      * @sample {highcharts} highcharts/series/type/
      *         Line and column in the same chart
      * @sample {highmaps} maps/demo/mapline-mappoint/
@@ -5629,6 +5631,8 @@ H.Series = H.seriesType(
 /**
  * A `line` series. If the [type](#series.line.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * In TypeScript instead the `type` option must always be set.
  *
  * @extends   series,plotOptions.line
  * @excluding dataParser,dataURL
