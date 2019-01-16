@@ -15,9 +15,9 @@ QUnit.test('X-Range', function (assert) {
         }
     });
 
-    assert.strictEqual(
-        chart.yAxis[0].max,
-        undefined,
+    assert.notEqual(
+        typeof chart.yAxis[0].max,
+        'number',
         'Axis empty'
     );
 
@@ -191,31 +191,31 @@ QUnit.test('X-range data labels', function (assert) {
             dataLabels: {
                 enabled: true
             },
-            "data": [{
-                "y": 0,
-                "x": 0,
-                "x2": 2,
-                "color": "#8CCAF4",
-                "label": "first",
+            data: [{
+                y: 0,
+                x: 0,
+                x2: 2,
+                color: "#8CCAF4",
+                label: "first",
                 partialFill: 0.28
             }, {
-                "y": 0,
-                "x": 2,
-                "x2": 4,
-                "color": "#F4C986",
-                "label": "second"
+                y: 0,
+                x: 2,
+                x2: 4,
+                color: "#F4C986",
+                label: "second"
             }, {
-                "y": 0,
-                "x": 4,
-                "x2": 5,
-                "color": "#AA45FC",
-                "label": "third"
+                y: 0,
+                x: 4,
+                x2: 5,
+                color: "#AA45FC",
+                label: "third"
             }, {
-                "y": 0,
-                "x": 5,
-                "x2": 7,
-                "color": "#FCC9FF",
-                "label": "fourth"
+                y: 0,
+                x: 5,
+                x2: 7,
+                color: "#FCC9FF",
+                label: "fourth"
             }]
         }]
     });
