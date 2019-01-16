@@ -202,11 +202,27 @@ gulp.task('test', ['styles', 'scripts'], done => {
     };
 
     const checkSamplesConsistency = () => {
-        ['highcharts', 'stock', 'maps', 'gantt'].forEach(product => {
+        const products = [
+            { product: 'highcharts' },
+            { product: 'stock' },
+            { product: 'maps' },
+            { product: 'gantt', ignore: ['logistics'] }
+        ];
+
+        /**
+         * @param {object} product The product information
+         * @param {string} product.product Product folder name.
+         * @param {array} [product.ignore=[]] List of samples that is not listed
+         * in index.htm, that still should exist in the demo folder.
+         */
+        products.forEach(({ product, ignore = [] }) => {
             const index = fs.readFileSync(
                 `./samples/${product}/demo/index.htm`,
                 'utf8'
-            );
+            )
+                // Remove comments from the html in index
+                .replace(/<!--[\s\S]*-->/gm, '');
+
             const regex = /href="examples\/([a-z\-0-9]+)\/index.htm"/g;
             const toc = [];
 
@@ -223,18 +239,12 @@ gulp.task('test', ['styles', 'scripts'], done => {
                 }
             });
 
-            const missingFolders = [];
-            const missingTOC = [];
-            folders.forEach(sample => {
-                if (toc.indexOf(sample) === -1) {
-                    missingTOC.push(sample);
-                }
-            });
-            toc.forEach(sample => {
-                if (folders.indexOf(sample) === -1) {
-                    missingFolders.push(sample);
-                }
-            });
+            const missingTOC = folders.filter(
+                sample => !toc.includes(sample) && !ignore.includes(sample)
+            );
+            const missingFolders = toc.filter(
+                sample => !folders.includes(sample)
+            );
 
             if (missingTOC.length) {
                 console.log(`Found demos that were not added to ./samples/${product}/demo/index.htm`.red);
