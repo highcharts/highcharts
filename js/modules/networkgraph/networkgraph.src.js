@@ -78,7 +78,9 @@ seriesType('networkgraph', 'line', {
          *
          * @apioption   plotOptions.networkgraph.layoutAlgorithm.repulsiveForce
          * @sample      highcharts/series-networkgraph/forces/
-         *              Custom forces
+         *              Custom forces with Euler integration
+         * @sample      highcharts/series-networkgraph/cuboids/
+         *              Custom forces with Verlet integration
          * @type        {Function}
          * @default function (d, k) { return k * k / d; }
          */
@@ -91,7 +93,9 @@ seriesType('networkgraph', 'line', {
          *
          * @apioption   plotOptions.networkgraph.layoutAlgorithm.attractiveForce
          * @sample      highcharts/series-networkgraph/forces/
-         *              Custom forces
+         *              Custom forces with Euler integration
+         * @sample      highcharts/series-networkgraph/cuboids/
+         *              Custom forces with Verlet integration
          * @type        {Function}
          * @default function (d, k) { return k * k / d; }
          */
