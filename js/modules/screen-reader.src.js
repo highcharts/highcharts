@@ -226,39 +226,39 @@ H.setOptions({
             return '<div>' + chart.langFormat(
                 'accessibility.navigationHint', formatContext
             ) + '</div><h3>' +
-                    (
-                        options.title.text ?
-                            htmlencode(options.title.text) :
-                            chart.langFormat(
-                                'accessibility.defaultChartTitle', formatContext
-                            )
+            (
+                options.title.text ?
+                    htmlencode(options.title.text) :
+                    chart.langFormat(
+                        'accessibility.defaultChartTitle', formatContext
+                    )
+            ) +
+            (
+                options.subtitle && options.subtitle.text ?
+                    '. ' + htmlencode(options.subtitle.text) :
+                    ''
+            ) +
+            '</h3>' + (
+                options.chart.description ? (
+                    '<h4>' + chart.langFormat(
+                        'accessibility.longDescriptionHeading',
+                        formatContext
                     ) +
-                    (
-                        options.subtitle && options.subtitle.text ?
-                            '. ' + htmlencode(options.subtitle.text) :
-                            ''
-                    ) +
-                    '</h3><h4>' + chart.langFormat(
-                'accessibility.longDescriptionHeading', formatContext
-            ) + '</h4><div>' +
-                    (
-                        options.chart.description || chart.langFormat(
-                            'accessibility.noDescription', formatContext
-                        )
-                    ) +
-                    '</div><h4>' + chart.langFormat(
+                    '</h4><div>' + options.chart.description + '</div>'
+                ) : ''
+            ) + '<h4>' + chart.langFormat(
                 'accessibility.structureHeading', formatContext
             ) + '</h4><div>' +
-                    (
-                        options.chart.typeDescription ||
-                        chart.getTypeDescription()
-                    ) + '</div>' +
-                    (axesDesc.xAxis ? (
-                        '<div>' + axesDesc.xAxis + '</div>'
-                    ) : '') +
-                    (axesDesc.yAxis ? (
-                        '<div>' + axesDesc.yAxis + '</div>'
-                    ) : '');
+            (
+                options.chart.typeDescription ||
+                chart.getTypeDescription()
+            ) + '</div>' +
+            (axesDesc.xAxis ? (
+                '<div>' + axesDesc.xAxis + '</div>'
+            ) : '') +
+            (axesDesc.yAxis ? (
+                '<div>' + axesDesc.yAxis + '</div>'
+            ) : '');
         }
 
     }
@@ -511,7 +511,8 @@ H.Point.prototype.buildPointInfoString = function () {
     }
 
     return (this.index + 1) + '. ' + infoString + '.' +
-        (this.description ? ' ' + this.description : '');
+        (this.description ? ' ' + this.description : '') +
+        (series.name ? ' ' + series.name : '');
 };
 
 
