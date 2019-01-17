@@ -2,7 +2,7 @@ QUnit.test('Drill to node by click events', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [{
                 type: 'sunburst',
-                allowDrillToNode: true,
+                allowTraversingTree: true,
                 data: [{
                     id: 'level-1'
                 }, {
