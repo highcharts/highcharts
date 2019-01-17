@@ -15,6 +15,97 @@
           </div>
           <div class="changelog-container">
             <p class="release-header" style="position: relative">
+              <a id="highcharts-v7.0.2" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v7.0.2">Highcharts Basic v7.0.2 (2019-01-17)</a>
+            </p>
+            <ul>
+              <li>Added
+                <a href="https://api.highcharts.com/highcharts/plotOptions.scatter.jitter">jitter feature</a> to scatter plots.</li>
+              <li>Added feature to set
+                <a href="https://api.highcharts.com/highcharts/legend.width">legend.width</a> as a percentage, and restrain the default width to 50% for legends at the sides of the chart.</li>
+              <li>Added
+                <a href="https://api.highcharts.com/highcharts/plotOptions.waterfall.stacking">overlap stacking</a> to waterfall charts.</li>
+            </ul>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+
+                <div id="heading-7-0-2-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#7-0-2-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="7-0-2-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/6817">#6817</a>, point click event didn&#39;t fire on the first touch.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/7253">#7253</a>, long legend titles were not wrapped, pushing the legend out of the chart.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/7860">#7860</a>, <code>pointPlacement</code> was not implemented for heatmap.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8160">#8160</a>, treemap data labels overflowed on long words.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9617">#9617</a>, chart update in responsive mode caused some of the responisve options noneffective.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9685">#9685</a>, maximum call stack exceeded in venn diagrams in certain cases.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9694">#9694</a>, tooltip was clipped when using the <code>outside</code> option and different series types.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9709">#9709</a>, missing values when exporting data in venn.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9718">#9718</a> and
+                        <a href="https://github.com/highcharts/highcharts/issues/9768">#9768</a>, incorrect overlap calculations in venn diagrams in some cases.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9728">#9728</a>, incorrect handling of negative Z values in bubble chart styled mode.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9747">#9747</a>, a regression causing upper area range data labels to get stuck after redrawing.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9749">#9749</a>, memory building up and animation deferred on hidden pages.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9758">#9758</a>, no-data module was ignoring boost points.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9761">#9761</a>, X axis labels overlapped on polar chart with dense categories.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9762">#9762</a>, series was referencing public object for <code>userOptions</code> and some updates were working in an unexpected way.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9779">#9779</a>, rendering bug in svg2pdf.js caused filled rectangles in offline-exported PDF.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9794">#9794</a>, wordcloud series didn&#39;t support state options.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9798">#9798</a>, added ability to change options for particular link and improved nodes docs for networkgraph series.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9801">#9801</a>, networkgraph was not compatible with no-data module.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9803">#9803</a>, networkgraph throwing maximum call stack error with cyclical links.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9815">#9815</a>, performance problem with series labels.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9818">#9818</a>, bad rendering of sankey chart with unordered data.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9835">#9835</a>, axis disappeared on rotating labels 180 degrees.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9841">#9841</a>, a regression causing the Y axis to shrink in certain cases when setting <code>xAxis.tickAmount</code>.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9841">#9841</a>, <code>tickAmount</code> axis option wasn&#39;t properly supporting false values for <code>startOnTick</code> and <code>endOnTick</code>.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9849">#9849</a>, improved line height handling with non-pixel font-size units.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9861">#9861</a>, error when updating the X value of data points that had an ID.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9869">#9869</a>, tooltip on xrange series type was having misplaced point anchor due to some xAxis options. Closes
+                        <a href="https://github.com/highcharts/highcharts/issues/9727">#9727</a>.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9871">#9871</a>, a regression causing the chart width to be miscalculated when the container had a transform.</li>
+                      <li>Fixed an issue in series-label placement logic, labels gravitated to the right.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header" style="position: relative">
               <a id="highcharts-v7.0.1" style="position: absolute; top: -60px"></a>
               <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-v7.0.1">Highcharts Basic v7.0.1 (2018-12-19)</a>
             </p>
@@ -62,7 +153,7 @@
                 <a href="https://www.highcharts.com/demo/sonification">sonification</a> to the accessibility features.</li>
               <li>Added TypeScript support (Beta).</li>
               <li>Added
-                <a href="https://api.highcharts.com/highcharts/legend.bubbleLegend">bubble legends</a>, legend items descibinb the scale of the bubbles.</li>
+                <a href="https://api.highcharts.com/highcharts/legend.bubbleLegend">bubble legends</a>, legend items describing the scale of the bubbles.</li>
               <li>Added feature to match points by id when running setData.</li>
               <li>Added new series type
                 <a href="https://www.highcharts.com/demo/network-graph">force directed graph or network graph</a>.</li>
@@ -6508,6 +6599,54 @@
           </div>
           <div class="changelog-container">
             <p class="release-header" style="position: relative">
+              <a id="highstock-v7.0.2" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highstock-v7.0.2">Highstock v7.0.2 (2019-01-17)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.0.2 above also apply to Highstock 7.0.2.</li>
+            </ul>
+            <div id="accordion" class="panel-group">
+              <div class="panel panel-default">
+
+                <div id="hs-heading-7-0-2-bug-fixes" class="panel-heading">
+                  <h4 class="panel-title">
+                    <a href="#hs-7-0-2-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hs-7-0-2-bug-fixes" class="panel-collapse collapse">
+                  <div class="panel-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/6989">#6989</a>, require data to be sorted for <code>dataGrouping</code> instead of for all series in a Highstock chart.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/7083">#7083</a>, improved pane clipping for column type series.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9235">#9235</a>, option <code>Axis.scrollbar.liveRedraw</code> did not block events and redraw.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9693">#9693</a>, added default <code>groupPixelWidth</code> when <code>dataGrouping</code> options were set to all series through <code>plotOptions.series</code>.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9724">#9724</a>, wrong position of range selector on init when all series were hidden.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9740">#9740</a>, calling <code>chart.update()</code> removed all stockTools bindings.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9767">#9767</a>, annotations&#39; dynamic updates (update, remove, resize, drag and drop) were not applied in the exported chart.</li>
+                      <li>Fixed positioning of flags when attached to a yAxis with pane information.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/8544">#8544</a>, series keys were not applied with <code>turboThreshold</code> and <code>dataGrouping</code>.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9787">#9787</a>, set supertrend <code>cropThreshold</code> equal to main series one on init.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9847">#9847</a>, stocktools gui and popup did not support touch events.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9854">#9854</a>, correct <code>compareValue</code> for OHLC series.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header" style="position: relative">
               <a id="highstock-v7.0.1" style="position: absolute; top: -60px"></a>
               <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highstock-v7.0.1">Highstock v7.0.1 (2018-12-19)</a>
             </p>
@@ -9392,6 +9531,13 @@
           </div>
           <div class="changelog-container">
             <p class="release-header" style="position: relative">
+              <a id="highmaps-v7.0.2" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highmaps-v7.0.2">Highmaps v7.0.2 (2019-01-17)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.0.2 above also apply to Highmaps 7.0.2.</li>
+            </ul>
+            <p class="release-header" style="position: relative">
               <a id="highmaps-v7.0.1" style="position: absolute; top: -60px"></a>
               <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highmaps-v7.0.1">Highmaps v7.0.1 (2018-12-19)</a>
             </p>
@@ -10377,6 +10523,13 @@
             <h2 id="highcharts-gantt">Highcharts Gantt</h2>
           </div>
           <div class="changelog-container">
+            <p class="release-header" style="position: relative">
+              <a id="highcharts-gantt-v7.0.2" style="position: absolute; top: -60px"></a>
+              <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-gantt-v7.0.2">Highcharts Gantt v7.0.2 (2019-01-17)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.0.2 above also apply to Highcharts Gantt 7.0.2.</li>
+            </ul>
             <p class="release-header" style="position: relative">
               <a id="highcharts-gantt-v7.0.1" style="position: absolute; top: -60px"></a>
               <a style="color: inherit; font-size: inherit; font-weight: inherit" href="#highcharts-gantt-v7.0.1">Highcharts Gantt v7.0.1 (2018-12-19)</a>

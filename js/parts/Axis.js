@@ -4197,7 +4197,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // series' pointPlacement is 'on', no padding is added.
                         pointRangePadding = Math.max(
                             pointRangePadding,
-                            isXAxis &&  pointPlacement === 'on' ?
+                            isXAxis && pointPlacement === 'on' ?
                                 0 : seriesPointRange
                         );
                     }

@@ -1578,7 +1578,6 @@ gulp.task('default', () => {
  * Create distribution files
  */
 gulp.task('dist', () => Promise.resolve()
-    .then(gulpify('update', () => commandLine('npm i --no-save')))
     .then(gulpify('cleanCode', cleanCode))
     .then(gulpify('styles', styles))
     .then(gulpify('scripts', getBuildScripts({}).fnFirstBuild))
