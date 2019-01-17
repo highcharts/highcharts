@@ -544,6 +544,15 @@ H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
         browserFocusElement.element &&
         browserFocusElement.element.focus
     ) {
+        // If there is no focusin-listener, add one to work around Edge issue
+        // where Narrator is not reading out points despite calling focus().
+        if (!(
+            browserFocusElement.element.hcEvents &&
+            browserFocusElement.element.hcEvents.focusin
+        )) {
+            addEvent(browserFocusElement.element, 'focusin', function () {});
+        }
+
         browserFocusElement.element.focus();
         // Hide default focus ring
         if (focusBorderOptions.hideBrowserFocusOutline) {

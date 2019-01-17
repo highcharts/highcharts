@@ -881,6 +881,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
         el.setAttribute('aria-hidden', 'true');
     });
 
+    // Hide desc element
+    descElement.setAttribute('aria-hidden', 'true');
+
     // Add top-secret screen reader region
     chart.addScreenReaderRegion(hiddenSectionId, tableId);
 
