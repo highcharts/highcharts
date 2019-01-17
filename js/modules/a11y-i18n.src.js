@@ -297,24 +297,26 @@ H.Chart.prototype.langFormat = function (langKey, context, time) {
 H.setOptions({
     lang: {
 
+        /* eslint-disable max-len */
         /**
-     * Configure the accessibility strings in the chart. Requires the
-     * [accessibility module](//code.highcharts.com/modules/accessibility.js)
-     * to be loaded. For a description of the module and information on its
-     * features, see [Highcharts Accessibility](
-     * http://www.highcharts.com/docs/chart-concepts/accessibility).
-     *
-     * For more dynamic control over the accessibility functionality, see
-     * [accessibility.pointDescriptionFormatter](
-     * accessibility.pointDescriptionFormatter),
-     * [accessibility.seriesDescriptionFormatter](
-     * accessibility.seriesDescriptionFormatter), and
-     * [accessibility.screenReaderSectionFormatter](
-     * accessibility.screenReaderSectionFormatter).
-     *
-     * @since        6.0.6
-     * @optionparent lang.accessibility
-     */
+         * Configure the accessibility strings in the chart. Requires the
+         * [accessibility module](//code.highcharts.com/modules/accessibility.js)
+         * to be loaded. For a description of the module and information on its
+         * features, see [Highcharts Accessibility](
+         * http://www.highcharts.com/docs/chart-concepts/accessibility).
+         *
+         * For more dynamic control over the accessibility functionality, see
+         * [accessibility.pointDescriptionFormatter](
+         * accessibility.pointDescriptionFormatter),
+         * [accessibility.seriesDescriptionFormatter](
+         * accessibility.seriesDescriptionFormatter), and
+         * [accessibility.screenReaderSectionFormatter](
+         * accessibility.screenReaderSectionFormatter).
+         *
+         * @since        6.0.6
+         * @optionparent lang.accessibility
+         */
+        /* eslint-enable max-len */
         accessibility: {
 
             /* eslint-disable max-len */
@@ -333,26 +335,26 @@ H.setOptions({
             mapZoomIn: 'Zoom chart',
             mapZoomOut: 'Zoom out chart',
             rangeSelectorButton: 'Select range {buttonText}',
-            legendItem: 'Toggle visibility of series {itemName}',
+            legendLabel: 'Toggle series visibility',
             /* eslint-enable max-len */
 
             /**
-         * Title element text for the chart SVG element. Leave this
-         * empty to disable adding the title element. Browsers will display
-         * this content when hovering over elements in the chart. Assistive
-         * technology may use this element to label the chart.
-         *
-         * @since 6.0.8
-         */
+             * Title element text for the chart SVG element. Leave this
+             * empty to disable adding the title element. Browsers will display
+             * this content when hovering over elements in the chart. Assistive
+             * technology may use this element to label the chart.
+             *
+             * @since 6.0.8
+             */
             svgContainerTitle: '{chartTitle}',
 
             /**
-         * Descriptions of lesser known series types. The relevant
-         * description is added to the screen reader information region
-         * when these series types are used.
-         *
-         * @since 6.0.6
-         */
+             * Descriptions of lesser known series types. The relevant
+             * description is added to the screen reader information region
+             * when these series types are used.
+             *
+             * @since 6.0.6
+             */
             seriesTypeDescriptions: {
                 boxplot: 'Box plot charts are typically used to display ' +
                 'groups of statistical data. Each data point in the ' +
@@ -378,17 +380,17 @@ H.setOptions({
             },
 
             /**
-         * Chart type description strings. This is added to the chart
-         * information region.
-         *
-         * If there is only a single series type used in the chart, we use
-         * the format string for the series type, or default if missing.
-         * There is one format string for cases where there is only a single
-         * series in the chart, and one for multiple series of the same
-         * type.
-         *
-         * @since 6.0.6
-         */
+             * Chart type description strings. This is added to the chart
+             * information region.
+             *
+             * If there is only a single series type used in the chart, we use
+             * the format string for the series type, or default if missing.
+             * There is one format string for cases where there is only a single
+             * series in the chart, and one for multiple series of the same
+             * type.
+             *
+             * @since 6.0.6
+             */
             chartTypes: {
             /* eslint-disable max-len */
                 emptyChart: 'Empty chart',
@@ -416,10 +418,10 @@ H.setOptions({
             }, /* eslint-enable max-len */
 
             /**
-         * Axis description format strings.
-         *
-         * @since 6.0.6
-         */
+             * Axis description format strings.
+             *
+             * @since 6.0.6
+             */
             axis: {
             /* eslint-disable max-len */
                 xAxisDescriptionSingular: 'The chart has 1 X axis displaying {names[0]}.',
@@ -429,10 +431,10 @@ H.setOptions({
             }, /* eslint-enable max-len */
 
             /**
-         * Exporting menu format strings for accessibility module.
-         *
-         * @since 6.0.6
-         */
+             * Exporting menu format strings for accessibility module.
+             *
+             * @since 6.0.6
+             */
             exporting: {
                 chartMenuLabel: 'Chart export',
                 menuButtonLabel: 'View export menu',
@@ -440,13 +442,13 @@ H.setOptions({
             },
 
             /**
-         * Lang configuration for different series types. For more dynamic
-         * control over the series element descriptions, see
-         * [accessibility.seriesDescriptionFormatter](
-         * accessibility.seriesDescriptionFormatter).
-         *
-         * @since 6.0.6
-         */
+             * Lang configuration for different series types. For more dynamic
+             * control over the series element descriptions, see
+             * [accessibility.seriesDescriptionFormatter](
+             * accessibility.seriesDescriptionFormatter).
+             *
+             * @since 6.0.6
+             */
             series: {
             /**
              * Lang configuration for the series main summary. Each series
@@ -491,27 +493,27 @@ H.setOptions({
                 }, /* eslint-enable max-len */
 
                 /**
-             * User supplied description text. This is added after the main
-             * summary if present.
-             *
-             * @since 6.0.6
-             */
+                 * User supplied description text. This is added after the main
+                 * summary if present.
+                 *
+                 * @since 6.0.6
+                 */
                 description: '{description}',
 
                 /**
-             * xAxis description for series if there are multiple xAxes in
-             * the chart.
-             *
-             * @since 6.0.6
-             */
+                 * xAxis description for series if there are multiple xAxes in
+                 * the chart.
+                 *
+                 * @since 6.0.6
+                 */
                 xAxisDescription: 'X axis, {name}',
 
                 /**
-             * yAxis description for series if there are multiple yAxes in
-             * the chart.
-             *
-             * @since 6.0.6
-             */
+                 * yAxis description for series if there are multiple yAxes in
+                 * the chart.
+                 *
+                 * @since 6.0.6
+                 */
                 yAxisDescription: 'Y axis, {name}'
 
             }
