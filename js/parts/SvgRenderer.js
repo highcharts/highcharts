@@ -4610,7 +4610,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var lineHeight,
             baseline;
 
-        if (this.styledMode || !/px/.test(fontSize)) {
+        if (
+            (this.styledMode || !/px/.test(fontSize)) &&
+            win.getComputedStyle // old IE doesn't support it
+        ) {
             fontSize = elem && SVGElement.prototype.getStyle.call(
                 elem,
                 'font-size'
