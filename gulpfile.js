@@ -53,6 +53,25 @@ const buildESModules = () => {
 const sass = require('node-sass');
 const sassRender = promisify(sass.render);
 
+/**
+ * Executes a single terminal command and returns when finished.
+ * Outputs stdout to the console.
+ * @param {string} command Command to execute in terminal
+ * @return {string} Returns all output to the terminal in the form of a string.
+ */
+const commandLine = command => new Promise((resolve, reject) => {
+    const cli = exec(command, (error, stdout) => {
+        if (error) {
+            console.log(error);
+            reject(error);
+        } else {
+            console.log('Command finished: ' + command);
+            resolve(stdout);
+        }
+    });
+    cli.stdout.on('data', data => console.log(data.toString()));
+});
+
 const compileSingleStyle = fileName => {
     const input = './css/' + fileName;
     const output = './code/css/' + fileName.replace('.scss', '.css');
@@ -65,7 +84,32 @@ const compileSingleStyle = fileName => {
         .then(result => writeFilePromise(output, result.css));
 };
 
-const styles = () => {
+/**
+ * Left pad a string
+ * @param  {string} str    The string we want to pad.
+ * @param  {string} char   The character we want it to be padded with.
+ * @param  {number} length The length of the resulting string.
+ * @return {string}        The string with padding on left.
+ */
+const leftPad = (str, char, length) => char.repeat(length - str.length) + str;
+
+/**
+ * Returns time of date as a string in the format of HH:MM:SS
+ * @param  {Date} d The date object we want to get the time from
+ * @return {string}   The string represantation of the Date object.
+ */
+const toTimeString = d => {
+    const pad = s => leftPad(s, '0', 2);
+    return pad('' + d.getHours()) + ':' + pad('' + d.getMinutes()) + ':' + pad('' + d.getSeconds());
+};
+
+/**
+ * Creates CSS files
+ *
+ * @return {Promise}
+ *         Promise to keep
+ */
+function styles() {
     const promisesCopyGfx = getFilesInFolder('./gfx', true)
         .map(path => copyFile(join('./gfx', path), join('./code/gfx', path)));
     const promisesCompileStyles = getFilesInFolder('./css', true)
@@ -74,7 +118,136 @@ const styles = () => {
     return Promise.all(promises).then(() => {
         console.log('Built CSS files from SASS.'.cyan);
     });
-};
+}
+gulp.task('styles', styles);
+
+/**
+ * @private
+ * Tests whether the code is in sync with source.
+ *
+ * @return {boolean}
+ *         True, if code is out of sync.
+ */
+function shouldBuild() {
+    const getModifiedTime = fsPattern => {
+        let modifyTime = 0;
+        glob.sync(fsPattern)
+            .forEach(file => {
+                modifyTime = Math.max(modifyTime, fs.statSync(file).mtimeMs);
+            });
+        return modifyTime;
+    };
+    const buildPath = join(__dirname, 'code', '**', '*.js');
+    const sourcePath = join(__dirname, 'js', '**', '*.js');
+    const latestBuildTime = getModifiedTime(buildPath);
+    const latestSourceTime = getModifiedTime(sourcePath);
+    return (latestBuildTime <= latestSourceTime);
+}
+
+/**
+ * Updates node packages.
+ *
+ * @return {Promise}
+ *         Promise to keep.
+ */
+function update() {
+
+    const configurationPath = join('node_modules', '_update.json');
+    const now = (new Date()).getTime();
+
+    let configuration = {
+        checkFrequency: 'weekly',
+        lastCheck: 0
+    };
+
+    if (fs.existsSync(configurationPath)) {
+        configuration = JSON.parse(fs.readFileSync(configurationPath));
+    }
+
+    let minimumTime = now;
+
+    switch (configuration.checkFrequency) {
+        default:
+        case 'weekly':
+            minimumTime -= Date.UTC(1970, 0, 8);
+            break;
+        case 'monthly':
+            minimumTime -= Date.UTC(1970, 0, 29);
+            break;
+        case 'daily':
+            minimumTime -= Date.UTC(1970, 0, 2);
+            break;
+        case 'hourly':
+            minimumTime -= Date.UTC(1970, 0, 1, 1);
+            break;
+    }
+
+    if (configuration.lastCheck <= minimumTime) {
+
+        configuration.lastCheck = now;
+
+        fs.writeFileSync(configurationPath, JSON.stringify(configuration));
+
+        console.log(
+            '[' + colors.gray(toTimeString(new Date())) + ']',
+            'Updating packages...'
+        );
+
+        return commandLine('npm i');
+    }
+
+    return Promise.resolve();
+}
+gulp.task('update', update);
+
+/**
+ * Gulp task to run the building process of distribution files. By default it
+ * builds all the distribution files. Usage: "gulp build".
+ *
+ * - `--file` Optional command line argument. Use to build a one or sevral
+ *   files. Usage: "gulp build --file highcharts.js,modules/data.src.js"
+ *
+ * - `--force` Optional CLI argument to force a rebuild of scripts.
+ *
+ * @todo add --help command to inform about usage.
+ *
+ * @return {Promise}
+ */
+gulp.task('scripts', gulp.series(gulp.parallel('update'), () => {
+    const options = {
+        debug: argv.d || false,
+        files: (
+            (argv.file) ?
+                argv.file.split(',') :
+                null
+        ),
+        type: (argv.type) ? argv.type : null,
+        watch: argv.watch || false
+    };
+    const {
+        fnFirstBuild,
+        mapOfWatchFn
+    } = getBuildScripts(options);
+    if (shouldBuild() ||
+        (argv.force && !argv.watch) ||
+        process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS
+    ) {
+        process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS = true;
+        fnFirstBuild();
+        delete process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS;
+        console.log('Built JS files from modules.'.cyan);
+    } else {
+        console.log('✓'.green, 'Code up to date.'.gray);
+    }
+    if (options.watch) {
+        Object.keys(mapOfWatchFn).forEach(key => {
+            const fn = mapOfWatchFn[key];
+            gulp.watch(key, fn);
+        });
+    }
+
+    return Promise.resolve();
+}));
 
 /**
  * Gulp task to execute ESLint. Pattern defaults to './js/**".'
@@ -119,7 +292,7 @@ const lintSamples = () => {
 /**
  * Run the test suite.
  */
-gulp.task('test', ['styles', 'scripts'], done => {
+gulp.task('test', gulp.series(gulp.parallel('styles', 'scripts'), done => {
 
     const lastRunFile = __dirname + '/test/last-run.json';
 
@@ -340,7 +513,7 @@ Available arguments for 'gulp test':
         console.log('Run ' + 'gulp test --help'.cyan + ' for available options');
 
         const Server = require('karma').Server;
-        const gutils = require('gulp-util');
+        const PluginError = require('plugin-error');
         new Server({
             configFile: __dirname + '/test/karma-conf.js',
             singleRun: true
@@ -357,7 +530,7 @@ Available arguments for 'gulp test':
                     );
                 }
             } else {
-                done(new gutils.PluginError('karma', {
+                done(new PluginError('karma', {
                     message: 'Tests failed'
                 }));
             }
@@ -365,7 +538,7 @@ Available arguments for 'gulp test':
     } else {
         done();
     }
-});
+}));
 
 /**
  * Run the nightly. The task spawns a child process running node.
@@ -528,6 +701,7 @@ const cleanApi = () => removeDirectory('./build/api')
     .then(() => {
         console.log('Successfully removed api directory.');
     });
+gulp.task('clean-api', cleanApi);
 
 const copyToDist = () => {
     const sourceFolder = 'code/';
@@ -685,25 +859,6 @@ const createProductJS = () => {
 };
 
 /**
- * Left pad a string
- * @param  {string} str    The string we want to pad.
- * @param  {string} char   The character we want it to be padded with.
- * @param  {number} length The length of the resulting string.
- * @return {string}        The string with padding on left.
- */
-const leftPad = (str, char, length) => char.repeat(length - str.length) + str;
-
-/**
- * Returns time of date as a string in the format of HH:MM:SS
- * @param  {Date} d The date object we want to get the time from
- * @return {string}   The string represantation of the Date object.
- */
-const toTimeString = d => {
-    const pad = s => leftPad(s, '0', 2);
-    return pad('' + d.getHours()) + ':' + pad('' + d.getMinutes()) + ':' + pad('' + d.getSeconds());
-};
-
-/**
  * Returns a string which tells the time difference between to dates.
  * Difference is formatted as xh xm xs xms. Where x is a number.
  * @param  {Date} d1 First date
@@ -764,25 +919,6 @@ const gulpify = (name, task) => {
         });
     };
 };
-
-/**
- * Executes a single terminal command and returns when finished.
- * Outputs stdout to the console.
- * @param {string} command Command to execute in terminal
- * @return {string} Returns all output to the terminal in the form of a string.
- */
-const commandLine = command => new Promise((resolve, reject) => {
-    const cli = exec(command, (error, stdout) => {
-        if (error) {
-            console.log(error);
-            reject(error);
-        } else {
-            console.log('Command finished: ' + command);
-            resolve(stdout);
-        }
-    });
-    cli.stdout.on('data', data => console.log(data.toString()));
-});
 
 const filesize = () => {
     const sourceFolder = './code/';
@@ -1123,6 +1259,7 @@ const uploadAPIDocs = () => {
             }
         });
 };
+gulp.task('upload-api', uploadAPIDocs);
 
 const startServer = () => {
     // Start a server serving up the api reference
@@ -1212,48 +1349,7 @@ const startServer = () => {
         ('http://localhost:' + docport).cyan
     );
 };
-
-let apiServerRunning = false;
-
-/**
- * Create Highcharts API and class references from JSDOC
- */
-const jsdoc = () => {
-    const optionsClassReference = {
-        templateDir: './node_modules/highcharts-docstrap',
-        destination: './build/api/class-reference/'
-    };
-    const optionsAPI = {
-        version: getBuildProperties().version,
-        treeFile: './tree.json',
-        output: './build/api',
-        onlyBuildCurrent: true
-    };
-    const dir = optionsClassReference.templateDir;
-    const watchFiles = [
-        './js/!(adapters|builds)/*.js',
-        './node_modules/highcharts-api-docs/include/*.*',
-        './node_modules/highcharts-api-docs/templates/*.handlebars',
-        dir + '/template/tmpl/*.tmpl',
-        dir + '/template/static/styles/*.css',
-        dir + '/template/static/scripts/*.js'
-    ];
-    if (argv.watch) {
-        gulp.watch(watchFiles, ['jsdoc']);
-        console.log('Watching file changes in JS files and templates');
-
-    } else {
-        console.log('Tip: use the --watch argument to watch JS file changes');
-    }
-
-    if (!apiServerRunning) {
-        startServer();
-        apiServerRunning = true;
-    }
-
-    return generateClassReferences(optionsClassReference)
-        .then(() => generateAPIDocs(optionsAPI));
-};
+gulp.task('start-api-server', startServer);
 
 /**
  * Creates additional JSON-based class references with JSDoc using
@@ -1267,8 +1363,8 @@ const jsdocNamespace = () => {
         .parse(fs.readFileSync('tsconfig.json')).files
         .filter(file => (
             file.indexOf('test') !== 0 &&
-            !file.indexOf('global.d.ts') >= 0 &&
-            !file.indexOf('.src.d.ts') >= 0
+            file.indexOf('global.d.ts') === -1 &&
+            file.indexOf('.src.d.ts') === -1
         ))
         .map(file => file.replace(/.d.ts$/, '.src.js'));
 
@@ -1309,6 +1405,7 @@ const jsdocNamespace = () => {
 
     return new Promise(aGulp);
 };
+gulp.task('jsdoc-namespace', gulp.series(gulp.parallel('scripts'), jsdocNamespace));
 
 /**
  * Creates JSON-based option references from JSDoc.
@@ -1319,19 +1416,55 @@ const jsdocOptions = () => generateAPIDocs({
     output: './build/api',
     onlyBuildCurrent: true
 });
+gulp.task('jsdoc-options', jsdocOptions);
 
-gulp.task('start-api-server', startServer);
-gulp.task('upload-api', uploadAPIDocs);
+let apiServerRunning = false;
+/**
+ * Create Highcharts API and class references from JSDOC
+ */
+const jsdoc = () => {
+    const optionsClassReference = {
+        templateDir: './node_modules/highcharts-docstrap',
+        destination: './build/api/class-reference/'
+    };
+    const optionsAPI = {
+        version: getBuildProperties().version,
+        treeFile: './tree.json',
+        output: './build/api',
+        onlyBuildCurrent: true
+    };
+    const dir = optionsClassReference.templateDir;
+    const watchFiles = [
+        './js/!(adapters|builds)/*.js',
+        './node_modules/highcharts-api-docs/include/*.*',
+        './node_modules/highcharts-api-docs/templates/*.handlebars',
+        dir + '/template/tmpl/*.tmpl',
+        dir + '/template/static/styles/*.css',
+        dir + '/template/static/scripts/*.js'
+    ];
+    if (argv.watch) {
+        gulp.watch(watchFiles, ['jsdoc']);
+        console.log('Watching file changes in JS files and templates');
+
+    } else {
+        console.log('Tip: use the --watch argument to watch JS file changes');
+    }
+
+    if (!apiServerRunning) {
+        startServer();
+        apiServerRunning = true;
+    }
+
+    return generateClassReferences(optionsClassReference)
+        .then(() => generateAPIDocs(optionsAPI));
+};
+gulp.task('jsdoc', gulp.series(gulp.parallel('clean-api', 'jsdoc-namespace'), jsdoc));
+
 gulp.task('create-productjs', createProductJS);
-gulp.task('clean-api', cleanApi);
 gulp.task('clean-dist', cleanDist);
 gulp.task('clean-code', cleanCode);
 gulp.task('copy-to-dist', copyToDist);
 gulp.task('filesize', filesize);
-gulp.task('jsdoc', ['clean-api', 'jsdoc-namespace'], jsdoc);
-gulp.task('styles', styles);
-gulp.task('jsdoc-namespace', ['scripts'], jsdocNamespace);
-gulp.task('jsdoc-options', jsdocOptions);
 
 /* *
  *
@@ -1346,6 +1479,7 @@ gulp.task('jsdoc-options', jsdocOptions);
 function dts() {
     return require('../highcharts-declarations-generator').task();
 }
+gulp.task('dts', gulp.series(gulp.parallel('jsdoc-options', 'jsdoc-namespace'), dts));
 
 /**
  * Test TypeScript declarations in the code folder using tsconfig.json.
@@ -1353,146 +1487,11 @@ function dts() {
 function dtsLint() {
     return commandLine('npx dtslint --onlyTestTsNext');
 }
+gulp.task('dtslint', gulp.series(gulp.parallel('update', 'dts'), dtsLint));
 
-gulp.task('dts', ['jsdoc-options', 'jsdoc-namespace'], dts);
-gulp.task('dtslint', ['update', 'dts'], dtsLint);
-
-/**
- * Updates node packages.
- */
-function update() {
-
-    const dependencies = (
-        require(join(__dirname, 'package.json')).devDependencies || {}
-    );
-
-    const githubKeys = Object
-        .keys(dependencies)
-        .filter(key => dependencies[key].indexOf('github:') === 0);
-    const latestKeys = Object
-        .keys(dependencies)
-        .filter(key => dependencies[key] === 'latest');
-
-    return new Promise((resolve, reject) => {
-
-        console.log(
-            '[' + colors.gray(toTimeString(new Date())) + ']',
-            'Searching for outdated packages...'
-        );
-
-        exec('npm outdated --json', (error, stdout) => {
-            try {
-
-                const json = JSON.parse(stdout);
-                const outdatedKeys = Object
-                    .keys(json)
-                    .filter(key => latestKeys.indexOf(key) > -1);
-
-                if (outdatedKeys.length === 0) {
-                    resolve();
-                    return;
-                }
-
-                Promise
-                    .resolve()
-                    .then(() => {
-                        console.log(
-                            '[' + colors.gray(toTimeString(new Date())) + ']',
-                            'Updating outdated packages:',
-                            outdatedKeys.join(' ')
-                        );
-                        return commandLine(
-                            'npm i ' + outdatedKeys.join(' ') + ' --no-save'
-                        );
-                    })
-                    .then(() => {
-                        console.info(
-                            '[' + colors.gray(toTimeString(new Date())) + ']',
-                            'Updating github-hosted packages:',
-                            githubKeys.join(' ')
-                        );
-                        return commandLine(
-                            'npm i ' + githubKeys.join(' ') + ' --no-save'
-                        );
-                    })
-                    .then(resolve)
-                    .catch(reject);
-
-            } catch (e) {
-                reject(e);
-            }
-        });
-    });
-}
-
-gulp.task('update', update);
-
-/**
- * Tests whether the code is in sync with source.
- *
- * @return {boolean}
- *         True, if code is out of sync.
- */
-function shouldBuild() {
-    const getModifiedTime = fsPattern => {
-        let modifyTime = 0;
-        glob.sync(fsPattern)
-            .forEach(file => {
-                modifyTime = Math.max(modifyTime, fs.statSync(file).mtimeMs);
-            });
-        return modifyTime;
-    };
-    const buildPath = join(__dirname, 'code', '**', '*.js');
-    const sourcePath = join(__dirname, 'js', '**', '*.js');
-    const latestBuildTime = getModifiedTime(buildPath);
-    const latestSourceTime = getModifiedTime(sourcePath);
-    return (latestBuildTime <= latestSourceTime);
-}
-
-/**
- * Gulp task to run the building process of distribution files. By default it
- * builds all the distribution files. Usage: "gulp build".
- * @param {string} --file Optional command line argument. Use to build a one
- * or sevral files. Usage: "gulp build --file highcharts.js,modules/data.src.js"
- * TODO add --help command to inform about usage.
- * @return undefined
- */
-gulp.task('scripts', ['update'], () => {
-    const options = {
-        debug: argv.d || false,
-        files: (
-            (argv.file) ?
-                argv.file.split(',') :
-                null
-        ),
-        type: (argv.type) ? argv.type : null,
-        watch: argv.watch || false
-    };
-    const {
-        fnFirstBuild,
-        mapOfWatchFn
-    } = getBuildScripts(options);
-    if (shouldBuild() ||
-        (argv.force && !argv.watch) ||
-        process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS
-    ) {
-        process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS = true;
-        fnFirstBuild();
-        delete process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS;
-        console.log('Built JS files from modules.'.cyan);
-    } else {
-        console.log('✓'.green, 'Code up to date.'.gray);
-    }
-    if (options.watch) {
-        Object.keys(mapOfWatchFn).forEach(key => {
-            const fn = mapOfWatchFn[key];
-            gulp.watch(key, fn);
-        });
-    }
-});
 gulp.task('build-modules', buildESModules);
-gulp.task('lint', ['update'], lint);
-gulp.task('lint-samples', ['update'], lintSamples);
+gulp.task('lint', gulp.series(gulp.parallel('update'), lint));
+gulp.task('lint-samples', gulp.series(gulp.parallel('update'), lintSamples));
 gulp.task('compile', () => {
     const messages = {
         usage: 'Run "gulp compile --help" for information on usage.',
@@ -1537,8 +1536,7 @@ gulp.task('default', () => {
     ];
     const msgBuildAll = 'Built JS files from modules.'.cyan;
     let watcher;
-    const onChange = event => {
-        const path = relative('.', event.path).split(sep).join('/');
+    const onChange = path => {
         if (path.startsWith('css')) {
             // Stop the watcher temporarily.
             watcher.end();
@@ -1556,10 +1554,10 @@ gulp.task('default', () => {
             });
         } else if (path.startsWith('js')) {
             // Build es-modules
-            mapOfWatchFn['js/**/*.js'](event);
+            mapOfWatchFn['js/**/*.js']({ path, type: 'change' });
         } else if (path.startsWith('code/es-modules')) {
             // Build dist files in classic mode.
-            mapOfWatchFn['code/es-modules/**/*.js'](event);
+            mapOfWatchFn['code/es-modules/**/*.js']({ path, type: 'change' });
         }
     };
     return styles().then(() => {
@@ -1570,7 +1568,8 @@ gulp.task('default', () => {
             console.log('✓'.green, 'Code up to date.'.gray);
         }
         // Start watching source files.
-        watcher = gulp.watch(watchlist, onChange);
+        watcher = gulp.watch(watchlist);
+        watcher.on('change', onChange);
     });
 });
 
@@ -1619,4 +1618,4 @@ gulp.task('webpack', function () {
     });
 });
 
-gulp.task('common', ['scripts', 'browserify', 'webpack']);
+gulp.task('common', gulp.series('scripts', 'browserify', 'webpack'));
