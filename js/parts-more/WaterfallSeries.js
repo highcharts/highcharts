@@ -445,7 +445,8 @@ seriesType('waterfall', 'column', {
         var data = this.data,
             yAxis = this.yAxis,
             length = data.length,
-            normalizer = Math.round(this.graph.strokeWidth()) % 2 / 2,
+            graphNormalizer = Math.round(this.graph.strokeWidth()) % 2 / 2,
+            borderNormalizer = Math.round(this.borderWidth) % 2 / 2,
             reversedXAxis = this.xAxis.reversed,
             reversedYAxis = this.yAxis.reversed,
             stacking = this.options.stacking,
@@ -480,9 +481,10 @@ seriesType('waterfall', 'column', {
                     yPos = Math.round(
                         (yAxis.translate(connectorThreshold, 0, 1, 0, 1) +
                         (reversedYAxis ? isPos : 0))
-                    ) - normalizer;
+                    ) - graphNormalizer;
                 } else {
-                    yPos = prevArgs.y + prevPoint.minPointLengthOffset;
+                    yPos = prevArgs.y + prevPoint.minPointLengthOffset +
+                        borderNormalizer - graphNormalizer;
                 }
 
                 d = [
