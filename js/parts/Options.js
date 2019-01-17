@@ -28,15 +28,15 @@
  * @type {Highcharts.SeriesOptionsType}
  *//**
  * Prevents the default behaviour of the event.
- * @name Highcharts.DrilldownEventObject#preventDefault
+ * @name Highcharts.ChartAddSeriesEventObject#preventDefault
  * @type {Function}
  *//**
  * The event target.
- * @name Highcharts.DrilldownEventObject#target
+ * @name Highcharts.ChartAddSeriesEventObject#target
  * @type {Highcharts.Chart}
  *//**
  * The event type.
- * @name Highcharts.DrilldownEventObject#type
+ * @name Highcharts.ChartAddSeriesEventObject#type
  * @type {"drilldown"}
  */
 
@@ -1366,6 +1366,9 @@ H.defaultOptions = {
         /**
          * The default series type for the chart. Can be any of the chart types
          * listed under [plotOptions](#plotOptions).
+         *
+         * In TypeScript instead the `type` option must always be set in the
+         * series.
          *
          * @sample {highcharts} highcharts/chart/type-bar/
          *         Bar

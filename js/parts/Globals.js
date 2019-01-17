@@ -1,9 +1,11 @@
-/**
- * (c) 2010-2019 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
- */
-
+ *  (c) 2010-2018 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+/* eslint-disable */
 /**
  * Reference to the global SVGElement class as a workaround for a name conflict
  * in the Highcharts namespace.
@@ -13,52 +15,39 @@
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
  */
-
 'use strict';
-
-/* global win, window */
-
-// glob is a temporary fix to allow our es-modules to work.
-var glob = typeof win === 'undefined' ? window : win,
-    doc = glob.document,
-    SVG_NS = 'http://www.w3.org/2000/svg',
-    userAgent = (glob.navigator && glob.navigator.userAgent) || '',
-    svg = (
-        doc &&
-        doc.createElementNS &&
-        !!doc.createElementNS(SVG_NS, 'svg').createSVGRect
-    ),
-    isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera,
-    isFirefox = userAgent.indexOf('Firefox') !== -1,
-    isChrome = userAgent.indexOf('Chrome') !== -1,
-    hasBidiBug = (
-        isFirefox &&
-        parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
+const glob = (typeof win === 'undefined' ? window : win);
+var Highcharts;
+(function (Highcharts) {
+    Highcharts.product = '@product.name@';
+    Highcharts.version = '@product.version@';
+    Highcharts.win = glob;
+    Highcharts.userAgent = ((glob.navigator && glob.navigator.userAgent) || '');
+    Highcharts.isChrome = Highcharts.userAgent.indexOf('Chrome') !== -1;
+    Highcharts.isFirefox = Highcharts.userAgent.indexOf('Firefox') !== -1;
+    Highcharts.isMS = /(edge|msie|trident)/i.test(Highcharts.userAgent) && !glob.opera;
+    Highcharts.isSafari = !Highcharts.isChrome && Highcharts.userAgent.indexOf('Safari') !== -1;
+    Highcharts.isTouchDevice = /(Mobile|Android|Windows Phone)/.test(Highcharts.userAgent);
+    Highcharts.isWebKit = Highcharts.userAgent.indexOf('AppleWebKit') !== -1;
+    Highcharts.doc = glob.document;
+    Highcharts.hasBidiBug = (Highcharts.isFirefox &&
+        parseInt(Highcharts.userAgent.split('Firefox/')[1], 10) < 4 // issue #38
     );
-
-var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
-    product: '@product.name@',
-    version: '@product.version@',
-    deg2rad: Math.PI * 2 / 360,
-    doc: doc,
-    hasBidiBug: hasBidiBug,
-    hasTouch: doc && doc.documentElement.ontouchstart !== undefined,
-    isMS: isMS,
-    isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
-    isFirefox: isFirefox,
-    isChrome: isChrome,
-    isSafari: !isChrome && userAgent.indexOf('Safari') !== -1,
-    isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
-    SVG_NS: SVG_NS,
-    chartCount: 0,
-    seriesTypes: {},
-    symbolSizes: {},
-    svg: svg,
-    win: glob,
-    marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-    noop: function () {
+    Highcharts.hasTouch = (Highcharts.doc && Highcharts.doc.documentElement.ontouchstart !== undefined);
+    Highcharts.noop = function () {
         return undefined;
-    },
+    };
+    Highcharts.SVG_NS = 'http://www.w3.org/2000/svg';
+    Highcharts.svg = (Highcharts.doc &&
+        Highcharts.doc.createElementNS &&
+        !!Highcharts.doc.createElementNS(Highcharts.SVG_NS, 'svg').createSVGRect);
+    Highcharts.chartCount = 0;
+    Highcharts.deg2rad = Math.PI * 2 / 360;
+    Highcharts.marginNames = [
+        'plotTop', 'marginRight', 'marginBottom', 'plotLeft'
+    ];
+    Highcharts.seriesTypes = {};
+    Highcharts.symbolSizes = {};
     /**
      * An array containing the current chart objects in the page. A chart's
      * position in the array is preserved throughout the page's lifetime. When
@@ -67,7 +56,9 @@ var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
      * @name Highcharts.charts
      * @type {Array<Highcharts.Chart>}
      */
-    charts: []
-};
-
+    Highcharts.charts = [];
+})(Highcharts || (Highcharts = {}));
+if (glob.Highcharts) {
+    glob.Highcharts.error(16, true);
+}
 export default Highcharts;
