@@ -20,6 +20,7 @@ var seriesType = H.seriesType,
     merge = H.merge,
     extend = H.extend,
     error = H.error,
+    defined = H.defined,
     noop = H.noop,
     fireEvent = H.fireEvent,
     getColor = mixinTreeSeries.getColor,
@@ -81,16 +82,32 @@ seriesType(
 
         /**
          * When enabled the user can click on a point which is a parent and
-         * zoom in on its children.
+         * zoom in on its children. Deprecated and replaced by
+         * [allowTraversingTree](#allowTraversingTree).
          *
          * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/
          *         Enabled
          *
+         * @deprecated
          * @type      {boolean}
          * @default   false
          * @since     4.1.0
          * @product   highcharts
          * @apioption plotOptions.treemap.allowDrillToNode
+         */
+
+        /**
+         * When enabled the user can click on a point which is a parent and
+         * zoom in on its children.
+         *
+         * @sample {highcharts} highcharts/plotoptions/treemap-allowtraversingtree/
+         *         Enabled
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since     next
+         * @product   highcharts
+         * @apioption plotOptions.treemap.allowTraversingTree
          */
 
         /**
@@ -128,13 +145,13 @@ seriesType(
         /**
          * This option decides if the user can interact with the parent nodes
          * or just the leaf nodes. When this option is undefined, it will be
-         * true by default. However when allowDrillToNode is true, then it will
-         * be false by default.
+         * true by default. However when allowTraversingTree is true, then it
+         * will be false by default.
          *
          * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-false/
          *         False
-         * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-true-and-allowdrilltonode/
-         *         InteractByLeaf and allowDrillToNode is true
+         * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-true-and-allowtraversingtree/
+         *         InteractByLeaf and allowTraversingTree is true
          *
          * @type      {boolean}
          * @since     4.1.2
@@ -263,7 +280,7 @@ seriesType(
         alternateStartingDirection: false,
 
         /**
-         * Used together with the levels and allowDrillToNode options. When
+         * Used together with the levels and allowTraversingTree options. When
          * set to false the first level visible when drilling is considered
          * to be level one. Otherwise the level will be the same as the tree
          * structure.
@@ -593,7 +610,25 @@ seriesType(
             }
 
             Series.prototype.init.call(series, chart, options);
-            if (series.options.allowDrillToNode) {
+
+            options = series.options;
+
+            // Test if deprecated option is set.
+            if (defined(options.allowDrillToNode)) {
+                error(
+                    'WARNING: plotOptions.treemap.allowDrillToNode has been ' +
+                    'renamed to plotOptions.treemap.allowTraversingTree, and ' +
+                    'will be removed in the next major version.'
+                );
+
+                // Copy option if not already defined with correct name.
+                if (!defined(options.allowTraversingTree)) {
+                    options.allowTraversingTree =
+                        options.allowDrillToNode;
+                }
+            }
+
+            if (options.allowTraversingTree) {
                 H.addEvent(series, 'click', series.onClickDrillToNode);
             }
         },
@@ -1143,7 +1178,7 @@ seriesType(
             }
 
             // Update axis extremes according to the root node.
-            if (options.allowDrillToNode) {
+            if (options.allowTraversingTree) {
                 val = rootNode.pointValues;
                 series.xAxis.setExtremes(val.x, val.x + val.width, false);
                 series.yAxis.setExtremes(val.y, val.y + val.height, false);
@@ -1338,7 +1373,7 @@ seriesType(
 
             // If setRootNode is allowed, set a point cursor on clickables & add
             // drillId to point
-            if (series.options.allowDrillToNode) {
+            if (series.options.allowTraversingTree) {
                 points.forEach(function (point) {
                     if (point.graphic) {
                         point.drillId = series.options.interactByLeaf ?
@@ -1594,7 +1629,7 @@ seriesType(
 
             } else if (
                 !this.node.isLeaf &&
-            !pick(options.interactByLeaf, !options.allowDrillToNode)
+            !pick(options.interactByLeaf, !options.allowTraversingTree)
             ) {
                 className += ' highcharts-internal-node-interactive';
 
