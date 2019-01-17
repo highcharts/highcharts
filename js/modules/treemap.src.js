@@ -111,6 +111,21 @@ seriesType(
          */
 
         /**
+         * Fires on a request for change of root node for the tree, before the
+         * update is made. An event object is passed to the function, containing
+         * additional properties `newRootId`, `previousRootId`, `redraw` and
+         * `trigger`.
+         *
+         * @type {function}
+         * @default undefined
+         * @sample {highcharts} highcharts/plotoptions/treemap-events-setrootnode/
+         *         Alert update information on setRootNode event.
+         * @since next
+         * @product highcharts
+         * @apioption plotOptions.treemap.events.setRootNode
+         */
+
+        /**
          * This option decides if the user can interact with the parent nodes
          * or just the leaf nodes. When this option is undefined, it will be
          * true by default. However when allowDrillToNode is true, then it will
