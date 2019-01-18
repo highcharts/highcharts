@@ -9,7 +9,7 @@ const Log = require('./lib/log');
 
 const templatePath = './node_modules/highcharts-docstrap';
 const targetPath = './build/api/class-reference/';
-const targetJsonPath = './tsdoc.json';
+const targetJsonPath = './tree-typescript.json';
 
 /**
  * Generates class references.
