@@ -31,7 +31,7 @@ function generateClassReferences() {
         ignoreCompilerErrors: false,
         includeDeclarations: false,
         json: targetJsonPath,
-        module: 'amd',
+        module: 'umd',
         name: 'Highcharts',
         out: targetPath,
         readme: 'README.md',
