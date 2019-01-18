@@ -5,10 +5,11 @@
 const Gulp = require('gulp');
 const gulpTypeDoc = require('gulp-typedoc');
 const Log = require('./lib/log');
-const Path = require('path');
+// const Path = require('path');
 
 const templatePath = './node_modules/highcharts-docstrap';
 const targetPath = './build/api/class-reference/';
+const targetJsonPath = './tsdoc.json';
 
 /**
  * Generates class references.
@@ -19,15 +20,25 @@ const targetPath = './build/api/class-reference/';
 function generateClassReferences() {
 
     const sourceFiles = [
-        'README.md',
         'ts/**/*.ts'
     ];
 
-    const optionsGulp = {
+    const gulpOptions = {
         read: false
     };
 
-    const typeDocOptions = {
+    const gulpTypeDocOptions = {
+        ignoreCompilerErrors: false,
+        includeDeclarations: false,
+        json: targetJsonPath,
+        module: 'amd',
+        name: 'Highcharts',
+        out: targetPath,
+        readme: 'README.md',
+        target: 'es6',
+        theme: templatePath,
+        version: false
+        /*
         navOptions: {
             theme: 'highsoft'
         },
@@ -49,6 +60,7 @@ function generateClassReferences() {
             systemName: 'Highcharts',
             theme: 'highsoft'
         }
+        */
     };
 
     return new Promise((resolve, reject) => {
@@ -56,15 +68,13 @@ function generateClassReferences() {
         const message = 'Generating JSDoc class reference';
         const starting = Log.starting(message);
 
-        Gulp.src(sourceFiles, optionsGulp)
-            .pipe(gulpTypeDoc(typeDocOptions, function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    Log.finished(message, starting);
-                    resolve();
-                }
-            }));
+        Gulp.src(sourceFiles, gulpOptions)
+            .pipe(gulpTypeDoc(gulpTypeDocOptions))
+            .on('error', reject)
+            .on('end', () => {
+                Log.finished(message, starting);
+                resolve();
+            });
     });
 }
 
