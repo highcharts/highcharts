@@ -61,6 +61,9 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        data: generateCloth(16, 16)
+        data: generateCloth(16, 16),
+        marker: {
+            radius: 2
+        }
     }]
 });
