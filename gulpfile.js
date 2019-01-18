@@ -215,7 +215,7 @@ gulp.task('update', update);
  *
  * @return {Promise}
  */
-gulp.task('scripts', gulp.series(gulp.parallel('update'), () => {
+function scriptsWatch() {
     const options = {
         debug: argv.d || false,
         files: (
@@ -244,12 +244,13 @@ gulp.task('scripts', gulp.series(gulp.parallel('update'), () => {
     if (options.watch) {
         Object.keys(mapOfWatchFn).forEach(key => {
             const fn = mapOfWatchFn[key];
-            gulp.watch(key, fn);
+            gulp.watch(key).on('change', path => fn({ path, type: 'change' }));
         });
     }
 
     return Promise.resolve();
-}));
+}
+gulp.task('scripts', gulp.series(gulp.parallel('update'), scriptsWatch));
 
 /**
  * Gulp task to execute ESLint. Pattern defaults to './js/**".'
@@ -1265,7 +1266,7 @@ const uploadAPIDocs = () => {
 };
 gulp.task('upload-api', uploadAPIDocs);
 
-const startServer = () => {
+const jsdocServer = () => {
     // Start a server serving up the api reference
     const http = require('http');
     const url = require('url');
@@ -1353,7 +1354,7 @@ const startServer = () => {
         ('http://localhost:' + docport).cyan
     );
 };
-gulp.task('start-api-server', startServer);
+gulp.task('start-api-server', jsdocServer);
 
 /**
  * Creates additional JSON-based class references with JSDoc using
@@ -1429,7 +1430,7 @@ let apiServerRunning = false;
 /**
  * Create Highcharts API and class references from JSDOC
  */
-const jsdoc = () => {
+const jsdocWatch = () => {
     const optionsClassReference = {
         templateDir: './node_modules/highcharts-docstrap',
         destination: './build/api/class-reference/'
@@ -1450,7 +1451,7 @@ const jsdoc = () => {
         dir + '/template/static/scripts/*.js'
     ];
     if (argv.watch) {
-        gulp.watch(watchFiles, ['jsdoc']);
+        gulp.watch(watchFiles, gulp.series('jsdoc'));
         console.log('Watching file changes in JS files and templates');
 
     } else {
@@ -1458,14 +1459,14 @@ const jsdoc = () => {
     }
 
     if (!apiServerRunning) {
-        startServer();
+        jsdocServer();
         apiServerRunning = true;
     }
 
     return generateClassReferences(optionsClassReference)
         .then(() => generateAPIDocs(optionsAPI));
 };
-gulp.task('jsdoc', gulp.series(gulp.parallel('clean-api', 'jsdoc-namespace'), jsdoc));
+gulp.task('jsdoc', gulp.series(gulp.parallel('clean-api', 'jsdoc-namespace'), jsdocWatch));
 
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-dist', cleanDist);
@@ -1538,8 +1539,11 @@ gulp.task('examples', createAllExamples);
 
 /**
  * Watch changes to JS and SCSS files
+ *
+ * @return {Promise}
+ *         Promise to keep
  */
-gulp.task('default', () => {
+function defaultWatch() {
     const {
         fnFirstBuild,
         mapOfWatchFn
@@ -1565,7 +1569,7 @@ gulp.task('default', () => {
                     console.log('✓'.green, 'Code up to date.'.gray);
                 }
                 // Start watcher again.
-                watcher = gulp.watch(watchlist, onChange);
+                watcher = gulp.watch(watchlist, onChange).on('change', onChange);
             });
         } else if (path.startsWith('js')) {
             // Build es-modules
@@ -1583,10 +1587,10 @@ gulp.task('default', () => {
             console.log('✓'.green, 'Code up to date.'.gray);
         }
         // Start watching source files.
-        watcher = gulp.watch(watchlist);
-        watcher.on('change', onChange);
+        watcher = gulp.watch(watchlist).on('change', onChange);
     });
-});
+}
+gulp.task('default', defaultWatch);
 
 /**
  * Create distribution files
