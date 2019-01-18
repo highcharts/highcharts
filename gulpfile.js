@@ -1565,7 +1565,7 @@ gulp.task('default', () => {
                     console.log('✓'.green, 'Code up to date.'.gray);
                 }
                 // Start watcher again.
-                watcher = gulp.watch(watchlist, onChange);
+                watcher = gulp.watch(watchlist).on('change', onChange);
             });
         } else if (path.startsWith('js')) {
             // Build es-modules
@@ -1634,3 +1634,4 @@ gulp.task('webpack', function () {
 });
 
 gulp.task('common', gulp.series('scripts', 'browserify', 'webpack'));
+gulp.task('tsdoc', (...args) => require('./tools/gulptasks/tsdoc')(...args));
