@@ -63,7 +63,7 @@
     "gulp-util": "^3.0.8",
     "gzip-size": "^3.0.0",
     "highcharts-api-docs": "github:highcharts/api-docs#v0.2.3",
-    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.1.0",
+    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.1.1",
     "highcharts-docstrap": "github:highcharts/highcharts-docstrap#v1.3.0",
     "husky": "latest",
     "js-yaml": "^3.12.1",
