@@ -16,7 +16,6 @@ const {
     sep
 } = require('path');
 const {
-    buildModules,
     getFilesInFolder
 } = require('highcharts-assembler/src/build.js');
 const {
@@ -44,6 +43,9 @@ const ProgressBar = require('./tools/progress-bar.js');
  * @return {undefined}
  */
 const buildESModules = () => {
+    const {
+        buildModules
+    } = require('highcharts-assembler/src/build.js');
     buildModules({
         base: './js/',
         output: './code/',
@@ -268,6 +270,7 @@ const lint = () => {
     }
     console.log(formatter(report.results));
 };
+gulp.task('lint', gulp.series(gulp.parallel('update'), lint));
 
 /**
  * Gulp task to execute ESLint on samples.
@@ -288,6 +291,7 @@ const lintSamples = () => {
     ]);
     console.log(formatter(report.results));
 };
+gulp.task('lint-samples', gulp.series(gulp.parallel('update'), lintSamples));
 
 /**
  * Run the test suite.
@@ -1359,8 +1363,11 @@ const jsdocNamespace = () => {
 
     const jsdoc3 = require('gulp-jsdoc3');
 
+    const dtsPath = 'test/typescript';
+
     const codeFiles = JSON
-        .parse(fs.readFileSync('tsconfig.json')).files
+        .parse(fs.readFileSync(join(dtsPath, 'tsconfig.json'))).files
+        .map(file => join(dtsPath, file))
         .filter(file => (
             file.indexOf('test') !== 0 &&
             file.indexOf('global.d.ts') === -1 &&
@@ -1468,7 +1475,7 @@ gulp.task('filesize', filesize);
 
 /* *
  *
- *  TypeScript Declarations
+ *  TypeScript
  *
  * */
 
@@ -1485,13 +1492,21 @@ gulp.task('dts', gulp.series(gulp.parallel('jsdoc-options', 'jsdoc-namespace'), 
  * Test TypeScript declarations in the code folder using tsconfig.json.
  */
 function dtsLint() {
-    return commandLine('npx dtslint --onlyTestTsNext');
+    return commandLine('cd test/typescript && npx dtslint --onlyTestTsNext');
 }
 gulp.task('dtslint', gulp.series(gulp.parallel('update', 'dts'), dtsLint));
 
+gulp.task('tsc', () => require('./tools/gulptasks/tsc')());
+gulp.task('tslint', gulp.series('tsc', () => require('./tools/gulptasks/tslint')()));
+
+/* *
+ *
+ *  Core Functionality
+ *
+ * */
+
 gulp.task('build-modules', buildESModules);
-gulp.task('lint', gulp.series(gulp.parallel('update'), lint));
-gulp.task('lint-samples', gulp.series(gulp.parallel('update'), lintSamples));
+
 gulp.task('compile', () => {
     const messages = {
         usage: 'Run "gulp compile --help" for information on usage.',
