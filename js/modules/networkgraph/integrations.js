@@ -12,7 +12,7 @@ import H from '../../parts/Globals.js';
 H.networkgraphIntegrations = {
     verlet: {
         attractiveForceFunction: function (distanceR, k) {
-            return (k - distanceR) / distanceR * 0.5 * this.diffTemperature;
+            return (k - distanceR) / distanceR * this.diffTemperature;
         },
         repulsiveForceFunction: function (distanceR, k) {
             // Used in API:
@@ -42,16 +42,17 @@ H.networkgraphIntegrations = {
             node.plotY += distanceXY.y * force;
         },
         attractive: function (link, force, distanceXY) {
-            var translatedX = -distanceXY.x * force,
+            var massFactor = link.getMass(),
+                translatedX = -distanceXY.x * force,
                 translatedY = -distanceXY.y * force;
 
             if (!link.fromNode.fixedPosition) {
-                link.fromNode.plotX -= translatedX;
-                link.fromNode.plotY -= translatedY;
+                link.fromNode.plotX -= translatedX * massFactor.fromNode;
+                link.fromNode.plotY -= translatedY * massFactor.fromNode;
             }
             if (!link.toNode.fixedPosition) {
-                link.toNode.plotX += translatedX;
-                link.toNode.plotY += translatedY;
+                link.toNode.plotX += translatedX * massFactor.toNode;
+                link.toNode.plotY += translatedY * massFactor.toNode;
             }
         },
         integrate: function (layout, node) {
@@ -145,17 +146,18 @@ H.networkgraphIntegrations = {
             node.dispY += (distanceXY.y / distanceR) * force;
         },
         attractive: function (link, force, distanceXY, distanceR) {
-            var translatedX = (distanceXY.x / distanceR) * force,
+            var massFactor = link.getMass(),
+                translatedX = (distanceXY.x / distanceR) * force,
                 translatedY = (distanceXY.y / distanceR) * force;
 
             if (!link.fromNode.fixedPosition) {
-                link.fromNode.dispX -= translatedX;
-                link.fromNode.dispY -= translatedY;
+                link.fromNode.dispX -= translatedX * massFactor.fromNode;
+                link.fromNode.dispY -= translatedY * massFactor.fromNode;
             }
 
             if (!link.toNode.fixedPosition) {
-                link.toNode.dispX += translatedX;
-                link.toNode.dispY += translatedY;
+                link.toNode.dispX += translatedX * massFactor.toNode;
+                link.toNode.dispY += translatedY * massFactor.toNode;
             }
         },
         integrate: function (layout, node) {

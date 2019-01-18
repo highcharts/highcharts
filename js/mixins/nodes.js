@@ -1,5 +1,7 @@
 import H from '../parts/Globals.js';
 
+var pick = H.pick;
+
 H.NodesMixin = {
     // Create a single node that holds information on incoming and outgoing
     // links.
@@ -30,6 +32,12 @@ H.NodesMixin = {
             node.linksFrom = [];
             node.formatPrefix = 'node';
             node.name = node.name || node.options.id; // for use in formats
+            // Mass is used in networkgraph:
+            node.mass = pick(
+                node.options.mass,
+                node.options.marker && node.options.marker.radius,
+                1
+            );
 
             // Return the largest sum of either the incoming or outgoing links.
             node.getSum = function () {

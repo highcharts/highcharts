@@ -479,6 +479,16 @@ seriesType('networkgraph', 'line', {
             });
         }
     },
+    getMass: function () {
+        var m1 = this.fromNode.mass,
+            m2 = this.toNode.mass,
+            sum = m1 + m2;
+
+        return {
+            fromNode: 1 - m1 / sum,
+            toNode: 1 - m2 / sum
+        };
+    },
     getLinkPath: function (from, to) {
         return [
             'M',
@@ -701,4 +711,22 @@ addEvent(
  * @type      {Number}
  * @product   highcharts
  * @apioption series.networkgraph.data.weight
+ */
+
+/**
+ * Mass of the node. By default, each node has mass equal to it's marker radius
+ * . Mass is used to determine how two connected nodes should affect
+ * each other:
+ *
+ * Attractive force is multiplied by the ratio of two connected
+ * nodes; if a big node has weights twice as the small one, then the small one
+ * will move towards the big one twice faster than the big one to the small one
+ * .
+ *
+ * @sample highcharts/series-networkgraph/ragdoll/
+ *         Mass determined by marker.radius
+ *
+ * @type      {Number}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.mass
  */

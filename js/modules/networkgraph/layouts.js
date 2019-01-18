@@ -343,20 +343,22 @@ H.extend(
             this.force('barycenter');
         },
         getBarycenter: function () {
-            var nodesLength = this.nodes.length,
+            var systemMass = 0,
                 cx = 0,
                 cy = 0;
 
             this.nodes.forEach(function (node) {
-                cx += node.plotX;
-                cy += node.plotY;
+                cx += node.plotX * node.mass;
+                cy += node.plotY * node.mass;
+
+                systemMass += node.mass;
             });
 
             this.barycenter = {
                 x: cx,
                 y: cy,
-                xFactor: cx / nodesLength,
-                yFactor: cy / nodesLength
+                xFactor: cx / systemMass,
+                yFactor: cy / systemMass
             };
 
             return this.barycenter;
