@@ -266,6 +266,16 @@ seriesType('networkgraph', 'line', {
         }
     },
 
+    // Extend the default marker attribs by using a non-rounded X position,
+    // otherwise the nodes will jump from pixel to pixel which looks a bit jaggy
+    // when approaching equilibrium.
+    markerAttribs: function (point, state) {
+        var attribs = Series.prototype.markerAttribs.call(this, point, state);
+
+        attribs.x = point.plotX - (attribs.width / 2);
+        return attribs;
+    },
+
     /**
      * Run pre-translation by generating the nodeColumns.
      */
