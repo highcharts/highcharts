@@ -1558,7 +1558,7 @@ function defaultWatch() {
     const onChange = path => {
         if (path.startsWith('css')) {
             // Stop the watcher temporarily.
-            watcher.end();
+            watcher.close();
             watcher = null;
             // Run styles and build all files.
             styles().then(() => {
@@ -1569,7 +1569,7 @@ function defaultWatch() {
                     console.log('✓'.green, 'Code up to date.'.gray);
                 }
                 // Start watcher again.
-                watcher = gulp.watch(watchlist, onChange).on('change', onChange);
+                watcher = gulp.watch(watchlist).on('change', onChange);
             });
         } else if (path.startsWith('js')) {
             // Build es-modules

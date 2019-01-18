@@ -1,6 +1,7 @@
 /* eslint-env node, es6 */
 /* eslint no-console:0, no-path-concat:0, no-nested-ternary:0, valid-jsdoc:0 */
 /* eslint-disable func-style */
+const colors = require('colors');
 const {
     join,
     relative,
@@ -21,13 +22,13 @@ const {
 } = require('highcharts-assembler/src/dependencies.js');
 const {
     checkDependency
-  } = require('./filesystem.js');
+} = require('./filesystem.js');
 const build = require('highcharts-assembler');
 
 // TODO move to a utils file
 const replaceAll = (str, search, replace) => str.split(search).join(replace);
 const isArray = x => Array.isArray(x);
-const isUndefined = (x) => typeof x === 'undefined';
+const isUndefined = x => typeof x === 'undefined';
 
 /**
  * Get the product version from build.properties.
@@ -45,21 +46,20 @@ const getProductVersion = () => {
  *   and reuse it on github.highcharts.com
  * @return {Object} Object containing all fileOptions
  */
-const getFileOptions = (files) => {
+const getFileOptions = files => {
     const highchartsFiles = replaceAll(
         getOrderedDependencies('js/masters/highcharts.src.js')
-        .map((path) => relative('js', path))
-        .join('|'),
+            .map(path => relative('js', path))
+            .join('|'),
         sep,
         `\\${sep}`
     );
     // Modules should not be standalone, and they should exclude all parts files.
     const fileOptions = files
         .reduce((obj, file) => {
-            if (
-              file.indexOf('modules') > -1 ||
-              file.indexOf('themes') > -1 ||
-              file.indexOf('indicators') > -1
+            if (file.indexOf('modules') > -1 ||
+                file.indexOf('themes') > -1 ||
+                file.indexOf('indicators') > -1
             ) {
                 obj[file] = {
                     exclude: new RegExp(highchartsFiles),
@@ -102,7 +102,7 @@ const getFileOptions = (files) => {
     return fileOptions;
 };
 
-const getBuildOptions = (input) => {
+const getBuildOptions = input => {
     const {
         base = './js/masters/',
         debug = false,
@@ -111,14 +111,14 @@ const getBuildOptions = (input) => {
     } = input;
     const files = (
         isArray(input.files) ?
-        input.files :
-        getFilesInFolder(base, true)
+            input.files :
+            getFilesInFolder(base, true)
     );
     const type = ['classic'];
     const fileOptions = getFileOptions(files);
     const mapTypeToSource = {
-        'classic': './code/es-modules',
-        'css': './code/js/es-modules'
+        classic: './code/es-modules',
+        css: './code/js/es-modules'
     };
     return {
         base,
@@ -132,7 +132,7 @@ const getBuildOptions = (input) => {
     };
 };
 
-const scripts = (params) => {
+const scripts = params => {
     checkDependency('highcharts-assembler', 'warn', 'devDependencies');
     const options = getBuildOptions(params);
     return build(options);
@@ -141,41 +141,29 @@ const scripts = (params) => {
 
 const getListOfDependencies = (files, fileOptions, pathSource) => {
     const dependencyList = {};
-    files.forEach((filename) => {
+    files.forEach(filename => {
         const options = fileOptions[filename];
         const exclude = (
             !isUndefined(options) && !isUndefined(options.exclude) ?
-            options.exclude :
-            false
+                options.exclude :
+                false
         );
         const pathFile = join(pathSource, 'masters', filename);
         const list = getOrderedDependencies(pathFile)
-            .filter((pathModule) => {
+            .filter(pathModule => {
                 let result = true;
                 if (exclude) {
                     result = !exclude.test(pathModule);
                 }
                 return result;
             })
-            .map((str) => {
-                return resolve(str);
-            });
+            .map(str => resolve(str));
         dependencyList[pathFile] = list;
     });
     return dependencyList;
 };
 
-const getTime = () => {
-    const date = new Date();
-    const pad = val => {
-        return (val <= 9 ? '0' + val : '' + val);
-    };
-    return [
-        pad(date.getHours()),
-        pad(date.getMinutes()),
-        pad(date.getSeconds())
-    ].join(':');
-};
+const getTime = () => (new Date()).toTimeString().substr(0, 8);
 
 const watchSourceFiles = (event, types) => {
     const pathFile = event.path;
@@ -188,34 +176,41 @@ const watchSourceFiles = (event, types) => {
         getTime().gray,
         'Rebuilding files: '.cyan,
         types
-            .map((type) => `- ${join(output, type === 'css' ? 'js' : '', 'es-modules', pathRelative)}`.gray)
+            .map(type => colors.gray(
+                `- ${join(output, type === 'css' ? 'js' : '', 'es-modules', pathRelative)}`
+            ))
             .join('\n')
     ].join('\n'));
     return buildModules({
-        base: base,
+        base,
         files: [pathRelative.split(sep).join('/')],
-        output: output,
+        output,
         type: types
     });
 };
 
 const watchESModules = (event, options, type, dependencies, pathESMasters) => {
-    const pathFile = event.path;
-    const filesModified = Object.keys(dependencies)
-      .reduce((arr, pathMaster) => {
-          const list = dependencies[pathMaster];
-          if (list.includes(pathFile)) {
-              arr.push(relative(pathESMasters, pathMaster).split(sep).join('/'));
-          }
-          return arr;
-      }, []);
+    const pathFile = resolve(event.path);
+    const filesModified = (
+        Object
+            .keys(dependencies)
+            .reduce((arr, pathMaster) => {
+                const list = dependencies[pathMaster];
+                if (list.includes(pathFile)) {
+                    arr.push(relative(pathESMasters, pathMaster).split(sep).join('/'));
+                }
+                return arr;
+            }, [])
+    );
     console.log([
         `${event.type}:`.cyan + ` ${relative('.', pathFile)} ` +
         getTime().gray,
         'Rebuilding files: '.cyan,
         filesModified
-          .map(str => `- ${join('code', type === 'css' ? 'js' : '', str)}`.gray)
-          .join('\n')
+            .map(str => colors.gray(
+                `- ${join('code', type === 'css' ? 'js' : '', str)}`
+            ))
+            .join('\n')
     ].join('\n'));
     const {
         debug,
@@ -224,16 +219,16 @@ const watchESModules = (event, options, type, dependencies, pathESMasters) => {
     } = options;
     return buildDistFromModules({
         base: pathESMasters,
-        debug: debug,
-        fileOptions: fileOptions,
+        debug,
+        fileOptions,
         files: filesModified,
         output: './code/',
         type: [type],
-        version: version
+        version
     });
 };
 
-const fnFirstBuild = (options) => {
+const fnFirstBuild = options => {
     // Build all module files
     const pathJSParts = './js/';
     const pathESModules = './code/';
@@ -252,23 +247,23 @@ const fnFirstBuild = (options) => {
     });
     const promises = [];
     promises.push(require('./error-messages')());
-    types.forEach((type) => {
+    types.forEach(type => {
         const pathSource = mapTypeToSource[type];
         const pathESMasters = join(pathSource, 'masters');
         promises.push(buildDistFromModules({
             base: pathESMasters,
-            debug: debug,
-            fileOptions: fileOptions,
-            files: files,
+            debug,
+            fileOptions,
+            files,
             output: './code/',
             type: [type],
-            version: version
+            version
         }));
     });
     return Promise.all(promises);
 };
 
-const getBuildScripts = (params) => {
+const getBuildScripts = params => {
     checkDependency('highcharts-assembler', 'warn', 'devDependencies');
     const options = getBuildOptions(params);
     const {
@@ -278,20 +273,16 @@ const getBuildScripts = (params) => {
         mapTypeToSource
     } = options;
     const result = {
-        fnFirstBuild: () => {
-            return fnFirstBuild(options);
-        },
+        fnFirstBuild: () => fnFirstBuild(options),
         mapOfWatchFn: {
-            'js/**/*.js': (event) => {
-                return watchSourceFiles(event, types);
-            }
+            'js/**/*.js': event => watchSourceFiles(event, types)
         }
     };
-    types.forEach((type) => {
+    types.forEach(type => {
         const pathSource = mapTypeToSource[type];
         const pathESMasters = join(pathSource, 'masters');
         const key = join(pathSource, '**/*.js').split(sep).join('/');
-        const fn = (event) => {
+        const fn = event => {
             const dependencies = getListOfDependencies(
                 files,
                 fileOptions,
