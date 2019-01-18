@@ -140,8 +140,8 @@
                         indicator.start : xAxis.min,
                     end = isNumber(indicator.end) ?
                         indicator.end : xAxis.max,
-                    x1 = xAxis.translate(start > end ? start : end, 0, 0, 0, 1),
-                    x2 = xAxis.translate(start > end ? end : start, 0, 0, 0, 1),
+                    x1 = xAxis.translate(start < end ? start : end, 0, 0, 0, 1),
+                    x2 = xAxis.translate(start < end ? end : start, 0, 0, 0, 1),
                     plotY = yAxis.translate(indicator.y, 0, 1, 0, 1),
                     y1 = plotY,
                     y2 = plotY + metrics.width / 2,
