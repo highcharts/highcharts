@@ -1,5 +1,5 @@
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.5/samples/data/usdeur.json', function (data) {
+$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
 
     // Create the chart
     Highcharts.stockChart('container', {

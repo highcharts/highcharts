@@ -76,7 +76,7 @@ Meteogram.prototype.drawWeatherSymbols = function (chart) {
 
             chart.renderer
                 .image(
-                    'https://cdn.rawgit.com/YR/weather-symbols/6.0.2/dist/svg/' +
+                    'https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/' +
                         meteogram.symbols[i] + '.svg',
                     point.plotX + chart.plotLeft - 8,
                     point.plotY + chart.plotTop - 30,

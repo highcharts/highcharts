@@ -1,6 +1,6 @@
 
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/v6.0.4/samples/data/us-population-density.json', function (data) {
+$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-population-density.json', function (data) {
 
     // Make it joinable
     $.each(data, function () {
