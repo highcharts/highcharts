@@ -34,9 +34,13 @@ H.NodesMixin = {
             node.name = node.name || node.options.id; // for use in formats
             // Mass is used in networkgraph:
             node.mass = pick(
+                // Node:
                 node.options.mass,
                 node.options.marker && node.options.marker.radius,
-                1
+                // Series:
+                this.options.marker && this.options.marker.radius,
+                // Default:
+                4
             );
 
             // Return the largest sum of either the incoming or outgoing links.
