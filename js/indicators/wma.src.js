@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2018 Kacper Madej
+ *  (c) 2010-2019 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -53,7 +53,9 @@ function populateAverage(points, xVal, yVal, i) {
  *
  * @augments Highcharts.Series
  */
-seriesType('wma', 'sma',
+seriesType(
+    'wma',
+    'sma',
     /**
      * Weighted moving average indicator (WMA). This series requires `linkedTo`
      * option to be set.

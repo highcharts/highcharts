@@ -22,7 +22,9 @@ var correctFloat = H.correctFloat,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('ao', 'sma',
+H.seriesType(
+    'ao',
+    'sma',
     /**
      * Awesome Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`

@@ -45,11 +45,11 @@ QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
 QUnit.test('Text word wrap with markup', function (assert) {
 
     var renderer = new Highcharts
-        .Renderer(
-            document.getElementById('container'),
-            400,
-            300
-        ),
+            .Renderer(
+                document.getElementById('container'),
+                400,
+                300
+            ),
         width = 100;
     renderer.rect(100, 20, width, 100)
         .attr({
@@ -89,11 +89,11 @@ QUnit.test('Text word wrap with markup', function (assert) {
 QUnit.test('Text word wrap with nowrap and break (#5689)', function (assert) {
 
     var renderer = new Highcharts
-        .Renderer(
-            document.getElementById('container'),
-            400,
-            300
-        ),
+            .Renderer(
+                document.getElementById('container'),
+                400,
+                300
+            ),
         width = 100;
     renderer.rect(100, 20, width, 100)
         .attr({
@@ -166,7 +166,7 @@ QUnit.test('getBBox with useHTML (#5899)', function (assert) {
             20,
             true
         )
-        .add();
+            .add();
 
         assert.strictEqual(
             text.getBBox().width,
@@ -368,8 +368,8 @@ QUnit.test('HTML', function (assert) {
         );
 
         text = renderer.text(
-                'The quick brown fox jumped over the lazy dog', 10, 30, true
-            )
+            'The quick brown fox jumped over the lazy dog', 10, 30, true
+        )
             .css({
                 textOverflow: 'ellipsis',
                 width: '100px'
@@ -512,32 +512,74 @@ QUnit.test('Attributes', function (assert) {
 
 });
 
-// Highcharts 4.1.1, Issue #3842:
-// Bar dataLabels positions in 4.1.x - Firefox, Internet Explorer
-QUnit.test('Text height (#3842)', function (assert) {
+QUnit.test('Text height', function (assert) {
 
-    var renderer;
+    const renderer = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        400
+    );
+    let fontSize;
 
     try {
+        const label = renderer.text('em')
+            .add();
 
-        renderer = new Highcharts.Renderer(
-            document.getElementById('container'),
-            400,
-            400
+        fontSize = '2vw';
+        label.css({
+            fontSize: fontSize
+        });
+
+        assert.strictEqual(
+            renderer.fontMetrics(fontSize, label.element).f,
+            parseInt(window.innerWidth / 50, 10),
+            'Font size in vw'
         );
 
-        var textLabel = renderer.text('Firefox/IE clean', 10, 30).add();
+        fontSize = '2em';
+        label.css({
+            fontSize: fontSize
+        });
+        assert.strictEqual(
+            renderer.fontMetrics(fontSize, label.element).f,
+            24,
+            'Font size in em'
+        );
 
-        var textLabelWithShadow = renderer.text('Firefox/IE shadow', 10, 60)
+        fontSize = '2rem';
+        label.css({
+            fontSize: fontSize
+        });
+        assert.strictEqual(
+            renderer.fontMetrics(fontSize, label.element).f,
+            32,
+            'Font size in rem'
+        );
+
+        fontSize = '200%';
+        label.css({
+            fontSize: fontSize
+        });
+        assert.strictEqual(
+            renderer.fontMetrics(fontSize, label.element).f,
+            24,
+            'Font size in %'
+        );
+
+        const textLabel = renderer.text('Firefox/IE clean', 10, 30).add();
+
+        const textLabelWithShadow = renderer.text('Firefox/IE shadow', 10, 60)
             .css({
                 textOutline: '6px silver'
             })
             .add();
 
+        // Highcharts 4.1.1, Issue #3842:
+        // Bar dataLabels positions in 4.1.x - Firefox, Internet Explorer
         assert.equal(
             textLabelWithShadow.getBBox().height,
             textLabel.getBBox().height,
-            'Shadow text'
+            'Shadow text (#3842)'
         );
 
     } finally {

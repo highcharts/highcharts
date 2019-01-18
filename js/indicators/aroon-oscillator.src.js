@@ -22,7 +22,9 @@ var AROON = H.seriesTypes.aroon,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('aroonoscillator', 'aroon',
+H.seriesType(
+    'aroonoscillator',
+    'aroon',
     /**
      * Aroon Oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` and

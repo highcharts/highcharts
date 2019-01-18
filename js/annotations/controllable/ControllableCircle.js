@@ -13,9 +13,11 @@ import ControllablePath from './ControllablePath.js';
  *
  * @param {Highcharts.Annotation} annotation an annotation instance
  * @param {Object} options a shape's options
+ * @param {number} index of the circle
  **/
-function ControllableCircle(annotation, options) {
-    this.init(annotation, options);
+function ControllableCircle(annotation, options, index) {
+    this.init(annotation, options, index);
+    this.collection = 'shapes';
 }
 
 /**
@@ -67,7 +69,13 @@ H.merge(
         },
 
         translate: function (dx, dy) {
+            var annotationOptions = this.annotation.userOptions,
+                shapeOptions = annotationOptions[this.collection][this.index];
+
             this.translatePoint(dx, dy, 0);
+
+            // Options stored in chart:
+            shapeOptions.point = this.options.point;
         },
 
         /**

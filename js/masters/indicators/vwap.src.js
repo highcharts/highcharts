@@ -3,7 +3,7 @@
  *
  * Indicator series type for Highstock
  *
- * (c) 2010-2018 Paweł Dalek
+ * (c) 2010-2019 Paweł Dalek
  *
  * License: www.highcharts.com/license
  */

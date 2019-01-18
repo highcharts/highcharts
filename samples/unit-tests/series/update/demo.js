@@ -250,15 +250,26 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
                     events: {
                         mouseOver: function () {
                             this.update({
-                                dataLabels: { enabled: true }, events: {
+                                dataLabels: {
+                                    enabled: true
+                                },
+                                events: {
                                     mouseOut: function () {
-                                        this.update({ dataLabels: { enabled: false } });
+                                        this.update({
+                                            dataLabels: {
+                                                enabled: false
+                                            }
+                                        });
                                     }
                                 }
                             });
                         },
                         mouseOut: function () {
-                            this.update({ dataLabels: { enabled: false } });
+                            this.update({
+                                dataLabels: {
+                                    enabled: false
+                                }
+                            });
                         }
                     }
                 }
@@ -571,7 +582,7 @@ QUnit.test('Z index changed after update (#3094)', function (assert) {
                 pointPadding: -0.4
             }
         },
-        series: [ {
+        series: [{
             data: [1300],
             color: 'rgba(13,35,58,0.9)',
             index: 0,
@@ -612,5 +623,51 @@ QUnit.test('Z index changed after update (#3094)', function (assert) {
         chart.series[0].dataLabelsGroup.visibility,
         "visible",
         "Data label should be visible"
+    );
+});
+
+QUnit.test('Wrong type for series config (#9680)', function (assert) {
+    assert.expect(0);
+
+    Highcharts.chart('container', {
+        series: {}
+    });
+});
+
+QUnit.test('series.update using altered original chart options', function (assert) {
+    var chartOptions = {
+            chart: {
+                renderTo: 'container'
+            },
+            plotOptions: {
+                series: {
+                    lineWidth: 10
+                }
+            },
+            series: [{
+                data: [1, 20, -3],
+                type: 'line'
+            }]
+        },
+        chart = new Highcharts.Chart(chartOptions);
+
+    chartOptions.series[0].lineWidth = 10;
+    chart.series[0].update(chartOptions.series[0]);
+
+    assert.strictEqual(
+        chart.series[0].userOptions.lineWidth,
+        10,
+        'New options is added - passes through cleanRecursively (#9762)'
+    );
+
+    chartOptions.plotOptions.series.lineWidth = 1;
+    chart.update({
+        plotOptions: chartOptions.plotOptions
+    });
+
+    assert.strictEqual(
+        chart.series[0].options.lineWidth,
+        10,
+        'Series level option survived after plotOptions.series update (#9762)'
     );
 });

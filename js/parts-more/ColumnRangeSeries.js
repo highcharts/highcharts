@@ -1,5 +1,5 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -59,6 +59,7 @@ var columnRangeOptions = {
         }
     }
 };
+
 /**
  * The ColumnRangeSeries class
  *
@@ -145,17 +146,17 @@ seriesType('columnrange', 'arearange', merge(
                 shapeArgs.y = y;
 
                 point.tooltipPos = chart.inverted ?
-                [
-                    yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2,
-                    xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x -
+                    [
+                        yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2,
+                        xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x -
                         shapeArgs.width / 2,
-                    height
-                ] : [
-                    xAxis.left - chart.plotLeft + shapeArgs.x +
+                        height
+                    ] : [
+                        xAxis.left - chart.plotLeft + shapeArgs.x +
                         shapeArgs.width / 2,
-                    yAxis.pos - chart.plotTop + y + height / 2,
-                    height
-                ]; // don't inherit from column tooltip position - #3372
+                        yAxis.pos - chart.plotTop + y + height / 2,
+                        height
+                    ]; // don't inherit from column tooltip position - #3372
             }
         });
     },
@@ -212,45 +213,42 @@ seriesType('columnrange', 'arearange', merge(
  * An array of data points for the series. For the `columnrange` series
  * type, points can be given in the following ways:
  *
- * 1.  An array of arrays with 3 or 2 values. In this case, the values
- * correspond to `x,low,high`. If the first value is a string, it is
- * applied as the name of the point, and the `x` value is inferred.
- * The `x` value can also be omitted, in which case the inner arrays
- * should be of length 2\. Then the `x` value is automatically calculated,
- * either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options.
+ * 1. An array of arrays with 3 or 2 values. In this case, the values correspond
+ *    to `x,low,high`. If the first value is a string, it is applied as the name
+ *    of the point, and the `x` value is inferred. The `x` value can also be
+ *    omitted, in which case the inner arrays should be of length 2\. Then the
+ *    `x` value is automatically calculated, either starting at 0 and
+ *    incremented by 1, or from `pointStart` and `pointInterval` given in the
+ *    series options.
+ *    ```js
+ *    data: [
+ *        [0, 4, 2],
+ *        [1, 2, 1],
+ *        [2, 9, 10]
+ *    ]
+ *    ```
  *
- *  ```js
- *     data: [
- *         [0, 4, 2],
- *         [1, 2, 1],
- *         [2, 9, 10]
- *     ]
- *  ```
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.columnrange.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        low: 0,
+ *        high: 4,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        x: 1,
+ *        low: 5,
+ *        high: 3,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](
- * #series.columnrange.turboThreshold), this option is not available.
- *
- *  ```js
- *     data: [{
- *         x: 1,
- *         low: 0,
- *         high: 4,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         x: 1,
- *         low: 5,
- *         high: 3,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
- *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
  *         Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
@@ -260,7 +258,7 @@ seriesType('columnrange', 'arearange', merge(
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<Array<number>|*>}
+ * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.arearange.data
  * @excluding marker
  * @product   highcharts highstock

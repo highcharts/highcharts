@@ -1,5 +1,5 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -39,7 +39,7 @@ seriesType('errorbar', 'boxplot', {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @default #000000
      * @since   3.0
      * @product highcharts
@@ -87,6 +87,7 @@ seriesType('errorbar', 'boxplot', {
     drawDataLabels: seriesTypes.arearange ?
         function () {
             var valKey = this.pointValKey;
+
             seriesTypes.arearange.prototype.drawDataLabels.call(this);
             // Arearange drawDataLabels does not reset point.y to high,
             // but to low after drawing (#4133)
@@ -118,45 +119,42 @@ seriesType('errorbar', 'boxplot', {
  * An array of data points for the series. For the `errorbar` series
  * type, points can be given in the following ways:
  *
- * 1.  An array of arrays with 3 or 2 values. In this case, the values
- * correspond to `x,low,high`. If the first value is a string, it is
- * applied as the name of the point, and the `x` value is inferred.
- * The `x` value can also be omitted, in which case the inner arrays
- * should be of length 2\. Then the `x` value is automatically calculated,
- * either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options.
+ * 1. An array of arrays with 3 or 2 values. In this case, the values correspond
+ *    to `x,low,high`. If the first value is a string, it is applied as the name
+ *    of the point, and the `x` value is inferred. The `x` value can also be
+ *    omitted, in which case the inner arrays should be of length 2\. Then the
+ *    `x` value is automatically calculated, either starting at 0 and
+ *    incremented by 1, or from `pointStart` and `pointInterval` given in the
+ *    series options.
+ *    ```js
+ *    data: [
+ *        [0, 10, 2],
+ *        [1, 1, 8],
+ *        [2, 4, 5]
+ *    ]
+ *    ```
  *
- *  ```js
- *     data: [
- *         [0, 10, 2],
- *         [1, 1, 8],
- *         [2, 4, 5]
- *     ]
- *  ```
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.errorbar.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        low: 0,
+ *        high: 0,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        x: 1,
+ *        low: 5,
+ *        high: 5,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.errorbar.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         x: 1,
- *         low: 0,
- *         high: 0,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         x: 1,
- *         low: 5,
- *         high: 5,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
- *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
  *         Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
@@ -166,7 +164,7 @@ seriesType('errorbar', 'boxplot', {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<Array<number>|*>}
+ * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.arearange.data
  * @excluding dataLabels, drilldown, marker, states
  * @product   highcharts

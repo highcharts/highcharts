@@ -117,8 +117,8 @@ var markerMixin = {
             defs = chart.options.defs,
             fill = itemOptions.fill,
             color = H.defined(fill) && fill !== 'none' ?
-            fill :
-            itemOptions.stroke,
+                fill :
+                itemOptions.stroke,
 
             setMarker = function (markerType) {
                 var markerId = itemOptions[markerType],
@@ -162,6 +162,7 @@ H.SVGRenderer.prototype.definition = function (def) {
 
     function recurse(config, parent) {
         var ret;
+
         H.splat(config).forEach(function (item) {
             var node = ren.createElement(item.tagName),
                 attr = {};

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2018 Øystein Moseng
+ *  (c) 2009-2019 Øystein Moseng
  *
  *  TimelineEvent class definition.
  *
@@ -93,6 +93,7 @@ TimelineEvent.prototype.play = function (options) {
         playOptions.onEnd = masterOnEnd || playOnEnd || playOptionsOnEnd ?
             function () {
                 var args = arguments;
+
                 [masterOnEnd, playOnEnd, playOptionsOnEnd].forEach(
                     function (onEnd) {
                         if (onEnd) {
@@ -191,8 +192,7 @@ TimelinePath.prototype.init = function (options) {
     this.eventsPlaying = {};
 
     // Handle silent wait, otherwise use events from options
-    this.events =
-        options.silentWait ?
+    this.events = options.silentWait ?
         [
             new TimelineEvent({ time: 0 }),
             new TimelineEvent({ time: options.silentWait })
@@ -271,6 +271,7 @@ TimelinePath.prototype.getCursor = function () {
  */
 TimelinePath.prototype.setCursor = function (eventId) {
     var ix = this.eventIdMap[eventId];
+
     if (ix !== undefined) {
         this.cursor = ix;
         return true;
@@ -424,7 +425,6 @@ TimelinePath.prototype.playEvents = function (direction) {
         }
     }
 };
-
 
 
 /* ************************************************************************** *
@@ -698,4 +698,5 @@ var timelineClasses = {
     TimelinePath: TimelinePath,
     Timeline: Timeline
 };
+
 export default timelineClasses;

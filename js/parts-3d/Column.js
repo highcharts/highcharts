@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -190,7 +190,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                 series.data.forEach(function (point) {
                     if (point.y !== null) {
                         point.height = point.shapeArgs.height;
-                        point.shapey = point.shapeArgs.y;    // #2968
+                        point.shapey = point.shapeArgs.y; // #2968
                         point.shapeArgs.height = 1;
                         if (!reversed) {
                             if (point.stackY) {
@@ -201,8 +201,8 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                                     point.plotY +
                                     (
                                         point.negative ?
-                                        -point.height :
-                                        point.height
+                                            -point.height :
+                                            point.height
                                     );
                             }
                         }
@@ -213,7 +213,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                 series.data.forEach(function (point) {
                     if (point.y !== null) {
                         point.shapeArgs.height = point.height;
-                        point.shapeArgs.y = point.shapey;    // #2968
+                        point.shapeArgs.y = point.shapey; // #2968
                         // null value do not have a graphic
                         if (point.graphic) {
                             point.graphic.animate(
@@ -262,6 +262,7 @@ wrap(
     function (proceed, vis) {
         var series = this,
             pointVis;
+
         if (series.chart.is3d()) {
             series.data.forEach(function (point) {
                 point.visible = point.options.visible = vis =
@@ -293,6 +294,7 @@ addEvent(Series, 'afterInit', function () {
             var stacks = this.chart.retrieveStacks(stacking),
                 stack = seriesOptions.stack || 0,
                 i; // position within the stack
+
             for (i = 0; i < stacks[stack].series.length; i++) {
                 if (stacks[stack].series[i] === this) {
                     break;
@@ -348,6 +350,7 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
             point = args[1];
 
         var pos = ({ x: alignTo.x, y: alignTo.y, z: series.z });
+
         pos = perspective([pos], chart, true)[0];
         alignTo.x = pos.x;
         // #7103 If point is outside of plotArea, hide data label.
@@ -368,6 +371,7 @@ wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) { // #3946
             y: stackBox.y,
             z: 0
         });
+
         pos = H.perspective([pos], chart, true)[0];
         stackBox.x = pos.x;
         stackBox.y = pos.y;

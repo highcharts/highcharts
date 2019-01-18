@@ -39,7 +39,7 @@ var merge = H.merge,
  * @param {Highcharts.ChartCallbackFunction} [callback]
  *        Function to run when the chart has loaded and and all external images
  *        are loaded. Defining a
- *        [chart.event.load](https://api.highcharts.com/highcharts/chart.events.load)
+ *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
  *        handler is equivalent.
  *
  * @return {Highcharts.Chart}
@@ -51,6 +51,7 @@ H.ganttChart = function (renderTo, options, callback) {
         defaultOptions = H.getOptions(),
         defaultLinkedTo,
         userOptions = options;
+
     options = arguments[hasRenderToArg ? 1 : 0];
 
     // If user hasn't defined axes as array, make it into an array and add a

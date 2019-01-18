@@ -196,7 +196,7 @@ H.extend(MockPoint.prototype, /** @lends Annotation.MockPoint# */ {
      */
     getOptions: function () {
         return this.hasDynamicOptions() ?
-            this.options.call(this, this.target) :
+            this.options(this.target) :
             this.options;
     },
 
@@ -227,10 +227,10 @@ H.extend(MockPoint.prototype, /** @lends Annotation.MockPoint# */ {
 
         this.series[axisName] =
             axisOptions instanceof H.Axis ?
-            axisOptions :
-            H.defined(axisOptions) ?
-            chart[axisName][axisOptions] || chart.get(axisOptions) :
-            null;
+                axisOptions :
+                H.defined(axisOptions) ?
+                    chart[axisName][axisOptions] || chart.get(axisOptions) :
+                    null;
     },
 
     /**

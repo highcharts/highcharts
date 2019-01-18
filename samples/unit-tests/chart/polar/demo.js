@@ -91,3 +91,58 @@ QUnit.test('Polar reversed yaxis (#2848)', function (assert) {
     }
 
 });
+
+QUnit.test('Polar with overlapping axis labels', assert => {
+
+    const data = [];
+
+    for (let i = 0; i < 100; i++) {
+        data.push({
+            name: 'name' + i,
+            y: i % 20
+        });
+    }
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'line',
+            polar: true
+        },
+        title: {
+            text: 'Polar Chart - overlapping axis label (With Category)'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            type: 'column',
+            data: data
+        }]
+    });
+
+    assert.ok(
+        chart.xAxis[0].tickPositions.some(
+            pos => chart.xAxis[0].ticks[pos]
+                .label
+                .element
+                .getAttribute('opacity') === '0'
+        ),
+        'The axis should have some hidden labels'
+    );
+
+    chart.xAxis[0].update({
+        labels: {
+            allowOverlap: true
+        }
+    });
+
+    assert.notOk(
+        chart.xAxis[0].tickPositions.some(
+            pos => chart.xAxis[0].ticks[pos]
+                .label
+                .element
+                .getAttribute('opacity') === '0'
+        ),
+        'The axis should have no hidden labels'
+    );
+});

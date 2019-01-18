@@ -15,11 +15,15 @@ $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data
             text: 'USD to EUR exchange rate'
         },
 
-        yAxis: {
+        yAxis: [{
             title: {
                 text: 'Exchange rate'
-            }
-        },
+            },
+            top: '15%',
+            height: '85%'
+        }, {
+            height: '15%'
+        }],
 
         series: [{
             name: 'USD to EUR',
@@ -50,6 +54,18 @@ $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data
                 x: lastDate - 15 * days,
                 title: 'On axis'
             }],
+            shape: 'squarepin'
+        }, {
+            type: 'flags',
+            name: 'Flags in pane',
+            data: [{
+                x: lastDate - 40 * days,
+                title: 'In pane'
+            }, {
+                x: lastDate - 15 * days,
+                title: 'In pane'
+            }],
+            yAxis: 1,
             shape: 'squarepin'
         }]
     });

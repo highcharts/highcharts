@@ -22,7 +22,9 @@ var correctFloat = H.correctFloat,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('trix', 'tema',
+H.seriesType(
+    'trix',
+    'tema',
     /**
      * Normalized average true range indicator (NATR). This series requires
      * `linkedTo` option to be set.
@@ -70,7 +72,7 @@ H.seriesType('trix', 'tema',
                 var TRIXPoint = [
                     xVal[i - 3],
                     EMAlevels.prevLevel3 !== 0 ?
-                      correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
+                        correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
                       EMAlevels.prevLevel3 * 100 : null
                 ];
             }

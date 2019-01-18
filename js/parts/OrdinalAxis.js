@@ -1,9 +1,8 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
-/* eslint max-len: 0 */
 
 'use strict';
 
@@ -22,27 +21,17 @@ var addEvent = H.addEvent,
     noop = H.noop,
     pick = H.pick,
     Series = H.Series,
-    timeUnits = H.timeUnits,
-    wrap = H.wrap;
+    timeUnits = H.timeUnits;
 
 /* ****************************************************************************
  * Start ordinal axis logic                                                   *
  *****************************************************************************/
-
-wrap(Series.prototype, 'init', function (proceed) {
-    var series = this,
-        xAxis;
-
-    // call the original function
-    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
-    xAxis = series.xAxis;
+addEvent(Series, 'updatedData', function () {
+    var xAxis = this.xAxis;
 
     // Destroy the extended ordinal index on updated data
     if (xAxis && xAxis.options.ordinal) {
-        addEvent(series, 'updatedData', function () {
-            delete xAxis.ordinalIndex;
-        });
+        delete xAxis.ordinalIndex;
     }
 });
 
@@ -54,8 +43,7 @@ wrap(Series.prototype, 'init', function (proceed) {
  * each segment then concatenize them. This method is used from both data
  * grouping logic and X axis tick position logic.
  */
-wrap(Axis.prototype, 'getTimeTicks', function (
-    proceed,
+Axis.prototype.getTimeTicks = function (
     normalizedInterval,
     min,
     max,
@@ -86,12 +74,12 @@ wrap(Axis.prototype, 'getTimeTicks', function (
         positions.length < 3 ||
         min === undefined
     ) {
-        return proceed.call(this, normalizedInterval, min, max, startOfWeek);
+        return time.getTimeTicks.apply(time, arguments);
     }
 
-    // Analyze the positions array to split it into segments on gaps larger than 5 times
-    // the closest distance. The closest distance is already found at this point, so
-    // we reuse that instead of computing it again.
+    // Analyze the positions array to split it into segments on gaps larger than
+    // 5 times the closest distance. The closest distance is already found at
+    // this point, so we reuse that instead of computing it again.
     posLength = positions.length;
 
     for (end = 0; end < posLength; end++) {
@@ -102,20 +90,35 @@ wrap(Axis.prototype, 'getTimeTicks', function (
             start = end;
         }
 
-        if (end === posLength - 1 || positions[end + 1] - positions[end] > closestDistance * 5 || outsideMax) {
+        if (
+            end === posLength - 1 ||
+            positions[end + 1] - positions[end] > closestDistance * 5 ||
+            outsideMax
+        ) {
 
-            // For each segment, calculate the tick positions from the getTimeTicks utility
-            // function. The interval will be the same regardless of how long the segment is.
+            // For each segment, calculate the tick positions from the
+            // getTimeTicks utility function. The interval will be the same
+            // regardless of how long the segment is.
             if (positions[end] > lastGroupPosition) { // #1475
 
-                segmentPositions = proceed.call(this, normalizedInterval, positions[start], positions[end], startOfWeek);
+                segmentPositions = time.getTimeTicks(
+                    normalizedInterval,
+                    positions[start],
+                    positions[end],
+                    startOfWeek
+                );
 
-                // Prevent duplicate groups, for example for multiple segments within one larger time frame (#1475)
-                while (segmentPositions.length && segmentPositions[0] <= lastGroupPosition) {
+                // Prevent duplicate groups, for example for multiple segments
+                // within one larger time frame (#1475)
+                while (
+                    segmentPositions.length &&
+                    segmentPositions[0] <= lastGroupPosition
+                ) {
                     segmentPositions.shift();
                 }
                 if (segmentPositions.length) {
-                    lastGroupPosition = segmentPositions[segmentPositions.length - 1];
+                    lastGroupPosition =
+                        segmentPositions[segmentPositions.length - 1];
                 }
 
                 groupPositions = groupPositions.concat(segmentPositions);
@@ -129,8 +132,8 @@ wrap(Axis.prototype, 'getTimeTicks', function (
         }
     }
 
-    // Get the grouping info from the last of the segments. The info is the same for
-    // all segments.
+    // Get the grouping info from the last of the segments. The info is the same
+    // for all segments.
     info = segmentPositions.info;
 
     // Optionally identify ticks with higher rank, for example when the ticks
@@ -161,10 +164,9 @@ wrap(Axis.prototype, 'getTimeTicks', function (
     groupPositions.info = info;
 
 
-
-    // Don't show ticks within a gap in the ordinal axis, where the space between
-    // two points is greater than a portion of the tick pixel interval
-    if (findHigherRanks && defined(tickPixelIntervalOption)) { // check for squashed ticks
+    // Don't show ticks within a gap in the ordinal axis, where the space
+    // between two points is greater than a portion of the tick pixel interval
+    if (findHigherRanks && defined(tickPixelIntervalOption)) {
 
         var length = groupPositions.length,
             i = length,
@@ -176,8 +178,8 @@ wrap(Axis.prototype, 'getTimeTicks', function (
             distance,
             distances = [];
 
-        // Find median pixel distance in order to keep a reasonably even distance between
-        // ticks (#748)
+        // Find median pixel distance in order to keep a reasonably even
+        // distance between ticks (#748)
         while (i--) {
             translated = this.translate(groupPositions[i]);
             if (lastTranslated) {
@@ -198,15 +200,24 @@ wrap(Axis.prototype, 'getTimeTicks', function (
             translated = translatedArr[i];
             distance = Math.abs(lastTranslated - translated);
             // #4175 - when axis is reversed, the distance, is negative but
-            // tickPixelIntervalOption positive, so we need to compare the same values
+            // tickPixelIntervalOption positive, so we need to compare the same
+            // values
 
-            // Remove ticks that are closer than 0.6 times the pixel interval from the one to the right,
-            // but not if it is close to the median distance (#748).
-            if (lastTranslated && distance < tickPixelIntervalOption * 0.8 &&
-                    (medianDistance === null || distance < medianDistance * 0.8)) {
+            // Remove ticks that are closer than 0.6 times the pixel interval
+            // from the one to the right, but not if it is close to the median
+            // distance (#748).
+            if (
+                lastTranslated &&
+                distance < tickPixelIntervalOption * 0.8 &&
+                (medianDistance === null || distance < medianDistance * 0.8)
+            ) {
 
-                // Is this a higher ranked position with a normal position to the right?
-                if (higherRanks[groupPositions[i]] && !higherRanks[groupPositions[i + 1]]) {
+                // Is this a higher ranked position with a normal position to
+                // the right?
+                if (
+                    higherRanks[groupPositions[i]] &&
+                    !higherRanks[groupPositions[i + 1]]
+                ) {
 
                     // Yes: remove the lower ranked neighbour to the right
                     itemToRemove = i + 1;
@@ -226,7 +237,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (
         }
     }
     return groupPositions;
-});
+};
 
 // Extend the Axis prototype
 extend(Axis.prototype, /** @lends Axis.prototype */ {
@@ -268,13 +279,17 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                     (series.takeOrdinalPosition !== false || hasBreaks)
                 ) {
 
-                    // concatenate the processed X data into the existing positions, or the empty array
-                    ordinalPositions = ordinalPositions.concat(series.processedXData);
+                    // concatenate the processed X data into the existing
+                    // positions, or the empty array
+                    ordinalPositions = ordinalPositions.concat(
+                        series.processedXData
+                    );
                     len = ordinalPositions.length;
 
                     // remove duplicates (#1588)
                     ordinalPositions.sort(function (a, b) {
-                        return a - b; // without a custom function it is sorted as strings
+                        // without a custom function it is sorted as strings
+                        return a - b;
                     });
 
                     overscrollPointsRange = Math.min(
@@ -326,24 +341,28 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             // cache the length
             len = ordinalPositions.length;
 
-            // Check if we really need the overhead of mapping axis data against the ordinal positions.
-            // If the series consist of evenly spaced data any way, we don't need any ordinal logic.
+            // Check if we really need the overhead of mapping axis data against
+            // the ordinal positions. If the series consist of evenly spaced
+            // data any way, we don't need any ordinal logic.
             if (len > 2) { // two points have equal distance by default
                 dist = ordinalPositions[1] - ordinalPositions[0];
                 i = len - 1;
                 while (i-- && !useOrdinal) {
-                    if (ordinalPositions[i + 1] - ordinalPositions[i] !== dist) {
+                    if (
+                        ordinalPositions[i + 1] - ordinalPositions[i] !== dist
+                    ) {
                         useOrdinal = true;
                     }
                 }
 
-                // When zooming in on a week, prevent axis padding for weekends even though the data within
-                // the week is evenly spaced.
+                // When zooming in on a week, prevent axis padding for weekends
+                // even though the data within the week is evenly spaced.
                 if (
                     !axis.options.keepOrdinalPadding &&
                     (
                         ordinalPositions[0] - min > dist ||
-                        max - ordinalPositions[ordinalPositions.length - 1] > dist
+                        max - ordinalPositions[ordinalPositions.length - 1] >
+                            dist
                     )
                 ) {
                     useOrdinal = true;
@@ -351,26 +370,33 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             } else if (axis.options.overscroll) {
                 if (len === 2) {
                     // Exactly two points, distance for overscroll is fixed:
-                    overscrollPointsRange = ordinalPositions[1] - ordinalPositions[0];
+                    overscrollPointsRange =
+                        ordinalPositions[1] - ordinalPositions[0];
                 } else if (len === 1) {
                     // We have just one point, closest distance is unknown.
                     // Assume then it is last point and overscrolled range:
                     overscrollPointsRange = axis.options.overscroll;
-                    ordinalPositions = [ordinalPositions[0], ordinalPositions[0] + overscrollPointsRange];
+                    ordinalPositions = [
+                        ordinalPositions[0],
+                        ordinalPositions[0] + overscrollPointsRange
+                    ];
                 } else {
-                    // In case of zooming in on overscrolled range, stick to the old range:
+                    // In case of zooming in on overscrolled range, stick to the
+                    // old range:
                     overscrollPointsRange = axis.overscrollPointsRange;
                 }
             }
 
-            // Record the slope and offset to compute the linear values from the array index.
-            // Since the ordinal positions may exceed the current range, get the start and
-            // end positions within it (#719, #665b)
+            // Record the slope and offset to compute the linear values from the
+            // array index. Since the ordinal positions may exceed the current
+            // range, get the start and end positions within it (#719, #665b)
             if (useOrdinal) {
 
                 if (axis.options.overscroll) {
                     axis.overscrollPointsRange = overscrollPointsRange;
-                    ordinalPositions = ordinalPositions.concat(axis.getOverscrollPositions());
+                    ordinalPositions = ordinalPositions.concat(
+                        axis.getOverscrollPositions()
+                    );
                 }
 
                 // Register
@@ -393,13 +419,18 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                     true
                 ), 1); // #3339
 
-                // Set the slope and offset of the values compared to the indices in the ordinal positions
+                // Set the slope and offset of the values compared to the
+                // indices in the ordinal positions
                 axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);
                 axis.ordinalOffset = min - (minIndex * slope);
 
             } else {
-                axis.overscrollPointsRange = pick(axis.closestPointRange, axis.overscrollPointsRange);
-                axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = undefined;
+                axis.overscrollPointsRange = pick(
+                    axis.closestPointRange,
+                    axis.overscrollPointsRange
+                );
+                axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset =
+                    undefined;
             }
         }
 
@@ -449,11 +480,14 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                 }
             }
 
-            // if that failed, find the intermediate position between the two nearest values
+            // if that failed, find the intermediate position between the two
+            // nearest values
             i = ordinalLength - 1;
             while (i--) {
                 if (val > ordinalPositions[i] || i === 0) { // interpolate
-                    distance = (val - ordinalPositions[i]) / (ordinalPositions[i + 1] - ordinalPositions[i]); // something between 0 and 1
+                    // something between 0 and 1
+                    distance = (val - ordinalPositions[i]) /
+                        (ordinalPositions[i + 1] - ordinalPositions[i]);
                     ordinalIndex = i + distance;
                     break;
                 }
@@ -484,7 +518,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             ordinalPositions = axis.ordinalPositions,
             ret;
 
-        if (!ordinalPositions) { // the visible range contains only equally spaced values
+        // the visible range contains only equally spaced values
+        if (!ordinalPositions) {
             ret = val;
 
         } else {
@@ -497,8 +532,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                 distance;
 
 
-            // Handle the case where we translate from the index directly, used only
-            // when panning an ordinal axis
+            // Handle the case where we translate from the index directly, used
+            // only when panning an ordinal axis
             if (fromIndex) {
 
                 if (val < 0) { // out of range, in effect panning to the left
@@ -510,24 +545,36 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                     distance = val - i; // the decimal
                 }
 
-            // Loop down along the ordinal positions. When the linear equivalent of i matches
-            // an ordinal position, interpolate between the left and right values.
+            // Loop down along the ordinal positions. When the linear equivalent
+            // of i matches an ordinal position, interpolate between the left
+            // and right values.
             } else {
                 while (i--) {
                     linearEquivalentLeft = (ordinalSlope * i) + ordinalOffset;
                     if (val >= linearEquivalentLeft) {
-                        linearEquivalentRight = (ordinalSlope * (i + 1)) + ordinalOffset;
-                        distance = (val - linearEquivalentLeft) / (linearEquivalentRight - linearEquivalentLeft); // something between 0 and 1
+                        linearEquivalentRight =
+                            (ordinalSlope * (i + 1)) + ordinalOffset;
+                        // something between 0 and 1
+                        distance = (val - linearEquivalentLeft) /
+                            (linearEquivalentRight - linearEquivalentLeft);
                         break;
                     }
                 }
             }
 
-            // If the index is within the range of the ordinal positions, return the associated
-            // or interpolated value. If not, just return the value
-            return distance !== undefined && ordinalPositions[i] !== undefined ?
-                ordinalPositions[i] + (distance ? distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 0) :
-                val;
+            // If the index is within the range of the ordinal positions, return
+            // the associated or interpolated value. If not, just return the
+            // value
+            return (
+                distance !== undefined && ordinalPositions[i] !== undefined ?
+                    ordinalPositions[i] + (
+                        distance ?
+                            distance *
+                            (ordinalPositions[i + 1] - ordinalPositions[i]) :
+                            0
+                    ) :
+                    val
+            );
         }
         return ret;
     },
@@ -555,7 +602,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             fakeAxis,
             fakeSeries;
 
-        // If this is the first time, or the ordinal index is deleted by updatedData,
+        // If this is the first time, or the ordinal index is deleted by
+        // updatedData,
         // create it.
         if (!ordinalIndex) {
             ordinalIndex = axis.ordinalIndex = {};
@@ -564,7 +612,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 
         if (!ordinalIndex[key]) {
 
-            // Create a fake axis object where the extended ordinal positions are emulated
+            // Create a fake axis object where the extended ordinal positions
+            // are emulated
             fakeAxis = {
                 series: [],
                 chart: chart,
@@ -581,7 +630,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                 ordinal2lin: Axis.prototype.ordinal2lin // #6276
             };
 
-            // Add the fake series to hold the full data, then apply processData to it
+            // Add the fake series to hold the full data, then apply processData
+            // to it
             axis.series.forEach(function (series) {
                 fakeSeries = {
                     xAxis: fakeAxis,
@@ -590,13 +640,16 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
                     destroyGroupedData: noop
                 };
 
-                fakeSeries.xData = fakeSeries.xData.concat(axis.getOverscrollPositions());
+                fakeSeries.xData = fakeSeries.xData.concat(
+                    axis.getOverscrollPositions()
+                );
 
                 fakeSeries.options = {
                     dataGrouping: grouping ? {
                         enabled: true,
                         forced: true,
-                        approximation: 'open', // doesn't matter which, use the fastest
+                        // doesn't matter which, use the fastest
+                        approximation: 'open',
                         units: [[grouping.unitName, [grouping.count]]]
                     } : {
                         enabled: false
@@ -692,7 +745,8 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             median,
             groupIntervalFactor = this.groupIntervalFactor;
 
-        // Only do this computation for the first series, let the other inherit it (#2416)
+        // Only do this computation for the first series, let the other inherit
+        // it (#2416)
         if (!groupIntervalFactor) {
 
             // Register all the distances in an array
@@ -706,11 +760,13 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             });
             median = distances[Math.floor(len / 2)];
 
-            // Compensate for series that don't extend through the entire axis extent. #1675.
+            // Compensate for series that don't extend through the entire axis
+            // extent. #1675.
             xMin = Math.max(xMin, processedXData[0]);
             xMax = Math.min(xMax, processedXData[len - 1]);
 
-            this.groupIntervalFactor = groupIntervalFactor = (len * median) / (xMax - xMin);
+            this.groupIntervalFactor = groupIntervalFactor =
+                (len * median) / (xMax - xMin);
         }
 
         // Return the factor needed for data grouping
@@ -730,10 +786,11 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
      */
     postProcessTickInterval: function (tickInterval) {
         // Problem: https://jsfiddle.net/highcharts/FQm4E/1/
-        // This is a case where this algorithm doesn't work optimally. In this case, the
-        // tick labels are spread out per week, but all the gaps reside within weeks. So
-        // we have a situation where the labels are courser than the ordinal gaps, and
-        // thus the tick interval should not be altered
+        // This is a case where this algorithm doesn't work optimally. In this
+        // case, the tick labels are spread out per week, but all the gaps
+        // reside within weeks. So we have a situation where the labels are
+        // courser than the ordinal gaps, and thus the tick interval should not
+        // be altered
         var ordinalSlope = this.ordinalSlope,
             ret;
 
@@ -755,11 +812,11 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 Axis.prototype.ordinal2lin = Axis.prototype.val2lin;
 
 // Extending the Chart.pan method for ordinal axes
-wrap(Chart.prototype, 'pan', function (proceed, e) {
+addEvent(Chart, 'pan', function (e) {
     var chart = this,
         xAxis = chart.xAxis[0],
         overscroll = xAxis.options.overscroll,
-        chartX = e.chartX,
+        chartX = e.originalEvent.chartX,
         runBase = false;
 
     if (xAxis.options.ordinal && xAxis.series.length) {
@@ -771,17 +828,24 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
             max = extremes.max,
             trimmedRange,
             hoverPoints = chart.hoverPoints,
-            closestPointRange = xAxis.closestPointRange || xAxis.overscrollPointsRange,
-            pointPixelWidth = xAxis.translationSlope * (xAxis.ordinalSlope || closestPointRange),
-            movedUnits = (mouseDownX - chartX) / pointPixelWidth, // how many ordinal units did we move?
-            extendedAxis = { ordinalPositions: xAxis.getExtendedPositions() }, // get index of all the chart's points
+            closestPointRange =
+                xAxis.closestPointRange || xAxis.overscrollPointsRange,
+            pointPixelWidth = (
+                xAxis.translationSlope *
+                (xAxis.ordinalSlope || closestPointRange)
+            ),
+            // how many ordinal units did we move?
+            movedUnits = (mouseDownX - chartX) / pointPixelWidth,
+            // get index of all the chart's points
+            extendedAxis = { ordinalPositions: xAxis.getExtendedPositions() },
             ordinalPositions,
             searchAxisLeft,
             lin2val = xAxis.lin2val,
             val2lin = xAxis.val2lin,
             searchAxisRight;
 
-        if (!extendedAxis.ordinalPositions) { // we have an ordinal axis, but the data is equally spaced
+        // we have an ordinal axis, but the data is equally spaced
+        if (!extendedAxis.ordinalPositions) {
             runBase = true;
 
         } else if (Math.abs(movedUnits) > 1) {
@@ -801,26 +865,30 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
                 searchAxisRight = extendedAxis;
             }
 
-            // In grouped data series, the last ordinal position represents the grouped data, which is
-            // to the left of the real data max. If we don't compensate for this, we will be allowed
-            // to pan grouped data series passed the right of the plot area.
+            // In grouped data series, the last ordinal position represents the
+            // grouped data, which is to the left of the real data max. If we
+            // don't compensate for this, we will be allowed to pan grouped data
+            // series passed the right of the plot area.
             ordinalPositions = searchAxisRight.ordinalPositions;
             if (dataMax > ordinalPositions[ordinalPositions.length - 1]) {
                 ordinalPositions.push(dataMax);
             }
 
-            // Get the new min and max values by getting the ordinal index for the current extreme,
-            // then add the moved units and translate back to values. This happens on the
-            // extended ordinal positions if the new position is out of range, else it happens
-            // on the current x axis which is smaller and faster.
+            // Get the new min and max values by getting the ordinal index for
+            // the current extreme, then add the moved units and translate back
+            // to values. This happens on the extended ordinal positions if the
+            // new position is out of range, else it happens on the current x
+            // axis which is smaller and faster.
             chart.fixedRange = max - min;
-            trimmedRange = xAxis.toFixedRange(null, null,
+            trimmedRange = xAxis.toFixedRange(
+                null,
+                null,
                 lin2val.apply(searchAxisLeft, [
-                    val2lin.apply(searchAxisLeft, [min, true]) + movedUnits, // the new index
+                    val2lin.apply(searchAxisLeft, [min, true]) + movedUnits,
                     true // translate from index
                 ]),
                 lin2val.apply(searchAxisRight, [
-                    val2lin.apply(searchAxisRight, [max, true]) + movedUnits, // the new index
+                    val2lin.apply(searchAxisRight, [max, true]) + movedUnits,
                     true // translate from index
                 ])
             );
@@ -830,7 +898,13 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
                 trimmedRange.min >= Math.min(extremes.dataMin, min) &&
                 trimmedRange.max <= Math.max(dataMax, max) + overscroll
             ) {
-                xAxis.setExtremes(trimmedRange.min, trimmedRange.max, true, false, { trigger: 'pan' });
+                xAxis.setExtremes(
+                    trimmedRange.min,
+                    trimmedRange.max,
+                    true,
+                    false,
+                    { trigger: 'pan' }
+                );
             }
 
             chart.mouseDownX = chartX; // set new reference for next run
@@ -846,8 +920,8 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
         if (overscroll) {
             xAxis.max = xAxis.dataMax + overscroll;
         }
-        // call the original function
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    } else {
+        e.preventDefault();
     }
 });
 

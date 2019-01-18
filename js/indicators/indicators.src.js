@@ -34,24 +34,31 @@ var pick = H.pick,
 
 addEvent(H.Series, 'init', function (eventOptions) {
     var series = this,
-        options = eventOptions.options,
-        dataGrouping = options.dataGrouping;
+        options = eventOptions.options;
 
     if (
         options.useOhlcData &&
         options.id !== 'highcharts-navigator-series'
-        ) {
-
-        if (dataGrouping && dataGrouping.enabled) {
-            dataGrouping.approximation = 'ohlc';
-        }
-
+    ) {
         H.extend(series, {
             pointValKey: ohlcProto.pointValKey,
             keys: ohlcProto.keys,
             pointArrayMap: ohlcProto.pointArrayMap,
             toYData: ohlcProto.toYData
         });
+    }
+});
+
+addEvent(Series, 'afterSetOptions', function (e) {
+    var options = e.options,
+        dataGrouping = options.dataGrouping;
+
+    if (
+        dataGrouping &&
+        options.useOhlcData &&
+        options.id !== 'highcharts-navigator-series'
+    ) {
+        dataGrouping.approximation = 'ohlc';
     }
 });
 
@@ -64,7 +71,9 @@ addEvent(H.Series, 'init', function (eventOptions) {
  *
  * @augments Highcharts.Series
  */
-seriesType('sma', 'line',
+seriesType(
+    'sma',
+    'line',
     /**
      * Simple moving average indicator (SMA). This series requires `linkedTo`
      * option to be set.

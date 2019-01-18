@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2018 Øystein Moseng
+ *  (c) 2009-2019 Øystein Moseng
  *
  *  Earcons for the sonification module in Highcharts.
  *
@@ -118,6 +118,7 @@ Earcon.prototype.sonify = function (options) {
             instrOnEnd,
             instrumentCopy,
             copyId;
+
         if (instrument && instrument.play) {
             if (opts.playOptions) {
                 // Handle master pan/volume
@@ -170,6 +171,7 @@ Earcon.prototype.sonify = function (options) {
 Earcon.prototype.cancelSonify = function (fadeOut) {
     var playing = this.instrumentsPlaying,
         instrIds = playing && Object.keys(playing);
+
     if (instrIds && instrIds.length) {
         instrIds.forEach(function (instr) {
             playing[instr].stop(!fadeOut, null, 'cancelled');

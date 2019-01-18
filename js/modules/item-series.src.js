@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2018 Torstein Honsi
+ *  (c) 2009-2019 Torstein Honsi
  *
  *  Item series type for Highcharts
  *
@@ -148,4 +148,3 @@ seriesType('item', 'column', {
 H.SVGRenderer.prototype.symbols.rect = function (x, y, w, h, options) {
     return H.SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
 };
-

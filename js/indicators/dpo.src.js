@@ -14,6 +14,7 @@ var correctFloat = H.correctFloat,
 // Utils
 function accumulatePoints(sum, yVal, i, index, subtract) {
     var price = pick(yVal[i][index], yVal[i]);
+
     if (subtract) {
         return correctFloat(sum - price);
     }
@@ -29,7 +30,9 @@ function accumulatePoints(sum, yVal, i, index, subtract) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('dpo', 'sma',
+H.seriesType(
+    'dpo',
+    'sma',
     /**
      * Detrended Price Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`.

@@ -1,5 +1,5 @@
 /* *
- * (c) 2018 Torstein Honsi, Lars Cabrera
+ * (c) 2016-2019 Torstein Honsi, Lars Cabrera
  *
  * License: www.highcharts.com/license
  */
@@ -71,6 +71,7 @@ Chart.prototype.adjustHeight = function () {
                 axis.series.forEach(function (series) {
                     var clipRect =
                         series.sharedClipKey && chart[series.sharedClipKey];
+
                     if (clipRect) {
                         clipRect.attr({
                             height: chart.plotHeight

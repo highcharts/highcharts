@@ -20,124 +20,130 @@ function Tunnel() {
     CrookedLine.apply(this, arguments);
 }
 
-H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
-    getPointsOptions: function () {
-        var pointsOptions =
-            CrookedLine.prototype.getPointsOptions.call(this);
+H.extendAnnotation(
+    Tunnel,
+    CrookedLine,
+    /** @lends Annotation.Tunnel# */
+    {
+        getPointsOptions: function () {
+            var pointsOptions =
+                CrookedLine.prototype.getPointsOptions.call(this);
 
-        pointsOptions[2] = this.heightPointOptions(pointsOptions[1]);
-        pointsOptions[3] = this.heightPointOptions(pointsOptions[0]);
+            pointsOptions[2] = this.heightPointOptions(pointsOptions[1]);
+            pointsOptions[3] = this.heightPointOptions(pointsOptions[0]);
 
-        return pointsOptions;
-    },
+            return pointsOptions;
+        },
 
-    getControlPointsOptions: function () {
-        return this.getPointsOptions().slice(0, 2);
-    },
+        getControlPointsOptions: function () {
+            return this.getPointsOptions().slice(0, 2);
+        },
 
-    heightPointOptions: function (pointOptions) {
-        var heightPointOptions = H.merge(pointOptions);
+        heightPointOptions: function (pointOptions) {
+            var heightPointOptions = H.merge(pointOptions);
 
-        heightPointOptions.y += this.options.typeOptions.height;
+            heightPointOptions.y += this.options.typeOptions.height;
 
-        return heightPointOptions;
-    },
+            return heightPointOptions;
+        },
 
-    addControlPoints: function () {
-        CrookedLine.prototype.addControlPoints.call(this);
+        addControlPoints: function () {
+            CrookedLine.prototype.addControlPoints.call(this);
 
-        var options = this.options,
-            controlPoint = new ControlPoint(
-                this.chart,
-                this,
-                H.merge(
-                    options.controlPointOptions,
-                    options.typeOptions.heightControlPoint
-                ),
-                2
+            var options = this.options,
+                controlPoint = new ControlPoint(
+                    this.chart,
+                    this,
+                    H.merge(
+                        options.controlPointOptions,
+                        options.typeOptions.heightControlPoint
+                    ),
+                    2
+                );
+
+            this.controlPoints.push(controlPoint);
+
+            options.typeOptions.heightControlPoint = controlPoint.options;
+        },
+
+        addShapes: function () {
+            this.addLine();
+            this.addBackground();
+        },
+
+        addLine: function () {
+            var line = this.initShape(
+                H.merge(this.options.typeOptions.line, {
+                    type: 'path',
+                    points: [
+                        this.points[0],
+                        this.points[1],
+                        function (target) {
+                            var pointOptions = MockPoint.pointToOptions(
+                                target.annotation.points[2]
+                            );
+
+                            pointOptions.command = 'M';
+
+                            return pointOptions;
+                        },
+                        this.points[3]
+                    ]
+                }),
+                false
             );
 
-        this.controlPoints.push(controlPoint);
+            this.options.typeOptions.line = line.options;
+        },
 
-        options.typeOptions.heightControlPoint = controlPoint.options;
+        addBackground: function () {
+            var background = this.initShape(H.merge(
+                this.options.typeOptions.background,
+                {
+                    type: 'path',
+                    points: this.points.slice()
+                }
+            ));
+
+            this.options.typeOptions.background = background.options;
+        },
+
+        /**
+         * Translate start or end ("left" or "right") side of the tunnel.
+         *
+         * @param {number} dx - the amount of x translation
+         * @param {number} dy - the amount of y translation
+         * @param {boolean} [end] - whether to translate start or end side
+         */
+        translateSide: function (dx, dy, end) {
+            var topIndex = Number(end),
+                bottomIndex = topIndex === 0 ? 3 : 2;
+
+            this.translatePoint(dx, dy, topIndex);
+            this.translatePoint(dx, dy, bottomIndex);
+        },
+
+        /**
+         * Translate height of the tunnel.
+         *
+         * @param {number} dh - the amount of height translation
+         */
+        translateHeight: function (dh) {
+            this.translatePoint(0, dh, 2);
+            this.translatePoint(0, dh, 3);
+
+            this.options.typeOptions.height =
+                this.points[3].y - this.points[0].y;
+        }
     },
 
-    addShapes: function () {
-        this.addLine();
-        this.addBackground();
-    },
-
-    addLine: function () {
-        var line = this.initShape(
-            H.merge(this.options.typeOptions.line, {
-                type: 'path',
-                points: [
-                    this.points[0],
-                    this.points[1],
-                    function (target) {
-                        var pointOptions = MockPoint.pointToOptions(
-                            target.annotation.points[2]
-                        );
-
-                        pointOptions.command = 'M';
-
-                        return pointOptions;
-                    },
-                    this.points[3]
-                ]
-            }),
-            false
-        );
-
-        this.options.typeOptions.line = line.options;
-    },
-
-    addBackground: function () {
-        var background = this.initShape(H.merge(
-            this.options.typeOptions.background,
-            {
-                type: 'path',
-                points: this.points.slice()
-            }
-        ));
-
-        this.options.typeOptions.background = background.options;
-    },
-
-    /**
-     * Translate start or end ("left" or "right") side of the tunnel.
-     *
-     * @param {number} dx - the amount of x translation
-     * @param {number} dy - the amount of y translation
-     * @param {boolean} [end] - whether to translate start or end side
-     */
-    translateSide: function (dx, dy, end) {
-        var topIndex = Number(end),
-            bottomIndex = topIndex === 0 ? 3 : 2;
-
-        this.translatePoint(dx, dy, topIndex);
-        this.translatePoint(dx, dy, bottomIndex);
-    },
-
-    /**
-     * Translate height of the tunnel.
-     *
-     * @param {number} dh - the amount of height translation
-     */
-    translateHeight: function (dh) {
-        this.translatePoint(0, dh, 2);
-        this.translatePoint(0, dh, 3);
-
-        this.options.typeOptions.height =
-            this.points[3].y - this.points[0].y;
-    }
-},
     /**
      * A tunnel annotation.
      *
      * @extends annotations.crookedLine
      * @sample highcharts/annotations-advanced/tunnel/
      *         Tunnel
+     * @product highstock
      * @optionparent annotations.tunnel
      */
     {
@@ -148,7 +154,6 @@ H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
              * Background options.
              *
              * @type {Object}
-             * @extends annotations.base.shapes
              * @excluding height, point, points, r, type, width, markerEnd,
              *            markerStart
              */
@@ -169,7 +174,7 @@ H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
              * Options for the control point which controls
              * the annotation's height.
              *
-             * @extends annotations.base.controlPointOptions
+             * @extends annotations.crookedLine.controlPointOptions
              * @excluding positioner, events
              */
             heightControlPoint: {
@@ -204,7 +209,7 @@ H.extendAnnotation(Tunnel, CrookedLine, /** @lends Annotation.Tunnel# */ {
         },
 
         /**
-         * @extends annotations.base.controlPointOptions
+         * @extends annotations.crookedLine.controlPointOptions
          * @excluding positioner, events
          */
         controlPointOptions: {

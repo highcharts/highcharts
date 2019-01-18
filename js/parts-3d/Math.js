@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -56,8 +56,9 @@ function rotate3D(x, y, z, angles) {
 // needed also outside of perspective() function (#8042).
 H.perspective3D = function (coordinate, origin, distance) {
     var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
-    distance / (coordinate.z + origin.z + distance) :
-    1;
+        distance / (coordinate.z + origin.z + distance) :
+        1;
+
     return {
         x: coordinate.x * projection,
         y: coordinate.y * projection
@@ -159,6 +160,7 @@ H.pointCameraDistance = function (coordinates, chart) {
             Math.pow(cameraPosition.y - coordinates.plotY, 2) +
             Math.pow(cameraPosition.z - coordinates.plotZ, 2)
         );
+
     return distance;
 };
 
@@ -177,6 +179,7 @@ H.shapeArea = function (vertexes) {
     var area = 0,
         i,
         j;
+
     for (i = 0; i < vertexes.length; i++) {
         j = (i + 1) % vertexes.length;
         area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
@@ -201,4 +204,3 @@ H.shapeArea = function (vertexes) {
 H.shapeArea3d = function (vertexes, chart, insidePlotArea) {
     return H.shapeArea(H.perspective(vertexes, chart, insidePlotArea));
 };
-

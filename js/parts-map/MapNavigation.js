@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -120,18 +120,18 @@ MapNavigation.prototype.update = function (options) {
                 0,
                 n === 'zoomIn' ? 'topbutton' : 'bottombutton'
             )
-            .addClass('highcharts-map-navigation highcharts-' + {
-                zoomIn: 'zoom-in',
-                zoomOut: 'zoom-out'
-            }[n])
-            .attr({
-                width: buttonOptions.width,
-                height: buttonOptions.height,
-                title: chart.options.lang[n],
-                padding: buttonOptions.padding,
-                zIndex: 5
-            })
-            .add();
+                .addClass('highcharts-map-navigation highcharts-' + {
+                    zoomIn: 'zoom-in',
+                    zoomOut: 'zoom-out'
+                }[n])
+                .attr({
+                    width: buttonOptions.width,
+                    height: buttonOptions.height,
+                    title: chart.options.lang[n],
+                    padding: buttonOptions.padding,
+                    zIndex: 5
+                })
+                .add();
             button.handler = buttonOptions.onclick;
             button.align(
                 extend(buttonOptions, {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2018 Øystein Moseng
+ *  (c) 2009-2019 Øystein Moseng
  *
  *  Utility functions for sonification.
  *
@@ -45,6 +45,7 @@ SignalHandler.prototype.init = function (supportedSignals) {
  */
 SignalHandler.prototype.registerSignalCallbacks = function (signals) {
     var signalHandler = this;
+
     signalHandler.supportedSignals.forEach(function (supportedSignal) {
         if (signals[supportedSignal]) {
             (
@@ -66,6 +67,7 @@ SignalHandler.prototype.registerSignalCallbacks = function (signals) {
  */
 SignalHandler.prototype.clearSignalCallbacks = function (signalNames) {
     var signalHandler = this;
+
     if (signalNames) {
         signalNames.forEach(function (signalName) {
             if (signalHandler.signals[signalName]) {
@@ -87,9 +89,11 @@ SignalHandler.prototype.clearSignalCallbacks = function (signalNames) {
  */
 SignalHandler.prototype.emitSignal = function (signalName, data) {
     var retval;
+
     if (this.signals[signalName]) {
         this.signals[signalName].forEach(function (handler) {
             var result = handler(data);
+
             retval = result !== undefined ? result : retval;
         });
     }
@@ -118,6 +122,7 @@ var utilities = {
     getMusicalScale: function (semitones) {
         return musicalFrequencies.filter(function (freq, i) {
             var interval = i % 12 + 1;
+
             return semitones.some(function (allowedInterval) {
                 return allowedInterval === interval;
             });
@@ -137,7 +142,8 @@ var utilities = {
             // users to zoom in for better fidelity.
             series.points.forEach(function (point) {
                 var val = point[prop] !== undefined ?
-                        point[prop] : point.options[prop];
+                    point[prop] : point.options[prop];
+
                 extremes.min = Math.min(extremes.min, val);
                 extremes.max = Math.max(extremes.max, val);
             });

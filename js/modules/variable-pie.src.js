@@ -27,7 +27,9 @@ var pick = H.pick,
  *
  * @augments Highcharts.Series
  */
-seriesType('variablepie', 'pie',
+seriesType(
+    'variablepie',
+    'pie',
     /**
      * A variable pie series is a two dimensional series type, where each point
      * renders an Y and Z value.  Each point is drawn as a pie slice where the
@@ -152,6 +154,7 @@ seriesType('variablepie', 'pie',
             ['minPointSize', 'maxPointSize'].forEach(function (prop) {
                 var length = seriesOptions[prop],
                     isPercent = /%$/.test(length);
+
                 length = parseInt(length, 10);
                 extremes[prop] = isPercent ?
                     smallestSize * length / 100 :
@@ -257,7 +260,8 @@ seriesType('variablepie', 'pie',
                 startAngleRad = Math.PI / 180 * (startAngle - 90),
                 endAngleRad = Math.PI / 180 * (pick(
                     options.endAngle,
-                    startAngle + 360) - 90),
+                    startAngle + 360
+                ) - 90),
                 circ = endAngleRad - startAngleRad, // 2 * Math.PI,
                 points = series.points,
                 // the x component of the radius vector for a given point
@@ -367,7 +371,7 @@ seriesType('variablepie', 'pie',
                         y: positions[1] + pointRadiusY +
                             Math.sin(angle) * point.labelDistance
                     },
-                    final: {
+                    'final': {
                         // used for generating connector path -
                         // initialized later in drawDataLabels function
                         // x: undefined,
@@ -411,7 +415,6 @@ seriesType('variablepie', 'pie',
  *
  * 1. An array of arrays with 2 values. In this case, the numerical values will
  *    be interpreted as `y, z` options. Example:
- *
  *    ```js
  *    data: [
  *        [40, 75],
@@ -425,7 +428,6 @@ seriesType('variablepie', 'pie',
  *    data points exceeds the series'
  *    [turboThreshold](#series.variablepie.turboThreshold), this option is not
  *    available.
- *
  *    ```js
  *    data: [{
  *        y: 1,
@@ -440,8 +442,6 @@ seriesType('variablepie', 'pie',
  *    }]
  *    ```
  *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
  *         Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
@@ -451,7 +451,7 @@ seriesType('variablepie', 'pie',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|*>}
+ * @type      {Array<Array<(number|string),number>|*>}
  * @extends   series.pie.data
  * @excluding marker, x
  * @product   highcharts

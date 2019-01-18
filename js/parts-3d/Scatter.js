@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * Scatter 3D series.
  *
@@ -22,7 +22,9 @@ var Point = H.Point,
  *
  * @augments Highcharts.Series
  */
-seriesType('scatter3d', 'scatter',
+seriesType(
+    'scatter3d',
+    'scatter',
     /**
      * A 3D scatter plot uses x, y and z coordinates to display values for three
      * variables for a set of data.

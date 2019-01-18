@@ -1,7 +1,7 @@
 /* *
  * Mixin for downloading content in the browser
  *
- * (c) 2018 Oystein Moseng
+ * (c) 2015-2019 Oystein Moseng
  *
  * License: www.highcharts.com/license
  */
@@ -19,6 +19,7 @@ var win = Highcharts.win,
 // Convert base64 dataURL to Blob if supported, otherwise returns undefined
 Highcharts.dataURLtoBlob = function (dataURL) {
     var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
+
     if (
         parts &&
         parts.length > 3 &&
@@ -76,7 +77,7 @@ Highcharts.downloadURL = function (dataURL, filename) {
     if (isEdgeBrowser || dataURL.length > 2000000) {
         dataURL = Highcharts.dataURLtoBlob(dataURL);
         if (!dataURL) {
-            throw 'Failed to convert to blob';
+            throw new Error('Failed to convert to blob');
         }
     }
 
@@ -92,7 +93,7 @@ Highcharts.downloadURL = function (dataURL, filename) {
         try {
             windowRef = win.open(dataURL, 'chart');
             if (windowRef === undefined || windowRef === null) {
-                throw 'Failed to open window';
+                throw new Error('Failed to open window');
             }
         } catch (e) {
             // window.open failed, trying location.href

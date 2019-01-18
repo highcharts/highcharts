@@ -1,7 +1,7 @@
 /* eslint-disable */
 /* eslint-env node,es6 */
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  *
@@ -248,8 +248,8 @@ function parseErrorsDirectory (directoryPath) {
 
             let parsedErrors = {
                 meta: {
-                    files: [],
-                    version: require(rootPath  + '/package.json').version
+                    files: []
+                    //, version: require(rootPath  + '/package.json').version
                 }
             };
 
@@ -290,7 +290,12 @@ function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
                 oldErrorsJson[error].text === parsedErrors[error].text &&
                 oldErrorsJson[error].enduser === parsedErrors[error].enduser
             ));
-        if (same) {
+        const version = require(rootPath  + '/package.json').version;
+
+        if (same &&
+            (!oldErrorsJson.meta.version ||
+            oldErrorsJson.meta.version === version)
+        ) {
             return Promise.resolve();
         }
     }
@@ -304,7 +309,7 @@ function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
                 '/* eslint-disable */\n' +
                 '/* *\n' +
                 ' * Error information for the debugger module\n' +
-                ' * (c) 2010-2018 Torstein Honsi\n' +
+                ' * (c) 2010-2019 Torstein Honsi\n' +
                 ' * License: www.highcharts.com/license\n' +
                 ' */\n\n' +
                 '// DO NOT EDIT!\n' +

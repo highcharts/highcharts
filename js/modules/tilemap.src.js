@@ -21,6 +21,7 @@ var seriesType = H.seriesType,
     // Utility func to get padding definition from tile size division
     tilePaddingFromTileSize = function (series, xDiv, yDiv) {
         var options = series.options;
+
         return {
             xPad: (options.colsize || 1) / -xDiv,
             yPad: (options.rowsize || 1) / -yDiv
@@ -41,6 +42,7 @@ H.tileShapeTypes = {
                 return [];
             }
             var hexagon = this.tileEdges;
+
             return [
                 'M', hexagon.x2 - size, hexagon.y1 + size,
                 'L', hexagon.x3 + size, hexagon.y1 + size,
@@ -173,6 +175,7 @@ H.tileShapeTypes = {
                 return [];
             }
             var diamond = this.tileEdges;
+
             return [
                 'M', diamond.x2, diamond.y1 + size,
                 'L', diamond.x3 + size, diamond.y2,
@@ -287,7 +290,8 @@ H.tileShapeTypes = {
         },
         haloPath: function (size) {
             return H.seriesTypes.scatter.prototype.pointClass.prototype.haloPath
-                .call(this,
+                .call(
+                    this,
                     size + (size && this.radius)
                 );
         },
@@ -414,7 +418,7 @@ H.tileShapeTypes = {
         alignDataLabel: H.seriesTypes.heatmap.prototype.alignDataLabel,
         translate: H.seriesTypes.heatmap.prototype.translate,
         getSeriesPadding: function () {
-            return;
+
         },
         haloPath: H.seriesTypes.heatmap.prototype.pointClass.prototype.haloPath
     }
@@ -424,11 +428,11 @@ H.tileShapeTypes = {
 // Extension to add pixel padding for series. Uses getSeriesPixelPadding on each
 // series and adds the largest padding required. If no series has this function
 // defined, we add nothing.
-H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
+H.addEvent(H.Axis, 'afterSetAxisTranslation', function () {
 
-    // We need to run the original func first, so that we know the translation
-    // formula to use for computing the padding
-    proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    if (this.recomputingForTilemap) {
+        return;
+    }
 
     var axis = this,
         // Find which series' padding to use
@@ -452,7 +456,9 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
     if (seriesPadding.padding) {
         // Recompute translation with new axis length now (minus padding)
         axis.len -= lengthPadding;
-        proceed.apply(axis, Array.prototype.slice.call(arguments, 1));
+        axis.recomputingForTilemap = true;
+        axis.setAxisTranslation();
+        delete axis.recomputingForTilemap;
         axis.minPixelPadding += seriesPadding.padding;
         axis.len += lengthPadding;
     }
@@ -467,7 +473,7 @@ H.wrap(H.Axis.prototype, 'setAxisTranslation', function (proceed) {
  */
 seriesType('tilemap', 'heatmap'
 
-/**
+    /**
  * A tilemap series is a type of heatmap where the tile shapes are configurable.
  *
  * @sample highcharts/demo/honeycomb-usa/
@@ -485,41 +491,41 @@ seriesType('tilemap', 'heatmap'
  *
  * @extends      plotOptions.heatmap
  * @since        6.0.0
- * @excluding    joinBy, shadow, allAreas, mapData, data
+ * @excluding    jitter, joinBy, shadow, allAreas, mapData, data
  * @product      highcharts highmaps
  * @optionparent plotOptions.tilemap
  */
-, { // Default options
+    , { // Default options
 
-    states: {
+        states: {
 
-        hover: {
+            hover: {
 
-            halo: {
+                halo: {
 
-                enabled: true,
+                    enabled: true,
 
-                size: 2,
+                    size: 2,
 
-                opacity: 0.5,
+                    opacity: 0.5,
 
-                attributes: {
+                    attributes: {
 
-                    zIndex: 3
+                        zIndex: 3
+                    }
                 }
             }
-        }
-    },
+        },
 
-    /**
+        /**
      * The padding between points in the tilemap.
      *
      * @sample maps/plotoptions/tilemap-pointpadding
      *         Point padding on tiles
      */
-    pointPadding: 2,
+        pointPadding: 2,
 
-    /**
+        /**
      * The column size - how many X axis units each column in the tilemap
      * should span. Works as in [Heatmaps](#plotOptions.heatmap.colsize).
      *
@@ -534,7 +540,7 @@ seriesType('tilemap', 'heatmap'
      * @apioption plotOptions.tilemap.colsize
      */
 
-    /**
+        /**
      * The row size - how many Y axis units each tilemap row should span.
      * Analogous to [colsize](#plotOptions.tilemap.colsize).
      *
@@ -549,7 +555,7 @@ seriesType('tilemap', 'heatmap'
      * @apioption plotOptions.tilemap.rowsize
      */
 
-    /**
+        /**
      * The shape of the tiles in the tilemap. Possible values are `hexagon`,
      * `circle`, `diamond`, and `square`.
      *
@@ -560,94 +566,98 @@ seriesType('tilemap', 'heatmap'
      *
      * @validvalue ["circle", "diamond", "hexagon", "square"]
      */
-    tileShape: 'hexagon'
+        tileShape: 'hexagon'
 
-}, { // Prototype functions
+    }, { // Prototype functions
 
-    // Set tile shape object on series
-    setOptions: function () {
+        // Set tile shape object on series
+        setOptions: function () {
         // Call original function
-        var ret = H.seriesTypes.heatmap.prototype.setOptions.apply(this,
-            Array.prototype.slice.call(arguments)
-        );
+            var ret = H.seriesTypes.heatmap.prototype.setOptions.apply(
+                this,
+                Array.prototype.slice.call(arguments)
+            );
 
-        this.tileShape = H.tileShapeTypes[ret.tileShape];
-        return ret;
-    },
+            this.tileShape = H.tileShapeTypes[ret.tileShape];
+            return ret;
+        },
 
-    // Use the shape's defined data label alignment function
-    alignDataLabel: function () {
-        return this.tileShape.alignDataLabel.apply(this,
-            Array.prototype.slice.call(arguments)
-        );
-    },
+        // Use the shape's defined data label alignment function
+        alignDataLabel: function () {
+            return this.tileShape.alignDataLabel.apply(
+                this,
+                Array.prototype.slice.call(arguments)
+            );
+        },
 
-    // Get metrics for padding of axis for this series
-    getSeriesPixelPadding: function (axis) {
-        var isX = axis.isXAxis,
-            padding = this.tileShape.getSeriesPadding(this),
-            coord1,
-            coord2;
+        // Get metrics for padding of axis for this series
+        getSeriesPixelPadding: function (axis) {
+            var isX = axis.isXAxis,
+                padding = this.tileShape.getSeriesPadding(this),
+                coord1,
+                coord2;
 
-        // If the shape type does not require padding, return no-op padding
-        if (!padding) {
+            // If the shape type does not require padding, return no-op padding
+            if (!padding) {
+                return {
+                    padding: 0,
+                    axisLengthFactor: 1
+                };
+            }
+
+            // Use translate to compute how far outside the points we
+            // draw, and use this difference as padding.
+            coord1 = Math.round(
+                axis.translate(
+                    isX ?
+                        padding.xPad * 2 :
+                        padding.yPad,
+                    0, 1, 0, 1
+                )
+            );
+            coord2 = Math.round(
+                axis.translate(
+                    isX ? padding.xPad : 0,
+                    0, 1, 0, 1
+                )
+            );
+
             return {
-                padding: 0,
-                axisLengthFactor: 1
+                padding: Math.abs(coord1 - coord2) || 0,
+
+                // Offset the yAxis length to compensate for shift. Setting the
+                // length factor to 2 would add the same margin to max as min.
+                // Now we only add a slight bit of the min margin to max, as we
+                // don't actually draw outside the max bounds. For the xAxis we
+                // draw outside on both sides so we add the same margin to min
+                // and max.
+                axisLengthFactor: isX ? 2 : 1.1
             };
+        },
+
+        // Use translate from tileShape
+        translate: function () {
+            return this.tileShape.translate.apply(
+                this,
+                Array.prototype.slice.call(arguments)
+            );
         }
 
-        // Use translate to compute how far outside the points we
-        // draw, and use this difference as padding.
-        coord1 = Math.round(
-            axis.translate(
-                isX ?
-                    padding.xPad * 2 :
-                    padding.yPad,
-                0, 1, 0, 1
-            )
-        );
-        coord2 = Math.round(
-            axis.translate(
-                isX ? padding.xPad : 0,
-                0, 1, 0, 1
-            )
-        );
+    }, H.extend({
 
-        return {
-            padding: Math.abs(coord1 - coord2) || 0,
-
-            // Offset the yAxis length to compensate for shift.
-            // Setting the length factor to 2 would add the same margin to max
-            // as min. Now we only add a slight bit of the min margin to max, as
-            // we don't actually draw outside the max bounds. For the xAxis we
-            // draw outside on both sides so we add the same margin to min and
-            // max.
-            axisLengthFactor: isX ? 2 : 1.1
-        };
-    },
-
-    // Use translate from tileShape
-    translate: function () {
-        return this.tileShape.translate.apply(this,
-            Array.prototype.slice.call(arguments)
-        );
-    }
-
-}, H.extend({
-
-    /**
+        /**
      * @private
      * @function Highcharts.Point#haloPath
      *
      * @return {Highcharts.SVGPathArray}
      */
-    haloPath: function () {
-        return this.series.tileShape.haloPath.apply(this,
-            Array.prototype.slice.call(arguments)
-        );
-    }
-}, H.colorPointMixin));
+        haloPath: function () {
+            return this.series.tileShape.haloPath.apply(
+                this,
+                Array.prototype.slice.call(arguments)
+            );
+        }
+    }, H.colorPointMixin));
 
 /**
  * A `tilemap` series. If the [type](#series.tilemap.type) option is
@@ -664,50 +674,46 @@ seriesType('tilemap', 'heatmap'
  * An array of data points for the series. For the `tilemap` series
  * type, points can be given in the following ways:
  *
- * 1.  An array of arrays with 3 or 2 values. In this case, the values
- * correspond to `x,y,value`. If the first value is a string, it is
- * applied as the name of the point, and the `x` value is inferred.
- * The `x` value can also be omitted, in which case the inner arrays
- * should be of length 2\. Then the `x` value is automatically calculated,
- * either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options.
+ * 1. An array of arrays with 3 or 2 values. In this case, the values correspond
+ *    to `x,y,value`. If the first value is a string, it is applied as the name
+ *    of the point, and the `x` value is inferred. The `x` value can also be
+ *    omitted, in which case the inner arrays should be of length 2\. Then the
+ *    `x` value is automatically calculated, either starting at 0 and
+ *    incremented by 1, or from `pointStart` and `pointInterval` given in the
+ *    series options.
+ *    ```js
+ *    data: [
+ *        [0, 9, 7],
+ *        [1, 10, 4],
+ *        [2, 6, 3]
+ *    ]
+ *    ```
  *
- *  ```js
- *     data: [
- *         [0, 9, 7],
- *         [1, 10, 4],
- *         [2, 6, 3]
- *     ]
- *  ```
- *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.tilemap.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         x: 1,
- *         y: 3,
- *         value: 10,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         x: 1,
- *         y: 7,
- *         value: 10,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
+ * 2. An array of objects with named values. The objects are point configuration
+ *    objects as seen below. If the total number of data points exceeds the
+ *    series' [turboThreshold](#series.tilemap.turboThreshold), this option is
+ *    not available.
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        y: 3,
+ *        value: 10,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        x: 1,
+ *        y: 7,
+ *        value: 10,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
  * Note that for some [tileShapes](#plotOptions.tilemap.tileShape) the grid
  * coordinates are offset.
  *
  * @sample maps/series/tilemap-gridoffset
  *         Offset grid coordinates
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
  *         Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
@@ -717,7 +723,7 @@ seriesType('tilemap', 'heatmap'
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<Array<number>|*>}
+ * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.heatmap.data
  * @excluding marker
  * @product   highcharts highmaps
@@ -729,7 +735,7 @@ seriesType('tilemap', 'heatmap'
  * explicitly, as we use the color to denote the `value`. Options for
  * this are set in the [colorAxis](#colorAxis) configuration.
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts highmaps
  * @apioption series.tilemap.data.color
  */

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -89,10 +89,10 @@ H.Color.prototype = {
             len;
 
         this.input = input = this.names[
-                                input && input.toLowerCase ?
-                                    input.toLowerCase() :
-                                    ''
-                            ] || input;
+            input && input.toLowerCase ?
+                input.toLowerCase() :
+                ''
+        ] || input;
 
         // Gradients
         if (input && input.stops) {

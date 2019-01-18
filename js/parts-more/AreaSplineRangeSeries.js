@@ -1,5 +1,5 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -46,45 +46,42 @@ seriesType('areasplinerange', 'arearange', null, {
  * An array of data points for the series. For the `areasplinerange`
  * series type, points can be given in the following ways:
  *
- * 1.  An array of arrays with 3 or 2 values. In this case, the values
- * correspond to `x,low,high`. If the first value is a string, it is
- * applied as the name of the point, and the `x` value is inferred.
- * The `x` value can also be omitted, in which case the inner arrays
- * should be of length 2\. Then the `x` value is automatically calculated,
- * either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options.
+ * 1. An array of arrays with 3 or 2 values. In this case, the values correspond
+ *    to `x,low,high`. If the first value is a string, it is applied as the name
+ *    of the point, and the `x` value is inferred. The `x` value can also be
+ *    omitted, in which case the inner arrays should be of length 2\. Then the
+ *    `x` value is automatically calculated, either starting at 0 and
+ *    incremented by 1, or from `pointStart` and `pointInterval` given in the
+ *    series options.
+ *    ```js
+ *    data: [
+ *        [0, 0, 5],
+ *        [1, 9, 1],
+ *        [2, 5, 2]
+ *    ]
+ *    ```
  *
- *  ```js
- *     data: [
- *         [0, 0, 5],
- *         [1, 9, 1],
- *         [2, 5, 2]
- *     ]
- *  ```
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.areasplinerange.turboThreshold), this option is
+ *    not available.
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        low: 5,
+ *        high: 0,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        x: 1,
+ *        low: 4,
+ *        high: 1,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](
- * #series.areasplinerange.turboThreshold), this option is not available.
- *
- *  ```js
- *     data: [{
- *         x: 1,
- *         low: 5,
- *         high: 0,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         x: 1,
- *         low: 4,
- *         high: 1,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
- *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
  *         Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
@@ -94,7 +91,7 @@ seriesType('areasplinerange', 'arearange', null, {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<Array<number>|*>}
+ * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.arearange.data
  * @product   highcharts highstock
  * @apioption series.areasplinerange.data

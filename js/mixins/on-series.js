@@ -1,5 +1,5 @@
 /* *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -141,9 +141,8 @@ var onSeriesMixin = {
                         point.plotX = defined(point.y) ?
                             yAxis.translate(point.y, 0, 0, 0, 1) : 0;
                     } else {
-                        point.plotY = chart.chartHeight - xAxis.bottom -
-                            (xAxis.opposite ? xAxis.height : 0) +
-                            xAxis.offset - yAxis.top; // #3517
+                        point.plotY = (xAxis.opposite ? 0 : series.yAxis.len) +
+                            xAxis.offset; // For the windbarb demo
                     }
                 } else {
                     point.shapeArgs = {}; // 847
@@ -164,4 +163,5 @@ var onSeriesMixin = {
         this.onSeries = onSeries;
     }
 };
+
 export default onSeriesMixin;

@@ -11,6 +11,8 @@ import Highcharts3D from 'highcharts/highcharts-3d';
 
 Highcharts3D(Highcharts);
 
+test_3DColumn();
+
 /**
  * Tests Highcharts.seriesTypes.column in a 3D use case.
  *

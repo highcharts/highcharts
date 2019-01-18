@@ -946,6 +946,12 @@
     <!-- Copy the folders and content of /samples and /studies to higcharts.com.site -->
     <target name="copy-to-site" depends="set.properties" description="Copy files from this repo to repository www.highcharts.com">
         <property file="git-ignore-me.properties"/>
+        <delete includeEmptyDirs="true">
+            <fileset dir="${highcharts.site.dir}/samples/gantt" includes="**/*"/>
+            <fileset dir="${highcharts.site.dir}/samples/highcharts" includes="**/*"/>
+            <fileset dir="${highcharts.site.dir}/samples/maps" includes="**/*"/>
+            <fileset dir="${highcharts.site.dir}/samples/stock" includes="**/*"/>
+        </delete>
         <copy todir="${highcharts.site.dir}/samples">
             <fileset dir="samples"/>
         </copy>

@@ -1,0 +1,6 @@
+---
+ name: Highcharts Demo
+ authors:
+   - Rafal Sebestjanski
+ js_wrap: b
+...

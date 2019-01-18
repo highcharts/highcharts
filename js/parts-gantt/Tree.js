@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2018 Highsoft AS
+ *  (c) 2016-2019 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -40,6 +40,7 @@ var extend = H.extend,
 var getListOfParents = function (data, ids) {
     var listOfParents = data.reduce(function (prev, curr) {
             var parent = pick(curr.parent, '');
+
             if (prev[parent] === undefined) {
                 prev[parent] = [];
             }
@@ -51,6 +52,7 @@ var getListOfParents = function (data, ids) {
     // If parent does not exist, hoist parent to root of tree.
     parents.forEach(function (parent, list) {
         var children = listOfParents[parent];
+
         if ((parent !== '') && (ids.indexOf(parent) === -1)) {
             children.forEach(function (child) {
                 list[''].push(child);
@@ -95,23 +97,23 @@ var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
             childStart = child.start,
             childEnd = (
                 child.milestone === true ?
-                childStart :
-                child.end
+                    childStart :
+                    child.end
             );
 
         // Start should be the lowest child.start.
         start = (
             (!isNumber(start) || childStart < start) ?
-            childStart :
-            start
+                childStart :
+                start
         );
 
         // End should be the largest child.end.
         // If child is milestone, then use start as end.
         end = (
             (!isNumber(end) || childEnd > end) ?
-            childEnd :
-            end
+                childEnd :
+                end
         );
 
         descendants = descendants + 1 + node.descendants;
@@ -143,6 +145,7 @@ var getTree = function (data, options) {
             return d.id;
         }),
         mapOfIdToChildren = getListOfParents(data, ids);
+
     return getNode('', null, 1, null, mapOfIdToChildren, options);
 };
 

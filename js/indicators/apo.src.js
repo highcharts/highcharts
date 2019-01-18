@@ -23,7 +23,9 @@ var EMA = H.seriesTypes.ema,
  *
  * @augments Highcharts.Series
  */
-H.seriesType('apo', 'ema',
+H.seriesType(
+    'apo',
+    'ema',
     /**
      * Absolute Price Oscillator. This series requires the `linkedTo` option to
      * be set and should be loaded after the `stock/indicators/indicators.js`

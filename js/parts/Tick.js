@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -155,7 +155,8 @@ H.Tick.prototype = {
 
             tick.label = label =
                 defined(str) && labelOptions.enabled ?
-                    chart.renderer.text(
+                    chart.renderer
+                        .text(
                             str,
                             0,
                             0,
@@ -395,6 +396,7 @@ H.Tick.prototype = {
         index,
         step
     ) {
+
         var axis = this.axis,
             transA = axis.transA,
             reversed = axis.reversed,
@@ -449,7 +451,11 @@ H.Tick.prototype = {
         pos.x = x;
         pos.y = Math.round(y);
 
-        fireEvent(this, 'afterGetLabelPosition', { pos: pos });
+        fireEvent(
+            this,
+            'afterGetLabelPosition',
+            { pos: pos, tickmarkOffset: tickmarkOffset, index: index }
+        );
 
         return pos;
     },
@@ -596,7 +602,8 @@ H.Tick.prototype = {
                     tickSize[0],
                     mark.strokeWidth() * reverseCrisp,
                     axis.horiz,
-                    renderer),
+                    renderer
+                ),
                 opacity: opacity
             });
 
@@ -630,6 +637,7 @@ H.Tick.prototype = {
             show = true,
             x = xy.x,
             y = xy.y;
+
         if (label && isNumber(x)) {
             label.xy = xy = tick.getLabelPosition(
                 x,

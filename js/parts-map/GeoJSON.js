@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -322,6 +322,7 @@ H.geojson = function (geojson, hType, series) {
         polygonToPath = function (polygon) {
             var i,
                 len = polygon.length;
+
             path.push('M');
             for (i = 0; i < len; i++) {
                 if (i === 1) {

@@ -1,7 +1,7 @@
 /**
  * Networkgraph series
  *
- * (c) 2010-2018 Paweł Fus
+ * (c) 2010-2019 Paweł Fus
  *
  * License: www.highcharts.com/license
  */
@@ -12,7 +12,7 @@ import H from '../../parts/Globals.js';
 var QuadTreeNode = H.QuadTreeNode = function (box) {
     this.box = box;
     this.nodes = []; // Array of 4 -> quad
-    this.children = [];  // Deferred leafs
+    this.children = []; // Deferred leafs
     this.mass = 1;
     this.centerX = 0;
     this.centerY = 0;

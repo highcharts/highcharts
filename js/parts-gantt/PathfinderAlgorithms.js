@@ -40,6 +40,7 @@ function findLastObstacleBefore(obstacles, xMin, startIx) {
         min = xMin - 0.0000001, // Make sure we include all obstacles at xMin
         cursor,
         cmp;
+
     while (left <= right) {
         cursor = (right + left) >> 1;
         cmp = min - obstacles[cursor].xMin;
@@ -96,6 +97,7 @@ function pointWithinObstacle(obstacle, point) {
  */
 function findObstacleFromPoint(obstacles, point) {
     var i = findLastObstacleBefore(obstacles, point.x + 1) + 1;
+
     while (i--) {
         if (obstacles[i].xMax >= point.x &&
             // optimization using lazy evaluation
@@ -120,6 +122,7 @@ function findObstacleFromPoint(obstacles, point) {
  */
 function pathFromSegments(segments) {
     var path = [];
+
     if (segments.length) {
         path.push('M', segments[0].start.x, segments[0].start.y);
         for (var i = 0; i < segments.length; ++i) {
@@ -148,7 +151,6 @@ function limitObstacleToBounds(obstacle, bounds) {
     obstacle.xMin = max(obstacle.xMin, bounds.xMin);
     obstacle.xMax = min(obstacle.xMax, bounds.xMax);
 }
-
 
 
 // Define the available pathfinding algorithms.
@@ -230,6 +232,7 @@ var algorithms = {
                 x: from.x,
                 y: from.y
             };
+
             point[fromKey] = to[toKey || fromKey] + (offset || 0);
             return point;
         }
@@ -238,6 +241,7 @@ var algorithms = {
         function getMeOut(obstacle, point, direction) {
             var useMax = abs(point[direction] - obstacle[direction + 'Min']) >
                         abs(point[direction] - obstacle[direction + 'Max']);
+
             return copyFromPoint(
                 point,
                 direction,
@@ -273,8 +277,8 @@ var algorithms = {
             // If we are going back again, switch direction to get around start
             // obstacle.
             if (
-                waypoint[dir] > start[dir] ===  // Going towards max from start
-                waypoint[dir] > endPoint[dir]   // Going towards min to end
+                waypoint[dir] > start[dir] === // Going towards max from start
+                waypoint[dir] > endPoint[dir] // Going towards min to end
             ) {
                 dir = dir === 'y' ? 'x' : 'y';
                 useMax = start[dir] < end[dir];
@@ -385,7 +389,7 @@ var algorithms = {
             extractedEndPoint,
             endSegments = [],
             forceObstacleBreak = false, // Used in clearPathTo to keep track of
-                                    // when to force break through an obstacle.
+            // when to force break through an obstacle.
 
             // Boundaries to stay within. If beyond soft boundary, prefer to
             // change direction ASAP. If at hard max, always change immediately.
@@ -531,8 +535,8 @@ var algorithms = {
                 // If it's a small difference, pick the one leading towards dest
                 // point. Otherwise pick the shortest distance
                 useMax = abs(minDistance - maxDistance) < 10 ?
-                        fromPoint[dir] < toPoint[dir] :
-                        maxDistance < minDistance;
+                    fromPoint[dir] < toPoint[dir] :
+                    maxDistance < minDistance;
 
             // Check if we hit any obstacles trying to go around in either
             // direction.
@@ -616,7 +620,8 @@ var algorithms = {
                 // If we crashed into another obstacle doing this, we put the
                 // waypoint between them instead
                 secondEnvelopingObstacle = findObstacleFromPoint(
-                    chartObstacles, envelopWaypoint);
+                    chartObstacles, envelopWaypoint
+                );
                 if (secondEnvelopingObstacle > -1) {
                     secondEnvelopingObstacle = chartObstacles[
                         secondEnvelopingObstacle
@@ -636,13 +641,14 @@ var algorithms = {
                             envelopingObstacle[dir + 'Max']
                         ) / 2
                     ) :
-                    min(
-                        envelopingObstacle[dir + 'Min'] + obstacleMargin - 1,
-                        (
-                            secondEnvelopingObstacle[dir + 'Max'] +
-                            envelopingObstacle[dir + 'Min']
-                        ) / 2
-                    );
+                        min((
+                            envelopingObstacle[dir + 'Min'] + obstacleMargin - 1
+                        ), (
+                            (
+                                secondEnvelopingObstacle[dir + 'Max'] +
+                                envelopingObstacle[dir + 'Min']
+                            ) / 2
+                        ));
 
                     // We are not going anywhere. If this happens for the first
                     // time, do nothing. Otherwise, try to go to the extreme of

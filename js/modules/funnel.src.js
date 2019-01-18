@@ -1,7 +1,7 @@
 /* *
  * Highcharts funnel module
  *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -136,7 +136,7 @@ seriesType('funnel', 'pie',
             /**
              * A specific color for the selected point.
              *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject}
+             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
             color: '${palette.neutralColor20}',
 
@@ -371,7 +371,7 @@ seriesType('funnel', 'pie',
                     x: 0,
                     y: y
                 },
-                final: {
+                'final': {
                     // used for generating connector path -
                     // initialized later in drawDataLabels function
                     // x: undefined,
@@ -516,38 +516,31 @@ seriesType('pyramid', 'funnel',
  * An array of data points for the series. For the `pyramid` series
  * type, points can be given in the following ways:
  *
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. Example:
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `y` options. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
  *
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
- *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.pyramid.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         y: 9,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         y: 6,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.pyramid.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        y: 9,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        y: 6,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/
- *         Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *         Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/
- *         Arrays of point.name and y
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *

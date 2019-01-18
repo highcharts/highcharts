@@ -103,7 +103,7 @@ function decorateOptions(parent, target, option, filename) {
         return;
     }
 
-    index = option.key.name;
+    index = (option.key.name || option.key.value); // `value` for literal keys
 
     if (parent && parent.length > 0) {
         parent += '.';
@@ -241,7 +241,7 @@ function nodeVisitor(node, e, _, currentSourceName) {
             s.forEach(function (p, i) {
                 // p = p.trim();
 
-                fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p
+                fullPath = fullPath + (fullPath.length > 0 ? '.' : '') + p;
 
                 target[p] = target[p] || {};
 
@@ -820,6 +820,8 @@ Move them up before functional code for JSDoc to see them.`.yellow
             }
             var s = `
 
+In TypeScript the [type](series.${type}.type) option must always be set.
+
 Configuration options for the series are given in three levels:
 1. Options for all series in a chart are defined in the
    [plotOptions.series](plotOptions.series) object.
@@ -828,7 +830,7 @@ Configuration options for the series are given in three levels:
 3. Options for one single series are given in
    [the series instance array](series.${type}).
 
-<pre>
+\`\`\`
 Highcharts.chart('container', {
     plotOptions: {
         series: {
@@ -843,7 +845,7 @@ Highcharts.chart('container', {
         type: '${type}'
     }]
 });
-</pre>
+\`\`\`
             `;
             if (options.plotOptions.children[node] &&
                 options.plotOptions.children[node].doclet.description

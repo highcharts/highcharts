@@ -78,17 +78,20 @@ $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data
                 hover: {
                     color: '#a4edba'
                 }
-            }
+            },
+            shadow: false
         }, {
             type: 'mapline',
             name: 'State borders',
             data: borderLines,
-            color: 'white'
+            color: 'white',
+            shadow: false
         }, {
             type: 'mapline',
             name: 'Separator',
             data: separatorLines,
-            color: 'gray'
+            color: 'gray',
+            shadow: false
         }]
     });
 });

@@ -1,6 +1,6 @@
 
 
-QUnit.test('Series index and updating (#5960)', function (assert) {
+QUnit.test('Series index and updating', function (assert) {
 
     var chart;
 
@@ -27,7 +27,7 @@ QUnit.test('Series index and updating (#5960)', function (assert) {
     assert.strictEqual(
         getNames(),
         'Series 1, Series 2, Series 3, Series 4, Series 5',
-        'Initial order'
+        'Initial order (#5960)'
     );
 
     chart.series[1].remove();
@@ -37,8 +37,8 @@ QUnit.test('Series index and updating (#5960)', function (assert) {
 
     assert.strictEqual(
         getNames(),
-        'Series 1, Series 5',
-        'Order after remove'
+        'Series 1, Series 2',
+        'Order after remove (#4119)'
     );
 
     chart.addSeries({
@@ -48,8 +48,8 @@ QUnit.test('Series index and updating (#5960)', function (assert) {
 
     assert.strictEqual(
         getNames(),
-        'Series 1, Series 5, New Series',
-        'Order after adding'
+        'Series 1, Series 2, New Series',
+        'Order after adding (#5960 & #4119)'
     );
 });
 

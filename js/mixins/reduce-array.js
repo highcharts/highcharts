@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Pawel Fus & Daniel Studencki
+ * (c) 2010-2019 Pawel Fus & Daniel Studencki
  *
  * License: www.highcharts.com/license
  */
@@ -49,4 +49,5 @@ var reduceArrayMixin = {
         }, [Number.MAX_VALUE, -Number.MAX_VALUE]);
     }
 };
+
 export default reduceArrayMixin;

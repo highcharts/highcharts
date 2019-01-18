@@ -224,8 +224,8 @@ H.setOptions({
                 ) && {} || chart.getAxesDescription();
 
             return '<div>' + chart.langFormat(
-                        'accessibility.navigationHint', formatContext
-                    ) + '</div><h3>' +
+                'accessibility.navigationHint', formatContext
+            ) + '</div><h3>' +
                     (
                         options.title.text ?
                             htmlencode(options.title.text) :
@@ -239,16 +239,16 @@ H.setOptions({
                             ''
                     ) +
                     '</h3><h4>' + chart.langFormat(
-                        'accessibility.longDescriptionHeading', formatContext
-                    ) + '</h4><div>' +
+                'accessibility.longDescriptionHeading', formatContext
+            ) + '</h4><div>' +
                     (
                         options.chart.description || chart.langFormat(
                             'accessibility.noDescription', formatContext
                         )
                     ) +
                     '</div><h4>' + chart.langFormat(
-                        'accessibility.structureHeading', formatContext
-                    ) + '</h4><div>' +
+                'accessibility.structureHeading', formatContext
+            ) + '</h4><div>' +
                     (
                         options.chart.typeDescription ||
                         chart.getTypeDescription()
@@ -279,7 +279,7 @@ H.setOptions({
  * @apioption chart.description
  */
 
- /**
+/**
  * A text description of the chart type.
  *
  * If the Accessibility module is loaded, this will be included in the
@@ -306,6 +306,7 @@ H.setOptions({
  */
 function reverseChildNodes(node) {
     var i = node.childNodes.length;
+
     while (i--) {
         node.appendChild(node.childNodes[i]);
     }
@@ -439,12 +440,12 @@ H.Series.prototype.buildSeriesInfoString = function () {
         );
 
     return summary + (description ? ' ' + description : '') + (
-            chart.yAxis.length > 1 && this.yAxis ?
-                ' ' + yAxisInfo : ''
-        ) + (
-            chart.xAxis.length > 1 && this.xAxis ?
-                ' ' + xAxisInfo : ''
-        );
+        chart.yAxis.length > 1 && this.yAxis ?
+            ' ' + yAxisInfo : ''
+    ) + (
+        chart.xAxis.length > 1 && this.xAxis ?
+            ' ' + xAxisInfo : ''
+    );
 };
 
 
@@ -537,6 +538,7 @@ H.Axis.prototype.getDescription = function () {
 // Whenever adding or removing series, keep track of types present in chart
 addEvent(H.Series, 'afterInit', function () {
     var chart = this.chart;
+
     if (chart.options.accessibility.enabled) {
         chart.types = chart.types || [];
 
@@ -597,7 +599,9 @@ H.Chart.prototype.getTypeDescription = function () {
         return this.langFormat(
             'accessibility.chartTypes.emptyChart', formatContext
         );
-    } else if (firstType === 'map') {
+    }
+
+    if (firstType === 'map') {
         return mapTitle ?
             this.langFormat(
                 'accessibility.chartTypes.mapTypeDescription',
@@ -607,7 +611,9 @@ H.Chart.prototype.getTypeDescription = function () {
                 'accessibility.chartTypes.unknownMap',
                 formatContext
             );
-    } else if (this.types.length > 1) {
+    }
+
+    if (this.types.length > 1) {
         return this.langFormat(
             'accessibility.chartTypes.combinationChart', formatContext
         );
@@ -682,6 +688,7 @@ H.Chart.prototype.getAxesDescription = function () {
  */
 H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
     var exportList = this.exportDivElements;
+
     if (exportList) {
         // Set tabindex on the menu items to allow focusing by script
         // Set role to give screen readers a chance to pick up the contents
@@ -694,7 +701,8 @@ H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
         });
         // Set accessibility properties on parent div
         exportList[0].parentNode.setAttribute('role', 'menu');
-        exportList[0].parentNode.setAttribute('aria-label',
+        exportList[0].parentNode.setAttribute(
+            'aria-label',
             this.langFormat(
                 'accessibility.exporting.chartMenuLabel', { chart: this }
             )
@@ -791,9 +799,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
     // Add SVG title tag if it is set
     if (svgContainerTitle.length) {
         titleElement = doc.createElementNS(
-                'http://www.w3.org/2000/svg',
-                'title'
-            );
+            'http://www.w3.org/2000/svg',
+            'title'
+        );
         titleElement.textContent = svgContainerTitle;
         titleElement.id = titleId;
         descElement.parentNode.insertBefore(titleElement, descElement);
@@ -820,6 +828,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
         // Set event handler on button
         var button = chart.exportSVGElements[0].element,
             oldExportCallback = button.onclick;
+
         button.onclick = function () {
             oldExportCallback.apply(
                 this,
@@ -840,7 +849,8 @@ H.Chart.prototype.callbacks.push(function (chart) {
 
         // Set props on group
         chart.exportingGroup.element.setAttribute('role', 'region');
-        chart.exportingGroup.element.setAttribute('aria-label',
+        chart.exportingGroup.element.setAttribute(
+            'aria-label',
             chart.langFormat(
                 'accessibility.exporting.exportRegionLabel', { chart: chart }
             )
@@ -875,13 +885,13 @@ H.Chart.prototype.callbacks.push(function (chart) {
     chart.addScreenReaderRegion(hiddenSectionId, tableId);
 
     // Add ID and summary attr to table HTML
-    H.wrap(chart, 'getTable', function (proceed) {
-        return proceed.apply(this, Array.prototype.slice.call(arguments, 1))
+    addEvent(chart, 'afterGetTable', function (e) {
+        e.html = e.html
             .replace(
-                '<table>',
-                '<table id="' + tableId + '" summary="' + chart.langFormat(
+                '<table ',
+                '<table summary="' + chart.langFormat(
                     'accessibility.tableSummary', { chart: chart }
-                ) + '">'
+                ) + '"'
             );
     });
 });

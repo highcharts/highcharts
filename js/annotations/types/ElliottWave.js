@@ -14,35 +14,39 @@ function ElliottWave() {
     CrookedLine.apply(this, arguments);
 }
 
-H.extendAnnotation(ElliottWave, CrookedLine, /** Annotation.CrookedLine# */ {
-    addLabels: function () {
-        this.getPointsOptions().forEach(function (point, i) {
-            var label = this.initLabel(H.merge(
-                point.label, {
-                    text: this.options.typeOptions.labels[i],
-                    point: function (target) {
-                        return target.annotation.points[i];
+H.extendAnnotation(ElliottWave, CrookedLine,
+    /** Annotation.CrookedLine# */
+    {
+        addLabels: function () {
+            this.getPointsOptions().forEach(function (point, i) {
+                var label = this.initLabel(H.merge(
+                    point.label, {
+                        text: this.options.typeOptions.labels[i],
+                        point: function (target) {
+                            return target.annotation.points[i];
+                        }
                     }
-                }
-            ), false);
+                ), false);
 
-            point.label = label.options;
-        }, this);
-    }
-},
+                point.label = label.options;
+            }, this);
+        }
+    },
+
     /**
      * An elliott wave annotation.
      *
      * @extends annotations.crookedLine
      * @sample highcharts/annotations-advanced/elliott-wave/
      *         Elliott wave
+     * @product highstock
      * @optionparent annotations.elliottWave
      */
     {
         typeOptions: {
             /**
              * @type {Object}
-             * @extends annotations.base.labelOptions
+             * @extends annotations.crookedLine.labelOptions
              * @apioption annotations.crookedLine.typeOptions.points.label
              */
 

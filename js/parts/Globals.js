@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -69,4 +69,5 @@ var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
      */
     charts: []
 };
+
 export default Highcharts;

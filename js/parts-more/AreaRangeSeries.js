@@ -1,5 +1,5 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -86,7 +86,13 @@ seriesType('arearange', 'area', {
      */
     dataLabels: {
 
+        /**
+         * @type {Highcharts.AlignType|null}
+         */
         align: null,
+        /**
+         * @type {Highcharts.VerticalAlignType|null}
+         */
         verticalAlign: null,
 
         /**
@@ -156,6 +162,7 @@ seriesType('arearange', 'area', {
                 point.rectPlotX,
                 this.yAxis.len - point.plotHigh
             );
+
         point.plotHighX = xy.x - chart.plotLeft;
         point.plotHigh = xy.y - chart.plotTop;
         point.plotLowX = point.plotX;
@@ -451,7 +458,7 @@ seriesType('arearange', 'area', {
             while (i--) {
                 point = data[i];
                 if (point) {
-                    point.dataLabels = [point.dataLabel, point.dataLabelUpper]
+                    point.dataLabels = [point.dataLabelUpper, point.dataLabel]
                         .filter(function (label) {
                             return !!label;
                         });
@@ -650,22 +657,20 @@ seriesType('arearange', 'area', {
  *     should be of length 2\. Then the `x` value is automatically calculated,
  *     either starting at 0 and incremented by 1, or from `pointStart`
  *     and `pointInterval` given in the series options.
- *
- *  ```js
+ *     ```js
  *     data: [
  *         [0, 8, 3],
  *         [1, 1, 1],
  *         [2, 6, 8]
  *     ]
- *  ```
+ *     ```
  *
  * 2.  An array of objects with named values. The following snippet shows only a
  *     few settings, see the complete options set below. If the total number of
  *     data points exceeds the series'
  *     [turboThreshold](#series.arearange.turboThreshold),
  *     this option is not available.
- *
- *  ```js
+ *     ```js
  *     data: [{
  *         x: 1,
  *         low: 9,
@@ -679,10 +684,8 @@ seriesType('arearange', 'area', {
  *         name: "Point1",
  *         color: "#FF00FF"
  *     }]
- *  ```
+ *     ```
  *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-arrays/
  *         Arrays of numeric x and y
  * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
@@ -692,7 +695,7 @@ seriesType('arearange', 'area', {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<Array<number>|*>}
+ * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.line.data
  * @excluding marker, y
  * @product   highcharts highstock
@@ -715,7 +718,7 @@ seriesType('arearange', 'area', {
  * @apioption series.arearange.data.low
  */
 
- /**
+/**
  * @excluding x, y
  * @product   highcharts highstock
  * @apioption series.arearange.dataLabels

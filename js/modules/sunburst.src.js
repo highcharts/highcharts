@@ -2,7 +2,7 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2018 Highsoft AS
+ *  (c) 2016-2019 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -44,6 +44,7 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
 var range = function range(from, to) {
     var result = [],
         i;
+
     if (isNumber(from) && isNumber(to) && from <= to) {
         for (i = from; i <= to; i++) {
             result.push(i);
@@ -90,6 +91,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
             var options = result[level],
                 unit = options.levelSize.unit,
                 value = options.levelSize.value;
+
             if (unit === 'weight') {
                 totalWeight += value;
             } else if (unit === 'percentage') {
@@ -107,6 +109,7 @@ var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
         levels.forEach(function (level) {
             var options = result[level],
                 weight;
+
             if (options.levelSize.unit === 'weight') {
                 weight = options.levelSize.value;
                 result[level].levelSize = {
@@ -168,8 +171,8 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
                 isObject(options.levelSize) &&
                 isNumber(options.levelSize.value)
             ) ?
-            options.levelSize.value :
-            0
+                options.levelSize.value :
+                0
         ),
         innerRadius = parent.r,
         outerRadius = innerRadius + radius,
@@ -191,6 +194,7 @@ var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
                 start: startAngle,
                 end: startAngle + radians
             };
+
         arr.push(values);
         startAngle = values.end;
         return arr;
@@ -203,13 +207,13 @@ var getDlOptions = function getDlOptions(params) {
         shape = isObject(params.shapeArgs) ? params.shapeArgs : {},
         optionsPoint = (
             isObject(params.optionsPoint) ?
-            params.optionsPoint.dataLabels :
-            {}
+                params.optionsPoint.dataLabels :
+                {}
         ),
         optionsLevel = (
             isObject(params.level) ?
-            params.level.dataLabels :
-            {}
+                params.level.dataLabels :
+                {}
         ),
         options = merge({
             style: {}
@@ -303,6 +307,7 @@ var getAnimation = function getAnimation(shape, params) {
             x: shape.x,
             y: shape.y
         };
+
     if (visible) {
         // Animate points in
         if (!point.graphic && shapePreviousRoot) {
@@ -333,17 +338,17 @@ var getAnimation = function getAnimation(shape, params) {
                 };
             } else if (shapeRoot) {
                 to = (shapeRoot.end <= shapeExisting.start) ?
-                {
-                    innerR: innerR,
-                    r: innerR,
-                    start: radians.end,
-                    end: radians.end
-                } : {
-                    innerR: innerR,
-                    r: innerR,
-                    start: radians.start,
-                    end: radians.start
-                };
+                    {
+                        innerR: innerR,
+                        r: innerR,
+                        start: radians.end,
+                        end: radians.end
+                    } : {
+                        innerR: innerR,
+                        r: innerR,
+                        start: radians.start,
+                        end: radians.start
+                    };
             }
         }
     }
@@ -357,6 +362,7 @@ var getDrillId = function getDrillId(point, idRoot, mapIdToNode) {
     var drillId,
         node = point.node,
         nodeRoot;
+
     if (!node.isLeaf) {
         // When it is the root node, the drillId should be set to parent.
         if (idRoot === point.id) {
@@ -386,6 +392,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
             series: options.series,
             siblings: options.siblings
         });
+
     node.color = colorInfo.color;
     node.colorIndex = colorInfo.colorIndex;
     if (point) {
@@ -450,7 +457,7 @@ var sunburstOptions = {
     /**
      * Can set a `color` on all points which lies on the same level.
      *
-     * @type      {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption plotOptions.sunburst.levels.color
      */
 
@@ -634,8 +641,8 @@ var sunburstSeries = {
             optionsChart = chart && chart.options && chart.options.chart || {},
             animation = (
                 isBoolean(optionsChart.animation) ?
-                optionsChart.animation :
-                true
+                    optionsChart.animation :
+                    true
             ),
             positions = series.center,
             center = {
@@ -658,6 +665,7 @@ var sunburstSeries = {
             series.dataLabelsGroup.attr({ opacity: 0 });
             animateLabels = function () {
                 var s = series;
+
                 animateLabelsCalled = true;
                 if (s.dataLabelsGroup) {
                     s.dataLabelsGroup.animate({
@@ -675,6 +683,7 @@ var sunburstSeries = {
                 animationInfo,
                 onComplete,
                 visible = !!(node.visible && node.shapeArgs);
+
             if (hasRendered && animation) {
                 animationInfo = getAnimation(shape, {
                     center: center,
@@ -763,6 +772,7 @@ var sunburstSeries = {
                 return n.visible;
             }),
             twoPi = 6.28; // Two times Pi.
+
         childrenValues = this.layoutAlgorithm(parentValues, children, options);
         children.forEach(function (child, index) {
             var values = childrenValues[index],
@@ -772,18 +782,19 @@ var sunburstSeries = {
                 isCircle = (values.innerR === 0 && radians > twoPi),
                 center = (
                     isCircle ?
-                    { x: values.x, y: values.y } :
-                    getEndPoint(values.x, values.y, angle, radius)
+                        { x: values.x, y: values.y } :
+                        getEndPoint(values.x, values.y, angle, radius)
                 ),
                 val = (
                     child.val ?
-                    (
-                        child.childrenTotal > child.val ?
-                        child.childrenTotal :
-                        child.val
-                    ) :
-                    child.childrenTotal
+                        (
+                            child.childrenTotal > child.val ?
+                                child.childrenTotal :
+                                child.val
+                        ) :
+                        child.childrenTotal
                 );
+
             // The inner arc length is a convenience for data label filters.
             if (this.points[child.i]) {
                 this.points[child.i].innerArcLength = radians * values.innerR;
@@ -825,6 +836,7 @@ var sunburstSeries = {
             nodeTop,
             tree,
             values;
+
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
         // Call prototype function
         Series.prototype.translate.call(series);
@@ -931,6 +943,7 @@ var sunburstPoint = {
     draw: drawPoint,
     shouldDraw: function shouldDraw() {
         var point = this;
+
         return !point.isNull;
     }
 };
@@ -974,7 +987,7 @@ var sunburstPoint = {
  * @apioption series.treemap.data.parent
  */
 
- /**
+/**
   * Whether to display a slice offset from the center. When a sunburst point is
   * sliced, its children are also offset.
   *

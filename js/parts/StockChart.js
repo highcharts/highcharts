@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2018 Torstein Honsi
+ *  (c) 2010-2019 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,7 +35,6 @@ var addEvent = H.addEvent,
     splat = H.splat,
     SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer,
-    wrap = H.wrap,
 
     seriesProto = Series.prototype,
     seriesInit = seriesProto.init,
@@ -127,7 +126,7 @@ var addEvent = H.addEvent,
  *        chart object will not be finished synchronously. As a consequence,
  *        code that relies on the newly built Chart object should always run in
  *        the callback. Defining a
- *        [chart.event.load](https://api.highcharts.com/highstock/chart.events.load)
+ *        [chart.events.load](https://api.highcharts.com/highstock/chart.events.load)
  *        handler is equivalent.
  *
  * @return {Highcharts.Chart}
@@ -197,30 +196,31 @@ H.StockChart = H.stockChart = function (a, b, c) {
     // apply Y axis options to both single and multi y axes
     options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions, i) {
         opposite = pick(yAxisOptions.opposite, true);
-        return merge({ // defaults
-            labels: {
-                y: -2
+        return merge(
+            { // defaults
+                labels: {
+                    y: -2
+                },
+                opposite: opposite,
+
+                /**
+                 * @default {highcharts} true
+                 * @default {highstock} false
+                 * @apioption yAxis.showLastLabel
+                 */
+                showLastLabel: !!(
+                    // #6104, show last label by default for category axes
+                    yAxisOptions.categories ||
+                    yAxisOptions.type === 'category'
+                ),
+
+                title: {
+                    text: null
+                }
             },
-            opposite: opposite,
-
-            /**
-             * @default {highcharts} true
-             * @default {highstock} false
-             * @apioption yAxis.showLastLabel
-             */
-            showLastLabel: !!(
-                // #6104, show last label by default for category axes
-                yAxisOptions.categories ||
-                yAxisOptions.type === 'category'
-            ),
-
-            title: {
-                text: null
-            }
-        },
-        defaultOptions.yAxis, // #3802
-        defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
-        yAxisOptions // user options
+            defaultOptions.yAxis, // #3802
+            defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
+            yAxisOptions // user options
         );
     });
 
@@ -285,12 +285,13 @@ H.StockChart = H.stockChart = function (a, b, c) {
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
-wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+addEvent(Axis, 'autoLabelAlign', function (e) {
     var chart = this.chart,
         options = this.options,
         panes = chart._labelPanes = chart._labelPanes || {},
         key,
         labelOptions = this.options.labels;
+
     if (this.chart.options.isStock && this.coll === 'yAxis') {
         key = options.top + ',' + options.height;
         // do it only for the first Y axis of each pane
@@ -302,10 +303,11 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
                 labelOptions.align = 'right';
             }
             panes[key] = this;
-            return 'right';
+            e.align = 'right';
+
+            e.preventDefault();
         }
     }
-    return proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 // Clear axis from label panes (#6071)
@@ -319,14 +321,7 @@ addEvent(Axis, 'destroy', function () {
 });
 
 // Override getPlotLinePath to allow for multipane charts
-wrap(Axis.prototype, 'getPlotLinePath', function (
-    proceed,
-    value,
-    lineWidth,
-    old,
-    force,
-    translatedValue
-) {
+addEvent(Axis, 'getPlotLinePath', function (e) {
     var axis = this,
         series = (
             this.isLinked && !this.series ?
@@ -345,6 +340,9 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
         axes = [], // #3416 need a default array
         axes2,
         uniqueAxes,
+        translatedValue = e.translatedValue,
+        value = e.value,
+        force = e.force,
         transVal;
 
     // Return the other axis based on either the axis option or on related
@@ -370,112 +368,117 @@ wrap(Axis.prototype, 'getPlotLinePath', function (
     }
 
     // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
-    if (axis.coll !== 'xAxis' && axis.coll !== 'yAxis') {
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    }
+    if (axis.coll === 'xAxis' || axis.coll === 'yAxis') {
 
-    // Get the related axes based on series
-    axes = getAxis(axis.coll);
+        e.preventDefault();
 
-    // Get the related axes based options.*Axis setting #2810
-    axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-    axes2.forEach(function (A) {
-        if (
-            defined(A.options.id) ?
-                A.options.id.indexOf('navigator') === -1 :
-                true
-        ) {
-            var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
-                rax = (
-                    defined(A.options[a]) ?
-                        chart[a][A.options[a]] :
-                        chart[a][0]
-                );
+        // Get the related axes based on series
+        axes = getAxis(axis.coll);
 
-            if (axis === rax) {
-                axes.push(A);
+        // Get the related axes based options.*Axis setting #2810
+        axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
+        axes2.forEach(function (A) {
+            if (
+                defined(A.options.id) ?
+                    A.options.id.indexOf('navigator') === -1 :
+                    true
+            ) {
+                var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
+                    rax = (
+                        defined(A.options[a]) ?
+                            chart[a][A.options[a]] :
+                            chart[a][0]
+                    );
+
+                if (axis === rax) {
+                    axes.push(A);
+                }
+            }
+        });
+
+
+        // Remove duplicates in the axes array. If there are no axes in the axes
+        // array, we are adding an axis without data, so we need to populate
+        // this with grid lines (#2796).
+        uniqueAxes = axes.length ?
+            [] :
+            [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
+        axes.forEach(function (axis2) {
+            if (
+                uniqueAxes.indexOf(axis2) === -1 &&
+                // Do not draw on axis which overlap completely. #5424
+                !H.find(uniqueAxes, function (unique) {
+                    return unique.pos === axis2.pos && unique.len === axis2.len;
+                })
+            ) {
+                uniqueAxes.push(axis2);
+            }
+        });
+
+        transVal = pick(
+            translatedValue,
+            axis.translate(value, null, null, e.old)
+        );
+        if (isNumber(transVal)) {
+            if (axis.horiz) {
+                uniqueAxes.forEach(function (axis2) {
+                    var skip;
+
+                    y1 = axis2.pos;
+                    y2 = y1 + axis2.len;
+                    x1 = x2 = Math.round(transVal + axis.transB);
+
+                    // outside plot area
+                    if (
+                        force !== 'pass' &&
+                        (x1 < axisLeft || x1 > axisLeft + axis.width)
+                    ) {
+                        if (force) {
+                            x1 = x2 = Math.min(
+                                Math.max(axisLeft, x1),
+                                axisLeft + axis.width
+                            );
+                        } else {
+                            skip = true;
+                        }
+                    }
+                    if (!skip) {
+                        result.push('M', x1, y1, 'L', x2, y2);
+                    }
+                });
+            } else {
+                uniqueAxes.forEach(function (axis2) {
+                    var skip;
+
+                    x1 = axis2.pos;
+                    x2 = x1 + axis2.len;
+                    y1 = y2 = Math.round(axisTop + axis.height - transVal);
+
+                    // outside plot area
+                    if (
+                        force !== 'pass' &&
+                        (y1 < axisTop || y1 > axisTop + axis.height)
+                    ) {
+                        if (force) {
+                            y1 = y2 = Math.min(
+                                Math.max(axisTop, y1),
+                                axis.top + axis.height
+                            );
+                        } else {
+                            skip = true;
+                        }
+                    }
+                    if (!skip) {
+                        result.push('M', x1, y1, 'L', x2, y2);
+                    }
+                });
             }
         }
-    });
-
-
-    // Remove duplicates in the axes array. If there are no axes in the axes
-    // array, we are adding an axis without data, so we need to populate this
-    // with grid lines (#2796).
-    uniqueAxes = axes.length ?
-        [] :
-        [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; // #3742
-    axes.forEach(function (axis2) {
-        if (
-            uniqueAxes.indexOf(axis2) === -1 &&
-            // Do not draw on axis which overlap completely. #5424
-            !H.find(uniqueAxes, function (unique) {
-                return unique.pos === axis2.pos && unique.len === axis2.len;
-            })
-        ) {
-            uniqueAxes.push(axis2);
-        }
-    });
-
-    transVal = pick(translatedValue, axis.translate(value, null, null, old));
-    if (isNumber(transVal)) {
-        if (axis.horiz) {
-            uniqueAxes.forEach(function (axis2) {
-                var skip;
-
-                y1 = axis2.pos;
-                y2 = y1 + axis2.len;
-                x1 = x2 = Math.round(transVal + axis.transB);
-
-                // outside plot area
-                if (
-                    force !== 'pass' &&
-                    (x1 < axisLeft || x1 > axisLeft + axis.width)
-                ) {
-                    if (force) {
-                        x1 = x2 = Math.min(
-                            Math.max(axisLeft, x1),
-                            axisLeft + axis.width
-                        );
-                    } else {
-                        skip = true;
-                    }
-                }
-                if (!skip) {
-                    result.push('M', x1, y1, 'L', x2, y2);
-                }
-            });
-        } else {
-            uniqueAxes.forEach(function (axis2) {
-                var skip;
-
-                x1 = axis2.pos;
-                x2 = x1 + axis2.len;
-                y1 = y2 = Math.round(axisTop + axis.height - transVal);
-
-                // outside plot area
-                if (
-                    force !== 'pass' &&
-                    (y1 < axisTop || y1 > axisTop + axis.height)
-                ) {
-                    if (force) {
-                        y1 = y2 = Math.min(
-                            Math.max(axisTop, y1),
-                            axis.top + axis.height
-                        );
-                    } else {
-                        skip = true;
-                    }
-                }
-                if (!skip) {
-                    result.push('M', x1, y1, 'L', x2, y2);
-                }
-            });
-        }
+        e.path = result.length > 0 ?
+            renderer.crispPolyLine(result, e.lineWidth || 1) :
+            // #3557 getPlotLinePath in regular Highcharts also returns null
+            null;
     }
-    return result.length > 0 ?
-        renderer.crispPolyLine(result, lineWidth || 1) :
-        null; // #3557 getPlotLinePath in regular Highcharts also returns null
 });
 
 /**
@@ -494,6 +497,7 @@ SVGRenderer.prototype.crispPolyLine = function (points, width) {
     // points format: ['M', 0, 0, 'L', 100, 0]
     // normalize to a crisp line
     var i;
+
     for (i = 0; i < points.length; i = i + 6) {
         if (points[i + 1] === points[i + 4]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
@@ -513,10 +517,7 @@ if (Renderer === VMLRenderer) {
 }
 
 // Wrapper to hide the label
-wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
-
-    proceed.call(this, i);
-
+addEvent(Axis, 'afterHideCrosshair', function () {
     if (this.crossLabel) {
         this.crossLabel = this.crossLabel.hide();
     }
@@ -535,12 +536,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     }
 
     var chart = this.chart,
-        options = this.options.crosshair.label,        // the label's options
-        horiz = this.horiz,                            // axis orientation
-        opposite = this.opposite,                    // axis position
-        left = this.left,                            // left position
-        top = this.top,                                // top position
-        crossLabel = this.crossLabel,                // the svgElement
+        options = this.options.crosshair.label, // the label's options
+        horiz = this.horiz, // axis orientation
+        opposite = this.opposite, // axis position
+        left = this.left, // left position
+        top = this.top, // top position
+        crossLabel = this.crossLabel, // the svgElement
         posx,
         posy,
         crossBox,
@@ -573,15 +574,18 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
 
     // If the label does not exist yet, create it.
     if (!crossLabel) {
-        crossLabel = this.crossLabel = chart.renderer.label(
+        crossLabel = this.crossLabel = chart.renderer
+            .label(
                 null,
                 null,
                 null,
                 options.shape || 'callout'
             )
-            .addClass('highcharts-crosshair-label' + (
-                this.series[0] &&
-                ' highcharts-color-' + this.series[0].colorIndex)
+            .addClass(
+                'highcharts-crosshair-label' + (
+                    this.series[0] &&
+                    ' highcharts-color-' + this.series[0].colorIndex
+                )
             )
             .attr({
                 align: options.align || align,
@@ -793,14 +797,11 @@ seriesProto.processData = function () {
         length = processedYData.length;
 
         // For series with more than one value (range, OHLC etc), compare
-        // against close or the pointValKey (#4922, #3112)
+        // against close or the pointValKey (#4922, #3112, #9854)
         if (series.pointArrayMap) {
-            // Use close if present (#3112)
-            keyIndex = series.pointArrayMap.indexOf('close');
-            if (keyIndex === -1) {
-                keyIndex = series.pointArrayMap.indexOf(
-                    series.pointValKey || 'y');
-            }
+            keyIndex = series.pointArrayMap.indexOf(
+                series.options.pointValKey || series.pointValKey || 'y'
+            );
         }
 
         // find the first value for comparison
@@ -821,16 +822,13 @@ seriesProto.processData = function () {
 };
 
 // Modify series extremes
-wrap(seriesProto, 'getExtremes', function (proceed) {
-    var extremes;
-
-    proceed.apply(this, [].slice.call(arguments, 1));
-
+addEvent(Series, 'afterGetExtremes', function () {
     if (this.modifyValue) {
-        extremes = [
+        var extremes = [
             this.modifyValue(this.dataMin),
             this.modifyValue(this.dataMax)
         ];
+
         this.dataMin = arrayMin(extremes);
         this.dataMax = arrayMax(extremes);
     }
@@ -896,8 +894,9 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 // Extend the Series prototype to create a separate series clip box. This is
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
-wrap(Series.prototype, 'render', function (proceed) {
+addEvent(Series, 'render', function () {
     var clipHeight;
+
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
     // if the series type handles clipping in the animate method (#2975).
     if (
@@ -919,37 +918,28 @@ wrap(Series.prototype, 'render', function (proceed) {
 
         // On redrawing, resizing etc, update the clip rectangle
         } else if (this.chart[this.sharedClipKey]) {
-            this.chart[this.sharedClipKey].attr({
+            // animate in case resize is done during initial animation
+            this.chart[this.sharedClipKey].animate({
                 width: this.xAxis.len,
                 height: clipHeight
             });
-        // #3111
-        } else if (this.clipBox) {
-            this.clipBox.width = this.xAxis.len;
-            this.clipBox.height = clipHeight;
+
+            // also change markers clip animation for consistency
+            // (marker clip rects should exist only on chart init)
+            if (
+                this.chart[this.sharedClipKey + 'm']
+            ) {
+                this.chart[this.sharedClipKey + 'm'].animate({
+                    width: this.xAxis.len
+                });
+            }
         }
     }
-    proceed.call(this);
-});
-
-wrap(Chart.prototype, 'getSelectedPoints', function (proceed) {
-    var points = proceed.call(this);
-
-    this.series.forEach(function (serie) {
-        // series.points - for grouped points (#6445)
-        if (serie.hasGroupedData) {
-            points = points.concat((serie.points || []).filter(
-                function (point) {
-                    return point.selected;
-                }
-            ));
-        }
-    });
-    return points;
 });
 
 addEvent(Chart, 'update', function (e) {
     var options = e.options;
+
     // Use case: enabling scrollbar from a disabled state.
     // Scrollbar needs to be initialized from a controller, Navigator in this
     // case (#6615)

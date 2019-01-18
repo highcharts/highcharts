@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  *
@@ -74,6 +74,7 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
                         axis.getPlotLinePath = function () {
                             var right = this.right,
                                 path;
+
                             this.right = right - axis.chart.scrollablePixels;
                             path = H.Axis.prototype.getPlotLinePath.apply(
                                 this,
@@ -162,6 +163,7 @@ Chart.prototype.applyFixed = function () {
             this.fixedDiv,
             this.renderTo.firstChild
         );
+        this.renderTo.style.overflow = 'visible';
 
         this.fixedRenderer = fixedRenderer = new H.Renderer(
             this.fixedDiv,
@@ -196,14 +198,17 @@ Chart.prototype.applyFixed = function () {
             '.highcharts-title',
             '.highcharts-legend-checkbox'
         ]).forEach(function (className) {
-            container.querySelectorAll(className).forEach(function (elem) {
-                (
-                    elem.namespaceURI === fixedRenderer.SVG_NS ?
-                        fixedRenderer.box :
-                        fixedRenderer.box.parentNode
-                ).appendChild(elem);
-                elem.style.pointerEvents = 'auto';
-            });
+            [].forEach.call(
+                container.querySelectorAll(className),
+                function (elem) {
+                    (
+                        elem.namespaceURI === fixedRenderer.SVG_NS ?
+                            fixedRenderer.box :
+                            fixedRenderer.box.parentNode
+                    ).appendChild(elem);
+                    elem.style.pointerEvents = 'auto';
+                }
+            );
         });
     }
 
@@ -227,6 +232,7 @@ Chart.prototype.applyFixed = function () {
     // Set scroll position
     if (firstTime) {
         var options = this.options.chart.scrollablePlotArea;
+
         if (options.scrollPositionX) {
             this.scrollingContainer.scrollLeft =
                 this.scrollablePixels * options.scrollPositionX;

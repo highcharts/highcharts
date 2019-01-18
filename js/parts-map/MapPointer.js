@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -58,8 +58,8 @@ extend(Pointer.prototype, {
         delta = e.detail || -(e.wheelDelta / 120);
         if (chart.isInsidePlot(
             e.chartX - chart.plotLeft,
-            e.chartY - chart.plotTop)
-        ) {
+            e.chartY - chart.plotTop
+        )) {
             chart.mapZoom(
                 Math.pow(
                     chart.options.mapNavigation.mouseWheelSensitivity,
@@ -103,6 +103,7 @@ wrap(
         lastValidTouch
     ) {
         var xBigger;
+
         proceed.call(
             this,
             pinchDown,

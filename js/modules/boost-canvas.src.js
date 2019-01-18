@@ -93,7 +93,8 @@ H.initCanvasBoost = function () {
             } else {
                 this.chart.showLoading(
                     'Your browser doesn\'t support HTML5 canvas, <br>' +
-                    'please use a modern browser');
+                    'please use a modern browser'
+                );
 
                 // Uncomment this to provide low-level (slow) support in oldIE.
                 // It will cause script errors on charts with more than a few
@@ -141,8 +142,8 @@ H.initCanvasBoost = function () {
                     width,
                     height
                 )
-                .addClass('highcharts-boost-canvas')
-                .add(targetGroup);
+                    .addClass('highcharts-boost-canvas')
+                    .add(targetGroup);
 
                 target.ctx = ctx = target.canvas.getContext('2d');
 
@@ -281,10 +282,10 @@ H.initCanvasBoost = function () {
                 index,
                 sdata = isStacked ? series.data : (xData || rawData),
                 fillColor = series.fillOpacity ?
-                        new Color(series.color).setOpacity(
-                            pick(options.fillOpacity, 0.75)
-                        ).get() :
-                        series.color,
+                    new Color(series.color).setOpacity(
+                        pick(options.fillOpacity, 0.75)
+                    ).get() :
+                    series.color,
 
                 stroke = function () {
                     if (doFill) {
@@ -597,6 +598,7 @@ H.initCanvasBoost = function () {
             }, function () {
                 var loadingDiv = chart.loadingDiv,
                     loadingShown = chart.loadingShown;
+
                 stroke();
 
                 // if (series.boostCopy || series.chart.boostCopy) {

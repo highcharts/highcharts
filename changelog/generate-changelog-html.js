@@ -55,7 +55,7 @@ var replaceString = require('replace-string');
         if (typeof textToken !== 'undefined') {
             var issues = textToken.match(/#[0-9]+/g);
             if (issues !== null) {
-                issues.forEach((issue) => {
+                issues.forEach(issue => {
                     var issued = issue.substring(1),
                         issueLink = 'https://github.com/highcharts/highcharts/issues/' + issued,
                         formatIssue = '[' + issue + '](' + issueLink + ')';
@@ -79,7 +79,7 @@ var replaceString = require('replace-string');
             if (index === 0) {
                 changelogTitle = token.text.split(' ');
 
-                let date = changelogTitle[changelogTitle.length - 1];
+                const date = changelogTitle[changelogTitle.length - 1];
                 if (date !== '()') {
                     changelog.header.date = date;
                 }
@@ -119,8 +119,7 @@ var replaceString = require('replace-string');
             `<div id="changelog">
             <div class="content-container container">
             <div class="row">
-            <div class="col-md-1 hidden-sm"> </div>
-            <div class="col-md-10 col-sm-12">
+            <div class="col-md-12">
             <p style="text-align: center;">View changelog for
             <a href="#highcharts">Highcharts</a>,
             <a href="#highstock">Highstock</a>,
@@ -140,13 +139,12 @@ var replaceString = require('replace-string');
 
     function featureHTMLStructure() {
         if (changelog.features) {
-            let version = changelog.header.version.split('-').join('.');
-            let id = changelog.header.name + '-v' + version;
+            const version = changelog.header.version.split('-').join('.');
+            const id = changelog.header.name + '-v' + version;
             return (
-                `<p class="release-header" style="position: relative">
-                    <a id="${id}" style="position: absolute; top: -60px"></a>
-                    <a style="color: inherit; font-size: inherit; font-weight: inherit"
-                    href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
+                `<p class="release-header">
+                    <a id="${id}"></a>
+                    <a href="#${id}">${changelog.header.productName} v${version} ${changelog.header.date}</a>
                 </p>
                 ${marked.parser(changelog.features)}`
             );
@@ -156,16 +154,16 @@ var replaceString = require('replace-string');
     function upgradeNotesHTMLStructure() {
         if (changelog.upgradeNotes.length > 0) {
             return (
-                `<div id="${changelog.header.offset}heading-${changelog.header.version}-upgrade-notes" class="panel-heading">
-                <h4 class="panel-title">
+                `<div id="${changelog.header.offset}heading-${changelog.header.version}-upgrade-notes" class="card-header">
+                <h4 class="card-title">
                 <a href="#${changelog.header.offset}${changelog.header.version}-upgrade-notes" data-toggle="collapse" data-parent="#accordion"> Upgrade notes</a>
                 </h4>
                 </div>
-                <div id="${changelog.header.offset}${changelog.header.version}-upgrade-notes" class="panel-collapse collapse">
-                <div class="panel-body">
+                <div id="${changelog.header.offset}${changelog.header.version}-upgrade-notes" class="collapse">
+                <div class="card-body">
                 ${marked.parser(changelog.upgradeNotes)}
                 </div>
-             
+
                 </div>`);
         }
         return '';
@@ -175,16 +173,16 @@ var replaceString = require('replace-string');
             return (
                 `<div
                     id="${changelog.header.offset}heading-${changelog.header.version}-bug-fixes"
-                    class="panel-heading">
-                <h4 class="panel-title">
+                    class="card-header">
+                <h4 class="card-title">
                 <a href="#${changelog.header.offset}${changelog.header.version}-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
                 </h4>
                 </div>
-                <div id="${changelog.header.offset}${changelog.header.version}-bug-fixes" class="panel-collapse collapse">
-                <div class="panel-body">
+                <div id="${changelog.header.offset}${changelog.header.version}-bug-fixes" class="collapse">
+                <div class="card-body">
                 ${marked.parser(changelog.bugFixes)}
                 </div>
-               
+
                 </div>`);
         }
         return '';
@@ -193,8 +191,8 @@ var replaceString = require('replace-string');
         if (changelog.upgradeNotes.length > 0 ||
             changelog.bugFixes.length > 0) {
             return (
-                `<div id="accordion" class="panel-group">
-                <div class="panel panel-default">
+                `<div id="accordion" class="card-group">
+                <div class="card">
                 ${upgradeNotesHTMLStructure()}
                 ${bugFixesHTMLStructure()}
                 </div>
@@ -207,7 +205,6 @@ var replaceString = require('replace-string');
             </div>
             </div>
             </div>
-            <div class="col-md-1 hidden-sm"></div>
             </div>`);
     }
     function endProductHTMLStructure() {
@@ -219,7 +216,7 @@ var replaceString = require('replace-string');
     }
 
     function writeContentToNewHTMLFile() {
-        var outputFile = './' + process.argv[2] + '.html';
+        var outputFile = './' + (process.argv[2] || 'changelog') + '.html';
         fs.writeFile(outputFile, pretty(htmlContent), function (err) {
             if (err) {
                 throw err;
@@ -242,7 +239,7 @@ var replaceString = require('replace-string');
         changelog.header.offset = product.offset;
         htmlContent += productHeaderHTMLStructure(product);
         var sortedDir = getSortedDirFiles(fs.readdirSync('./' + product.name));
-        sortedDir.forEach((file) => {
+        sortedDir.forEach(file => {
             var content = fs.readFileSync('./' + product.name + '/' + file, 'utf8');
             sortMarkdownFileContent(content);
             changelog.header.version = formatVersionNumber(file);
@@ -254,9 +251,3 @@ var replaceString = require('replace-string');
     htmlContent += bottomHTMLContent();
     writeContentToNewHTMLFile();
 }());
-
-
-
-
-
-

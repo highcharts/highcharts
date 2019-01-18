@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -399,6 +399,7 @@ Highcharts.Time.prototype = {
      */
     makeTime: function (year, month, date, hours, minutes, seconds) {
         var d, offset, newOffset;
+
         if (this.useUTC) {
             d = this.Date.UTC.apply(0, arguments);
             offset = this.getTimezoneOffset(d);
@@ -690,7 +691,8 @@ Highcharts.Time.prototype = {
             ); // #3652, #3654
 
             if (interval >= timeUnits.second) { // second
-                time.set('Seconds',
+                time.set(
+                    'Seconds',
                     minDate,
                     interval >= timeUnits.minute ?
                         0 : // #3935
@@ -699,7 +701,9 @@ Highcharts.Time.prototype = {
             }
 
             if (interval >= timeUnits.minute) { // minute
-                time.set('Minutes', minDate,
+                time.set(
+                    'Minutes',
+                    minDate,
                     interval >= timeUnits.hour ?
                         0 :
                         count * Math.floor(time.get('Minutes', minDate) / count)
@@ -730,7 +734,7 @@ Highcharts.Time.prototype = {
                                 time.get('Date', minDate) / count
                             )
                         )
-                    );
+                );
             }
 
             if (interval >= timeUnits.month) { // month
@@ -794,6 +798,7 @@ Highcharts.Time.prototype = {
 
             // Iterate and add tick positions at appropriate values
             var t = minDate.getTime();
+
             i = 1;
             while (t < max) {
                 tickPositions.push(t);
@@ -874,4 +879,3 @@ Highcharts.Time.prototype = {
     }
 
 }; // end of Time
-

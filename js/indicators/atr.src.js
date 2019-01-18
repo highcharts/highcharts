@@ -51,7 +51,9 @@ function populateAverage(points, xVal, yVal, i, period, prevATR) {
  *
  * @augments Highcharts.Series
  */
-seriesType('atr', 'sma',
+seriesType(
+    'atr',
+    'sma',
     /**
      * Average true range indicator (ATR). This series requires `linkedTo`
      * option to be set.

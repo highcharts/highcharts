@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2018 Paweł Dalek
+ *  (c) 2010-2019 Paweł Dalek
  *
  *  Volume By Price (VBP) indicator for Highstock
  *
@@ -54,7 +54,9 @@ var abs = Math.abs,
  *
  * @augments Highcharts.Series
  */
-seriesType('vbp', 'sma',
+seriesType(
+    'vbp',
+    'sma',
     /**
      * Volume By Price indicator.
      *
@@ -92,20 +94,18 @@ seriesType('vbp', 'sma',
              * Enable/disable zone lines.
              */
             enabled: true,
+            /**
+             * Specify the style of zone lines.
+             *
+             * @type    {Highcharts.CSSObject}
+             * @default {"color": "#0A9AC9", "dashStyle": "LongDash", "lineWidth": 1}
+             */
             styles: {
-                /**
-                 * Color of zone lines.
-                 *
-                 * @type {Highcharts.ColorString}
-                 */
+                /** @ignore-options */
                 color: '#0A9AC9',
-                /**
-                 * The dash style of zone lines.
-                 */
+                /** @ignore-options */
                 dashStyle: 'LongDash',
-                /**
-                 * Pixel width of zone lines.
-                 */
+                /** @ignore-options */
                 lineWidth: 1
             }
         },
@@ -372,7 +372,7 @@ seriesType('vbp', 'sma',
                     );
                     point.pointWidth = barWidth;
 
-                    point.shapeArgs = indicator.crispCol.apply(
+                    point.shapeArgs = indicator.crispCol.apply( // eslint-disable-line no-useless-call
                         indicator,
                         [barX, barY, barWidth, barHeight]
                     );
@@ -641,7 +641,7 @@ seriesType('vbp', 'sma',
                         'dashstyle': zonesStyles.dashStyle,
                         'zIndex': indicator.group.zIndex + 0.1
                     })
-                    .add(indicator.group);
+                        .add(indicator.group);
             }
         }
     },

@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -271,7 +271,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
 
         // Event type is touchmove, handle panning and pinching
         } else if (pinchDown.length) { // can be 0 when releasing, if touchend
-                // fires first
+            // fires first
 
 
             // Set the marker

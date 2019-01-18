@@ -1,10 +1,8 @@
 /* *
+ * (c) 2010-2019 Grzegorz Blachlinski, Sebastian Bochan
  *
- *  (c) 2010-2018 Grzegorz Blachlinski, Sebastian Bochan
- *
- *  License: www.highcharts.com/license
- *
- * */
+ * License: www.highcharts.com/license
+ */
 
 'use strict';
 
@@ -30,7 +28,9 @@ var seriesType = H.seriesType,
  *
  * @requires modules:highcharts-more
  */
-seriesType('packedbubble', 'bubble',
+seriesType(
+    'packedbubble',
+    'bubble',
 
     /**
      * A packed bubble series is a two dimensional series type, where each point
@@ -44,14 +44,14 @@ seriesType('packedbubble', 'bubble',
      * @extends      plotOptions.bubble
      * @since        7.0.0
      * @product      highcharts
-     * @excluding    connectEnds, connectNulls, keys, maxSize, minSize, sizeBy,
+     * @excluding    connectEnds, connectNulls, jitter, keys,
      *               sizeByAbsoluteValue, step, zMax, zMin
      * @optionparent plotOptions.packedbubble
      */
     {
         /**
          * Minimum bubble size. Bubbles will automatically size between the
-         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * `minSize` and `maxSize` to reflect the value of each bubble.
          * Can be either pixels (when no unit is given), or a percentage of
          * the smallest one of the plot width and height.
          *
@@ -59,13 +59,11 @@ seriesType('packedbubble', 'bubble',
          *         Bubble size
          *
          * @type    {number|string}
-         * @since   3.0
-         * @product highcharts highstock
          */
         minSize: '10%',
         /**
          * Maximum bubble size. Bubbles will automatically size between the
-         * `minSize` and `maxSize` to reflect the `z` value of each bubble.
+         * `minSize` and `maxSize` to reflect the value of each bubble.
          * Can be either pixels (when no unit is given), or a percentage of
          * the smallest one of the plot width and height.
          *
@@ -73,8 +71,6 @@ seriesType('packedbubble', 'bubble',
          *         Bubble size
          *
          * @type    {number|string}
-         * @since   3.0
-         * @product highcharts highstock
          */
         maxSize: '100%',
         sizeBy: 'radius',
@@ -204,21 +200,21 @@ seriesType('packedbubble', 'bubble',
                 pow = Math.pow,
                 abs = Math.abs,
                 distance = sqrt( // dist between lastBubble and newOrigin
-                  pow((lastBubble[0] - newOrigin[0]), 2) +
+                    pow((lastBubble[0] - newOrigin[0]), 2) +
                   pow((lastBubble[1] - newOrigin[1]), 2)
                 ),
                 alfa = acos(
-                  // from cosinus theorem: alfa is an angle used for
-                  // calculating correct position
-                  (
-                    pow(distance, 2) +
+                    // from cosinus theorem: alfa is an angle used for
+                    // calculating correct position
+                    (
+                        pow(distance, 2) +
                     pow(nextBubble[2] + newOrigin[2], 2) -
                     pow(nextBubble[2] + lastBubble[2], 2)
-                  ) / (2 * (nextBubble[2] + newOrigin[2]) * distance)
+                    ) / (2 * (nextBubble[2] + newOrigin[2]) * distance)
                 ),
 
                 beta = asin( // from sinus theorem.
-                  abs(lastBubble[0] - newOrigin[0]) /
+                    abs(lastBubble[0] - newOrigin[0]) /
                   distance
                 ),
                 // providing helping variables, related to angle between
@@ -230,7 +226,7 @@ seriesType('packedbubble', 'bubble',
 
                 delta = (lastBubble[0] - newOrigin[0]) *
                 (lastBubble[1] - newOrigin[1]) < 0 ?
-                1 : -1, // (1st and 3rd quarter)
+                    1 : -1, // (1st and 3rd quarter)
                 finalAngle = gamma + alfa + beta * delta,
                 cosA = Math.cos(finalAngle),
                 sinA = Math.sin(finalAngle),
@@ -276,7 +272,8 @@ seriesType('packedbubble', 'bubble',
             // if length is 0, return empty array
             if (!sortedArr.length) {
                 return [];
-            } else if (sortedArr.length < 2) {
+            }
+            if (sortedArr.length < 2) {
                 // if length is 1,return only one bubble
                 return [
                     0, 0,
@@ -328,11 +325,11 @@ seriesType('packedbubble', 'bubble',
                     // around it, we are starting from first bubble in next
                     // stage because we are changing level to higher
                     bubblePos[stage + 1].push(
-                      positionBubble(
-                        bubblePos[stage][j],
-                        bubblePos[stage][0],
-                        sortedArr[i]
-                      )
+                        positionBubble(
+                            bubblePos[stage][j],
+                            bubblePos[stage][0],
+                            sortedArr[i]
+                        )
                     );
                     // (last added bubble, 1st. bbl from cur stage, new bubble)
                     stage++; // the new level is created, above current one
@@ -347,10 +344,12 @@ seriesType('packedbubble', 'bubble',
                     // to recalculate it.
                     k++;
                     bubblePos[stage].push(
-                      positionBubble(bubblePos[stage][j],
-                        bubblePos[stage - 1][k],
-                        sortedArr[i]
-                      ));
+                        positionBubble(
+                            bubblePos[stage][j],
+                            bubblePos[stage - 1][k],
+                            sortedArr[i]
+                        )
+                    );
                     // (last added bubble, previous stage bubble, new bubble)
                     j++;
                 } else { // simply add calculated bubble
@@ -493,6 +492,7 @@ seriesType('packedbubble', 'bubble',
 // When one series is modified, the others need to be recomputed
 H.addEvent(H.seriesTypes.packedbubble, 'updatedData', function () {
     var self = this;
+
     this.chart.series.forEach(function (s) {
         if (s.type === self.type) {
             s.isDirty = true;
@@ -522,7 +522,7 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
  * An array of data points for the series. For the `packedbubble` series type,
  * points can be given in the following ways:
  *
- * 1. An array of `y` values.
+ * 1. An array of `value` values.
  *    ```js
  *    data: [5, 1, 20]
  *    ```
@@ -533,11 +533,11 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
  *    is not available.
  *    ```js
  *    data: [{
- *        y: 1,
+ *        value: 1,
  *        name: "Point2",
  *        color: "#00FF00"
  *    }, {
- *        y: 5,
+ *        value: 5,
  *        name: "Point1",
  *        color: "#FF00FF"
  *    }]
@@ -548,9 +548,17 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
  *
  * @type      {Array<number|*>}
  * @extends   series.line.data
- * @excluding marker
+ * @excluding marker,x,y
  * @product   highcharts
  * @apioption series.packedbubble.data
+ */
+
+/**
+ * The value of a bubble. The bubble's size proportional to its `value`.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.packedbubble.data.weight
  */
 
 /**

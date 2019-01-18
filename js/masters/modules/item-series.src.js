@@ -3,7 +3,7 @@
  *
  * Item series type for Highcharts
  *
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

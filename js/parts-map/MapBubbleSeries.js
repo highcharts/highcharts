@@ -1,5 +1,5 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -29,7 +29,7 @@ if (seriesTypes.bubble) {
      */
     seriesType('mapbubble', 'bubble'
 
-    /**
+        /**
      * A map bubble series is a bubble series laid out on top of a map series,
      * where each bubble is tied to a specific map area.
      *
@@ -40,20 +40,20 @@ if (seriesTypes.bubble) {
      * @product      highmaps
      * @optionparent plotOptions.mapbubble
      */
-    , {
+        , {
 
-        /**
+            /**
          * The main color of the series. This color affects both the fill and
          * the stroke of the bubble. For enhanced control, use `marker` options.
          *
          * @sample {highmaps} maps/plotoptions/mapbubble-color/
          *         Pink bubbles
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption plotOptions.mapbubble.color
          */
 
-        /**
+            /**
          * Whether to display negative sized bubbles. The threshold is given
          * by the [zThreshold](#plotOptions.mapbubble.zThreshold) option, and
          * negative bubbles can be visualized by setting [negativeColor](
@@ -64,21 +64,21 @@ if (seriesTypes.bubble) {
          * @apioption plotOptions.mapbubble.displayNegative
          */
 
-        /**
+            /**
          * @sample {highmaps} maps/demo/map-bubble/
          *         Bubble size
          *
          * @apioption plotOptions.mapbubble.maxSize
          */
 
-        /**
+            /**
          * @sample {highmaps} maps/demo/map-bubble/
          *         Bubble size
          *
          * @apioption plotOptions.mapbubble.minSize
          */
 
-        /**
+            /**
          * When a point's Z value is below the
          * [zThreshold](#plotOptions.mapbubble.zThreshold) setting, this color
          * is used.
@@ -86,11 +86,11 @@ if (seriesTypes.bubble) {
          * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/
          *         Negative color below a threshold
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @apioption plotOptions.mapbubble.negativeColor
          */
 
-        /**
+            /**
          * Whether the bubble's value should be represented by the area or the
          * width of the bubble. The default, `area`, corresponds best to the
          * human perception of the size of each bubble.
@@ -101,7 +101,7 @@ if (seriesTypes.bubble) {
          * @apioption  plotOptions.mapbubble.sizeBy
          */
 
-        /**
+            /**
          * When this is true, the absolute value of z determines the size of
          * the bubble. This means that with the default `zThreshold` of 0, a
          * bubble of value -1 will have the same size as a bubble of value 1,
@@ -117,7 +117,7 @@ if (seriesTypes.bubble) {
          * @apioption plotOptions.mapbubble.sizeByAbsoluteValue
          */
 
-        /**
+            /**
          * The minimum for the Z value range. Defaults to the highest Z value
          * in the data.
          *
@@ -131,7 +131,7 @@ if (seriesTypes.bubble) {
          * @apioption plotOptions.mapbubble.zMax
          */
 
-        /**
+            /**
          * The minimum for the Z value range. Defaults to the lowest Z value
          * in the data.
          *
@@ -145,7 +145,7 @@ if (seriesTypes.bubble) {
          * @apioption plotOptions.mapbubble.zMin
          */
 
-        /**
+            /**
          * When [displayNegative](#plotOptions.mapbubble.displayNegative) is
          * `false`, bubbles with lower Z values are skipped. When
          * `displayNegative` is `true` and a [negativeColor](
@@ -160,51 +160,52 @@ if (seriesTypes.bubble) {
          * @apioption plotOptions.mapbubble.zThreshold
          */
 
-        animationLimit: 500,
+            animationLimit: 500,
 
-        tooltip: {
-            pointFormat: '{point.name}: {point.z}'
-        }
+            tooltip: {
+                pointFormat: '{point.name}: {point.z}'
+            }
 
-    // Prototype members
-    }, {
-        xyFromShape: true,
-        type: 'mapbubble',
-        // If one single value is passed, it is interpreted as z
-        pointArrayMap: ['z'],
-        // Return the map area identified by the dataJoinBy option
-        getMapData: seriesTypes.map.prototype.getMapData,
-        getBox: seriesTypes.map.prototype.getBox,
-        setData: seriesTypes.map.prototype.setData
+            // Prototype members
+        }, {
+            xyFromShape: true,
+            type: 'mapbubble',
+            // If one single value is passed, it is interpreted as z
+            pointArrayMap: ['z'],
+            // Return the map area identified by the dataJoinBy option
+            getMapData: seriesTypes.map.prototype.getMapData,
+            getBox: seriesTypes.map.prototype.getBox,
+            setData: seriesTypes.map.prototype.setData
 
-    // Point class
-    }, {
-        applyOptions: function (options, x) {
-            var point;
-            if (
-                options &&
+            // Point class
+        }, {
+            applyOptions: function (options, x) {
+                var point;
+
+                if (
+                    options &&
                 options.lat !== undefined &&
                 options.lon !== undefined
-            ) {
-                point = Point.prototype.applyOptions.call(
-                    this,
-                    merge(
-                        options,
-                        this.series.chart.fromLatLonToPoint(options)
-                    ),
-                    x
-                );
-            } else {
-                point = seriesTypes.map.prototype.pointClass.prototype
-                    .applyOptions.call(this, options, x);
-            }
-            return point;
-        },
-        isValid: function () {
-            return typeof this.z === 'number';
-        },
-        ttBelow: false
-    });
+                ) {
+                    point = Point.prototype.applyOptions.call(
+                        this,
+                        merge(
+                            options,
+                            this.series.chart.fromLatLonToPoint(options)
+                        ),
+                        x
+                    );
+                } else {
+                    point = seriesTypes.map.prototype.pointClass.prototype
+                        .applyOptions.call(this, options, x);
+                }
+                return point;
+            },
+            isValid: function () {
+                return typeof this.z === 'number';
+            },
+            ttBelow: false
+        });
 }
 
 

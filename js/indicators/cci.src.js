@@ -40,7 +40,9 @@ function meanDeviation(arr, sma) {
  *
  * @augments Highcharts.Series
  */
-seriesType('cci', 'sma',
+seriesType(
+    'cci',
+    'sma',
     /**
      * Commodity Channel Index (CCI). This series requires `linkedTo` option to
      * be set.

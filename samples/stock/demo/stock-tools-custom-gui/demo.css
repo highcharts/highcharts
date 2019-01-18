@@ -1,103 +1,288 @@
 /* FULL SCREEN */
+
 .chart:-webkit-full-screen {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .chart:-moz-full-screen {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .chart:-ms-fullscreen {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .chart:fullscreen {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 /* GENERAL */
-.chart { float: left; height: 800px; position: relative; width: 100%; }
-.highcharts-draw-mode { cursor: crosshair; }
-.left { float:left; }
-.right, .highcharts-stocktools-toolbar li.right { float:right; }
 
-/* GUI */
-.highcharts-stocktools-toolbar { margin: 0px 0px 0px 10px; padding: 0px; width:calc(100% - 63px); }
-.highcharts-stocktools-toolbar li { background-color: #f7f7f7; background-repeat: no-repeat; cursor: pointer; float:left; height: 40px; list-style: none; margin-right:2px; margin-bottom: 3px; padding: 0px; position: relative; width: auto; }
-.highcharts-stocktools-toolbar li ul { display: none; left: 0px; padding-left: 0px; position: absolute; z-index: 125; }
-.highcharts-stocktools-toolbar li:hover { background-color:#e6ebf5; }
-.highcharts-stocktools-toolbar li:hover ul { display:block; } 
-.highcharts-stocktools-toolbar li ul li { margin-bottom: 0px; width:160px; }
-.highcharts-stocktools-toolbar li > span.highcharts-menu-item-btn { background-repeat: no-repeat; background-position: 50% 50%; display: block; float: left; height: 100%; width: 40px; }
-.highcharts-stocktools-toolbar li > .highcharts-menu-item-title { color:#666; line-height: 40px; font-size:0.876em; padding:0px 10px 0px 5px; }
-
-.highcharts-indicators>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/indicators.svg'); } 
-.highcharts-label-annotation>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/label.svg'); } 
-.highcharts-circle-annotation>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/circle.svg'); } 
-.highcharts-rectangle-annotation>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/rectangle.svg'); } 
-.highcharts-segment>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/segment.svg'); } 
-.highcharts-arrow-segment>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/arrow-segment.svg'); } 
-.highcharts-ray>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/ray.svg'); } 
-.highcharts-arrow-ray>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/arrow-ray.svg'); } 
-.highcharts-infinity-line>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/line.svg'); } 
-.highcharts-arrow-infinity-line>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/arrow-line.svg'); } 
-.highcharts-horizontal-line>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/horizontal-line.svg'); } 
-.highcharts-vertical-line>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-line.svg'); } 
-.highcharts-elliott3>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/elliott-3.svg'); } 
-.highcharts-elliott5>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/elliott-5.svg'); } 
-.highcharts-crooked3>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/crooked-3.svg'); } 
-.highcharts-crooked5>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/crooked-5.svg'); } 
-.highcharts-measureXY>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/measure-xy.svg'); } 
-.highcharts-measureX>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/measure-x.svg'); } 
-.highcharts-measureY>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/measure-y.svg'); } 
-.highcharts-fibonacci>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/fibonacci.svg'); } 
-.highcharts-pitchfork>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/pitchfork.svg'); } 
-.highcharts-parallel-channel>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/parallel-channel.svg'); } 
-.highcharts-toggle-annotations>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/annotations-visible.svg'); } 
-.highcharts-vertical-counter>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-counter.svg'); } 
-.highcharts-vertical-label>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-label.svg'); } 
-.highcharts-vertical-arrow>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-arrow.svg'); } 
-.highcharts-vertical-double-arrow>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-double-arrow.svg'); } 
-.highcharts-flag-circlepin>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-elipse.svg'); } 
-.highcharts-flag-diamondpin>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-diamond.svg'); } 
-.highcharts-flag-squarepin>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-trapeze.svg'); } 
-.highcharts-flag-simplepin>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-basic.svg'); } 
-.highcharts-zoom-xy>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/zoom-xy.svg'); } 
-.highcharts-zoom-x>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/zoom-x.svg'); } 
-.highcharts-zoom-y>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/zoom-y.svg'); } 
-.highcharts-full-screen>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/fullscreen.svg'); } 
-.highcharts-series-type-ohlc>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/series-ohlc.svg'); } 
-.highcharts-series-type-line>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/series-line.svg'); } 
-.highcharts-series-type-candlestick>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/series-candlestick.svg'); } 
-.highcharts-current-price-indicator>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/current-price-show.svg'); } 
-.highcharts-save-chart>.highcharts-menu-item-btn { background-image: url('https://code.highcharts.com/gfx/stock-icons/save-chart.svg'); } 
-
-li.highcharts-active { background-color: #e6ebf5; }
-
-/* Popup */
-.chart-wrapper { float:left; position: relative; width: 100%; }
-.highcharts-popup { background: #fff; display: none; height:190px; left:calc(50% - 120px); top:calc(50% - 105px); padding:20px; position: absolute; width: 200px; z-index: 10; 
--webkit-box-shadow: 0px 0px 11px 0px rgba(133,133,133,0.3);
--moz-box-shadow: 0px 0px 11px 0px rgba(133,133,133,0.3);
-box-shadow: 0px 0px 11px 0px rgba(133,133,133,0.3);}
-
-.highcharts-popup input, .highcharts-popup label, .highcharts-popup select { color:#666; float:left; font-size:0.876em; margin-left:0px; margin-bottom: 5px; padding:5px; width: calc(100% - 14px); }
-.highcharts-popup select { width: 100%; }
-.highcharts-popup label { padding-left:0px; }
-.highcharts-popup .highcharts-close-popup { cursor: pointer; display:block; padding:5px; position: absolute; right:0px; top:0px; }
-.highcharts-popup .highcharts-close-popup:hover { background-color:#e6ebf5; }
-.highcharts-popup button { font-size:0.876em; float:right; margin-top:20px; padding:5px 10px; }
-
-/* Responsive design */
-@media screen and (max-width: 1024px) {
-  .highcharts-stocktools-toolbar li > .highcharts-menu-item-title { display:none; }
-  .highcharts-stocktools-toolbar li ul li { width:auto; }
+.chart {
+    float: left;
+    max-height: 800px;
+    height: 75vh;
+    position: relative;
+    width: 100%;
 }
 
+.highcharts-draw-mode {
+    cursor: crosshair;
+}
 
+.left {
+    float: left;
+}
 
+.right,
+.highcharts-stocktools-toolbar li.right {
+    float: right;
+}
 
+/* GUI */
+
+.highcharts-stocktools-toolbar {
+    margin: 0px 0px 0px 10px;
+    padding: 0px;
+    width: calc(100% - 63px);
+}
+
+.highcharts-stocktools-toolbar li {
+    background-color: #f7f7f7;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    float: left;
+    height: 40px;
+    list-style: none;
+    margin-right: 2px;
+    margin-bottom: 3px;
+    padding: 0px;
+    position: relative;
+    width: auto;
+}
+
+.highcharts-stocktools-toolbar li ul {
+    display: none;
+    left: 0px;
+    padding-left: 0px;
+    position: absolute;
+    z-index: 125;
+}
+
+.highcharts-stocktools-toolbar li:hover {
+    background-color: #e6ebf5;
+}
+
+.highcharts-stocktools-toolbar li:hover ul {
+    display: block;
+}
+
+.highcharts-stocktools-toolbar li ul li {
+    margin-bottom: 0px;
+    width: 160px;
+}
+
+.highcharts-stocktools-toolbar li>span.highcharts-menu-item-btn {
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    display: block;
+    float: left;
+    height: 100%;
+    width: 40px;
+}
+
+.highcharts-stocktools-toolbar li>.highcharts-menu-item-title {
+    color: #666;
+    line-height: 40px;
+    font-size: 0.876em;
+    padding: 0px 10px 0px 5px;
+}
+
+.highcharts-indicators>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/indicators.svg');
+}
+
+.highcharts-label-annotation>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/label.svg');
+}
+
+.highcharts-circle-annotation>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/circle.svg');
+}
+
+.highcharts-rectangle-annotation>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/rectangle.svg');
+}
+
+.highcharts-segment>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/segment.svg');
+}
+
+.highcharts-arrow-segment>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/arrow-segment.svg');
+}
+
+.highcharts-ray>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/ray.svg');
+}
+
+.highcharts-arrow-ray>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/arrow-ray.svg');
+}
+
+.highcharts-infinity-line>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/line.svg');
+}
+
+.highcharts-arrow-infinity-line>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/arrow-line.svg');
+}
+
+.highcharts-horizontal-line>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/horizontal-line.svg');
+}
+
+.highcharts-vertical-line>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-line.svg');
+}
+
+.highcharts-elliott3>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/elliott-3.svg');
+}
+
+.highcharts-elliott5>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/elliott-5.svg');
+}
+
+.highcharts-crooked3>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/crooked-3.svg');
+}
+
+.highcharts-crooked5>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/crooked-5.svg');
+}
+
+.highcharts-measure-xy>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/measure-xy.svg');
+}
+
+.highcharts-measure-x>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/measure-x.svg');
+}
+
+.highcharts-measure-y>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/measure-y.svg');
+}
+
+.highcharts-fibonacci>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/fibonacci.svg');
+}
+
+.highcharts-pitchfork>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/pitchfork.svg');
+}
+
+.highcharts-parallel-channel>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/parallel-channel.svg');
+}
+
+.highcharts-toggle-annotations>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/annotations-visible.svg');
+}
+
+.highcharts-vertical-counter>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-counter.svg');
+}
+
+.highcharts-vertical-label>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-label.svg');
+}
+
+.highcharts-vertical-arrow>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-arrow.svg');
+}
+
+.highcharts-vertical-double-arrow>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-double-arrow.svg');
+}
+
+.highcharts-flag-circlepin>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-elipse.svg');
+}
+
+.highcharts-flag-diamondpin>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-diamond.svg');
+}
+
+.highcharts-flag-squarepin>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-trapeze.svg');
+}
+
+.highcharts-flag-simplepin>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-basic.svg');
+}
+
+.highcharts-zoom-xy>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/zoom-xy.svg');
+}
+
+.highcharts-zoom-x>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/zoom-x.svg');
+}
+
+.highcharts-zoom-y>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/zoom-y.svg');
+}
+
+.highcharts-full-screen>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/fullscreen.svg');
+}
+
+.highcharts-series-type-ohlc>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/series-ohlc.svg');
+}
+
+.highcharts-series-type-line>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/series-line.svg');
+}
+
+.highcharts-series-type-candlestick>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/series-candlestick.svg');
+}
+
+.highcharts-current-price-indicator>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/current-price-show.svg');
+}
+
+.highcharts-save-chart>.highcharts-menu-item-btn {
+    background-image: url('https://code.highcharts.com/gfx/stock-icons/save-chart.svg');
+}
+
+li.highcharts-active {
+    background-color: #e6ebf5;
+}
+
+/* Popup */
+
+.chart-wrapper {
+    float: left;
+    position: relative;
+    width: 100%;
+    background: white;
+    padding-top: 10px;
+}
+
+/* Responsive design */
+
+@media screen and (max-width: 1024px) {
+    .highcharts-stocktools-toolbar li>.highcharts-menu-item-title {
+        display: none;
+    }
+    .highcharts-stocktools-toolbar li ul li {
+        width: auto;
+    }
+}

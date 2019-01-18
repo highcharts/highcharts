@@ -1,18 +1,20 @@
-/**
- * (c) 2010-2018 Torstein Honsi
+/* *
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
-/* ****************************************************************************
- * Start PlotBand series code                                                 *
- *****************************************************************************/
-/**
- * This is an experiment of implementing plotBands and plotLines as a series.
- * It could solve problems with export, updating etc., add tooltip and mouse
- * events, and provide a more compact and consistent implementation.
- * Demo: https://jsfiddle.net/highcharts/5Rbf6/
- */
+
+/* ************************************************************************** *
+ *  Start PlotBand series code                                                *
+ * ************************************************************************** */
+
+/* This is an experiment of implementing plotBands and plotLines as a series.
+   It could solve problems with export, updating etc., add tooltip and mouse
+   events, and provide a more compact and consistent implementation.
+   Demo: https://jsfiddle.net/highcharts/5Rbf6/ */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
@@ -66,6 +68,7 @@ seriesType('plotband', 'column', {
 
 
 });
-/* ****************************************************************************
- * End PlotBand series code                                                   *
- *****************************************************************************/
+
+/* ************************************************************************** *
+ *  End PlotBand series code                                                  *
+ * ************************************************************************** */

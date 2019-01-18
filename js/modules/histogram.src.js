@@ -52,6 +52,7 @@ var binsNumberFormulas = {
 function fitToBinLeftClosed(bins) {
     return function (y) {
         var i = 1;
+
         while (bins[i] <= y) {
             i++;
         }
@@ -153,10 +154,12 @@ seriesType('histogram', 'column', {
         fitToBin = fitToBinLeftClosed(
             frequencies.map(function (elem) {
                 return parseFloat(elem);
-            }));
+            })
+        );
 
         baseData.forEach(function (y) {
             var x = correctFloat(fitToBin(y));
+
             bins[x]++;
         });
 

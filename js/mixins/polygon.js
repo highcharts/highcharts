@@ -22,6 +22,7 @@ var deg2rad = H.deg2rad,
 var correctFloat = function (number, precision) {
     var p = isNumber(precision) ? precision : 14,
         magnitude = Math.pow(10, p);
+
     return Math.round(number * magnitude) / magnitude;
 };
 
@@ -43,6 +44,7 @@ var correctFloat = function (number, precision) {
 var getNormals = function getNormal(p1, p2) {
     var dx = p2[0] - p1[0], // x2 - x1
         dy = p2[1] - p1[1]; // y2 - y1
+
     return [
         [-dy, dx],
         [dy, -dx]
@@ -69,6 +71,7 @@ var dotProduct = function dotProduct(a, b) {
         ay = a[1],
         bx = b[0],
         by = b[1];
+
     return ax * bx + ay * by;
 };
 
@@ -90,6 +93,7 @@ var project = function project(polygon, target) {
     var products = polygon.map(function (point) {
         return dotProduct(point, target);
     });
+
     return {
         min: Math.min.apply(this, products),
         max: Math.max.apply(this, products)
@@ -117,6 +121,7 @@ var rotate2DToOrigin = function (point, angle) {
         rad = deg2rad * -angle,
         cosAngle = Math.cos(rad),
         sinAngle = Math.sin(rad);
+
     return [
         correctFloat(x * cosAngle - y * sinAngle),
         correctFloat(x * sinAngle + y * cosAngle)
@@ -145,6 +150,7 @@ var rotate2DToPoint = function (point, origin, angle) {
     var x = point[0] - origin[0],
         y = point[1] - origin[1],
         rotated = rotate2DToOrigin([x, y], angle);
+
     return [
         rotated[0] + origin[0],
         rotated[1] + origin[1]
@@ -161,6 +167,7 @@ var isAxesEqual = function (axis1, axis2) {
 var getAxesFromPolygon = function (polygon) {
     var points,
         axes = polygon.axes;
+
     if (!isArray(axes)) {
         axes = [];
         points = points = polygon.concat([polygon[0]]);
@@ -189,6 +196,7 @@ var getAxes = function (polygon1, polygon2) {
     // Get the axis from both polygons.
     var axes1 = getAxesFromPolygon(polygon1),
         axes2 = getAxesFromPolygon(polygon2);
+
     return axes1.concat(axes2);
 };
 
@@ -204,6 +212,7 @@ var getPolygon = function (x, y, width, height, rotation) {
             [right, bottom],
             [left, bottom]
         ];
+
     return polygon.map(function (point) {
         return rotate2DToPoint(point, origin, -rotation);
     });
@@ -213,6 +222,7 @@ var getBoundingBoxFromPolygon = function (points) {
     return points.reduce(function (obj, point) {
         var x = point[0],
             y = point[1];
+
         obj.left = Math.min(x, obj.left);
         obj.right = Math.max(x, obj.right);
         obj.bottom = Math.max(y, obj.bottom);
@@ -233,6 +243,7 @@ var isPolygonsOverlappingOnAxis = function (axis, polygon1, polygon2) {
             projection2.min > projection1.max ||
             projection2.max < projection1.min
         );
+
     return !isOverlapping;
 };
 
@@ -257,6 +268,7 @@ var isPolygonsColliding = function isPolygonsColliding(polygon1, polygon2) {
         overlappingOnAllAxes = !find(axes, function (axis) {
             return isPolygonsOverlappingOnAxis(axis, polygon1, polygon2);
         });
+
     return overlappingOnAllAxes;
 };
 

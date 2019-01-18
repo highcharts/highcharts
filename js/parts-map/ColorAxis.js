@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2018 Torstein Honsi
+ *  (c) 2010-2019 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -137,7 +137,7 @@ if (!H.ColorAxis) {
              * @sample {highmaps} maps/demo/data-class-two-ranges/
              *         Explicit colors
              *
-             * @type      {Highcharts.ColorString}
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product   highcharts highmaps
              * @apioption colorAxis.dataClasses.color
              */
@@ -323,7 +323,7 @@ if (!H.ColorAxis) {
                 /**
                  * The color of the marker.
                  *
-                 * @type    {Highcharts.ColorString}
+                 * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highcharts highmaps
                  */
                 color: '${palette.neutralColor40}'
@@ -438,6 +438,12 @@ if (!H.ColorAxis) {
              */
 
             /**
+             * @product   highcharts highmaps
+             * @excluding afterBreaks, pointBreak, pointInBreak
+             * @apioption colorAxis.events
+             */
+
+            /**
              * Fires when the legend item belonging to the colorAxis is clicked.
              * One parameter, `event`, is passed to the function.
              *
@@ -519,6 +525,7 @@ if (!H.ColorAxis) {
                 colorCount = chart.options.chart.colorCount,
                 options = this.options,
                 len = userOptions.dataClasses.length;
+
             this.dataClasses = dataClasses = [];
             this.legendItems = [];
 
@@ -615,10 +622,10 @@ if (!H.ColorAxis) {
                 // Fake length for disabled legend to avoid tick issues
                 // and such (#5205)
                 this.len = (
-                        this.horiz ?
-                            legendOptions.symbolWidth :
-                            legendOptions.symbolHeight
-                    ) || this.defaultLegendLength;
+                    this.horiz ?
+                        legendOptions.symbolWidth :
+                        legendOptions.symbolHeight
+                ) || this.defaultLegendLength;
             }
         },
 
@@ -742,8 +749,10 @@ if (!H.ColorAxis) {
             grad = horiz ? [one, 0, zero, 0] : [0, zero, 0, one]; // #3190
             this.legendColor = {
                 linearGradient: {
-                    x1: grad[0], y1: grad[1],
-                    x2: grad[2], y2: grad[3]
+                    x1: grad[0],
+                    y1: grad[1],
+                    x2: grad[2],
+                    y2: grad[3]
                 },
                 stops: this.stops
             };
@@ -818,6 +827,7 @@ if (!H.ColorAxis) {
         getSeriesExtremes: function () {
             var series = this.series,
                 i = series.length;
+
             this.dataMin = Infinity;
             this.dataMax = -Infinity;
             while (i--) {
