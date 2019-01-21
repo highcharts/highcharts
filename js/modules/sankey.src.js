@@ -167,11 +167,15 @@ seriesType('sankey', 'column'
         // links.
         createNode: H.NodesMixin.createNode,
 
+        getNodePadding: function () {
+            return this.options.nodePadding;
+        },
+
         // Create a node column.
         createNodeColumn: function () {
             var chart = this.chart,
                 column = [],
-                nodePadding = this.options.nodePadding;
+                nodePadding = this.getNodePadding();
 
             column.sum = function () {
                 var sum = 0;
@@ -383,13 +387,14 @@ seriesType('sankey', 'column'
                     (inverted ? -colDistance : colDistance) *
                 options.curveFactor
                 ),
-                factor = Infinity;
+                factor = Infinity,
+                nodePadding = this.getNodePadding();
 
             // Find out how much space is needed. Base it on the translation
             // factor of the most spaceous column.
             this.nodeColumns.forEach(function (column) {
                 var height = chart.plotSizeY -
-                (column.length - 1) * options.nodePadding;
+                (column.length - 1) * nodePadding;
 
                 factor = Math.min(factor, height / column.sum());
             });
@@ -461,6 +466,12 @@ seriesType('sankey', 'column'
                         }
 
                         point.shapeType = 'path';
+                        point.linkBase = [
+                            fromY,
+                            fromY + linkHeight,
+                            toY,
+                            toY + linkHeight
+                        ];
 
                         // Links going from left to right
                         if (straight) {
