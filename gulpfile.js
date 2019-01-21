@@ -1555,13 +1555,16 @@ function defaultWatch() {
     ];
     const msgBuildAll = 'Built JS files from modules.'.cyan;
     let watcher;
-    const onChange = path => {
+    const onChange = p => {
+        const path = p.split(sep).join('/');
+        let promise;
+
         if (path.startsWith('css')) {
             // Stop the watcher temporarily.
             watcher.close();
             watcher = null;
             // Run styles and build all files.
-            styles().then(() => {
+            promise = styles().then(() => {
                 if (shouldBuild()) {
                     fnFirstBuild();
                     console.log(msgBuildAll);
@@ -1573,11 +1576,13 @@ function defaultWatch() {
             });
         } else if (path.startsWith('js')) {
             // Build es-modules
-            mapOfWatchFn['js/**/*.js']({ path, type: 'change' });
+            promise = mapOfWatchFn['js/**/*.js']({ path, type: 'change' });
         } else if (path.startsWith('code/es-modules')) {
             // Build dist files in classic mode.
-            mapOfWatchFn['code/es-modules/**/*.js']({ path, type: 'change' });
+            promise = mapOfWatchFn['code/es-modules/**/*.js']({ path, type: 'change' });
         }
+
+        return promise;
     };
     return styles().then(() => {
         if (shouldBuild()) {
