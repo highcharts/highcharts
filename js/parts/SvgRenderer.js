@@ -426,7 +426,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
     /**
      * Initialize the SVG element. This function only exists to make the
-     * initiation process overridable. It should not be called directly.
+     * initialization process overridable. It should not be called directly.
      *
      * @function Highcharts.SVGElement#init
      *
@@ -2535,7 +2535,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     SVG_NS: SVG_NS,
 
     /**
-     * Initialize the SVGRenderer. Overridable initiator function that takes
+     * Initialize the SVGRenderer. Overridable initializer function that takes
      * the same parameters as the constructor.
      *
      * @function Highcharts.SVGRenderer#init

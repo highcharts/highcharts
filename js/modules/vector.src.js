@@ -253,7 +253,7 @@ seriesType('vector', 'scatter'
     */
 
         /**
-     * Fade in the arrows on initiating series.
+     * Fade in the arrows on initializing series.
      *
      * @private
      * @function Highcharts.seriesTypes.vector#animate

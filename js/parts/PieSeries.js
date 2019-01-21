@@ -946,7 +946,7 @@ seriesType('pie', 'line',
     }, /** @lends seriesTypes.pie.prototype.pointClass.prototype */ {
 
         /**
-     * Initiate the pie slice
+     * Initialize the pie slice
      *
      * @private
      * @function Highcharts.seriesTypes.pie#pointClass#init

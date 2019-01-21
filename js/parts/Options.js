@@ -251,7 +251,7 @@ H.defaultOptions = {
 
     /**
      * The language object is global and it can't be set on each chart
-     * initiation. Instead, use `Highcharts.setOptions` to set it before any
+     * initialization. Instead, use `Highcharts.setOptions` to set it before any
      * chart is initialized.
      *
      * <pre>Highcharts.setOptions({
