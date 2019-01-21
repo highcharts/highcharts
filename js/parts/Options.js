@@ -1365,10 +1365,11 @@ H.defaultOptions = {
 
         /**
          * The default series type for the chart. Can be any of the chart types
-         * listed under [plotOptions](#plotOptions).
+         * listed under [plotOptions](#plotOptions) and [series](#series) or can
+         * be a series provided by an additional module.
          *
-         * In TypeScript instead the `type` option must always be set in the
-         * series.
+         * In TypeScript this option has no effect in sense of typing and
+         * instead the `type` option must always be set in the series.
          *
          * @sample {highcharts} highcharts/chart/type-bar/
          *         Bar
@@ -1382,11 +1383,6 @@ H.defaultOptions = {
          * @default    {highstock} line
          * @default    {highmaps} map
          * @since      2.1.0
-         * @validvalue ["line", "spline", "column", "bar", "area", "areaspline",
-         *             "pie", "arearange", "areasplinerange", "boxplot",
-         *             "bubble", "columnrange", "errorbar", "funnel", "gauge",
-         *             "heatmap", "polygon", "pyramid", "scatter", "solidgauge",
-         *             "treemap", "waterfall"]
          * @apioption  chart.type
          */
 
