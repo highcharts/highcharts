@@ -975,7 +975,8 @@ seriesType('column', 'line'
 
                                 attr[translateProp] =
                             translateStart +
-                            fx.pos * (yAxis.pos - translateStart);
+                            H.pick((fx && fx.pos), 1) *
+                            (yAxis.pos - translateStart);
                                 series.group.attr(attr);
                             }
                         })
