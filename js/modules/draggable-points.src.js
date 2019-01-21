@@ -1595,6 +1595,8 @@ function initDragDrop(e, point) {
     )) {
         chart.dragGuideBox = guideBox = series.getGuideBox(groupedPoints);
         chart.setGuideBoxState('default', series.options.dragDrop.guideBox)
+            // Use pointerEvents 'none' to avoid capturing the click event
+            .css({ pointerEvents: 'none' })
             .add(series.group);
     }
 
