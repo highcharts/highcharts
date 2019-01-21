@@ -280,7 +280,7 @@ seriesType('windbarb', 'column'
             }, this);
         },
 
-        // Fade in the arrows on initiating series.
+        // Fade in the arrows on initializing series.
         animate: function (init) {
             if (init) {
                 this.markerGroup.attr({

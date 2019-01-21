@@ -254,7 +254,7 @@ Highcharts.Time.prototype = {
 
     /**
      * Update the Time object with current options. It is called internally on
-     * initiating Highcharts, after running `Highcharts.setOptions` and on
+     * initializing Highcharts, after running `Highcharts.setOptions` and on
      * `Chart.update`.
      *
      * @private

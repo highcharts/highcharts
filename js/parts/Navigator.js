@@ -1523,7 +1523,7 @@ Navigator.prototype = {
     },
 
     /**
-     * Initiate the Navigator object
+     * Initialize the Navigator object
      *
      * @private
      * @function Highcharts.Navigator#init
@@ -2444,7 +2444,7 @@ addEvent(Chart, 'update', function (e) {
 
 });
 
-// Initiate navigator, if no scrolling exists yet
+// Initialize navigator, if no scrolling exists yet
 addEvent(Chart, 'afterUpdate', function () {
 
     if (!this.navigator && !this.scroller &&
@@ -2474,7 +2474,7 @@ Chart.prototype.callbacks.push(function (chart) {
     var extremes,
         navigator = chart.navigator;
 
-    // Initiate the navigator
+    // Initialize the navigator
     if (navigator && chart.xAxis[0]) {
         extremes = chart.xAxis[0].getExtremes();
         navigator.render(extremes.min, extremes.max);

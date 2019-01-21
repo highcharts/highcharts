@@ -1006,8 +1006,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
     /**
      * Update the series with a new set of options. For a clean and precise
      * handling of new options, all methods and elements from the series are
-     * removed, and it is initiated from scratch. Therefore, this method is more
-     * performance expensive than some other utility methods like {@link
+     * removed, and it is initialized from scratch. Therefore, this method is
+     * more performance expensive than some other utility methods like {@link
      * Series#setData} or {@link Series#setVisible}.
      *
      * Note that `Series.update` may mutate the passed `data` options.

@@ -200,7 +200,7 @@ H.AxisResizer = function (axis) {
 
 H.AxisResizer.prototype = {
     /**
-     * Initiate the AxisResizer object.
+     * Initialize the AxisResizer object.
      *
      * @function Highcharts.AxisResizer#init
      *
