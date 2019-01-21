@@ -1,73 +1,3 @@
-document.addEventListener('DOMContentLoaded', function () {
-
-    var datasets = {
-        topdown: {
-            data: [
-                ['CEO', 'CTO', 1],
-                ['CEO', 'CPO', 1],
-                ['CEO', 'CSO', 1],
-                ['CEO', 'CMO', 1],
-                ['CTO', 'Dev1', 1],
-                ['CTO', 'Dev2', 1]
-            ]
-        },
-        mafia: {
-            data: [
-                ['Boss', 'Consigliere', 1],
-                ['Boss', 'Underboss', 1],
-                ['Underboss', 'Caporegime1', 1],
-                ['Underboss', 'Caporegime2', 1],
-                ['Underboss', 'Caporegime3', 1],
-                ['Caporegime1', 'Soldiers1', 1],
-                ['Caporegime2', 'Soldiers2', 1],
-                ['Caporegime3', 'Soldiers3', 1]
-            ],
-            nodes: [{
-                id: 'Consigliere',
-                column: 0
-            }, {
-                id: 'Caporegime1',
-                name: 'Caporegime'
-            }, {
-                id: 'Caporegime2',
-                name: 'Caporegime'
-            }, {
-                id: 'Caporegime3',
-                name: 'Caporegime'
-            }, {
-                id: 'Soldiers1',
-                name: 'Soldiers',
-                color: '#eeeeee'
-            }, {
-                id: 'Soldiers2',
-                name: 'Soldiers',
-                color: '#eeeeee'
-            }, {
-                id: 'Soldiers3',
-                name: 'Soldiers',
-                color: '#eeeeee'
-            }]
-        }
-    };
-
-    var dataset = datasets.mafia;
-    Highcharts.chart('container', {
-
-        title: {
-            text: 'Highcharts Org Chart POC'
-        },
-
-        series: [{
-            keys: ['from', 'to', 'weight'],
-            data: dataset.data,
-            nodes: dataset.nodes,
-            type: 'orgchart',
-            name: 'Highcharts Org Chart POC'
-        }]
-
-    });
-});
-
 (function (H) {
 
     var base = H.seriesTypes.sankey.prototype;
@@ -145,3 +75,70 @@ document.addEventListener('DOMContentLoaded', function () {
     );
 
 }(Highcharts));
+
+var datasets = {
+    topdown: {
+        data: [
+            ['CEO', 'CTO', 1],
+            ['CEO', 'CPO', 1],
+            ['CEO', 'CSO', 1],
+            ['CEO', 'CMO', 1],
+            ['CTO', 'Dev1', 1],
+            ['CTO', 'Dev2', 1]
+        ]
+    },
+    mafia: {
+        data: [
+            ['Boss', 'Consigliere', 1],
+            ['Boss', 'Underboss', 1],
+            ['Underboss', 'Caporegime1', 1],
+            ['Underboss', 'Caporegime2', 1],
+            ['Underboss', 'Caporegime3', 1],
+            ['Caporegime1', 'Soldiers1', 1],
+            ['Caporegime2', 'Soldiers2', 1],
+            ['Caporegime3', 'Soldiers3', 1]
+        ],
+        nodes: [{
+            id: 'Consigliere',
+            column: 0
+        }, {
+            id: 'Caporegime1',
+            name: 'Caporegime'
+        }, {
+            id: 'Caporegime2',
+            name: 'Caporegime'
+        }, {
+            id: 'Caporegime3',
+            name: 'Caporegime'
+        }, {
+            id: 'Soldiers1',
+            name: 'Soldiers',
+            color: '#eeeeee'
+        }, {
+            id: 'Soldiers2',
+            name: 'Soldiers',
+            color: '#eeeeee'
+        }, {
+            id: 'Soldiers3',
+            name: 'Soldiers',
+            color: '#eeeeee'
+        }]
+    }
+};
+
+var dataset = datasets.mafia;
+Highcharts.chart('container', {
+
+    title: {
+        text: 'Highcharts Org Chart POC'
+    },
+
+    series: [{
+        keys: ['from', 'to', 'weight'],
+        data: dataset.data,
+        nodes: dataset.nodes,
+        type: 'orgchart',
+        name: 'Highcharts Org Chart POC'
+    }]
+
+});
