@@ -1555,11 +1555,11 @@ function defaultWatch() {
     ];
     const msgBuildAll = 'Built JS files from modules.'.cyan;
     let watcher;
-    const onChange = p => {
-        const path = p.split(sep).join('/');
+    const onChange = path => {
+        const posixPath = path.split(sep).join('/');
         let promise;
 
-        if (path.startsWith('css')) {
+        if (posixPath.startsWith('css')) {
             // Stop the watcher temporarily.
             watcher.close();
             watcher = null;
@@ -1574,12 +1574,12 @@ function defaultWatch() {
                 // Start watcher again.
                 watcher = gulp.watch(watchlist).on('change', onChange);
             });
-        } else if (path.startsWith('js')) {
+        } else if (posixPath.startsWith('js')) {
             // Build es-modules
-            promise = mapOfWatchFn['js/**/*.js']({ path, type: 'change' });
-        } else if (path.startsWith('code/es-modules')) {
+            promise = mapOfWatchFn['js/**/*.js']({ posixPath, type: 'change' });
+        } else if (posixPath.startsWith('code/es-modules')) {
             // Build dist files in classic mode.
-            promise = mapOfWatchFn['code/es-modules/**/*.js']({ path, type: 'change' });
+            promise = mapOfWatchFn['code/es-modules/**/*.js']({ posixPath, type: 'change' });
         }
 
         return promise;
