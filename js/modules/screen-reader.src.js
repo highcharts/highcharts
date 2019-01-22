@@ -814,15 +814,15 @@ addEvent(H.Legend, 'afterRender', function () {
 });
 
 
-// Handle show/hide series
-addEvent(H.Series, 'show', function () {
-    if (this.legendGroup) {
-        this.legendGroup.attr('aria-pressed', 'false');
-    }
-});
-addEvent(H.Series, 'hide', function () {
-    if (this.legendGroup) {
-        this.legendGroup.attr('aria-pressed', 'true');
+// Handle show/hide series/points
+addEvent(H.Legend, 'afterColorizeItem', function (e) {
+    var legendGroup = e.item && e.item.legendGroup,
+        pressed = e.visible ? 'false' : 'true';
+    if (legendGroup) {
+        legendGroup.attr('aria-pressed', pressed);
+        if (legendGroup.div) {
+            legendGroup.div.setAttribute('aria-pressed', pressed);
+        }
     }
 });
 
