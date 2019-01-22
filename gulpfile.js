@@ -1576,10 +1576,10 @@ function defaultWatch() {
             });
         } else if (posixPath.startsWith('js')) {
             // Build es-modules
-            promise = mapOfWatchFn['js/**/*.js']({ posixPath, type: 'change' });
+            promise = mapOfWatchFn['js/**/*.js']({ path: posixPath, type: 'change' });
         } else if (posixPath.startsWith('code/es-modules')) {
             // Build dist files in classic mode.
-            promise = mapOfWatchFn['code/es-modules/**/*.js']({ posixPath, type: 'change' });
+            promise = mapOfWatchFn['code/es-modules/**/*.js']({ path: posixPath, type: 'change' });
         }
 
         return promise;
