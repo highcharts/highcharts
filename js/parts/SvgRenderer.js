@@ -500,9 +500,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             animate(this, params, animOptions);
         } else {
             this.attr(params, null, complete);
-            if (animOptions.step) {
-                animOptions.step.call(this);
-            }
+
+            // Call the end step synchronously
+            H.objectEach(params, function (val, prop) {
+                if (animOptions.step) {
+                    animOptions.step.call(this, val, { prop: prop, pos: 1 });
+                }
+            }, this);
         }
         return this;
     },
