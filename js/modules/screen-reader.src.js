@@ -460,22 +460,23 @@ H.Series.prototype.buildSeriesInfoString = function () {
 H.Point.prototype.buildPointInfoString = function () {
     var point = this,
         series = point.series,
-        a11yOptions = series.chart.options.accessibility,
+        chart = series.chart,
+        a11yOptions = chart.options.accessibility,
         infoString = '',
         dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
         timeDesc =
             dateTimePoint &&
-            series.chart.time.dateFormat(
+            chart.time.dateFormat(
                 a11yOptions.pointDateFormatter &&
                 a11yOptions.pointDateFormatter(point) ||
                 a11yOptions.pointDateFormat ||
                 H.Tooltip.prototype.getXDateFormat.call(
                     {
                         getDateFormat: H.Tooltip.prototype.getDateFormat,
-                        chart: series.chart
+                        chart: chart
                     },
                     point,
-                    series.chart.options.tooltip,
+                    chart.options.tooltip,
                     series.xAxis
                 ),
                 point.x
@@ -512,7 +513,7 @@ H.Point.prototype.buildPointInfoString = function () {
 
     return (this.index + 1) + '. ' + infoString + '.' +
         (this.description ? ' ' + this.description : '') +
-        (series.name ? ' ' + series.name : '');
+        (chart.series.length > 1 && series.name ? ' ' + series.name : '');
 };
 
 
