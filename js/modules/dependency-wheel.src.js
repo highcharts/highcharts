@@ -95,6 +95,8 @@ unsupportedSeriesType('dependencywheel', 'sankey', {
         return node;
     },
 
+    // @todo: Override the refactored sankey translateLink and translateNode
+    // functions instead of the whole translate function
     translate: function () {
 
         var options = this.options,

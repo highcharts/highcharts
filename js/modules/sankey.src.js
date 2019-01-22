@@ -581,19 +581,22 @@ seriesType('sankey', 'column'
             this.colDistance = (chart.plotSizeX - nodeWidth) /
                     (nodeColumns.length - 1);
 
+            // First translate all nodes so we can use them when drawing links
             nodeColumns.forEach(function (column) {
 
                 column.forEach(function (node) {
-
                     series.translateNode(node, column);
-
-                    // Translate the links from this node
-                    node.linksFrom.forEach(function (point) {
-                        series.translateLink(point);
-                    });
                 });
 
             }, this);
+
+            // Then translate links
+            this.nodes.forEach(function (node) {
+                // Translate the links from this node
+                node.linksFrom.forEach(function (point) {
+                    series.translateLink(point);
+                });
+            });
         },
         // Extend the render function to also render this.nodes together with
         // the points.
