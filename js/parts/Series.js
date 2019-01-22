@@ -3009,13 +3009,16 @@ H.Series = H.seriesType(
                 userOptions = chart.userOptions || {},
                 userPlotOptions = userOptions.plotOptions || {},
                 typeOptions = plotOptions[this.type],
+                seriesUserOptions = merge(itemOptions),
                 options,
                 zones,
                 zone,
                 styledMode = chart.styledMode;
 
+            fireEvent(this, 'setOptions', { userOptions: seriesUserOptions });
+
             // use copy to prevent undetected changes (#9762)
-            this.userOptions = merge(itemOptions);
+            this.userOptions = seriesUserOptions;
 
             // General series options take precedence over type options because
             // otherwise, default type options like column.animation would be
@@ -3025,7 +3028,7 @@ H.Series = H.seriesType(
             options = merge(
                 typeOptions,
                 plotOptions.series,
-                itemOptions
+                seriesUserOptions
             );
 
             // The tooltip options are merged between global and series specific
@@ -3042,13 +3045,13 @@ H.Series = H.seriesType(
                 chartOptions.tooltip.userOptions, // 4
                 plotOptions.series && plotOptions.series.tooltip, // 5
                 plotOptions[this.type].tooltip, // 6
-                itemOptions.tooltip // 7
+                seriesUserOptions.tooltip // 7
             );
 
             // When shared tooltip, stickyTracking is true by default,
             // unless user says otherwise.
             this.stickyTracking = pick(
-                itemOptions.stickyTracking,
+                seriesUserOptions.stickyTracking,
                 userPlotOptions[this.type] &&
                     userPlotOptions[this.type].stickyTracking,
                 userPlotOptions.series && userPlotOptions.series.stickyTracking,
