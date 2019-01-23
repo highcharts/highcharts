@@ -800,6 +800,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             options = chart.options,
             styledMode = chart.styledMode,
             optionsTitle = merge(options.title, titleOptions),
+            titleText = H.defined(optionsTitle.text),
             chartTitleOptions,
             chartSubtitleOptions;
 
@@ -812,7 +813,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
             },
             optionsTitle,
-            H.defined(optionsTitle.text) && optionsTitle.text.length === 0 ? {
+            (!titleText) || (titleText && optionsTitle.text.length === 0) ? {
                 margin: 0
             } : { }
         );
