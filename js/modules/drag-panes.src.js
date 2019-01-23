@@ -56,10 +56,9 @@ var hasTouch = H.hasTouch,
 
         /**
          * Options for axis resizing. This feature requires the
-         * `drag-panes.js` -
-         * [classic](http://code.highcharts.com/stock/modules/drag-panes.js) or
-         * [styled](http://code.highcharts.com/stock/js/modules/drag-panes.js)
-         * mode - module.
+         * [drag-panes.js](http://code.highcharts.com/stock/modules/drag-panes.js)
+         * module. It adds a thick line between panes which the user can drag
+         * in order to resize the panes.
          *
          * @product highstock
          * @sample    {highstock} stock/demo/candlestick-and-volume
