@@ -375,7 +375,8 @@ var groupData = function (xData, yData, groupPositions, approximation) {
             return approximations[approx];
         }
         return approximations[
-            series && series.getDGApproximation() || 'average'
+            (series.getDGApproximation && series.getDGApproximation()) ||
+            'average'
         ];
     }
     approximationFn = getApproximation(approximation);
@@ -507,6 +508,9 @@ var dataGrouping = {
     groupData: groupData
 };
 
+
+// -----------------------------------------------------------------------------
+// The following code applies to implementation of data grouping on a Series
 
 var seriesProto = Series.prototype,
     baseProcessData = seriesProto.processData,

@@ -269,7 +269,7 @@ Highcharts.Time.prototype = {
         this.options = options = merge(true, this.options || {}, options);
 
         // Allow using a different Date class
-        this.Date = options.Date || win.Date;
+        this.Date = options.Date || win.Date || Date;
 
         this.useUTC = useUTC;
         this.timezoneOffset = useUTC && options.timezoneOffset;
