@@ -61,7 +61,7 @@ undocumentedSeriesType('timeline', 'line',
         lineWidth: 0,
         tooltip: {
             headerFormat: '<span style="color:{point.color}">● </span>' +
-            '<span style="font-weight: bold;">{point.point.date}</span><br/>',
+                '<span style="font-size: 10px">{point.point.name}</span><br/>',
             pointFormat: '{point.description}'
         },
         states: {
@@ -108,11 +108,11 @@ undocumentedSeriesType('timeline', 'line',
              *   if (!this.series.chart.styledMode) {
              *       format = '<span style="color:' + this.point.color +
              *           '">● </span><span style="font-weight: bold;" > ' +
-             *           (this.point.date || '') + '</span><br/>' +
+             *           (this.point.name || '') + '</span><br/>' +
              *           (this.point.label || '');
              *   } else {
              *       format = '<span>● </span>' +
-             *           '<span>' + (this.point.date || '') +
+             *           '<span>' + (this.point.name || '') +
              *           '</span><br/>' + (this.point.label || '');
              *   }
              *   return format;
@@ -125,11 +125,11 @@ undocumentedSeriesType('timeline', 'line',
                 if (!this.series.chart.styledMode) {
                     format = '<span style="color:' + this.point.color +
                     '">● </span><span style="font-weight: bold;" > ' +
-                    (this.point.date || '') + '</span><br/>' +
+                    (this.point.name || '') + '</span><br/>' +
                     (this.point.label || '');
                 } else {
                     format = '<span>● </span>' +
-                    '<span>' + (this.point.date || '') +
+                    '<span>' + (this.point.name || '') +
                     '</span><br/>' + (this.point.label || '');
                 }
                 return format;
@@ -336,7 +336,6 @@ undocumentedSeriesType('timeline', 'line',
         processData: function () {
             var series = this,
                 xMap = [],
-                base,
                 visiblePoints = 0,
                 i;
 
@@ -350,13 +349,10 @@ undocumentedSeriesType('timeline', 'line',
             });
 
             series.visiblePointsCount = visiblePoints;
-            base = series.xAxis.options.max / visiblePoints;
 
             // Generate xData map.
-            for (i = 1; i <= visiblePoints; i++) {
-                xMap.push(
-                    (base * i) - (base / 2)
-                );
+            for (i = 0; i < visiblePoints; i++) {
+                xMap.push(i);
             }
 
             // Set all hidden points y values as negatives, in order to move
@@ -396,7 +392,6 @@ undocumentedSeriesType('timeline', 'line',
                         !point.isNull
                     ) ? point : false;
                 });
-
             return map;
         },
         distributeDL: function () {
@@ -480,23 +475,11 @@ undocumentedSeriesType('timeline', 'line',
                 timelineXAxis = {
                     gridLineWidth: 0,
                     lineWidth: 0,
-                    min: 0,
-                    dataMin: 0,
-                    minPadding: 0,
-                    max: 100,
-                    dataMax: 100,
-                    maxPadding: 0,
                     title: null,
                     tickPositions: []
                 },
                 timelineYAxis = {
                     gridLineWidth: 0,
-                    min: 0.5,
-                    dataMin: 0.5,
-                    minPadding: 0,
-                    max: 1.5,
-                    dataMax: 1.5,
-                    maxPadding: 0,
                     title: null,
                     labels: {
                         enabled: false
@@ -504,6 +487,12 @@ undocumentedSeriesType('timeline', 'line',
                 };
 
             Series.prototype.bindAxes.call(series);
+
+            // Initially set the linked xAxis type to category.
+            if (!series.xAxis.userOptions.type) {
+                series.xAxis.categories = series.xAxis.hasNames = true;
+            }
+
             extend(series.xAxis.options, timelineXAxis);
             extend(series.yAxis.options, timelineYAxis);
         }
@@ -515,7 +504,7 @@ undocumentedSeriesType('timeline', 'line',
         init: function () {
             var point = Point.prototype.init.apply(this, arguments);
 
-            point.name = pick(point.name, point.date, 'Event');
+            point.name = pick(point.name, 'Event');
             point.y = 1;
 
             return point;
@@ -526,7 +515,8 @@ undocumentedSeriesType('timeline', 'line',
             var point = this,
                 series = point.series,
                 chart = series.chart,
-                ignoreHiddenPoint = series.options.ignoreHiddenPoint;
+                ignoreHiddenPoint = series.options.ignoreHiddenPoint,
+                visiblePoints;
 
             redraw = pick(redraw, ignoreHiddenPoint);
 
@@ -562,6 +552,14 @@ undocumentedSeriesType('timeline', 'line',
                 if (ignoreHiddenPoint) {
                     series.isDirty = true;
                 }
+
+                visiblePoints = series.getVisibilityMap()
+                    .filter(function (point) {
+                        return point;
+                    });
+
+                series.xAxis.options.min = 0;
+                series.xAxis.options.max = visiblePoints.length - 1;
 
                 if (redraw) {
                     chart.redraw();
@@ -699,7 +697,7 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
 
 /* *
  * An array of data points for the series. For the `timeline` series type,
- * points can be given with three general parameters, `date`, `label`,
+ * points can be given with three general parameters, `name`, `label`,
  * and `description`:
  *
  * Example:
@@ -708,7 +706,7 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
  * series: [{
  *    type: 'timeline',
  *    data: [{
- *        date: 'Jan 2018',
+ *        name: 'Jan 2018',
  *        label: 'Some event label',
  *        description: 'Description to show in tooltip'
  *    }]
@@ -726,11 +724,11 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
  */
 
 /* *
- * The date of event.
+ * The name of event.
  *
  * @type      {string}
  * @product   highcharts
- * @apioption series.timeline.data.date
+ * @apioption series.timeline.data.name
  */
 
 /* *
