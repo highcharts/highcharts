@@ -109,6 +109,14 @@ extend(defaultOptions.lang
     , {
 
         /**
+         * Exporting module only. View the chart in full scren
+         *
+         * @since next
+         */
+        viewFullscreen: 'View in full screen',
+
+
+        /**
      * Exporting module only. The text for the menu item to print the chart.
      *
      * @since 3.0.1
@@ -781,8 +789,8 @@ defaultOptions.exporting = {
              * items. The config options are defined in the
              * `menuItemDefinitions` option.
              *
-             * By default, there is the "Print" menu item plus one menu item
-             * for each of the available export types.
+             * By default, there is the "View in full screen" and "Print" menu
+             * items, plus one menu item for each of the available export types.
              *
              * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
              *         Menu item definitions
@@ -792,10 +800,11 @@ defaultOptions.exporting = {
              *         Menu item definitions
              *
              * @type    {Array<string>}
-             * @default ["printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG"]
+             * @default ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG"]
              * @since   2.0
              */
             menuItems: [
+                'viewFullscreen',
                 'printChart',
                 'separator',
                 'downloadPNG',
@@ -828,10 +837,20 @@ defaultOptions.exporting = {
      *         Menu item definitions
      *
      * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
-     * @default {"printChart": {}, "separator": {}, "downloadPNG": {}, "downloadJPEG": {}, "downloadPDF": {}, "downloadSVG": {}}
+     * @default {"viewFullscreen": {}, "printChart": {}, "separator": {}, "downloadPNG": {}, "downloadJPEG": {}, "downloadPDF": {}, "downloadSVG": {}}
      * @since   5.0.13
      */
     menuItemDefinitions: {
+
+        /**
+         * @ignore
+         */
+        viewFullscreen: {
+            textKey: 'viewFullscreen',
+            onclick: function () {
+                this.fullscreen = new H.FullScreen(this.container);
+            }
+        },
 
         /**
          * @ignore
