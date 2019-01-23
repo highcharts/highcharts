@@ -5,9 +5,12 @@
 const Gulp = require('gulp');
 const gulpTypeDoc = require('gulp-typedoc');
 const Log = require('./lib/log');
-// const Path = require('path');
+const Path = require('path');
+const Yargs = require('yargs');
 
-const templatePath = './node_modules/highcharts-docstrap';
+const templatePath = Path.join(
+    '..', 'highcharts-documentation-generators', 'typedoc', 'theme'
+);
 const targetPath = './build/api/class-reference/';
 const targetJsonPath = './tree-typescript.json';
 
@@ -26,12 +29,11 @@ function generateClassReferences() {
     const gulpOptions = {
         read: false
     };
-
     const gulpTypeDocOptions = {
         ignoreCompilerErrors: false,
         includeDeclarations: false,
         json: targetJsonPath,
-        module: 'umd',
+        module: 'amd',
         name: 'Highcharts',
         out: targetPath,
         readme: 'README.md',
@@ -85,6 +87,11 @@ function generateClassReferences() {
  *         Promise to keep
  */
 function tsdoc() {
+
+    if (Yargs.argv.watch) {
+        Gulp.watch(Path.join(templatePath, '**', '*'), generateClassReferences);
+    }
+
     return Promise.all([
         generateClassReferences()
     ]);
