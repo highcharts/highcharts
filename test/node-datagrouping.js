@@ -44,8 +44,8 @@ const groupPositions = time.getTimeTicks(
         // One tick per day
         unitRange: 24 * 36e5
     },
-    Date.UTC(2019, 0, 1), // From
-    Date.UTC(2019, 11, 31, 23, 59, 59) // To
+    xData[0], // From
+    xData[xData.length - 1] // To
 );
 
 // Next, group the data by the groupPositions.
