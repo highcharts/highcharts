@@ -84,7 +84,7 @@ seriesType(
         /**
          * When enabled the user can click on a point which is a parent and
          * zoom in on its children. Deprecated and replaced by
-         * [allowTraversingTree](#allowTraversingTree).
+         * [allowTraversingTree](#plotOptions.treemap.allowTraversingTree).
          *
          * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/
          *         Enabled
@@ -104,12 +104,10 @@ seriesType(
          * @sample {highcharts} highcharts/plotoptions/treemap-allowtraversingtree/
          *         Enabled
          *
-         * @type      {boolean}
-         * @default   false
          * @since     next
          * @product   highcharts
-         * @apioption plotOptions.treemap.allowTraversingTree
          */
+        allowTraversingTree: false,
 
         /**
          * When the series contains less points than the crop threshold, all
@@ -291,7 +289,7 @@ seriesType(
         levelIsConstant: true,
         /**
          * Options for the button appearing when drilling down in a treemap.
-         * Deprecated and replaced by [traverseUpButton](#series.treemap.traverseUpButton).
+         * Deprecated and replaced by [traverseUpButton](#plotOptions.treemap.traverseUpButton).
          *
          * @deprecated
          */
