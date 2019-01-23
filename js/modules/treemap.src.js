@@ -1457,7 +1457,7 @@ seriesType(
             // If a drill id is returned, add click event and cursor.
             if (isString(drillId)) {
                 point.setState(''); // Remove hover
-                series.setRootNode(drillId);
+                series.setRootNode(drillId, true, { trigger: 'click' });
             }
         },
         /**
@@ -1524,7 +1524,7 @@ seriesType(
                 series.setRootNode(
                     node.parent,
                     true,
-                    { trigger: 'drillUpButton' }
+                    { trigger: 'traverseUpButton' }
                 );
             }
         },
