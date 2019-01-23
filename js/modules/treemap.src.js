@@ -17,6 +17,7 @@ import '../parts/Color.js';
 
 var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
+    addEvent = H.addEvent,
     merge = H.merge,
     extend = H.extend,
     error = H.error,
@@ -281,18 +282,65 @@ seriesType(
 
         /**
          * Used together with the levels and allowTraversingTree options. When
-         * set to false the first level visible when drilling is considered
-         * to be level one. Otherwise the level will be the same as the tree
-         * structure.
+         * set to false the first level visible to be level one, which is
+         * dynamic when traversing the tree. Otherwise the level will be the
+         * same as the tree structure.
          *
          * @since 4.1.0
          */
         levelIsConstant: true,
-
         /**
          * Options for the button appearing when drilling down in a treemap.
+         * Deprecated and replaced by [traverseUpButton](#series.treemap.traverseUpButton).
+         *
+         * @deprecated
          */
         drillUpButton: {
+
+            /**
+             * The position of the button.
+             *
+             * @deprecated
+             */
+            position: {
+
+                /**
+                 * Vertical alignment of the button.
+                 *
+                 * @default    top
+                 * @validvalue ["top", "middle", "bottom"]
+                 * @product    highcharts
+                 * @apioption  plotOptions.treemap.traverseUpButton.position.verticalAlign
+                 */
+
+                /**
+                 * Horizontal alignment of the button.
+                 *
+                 * @deprecated
+                 * @validvalue ["left", "center", "right"]
+                 */
+                align: 'right',
+
+                /**
+                 * Horizontal offset of the button.
+                 *
+                 * @deprecated
+                 */
+                x: -10,
+
+                /**
+                 * Vertical offset of the button.
+                 *
+                 * @deprecated
+                 */
+                y: 10
+            }
+        },
+
+        /**
+         * Options for the button appearing when traversing down in a treemap.
+         */
+        traverseUpButton: {
 
             /**
              * The position of the button.
@@ -305,7 +353,7 @@ seriesType(
                  * @default    top
                  * @validvalue ["top", "middle", "bottom"]
                  * @product    highcharts
-                 * @apioption  plotOptions.treemap.drillUpButton.position.verticalAlign
+                 * @apioption  plotOptions.treemap.traverseUpButton.position.verticalAlign
                  */
 
                 /**
@@ -609,27 +657,46 @@ seriesType(
                 this.axisTypes = colorSeriesMixin.axisTypes;
             }
 
+            addEvent(series, 'setOptions', function (event) {
+                var options = event.userOptions;
+
+                // Test if deprecated option is set.
+                if (defined(options.allowDrillToNode)) {
+                    error(
+                        'WARNING: plotOptions.treemap.allowDrillToNode has ' +
+                        'been renamed to plotOptions.treemap.' +
+                        'allowTraversingTree, and will be removed in the ' +
+                        'next major version.'
+                    );
+
+                    // Copy option if not already defined with correct name.
+                    if (!defined(options.allowTraversingTree)) {
+                        options.allowTraversingTree =
+                            options.allowDrillToNode;
+                    }
+                    delete options.allowDrillToNode;
+                }
+
+                if (defined(options.drillUpButton)) {
+                    error(
+                        'WARNING: plotOptions.treemap.drillUpButton has been ' +
+                        'renamed to plotOptions.treemap.traverseUpButton, ' +
+                        'and will be removed in the next major version.'
+                    );
+
+                    // Copy option if not already defined with correct name.
+                    if (!defined(options.traverseUpButton)) {
+                        options.traverseUpButton =
+                            options.drillUpButton;
+                    }
+                    delete options.drillUpButton;
+                }
+            });
+
             Series.prototype.init.call(series, chart, options);
 
-            options = series.options;
-
-            // Test if deprecated option is set.
-            if (defined(options.allowDrillToNode)) {
-                error(
-                    'WARNING: plotOptions.treemap.allowDrillToNode has been ' +
-                    'renamed to plotOptions.treemap.allowTraversingTree, and ' +
-                    'will be removed in the next major version.'
-                );
-
-                // Copy option if not already defined with correct name.
-                if (!defined(options.allowTraversingTree)) {
-                    options.allowTraversingTree =
-                        options.allowDrillToNode;
-                }
-            }
-
-            if (options.allowTraversingTree) {
-                H.addEvent(series, 'click', series.onClickDrillToNode);
+            if (series.options.allowTraversingTree) {
+                addEvent(series, 'click', series.onClickDrillToNode);
             }
         },
         buildNode: function (id, i, level, list, parent) {
@@ -1539,7 +1606,7 @@ seriesType(
         showDrillUpButton: function (name) {
             var series = this,
                 backText = (name || '< Back'),
-                buttonOptions = series.options.drillUpButton,
+                buttonOptions = series.options.traverseUpButton,
                 attr,
                 states;
 
