@@ -799,8 +799,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var chart = this,
             options = chart.options,
             styledMode = chart.styledMode,
-            optionsTitle = merge(options.title, titleOptions),
-            titleText = H.defined(optionsTitle.text),
             chartTitleOptions,
             chartSubtitleOptions;
 
@@ -812,12 +810,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     fontSize: options.isStock ? '16px' : '18px' // #2944
                 }
             },
-            optionsTitle,
-            (!titleText) || (titleText && optionsTitle.text.length === 0) ? {
-                margin: 0
-            } : {
-                margin: (titleOptions && titleOptions.margin) || 15
-            }
+            options.title,
+            titleOptions
         );
         chartSubtitleOptions = options.subtitle = merge(
             // Default styles

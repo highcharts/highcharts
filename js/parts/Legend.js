@@ -729,7 +729,11 @@ Highcharts.Legend.prototype = {
     adjustMargins: function (margin, spacing) {
         var chart = this.chart,
             options = this.options,
-            alignment = this.getAlignment();
+            alignment = this.getAlignment(),
+            titleMargin = chart.options.title.margin !== undefined ?
+                chart.titleOffset +
+                    chart.options.title.margin :
+                0;
 
         if (alignment) {
 
@@ -756,10 +760,7 @@ Highcharts.Legend.prototype = {
                             spacing[side] +
                             (
                                 side === 0 &&
-                                chart.options.title.margin !== undefined ?
-                                    chart.titleOffset +
-                                        chart.options.title.margin :
-                                    0
+                                (chart.titleOffset === 0 ? 0 : titleMargin)
                             ) // #7428, #7894
                         )
                     );
@@ -836,7 +837,8 @@ Highcharts.Legend.prototype = {
             options = legend.options,
             padding = legend.padding,
             alignTo,
-            allowedWidth;
+            allowedWidth,
+            y;
 
         legend.itemX = padding;
         legend.itemY = legend.initialItemY;
@@ -973,9 +975,12 @@ Highcharts.Legend.prototype = {
             // the title (#7428)
             alignTo = chart.spacingBox;
             if (/(lth|ct|rth)/.test(legend.getAlignment())) {
+
+                y = alignTo.y + chart.titleOffset;
+
                 alignTo = merge(alignTo, {
-                    y: alignTo.y + chart.titleOffset +
-                        chart.options.title.margin
+                    y: chart.titleOffset > 0 ?
+                        y += chart.options.title.margin : y
                 });
             }
 
