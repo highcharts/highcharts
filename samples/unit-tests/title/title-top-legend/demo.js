@@ -14,21 +14,19 @@ QUnit.test('The title should not apply top margin, when legend is on top (#9964)
         }]
     });
 
-
     assert.strictEqual(
-        chart.options.title.margin,
-        0,
+        chart.legend.group.translateY,
+        10,
         'Margin is not applied.'
     );
-
 
     chart.setTitle({
         text: 'Dynamically added title'
     });
 
     assert.strictEqual(
-        chart.options.title.margin,
-        15,
+        chart.legend.group.translateY > 10,
+        true,
         'Margin is applied after title update.'
     );
 
