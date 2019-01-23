@@ -2901,8 +2901,12 @@ H.defaultOptions = {
          */
 
         /**
-         * Callback function to format the text of the tooltip from scratch.
-         * Return `false` to disable tooltip for a specific point on series.
+         * Callback function to format the text of the tooltip from scratch. In
+         * case of single or [shared](#tooltip.shared) tooltips, a string should
+         * be returned. In case of [split](#tooltip.split) tooltips, it should
+         * return an array where the first item is the header, and subsequent
+         * items are mapped to the points. Return `false` to disable tooltip for
+         * a specific point on series.
          *
          * A subset of HTML is supported. Unless `useHTML` is true, the HTML of
          * the tooltip is parsed and converted to SVG, therefore this isn't a
@@ -2911,10 +2915,9 @@ H.defaultOptions = {
          * with a `style` attribute, but only text-related CSS that is shared
          * with SVG is handled.
          *
-         * Since version 2.1 the tooltip can be shared between multiple series
-         * through the `shared` option. The available data in the formatter
-         * differ a bit depending on whether the tooltip is shared or not. In
-         * a shared tooltip, all properties except `x`, which is common for
+         * The available data in the formatter differ a bit depending on whether
+         * the tooltip is shared or split, or belongs to a single point. In a
+         * shared/split tooltip, all properties except `x`, which is common for
          * all points, are kept in an array, `this.points`.
          *
          * Available data are:
@@ -2963,6 +2966,8 @@ H.defaultOptions = {
          *         Simple string formatting
          * @sample {highcharts} highcharts/tooltip/formatter-shared/
          *         Formatting with shared tooltip
+         * @sample {highcharts|highstock} highcharts/tooltip/formatter-split/
+         *         Formatting with split tooltip
          * @sample {highstock} stock/tooltip/formatter/
          *         Formatting with shared tooltip
          * @sample {highmaps} maps/tooltip/formatter/
@@ -3119,6 +3124,8 @@ H.defaultOptions = {
          *
          * @sample highcharts/tooltip/split/
          *         Split tooltip
+         * @sample {highcharts|highstock} highcharts/tooltip/formatter-split/
+         *         Split tooltip and custom formatter callback
          *
          * @type      {boolean}
          * @default   {highcharts} false

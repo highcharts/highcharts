@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'Highcharts with a shared tooltip formatter'
+        text: 'Highcharts with a split tooltip formatter'
     },
 
     xAxis: {
@@ -14,12 +14,15 @@ Highcharts.chart('container', {
 
     tooltip: {
         formatter: function () {
-            return this.points.reduce(function (s, point) {
-                return s + '<br/>' + point.series.name + ': ' +
-                    point.y + 'm';
-            }, '<b>' + this.x + '</b>');
+            // The first returned item is the header, subsequent items are the
+            // points
+            return ['<b>' + this.x + '</b>'].concat(
+                this.points.map(function (point) {
+                    return point.series.name + ': ' + point.y + 'm';
+                })
+            );
         },
-        shared: true
+        split: true
     },
 
     series: [{
