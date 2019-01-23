@@ -815,7 +815,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             optionsTitle,
             (!titleText) || (titleText && optionsTitle.text.length === 0) ? {
                 margin: 0
-            } : { }
+            } : {
+                margin: (titleOptions && titleOptions.margin) || 15
+            }
         );
         chartSubtitleOptions = options.subtitle = merge(
             // Default styles
