@@ -3264,13 +3264,24 @@ H.Series = H.seriesType(
                         pointIndex = this.xData.indexOf(x, lastIndex);
                     }
 
+                    // Reduce pointIndex if data is cropped
+                    if (pointIndex !== -1 &&
+                        pointIndex !== undefined &&
+                        this.cropped
+                    ) {
+                        pointIndex = (pointIndex >= this.cropStart) ?
+                            pointIndex - this.cropStart : pointIndex;
+                    }
+
                     // Matching X not found
                     // or used already due to ununique x values (#8995),
                     // add point (but later)
                     if (
                         pointIndex === -1 ||
                         pointIndex === undefined ||
-                        oldData[pointIndex].touched
+                        (oldData[pointIndex] &&
+                            oldData[pointIndex].touched
+                        )
                     ) {
                         pointsToAdd.push(pointOptions);
 
