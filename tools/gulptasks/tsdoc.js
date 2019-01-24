@@ -8,22 +8,29 @@ const Log = require('./lib/log');
 const Path = require('path');
 const Yargs = require('yargs');
 
-const templatePath = Path.join(
+const SOURCE_PATH = Path.join(
+    '.', 'ts'
+);
+const TARGET_JSON = Path.join(
+    '.', 'tree-typescript.json'
+);
+const TARGET_PATH = Path.join(
+    'build', 'api'
+);
+const TEMPLATE_PATH = Path.join(
     '..', 'highcharts-documentation-generators', 'typedoc', 'theme'
 );
-const targetPath = './build/api/class-reference/';
-const targetJsonPath = './tree-typescript.json';
 
 /**
- * Generates class references.
+ * Generates the API documentation.
  *
  * @return {Promise}
  *         Promise to keep
  */
-function generateClassReferences() {
+function tsdoc() {
 
     const sourceFiles = [
-        'ts/**/*.ts'
+        Path.join(SOURCE_PATH, '**', '*.ts')
     ];
 
     const gulpOptions = {
@@ -32,13 +39,13 @@ function generateClassReferences() {
     const gulpTypeDocOptions = {
         ignoreCompilerErrors: false,
         includeDeclarations: false,
-        json: targetJsonPath,
+        json: TARGET_JSON,
         module: 'amd',
         name: 'Highcharts',
-        out: targetPath,
+        out: TARGET_PATH,
         readme: 'README.md',
         target: 'es6',
-        theme: templatePath,
+        theme: TEMPLATE_PATH,
         version: false
         /*
         navOptions: {
@@ -81,20 +88,25 @@ function generateClassReferences() {
 }
 
 /**
- * Generates the API documentation.
+ * Watches for changes of the API documentation sources.
  *
  * @return {Promise}
  *         Promise to keep
  */
-function tsdoc() {
+function tsdocWatch() {
 
     if (Yargs.argv.watch) {
-        Gulp.watch(Path.join(templatePath, '**', '*'), generateClassReferences);
+        Gulp.watch(
+            Path.join(SOURCE_PATH, '**', '*'),
+            Gulp.task('tsdoc')
+        );
+        Gulp.watch(
+            Path.join(TEMPLATE_PATH, '**', '*'),
+            Gulp.task('tsdoc')
+        );
     }
 
-    return Promise.all([
-        generateClassReferences()
-    ]);
+    return Promise.resolve();
 }
 
-module.exports = tsdoc;
+module.exports = Gulp.series('clean-api', tsdoc, tsdocWatch);

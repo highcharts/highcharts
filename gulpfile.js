@@ -1638,4 +1638,8 @@ gulp.task('webpack', function () {
 });
 
 gulp.task('common', gulp.series('scripts', 'browserify', 'webpack'));
-gulp.task('tsdoc', (...args) => require('./tools/gulptasks/tsdoc')(...args));
+
+/**
+ * TypeScript source code documentation
+ */
+gulp.task('tsdoc', () => require('./tools/gulptasks/tsdoc')());
