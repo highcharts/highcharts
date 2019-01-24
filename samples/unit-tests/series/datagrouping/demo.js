@@ -415,3 +415,51 @@ QUnit.test('Data grouping and adding points with data labels', function (assert)
         'Correct number of points and no errors (#9770).'
     );
 });
+
+QUnit.test('Data grouping, custom name in tooltip', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        chart: {
+            zoomType: 'x'
+        },
+        xAxis: {
+            min: 120,
+            max: 125
+        },
+        series: [{
+            name: 'AAPL',
+            data: (function () {
+                var data = [];
+
+                for (var i = 0; i < 255; i++) {
+                    data.push({
+                        x: i,
+                        y: i,
+                        name: 'a' + i
+                    });
+                }
+                return data;
+            }()),
+            tooltip: {
+                pointFormat: 'name: {point.name} <br>' +
+                'myName: {point.myName} <br>' +
+                'x: {point.x}'
+            },
+            dataGrouping: {
+                forced: true,
+                units: [
+                    [
+                        'millisecond', [1]
+                    ]
+                ]
+            }
+        }]
+    });
+
+    chart.tooltip.refresh([chart.series[0].points[2]]);
+
+    assert.strictEqual(
+        chart.tooltip.tt.text.textStr.indexOf('a121') > -1,
+        true,
+        'Custom name in label is correct (#9928).'
+    );
+});

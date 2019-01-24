@@ -426,7 +426,7 @@ var groupData = function (xData, yData, groupPositions, approximation) {
                     series.pointClass.prototype
                         .optionsToObject.call(
                             { series: series },
-                            series.options.data[start]
+                            series.options.data[series.cropStart + start]
                         )
                 );
 
