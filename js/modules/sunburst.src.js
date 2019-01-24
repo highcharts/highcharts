@@ -512,14 +512,26 @@ var sunburstOptions = {
 
     /**
      * When enabled the user can click on a point which is a parent and
-     * zoom in on its children.
+     * zoom in on its children. Deprecated and replaced by
+     * [allowTraversingTree](#plotOptions.sunburst.allowTraversingTree).
      *
-     * @sample highcharts/demo/sunburst
-     *         Allow drill to node
+     * @deprecated
+     * @type      {boolean}
+     * @default   false
+     * @since     6.0.0
+     * @product   highcharts
+     * @apioption plotOptions.sunburst.allowDrillToNode
+     */
+
+    /**
+     * When enabled the user can click on a point which is a parent and
+     * zoom in on its children.
      *
      * @type      {boolean}
      * @default   false
-     * @apioption plotOptions.sunburst.allowDrillToNode
+     * @since     next
+     * @product   highcharts
+     * @apioption plotOptions.sunburst.allowTraversingTree
      */
 
     /**
@@ -609,6 +621,15 @@ var sunburstOptions = {
          */
         unit: 'weight'
     },
+
+    /**
+     * Options for the button appearing when traversing down in a treemap.
+     *
+     * @extends plotOptions.treemap.traverseUpButton
+     * @since 6.0.0
+     * @apioption plotOptions.sunburst.traverseUpButton
+     */
+
     /**
      * If a point is sliced, moved out from the center, how many pixels
      * should it be moved?.
