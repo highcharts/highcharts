@@ -4702,11 +4702,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *        `rect`. Other possible values are `callout` or other shapes
      *        defined in {@link Highcharts.SVGRenderer#symbols}.
      *
-     * @param {string} [shape='rect']
-     *        The shape of the label's border/background, if any. Defaults to
-     *        `rect`. Other possible values are `callout` or other shapes
-     *        defined in {@link Highcharts.SVGRenderer#symbols}.
-     *
      * @param {number} [anchorX]
      *        In case the `shape` has a pointer, like a flag, this is the
      *        coordinates it should be pinned to.
