@@ -15,10 +15,11 @@ H.seriesType(
     'organization',
     'sankey',
     {
+        colorByPoint: false,
         nodeWidth: 50,
 
         // @todo: Use palette
-        linkColor: '#666666',
+        linkColor: '${palette.neutralColor60}',
         linkLineWidth: 1
     },
     {
