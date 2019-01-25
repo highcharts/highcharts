@@ -305,10 +305,11 @@ seriesType(
                 /**
                  * Vertical alignment of the button.
                  *
+                 * @deprecated
                  * @default    top
                  * @validvalue ["top", "middle", "bottom"]
                  * @product    highcharts
-                 * @apioption  plotOptions.treemap.traverseUpButton.position.verticalAlign
+                 * @apioption  plotOptions.treemap.drillUpButton.position.verticalAlign
                  */
 
                 /**
