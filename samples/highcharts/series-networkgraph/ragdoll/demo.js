@@ -8,14 +8,13 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         networkgraph: {
+            layoutAlgorithm: {
+                enableSimulation: true
+            },
             keys: ['from', 'to']
         }
     },
     series: [{
-        layoutAlgorithm: {
-            enableSimulation: true,
-            gravitationalConstant: 0
-        },
         marker: {
             radius: 3
         },

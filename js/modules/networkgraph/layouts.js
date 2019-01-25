@@ -9,6 +9,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import 'integrations.js';
+import 'QuadTree.js';
 
 var pick = H.pick,
     defined = H.defined;
@@ -70,6 +71,17 @@ H.extend(
             // Algorithm:
             function localLayout() {
                 step++;
+
+                // Debugging:
+                // if (layout.quadTree) {
+                //     layout.quadTree.clear(series[0].chart);
+                // }
+
+                layout.createQuadTree();
+                layout.quadTree.calculateMassAndCenter();
+
+                // Debugging:
+                // layout.quadTree.render(series[0].chart);
 
                 layout.forces.forEach(function (forceName) {
                     layout[forceName + 'Forces'](layout.temperature);
@@ -222,12 +234,21 @@ H.extend(
         setInitialRendering: function (enable) {
             this.initialRendering = enable;
         },
+        createQuadTree: function () {
+            this.quadTree = new H.QuadTree(
+                this.box.left,
+                this.box.top,
+                this.box.width,
+                this.box.height
+            );
+
+            this.quadTree.insertNodes(this.nodes);
+        },
         initPositions: function () {
             var initialPositions = this.options.initialPositions;
 
             if (H.isFunction(initialPositions)) {
                 initialPositions.call(this);
-
                 this.nodes.forEach(function (node) {
                     if (!defined(node.prevX)) {
                         node.prevX = node.plotX;
@@ -235,6 +256,9 @@ H.extend(
                     if (!defined(node.prevY)) {
                         node.prevY = node.plotY;
                     }
+
+                    node.dispX = 0;
+                    node.dispY = 0;
                 });
 
             } else if (initialPositions === 'circle') {
@@ -363,38 +387,61 @@ H.extend(
 
             return this.barycenter;
         },
-        repulsiveForces: function () {
+        barnesHutApproximation: function (node, quadNode) {
             var layout = this,
-                nodes = layout.nodes,
-                force,
-                distanceR,
-                distanceXY;
+                distanceXY = layout.getDistXY(node, quadNode),
+                distanceR = layout.vectorLength(distanceXY),
+                goDeeper,
+                force;
 
-            nodes.forEach(function (node) {
-                nodes.forEach(function (repNode) {
+            if (node !== quadNode && distanceR !== 0) {
+                if (quadNode.isInternal) {
+                    // Internal node:
                     if (
-                        // Node can not repulse itself:
-                        node !== repNode &&
-                        // Not dragged:
-                        !node.fixedPosition
+                        quadNode.boxSize / distanceR < layout.options.theta &&
+                        distanceR !== 0
                     ) {
-                        distanceXY = layout.getDistXY(node, repNode);
-                        distanceR = layout.vectorLength(distanceXY);
+                        // Treat as an external node:
+                        force = layout.repulsiveForce(distanceR, layout.k);
 
-                        if (distanceR !== 0) {
-                            force = layout.repulsiveForce(distanceR, layout.k);
-
-                            layout.force(
-                                'repulsive',
-                                node,
-                                force,
-                                distanceXY,
-                                distanceR
-                            );
-
-                        }
+                        layout.force(
+                            'repulsive',
+                            node,
+                            force * quadNode.mass,
+                            distanceXY,
+                            distanceR
+                        );
+                        goDeeper = false;
+                    } else {
+                        // Go deeper:
+                        goDeeper = true;
                     }
-                });
+                } else {
+                    // External node, direct force:
+                    force = layout.repulsiveForce(distanceR, layout.k);
+
+                    layout.force(
+                        'repulsive',
+                        node,
+                        force * quadNode.mass,
+                        distanceXY,
+                        distanceR
+                    );
+                }
+            }
+
+            return goDeeper;
+        },
+        repulsiveForces: function () {
+            var layout = this;
+
+            layout.nodes.forEach(function (node) {
+                layout.quadTree.visitNodeRecursive(
+                    null,
+                    function (quadNode) {
+                        return layout.barnesHutApproximation(node, quadNode);
+                    }
+                );
             });
         },
         attractiveForces: function () {

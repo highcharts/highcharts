@@ -136,6 +136,8 @@ seriesType('networkgraph', 'line', {
          *               Live simulation enabled
          */
         enableSimulation: false,
+        // TO DO:
+        theta: 0.5,
         /**
          * Type of the algorithm used when positioning nodes.
          *
