@@ -412,7 +412,10 @@ var groupData = function (xData, yData, groupPositions, approximation) {
 
             // get group x and y
             pointX = groupPositions[pos];
-            dataGroupInfo = { start: start, length: values[0].length };
+            dataGroupInfo = {
+                start: series.cropStart + start,
+                length: values[0].length
+            };
             groupedY = approximationFn.apply(series, values);
 
             // By default, let options of the first grouped point be passed over

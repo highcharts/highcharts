@@ -462,4 +462,10 @@ QUnit.test('Data grouping, custom name in tooltip', function (assert) {
         true,
         'Custom name in label is correct (#9928).'
     );
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataGroup.start,
+        chart.series[0].points[0].x,
+        'dataGroup should consider crop start'
+    );
 });
