@@ -656,38 +656,23 @@ seriesType(
                 this.axisTypes = colorSeriesMixin.axisTypes;
             }
 
+            // Handle deprecated options.
             addEvent(series, 'setOptions', function (event) {
                 var options = event.userOptions;
 
-                // Test if deprecated option is set.
-                if (defined(options.allowDrillToNode)) {
-                    error(
-                        'WARNING: plotOptions.treemap.allowDrillToNode has ' +
-                        'been renamed to plotOptions.treemap.' +
-                        'allowTraversingTree, and will be removed in the ' +
-                        'next major version.'
-                    );
-
-                    // Copy option if not already defined with correct name.
-                    if (!defined(options.allowTraversingTree)) {
-                        options.allowTraversingTree =
-                            options.allowDrillToNode;
-                    }
+                if (
+                    defined(options.allowDrillToNode) &&
+                    !defined(options.allowTraversingTree)
+                ) {
+                    options.allowTraversingTree = options.allowDrillToNode;
                     delete options.allowDrillToNode;
                 }
 
-                if (defined(options.drillUpButton)) {
-                    error(
-                        'WARNING: plotOptions.treemap.drillUpButton has been ' +
-                        'renamed to plotOptions.treemap.traverseUpButton, ' +
-                        'and will be removed in the next major version.'
-                    );
-
-                    // Copy option if not already defined with correct name.
-                    if (!defined(options.traverseUpButton)) {
-                        options.traverseUpButton =
-                            options.drillUpButton;
-                    }
+                if (
+                    defined(options.drillUpButton) &&
+                    !defined(options.traverseUpButton)
+                ) {
+                    options.traverseUpButton = options.drillUpButton;
                     delete options.drillUpButton;
                 }
             });
