@@ -1093,6 +1093,7 @@ var vennSeries = {
         geometry: geometry,
         geometryCircles: geometryCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
+        layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
