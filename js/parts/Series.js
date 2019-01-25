@@ -2661,6 +2661,7 @@ H.Series = H.seriesType(
         // each point's x and y values are stored in this.xData and this.yData
         parallelArrays: ['x', 'y'],
         coll: 'series',
+        cropShoulder: 1,
         init: function (chart, options) {
 
             fireEvent(this, 'init', { options: options });
@@ -3704,7 +3705,7 @@ H.Series = H.seriesType(
                 j;
 
             // line-type series need one point outside
-            cropShoulder = pick(cropShoulder, this.cropShoulder, 1);
+            cropShoulder = pick(cropShoulder, this.cropShoulder);
 
             // iterate up to find slice start
             for (i = 0; i < dataLength; i++) {
@@ -3902,7 +3903,7 @@ H.Series = H.seriesType(
                 withinRange,
                 // Handle X outside the viewed area. This does not work with
                 // non-sorted data like scatter (#7639).
-                shoulder = this.requireSorting ? 1 : 0,
+                shoulder = this.requireSorting ? this.cropShoulder : 0,
                 x,
                 y,
                 i,
