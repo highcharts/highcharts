@@ -3424,6 +3424,10 @@ H.defaultOptions = {
          * CSS styles for the tooltip. The tooltip can also be styled through
          * the CSS class `.highcharts-tooltip`.
          *
+         * Note that the default `pointerEvents` style makes the tooltip ignore
+         * mouse events, so in order to use clickable tooltips, this value must
+         * be set to `auto`.
+         *
          * @sample {highcharts} highcharts/tooltip/style/
          *         Greater padding, bold text
          *
@@ -3447,7 +3451,6 @@ H.defaultOptions = {
              * @ignore
              */
             pointerEvents: 'none',
-            // #1686 http://caniuse.com/#feat=pointer-events
             /**
              * @ignore
              */
