@@ -30,11 +30,12 @@ Highcharts.chart('container', {
         }],
         events: {
             setRootNode: function (eventArguments) {
-                alert(
+                var msg = (
                     'Root node changed from "' + eventArguments.previousRootId +
                     '" to "' + eventArguments.newRootId + '".\nTriggered' +
                     ' by "' + eventArguments.trigger + '".'
                 );
+                document.getElementById('msg').innerHTML = msg;
             }
         },
         layoutAlgorithm: 'squarified',
