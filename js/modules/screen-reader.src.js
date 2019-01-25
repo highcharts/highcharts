@@ -24,8 +24,7 @@ var win = H.win,
     // screen readers
     hiddenStyle = {
         position: 'absolute',
-        left: '-9999px',
-        top: 'auto',
+        top: '-999em',
         width: '1px',
         height: '1px',
         overflow: 'hidden'
@@ -729,7 +728,7 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
         hiddenSection = chart.screenReaderRegion = doc.createElement('div'),
         tableShortcut = doc.createElement('h4'),
         tableShortcutAnchor = doc.createElement('a'),
-        chartHeading = doc.createElement('h4');
+        chartHeading = chart.screenReaderHeading = doc.createElement('h4');
 
     hiddenSection.setAttribute('id', id);
     hiddenSection.setAttribute('role', 'region');

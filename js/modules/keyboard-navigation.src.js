@@ -1456,8 +1456,7 @@ H.Chart.prototype.addExitAnchor = function () {
     // Hide exit anchor
     merge(true, chart.tabExitAnchor.style, {
         position: 'absolute',
-        left: '-9999px',
-        top: 'auto',
+        top: '-999em',
         width: '1px',
         height: '1px',
         overflow: 'hidden'
