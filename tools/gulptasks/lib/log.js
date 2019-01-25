@@ -97,10 +97,23 @@ function success(text) {
     console.info(format(text, 'green'));
 }
 
+/**
+ * Writes a yellow warning message in gulp style into the console.
+ *
+ * @param {Array<string>} text
+ *        Message text to write
+ *
+ * @return {void}
+ */
+function warn(...text) {
+    console.info(format(text.join(' '), 'yellow'));
+}
+
 module.exports = {
     finished,
     format,
     message,
     starting,
-    success
+    success,
+    warn
 };
