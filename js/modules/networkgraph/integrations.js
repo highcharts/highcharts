@@ -11,14 +11,13 @@ import H from '../../parts/Globals.js';
 
 H.networkgraphIntegrations = {
     verlet: {
-        attractiveForceFunction: function (distanceR, k) {
+        attractiveForceFunction: function (d, k) {
             // Used in API:
-            return (k - distanceR) / distanceR;
+            return (k - d) / d;
         },
-        repulsiveForceFunction: function (distanceR, k) {
+        repulsiveForceFunction: function (d, k) {
             // Used in API:
-            return (k - distanceR) / distanceR *
-                (k > distanceR ? 1 : 0); // Force only for close nodes
+            return (k - d) / d * (k > d ? 1 : 0); // Force only for close nodes
         },
         barycenter: function () {
             var gravitationalConstant = this.options.gravitationalConstant,
@@ -41,8 +40,10 @@ H.networkgraphIntegrations = {
         repulsive: function (node, force, distanceXY) {
             var factor = force * this.diffTemperature / node.mass;
 
-            node.plotX += distanceXY.x * factor;
-            node.plotY += distanceXY.y * factor;
+            if (!node.fixedPosition) {
+                node.plotX += distanceXY.x * factor;
+                node.plotY += distanceXY.y * factor;
+            }
         },
         attractive: function (link, force, distanceXY) {
             var massFactor = link.getMass(),

@@ -274,7 +274,7 @@ seriesType('networkgraph', 'line', {
     markerAttribs: function (point, state) {
         var attribs = Series.prototype.markerAttribs.call(this, point, state);
 
-        attribs.x = point.plotX - (attribs.width / 2);
+        attribs.x = point.plotX - (attribs.width / 2 || 0);
         return attribs;
     },
 
