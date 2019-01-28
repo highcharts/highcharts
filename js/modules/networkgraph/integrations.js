@@ -97,8 +97,8 @@ H.networkgraphIntegrations = {
             node.plotY += diffY * -layout.options.friction;
 
             node.temperature = layout.vectorLength({
-                x: diffX,
-                y: diffY
+                x: diffX * -layout.options.friction,
+                y: diffY * -layout.options.friction
             });
         }
     },

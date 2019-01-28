@@ -41,6 +41,8 @@ H.layouts = {
             options.repulsiveForce,
             this.integration.repulsiveForceFunction
         );
+
+        this.approximation = options.approximation;
     }
 };
 
@@ -72,16 +74,10 @@ H.extend(
             function localLayout() {
                 step++;
 
-                // Debugging:
-                // if (layout.quadTree) {
-                //     layout.quadTree.clear(series[0].chart);
-                // }
-
-                layout.createQuadTree();
-                layout.quadTree.calculateMassAndCenter();
-
-                // Debugging:
-                // layout.quadTree.render(series[0].chart);
+                if (layout.approximation === 'barnes-hut') {
+                    layout.createQuadTree();
+                    layout.quadTree.calculateMassAndCenter();
+                }
 
                 layout.forces.forEach(function (forceName) {
                     layout[forceName + 'Forces'](layout.temperature);
@@ -435,14 +431,49 @@ H.extend(
         repulsiveForces: function () {
             var layout = this;
 
-            layout.nodes.forEach(function (node) {
-                layout.quadTree.visitNodeRecursive(
-                    null,
-                    function (quadNode) {
-                        return layout.barnesHutApproximation(node, quadNode);
-                    }
-                );
-            });
+            if (layout.approximation === 'barnes-hut') {
+                layout.nodes.forEach(function (node) {
+                    layout.quadTree.visitNodeRecursive(
+                        null,
+                        function (quadNode) {
+                            return layout.barnesHutApproximation(
+                                node,
+                                quadNode
+                            );
+                        }
+                    );
+                });
+            } else {
+                layout.nodes.forEach(function (node) {
+                    layout.nodes.forEach(function (repNode) {
+                        var force,
+                            distanceR,
+                            distanceXY;
+
+                        if (
+                            // Node can not repulse itself:
+                            node !== repNode &&
+                            // Only close nodes affect each other:
+                            /* layout.getDistR(node, repNode) < 2 * k && */
+                            // Not dragged:
+                            !node.fixedPosition
+                        ) {
+                            distanceXY = layout.getDistXY(node, repNode);
+                            distanceR = layout.vectorLength(distanceXY);
+
+                            force = layout.repulsiveForce(distanceR, layout.k);
+
+                            layout.force(
+                                'repulsive',
+                                node,
+                                force * repNode.mass,
+                                distanceXY,
+                                distanceR
+                            );
+                        }
+                    });
+                });
+            }
         },
         attractiveForces: function () {
             var layout = this,
@@ -571,7 +602,7 @@ H.extend(
             return Math.abs(
                 this.systemTemperature -
                 this.prevSystemTemperature
-            ) === 0 || this.temperature <= 0;
+            ) < 0.00001 || this.temperature <= 0;
         },
         getSystemTemperature: function () {
             return this.nodes.reduce(function (value, node) {
