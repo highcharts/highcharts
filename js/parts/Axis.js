@@ -2610,6 +2610,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
+         * If there are multiple axes on the same side of the chart, the pixel
+         * margin between the axes. Defaults to 0 on vertical axes, 15 on
+         * horizontal axes.
+         *
+         * @type      number
+         * @since     7.0.3
+         * @apioption xAxis.margin
+         */
+
+        /**
          * @sample {highcharts} highcharts/yaxis/max-200/
          *         Y axis max of 200
          * @sample {highcharts} highcharts/yaxis/max-logarithmic/
@@ -3066,6 +3076,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // overflow: undefined,
             // staggerLines: null
         },
+        margin: 15,
         title: {
             rotation: 0
         }
@@ -3079,6 +3090,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // overflow: undefined
             // staggerLines: null
         },
+        margin: 15,
         title: {
             rotation: 0
         }
@@ -5769,7 +5781,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         axis.renderLine();
 
         // handle automatic or user set offset
-        axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
+        axis.offset = directionFactor * pick(
+            options.offset,
+            axisOffset[side] ? axisOffset[side] + (options.margin || 0) : 0
+        );
 
         axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
         if (side === 0) {

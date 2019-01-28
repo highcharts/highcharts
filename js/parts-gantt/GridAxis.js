@@ -479,6 +479,8 @@ addEvent(
                     }
                 },
 
+                margin: 0,
+
                 title: {
                     text: null,
                     reserveSpace: false,
