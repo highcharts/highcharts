@@ -11,13 +11,13 @@ import H from '../../parts/Globals.js';
 
 H.networkgraphIntegrations = {
     verlet: {
-        attractiveForceFunction: function (distanceR, k) {
-            return (k - distanceR) / distanceR * this.diffTemperature;
-        },
-        repulsiveForceFunction: function (distanceR, k) {
+        attractiveForceFunction: function (d, k) {
             // Used in API:
-            return distanceR >= k ? 0 : (k - distanceR) /
-                    distanceR * this.diffTemperature * 0.5;
+            return (k - d) / d;
+        },
+        repulsiveForceFunction: function (d, k) {
+            // Used in API:
+            return (k - d) / d * (k > d ? 1 : 0); // Force only for close nodes
         },
         barycenter: function () {
             var gravitationalConstant = this.options.gravitationalConstant,
@@ -32,19 +32,23 @@ H.networkgraphIntegrations = {
 
             this.nodes.forEach(function (node) {
                 if (!node.fixedPosition) {
-                    node.plotX -= xFactor;
-                    node.plotY -= yFactor;
+                    node.plotX -= xFactor / node.mass;
+                    node.plotY -= yFactor / node.mass;
                 }
             });
         },
         repulsive: function (node, force, distanceXY) {
-            node.plotX += distanceXY.x * force;
-            node.plotY += distanceXY.y * force;
+            var factor = force * this.diffTemperature / node.mass;
+
+            if (!node.fixedPosition) {
+                node.plotX += distanceXY.x * factor;
+                node.plotY += distanceXY.y * factor;
+            }
         },
         attractive: function (link, force, distanceXY) {
             var massFactor = link.getMass(),
-                translatedX = -distanceXY.x * force,
-                translatedY = -distanceXY.y * force;
+                translatedX = -distanceXY.x * force * this.diffTemperature,
+                translatedY = -distanceXY.y * force * this.diffTemperature;
 
             if (!link.fromNode.fixedPosition) {
                 link.fromNode.plotX -= translatedX * massFactor.fromNode;
@@ -81,20 +85,20 @@ H.networkgraphIntegrations = {
             */
             var prevX = node.prevX,
                 prevY = node.prevY,
-                diffX = (node.plotX - prevX),
-                diffY = (node.plotY - prevY);
+                diffX = (node.plotX + node.dispX - prevX),
+                diffY = (node.plotY + node.dispY - prevY);
 
             // Store for the next iteration:
-            node.prevX = node.plotX;
-            node.prevY = node.plotY;
+            node.prevX = node.plotX + node.dispX;
+            node.prevY = node.plotY + node.dispY;
 
             // Update positions, apply friction:
             node.plotX += diffX * -layout.options.friction;
             node.plotY += diffY * -layout.options.friction;
 
             node.temperature = layout.vectorLength({
-                x: diffX,
-                y: diffY
+                x: diffX * -layout.options.friction,
+                y: diffY * -layout.options.friction
             });
         }
     },
@@ -121,7 +125,6 @@ H.networkgraphIntegrations = {
             grid-variant:
             return k * k / d * (2 * k - d > 0 ? 1 : 0);
             */
-
             return k * k / d;
         },
         barycenter: function () {

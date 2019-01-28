@@ -76,6 +76,10 @@ seriesType('networkgraph', 'line', {
          * - `d` - which is current distance between two nodes
          * - `k` - which is desired distance between two nodes
          *
+         * In `verlet` integration, defaults to:
+         * `function (d, k) { return (k - d) / d * (k > d ? 1 : 0) }`
+         *
+         * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
          * @apioption   plotOptions.networkgraph.layoutAlgorithm.repulsiveForce
          * @sample      highcharts/series-networkgraph/forces/
          *              Custom forces with Euler integration
@@ -91,6 +95,10 @@ seriesType('networkgraph', 'line', {
          * - `d` - which is current distance between two nodes
          * - `k` - which is desired distance between two nodes
          *
+         * In `verlet` integration, defaults to:
+         * `function (d, k) { return (k - d) / d; }`
+         *
+         * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
          * @apioption   plotOptions.networkgraph.layoutAlgorithm.attractiveForce
          * @sample      highcharts/series-networkgraph/forces/
          *              Custom forces with Euler integration
@@ -137,6 +145,32 @@ seriesType('networkgraph', 'line', {
          */
         enableSimulation: false,
         /**
+         * Barnes-Hut approximation only.
+         * Deteremines when distance between cell and node is small enough to
+         * caculate forces. Value of `theta` is compared directly with quotient
+         * `s / d`, where `s` is the size of the cell, and `d` is distance
+         * between center of cell's mass and currently compared node.
+         *
+         * @see         [layoutAlgorithm.approximation](#series.networkgraph.layoutAlgorithm.approximation)
+         * @since       7.1.0
+         */
+        theta: 0.5,
+        /**
+         * Approximation used to calculate repulsive forces affecting nodes.
+         * By default, when calculateing net force, nodes are compared against
+         * each other, which gives O(N^2) complexity. Using Barnes-Hut
+         * approximation, we decrease this to O(N log N), but the resulting
+         * graph will have different layout. Barnes-Hut approximation divides
+         * space into rectangles via quad tree, where forces exerted on nodes
+         * are calculated directly for nearby cells, and for all others, cells
+         * are treated as a separate node with center of mass.
+         *
+         * @see         [layoutAlgorithm.theta](#series.networkgraph.layoutAlgorithm.theta)
+         * @validvalue  ["barnes-hut", "none"]
+         * @since       7.1.0
+         */
+        approximation: 'none',
+        /**
          * Type of the algorithm used when positioning nodes.
          *
          * @validvalue  ["reingold-fruchterman"]
@@ -152,7 +186,7 @@ seriesType('networkgraph', 'line', {
          * Note that different integrations give different results as forces
          * are different.
          *
-         * In Highcharts v7.0.x only `'euler'` integrations was supported.
+         * In Highcharts v7.0.x only `'euler'` integration was supported.
          *
          * @since       7.1.0
          * @sample      highcharts/series-networkgraph/forces/
@@ -272,7 +306,7 @@ seriesType('networkgraph', 'line', {
     markerAttribs: function (point, state) {
         var attribs = Series.prototype.markerAttribs.call(this, point, state);
 
-        attribs.x = point.plotX - (attribs.width / 2);
+        attribs.x = point.plotX - (attribs.width / 2 || 0);
         return attribs;
     },
 

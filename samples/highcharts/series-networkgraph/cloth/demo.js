@@ -45,18 +45,10 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         networkgraph: {
-            keys: ['from', 'to'],
             layoutAlgorithm: {
-                linkLength: 0.25,
-                enableSimulation: true,
-                // Elastic like forces:
-                attractiveForce: function (d, k) {
-                    return -(d * d) / (k * 100000);
-                },
-                repulsiveForce: function (d, k) {
-                    return (k * k) / (d * d);
-                }
-            }
+                enableSimulation: true
+            },
+            keys: ['from', 'to']
         }
     },
 

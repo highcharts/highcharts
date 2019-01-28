@@ -9,6 +9,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import 'integrations.js';
+import 'QuadTree.js';
 
 var pick = H.pick,
     defined = H.defined;
@@ -40,6 +41,8 @@ H.layouts = {
             options.repulsiveForce,
             this.integration.repulsiveForceFunction
         );
+
+        this.approximation = options.approximation;
     }
 };
 
@@ -70,6 +73,11 @@ H.extend(
             // Algorithm:
             function localLayout() {
                 step++;
+
+                if (layout.approximation === 'barnes-hut') {
+                    layout.createQuadTree();
+                    layout.quadTree.calculateMassAndCenter();
+                }
 
                 layout.forces.forEach(function (forceName) {
                     layout[forceName + 'Forces'](layout.temperature);
@@ -222,12 +230,21 @@ H.extend(
         setInitialRendering: function (enable) {
             this.initialRendering = enable;
         },
+        createQuadTree: function () {
+            this.quadTree = new H.QuadTree(
+                this.box.left,
+                this.box.top,
+                this.box.width,
+                this.box.height
+            );
+
+            this.quadTree.insertNodes(this.nodes);
+        },
         initPositions: function () {
             var initialPositions = this.options.initialPositions;
 
             if (H.isFunction(initialPositions)) {
                 initialPositions.call(this);
-
                 this.nodes.forEach(function (node) {
                     if (!defined(node.prevX)) {
                         node.prevX = node.plotX;
@@ -235,6 +252,9 @@ H.extend(
                     if (!defined(node.prevY)) {
                         node.prevY = node.plotY;
                     }
+
+                    node.dispX = 0;
+                    node.dispY = 0;
                 });
 
             } else if (initialPositions === 'circle') {
@@ -363,39 +383,97 @@ H.extend(
 
             return this.barycenter;
         },
-        repulsiveForces: function () {
+        barnesHutApproximation: function (node, quadNode) {
             var layout = this,
-                nodes = layout.nodes,
-                force,
-                distanceR,
-                distanceXY;
+                distanceXY = layout.getDistXY(node, quadNode),
+                distanceR = layout.vectorLength(distanceXY),
+                goDeeper,
+                force;
 
-            nodes.forEach(function (node) {
-                nodes.forEach(function (repNode) {
+            if (node !== quadNode && distanceR !== 0) {
+                if (quadNode.isInternal) {
+                    // Internal node:
                     if (
-                        // Node can not repulse itself:
-                        node !== repNode &&
-                        // Not dragged:
-                        !node.fixedPosition
+                        quadNode.boxSize / distanceR < layout.options.theta &&
+                        distanceR !== 0
                     ) {
-                        distanceXY = layout.getDistXY(node, repNode);
-                        distanceR = layout.vectorLength(distanceXY);
+                        // Treat as an external node:
+                        force = layout.repulsiveForce(distanceR, layout.k);
 
-                        if (distanceR !== 0) {
+                        layout.force(
+                            'repulsive',
+                            node,
+                            force * quadNode.mass,
+                            distanceXY,
+                            distanceR
+                        );
+                        goDeeper = false;
+                    } else {
+                        // Go deeper:
+                        goDeeper = true;
+                    }
+                } else {
+                    // External node, direct force:
+                    force = layout.repulsiveForce(distanceR, layout.k);
+
+                    layout.force(
+                        'repulsive',
+                        node,
+                        force * quadNode.mass,
+                        distanceXY,
+                        distanceR
+                    );
+                }
+            }
+
+            return goDeeper;
+        },
+        repulsiveForces: function () {
+            var layout = this;
+
+            if (layout.approximation === 'barnes-hut') {
+                layout.nodes.forEach(function (node) {
+                    layout.quadTree.visitNodeRecursive(
+                        null,
+                        function (quadNode) {
+                            return layout.barnesHutApproximation(
+                                node,
+                                quadNode
+                            );
+                        }
+                    );
+                });
+            } else {
+                layout.nodes.forEach(function (node) {
+                    layout.nodes.forEach(function (repNode) {
+                        var force,
+                            distanceR,
+                            distanceXY;
+
+                        if (
+                            // Node can not repulse itself:
+                            node !== repNode &&
+                            // Only close nodes affect each other:
+                            /* layout.getDistR(node, repNode) < 2 * k && */
+                            // Not dragged:
+                            !node.fixedPosition
+                        ) {
+                            distanceXY = layout.getDistXY(node, repNode);
+                            distanceR = layout.vectorLength(distanceXY);
+
                             force = layout.repulsiveForce(distanceR, layout.k);
 
                             layout.force(
                                 'repulsive',
                                 node,
-                                force,
+                                force * repNode.mass,
                                 distanceXY,
                                 distanceR
                             );
-
                         }
-                    }
+                    });
                 });
-            });
+            }
         },
         attractiveForces: function () {
             var layout = this,
@@ -524,7 +602,7 @@ H.extend(
             return Math.abs(
                 this.systemTemperature -
                 this.prevSystemTemperature
-            ) === 0 || this.temperature <= 0;
+            ) < 0.00001 || this.temperature <= 0;
         },
         getSystemTemperature: function () {
             return this.nodes.reduce(function (value, node) {
