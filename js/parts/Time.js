@@ -254,7 +254,7 @@ Highcharts.Time.prototype = {
 
     /**
      * Update the Time object with current options. It is called internally on
-     * initiating Highcharts, after running `Highcharts.setOptions` and on
+     * initializing Highcharts, after running `Highcharts.setOptions` and on
      * `Chart.update`.
      *
      * @private
@@ -269,7 +269,7 @@ Highcharts.Time.prototype = {
         this.options = options = merge(true, this.options || {}, options);
 
         // Allow using a different Date class
-        this.Date = options.Date || win.Date;
+        this.Date = options.Date || win.Date || Date;
 
         this.useUTC = useUTC;
         this.timezoneOffset = useUTC && options.timezoneOffset;
@@ -596,7 +596,7 @@ Highcharts.Time.prototype = {
                  *         Adding support for week number
                  *
                  * @name Highcharts.dateFormats
-                 * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
+                 * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>|undefined}
                  */
                 H.dateFormats
             );

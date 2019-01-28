@@ -226,6 +226,25 @@
  */
 
 /**
+ * Enable or disable pre-allocation of vertex buffers.
+ *
+ * Enabling this will make it so that the binary data arrays required for
+ * storing the series data will be allocated prior to transforming the data
+ * to a WebGL-compatible format.
+ *
+ * This saves a copy operation on the order of O(n) and so is significantly more
+ * performant. However, this is currently an experimental option, and may cause
+ * visual artifacts with some datasets.
+ *
+ * As such, care should be taken when using this setting to make sure that
+ * it doesn't cause any rendering glitches with the given use-case.
+ *
+ * @type      {boolean}
+ * @default   false
+ * @apioption boost.usePreallocated
+ */
+
+/**
  * Set the point threshold for when a series should enter boost mode.
  *
  * Setting it to e.g. 2000 will cause the series to enter boost mode when there

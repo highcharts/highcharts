@@ -34,7 +34,7 @@ seriesType('vector', 'scatter'
  * @extends      plotOptions.scatter
  * @excluding    boostThreshold, marker, connectEnds, connectNulls,
  *               cropThreshold, dashStyle, gapSize, gapUnit, dataGrouping,
- *               linecap, shadow, stacking, step
+ *               linecap, shadow, stacking, step, jitter
  * @product      highcharts highstock
  * @optionparent plotOptions.vector
  */
@@ -253,7 +253,7 @@ seriesType('vector', 'scatter'
     */
 
         /**
-     * Fade in the arrows on initiating series.
+     * Fade in the arrows on initializing series.
      *
      * @private
      * @function Highcharts.seriesTypes.vector#animate

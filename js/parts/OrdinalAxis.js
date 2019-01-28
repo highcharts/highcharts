@@ -21,8 +21,7 @@ var addEvent = H.addEvent,
     noop = H.noop,
     pick = H.pick,
     Series = H.Series,
-    timeUnits = H.timeUnits,
-    wrap = H.wrap;
+    timeUnits = H.timeUnits;
 
 /* ****************************************************************************
  * Start ordinal axis logic                                                   *
@@ -813,11 +812,11 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
 Axis.prototype.ordinal2lin = Axis.prototype.val2lin;
 
 // Extending the Chart.pan method for ordinal axes
-wrap(Chart.prototype, 'pan', function (proceed, e) {
+addEvent(Chart, 'pan', function (e) {
     var chart = this,
         xAxis = chart.xAxis[0],
         overscroll = xAxis.options.overscroll,
-        chartX = e.chartX,
+        chartX = e.originalEvent.chartX,
         runBase = false;
 
     if (xAxis.options.ordinal && xAxis.series.length) {
@@ -921,8 +920,8 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
         if (overscroll) {
             xAxis.max = xAxis.dataMax + overscroll;
         }
-        // call the original function
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+    } else {
+        e.preventDefault();
     }
 });
 

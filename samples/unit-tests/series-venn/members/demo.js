@@ -79,37 +79,6 @@ QUnit.test('addOverlapToRelations', function (assert) {
     );
 });
 
-QUnit.test('binarySearch', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        binarySearch = vennPrototype.utils.binarySearch,
-        arr = [1, 3, 5, 8, 10, 12, 16],
-        noError = function (x) {
-            return x;
-        },
-        allowError = function (x, value) {
-            // Allow an error of 1
-            return (Math.abs(value - x) <= 1) ? value : x;
-        };
-
-    assert.strictEqual(
-        binarySearch(arr, 12, noError),
-        5,
-        'should return index 5 when looking for 12.'
-    );
-
-    assert.strictEqual(
-        binarySearch(arr, 4, noError),
-        -1,
-        'should return index -1 since 4 does not exist in the array.'
-    );
-
-    assert.strictEqual(
-        binarySearch(arr, 7, allowError),
-        3,
-        'should return index 3 when looking for 7, since fn allows an error of 1 which accepts 8.'
-    );
-});
-
 QUnit.test('getAreaOfIntersectionBetweenCircles', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getAreaOfIntersectionBetweenCircles =
@@ -195,24 +164,29 @@ QUnit.test('getOverlapBetweenCircles', assert => {
     );
 });
 
-QUnit.test('getDistanceBetweenCirclesByOverlap', function (assert) {
-    var vennPrototype = Highcharts.seriesTypes.venn.prototype,
-        getDistanceBetweenCirclesByOverlap =
-            vennPrototype.utils.getDistanceBetweenCirclesByOverlap;
+QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
+    var { prototype: vennPrototype } = Highcharts.seriesTypes.venn,
+        { getDistanceBetweenCirclesByOverlap } = vennPrototype.utils;
+
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(3, 4, 6.64),
-        5.0029,
-        'should return a distance of 5.0029 when r1=3, r2=4 and overlap=6.64.'
+        5.0003489085283945,
+        'should return a distance of 5.0003489085283945 when r1=3, r2=4 and overlap=6.64.'
     );
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(1.1283791670955126, 0.5641895835477563, 1),
-        0.42297293078575,
-        'should return a distance of 0.42297293078575 when r1=1.1283791670955126, r2=0.5641895835477563 and overlap=1.'
+        0,
+        'should return a distance of 0 when r1=1.1283791670955126, r2=0.5641895835477563 and overlap=1. The circles completely overlap.'
     );
     assert.strictEqual(
         getDistanceBetweenCirclesByOverlap(25.2313252202016, 25.2313252202016, 1000),
-        20.39195704296693,
-        'should return a distance of 20.39195704296693 when r1=r2=25.2313252202016 and overlap=1000.'
+        20.385535837223518,
+        'should return a distance of 20.385535837223518 when r1=r2=25.2313252202016 and overlap=1000.'
+    );
+    assert.strictEqual(
+        getDistanceBetweenCirclesByOverlap(600, 300, 250000),
+        387.2988213671704,
+        'should return a distance of 387.2988213671704 when r1=600, r2=300 and overlap=250000.'
     );
 });
 
@@ -270,6 +244,7 @@ QUnit.test('getCirclesIntersectionPoints', function (assert) {
             { x: 5, y: 0, r: 3 },
             { x: -3, y: 3, r: 3 }
         ];
+
     assert.deepEqual(
         getCirclesIntersectionPoints(circles),
         [
@@ -336,6 +311,54 @@ QUnit.test('isPointInsideAllCircles', function (assert) {
     );
 });
 
+/**
+ * Since there is no "correct" positions for a specific input value, this test
+ * wont tell if a change in return values is correct or not, but it will alert
+ * of any unexpected changes.
+ */
+QUnit.test('layoutGreedyVenn', assert => {
+    const { prototype: vennPrototype } = Highcharts.seriesTypes.venn;
+    const { layoutGreedyVenn } = vennPrototype.utils;
+    const relations = [{
+        id: "A",
+        sets: ["A"],
+        value: 8.707145671877052
+    }, {
+        id: "C",
+        sets: ["C"],
+        value: 3.269735977932484
+    }, {
+        id: "B",
+        sets: ["B"],
+        value: 3.0135951661631424
+    }, {
+        id: "A_C",
+        sets: ["A", "C"],
+        value: 2.798830947064232
+    }, {
+        id: "A_B",
+        sets: ["A", "B"],
+        value: 2.078352817548929
+    }, {
+        id: "B_C",
+        sets: ["B", "C"],
+        value: 0.7966636017338763
+    }, {
+        id: "A_B_C",
+        sets: ["A", "B", "C"],
+        value: 0.6833705503743597
+    }];
+
+    assert.deepEqual(
+        layoutGreedyVenn(relations),
+        {
+            A: { r: 1.66480345620763, x: 0, y: 0 },
+            B: { r: 0.9794167317058717, x: 0.48757084298176, y: 1.1634694924001 },
+            C: { r: 1.0201908091071663, x: 0.9751416859635283, y: 0 }
+        },
+        'should return expected positions and sizes for the sets.'
+    );
+});
 
 QUnit.test('loss', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,

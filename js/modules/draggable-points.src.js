@@ -6,15 +6,16 @@
  */
 
 /**
- * Function callback to execute while series points are dragged.
+ * Function callback to execute while series points are dragged. Return false to
+ * stop the default drag action.
  *
  * @callback Highcharts.SeriesPointDragCallbackFunction
  *
- * @param {Highcharts.SeriesPointDragEventObject} e
- *        Event arguments.
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
  *
- * @return {boolean}
- *         Return false to stop the default drag action.
+ * @param {Highcharts.SeriesPointDragEventObject} event
+ *        Event arguments.
  */
 
 /**
@@ -62,7 +63,10 @@
  *
  * @callback Highcharts.SeriesPointDragStartCallbackFunction
  *
- * @param {Highcharts.SeriesPointDragStartEventObject} e
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.SeriesPointDragStartEventObject} event
  *        Event arguments.
  */
 
@@ -83,7 +87,10 @@
  *
  * @callback Highcharts.SeriesPointDropCallbackFunction
  *
- * @param {Highcharts.SeriesPointDropEventObject} e
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.SeriesPointDropEventObject} event
  *        Event arguments.
  */
 
@@ -951,7 +958,7 @@ var defaultGuideBoxOptions = {
         /**
          * Guide box fill color.
          *
-         * @type  {Highcharts.ColorString}
+         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 6.2.0
          */
         color: 'rgba(0, 0, 0, 0.1)',
@@ -1013,7 +1020,7 @@ var defaultDragHandleOptions = {
     /**
      * The fill color of the drag handles.
      *
-     * @type  {Highcharts.ColorString}
+     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since 6.2.0
      */
     color: '#fff',
@@ -1849,7 +1856,9 @@ H.Chart.prototype.setGuideBoxState = function (state, options) {
         fill: stateOptions.color,
         cursor: stateOptions.cursor,
         zIndex: stateOptions.zIndex
-    });
+    })
+    // Use pointerEvents 'none' to avoid capturing the click event
+    .css({ pointerEvents: 'none' });
 };
 
 
@@ -2426,6 +2435,7 @@ function mouseUp(e, chart) {
         chart.cancelClick = true;
 
         // Fire the event, with a default handler that updates the points
+
         point.firePointEvent('drop', {
             origin: dragDropData.origin,
             chartX: e.chartX,
@@ -2464,10 +2474,21 @@ function mouseUp(e, chart) {
  *        The chart we are clicking.
  */
 function mouseDown(e, chart) {
-    var dragPoint = chart.hoverPoint;
+    var dragPoint = chart.hoverPoint,
+        dragDropOptions = H.merge(
+            dragPoint.series.options.dragDrop,
+            dragPoint.options.dragDrop
+        ),
+        draggableX = dragDropOptions.draggableX || false,
+        draggableY = dragDropOptions.draggableY || false;
 
     // Reset cancel click
     chart.cancelClick = false;
+
+    // Ignore if option is disable for the point
+    if (!(draggableX || draggableY)) {
+        return;
+    }
 
     // Ignore if zoom/pan key is pressed
     if (chart.zoomOrPanKeyPressed(e)) {

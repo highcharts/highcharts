@@ -5,6 +5,7 @@ QUnit.test('Test Absolute Price Oscillator calculations on data updates.', funct
         series: [{
             id: 'main',
             type: 'ohlc',
+            cropThreshold: 30,
             data: [
                 [1474378200000, 113.05, 114.12, 112.51, 113.57],
                 [1474464600000, 113.85, 113.99, 112.44, 113.55],
@@ -248,5 +249,15 @@ QUnit.test('Test Absolute Price Oscillator calculations on data updates.', funct
         chart.series[1].graphintersectLine.attr('stroke-width'),
         0.5,
         'Intersect line width changed'
+    );
+
+    // Indicator cropThreshold has to be equal linked series one
+    // reduced by period due to points comparison in drawGraph method
+    // (#9787)
+    assert.strictEqual(
+        chart.series[1].options.cropThreshold +
+        chart.series[1].options.params.period - 1,
+        30,
+        'Indicator cropThreshold equal main series cropThreshold reduced by period.'
     );
 });

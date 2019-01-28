@@ -241,8 +241,8 @@ setOptions({ // Set default bubble legend options
              */
             ranges: {
                 /**
-                * Range size value, similar to bubble Z data.
-                */
+                 * Range size value, similar to bubble Z data.
+                 */
                 value: undefined,
                 /**
                  * The color of the border for individual range.

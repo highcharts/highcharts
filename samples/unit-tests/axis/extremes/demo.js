@@ -359,25 +359,27 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
 
         try {
 
-            assert.deepEqual([
-                typeof xAxis.userMin,
-                typeof xAxis.userMax
-            ], [
-                'undefined',
-                'undefined'
-            ],
+            assert.deepEqual(
+                [
+                    typeof xAxis.userMin,
+                    typeof xAxis.userMax
+                ], [
+                    'undefined',
+                    'undefined'
+                ],
                 'The user range of x-axis should be undefined.'
             );
 
             xAxis.setExtremes(5, 11, true, false);
 
-            assert.deepEqual([
-                xAxis.userMin,
-                xAxis.userMax
-            ], [
-                5,
-                11
-            ],
+            assert.deepEqual(
+                [
+                    xAxis.userMin,
+                    xAxis.userMax
+                ], [
+                    5,
+                    11
+                ],
                 'The user range of x-axis should be set.'
             );
 
@@ -391,13 +393,14 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
 
             controller.touchEnd(100, 100);
 
-            assert.deepEqual([
-                xAxis.userMin,
-                xAxis.userMax
-            ], [
-                5,
-                11
-            ],
+            assert.deepEqual(
+                [
+                    xAxis.userMin,
+                    xAxis.userMax
+                ], [
+                    5,
+                    11
+                ],
                 'The user range of x-axis should be unchanged.'
             );
 
@@ -439,7 +442,10 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
 
     controller.slide(
         [touchPointX, touchPointY],
-        [touchPointX + 100, touchPointY], undefined, true);
+        [touchPointX + 100, touchPointY],
+        undefined,
+        true
+    );
 
     var tickPositionsAfterSlide =  chart.axes[0].tickPositions;
 
@@ -447,5 +453,25 @@ QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
         tickPositions,
         tickPositionsAfterSlide,
         "Tick positions has changed after touch sliding"
+    );
+});
+
+QUnit.test('Column zooming and Y axis extremes (#9944)', assert => {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            categories: ['One', 'Two', 'Three', 'Four'],
+            minRange: 0.1
+        },
+        series: [{
+            type: 'column',
+            data: [10, 1, 1, 1]
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(0.9, 1.1);
+
+    assert.ok(
+        chart.yAxis[0].max < 5,
+        'The Y axis should adapt to the visible data (#9044)'
     );
 });

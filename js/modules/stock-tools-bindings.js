@@ -1678,7 +1678,8 @@ var stockToolsBindings = {
         /** @ignore */
         init: function (button) {
             this.chart.series[0].update({
-                type: 'line'
+                type: 'line',
+                useOhlcData: true
             });
 
             fireEvent(

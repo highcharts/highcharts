@@ -94,20 +94,18 @@ seriesType(
              * Enable/disable zone lines.
              */
             enabled: true,
+            /**
+             * Specify the style of zone lines.
+             *
+             * @type    {Highcharts.CSSObject}
+             * @default {"color": "#0A9AC9", "dashStyle": "LongDash", "lineWidth": 1}
+             */
             styles: {
-                /**
-                 * Color of zone lines.
-                 *
-                 * @type {Highcharts.ColorString}
-                 */
+                /** @ignore-options */
                 color: '#0A9AC9',
-                /**
-                 * The dash style of zone lines.
-                 */
+                /** @ignore-options */
                 dashStyle: 'LongDash',
-                /**
-                 * Pixel width of zone lines.
-                 */
+                /** @ignore-options */
                 lineWidth: 1
             }
         },
@@ -374,7 +372,8 @@ seriesType(
                     );
                     point.pointWidth = barWidth;
 
-                    point.shapeArgs = indicator.crispCol(
+                    point.shapeArgs = indicator.crispCol.apply( // eslint-disable-line no-useless-call
+                        indicator,
                         [barX, barY, barWidth, barHeight]
                     );
 

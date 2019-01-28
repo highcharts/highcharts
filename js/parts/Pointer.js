@@ -279,13 +279,14 @@ Highcharts.Pointer.prototype = {
      * @param {boolean} shared
      *        Whether it is a shared tooltip or not.
      *
-     * @param {Highcharts.PointerCoordinatesObject} coordinates
-     *        Chart coordinates of the pointer.
+     * @param {Highcharts.PointerEventObject} e
+     *        The pointer event object, containing chart coordinates of the
+     *        pointer.
      *
      * @return {Point|undefined}
      *         The point closest to given coordinates.
      */
-    findNearestKDPoint: function (series, shared, coordinates) {
+    findNearestKDPoint: function (series, shared, e) {
         var closest,
             sort = function (p1, p2) {
                 var isCloserX = p1.distX - p2.distX,
@@ -319,7 +320,7 @@ Highcharts.Pointer.prototype = {
                     s.options.findNearestPointBy.indexOf('y') < 0
                 ),
                 point = s.searchPoint(
-                    coordinates,
+                    e,
                     compareX
                 );
 
@@ -411,8 +412,8 @@ Highcharts.Pointer.prototype = {
      * @param {boolean} shared
      *        Whether it is a shared tooltip or not.
      *
-     * @param {Highcharts.PointerCoordinatesObject} coordinates
-     *        Chart coordinates of the pointer.
+     * @param {Highcharts.PointerEventObject} e
+     *        The triggering event, containing chart coordinates of the pointer.
      *
      * @return {*}
      *         Object containing resulting hover data: hoverPoint, hoverSeries,
@@ -424,13 +425,11 @@ Highcharts.Pointer.prototype = {
         series,
         isDirectTouch,
         shared,
-        coordinates,
-        params
+        e
     ) {
         var hoverPoint,
             hoverPoints = [],
             hoverSeries = existingHoverSeries,
-            isBoosting = params && params.isBoosting,
             useExisting = !!(isDirectTouch && existingHoverPoint),
             notSticky = hoverSeries && !hoverSeries.stickyTracking,
             filter = function (s) {
@@ -452,7 +451,7 @@ Highcharts.Pointer.prototype = {
         // Use existing hovered point or find the one closest to coordinates.
         hoverPoint = useExisting ?
             existingHoverPoint :
-            this.findNearestKDPoint(searchSeries, shared, coordinates);
+            this.findNearestKDPoint(searchSeries, shared, e);
 
         // Assign hover series
         hoverSeries = hoverPoint && hoverPoint.series;
@@ -476,7 +475,7 @@ Highcharts.Pointer.prototype = {
                         * Boost returns a minimal point. Convert it to a usable
                         * point for tooltip and states.
                         */
-                        if (isBoosting) {
+                        if (s.chart.isBoosting) {
                             point = s.getPoint(point);
                         }
                         hoverPoints.push(point);
@@ -530,8 +529,7 @@ Highcharts.Pointer.prototype = {
                 series,
                 isDirectTouch,
                 shared,
-                e,
-                { isBoosting: chart.isBoosting }
+                e
             ),
             useSharedTooltip,
             followPointer,
@@ -1110,7 +1108,15 @@ Highcharts.Pointer.prototype = {
         }
 
         e = this.normalize(e);
-        e.returnValue = false; // #2251, #3224
+
+        // In IE8 we apparently need this returnValue set to false in order to
+        // avoid text being selected. But in Chrome, e.returnValue is prevented,
+        // plus we don't need to run e.preventDefault to prevent selected text
+        // in modern browsers. So we set it conditionally. Remove it when IE8 is
+        // no longer needed. #2251, #3224.
+        if (!e.preventDefault) {
+            e.returnValue = false;
+        }
 
         if (chart.mouseIsDown === 'mousedown') {
             this.drag(e);

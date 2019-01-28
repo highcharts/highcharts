@@ -245,8 +245,8 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/vertical-align-bottom/
          *         Bottom
          *
-         * @since      6.0.0
-         * @validvalue ["top", "middle", "bottom"]
+         * @type  {Highcharts.VerticalAlignType}
+         * @since 6.0.0
          */
         verticalAlign: 'top',
 
@@ -431,8 +431,8 @@ extend(defaultOptions, {
              * @sample {highstock} stock/rangeselector/input-button-position/
              *         Alignment
              *
-             * @since      6.0.0
-             * @validvalue ["left", "center", "right"]
+             * @type  {Highcharts.AlignType}
+             * @since 6.0.0
              */
             align: 'right',
 
@@ -523,7 +523,7 @@ defaultOptions.lang = merge(
 
     /**
      * Language object. The language object is global and it can't be set
-     * on each chart initiation. Instead, use `Highcharts.setOptions` to
+     * on each chart initialization. Instead, use `Highcharts.setOptions` to
      * set it before any chart is initialized.
      *
      * <pre>Highcharts.setOptions({
@@ -699,9 +699,7 @@ RangeSelector.prototype = {
             // point and extremes data (things like pointStart and pointInterval
             // are missing), so we delay the process (#942)
             } else {
-                addEvent(chart, 'beforeRender', function () {
-                    rangeSelector.clickButton(i);
-                });
+                rangeSelector.deferredYTDClick = i;
                 return;
             }
         } else if (type === 'all' && baseAxis) {
@@ -1898,6 +1896,11 @@ addEvent(Chart, 'beforeRender', function () {
         verticalAlign;
 
     if (rangeSelector) {
+
+        if (isNumber(rangeSelector.deferredYTDClick)) {
+            rangeSelector.clickButton(rangeSelector.deferredYTDClick);
+            delete rangeSelector.deferredYTDClick;
+        }
 
         axes.forEach(function (axis) {
             axis.updateNames();

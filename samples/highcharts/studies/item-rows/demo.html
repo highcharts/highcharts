@@ -1,0 +1,24 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<div id="container"></div>
+
+<h4>Data</h4>
+<input name="country" type="radio" id="de" checked>
+<label for="de">Germany</label>
+<input name="country" type="radio" id="gb">
+<label for="gb">Britain</label>
+<input name="country" type="radio" id="no">
+<label for="no">Norway</label>
+
+<h4>Layout</h4>
+<input name="layout" type="radio" id="parliament" checked>
+<label for="parliament">Parliament</label>
+<input name="layout" type="radio" id="rectangle">
+<label for="rectangle">Rectangle</label>
+<input name="layout" type="radio" id="circle">
+<label for="circle">Circle</label>
+
+<h4>Inner size</h4>
+<input type="number" id="rows" value="0" min="0" max="30" step="1">
+<label for="rows">Rows <small>(when 0, <code>innserSize</code> takes precedence)</small></label><br>
+<input type="number" id="innersize" value="40" min="0" max="100" step="10">
+<label for="innersize">Inner size (%)</label>

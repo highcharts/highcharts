@@ -318,8 +318,29 @@ seriesType('xrange', 'column'
             }
 
             // Tooltip position
-            point.tooltipPos[0] += inverted ? 0 : length / 2;
-            point.tooltipPos[1] -= inverted ? -length / 2 : metrics.width / 2;
+            if (!inverted) {
+                point.tooltipPos[0] += length / 2 * (xAxis.reversed ? -1 : 1);
+                point.tooltipPos[1] -= metrics.width / 2;
+
+                // Limit position by the correct axis size (#9727)
+                point.tooltipPos[0] = Math.max(
+                    Math.min(point.tooltipPos[0], xAxis.len - 1), 0
+                );
+                point.tooltipPos[1] = Math.max(
+                    Math.min(point.tooltipPos[1], yAxis.len - 1), 0
+                );
+            } else {
+                point.tooltipPos[1] += length / 2 * (xAxis.reversed ? 1 : -1);
+                point.tooltipPos[0] += metrics.width / 2;
+
+                // Limit position by the correct axis size (#9727)
+                point.tooltipPos[1] = Math.max(
+                    Math.min(point.tooltipPos[1], xAxis.len - 1), 0
+                );
+                point.tooltipPos[0] = Math.max(
+                    Math.min(point.tooltipPos[0], yAxis.len - 1), 0
+                );
+            }
 
             // Add a partShapeArgs to the point, based on the shapeArgs property
             partialFill = point.partialFill;
@@ -734,7 +755,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
  * The fill color to be used for partial fills. Defaults to a darker shade
  * of the point color.
  *
- * @type      {Highcharts.ColorString}
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @product   highcharts highstock gantt
  * @apioption series.xrange.data.partialFill.fill
  */

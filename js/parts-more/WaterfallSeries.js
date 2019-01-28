@@ -67,6 +67,11 @@ addEvent(Chart, 'beforeRedraw', function () {
 seriesType('waterfall', 'column', {
 
     /**
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @apioption plotOptions.waterfall.color
+     */
+
+    /**
      * The color used specifically for positive point columns. When not
      * specified, the general series color is used.
      *
@@ -77,7 +82,7 @@ seriesType('waterfall', 'column', {
      * @sample {highcharts} highcharts/demo/waterfall/
      *         Waterfall
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @product   highcharts
      * @apioption plotOptions.waterfall.upColor
      */
@@ -440,8 +445,8 @@ seriesType('waterfall', 'column', {
         var data = this.data,
             yAxis = this.yAxis,
             length = data.length,
-            lineWidth = this.graph.strokeWidth() + this.borderWidth,
-            normalizer = Math.round(lineWidth) % 2 / 2,
+            graphNormalizer = Math.round(this.graph.strokeWidth()) % 2 / 2,
+            borderNormalizer = Math.round(this.borderWidth) % 2 / 2,
             reversedXAxis = this.xAxis.reversed,
             reversedYAxis = this.yAxis.reversed,
             stacking = this.options.stacking,
@@ -473,11 +478,13 @@ seriesType('waterfall', 'column', {
                 if (stacking) {
                     connectorThreshold = prevStackX.connectorThreshold;
 
-                    yPos = (yAxis.translate(connectorThreshold, 0, 1, 0, 1) +
-                    (reversedYAxis ? isPos : 0));
+                    yPos = Math.round(
+                        (yAxis.translate(connectorThreshold, 0, 1, 0, 1) +
+                        (reversedYAxis ? isPos : 0))
+                    ) - graphNormalizer;
                 } else {
                     yPos = prevArgs.y + prevPoint.minPointLengthOffset +
-                    normalizer;
+                        borderNormalizer - graphNormalizer;
                 }
 
                 d = [

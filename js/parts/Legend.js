@@ -413,6 +413,14 @@ Highcharts.Legend.prototype = {
 
                 this.title.add(this.group);
             }
+
+            // Set the max title width (#7253)
+            if (!titleOptions.width) {
+                this.title.css({
+                    width: this.maxLegendWidth + 'px'
+                });
+            }
+
             bBox = this.title.getBBox();
             titleHeight = bBox.height;
             this.offsetWidth = bBox.width; // #1717
@@ -544,7 +552,7 @@ Highcharts.Legend.prototype = {
             li.css({
                 width: (
                     options.itemWidth ||
-                    options.width ||
+                    legend.widthOption ||
                     chart.spacingBox.width
                 ) - itemExtraWidth
             });
@@ -585,10 +593,7 @@ Highcharts.Legend.prototype = {
             itemMarginBottom = options.itemMarginBottom || 0,
             itemMarginTop = this.itemMarginTop,
             itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
-            widthOption = options.width,
-            maxLegendWidth = widthOption || (
-                this.chart.spacingBox.width - 2 * padding - options.x
-            ),
+            maxLegendWidth = this.maxLegendWidth,
             itemWidth = (
                 options.alignColumns &&
                     this.totalItemWidth > maxLegendWidth
@@ -627,7 +632,7 @@ Highcharts.Legend.prototype = {
         }
 
         // the width of the widest item
-        this.offsetWidth = widthOption || Math.max(
+        this.offsetWidth = this.widthOption || Math.max(
             (
                 horizontal ? this.itemX - padding - (item.checkbox ?
                     // decrease by itemDistance only when no checkbox #4853
@@ -724,7 +729,11 @@ Highcharts.Legend.prototype = {
     adjustMargins: function (margin, spacing) {
         var chart = this.chart,
             options = this.options,
-            alignment = this.getAlignment();
+            alignment = this.getAlignment(),
+            titleMargin = chart.options.title.margin !== undefined ?
+                chart.titleOffset +
+                    chart.options.title.margin :
+                0;
 
         if (alignment) {
 
@@ -751,10 +760,7 @@ Highcharts.Legend.prototype = {
                             spacing[side] +
                             (
                                 side === 0 &&
-                                chart.options.title.margin !== undefined ?
-                                    chart.titleOffset +
-                                        chart.options.title.margin :
-                                    0
+                                (chart.titleOffset === 0 ? 0 : titleMargin)
                             ) // #7428, #7894
                         )
                     );
@@ -830,12 +836,25 @@ Highcharts.Legend.prototype = {
             box = legend.box,
             options = legend.options,
             padding = legend.padding,
-            alignTo;
+            alignTo,
+            allowedWidth,
+            y;
 
         legend.itemX = padding;
         legend.itemY = legend.initialItemY;
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
+        legend.widthOption = H.relativeLength(
+            options.width,
+            chart.spacingBox.width - padding
+        );
+
+        // Compute how wide the legend is allowed to be
+        allowedWidth = chart.spacingBox.width - 2 * padding - options.x;
+        if (['rm', 'lm'].indexOf(legend.getAlignment().substring(0, 2)) > -1) {
+            allowedWidth /= 2;
+        }
+        legend.maxLegendWidth = legend.widthOption || allowedWidth;
 
         if (!legendGroup) {
             /**
@@ -893,7 +912,7 @@ Highcharts.Legend.prototype = {
         allItems.forEach(legend.layoutItem, legend);
 
         // Get the box
-        legendWidth = (options.width || legend.offsetWidth) + padding;
+        legendWidth = (legend.widthOption || legend.offsetWidth) + padding;
         legendHeight = legend.lastItemY + legend.lastLineHeight +
             legend.titleHeight;
         legendHeight = legend.handleOverflow(legendHeight);
@@ -956,9 +975,12 @@ Highcharts.Legend.prototype = {
             // the title (#7428)
             alignTo = chart.spacingBox;
             if (/(lth|ct|rth)/.test(legend.getAlignment())) {
+
+                y = alignTo.y + chart.titleOffset;
+
                 alignTo = merge(alignTo, {
-                    y: alignTo.y + chart.titleOffset +
-                        chart.options.title.margin
+                    y: chart.titleOffset > 0 ?
+                        y += chart.options.title.margin : y
                 });
             }
 
@@ -972,6 +994,8 @@ Highcharts.Legend.prototype = {
         if (!this.proximate) {
             this.positionItems();
         }
+
+        fireEvent(this, 'afterRender');
     },
 
     /**
@@ -1363,7 +1387,10 @@ H.LegendSymbolMixin = {
 // Explore if there's a general cause for this. The problem may be related
 // to nested group elements, as the legend item texts are within 4 group
 // elements.
-if (/Trident\/7\.0/.test(win.navigator.userAgent) || isFirefox) {
+if (
+    /Trident\/7\.0/.test(win.navigator && win.navigator.userAgent) ||
+    isFirefox
+) {
     wrap(Highcharts.Legend.prototype, 'positionItem', function (proceed, item) {
         var legend = this,
             // If chart destroyed in sync, this is undefined (#2030)

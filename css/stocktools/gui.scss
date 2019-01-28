@@ -1,4 +1,4 @@
-$version: "7.0.1";
+$version: "7.0.2";
 
 // Colors for buttons.
 $button-background-color: #f7f7f7;
@@ -38,6 +38,7 @@ $button-hover-color: #e6ebf5;
 }
 
 .highcharts-bindings-wrapper {
+  display: block;
   width: 40px;
   height: 100%;
   position: absolute;

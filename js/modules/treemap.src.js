@@ -17,9 +17,13 @@ import '../parts/Color.js';
 
 var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
+    addEvent = H.addEvent,
     merge = H.merge,
     extend = H.extend,
+    error = H.error,
+    defined = H.defined,
     noop = H.noop,
+    fireEvent = H.fireEvent,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     isArray = H.isArray,
@@ -64,121 +68,150 @@ seriesType(
     'scatter'
 
     /**
- * A treemap displays hierarchical data using nested rectangles. The data can be
- * laid out in varying ways depending on options.
- *
- * @sample highcharts/demo/treemap-large-dataset/
- *         Treemap
- *
- * @extends      plotOptions.scatter
- * @excluding    marker
- * @product      highcharts
- * @optionparent plotOptions.treemap
- */
+     * A treemap displays hierarchical data using nested rectangles. The data
+     * can be laid out in varying ways depending on options.
+     *
+     * @sample highcharts/demo/treemap-large-dataset/
+     *         Treemap
+     *
+     * @extends      plotOptions.scatter
+     * @excluding    marker, jitter
+     * @product      highcharts
+     * @optionparent plotOptions.treemap
+     */
     , {
 
         /**
-     * When enabled the user can click on a point which is a parent and
-     * zoom in on its children.
-     *
-     * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/
-     *         Enabled
-     *
-     * @type      {boolean}
-     * @default   false
-     * @since     4.1.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.allowDrillToNode
-     */
+         * When enabled the user can click on a point which is a parent and
+         * zoom in on its children. Deprecated and replaced by
+         * [allowTraversingTree](#plotOptions.treemap.allowTraversingTree).
+         *
+         * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/
+         *         Enabled
+         *
+         * @deprecated
+         * @type      {boolean}
+         * @default   false
+         * @since     4.1.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.allowDrillToNode
+         */
 
         /**
-     * When the series contains less points than the crop threshold, all
-     * points are drawn, event if the points fall outside the visible plot
-     * area at the current zoom. The advantage of drawing all points (including
-     * markers and columns), is that animation is performed on updates.
-     * On the other hand, when the series contains more points than the
-     * crop threshold, the series data is cropped to only contain points
-     * that fall within the plot area. The advantage of cropping away invisible
-     * points is to increase performance on large series.
-     *
-     * @type      {number}
-     * @default   300
-     * @since     4.1.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.cropThreshold
-     */
+         * When enabled the user can click on a point which is a parent and
+         * zoom in on its children.
+         *
+         * @sample {highcharts} highcharts/plotoptions/treemap-allowtraversingtree/
+         *         Enabled
+         *
+         * @since     next
+         * @product   highcharts
+         */
+        allowTraversingTree: false,
 
         /**
-     * This option decides if the user can interact with the parent nodes
-     * or just the leaf nodes. When this option is undefined, it will be
-     * true by default. However when allowDrillToNode is true, then it will
-     * be false by default.
-     *
-     * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-false/
-     *         False
-     * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-true-and-allowdrilltonode/
-     *         InteractByLeaf and allowDrillToNode is true
-     *
-     * @type      {boolean}
-     * @since     4.1.2
-     * @product   highcharts
-     * @apioption plotOptions.treemap.interactByLeaf
-     */
+         * When the series contains less points than the crop threshold, all
+         * points are drawn, event if the points fall outside the visible plot
+         * area at the current zoom. The advantage of drawing all points
+         * (including markers and columns), is that animation is performed on
+         * updates. On the other hand, when the series contains more points than
+         * the crop threshold, the series data is cropped to only contain points
+         * that fall within the plot area. The advantage of cropping away
+         * invisible points is to increase performance on large series.
+         *
+         * @type      {number}
+         * @default   300
+         * @since     4.1.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.cropThreshold
+         */
 
         /**
-     * The sort index of the point inside the treemap level.
-     *
-     * @sample {highcharts} highcharts/plotoptions/treemap-sortindex/
-     *         Sort by years
-     *
-     * @type      {number}
-     * @since     4.1.10
-     * @product   highcharts
-     * @apioption plotOptions.treemap.sortIndex
-     */
+         * Fires on a request for change of root node for the tree, before the
+         * update is made. An event object is passed to the function, containing
+         * additional properties `newRootId`, `previousRootId`, `redraw` and
+         * `trigger`.
+         *
+         * @type {function}
+         * @default undefined
+         * @sample {highcharts} highcharts/plotoptions/treemap-events-setrootnode/
+         *         Alert update information on setRootNode event.
+         * @since next
+         * @product highcharts
+         * @apioption plotOptions.treemap.events.setRootNode
+         */
 
         /**
-     * When using automatic point colors pulled from the `options.colors`
-     * collection, this option determines whether the chart should receive
-     * one color per series or one color per point.
-     *
-     * @see [series colors](#plotOptions.treemap.colors)
-     *
-     * @type      {boolean}
-     * @default   false
-     * @since     2.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.colorByPoint
-     */
+         * This option decides if the user can interact with the parent nodes
+         * or just the leaf nodes. When this option is undefined, it will be
+         * true by default. However when allowTraversingTree is true, then it
+         * will be false by default.
+         *
+         * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-false/
+         *         False
+         * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-true-and-allowtraversingtree/
+         *         InteractByLeaf and allowTraversingTree is true
+         *
+         * @type      {boolean}
+         * @since     4.1.2
+         * @product   highcharts
+         * @apioption plotOptions.treemap.interactByLeaf
+         */
 
         /**
-     * A series specific or series type specific color set to apply instead
-     * of the global [colors](#colors) when
-     * [colorByPoint](#plotOptions.treemap.colorByPoint) is true.
-     *
-     * @type      {Array<Highcharts.ColorString>}
-     * @since     3.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.colors
-     */
+         * The sort index of the point inside the treemap level.
+         *
+         * @sample {highcharts} highcharts/plotoptions/treemap-sortindex/
+         *         Sort by years
+         *
+         * @type      {number}
+         * @since     4.1.10
+         * @product   highcharts
+         * @apioption plotOptions.treemap.sortIndex
+         */
 
         /**
-     * Whether to display this series type or specific series item in the
-     * legend.
-     */
+         * When using automatic point colors pulled from the `options.colors`
+         * collection, this option determines whether the chart should receive
+         * one color per series or one color per point.
+         *
+         * @see [series colors](#plotOptions.treemap.colors)
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since     2.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.colorByPoint
+         */
+
+        /**
+         * A series specific or series type specific color set to apply instead
+         * of the global [colors](#colors) when
+         * [colorByPoint](#plotOptions.treemap.colorByPoint) is true.
+         *
+         * @type      {Array<Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject>}
+         * @since     3.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.colors
+         */
+
+        /**
+         * Whether to display this series type or specific series item in the
+         * legend.
+         */
         showInLegend: false,
 
         /**
-     * @ignore
-     */
+         * @ignore
+         */
         marker: false,
 
         colorByPoint: false,
 
         /**
-     * @extends plotOptions.heatmap.dataLabels
-     * @since   4.1.0
-     */
+         * @extends plotOptions.heatmap.dataLabels
+         * @since   4.1.0
+         */
         dataLabels: {
             enabled: true,
             defer: false,
@@ -198,302 +231,354 @@ seriesType(
         },
 
         /**
-     * Whether to ignore hidden points when the layout algorithm runs.
-     * If `false`, hidden points will leave open spaces.
-     *
-     * @since 5.0.8
-     */
+         * Whether to ignore hidden points when the layout algorithm runs.
+         * If `false`, hidden points will leave open spaces.
+         *
+         * @since 5.0.8
+         */
         ignoreHiddenPoint: true,
 
         /**
-     * This option decides which algorithm is used for setting position
-     * and dimensions of the points.
-     *
-     * @see [How to write your own algorithm](https://www.highcharts.com/docs/chart-and-series-types/treemap)
-     *
-     * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-sliceanddice/
-     *         SliceAndDice by default
-     * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-stripes/
-     *         Stripes
-     * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-squarified/
-     *         Squarified
-     * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-strip/
-     *         Strip
-     *
-     * @since      4.1.0
-     * @validvalue ["sliceAndDice", "stripes", "squarified", "strip"]
-     */
+         * This option decides which algorithm is used for setting position
+         * and dimensions of the points.
+         *
+         * @see [How to write your own algorithm](https://www.highcharts.com/docs/chart-and-series-types/treemap)
+         *
+         * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-sliceanddice/
+         *         SliceAndDice by default
+         * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-stripes/
+         *         Stripes
+         * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-squarified/
+         *         Squarified
+         * @sample {highcharts} highcharts/plotoptions/treemap-layoutalgorithm-strip/
+         *         Strip
+         *
+         * @since      4.1.0
+         * @validvalue ["sliceAndDice", "stripes", "squarified", "strip"]
+         */
         layoutAlgorithm: 'sliceAndDice',
 
         /**
-     * Defines which direction the layout algorithm will start drawing.
-     *
-     * @since       4.1.0
-     * @validvalue ["vertical", "horizontal"]
-     */
+         * Defines which direction the layout algorithm will start drawing.
+         *
+         * @since       4.1.0
+         * @validvalue ["vertical", "horizontal"]
+         */
         layoutStartingDirection: 'vertical',
 
         /**
-     * Enabling this option will make the treemap alternate the drawing
-     * direction between vertical and horizontal. The next levels starting
-     * direction will always be the opposite of the previous.
-     *
-     * @sample {highcharts} highcharts/plotoptions/treemap-alternatestartingdirection-true/
-     *         Enabled
-     *
-     * @since 4.1.0
-     */
+         * Enabling this option will make the treemap alternate the drawing
+         * direction between vertical and horizontal. The next levels starting
+         * direction will always be the opposite of the previous.
+         *
+         * @sample {highcharts} highcharts/plotoptions/treemap-alternatestartingdirection-true/
+         *         Enabled
+         *
+         * @since 4.1.0
+         */
         alternateStartingDirection: false,
 
         /**
-     * Used together with the levels and allowDrillToNode options. When
-     * set to false the first level visible when drilling is considered
-     * to be level one. Otherwise the level will be the same as the tree
-     * structure.
-     *
-     * @since 4.1.0
-     */
+         * Used together with the levels and allowTraversingTree options. When
+         * set to false the first level visible to be level one, which is
+         * dynamic when traversing the tree. Otherwise the level will be the
+         * same as the tree structure.
+         *
+         * @since 4.1.0
+         */
         levelIsConstant: true,
-
         /**
-     * Options for the button appearing when drilling down in a treemap.
-     */
+         * Options for the button appearing when drilling down in a treemap.
+         * Deprecated and replaced by [traverseUpButton](#plotOptions.treemap.traverseUpButton).
+         *
+         * @deprecated
+         */
         drillUpButton: {
 
             /**
-         * The position of the button.
-         */
+             * The position of the button.
+             *
+             * @deprecated
+             */
             position: {
 
                 /**
-             * Vertical alignment of the button.
-             *
-             * @default    top
-             * @validvalue ["top", "middle", "bottom"]
-             * @product    highcharts
-             * @apioption  plotOptions.treemap.drillUpButton.position.verticalAlign
-             */
+                 * Vertical alignment of the button.
+                 *
+                 * @deprecated
+                 * @default    top
+                 * @validvalue ["top", "middle", "bottom"]
+                 * @product    highcharts
+                 * @apioption  plotOptions.treemap.drillUpButton.position.verticalAlign
+                 */
 
                 /**
-             * Horizontal alignment of the button.
-             *
-             * @validvalue ["left", "center", "right"]
-             */
+                 * Horizontal alignment of the button.
+                 *
+                 * @deprecated
+                 * @validvalue ["left", "center", "right"]
+                 */
                 align: 'right',
 
                 /**
-             * Horizontal offset of the button.
-             */
+                 * Horizontal offset of the button.
+                 *
+                 * @deprecated
+                 */
                 x: -10,
 
                 /**
-             * Vertical offset of the button.
+                 * Vertical offset of the button.
+                 *
+                 * @deprecated
+                 */
+                y: 10
+            }
+        },
+
+        /**
+         * Options for the button appearing when traversing down in a treemap.
+         */
+        traverseUpButton: {
+
+            /**
+             * The position of the button.
              */
+            position: {
+
+                /**
+                 * Vertical alignment of the button.
+                 *
+                 * @default    top
+                 * @validvalue ["top", "middle", "bottom"]
+                 * @product    highcharts
+                 * @apioption  plotOptions.treemap.traverseUpButton.position.verticalAlign
+                 */
+
+                /**
+                 * Horizontal alignment of the button.
+                 *
+                 * @validvalue ["left", "center", "right"]
+                 */
+                align: 'right',
+
+                /**
+                 * Horizontal offset of the button.
+                 */
+                x: -10,
+
+                /**
+                 * Vertical offset of the button.
+                 */
                 y: 10
             }
         },
 
 
         /**
-     * Set options on specific levels. Takes precedence over series options,
-     * but not point options.
-     *
-     * @sample {highcharts} highcharts/plotoptions/treemap-levels/
-     *         Styling dataLabels and borders
-     * @sample {highcharts} highcharts/demo/treemap-with-levels/
-     *         Different layoutAlgorithm
-     *
-     * @type      {Array<*>}
-     * @since     4.1.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.levels
-     */
+         * Set options on specific levels. Takes precedence over series options,
+         * but not point options.
+         *
+         * @sample {highcharts} highcharts/plotoptions/treemap-levels/
+         *         Styling dataLabels and borders
+         * @sample {highcharts} highcharts/demo/treemap-with-levels/
+         *         Different layoutAlgorithm
+         *
+         * @type      {Array<*>}
+         * @since     4.1.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.levels
+         */
 
         /**
-     * Can set a `borderColor` on all points which lies on the same level.
-     *
-     * @type      {Highcharts.ColorString}
-     * @since     4.1.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.levels.borderColor
-     */
+         * Can set a `borderColor` on all points which lies on the same level.
+         *
+         * @type      {Highcharts.ColorString}
+         * @since     4.1.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.levels.borderColor
+         */
 
         /**
-     * Set the dash style of the border of all the point which lies on the
-     * level. See <a href"#plotoptions.scatter.dashstyle">
-     * plotOptions.scatter.dashStyle</a> for possible options.
-     *
-     * @type      {string}
-     * @since     4.1.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.levels.borderDashStyle
-     */
+         * Set the dash style of the border of all the point which lies on the
+         * level. See <a href"#plotoptions.scatter.dashstyle">
+         * plotOptions.scatter.dashStyle</a> for possible options.
+         *
+         * @type      {string}
+         * @since     4.1.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.levels.borderDashStyle
+         */
 
         /**
-     * Can set the borderWidth on all points which lies on the same level.
-     *
-     * @type      {number}
-     * @since     4.1.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.levels.borderWidth
-     */
+         * Can set the borderWidth on all points which lies on the same level.
+         *
+         * @type      {number}
+         * @since     4.1.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.levels.borderWidth
+         */
 
         /**
-     * Can set a color on all points which lies on the same level.
-     *
-     * @type      {Highcharts.ColorString}
-     * @since     4.1.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.levels.color
-     */
+         * Can set a color on all points which lies on the same level.
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @since     4.1.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.levels.color
+         */
 
         /**
-     * A configuration object to define how the color of a child varies from the
-     * parent's color. The variation is distributed among the children of node.
-     * For example when setting brightness, the brightness change will range
-     * from the parent's original brightness on the first child, to the amount
-     * set in the `to` setting on the last node. This allows a gradient-like
-     * color scheme that sets children out from each other while highlighting
-     * the grouping on treemaps and sectors on sunburst charts.
-     *
-     * @sample highcharts/demo/sunburst/
-     *         Sunburst with color variation
-     *
-     * @since     6.0.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.levels.colorVariation
-     */
+         * A configuration object to define how the color of a child varies from
+         * the parent's color. The variation is distributed among the children
+         * of node. For example when setting brightness, the brightness change
+         * will range from the parent's original brightness on the first child,
+         * to the amount set in the `to` setting on the last node. This allows a
+         * gradient-like color scheme that sets children out from each other
+         * while highlighting the grouping on treemaps and sectors on sunburst
+         * charts.
+         *
+         * @sample highcharts/demo/sunburst/
+         *         Sunburst with color variation
+         *
+         * @since     6.0.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.levels.colorVariation
+         */
 
         /**
-     * The key of a color variation. Currently supports `brightness` only.
-     *
-     * @type       {string}
-     * @since      6.0.0
-     * @product    highcharts
-     * @validvalue ["brightness"]
-     * @apioption  plotOptions.treemap.levels.colorVariation.key
-     */
+         * The key of a color variation. Currently supports `brightness` only.
+         *
+         * @type       {string}
+         * @since      6.0.0
+         * @product    highcharts
+         * @validvalue ["brightness"]
+         * @apioption  plotOptions.treemap.levels.colorVariation.key
+         */
 
         /**
-     * The ending value of a color variation. The last sibling will receive this
-     * value.
-     *
-     * @type      {number}
-     * @since     6.0.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.levels.colorVariation.to
-     */
+         * The ending value of a color variation. The last sibling will receive
+         * this value.
+         *
+         * @type      {number}
+         * @since     6.0.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.levels.colorVariation.to
+         */
 
         /**
-     * Can set the options of dataLabels on each point which lies on the
-     * level. [plotOptions.treemap.dataLabels](#plotOptions.treemap.dataLabels)
-     * for possible values.
-     *
-     * @type      {object}
-     * @since     4.1.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.levels.dataLabels
-     */
+         * Can set the options of dataLabels on each point which lies on the
+         * level.
+         * [plotOptions.treemap.dataLabels](#plotOptions.treemap.dataLabels) for
+         * possible values.
+         *
+         * @type      {object}
+         * @since     4.1.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.levels.dataLabels
+         */
 
         /**
-     * Can set the layoutAlgorithm option on a specific level.
-     *
-     * @type       {string}
-     * @since      4.1.0
-     * @product    highcharts
-     * @validvalue ["sliceAndDice", "stripes", "squarified", "strip"]
-     * @apioption  plotOptions.treemap.levels.layoutAlgorithm
-     */
+         * Can set the layoutAlgorithm option on a specific level.
+         *
+         * @type       {string}
+         * @since      4.1.0
+         * @product    highcharts
+         * @validvalue ["sliceAndDice", "stripes", "squarified", "strip"]
+         * @apioption  plotOptions.treemap.levels.layoutAlgorithm
+         */
 
         /**
-     * Can set the layoutStartingDirection option on a specific level.
-     *
-     * @type       {string}
-     * @since      4.1.0
-     * @product    highcharts
-     * @validvalue ["vertical", "horizontal"]
-     * @apioption  plotOptions.treemap.levels.layoutStartingDirection
-     */
+         * Can set the layoutStartingDirection option on a specific level.
+         *
+         * @type       {string}
+         * @since      4.1.0
+         * @product    highcharts
+         * @validvalue ["vertical", "horizontal"]
+         * @apioption  plotOptions.treemap.levels.layoutStartingDirection
+         */
 
         /**
-     * Decides which level takes effect from the options set in the levels
-     * object.
-     *
-     * @sample {highcharts} highcharts/plotoptions/treemap-levels/
-     *         Styling of both levels
-     *
-     * @type      {number}
-     * @since     4.1.0
-     * @product   highcharts
-     * @apioption plotOptions.treemap.levels.level
-     */
+         * Decides which level takes effect from the options set in the levels
+         * object.
+         *
+         * @sample {highcharts} highcharts/plotoptions/treemap-levels/
+         *         Styling of both levels
+         *
+         * @type      {number}
+         * @since     4.1.0
+         * @product   highcharts
+         * @apioption plotOptions.treemap.levels.level
+         */
 
 
         // Presentational options
 
         /**
-     * The color of the border surrounding each tree map item.
-     *
-     * @type {Highcharts.ColorString}
-     */
+         * The color of the border surrounding each tree map item.
+         *
+         * @type {Highcharts.ColorString}
+         */
         borderColor: '${palette.neutralColor10}',
 
         /**
-     * The width of the border surrounding each tree map item.
-     */
+         * The width of the border surrounding each tree map item.
+         */
         borderWidth: 1,
 
         /**
-     * The opacity of a point in treemap. When a point has children, the
-     * visibility of the children is determined by the opacity.
-     *
-     * @since 4.2.4
-     */
+         * The opacity of a point in treemap. When a point has children, the
+         * visibility of the children is determined by the opacity.
+         *
+         * @since 4.2.4
+         */
         opacity: 0.15,
 
         /**
-     * A wrapper object for all the series options in specific states.
-     *
-     * @extends plotOptions.heatmap.states
-     */
+         * A wrapper object for all the series options in specific states.
+         *
+         * @extends plotOptions.heatmap.states
+         */
         states: {
 
             /**
-         * Options for the hovered series
-         *
-         * @extends   plotOptions.heatmap.states.hover
-         * @excluding halo
-         */
+             * Options for the hovered series
+             *
+             * @extends   plotOptions.heatmap.states.hover
+             * @excluding halo
+             */
             hover: {
 
                 /**
-             * The border color for the hovered state.
-             */
+                 * The border color for the hovered state.
+                 */
                 borderColor: '${palette.neutralColor40}',
 
                 /**
-             * Brightness for the hovered point. Defaults to 0 if the heatmap
-             * series is loaded first, otherwise 0.1.
-             *
-             * @type    {number}
-             * @default undefined
-             */
+                 * Brightness for the hovered point. Defaults to 0 if the
+                 * heatmap series is loaded first, otherwise 0.1.
+                 *
+                 * @type    {number}
+                 * @default undefined
+                 */
                 brightness: seriesTypes.heatmap ? 0 : 0.1,
+
                 /**
-             * @extends plotOptions.heatmap.states.hover.halo
-             */
+                 * @extends plotOptions.heatmap.states.hover.halo
+                 */
                 halo: false,
+
                 /**
-             * The opacity of a point in treemap. When a point has children,
-             * the visibility of the children is determined by the opacity.
-             *
-             * @since 4.2.4
-             */
+                 * The opacity of a point in treemap. When a point has children,
+                 * the visibility of the children is determined by the opacity.
+                 *
+                 * @since 4.2.4
+                 */
                 opacity: 0.75,
 
                 /**
-             * The shadow option for hovered state.
-             */
+                 * The shadow option for hovered state.
+                 */
                 shadow: false
             }
         }
@@ -509,20 +594,20 @@ seriesType(
         colorKey: 'colorValue', // Point color option key
         trackerGroups: ['group', 'dataLabelsGroup'],
         /**
-     * Creates an object map from parent id to childrens index.
-     *
-     * @private
-     * @function Highcharts.Series#getListOfParents
-     *
-     * @param {Highcharts.SeriesTreemapDataOptions} data
-     *        List of points set in options.
-     *
-     * @param {Array<string>} existingIds
-     *        List of all point ids.
-     *
-     * @return {object}
-     *         Map from parent id to children index in data.
-     */
+         * Creates an object map from parent id to childrens index.
+         *
+         * @private
+         * @function Highcharts.Series#getListOfParents
+         *
+         * @param {Highcharts.SeriesTreemapDataOptions} data
+         *        List of points set in options.
+         *
+         * @param {Array<string>} existingIds
+         *        List of all point ids.
+         *
+         * @return {object}
+         *         Map from parent id to children index in data.
+         */
         getListOfParents: function (data, existingIds) {
             var arr = isArray(data) ? data : [],
                 ids = isArray(existingIds) ? existingIds : [],
@@ -571,9 +656,31 @@ seriesType(
                 this.axisTypes = colorSeriesMixin.axisTypes;
             }
 
+            // Handle deprecated options.
+            addEvent(series, 'setOptions', function (event) {
+                var options = event.userOptions;
+
+                if (
+                    defined(options.allowDrillToNode) &&
+                    !defined(options.allowTraversingTree)
+                ) {
+                    options.allowTraversingTree = options.allowDrillToNode;
+                    delete options.allowDrillToNode;
+                }
+
+                if (
+                    defined(options.drillUpButton) &&
+                    !defined(options.traverseUpButton)
+                ) {
+                    options.traverseUpButton = options.drillUpButton;
+                    delete options.drillUpButton;
+                }
+            });
+
             Series.prototype.init.call(series, chart, options);
-            if (series.options.allowDrillToNode) {
-                H.addEvent(series, 'click', series.onClickDrillToNode);
+
+            if (series.options.allowTraversingTree) {
+                addEvent(series, 'click', series.onClickDrillToNode);
             }
         },
         buildNode: function (id, i, level, list, parent) {
@@ -1069,7 +1176,7 @@ seriesType(
                 rootId !== '' &&
             (!rootNode || !rootNode.children.length)
             ) {
-                series.drillToNode('', false);
+                series.setRootNode('', false);
                 rootId = series.rootNode;
                 rootNode = series.nodeMap[rootId];
             }
@@ -1122,7 +1229,7 @@ seriesType(
             }
 
             // Update axis extremes according to the root node.
-            if (options.allowDrillToNode) {
+            if (options.allowTraversingTree) {
                 val = rootNode.pointValues;
                 series.xAxis.setExtremes(val.x, val.x + val.width, false);
                 series.yAxis.setExtremes(val.y, val.y + val.height, false);
@@ -1134,18 +1241,20 @@ seriesType(
             series.setPointValues();
         },
         /**
-     * Extend drawDataLabels with logic to handle custom options related to the
-     * treemap series:
-     *
-     * - Points which is not a leaf node, has dataLabels disabled by default.
-     *
-     * - Options set on series.levels is merged in.
-     *
-     * - Width of the dataLabel is set to match the width of the point shape.
-     *
-     * @private
-     * @function Highcharts.Series#drawDataLabels
-     */
+         * Extend drawDataLabels with logic to handle custom options related to
+         * the treemap series:
+         *
+         * - Points which is not a leaf node, has dataLabels disabled by
+         *   default.
+         *
+         * - Options set on series.levels is merged in.
+         *
+         * - Width of the dataLabel is set to match the width of the point
+         *   shape.
+         *
+         * @private
+         * @function Highcharts.Series#drawDataLabels
+         */
         drawDataLabels: function () {
             var series = this,
                 mapOptionsToLevel = series.mapOptionsToLevel,
@@ -1313,9 +1422,9 @@ seriesType(
                 }, this);
             }
 
-            // If drillToNode is allowed, set a point cursor on clickables & add
+            // If setRootNode is allowed, set a point cursor on clickables & add
             // drillId to point
-            if (series.options.allowDrillToNode) {
+            if (series.options.allowTraversingTree) {
                 points.forEach(function (point) {
                     if (point.graphic) {
                         point.drillId = series.options.interactByLeaf ?
@@ -1334,21 +1443,22 @@ seriesType(
             // If a drill id is returned, add click event and cursor.
             if (isString(drillId)) {
                 point.setState(''); // Remove hover
-                series.drillToNode(drillId);
+                series.setRootNode(drillId, true, { trigger: 'click' });
             }
         },
         /**
-     * Finds the drill id for a parent node. Returns false if point should not
-     * have a click event.
-     *
-     * @private
-     * @function Highcharts.Series#drillToByGroup
-     *
-     * @param {object} point
-     *
-     * @return {boolean|string}
-     *         Drill to id or false when point should not have a click event.
-     */
+         * Finds the drill id for a parent node. Returns false if point should
+         * not have a click event.
+         *
+         * @private
+         * @function Highcharts.Series#drillToByGroup
+         *
+         * @param {object} point
+         *
+         * @return {boolean|string}
+         *         Drill to id or false when point should not have a click
+         *         event.
+         */
         drillToByGroup: function (point) {
             var series = this,
                 drillId = false;
@@ -1362,17 +1472,18 @@ seriesType(
             return drillId;
         },
         /**
-    * Finds the drill id for a leaf node. Returns false if point should not have
-    * a click event
-    *
-    * @private
-    * @function Highcharts.Series#drillToByLeaf
-    *
-    * @param {object} point
-    *
-    * @return {boolean|string}
-    *         Drill to id or false when point should not have a click event.
-    */
+         * Finds the drill id for a leaf node. Returns false if point should not
+         * have a click event
+         *
+         * @private
+         * @function Highcharts.Series#drillToByLeaf
+         *
+         * @param {object} point
+         *
+         * @return {boolean|string}
+         *         Drill to id or false when point should not have a click
+         *         event.
+         */
         drillToByLeaf: function (point) {
             var series = this,
                 drillId = false,
@@ -1396,30 +1507,90 @@ seriesType(
                 node = series.nodeMap[series.rootNode];
 
             if (node && isString(node.parent)) {
-                series.drillToNode(node.parent);
+                series.setRootNode(
+                    node.parent,
+                    true,
+                    { trigger: 'traverseUpButton' }
+                );
             }
         },
+        // TODO remove this function at a suitable version.
         drillToNode: function (id, redraw) {
+            error(
+                'WARNING: treemap.drillToNode has been renamed to treemap.' +
+                'setRootNode, and will be removed in the next major version.'
+            );
+            this.setRootNode(id, redraw);
+        },
+        /**
+         * Sets a new root node for the series.
+         *
+         * @param {string} id The id of the new root node.
+         * @param {boolean} [redraw=true] Wether to redraw the chart or not.
+         * @param {object} [eventArguments] Arguments to be accessed in
+         * event handler.
+         * @param {string} [eventArguments.newRootId] Id of the new root.
+         * @param {string} [eventArguments.previousRootId] Id of the previous
+         * root.
+         * @param {boolean} [eventArguments.redraw] Wether to redraw the
+         * chart after.
+         * @param {object} [eventArguments.series] The series to update the root
+         * of.
+         * @param {string} [eventArguments.trigger] The action which
+         * triggered the event. Undefined if the setRootNode is called
+         * directly.
+         */
+        setRootNode: function (id, redraw, eventArguments) {
             var series = this,
-                nodeMap = series.nodeMap,
-                node = nodeMap[id];
+                eventArgs = extend({
+                    newRootId: id,
+                    previousRootId: series.rootNode,
+                    redraw: pick(redraw, true),
+                    series: series
+                }, eventArguments);
 
-            series.idPreviousRoot = series.rootNode;
-            series.rootNode = id;
-            if (id === '') {
-                series.drillUpButton = series.drillUpButton.destroy();
-            } else {
-                series.showDrillUpButton((node && node.name || id));
-            }
-            this.isDirty = true; // Force redraw
-            if (pick(redraw, true)) {
-                this.chart.redraw();
-            }
+            /**
+             * The default functionality of the setRootNode event.
+             * @param {object} args The event arguments.
+             * @param {string} args.newRootId Id of the new root.
+             * @param {string} args.previousRootId Id of the previous root.
+             * @param {boolean} args.redraw Wether to redraw the chart after.
+             * @param {object} args.series The series to update the root of.
+             * @param {string} [args.trigger=undefined] The action which
+             * triggered the event. Undefined if the setRootNode is called
+             * directly.
+             */
+            var defaultFn = function (args) {
+                var series = args.series,
+                    newRootId = args.newRootId,
+                    nodeMap = series.nodeMap,
+                    node = nodeMap[newRootId];
+
+                // Store previous and new root ids on the series.
+                series.idPreviousRoot = args.previousRootId;
+                series.rootNode = newRootId;
+
+                // Remove or update the drill up button.
+                if (newRootId === '') {
+                    series.drillUpButton = series.drillUpButton.destroy();
+                } else {
+                    series.showDrillUpButton((node && node.name || newRootId));
+                }
+
+                // Redraw the chart
+                series.isDirty = true; // Force redraw
+                if (args.redraw) {
+                    series.chart.redraw();
+                }
+            };
+
+            // Fire setRootNode event.
+            fireEvent(series, 'setRootNode', eventArgs, defaultFn);
         },
         showDrillUpButton: function (name) {
             var series = this,
                 backText = (name || '< Back'),
-                buttonOptions = series.options.drillUpButton,
+                buttonOptions = series.options.traverseUpButton,
                 attr,
                 states;
 
@@ -1509,7 +1680,7 @@ seriesType(
 
             } else if (
                 !this.node.isLeaf &&
-            !pick(options.interactByLeaf, !options.allowDrillToNode)
+            !pick(options.interactByLeaf, !options.allowTraversingTree)
             ) {
                 className += ' highcharts-internal-node-interactive';
 
@@ -1520,12 +1691,12 @@ seriesType(
         },
 
         /**
-     * A tree point is valid if it has han id too, assume it may be a parent
-     * item.
-     *
-     * @private
-     * @function Highcharts.Point#isValid
-     */
+         * A tree point is valid if it has han id too, assume it may be a parent
+         * item.
+         *
+         * @private
+         * @function Highcharts.Point#isValid
+         */
         isValid: function () {
             return this.id || isNumber(this.value);
         },

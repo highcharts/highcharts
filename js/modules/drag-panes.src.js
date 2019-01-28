@@ -56,10 +56,9 @@ var hasTouch = H.hasTouch,
 
         /**
          * Options for axis resizing. This feature requires the
-         * `drag-panes.js` -
-         * [classic](http://code.highcharts.com/stock/modules/drag-panes.js) or
-         * [styled](http://code.highcharts.com/stock/js/modules/drag-panes.js)
-         * mode - module.
+         * [drag-panes.js](http://code.highcharts.com/stock/modules/drag-panes.js)
+         * module. It adds a thick line between panes which the user can drag
+         * in order to resize the panes.
          *
          * @product highstock
          * @sample    {highstock} stock/demo/candlestick-and-volume
@@ -200,7 +199,7 @@ H.AxisResizer = function (axis) {
 
 H.AxisResizer.prototype = {
     /**
-     * Initiate the AxisResizer object.
+     * Initialize the AxisResizer object.
      *
      * @function Highcharts.AxisResizer#init
      *
@@ -404,6 +403,9 @@ H.AxisResizer.prototype = {
             plotHeight = chart.plotHeight,
             plotBottom = plotTop + plotHeight,
             yDelta,
+            calculatePercent = function (value) {
+                return value * 100 / plotHeight + '%';
+            },
             normalize = function (val, min, max) {
                 return Math.round(Math.min(Math.max(val, min), max));
             };
@@ -496,8 +498,8 @@ H.AxisResizer.prototype = {
                     axesConfigs.push({
                         axis: axis,
                         options: {
-                            top: Math.round(top),
-                            height: height
+                            top: calculatePercent(top - plotTop),
+                            height: calculatePercent(height)
                         }
                     });
                 } else {
@@ -514,7 +516,7 @@ H.AxisResizer.prototype = {
                     axesConfigs.push({
                         axis: axis,
                         options: {
-                            height: height
+                            height: calculatePercent(height)
                         }
                     });
                 }

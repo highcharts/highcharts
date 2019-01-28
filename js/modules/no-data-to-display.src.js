@@ -83,6 +83,7 @@ defaultOptions.noData = {
     /**
      * The position of the no-data label, relative to the plot area.
      *
+     * @type  {Highcharts.AlignObject}
      * @since 3.0.8
      */
     position: {
@@ -100,14 +101,14 @@ defaultOptions.noData = {
         /**
          * Horizontal alignment of the label.
          *
-         * @validvalue ["left", "center", "right"]
+         * @type {Highcharts.AlignType}
          */
         align: 'center',
 
         /**
          * Vertical alignment of the label.
          *
-         * @validvalue ["top", "middle", "bottom"]
+         * @type {Highcharts.VerticalAlignType}
          */
         verticalAlign: 'middle'
     },

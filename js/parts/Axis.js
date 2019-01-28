@@ -2610,6 +2610,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
+         * If there are multiple axes on the same side of the chart, the pixel
+         * margin between the axes. Defaults to 0 on vertical axes, 15 on
+         * horizontal axes.
+         *
+         * @type      number
+         * @since     7.0.3
+         * @apioption xAxis.margin
+         */
+
+        /**
          * @sample {highcharts} highcharts/yaxis/max-200/
          *         Y axis max of 200
          * @sample {highcharts} highcharts/yaxis/max-logarithmic/
@@ -2761,11 +2771,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-align-right/
          *         Aligned to the right
          *
-         * @type       {string}
-         * @since      2.1.5
-         * @product    highcharts
-         * @validvalue ["left", "center", "right"]
-         * @apioption  yAxis.stackLabels.align
+         * @type      {Highcharts.AlignType}
+         * @since     2.1.5
+         * @product   highcharts
+         * @apioption yAxis.stackLabels.align
          */
 
         /**
@@ -2803,11 +2812,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-textalign-left/
          *         Label in center position but text-aligned left
          *
-         * @type       {string}
-         * @since      2.1.5
-         * @product    highcharts
-         * @validvalue ["left", "center", "right"]
-         * @apioption  yAxis.stackLabels.textAlign
+         * @type      {Highcharts.AlignType}
+         * @since     2.1.5
+         * @product   highcharts
+         * @apioption yAxis.stackLabels.textAlign
          */
 
         /**
@@ -2834,11 +2842,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-bottom/
          *         Vertically aligned bottom
          *
-         * @type       {string}
-         * @since      2.1.5
-         * @product    highcharts
-         * @validvalue ["top", "middle", "bottom"]
-         * @apioption  yAxis.stackLabels.verticalAlign
+         * @type      {Highcharts.VerticalAlignType}
+         * @since     2.1.5
+         * @product   highcharts
+         * @apioption yAxis.stackLabels.verticalAlign
          */
 
         /**
@@ -3069,6 +3076,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // overflow: undefined,
             // staggerLines: null
         },
+        margin: 15,
         title: {
             rotation: 0
         }
@@ -3082,6 +3090,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // overflow: undefined
             // staggerLines: null
         },
+        margin: 15,
         title: {
             rotation: 0
         }
@@ -4191,7 +4200,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // padding does not apply.
                         minPointOffset = Math.max(
                             minPointOffset,
-                            isString(pointPlacement) ? 0 : seriesPointRange / 2
+                            isXAxis && isString(pointPlacement) ?
+                                0 : seriesPointRange / 2
                         );
 
                         // Determine the total padding needed to the length of
@@ -4199,7 +4209,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // series' pointPlacement is 'on', no padding is added.
                         pointRangePadding = Math.max(
                             pointRangePadding,
-                            pointPlacement === 'on' ? 0 : seriesPointRange
+                            isXAxis && pointPlacement === 'on' ?
+                                0 : seriesPointRange
                         );
                     }
                 });
@@ -4787,24 +4798,29 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      */
     adjustTickAmount: function () {
-        var tickInterval = this.tickInterval,
-            tickPositions = this.tickPositions,
-            tickAmount = this.tickAmount,
-            finalTickAmt = this.finalTickAmt,
+        var axis = this,
+            axisOptions = axis.options,
+            tickInterval = axis.tickInterval,
+            tickPositions = axis.tickPositions,
+            tickAmount = axis.tickAmount,
+            finalTickAmt = axis.finalTickAmt,
             currentTickAmount = tickPositions && tickPositions.length,
-            threshold = pick(this.threshold, this.softThreshold ? 0 : null),
-            i,
-            len;
+            threshold = pick(axis.threshold, axis.softThreshold ? 0 : null),
+            min,
+            len,
+            i;
 
-        if (this.hasData()) {
+        if (axis.hasData()) {
             if (currentTickAmount < tickAmount) {
+                min = axis.min;
+
                 while (tickPositions.length < tickAmount) {
 
                     // Extend evenly for both sides unless we're on the
                     // threshold (#3965)
                     if (
                         tickPositions.length % 2 ||
-                        this.min === threshold
+                        min === threshold
                     ) {
                         // to the end
                         tickPositions.push(correctFloat(
@@ -4818,14 +4834,20 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         ));
                     }
                 }
-                this.transA *= (currentTickAmount - 1) / (tickAmount - 1);
-                this.min = tickPositions[0];
-                this.max = tickPositions[tickPositions.length - 1];
+                axis.transA *= (currentTickAmount - 1) / (tickAmount - 1);
+
+                // Do not crop when ticks are not extremes (#9841)
+                axis.min = axisOptions.startOnTick ?
+                    tickPositions[0] :
+                    Math.min(axis.min, tickPositions[0]);
+                axis.max = axisOptions.endOnTick ?
+                    tickPositions[tickPositions.length - 1] :
+                    Math.max(axis.max, tickPositions[tickPositions.length - 1]);
 
             // We have too many ticks, run second pass to try to reduce ticks
             } else if (currentTickAmount > tickAmount) {
-                this.tickInterval *= 2;
-                this.setTickPositions();
+                axis.tickInterval *= 2;
+                axis.setTickPositions();
             }
 
             // The finalTickAmt property is set in getTickAmount
@@ -4841,7 +4863,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         tickPositions.splice(i, 1);
                     }
                 }
-                this.finalTickAmt = undefined;
+                axis.finalTickAmt = undefined;
             }
         }
     },
@@ -5232,12 +5254,23 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             step,
             bestScore = Number.MAX_VALUE,
             autoRotation,
+            range = this.max - this.min,
             // Return the multiple of tickInterval that is needed to avoid
             // collision
             getStep = function (spaceNeeded) {
                 var step = spaceNeeded / (slotSize || 1);
 
                 step = step > 1 ? Math.ceil(step) : 1;
+
+                // Guard for very small or negative angles (#9835)
+                if (
+                    step * tickInterval > range &&
+                    spaceNeeded !== Infinity &&
+                    slotSize !== Infinity
+                ) {
+                    step = Math.ceil(range / tickInterval);
+                }
+
                 return correctFloat(step * tickInterval);
             };
 
@@ -5748,7 +5781,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         axis.renderLine();
 
         // handle automatic or user set offset
-        axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
+        axis.offset = directionFactor * pick(
+            options.offset,
+            axisOffset[side] ? axisOffset[side] + (options.margin || 0) : 0
+        );
 
         axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
         if (side === 0) {

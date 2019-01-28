@@ -44,8 +44,8 @@ seriesType(
      * @extends      plotOptions.bubble
      * @since        7.0.0
      * @product      highcharts
-     * @excluding    connectEnds, connectNulls, keys, sizeByAbsoluteValue, step,
-     *               zMax, zMin
+     * @excluding    connectEnds, connectNulls, jitter, keys,
+     *               sizeByAbsoluteValue, step, zMax, zMin
      * @optionparent plotOptions.packedbubble
      */
     {

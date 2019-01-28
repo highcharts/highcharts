@@ -15,4 +15,4 @@ node generate-changelog --since vX.X.X
 node generate-changelog-html
 ```
 
-5. Publish the generated .html file on  the website.
+5. The generated `changelog.html` is committed to the _highcharts_ repo and will be picked up by the web server.

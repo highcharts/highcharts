@@ -9,7 +9,10 @@
  *
  * @callback Highcharts.SeriesAfterAnimateCallbackFunction
  *
- * @param {Highcharts.SeriesAfterAnimateEventObject} e
+ * @param {Highcharts.Series} this
+ *        The series where the event occured.
+ *
+ * @param {Highcharts.SeriesAfterAnimateEventObject} event
  *        Event arguments.
  */
 
@@ -33,7 +36,10 @@
  *
  * @callback Highcharts.SeriesCheckboxClickCallbackFunction
  *
- * @param {Highcharts.SeriesCheckboxClickEventObject} e
+ * @param {Highcharts.Series} this
+ *        The series where the event occured.
+ *
+ * @param {Highcharts.SeriesCheckboxClickEventObject} event
  *        Event arguments.
  */
 
@@ -60,10 +66,22 @@
  */
 
 /**
+ * Function callback when a series is clicked. Return false to cancel toogle
+ * actions.
+ *
+ * @callback Highcharts.SeriesClickCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occured.
+ *
+ * @param {Highcharts.SeriesClickEventObject} event
+ *        Event arguments.
+ */
+
+/**
  * Common information for a click event on a series.
  *
  * @interface Highcharts.SeriesClickEventObject
- *
  * @implements {global.Event}
  *//**
  * Nearest point on the graph.
@@ -72,20 +90,83 @@
  */
 
 /**
- * Function callback when a series is clicked. Return false to cancel toogle
- * actions.
- *
- * @callback Highcharts.SeriesClickCallbackFunction
- *
- * @param {Highcharts.SeriesClickEventObject} e
- *        Event arguments.
- */
-
-/**
  * @interface Highcharts.SeriesDataLabelsFormatterContextObject
  *//**
  * @name Highcharts.SeriesDataLabelsFormatterContextObject#point
  * @type {Highcharts.Point}
+ */
+
+/**
+ * Gets fired when the series is hidden after chart generation time, either by
+ * clicking the legend item or by calling `.hide()`.
+ *
+ * @callback Highcharts.SeriesHideCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occured.
+ *
+ * @param {global.Event} event
+ *        The event that occured.
+ */
+
+/**
+ * Gets fired when the legend item belonging to the series is clicked. The
+ * default action is to toggle the visibility of the series. This can be
+ * prevented by returning `false` or calling `event.preventDefault()`.
+ *
+ * @callback Highcharts.SeriesLegendItemClickCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occured.
+ *
+ * @param {Highcharts.SeriesLegendItemClickEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Information about the event.
+ *
+ * @interface Highcharts.SeriesLegendItemClickEventObject
+ *//**
+ * Related browser event.
+ * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
+ * @type {Highcharts.PointerEvent}
+ *//**
+ * Prevent the default action of toggle the visibility of the series.
+ * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * Related series.
+ * @name Highcharts.SeriesCheckboxClickEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesCheckboxClickEventObject#type
+ * @type {"checkboxClick"}
+ */
+
+/**
+ * Gets fired when the mouse leaves the graph.
+ *
+ * @callback Highcharts.SeriesMouseOutCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        Series where the event occured.
+ *
+ * @param {global.Event} event
+ *        Event that occured.
+ */
+
+/**
+ * Gets fired when the mouse enters the graph.
+ *
+ * @callback Highcharts.SeriesMouseOverCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        Series where the event occured.
+ *
+ * @param {global.Event} event
+ *        Event that occured.
  */
 
 /**
@@ -112,7 +193,10 @@
  *
  * @callback Highcharts.SeriesPointClickCallbackFunction
  *
- * @param {Highcharts.SeriesPointClickEventObject} e
+ * @param {Highcharts.Point} this
+ *        The point where the event occured.
+ *
+ * @param {Highcharts.SeriesPointClickEventObject} event
  *        Event arguments.
  */
 
@@ -120,12 +204,130 @@
  * Common information for a click event on a series point.
  *
  * @interface Highcharts.SeriesPointClickEventObject
- *
- * @implements {global.Event}
+ * @implements {Highcharts.PointerEventObject}
  *//**
  * Clicked point.
  * @name Highcharts.SeriesPointClickEventObject#point
  * @type {Highcharts.Point}
+ */
+
+/**
+ * Gets fired when the mouse leaves the area close to the point.
+ *
+ * @callback Highcharts.SeriesPointMouseOutCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {global.Event} event
+ *        Event that occured.
+ */
+
+/**
+ * Gets fired when the mouse enters the area close to the point.
+ *
+ * @callback Highcharts.SeriesPointMouseOverCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {global.Event} event
+ *        Event that occured.
+ */
+
+/**
+ * Gets fired when the point is removed using the `.remove()` method.
+ *
+ * @callback Highcharts.SeriesPointRemoveCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {global.Event} event
+ *        Event that occured.
+ */
+
+/**
+ * Gets fired when the point is selected either programmatically or following a
+ * click on the point.
+ *
+ * @callback Highcharts.SeriesPointSelectCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.SeriesPointSelectEventObject} event
+ *        Event that occured.
+ */
+
+/**
+ * Information about the select event.
+ *
+ * @interface Highcharts.SeriesPointSelectEventObject
+ * @implements {global.Event}
+ *//**
+ * @name Highcharts.SeriesPointSelectEventObject#accumulate
+ * @type {boolean}
+ */
+
+/**
+ * Fires when the point is unselected either programmatically or following a
+ * click on the point.
+ *
+ * @callback Highcharts.SeriesPointUnselectCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.SeriesPointUnselectEventObject} event
+ *        Event that occured.
+ */
+
+/**
+ * Information about the unselect event.
+ *
+ * @interface Highcharts.SeriesPointUnselectEventObject
+ * @implements {global.Event}
+ *//**
+ * @name Highcharts.SeriesPointUnselectEventObject#accumulate
+ * @type {boolean}
+ */
+
+/**
+ * Gets fired when the point is updated programmatically through the `.update()`
+ * method.
+ *
+ * @callback Highcharts.SeriesPointUpdateCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.SeriesPointUpdateEventObject} event
+ *        Event that occured.
+ */
+
+/**
+ * Information about the update event.
+ *
+ * @interface Highcharts.SeriesPointUpdateEventObject
+ * @implements {global.Event}
+ *//**
+ * Options data of the update event.
+ * @name Highcharts.SeriesPointUpdateEventObject#options
+ * @type {number|object|Array<(number|string)>|null}
+ */
+
+/**
+ * Gets fired when the series is shown after chart generation time, either by
+ * clicking the legend item or by calling `.show()`.
+ *
+ * @callback Highcharts.SeriesShowCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        Series where the event occured.
+ *
+ * @param {global.Event} event
+ *        Event that occured.
  */
 
 'use strict';
@@ -312,6 +514,8 @@ H.Series = H.seriesType(
      * series type is inherited from [chart.type](#chart.type), so unless the
      * chart is a combination of series types, there is no need to set it on the
      * series level.
+     *
+     * In TypeScript instead the `type` option must always be set.
      *
      * @sample {highcharts} highcharts/series/type/
      *         Line and column in the same chart
@@ -869,6 +1073,8 @@ H.Series = H.seriesType(
          *         Between in a column chart
          * @sample {highcharts|highstock} highcharts/plotoptions/series-pointplacement-numeric/
          *         Numeric placement for custom layout
+         * @sample {highcharts|highstock} maps/plotoptions/heatmap-pointplacement/
+         *         Placement in heatmap
          *
          * @type      {string|number}
          * @since     2.3.0
@@ -1118,7 +1324,7 @@ H.Series = H.seriesType(
          * @sample {highcharts} highcharts/plotoptions/series-events-hide/
          *         Alert when the series is hidden by clicking the legend item
          *
-         * @type      {Function}
+         * @type      {Highcharts.SeriesHideCallbackFunction}
          * @since     1.2.0
          * @context   Highcharts.Series
          * @apioption plotOptions.series.events.hide
@@ -1133,7 +1339,7 @@ H.Series = H.seriesType(
          * @sample {highcharts} highcharts/plotoptions/series-events-legenditemclick/
          *         Confirm hiding and showing
          *
-         * @type      {Function}
+         * @type      {Highcharts.SeriesLegendItemClickCallbackFunction}
          * @context   Highcharts.Series
          * @apioption plotOptions.series.events.legendItemClick
          */
@@ -1150,7 +1356,7 @@ H.Series = H.seriesType(
          * @sample {highcharts} highcharts/plotoptions/series-events-mouseover-no-sticky/
          *         Without sticky tracking
          *
-         * @type      {Function}
+         * @type      {Highcharts.SeriesMouseOutCallbackFunction}
          * @context   Highcharts.Series
          * @apioption plotOptions.series.events.mouseOut
          */
@@ -1164,7 +1370,7 @@ H.Series = H.seriesType(
          * @sample {highcharts} highcharts/plotoptions/series-events-mouseover-no-sticky/
          *         Without sticky tracking
          *
-         * @type      {Function}
+         * @type      {Highcharts.SeriesMouseOverCallbackFunction}
          * @context   Highcharts.Series
          * @apioption plotOptions.series.events.mouseOver
          */
@@ -1176,7 +1382,7 @@ H.Series = H.seriesType(
          * @sample {highcharts} highcharts/plotoptions/series-events-show/
          *         Alert when the series is shown by clicking the legend item.
          *
-         * @type      {Function}
+         * @type      {Highcharts.SeriesShowCallbackFunction}
          * @since     1.2.0
          * @context   Highcharts.Series
          * @apioption plotOptions.series.events.show
@@ -1531,7 +1737,7 @@ H.Series = H.seriesType(
              * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/
              *         Show values in the chart's corner on mouse over
              *
-             * @type      {Function}
+             * @type      {Highcharts.SeriesPointMouseOutCallbackFunction}
              * @context   Highcharts.Point
              * @apioption plotOptions.series.point.events.mouseOut
              */
@@ -1544,7 +1750,7 @@ H.Series = H.seriesType(
              * @sample {highcharts} highcharts/plotoptions/series-point-events-mouseover/
              *         Show values in the chart's corner on mouse over
              *
-             * @type      {Function}
+             * @type      {Highcharts.SeriesPointMouseOverCallbackFunction}
              * @context   Highcharts.Point
              * @apioption plotOptions.series.point.events.mouseOver
              */
@@ -1557,7 +1763,7 @@ H.Series = H.seriesType(
              * @sample {highcharts} highcharts/plotoptions/series-point-events-remove/
              *         Remove point and confirm
              *
-             * @type      {Function}
+             * @type      {Highcharts.SeriesPointRemoveCallbackFunction}
              * @since     1.2.0
              * @context   Highcharts.Point
              * @apioption plotOptions.series.point.events.remove
@@ -1573,7 +1779,7 @@ H.Series = H.seriesType(
              * @sample {highmaps} maps/plotoptions/series-allowpointselect/
              *         Report select and unselect
              *
-             * @type      {Function}
+             * @type      {Highcharts.SeriesPointSelectCallbackFunction}
              * @since     1.2.0
              * @context   Highcharts.Point
              * @apioption plotOptions.series.point.events.select
@@ -1590,7 +1796,7 @@ H.Series = H.seriesType(
              * @sample {highmaps} maps/plotoptions/series-allowpointselect/
              *         Report select and unselect
              *
-             * @type      {Function}
+             * @type      {Highcharts.SeriesPointUnselectCallbackFunction}
              * @since     1.2.0
              * @context   Highcharts.Point
              * @apioption plotOptions.series.point.events.unselect
@@ -1605,7 +1811,7 @@ H.Series = H.seriesType(
              * @sample {highcharts} highcharts/plotoptions/series-point-events-update/
              *         Confirm point updating
              *
-             * @type      {Function}
+             * @type      {Highcharts.SeriesPointUpdateCallbackFunction}
              * @since     1.2.0
              * @context   Highcharts.Point
              * @apioption plotOptions.series.point.events.update
@@ -1647,7 +1853,7 @@ H.Series = H.seriesType(
              * @sample {highcharts} highcharts/plotoptions/series-datalabels-align-left/
              *         Left aligned
              *
-             * @validvalue ["left", "center", "right"]
+             * @type {Highcharts.AlignType}
              */
             align: 'center',
 
@@ -2027,8 +2233,8 @@ H.Series = H.seriesType(
              * instance in a column chart, the label is above positive values
              * and below negative values.
              *
-             * @since      2.3.3
-             * @validvalue ["top", "middle", "bottom"]
+             * @type  {Highcharts.VerticalAlignType}
+             * @since 2.3.3
              */
             verticalAlign: 'bottom', // above singular point
 
@@ -2379,7 +2585,7 @@ H.Series = H.seriesType(
          *
          * @see [series color](#plotOptions.series.color)
          *
-         * @type      {Highcharts.ColorString}
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since     4.1.0
          * @product   highcharts highstock
          * @apioption plotOptions.series.zones.color
@@ -2393,7 +2599,7 @@ H.Series = H.seriesType(
          * @sample {highcharts|highstock} highcharts/series/color-zones-dashstyle-dot/
          *         Dashed line indicates prognosis
          *
-         * @type      {string}
+         * @type      {Highcharts.DashStyleType}
          * @since     4.1.0
          * @product   highcharts highstock
          * @apioption plotOptions.series.zones.dashStyle
@@ -2455,6 +2661,7 @@ H.Series = H.seriesType(
         // each point's x and y values are stored in this.xData and this.yData
         parallelArrays: ['x', 'y'],
         coll: 'series',
+        cropShoulder: 1,
         init: function (chart, options) {
 
             fireEvent(this, 'init', { options: options });
@@ -2784,8 +2991,8 @@ H.Series = H.seriesType(
 
         /**
          * Set the series options by merging from the options tree. Called
-         * internally on initiating and updating series. This function will not
-         * redraw the series. For API usage, use {@link Series#update}.
+         * internally on initializing and updating series. This function will
+         * not redraw the series. For API usage, use {@link Series#update}.
          *
          * @function Highcharts.Series#setOptions
          *
@@ -2803,13 +3010,16 @@ H.Series = H.seriesType(
                 userOptions = chart.userOptions || {},
                 userPlotOptions = userOptions.plotOptions || {},
                 typeOptions = plotOptions[this.type],
+                seriesUserOptions = merge(itemOptions),
                 options,
                 zones,
                 zone,
                 styledMode = chart.styledMode;
 
+            fireEvent(this, 'setOptions', { userOptions: seriesUserOptions });
+
             // use copy to prevent undetected changes (#9762)
-            this.userOptions = merge(itemOptions);
+            this.userOptions = seriesUserOptions;
 
             // General series options take precedence over type options because
             // otherwise, default type options like column.animation would be
@@ -2819,7 +3029,7 @@ H.Series = H.seriesType(
             options = merge(
                 typeOptions,
                 plotOptions.series,
-                itemOptions
+                seriesUserOptions
             );
 
             // The tooltip options are merged between global and series specific
@@ -2836,13 +3046,13 @@ H.Series = H.seriesType(
                 chartOptions.tooltip.userOptions, // 4
                 plotOptions.series && plotOptions.series.tooltip, // 5
                 plotOptions[this.type].tooltip, // 6
-                itemOptions.tooltip // 7
+                seriesUserOptions.tooltip // 7
             );
 
             // When shared tooltip, stickyTracking is true by default,
             // unless user says otherwise.
             this.stickyTracking = pick(
-                itemOptions.stickyTracking,
+                seriesUserOptions.stickyTracking,
                 userPlotOptions[this.type] &&
                     userPlotOptions[this.type].stickyTracking,
                 userPlotOptions.series && userPlotOptions.series.stickyTracking,
@@ -3049,12 +3259,21 @@ H.Series = H.seriesType(
                 if (id || isNumber(x)) {
                     if (id) {
                         matchingPoint = this.chart.get(id);
-                        pointIndex = matchingPoint && matchingPoint.x;
+                        pointIndex = matchingPoint && matchingPoint.index;
                     }
 
                     // Search for the same X in the existing data set
                     if (pointIndex === undefined && isNumber(x)) {
                         pointIndex = this.xData.indexOf(x, lastIndex);
+                    }
+
+                    // Reduce pointIndex if data is cropped
+                    if (pointIndex !== -1 &&
+                        pointIndex !== undefined &&
+                        this.cropped
+                    ) {
+                        pointIndex = (pointIndex >= this.cropStart) ?
+                            pointIndex - this.cropStart : pointIndex;
                     }
 
                     // Matching X not found
@@ -3063,7 +3282,9 @@ H.Series = H.seriesType(
                     if (
                         pointIndex === -1 ||
                         pointIndex === undefined ||
-                        oldData[pointIndex].touched
+                        (oldData[pointIndex] &&
+                            oldData[pointIndex].touched
+                        )
                     ) {
                         pointsToAdd.push(pointOptions);
 
@@ -3190,6 +3411,9 @@ H.Series = H.seriesType(
                 yData = this.yData,
                 pointArrayMap = series.pointArrayMap,
                 valueCount = pointArrayMap && pointArrayMap.length,
+                keys = options.keys,
+                indexOfX = 0,
+                indexOfY = 1,
                 updatedData;
 
             data = data || [];
@@ -3255,10 +3479,18 @@ H.Series = H.seriesType(
                                 yData[i] = pt.slice(1, valueCount + 1);
                             }
                         } else { // [x, y]
+                            if (keys) {
+                                indexOfX = keys.indexOf('x');
+                                indexOfY = keys.indexOf('y');
+
+                                indexOfX = indexOfX >= 0 ? indexOfX : 0;
+                                indexOfY = indexOfY >= 0 ? indexOfY : 1;
+                            }
+
                             for (i = 0; i < dataLength; i++) {
                                 pt = data[i];
-                                xData[i] = pt[0];
-                                yData[i] = pt[1];
+                                xData[i] = pt[indexOfX];
+                                yData[i] = pt[indexOfY];
                             }
                         }
                     } else {
@@ -3487,7 +3719,7 @@ H.Series = H.seriesType(
                 j;
 
             // line-type series need one point outside
-            cropShoulder = pick(cropShoulder, this.cropShoulder, 1);
+            cropShoulder = pick(cropShoulder, this.cropShoulder);
 
             // iterate up to find slice start
             for (i = 0; i < dataLength; i++) {
@@ -3590,6 +3822,8 @@ H.Series = H.seriesType(
                     if (point.dataGroup.options) {
                         point.options = point.dataGroup.options;
                         extend(point, point.dataGroup.options);
+                        // Collision of props and options (#9770)
+                        delete point.dataLabels;
                     }
                 }
                 if (point) { // #6279
@@ -3654,6 +3888,8 @@ H.Series = H.seriesType(
              * @type {Array<Highcharts.Point>}
              */
             series.points = points;
+
+            fireEvent(this, 'afterGeneratePoints');
         },
 
         /**
@@ -3681,7 +3917,7 @@ H.Series = H.seriesType(
                 withinRange,
                 // Handle X outside the viewed area. This does not work with
                 // non-sorted data like scatter (#7639).
-                shoulder = this.requireSorting ? 1 : 0,
+                shoulder = this.requireSorting ? this.cropShoulder : 0,
                 x,
                 y,
                 i,
@@ -3757,10 +3993,8 @@ H.Series = H.seriesType(
                 dataLength = points.length,
                 hasModifyValue = !!series.modifyValue,
                 i,
-                pointPlacement = options.pointPlacement,
-                dynamicallyPlaced =
-                    pointPlacement === 'between' ||
-                    isNumber(pointPlacement),
+                pointPlacement = series.pointPlacementToXValue(), // #7860
+                dynamicallyPlaced = isNumber(pointPlacement),
                 threshold = options.threshold,
                 stackThreshold = options.startFromThreshold ? threshold : 0,
                 plotX,
@@ -3775,14 +4009,6 @@ H.Series = H.seriesType(
             // (#3201, #3923, #7555).
             function limitedRange(val) {
                 return Math.min(Math.max(-1e5, val), 1e5);
-            }
-
-            // Point placement is relative to each series pointRange (#5889)
-            if (pointPlacement === 'between') {
-                pointPlacement = 0.5;
-            }
-            if (isNumber(pointPlacement)) {
-                pointPlacement *= pick(options.pointRange || xAxis.pointRange);
             }
 
             // Translate each point
@@ -5199,7 +5425,7 @@ H.Series = H.seriesType(
                 plotY: inverted ?
                     yAxis.len - e.chartX + yAxis.pos :
                     e.chartY - yAxis.pos
-            }, compareX);
+            }, compareX, e);
         },
 
         /**
@@ -5211,7 +5437,7 @@ H.Series = H.seriesType(
          * @private
          * @function Highcharts.Series#buildKDTree
          */
-        buildKDTree: function () {
+        buildKDTree: function (e) {
 
             // Prevent multiple k-d-trees from being built simultaneously
             // (#6235)
@@ -5271,8 +5497,13 @@ H.Series = H.seriesType(
             }
             delete series.kdTree;
 
-            // For testing tooltips, don't build async
-            syncTimeout(startRecursive, series.options.kdNow ? 0 : 1);
+            // For testing tooltips, don't build async. Also if touchstart, we
+            // may be dealing with click events on mobile, so don't delay
+            // (#6817).
+            syncTimeout(
+                startRecursive,
+                series.options.kdNow || (e && e.type === 'touchstart') ? 0 : 1
+            );
         },
 
         /**
@@ -5285,7 +5516,7 @@ H.Series = H.seriesType(
          *
          * @return {Highcharts.Point}
          */
-        searchKDTree: function (point, compareX) {
+        searchKDTree: function (point, compareX, e) {
             var series = this,
                 kdX = this.kdAxisArray[0],
                 kdY = this.kdAxisArray[1],
@@ -5353,14 +5584,36 @@ H.Series = H.seriesType(
             }
 
             if (!this.kdTree && !this.buildingKdTree) {
-                this.buildKDTree();
+                this.buildKDTree(e);
             }
 
             if (this.kdTree) {
                 return _search(point, this.kdTree, kdDimensions, kdDimensions);
             }
-        }
+        },
 
+        /**
+         * @private
+         * @function Highcharts.Series#pointPlacementToXValue
+         *
+         * @return {number}
+         */
+        pointPlacementToXValue: function () {
+
+            var series = this,
+                pointPlacement = series.options.pointPlacement;
+
+            // Point placement is relative to each series pointRange (#5889)
+            if (pointPlacement === 'between') {
+                pointPlacement = 0.5;
+            }
+            if (isNumber(pointPlacement)) {
+                pointPlacement *=
+                    pick(series.options.pointRange || series.xAxis.pointRange);
+            }
+
+            return pointPlacement;
+        }
     }
 ); // end Series prototype
 
@@ -5393,6 +5646,8 @@ H.Series = H.seriesType(
 /**
  * A `line` series. If the [type](#series.line.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * In TypeScript instead the `type` option must always be set.
  *
  * @extends   series,plotOptions.line
  * @excluding dataParser,dataURL
