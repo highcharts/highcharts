@@ -766,7 +766,8 @@ seriesProto.processData = function () {
                     ]
                 ),
                 groupedXData = groupedData.groupedXData,
-                groupedYData = groupedData.groupedYData;
+                groupedYData = groupedData.groupedYData,
+                gapSize = 0;
 
             // Prevent the smoothed data to spill out left and right, and make
             // sure data is not shifted to the left
@@ -780,7 +781,17 @@ seriesProto.processData = function () {
             }
 
             // Record what data grouping values were used
+            for (i = 1; i < groupPositions.length; i++) {
+                // The grouped gapSize needs to be the largest distance between
+                // the group to capture varying group sizes like months or DST
+                // crossing (#10000).
+                gapSize = Math.max(
+                    groupPositions[i] - groupPositions[i - 1],
+                    gapSize
+                );
+            }
             currentDataGrouping = groupPositions.info;
+            currentDataGrouping.gapSize = gapSize;
             series.closestPointRange = groupPositions.info.totalRange;
             series.groupMap = groupedData.groupMap;
 
