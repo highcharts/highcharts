@@ -4169,10 +4169,13 @@ H.Series = H.seriesType(
          *        Whether to inspect only the points that are inside the visible
          *        view.
          *
+         * @param {boolean} [allowNull=false]
+         *        Whether to allow null points to pass as valid points.
+         *
          * @return {Array<Highcharts.Point>}
          *         The valid points.
          */
-        getValidPoints: function (points, insideOnly) {
+        getValidPoints: function (points, insideOnly, allowNull) {
             var chart = this.chart;
 
             // #3916, #5029, #5085
@@ -4185,7 +4188,7 @@ H.Series = H.seriesType(
                     )) {
                         return false;
                     }
-                    return !point.isNull;
+                    return allowNull || !point.isNull;
                 }
             );
         },
