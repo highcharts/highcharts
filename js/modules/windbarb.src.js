@@ -43,7 +43,7 @@ seriesType('windbarb', 'column'
         dataGrouping: {
             enabled: true,
             approximation: 'windbarb',
-            groupPixelWidth: 24
+            groupPixelWidth: 30
         },
         /**
          * The line width of the wind barb symbols.
@@ -339,7 +339,10 @@ seriesType('windbarb', 'column'
         },
 
         // Don't invert the marker group (#4960)
-        invertGroups: noop
+        invertGroups: noop,
+
+        // No data extremes for the Y axis
+        getExtremes: noop
     }, {
         isValid: function () {
             return H.isNumber(this.value) && this.value >= 0;
