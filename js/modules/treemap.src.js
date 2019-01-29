@@ -1163,6 +1163,7 @@ seriesType(
             // @todo Only if series.isDirtyData is true
             tree = series.tree = series.getTree();
             rootNode = series.nodeMap[rootId];
+            series.renderTraverseUpButton(rootId);
             series.mapOptionsToLevel = getLevelOptions({
                 from: rootNode.level + 1,
                 levels: options.levels,
@@ -1561,21 +1562,11 @@ seriesType(
              * directly.
              */
             var defaultFn = function (args) {
-                var series = args.series,
-                    newRootId = args.newRootId,
-                    nodeMap = series.nodeMap,
-                    node = nodeMap[newRootId];
+                var series = args.series;
 
                 // Store previous and new root ids on the series.
                 series.idPreviousRoot = args.previousRootId;
-                series.rootNode = newRootId;
-
-                // Remove or update the drill up button.
-                if (newRootId === '') {
-                    series.drillUpButton = series.drillUpButton.destroy();
-                } else {
-                    series.showDrillUpButton((node && node.name || newRootId));
-                }
+                series.rootNode = args.newRootId;
 
                 // Redraw the chart
                 series.isDirty = true; // Force redraw
@@ -1587,17 +1578,21 @@ seriesType(
             // Fire setRootNode event.
             fireEvent(series, 'setRootNode', eventArgs, defaultFn);
         },
-        showDrillUpButton: function (name) {
+        renderTraverseUpButton: function (rootId) {
             var series = this,
-                backText = (name || '< Back'),
+                nodeMap = series.nodeMap,
+                node = nodeMap[rootId],
+                name = node.name,
                 buttonOptions = series.options.traverseUpButton,
+                backText = pick(buttonOptions.text, name, '< Back'),
                 attr,
                 states;
 
-            if (buttonOptions.text) {
-                backText = buttonOptions.text;
-            }
-            if (!this.drillUpButton) {
+            if (rootId === '') {
+                if (series.drillUpButton) {
+                    series.drillUpButton = series.drillUpButton.destroy();
+                }
+            } else if (!this.drillUpButton) {
                 attr = buttonOptions.theme;
                 states = attr && attr.states;
 
