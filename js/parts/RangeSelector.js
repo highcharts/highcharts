@@ -1950,7 +1950,7 @@ addEvent(Chart, 'beforeRender', function () {
 
 });
 
-addEvent(Chart, 'update', function (e) {
+addEvent(Chart, 'afterUpdate', function (e) {
 
     var chart = this,
         options = e.options,
@@ -2027,7 +2027,6 @@ addEvent(Chart, 'getMargins', function () {
 
     if (rangeSelector) {
         rangeSelectorHeight = rangeSelector.getHeight();
-
         if (this.extraTopMargin) {
             this.plotTop += rangeSelectorHeight;
         }
