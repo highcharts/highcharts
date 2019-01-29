@@ -2968,6 +2968,8 @@ H.defaultOptions = {
          *         Formatting with shared tooltip
          * @sample {highcharts|highstock} highcharts/tooltip/formatter-split/
          *         Formatting with split tooltip
+         * @sample highcharts/tooltip/formatter-conditional-default/
+         *         Extending default formatter
          * @sample {highstock} stock/tooltip/formatter/
          *         Formatting with shared tooltip
          * @sample {highmaps} maps/tooltip/formatter/
