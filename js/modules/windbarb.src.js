@@ -40,9 +40,14 @@ seriesType('windbarb', 'column'
  * @optionparent plotOptions.windbarb
  */
     , {
-    /**
-     * The line width of the wind barb symbols.
-     */
+        dataGrouping: {
+            enabled: true,
+            approximation: 'windbarb',
+            groupPixelWidth: 24
+        },
+        /**
+         * The line width of the wind barb symbols.
+         */
         lineWidth: 2,
         /**
      * The id of another series in the chart that the wind barbs are projected
@@ -98,6 +103,44 @@ seriesType('windbarb', 'column'
         beaufortFloor: [0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
             24.5, 28.5, 32.7],
         trackerGroups: ['markerGroup'],
+
+        init: function (chart, options) {
+            // Once off, register the windbarb approximation for data grouping.
+            // This can be added anywhere (not necessarily in the translate
+            // function), but must happen after the data grouping module is
+            // loaded and before the wind barb series uses it.
+            if (H.approximations && !H.approximations.windbarb) {
+                H.approximations.windbarb = function (values, directions) {
+                    var vectorX = 0,
+                        vectorY = 0,
+                        i,
+                        len = values.length;
+
+                    for (i = 0; i < len; i++) {
+                        vectorX += values[i] * Math.cos(
+                            directions[i] * H.deg2rad
+                        );
+                        vectorY += values[i] * Math.sin(
+                            directions[i] * H.deg2rad
+                        );
+                    }
+
+                    return [
+                        // Wind speed
+                        Math.round(
+                            10 *
+                            Math.sqrt(
+                                Math.pow(vectorX, 2) + Math.pow(vectorY, 2)
+                            ) /
+                            len
+                        ) / 10,
+                        // Wind direction
+                        Math.atan2(vectorY, vectorX) / H.deg2rad
+                    ];
+                };
+            }
+            H.Series.prototype.init.call(this, chart, options);
+        },
 
         // Get presentational attributes.
         pointAttribs: function (point, state) {
