@@ -1029,9 +1029,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *
      * @fires Highcharts.Series#event:afterUpdate
      */
-    update: function (newOptions, redraw) {
+    update: function (options, redraw) {
 
-        newOptions = H.cleanRecursively(newOptions, this.userOptions);
+        options = H.cleanRecursively(options, this.userOptions);
 
         var series = this,
             chart = series.chart,
@@ -1040,7 +1040,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             oldOptions = series.userOptions,
             initialType = series.initialType || series.type,
             newType = (
-                newOptions.type ||
+                options.type ||
                 oldOptions.type ||
                 chart.options.chart.type
             ),
@@ -1066,7 +1066,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 'name',
                 'turboThreshold'
             ],
-            keys = Object.keys(newOptions),
+            keys = Object.keys(options),
             doSoftUpdate = keys.length > 0;
 
         // Running Series.update to update the data only is an intuitive usage,
@@ -1082,11 +1082,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             }
         });
         if (doSoftUpdate) {
-            if (newOptions.data) {
-                this.setData(newOptions.data, false);
+            if (options.data) {
+                this.setData(options.data, false);
             }
-            if (newOptions.name) {
-                this.setName(newOptions.name, false);
+            if (options.name) {
+                this.setName(options.name, false);
             }
         } else {
 
@@ -1098,13 +1098,13 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             });
 
             // Do the merge, with some forced options
-            newOptions = merge(oldOptions, animation, {
+            options = merge(oldOptions, animation, {
                 index: series.index,
                 pointStart: pick(
                     oldOptions.pointStart, // when updating from blank (#7933)
                     series.xData[0] // when updating after addPoint
                 )
-            }, { data: series.options.data }, newOptions);
+            }, { data: series.options.data }, options);
 
             // Destroy the series and delete all properties. Reinsert all
             // methods and properties from the new type prototype (#2270,
@@ -1124,14 +1124,14 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 series[prop] = preserve[prop];
             });
 
-            series.init(chart, newOptions);
+            series.init(chart, options);
 
             // Update the Z index of groups (#3380, #7397)
-            if (newOptions.zIndex !== oldOptions.zIndex) {
+            if (options.zIndex !== oldOptions.zIndex) {
                 groups.forEach(function (groupName) {
                     if (series[groupName]) {
                         series[groupName].attr({
-                            zIndex: newOptions.zIndex
+                            zIndex: options.zIndex
                         });
                     }
                 });
