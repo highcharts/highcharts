@@ -976,14 +976,14 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *
      * @fires Highcharts.Series#event:remove
      */
-    remove: function (redraw, animation, withEvent) {
+    remove: function (redraw, animation, withEvent, keepEvents) {
         var series = this,
             chart = series.chart;
 
         function remove() {
 
             // Destroy elements
-            series.destroy();
+            series.destroy(keepEvents);
             series.remove = null; // Prevent from doing again (#9097)
 
             // Redraw
@@ -1109,7 +1109,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // Destroy the series and delete all properties. Reinsert all
             // methods and properties from the new type prototype (#2270,
             // #3719).
-            series.remove(false, null, false);
+            series.remove(false, null, false, true);
             for (n in initialSeriesProto) {
                 series[n] = undefined;
             }

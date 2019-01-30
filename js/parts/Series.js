@@ -2734,7 +2734,15 @@ H.Series = H.seriesType(
             events = options.events;
 
             objectEach(events, function (event, eventType) {
-                addEvent(series, eventType, event);
+                if (
+                    // In case we're doing Series.update(), first check if the
+                    // event already exists.
+                    !series.hcEvents ||
+                    !series.hcEvents[eventType] ||
+                    series.hcEvents[eventType].indexOf(event) === -1
+                ) {
+                    addEvent(series, eventType, event);
+                }
             });
             if (
                 (events && events.click) ||
@@ -4635,7 +4643,7 @@ H.Series = H.seriesType(
          *
          * @fires Highcharts.Series#event:destroy
          */
-        destroy: function () {
+        destroy: function (keepEvents) {
             var series = this,
                 chart = series.chart,
                 issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
@@ -4649,7 +4657,9 @@ H.Series = H.seriesType(
             fireEvent(series, 'destroy');
 
             // remove all events
-            removeEvent(series);
+            if (!keepEvents) {
+                removeEvent(series);
+            }
 
             // erase from axes
             (series.axisTypes || []).forEach(function (AXIS) {
@@ -4702,7 +4712,9 @@ H.Series = H.seriesType(
 
             // clear all members
             objectEach(series, function (val, prop) {
-                delete series[prop];
+                if (!keepEvents || prop !== 'hcEvents') {
+                    delete series[prop];
+                }
             });
         },
 
