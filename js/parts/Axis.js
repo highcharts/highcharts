@@ -4875,7 +4875,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      */
     setScale: function () {
         var axis = this,
-            isDirtyData,
+            isDirtyData = axis.series.some(function (series) {
+                return (
+                    series.isDirtyData ||
+                    series.isDirty ||
+                    // When x axis is dirty, we need new data extremes for y as
+                    // well
+                    series.xAxis.isDirty
+                );
+            }),
             isDirtyAxisLength;
 
         axis.oldMin = axis.min;
@@ -4885,18 +4893,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // set the new axisLength
         axis.setAxisSize();
         isDirtyAxisLength = axis.len !== axis.oldAxisLength;
-
-        // is there new data?
-        axis.series.forEach(function (series) {
-            if (
-                series.isDirtyData ||
-                series.isDirty ||
-                // When x axis is dirty, we need new data extremes for y as well
-                series.xAxis.isDirty
-            ) {
-                isDirtyData = true;
-            }
-        });
 
         // do we really need to go through all this?
         if (
