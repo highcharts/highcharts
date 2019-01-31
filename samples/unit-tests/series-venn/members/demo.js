@@ -319,7 +319,9 @@ QUnit.test('isPointInsideAllCircles', function (assert) {
 QUnit.test('layoutGreedyVenn', assert => {
     const { prototype: vennPrototype } = Highcharts.seriesTypes.venn;
     const { layoutGreedyVenn } = vennPrototype.utils;
-    const relations = [{
+
+    // Data from #9844
+    const relations1 = [{
         id: "A",
         sets: ["A"],
         value: 8.707145671877052
@@ -348,15 +350,44 @@ QUnit.test('layoutGreedyVenn', assert => {
         sets: ["A", "B", "C"],
         value: 0.6833705503743597
     }];
-
     assert.deepEqual(
-        layoutGreedyVenn(relations),
+        layoutGreedyVenn(relations1),
         {
             A: { r: 1.66480345620763, x: 0, y: 0 },
-            B: { r: 0.9794167317058717, x: 0.48757084298176, y: 1.1634694924001 },
+            B: { r: 0.9794167317058717, x: 0.50013676238039, y: 1.16865602691445 },
             C: { r: 1.0201908091071663, x: 0.9751416859635283, y: 0 }
         },
-        'should return expected positions and sizes for the sets.'
+        'should return expected positions and sizes for the sets in relations1.'
+    );
+
+    // Data from #10006
+    const relations2 = [{
+        sets: ['A'],
+        value: 1000
+    }, {
+        sets: ['B'],
+        value: 600
+    }, {
+        sets: ['C'],
+        value: 50
+    }, {
+        sets: ['A', 'B'],
+        value: 100
+    }, {
+        sets: ['A', 'C'],
+        value: 5
+    }, {
+        sets: ['B', 'C'],
+        value: 10
+    }];
+    assert.deepEqual(
+        layoutGreedyVenn(relations2),
+        {
+            A: { r: 17.841241161527712, x: 24.351995419742487, y: 0 },
+            B: { r: 13.81976597885342, x: 0, y: 0 },
+            C: { r: 3.989422804014327, x: 8.56494669770081, y: 13.08868212641161 }
+        },
+        'should return expected positions and sizes for the sets in relations2.'
     );
 });
 
