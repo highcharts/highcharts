@@ -624,7 +624,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
                         getCircleCircleIntersection({
                             x: positionedCircle.x,
                             y: positionedCircle.y,
-                            r: distance2
+                            r: distance
                         }, {
                             x: positionedCircle2.x,
                             y: positionedCircle2.y,
