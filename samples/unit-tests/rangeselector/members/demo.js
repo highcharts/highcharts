@@ -85,6 +85,24 @@ QUnit.test('RangeSelector.updateButtonStates', function (assert) {
         [0, 0, 2, 0, 0, 0],
         'allButtonsEnabled.'
     );
+
+    rangeSelector.setSelected = RangeSelector.prototype.setSelected;
+    rangeSelector.setSelected(1);
+
+    rangeSelector.chart.xAxis[0].min = now - (1.2 * month);
+    updateButtonStates.call(rangeSelector);
+
+    assert.deepEqual(
+        rangeSelector.selected,
+        null,
+        'rangeSelector.selected is cleared when all buttons are unchecked (#9209).'
+    );
+
+    assert.deepEqual(
+        rangeSelector.options.selected,
+        null,
+        'rangeSelector.options.selected is cleared when all buttons are unchecked (#9209).'
+    );
 });
 
 QUnit.test('RangeSelector.getYTDExtremes', function (assert) {
