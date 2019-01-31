@@ -580,9 +580,6 @@ Annotation.prototype = {
          * Allow an annotation to be draggable by a user. Possible
          * values are `"x"`, `"xy"`, `"y"` and `""` (disabled).
          *
-         * @type {string}
-         * @validvalue ["x", "xy", "y", ""]
-         *
          * @sample highcharts/annotations/draggable/
          *         Annotations draggable: 'xy'
          */
