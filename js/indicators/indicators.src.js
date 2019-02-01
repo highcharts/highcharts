@@ -160,6 +160,7 @@ seriesType(
             series: true,
             eventName: 'updatedData'
         },
+        hasDerivedData: true,
         useCommonDataGrouping: true,
         nameComponents: ['period'],
         nameSuffixes: [], // e.g. Zig Zag uses extra '%'' in the legend name

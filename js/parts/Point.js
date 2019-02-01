@@ -110,7 +110,30 @@ Highcharts.Point.prototype = {
      */
     init: function (series, options, x) {
 
-        var point = this,
+        /**
+         * The series object associated with the point.
+         *
+         * @name Highcharts.Point#series
+         * @type {Highcharts.Series}
+         */
+        this.series = series;
+
+        this.applyOptions(options, x);
+
+        // Add a unique ID to the point if none is assigned
+        this.id = defined(this.id) ? this.id : uniqueKey();
+
+        this.resolveColor();
+
+        series.chart.pointCount++;
+
+        fireEvent(this, 'afterInit');
+
+        return this;
+    },
+
+    resolveColor: function () {
+        var series = this.series,
             colors,
             optionsChart = series.chart.options.chart,
             colorCount = optionsChart.colorCount,
@@ -118,31 +141,19 @@ Highcharts.Point.prototype = {
             colorIndex;
 
         /**
-         * The series object associated with the point.
-         *
-         * @name Highcharts.Point#series
-         * @type {Highcharts.Series}
-         */
-        point.series = series;
-
-        /**
          * The point's current color.
          *
          * @name Highcharts.Point#color
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        if (!styledMode) {
-            point.color = series.color; // #3445
+        if (!styledMode && !this.options.color) {
+            this.color = series.color; // #3445
         }
-        point.applyOptions(options, x);
-
-        // Add a unique ID to the point if none is assigned
-        point.id = defined(point.id) ? point.id : uniqueKey();
 
         if (series.options.colorByPoint) {
             if (!styledMode) {
                 colors = series.options.colors || series.chart.options.colors;
-                point.color = point.color || colors[series.colorCounter];
+                this.color = this.color || colors[series.colorCounter];
                 colorCount = colors.length;
             }
             colorIndex = series.colorCounter;
@@ -162,14 +173,9 @@ Highcharts.Point.prototype = {
          * @name Highcharts.Point#colorIndex
          * @type {number}
          */
-        point.colorIndex = pick(point.colorIndex, colorIndex);
-
-        series.chart.pointCount++;
-
-        fireEvent(point, 'afterInit');
-
-        return point;
+        this.colorIndex = pick(this.colorIndex, colorIndex);
     },
+
     /**
      * Apply the options containing the x and y data and possible some extra
      * properties. Called on point init or from point.update.
