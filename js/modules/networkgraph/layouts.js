@@ -157,11 +157,7 @@ H.extend(
         setK: function () {
             // Optimal distance between nodes,
             // available space around the node:
-            this.k = this.options.linkLength ||
-                Math.pow(
-                    this.box.width * this.box.height / this.nodes.length,
-                    0.4
-                );
+            this.k = this.options.linkLength || this.integration.getK(this);
         },
         addNodes: function (nodes) {
             nodes.forEach(function (node) {

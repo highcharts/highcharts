@@ -104,6 +104,12 @@ H.networkgraphIntegrations = {
                 x: diffX * -layout.options.friction,
                 y: diffY * -layout.options.friction
             });
+        },
+        getK: function (layout) {
+            return Math.pow(
+                layout.box.width * layout.box.height / layout.nodes.length,
+                0.5
+            );
         }
     },
     euler: {
@@ -211,6 +217,12 @@ H.networkgraphIntegrations = {
                 node.plotY += node.dispY / distanceR *
                     Math.min(Math.abs(node.dispY), layout.temperature);
             }
+        },
+        getK: function (layout) {
+            return Math.pow(
+                layout.box.width * layout.box.height / layout.nodes.length,
+                0.3
+            );
         }
     }
 };
