@@ -962,8 +962,7 @@ RangeSelector.prototype = {
         // should be cleared (#9209)
         if (
             btnSelected === undefined &&
-            selected !== null &&
-            selected !== undefined
+            defined(selected)
         ) {
             rangeSelector.setSelected(null);
         } else if (
