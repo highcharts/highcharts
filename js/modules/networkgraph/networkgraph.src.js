@@ -298,6 +298,10 @@ seriesType('networkgraph', 'line', {
                 this
             );
         }
+
+        this.nodes.forEach(function (node) {
+            node.degree = node.getDegree();
+        });
     },
 
     // Extend the default marker attribs by using a non-rounded X position,

@@ -32,13 +32,13 @@ H.networkgraphIntegrations = {
 
             this.nodes.forEach(function (node) {
                 if (!node.fixedPosition) {
-                    node.plotX -= xFactor / node.mass;
-                    node.plotY -= yFactor / node.mass;
+                    node.plotX -= xFactor / node.mass / node.degree;
+                    node.plotY -= yFactor / node.mass / node.degree;
                 }
             });
         },
         repulsive: function (node, force, distanceXY) {
-            var factor = force * this.diffTemperature / node.mass;
+            var factor = force * this.diffTemperature / node.mass / node.degree;
 
             if (!node.fixedPosition) {
                 node.plotX += distanceXY.x * factor;
@@ -51,12 +51,16 @@ H.networkgraphIntegrations = {
                 translatedY = -distanceXY.y * force * this.diffTemperature;
 
             if (!link.fromNode.fixedPosition) {
-                link.fromNode.plotX -= translatedX * massFactor.fromNode;
-                link.fromNode.plotY -= translatedY * massFactor.fromNode;
+                link.fromNode.plotX -= translatedX * massFactor.fromNode /
+                    link.fromNode.degree;
+                link.fromNode.plotY -= translatedY * massFactor.fromNode /
+                    link.fromNode.degree;
             }
             if (!link.toNode.fixedPosition) {
-                link.toNode.plotX += translatedX * massFactor.toNode;
-                link.toNode.plotY += translatedY * massFactor.toNode;
+                link.toNode.plotX += translatedX * massFactor.toNode /
+                    link.toNode.degree;
+                link.toNode.plotY += translatedY * massFactor.toNode /
+                    link.toNode.degree;
             }
         },
         integrate: function (layout, node) {
@@ -138,15 +142,15 @@ H.networkgraphIntegrations = {
                         phi = degree * (1 + degree / 2);
 
                     node.dispX += (xFactor - node.plotX) *
-                        gravitationalConstant * phi;
+                        gravitationalConstant * phi / node.degree;
                     node.dispY += (yFactor - node.plotY) *
-                        gravitationalConstant * phi;
+                        gravitationalConstant * phi / node.degree;
                 }
             });
         },
         repulsive: function (node, force, distanceXY, distanceR) {
-            node.dispX += (distanceXY.x / distanceR) * force;
-            node.dispY += (distanceXY.y / distanceR) * force;
+            node.dispX += (distanceXY.x / distanceR) * force / node.degree;
+            node.dispY += (distanceXY.y / distanceR) * force / node.degree;
         },
         attractive: function (link, force, distanceXY, distanceR) {
             var massFactor = link.getMass(),
@@ -154,13 +158,17 @@ H.networkgraphIntegrations = {
                 translatedY = (distanceXY.y / distanceR) * force;
 
             if (!link.fromNode.fixedPosition) {
-                link.fromNode.dispX -= translatedX * massFactor.fromNode;
-                link.fromNode.dispY -= translatedY * massFactor.fromNode;
+                link.fromNode.dispX -= translatedX * massFactor.fromNode /
+                    link.fromNode.degree;
+                link.fromNode.dispY -= translatedY * massFactor.fromNode /
+                    link.fromNode.degree;
             }
 
             if (!link.toNode.fixedPosition) {
-                link.toNode.dispX += translatedX * massFactor.toNode;
-                link.toNode.dispY += translatedY * massFactor.toNode;
+                link.toNode.dispX += translatedX * massFactor.toNode /
+                    link.toNode.degree;
+                link.toNode.dispY += translatedY * massFactor.toNode /
+                    link.toNode.degree;
             }
         },
         integrate: function (layout, node) {
