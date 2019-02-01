@@ -1652,6 +1652,10 @@ H.normalizeTickInterval = function (
  *        The function to sort it with, like with regular Array.prototype.sort.
  */
 H.stableSort = function (arr, sortFunction) {
+
+    // @todo It seems like Chrome since v70 sorts in a stable way internally,
+    // plus all other browsers do it, so over time we may be able to remove this
+    // function
     var length = arr.length,
         sortValue,
         i;

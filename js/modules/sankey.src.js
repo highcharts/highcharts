@@ -352,7 +352,7 @@ seriesType('sankey', 'column'
                 .forEach(function (node) {
                     order(node, 0);
                 });
-            this.nodes.sort(function (a, b) {
+            H.stableSort(this.nodes, function (a, b) {
                 return a.level - b.level;
             });
 
