@@ -1057,10 +1057,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 chart.options.chart.type
             ),
             regeneratePoints = Boolean(
-                // Indicators, histograms etc recalculate the data
+                // Indicators, histograms etc recalculate the data. It should be
+                // possible to omit this.
                 this.hasDerivedData ||
-                // Any changes to data grouping may require new points
-                options.dataGrouping ||
                 // New data
                 options.data ||
                 // New type requires new point classes
@@ -1158,7 +1157,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
             if (!regeneratePoints && this.points) {
                 this.points.forEach(function (point) {
-                    if (point.series) { // Meaning it has not been destroyed
+                    if (point && point.series) {
                         point.resolveColor();
                         // Destroy all elements in order to recreate based on
                         // updated series options. This is not necessary in all

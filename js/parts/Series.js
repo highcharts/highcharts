@@ -2896,7 +2896,10 @@ H.Series = H.seriesType(
                         pointsToAdd.push(pointOptions);
 
                     // Matching X found, update
-                    } else if (pointOptions !== options.data[pointIndex]) {
+                    } else if (
+                        oldData[pointIndex] &&
+                        pointOptions !== options.data[pointIndex]
+                    ) {
                         oldData[pointIndex].update(
                             pointOptions,
                             false,
@@ -2936,7 +2939,7 @@ H.Series = H.seriesType(
                 i = oldData.length;
                 while (i--) {
                     point = oldData[i];
-                    if (!point.touched) {
+                    if (point && !point.touched) {
                         point.remove(false);
                     }
                 }
@@ -2957,7 +2960,9 @@ H.Series = H.seriesType(
             }
 
             oldData.forEach(function (point) {
-                point.touched = false;
+                if (point) {
+                    point.touched = false;
+                }
             });
 
             if (!succeeded) {
