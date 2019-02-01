@@ -538,10 +538,11 @@ Highcharts.Legend.prototype = {
                 legend.setItemEvents(item, li, useHTML);
             }
 
-            // add the HTML checkbox on top
-            if (showCheckbox) {
-                legend.createCheckboxForItem(item);
-            }
+        }
+
+        // Add the HTML checkbox on top
+        if (showCheckbox && !item.checkbox) {
+            legend.createCheckboxForItem(item);
         }
 
         // Colorize the items

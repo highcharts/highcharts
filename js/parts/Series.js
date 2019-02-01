@@ -2759,9 +2759,11 @@ H.Series = H.seriesType(
             series.getColor();
             series.getSymbol();
 
-            // Set the data
+            // Initialize the parallel data arrays
             series.parallelArrays.forEach(function (key) {
-                series[key + 'Data'] = [];
+                if (!series[key + 'Data']) {
+                    series[key + 'Data'] = [];
+                }
             });
             series.setData(options.data, false);
 
@@ -3242,12 +3244,15 @@ H.Series = H.seriesType(
                 i,
                 point,
                 lastIndex,
-                requireSorting = this.requireSorting;
+                requireSorting = this.requireSorting,
+                equalLength = data.length === oldData.length,
+                matchedById,
+                succeeded = true;
 
             this.xIncrement = null;
 
             // Iterate the new data
-            data.forEach(function (pointOptions) {
+            data.forEach(function (pointOptions, i) {
                 var id,
                     matchingPoint,
                     x,
@@ -3266,8 +3271,13 @@ H.Series = H.seriesType(
 
                 if (id || isNumber(x)) {
                     if (id) {
-                        matchingPoint = this.chart.get(id);
+                        matchingPoint = oldData.find(function (point) {
+                            return point.id === id;
+                        });
                         pointIndex = matchingPoint && matchingPoint.index;
+                        if (pointIndex !== undefined) {
+                            matchedById = true;
+                        }
                     }
 
                     // Search for the same X in the existing data set
@@ -3290,7 +3300,9 @@ H.Series = H.seriesType(
                     if (
                         pointIndex === -1 ||
                         pointIndex === undefined ||
-                        (oldData[pointIndex] &&
+                        (
+                            !matchedById &&
+                            oldData[pointIndex] &&
                             oldData[pointIndex].touched
                         )
                     ) {
@@ -3318,7 +3330,17 @@ H.Series = H.seriesType(
                     } else if (oldData[pointIndex]) {
                         oldData[pointIndex].touched = true;
                     }
-                    hasUpdatedByKey = true;
+
+                    // If the length is equal and some of the nodes had a
+                    // match in the same position, we don't want to remove
+                    // non-matches.
+                    if (
+                        !equalLength ||
+                        i !== pointIndex ||
+                        this.hasDerivedData
+                    ) {
+                        hasUpdatedByKey = true;
+                    }
                 }
             }, this);
 
@@ -3330,12 +3352,11 @@ H.Series = H.seriesType(
                     if (!point.touched) {
                         point.remove(false);
                     }
-                    point.touched = false;
                 }
 
-            // If we did not find keys (x-values), and the length is the same,
-            // update one-to-one
-            } else if (data.length === oldData.length) {
+            // If we did not find keys (ids or x-values), and the length is the
+            // same, update one-to-one
+            } else if (equalLength) {
                 data.forEach(function (point, i) {
                     // .update doesn't exist on a linked, hidden series (#3709)
                     if (oldData[i].update && point !== options.data[i]) {
@@ -3345,6 +3366,14 @@ H.Series = H.seriesType(
 
             // Did not succeed in updating data
             } else {
+                succeeded = false;
+            }
+
+            oldData.forEach(function (point) {
+                point.touched = false;
+            });
+
+            if (!succeeded) {
                 return false;
             }
 

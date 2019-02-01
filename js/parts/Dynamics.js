@@ -1044,6 +1044,16 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 oldOptions.type ||
                 chart.options.chart.type
             ),
+            regeneratePoints = Boolean(
+                // Indicators, histograms etc recalculate the data
+                this.hasDerivedData ||
+                // Any changes to data grouping may require new points
+                options.dataGrouping ||
+                // New data
+                options.data ||
+                // New type requires new point classes
+                newType !== this.type
+            ),
             initialSeriesProto = seriesTypes[initialType].prototype,
             n,
             groups = [
@@ -1089,6 +1099,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 this.setName(options.name, false);
             }
         } else {
+            if (!regeneratePoints) {
+                preserve.push('data', 'points');
+                series.parallelArrays.forEach(function (key) {
+                    preserve.push(key + 'Data');
+                });
+            }
 
             // Make sure preserved properties are not destroyed (#3094)
             preserve = groups.concat(preserve);
@@ -1101,8 +1117,10 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             options = merge(oldOptions, animation, {
                 index: series.index,
                 pointStart: pick(
-                    oldOptions.pointStart, // when updating from blank (#7933)
-                    series.xData[0] // when updating after addPoint
+                    // when updating from blank (#7933)
+                    oldOptions.pointStart,
+                    // when updating after addPoint
+                    (series.xData || preserve.xData)[0]
                 )
             }, { data: series.options.data }, options);
 
@@ -1125,6 +1143,20 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             });
 
             series.init(chart, options);
+
+            if (!regeneratePoints && this.points) {
+                this.points.forEach(function (point) {
+                    if (point.series) { // Meaning it has not been destroyed
+                        point.resolveColor();
+                        // Destroy all elements in order to recreate based on
+                        // updated series options. This is not necessary in all
+                        // cases, and in the future we may add smarter checks
+                        // for what we need to destroy based on what options
+                        // we're setting.
+                        point.destroyElements();
+                    }
+                });
+            }
 
             // Update the Z index of groups (#3380, #7397)
             if (options.zIndex !== oldOptions.zIndex) {

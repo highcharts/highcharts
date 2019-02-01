@@ -22,6 +22,8 @@ var Series = H.Series,
  * @mixin derivedSeriesMixin
  */
 var derivedSeriesMixin = {
+
+    hasDerivedData: true,
     /**
      * Initialise series
      *

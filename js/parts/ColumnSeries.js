@@ -740,7 +740,8 @@ seriesType('column', 'line'
 
                 // Register shape type and arguments to be used in drawPoints
                 // Allow shapeType defined on pointClass level
-                point.shapeType = point.shapeType || 'rect';
+                point.shapeType =
+                    series.pointClass.prototype.shapeType || 'rect';
                 point.shapeArgs = series.crispCol.apply(
                     series,
                     point.isNull ?
