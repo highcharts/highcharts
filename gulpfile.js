@@ -203,6 +203,40 @@ function update() {
 gulp.task('update', update);
 
 /**
+ * Update the vendor files for distribution
+ */
+function updateVendor() {
+
+    console.log((
+        'Note: This task only copies the files into the vendor folder.\n' +
+        'To upgrade, run npm update jspdf-yworks && npm update svg2pdf.js`'
+    ).yellow);
+
+    const promises = [
+        [
+            './node_modules/jspdf-yworks/dist/jspdf.debug.js',
+            './vendor/jspdf.src.js'
+        ],
+        [
+            './node_modules/jspdf-yworks/dist/jspdf.min.js',
+            './vendor/jspdf.js'
+        ],
+        [
+            './node_modules/svg2pdf.js/dist/svg2pdf.js',
+            './vendor/svg2pdf.src.js'
+        ],
+        [
+            './node_modules/svg2pdf.js/dist/svg2pdf.min.js',
+            './vendor/svg2pdf.js'
+        ]
+    ].map(([source, target]) => copyFile(source, target));
+
+    return Promise.all(promises);
+
+}
+gulp.task('update-vendor', updateVendor);
+
+/**
  * Gulp task to run the building process of distribution files. By default it
  * builds all the distribution files. Usage: "gulp build".
  *
