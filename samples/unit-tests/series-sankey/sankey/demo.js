@@ -435,4 +435,16 @@ QUnit.test('Sankey and unordered data', assert => {
         'There should be only one item in the first (root) column'
     );
 
+    chart.series[0].setData([
+        ['a', 'b', 5],
+        ['b', 'c', 5],
+        ['c', 'b', 5]
+    ]);
+
+    assert.strictEqual(
+        chart.series[0].nodes.length,
+        3,
+        'Circular data should not cause endless recursion'
+    );
+
 });

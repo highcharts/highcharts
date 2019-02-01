@@ -296,6 +296,7 @@ seriesType('sankey', 'column'
             this.nodes.forEach(function (node) {
                 node.linksFrom.length = 0;
                 node.linksTo.length = 0;
+                node.level = undefined;
             });
 
             // Create the node list and set up links
@@ -334,10 +335,12 @@ seriesType('sankey', 'column'
 
             // Order the nodes, starting with the root node(s) (#9818)
             function order(node, level) {
-                node.level = level;
-                node.linksFrom.forEach(function (link) {
-                    order(link.toNode, level + 1);
-                });
+                if (node.level === undefined) { // Prevents circular recursion
+                    node.level = level;
+                    node.linksFrom.forEach(function (link) {
+                        order(link.toNode, level + 1);
+                    });
+                }
             }
             this.nodes
                 // Identify the root node(s)
