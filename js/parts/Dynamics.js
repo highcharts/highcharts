@@ -1051,7 +1051,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 // New data
                 options.data ||
                 // New type requires new point classes
-                newType !== this.type
+                (newType && newType !== this.type) ||
+                // New pointStart, increment needs to be calculated
+                options.pointStart !== undefined
             ),
             initialSeriesProto = seriesTypes[initialType].prototype,
             n,
@@ -1101,9 +1103,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             if (!regeneratePoints) {
                 preserve.push(
                     'data',
+                    'isDirtyData',
                     'points',
                     'processedXData',
-                    'processedYData'
+                    'processedYData',
+                    'xIncrement'
                 );
                 series.parallelArrays.forEach(function (key) {
                     preserve.push(key + 'Data');
