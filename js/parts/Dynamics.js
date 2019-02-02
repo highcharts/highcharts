@@ -1099,7 +1099,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             }
         } else {
             if (!regeneratePoints) {
-                preserve.push('data', 'points');
+                preserve.push(
+                    'data',
+                    'points',
+                    'processedXData',
+                    'processedYData'
+                );
                 series.parallelArrays.forEach(function (key) {
                     preserve.push(key + 'Data');
                 });

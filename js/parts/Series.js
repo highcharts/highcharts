@@ -2765,7 +2765,9 @@ H.Series = H.seriesType(
                     series[key + 'Data'] = [];
                 }
             });
-            series.setData(options.data, false);
+            if (!series.points) {
+                series.setData(options.data, false);
+            }
 
             // Mark cartesian
             if (series.isCartesian) {
