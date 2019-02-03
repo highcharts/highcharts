@@ -1067,6 +1067,7 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/chart/resetzoombutton-theme/
              *         Theming the button
              *
+             * @type {Highcharts.SVGAttributes}
              * @since 2.2
              */
             theme: {
