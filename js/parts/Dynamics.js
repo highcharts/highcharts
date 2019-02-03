@@ -1060,12 +1060,15 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 // Indicators, histograms etc recalculate the data. It should be
                 // possible to omit this.
                 this.hasDerivedData ||
-                // New data
-                options.data ||
+                // Changes to data grouping requires new points in new groups
+                options.dataGrouping ||
                 // New type requires new point classes
                 (newType && newType !== this.type) ||
-                // New pointStart, increment needs to be calculated
-                options.pointStart !== undefined
+                // New options affecting how the data points are built
+                options.pointStart !== undefined ||
+                options.pointInterval ||
+                options.pointIntervalUnit ||
+                options.keys
             ),
             initialSeriesProto = seriesTypes[initialType].prototype,
             n,
@@ -1124,6 +1127,10 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 series.parallelArrays.forEach(function (key) {
                     preserve.push(key + 'Data');
                 });
+            }
+
+            if (options.data) {
+                this.setData(options.data, false);
             }
 
             // Make sure preserved properties are not destroyed (#3094)
