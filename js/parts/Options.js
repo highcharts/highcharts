@@ -135,11 +135,47 @@
  * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
- * @param {global.Event} event
+ * @param {global.ChartSelectionContextObject} event
  *        Event informations
  *
  * @return {boolean|undefined}
  *         Return false to prevent the default action, usually zoom.
+ */
+
+/**
+ * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
+ * datetime axis is milliseconds since 1970-01-01 00:00:00.
+ *
+ * @interface Highcharts.ChartSelectionContextObject
+ * @extends global.Event
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
+ * @name Highcharts.ChartSelectionContextObject#xAxis
+ * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
+ * @name Highcharts.ChartSelectionContextObject#yAxis
+ * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
+ */
+
+/**
+ * Axis context of the selection.
+ *
+ * @interface Highcharts.ChartSelectionAxisContextObject
+ *//**
+ * The selected Axis.
+ * @name Highcharts.ChartSelectionAxisContextObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * The maximum axis value, either automatic or set manually.
+ * @name Highcharts.ChartSelectionAxisContextObject#max
+ * @type {number}
+ *//**
+ * The minimum axis value, either automatic or set manually.
+ * @name Highcharts.ChartSelectionAxisContextObject#min
+ * @type {number}
  */
 
 /**
