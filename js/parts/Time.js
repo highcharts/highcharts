@@ -596,7 +596,7 @@ Highcharts.Time.prototype = {
                  *         Adding support for week number
                  *
                  * @name Highcharts.dateFormats
-                 * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>|undefined}
+                 * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
                  */
                 H.dateFormats
             );
