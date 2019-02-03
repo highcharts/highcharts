@@ -273,7 +273,7 @@
  * @interface Highcharts.SVGAttributes
  *//**
  * @name Highcharts.SVGAttributes#[key:string]
- * @type {boolean|number|string|Array<number|string>|undefined}
+ * @type {boolean|number|string|Array<number|string>|Dictionary<boolean|number|string|undefined>|undefined}
  *//**
  * @name Highcharts.SVGAttributes#d
  * @type {string|Highcharts.SVGPathArray|undefined}
@@ -283,9 +283,6 @@
  *//**
  * @name Highcharts.SVGAttributes#matrix
  * @type {Array<number>|undefined}
- *//**
- * @name Highcharts.SVGAttributes#stroke
- * @type {Highcharts.ColorString|undefined}
  *//**
  * @name Highcharts.SVGAttributes#rotation
  * @type {string|undefined}
@@ -301,6 +298,12 @@
  *//**
  * @name Highcharts.SVGAttributes#scaleY
  * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#stroke
+ * @type {Highcharts.ColorString|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#style
+ * @type {string|Highcharts.CSSObject|undefined}
  *//**
  * @name Highcharts.SVGAttributes#translateX
  * @type {number|undefined}

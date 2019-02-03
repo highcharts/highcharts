@@ -268,7 +268,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/styling/
          *         Styling the buttons and inputs
          *
-         * @type {Highcharts.CSSObject}
+         * @type {Highcharts.SVGAttributes}
          */
         buttonTheme: {
             /** @ignore */
