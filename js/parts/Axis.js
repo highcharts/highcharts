@@ -1019,7 +1019,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * `"justify"` labels inside the chart area. If there is room to
              * move it, it will be aligned to the edge, else it will be removed.
              *
-             * @type       {boolean|string}
+             * @type       {string}
              * @default    justify
              * @since      2.2.5
              * @validvalue ["allow", "justify"]
