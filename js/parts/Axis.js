@@ -750,7 +750,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * maximum in axis values. The actual data extremes are found in
          * `event.dataMin` and `event.dataMax`.
          *
-         * @type      {Highcharts.AxisEventCallbackFunction}
+         * @type      {Highcharts.AxisSetExtremesEventCallbackFunction}
          * @since     2.3
          * @context   Axis
          * @apioption xAxis.events.afterSetExtremes
