@@ -7,16 +7,6 @@
  * */
 
 /**
- * Reference to the global SVGElement class as a workaround for a name conflict
- * in the Highcharts namespace.
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
- *
- * @global
- * @typedef {global.SVGElement} GlobalSVGElement
- */
-
-/**
  * An animation configuration. Animation configurations can also be defined as
  * booleans, where `false` turns off animation and `true` defaults to a duration
  * of 500ms.
