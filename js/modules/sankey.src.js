@@ -73,6 +73,8 @@ seriesType('sankey', 'column'
          * specifying what to show for _nodes_ in the sankey diagram. By default
          * the `nodeFormatter` returns `{point.name}`.
          *
+         * @sample highcharts/plotoptions/sankey-link-datalabels
+         *         Node and link data labels
          * @type {string}
          */
             nodeFormat: undefined,
