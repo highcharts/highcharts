@@ -1127,18 +1127,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 series.parallelArrays.forEach(function (key) {
                     preserve.push(key + 'Data');
                 });
-            }
 
-            if (options.data) {
-                this.setData(options.data, false);
+                if (options.data) {
+                    this.setData(options.data, false);
+                }
             }
-
-            // Make sure preserved properties are not destroyed (#3094)
-            preserve = groups.concat(preserve);
-            preserve.forEach(function (prop) {
-                preserve[prop] = series[prop];
-                delete series[prop];
-            });
 
             // Do the merge, with some forced options
             options = merge(oldOptions, animation, {
@@ -1147,9 +1140,16 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                     // when updating from blank (#7933)
                     oldOptions.pointStart,
                     // when updating after addPoint
-                    (series.xData || preserve.xData)[0]
+                    series.xData[0]
                 )
-            }, { data: series.options.data }, options);
+            }, regeneratePoints && { data: series.options.data }, options);
+
+            // Make sure preserved properties are not destroyed (#3094)
+            preserve = groups.concat(preserve);
+            preserve.forEach(function (prop) {
+                preserve[prop] = series[prop];
+                delete series[prop];
+            });
 
             // Destroy the series and delete all properties. Reinsert all
             // methods and properties from the new type prototype (#2270,
