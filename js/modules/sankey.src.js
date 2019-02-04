@@ -165,6 +165,7 @@ seriesType('sankey', 'column'
     }, {
         isCartesian: false,
         forceDL: true,
+        orderNodes: true,
         // Create a single node that holds information on incoming and outgoing
         // links.
         createNode: H.NodesMixin.createNode,
@@ -344,20 +345,22 @@ seriesType('sankey', 'column'
                     });
                 }
             }
-            this.nodes
-                // Identify the root node(s)
-                .filter(function (node) {
-                    return node.linksTo.length === 0;
-                })
-                // Start by the root node(s) and recursively set the level on
-                // all following nodes.
-                .forEach(function (node) {
-                    order(node, 0);
-                });
-            H.stableSort(this.nodes, function (a, b) {
-                return a.level - b.level;
-            });
 
+            if (this.orderNodes) {
+                this.nodes
+                    // Identify the root node(s)
+                    .filter(function (node) {
+                        return node.linksTo.length === 0;
+                    })
+                    // Start by the root node(s) and recursively set the level
+                    // on all following nodes.
+                    .forEach(function (node) {
+                        order(node, 0);
+                    });
+                H.stableSort(this.nodes, function (a, b) {
+                    return a.level - b.level;
+                });
+            }
         },
 
         // Destroy all nodes on setting new data

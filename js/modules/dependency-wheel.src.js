@@ -22,6 +22,7 @@ unsupportedSeriesType('dependencywheel', 'sankey', {
     curveFactor: 0.6,
     startAngle: 0
 }, {
+    orderNodes: false,
     getCenter: H.seriesTypes.pie.prototype.getCenter,
 
     // Dependency wheel has only one column, it runs along the perimeter
