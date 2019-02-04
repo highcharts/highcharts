@@ -1,5 +1,3 @@
-
-
 QUnit.test('Compare in candlesticks', function (assert) {
     var chart = Highcharts.stockChart('container', {
         series: [{
@@ -97,5 +95,45 @@ QUnit.test('Compare with the correct compareValue', function (assert) {
         series.compareValue,
         series.points[0][series.options.pointValKey],
         'compareValue is correct'
+    );
+});
+
+QUnit.test('Compare to the proper series (#7773)', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+
+        plotOptions: {
+            series: {
+                compare: 'percent'
+            }
+        },
+
+        tooltip: {
+            pointFormat: '{series.name}: {point.y} ({point.change}%)'
+        },
+
+        series: [{
+            data: [13, 12, 8, 4, 2, 5, 10, 30],
+            id: 'main'
+        }, {
+            type: 'sma',
+            name: 'SMA',
+            linkedTo: 'main',
+            compareToMain: true,
+            params: {
+                period: 3
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[1].compareValue,
+        13,
+        'compareValue is correct'
+    );
+
+    assert.strictEqual(
+        chart.series[1].data[0].change,
+        -15.384615384615387,
+        'First change value is correct'
     );
 });
