@@ -121,7 +121,8 @@ seriesType('pie', 'line',
 
         /**
          * @extends   plotOptions.series.dataLabels
-         * @excluding align, allowOverlap, staggerLines, step
+         * @excluding align, allowOverlap, inside, staggerLines, step,
+         *            verticalAlign
          * @product   highcharts
          */
         dataLabels: {
