@@ -514,7 +514,7 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
  *
  * @extends   series,plotOptions.packedbubble
  * @excluding dataParser, dataURL, stack
- * @product   highcharts highstock
+ * @product   highcharts
  * @apioption series.packedbubble
  */
 
