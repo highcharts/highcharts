@@ -311,6 +311,54 @@ QUnit.test('isPointInsideAllCircles', function (assert) {
     );
 });
 
+/**
+ * Since there is no "correct" positions for a specific input value, this test
+ * wont tell if a change in return values is correct or not, but it will alert
+ * of any unexpected changes.
+ */
+QUnit.test('layoutGreedyVenn', assert => {
+    const { prototype: vennPrototype } = Highcharts.seriesTypes.venn;
+    const { layoutGreedyVenn } = vennPrototype.utils;
+    const relations = [{
+        id: "A",
+        sets: ["A"],
+        value: 8.707145671877052
+    }, {
+        id: "C",
+        sets: ["C"],
+        value: 3.269735977932484
+    }, {
+        id: "B",
+        sets: ["B"],
+        value: 3.0135951661631424
+    }, {
+        id: "A_C",
+        sets: ["A", "C"],
+        value: 2.798830947064232
+    }, {
+        id: "A_B",
+        sets: ["A", "B"],
+        value: 2.078352817548929
+    }, {
+        id: "B_C",
+        sets: ["B", "C"],
+        value: 0.7966636017338763
+    }, {
+        id: "A_B_C",
+        sets: ["A", "B", "C"],
+        value: 0.6833705503743597
+    }];
+
+    assert.deepEqual(
+        layoutGreedyVenn(relations),
+        {
+            A: { r: 1.66480345620763, x: 0, y: 0 },
+            B: { r: 0.9794167317058717, x: 0.48757084298176, y: 1.1634694924001 },
+            C: { r: 1.0201908091071663, x: 0.9751416859635283, y: 0 }
+        },
+        'should return expected positions and sizes for the sets.'
+    );
+});
 
 QUnit.test('loss', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,

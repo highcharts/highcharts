@@ -3,7 +3,9 @@ import MfiIndicator from 'highcharts/indicators/mfi';
 
 MfiIndicator(Highcharts);
 
-test_PlotMfiParamsOptions() {
+test_PlotMfiParamsOptions();
+
+function test_PlotMfiParamsOptions() {
     // $ExpectError
     const options: Highcharts.PlotMfiParamsOptions = {
         index: 123

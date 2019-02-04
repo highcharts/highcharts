@@ -312,7 +312,7 @@ QUnit.test('Columns were cut by cliprect, when resizing chart during initial ani
             chart.setSize(700, 450);
 
             assert.strictEqual(
-                chart[chart.series[1].sharedClipKey].getBBox().width,
+                Number(chart[chart.series[1].sharedClipKey].attr('width')),
                 chart.series[1].xAxis.len,
                 'Correct clipbox width.'
             );

@@ -1108,7 +1108,15 @@ Highcharts.Pointer.prototype = {
         }
 
         e = this.normalize(e);
-        e.returnValue = false; // #2251, #3224
+
+        // In IE8 we apparently need this returnValue set to false in order to
+        // avoid text being selected. But in Chrome, e.returnValue is prevented,
+        // plus we don't need to run e.preventDefault to prevent selected text
+        // in modern browsers. So we set it conditionally. Remove it when IE8 is
+        // no longer needed. #2251, #3224.
+        if (!e.preventDefault) {
+            e.returnValue = false;
+        }
 
         if (chart.mouseIsDown === 'mousedown') {
             this.drag(e);

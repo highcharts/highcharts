@@ -33,7 +33,7 @@ var colorPointMixin = H.colorPointMixin,
  */
 seriesType(
     'heatmap',
-    'scatter'
+    'scatter',
 
     /**
      * A heatmap is a graphical representation of data where the individual
@@ -53,7 +53,7 @@ seriesType(
      * @product      highcharts highmaps
      * @optionparent plotOptions.heatmap
      */
-    , {
+    {
 
         /**
          * Animation is disabled by default on the heatmap series.
@@ -204,7 +204,8 @@ seriesType(
                 seriesPointPadding = options.pointPadding || 0,
                 between = function (x, a, b) {
                     return Math.min(Math.max(a, x), b);
-                };
+                },
+                pointPlacement = series.pointPlacementToXValue(); // #7860
 
             series.generatePoints();
 
@@ -214,14 +215,24 @@ seriesType(
                     x1 = between(
                         Math.round(
                             xAxis.len -
-                        xAxis.translate(point.x - xPad, 0, 1, 0, 1)
+                        xAxis.translate(point.x - xPad,
+                            0,
+                            1,
+                            0,
+                            1,
+                            -pointPlacement)
                         ),
                         -xAxis.len, 2 * xAxis.len
                     ),
                     x2 = between(
                         Math.round(
                             xAxis.len -
-                        xAxis.translate(point.x + xPad, 0, 1, 0, 1)
+                        xAxis.translate(point.x + xPad,
+                            0,
+                            1,
+                            0,
+                            1,
+                            -pointPlacement)
                         ),
                         -xAxis.len, 2 * xAxis.len
                     ),
@@ -266,6 +277,17 @@ seriesType(
             this.points.forEach(function (point) {
                 point.graphic[func](this.colorAttribs(point));
             }, this);
+        },
+
+        // Override to also allow null points, used when building the k-d-tree
+        // for tooltips in boost mode.
+        getValidPoints: function (points, insideOnly) {
+            return Series.prototype.getValidPoints.call(
+                this,
+                points,
+                insideOnly,
+                true
+            );
         },
 
         /**

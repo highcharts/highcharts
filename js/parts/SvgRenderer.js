@@ -426,7 +426,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
     /**
      * Initialize the SVG element. This function only exists to make the
-     * initiation process overridable. It should not be called directly.
+     * initialization process overridable. It should not be called directly.
      *
      * @function Highcharts.SVGElement#init
      *
@@ -500,9 +500,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             animate(this, params, animOptions);
         } else {
             this.attr(params, null, complete);
-            if (animOptions.step) {
-                animOptions.step.call(this);
-            }
+
+            // Call the end step synchronously
+            H.objectEach(params, function (val, prop) {
+                if (animOptions.step) {
+                    animOptions.step.call(this, val, { prop: prop, pos: 1 });
+                }
+            }, this);
         }
         return this;
     },
@@ -2535,7 +2539,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     SVG_NS: SVG_NS,
 
     /**
-     * Initialize the SVGRenderer. Overridable initiator function that takes
+     * Initialize the SVGRenderer. Overridable initializer function that takes
      * the same parameters as the constructor.
      *
      * @function Highcharts.SVGRenderer#init
@@ -4610,7 +4614,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var lineHeight,
             baseline;
 
-        if (this.styledMode || !/px/.test(fontSize)) {
+        if (
+            (this.styledMode || !/px/.test(fontSize)) &&
+            win.getComputedStyle // old IE doesn't support it
+        ) {
             fontSize = elem && SVGElement.prototype.getStyle.call(
                 elem,
                 'font-size'
@@ -4689,11 +4696,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} y
      *        The y position of the label's top side or baseline, depending on
      *        the `baseline` parameter.
-     *
-     * @param {string} [shape='rect']
-     *        The shape of the label's border/background, if any. Defaults to
-     *        `rect`. Other possible values are `callout` or other shapes
-     *        defined in {@link Highcharts.SVGRenderer#symbols}.
      *
      * @param {string} [shape='rect']
      *        The shape of the label's border/background, if any. Defaults to

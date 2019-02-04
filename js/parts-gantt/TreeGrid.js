@@ -464,10 +464,54 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
     };
 };
 
+H.addEvent(H.Chart, 'beforeRender', function () {
+
+    this.axes.forEach(function (axis) {
+        if (axis.userOptions.type === 'treegrid') {
+            var labelOptions = axis.options && axis.options.labels,
+                removeFoundExtremesEvent;
+
+            // beforeRender is fired after all the series is initialized,
+            // which is an ideal time to update the axis.categories.
+            axis.updateYNames();
+
+            // Update yData now that we have calculated the y values
+            // TODO: it would be better to be able to calculate y values
+            // before Series.setData
+            axis.series.forEach(function (series) {
+                series.yData = series.options.data.map(function (data) {
+                    return data.y;
+                });
+            });
+
+            // Calculate the label options for each level in the tree.
+            axis.mapOptionsToLevel = getLevelOptions({
+                defaults: labelOptions,
+                from: 1,
+                levels: labelOptions.levels,
+                to: axis.tree.height
+            });
+
+            // Collapse all the nodes belonging to a point where collapsed
+            // equals true.
+            // Can be called from beforeRender, if getBreakFromNode removes
+            // its dependency on axis.max.
+            removeFoundExtremesEvent =
+                H.addEvent(axis, 'foundExtremes', function () {
+                    axis.collapsedNodes.forEach(function (node) {
+                        var breaks = collapse(axis, node);
+
+                        axis.setBreaks(breaks, false);
+                    });
+                    removeFoundExtremesEvent();
+                });
+        }
+    });
+});
+
 override(GridAxis.prototype, {
     init: function (proceed, chart, userOptions) {
         var axis = this,
-            removeFoundExtremesEvent,
             isTreeGrid = userOptions.type === 'treegrid';
 
         // Set default and forced options for TreeGrid
@@ -555,44 +599,6 @@ override(GridAxis.prototype, {
         // which are sliced off this function's arguments
         proceed.apply(axis, [chart, userOptions]);
         if (isTreeGrid) {
-            H.addEvent(axis.chart, 'beforeRender', function () {
-                var labelOptions = axis.options && axis.options.labels;
-
-                // beforeRender is fired after all the series is initialized,
-                // which is an ideal time to update the axis.categories.
-                axis.updateYNames();
-
-                // Update yData now that we have calculated the y values
-                // TODO: it would be better to be able to calculate y values
-                // before Series.setData
-                axis.series.forEach(function (series) {
-                    series.yData = series.options.data.map(function (data) {
-                        return data.y;
-                    });
-                });
-
-                // Calculate the label options for each level in the tree.
-                axis.mapOptionsToLevel = getLevelOptions({
-                    defaults: labelOptions,
-                    from: 1,
-                    levels: labelOptions.levels,
-                    to: axis.tree.height
-                });
-
-                // Collapse all the nodes belonging to a point where collapsed
-                // equals true.
-                // Can be called from beforeRender, if getBreakFromNode removes
-                // its dependency on axis.max.
-                removeFoundExtremesEvent =
-                    H.addEvent(axis, 'foundExtremes', function () {
-                        axis.collapsedNodes.forEach(function (node) {
-                            var breaks = collapse(axis, node);
-
-                            axis.setBreaks(breaks, false);
-                        });
-                        removeFoundExtremesEvent();
-                    });
-            });
             axis.hasNames = true;
             axis.options.showLastLabel = true;
         }
@@ -619,7 +625,7 @@ override(GridAxis.prototype, {
             isTreeGrid = axis.options.type === 'treegrid',
             treeDepth;
 
-        if (isTreeGrid) {
+        if (isTreeGrid && this.mapOfPosToGridNode) {
             treeDepth = axis.mapOfPosToGridNode[-1].height;
             retVal.width += indentation * (treeDepth - 1);
         }
@@ -691,7 +697,7 @@ override(GridAxis.prototype, {
             options = axis.options,
             isTreeGrid = options.type === 'treegrid';
 
-        if (isTreeGrid) {
+        if (isTreeGrid && this.mapOfPosToGridNode) {
             axis.min = pick(axis.userMin, options.min, axis.dataMin);
             axis.max = pick(axis.userMax, options.max, axis.dataMax);
 

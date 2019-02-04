@@ -45,7 +45,7 @@ function MapNavigation(chart) {
 }
 
 /**
- * Initiator function.
+ * Initialize function.
  *
  * @function MapNavigation#init
  *

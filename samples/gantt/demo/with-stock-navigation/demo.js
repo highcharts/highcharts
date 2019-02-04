@@ -1,4 +1,3 @@
-
 Highcharts.ganttChart('container', {
 
     title: {
@@ -11,6 +10,7 @@ Highcharts.ganttChart('container', {
 
     navigator: {
         enabled: true,
+        liveRedraw: true,
         series: {
             type: 'gantt',
             pointPlacement: 0.5,

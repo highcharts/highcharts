@@ -38,7 +38,7 @@ extend(Pane.prototype, {
     coll: 'pane', // Member of chart.pane
 
     /**
-     * Initiate the Pane object
+     * Initialize the Pane object
      *
      * @private
      * @function Highcharts.Pane#init

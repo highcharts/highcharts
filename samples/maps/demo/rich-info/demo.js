@@ -1,6 +1,6 @@
 
 $.ajax({
-    url: 'https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/world-population-history.csv',
+    url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-history.csv',
     success: function (csv) {
 
         // Parse the CSV Data

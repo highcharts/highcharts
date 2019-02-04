@@ -17,9 +17,13 @@ import '../parts/Color.js';
 
 var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
+    addEvent = H.addEvent,
     merge = H.merge,
     extend = H.extend,
+    error = H.error,
+    defined = H.defined,
     noop = H.noop,
+    fireEvent = H.fireEvent,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     isArray = H.isArray,
@@ -79,17 +83,31 @@ seriesType(
 
         /**
          * When enabled the user can click on a point which is a parent and
-         * zoom in on its children.
+         * zoom in on its children. Deprecated and replaced by
+         * [allowTraversingTree](#plotOptions.treemap.allowTraversingTree).
          *
          * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/
          *         Enabled
          *
+         * @deprecated
          * @type      {boolean}
          * @default   false
          * @since     4.1.0
          * @product   highcharts
          * @apioption plotOptions.treemap.allowDrillToNode
          */
+
+        /**
+         * When enabled the user can click on a point which is a parent and
+         * zoom in on its children.
+         *
+         * @sample {highcharts} highcharts/plotoptions/treemap-allowtraversingtree/
+         *         Enabled
+         *
+         * @since     next
+         * @product   highcharts
+         */
+        allowTraversingTree: false,
 
         /**
          * When the series contains less points than the crop threshold, all
@@ -109,15 +127,30 @@ seriesType(
          */
 
         /**
+         * Fires on a request for change of root node for the tree, before the
+         * update is made. An event object is passed to the function, containing
+         * additional properties `newRootId`, `previousRootId`, `redraw` and
+         * `trigger`.
+         *
+         * @type {function}
+         * @default undefined
+         * @sample {highcharts} highcharts/plotoptions/treemap-events-setrootnode/
+         *         Alert update information on setRootNode event.
+         * @since next
+         * @product highcharts
+         * @apioption plotOptions.treemap.events.setRootNode
+         */
+
+        /**
          * This option decides if the user can interact with the parent nodes
          * or just the leaf nodes. When this option is undefined, it will be
-         * true by default. However when allowDrillToNode is true, then it will
-         * be false by default.
+         * true by default. However when allowTraversingTree is true, then it
+         * will be false by default.
          *
          * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-false/
          *         False
-         * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-true-and-allowdrilltonode/
-         *         InteractByLeaf and allowDrillToNode is true
+         * @sample {highcharts} highcharts/plotoptions/treemap-interactbyleaf-true-and-allowtraversingtree/
+         *         InteractByLeaf and allowTraversingTree is true
          *
          * @type      {boolean}
          * @since     4.1.2
@@ -246,19 +279,67 @@ seriesType(
         alternateStartingDirection: false,
 
         /**
-         * Used together with the levels and allowDrillToNode options. When
-         * set to false the first level visible when drilling is considered
-         * to be level one. Otherwise the level will be the same as the tree
-         * structure.
+         * Used together with the levels and allowTraversingTree options. When
+         * set to false the first level visible to be level one, which is
+         * dynamic when traversing the tree. Otherwise the level will be the
+         * same as the tree structure.
          *
          * @since 4.1.0
          */
         levelIsConstant: true,
-
         /**
          * Options for the button appearing when drilling down in a treemap.
+         * Deprecated and replaced by [traverseUpButton](#plotOptions.treemap.traverseUpButton).
+         *
+         * @deprecated
          */
         drillUpButton: {
+
+            /**
+             * The position of the button.
+             *
+             * @deprecated
+             */
+            position: {
+
+                /**
+                 * Vertical alignment of the button.
+                 *
+                 * @deprecated
+                 * @default    top
+                 * @validvalue ["top", "middle", "bottom"]
+                 * @product    highcharts
+                 * @apioption  plotOptions.treemap.drillUpButton.position.verticalAlign
+                 */
+
+                /**
+                 * Horizontal alignment of the button.
+                 *
+                 * @deprecated
+                 * @validvalue ["left", "center", "right"]
+                 */
+                align: 'right',
+
+                /**
+                 * Horizontal offset of the button.
+                 *
+                 * @deprecated
+                 */
+                x: -10,
+
+                /**
+                 * Vertical offset of the button.
+                 *
+                 * @deprecated
+                 */
+                y: 10
+            }
+        },
+
+        /**
+         * Options for the button appearing when traversing down in a treemap.
+         */
+        traverseUpButton: {
 
             /**
              * The position of the button.
@@ -271,7 +352,7 @@ seriesType(
                  * @default    top
                  * @validvalue ["top", "middle", "bottom"]
                  * @product    highcharts
-                 * @apioption  plotOptions.treemap.drillUpButton.position.verticalAlign
+                 * @apioption  plotOptions.treemap.traverseUpButton.position.verticalAlign
                  */
 
                 /**
@@ -575,9 +656,31 @@ seriesType(
                 this.axisTypes = colorSeriesMixin.axisTypes;
             }
 
+            // Handle deprecated options.
+            addEvent(series, 'setOptions', function (event) {
+                var options = event.userOptions;
+
+                if (
+                    defined(options.allowDrillToNode) &&
+                    !defined(options.allowTraversingTree)
+                ) {
+                    options.allowTraversingTree = options.allowDrillToNode;
+                    delete options.allowDrillToNode;
+                }
+
+                if (
+                    defined(options.drillUpButton) &&
+                    !defined(options.traverseUpButton)
+                ) {
+                    options.traverseUpButton = options.drillUpButton;
+                    delete options.drillUpButton;
+                }
+            });
+
             Series.prototype.init.call(series, chart, options);
-            if (series.options.allowDrillToNode) {
-                H.addEvent(series, 'click', series.onClickDrillToNode);
+
+            if (series.options.allowTraversingTree) {
+                addEvent(series, 'click', series.onClickDrillToNode);
             }
         },
         buildNode: function (id, i, level, list, parent) {
@@ -1073,7 +1176,7 @@ seriesType(
                 rootId !== '' &&
             (!rootNode || !rootNode.children.length)
             ) {
-                series.drillToNode('', false);
+                series.setRootNode('', false);
                 rootId = series.rootNode;
                 rootNode = series.nodeMap[rootId];
             }
@@ -1126,7 +1229,7 @@ seriesType(
             }
 
             // Update axis extremes according to the root node.
-            if (options.allowDrillToNode) {
+            if (options.allowTraversingTree) {
                 val = rootNode.pointValues;
                 series.xAxis.setExtremes(val.x, val.x + val.width, false);
                 series.yAxis.setExtremes(val.y, val.y + val.height, false);
@@ -1319,9 +1422,9 @@ seriesType(
                 }, this);
             }
 
-            // If drillToNode is allowed, set a point cursor on clickables & add
+            // If setRootNode is allowed, set a point cursor on clickables & add
             // drillId to point
-            if (series.options.allowDrillToNode) {
+            if (series.options.allowTraversingTree) {
                 points.forEach(function (point) {
                     if (point.graphic) {
                         point.drillId = series.options.interactByLeaf ?
@@ -1340,7 +1443,7 @@ seriesType(
             // If a drill id is returned, add click event and cursor.
             if (isString(drillId)) {
                 point.setState(''); // Remove hover
-                series.drillToNode(drillId);
+                series.setRootNode(drillId, true, { trigger: 'click' });
             }
         },
         /**
@@ -1404,30 +1507,90 @@ seriesType(
                 node = series.nodeMap[series.rootNode];
 
             if (node && isString(node.parent)) {
-                series.drillToNode(node.parent);
+                series.setRootNode(
+                    node.parent,
+                    true,
+                    { trigger: 'traverseUpButton' }
+                );
             }
         },
+        // TODO remove this function at a suitable version.
         drillToNode: function (id, redraw) {
+            error(
+                'WARNING: treemap.drillToNode has been renamed to treemap.' +
+                'setRootNode, and will be removed in the next major version.'
+            );
+            this.setRootNode(id, redraw);
+        },
+        /**
+         * Sets a new root node for the series.
+         *
+         * @param {string} id The id of the new root node.
+         * @param {boolean} [redraw=true] Wether to redraw the chart or not.
+         * @param {object} [eventArguments] Arguments to be accessed in
+         * event handler.
+         * @param {string} [eventArguments.newRootId] Id of the new root.
+         * @param {string} [eventArguments.previousRootId] Id of the previous
+         * root.
+         * @param {boolean} [eventArguments.redraw] Wether to redraw the
+         * chart after.
+         * @param {object} [eventArguments.series] The series to update the root
+         * of.
+         * @param {string} [eventArguments.trigger] The action which
+         * triggered the event. Undefined if the setRootNode is called
+         * directly.
+         */
+        setRootNode: function (id, redraw, eventArguments) {
             var series = this,
-                nodeMap = series.nodeMap,
-                node = nodeMap[id];
+                eventArgs = extend({
+                    newRootId: id,
+                    previousRootId: series.rootNode,
+                    redraw: pick(redraw, true),
+                    series: series
+                }, eventArguments);
 
-            series.idPreviousRoot = series.rootNode;
-            series.rootNode = id;
-            if (id === '') {
-                series.drillUpButton = series.drillUpButton.destroy();
-            } else {
-                series.showDrillUpButton((node && node.name || id));
-            }
-            this.isDirty = true; // Force redraw
-            if (pick(redraw, true)) {
-                this.chart.redraw();
-            }
+            /**
+             * The default functionality of the setRootNode event.
+             * @param {object} args The event arguments.
+             * @param {string} args.newRootId Id of the new root.
+             * @param {string} args.previousRootId Id of the previous root.
+             * @param {boolean} args.redraw Wether to redraw the chart after.
+             * @param {object} args.series The series to update the root of.
+             * @param {string} [args.trigger=undefined] The action which
+             * triggered the event. Undefined if the setRootNode is called
+             * directly.
+             */
+            var defaultFn = function (args) {
+                var series = args.series,
+                    newRootId = args.newRootId,
+                    nodeMap = series.nodeMap,
+                    node = nodeMap[newRootId];
+
+                // Store previous and new root ids on the series.
+                series.idPreviousRoot = args.previousRootId;
+                series.rootNode = newRootId;
+
+                // Remove or update the drill up button.
+                if (newRootId === '') {
+                    series.drillUpButton = series.drillUpButton.destroy();
+                } else {
+                    series.showDrillUpButton((node && node.name || newRootId));
+                }
+
+                // Redraw the chart
+                series.isDirty = true; // Force redraw
+                if (args.redraw) {
+                    series.chart.redraw();
+                }
+            };
+
+            // Fire setRootNode event.
+            fireEvent(series, 'setRootNode', eventArgs, defaultFn);
         },
         showDrillUpButton: function (name) {
             var series = this,
                 backText = (name || '< Back'),
-                buttonOptions = series.options.drillUpButton,
+                buttonOptions = series.options.traverseUpButton,
                 attr,
                 states;
 
@@ -1517,7 +1680,7 @@ seriesType(
 
             } else if (
                 !this.node.isLeaf &&
-            !pick(options.interactByLeaf, !options.allowDrillToNode)
+            !pick(options.interactByLeaf, !options.allowTraversingTree)
             ) {
                 className += ' highcharts-internal-node-interactive';
 

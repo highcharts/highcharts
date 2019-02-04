@@ -19,7 +19,9 @@
 /* global win, window */
 
 // glob is a temporary fix to allow our es-modules to work.
-var glob = typeof win === 'undefined' ? window : win,
+var glob = typeof win === 'undefined' ?
+        (typeof window !== 'undefined' ? window : {}) :
+        win,
     doc = glob.document,
     SVG_NS = 'http://www.w3.org/2000/svg',
     userAgent = (glob.navigator && glob.navigator.userAgent) || '',

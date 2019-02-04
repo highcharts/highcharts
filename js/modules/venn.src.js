@@ -574,7 +574,7 @@ var layoutGreedyVenn = function layoutGreedyVenn(relations) {
         .sort(sortByTotalOverlap);
 
     // Position the most overlapped set at 0,0.
-    positionSet(sortedByOverlap.pop(), { x: 0, y: 0 });
+    positionSet(sortedByOverlap.shift(), { x: 0, y: 0 });
 
     var relationsWithTwoSets = relations.filter(function (x) {
         return x.sets.length === 2;
@@ -1093,6 +1093,7 @@ var vennSeries = {
         geometry: geometry,
         geometryCircles: geometryCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
+        layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap

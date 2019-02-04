@@ -1,5 +1,5 @@
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/usdeur.json', function (data) {
+$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
 
     var year = new Date(data[data.length - 1][0]).getFullYear(); // Get year of last data point
 

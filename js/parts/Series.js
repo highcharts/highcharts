@@ -515,6 +515,8 @@ H.Series = H.seriesType(
      * chart is a combination of series types, there is no need to set it on the
      * series level.
      *
+     * In TypeScript instead the `type` option must always be set.
+     *
      * @sample {highcharts} highcharts/series/type/
      *         Line and column in the same chart
      * @sample {highmaps} maps/demo/mapline-mappoint/
@@ -1071,6 +1073,8 @@ H.Series = H.seriesType(
          *         Between in a column chart
          * @sample {highcharts|highstock} highcharts/plotoptions/series-pointplacement-numeric/
          *         Numeric placement for custom layout
+         * @sample {highcharts|highstock} maps/plotoptions/heatmap-pointplacement/
+         *         Placement in heatmap
          *
          * @type      {string|number}
          * @since     2.3.0
@@ -2657,6 +2661,7 @@ H.Series = H.seriesType(
         // each point's x and y values are stored in this.xData and this.yData
         parallelArrays: ['x', 'y'],
         coll: 'series',
+        cropShoulder: 1,
         init: function (chart, options) {
 
             fireEvent(this, 'init', { options: options });
@@ -2729,7 +2734,15 @@ H.Series = H.seriesType(
             events = options.events;
 
             objectEach(events, function (event, eventType) {
-                addEvent(series, eventType, event);
+                if (
+                    // In case we're doing Series.update(), first check if the
+                    // event already exists.
+                    !series.hcEvents ||
+                    !series.hcEvents[eventType] ||
+                    series.hcEvents[eventType].indexOf(event) === -1
+                ) {
+                    addEvent(series, eventType, event);
+                }
             });
             if (
                 (events && events.click) ||
@@ -2986,8 +2999,8 @@ H.Series = H.seriesType(
 
         /**
          * Set the series options by merging from the options tree. Called
-         * internally on initiating and updating series. This function will not
-         * redraw the series. For API usage, use {@link Series#update}.
+         * internally on initializing and updating series. This function will
+         * not redraw the series. For API usage, use {@link Series#update}.
          *
          * @function Highcharts.Series#setOptions
          *
@@ -3005,13 +3018,16 @@ H.Series = H.seriesType(
                 userOptions = chart.userOptions || {},
                 userPlotOptions = userOptions.plotOptions || {},
                 typeOptions = plotOptions[this.type],
+                seriesUserOptions = merge(itemOptions),
                 options,
                 zones,
                 zone,
                 styledMode = chart.styledMode;
 
+            fireEvent(this, 'setOptions', { userOptions: seriesUserOptions });
+
             // use copy to prevent undetected changes (#9762)
-            this.userOptions = merge(itemOptions);
+            this.userOptions = seriesUserOptions;
 
             // General series options take precedence over type options because
             // otherwise, default type options like column.animation would be
@@ -3021,7 +3037,7 @@ H.Series = H.seriesType(
             options = merge(
                 typeOptions,
                 plotOptions.series,
-                itemOptions
+                seriesUserOptions
             );
 
             // The tooltip options are merged between global and series specific
@@ -3038,13 +3054,13 @@ H.Series = H.seriesType(
                 chartOptions.tooltip.userOptions, // 4
                 plotOptions.series && plotOptions.series.tooltip, // 5
                 plotOptions[this.type].tooltip, // 6
-                itemOptions.tooltip // 7
+                seriesUserOptions.tooltip // 7
             );
 
             // When shared tooltip, stickyTracking is true by default,
             // unless user says otherwise.
             this.stickyTracking = pick(
-                itemOptions.stickyTracking,
+                seriesUserOptions.stickyTracking,
                 userPlotOptions[this.type] &&
                     userPlotOptions[this.type].stickyTracking,
                 userPlotOptions.series && userPlotOptions.series.stickyTracking,
@@ -3259,13 +3275,24 @@ H.Series = H.seriesType(
                         pointIndex = this.xData.indexOf(x, lastIndex);
                     }
 
+                    // Reduce pointIndex if data is cropped
+                    if (pointIndex !== -1 &&
+                        pointIndex !== undefined &&
+                        this.cropped
+                    ) {
+                        pointIndex = (pointIndex >= this.cropStart) ?
+                            pointIndex - this.cropStart : pointIndex;
+                    }
+
                     // Matching X not found
                     // or used already due to ununique x values (#8995),
                     // add point (but later)
                     if (
                         pointIndex === -1 ||
                         pointIndex === undefined ||
-                        oldData[pointIndex].touched
+                        (oldData[pointIndex] &&
+                            oldData[pointIndex].touched
+                        )
                     ) {
                         pointsToAdd.push(pointOptions);
 
@@ -3700,7 +3727,7 @@ H.Series = H.seriesType(
                 j;
 
             // line-type series need one point outside
-            cropShoulder = pick(cropShoulder, this.cropShoulder, 1);
+            cropShoulder = pick(cropShoulder, this.cropShoulder);
 
             // iterate up to find slice start
             for (i = 0; i < dataLength; i++) {
@@ -3869,6 +3896,8 @@ H.Series = H.seriesType(
              * @type {Array<Highcharts.Point>}
              */
             series.points = points;
+
+            fireEvent(this, 'afterGeneratePoints');
         },
 
         /**
@@ -3896,7 +3925,7 @@ H.Series = H.seriesType(
                 withinRange,
                 // Handle X outside the viewed area. This does not work with
                 // non-sorted data like scatter (#7639).
-                shoulder = this.requireSorting ? 1 : 0,
+                shoulder = this.requireSorting ? this.cropShoulder : 0,
                 x,
                 y,
                 i,
@@ -3972,10 +4001,8 @@ H.Series = H.seriesType(
                 dataLength = points.length,
                 hasModifyValue = !!series.modifyValue,
                 i,
-                pointPlacement = options.pointPlacement,
-                dynamicallyPlaced =
-                    pointPlacement === 'between' ||
-                    isNumber(pointPlacement),
+                pointPlacement = series.pointPlacementToXValue(), // #7860
+                dynamicallyPlaced = isNumber(pointPlacement),
                 threshold = options.threshold,
                 stackThreshold = options.startFromThreshold ? threshold : 0,
                 plotX,
@@ -3990,14 +4017,6 @@ H.Series = H.seriesType(
             // (#3201, #3923, #7555).
             function limitedRange(val) {
                 return Math.min(Math.max(-1e5, val), 1e5);
-            }
-
-            // Point placement is relative to each series pointRange (#5889)
-            if (pointPlacement === 'between') {
-                pointPlacement = 0.5;
-            }
-            if (isNumber(pointPlacement)) {
-                pointPlacement *= pick(options.pointRange || xAxis.pointRange);
             }
 
             // Translate each point
@@ -4158,10 +4177,13 @@ H.Series = H.seriesType(
          *        Whether to inspect only the points that are inside the visible
          *        view.
          *
+         * @param {boolean} [allowNull=false]
+         *        Whether to allow null points to pass as valid points.
+         *
          * @return {Array<Highcharts.Point>}
          *         The valid points.
          */
-        getValidPoints: function (points, insideOnly) {
+        getValidPoints: function (points, insideOnly, allowNull) {
             var chart = this.chart;
 
             // #3916, #5029, #5085
@@ -4174,7 +4196,7 @@ H.Series = H.seriesType(
                     )) {
                         return false;
                     }
-                    return !point.isNull;
+                    return allowNull || !point.isNull;
                 }
             );
         },
@@ -4621,7 +4643,7 @@ H.Series = H.seriesType(
          *
          * @fires Highcharts.Series#event:destroy
          */
-        destroy: function () {
+        destroy: function (keepEvents) {
             var series = this,
                 chart = series.chart,
                 issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
@@ -4635,7 +4657,9 @@ H.Series = H.seriesType(
             fireEvent(series, 'destroy');
 
             // remove all events
-            removeEvent(series);
+            if (!keepEvents) {
+                removeEvent(series);
+            }
 
             // erase from axes
             (series.axisTypes || []).forEach(function (AXIS) {
@@ -4688,7 +4712,9 @@ H.Series = H.seriesType(
 
             // clear all members
             objectEach(series, function (val, prop) {
-                delete series[prop];
+                if (!keepEvents || prop !== 'hcEvents') {
+                    delete series[prop];
+                }
             });
         },
 
@@ -5579,8 +5605,30 @@ H.Series = H.seriesType(
             if (this.kdTree) {
                 return _search(point, this.kdTree, kdDimensions, kdDimensions);
             }
-        }
+        },
 
+        /**
+         * @private
+         * @function Highcharts.Series#pointPlacementToXValue
+         *
+         * @return {number}
+         */
+        pointPlacementToXValue: function () {
+
+            var series = this,
+                pointPlacement = series.options.pointPlacement;
+
+            // Point placement is relative to each series pointRange (#5889)
+            if (pointPlacement === 'between') {
+                pointPlacement = 0.5;
+            }
+            if (isNumber(pointPlacement)) {
+                pointPlacement *=
+                    pick(series.options.pointRange || series.xAxis.pointRange);
+            }
+
+            return pointPlacement;
+        }
     }
 ); // end Series prototype
 
@@ -5613,6 +5661,8 @@ H.Series = H.seriesType(
 /**
  * A `line` series. If the [type](#series.line.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * In TypeScript instead the `type` option must always be set.
  *
  * @extends   series,plotOptions.line
  * @excluding dataParser,dataURL

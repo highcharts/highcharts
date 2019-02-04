@@ -1523,7 +1523,7 @@ Navigator.prototype = {
     },
 
     /**
-     * Initiate the Navigator object
+     * Initialize the Navigator object
      *
      * @private
      * @function Highcharts.Navigator#init
@@ -1776,7 +1776,11 @@ Navigator.prototype = {
         baseSeriesOptions = (
             baseSeriesOptions ||
             chart.options && chart.options.navigator.baseSeries ||
-            0
+            (chart.series.length ?
+                // Find the first non-navigator series (#8430)
+                H.find(chart.series, function (s) {
+                    return !s.options.isInternal;
+                }).index : 0)
         );
 
         // Iterate through series and add the ones that should be shown in
@@ -2444,7 +2448,7 @@ addEvent(Chart, 'update', function (e) {
 
 });
 
-// Initiate navigator, if no scrolling exists yet
+// Initialize navigator, if no scrolling exists yet
 addEvent(Chart, 'afterUpdate', function () {
 
     if (!this.navigator && !this.scroller &&
@@ -2474,7 +2478,7 @@ Chart.prototype.callbacks.push(function (chart) {
     var extremes,
         navigator = chart.navigator;
 
-    // Initiate the navigator
+    // Initialize the navigator
     if (navigator && chart.xAxis[0]) {
         extremes = chart.xAxis[0].getExtremes();
         navigator.render(extremes.min, extremes.max);
