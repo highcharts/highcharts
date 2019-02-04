@@ -708,11 +708,35 @@ Chart.prototype.drawSeriesLabels = function () {
             onArea = pick(labelOptions.onArea, !!series.area),
             label = series.labelBySeries,
             minFontSize = labelOptions.minFontSize,
-            maxFontSize = labelOptions.maxFontSize;
+            maxFontSize = labelOptions.maxFontSize,
+            dataExtremes,
+            areaMin,
+            areaMax;
+
+        // Stay within the area data bounds (#10038)
+        if (onArea && !inverted) {
+            dataExtremes = [
+                series.xAxis.toPixels(series.xData[0]),
+                series.xAxis.toPixels(
+                    series.xData[series.xData.length - 1]
+                )
+            ];
+            areaMin = Math.min.apply(Math, dataExtremes);
+            areaMax = Math.max.apply(Math, dataExtremes);
+        }
 
         function insidePane(x, y, bBox) {
-            return x > paneLeft && x <= paneLeft + paneWidth - bBox.width &&
-                y >= paneTop && y <= paneTop + paneHeight - bBox.height;
+            var leftBound = Math.max(paneLeft, pick(areaMin, -Infinity)),
+                rightBound = Math.min(
+                    paneLeft + paneWidth,
+                    pick(areaMax, Infinity)
+                );
+            return (
+                x > leftBound &&
+                x <= rightBound - bBox.width &&
+                y >= paneTop &&
+                y <= paneTop + paneHeight - bBox.height
+            );
         }
 
         function destroyLabel() {
