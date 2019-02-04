@@ -233,6 +233,18 @@ seriesType('networkgraph', 'line', {
      */
     createNode: H.NodesMixin.createNode,
 
+    init: function () {
+        Series.prototype.init.apply(this, arguments);
+
+        addEvent(this, 'updatedData', function () {
+            if (this.layout) {
+                this.layout.stop();
+            }
+        });
+
+        return this;
+    },
+
     /**
      * Extend generatePoints by adding the nodes, which are Point objects
      * but pushed to the this.nodes array.
@@ -485,6 +497,26 @@ seriesType('networkgraph', 'line', {
         return Series.prototype.destroy.apply(this, arguments);
     }
 }, {
+    init: function () {
+        Point.prototype.init.apply(this, arguments);
+
+        addEvent(
+            this,
+            'mouseOver',
+            function () {
+                H.css(this.series.chart.container, { cursor: 'move' });
+            }
+        );
+        addEvent(
+            this,
+            'mouseOut',
+            function () {
+                H.css(this.series.chart.container, { cursor: 'default' });
+            }
+        );
+
+        return this;
+    },
     getDegree: function () {
         var deg = this.isNode ? this.linksFrom.length + this.linksTo.length : 0;
 
@@ -551,6 +583,16 @@ seriesType('networkgraph', 'line', {
             to.plotY
         ];*/
     },
+    remove: function () {
+        if (this.isNode) {
+            this.series.layout.removeNode(this);
+        } else {
+            this.series.layout.removeLink(this);
+        }
+
+        return Point.prototype.remove.apply(this, arguments);
+    },
+
     // Default utils:
     destroy: function () {
         if (this.isNode) {
@@ -564,22 +606,6 @@ seriesType('networkgraph', 'line', {
         }
 
         return Point.prototype.destroy.apply(this, arguments);
-    }
-});
-
-addEvent(seriesTypes.networkgraph, 'updatedData', function () {
-    if (this.layout) {
-        this.layout.stop();
-    }
-});
-
-addEvent(seriesTypes.networkgraph.prototype.pointClass, 'remove', function () {
-    if (this.series.layout) {
-        if (this.isNode) {
-            this.series.layout.removeNode(this);
-        } else {
-            this.series.layout.removeLink(this);
-        }
     }
 });
 
@@ -612,20 +638,6 @@ addEvent(Chart, 'render', function () {
 /*
  * Draggable mode:
  */
-addEvent(
-    seriesTypes.networkgraph.prototype.pointClass,
-    'mouseOver',
-    function () {
-        H.css(this.series.chart.container, { cursor: 'move' });
-    }
-);
-addEvent(
-    seriesTypes.networkgraph.prototype.pointClass,
-    'mouseOut',
-    function () {
-        H.css(this.series.chart.container, { cursor: 'default' });
-    }
-);
 addEvent(
     Chart,
     'load',
