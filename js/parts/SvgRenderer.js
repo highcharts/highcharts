@@ -2225,9 +2225,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     alignSetter: function (value) {
         var convert = { left: 'start', center: 'middle', right: 'end' };
-
-        this.alignValue = value;
-        this.element.setAttribute('text-anchor', convert[value]);
+        if (convert[value]) {
+            this.alignValue = value;
+            this.element.setAttribute('text-anchor', convert[value]);
+        }
     },
     /**
      * @private

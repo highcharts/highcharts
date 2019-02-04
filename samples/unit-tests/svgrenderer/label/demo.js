@@ -110,24 +110,24 @@ QUnit.test('SVG text wrap (#3132)', function (assert) {
         300
     );
     renderer.label('Foo: bar', 100, 150)
-    .attr({
-        'stroke-width': 1,
-        stroke: 'blue'
-    })
-    .css({
-        width: '260px'
-    })
-    .add();
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .css({
+            width: '260px'
+        })
+        .add();
 
     renderer.label('Foo: <b>bar</b>', 100, 100)
-    .attr({
-        'stroke-width': 1,
-        stroke: 'blue'
-    })
-    .css({
-        width: '260px'
-    })
-    .add();
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .css({
+            width: '260px'
+        })
+        .add();
 
 
     var labelWithMarkup = renderer.box.childNodes[3].childNodes[0].getBBox(),
@@ -135,7 +135,8 @@ QUnit.test('SVG text wrap (#3132)', function (assert) {
 
     assert.ok(
         labelWithMarkup.width > label.width,
-        "The width of the label that contains markup should be the greatest");
+        "The width of the label that contains markup should be the greatest"
+    );
 });
 
 QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
@@ -156,7 +157,7 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
             100
         )
         .attr({
-            'stroke': 'blue',
+            stroke: 'blue',
             'stroke-width': '1px'
         })
         .css({
@@ -171,7 +172,7 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
             130
         )
         .attr({
-            'stroke': 'blue',
+            stroke: 'blue',
             'stroke-width': '1px'
         })
         .css({
@@ -186,7 +187,7 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
             160
         )
         .attr({
-            'stroke': 'blue',
+            stroke: 'blue',
             'stroke-width': '1px'
         })
         .css({
@@ -213,7 +214,7 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
 
     label1 = ren.label('I should be inside the box', 100, 200)
         .attr({
-            'stroke': 'red',
+            stroke: 'red',
             'stroke-width': '1px'
         })
         .add()
@@ -229,5 +230,20 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
     assert.ok(
         label1.box.element.getBBox().width > label1.text.element.getBBox().width,
         'Border should be wider than text'
+    );
+
+    label1 = ren.text('Testing text-anchor', 100, 300)
+        .attr({
+            align: ''
+        })
+        .add()
+        .css({
+            fontSize: '30px'
+        });
+
+    assert.strictEqual(
+        label1.element.attributes["text-anchor"],
+        undefined,
+        'Label text-anchor with empty align attribute should not be set'
     );
 });
