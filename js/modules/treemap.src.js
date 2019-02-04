@@ -1532,6 +1532,16 @@ seriesType(
          * @param {boolean} [redraw=true] Wether to redraw the chart or not.
          * @param {object} [eventArguments] Arguments to be accessed in
          * event handler.
+         * @param {string} [eventArguments.newRootId] Id of the new root.
+         * @param {string} [eventArguments.previousRootId] Id of the previous
+         * root.
+         * @param {boolean} [eventArguments.redraw] Wether to redraw the
+         * chart after.
+         * @param {object} [eventArguments.series] The series to update the root
+         * of.
+         * @param {string} [eventArguments.trigger] The action which
+         * triggered the event. Undefined if the setRootNode is called
+         * directly.
          */
         setRootNode: function (id, redraw, eventArguments) {
             var series = this,
@@ -1547,6 +1557,13 @@ seriesType(
              *
              * @private
              * @param {object} args The event arguments.
+             * @param {string} args.newRootId Id of the new root.
+             * @param {string} args.previousRootId Id of the previous root.
+             * @param {boolean} args.redraw Wether to redraw the chart after.
+             * @param {object} args.series The series to update the root of.
+             * @param {string} [args.trigger=undefined] The action which
+             * triggered the event. Undefined if the setRootNode is called
+             * directly.
              */
             var defaultFn = function (args) {
                 var series = args.series,
