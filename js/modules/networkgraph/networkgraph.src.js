@@ -497,25 +497,60 @@ seriesType('networkgraph', 'line', {
         return Series.prototype.destroy.apply(this, arguments);
     }
 }, {
-    init: function () {
-        Point.prototype.init.apply(this, arguments);
+    onMouseOver: function () {
+        if (this.series.draggable) {
+            H.css(this.series.chart.container, { cursor: 'move' });
+        }
 
-        addEvent(
-            this,
-            'mouseOver',
-            function () {
-                H.css(this.series.chart.container, { cursor: 'move' });
-            }
-        );
-        addEvent(
-            this,
-            'mouseOut',
-            function () {
-                H.css(this.series.chart.container, { cursor: 'default' });
-            }
-        );
+        this.series.nodes.forEach(function (node) {
+            node.graphic.attr({
+                opacity: 0.25
+            });
+        });
 
-        return this;
+        this.series.points.forEach(function (link) {
+            link.graphic.attr({
+                opacity: 0.25
+            });
+        });
+
+        this.linksFrom.forEach(function (link) {
+            link.graphic.attr({ opacity: 1 }).toFront();
+            link.toNode.graphic.attr({
+                opacity: 1
+            });
+        });
+        this.linksTo.forEach(function (link) {
+            link.graphic.attr({ opacity: 1 }).toFront();
+            link.fromNode.graphic.attr({
+                opacity: 1
+            });
+        });
+
+        this.graphic.attr({
+            opacity: 1
+        });
+
+        return Point.prototype.onMouseOver.apply(this, arguments);
+    },
+    onMouseOut: function () {
+        if (this.series.draggable) {
+            H.css(this.series.chart.container, { cursor: 'default' });
+        }
+
+        this.series.nodes.forEach(function (node) {
+            node.graphic.attr({
+                opacity: 1
+            });
+        });
+
+        this.series.points.forEach(function (link) {
+            link.graphic.attr({
+                opacity: 1
+            });
+        });
+
+        return Point.prototype.onMouseOut.apply(this, arguments);
     },
     getDegree: function () {
         var deg = this.isNode ? this.linksFrom.length + this.linksTo.length : 0;
