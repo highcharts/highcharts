@@ -502,8 +502,8 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
         distToPointSquared = Number.MAX_VALUE,
         dist,
         connectorPoint,
-        connectorEnabled = this.options.label.connectorAllowed,
         onArea = pick(this.options.label.onArea, !!this.area),
+        findDistanceToOthers = onArea || this.options.label.connectorAllowed,
         chart = this.chart,
         series,
         points,
@@ -589,7 +589,7 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
                 // Find the squared distance from the center of the label. On
                 // area series, avoid its own graph.
                 if (
-                    (connectorEnabled || withinRange) &&
+                    (findDistanceToOthers || withinRange) &&
                     (this !== series || onArea)
                 ) {
                     xDist = x + bBox.width / 2 - points[j].chartX;
@@ -604,7 +604,7 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
             // Do we need a connector?
             if (
                 !onArea &&
-                connectorEnabled &&
+                findDistanceToOthers &&
                 this === series &&
                 (
                     (checkDistance && !withinRange) ||
