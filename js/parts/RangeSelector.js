@@ -875,8 +875,7 @@ RangeSelector.prototype = {
             selected = rangeSelector.selected,
             selectedExists = isNumber(selected),
             allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
-            buttons = rangeSelector.buttons,
-            btnSelected;
+            buttons = rangeSelector.buttons;
 
         rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
             var range = rangeOptions._range,
@@ -949,28 +948,18 @@ RangeSelector.prototype = {
             } else if (select) {
                 selectedExists = true; // Only one button can be selected
                 state = 2;
-                btnSelected = i;
             }
 
             // If state has changed, update the button
             if (button.state !== state) {
                 button.setState(state);
+
+                // Reset (#9209)
+                if (state === 0 && selected === i) {
+                    rangeSelector.setSelected(null);
+                }
             }
         });
-
-        // When all buttons are unchecked selected property
-        // should be cleared (#9209)
-        if (
-            btnSelected === undefined &&
-            defined(selected)
-        ) {
-            rangeSelector.setSelected(null);
-        } else if (
-            btnSelected !== undefined &&
-            btnSelected !== selected
-        ) {
-            rangeSelector.setSelected(btnSelected);
-        }
     },
 
     /**
