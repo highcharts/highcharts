@@ -714,7 +714,7 @@ override(GridAxis.prototype, {
             options = axis.options,
             isTreeGrid = options.type === 'treegrid';
 
-        if (isTreeGrid && this.mapOfPosToGridNode) {
+        if (isTreeGrid) {
             axis.min = pick(axis.userMin, options.min, axis.dataMin);
             axis.max = pick(axis.userMax, options.max, axis.dataMax);
 
@@ -726,7 +726,9 @@ override(GridAxis.prototype, {
 
             axis.tickmarkOffset = 0.5;
             axis.tickInterval = 1;
-            axis.tickPositions = getTickPositions(axis);
+            axis.tickPositions = this.mapOfPosToGridNode ?
+                getTickPositions(axis) :
+                [];
         } else {
             proceed.apply(axis, argsToArray(arguments));
         }
