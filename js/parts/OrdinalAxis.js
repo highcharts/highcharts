@@ -64,7 +64,10 @@ Axis.prototype.getTimeTicks = function (
         groupPositions = [],
         lastGroupPosition = -Number.MAX_VALUE,
         tickPixelIntervalOption = this.options.tickPixelInterval,
-        time = this.chart.time;
+        time = this.chart.time,
+        // Record all the start positions of a segment, to use when deciding
+        // what's a gap in the data.
+        segmentStarts = [];
 
     // The positions are not always defined, for example for ordinal positions
     // when data has regular interval (#1557, #2090)
@@ -121,6 +124,7 @@ Axis.prototype.getTimeTicks = function (
                         segmentPositions[segmentPositions.length - 1];
                 }
 
+                segmentStarts.push(groupPositions.length);
                 groupPositions = groupPositions.concat(segmentPositions);
             }
             // Set start of next segment
@@ -161,6 +165,7 @@ Axis.prototype.getTimeTicks = function (
     }
 
     // Save the info
+    info.segmentStarts = segmentStarts;
     groupPositions.info = info;
 
 

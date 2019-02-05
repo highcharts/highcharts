@@ -783,11 +783,17 @@ seriesProto.processData = function () {
             for (i = 1; i < groupPositions.length; i++) {
                 // The grouped gapSize needs to be the largest distance between
                 // the group to capture varying group sizes like months or DST
-                // crossing (#10000).
-                gapSize = Math.max(
-                    groupPositions[i] - groupPositions[i - 1],
-                    gapSize
-                );
+                // crossing (#10000). Also check that the gap is not at the
+                // start of a segment.
+                if (
+                    !groupPositions.info.segmentStarts ||
+                    groupPositions.info.segmentStarts.indexOf(i) === -1
+                ) {
+                    gapSize = Math.max(
+                        groupPositions[i] - groupPositions[i - 1],
+                        gapSize
+                    );
+                }
             }
             currentDataGrouping = groupPositions.info;
             currentDataGrouping.gapSize = gapSize;
