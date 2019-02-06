@@ -2,12 +2,13 @@
 /* eslint valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
 
 /**
- * Usage: node generate-changelog-html.js [name-of-output-file]
+ * Usage: node changelog/generate-html
  *
  * This node script is used to assemble the content for all markdown files
  * in each sub-directory of this directory into a new html output file.
  */
-var replaceString = require('replace-string');
+var path = require('path'),
+    replaceString = require('replace-string');
 
 (function () {
     var marked = require('marked'),
@@ -216,7 +217,7 @@ var replaceString = require('replace-string');
     }
 
     function writeContentToNewHTMLFile() {
-        var outputFile = './' + (process.argv[2] || 'changelog') + '.html';
+        var outputFile = path.join(__dirname, (process.argv[2] || 'changelog') + '.html');
         fs.writeFile(outputFile, pretty(htmlContent), function (err) {
             if (err) {
                 throw err;
@@ -238,9 +239,13 @@ var replaceString = require('replace-string');
         changelog.header.name = product.name;
         changelog.header.offset = product.offset;
         htmlContent += productHeaderHTMLStructure(product);
-        var sortedDir = getSortedDirFiles(fs.readdirSync('./' + product.name));
+        var sortedDir = getSortedDirFiles(fs.readdirSync(
+            path.join(__dirname, product.name)
+        ));
         sortedDir.forEach(file => {
-            var content = fs.readFileSync('./' + product.name + '/' + file, 'utf8');
+            var content = fs.readFileSync(
+                path.join(__dirname, product.name, file), 'utf8'
+            );
             sortMarkdownFileContent(content);
             changelog.header.version = formatVersionNumber(file);
             htmlContent += featureHTMLStructure();
