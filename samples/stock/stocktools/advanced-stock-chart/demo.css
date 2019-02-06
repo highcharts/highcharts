@@ -178,43 +178,43 @@
 }
 
 #demo button#annotation-selection {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/cursor.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/cursor.svg);
 }
 
 #demo button#annotation-line {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/line.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/line.svg);
 }
 
 #demo button#annotation-rect {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/rect.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/rect.svg);
 }
 
 #demo button#annotation-circle {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/circle.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/circle.svg);
 }
 
 #demo button#annotation-arrow {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/arrow.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/arrow.svg);
 }
 
 #demo button#annotation-tunnel {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/tunnel.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/tunnel.svg);
 }
 
 #demo button#annotation-text {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/text.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/text.svg);
 }
 
 #demo button#annotation-fibonacci {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/fibonacci.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/fibonacci.svg);
 }
 
 #demo button#annotation-flag {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/flag.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/flag.svg);
 }
 
 #demo button#annotation-feature {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/feature.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/feature.svg);
 }
 
 #demo #highcharts-manage-chart {
@@ -234,11 +234,11 @@
 }
 
 #demo #highcharts-save {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/save.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/save.svg);
 }
 
 #demo #highcharts-reset {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/reset.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/reset.svg);
 }
 
 #demo .button-group {
@@ -378,19 +378,19 @@
 }
 
 #demo #submenu li#flag-flag {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/flag-flag.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/flag-flag.svg);
 }
 
 #demo #submenu li#flag-circlepin {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/flag-circlepin.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/flag-circlepin.svg);
 }
 
 #demo #submenu li#flag-squarepin {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/flag-squarepin.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/flag-squarepin.svg);
 }
 
 #demo #submenu li#flag-diamondpin {
-    background-image: url(https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/graphics/flag-diamondpin.svg);
+    background-image: url(https://code.highcharts.com/7.0.0/gfx/stock-icons/flag-diamondpin.svg);
 }
 
 #demo #container-inner .crosshair-on-point .highcharts-tracker path:hover,
