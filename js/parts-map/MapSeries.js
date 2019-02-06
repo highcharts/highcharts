@@ -1165,6 +1165,7 @@ seriesType(
  *  ```
  *
  * @type      {Array<number|Array<string,number>|*>}
+ * @product   highmaps
  * @apioption series.map.data
  */
 
@@ -1185,8 +1186,8 @@ seriesType(
  * @sample maps/series/data-datalabels/
  *         Disable data labels for individual areas
  *
- * @type {Object}
- * @product highmaps
+ * @type      {Object}
+ * @product   highmaps
  * @apioption series.map.data.dataLabels
  */
 
