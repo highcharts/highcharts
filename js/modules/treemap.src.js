@@ -1019,7 +1019,7 @@ seriesType(
                         x: pX,
                         y: pY,
                         width: pW,
-                        height: pH
+                        height: H.correctFloat(pH)
                     });
                     if (group.direction === 0) {
                         plot.y = plot.y + pH;
