@@ -192,23 +192,21 @@ Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
 };
 
 // Add custom date formats
-H.dateFormats = {
-    // Week number
-    W: function (timestamp) {
-        var d = new Date(timestamp),
-            yearStart,
-            weekNo;
+H.dateFormats.W = function (timestamp) {
+    var d = new Date(timestamp),
+        yearStart,
+        weekNo;
 
-        d.setHours(0, 0, 0, 0);
-        d.setDate(d.getDate() - (d.getDay() || 7));
-        yearStart = new Date(d.getFullYear(), 0, 1);
-        weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-        return weekNo;
-    },
-    // First letter of the day of the week, e.g. 'M' for 'Monday'.
-    E: function (timestamp) {
-        return dateFormat('%a', timestamp, true).charAt(0);
-    }
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - (d.getDay() || 7));
+    yearStart = new Date(d.getFullYear(), 0, 1);
+    weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return weekNo;
+};
+
+// First letter of the day of the week, e.g. 'M' for 'Monday'.
+H.dateFormats.E = function (timestamp) {
+    return dateFormat('%a', timestamp, true).charAt(0);
 };
 
 addEvent(

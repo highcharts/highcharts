@@ -585,19 +585,6 @@ Highcharts.Time.prototype = {
                     'L': pad(Math.floor(timestamp % 1000), 3)
                 },
 
-                /**
-                 * A hook for defining additional date format specifiers. New
-                 * specifiers are defined as key-value pairs by using the
-                 * specifier as key, and a function which takes the timestamp as
-                 * value. This function returns the formatted portion of the
-                 * date.
-                 *
-                 * @sample highcharts/global/dateformats/
-                 *         Adding support for week number
-                 *
-                 * @name Highcharts.dateFormats
-                 * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
-                 */
                 H.dateFormats
             );
 
