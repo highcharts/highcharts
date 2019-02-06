@@ -604,7 +604,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.redraw(animation);
         }
 
-        fireEvent(chart, 'afterUpdate', { options: options });
+        fireEvent(chart, 'afterUpdate', {
+            options: options,
+            redraw: redraw,
+            animation: animation
+        });
 
     },
 
