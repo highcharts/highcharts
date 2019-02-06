@@ -104,7 +104,7 @@ seriesType(
          * @sample {highcharts} highcharts/plotoptions/treemap-allowtraversingtree/
          *         Enabled
          *
-         * @since     next
+         * @since     7.0.3
          * @product   highcharts
          */
         allowTraversingTree: false,
@@ -136,7 +136,7 @@ seriesType(
          * @default undefined
          * @sample {highcharts} highcharts/plotoptions/treemap-events-setrootnode/
          *         Alert update information on setRootNode event.
-         * @since next
+         * @since 7.0.3
          * @product highcharts
          * @apioption plotOptions.treemap.events.setRootNode
          */

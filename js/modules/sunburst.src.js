@@ -529,7 +529,7 @@ var sunburstOptions = {
      *
      * @type      {boolean}
      * @default   false
-     * @since     next
+     * @since     7.0.3
      * @product   highcharts
      * @apioption plotOptions.sunburst.allowTraversingTree
      */
