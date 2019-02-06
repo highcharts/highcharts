@@ -321,7 +321,8 @@ Series.prototype.drawDataLabels = function () {
             pointOptions.forEach(function (labelOptions, i) {
                 // Options for one datalabel
                 var labelEnabled = labelOptions.enabled &&
-                        !point.isNull && // #2282, #4641, #7112
+                        // #2282, #4641, #7112, #10049
+                        (!point.isNull || point.dataLabelOnNull) &&
                         applyFilter(point, labelOptions),
                     labelConfig,
                     formatString,
