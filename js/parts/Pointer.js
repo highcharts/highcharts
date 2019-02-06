@@ -662,7 +662,7 @@ Highcharts.Pointer.prototype = {
 
         // Just move the tooltip, #349
         if (allowMove) {
-            if (tooltip && tooltipPoints && tooltipPoints.length) {
+            if (tooltip && tooltipPoints && splat(tooltipPoints).length) {
                 tooltip.refresh(tooltipPoints);
                 if (tooltip.shared && hoverPoints) { // #8284
                     hoverPoints.forEach(function (point) {
