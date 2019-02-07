@@ -4947,7 +4947,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // apply these to the box and the text alike
         wrapper.textSetter = function (value) {
             if (value !== undefined) {
-                text.textSetter(value);
+                // Must use .attr to ensure transforms are done (#10009)
+                text.attr({
+                    text: value
+                });
             }
             updateBoxSize();
             updateTextPadding();

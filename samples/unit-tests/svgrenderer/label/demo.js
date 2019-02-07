@@ -247,3 +247,48 @@ QUnit.test('Labels with nested or async styling (#9400)', function (assert) {
         'Label text-anchor with empty align attribute should not be set'
     );
 });
+
+QUnit.test('Labels with useHTML', assert => {
+    document.getElementById('container').innerHTML = '';
+    document.getElementById('container').style.position = 'relative';
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    const lbl = ren
+        .label(
+            'This is a long text that requires the label to wrap into multiple lines',
+            10,
+            19,
+            null,
+            0,
+            0,
+            true
+        )
+        .attr({
+            stroke: 'blue',
+            'stroke-width': 2
+        })
+        .css({
+            width: '200px'
+        })
+        .add();
+
+    assert.strictEqual(
+        lbl.text.element.style.width,
+        '200px',
+        'The span should have a fixed width'
+    );
+
+    lbl.attr({
+        text: 'Short'
+    });
+
+    assert.notEqual(
+        lbl.text.element.style.width,
+        '200px',
+        'The span width should adapt to shorter text (#10009)'
+    );
+});
