@@ -1148,7 +1148,7 @@ H.defaultOptions = {
                 /**
                  * The vertical alignment of the button.
                  *
-                 * @type       {Highcharts.VerticalAlignType}
+                 * @type       {Highcharts.VerticalAlignValue}
                  * @default    top
                  * @apioption  chart.resetZoomButton.position.verticalAlign
                  */
@@ -1681,7 +1681,7 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/title-verticalalign/
          *         Chart title in bottom right corner
          *
-         * @type      {Highcharts.VerticalAlignType}
+         * @type      {Highcharts.VerticalAlignValue}
          * @since     2.1
          * @apioption title.verticalAlign
          */
@@ -1743,7 +1743,7 @@ H.defaultOptions = {
          *         Aligned to the plot area (x = 50px = margin left - spacing
          *         left)
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'center',
@@ -1843,7 +1843,7 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/subtitle-footnote
          *         Footnote at the bottom right of plot area
          *
-         * @type      {Highcharts.VerticalAlignType}
+         * @type      {Highcharts.VerticalAlignValue}
          * @since     2.1
          * @apioption subtitle.verticalAlign
          */
@@ -1897,7 +1897,7 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/subtitle-footnote
          *         Footnote at bottom right of plot area
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'center',
@@ -2062,7 +2062,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/alignment/
          *         Legend alignment
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'center',
@@ -2691,7 +2691,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/alignment/
          *         Legend alignment
          *
-         * @type  {Highcharts.VerticalAlignType}
+         * @type  {Highcharts.VerticalAlignValue}
          * @since 2.0
          */
         verticalAlign: 'bottom',
@@ -3581,7 +3581,7 @@ H.defaultOptions = {
             /**
              * Horizontal alignment of the credits.
              *
-             * @type {Highcharts.AlignType}
+             * @type {Highcharts.AlignValue}
              */
             align: 'right',
 
@@ -3593,7 +3593,7 @@ H.defaultOptions = {
             /**
              * Vertical alignment of the credits.
              *
-             * @type {Highcharts.VerticalAlignType}
+             * @type {Highcharts.VerticalAlignValue}
              */
             verticalAlign: 'bottom',
 

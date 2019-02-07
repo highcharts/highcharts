@@ -349,7 +349,7 @@ defaultOptions.drilldown = {
             /**
              * Vertical alignment of the button.
              *
-             * @type      {Highcharts.VerticalAlignType}
+             * @type      {Highcharts.VerticalAlignValue}
              * @default   top
              * @product   highcharts highmaps
              * @apioption drilldown.drillUpButton.position.verticalAlign
@@ -358,7 +358,7 @@ defaultOptions.drilldown = {
             /**
              * Horizontal alignment.
              *
-             * @type {Highcharts.AlignType}
+             * @type {Highcharts.AlignValue}
              */
             align: 'right',
 

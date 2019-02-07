@@ -463,7 +463,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/crosshair-dashed/
          *         Dashed X axis crosshair
          *
-         * @type      {Highcharts.DashStyleType}
+         * @type      {Highcharts.DashStyleValue}
          * @default   Solid
          * @since     4.1
          * @apioption xAxis.crosshair.dashStyle
@@ -826,7 +826,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/gridlinedashstyle/
          *         Long dashes
          *
-         * @type      {Highcharts.DashStyleType}
+         * @type      {Highcharts.DashStyleValue}
          * @default   Solid
          * @since     1.2
          * @apioption xAxis.gridLineDashStyle
@@ -1279,7 +1279,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/minorgridlinedashstyle/
          *         Long dashes on minor grid lines
          *
-         * @type      {Highcharts.DashStyleType}
+         * @type      {Highcharts.DashStyleValue}
          * @default   Solid
          * @since     1.2
          * @apioption xAxis.minorGridLineDashStyle
@@ -2771,7 +2771,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-align-right/
          *         Aligned to the right
          *
-         * @type      {Highcharts.AlignType}
+         * @type      {Highcharts.AlignValue}
          * @since     2.1.5
          * @product   highcharts
          * @apioption yAxis.stackLabels.align
@@ -2812,7 +2812,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-textalign-left/
          *         Label in center position but text-aligned left
          *
-         * @type      {Highcharts.AlignType}
+         * @type      {Highcharts.AlignValue}
          * @since     2.1.5
          * @product   highcharts
          * @apioption yAxis.stackLabels.textAlign
@@ -2842,7 +2842,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-bottom/
          *         Vertically aligned bottom
          *
-         * @type      {Highcharts.VerticalAlignType}
+         * @type      {Highcharts.VerticalAlignValue}
          * @since     2.1.5
          * @product   highcharts
          * @apioption yAxis.stackLabels.verticalAlign

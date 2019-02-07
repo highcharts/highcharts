@@ -87,11 +87,11 @@ seriesType('arearange', 'area', {
     dataLabels: {
 
         /**
-         * @type {Highcharts.AlignType|null}
+         * @type {Highcharts.AlignValue|null}
          */
         align: null,
         /**
-         * @type {Highcharts.VerticalAlignType|null}
+         * @type {Highcharts.VerticalAlignValue|null}
          */
         verticalAlign: null,
 

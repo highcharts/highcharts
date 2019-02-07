@@ -72,7 +72,7 @@
  *//**
  * Style of the mouse cursor when resting over the element.
  * @name Highcharts.CSSObject#cursor
- * @type {Highcharts.CursorType|undefined}
+ * @type {Highcharts.CursorValue|undefined}
  *//**
  * Font family of the element text. Multiple values have to be in decreasing
  * preference order and separated by comma.
@@ -148,13 +148,13 @@
 /**
  * All possible cursor styles.
  *
- * @typedef {"alias"|"all-scroll"|"auto"|"cell"|"col-resize"|"context-menu"|"copy"|"crosshair"|"default"|"e-resize"|"ew-resize"|"grab"|"grabbing"|"help"|"move"|"n-resize"|"ne-resize"|"nesw-resize"|"no-drop"|"none"|"not-allowed"|"ns-resize"|"nw-resize"|"nwse-resize"|"pointer"|"progress"|"row-resize"|"s-resize"|"se-resize"|"sw-resize"|"text"|"vertical-text"|"w-resize"|"wait"|"zoom-in"|"zoom-out"} Highcharts.CursorType
+ * @typedef {"alias"|"all-scroll"|"auto"|"cell"|"col-resize"|"context-menu"|"copy"|"crosshair"|"default"|"e-resize"|"ew-resize"|"grab"|"grabbing"|"help"|"move"|"n-resize"|"ne-resize"|"nesw-resize"|"no-drop"|"none"|"not-allowed"|"ns-resize"|"nw-resize"|"nwse-resize"|"pointer"|"progress"|"row-resize"|"s-resize"|"se-resize"|"sw-resize"|"text"|"vertical-text"|"w-resize"|"wait"|"zoom-in"|"zoom-out"} Highcharts.CursorValue
  */
 
 /**
  * All possible dash styles.
  *
- * @typedef {"Dash"|"DashDot"|"Dot"|"LongDash"|"LongDashDot"|"LongDashDotDot"|"ShortDash"|"ShortDashDot"|"ShortDashDotDot"|"ShortDot"|"Solid"} Highcharts.DashStyleType
+ * @typedef {"Dash"|"DashDot"|"Dot"|"LongDash"|"LongDashDot"|"LongDashDotDot"|"ShortDash"|"ShortDashDot"|"ShortDashDotDot"|"ShortDot"|"Solid"} Highcharts.DashStyleValue
  */
 
 /**

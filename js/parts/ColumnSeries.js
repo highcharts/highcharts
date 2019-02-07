@@ -360,12 +360,12 @@ seriesType('column', 'line'
         dataLabels: {
 
             /**
-             * @type {Highcharts.AlignType|null}
+             * @type {Highcharts.AlignValue|null}
              */
             align: null, // auto
 
             /**
-             * @type {Highcharts.VerticalAlignType|null}
+             * @type {Highcharts.VerticalAlignValue|null}
              */
             verticalAlign: null, // auto
 
