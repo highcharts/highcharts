@@ -9,7 +9,7 @@
 /**
  * The horizontal alignment of an element.
  *
- * @typedef {"center"|"left"|"right"} Highcharts.AlignType
+ * @typedef {"center"|"left"|"right"} Highcharts.AlignValue
  */
 
 /**
@@ -20,14 +20,14 @@
  * Horizontal alignment. Can be one of `left`, `center` and `right`.
  *
  * @name Highcharts.AlignObject#align
- * @type {Highcharts.AlignType|undefined}
+ * @type {Highcharts.AlignValue|undefined}
  *
  * @default left
  *//**
  * Vertical alignment. Can be one of `top`, `middle` and `bottom`.
  *
  * @name Highcharts.AlignObject#verticalAlign
- * @type {Highcharts.VerticalAlignType|undefined}
+ * @type {Highcharts.VerticalAlignValue|undefined}
  *
  * @default top
  *//**
@@ -342,7 +342,7 @@
 /**
  * The vertical alignment of an element.
  *
- * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignType
+ * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
  */
 
 'use strict';

@@ -178,7 +178,7 @@ seriesType('boxplot', 'column', {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type      {Highcharts.DashStyleType}
+     * @type      {Highcharts.DashStyleValue}
      * @default   Solid
      * @since     3.0
      * @product   highcharts

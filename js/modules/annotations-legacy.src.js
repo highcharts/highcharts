@@ -599,7 +599,7 @@ Annotation.prototype = {
              * @sample highcharts/annotations/label-position/
              *         Set labels position
              *
-             * @type {Highcharts.AlignType}
+             * @type {Highcharts.AlignValue}
              */
             align: 'center',
 
@@ -793,7 +793,7 @@ Annotation.prototype = {
              * @sample highcharts/annotations/label-position/
              *         Set labels position
              *
-             * @type {Highcharts.VerticalAlignType}
+             * @type {Highcharts.VerticalAlignValue}
              */
             verticalAlign: 'bottom',
 

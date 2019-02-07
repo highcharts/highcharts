@@ -809,7 +809,7 @@ H.Series = H.seriesType(
          * @sample {highmaps} maps/plotoptions/mapbubble-allowpointselect/
          *         Map bubble
          *
-         * @type      {string|Highcharts.CursorType}
+         * @type      {string|Highcharts.CursorValue}
          * @apioption plotOptions.series.cursor
          */
 
@@ -834,7 +834,7 @@ H.Series = H.seriesType(
          * @sample {highmaps} maps/plotoptions/series-dashstyle/
          *         Dotted borders on a map
          *
-         * @type      {Highcharts.DashStyleType}
+         * @type      {Highcharts.DashStyleValue}
          * @default   Solid
          * @since     2.1
          * @apioption plotOptions.series.dashStyle
@@ -1853,7 +1853,7 @@ H.Series = H.seriesType(
              * @sample {highcharts} highcharts/plotoptions/series-datalabels-align-left/
              *         Left aligned
              *
-             * @type {Highcharts.AlignType}
+             * @type {Highcharts.AlignValue}
              */
             align: 'center',
 
@@ -2233,7 +2233,7 @@ H.Series = H.seriesType(
              * instance in a column chart, the label is above positive values
              * and below negative values.
              *
-             * @type  {Highcharts.VerticalAlignType}
+             * @type  {Highcharts.VerticalAlignValue}
              * @since 2.3.3
              */
             verticalAlign: 'bottom', // above singular point
@@ -2599,7 +2599,7 @@ H.Series = H.seriesType(
          * @sample {highcharts|highstock} highcharts/series/color-zones-dashstyle-dot/
          *         Dashed line indicates prognosis
          *
-         * @type      {Highcharts.DashStyleType}
+         * @type      {Highcharts.DashStyleValue}
          * @since     4.1.0
          * @product   highcharts highstock
          * @apioption plotOptions.series.zones.dashStyle
