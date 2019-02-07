@@ -1937,7 +1937,12 @@ function GLRenderer(postRenderCallback) {
                 continue;
             }
 
-            if (x >= xMin && x <= xMax) {
+            // The first point before and first after extremes should be
+            // rendered (#9962)
+            if (
+                (nx >= xMin || x >= xMin) &&
+                (px <= xMax || x <= xMax)
+            ) {
                 isXInside = true;
             }
 
