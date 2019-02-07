@@ -1585,6 +1585,7 @@ function GLRenderer(postRenderCallback) {
             color,
             scolor,
             sdata = isStacked ? series.data : (xData || rawData),
+            sdataLength = sdata.length,
             closestLeft = { x: Number.MAX_VALUE, y: 0 },
             closestRight = { x: -Number.MAX_VALUE, y: 0 },
 
@@ -1612,6 +1613,7 @@ function GLRenderer(postRenderCallback) {
             isXInside = false,
             isYInside = true,
             firstPoint = true,
+            lastPoint,
             threshold = options.threshold;
 
         if (options.boostData && options.boostData.length > 0) {
@@ -1808,8 +1810,9 @@ function GLRenderer(postRenderCallback) {
         //     }
         // });
 
-        while (i < sdata.length - 1) {
+        while (i < sdataLength - 1) {
             d = sdata[++i];
+            lastPoint = i === sdataLength - 1;
 
             // px = x = y = z = nx = low = false;
             // chartDestroyed = typeof chart.index === 'undefined';
@@ -1937,7 +1940,8 @@ function GLRenderer(postRenderCallback) {
                 continue;
             }
 
-            if (x >= xMin && x <= xMax) {
+            // Treat last and first point as inside the extremes (#9962)
+            if (firstPoint || lastPoint || x >= xMin && x <= xMax) {
                 isXInside = true;
             }
 
