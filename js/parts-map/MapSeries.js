@@ -886,13 +886,13 @@ seriesType(
             if (!chart.styledMode) {
                 group.element.setAttribute(
                     'stroke-width',
-                    (
+                    pick(
                         series.options[
                             (
                                 series.pointAttrToOptions &&
                                 series.pointAttrToOptions['stroke-width']
                             ) || 'borderWidth'
-                        ] ||
+                        ],
                         1 // Styled mode
                     ) / (scaleX || 1)
                 );
