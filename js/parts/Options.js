@@ -562,9 +562,14 @@ H.defaultOptions = {
         /**
          * Default `mapData` for all series. If set to a string, it functions
          * as an index into the `Highcharts.maps` array. Otherwise it is
-         * interpreted s map data.
+         * interpreted as map data.
          *
          * @see [mapData](#series.map.mapData)
+         *
+         * @sample    map/demo/geojson
+         *            Loading geoJSON data
+         * @sample    map/chart/topojson
+         *            Loading topoJSON converted to geoJSON
          *
          * @type      {string|Array<*>}
          * @since     5.0.0

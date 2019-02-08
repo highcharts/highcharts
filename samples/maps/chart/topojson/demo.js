@@ -36,12 +36,12 @@ $.getJSON(
 
         // Optionally project the data using Proj4. This costs performance, and
         // when possible, should be done on the server. In this case we're using
-        // a custom projection for the USA, with a view point directly above its
-        // center. A mercator based projection, like 'EPSG:3857', is faster but
-        // doesn't look as good.
+        // a Lambert Conformal Conic projection for the USA, with a projection
+        // center in the middle of the country. A mercator based projection,
+        // like 'EPSG:3857', is faster but is more distorted.
         project(
             geojson,
-            '+proj=lcc +lat_1=33 +lat_2=45 +lat_0=39 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs'
+            '+proj=lcc +lat_1=33 +lat_2=45 +lat_0=39 +lon_0=-96'
         );
 
         // Initialize the chart
@@ -62,7 +62,9 @@ $.getJSON(
             },
 
             colorAxis: {
-                tickPixelInterval: 100
+                tickPixelInterval: 100,
+                minColor: '#F1EEF6',
+                maxColor: '#900037'
             },
 
             tooltip: {
