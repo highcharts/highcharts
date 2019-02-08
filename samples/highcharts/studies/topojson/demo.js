@@ -1,63 +1,48 @@
-// Prepare random data
-var data = [
-    ['DE.BY.NI', 955],
-    ['DE.BY.OB', 233],
-    ['DE.BY.OF', 1],
-    ['DE.BY.OP', 316],
-    ['DE.BY.SC', 742],
-    ['DE.BY.UF', 848],
-    ['DE.BW.FR', 880],
-    ['DE.BW.KR', 831],
-    ['DE.BW.ST', 394],
-    ['DE.BW.TU', 201],
-    ['DE.BY.MF', 406],
-    ['DE.BE.BE', 193],
-    ['DE.BB.BB', 74],
-    ['DE.HB.HB', 710],
-    ['DE.HH.HH', 567],
-    ['DE.HE.DA', 612],
-    ['DE.HE.GI', 335],
-    ['DE.HE.KS', 975],
-    ['DE.MV.MV', 939],
-    ['DE.NW.AR', 869],
-    ['DE.NW.DM', 821],
-    ['DE.NW.DU', 172],
-    ['DE.NW.KL', 539],
-    ['DE.NW.MU', 307],
-    ['DE.RP.RL', 199],
-    ['DE.SL.SL', 600],
-    ['DE.SN.CH', 841],
-    ['DE.SN.DR', 58],
-    ['DE.SN.LE', 78],
-    ['DE.SH.SH', 2],
-    ['DE.TH.TH', 353]
-];
-
-$.getJSON(
-    'https://cdn.jsdelivr.net/gh/deldersveld/topojson@master/countries/germany/germany-regions.json',
-    function (topology) {
-        var geojson = window.topojson.feature(
-            topology,
-            topology.objects.DEU_adm2
-        );
-
-        // Optionally project the data using Proj4. This costs performance, and
-        // when possible, should be done on the server.
-        function projectPolygon(coordinate) {
-            coordinate.forEach(function (lonLat, i) {
-                var projected = window.proj4('EPSG:3857', lonLat);
-                coordinate[i] = projected;
+// Project the data using Proj4
+function project(geojson, projection) {
+    const projectPolygon = coordinate => {
+        coordinate.forEach((lonLat, i) => {
+            coordinate[i] = window.proj4(projection, lonLat);
+        });
+    };
+    geojson.features.forEach(function (feature) {
+        if (feature.geometry.type === 'Polygon') {
+            feature.geometry.coordinates.forEach(projectPolygon);
+        } else if (feature.geometry.type === 'MultiPolygon') {
+            feature.geometry.coordinates.forEach(items => {
+                items.forEach(projectPolygon);
             });
         }
-        geojson.features.forEach(function (feature) {
-            if (feature.geometry.type === 'Polygon') {
-                feature.geometry.coordinates.forEach(projectPolygon);
-            } else if (feature.geometry.type === 'MultiPolygon') {
-                feature.geometry.coordinates.forEach(function (items) {
-                    items.forEach(projectPolygon);
-                });
-            }
-        });
+    });
+}
+
+// Get random data for this sample
+function getRandomData(geojson) {
+    return geojson.features.map(() => Math.round(Math.random() * 100));
+}
+
+$.getJSON(
+    // Map source: https://github.com/deldersveld/topojson/
+    'https://cdn.jsdelivr.net/gh/deldersveld/topojson@master/countries/united-states/us-albers.json',
+    function (topology) {
+
+        // Convert the topoJSON feature into geoJSON
+        const geojson = window.topojson.feature(
+            topology,
+            // For this demo, get the first of the named objects
+            topology.objects[Object.keys(topology.objects)[0]]
+        );
+        const data = getRandomData(geojson);
+
+        // Optionally project the data using Proj4. This costs performance, and
+        // when possible, should be done on the server. In this case we're using
+        // a custom projection for the USA, with a view point directly above its
+        // center. A mercator based projection, like 'EPSG:3857', is faster but
+        // doesn't look as good.
+        project(
+            geojson,
+            '+proj=lcc +lat_1=33 +lat_2=45 +lat_0=39 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs'
+        );
 
         // Initialize the chart
         Highcharts.mapChart('container', {
@@ -81,13 +66,12 @@ $.getJSON(
             },
 
             tooltip: {
-                pointFormat: '{point.properties.NAME_2}: {point.value}'
+                pointFormat: '{point.properties.name}: {point.value}'
             },
 
             series: [{
                 data: data,
-                keys: ['HASC_2', 'value'],
-                joinBy: 'HASC_2',
+                joinBy: null,
                 name: 'Random data',
                 states: {
                     hover: {
@@ -96,7 +80,7 @@ $.getJSON(
                 },
                 dataLabels: {
                     enabled: true,
-                    format: '{point.properties.NAME_2}'
+                    format: '{point.properties.name}'
                 }
             }]
         });
