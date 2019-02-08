@@ -9,10 +9,11 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import H from '../../parts/Globals.js';
+import '../../parts/Utilities.js';
 
 var pick = H.pick;
+
 
 /**
  * String trim that works for IE6-8 as well.
@@ -321,14 +322,14 @@ H.setOptions({
 
             /* eslint-disable max-len */
             screenReaderRegionLabel: 'Chart screen reader information.',
-            navigationHint: 'Use regions/landmarks to skip ahead to chart {#plural(numSeries, and navigate between data series,)}',
+            navigationHint: '',
             defaultChartTitle: 'Chart',
             longDescriptionHeading: 'Long description.',
             noDescription: 'No description available.',
             structureHeading: 'Structure.',
             viewAsDataTable: 'View as data table.',
             chartHeading: 'Chart graphic.',
-            chartContainerLabel: 'Interactive chart. {title}. Use up and down arrows to navigate with most screen readers.',
+            chartContainerLabel: 'Interactive chart. {title}.',
             rangeSelectorMinInput: 'Select start date.',
             rangeSelectorMaxInput: 'Select end date.',
             tableSummary: 'Table representation of chart.',

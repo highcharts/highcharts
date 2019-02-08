@@ -589,6 +589,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/parts-map/Map.js',
         './js/parts-map/MapNavigation.js',
         './js/parts-map/MapSeries.js',
+        './js/modules/accessibility/*.js',
         './js/modules/drilldown.src.js',
         './js/modules/exporting.src.js',
         './js/modules/export-data.src.js',
@@ -1164,6 +1165,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         './js/modules',
         './js/modules/networkgraph',
         './js/modules/sonification',
+        './js/modules/accessibility',
         './js/parts',
         './js/parts-3d',
         './js/parts-more',
@@ -1485,6 +1487,7 @@ gulp.task('filesize', filesize);
  * tree-namespace.json.
  */
 function dts() {
+    // eslint-disable-next-line
     return require('../highcharts-declarations-generator').task();
 }
 gulp.task('dts', gulp.series(gulp.parallel('jsdoc-options', 'jsdoc-namespace'), dts));
