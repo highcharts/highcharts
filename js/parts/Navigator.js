@@ -1726,6 +1726,10 @@ Navigator.prototype = {
             navAxis = this.xAxis,
             navAxisOptions = navAxis.options,
             baseAxisOptions = baseAxis.options,
+            min = (navAxisOptions && navAxisOptions.ordinal) ?
+                null : baseAxisOptions.min,
+            max = (navAxisOptions && navAxisOptions.ordinal) ?
+                null : baseAxisOptions.max,
             ret;
 
         if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
@@ -1734,7 +1738,7 @@ Navigator.prototype = {
                     navAxisOptions && navAxisOptions.min,
                     numExt(
                         'min',
-                        baseAxisOptions.min,
+                        min, // #9994
                         baseAxis.dataMin,
                         navAxis.dataMin,
                         navAxis.min
@@ -1744,7 +1748,7 @@ Navigator.prototype = {
                     navAxisOptions && navAxisOptions.max,
                     numExt(
                         'max',
-                        baseAxisOptions.max,
+                        max, // #9994
                         baseAxis.dataMax,
                         navAxis.dataMax,
                         navAxis.max
