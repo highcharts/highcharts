@@ -9,18 +9,76 @@
 'use strict';
 import H from '../../parts/Globals.js';
 
+/**
+ * The QuadTree node class. Used in Networkgraph chart as a base for Barnes-Hut
+ * approximation.
+ *
+ * @class
+ * @name Highcharts.QuadTreeNode
+ *
+ * @param {Highcharts.RectangleObject} Available space for the node
+ */
 var QuadTreeNode = H.QuadTreeNode = function (box) {
+    /**
+     * Read only. The available space for node.
+     *
+     * @name Highcharts.QuadTreeNode#box
+     * @type {Highcharts.RectangleObject}
+     */
     this.box = box;
+    /**
+     * Read only. The minium of width and height values.
+     *
+     * @name Highcharts.QuadTreeNode#boxSize
+     * @type {number}
+     */
     this.boxSize = Math.min(box.width, box.height);
-    this.nodes = []; // Array of 4 -> quad subtrees
-    this.isInternal = false; // Internal or external node
-    this.body = false; // External node has it's body which is just a point
+    /**
+     * Read only. Array of subnodes. Empty if QuadTreeNode has just one Point.
+     * When added another Point to this QuadTreeNode, array is filled with four
+     * subnodes.
+     *
+     * @name Highcharts.QuadTreeNode#nodes
+     * @type {Array<Highcharts.QuadTreeNode>}
+     */
+    this.nodes = [];
+    /**
+     * Read only. Flag to determine if QuadTreeNode is internal (and has
+     * subnodes with mass and central position) or external (bound to Point).
+     *
+     * @name Highcharts.QuadTreeNode#isInternal
+     * @type {boolean}
+     */
+    this.isInternal = false;
+    /**
+     * Read only. If QuadTreeNode is an external node, Point is stored in
+     * `this.body`.
+     *
+     * @name Highcharts.QuadTreeNode#body
+     * @type {boolean|Highcharts.Point}
+     */
+    this.body = false;
+    /**
+     * Read only. Internal nodes when created are empty to reserve the space. If
+     * Point is added to this QuadTreeNode, QuadTreeNode is no longer empty.
+     *
+     * @name Highcharts.QuadTreeNode#isEmpty
+     * @type {boolean}
+     */
     this.isEmpty = true;
 };
 
 H.extend(
     QuadTreeNode.prototype,
+    /** @lends Highcharts.QuadTreeNode.prototype */
     {
+        /**
+         * Insert recursively point(node) into the QuadTree. If the given
+         * quadrant is already occupied, divide it into smaller quadrants.
+         *
+         * @param {Highcharts.Point} point point/node to be inserted
+         * @param {number} depth max depth of the QuadTree
+         */
         insert: function (point, depth) {
             if (this.isInternal) {
                 // Internal node:
@@ -53,6 +111,10 @@ H.extend(
                 }
             }
         },
+        /**
+         * Each quad node requires it's mass and center position. That mass and
+         * position is used to imitate real node in the layout by approximation.
+         */
         updateMassAndCenter: function () {
             var mass = 0,
                 plotX = 0,
@@ -81,6 +143,24 @@ H.extend(
             this.plotX = plotX;
             this.plotY = plotY;
         },
+        /**
+         * When inserting another node into the box, that already hove one node,
+         * divide the available space into another four quadrants.
+         *
+         * Indexes of quadrants are:
+         *
+         * <pre>
+         * -------------               -------------
+         * |           |               |     |     |
+         * |           |               |  0  |  1  |
+         * |           |   divide()    |     |     |
+         * |     1     | ----------->  -------------
+         * |           |               |     |     |
+         * |           |               |  3  |  2  |
+         * |           |               |     |     |
+         * -------------               -------------
+         * </pre>
+         */
         divideBox: function () {
             var halfWidth = this.box.width / 2,
                 halfHeight = this.box.height / 2;
@@ -117,6 +197,13 @@ H.extend(
                 height: halfHeight
             });
         },
+        /**
+         * Determine which of the quadrants should be used when placing node in
+         * the QuadTree. Returned index is always in range `<0, 3>`.
+         *
+         * @param {Highcharts.Point} node
+         * @return {number}
+         */
         getBoxPosition: function (node) {
             var left = node.plotX < this.box.left + this.box.width / 2,
                 top = node.plotY < this.box.top + this.box.height / 2,
@@ -144,7 +231,18 @@ H.extend(
         }
     }
 );
-
+/**
+ * The QuadTree class. Used in Networkgraph chart as a base for Barnes-Hut
+ * approximation.
+ *
+ * @class
+ * @name Highcharts.QuadTree
+ *
+ * @param {number} x left position of the plotting area
+ * @param {number} y top position of the plotting area
+ * @param {number} width width of the plotting area
+ * @param {number} height height of the plotting area
+ */
 var QuadTree = H.QuadTree = function (x, y, width, height) {
     // Boundary rectangle:
     this.box = {
@@ -166,15 +264,40 @@ var QuadTree = H.QuadTree = function (x, y, width, height) {
 
 H.extend(
     QuadTree.prototype,
+    /** @lends Highcharts.QuadTree.prototype */
     {
+        /**
+         * Insert nodes into the QuadTree
+         *
+         * @param {Array<Highcharts.Points>} points
+         */
         insertNodes: function (nodes) {
             nodes.forEach(function (node) {
                 this.root.insert(node, this.maxDepth);
             }, this);
         },
-        clear: function (chart) {
-            this.render(chart, true);
-        },
+        /**
+         * Depfth first treversal (DFS). Using `before` and `after` callbacks,
+         * we can get two results: preorder and postorder traversals, reminder:
+         *
+         * <pre>
+         *     (a)
+         *     / \
+         *   (b) (c)
+         *   / \
+         * (d) (e)
+         * </pre>
+         *
+         * DFS (preorder): `a -> b -> d -> e -> c`
+         *
+         * DFS (postorder): `d -> e -> b -> c -> a`
+         *
+         * @param {Highcharts.QuadTreeNode} node
+         * @param {function} beforeCallback function to be called before
+         *                      visiting children nodes
+         * @param {function} afterCallback function to be called after
+         *                      visiting children nodes
+         */
         visitNodeRecursive: function (
             node,
             beforeCallback,
@@ -230,6 +353,9 @@ H.extend(
                 afterCallback(node);
             }
         },
+        /**
+         * Calculate mass of the each QuadNode in the tree.
+         */
         calculateMassAndCenter: function () {
             this.visitNodeRecursive(null, null, function (node) {
                 node.updateMassAndCenter();
@@ -237,6 +363,9 @@ H.extend(
         },
         render: function (chart, clear) {
             this.visitNodeRecursive(this.root, null, null, chart, clear);
+        },
+        clear: function (chart) {
+            this.render(chart, true);
         },
         renderBox: function (qtNode, chart, clear) {
             if (!qtNode.graphic && !clear) {
