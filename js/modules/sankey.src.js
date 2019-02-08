@@ -6,6 +6,44 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * Options for the series data labels, appearing next to each data point.
+ *
+ * Since v6.2.0, multiple data labels can be applied to each single point by
+ * defining them as an array of configs.
+ *
+ * In styled mode, the data labels can be styled with the
+ * `.highcharts-data-label-box` and `.highcharts-data-label` class names.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-enabled|Highcharts-Demo:}
+ *      Data labels enabled
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-multiple|Highcharts-Demo:}
+ *      Multiple data labels on a bar series
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels|Highcharts-Demo:}
+ *      Style mode example
+ *
+ * @interface Highcharts.PlotSankeyDataLabelsOptionsObject
+ * @extends Highcharts.DataLabelsOptionsObject
+ *//**
+ * The
+ * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+ * specifying what to show for _nodes_ in the sankey diagram. By default the
+ * `nodeFormatter` returns `{point.name}`.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-link-datalabels|Highcharts-Demo:}
+ *      Node and link data labels
+ *
+ * @name Highcharts.PlotSankeyDataLabelsOptionsObject#nodeFormat
+ * @type {string|undefined}
+ *//**
+ * Callback to format data labels for _nodes_ in the sankey diagram. The
+ * `nodeFormat` option takes precedence over the `nodeFormatter`.
+ *
+ * @name Highcharts.PlotSankeyDataLabelsOptionsObject#nodeFormatter
+ * @type {Highcharts.DataLabelsFormatterCallbackFunction|undefined}
+ * @default function () { return this.point.name; }
+ * @since 6.0.2
+ */
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -28,137 +66,118 @@ var defined = H.defined,
 seriesType('sankey', 'column'
 
     /**
- * A sankey diagram is a type of flow diagram, in which the width of the
- * link between two nodes is shown proportionally to the flow quantity.
- *
- * @sample highcharts/demo/sankey-diagram/
- *         Sankey diagram
- * @sample highcharts/plotoptions/sankey-inverted/
- *         Inverted sankey diagram
- * @sample highcharts/plotoptions/sankey-outgoing
- *         Sankey diagram with outgoing links
- *
- * @extends      plotOptions.column
- * @since        6.0.0
- * @product      highcharts
- * @excluding    animationLimit, boostThreshold, borderColor, borderRadius,
- *               borderWidth, crisp, cropThreshold, depth, edgeColor, edgeWidth,
- *               findNearestPointBy, grouping, groupPadding, groupZPadding,
- *               maxPointWidth, negativeColor, pointInterval, pointIntervalUnit,
- *               pointPadding, pointPlacement, pointRange, pointStart,
- *               pointWidth, shadow, softThreshold, stacking, threshold,
- *               zoneAxis, zones
- * @optionparent plotOptions.sankey
- */
+     * A sankey diagram is a type of flow diagram, in which the width of the
+     * link between two nodes is shown proportionally to the flow quantity.
+     *
+     * @sample highcharts/demo/sankey-diagram/
+     *         Sankey diagram
+     * @sample highcharts/plotoptions/sankey-inverted/
+     *         Inverted sankey diagram
+     * @sample highcharts/plotoptions/sankey-outgoing
+     *         Sankey diagram with outgoing links
+     *
+     * @extends      plotOptions.column
+     * @since        6.0.0
+     * @product      highcharts
+     * @excluding    animationLimit, boostThreshold, borderColor, borderRadius,
+     *               borderWidth, crisp, cropThreshold, depth, edgeColor,
+     *               edgeWidth, findNearestPointBy, grouping, groupPadding,
+     *               groupZPadding, maxPointWidth, negativeColor, pointInterval,
+     *               pointIntervalUnit, pointPadding, pointPlacement,
+     *               pointRange, pointStart, pointWidth, shadow, softThreshold,
+     *               stacking, threshold, zoneAxis, zones
+     * @optionparent plotOptions.sankey
+     */
     , {
         colorByPoint: true,
         /**
-     * Higher numbers makes the links in a sankey diagram render more curved.
-     * A `curveFactor` of 0 makes the lines straight.
-     */
+         * Higher numbers makes the links in a sankey diagram render more
+         * curved. A `curveFactor` of 0 makes the lines straight.
+         */
         curveFactor: 0.33,
         /**
-     * Options for the data labels appearing on top of the nodes and links. For
-     * sankey charts, data labels are visible for the nodes by default, but
-     * hidden for links. This is controlled by modifying the `nodeFormat`, and
-     * the `format` that applies to links and is an empty string by default.
-     */
+         * Options for the data labels appearing on top of the nodes and links.
+         * For sankey charts, data labels are visible for the nodes by default,
+         * but hidden for links. This is controlled by modifying the
+         * `nodeFormat`, and the `format` that applies to links and is an empty
+         * string by default.
+         *
+         * @type {Highcharts.DataLabelsOptionsObject|Highcharts.PlotSankeyDataLabelsOptionsObject}
+         */
         dataLabels: {
+            /** @ignore-option */
             enabled: true,
-            backgroundColor: 'none', // enable padding
+            /**
+             * enable padding
+             * @ignore-option
+             */
+            backgroundColor: 'none',
+            /** @ignore-option */
             crop: false,
-            /**
-         * The
-         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * specifying what to show for _nodes_ in the sankey diagram. By default
-         * the `nodeFormatter` returns `{point.name}`.
-         *
-         * @sample highcharts/plotoptions/sankey-link-datalabels
-         *         Node and link data labels
-         * @type {string}
-         */
+            /** @ignore-option */
             nodeFormat: undefined,
-
-            /**
-         * Callback to format data labels for _nodes_ in the sankey diagram.
-         * The `nodeFormat` option takes precedence over the `nodeFormatter`.
-         *
-         * @type  {Highcharts.FormatterCallbackFunction<object>}
-         * @since 6.0.2
-         */
+            /** @ignore-option */
             nodeFormatter: function () {
                 return this.point.name;
             },
-            /**
-         * The
-         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * specifying what to show for _links_ in the sankey diagram. Defaults
-         * to an empty string returned from the `formatter`, in effect disabling
-         * the labels.
-         *
-         * @type {string}
-         */
+            /** @ignore-option */
             format: undefined,
             /**
-         * Callback to format data labels for _links_ in the sankey diagram.
-         * The `format` option takes precedence over the `formatter`.
-         *
-         * @type  {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
-         * @since 6.0.2
-         */
+            /** @ignore-option */
             formatter: function () {
                 return '';
             },
+            /** @ignore-option */
             inside: true
         },
         /**
-     * Opacity for the links between nodes in the sankey diagram.
-     */
+         * Opacity for the links between nodes in the sankey diagram.
+         */
         linkOpacity: 0.5,
         /**
-     * The pixel width of each node in a sankey diagram, or the height in case
-     * the chart is inverted.
-     */
+         * The pixel width of each node in a sankey diagram, or the height in
+         * case the chart is inverted.
+         */
         nodeWidth: 20,
         /**
-     * The padding between nodes in a sankey diagram, in pixels.
-     */
+         * The padding between nodes in a sankey diagram, in pixels.
+         */
         nodePadding: 10,
         showInLegend: false,
         states: {
             hover: {
-            /**
-             * Opacity for the links between nodes in the sankey diagram in
-             * hover mode.
-             */
+                /**
+                 * Opacity for the links between nodes in the sankey diagram in
+                 * hover mode.
+                 */
                 linkOpacity: 1
             }
         },
         tooltip: {
-        /**
-         * A callback for defining the format for _nodes_ in the sankey chart's
-         * tooltip, as opposed to links.
-         *
-         * @type      {Highcharts.FormatterCallbackFunction<object>}
-         * @since     6.0.2
-         * @apioption plotOptions.sankey.tooltip.nodeFormatter
-         */
+            /**
+             * A callback for defining the format for _nodes_ in the sankey
+             * chart's tooltip, as opposed to links.
+             *
+             * @type      {Highcharts.FormatterCallbackFunction<object>}
+             * @since     6.0.2
+             * @apioption plotOptions.sankey.tooltip.nodeFormatter
+             */
 
             /**
-         * Whether the tooltip should follow the pointer or stay fixed on the
-         * item.
-         */
+             * Whether the tooltip should follow the pointer or stay fixed on
+             * the item.
+             */
             followPointer: true,
 
             headerFormat:
             '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>{point.weight}</b><br/>',
             /**
-         * The
-         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * specifying what to show for _nodes_ in tooltip of a sankey diagram
-         * series, as opposed to links.
-         */
+             * The
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * specifying what to show for _nodes_ in tooltip of a sankey
+             * diagram series, as opposed to links.
+             */
             nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
         }
 

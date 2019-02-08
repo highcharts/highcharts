@@ -1,8 +1,10 @@
 /* *
- * (c) 2010-2019 Torstein Honsi
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 /**
  * Adjusted width and x offset of the columns for grouping.
@@ -358,20 +360,17 @@ seriesType('column', 'line'
         },
 
         dataLabels: {
-
             /**
-             * @type {Highcharts.AlignType|null}
+             * @ignore-option
+             * auto
              */
-            align: null, // auto
-
+            align: null,
             /**
-             * @type {Highcharts.VerticalAlignType|null}
+             * @ignore-option
+             * auto
              */
-            verticalAlign: null, // auto
-
-            /**
-             * @type {number|null}
-             */
+            verticalAlign: null,
+            /** @ignore-option */
             y: null
         },
 

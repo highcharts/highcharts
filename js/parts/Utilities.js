@@ -197,8 +197,10 @@
  * @callback Highcharts.FormatterCallbackFunction<T>
  *
  * @param {T} this
+ *        Context to format
  *
  * @return {string}
+ *         Formatted text
  */
 
 /**

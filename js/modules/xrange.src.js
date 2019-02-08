@@ -64,79 +64,68 @@ function getColorByCategory(series, point) {
 seriesType('xrange', 'column'
 
     /**
- * The X-range series displays ranges on the X axis, typically time intervals
- * with a start and end date.
- *
- * @sample {highcharts} highcharts/demo/x-range/
- *         X-range
- * @sample {highcharts} highcharts/css/x-range/
- *         Styled mode X-range
- * @sample {highcharts} highcharts/chart/inverted-xrange/
- *         Inverted X-range
- *
- * @extends      plotOptions.column
- * @since        6.0.0
- * @product      highcharts highstock gantt
- * @excluding    boostThreshold, crisp, cropThreshold, depth, edgeColor,
- *               edgeWidth, findNearestPointBy, getExtremesFromAll,
- *               negativeColor, pointInterval, pointIntervalUnit,
- *               pointPlacement, pointRange, pointStart, softThreshold,
- *               stacking, threshold, data
- * @optionparent plotOptions.xrange
- */
+     * The X-range series displays ranges on the X axis, typically time
+     * intervals with a start and end date.
+     *
+     * @sample {highcharts} highcharts/demo/x-range/
+     *         X-range
+     * @sample {highcharts} highcharts/css/x-range/
+     *         Styled mode X-range
+     * @sample {highcharts} highcharts/chart/inverted-xrange/
+     *         Inverted X-range
+     *
+     * @extends      plotOptions.column
+     * @since        6.0.0
+     * @product      highcharts highstock gantt
+     * @excluding    boostThreshold, crisp, cropThreshold, depth, edgeColor,
+     *               edgeWidth, findNearestPointBy, getExtremesFromAll,
+     *               negativeColor, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, softThreshold,
+     *               stacking, threshold, data
+     * @optionparent plotOptions.xrange
+     */
     , {
 
         /**
-     * A partial fill for each point, typically used to visualize how much of
-     * a task is performed. The partial fill object can be set either on series
-     * or point level.
-     *
-     * @sample {highcharts} highcharts/demo/x-range
-     *         X-range with partial fill
-     *
-     * @product   highcharts highstock gantt
-     * @apioption plotOptions.xrange.partialFill
-     */
+         * A partial fill for each point, typically used to visualize how much
+         * of a task is performed. The partial fill object can be set either on
+         * series or point level.
+         *
+         * @sample {highcharts} highcharts/demo/x-range
+         *         X-range with partial fill
+         *
+         * @product   highcharts highstock gantt
+         * @apioption plotOptions.xrange.partialFill
+         */
 
         /**
-     * The fill color to be used for partial fills. Defaults to a darker shade
-     * of the point color.
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @product   highcharts highstock gantt
-     * @apioption plotOptions.xrange.partialFill.fill
-     */
+         * The fill color to be used for partial fills. Defaults to a darker
+         * shade of the point color.
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @product   highcharts highstock gantt
+         * @apioption plotOptions.xrange.partialFill.fill
+         */
 
         /**
-     * A partial fill for each point, typically used to visualize how much of
-     * a task is performed. See [completed](series.gantt.data.completed).
-     *
-     * @sample gantt/demo/progress-indicator
-     *         Gantt with progress indicator
-     *
-     * @product   gantt
-     * @apioption plotOptions.gantt.partialFill
-     */
+         * A partial fill for each point, typically used to visualize how much
+         * of a task is performed. See [completed](series.gantt.data.completed).
+         *
+         * @sample gantt/demo/progress-indicator
+         *         Gantt with progress indicator
+         *
+         * @product   gantt
+         * @apioption plotOptions.gantt.partialFill
+         */
 
         /**
-     * In an X-range series, this option makes all points of the same Y-axis
-     * category the same color.
-     */
+         * In an X-range series, this option makes all points of the same Y-axis
+         * category the same color.
+         */
         colorByPoint: true,
 
         dataLabels: {
-
-            verticalAlign: 'middle',
-
-            inside: true,
-
-            /**
-         * The default formatter for X-range data labels displays the percentage
-         * of the partial fill amount.
-         *
-         * @type    {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
-         * @default function () { return (amount * 100) + '%'; }
-         */
+            /** @ignore-option */
             formatter: function () {
                 var point = this.point,
                     amount = point.partialFill;
@@ -148,7 +137,11 @@ seriesType('xrange', 'column'
                     amount = 0;
                 }
                 return correctFloat(amount * 100) + '%';
-            }
+            },
+            /** @ignore-option */
+            inside: true,
+            /** @ignore-option */
+            verticalAlign: 'middle'
         },
 
         tooltip: {
