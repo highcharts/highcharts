@@ -41,8 +41,8 @@ seriesType('sankey', 'column'
  * @extends      plotOptions.column
  * @since        6.0.0
  * @product      highcharts
- * @excluding    animationLimit, boostThreshold, borderColor, borderRadius,
- *               borderWidth, crisp, cropThreshold, depth, edgeColor, edgeWidth,
+ * @excluding    animationLimit, boostThreshold, borderRadius,
+ *               crisp, cropThreshold, depth, edgeColor, edgeWidth,
  *               findNearestPointBy, grouping, groupPadding, groupZPadding,
  *               maxPointWidth, negativeColor, pointInterval, pointIntervalUnit,
  *               pointPadding, pointPlacement, pointRange, pointStart,
@@ -51,6 +51,7 @@ seriesType('sankey', 'column'
  * @optionparent plotOptions.sankey
  */
     , {
+        borderWidth: 0,
         colorByPoint: true,
         /**
      * Higher numbers makes the links in a sankey diagram render more curved.
@@ -267,18 +268,32 @@ seriesType('sankey', 'column'
         pointAttribs: function (point, state) {
 
             var opacity = this.options.linkOpacity,
-                color = point.color;
+                color = point.color,
+                stroke = this.options.borderColor,
+                strokeWidth = this.options.borderWidth;
 
             if (state) {
                 opacity = this.options.states[state].linkOpacity || opacity;
                 color = this.options.states[state].color || point.color;
+                stroke = this.options.states[state].borderColor || stroke;
+                strokeWidth = this.options.states[state].borderWidth ||
+                    strokeWidth;
             }
 
+            // Node attributes
+            if (point.isNode) {
+                return {
+                    fill: color,
+                    stroke: stroke,
+                    'stroke-width': strokeWidth
+                };
+            }
+
+            // Link attributes
             return {
-                fill: point.isNode ?
-                    color :
-                    H.color(color).setOpacity(opacity).get()
+                fill: H.color(color).setOpacity(opacity).get()
             };
+
         },
 
         // Extend generatePoints by adding the nodes, which are Point objects
@@ -378,17 +393,21 @@ seriesType('sankey', 'column'
         translateNode: function (node, column) {
             var translationFactor = this.translationFactor,
                 chart = this.chart,
+                options = this.options,
                 sum = node.getSum(),
-                height = sum * translationFactor,
-                fromNodeTop = (
+                height = Math.round(sum * translationFactor),
+                crisp = Math.round(options.borderWidth) % 2 / 2,
+                fromNodeTop = Math.floor(
                     column.top(translationFactor) +
                     column.offset(node, translationFactor)
-                ),
-                left = this.colDistance * node.column,
+                ) + crisp,
+                left = Math.floor(
+                    this.colDistance * node.column + options.borderWidth / 2
+                ) + crisp,
                 nodeLeft = chart.inverted ?
                     chart.plotSizeX - left :
                     left,
-                nodeWidth = this.options.nodeWidth;
+                nodeWidth = Math.round(options.nodeWidth);
 
             node.sum = sum;
 
@@ -579,15 +598,16 @@ seriesType('sankey', 'column'
             // factor of the most spaceous column.
             this.translationFactor = nodeColumns.reduce(
                 function (translationFactor, column) {
-                    var height = chart.plotSizeY -
+                    var height = chart.plotSizeY - options.borderWidth -
                     (column.length - 1) * nodePadding;
 
                     return Math.min(translationFactor, height / column.sum());
                 },
                 Infinity
             );
-            this.colDistance = (chart.plotSizeX - nodeWidth) /
-                    (nodeColumns.length - 1);
+            this.colDistance =
+                (chart.plotSizeX - nodeWidth - options.borderWidth) /
+                (nodeColumns.length - 1);
 
             // First translate all nodes so we can use them when drawing links
             nodeColumns.forEach(function (column) {
