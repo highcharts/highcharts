@@ -117,7 +117,8 @@ seriesType(
          * or indicator values.
          *
          * @sample {highstock} stock/plotoptions/series-comparetomain/
-         *         compareToMain
+         *         Difference between comparing SMA values to the main series
+         *         and its own values.
          *
          * @type {boolean}
          */

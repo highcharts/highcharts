@@ -36,30 +36,6 @@ seriesType('bar', 'column',
      */
 
     /**
-     * Alignment of the data label relative to the data point.
-     *
-     * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
-     *         Data labels inside the bar
-     *
-     * @type      {string}
-     * @default   left
-     * @product   highcharts
-     * @apioption plotOptions.bar.dataLabels.align
-     */
-
-    /**
-     * The x position of the data label relative to the data point.
-     *
-     * @sample {highcharts} highcharts/plotoptions/bar-datalabels-align-inside-bar/
-     *         Data labels inside the bar
-     *
-     * @type      {number}
-     * @default   5
-     * @product   highcharts
-     * @apioption plotOptions.bar.dataLabels.x
-     */
-
-    /**
      * @ignore
      */
     null

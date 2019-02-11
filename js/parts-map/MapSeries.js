@@ -886,13 +886,13 @@ seriesType(
             if (!chart.styledMode) {
                 group.element.setAttribute(
                     'stroke-width',
-                    (
+                    pick(
                         series.options[
                             (
                                 series.pointAttrToOptions &&
                                 series.pointAttrToOptions['stroke-width']
                             ) || 'borderWidth'
-                        ] ||
+                        ],
                         1 // Styled mode
                     ) / (scaleX || 1)
                 );
@@ -1167,6 +1167,7 @@ seriesType(
  *  ```
  *
  * @type      {Array<number|Array<string,number>|*>}
+ * @product   highmaps
  * @apioption series.map.data
  */
 
@@ -1187,8 +1188,8 @@ seriesType(
  * @sample maps/series/data-datalabels/
  *         Disable data labels for individual areas
  *
- * @type {Object}
- * @product highmaps
+ * @type      {Object}
+ * @product   highmaps
  * @apioption series.map.data.dataLabels
  */
 

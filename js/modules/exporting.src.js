@@ -219,7 +219,7 @@ merge(true, defaultOptions.navigation, {
          * @sample highcharts/navigation/buttonoptions-align/
          *         Center aligned
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'right',
@@ -275,7 +275,7 @@ merge(true, defaultOptions.navigation, {
          * @sample highcharts/navigation/buttonoptions-verticalalign/
          *         Buttons at lower right
          *
-         * @type  {Highcharts.VerticalAlignType}
+         * @type  {Highcharts.VerticalAlignValue}
          * @since 2.0
          */
         verticalAlign: 'top',

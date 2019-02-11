@@ -2449,12 +2449,16 @@ addEvent(Chart, 'update', function (e) {
 });
 
 // Initialize navigator, if no scrolling exists yet
-addEvent(Chart, 'afterUpdate', function () {
+addEvent(Chart, 'afterUpdate', function (event) {
 
     if (!this.navigator && !this.scroller &&
         (this.options.navigator.enabled || this.options.scrollbar.enabled)
     ) {
         this.scroller = this.navigator = new Navigator(this);
+
+        if (pick(event.redraw, true)) {
+            this.redraw(event.animation); // #7067
+        }
     }
 
 });

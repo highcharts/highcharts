@@ -118,7 +118,7 @@ seriesType('waterfall', 'column', {
      * In styled mode, the stroke dash-array can be set with the
      * `.highcharts-graph` class.
      *
-     * @type    {Highcharts.DashStyleType}
+     * @type    {Highcharts.DashStyleValue}
      * @since   3.0
      * @product highcharts
      */

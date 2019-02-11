@@ -2,9 +2,14 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function (data)
     // Create the chart
     Highcharts.stockChart('container', {
 
+        legend: {
+            enabled: true
+        },
+
         plotOptions: {
             series: {
-                compare: 'percent'
+                compare: 'percent',
+                showInLegend: true
             }
         },
 
@@ -27,7 +32,12 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function (data)
             data: data
         }, {
             type: 'sma',
-            name: 'SMA',
+            name: 'SMA with comparing to itself',
+            linkedTo: 'main',
+            compareToMain: false
+        }, {
+            type: 'sma',
+            name: 'SMA with comparing to main series',
             linkedTo: 'main',
             compareToMain: true
         }]

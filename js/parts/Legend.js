@@ -781,9 +781,11 @@ Highcharts.Legend.prototype = {
         this.allItems.forEach(function (item) {
             var lastPoint,
                 height,
-                useFirstPoint = alignLeft;
+                useFirstPoint = alignLeft,
+                target,
+                top;
 
-            if (item.xAxis && item.points) {
+            if (item.yAxis && item.points) {
 
                 if (item.xAxis.options.reversed) {
                     useFirstPoint = !useFirstPoint;
@@ -797,11 +799,17 @@ Highcharts.Legend.prototype = {
                     }
                 );
                 height = item.legendGroup.getBBox().height;
+
+                top = item.yAxis.top - chart.plotTop;
+                if (item.visible) {
+                    target = lastPoint ? lastPoint.plotY : item.yAxis.height;
+                    target += top - 0.3 * height;
+                } else {
+                    target = top + item.yAxis.height;
+                }
+
                 boxes.push({
-                    target: item.visible ?
-                        (lastPoint ? lastPoint.plotY : item.xAxis.height) -
-                            0.3 * height :
-                        chart.plotHeight,
+                    target: target,
                     size: height,
                     item: item
                 });

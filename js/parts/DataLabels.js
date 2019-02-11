@@ -120,6 +120,8 @@
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-align-left/|Highcharts-Demo:}
  *      Left aligned
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/bar-datalabels-align-inside-bar/|Highcharts-Demo:}
+ *      Data labels inside the bar
  *
  * @name Highcharts.DataLabelsOptionsObject#align
  * @type {Highcharts.AlignValue|undefined}
@@ -401,6 +403,8 @@
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-rotation/|Highcharts-Demo:}
  *      Vertical and positioned
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/bar-datalabels-align-inside-bar/|Highcharts-Demo:}
+ *      Data labels inside the bar
  *
  * @name Highcharts.DataLabelsOptionsObject#x
  * @type {number|undefined}

@@ -747,3 +747,28 @@ QUnit.test('Update an unrelated dynamically added chart series (#8430)', functio
         'Correct number of points in navigator series (#8430).'
     );
 });
+
+QUnit.test('Add a navigator by chart update (#7067)', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3]
+        }],
+        navigator: {
+            enabled: false
+        },
+        scrollbar: {
+            enabled: false
+        }
+    });
+
+    chart.update({
+        navigator: {
+            enabled: true
+        }
+    });
+
+    assert.ok(
+        chart.navigator.size,
+        'Navigator correctly added (#7067).'
+    );
+});
