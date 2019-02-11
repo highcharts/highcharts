@@ -75,8 +75,35 @@ seriesType('networkgraph', 'line', {
          * @default function () { return this.point.fromNode.name + ' \u2192 ' + this.point.toNode.name; }
          */
         linkFormatter: function () {
-            return this.point.fromNode.name + ' \u2192 ' +
+            return this.point.fromNode.name + '<br>' +
                 this.point.toNode.name;
+        },
+        /**
+         * Options for a _node_ label text which should follow link connection.
+         *
+         * @since   7.1.0
+         */
+        textPath: {
+            enabled: false,
+            attributes: {
+                startOffset: '50%',
+                'text-anchor': 'middle',
+                dy: -3
+            }
+        },
+
+        /**
+         * Options for a _link_ label text which should follow link connection.
+         *
+         * @since   7.1.0
+         */
+        linkTextPath: {
+            enabled: true,
+            attributes: {
+                startOffset: '50%',
+                'text-anchor': 'middle',
+                dy: -3
+            }
         },
 
         /**
@@ -468,7 +495,7 @@ seriesType('networkgraph', 'line', {
             this.redrawHalo(hoverPoint);
         }
 
-        if (this.chart.hasRendered) {
+        if (this.chart.hasRendered && !this.options.dataLabels.allowOverlap) {
             this.nodes.concat(this.points).forEach(function (node) {
                 if (node.dataLabel) {
                     dataLabels.push(node.dataLabel);
@@ -482,12 +509,19 @@ seriesType('networkgraph', 'line', {
     // Networkgraph has two separate collecions of nodes and lins, render
     // dataLabels for both sets:
     drawDataLabels: function () {
-        // Render link and node labels
-        this.points = this.data.concat(this.points);
+        var textPath = this.options.dataLabels.textPath;
+
+        // Render node labels:
         Series.prototype.drawDataLabels.apply(this, arguments);
 
-        // Restore nodes to be points array
+        // Render link labels:
+        this.points = this.data;
+        this.options.dataLabels.textPath = this.options.dataLabels.linkTextPath;
+        Series.prototype.drawDataLabels.apply(this, arguments);
+
+        // Restore nodes
         this.points = this.nodes;
+        this.options.dataLabels.textPath = textPath;
     },
     /*
      * Draggable mode:

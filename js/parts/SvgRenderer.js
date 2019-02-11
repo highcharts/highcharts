@@ -2291,6 +2291,96 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     },
     /**
      * @private
+     * @function Highcharts.SVGElement#textPathSetter
+     *
+     * TO DO:
+     * @param {object} value - Format:
+     * <pre>
+     *              {
+     *                  element: Highcharts.SVGElement,
+     *                  options: {
+     *                      enabled: boolean,
+     *                      attribues: Highcharts.SVGAttributes
+     *                  }
+     *              }
+     * </pre>
+     */
+    textPathSetter: function (value, key, element) {
+        var textPathWrapper,
+            tspans,
+            adder = false,
+            path,
+            attrs;
+
+        if (element && value && value.element) {
+            path = value.element;
+            attrs = merge(value.options.attributes);
+
+            if (!path.textPathWrapper) {
+                // Create <textPath>, defer the DOM adder
+                path.textPathWrapper = this.renderer.createElement('textPath');
+                adder = true;
+            }
+
+            textPathWrapper = path.textPathWrapper.element;
+
+            if (!path.textPathId) {
+                // Store path ID's reference
+                path.textPathId = H.uniqueKey();
+                path.element.setAttribute('id', path.textPathId);
+
+                // Change DOM structure, by placing <textPath> tag in <text>
+                tspans = element.children[0].childNodes;
+
+                // Now move all <tspan>'s to the <textPath> node
+                while (tspans.length) {
+                    textPathWrapper.appendChild(tspans[0]);
+                }
+            }
+
+            // Add <textPath> to the DOM
+            if (adder) {
+                path.textPathWrapper.add({
+                    element: this.element.firstChild
+                });
+            }
+
+            // Set basic options:
+            textPathWrapper.setAttribute('href', '#' + path.textPathId);
+
+            // Representational options:
+
+            // dx/dy options must by set on <text>,
+            // the rest should be set on <textPath>
+            if (attrs.dy) {
+                element.children[0].setAttribute('dy', attrs.dy);
+                delete attrs.dy;
+            }
+            if (attrs.dx) {
+                element.children[0].setAttribute('dx', attrs.dx);
+                delete attrs.dyx;
+            }
+
+            // Additional attributes
+            Object.keys(attrs).forEach(function (key) {
+                textPathWrapper.setAttribute(key, attrs[key]);
+            });
+
+            // TO DO:
+            // How to modify "translateX" and "translateY"?
+            element.setAttribute('transform', 'translate(0, 0)');
+            this.replacedUpdateTransform = this.updateTransform;
+            this.updateTransform = noop;
+
+        } else if (this.replacedUpdateTransform) {
+            // Restore transform method:
+            this.updateTransform = this.replacedUpdateTransform;
+            delete this.replacedUpdateTransform;
+
+        }
+    },
+    /**
+     * @private
      * @function Highcharts.SVGElement#fillSetter
      *
      * @param {Highcharts.Color|Highcharts.ColorString} value
