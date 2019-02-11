@@ -171,6 +171,8 @@ seriesType('sankey', 'column'
         // links.
         createNode: H.NodesMixin.createNode,
 
+        // Overridable function to get node padding, overridden in dependency
+        // wheel series type
         getNodePadding: function () {
             return this.options.nodePadding;
         },
@@ -191,13 +193,18 @@ seriesType('sankey', 'column'
             };
             // Get the offset in pixels of a node inside the column.
             column.offset = function (node, factor) {
-                var offset = 0;
+                var offset = 0,
+                    totalNodeOffset;
 
                 for (var i = 0; i < column.length; i++) {
+                    totalNodeOffset = column[i].getSum() * factor + nodePadding;
                     if (column[i] === node) {
-                        return offset + (node.options.offset || 0);
+                        return offset + H.relativeLength(
+                            node.options.offset || 0,
+                            totalNodeOffset
+                        );
                     }
-                    offset += column[i].getSum() * factor + nodePadding;
+                    offset += totalNodeOffset;
                 }
             };
 
@@ -737,13 +744,17 @@ seriesType('sankey', 'column'
  */
 
 /**
- * The vertical offset of a node in terms of weight. Positive values shift the
- * node downwards, negative shift it upwards.
+ * In a horizontal layout, the vertical offset of a node in terms of weight.
+ * Positive values shift the node downwards, negative shift it upwards. In a
+ * vertical layout, like organization chart, the offset is horizontal.
+ *
+ * If a percantage string is given, the node is offset by the percentage of the
+ * node size plus `nodePadding`.
  *
  * @sample highcharts/plotoptions/sankey-node-column/
  *         Specified node offset
  *
- * @type      {number}
+ * @type      {number|string}
  * @default   0
  * @since     6.0.5
  * @product   highcharts
