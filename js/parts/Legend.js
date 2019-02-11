@@ -1054,6 +1054,16 @@ Highcharts.Legend.prototype = {
                             (padding + height) + 'px,0)' :
                         'auto';
                 }
+            },
+            addTracker = function (key) {
+                legend[key] = renderer
+                    .circle(0, 0, arrowSize * 1.3)
+                    .translate(arrowSize / 2, arrowSize / 2)
+                    .add(nav);
+                if (!chart.styledMode) {
+                    legend[key].attr('fill', 'rgba(0,0,0,0.0001)');
+                }
+                return legend[key];
             };
 
 
@@ -1135,10 +1145,11 @@ Highcharts.Legend.prototype = {
                         arrowSize,
                         arrowSize
                     )
+                    .add(nav);
+                addTracker('upTracker')
                     .on('click', function () {
                         legend.scroll(-1, animation);
-                    })
-                    .add(nav);
+                    });
 
                 this.pager = renderer.text('', 15, 10)
                     .addClass('highcharts-legend-navigation');
@@ -1156,10 +1167,12 @@ Highcharts.Legend.prototype = {
                         arrowSize,
                         arrowSize
                     )
+                    .add(nav);
+                addTracker('downTracker')
                     .on('click', function () {
                         legend.scroll(1, animation);
-                    })
-                    .add(nav);
+                    });
+
             }
 
             // Set initial position
@@ -1217,20 +1230,25 @@ Highcharts.Legend.prototype = {
                 translateY: clipHeight + this.padding + 7 + this.titleHeight,
                 visibility: 'visible'
             });
-            this.up.attr({
-                'class': currentPage === 1 ?
-                    'highcharts-legend-nav-inactive' :
-                    'highcharts-legend-nav-active'
+            [this.up, this.upTracker].forEach(function (elem) {
+                elem.attr({
+                    'class': currentPage === 1 ?
+                        'highcharts-legend-nav-inactive' :
+                        'highcharts-legend-nav-active'
+                });
             });
             pager.attr({
                 text: currentPage + '/' + pageCount
             });
-            this.down.attr({
-                'x': 18 + this.pager.getBBox().width, // adjust to text width
-                'class': currentPage === pageCount ?
-                    'highcharts-legend-nav-inactive' :
-                    'highcharts-legend-nav-active'
-            });
+            [this.down, this.downTracker].forEach(function (elem) {
+                elem.attr({
+                    // adjust to text width
+                    'x': 18 + this.pager.getBBox().width,
+                    'class': currentPage === pageCount ?
+                        'highcharts-legend-nav-inactive' :
+                        'highcharts-legend-nav-active'
+                });
+            }, this);
 
             if (!this.chart.styledMode) {
                 this.up
@@ -1238,7 +1256,8 @@ Highcharts.Legend.prototype = {
                         fill: currentPage === 1 ?
                             navOptions.inactiveColor :
                             navOptions.activeColor
-                    })
+                    });
+                this.upTracker
                     .css({
                         cursor: currentPage === 1 ? 'default' : 'pointer'
                     });
@@ -1247,7 +1266,8 @@ Highcharts.Legend.prototype = {
                         fill: currentPage === pageCount ?
                             navOptions.inactiveColor :
                             navOptions.activeColor
-                    })
+                    });
+                this.downTracker
                     .css({
                         cursor: currentPage === pageCount ?
                             'default' :
