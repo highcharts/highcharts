@@ -15,9 +15,11 @@ H.seriesType(
     'orgchart',
     'sankey',
     {
-        nodeWidth: 50,
+        borderColor: '${palette.neutralColor60}',
+        borderWidth: 1,
         linkColor: '${palette.neutralColor60}',
-        linkLineWidth: 1
+        linkLineWidth: 1,
+        nodeWidth: 50
     },
     {
         inverted: true,

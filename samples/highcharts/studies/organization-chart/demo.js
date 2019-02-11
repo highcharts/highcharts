@@ -20,7 +20,12 @@ var datasets = {
         ],
         nodes: [{
             id: 'HR',
-            column: 2
+            column: 2,
+            color: 'silver',
+            offset: '-50%'
+        }, {
+            id: 'CEO',
+            offset: '-50%'
         }]
     },
     mafia: {
