@@ -822,7 +822,7 @@ seriesType('sankey', 'column'
 /**
  * The weight of the link.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highcharts
  * @apioption series.sankey.data.weight
  */
