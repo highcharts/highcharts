@@ -166,6 +166,10 @@ Accessibility.prototype = {
     init: function (chart) {
         this.chart = chart;
 
+        // Copy over any deprecated options that are used. We could do this on
+        // every update, but it is probably not needed.
+        this.copyDeprecatedOptions();
+
         // Add the components
         var components = this.components = {
             // infoRegion: '',
@@ -221,6 +225,105 @@ Accessibility.prototype = {
         if (this.chart.focusElement) {
             this.chart.focusElement.removeFocusBorder();
         }
+    },
+
+
+    /**
+     * Copy options that are deprecated over to new options. Logs warnings to
+     * console for deprecated options used. The following options are
+     * deprecated:
+     *
+     *  chart.description -> accessibility.description
+     *  chart.typeDescription -> accessibility.typeDescription
+     *  series.description -> series.accessibility.description
+     *  series.exposeElementToA11y -> series.accessibility.exposeAsGroupOnly
+     *  series.pointDescriptionFormatter ->
+     *      series.accessibility.pointDescriptionFormatter
+     *  series.skipKeyboardNavigation ->
+     *      series.accessibility.keyboardNavigation.enabled
+     *  point.description -> point.accessibility.description
+     *
+     * @private
+     */
+    copyDeprecatedOptions: function () {
+        var chart = this.chart,
+            // Warn user that a deprecated option was used
+            warn = function (oldOption, newOption) {
+                console.warn( // eslint-disable-line
+                    'Highcharts: Deprecated option ' + oldOption +
+                    ' used. Use ' + newOption + ' instead.'
+                );
+            },
+            // Set a new option on a root prop, where the option is defined as
+            // an array of suboptions.
+            traverseSetOption = function (val, optionAsArray, root) {
+                var opt = root,
+                    prop,
+                    i = 0;
+                for (;i < optionAsArray.length - 1; ++i) {
+                    prop = optionAsArray[i];
+                    opt = opt[prop] = pick(opt[prop], {});
+                }
+                opt[optionAsArray[optionAsArray.length - 1]] = val;
+            },
+            // Map of deprecated series options. New options are defined as
+            // arrays of paths under series.options.
+            oldToNewSeriesOptions = {
+                description: ['accessibility', 'description'],
+                exposeElementToA11y: ['accessibility', 'exposeAsGroupOnly'],
+                pointDescriptionFormatter: [
+                    'accessibility', 'pointDescriptionFormatter'
+                ],
+                skipKeyboardNavigation: [
+                    'accessibility', 'keyboardNavigation', 'enabled'
+                ]
+            };
+
+        // Deal with chart wide options (description, typeDescription)
+        var chartOptions = chart.options.chart || {},
+            a11yOptions = chart.options.accessibility || {};
+        ['description', 'typeDescription'].forEach(function (prop) {
+            if (chartOptions[prop]) {
+                a11yOptions[prop] = chartOptions[prop];
+                warn('chart.' + prop, 'accessibility.' + prop);
+            }
+        });
+
+        // Loop through all series and handle options
+        chart.series.forEach(function (series) {
+            // Handle series wide options
+            Object.keys(oldToNewSeriesOptions).forEach(function (oldOption) {
+                var optionVal = series.options[oldOption];
+                if (optionVal !== undefined) {
+                    // Set the new option
+                    traverseSetOption(
+                        // Note that skipKeyboardNavigation has inverted option
+                        // value, since we set enabled rather than disabled
+                        oldOption === 'skipKeyboardNavigation' ?
+                            !optionVal : optionVal,
+                        oldToNewSeriesOptions[oldOption],
+                        series.options
+                    );
+                    warn(
+                        'series.' + oldOption, 'series.' +
+                        oldToNewSeriesOptions[oldOption].join('.')
+                    );
+                }
+            });
+
+            // Loop through the points and handle point.description
+            series.points.forEach(function (point) {
+                if (point.options && point.options.description) {
+                    point.options.accessibility =
+                        point.options.accessibility || {};
+                    point.options.accessibility.description =
+                        point.options.description;
+                    warn(
+                        'point.description', 'point.accessibility.description'
+                    );
+                }
+            });
+        });
     }
 
 };

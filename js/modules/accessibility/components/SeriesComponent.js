@@ -69,9 +69,10 @@ function getPointIndex(point) {
  */
 function isSkipSeries(series) {
     var a11yOptions = series.chart.options.accessibility,
-        seriesA11yOptions = series.options.accessibility || {};
+        seriesA11yOptions = series.options.accessibility || {},
+        seriesKbdNavOptions = seriesA11yOptions.keyboardNavigation;
 
-    return seriesA11yOptions.skipKeyboardNavigation ||
+    return seriesKbdNavOptions && seriesKbdNavOptions.enabled === false ||
         seriesA11yOptions.enabled === false ||
         series.options.enableMouseTracking === false || // #8440
         !series.visible ||
