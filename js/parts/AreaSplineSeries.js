@@ -115,7 +115,7 @@ seriesType('areaspline', 'spline',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<(number|string),number>|*>}
+ * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.areaspline.data

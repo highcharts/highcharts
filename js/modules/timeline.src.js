@@ -718,7 +718,7 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
  * @sample {highcharts} highcharts/series-timeline/alternate-labels
  *         Alternate labels
  *
- * @type      {Array<number|*>}
+ * @type      {Array<*>}
  * @extends   series.line.data
  * @excluding marker, x, y
  * @product   highcharts

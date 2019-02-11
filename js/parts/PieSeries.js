@@ -1244,28 +1244,28 @@ seriesType('pie', 'line',
  * An array of data points for the series. For the `pie` series type,
  * points can be given in the following ways:
  *
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. Example:
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `y` options. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
  *
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
- *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.pie.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *     y: 1,
- *     name: "Point2",
- *     color: "#00FF00"
- * }, {
- *     y: 7,
- *     name: "Point1",
- *     color: "#FF00FF"
- * }]</pre>
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.pie.turboThreshold),
+ *    this option is not available.
+ *    ```js
+ *    data: [{
+ *        y: 1,
+ *        name: "Point2",
+ *        color: "#00FF00"
+ *    }, {
+ *        y: 7,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
  *
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
@@ -1278,7 +1278,7 @@ seriesType('pie', 'line',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<string,number>|*>}
+ * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @extends   series.line.data
  * @excluding marker, x
  * @product   highcharts

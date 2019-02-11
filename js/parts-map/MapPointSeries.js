@@ -90,48 +90,46 @@ seriesType(
  * An array of data points for the series. For the `mappoint` series
  * type, points can be given in the following ways:
  *
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `y` options. The `x` values will be automatically
- * calculated, either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options. If the axis has
- * categories, these will be used. Example:
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `y` options. The `x` values will be automatically
+ *    calculated, either starting at 0 and incremented by 1, or from
+ *    `pointStart` and `pointInterval` given in the series options. If the axis
+ *    has categories, these will be used. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
  *
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
+ * 2. An array of arrays with 2 values. In this case, the values correspond to
+ *    `x,y`. If the first value is a string, it is applied as the name of the
+ *    point, and the `x` value is inferred.
+ *    ```js
+ *        data: [
+ *            [0, 1],
+ *            [1, 8],
+ *            [2, 7]
+ *        ]
+ *    ```
  *
- * 2.  An array of arrays with 2 values. In this case, the values correspond
- * to `x,y`. If the first value is a string, it is applied as the name
- * of the point, and the `x` value is inferred.
+ * 3. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.mappoint.turboThreshold),
+ *    this option is not available.
+ *    ```js
+ *        data: [{
+ *            x: 1,
+ *            y: 7,
+ *            name: "Point2",
+ *            color: "#00FF00"
+ *        }, {
+ *            x: 1,
+ *            y: 4,
+ *            name: "Point1",
+ *            color: "#FF00FF"
+ *        }]
+ *    ```
  *
- *  ```js
- *     data: [
- *         [0, 1],
- *         [1, 8],
- *         [2, 7]
- *     ]
- *  ```
- *
- * 3.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.mappoint.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         x: 1,
- *         y: 7,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         x: 1,
- *         y: 4,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
- *
- * @type      {Array<number|Array<number,number>|*>}
+ * @type      {Array<number|Array<number,(number|null)>|null|*>}
  * @extends   series.map.data
  * @excluding labelrank, middleX, middleY, path, value
  * @product   highmaps
@@ -181,7 +179,7 @@ seriesType(
  * @sample {highmaps} maps/demo/mapline-mappoint/
  *         Map point demo
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highmaps
  * @apioption series.mappoint.data.y
  */

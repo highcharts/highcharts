@@ -546,7 +546,7 @@ H.addEvent(H.Chart, 'beforeRedraw', function () {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|*>}
+ * @type      {Array<number|null|*>}
  * @extends   series.line.data
  * @excluding marker,x,y
  * @product   highcharts
