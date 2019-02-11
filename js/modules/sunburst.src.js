@@ -983,7 +983,7 @@ var sunburstPoint = {
  */
 
 /**
- * @type      {Array<number|*>}
+ * @type      {Array<number|null|*>}
  * @extends   series.treemap.data
  * @excluding x, y
  * @product   highcharts
@@ -994,7 +994,7 @@ var sunburstPoint = {
  * The value of the point, resulting in a relative area of the point
  * in the sunburst.
  *
- * @type      {number}
+ * @type      {number|null}
  * @since     6.0.0
  * @product   highcharts
  * @apioption series.sunburst.data.value

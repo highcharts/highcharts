@@ -1130,43 +1130,41 @@ seriesType(
  * An array of data points for the series. For the `map` series type, points can
  * be given in the following ways:
  *
- * 1.  An array of numerical values. In this case, the numerical values will be
- * interpreted as `value` options. Example:
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `value` options. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
  *
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
+ * 2. An array of arrays with 2 values. In this case, the values correspond to
+ *    `[hc-key, value]`. Example:
+ *    ```js
+ *        data: [
+ *            ['us-ny', 0],
+ *            ['us-mi', 5],
+ *            ['us-tx', 3],
+ *            ['us-ak', 5]
+ *        ]
+ *    ```
  *
- * 2.  An array of arrays with 2 values. In this case, the values correspond to
- * `[hc-key, value]`. Example:
+ * 3. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.map.turboThreshold),
+ *    this option is not available.
+ *    ```js
+ *        data: [{
+ *            value: 6,
+ *            name: "Point2",
+ *            color: "#00FF00"
+ *        }, {
+ *            value: 6,
+ *            name: "Point1",
+ *            color: "#FF00FF"
+ *        }]
+ *    ```
  *
- *  ```js
- *     data: [
- *         ['us-ny', 0],
- *         ['us-mi', 5],
- *         ['us-tx', 3],
- *         ['us-ak', 5]
- *     ]
- *  ```
- *
- * 3.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.map.turboThreshold), this
- * option is not available.
- *
- *  ```js
- *     data: [{
- *         value: 6,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         value: 6,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
- *
- * @type      {Array<number|Array<string,number>|*>}
+ * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @product   highmaps
  * @apioption series.map.data
  */
@@ -1282,7 +1280,7 @@ seriesType(
 /**
  * The numeric value of the data point.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highmaps
  * @apioption series.map.data.value
  */

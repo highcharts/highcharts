@@ -1729,36 +1729,35 @@ seriesType(
  * An array of data points for the series. For the `treemap` series
  * type, points can be given in the following ways:
  *
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `value` options. Example:
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `value` options. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
  *
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
- *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.treemap.turboThreshold),
- * this option is not available.
- *
- *  ```js
- *     data: [{
- *         value: 9,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         value: 6,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.treemap.turboThreshold),
+ *    this option is not available.
+ *    ```js
+ *        data: [{
+ *            value: 9,
+ *            name: "Point2",
+ *            color: "#00FF00"
+ *        }, {
+ *            value: 6,
+ *            name: "Point1",
+ *            color: "#FF00FF"
+ *        }]
+ *    ```
  *
  * @sample {highcharts} highcharts/chart/reflow-true/
  *         Numerical values
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|*>}
+ * @type      {Array<number|null|*>}
  * @extends   series.heatmap.data
  * @excluding x, y
  * @product   highcharts
@@ -1769,7 +1768,7 @@ seriesType(
  * The value of the point, resulting in a relative area of the point
  * in the treemap.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highcharts
  * @apioption series.treemap.data.value
  */

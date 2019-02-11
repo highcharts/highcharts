@@ -110,7 +110,7 @@ seriesType('bar', 'column',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<(number|string),number>|*>}
+ * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.column.data
  * @product   highcharts
  * @apioption series.bar.data

@@ -223,32 +223,32 @@ if (seriesTypes.bubble) {
  * An array of data points for the series. For the `mapbubble` series
  * type, points can be given in the following ways:
  *
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `z` options. Example:
+ * 1. An array of numerical values. In this case, the numerical values
+ *    will be interpreted as `z` options. Example:
  *
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
  *
- * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](
- * #series.mapbubble.turboThreshold),
- * this option is not available.
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.mapbubble.turboThreshold),
+ *    this option is not available.
  *
- *  ```js
- *     data: [{
- *         z: 9,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         z: 10,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
+ *    ```js
+ *        data: [{
+ *            z: 9,
+ *            name: "Point2",
+ *            color: "#00FF00"
+ *        }, {
+ *            z: 10,
+ *            name: "Point1",
+ *            color: "#FF00FF"
+ *        }]
+ *    ```
  *
- * @type      {Array<number|*>}
+ * @type      {Array<number|null|*>}
  * @extends   series.mappoint.data
  * @excluding labelrank, middleX, middleY, path, value, x, y, lat, lon
  * @product   highmaps
@@ -263,7 +263,7 @@ if (seriesTypes.bubble) {
  * @sample {highmaps} maps/demo/map-bubble/
  *         Bubble
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highmaps
  * @apioption series.mapbubble.data.z
  */
