@@ -1,8 +1,68 @@
 /* *
- * (c) 2010-2019 Torstein Honsi
  *
- * License: www.highcharts.com/license
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
+/**
+ * Extended data labels for range series types. Range series data labels use no
+ * `x` and `y` options. Instead, they have `xLow`, `xHigh`, `yLow` and `yHigh`
+ * options to allow the higher and lower data label sets individually.
+ *
+ * @interface Highcharts.PlotAreaRangeDataLabelsOptionsObject
+ * @extends Highcharts.DataLabelsOptionsObject
+ * @since 2.3.0
+ * @product highcharts highstock
+ *//**
+ * X offset of the lower data labels relative to the point value.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
+ *      Data labels on range series
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
+ *      Data labels on range series
+ *
+ * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#xLow
+ * @type {number|undefined}
+ * @default 0
+ * @since 2.3.0
+ * @product highcharts highstock
+ *//**
+ * X offset of the higher data labels relative to the point value.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
+ *      Data labels on range series
+ *
+ * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#xHigh
+ * @type {number|undefined}
+ * @default 0
+ * @since 2.3.0
+ * @product highcharts highstock
+ *//**
+ * Y offset of the lower data labels relative to the point value.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
+ *      Data labels on range series
+ *
+ * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#yLow
+ * @type {number|undefined}
+ * @default 0
+ * @since 2.3.0
+ * @product highcharts highstock
+ *//**
+ * Y offset of the higher data labels relative to the point value.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
+ *      Data labels on range series
+ *
+ * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#yHigh
+ * @type {number|undefined}
+ * @default 0
+ * @since 2.3.0
+ * @product highcharts highstock
  */
+
 
 'use strict';
 
@@ -74,71 +134,20 @@ seriesType('arearange', 'area', {
     trackByArea: true,
 
     /**
-     * Extended data labels for range series types. Range series data labels
-     * have no `x` and `y` options. Instead, they have `xLow`, `xHigh`, `yLow`
-     * and `yHigh` options to allow the higher and lower data label sets
-     * individually.
-     *
-     * @extends   plotOptions.series.dataLabels
-     * @since     2.3.0
-     * @excluding x, y
-     * @product   highcharts highstock
+     * @type {Highcharts.DataLabelsOptionsObject|Highcharts.PlotAreaRangeDataLabelsOptionsObject}
      */
     dataLabels: {
-
-        /**
-         * @type {Highcharts.AlignValue|null}
-         */
+        /** @ignore-option */
         align: null,
-        /**
-         * @type {Highcharts.VerticalAlignValue|null}
-         */
+        /** @ignore-option */
         verticalAlign: null,
-
-        /**
-         * X offset of the lower data labels relative to the point value.
-         *
-         * @sample {highcharts} highcharts/plotoptions/arearange-datalabels/
-         *         Data labels on range series
-         * @sample {highstock} highcharts/plotoptions/arearange-datalabels/
-         *         Data labels on range series
-         *
-         * @since   2.3.0
-         * @product highcharts highstock
-         */
+        /** @ignore-option */
         xLow: 0,
-
-        /**
-         * X offset of the higher data labels relative to the point value.
-         *
-         * @sample {highcharts|highstock} highcharts/plotoptions/arearange-datalabels/
-         *         Data labels on range series
-         *
-         * @since   2.3.0
-         * @product highcharts highstock
-         */
+        /** @ignore-option */
         xHigh: 0,
-
-        /**
-         * Y offset of the lower data labels relative to the point value.
-         *
-         * @sample {highcharts|highstock} highcharts/plotoptions/arearange-datalabels/
-         *         Data labels on range series
-         *
-         * @since   2.3.0
-         * @product highcharts highstock
-         */
+        /** @ignore-option */
         yLow: 0,
-
-        /**
-         * Y offset of the higher data labels relative to the point value.
-         *
-         * @sample {highcharts|highstock} highcharts/plotoptions/arearange-datalabels/
-         *         Data labels on range series
-         *
-         * @since   2.3.0
-         * @product highcharts highstock
-         */
+        /** @ignore-option */
         yHigh: 0
     }
 
