@@ -16,9 +16,7 @@ H.seriesType(
     'sankey',
     {
         nodeWidth: 50,
-
-        // @todo: Use palette
-        linkColor: '#666666',
+        linkColor: '${palette.neutralColor60}',
         linkLineWidth: 1
     },
     {
@@ -33,6 +31,7 @@ H.seriesType(
             }
             return attribs;
         },
+
         createNode: function (id) {
             var node = base.createNode
                 .call(this, id);
@@ -59,7 +58,8 @@ H.seriesType(
                 x2 = Math.floor(toNode.shapeArgs.x) + crisp,
                 y2 = Math.floor(
                     toNode.shapeArgs.y + toNode.shapeArgs.height / 2
-                ) + crisp;
+                ) + crisp,
+                xMiddle = Math.floor((x1 + x2) / 2) + crisp;
 
             if (this.chart.inverted) {
                 x1 -= fromNode.shapeArgs.width;
@@ -71,8 +71,8 @@ H.seriesType(
             point.shapeArgs = {
                 d: [
                     'M', x1, y1,
-                    'L', (x1 + x2) / 2, y1,
-                    (x1 + x2) / 2, y2,
+                    'L', xMiddle, y1,
+                    xMiddle, y2,
                     x2, y2
                 ]
             };
