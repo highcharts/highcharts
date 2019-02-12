@@ -13,7 +13,23 @@
 /**
  * Options for crosshairs on axes.
  *
+ * @product highstock
+ *
  * @typedef {Highcharts.XAxisCrosshairOptions|Highcharts.YAxisCrosshairOptions} Highcharts.AxisCrosshairOptions
+ */
+
+/**
+ * Formatter function for the text of a crosshair label.
+ *
+ * @product highstock
+ *
+ * @callback Highcharts.XAxisCrosshairLabelFormatterCallbackFunction
+ *
+ * @param {Highcharts.Axis} this
+ *        Axis context
+ *
+ * @param {number} value
+ *        Y value of the data point
  */
 
 /**
@@ -548,7 +564,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * Formatter function for the label text.
          *
-         * @type      {Highcharts.FormatterCallbackFunction<object>}
+         * @type      {Highcharts.XAxisCrosshairLabelFormatterCallbackFunction}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.formatter
@@ -2989,7 +3005,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highcharts} highcharts/yaxis/stacklabels-formatter/
              *         Added units to stack total value
              *
-             * @type    {Highcharts.FormatterCallbackFunction<object>}
+             * @type    {Highcharts.FormatterCallbackFunction<Highcharts.StackItemObject>}
              * @since   2.1.5
              * @product highcharts
              */
