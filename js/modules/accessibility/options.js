@@ -136,7 +136,14 @@ var options = {
              * @since next
              */
             wrapAround: true
-        }
+        },
+
+        /**
+         * Whether or not to add a shortcut button in the screen reader
+         * information region to show the data table.
+         * @since next
+         */
+        addTableShortcut: true
     },
 
 
@@ -184,6 +191,13 @@ var options = {
         accessibility: {
 
             /**
+             * Enable accessibility support for the legend.
+             *
+             * @since next
+             */
+            enabled: true,
+
+            /**
              * Options for keyboard navigation for the legend.
              *
              * @since next
@@ -199,7 +213,26 @@ var options = {
                 enabled: true
             }
         }
+    },
+
+    exporting: {
+        /**
+         * Accessibility options for the exporting menu. Requires the
+         * Accessibility module.
+         *
+         * @since next
+         * @apioption exporting.accessibility
+         */
+        accessibility: {
+            /**
+             * Enable accessibility support for the export menu.
+             *
+             * @since next
+             */
+            enabled: true
+        }
     }
+
 };
 
 export default options;

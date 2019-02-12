@@ -55,22 +55,9 @@ H.Axis.prototype.panStep = function (direction, granularity) {
  */
 var ZoomComponent = function (chart) {
     this.initBase(chart);
-    this.init();
 };
 ZoomComponent.prototype = new AccessibilityComponent();
 H.extend(ZoomComponent.prototype, {
-
-    /**
-     * Init the component.
-     */
-    init: function () {},
-
-
-    /**
-     * Called on first render/updates to the chart, including options changes.
-     */
-    onChartUpdate: function () {},
-
 
     /**
      * Get keyboard navigation module for map zoom.

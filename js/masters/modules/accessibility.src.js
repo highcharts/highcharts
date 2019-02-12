@@ -9,5 +9,4 @@
  */
 'use strict';
 
-import '../../modules/accessibility/a11y-i18n.js';
 import '../../modules/accessibility/accessibility.js';

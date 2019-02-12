@@ -82,6 +82,7 @@ H.extend(RangeSelectorComponent.prototype, {
             // Make sure buttons are accessible and focusable
             rangeSelector.buttons.forEach(function (button) {
                 button.element.setAttribute('tabindex', '-1');
+                button.element.setAttribute('aria-hidden', 'false');
                 button.element.setAttribute('role', 'button');
                 button.element.setAttribute(
                     'aria-label',
@@ -96,8 +97,20 @@ H.extend(RangeSelectorComponent.prototype, {
             });
         }
         if (rangeSelector && rangeSelector.maxInput && rangeSelector.minInput) {
-            rangeSelector.maxInput.setAttribute('tabindex', '-1');
-            rangeSelector.minInput.setAttribute('tabindex', '-1');
+            ['minInput', 'maxInput'].forEach(function (key, i) {
+                if (rangeSelector[key]) {
+                    rangeSelector[key].setAttribute('tabindex', '-1');
+                    rangeSelector[key].setAttribute('role', 'textbox');
+                    rangeSelector[key].setAttribute('aria-hidden', 'false');
+                    rangeSelector[key].setAttribute(
+                        'aria-label',
+                        chart.langFormat(
+                            'accessibility.rangeSelector' +
+                                (i ? 'MaxInput' : 'MinInput'), { chart: chart }
+                        )
+                    );
+                }
+            });
         }
     },
 
@@ -230,7 +243,7 @@ H.extend(RangeSelectorComponent.prototype, {
             // Hide HTML element when leaving boxes
             terminate: function () {
                 var rangeSel = chart.rangeSelector;
-                if (rangeSel.maxInput && rangeSel.minInput) {
+                if (rangeSel && rangeSel.maxInput && rangeSel.minInput) {
                     rangeSel.hideInput('max');
                     rangeSel.hideInput('min');
                 }

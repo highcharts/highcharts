@@ -68,18 +68,80 @@ H.extend(LegendComponent.prototype, {
     /**
      * Init the component.
      */
-    init: function () {},
+    init: function () {
+        // Handle show/hide series/points
+        this.addEvent(H.Legend, 'afterColorizeItem', function (e) {
+            var legendGroup = e.item && e.item.legendGroup,
+                pressed = e.visible ? 'false' : 'true';
+            if (legendGroup) {
+                legendGroup.attr('aria-pressed', pressed);
+                if (legendGroup.div) {
+                    legendGroup.div.setAttribute('aria-pressed', pressed);
+                }
+            }
+        });
+    },
 
 
     /**
      * Called on first render/updates to the chart, including options changes.
      */
     onChartUpdate: function () {
-        var chart = this.chart;
-        if (chart.legend && chart.legend.allItems) {
-            // Make elements focusable
-            chart.legend.allItems.forEach(function (item) {
-                item.legendGroup.element.setAttribute('tabindex', '-1');
+        var chart = this.chart,
+            legend = chart.legend || {},
+            group = legend.group,
+            items = legend.allItems,
+            component = this;
+
+        // Skip everything if we do not have accessibility enabled on legend
+        if (!items || !chart.options.legend.accessibility.enabled) {
+            if (group) {
+                group.attr({
+                    'aria-label': '',
+                    'aria-hidden': true
+                });
+            }
+            return;
+        }
+
+        // Make elements focusable
+        items.forEach(function (item) {
+            item.legendGroup.element.setAttribute('tabindex', '-1');
+        });
+
+        // Set ARIA on legend items
+        if (group && items.length) {
+            group.attr({
+                role: 'region',
+                'aria-hidden': false,
+                'aria-label': chart.langFormat('accessibility.legendLabel')
+            });
+
+            if (this.box) {
+                this.box.attr('aria-hidden', 'true');
+            }
+
+            items.forEach(function (item) {
+                var itemGroup = item.legendGroup,
+                    text = item.legendItem,
+                    visible = item.visible,
+                    label = chart.langFormat(
+                        'accessibility.legendItem',
+                        {
+                            chart: chart,
+                            itemName: component.stripTags(item.name)
+                        }
+                    );
+                if (itemGroup && text) {
+                    itemGroup.attr({
+                        role: 'button',
+                        'aria-pressed': visible ? 'false' : 'true'
+                    });
+                    if (label) {
+                        itemGroup.attr('aria-label', label);
+                    }
+                    text.attr('aria-hidden', 'false');
+                }
             });
         }
     },
@@ -152,6 +214,7 @@ H.extend(LegendComponent.prototype, {
                     !(chart.colorAxis && chart.colorAxis.length) &&
                     legendOptions &&
                     legendOptions.accessibility &&
+                    legendOptions.accessibility.enabled &&
                     legendOptions.accessibility.keyboardNavigation &&
                     legendOptions.accessibility.keyboardNavigation.enabled;
             },

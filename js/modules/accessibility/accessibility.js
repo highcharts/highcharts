@@ -17,7 +17,9 @@ import MenuComponent from './components/MenuComponent.js';
 import SeriesComponent from './components/SeriesComponent.js';
 import ZoomComponent from './components/ZoomComponent.js';
 import RangeSelectorComponent from './components/RangeSelectorComponent.js';
+import InfoRegionComponent from './components/InfoRegionComponent.js';
 import defaultOptions from './options.js';
+import '../../modules/accessibility/a11y-i18n.js';
 
 var addEvent = H.addEvent,
     pick = H.pick;
@@ -172,14 +174,13 @@ Accessibility.prototype = {
 
         // Add the components
         var components = this.components = {
-            // infoRegion: '',
+            // container
+            infoRegion: new InfoRegionComponent(chart),
             chartMenu: new MenuComponent(chart),
             rangeSelector: new RangeSelectorComponent(chart),
             series: new SeriesComponent(chart),
             legend: new LegendComponent(chart),
-            // navigator: '',
             zoom: new ZoomComponent(chart)
-            // table: ''
         };
 
         this.keyboardNavigation = new KeyboardNavigation(chart, components);

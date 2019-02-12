@@ -322,7 +322,6 @@ H.setOptions({
 
             /* eslint-disable max-len */
             screenReaderRegionLabel: 'Chart screen reader information.',
-            navigationHint: '',
             defaultChartTitle: 'Chart',
             longDescriptionHeading: 'Long description.',
             noDescription: 'No description available.',

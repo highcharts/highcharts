@@ -131,21 +131,107 @@ H.Chart.prototype.highlightLastExportItem = function () {
  */
 var MenuComponent = function (chart) {
     this.initBase(chart);
-    this.init();
 };
 MenuComponent.prototype = new AccessibilityComponent();
 H.extend(MenuComponent.prototype, {
 
     /**
-     * Init the component.
+     * Called on first render/updates to the chart, including options changes.
      */
-    init: function () {},
+    onChartUpdate: function () {
+        var component = this,
+            chart = this.chart;
+
+        // Handle if accessibility is disabled for menu
+        if (!chart.options.exporting.accessibility.enabled) {
+            if (chart.exportingGroup && chart.exportingGroup.element) {
+                chart.exportingGroup.element.setAttribute(
+                    'aria-hidden', 'true'
+                );
+                chart.exportingGroup.element.removeAttribute('aria-label');
+            }
+            return;
+        }
+
+        // Set screen reader properties on export menu
+        if (
+            chart.exportSVGElements &&
+            chart.exportSVGElements[0] &&
+            chart.exportSVGElements[0].element
+        ) {
+            // Set event handler on button if not already done
+            var button = chart.exportSVGElements[0].element,
+                oldExportCallback = button.onclick;
+            if (this.wrappedButton !== button) {
+                button.onclick = function () {
+                    oldExportCallback.apply(
+                        this,
+                        Array.prototype.slice.call(arguments)
+                    );
+                    component.addAccessibleContextMenuAttribs();
+                    chart.highlightExportItem(0);
+                };
+                this.wrappedButton = button;
+            }
+
+            // Set props on button
+            button.setAttribute('role', 'button');
+            button.setAttribute('aria-hidden', 'false');
+            button.setAttribute(
+                'aria-label',
+                chart.langFormat(
+                    'accessibility.exporting.menuButtonLabel', { chart: chart }
+                )
+            );
+
+            // Set props on group
+            chart.exportingGroup.element.setAttribute('role', 'region');
+            chart.exportingGroup.element.setAttribute('aria-hidden', 'false');
+            chart.exportingGroup.element.setAttribute(
+                'aria-label',
+                chart.langFormat(
+                    'accessibility.exporting.exportRegionLabel',
+                    { chart: chart }
+                )
+            );
+        }
+    },
 
 
     /**
-     * Called on first render/updates to the chart, including options changes.
+     * Add ARIA to context menu
+     * @private
      */
-    onChartUpdate: function () {},
+    addAccessibleContextMenuAttribs: function () {
+        var chart = this.chart,
+            exportList = chart.exportDivElements,
+            contextMenu = chart.contextMenu;
+
+        if (exportList) {
+            // Set tabindex on the menu items to allow focusing by script
+            // Set role to give screen readers a chance to pick up the contents
+            exportList.forEach(function (item) {
+                if (item.tagName === 'DIV' &&
+                    !(item.children && item.children.length)) {
+                    item.setAttribute('role', 'menuitem');
+                    item.setAttribute('aria-hidden', 'false');
+                    item.setAttribute('tabindex', -1);
+                }
+            });
+            // Set accessibility properties on parent div
+            exportList[0].parentNode.setAttribute('role', 'menu');
+            exportList[0].parentNode.setAttribute(
+                'aria-label',
+                chart.langFormat(
+                    'accessibility.exporting.chartMenuLabel', { chart: chart }
+                )
+            );
+            exportList[0].parentNode.setAttribute('aria-hidden', 'false');
+        }
+        if (contextMenu && contextMenu.element) {
+            contextMenu.element.setAttribute('aria-hidden', 'false');
+        }
+    },
 
 
     /**
@@ -224,8 +310,8 @@ H.extend(MenuComponent.prototype, {
             // enabled on chart
             validate: function () {
                 return chart.exportChart &&
-                    !(chart.options.exporting &&
-                    chart.options.exporting.enabled === false);
+                    chart.options.exporting.enabled !== false &&
+                    chart.options.exporting.accessibility.enabled !== false;
             },
 
             // Show export menu

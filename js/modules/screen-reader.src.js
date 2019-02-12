@@ -65,22 +65,6 @@ function htmlencode(html) {
 }
 
 
-/**
- * Strip HTML tags away from a string. Used for aria-label attributes, painting
- * on a canvas will fail if the text contains tags.
- *
- * @private
- * @function stripTags
- *
- * @param {string} s
- *        The input string.
- *
- * @return {string}
- *         The filtered string.
- */
-function stripTags(s) {
-    return typeof s === 'string' ? s.replace(/<\/?[^>]+(>|$)/g, '') : s;
-}
 
 
 // Accessibility options
@@ -201,64 +185,14 @@ H.setOptions({
          * to the chart object. Should return a String with the HTML content
          * of the region.
          *
-         * The link to view the chart as a data table will be added
-         * automatically after the custom HTML content.
+         * The button to view the chart as a data table will be added
+         * automatically after the custom HTML content if enabled.
          *
          * @type    {Function}
          * @default undefined
          * @since   5.0.0
          */
-        screenReaderSectionFormatter: function (chart) {
-            var options = chart.options,
-                chartTypes = chart.types || [],
-                formatContext = {
-                    chart: chart,
-                    numSeries: chart.series && chart.series.length
-                },
-                // Build axis info - but not for pies and maps. Consider not
-                // adding for certain other types as well (funnel, pyramid?)
-                axesDesc = (
-                    chartTypes.length === 1 && chartTypes[0] === 'pie' ||
-                    chartTypes[0] === 'map'
-                ) && {} || chart.getAxesDescription();
-
-            return '<div>' + chart.langFormat(
-                'accessibility.navigationHint', formatContext
-            ) + '</div><h3>' +
-            (
-                options.title.text ?
-                    htmlencode(options.title.text) :
-                    chart.langFormat(
-                        'accessibility.defaultChartTitle', formatContext
-                    )
-            ) +
-            (
-                options.subtitle && options.subtitle.text ?
-                    '. ' + htmlencode(options.subtitle.text) :
-                    ''
-            ) +
-            '</h3>' + (
-                options.chart.description ? (
-                    '<h4>' + chart.langFormat(
-                        'accessibility.longDescriptionHeading',
-                        formatContext
-                    ) +
-                    '</h4><div>' + options.chart.description + '</div>'
-                ) : ''
-            ) + '<h4>' + chart.langFormat(
-                'accessibility.structureHeading', formatContext
-            ) + '</h4><div>' +
-            (
-                options.chart.typeDescription ||
-                chart.getTypeDescription()
-            ) + '</div>' +
-            (axesDesc.xAxis ? (
-                '<div>' + axesDesc.xAxis + '</div>'
-            ) : '') +
-            (axesDesc.yAxis ? (
-                '<div>' + axesDesc.yAxis + '</div>'
-            ) : '');
-        }
+        screenReaderSectionFormatter: 
 
     }
 
@@ -311,13 +245,6 @@ function reverseChildNodes(node) {
     }
 }
 
-
-// Whenever drawing series, put info on DOM elements
-H.addEvent(H.Series, 'afterRender', function () {
-    if (this.chart.options.accessibility.enabled) {
-        this.setA11yDescription();
-    }
-});
 
 
 /**
@@ -516,332 +443,17 @@ H.Point.prototype.buildPointInfoString = function () {
 };
 
 
-/**
- * Get descriptive label for axis.
- *
- * @private
- * @function Highcharts.Axis#getDescription
- *
- * @return {string}
- */
-H.Axis.prototype.getDescription = function () {
-    return (
-        this.userOptions && this.userOptions.description ||
-        this.axisTitle && this.axisTitle.textStr ||
-        this.options.id ||
-        this.categories && 'categories' ||
-        this.isDatetimeAxis && 'Time' ||
-        'values'
-    );
-};
 
-
-// Whenever adding or removing series, keep track of types present in chart
-addEvent(H.Series, 'afterInit', function () {
-    var chart = this.chart;
-
-    if (chart.options.accessibility.enabled) {
-        chart.types = chart.types || [];
-
-        // Add type to list if does not exist
-        if (chart.types.indexOf(this.type) < 0) {
-            chart.types.push(this.type);
-        }
-    }
-});
-addEvent(H.Series, 'remove', function () {
-    var chart = this.chart,
-        removedSeries = this,
-        hasType = false;
-
-    // Check if any of the other series have the same type as this one.
-    // Otherwise remove it from the list.
-    chart.series.forEach(function (s) {
-        if (
-            s !== removedSeries &&
-            chart.types.indexOf(removedSeries.type) < 0
-        ) {
-            hasType = true;
-        }
-    });
-    if (!hasType) {
-        erase(chart.types, removedSeries.type);
-    }
-});
-
-
-/**
- * Return simplified description of chart type. Some types will not be familiar
- * to most screen reader users, but in those cases we try to add a description
- * of the type.
- *
- * @private
- * @function Highcharts.Chart#getTypeDescription
- *
- * @return {string}
- */
-H.Chart.prototype.getTypeDescription = function () {
-    var firstType = this.types && this.types[0],
-        firstSeries = this.series && this.series[0] || {},
-        mapTitle = firstSeries.mapTitle,
-        typeDesc = this.langFormat(
-            'accessibility.seriesTypeDescriptions.' + firstType,
-            { chart: this }
-        ),
-        formatContext = {
-            numSeries: this.series.length,
-            numPoints: firstSeries.points && firstSeries.points.length,
-            chart: this,
-            mapTitle: mapTitle
-        },
-        multi = this.series && this.series.length === 1 ? 'Single' : 'Multiple';
-
-    if (!firstType) {
-        return this.langFormat(
-            'accessibility.chartTypes.emptyChart', formatContext
-        );
-    }
-
-    if (firstType === 'map') {
-        return mapTitle ?
-            this.langFormat(
-                'accessibility.chartTypes.mapTypeDescription',
-                formatContext
-            ) :
-            this.langFormat(
-                'accessibility.chartTypes.unknownMap',
-                formatContext
-            );
-    }
-
-    if (this.types.length > 1) {
-        return this.langFormat(
-            'accessibility.chartTypes.combinationChart', formatContext
-        );
-    }
-
-    return (
-        this.langFormat(
-            'accessibility.chartTypes.' + firstType + multi,
-            formatContext
-        ) ||
-        this.langFormat(
-            'accessibility.chartTypes.default' + multi,
-            formatContext
-        )
-    ) +
-    (typeDesc ? ' ' + typeDesc : '');
-};
-
-
-/**
- * Return object with text description of each of the chart's axes.
- *
- * @private
- * @function Highcharts.Chart#getAxesDescription
- *
- * @return {*}
- */
-H.Chart.prototype.getAxesDescription = function () {
-    var numXAxes = this.xAxis.length,
-        numYAxes = this.yAxis.length,
-        desc = {};
-
-    if (numXAxes) {
-        desc.xAxis = this.langFormat(
-            'accessibility.axis.xAxisDescription' + (
-                numXAxes > 1 ? 'Plural' : 'Singular'
-            ),
-            {
-                chart: this,
-                names: this.xAxis.map(function (axis) {
-                    return axis.getDescription();
-                }),
-                numAxes: numXAxes
-            }
-        );
-    }
-
-    if (numYAxes) {
-        desc.yAxis = this.langFormat(
-            'accessibility.axis.yAxisDescription' + (
-                numYAxes > 1 ? 'Plural' : 'Singular'
-            ),
-            {
-                chart: this,
-                names: this.yAxis.map(function (axis) {
-                    return axis.getDescription();
-                }),
-                numAxes: numYAxes
-            }
-        );
-    }
-
-    return desc;
-};
-
-
-/**
- * Set a11y attribs on exporting menu.
- *
- * @private
- * @function Highcharts.Chart#addAccessibleContextMenuAttribs
- */
-H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
-    var exportList = this.exportDivElements;
-
-    if (exportList) {
-        // Set tabindex on the menu items to allow focusing by script
-        // Set role to give screen readers a chance to pick up the contents
-        exportList.forEach(function (item) {
-            if (item.tagName === 'DIV' &&
-                !(item.children && item.children.length)) {
-                item.setAttribute('role', 'menuitem');
-                item.setAttribute('tabindex', -1);
-            }
-        });
-        // Set accessibility properties on parent div
-        exportList[0].parentNode.setAttribute('role', 'menu');
-        exportList[0].parentNode.setAttribute(
-            'aria-label',
-            this.langFormat(
-                'accessibility.exporting.chartMenuLabel', { chart: this }
-            )
-        );
-    }
-};
-
-
-/**
- * Add screen reader region to chart. tableId is the HTML id of the table to
- * focus when clicking the table anchor in the screen reader region.
- *
- * @private
- * @function Highcharts.Chart#addScreenReaderRegion
- *
- * @param {string} id
- *
- * @param {string} tableId
- */
-H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
-    var chart = this,
-        hiddenSection = chart.screenReaderRegion = doc.createElement('div'),
-        tableShortcut = doc.createElement('h4'),
-        tableShortcutAnchor = doc.createElement('a'),
-        chartHeading = chart.screenReaderHeading = doc.createElement('h4');
-
-    hiddenSection.setAttribute('id', id);
-    hiddenSection.setAttribute('role', 'region');
-    hiddenSection.setAttribute(
-        'aria-label',
-        chart.langFormat(
-            'accessibility.screenReaderRegionLabel', { chart: this }
-        )
-    );
-
-    hiddenSection.innerHTML = chart.options.accessibility
-        .screenReaderSectionFormatter(chart);
-
-    // Add shortcut to data table if export-data is loaded
-    if (chart.getCSV) {
-        tableShortcutAnchor.innerHTML = chart.langFormat(
-            'accessibility.viewAsDataTable', { chart: chart }
-        );
-        tableShortcutAnchor.href = '#' + tableId;
-        // Make this unreachable by user tabbing
-        tableShortcutAnchor.setAttribute('tabindex', '-1');
-        tableShortcutAnchor.onclick =
-            chart.options.accessibility.onTableAnchorClick || function () {
-                chart.viewData();
-                doc.getElementById(tableId).focus();
-            };
-        tableShortcut.appendChild(tableShortcutAnchor);
-        hiddenSection.appendChild(tableShortcut);
-    }
-
-    // Note: JAWS seems to refuse to read aria-label on the container, so add an
-    // h4 element as title for the chart.
-    chartHeading.innerHTML = chart.langFormat(
-        'accessibility.chartHeading', { chart: chart }
-    );
-    chart.renderTo.insertBefore(chartHeading, chart.renderTo.firstChild);
-    chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
-
-    // Hide the section and the chart heading
-    merge(true, chartHeading.style, hiddenStyle);
-    merge(true, hiddenSection.style, hiddenStyle);
-};
-
-
-// Add ARIA to legend
-addEvent(H.Legend, 'afterRender', function () {
-    var group = this.group,
-        items = this.allItems,
-        chart = this.chart;
-    if (group && items && items.length) {
-        group.attr({
-            role: 'region',
-            'aria-label': chart.langFormat('accessibility.legendLabel')
-        });
-
-        if (this.box) {
-            this.box.attr('aria-hidden', 'true');
-        }
-
-        items.forEach(function (item) {
-            var itemGroup = item.legendGroup,
-                text = item.legendItem,
-                visible = item.visible,
-                label = chart.langFormat(
-                    'accessibility.legendItem',
-                    {
-                        chart: chart,
-                        itemName: stripTags(item.name)
-                    }
-                );
-            if (itemGroup && text) {
-                itemGroup.attr({
-                    role: 'button',
-                    'aria-pressed': visible ? 'false' : 'true'
-                });
-                if (label) {
-                    itemGroup.attr('aria-label', label);
-                }
-                text.attr('aria-hidden', 'false');
-            }
-        });
-    }
-});
-
-
-// Handle show/hide series/points
-addEvent(H.Legend, 'afterColorizeItem', function (e) {
-    var legendGroup = e.item && e.item.legendGroup,
-        pressed = e.visible ? 'false' : 'true';
-    if (legendGroup) {
-        legendGroup.attr('aria-pressed', pressed);
-        if (legendGroup.div) {
-            legendGroup.div.setAttribute('aria-pressed', pressed);
-        }
-    }
-});
 
 
 // Make chart container accessible, and wrap table functionality.
 H.Chart.prototype.callbacks.push(function (chart) {
     var options = chart.options,
         a11yOptions = options.accessibility;
-
-    if (!a11yOptions.enabled) {
-        return;
-    }
-
     var titleElement,
         descElement = chart.container.getElementsByTagName('desc')[0],
         textElements = chart.container.getElementsByTagName('text'),
         titleId = 'highcharts-title-' + chart.index,
-        tableId = 'highcharts-data-table-' + chart.index,
-        hiddenSectionId = 'highcharts-information-region-' + chart.index,
         chartTitle = options.title.text || chart.langFormat(
             'accessibility.defaultChartTitle', { chart: chart }
         ),
@@ -874,63 +486,6 @@ H.Chart.prototype.callbacks.push(function (chart) {
         )
     );
 
-    // Set screen reader properties on export menu
-    if (
-        chart.exportSVGElements &&
-        chart.exportSVGElements[0] &&
-        chart.exportSVGElements[0].element
-    ) {
-        // Set event handler on button
-        var button = chart.exportSVGElements[0].element,
-            oldExportCallback = button.onclick;
-
-        button.onclick = function () {
-            oldExportCallback.apply(
-                this,
-                Array.prototype.slice.call(arguments)
-            );
-            chart.addAccessibleContextMenuAttribs();
-            chart.highlightExportItem(0);
-        };
-
-        // Set props on button
-        button.setAttribute('role', 'button');
-        button.setAttribute(
-            'aria-label',
-            chart.langFormat(
-                'accessibility.exporting.menuButtonLabel', { chart: chart }
-            )
-        );
-
-        // Set props on group
-        chart.exportingGroup.element.setAttribute('role', 'region');
-        chart.exportingGroup.element.setAttribute(
-            'aria-label',
-            chart.langFormat(
-                'accessibility.exporting.exportRegionLabel', { chart: chart }
-            )
-        );
-    }
-
-    // Set screen reader properties on input boxes for range selector. We need
-    // to do this regardless of whether or not these are visible, as they are
-    // by default part of the page's tabindex unless we set them to -1.
-    if (chart.rangeSelector) {
-        ['minInput', 'maxInput'].forEach(function (key, i) {
-            if (chart.rangeSelector[key]) {
-                chart.rangeSelector[key].setAttribute('tabindex', '-1');
-                chart.rangeSelector[key].setAttribute('role', 'textbox');
-                chart.rangeSelector[key].setAttribute(
-                    'aria-label',
-                    chart.langFormat(
-                        'accessibility.rangeSelector' +
-                            (i ? 'MaxInput' : 'MinInput'), { chart: chart }
-                    )
-                );
-            }
-        });
-    }
-
     // Hide text elements from screen readers
     [].forEach.call(textElements, function (el) {
         if (el.getAttribute('aria-hidden') !== 'false') {
@@ -940,18 +495,4 @@ H.Chart.prototype.callbacks.push(function (chart) {
 
     // Hide desc element
     descElement.setAttribute('aria-hidden', 'true');
-
-    // Add top-secret screen reader region
-    chart.addScreenReaderRegion(hiddenSectionId, tableId);
-
-    // Add ID and summary attr to table HTML
-    addEvent(chart, 'afterGetTable', function (e) {
-        e.html = e.html
-            .replace(
-                '<table ',
-                '<table summary="' + chart.langFormat(
-                    'accessibility.tableSummary', { chart: chart }
-                ) + '"'
-            );
-    });
 });
