@@ -17,6 +17,7 @@ H.seriesType(
     {
         borderColor: '${palette.neutralColor60}',
         borderWidth: 1,
+        hangingIndent: 20,
         linkColor: '${palette.neutralColor60}',
         linkLineWidth: 1,
         nodeWidth: 50
@@ -53,16 +54,12 @@ H.seriesType(
             // Wrap the offset function so that the hanging node's children are
             // aligned to their parent
             H.wrap(column, 'offset', function (proceed, node, factor) {
-                var offset = proceed.call(this, node, factor),
-                    fromNode = (
-                        node.linksTo.length === 1 &&
-                        node.linksTo[0].fromNode
-                    );
+                var offset = proceed.call(this, node, factor);
 
                 // Modify the default output if the parent's layout is 'hanging'
-                if (fromNode && fromNode.options.layout === 'hanging') {
+                if (node.hangsFrom) {
                     return {
-                        absoluteTop: fromNode.nodeY
+                        absoluteTop: node.hangsFrom.nodeY
                     };
                 }
 
@@ -70,6 +67,17 @@ H.seriesType(
             });
 
             return column;
+        },
+
+        translateNode: function (node, column) {
+            base.translateNode.call(this, node, column);
+
+            if (node.hangsFrom) {
+                node.shapeArgs.height -= this.options.hangingIndent;
+                if (!this.chart.inverted) {
+                    node.shapeArgs.y += this.options.hangingIndent;
+                }
+            }
         },
 
         translateLink: function (point) {
@@ -86,15 +94,29 @@ H.seriesType(
                 y2 = Math.floor(
                     toNode.shapeArgs.y + toNode.shapeArgs.height / 2
                 ) + crisp,
-                xMiddle = Math.floor((x1 + x2) / 2) + crisp;
+                xMiddle = Math.floor((x1 + x2) / 2) + crisp,
+                hangingIndent = this.options.hangingIndent;
 
             if (this.chart.inverted) {
                 x1 -= fromNode.shapeArgs.width;
                 x2 += toNode.shapeArgs.width;
             }
 
-            if (fromNode.options.layout === 'hanging') {
-                x2 = xMiddle = Math.floor(
+            if (toNode.hangsFrom === fromNode) {
+                if (this.chart.inverted) {
+                    y1 = Math.floor(
+                        fromNode.shapeArgs.y +
+                        fromNode.shapeArgs.height -
+                        hangingIndent / 2
+                    ) + crisp;
+                } else {
+                    y1 = Math.floor(
+                        fromNode.shapeArgs.y +
+                        hangingIndent / 2
+                    ) + crisp;
+
+                }
+                xMiddle = x2 = Math.floor(
                     toNode.shapeArgs.x + toNode.shapeArgs.width / 2
                 ) + crisp;
             }

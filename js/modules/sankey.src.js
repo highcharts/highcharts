@@ -252,6 +252,7 @@ seriesType('sankey', 'column'
 
                         // Hanging layout for organization chart
                         if (fromNode.options.layout === 'hanging') {
+                            node.hangsFrom = fromNode;
                             node.column += fromNode.linksFrom.findIndex(
                                 function (link) {
                                     return link.toNode === node;
