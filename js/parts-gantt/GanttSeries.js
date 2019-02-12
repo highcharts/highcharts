@@ -52,7 +52,9 @@ seriesType('gantt', 'xrange'
         grouping: false,
 
         dataLabels: {
+            /** @ignore-option */
             enabled: true,
+            /** @ignore-option */
             formatter: function () {
                 var point = this,
                     amount = point.point.partialFill;

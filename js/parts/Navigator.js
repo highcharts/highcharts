@@ -386,7 +386,9 @@ extend(defaultOptions, {
              * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
+                /** @ignore-option */
                 enabled: false,
+                /** @ignore-option */
                 zIndex: 2 // #1839
             },
 

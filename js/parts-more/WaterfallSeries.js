@@ -88,6 +88,7 @@ seriesType('waterfall', 'column', {
      */
 
     dataLabels: {
+        /** @ignore-option */
         inside: true
     },
 

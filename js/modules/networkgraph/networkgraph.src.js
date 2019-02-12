@@ -43,6 +43,7 @@ seriesType('networkgraph', 'line', {
         enabled: true
     },
     dataLabels: {
+        /** @ignore-option */
         format: '{key}'
     },
     /**
