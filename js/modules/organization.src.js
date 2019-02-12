@@ -20,21 +20,22 @@ H.seriesType(
         linkRadius: 10,
         borderWidth: 1,
         dataLabels: {
-            fit: true,
             nodeFormatter: function () {
-                var html = '<table style="width: 100%; height: 100%; ' +
-                    'border-collapse: collapse"><tr>';
+                var html = '<div style="width: 100%; height: 100%; ' +
+                    'display: flex; flex-direction: row; align-items: center;' +
+                    'justify-content: center">';
+
+                var width = 100;
 
                 if (this.point.image) {
-                    html += '<td style="width: 30%; padding: 0">' +
-                        '<img src="' + this.point.image + '" style="' +
-                        'min-width: 20px; max-width: 100%; max-height: ' +
-                        (this.point.nodeHeight - 5) + // 2x padding + border
-                        'px; border-radius: 50%">' +
-                        '</td>';
+                    html += '<img src="' + this.point.image + '" style="' +
+                        'max-width: 30%; max-height: 100%;' +
+                        'border-radius: 50%">';
+                    width -= 30;
                 }
 
-                html += '<td style="padding: 0; text-align: center">';
+                html += '<div style="width: ' + width + '%; padding: 0;' +
+                    'text-align: center; white-space: normal">';
 
                 if (this.point.name) {
                     html += '<h4 style="margin: 0">' + this.point.name +
@@ -51,8 +52,8 @@ H.seriesType(
                         this.point.description + '</p>';
                 }
 
-                html += '</td>' +
-                    '</tr></table>';
+                html += '</div>' +
+                    '</div>';
                 return html;
             },
             style: {
