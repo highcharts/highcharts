@@ -16,6 +16,8 @@ H.seriesType(
     'sankey',
     {
         borderColor: '${palette.neutralColor60}',
+        borderRadius: 3,
+        linkRadius: 10,
         borderWidth: 1,
         dataLabels: {
             fit: true,
@@ -53,7 +55,6 @@ H.seriesType(
                     '</tr></table>';
                 return html;
             },
-            padding: 2,
             style: {
                 fontWeight: 'normal',
                 fontSize: '13px'
@@ -74,6 +75,10 @@ H.seriesType(
                 attribs.stroke = this.options.linkColor;
                 attribs['stroke-width'] = this.options.linkLineWidth;
                 delete attribs.fill;
+            } else {
+                if (this.options.borderRadius) {
+                    attribs.r = this.options.borderRadius;
+                }
             }
             return attribs;
         },
@@ -126,6 +131,65 @@ H.seriesType(
                 node.shapeArgs.height;
         },
 
+        // General function to apply corner radius to a path - can be lifted to
+        // renderer or utilities if we need it elsewhere.
+        curvedPath: function (path, r) {
+            var d = [],
+                i,
+                x,
+                y,
+                x1,
+                x2,
+                y1,
+                y2,
+                directionX,
+                directionY;
+
+            for (i = 0; i < path.length; i++) {
+                x = path[i][0];
+                y = path[i][1];
+
+                // moveTo
+                if (i === 0) {
+                    d.push('M', x, y);
+
+                } else if (i === path.length - 1) {
+                    d.push('L', x, y);
+
+                // curveTo
+                } else if (r) {
+                    x1 = path[i - 1][0];
+                    y1 = path[i - 1][1];
+                    x2 = path[i + 1][0];
+                    y2 = path[i + 1][1];
+
+                    // Only apply to breaks
+                    if (x1 !== x2 && y1 !== y2) {
+                        directionX = x1 < x2 ? 1 : -1;
+                        directionY = y1 < y2 ? 1 : -1;
+                        d.push(
+                            'L',
+                            x - directionX * Math.min(Math.abs(x - x1), r),
+                            y - directionY * Math.min(Math.abs(y - y1), r),
+                            'C',
+                            x,
+                            y,
+                            x,
+                            y,
+                            x + directionX * Math.min(Math.abs(x - x2), r),
+                            y + directionY * Math.min(Math.abs(y - y2), r),
+                        );
+                    }
+
+                // lineTo
+                } else {
+                    d.push('L', x, y);
+                }
+            }
+            return d;
+
+        },
+
         translateLink: function (point) {
             var fromNode = point.fromNode,
                 toNode = point.toNode,
@@ -170,12 +234,12 @@ H.seriesType(
             point.plotY = 1;
             point.shapeType = 'path';
             point.shapeArgs = {
-                d: [
-                    'M', x1, y1,
-                    'L', xMiddle, y1,
-                    xMiddle, y2,
-                    x2, y2
-                ]
+                d: this.curvedPath([
+                    [x1, y1],
+                    [xMiddle, y1],
+                    [xMiddle, y2],
+                    [x2, y2]
+                ], this.options.linkRadius)
             };
         },
 
