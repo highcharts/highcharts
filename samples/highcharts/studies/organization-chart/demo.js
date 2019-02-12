@@ -8,33 +8,73 @@ var datasets = {
             ['CEO', 'CSO'],
             ['CEO', 'CMO'],
             ['HR', 'CEO'],
-            ['CTO', 'Dev1'],
-            ['CTO', 'Dev2'],
-            ['CTO', 'Dev3'],
-            ['CTO', 'Dev4'],
-            ['CSO', 'Sales1'],
-            ['CSO', 'Sales2'],
-            ['CSO', 'Sales3'],
-            ['CMO', 'Market1'],
-            ['CMO', 'Market2']
+            ['CTO', 'Tech'],
+            ['CTO', 'BL'],
+            ['CSO', 'Sales'],
+            ['CMO', 'Market']
         ],
         nodes: [{
-            id: 'HR',
-            column: 2,
+            id: 'Shareholders',
             color: 'silver',
-            offset: '-50%'
+            dataLabels: {
+                color: 'black'
+            }
+        }, {
+            id: 'Board',
+            color: 'silver',
+            dataLabels: {
+                color: 'black'
+            }
         }, {
             id: 'CEO',
+            title: 'CEO',
+            name: 'Grethe Hjetland',
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132317/Grethe.jpg',
+            offset: '-50%'
+        }, {
+            id: 'HR',
+            title: 'HR/CFO',
+            name: 'Anne Jorunn Fjærestad',
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132314/AnneJorunn.jpg',
+            column: 2,
             offset: '-50%'
         }, {
             id: 'CTO',
+            title: 'CTO',
+            name: 'Christer Vasseng',
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12140620/Christer.jpg',
             layout: 'hanging'
         }, {
+            id: 'CPO',
+            title: 'CPO',
+            name: 'Torstein Hønsi',
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12131849/Torstein1.jpg'
+        }, {
             id: 'CSO',
+            title: 'CSO',
+            name: 'Anita Nesse',
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132313/Anita.jpg',
             layout: 'hanging'
         }, {
             id: 'CMO',
+            title: 'CMO',
+            name: 'Vidar Brekke',
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/13105551/Vidar.jpg',
             layout: 'hanging'
+        }, {
+            id: 'Tech',
+            name: 'Tech team',
+            description: 'Product developers, web developers, sys admin'
+        }, {
+            id: 'BL',
+            name: 'Black Label',
+            description: 'Contracters'
+        }, {
+            id: 'Sales',
+            name: 'Sales team'
+        }, {
+            id: 'Market',
+            name: 'Marketing team'
         }]
     },
     mafia: {
@@ -78,6 +118,11 @@ var datasets = {
 
 var dataset = datasets.topdown;
 Highcharts.chart('container', {
+
+    chart: {
+        height: 600
+    },
+
     title: {
         text: 'Highcharts Org Chart POC'
     },
@@ -88,7 +133,16 @@ Highcharts.chart('container', {
         nodes: dataset.nodes,
         type: 'orgchart',
         name: 'Highcharts Org Chart POC',
-        nodeWidth: 35
-    }]
+        colorByPoint: false,
+        color: '#007ad0',
+        dataLabels: {
+            color: 'white'
+        },
+        borderColor: 'white',
+        nodeWidth: 60
+    }],
+    exporting: {
+        allowHTML: true
+    }
 
 });

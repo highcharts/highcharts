@@ -17,6 +17,49 @@ H.seriesType(
     {
         borderColor: '${palette.neutralColor60}',
         borderWidth: 1,
+        dataLabels: {
+            fit: true,
+            nodeFormatter: function () {
+                var html = '<table style="width: 100%; height: 100%; ' +
+                    'border-collapse: collapse"><tr>';
+
+                if (this.point.image) {
+                    html += '<td style="width: 30%; padding: 0">' +
+                        '<img src="' + this.point.image + '" style="' +
+                        'min-width: 20px; max-width: 100%; max-height: ' +
+                        (this.point.nodeHeight - 5) + // 2x padding + border
+                        'px; border-radius: 50%">' +
+                        '</td>';
+                }
+
+                html += '<td style="padding: 0; text-align: center">';
+
+                if (this.point.name) {
+                    html += '<h4 style="margin: 0">' + this.point.name +
+                        '</h4>';
+                }
+
+                if (this.point.title) {
+                    html += '<p style="margin: 0">' + (this.point.title || '') +
+                        '</p>';
+                }
+
+                if (this.point.description) {
+                    html += '<p style="opacity: 0.75; margin: 5px">' +
+                        this.point.description + '</p>';
+                }
+
+                html += '</td>' +
+                    '</tr></table>';
+                return html;
+            },
+            padding: 2,
+            style: {
+                fontWeight: 'normal',
+                fontSize: '13px'
+            },
+            useHTML: true
+        },
         hangingIndent: 20,
         linkColor: '${palette.neutralColor60}',
         linkLineWidth: 1,
@@ -78,6 +121,9 @@ H.seriesType(
                     node.shapeArgs.y += this.options.hangingIndent;
                 }
             }
+            node.nodeHeight = this.chart.inverted ?
+                node.shapeArgs.width :
+                node.shapeArgs.height;
         },
 
         translateLink: function (point) {
@@ -131,6 +177,53 @@ H.seriesType(
                     x2, y2
                 ]
             };
+        },
+
+        alignDataLabel: function (point, dataLabel, options) {
+            // Align the data label to the point graphic
+            if (options.useHTML) {
+                var width = point.shapeArgs.width,
+                    height = point.shapeArgs.height,
+                    padjust = this.options.borderWidth +
+                        2 * this.options.dataLabels.padding;
+
+                if (this.chart.inverted) {
+                    width = height;
+                    height = point.shapeArgs.width;
+                }
+
+                height -= padjust;
+                width -= padjust;
+
+                // Set the size of the surrounding div emulating `g`
+                H.css(dataLabel.text.element.parentNode, {
+                    width: width + 'px',
+                    height: height + 'px'
+                });
+
+                // Set properties for the span emulating `text`
+                H.css(dataLabel.text.element, {
+                    left: 0,
+                    top: 0,
+                    width: '100%',
+                    height: '100%',
+                    overflow: 'hidden'
+                });
+
+                // The getBBox function is used in `alignDataLabel` to align
+                // inside the box
+                dataLabel.getBBox = function () {
+                    return {
+                        width: width,
+                        height: height
+                    };
+                };
+            }
+
+            H.seriesTypes.column.prototype.alignDataLabel.apply(
+                this,
+                arguments
+            );
         }
     }
 
