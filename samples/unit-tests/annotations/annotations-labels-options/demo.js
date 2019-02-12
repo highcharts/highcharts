@@ -1,4 +1,3 @@
-
 QUnit.test('Setting graphic attributes for a label', function (assert) {
     var expected = {
             text: 'Max',
@@ -39,4 +38,10 @@ QUnit.test('Setting graphic attributes for a label', function (assert) {
         };
 
     assert.deepEqual(actual, expected);
+
+    assert.deepEqual(
+        document.getElementsByClassName('highcharts-annotation').length,
+        1,
+        'Correct number of annotations with the module added twice (#10061).'
+    );
 });
