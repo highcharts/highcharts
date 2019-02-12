@@ -284,7 +284,7 @@ function scriptsWatch() {
 
     return Promise.resolve();
 }
-gulp.task('scripts', gulp.series(gulp.parallel('update'), scriptsWatch));
+gulp.task('scripts', gulp.series('update', scriptsWatch));
 
 /**
  * Gulp task to execute ESLint. Pattern defaults to './js/**".'
@@ -305,7 +305,7 @@ const lint = () => {
     }
     console.log(formatter(report.results));
 };
-gulp.task('lint', gulp.series(gulp.parallel('update'), lint));
+gulp.task('lint', gulp.series('update', lint));
 
 /**
  * Gulp task to execute ESLint on samples.
@@ -326,12 +326,12 @@ const lintSamples = () => {
     ]);
     console.log(formatter(report.results));
 };
-gulp.task('lint-samples', gulp.series(gulp.parallel('update'), lintSamples));
+gulp.task('lint-samples', gulp.series('update', lintSamples));
 
 /**
  * Run the test suite.
  */
-gulp.task('test', gulp.series(gulp.parallel('styles', 'scripts'), done => {
+gulp.task('test', gulp.series('styles', 'scripts', done => {
 
     const lastRunFile = __dirname + '/test/last-run.json';
 
@@ -1451,7 +1451,7 @@ const jsdocNamespace = () => {
 
     return new Promise(aGulp);
 };
-gulp.task('jsdoc-namespace', gulp.series(gulp.parallel('scripts'), jsdocNamespace));
+gulp.task('jsdoc-namespace', gulp.series('scripts', jsdocNamespace));
 
 /**
  * Creates JSON-based option references from JSDoc.
@@ -1504,7 +1504,7 @@ const jsdocWatch = () => {
     return generateClassReferences(optionsClassReference)
         .then(() => generateAPIDocs(optionsAPI));
 };
-gulp.task('jsdoc', gulp.series(gulp.parallel('clean-api', 'jsdoc-namespace'), jsdocWatch));
+gulp.task('jsdoc', gulp.series('clean-api', 'jsdoc-namespace', jsdocWatch));
 
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-dist', cleanDist);
@@ -1525,7 +1525,7 @@ gulp.task('filesize', filesize);
 function dts() {
     return require('../highcharts-declarations-generator').task();
 }
-gulp.task('dts', gulp.series(gulp.parallel('jsdoc-options', 'jsdoc-namespace'), dts));
+gulp.task('dts', gulp.series('jsdoc-options', 'jsdoc-namespace', dts));
 
 /**
  * Test TypeScript declarations in the code folder using tsconfig.json.
@@ -1533,7 +1533,7 @@ gulp.task('dts', gulp.series(gulp.parallel('jsdoc-options', 'jsdoc-namespace'), 
 function dtsLint() {
     return commandLine('cd test/typescript && npx dtslint --onlyTestTsNext');
 }
-gulp.task('dtslint', gulp.series(gulp.parallel('update', 'dts'), dtsLint));
+gulp.task('dtslint', gulp.series('update', 'dts', dtsLint));
 
 gulp.task('tsc', () => require('./tools/gulptasks/tsc')());
 gulp.task('tslint', gulp.series('tsc', () => require('./tools/gulptasks/tslint')()));
@@ -1656,27 +1656,38 @@ gulp.task('dist', () => Promise.resolve()
     .then(gulpify('ant-dist', antDist)));
 
 gulp.task('browserify', function () {
-    const browserify = require('browserify');
-    browserify('./samples/highcharts/common-js/browserify/app.js')
-        .bundle(function (err, buf) {
-            if (err) {
-                // @todo Do something meaningful with err
-            }
-            fs.writeFileSync('./samples/highcharts/common-js/browserify/demo.js', buf);
-        });
+    return new Promise((resolve, reject) => {
+        const browserify = require('browserify');
+        browserify('./samples/highcharts/common-js/browserify/app.js')
+            .bundle(function (error, buffer) {
+                if (error) {
+                    reject(error);
+                } else {
+                    fs.writeFileSync(
+                        './samples/highcharts/common-js/browserify/demo.js',
+                        buffer
+                    );
+                    resolve();
+                }
+            });
+    });
 });
 
 gulp.task('webpack', function () {
-    const webpack = require('webpack');
-    webpack({
-        entry: './samples/highcharts/common-js/browserify/app.js', // Share the same unit tests
-        output: {
-            filename: './samples/highcharts/common-js/webpack/demo.js'
-        }
-    }, function (err) {
-        if (err) {
-            throw new Error('Webpack failed.');
-        }
+    return new Promise((resolve, reject) => {
+        const webpack = require('webpack');
+        webpack({
+            entry: './samples/highcharts/common-js/browserify/app.js', // Share the same unit tests
+            output: {
+                filename: './samples/highcharts/common-js/webpack/demo.js'
+            }
+        }, function (error) {
+            if (error) {
+                reject(new Error('Webpack failed.'));
+            } else {
+                resolve();
+            }
+        });
     });
 });
 
