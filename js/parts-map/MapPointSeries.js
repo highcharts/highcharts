@@ -39,17 +39,19 @@ seriesType(
      */
     {
         dataLabels: {
-            /**
-             * @default   {point.name}
-             * @apioption plotOptions.mappoint.dataLabels.format
-             */
+            /** @ignore-option */
+            crop: false,
+            /** @ignore-option */
+            defer: false,
+            /** @ignore-option */
             enabled: true,
+            /** @ignore-option */
             formatter: function () { // #2945
                 return this.point.name;
             },
-            crop: false,
-            defer: false,
+            /** @ignore-option */
             overflow: false,
+            /** @ignore-option */
             style: {
                 color: '${palette.neutralColor100}'
             }

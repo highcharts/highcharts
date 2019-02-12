@@ -209,20 +209,24 @@ seriesType(
         colorByPoint: false,
 
         /**
-         * @extends plotOptions.heatmap.dataLabels
-         * @since   4.1.0
+         * @since 4.1.0
          */
         dataLabels: {
-            enabled: true,
+            /** @ignore-option */
             defer: false,
-            verticalAlign: 'middle',
+            /** @ignore-option */
+            enabled: true,
+            /** @ignore-option */
             formatter: function () {
                 var point = this && this.point ? this.point : {},
                     name = isString(point.name) ? point.name : '';
 
                 return name;
             },
-            inside: true
+            /** @ignore-option */
+            inside: true,
+            /** @ignore-option */
+            verticalAlign: 'middle'
         },
 
         tooltip: {

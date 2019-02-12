@@ -864,7 +864,9 @@ var vennOptions = {
     clip: false,
     colorByPoint: true,
     dataLabels: {
+        /** @ignore-option */
         enabled: true,
+        /** @ignore-option */
         formatter: function () {
             return this.point.name;
         }

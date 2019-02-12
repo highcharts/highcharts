@@ -115,6 +115,7 @@ seriesType('funnel', 'pie',
     size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 
     dataLabels: {
+        /** @ignore-option */
         connectorWidth: 1
     },
 

@@ -75,13 +75,19 @@ seriesType(
         animation: false, // makes the complex shapes slow
 
         dataLabels: {
+            /** @ignore-option */
             crop: false,
+            /** @ignore-option */
             formatter: function () { // #2945
                 return this.point.value;
             },
+            /** @ignore-option */
             inside: true, // for the color
+            /** @ignore-option */
             overflow: false,
+            /** @ignore-option */
             padding: 0,
+            /** @ignore-option */
             verticalAlign: 'middle'
         },
 
