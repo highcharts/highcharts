@@ -184,12 +184,9 @@ seriesType('sankey', 'column'
                 nodePadding = this.getNodePadding();
 
             column.sum = function () {
-                var sum = 0;
-
-                this.forEach(function (node) {
-                    sum += node.getSum();
-                });
-                return sum;
+                return this.reduce(function (sum, node) {
+                    return sum + node.getSum();
+                }, 0);
             };
             // Get the offset in pixels of a node inside the column.
             column.offset = function (node, factor) {
@@ -199,10 +196,12 @@ seriesType('sankey', 'column'
                 for (var i = 0; i < column.length; i++) {
                     totalNodeOffset = column[i].getSum() * factor + nodePadding;
                     if (column[i] === node) {
-                        return offset + H.relativeLength(
-                            node.options.offset || 0,
-                            totalNodeOffset
-                        );
+                        return {
+                            relativeTop: offset + H.relativeLength(
+                                node.options.offset || 0,
+                                totalNodeOffset
+                            )
+                        };
                     }
                     offset += totalNodeOffset;
                 }
@@ -210,14 +209,13 @@ seriesType('sankey', 'column'
 
             // Get the column height in pixels.
             column.top = function (factor) {
-                var height = 0;
-
-                for (var i = 0; i < column.length; i++) {
-                    if (i > 0) {
+                var height = this.reduce(function (height, node) {
+                    if (height > 0) {
                         height += nodePadding;
                     }
-                    height += column[i].getSum() * factor;
-                }
+                    height += node.getSum() * factor;
+                    return height;
+                }, 0);
                 return (chart.plotSizeY - height) / 2;
             };
 
@@ -231,6 +229,7 @@ seriesType('sankey', 'column'
 
             this.nodes.forEach(function (node) {
                 var fromColumn = -1,
+                    fromNode,
                     i,
                     point;
 
@@ -245,10 +244,20 @@ seriesType('sankey', 'column'
                         for (i = 0; i < node.linksTo.length; i++) {
                             point = node.linksTo[0];
                             if (point.fromNode.column > fromColumn) {
-                                fromColumn = point.fromNode.column;
+                                fromNode = point.fromNode;
+                                fromColumn = fromNode.column;
                             }
                         }
                         node.column = fromColumn + 1;
+
+                        // Hanging layout for organization chart
+                        if (fromNode.options.layout === 'hanging') {
+                            node.column += fromNode.linksFrom.findIndex(
+                                function (link) {
+                                    return link.toNode === node;
+                                }
+                            );
+                        }
                     }
                 }
 
@@ -404,12 +413,14 @@ seriesType('sankey', 'column'
                 sum = node.getSum(),
                 height = Math.round(sum * translationFactor),
                 crisp = Math.round(options.borderWidth) % 2 / 2,
-                fromNodeTop = Math.floor(
-                    column.top(translationFactor) +
-                    column.offset(node, translationFactor)
-                ) + crisp,
+                nodeOffset = column.offset(node, translationFactor),
+                fromNodeTop = Math.floor(pick(
+                    nodeOffset.absoluteTop,
+                    column.top(translationFactor) + nodeOffset.relativeTop
+                )) + crisp,
                 left = Math.floor(
-                    this.colDistance * node.column + options.borderWidth / 2
+                    this.colDistance * node.column +
+                    options.borderWidth / 2
                 ) + crisp,
                 nodeLeft = chart.inverted ?
                     chart.plotSizeX - left :
@@ -468,7 +479,7 @@ seriesType('sankey', 'column'
                     this.nodeColumns[toNode.column].offset(
                         toNode,
                         translationFactor
-                    )
+                    ).relativeTop
                 ),
                 nodeW = options.nodeWidth,
                 right = toNode.column * this.colDistance,

@@ -26,6 +26,15 @@ var datasets = {
         }, {
             id: 'CEO',
             offset: '-50%'
+        }, {
+            id: 'CTO',
+            layout: 'hanging'
+        }, {
+            id: 'CSO',
+            layout: 'hanging'
+        }, {
+            id: 'CMO',
+            layout: 'hanging'
         }]
     },
     mafia: {
@@ -69,7 +78,6 @@ var datasets = {
 
 var dataset = datasets.topdown;
 Highcharts.chart('container', {
-
     title: {
         text: 'Highcharts Org Chart POC'
     },
@@ -79,7 +87,8 @@ Highcharts.chart('container', {
         data: dataset.data,
         nodes: dataset.nodes,
         type: 'orgchart',
-        name: 'Highcharts Org Chart POC'
+        name: 'Highcharts Org Chart POC',
+        nodeWidth: 35
     }]
 
 });

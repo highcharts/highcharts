@@ -46,8 +46,33 @@ H.seriesType(
             return node;
 
         },
-        translateLink: function (point) {
 
+        createNodeColumn: function () {
+            var column = base.createNodeColumn.call(this);
+
+            // Wrap the offset function so that the hanging node's children are
+            // aligned to their parent
+            H.wrap(column, 'offset', function (proceed, node, factor) {
+                var offset = proceed.call(this, node, factor),
+                    fromNode = (
+                        node.linksTo.length === 1 &&
+                        node.linksTo[0].fromNode
+                    );
+
+                // Modify the default output if the parent's layout is 'hanging'
+                if (fromNode && fromNode.options.layout === 'hanging') {
+                    return {
+                        absoluteTop: fromNode.nodeY
+                    };
+                }
+
+                return offset;
+            });
+
+            return column;
+        },
+
+        translateLink: function (point) {
             var fromNode = point.fromNode,
                 toNode = point.toNode,
                 crisp = Math.round(this.options.linkLineWidth) % 2 / 2,
@@ -66,6 +91,12 @@ H.seriesType(
             if (this.chart.inverted) {
                 x1 -= fromNode.shapeArgs.width;
                 x2 += toNode.shapeArgs.width;
+            }
+
+            if (fromNode.options.layout === 'hanging') {
+                x2 = xMiddle = Math.floor(
+                    toNode.shapeArgs.x + toNode.shapeArgs.width / 2
+                ) + crisp;
             }
 
             point.plotY = 1;
