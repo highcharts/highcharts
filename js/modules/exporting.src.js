@@ -227,7 +227,7 @@ merge(true, defaultOptions.navigation, {
          * @sample highcharts/navigation/buttonoptions-align/
          *         Center aligned
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'right',
@@ -283,7 +283,7 @@ merge(true, defaultOptions.navigation, {
          * @sample highcharts/navigation/buttonoptions-verticalalign/
          *         Buttons at lower right
          *
-         * @type  {Highcharts.VerticalAlignType}
+         * @type  {Highcharts.VerticalAlignValue}
          * @since 2.0
          */
         verticalAlign: 'top',
@@ -1367,7 +1367,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // hide all body content
-        childNodes.forEach(function (node, i) {
+        [].forEach.call(childNodes, function (node, i) {
             if (node.nodeType === 1) {
                 origDisplay[i] = node.style.display;
                 node.style.display = 'none';
@@ -1391,7 +1391,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 moveContainers(chart.renderTo);
 
                 // restore all body content
-                childNodes.forEach(function (node, i) {
+                [].forEach.call(childNodes, function (node, i) {
                     if (node.nodeType === 1) {
                         node.style.display = origDisplay[i];
                     }

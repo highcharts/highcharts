@@ -16,6 +16,7 @@
 
     var fs = require('fs'),
         cmd = require('child_process'),
+        path = require('path'),
         tree = require('../tree.json');
 
     var params;
@@ -103,21 +104,17 @@
 
         // Last release not found, abort
         if (proceed === true && !params.since) {
-            throw 'Last release not located, try setting an older start date.';
+            throw new Error('Last release not located, try setting an older start date.');
         }
 
         // Sort alphabetically
         washed.sort();
 
         // Pull out Fixes and append at the end
-        var fixes = washed.filter(message => {
-            return message.indexOf('Fixed') === 0;
-        });
+        var fixes = washed.filter(message => message.indexOf('Fixed') === 0);
 
         if (fixes.length > 0) {
-            washed = washed.filter(message => {
-                return message.indexOf('Fixed') !== 0;
-            });
+            washed = washed.filter(message => message.indexOf('Fixed') !== 0);
 
             washed = washed.concat(fixes);
             washed.startFixes = washed.length - fixes.length;
@@ -131,12 +128,15 @@
      */
     function buildMarkdown(name, version, date, log, products, optionKeys) {
         var outputString,
-            filename = name.toLowerCase().replace(' ', '-') + '/' +
-                version + '.md',
+            filename = path.join(
+                __dirname,
+                name.toLowerCase().replace(' ', '-'),
+                version + '.md'
+            ),
             apiFolder = {
-                'Highcharts': 'highcharts',
-                'Highstock': 'highstock',
-                'Highmaps': 'highmaps',
+                Highcharts: 'highcharts',
+                Highstock: 'highstock',
+                Highmaps: 'highmaps',
                 'Highcharts Gantt': 'gantt'
             }[name];
 
@@ -151,7 +151,7 @@
         log.forEach((li, i) => {
 
             optionKeys.forEach(key => {
-                let replacement = ` [${key}](https://api.highcharts.com/${apiFolder}/${key}) `;
+                const replacement = ` [${key}](https://api.highcharts.com/${apiFolder}/${key}) `;
 
                 li = li
                     .replace(
@@ -165,7 +165,7 @@
                 // We often refer to series options without the plotOptions
                 // parent, so make sure it is auto linked too.
                 if (key.indexOf('plotOptions.') === 0) {
-                    let shortKey = key.replace('plotOptions.', '');
+                    const shortKey = key.replace('plotOptions.', '');
                     if (shortKey.indexOf('.') !== -1) {
                         li = li
                             .replace(
@@ -194,25 +194,23 @@
         });
     }
 
-
-
     /*
      * Return a list of options so that we can auto-link option references in
      * the changelog.
      */
     function getOptionKeys(treeroot) {
-        let keys = [];
+        const keys = [];
 
-        function recurse(subtree, path) {
+        function recurse(subtree, optionPath) {
             Object.keys(subtree).forEach(key => {
-                if (path + key !== '') {
+                if (optionPath + key !== '') {
                     // Push only the second level, we don't want auto linking of
                     // general words like chart, series, legend, tooltip etc.
-                    if (path.indexOf('.') !== -1) {
-                        keys.push(path + key);
+                    if (optionPath.indexOf('.') !== -1) {
+                        keys.push(optionPath + key);
                     }
                     if (subtree[key].children) {
-                        recurse(subtree[key].children, `${path}${key}.`);
+                        recurse(subtree[key].children, `${optionPath}${key}.`);
                     }
                 }
             });
@@ -235,23 +233,27 @@
         const optionKeys = getOptionKeys(tree);
 
         // Load the current products and versions, and create one log each
-        fs.readFile('../build/dist/products.js', 'utf8', function (err, products) {
-            var name;
+        fs.readFile(
+            path.join(__dirname, '/../build/dist/products.js'),
+            'utf8',
+            function (err, products) {
+                var name;
 
-            if (err) {
-                throw err;
-            }
+                if (err) {
+                    throw err;
+                }
 
-            if (products) {
-                products = products.replace('var products = ', '');
-                products = JSON.parse(products);
-            }
+                if (products) {
+                    products = products.replace('var products = ', '');
+                    products = JSON.parse(products);
+                }
 
-            for (name in products) {
-                if (products.hasOwnProperty(name)) {
-                    buildMarkdown(name, products[name].nr, products[name].date, log, products, optionKeys);
+                for (name in products) {
+                    if (products.hasOwnProperty(name)) {
+                        buildMarkdown(name, products[name].nr, products[name].date, log, products, optionKeys);
+                    }
                 }
             }
-        });
+        );
     });
 }());

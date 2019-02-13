@@ -1,8 +1,10 @@
 /* *
- * (c) 2010-2019 Torstein Honsi
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 /**
  * Adjusted width and x offset of the columns for grouping.
@@ -358,20 +360,17 @@ seriesType('column', 'line'
         },
 
         dataLabels: {
-
             /**
-             * @type {Highcharts.AlignType|null}
+             * @ignore-option
+             * auto
              */
-            align: null, // auto
-
+            align: null,
             /**
-             * @type {Highcharts.VerticalAlignType|null}
+             * @ignore-option
+             * auto
              */
-            verticalAlign: null, // auto
-
-            /**
-             * @type {number|null}
-             */
+            verticalAlign: null,
+            /** @ignore-option */
             y: null
         },
 
@@ -1077,7 +1076,7 @@ seriesType('column', 'line'
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<(number|string),number>|*>}
+ * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.line.data
  * @excluding marker
  * @product   highcharts highstock

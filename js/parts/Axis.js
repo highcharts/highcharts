@@ -13,7 +13,23 @@
 /**
  * Options for crosshairs on axes.
  *
+ * @product highstock
+ *
  * @typedef {Highcharts.XAxisCrosshairOptions|Highcharts.YAxisCrosshairOptions} Highcharts.AxisCrosshairOptions
+ */
+
+/**
+ * Formatter function for the text of a crosshair label.
+ *
+ * @product highstock
+ *
+ * @callback Highcharts.XAxisCrosshairLabelFormatterCallbackFunction
+ *
+ * @param {Highcharts.Axis} this
+ *        Axis context
+ *
+ * @param {number} value
+ *        Y value of the data point
  */
 
 /**
@@ -463,7 +479,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/crosshair-dashed/
          *         Dashed X axis crosshair
          *
-         * @type      {Highcharts.DashStyleType}
+         * @type      {Highcharts.DashStyleValue}
          * @default   Solid
          * @since     4.1
          * @apioption xAxis.crosshair.dashStyle
@@ -548,7 +564,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * Formatter function for the label text.
          *
-         * @type      {Highcharts.FormatterCallbackFunction<object>}
+         * @type      {Highcharts.XAxisCrosshairLabelFormatterCallbackFunction}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.formatter
@@ -750,7 +766,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * maximum in axis values. The actual data extremes are found in
          * `event.dataMin` and `event.dataMax`.
          *
-         * @type      {Highcharts.AxisEventCallbackFunction}
+         * @type      {Highcharts.AxisSetExtremesEventCallbackFunction}
          * @since     2.3
          * @context   Axis
          * @apioption xAxis.events.afterSetExtremes
@@ -826,7 +842,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/gridlinedashstyle/
          *         Long dashes
          *
-         * @type      {Highcharts.DashStyleType}
+         * @type      {Highcharts.DashStyleValue}
          * @default   Solid
          * @since     1.2
          * @apioption xAxis.gridLineDashStyle
@@ -1019,7 +1035,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * `"justify"` labels inside the chart area. If there is room to
              * move it, it will be aligned to the edge, else it will be removed.
              *
-             * @type       {boolean|string}
+             * @type       {string}
              * @default    justify
              * @since      2.2.5
              * @validvalue ["allow", "justify"]
@@ -1279,7 +1295,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} stock/xaxis/minorgridlinedashstyle/
          *         Long dashes on minor grid lines
          *
-         * @type      {Highcharts.DashStyleType}
+         * @type      {Highcharts.DashStyleValue}
          * @default   Solid
          * @since     1.2
          * @apioption xAxis.minorGridLineDashStyle
@@ -2771,7 +2787,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-align-right/
          *         Aligned to the right
          *
-         * @type      {Highcharts.AlignType}
+         * @type      {Highcharts.AlignValue}
          * @since     2.1.5
          * @product   highcharts
          * @apioption yAxis.stackLabels.align
@@ -2812,7 +2828,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-textalign-left/
          *         Label in center position but text-aligned left
          *
-         * @type      {Highcharts.AlignType}
+         * @type      {Highcharts.AlignValue}
          * @since     2.1.5
          * @product   highcharts
          * @apioption yAxis.stackLabels.textAlign
@@ -2842,7 +2858,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-bottom/
          *         Vertically aligned bottom
          *
-         * @type      {Highcharts.VerticalAlignType}
+         * @type      {Highcharts.VerticalAlignValue}
          * @since     2.1.5
          * @product   highcharts
          * @apioption yAxis.stackLabels.verticalAlign
@@ -2989,7 +3005,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highcharts} highcharts/yaxis/stacklabels-formatter/
              *         Added units to stack total value
              *
-             * @type    {Highcharts.FormatterCallbackFunction<object>}
+             * @type    {Highcharts.FormatterCallbackFunction<Highcharts.StackItemObject>}
              * @since   2.1.5
              * @product highcharts
              */
@@ -4387,12 +4403,21 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Handle options for floor, ceiling, softMin and softMax (#6359)
-        if (isNumber(options.softMin) && !isNumber(axis.userMin)) {
-            axis.min = Math.min(axis.min, options.softMin);
+        if (
+            isNumber(options.softMin) &&
+            !isNumber(axis.userMin) &&
+            options.softMin < axis.min
+        ) {
+            axis.min = hardMin = options.softMin; // #6894
         }
-        if (isNumber(options.softMax) && !isNumber(axis.userMax)) {
-            axis.max = Math.max(axis.max, options.softMax);
+        if (
+            isNumber(options.softMax) &&
+            !isNumber(axis.userMax) &&
+            options.softMax > axis.max
+        ) {
+            axis.max = hardMax = options.softMax; // #6894
         }
+
         if (isNumber(options.floor)) {
             axis.min = Math.min(
                 Math.max(axis.min, options.floor),
@@ -4875,7 +4900,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      */
     setScale: function () {
         var axis = this,
-            isDirtyData,
+            isDirtyData = axis.series.some(function (series) {
+                return (
+                    series.isDirtyData ||
+                    series.isDirty ||
+                    // When x axis is dirty, we need new data extremes for y as
+                    // well
+                    series.xAxis.isDirty
+                );
+            }),
             isDirtyAxisLength;
 
         axis.oldMin = axis.min;
@@ -4885,18 +4918,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // set the new axisLength
         axis.setAxisSize();
         isDirtyAxisLength = axis.len !== axis.oldAxisLength;
-
-        // is there new data?
-        axis.series.forEach(function (series) {
-            if (
-                series.isDirtyData ||
-                series.isDirty ||
-                // When x axis is dirty, we need new data extremes for y as well
-                series.xAxis.isDirty
-            ) {
-                isDirtyData = true;
-            }
-        });
 
         // do we really need to go through all this?
         if (

@@ -245,7 +245,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/vertical-align-bottom/
          *         Bottom
          *
-         * @type  {Highcharts.VerticalAlignType}
+         * @type  {Highcharts.VerticalAlignValue}
          * @since 6.0.0
          */
         verticalAlign: 'top',
@@ -268,7 +268,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/styling/
          *         Styling the buttons and inputs
          *
-         * @type {Highcharts.CSSObject}
+         * @type {Highcharts.SVGAttributes}
          */
         buttonTheme: {
             /** @ignore */
@@ -431,7 +431,7 @@ extend(defaultOptions, {
              * @sample {highstock} stock/rangeselector/input-button-position/
              *         Alignment
              *
-             * @type  {Highcharts.AlignType}
+             * @type  {Highcharts.AlignValue}
              * @since 6.0.0
              */
             align: 'right',
@@ -952,6 +952,11 @@ RangeSelector.prototype = {
             // If state has changed, update the button
             if (button.state !== state) {
                 button.setState(state);
+
+                // Reset (#9209)
+                if (state === 0 && selected === i) {
+                    rangeSelector.setSelected(null);
+                }
             }
         });
     },

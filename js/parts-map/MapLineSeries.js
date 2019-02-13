@@ -137,7 +137,7 @@ seriesType('mapline', 'map'
  *     }]
  *  ```
  *
- * @type      {Array<number|Array<string,number>|object>}
+ * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @product   highmaps
  * @apioption series.mapline.data
  */

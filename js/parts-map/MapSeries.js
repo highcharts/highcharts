@@ -75,13 +75,19 @@ seriesType(
         animation: false, // makes the complex shapes slow
 
         dataLabels: {
+            /** @ignore-option */
             crop: false,
+            /** @ignore-option */
             formatter: function () { // #2945
                 return this.point.value;
             },
+            /** @ignore-option */
             inside: true, // for the color
+            /** @ignore-option */
             overflow: false,
+            /** @ignore-option */
             padding: 0,
+            /** @ignore-option */
             verticalAlign: 'middle'
         },
 
@@ -886,13 +892,13 @@ seriesType(
             if (!chart.styledMode) {
                 group.element.setAttribute(
                     'stroke-width',
-                    (
+                    pick(
                         series.options[
                             (
                                 series.pointAttrToOptions &&
                                 series.pointAttrToOptions['stroke-width']
                             ) || 'borderWidth'
-                        ] ||
+                        ],
                         1 // Styled mode
                     ) / (scaleX || 1)
                 );
@@ -1036,6 +1042,8 @@ seriesType(
     // Point class
     }), extend({
 
+        dataLabelOnNull: true,
+
         // Extend the Point object to split paths
         applyOptions: function (options, x) {
 
@@ -1128,43 +1136,42 @@ seriesType(
  * An array of data points for the series. For the `map` series type, points can
  * be given in the following ways:
  *
- * 1.  An array of numerical values. In this case, the numerical values will be
- * interpreted as `value` options. Example:
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `value` options. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
  *
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
+ * 2. An array of arrays with 2 values. In this case, the values correspond to
+ *    `[hc-key, value]`. Example:
+ *    ```js
+ *        data: [
+ *            ['us-ny', 0],
+ *            ['us-mi', 5],
+ *            ['us-tx', 3],
+ *            ['us-ak', 5]
+ *        ]
+ *    ```
  *
- * 2.  An array of arrays with 2 values. In this case, the values correspond to
- * `[hc-key, value]`. Example:
+ * 3. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.map.turboThreshold),
+ *    this option is not available.
+ *    ```js
+ *        data: [{
+ *            value: 6,
+ *            name: "Point2",
+ *            color: "#00FF00"
+ *        }, {
+ *            value: 6,
+ *            name: "Point1",
+ *            color: "#FF00FF"
+ *        }]
+ *    ```
  *
- *  ```js
- *     data: [
- *         ['us-ny', 0],
- *         ['us-mi', 5],
- *         ['us-tx', 3],
- *         ['us-ak', 5]
- *     ]
- *  ```
- *
- * 3.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.map.turboThreshold), this
- * option is not available.
- *
- *  ```js
- *     data: [{
- *         value: 6,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         value: 6,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
- *
- * @type      {Array<number|Array<string,number>|*>}
+ * @type      {Array<number|Array<string,(number|null)>|null|*>}
+ * @product   highmaps
  * @apioption series.map.data
  */
 
@@ -1185,8 +1192,8 @@ seriesType(
  * @sample maps/series/data-datalabels/
  *         Disable data labels for individual areas
  *
- * @type {Object}
- * @product highmaps
+ * @type      {Object}
+ * @product   highmaps
  * @apioption series.map.data.dataLabels
  */
 
@@ -1279,7 +1286,7 @@ seriesType(
 /**
  * The numeric value of the data point.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highmaps
  * @apioption series.map.data.value
  */

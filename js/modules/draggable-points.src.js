@@ -1849,16 +1849,17 @@ H.Chart.prototype.setGuideBoxState = function (state, options) {
         guideBoxOptions = merge(defaultGuideBoxOptions, options),
         stateOptions = merge(guideBoxOptions.default, guideBoxOptions[state]);
 
-    return guideBox.attr({
-        className: stateOptions.className,
-        stroke: stateOptions.lineColor,
-        strokeWidth: stateOptions.lineWidth,
-        fill: stateOptions.color,
-        cursor: stateOptions.cursor,
-        zIndex: stateOptions.zIndex
-    })
-    // Use pointerEvents 'none' to avoid capturing the click event
-    .css({ pointerEvents: 'none' });
+    return guideBox
+        .attr({
+            className: stateOptions.className,
+            stroke: stateOptions.lineColor,
+            strokeWidth: stateOptions.lineWidth,
+            fill: stateOptions.color,
+            cursor: stateOptions.cursor,
+            zIndex: stateOptions.zIndex
+        })
+        // Use pointerEvents 'none' to avoid capturing the click event
+        .css({ pointerEvents: 'none' });
 };
 
 

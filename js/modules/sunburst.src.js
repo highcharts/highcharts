@@ -10,6 +10,36 @@
  *
  * */
 
+/**
+ * Possible rotation options for data labels in the sunburst series.
+ *
+ * @typedef {"auto"|"perpendicular"|"parallel"} Highcharts.SeriesSunburstDataLabelsRotationValues
+ */
+
+/**
+ * Options for data labels in the sunburst series.
+ *
+ * @interface Highcharts.SeriesSunburstDataLabelsOptionsObject
+ * @extends Highcharts.DataLabelsOptionsObject
+ *//**
+ * @name Highcharts.SeriesSunburstDataLabelsOptionsObject#align
+ * @type {undefined}
+ *//**
+ * @name Highcharts.SeriesSunburstDataLabelsOptionsObject#allowOverlap
+ * @type {undefined}
+ *//**
+ * Decides how the data label will be rotated relative to the perimeter
+ * of the sunburst. Valid values are `auto`, `parallel` and
+ * `perpendicular`. When `auto`, the best fit will be computed for the
+ * point.
+ *
+ * The `series.rotation` option takes precedence over `rotationMode`.
+ *
+ * @name Highcharts.SeriesSunburstDataLabelsOptionsObject#rotationMode
+ * @type {Highcharts.SeriesSunburstDataLabelsRotationValues|undefined}
+ * @since 6.0.0
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -529,7 +559,7 @@ var sunburstOptions = {
      *
      * @type      {boolean}
      * @default   false
-     * @since     next
+     * @since     7.0.3
      * @product   highcharts
      * @apioption plotOptions.sunburst.allowTraversingTree
      */
@@ -548,27 +578,19 @@ var sunburstOptions = {
     center: ['50%', '50%'],
     colorByPoint: false,
     /**
-     * @extends   plotOptions.series.dataLabels
-     * @excluding align, allowOverlap, distance, staggerLines, step
+     * @type {Highcharts.SeriesSunburstDataLabelsOptionsObject|Highcharts.DataLabelsOptionsObject}
      */
     dataLabels: {
+        /** @ignore-option */
         allowOverlap: true,
+        /** @ignore-option */
         defer: true,
+        /** @ignore-option */
+        rotationMode: 'auto',
+        /** @ignore-option */
         style: {
             textOverflow: 'ellipsis'
-        },
-        /**
-         * Decides how the data label will be rotated relative to the perimeter
-         * of the sunburst. Valid values are `auto`, `parallel` and
-         * `perpendicular`. When `auto`, the best fit will be computed for the
-         * point.
-         *
-         * The `series.rotation` option takes precedence over `rotationMode`.
-         *
-         * @since      6.0.0
-         * @validvalue ["auto", "perpendicular", "parallel"]
-         */
-        rotationMode: 'auto'
+        }
     },
     /**
      * Which point to use as a root in the visualization.
@@ -863,6 +885,9 @@ var sunburstSeries = {
         Series.prototype.translate.call(series);
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
+
+        // Render traverseUpButton, after series.nodeMap i calculated.
+        series.renderTraverseUpButton(rootId);
         mapIdToNode = series.nodeMap;
         nodeRoot = mapIdToNode[rootId];
         idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
@@ -980,7 +1005,7 @@ var sunburstPoint = {
  */
 
 /**
- * @type      {Array<number|*>}
+ * @type      {Array<number|null|*>}
  * @extends   series.treemap.data
  * @excluding x, y
  * @product   highcharts
@@ -991,7 +1016,7 @@ var sunburstPoint = {
  * The value of the point, resulting in a relative area of the point
  * in the sunburst.
  *
- * @type      {number}
+ * @type      {number|null}
  * @since     6.0.0
  * @product   highcharts
  * @apioption series.sunburst.data.value

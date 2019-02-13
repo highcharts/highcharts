@@ -202,14 +202,14 @@ extend(H.defaultOptions, {
             /**
              * Horizontal alignment of the markers relative to the points.
              *
-             * @type {Highcharts.AlignType}
+             * @type {Highcharts.AlignValue}
              */
             align: 'center',
 
             /**
              * Vertical alignment of the markers relative to the points.
              *
-             * @type {Highcharts.VerticalAlignType}
+             * @type {Highcharts.VerticalAlignValue}
              */
             verticalAlign: 'middle',
 

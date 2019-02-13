@@ -119,7 +119,7 @@ H.seriesType(
                  * @sample {highstock} stock/xaxis/gridlinedashstyle/
                  *         Long dashes
                  *
-                 * @type  {Highcharts.DashStyleType}
+                 * @type  {Highcharts.DashStyleValue}
                  * @since 7.0.0
                  */
                 dashStyle: 'LongDash'

@@ -45,10 +45,13 @@ var arrayMax = H.arrayMax,
 seriesType('bubble', 'scatter', {
 
     dataLabels: {
+        /** @ignore-option */
         formatter: function () { // #2945
             return this.point.z;
         },
+        /** @ignore-option */
         inside: true,
+        /** @ignore-option */
         verticalAlign: 'middle'
     },
 

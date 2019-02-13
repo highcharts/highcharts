@@ -142,14 +142,20 @@ seriesType(
             enabled: false
         },
         dataLabels: {
-            enabled: true,
+            /** @ignore-option */
             allowOverlap: true,
-            verticalAlign: 'top',
+            /** @ignore-option */
+            enabled: true,
+            /** @ignore-option */
             format: 'P: {point.volumePos:.2f} | N: {point.volumeNeg:.2f}',
+            /** @ignore-option */
             padding: 0,
+            /** @ignore-option */
             style: {
                 fontSize: '7px'
-            }
+            },
+            /** @ignore-option */
+            verticalAlign: 'top'
         }
     },
     /**

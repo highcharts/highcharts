@@ -135,11 +135,47 @@
  * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
- * @param {global.Event} event
+ * @param {global.ChartSelectionContextObject} event
  *        Event informations
  *
  * @return {boolean|undefined}
  *         Return false to prevent the default action, usually zoom.
+ */
+
+/**
+ * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
+ * datetime axis is milliseconds since 1970-01-01 00:00:00.
+ *
+ * @interface Highcharts.ChartSelectionContextObject
+ * @extends global.Event
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
+ * @name Highcharts.ChartSelectionContextObject#xAxis
+ * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
+ * @name Highcharts.ChartSelectionContextObject#yAxis
+ * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
+ */
+
+/**
+ * Axis context of the selection.
+ *
+ * @interface Highcharts.ChartSelectionAxisContextObject
+ *//**
+ * The selected Axis.
+ * @name Highcharts.ChartSelectionAxisContextObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * The maximum axis value, either automatic or set manually.
+ * @name Highcharts.ChartSelectionAxisContextObject#max
+ * @type {number}
+ *//**
+ * The minimum axis value, either automatic or set manually.
+ * @name Highcharts.ChartSelectionAxisContextObject#min
+ * @type {number}
  */
 
 /**
@@ -526,9 +562,14 @@ H.defaultOptions = {
         /**
          * Default `mapData` for all series. If set to a string, it functions
          * as an index into the `Highcharts.maps` array. Otherwise it is
-         * interpreted s map data.
+         * interpreted as map data.
          *
          * @see [mapData](#series.map.mapData)
+         *
+         * @sample    map/demo/geojson
+         *            Loading geoJSON data
+         * @sample    map/chart/topojson
+         *            Loading topoJSON converted to geoJSON
          *
          * @type      {string|Array<*>}
          * @since     5.0.0
@@ -1067,6 +1108,7 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/chart/resetzoombutton-theme/
              *         Theming the button
              *
+             * @type {Highcharts.SVGAttributes}
              * @since 2.2
              */
             theme: {
@@ -1106,7 +1148,7 @@ H.defaultOptions = {
                 /**
                  * The vertical alignment of the button.
                  *
-                 * @type       {Highcharts.VerticalAlignType}
+                 * @type       {Highcharts.VerticalAlignValue}
                  * @default    top
                  * @apioption  chart.resetZoomButton.position.verticalAlign
                  */
@@ -1639,7 +1681,7 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/title-verticalalign/
          *         Chart title in bottom right corner
          *
-         * @type      {Highcharts.VerticalAlignType}
+         * @type      {Highcharts.VerticalAlignValue}
          * @since     2.1
          * @apioption title.verticalAlign
          */
@@ -1701,7 +1743,7 @@ H.defaultOptions = {
          *         Aligned to the plot area (x = 50px = margin left - spacing
          *         left)
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'center',
@@ -1801,7 +1843,7 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/subtitle-footnote
          *         Footnote at the bottom right of plot area
          *
-         * @type      {Highcharts.VerticalAlignType}
+         * @type      {Highcharts.VerticalAlignValue}
          * @since     2.1
          * @apioption subtitle.verticalAlign
          */
@@ -1855,7 +1897,7 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/subtitle-footnote
          *         Footnote at bottom right of plot area
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'center',
@@ -2020,7 +2062,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/alignment/
          *         Legend alignment
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'center',
@@ -2649,7 +2691,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/alignment/
          *         Legend alignment
          *
-         * @type  {Highcharts.VerticalAlignType}
+         * @type  {Highcharts.VerticalAlignValue}
          * @since 2.0
          */
         verticalAlign: 'bottom',
@@ -3539,7 +3581,7 @@ H.defaultOptions = {
             /**
              * Horizontal alignment of the credits.
              *
-             * @type {Highcharts.AlignType}
+             * @type {Highcharts.AlignValue}
              */
             align: 'right',
 
@@ -3551,7 +3593,7 @@ H.defaultOptions = {
             /**
              * Vertical alignment of the credits.
              *
-             * @type {Highcharts.VerticalAlignType}
+             * @type {Highcharts.VerticalAlignValue}
              */
             verticalAlign: 'bottom',
 

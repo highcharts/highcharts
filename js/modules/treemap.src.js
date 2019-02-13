@@ -104,7 +104,7 @@ seriesType(
          * @sample {highcharts} highcharts/plotoptions/treemap-allowtraversingtree/
          *         Enabled
          *
-         * @since     next
+         * @since     7.0.3
          * @product   highcharts
          */
         allowTraversingTree: false,
@@ -136,7 +136,7 @@ seriesType(
          * @default undefined
          * @sample {highcharts} highcharts/plotoptions/treemap-events-setrootnode/
          *         Alert update information on setRootNode event.
-         * @since next
+         * @since 7.0.3
          * @product highcharts
          * @apioption plotOptions.treemap.events.setRootNode
          */
@@ -209,20 +209,24 @@ seriesType(
         colorByPoint: false,
 
         /**
-         * @extends plotOptions.heatmap.dataLabels
          * @since   4.1.0
          */
         dataLabels: {
-            enabled: true,
+            /** @ignore-option */
             defer: false,
-            verticalAlign: 'middle',
+            /** @ignore-option */
+            enabled: true,
+            /** @ignore-option */
             formatter: function () {
                 var point = this && this.point ? this.point : {},
                     name = isString(point.name) ? point.name : '';
 
                 return name;
             },
-            inside: true
+            /** @ignore-option */
+            inside: true,
+            /** @ignore-option */
+            verticalAlign: 'middle'
         },
 
         tooltip: {
@@ -1019,7 +1023,7 @@ seriesType(
                         x: pX,
                         y: pY,
                         width: pW,
-                        height: pH
+                        height: H.correctFloat(pH)
                     });
                     if (group.direction === 0) {
                         plot.y = plot.y + pH;
@@ -1163,6 +1167,7 @@ seriesType(
             // @todo Only if series.isDirtyData is true
             tree = series.tree = series.getTree();
             rootNode = series.nodeMap[rootId];
+            series.renderTraverseUpButton(rootId);
             series.mapOptionsToLevel = getLevelOptions({
                 from: rootNode.level + 1,
                 levels: options.levels,
@@ -1525,6 +1530,9 @@ seriesType(
         /**
          * Sets a new root node for the series.
          *
+         * @private
+         * @function Highcharts.Series#setRootNode
+         *
          * @param {string} id The id of the new root node.
          * @param {boolean} [redraw=true] Wether to redraw the chart or not.
          * @param {object} [eventArguments] Arguments to be accessed in
@@ -1551,6 +1559,8 @@ seriesType(
 
             /**
              * The default functionality of the setRootNode event.
+             *
+             * @private
              * @param {object} args The event arguments.
              * @param {string} args.newRootId Id of the new root.
              * @param {string} args.previousRootId Id of the previous root.
@@ -1561,21 +1571,11 @@ seriesType(
              * directly.
              */
             var defaultFn = function (args) {
-                var series = args.series,
-                    newRootId = args.newRootId,
-                    nodeMap = series.nodeMap,
-                    node = nodeMap[newRootId];
+                var series = args.series;
 
                 // Store previous and new root ids on the series.
                 series.idPreviousRoot = args.previousRootId;
-                series.rootNode = newRootId;
-
-                // Remove or update the drill up button.
-                if (newRootId === '') {
-                    series.drillUpButton = series.drillUpButton.destroy();
-                } else {
-                    series.showDrillUpButton((node && node.name || newRootId));
-                }
+                series.rootNode = args.newRootId;
 
                 // Redraw the chart
                 series.isDirty = true; // Force redraw
@@ -1587,17 +1587,21 @@ seriesType(
             // Fire setRootNode event.
             fireEvent(series, 'setRootNode', eventArgs, defaultFn);
         },
-        showDrillUpButton: function (name) {
+        renderTraverseUpButton: function (rootId) {
             var series = this,
-                backText = (name || '< Back'),
+                nodeMap = series.nodeMap,
+                node = nodeMap[rootId],
+                name = node.name,
                 buttonOptions = series.options.traverseUpButton,
+                backText = pick(buttonOptions.text, name, '< Back'),
                 attr,
                 states;
 
-            if (buttonOptions.text) {
-                backText = buttonOptions.text;
-            }
-            if (!this.drillUpButton) {
+            if (rootId === '') {
+                if (series.drillUpButton) {
+                    series.drillUpButton = series.drillUpButton.destroy();
+                }
+            } else if (!this.drillUpButton) {
                 attr = buttonOptions.theme;
                 states = attr && attr.states;
 
@@ -1729,18 +1733,17 @@ seriesType(
  * An array of data points for the series. For the `treemap` series
  * type, points can be given in the following ways:
  *
- * 1.  An array of numerical values. In this case, the numerical values
- * will be interpreted as `value` options. Example:
- *
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `value` options. Example:
  *  ```js
  *  data: [0, 5, 3, 5]
  *  ```
  *
  * 2.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.treemap.turboThreshold),
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.treemap.turboThreshold),
  * this option is not available.
- *
  *  ```js
  *     data: [{
  *         value: 9,
@@ -1758,7 +1761,7 @@ seriesType(
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|*>}
+ * @type      {Array<number|null|*>}
  * @extends   series.heatmap.data
  * @excluding x, y
  * @product   highcharts
@@ -1769,7 +1772,7 @@ seriesType(
  * The value of the point, resulting in a relative area of the point
  * in the treemap.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highcharts
  * @apioption series.treemap.data.value
  */

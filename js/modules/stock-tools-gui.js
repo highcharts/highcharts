@@ -1239,7 +1239,9 @@ H.Toolbar.prototype = {
 
             toolbar.classList.add(PREFIX + 'hide');
             showhideBtn.classList.toggle(PREFIX + 'arrow-right');
+            wrapper.style.height = showhideBtn.offsetHeight + 'px';
         } else {
+            wrapper.style.height = '100%';
             showhideBtn.style.top = H.getStyle(toolbar, 'padding-top') + 'px';
             showhideBtn.style.left = (
                 wrapper.offsetWidth +

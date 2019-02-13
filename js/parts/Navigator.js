@@ -367,7 +367,9 @@ extend(defaultOptions, {
              * @extends plotOptions.series.dataLabels
              */
             dataLabels: {
+                /** @ignore-option */
                 enabled: false,
+                /** @ignore-option */
                 zIndex: 2 // #1839
             },
 
@@ -1747,6 +1749,10 @@ Navigator.prototype = {
             navAxis = this.xAxis,
             navAxisOptions = navAxis.options,
             baseAxisOptions = baseAxis.options,
+            min = (navAxisOptions && navAxisOptions.ordinal) ?
+                null : baseAxisOptions.min,
+            max = (navAxisOptions && navAxisOptions.ordinal) ?
+                null : baseAxisOptions.max,
             ret;
 
         if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
@@ -1755,7 +1761,7 @@ Navigator.prototype = {
                     navAxisOptions && navAxisOptions.min,
                     numExt(
                         'min',
-                        baseAxisOptions.min,
+                        min, // #9994
                         baseAxis.dataMin,
                         navAxis.dataMin,
                         navAxis.min
@@ -1765,7 +1771,7 @@ Navigator.prototype = {
                     navAxisOptions && navAxisOptions.max,
                     numExt(
                         'max',
-                        baseAxisOptions.max,
+                        max, // #9994
                         baseAxis.dataMax,
                         navAxis.dataMax,
                         navAxis.max
@@ -2472,12 +2478,16 @@ if (!H.Navigator) {
     });
 
     // Initialize navigator, if no scrolling exists yet
-    addEvent(Chart, 'afterUpdate', function () {
+    addEvent(Chart, 'afterUpdate', function (event) {
 
         if (!this.navigator && !this.scroller &&
             (this.options.navigator.enabled || this.options.scrollbar.enabled)
         ) {
             this.scroller = this.navigator = new Navigator(this);
+
+            if (pick(event.redraw, true)) {
+                this.redraw(event.animation); // #7067
+            }
         }
 
     });
