@@ -194,7 +194,10 @@ seriesType('vector', 'scatter'
                 var plotX = point.plotX,
                     plotY = point.plotY;
 
-                if (chart.isInsidePlot(plotX, plotY, chart.inverted)) {
+                if (
+                    this.options.clip === false ||
+                    chart.isInsidePlot(plotX, plotY, chart.inverted)
+                ) {
 
                     if (!point.graphic) {
                         point.graphic = this.chart.renderer
