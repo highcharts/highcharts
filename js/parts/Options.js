@@ -1108,15 +1108,12 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/chart/resetzoombutton-theme/
              *         Theming the button
              *
-             * @type {Highcharts.SVGAttributes}
-             * @since 2.2
+             * @type    {Highcharts.SVGAttributes}
+             * @default {"zIndex":6}
+             * @since   2.2
              */
             theme: {
-
-                /**
-                 * The Z index for the reset zoom button. The default value
-                 * places it below the tooltip that has Z index 7.
-                 */
+                /** @ignore-option */
                 zIndex: 6
             },
 
