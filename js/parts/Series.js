@@ -1906,9 +1906,6 @@ H.Series = H.seriesType(
          */
         softThreshold: true,
 
-        /**
-         * A wrapper object for all the series options in specific states.
-         */
         states: {
 
             /**
@@ -1954,7 +1951,7 @@ H.Series = H.seriesType(
                  *
                  * @type    {boolean|Highcharts.AnimationOptionsObject}
                  * @since   5.0.8
-                 * @product highcharts
+                 * @product highcharts highstock
                  */
                 animation: {
 
@@ -2014,7 +2011,7 @@ H.Series = H.seriesType(
                  * line-type series as well as outside the hovered slice in pie
                  * charts. By default the halo is filled by the current point or
                  * series color with an opacity of 0.25\. The halo can be
-                 * disabled by setting the `halo` option to `false`.
+                 * disabled by setting the `halo` option to `null`.
                  *
                  * In styled mode, the halo is styled with the
                  * `.highcharts-halo` class, with colors inherited from
@@ -2025,6 +2022,7 @@ H.Series = H.seriesType(
                  * @sample {highstock} highcharts/plotoptions/halo/
                  *         Halo options
                  *
+                 * @type    {null|*}
                  * @since   4.0
                  * @product highcharts highstock
                  */
@@ -2070,10 +2068,10 @@ H.Series = H.seriesType(
             /**
              * Specific options for point in selected states, after being
              * selected by
-             * [allowPointSelect](#plotOptions.series.allowPointSelect) or
-             * programmatically.
+             * [allowPointSelect](#plotOptions.series.allowPointSelect)
+             * or programmatically.
              *
-             * @sample {highmaps} maps/plotoptions/series-allowpointselect/
+             * @sample maps/plotoptions/series-allowpointselect/
              *         Allow point select demo
              *
              * @extends   plotOptions.series.states.hover
