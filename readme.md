@@ -30,40 +30,69 @@ bower install highcharts
 
 ## Load Highcharts from the CDN as ECMAScript modules
 Starting with v6.1.0, Highcharts is available on our CDN as ECMAScript modules. You can [import ES modules directly in modern browsers](https://jakearchibald.com/2017/es-modules-in-browsers/)
-without any bundling tools, by using `<script type="module">` ([demo](https://jsfiddle.net/highcharts/rtcx6j3h/)):
-
-```js
+without any bundling tools by using `<script type="module">` ([demo](https://jsfiddle.net/highcharts/rtcx6j3h/)):
+```html
 <script type="module">
-  import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
+    import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
 
-  Highcharts.chart('container', {
-    ...
-  });
+    Highcharts.chart('container', {
+        ...
+    });
 </script>
 ```
-
-
-## Load Highcharts as an AMD module
-Highcharts is compatible with AMD module loaders (such as RequireJS). Module files require an initialization step in order to reference Highcharts. To accomplish this, pass Highcharts to the function returned by loading the module. The following example demonstrates loading Highcharts along with two modules using RequireJS. No special RequireJS config is necessary for this example to work.
+The following example shows dynamic import with lazy-loading:
 ```js
-requirejs([
-    'path/to/highcharts.js',
-    'path/to/modules/exporting.js',
-    'path/to/modules/accessibility.src.js'
-], function (Highcharts, exporting, accessibility) {
-    // This function runs when the above files have been loaded
+    import('https://code.highcharts.com/es-modules/masters/highcharts.src.js')
+        .then(function (importedModule) {
+            const Highcharts = importedModule.default;
+            Highcharts.chart('container', {
+                ...
+            });
+        });
+```
 
-    // We need to initialize module files and pass in Highcharts
-    exporting(Highcharts); // Load exporting before accessibility
-    accessibility(Highcharts);
-
-    // Create a test chart
-    Highcharts.chart('container', {
-        series: [{
-            data: [1,2,3,4,5]
-        }]
-    });
-});
+## Load Highcharts from the CDN as an AMD module
+Highcharts is compatible with AMD module loaders (such as RequireJS). Module files require an initialization step in order to reference Highcharts. To accomplish this, pass Highcharts to the function returned by loading the module. The following example demonstrates loading Highcharts along with two modules from our CDN using RequireJS.
+```html
+<html>
+    <head>
+        <script src="require.js"></script>
+        <script>
+            require.config({
+                packages: [{
+                    name: 'highcharts',
+                    main: 'highcharts'
+                }],
+                paths: {
+                    // Change this to your server if you do not wish to use our CDN.
+                    'highcharts': 'https://code.highcharts.com'
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script>
+            require([
+                'highcharts',
+                'highcharts/modules/exporting',
+                'highcharts/modules/accessibility'
+                // This function runs when the above files have been loaded.
+            ], function (Highcharts, ExportingModule, AccessibilityModule) {
+                // We need to initialize module files and pass in Highcharts.
+                ExportingModule(Highcharts);
+                // Load exporting before accessibility.
+                AccessibilityModule(Highcharts);
+                // Create a test chart.
+                Highcharts.chart('container', {
+                    series: [{
+                        data: [1,2,3,4,5]
+                    }]
+                });
+            });
+        </script>
+    </body>
+</html>
 ```
 
 ## Load Highcharts as a CommonJS module
