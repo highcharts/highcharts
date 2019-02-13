@@ -43,8 +43,10 @@ without any bundling tools by using `<script type="module">` ([demo](https://jsf
 The following example shows dynamic import with lazy-loading:
 ```js
     import('https://code.highcharts.com/es-modules/masters/highcharts.src.js')
-        .then(function (importedModule) {
-            const Highcharts = importedModule.default;
+        .then(imported => imported.default)
+        .then(Highcharts => import('https://code.highcharts.com/es-modules/masters/modules/exporting.src.js').then(() => Highcharts))
+        .then(Highcharts => import('https://code.highcharts.com/es-modules/masters/modules/accessibility.src.js').then(() => Highcharts))
+        .then(Highcharts => {
             Highcharts.chart('container', {
                 ...
             });
