@@ -292,7 +292,7 @@ gulp.task('scripts', gulp.series('update', scriptsWatch));
  *     files, see the lintSamples function.
  * @return undefined Returns nothing
  */
-const lint = () => {
+const lint = () => new Promise((resolve, reject) => {
     const CLIEngine = require('eslint').CLIEngine;
     const cli = new CLIEngine({
         fix: argv.fix
@@ -302,9 +302,13 @@ const lint = () => {
     const report = cli.executeOnFiles(pattern);
     if (argv.fix) {
         CLIEngine.outputFixes(report);
+        console.log(formatter(report.results));
+        reject(new Error('ESLint error'));
+    } else {
+        console.log(formatter(report.results));
+        resolve();
     }
-    console.log(formatter(report.results));
-};
+});
 gulp.task('lint', gulp.series('update', lint));
 
 /**
