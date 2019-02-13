@@ -678,13 +678,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     applyTextOutline: function (textOutline) {
         var elem = this.element,
             tspans,
-            tspan,
             hasContrast = textOutline.indexOf('contrast') !== -1,
             styles = {},
             color,
             strokeWidth,
-            firstRealChild,
-            i;
+            firstRealChild;
 
         // When the text shadow is set to contrast, use dark stroke for light
         // text and vice versa.
@@ -720,16 +718,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 }
             );
 
-            // Remove shadows from previous runs. Iterate from the end to
-            // support removing items inside the cycle (#6472).
-            i = tspans.length;
-            while (i--) {
-                tspan = tspans[i];
-                if (tspan.getAttribute('class') === 'highcharts-text-outline') {
-                    // Remove then erase
-                    erase(tspans, elem.removeChild(tspan));
-                }
-            }
+            // Remove shadows from previous runs.
+            this.removeTextOutline(tspans);
 
             // For each of the tspans, create a stroked copy behind it.
             firstRealChild = elem.firstChild;
@@ -757,6 +747,20 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 });
                 elem.insertBefore(clone, firstRealChild);
             });
+        }
+    },
+
+    removeTextOutline: function (tspans) {
+        // Iterate from the end to
+        // support removing items inside the cycle (#6472).
+        var i = tspans.length,
+            tspan;
+        while (i--) {
+            tspan = tspans[i];
+            if (tspan.getAttribute('class') === 'highcharts-text-outline') {
+                // Remove then erase
+                erase(tspans, this.element.removeChild(tspan));
+            }
         }
     },
 
@@ -2291,30 +2295,43 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     },
     /**
      * @private
-     * @function Highcharts.SVGElement#textPathSetter
+     * @function Highcharts.SVGElement#setTextPath
      *
      * TO DO:
-     * @param {object} value - Format:
+     * @param {object} options - Format:
      * <pre>
      *              {
-     *                  element: Highcharts.SVGElement,
      *                  options: {
      *                      enabled: boolean,
      *                      attribues: Highcharts.SVGAttributes
      *                  }
      *              }
      * </pre>
+     * @param {Highcharts.SVGElement} - path - path to follow
+     *
+     * @return {Highcharts.SVGElement}
+     *         Returns the SVGElement for chaining.
      */
-    textPathSetter: function (value, key, element) {
-        var textPathWrapper,
-            tspans,
+    setTextPath: function (options, path) {
+        var elem = this.element,
+            keyMap = {
+                textAnchor: 'text-anchor'
+            },
             adder = false,
-            path,
-            attrs;
+            textPathWrapper,
+            tspans,
+            // defaults
+            attrs = {
+                dy: -5,
+                startOffset: '50%',
+                textAnchor: 'middle'
+            };
 
-        if (element && value && value.element) {
-            path = value.element;
-            attrs = merge(value.options.attributes);
+        if (path && options && options.enabled) {
+            if (this.options.padding) {
+                attrs.dx = -this.options.padding;
+            }
+            merge(true, attrs, options.attributes);
 
             if (!path.textPathWrapper) {
                 // Create <textPath>, defer the DOM adder
@@ -2330,7 +2347,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 path.element.setAttribute('id', path.textPathId);
 
                 // Change DOM structure, by placing <textPath> tag in <text>
-                tspans = element.children[0].childNodes;
+                tspans = elem.children[0].childNodes;
 
                 // Now move all <tspan>'s to the <textPath> node
                 while (tspans.length) {
@@ -2341,7 +2358,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // Add <textPath> to the DOM
             if (adder) {
                 path.textPathWrapper.add({
-                    element: this.element.firstChild
+                    element: elem.firstChild
                 });
             }
 
@@ -2353,31 +2370,69 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // dx/dy options must by set on <text>,
             // the rest should be set on <textPath>
             if (attrs.dy) {
-                element.children[0].setAttribute('dy', attrs.dy);
+                elem.children[0].setAttribute('dy', attrs.dy);
                 delete attrs.dy;
             }
             if (attrs.dx) {
-                element.children[0].setAttribute('dx', attrs.dx);
+                elem.children[0].setAttribute('dx', attrs.dx);
                 delete attrs.dyx;
             }
 
             // Additional attributes
             Object.keys(attrs).forEach(function (key) {
-                textPathWrapper.setAttribute(key, attrs[key]);
+                textPathWrapper.setAttribute(keyMap[key] || key, attrs[key]);
             });
 
-            // TO DO:
-            // How to modify "translateX" and "translateY"?
-            element.setAttribute('transform', 'translate(0, 0)');
+            // Remove translation, text that follows path does not need that
+            elem.setAttribute('transform', 'translate(0, 0)');
+
+            // Remove shadows/textOutliners
+            this.removeTextOutline.call(
+                path.textPathWrapper,
+                [].slice.call(elem.getElementsByTagName('tspan'))
+            );
+            // Keep old methods in case of textPath update
             this.replacedUpdateTransform = this.updateTransform;
+            this.replacedApplyTextOutline = this.applyTextOutline;
             this.updateTransform = noop;
+            this.applyTextOutline = noop;
 
         } else if (this.replacedUpdateTransform) {
-            // Restore transform method:
+            // Restore replaced method:
             this.updateTransform = this.replacedUpdateTransform;
             delete this.replacedUpdateTransform;
 
+            this.applyTextOutline = this.replacedApplyTextOutline;
+            delete this.replacedApplyTextOutline;
+
+            // Restore DOM structure:
+            if (path.textPathWrapper) {
+                this.destroyTextPath(elem, path);
+            }
         }
+
+        return this;
+    },
+    destroyTextPath: function (elem, path) {
+        var tspans;
+
+        // Remove ID's:
+        path.element.setAttribute('id', '');
+        delete path.textPathId;
+
+        // Move nodes to <text>
+        tspans = path.textPathWrapper.element.childNodes;
+
+        // debugger;
+
+        // Now move all <tspan>'s to the <textPath> node
+        while (tspans.length) {
+            elem.firstChild.appendChild(tspans[0]);
+        }
+        // Remove <textPath>
+        elem.firstChild.removeChild(path.textPathWrapper.element);
+        delete path.textPathWrapper;
+
     },
     /**
      * @private
@@ -4349,8 +4404,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         'circle': function (x, y, w, h) {
             // Return a full arc
             return this.arc(x + w / 2, y + h / 2, w / 2, h / 2, {
-                start: 0,
-                end: Math.PI * 2,
+                start: Math.PI * 0.5,
+                end: Math.PI * 2.5,
                 open: false
             });
         },

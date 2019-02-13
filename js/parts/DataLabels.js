@@ -385,13 +385,7 @@ Series.prototype.drawDataLabels = function () {
                         r: labelOptions.borderRadius || 0,
                         rotation: rotation,
                         padding: labelOptions.padding,
-                        zIndex: 1,
-                        textPath: labelOptions.textPath &&
-                            labelOptions.textPath.enabled ?
-                            {
-                                element: point.graphic,
-                                options: labelOptions.textPath
-                            } : false
+                        zIndex: 1
                     };
 
                     if (!chart.styledMode) {
@@ -483,7 +477,9 @@ Series.prototype.drawDataLabels = function () {
                     // Store data label options for later access
                     dataLabel.options = labelOptions;
 
-                    dataLabel.attr(attr);
+                    dataLabel
+                        .setTextPath(labelOptions.textPath, point.graphic)
+                        .attr(attr);
 
                     if (!chart.styledMode) {
                         // Styles must be applied before add in order to read
