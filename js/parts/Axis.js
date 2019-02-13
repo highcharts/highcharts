@@ -4403,12 +4403,21 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Handle options for floor, ceiling, softMin and softMax (#6359)
-        if (isNumber(options.softMin) && !isNumber(axis.userMin)) {
-            axis.min = Math.min(axis.min, options.softMin);
+        if (
+            isNumber(options.softMin) &&
+            !isNumber(axis.userMin) &&
+            options.softMin < axis.min
+        ) {
+            axis.min = hardMin = options.softMin; // #6894
         }
-        if (isNumber(options.softMax) && !isNumber(axis.userMax)) {
-            axis.max = Math.max(axis.max, options.softMax);
+        if (
+            isNumber(options.softMax) &&
+            !isNumber(axis.userMax) &&
+            options.softMax > axis.max
+        ) {
+            axis.max = hardMax = options.softMax; // #6894
         }
+
         if (isNumber(options.floor)) {
             axis.min = Math.min(
                 Math.max(axis.min, options.floor),
