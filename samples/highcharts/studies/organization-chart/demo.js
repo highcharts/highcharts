@@ -30,7 +30,8 @@ var datasets = {
             title: 'CEO',
             name: 'Grethe Hjetland',
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132317/Grethe.jpg',
-            offset: '-50%'
+            offset: '-50%',
+            color: '#980104'
         }, {
             id: 'HR',
             title: 'HR/CFO',
@@ -64,17 +65,21 @@ var datasets = {
         }, {
             id: 'Tech',
             name: 'Tech team',
-            description: 'Product developers, web developers, sys admin'
+            description: 'Product and web developers, sys admin',
+            color: '#359154'
         }, {
             id: 'BL',
             name: 'Black Label',
-            description: 'Contracters'
+            description: 'Tech support, development',
+            color: '#359154'
         }, {
             id: 'Sales',
-            name: 'Sales team'
+            name: 'Sales team',
+            color: '#359154'
         }, {
             id: 'Market',
-            name: 'Marketing team'
+            name: 'Marketing team',
+            color: '#359154'
         }]
     },
     mafia: {
@@ -139,7 +144,7 @@ Highcharts.chart('container', {
             color: 'white'
         },
         borderColor: 'white',
-        nodeWidth: 60
+        nodeWidth: 65
     }],
     exporting: {
         allowHTML: true
