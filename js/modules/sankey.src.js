@@ -27,8 +27,8 @@
  * An optional column index of where to place the node. The default behaviour is
  * to place it next to the preceding node.
  *
- * @sample highcharts/plotoptions/sankey-node-column/
- *         Specified node column
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
+ *      Specified node column
  *
  * @name Highcharts.SankeyNodeObject#column
  * @type {number}
@@ -44,7 +44,7 @@
  * the name is different from the `id`. Where the id must be unique for each
  * node, this is not necessary for the name.
  *
- * @sample {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/sankey/|Highcharts-Demo:}
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/sankey/|Highcharts-Demo:}
  *         Sankey diagram with node options
  *
  * @name Highcharts.SankeyNodeObject#name
@@ -54,7 +54,7 @@
  * The vertical offset of a node in terms of weight. Positive values shift the
  * node downwards, negative shift it upwards.
  *
- * @sample {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
  *         Specified node offset
  *
  * @name Highcharts.SankeyNodeObject#offset
