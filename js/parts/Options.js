@@ -2844,6 +2844,19 @@ H.defaultOptions = {
          * @apioption tooltip.formatter
          */
 
+
+        /**
+         * Callback function to format the text of the tooltip for
+         * visible null points.
+         * Works analogously to [formatter](#tooltip.formatter).
+         *
+         * @sample highcharts/plotoptions/series-nullpointformat
+         *         Format data label and tooltip for null point.
+         * @type {Highcharts.FormatterCallbackFunction<Highcharts.TooltipFormatterContextObject>}
+         * @apioption tooltip.nullPointFormatter
+         */
+
+
         /**
          * The number of milliseconds to wait until the tooltip is hidden when
          * mouse out from a point or chart.
@@ -3223,6 +3236,18 @@ H.defaultOptions = {
          * @apioption  tooltip.pointFormat
          */
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+
+        /**
+         * The HTML of the null point's line in the tooltip. Works analogously
+         * to [pointFormat](#tooltip.pointFormat).
+         *
+         * @type {string}
+         * @sample highcharts/plotoptions/series-nullpointformat
+         *         Format data label and tooltip for null point.
+         * @since 7.1.0
+         * @apioption tooltip.nullPointFormat
+         */
+        nullPointFormat: undefined,
 
         /**
          * The background color or gradient for the tooltip.

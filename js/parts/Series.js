@@ -2064,7 +2064,40 @@ H.Series = H.seriesType('line',
              * @default {highmaps} 0
              * @since   2.2.1
              */
-            padding: 5
+            padding: 5,
+
+            /**
+             * Format for points with the value of null. Works analogously to
+             * [format](#plotOptions.series.dataLabels.format).
+             * `nullPointFormat` can be applied only to series which support
+             * displaying null points.
+             *
+             * @type       {string}
+             * @default    undefined
+             * @since      7.1.0
+             * @sample highcharts/plotoptions/series-nullpointformat
+             *         Format data label and tooltip for null point.
+             * @apioption  plotOptions.series.dataLabels.nullPointFormat
+             * @type      {string|boolean}
+             */
+            nullPointFormat: undefined,
+
+            /**
+              * Callback JavaScript function that defines formatting for points
+              * with the value of null. Works analogously to
+              * [formatter](#plotOptions.series.dataLabels.formatter).
+              * `nullPointFormatter` can be applied only to series which support
+              * displaying null points.
+              *
+              * @since      7.1.0
+              * @sample highcharts/plotoptions/series-nullpointformat
+              *         Format data label and tooltip for null point.
+              * @apioption  plotOptions.series.dataLabels.nullPointFormatter
+              * @type    {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
+              * @default undefined
+              */
+            nullPointFormatter: undefined
+
         },
 
         /**

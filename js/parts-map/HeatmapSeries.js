@@ -259,10 +259,24 @@ seriesType('heatmap', 'scatter'
             var func = this.chart.styledMode ? 'css' : 'attr';
 
             seriesTypes.column.prototype.drawPoints.call(this);
-
             this.points.forEach(function (point) {
                 point.graphic[func](this.colorAttribs(point));
             }, this);
+        },
+
+
+        /**
+         * @private
+         * @function Highcharts.seriesTypes.heatmap#drawDataLabels
+         */
+        drawDataLabels: function () {
+            // #9233: show data labels for heatmap null points
+            this.points.forEach(function (point) {
+                if (point.isNull) {
+                    point.formatPrefix = 'nullPoint';
+                }
+            });
+            seriesTypes.column.prototype.drawDataLabels.call(this);
         },
 
         /**
@@ -446,4 +460,3 @@ seriesType('heatmap', 'scatter'
  * @product   highcharts highmaps
  * @apioption series.heatmap.data.pointPadding
  */
-

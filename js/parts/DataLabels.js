@@ -317,9 +317,7 @@ Series.prototype.drawDataLabels = function () {
             // Handle each individual data label for this point
             pointOptions.forEach(function (labelOptions, i) {
                 // Options for one datalabel
-                var labelEnabled = labelOptions.enabled &&
-                        !point.isNull && // #2282, #4641, #7112
-                        applyFilter(point, labelOptions),
+                var labelEnabled,
                     labelConfig,
                     formatString,
                     labelText,
@@ -330,7 +328,26 @@ Series.prototype.drawDataLabels = function () {
                         point.dataLabel,
                     connector = point.connectors ? point.connectors[i] :
                         point.connector,
-                    isNew = !dataLabel;
+                    isNew = !dataLabel,
+                    definedForNullPoint = point.formatPrefix === 'nullPoint' &&
+                      (
+                          labelOptions.nullPointFormat ||
+                        labelOptions.nullPointFormatter
+                      );
+
+
+                if (labelOptions.enabled &&
+                    (
+                        !point.isNull ||  // #2282, #4641, #7112
+                      definedForNullPoint // #9233
+                    ) &&
+                    applyFilter(point, labelOptions)) {
+                    labelEnabled = true;
+                }
+
+                if (definedForNullPoint) {
+                    labelOptions.format = labelOptions.nullPointFormat;
+                }
 
                 if (labelEnabled) {
                     // Create individual options structure that can be extended
@@ -340,6 +357,7 @@ Series.prototype.drawDataLabels = function () {
                         labelOptions[point.formatPrefix + 'Format'] ||
                         labelOptions.format
                     );
+
 
                     labelText = defined(formatString) ?
                         format(formatString, labelConfig, chart.time) :
