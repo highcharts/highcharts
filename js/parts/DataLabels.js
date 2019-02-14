@@ -477,9 +477,14 @@ Series.prototype.drawDataLabels = function () {
                     // Store data label options for later access
                     dataLabel.options = labelOptions;
 
-                    dataLabel
-                        .attr(attr)
-                        .setTextPath(point.graphic, labelOptions.textPath);
+                    dataLabel.attr(attr);
+
+                    if (labelOptions.textPath) {
+                        dataLabel.setTextPath(
+                            point.graphic,
+                            labelOptions.textPath
+                        );
+                    }
 
                     if (!chart.styledMode) {
                         // Styles must be applied before add in order to read
