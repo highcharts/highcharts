@@ -449,6 +449,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             hasZoomed,
             pointer = chart.pointer,
             displayButton = false,
+            mouseDownY = pointer.mouseDownY,
             resetZoomButton;
 
         // If zoom is called with no arguments, reset the axes
@@ -461,10 +462,25 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
         } else { // else, zoom in on all axes
             event.xAxis.concat(event.yAxis).forEach(function (axisData) {
                 var axis = axisData.axis,
-                    isXAxis = axis.isXAxis;
+                    axisTop = axis.top,
+                    axisBottom = axisTop + axis.height,
+                    isXAxis = axis.isXAxis,
+                    isWithinPane = false;
+
+                // Check if zoomed area is within the pane (#1289).
+                // In case of multiple panes only one pane should be zoomed.
+                if (
+                    (!isXAxis &&
+                    mouseDownY >= axisTop &&
+                    mouseDownY <= axisBottom) ||
+                    isXAxis ||
+                    !H.defined(mouseDownY)
+                ) {
+                    isWithinPane = true;
+                }
 
                 // don't zoom more than minRange
-                if (pointer[isXAxis ? 'zoomX' : 'zoomY']) {
+                if (pointer[isXAxis ? 'zoomX' : 'zoomY'] && isWithinPane) {
                     hasZoomed = axis.zoom(axisData.min, axisData.max);
                     if (axis.displayBtn) {
                         displayButton = true;
