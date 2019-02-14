@@ -1,5 +1,3 @@
-
-
 QUnit.test('Pie Point dataLabel distance (#1174)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -234,4 +232,35 @@ QUnit.test('Wide data labels', function (assert) {
     );
 });
 
+QUnit.test('Pie with long dataLabels with useHTML: true wrongly rendered', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            width: 100
+        },
+        series: [{
+            type: 'pie',
+            dataLabels: {
+                useHTML: true
+            },
+            data: [{
+                name: '<div>Test</div>',
+                y: 550
+            }, {
+                name: '<div>Testing two test test test test</div>',
+                y: 432
+            }, {
+                name: '<div>Testing s three</div>',
+                y: 320
+            }, {
+                name: '<div>Testing four test test</div>',
+                y: 210.009
+            }]
+        }]
+    });
 
+    assert.ok(
+        // eslint-disable-next-line no-underscore-dangle
+        chart.series[0].points[2].dataLabels[0]._attr.width >= 0,
+        'Data label width cannot be negative'
+    );
+});
