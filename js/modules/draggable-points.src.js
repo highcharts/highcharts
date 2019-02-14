@@ -2477,8 +2477,8 @@ function mouseUp(e, chart) {
 function mouseDown(e, chart) {
     var dragPoint = chart.hoverPoint,
         dragDropOptions = H.merge(
-            dragPoint.series.options.dragDrop,
-            dragPoint.options.dragDrop
+            dragPoint && dragPoint.series.options.dragDrop,
+            dragPoint && dragPoint.options.dragDrop
         ),
         draggableX = dragDropOptions.draggableX || false,
         draggableY = dragDropOptions.draggableY || false;
