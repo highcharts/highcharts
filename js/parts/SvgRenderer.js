@@ -2298,6 +2298,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @function Highcharts.SVGElement#setTextPath
      *
      * TO DO:
+     * @param {Highcharts.SVGElement} - path - path to follow
      * @param {object} options - Format:
      * <pre>
      *              {
@@ -2307,80 +2308,93 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *                  }
      *              }
      * </pre>
-     * @param {Highcharts.SVGElement} - path - path to follow
      *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    setTextPath: function (options, path) {
+    setTextPath: function (path, options) {
         var elem = this.element,
-            keyMap = {
+            // TO DO:
+            // Is there a better way to distinguish label() and text()?
+            isLabel = defined(this.onAdd),
+            attribsMap = {
                 textAnchor: 'text-anchor'
             },
-            adder = false,
-            textPathWrapper,
-            tspans,
             // defaults
             attrs = {
                 dy: -5,
                 startOffset: '50%',
                 textAnchor: 'middle'
-            };
+            },
+            adder = false,
+            textPathElement,
+            textPathId,
+            tspans;
 
         if (path && options && options.enabled) {
-            if (this.options.padding) {
+            // label() has padding, text() doesn't
+            if (this.options && this.options.padding) {
                 attrs.dx = -this.options.padding;
             }
             merge(true, attrs, options.attributes);
 
-            if (!path.textPathWrapper) {
+            if (!this.textPathWrapper) {
                 // Create <textPath>, defer the DOM adder
-                path.textPathWrapper = this.renderer.createElement('textPath');
+                this.textPathWrapper = this.renderer.createElement('textPath');
                 adder = true;
             }
 
-            textPathWrapper = path.textPathWrapper.element;
+            textPathElement = this.textPathWrapper.element;
 
-            if (!path.textPathId) {
-                // Store path ID's reference
-                path.textPathId = H.uniqueKey();
-                path.element.setAttribute('id', path.textPathId);
+            // Set ID for the path
+            textPathId = path.element.getAttribute('id');
+            if (!textPathId) {
+                path.element.setAttribute('id', textPathId = H.uniqueKey());
+            }
 
-                // Change DOM structure, by placing <textPath> tag in <text>
-                tspans = elem.children[0].childNodes;
+            // Change DOM structure, by placing <textPath> tag in <text>
+            if (!this.organizedTexPath) {
+                tspans = (isLabel ? elem.firstChild : elem).childNodes;
 
                 // Now move all <tspan>'s to the <textPath> node
                 while (tspans.length) {
-                    textPathWrapper.appendChild(tspans[0]);
+                    textPathElement.appendChild(tspans[0]);
                 }
+
+                // Do it only once
+                this.organizedTexPath = true;
             }
 
             // Add <textPath> to the DOM
             if (adder) {
-                path.textPathWrapper.add({
-                    element: elem.firstChild
+                this.textPathWrapper.add({
+                    // label() is placed in a group, text() is standalone
+                    element: elem.firstChild || elem
                 });
             }
 
             // Set basic options:
-            textPathWrapper.setAttribute('href', '#' + path.textPathId);
+            textPathElement.setAttribute('href', '#' + textPathId);
 
             // Representational options:
 
-            // dx/dy options must by set on <text>,
+            // dx/dy options must by set on <text> (parent),
             // the rest should be set on <textPath>
             if (attrs.dy) {
-                elem.children[0].setAttribute('dy', attrs.dy);
+                textPathElement.parentNode.setAttribute('dy', attrs.dy);
                 delete attrs.dy;
             }
             if (attrs.dx) {
-                elem.children[0].setAttribute('dx', attrs.dx);
+                textPathElement.parentNode.setAttribute('dx', attrs.dx);
                 delete attrs.dyx;
             }
 
             // Additional attributes
             Object.keys(attrs).forEach(function (key) {
-                textPathWrapper.setAttribute(keyMap[key] || key, attrs[key]);
+                textPathElement.setAttribute(
+                    attribsMap[key] || key,
+                    attrs[key]
+                );
             });
 
             // Remove translation, text that follows path does not need that
@@ -2388,7 +2402,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
             // Remove shadows/textOutliners
             this.removeTextOutline.call(
-                path.textPathWrapper,
+                this.textPathWrapper,
                 [].slice.call(elem.getElementsByTagName('tspan'))
             );
             // Keep old methods in case of textPath update
@@ -2406,7 +2420,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             delete this.replacedApplyTextOutline;
 
             // Restore DOM structure:
-            if (path.textPathWrapper) {
+            if (this.textPathWrapper) {
                 this.destroyTextPath(elem, path);
             }
         }

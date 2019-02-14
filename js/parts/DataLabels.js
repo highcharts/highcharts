@@ -478,8 +478,8 @@ Series.prototype.drawDataLabels = function () {
                     dataLabel.options = labelOptions;
 
                     dataLabel
-                        .setTextPath(labelOptions.textPath, point.graphic)
-                        .attr(attr);
+                        .attr(attr)
+                        .setTextPath(point.graphic, labelOptions.textPath);
 
                     if (!chart.styledMode) {
                         // Styles must be applied before add in order to read
