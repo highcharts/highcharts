@@ -2385,11 +2385,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
             // dx/dy options must by set on <text> (parent),
             // the rest should be set on <textPath>
-            if (attrs.dy) {
+            if (defined(attrs.dy)) {
                 textPathElement.parentNode.setAttribute('dy', attrs.dy);
                 delete attrs.dy;
             }
-            if (attrs.dx) {
+            if (defined(attrs.dx)) {
                 textPathElement.parentNode.setAttribute('dx', attrs.dx);
                 delete attrs.dx;
             }
@@ -2432,12 +2432,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
         // Remove ID's:
         path.element.setAttribute('id', '');
-        delete path.textPathId;
 
         // Move nodes to <text>
         tspans = this.textPathWrapper.element.childNodes;
-
-        // debugger;
 
         // Now move all <tspan>'s to the <textPath> node
         while (tspans.length) {
