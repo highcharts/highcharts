@@ -28,6 +28,10 @@ const {
     scripts,
     getBuildScripts
 } = require('./tools/build.js');
+const {
+    getCompareFileSizeTable,
+    getFileSizes
+} = require('./tools/compareFilesize.js');
 const compile = require('./tools/compile.js').compile;
 const {
     copyFile,
@@ -1307,6 +1311,31 @@ const uploadAPIDocs = () => {
         });
 };
 gulp.task('upload-api', uploadAPIDocs);
+
+gulp.task('get-filesizes', () => {
+    const isSourceFile = path => (
+        path.endsWith('.src.js') && !path.includes('es-modules')
+    );
+    const jsFolder = './js/masters/';
+    const out = argv.out || './filesizes.json';
+    const files = argv.file ?
+        argv.file.split(',') :
+        getFilesInFolder(jsFolder, true, '').filter(isSourceFile);
+
+    return getFileSizes(files, out);
+});
+
+gulp.task('compare-filesizes', () => {
+    const out = argv.out;
+    const pathOld = argv.old;
+    const pathNew = argv.new;
+    if (!pathOld || !pathNew) {
+        throw new Error(
+            'This task requires paths to the files --old and --new'
+        );
+    }
+    return getCompareFileSizeTable(pathOld, pathNew, out);
+});
 
 const jsdocServer = () => {
     // Start a server serving up the api reference
