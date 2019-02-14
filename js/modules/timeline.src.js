@@ -16,17 +16,17 @@
 import H from '../parts/Globals.js';
 
 var addEvent = H.addEvent,
-    extend = H.extend,
     defined = H.defined,
     LegendSymbolMixin = H.LegendSymbolMixin,
     TrackerMixin = H.TrackerMixin,
     merge = H.merge,
+    isNumber = H.isNumber,
     pick = H.pick,
     Point = H.Point,
     Series = H.Series,
-    undocumentedSeriesType = H.seriesType;
+    seriesType = H.seriesType;
 
-/* *
+/**
  * The timeline series type.
  *
  * @private
@@ -35,9 +35,9 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-undocumentedSeriesType('timeline', 'line',
+seriesType('timeline', 'line',
 
-    /* *
+    /**
      * The timeline series presents given events along a drawn line.
      *
      * @sample highcharts/series-timeline/alternate-labels Timeline series
@@ -61,7 +61,7 @@ undocumentedSeriesType('timeline', 'line',
         lineWidth: 0,
         tooltip: {
             headerFormat: '<span style="color:{point.color}">● </span>' +
-                '<span style="font-size: 10px">{point.point.name}</span><br/>',
+                '<span style="font-size: 10px">{point.key}</span><br/>',
             pointFormat: '{point.description}'
         },
         states: {
@@ -75,7 +75,7 @@ undocumentedSeriesType('timeline', 'line',
         dataLabels: {
             enabled: true,
             allowOverlap: true,
-            /* *
+            /**
              * The width of the line connecting the data label to the point.
              *
              *
@@ -88,7 +88,7 @@ undocumentedSeriesType('timeline', 'line',
              *         Custom connector width and color
              */
             connectorWidth: 1,
-            /* *
+            /**
              * The color of the line connecting the data label to the point.
              *
              * In styled mode, the connector stroke is given in the
@@ -100,7 +100,7 @@ undocumentedSeriesType('timeline', 'line',
              */
             connectorColor: '${palette.neutralColor100}',
             backgroundColor: '${palette.backgroundColor}',
-            /* *
+            /**
              * @type      {Highcharts.FormatterCallbackFunction<object>}
              * @default function () {
              *   var format;
@@ -124,19 +124,19 @@ undocumentedSeriesType('timeline', 'line',
 
                 if (!this.series.chart.styledMode) {
                     format = '<span style="color:' + this.point.color +
-                    '">● </span><span style="font-weight: bold;" > ' +
-                    (this.point.name || '') + '</span><br/>' +
-                    (this.point.label || '');
+                        '">● </span><span style="" > ' +
+                        (this.key || '') + '</span><br/>' +
+                        (this.point.label || '');
                 } else {
                     format = '<span>● </span>' +
-                    '<span>' + (this.point.name || '') +
-                    '</span><br/>' + (this.point.label || '');
+                        '<span>' + (this.key || '') +
+                        '</span><br/>' + (this.point.label || '');
                 }
                 return format;
             },
             borderWidth: 1,
             borderColor: '${palette.neutralColor60}',
-            /* *
+            /**
              * A pixel value defining the distance between the data label
              * and the point. Negative numbers puts the label on top
              * of the point.
@@ -145,7 +145,7 @@ undocumentedSeriesType('timeline', 'line',
              * @default 100
              */
             distance: 100,
-            /* *
+            /**
              * Whether to position data labels alternately. For example, if
              * [distance](#plotOptions.timeline.dataLabels.distance) is set
              * equal to `100`, then the first data label 's distance will be
@@ -166,11 +166,10 @@ undocumentedSeriesType('timeline', 'line',
             height: 15
         }
     },
-    /* *
+    /**
      * @lends Highcharts.Series#
      */
     {
-        requireSorting: false,
         trackerGroups: ['markerGroup', 'dataLabelsGroup'],
         // Use a simple symbol from LegendSymbolMixin
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
@@ -180,6 +179,31 @@ undocumentedSeriesType('timeline', 'line',
             var series = this;
 
             Series.prototype.init.apply(series, arguments);
+
+            addEvent(series, 'afterTranslate', function () {
+                var lastPlotX,
+                    closestPointRangePx = Number.MAX_VALUE;
+
+                series.points.forEach(function (point) {
+                    // Set the isInside parameter basing on the real point
+                    // visibility, in order to avoid showing hidden points
+                    // in drawPoints method.
+                    point.isInside = point.visible;
+
+                    // New way of calculating closestPointRangePx value, which
+                    // respects the real point visibility is needed.
+                    if (point.visible) {
+                        if (defined(lastPlotX)) {
+                            closestPointRangePx = Math.min(
+                                closestPointRangePx,
+                                Math.abs(point.plotX - lastPlotX)
+                            );
+                        }
+                        lastPlotX = point.plotX;
+                    }
+                });
+                series.closestPointRangePx = closestPointRangePx;
+            });
 
             // Distribute data labels before rendering them. Distribution is
             // based on the 'dataLabels.distance' and 'dataLabels.alternate'
@@ -315,14 +339,14 @@ undocumentedSeriesType('timeline', 'line',
                         width: targetDLWidth,
                         // Apply ellipsis when data label height is exceeded.
                         textOverflow: dataLabel.width / targetDLWidth *
-                        dataLabel.height / 2 > availableSpace * multiplier ?
+                            dataLabel.height / 2 > availableSpace * multiplier ?
                             'ellipsis' : 'none'
                     };
                 } else {
                     styles = {
                         width: userDLOptions.width ||
-                        dataLabelsOptions.width ||
-                        availableSpace * multiplier - (pad * 2)
+                            dataLabelsOptions.width ||
+                            availableSpace * multiplier - (pad * 2)
                     };
                 }
                 dataLabel.css(styles);
@@ -350,24 +374,27 @@ undocumentedSeriesType('timeline', 'line',
 
             series.visiblePointsCount = visiblePoints;
 
-            // Generate xData map.
-            for (i = 0; i < visiblePoints; i++) {
-                xMap.push(i);
-            }
-
-            // Set all hidden points y values as negatives, in order to move
-            // them away from plot area. It is necessary to avoid hiding data
-            // labels, when dataLabels.allowOverlap is set to false.
-            series.visibilityMap.forEach(function (vis, i) {
-                if (!vis) {
-                    xMap.splice(i, 0, series.yData[i] === null ? null : -99);
+            if (series.xAxis.isDatetimeAxis) {
+                for (i = 0; i < series.xData.length; i++) {
+                    series.yData[i] = 1;
                 }
-            });
+            } else {
+                // Generate xData map.
+                for (i = 0; i < visiblePoints; i++) {
+                    xMap.push(i);
+                }
 
-            series.xData = xMap;
-            series.yData = xMap.map(function (data) {
-                return defined(data) ? 1 : null;
-            });
+                series.visibilityMap.forEach(function (vis, i) {
+                    if (!vis) {
+                        xMap.splice(i, 0, series.yData[i] === null ? null : 0);
+                    }
+                });
+
+                series.xData = xMap;
+                series.yData = xMap.map(function (data) {
+                    return defined(data) ? 1 : null;
+                });
+            }
 
             Series.prototype.processData.call(this, arguments);
         },
@@ -378,7 +405,7 @@ undocumentedSeriesType('timeline', 'line',
             series.points.forEach(function (point, i) {
                 point.applyOptions({
                     x: series.xData[i]
-                });
+                }, series.xData[i]);
             });
         },
         getVisibilityMap: function () {
@@ -413,8 +440,8 @@ undocumentedSeriesType('timeline', 'line',
                     }
 
                     newOptions[series.chart.inverted ? 'x' : 'y'] =
-                    dataLabelsOptions.alternate && visibilityIndex % 2 ?
-                        -distance : distance;
+                        dataLabelsOptions.alternate && visibilityIndex % 2 ?
+                            -distance : distance;
 
                     options.dataLabels = merge(newOptions, point.userDLOptions);
                     visibilityIndex++;
@@ -433,7 +460,7 @@ undocumentedSeriesType('timeline', 'line',
                 width = pick(
                     pointMarkerOptions.width,
                     seriesMarkerOptions.width,
-                    series.xAxis.len / series.visiblePointsCount
+                    series.closestPointRangePx
                 ),
                 height = pick(
                     pointMarkerOptions.height,
@@ -442,18 +469,25 @@ undocumentedSeriesType('timeline', 'line',
                 radius = 0,
                 attribs;
 
+            // Call default markerAttribs method, when the xAxis type
+            // is set to datetime.
+            if (series.xAxis.isDatetimeAxis) {
+                return H.seriesTypes.line.prototype.markerAttribs
+                    .call(this, point, state);
+            }
+
             // Handle hover and select states
             if (state) {
                 seriesStateOptions = seriesMarkerOptions.states[state] || {};
                 pointStateOptions = pointMarkerOptions.states &&
-                pointMarkerOptions.states[state] || {};
+                    pointMarkerOptions.states[state] || {};
 
                 radius = pick(
                     pointStateOptions.radius,
                     seriesStateOptions.radius,
                     radius + (
                         seriesStateOptions.radiusPlus ||
-                    0
+                        0
                     )
                 );
             }
@@ -472,32 +506,37 @@ undocumentedSeriesType('timeline', 'line',
         },
         bindAxes: function () {
             var series = this,
-                timelineXAxis = {
-                    gridLineWidth: 0,
-                    lineWidth: 0,
-                    title: null,
-                    tickPositions: []
-                },
-                timelineYAxis = {
-                    gridLineWidth: 0,
-                    title: null,
-                    labels: {
-                        enabled: false
+                conf = {
+                    xAxis: {
+                        gridLineWidth: 0,
+                        lineWidth: 0,
+                        title: null,
+                        tickPositions: []
+                    },
+                    yAxis: {
+                        gridLineWidth: 1,
+                        title: null,
+                        labels: {
+                            enabled: false
+                        }
                     }
                 };
 
             Series.prototype.bindAxes.call(series);
 
-            // Initially set the linked xAxis type to category.
-            if (!series.xAxis.userOptions.type) {
-                series.xAxis.categories = series.xAxis.hasNames = true;
-            }
-
-            extend(series.xAxis.options, timelineXAxis);
-            extend(series.yAxis.options, timelineYAxis);
+            ['xAxis', 'yAxis'].forEach(function (axis) {
+                // Initially set the linked xAxis type to category.
+                if (axis === 'xAxis' && !series[axis].userOptions.type) {
+                    series[axis].categories = series[axis].hasNames = true;
+                }
+                // Merge options
+                series[axis].options = merge(
+                    series[axis].options, conf[axis], series[axis].userOptions
+                );
+            });
         }
     },
-    /* *
+    /**
      * @lends Highcharts.Point#
      */
     {
@@ -514,6 +553,7 @@ undocumentedSeriesType('timeline', 'line',
         setVisible: function (vis, redraw) {
             var point = this,
                 series = point.series,
+                axis = series.xAxis,
                 chart = series.chart,
                 ignoreHiddenPoint = series.options.ignoreHiddenPoint,
                 visiblePoints;
@@ -524,7 +564,7 @@ undocumentedSeriesType('timeline', 'line',
 
                 // If called without an argument, toggle visibility
                 point.visible = point.options.visible = vis =
-                vis === undefined ? !point.visible : vis;
+                    vis === undefined ? !point.visible : vis;
                 // update userOptions.data
                 series.options.data[series.data.indexOf(point)] = point.options;
 
@@ -558,8 +598,16 @@ undocumentedSeriesType('timeline', 'line',
                         return point;
                     });
 
-                series.xAxis.options.min = 0;
-                series.xAxis.options.max = visiblePoints.length - 1;
+                if (axis.isDatetimeAxis) {
+                    axis.setExtremes(
+                        visiblePoints[0].x,
+                        visiblePoints[visiblePoints.length - 1].x,
+                        false
+                    );
+                }
+
+                // Process new data
+                series.processData();
 
                 if (redraw) {
                     chart.redraw();
@@ -586,7 +634,7 @@ undocumentedSeriesType('timeline', 'line',
                     x1: point.plotX,
                     y1: point.plotY,
                     x2: point.plotX,
-                    y2: targetDLPos.y || dl.y
+                    y2: isNumber(targetDLPos.y) ? targetDLPos.y : dl.y
                 },
                 negativeDistance = (
                     coords[direction] < point.series.yAxis.len / 2
@@ -624,7 +672,7 @@ undocumentedSeriesType('timeline', 'line',
             var point = this,
                 series = point.series,
                 dlOptions = point.dataLabel.options = merge(
-                    {}, series.options.dataLabels,
+                    series.options.dataLabels,
                     point.options.dataLabels
                 );
 
@@ -643,8 +691,11 @@ undocumentedSeriesType('timeline', 'line',
         alignConnector: function () {
             var point = this,
                 connector = point.connector,
+                dl = point.dataLabel,
                 bBox = connector.getBBox(),
-                isVisible = bBox.y > 0;
+                isVisible = bBox.y > 0 && point.series.chart.isInsidePlot(
+                    dl.translateX, dl.translateY
+                );
 
             connector[isVisible ? 'animate' : 'attr']({
                 d: point.getConnectorPath()
@@ -680,7 +731,7 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
     });
 });
 
-/* *
+/**
  * The `timeline` series. If the [type](#series.timeline.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
@@ -695,7 +746,7 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
  * @apioption series.timeline
  */
 
-/* *
+/**
  * An array of data points for the series. For the `timeline` series type,
  * points can be given with three general parameters, `name`, `label`,
  * and `description`:
@@ -712,18 +763,23 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
  *    }]
  * }]
  * ```
+ * If all points additionally have the `x` values, and xAxis type is set to
+ * `datetime`, then events are laid out on a true time axis, where their
+ * placement reflects the actual time between them.
  *
  * @sample {highcharts} highcharts/series-timeline/alternate-labels
  *         Alternate labels
+ * @sample {highcharts} highcharts/series-timeline/datetime-axis
+ *         Real time intervals
  *
  * @type      {Array<number|*>}
  * @extends   series.line.data
- * @excluding marker, x, y
+ * @excluding marker, y
  * @product   highcharts
  * @apioption series.timeline.data
  */
 
-/* *
+/**
  * The name of event.
  *
  * @type      {string}
@@ -731,7 +787,7 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
  * @apioption series.timeline.data.name
  */
 
-/* *
+/**
  * The label of event.
  *
  * @type      {string}
@@ -739,7 +795,7 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
  * @apioption series.timeline.data.label
  */
 
-/* *
+/**
  * The description of event. This description will be shown in tooltip.
  *
  * @type      {string}
