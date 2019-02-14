@@ -142,17 +142,6 @@ H.extend(MenuComponent.prototype, {
         var component = this,
             chart = this.chart;
 
-        // Handle if accessibility is disabled for menu
-        if (!chart.options.exporting.accessibility.enabled) {
-            if (chart.exportingGroup && chart.exportingGroup.element) {
-                chart.exportingGroup.element.setAttribute(
-                    'aria-hidden', 'true'
-                );
-                chart.exportingGroup.element.removeAttribute('aria-label');
-            }
-            return;
-        }
-
         // Set screen reader properties on export menu
         if (
             chart.exportSVGElements &&
@@ -195,6 +184,21 @@ H.extend(MenuComponent.prototype, {
                 )
             );
         }
+    },
+
+
+    /**
+     * Accessibility disabled/chart destroyed.
+     */
+    destroy: function () {
+        var chart = this.chart;
+        if (chart.exportingGroup && chart.exportingGroup.element) {
+            chart.exportingGroup.element.setAttribute(
+                'aria-hidden', 'true'
+            );
+            chart.exportingGroup.element.removeAttribute('aria-label');
+        }
+        this.destroyBase();
     },
 
 

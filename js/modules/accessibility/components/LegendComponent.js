@@ -93,8 +93,8 @@ H.extend(LegendComponent.prototype, {
             items = legend.allItems,
             component = this;
 
-        // Skip everything if we do not have accessibility enabled on legend
-        if (!items || !chart.options.legend.accessibility.enabled) {
+        // Skip everything if we do not have legend items
+        if (!items) {
             if (group) {
                 group.attr({
                     'aria-label': '',
@@ -106,18 +106,20 @@ H.extend(LegendComponent.prototype, {
 
         // Make elements focusable
         items.forEach(function (item) {
-            item.legendGroup.element.setAttribute('tabindex', '-1');
+            if (item.legendGroup && item.legendGroup.element) {
+                item.legendGroup.element.setAttribute('tabindex', '-1');
+            }
         });
 
         // Set ARIA on legend items
-        if (group && items.length) {
+        if (group && group.element && items.length) {
             group.attr({
                 role: 'region',
                 'aria-hidden': false,
                 'aria-label': chart.langFormat('accessibility.legendLabel')
             });
 
-            if (this.box) {
+            if (this.box && this.box.element) {
                 this.box.attr('aria-hidden', 'true');
             }
 
@@ -132,7 +134,7 @@ H.extend(LegendComponent.prototype, {
                             itemName: component.stripTags(item.name)
                         }
                     );
-                if (itemGroup && text) {
+                if (itemGroup && itemGroup.element && text && text.element) {
                     itemGroup.attr({
                         role: 'button',
                         'aria-pressed': visible ? 'false' : 'true'
@@ -144,6 +146,21 @@ H.extend(LegendComponent.prototype, {
                 }
             });
         }
+    },
+
+
+    /**
+     * Accessibility disabled/chart destroyed.
+     */
+    destroy: function () {
+        var group = this.chart.legend && this.chart.legend.group;
+        if (group) {
+            group.attr({
+                'aria-label': '',
+                'aria-hidden': true
+            });
+        }
+        this.destroyBase();
     },
 
 

@@ -346,7 +346,14 @@ H.setOptions({
              *
              * @since 6.0.8
              */
-            svgContainerTitle: '{chartTitle}',
+            svgContainerTitle: '',
+
+            /**
+             * Label for the end of the chart. Announced by screen readers.
+             *
+             * @since next
+             */
+            svgContainerEnd: 'End of interactive chart',
 
             /**
              * Descriptions of lesser known series types. The relevant
@@ -425,9 +432,9 @@ H.setOptions({
             axis: {
             /* eslint-disable max-len */
                 xAxisDescriptionSingular: 'The chart has 1 X axis displaying {names[0]}.',
-                xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#names.forEach(-1), }and {names[-1]}',
+                xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each(names, -1), }and {names[-1]}',
                 yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}.',
-                yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#names.forEach(-1), }and {names[-1]}'
+                yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each(names, -1), }and {names[-1]}'
             }, /* eslint-enable max-len */
 
             /**

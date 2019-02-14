@@ -35,12 +35,11 @@ H.extend(ContainerComponent.prototype, {
      */
     onChartUpdate: function () {
         var chart = this.chart,
-            options = chart.options,
             titleElement,
             descElement = chart.container.getElementsByTagName('desc')[0],
             textElements = chart.container.getElementsByTagName('text'),
             titleId = 'highcharts-title-' + chart.index,
-            chartTitle = options.title.text || chart.langFormat(
+            chartTitle = chart.options.title.text || chart.langFormat(
                 'accessibility.defaultChartTitle', { chart: chart }
             ),
             svgContainerTitle = this.stripTags(chart.langFormat(
@@ -48,12 +47,6 @@ H.extend(ContainerComponent.prototype, {
                     chartTitle: chartTitle
                 }
             ));
-
-        // Handle accessibility disabled
-        if (!options.accessibility.enabled) {
-            chart.renderTo.setAttribute('aria-hidden', true);
-            return;
-        }
 
         // Add SVG title tag if it is set
         if (svgContainerTitle.length) {
@@ -80,15 +73,23 @@ H.extend(ContainerComponent.prototype, {
             )
         );
 
-        // Hide text elements from screen readers
+        // Hide desc & text elements from screen readers
+        // TODO: Expand to hide everything we don't want?
         [].forEach.call(textElements, function (el) {
             if (el.getAttribute('aria-hidden') !== 'false') {
                 el.setAttribute('aria-hidden', 'true');
             }
         });
-
-        // Hide desc element
         descElement.setAttribute('aria-hidden', 'true');
+    },
+
+
+    /**
+     * Accessibility disabled/chart destroyed.
+     */
+    destroy: function () {
+        this.chart.renderTo.setAttribute('aria-hidden', true);
+        this.destroyBase();
     }
 
 });

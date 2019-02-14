@@ -15,6 +15,18 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationModule from '../KeyboardNavigationModule.js';
 
 
+// If a point has one of the special keys defined, we expose all keys to the
+// screen reader.
+H.Series.prototype.commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'];
+H.Series.prototype.specialKeys = [
+    'z', 'open', 'high', 'q3', 'median', 'q1', 'low', 'close'
+];
+if (H.seriesTypes.pie) {
+    // A pie is always considered simple
+    H.seriesTypes.pie.prototype.specialKeys = [];
+}
+
+
 /*
  * Set for which series types it makes sense to move to the closest point with
  * up/down arrows, and which series types should just move to next series.
@@ -443,8 +455,15 @@ H.extend(SeriesComponent.prototype, {
      * Called on first render/updates to the chart, including options changes.
      */
     onChartUpdate: function () {
-
-
+        var component = this,
+            chart = this.chart;
+        chart.series.forEach(function (series) {
+            component[
+                (series.options.accessibility &&
+                series.options.accessibility.enabled) !== false ?
+                    'addSeriesDescription' : 'hideSeriesFromScreenReader'
+            ](series);
+        });
     },
 
 
@@ -556,6 +575,266 @@ H.extend(SeriesComponent.prototype, {
                 delete chart.highlightedPoint;
             }
         });
+    },
+
+
+    /**
+     * Utility function. Reverses child nodes of a DOM element.
+     * @private
+     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} node
+     */
+    reverseChildNodes: function (node) {
+        var i = node.childNodes.length;
+        while (i--) {
+            node.appendChild(node.childNodes[i]);
+        }
+    },
+
+
+    /**
+     * Get the DOM element for the first point in the series.
+     * @private
+     * @param {Highcharts.Series} series The series to get element for.
+     * @return {SVGDOMElement} The DOM element for the point.
+     */
+    getSeriesFirstPointElement: function (series) {
+        return (
+            series.points &&
+            series.points.length &&
+            series.points[0].graphic &&
+            series.points[0].graphic.element
+        );
+    },
+
+
+    /**
+     * Get the DOM element for the series that we put accessibility info on.
+     * @private
+     * @param {Highcharts.Series} series The series to get element for.
+     * @return {SVGDOMElement} The DOM element for the series
+     */
+    getSeriesElement: function (series) {
+        var firstPointEl = this.getSeriesFirstPointElement(series);
+        return (
+            firstPointEl &&
+            firstPointEl.parentNode || series.graph &&
+            series.graph.element || series.group &&
+            series.group.element
+        ); // Could be tracker series depending on series type
+    },
+
+
+    /**
+     * Hide series from screen readers.
+     * @private
+     * @param {Highcharts.Series} series The series to hide
+     */
+    hideSeriesFromScreenReader: function (series) {
+        var seriesEl = this.getSeriesElement(series);
+        if (seriesEl) {
+            seriesEl.setAttribute('aria-label', '');
+            seriesEl.setAttribute('aria-hidden', true);
+        }
+    },
+
+
+    /**
+     * Put accessible info on series and points of a series.
+     * @private
+     * @param {Highcharts.Series} series The series to add info on.
+     */
+    addSeriesDescription: function (series) {
+        var component = this,
+            chart = series.chart,
+            a11yOptions = chart.options.accessibility,
+            seriesA11yOptions = series.options.accessibility || {},
+            firstPointEl = component.getSeriesFirstPointElement(series),
+            seriesEl = component.getSeriesElement(series);
+
+        if (seriesEl) {
+            // For some series types the order of elements do not match the
+            // order of points in series. In that case we have to reverse them
+            // in order for AT to read them out in an understandable order
+            if (seriesEl.lastChild === firstPointEl) {
+                component.reverseChildNodes(seriesEl);
+            }
+
+            // Make individual point elements accessible if possible. Note: If
+            // markers are disabled there might not be any elements there to
+            // make accessible.
+            if (
+                series.points && (
+                    series.points.length <
+                        a11yOptions.pointDescriptionThreshold ||
+                    a11yOptions.pointDescriptionThreshold === false
+                ) &&
+                !seriesA11yOptions.exposeAsGroupOnly
+            ) {
+                series.points.forEach(function (point) {
+                    if (point.graphic) {
+                        point.graphic.element.setAttribute('role', 'img');
+                        point.graphic.element.setAttribute('tabindex', '-1');
+                        point.graphic.element.setAttribute('aria-label',
+                            component.stripTags(
+                                seriesA11yOptions.pointDescriptionFormatter &&
+                                seriesA11yOptions
+                                    .pointDescriptionFormatter(point) ||
+                                a11yOptions.pointDescriptionFormatter &&
+                                a11yOptions.pointDescriptionFormatter(point) ||
+                                component
+                                    .defaultPointDescriptionFormatter(point)
+                            ));
+                    }
+                });
+            }
+
+            // Make series element accessible
+            if (chart.series.length > 1 || a11yOptions.describeSingleSeries) {
+                seriesEl.setAttribute(
+                    'role',
+                    seriesA11yOptions.exposeAsGroupOnly ? 'img' : 'region'
+                );
+                seriesEl.setAttribute('tabindex', '-1');
+                seriesEl.setAttribute(
+                    'aria-label',
+                    component.stripTags(
+                        a11yOptions.seriesDescriptionFormatter &&
+                        a11yOptions.seriesDescriptionFormatter(series) ||
+                        component.defaultSeriesDescriptionFormatter(series)
+                    )
+                );
+            }
+        }
+    },
+
+
+    /**
+     * Return string with information about series.
+     * @private
+     * @return {string}
+     */
+    defaultSeriesDescriptionFormatter: function (series) {
+        var chart = series.chart,
+            seriesA11yOptions = series.options.accessibility || {},
+            desc = seriesA11yOptions.description,
+            description = desc && chart.langFormat(
+                'accessibility.series.description', {
+                    description: desc,
+                    series: series
+                }
+            ),
+            xAxisInfo = chart.langFormat(
+                'accessibility.series.xAxisDescription',
+                {
+                    name: series.xAxis && series.xAxis.getDescription(),
+                    series: series
+                }
+            ),
+            yAxisInfo = chart.langFormat(
+                'accessibility.series.yAxisDescription',
+                {
+                    name: series.yAxis && series.yAxis.getDescription(),
+                    series: series
+                }
+            ),
+            summaryContext = {
+                name: series.name || '',
+                ix: series.index + 1,
+                numSeries: chart.series && chart.series.length,
+                numPoints: series.points && series.points.length,
+                series: series
+            },
+            combination = chart.types && chart.types.length > 1 ?
+                'Combination' : '',
+            summary = chart.langFormat(
+                'accessibility.series.summary.' + series.type + combination,
+                summaryContext
+            ) || chart.langFormat(
+                'accessibility.series.summary.default' + combination,
+                summaryContext
+            );
+
+        return summary + (description ? ' ' + description : '') + (
+            chart.yAxis && chart.yAxis.length > 1 && this.yAxis ?
+                ' ' + yAxisInfo : ''
+        ) + (
+            chart.xAxis && chart.xAxis.length > 1 && this.xAxis ?
+                ' ' + xAxisInfo : ''
+        );
+    },
+
+
+    /**
+     * Return string with information about point.
+     * @private
+     * @return {string}
+     */
+    defaultPointDescriptionFormatter: function (point) {
+        var series = point.series,
+            chart = series.chart,
+            a11yOptions = chart.options.accessibility,
+            infoString = '',
+            description = point.options && point.options.accessibility &&
+                point.options.accessibility.description,
+            dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
+            timeDesc =
+                dateTimePoint &&
+                chart.time.dateFormat(
+                    a11yOptions.pointDateFormatter &&
+                    a11yOptions.pointDateFormatter(point) ||
+                    a11yOptions.pointDateFormat ||
+                    H.Tooltip.prototype.getXDateFormat.call(
+                        {
+                            getDateFormat: H.Tooltip.prototype.getDateFormat,
+                            chart: chart
+                        },
+                        point,
+                        chart.options.tooltip,
+                        series.xAxis
+                    ),
+                    point.x
+                ),
+            hasSpecialKey = H.find(series.specialKeys, function (key) {
+                return point[key] !== undefined;
+            });
+
+        // If the point has one of the less common properties defined, display
+        // all that are defined
+        if (hasSpecialKey) {
+            if (dateTimePoint) {
+                infoString = timeDesc;
+            }
+            series.commonKeys.concat(series.specialKeys).forEach(
+                function (key) {
+                    if (
+                        point[key] !== undefined &&
+                        !(dateTimePoint && key === 'x')
+                    ) {
+                        infoString += (infoString ? '. ' : '') +
+                            key + ', ' +
+                            point[key];
+                    }
+                }
+            );
+        } else {
+            // Pick and choose properties for a succint label
+            var pointCategory = series.xAxis && series.xAxis.categories &&
+                    point.category !== undefined && '' + point.category;
+            infoString =
+                (
+                    point.name ||
+                    timeDesc ||
+                    pointCategory || (
+                        point.id && point.id.indexOf('highcharts-') < 0 ?
+                            point.id : ('x, ' + point.x)
+                    )
+                ) + ', ' +
+                (point.value !== undefined ? point.value : point.y);
+        }
+
+        return (point.index + 1) + '. ' + infoString + '.' +
+            (description ? ' ' + description : '') +
+            (chart.series.length > 1 && series.name ? ' ' + series.name : '');
     }
 
 });

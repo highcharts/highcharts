@@ -72,7 +72,7 @@ AccessibilityComponent.prototype = {
      * Should remove any event handlers added, as well as any DOM elements.
      * @private
      */
-    destroy: function () {
+    destroyBase: function () {
         this.eventRemovers.forEach(function (remover) {
             remover();
         });
@@ -129,7 +129,15 @@ AccessibilityComponent.prototype = {
      * Called on updates to the chart, including options changes.
      * Note that this is also called on first render of chart.
      */
-    onChartUpdate: function () {}
+    onChartUpdate: function () {},
+
+    /**
+     * Called when accessibility is disabled or chart is destroyed.
+     * Should call destroyBase to make sure events/elements added are removed.
+     */
+    destroy: function () {
+        this.destroyBase();
+    }
 
 };
 

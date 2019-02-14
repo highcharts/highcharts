@@ -18,6 +18,7 @@ import SeriesComponent from './components/SeriesComponent.js';
 import ZoomComponent from './components/ZoomComponent.js';
 import RangeSelectorComponent from './components/RangeSelectorComponent.js';
 import InfoRegionComponent from './components/InfoRegionComponent.js';
+import ContainerComponent from './components/ContainerComponent.js';
 import defaultOptions from './options.js';
 import '../../modules/accessibility/a11y-i18n.js';
 
@@ -30,7 +31,7 @@ H.merge(true, H.defaultOptions, defaultOptions);
 
 /*
  * Add focus border functionality to SVGElements. Draws a new rect on top of
- * element around its bounding box.
+ * element around its bounding box. This is used by multiple components.
  */
 H.extend(H.SVGElement.prototype, {
 
@@ -90,7 +91,7 @@ H.extend(H.SVGElement.prototype, {
 
 /**
  * Set chart's focus to an SVGElement. Calls focus() on it, and draws the focus
- * border.
+ * border. This is used by multiple components.
  *
  * @private
  * @function Highcharts.Chart#setFocusToElement
@@ -144,6 +145,26 @@ H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
 
 
 /**
+ * Get descriptive label for axis. This is used by multiple components.
+ *
+ * @private
+ * @function Highcharts.Axis#getDescription
+ *
+ * @return {string}
+ */
+H.Axis.prototype.getDescription = function () {
+    return (
+        this.userOptions && this.userOptions.description ||
+        this.axisTitle && this.axisTitle.textStr ||
+        this.options.id ||
+        this.categories && 'categories' ||
+        this.isDatetimeAxis && 'Time' ||
+        'values'
+    );
+};
+
+
+/**
  * The Accessibility class
  *
  * @private
@@ -174,17 +195,21 @@ Accessibility.prototype = {
 
         // Add the components
         var components = this.components = {
-            // container
+            container: new ContainerComponent(chart),
             infoRegion: new InfoRegionComponent(chart),
+            legend: new LegendComponent(chart),
             chartMenu: new MenuComponent(chart),
             rangeSelector: new RangeSelectorComponent(chart),
             series: new SeriesComponent(chart),
-            legend: new LegendComponent(chart),
             zoom: new ZoomComponent(chart)
         };
 
         this.keyboardNavigation = new KeyboardNavigation(chart, components);
-        this.update();
+        if (chart.options.accessibility.enabled) {
+            this.update();
+        } else {
+            chart.renderTo.setAttribute('aria-hidden', true);
+        }
     },
 
 
@@ -195,6 +220,9 @@ Accessibility.prototype = {
         var components = this.components,
             accessibilityOptions = this.chart.options.accessibility;
 
+        // Update the chart type list as this is used by multiple modules
+        this.chart.types = this.getChartTypes();
+
         // Update markup
         Object.keys(components).forEach(function (componentName) {
             components[componentName].onChartUpdate();
@@ -202,9 +230,7 @@ Accessibility.prototype = {
 
         // Update keyboard navigation
         this.keyboardNavigation.update(
-            accessibilityOptions &&
-                accessibilityOptions.keyboardNavigation &&
-                accessibilityOptions.keyboardNavigation.order
+            accessibilityOptions.keyboardNavigation.order
         );
     },
 
@@ -226,6 +252,19 @@ Accessibility.prototype = {
         if (this.chart.focusElement) {
             this.chart.focusElement.removeFocusBorder();
         }
+    },
+
+
+    /**
+     * Return a list of the types of series we have in the chart.
+     * @private
+     */
+    getChartTypes: function () {
+        var types = {};
+        this.chart.series.forEach(function (series) {
+            types[series.type] = 1;
+        });
+        return Object.keys(types);
     },
 
 
@@ -291,6 +330,9 @@ Accessibility.prototype = {
         });
 
         // Loop through all series and handle options
+        if (!chart.series) {
+            return;
+        }
         chart.series.forEach(function (series) {
             // Handle series wide options
             Object.keys(oldToNewSeriesOptions).forEach(function (oldOption) {
@@ -313,17 +355,18 @@ Accessibility.prototype = {
             });
 
             // Loop through the points and handle point.description
-            series.points.forEach(function (point) {
-                if (point.options && point.options.description) {
-                    point.options.accessibility =
-                        point.options.accessibility || {};
-                    point.options.accessibility.description =
-                        point.options.description;
-                    warn(
-                        'point.description', 'point.accessibility.description'
-                    );
-                }
-            });
+            if (series.points) {
+                series.points.forEach(function (point) {
+                    if (point.options && point.options.description) {
+                        point.options.accessibility =
+                            point.options.accessibility || {};
+                        point.options.accessibility.description =
+                            point.options.description;
+                        warn('point.description',
+                            'point.accessibility.description');
+                    }
+                });
+            }
         });
     }
 
@@ -332,7 +375,7 @@ Accessibility.prototype = {
 
 // Init on chart when loaded
 addEvent(H.Chart, 'load', function () {
-    var accessibilityOptions = this.options.accessibility;
+    var accessibilityOptions = this.options && this.options.accessibility;
     if (accessibilityOptions && accessibilityOptions.enabled) {
         this.accessibility = new Accessibility(this);
     }
@@ -374,7 +417,6 @@ addEvent(H.Point, 'update', function () {
         }
     });
 });
-
 
 // Destroy with chart
 addEvent(H.Chart, 'destroy', function () {

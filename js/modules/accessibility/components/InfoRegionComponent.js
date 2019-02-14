@@ -24,26 +24,6 @@ var doc = H.win.document,
 
 
 /**
- * Get descriptive label for axis.
- *
- * @private
- * @function Highcharts.Axis#getDescription
- *
- * @return {string}
- */
-H.Axis.prototype.getDescription = function () {
-    return (
-        this.userOptions && this.userOptions.description ||
-        this.axisTitle && this.axisTitle.textStr ||
-        this.options.id ||
-        this.categories && 'categories' ||
-        this.isDatetimeAxis && 'Time' ||
-        'values'
-    );
-};
-
-
-/**
  * Return simplified text description of chart type. Some types will not be
  * familiar to most users, but in those cases we try to add a description of the
  * type.
@@ -109,53 +89,6 @@ H.Chart.prototype.getTypeDescription = function (types) {
 
 
 /**
- * Return object with text description of each of the chart's axes.
- *
- * @private
- * @function Highcharts.Chart#getAxesDescription
- *
- * @return {*}
- */
-H.Chart.prototype.getAxesDescription = function () {
-    var numXAxes = this.xAxis.length,
-        numYAxes = this.yAxis.length,
-        desc = {};
-
-    if (numXAxes) {
-        desc.xAxis = this.langFormat(
-            'accessibility.axis.xAxisDescription' + (
-                numXAxes > 1 ? 'Plural' : 'Singular'
-            ),
-            {
-                chart: this,
-                names: this.xAxis.map(function (axis) {
-                    return axis.getDescription();
-                }),
-                numAxes: numXAxes
-            }
-        );
-    }
-
-    if (numYAxes) {
-        desc.yAxis = this.langFormat(
-            'accessibility.axis.yAxisDescription' + (
-                numYAxes > 1 ? 'Plural' : 'Singular'
-            ),
-            {
-                chart: this,
-                names: this.yAxis.map(function (axis) {
-                    return axis.getDescription();
-                }),
-                numAxes: numYAxes
-            }
-        );
-    }
-
-    return desc;
-};
-
-
-/**
  * The InfoRegionComponent class
  *
  * @private
@@ -195,22 +128,9 @@ H.extend(InfoRegionComponent.prototype, {
      * Called on first render/updates to the chart, including options changes.
      */
     onChartUpdate: function () {
-        if (this.chart.options.accessibility.enabled) {
-            // Create/update the screen reader region
-            this.updateScreenReaderRegion();
-        } else if (this.screenReaderRegion) {
-            // Hide info region
-            this.screenReaderRegion.setAttribute('aria-hidden', true);
-        }
-    },
-
-
-    /**
-     * Update the screen reader region.
-     * @private
-     */
-    updateScreenReaderRegion: function () {
+        // Create/update the screen reader region
         var chart = this.chart,
+            a11yOptions = chart.options.accessibility,
             hiddenSectionId = 'highcharts-information-region-' + chart.index,
             hiddenSection = this.screenReaderRegion =
                 this.screenReaderRegion || this.createElement('div'),
@@ -231,10 +151,9 @@ H.extend(InfoRegionComponent.prototype, {
             )
         );
 
-        hiddenSection.innerHTML = (
-            chart.options.accessibility.screenReaderSectionFormatter ||
-            this.defaultScreenReaderSectionFormatter
-        )(chart);
+        hiddenSection.innerHTML = a11yOptions.screenReaderSectionFormatter ?
+            a11yOptions.screenReaderSectionFormatter(chart) :
+            this.defaultScreenReaderSectionFormatter(chart);
 
         // Add shortcut to data table if export-data is loaded
         if (chart.getCSV && chart.options.accessibility.addTableShortcut) {
@@ -272,13 +191,24 @@ H.extend(InfoRegionComponent.prototype, {
 
 
     /**
+     * Accessibility disabled/chart destroyed.
+     */
+    destroy: function () {
+        if (this.screenReaderRegion) {
+            this.screenReaderRegion.setAttribute('aria-hidden', true);
+        }
+        this.destroyBase();
+    },
+
+
+    /**
      * The default formatter for the screen reader section.
      * @private
      */
     defaultScreenReaderSectionFormatter: function () {
         var chart = this.chart,
             options = chart.options,
-            chartTypes = this.getChartTypes(),
+            chartTypes = chart.types,
             formatContext = {
                 chart: chart,
                 numSeries: chart.series && chart.series.length
@@ -304,18 +234,18 @@ H.extend(InfoRegionComponent.prototype, {
                 ''
         ) +
         '</h3>' + (
-            options.chart.description ? (
+            options.accessibility.description ? (
                 '<h4>' + chart.langFormat(
                     'accessibility.longDescriptionHeading',
                     formatContext
                 ) +
-                '</h4><div>' + options.chart.description + '</div>'
+                '</h4><div>' + options.accessibility.description + '</div>'
             ) : ''
         ) + '<h4>' + chart.langFormat(
             'accessibility.structureHeading', formatContext
         ) + '</h4><div>' +
         (
-            options.chart.typeDescription ||
+            options.accessibility.typeDescription ||
             chart.getTypeDescription(chartTypes)
         ) + '</div>' +
         (axesDesc.xAxis ? (
@@ -328,16 +258,49 @@ H.extend(InfoRegionComponent.prototype, {
 
 
     /**
-     * Return a list of the types of series we have in the chart.
+     * Return object with text description of each of the chart's axes.
      * @private
+     * @return {*}
      */
-    getChartTypes: function () {
-        var types = {};
-        this.chart.series.forEach(function (series) {
-            types[series.type] = 1;
-        });
-        return Object.keys(types);
+    getAxesDescription: function () {
+        var chart = this.chart,
+            numXAxes = chart.xAxis.length,
+            numYAxes = chart.yAxis.length,
+            desc = {};
+
+        if (numXAxes) {
+            desc.xAxis = chart.langFormat(
+                'accessibility.axis.xAxisDescription' + (
+                    numXAxes > 1 ? 'Plural' : 'Singular'
+                ),
+                {
+                    chart: chart,
+                    names: chart.xAxis.map(function (axis) {
+                        return axis.getDescription();
+                    }),
+                    numAxes: numXAxes
+                }
+            );
+        }
+
+        if (numYAxes) {
+            desc.yAxis = chart.langFormat(
+                'accessibility.axis.yAxisDescription' + (
+                    numYAxes > 1 ? 'Plural' : 'Singular'
+                ),
+                {
+                    chart: chart,
+                    names: chart.yAxis.map(function (axis) {
+                        return axis.getDescription();
+                    }),
+                    numAxes: numYAxes
+                }
+            );
+        }
+
+        return desc;
     }
+
 });
 
 export default InfoRegionComponent;

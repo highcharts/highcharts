@@ -253,10 +253,13 @@ KeyboardNavigation.prototype = {
     addExitAnchor: function () {
         var chart = this.chart,
             exitAnchor = this.exitAnchor = doc.createElement('div'),
-            keyboardNavigation = this;
+            keyboardNavigation = this,
+            exitAnchorLabel = chart.langFormat(
+                'accessibility.svgContainerEnd', { chart: chart }
+            );
 
         exitAnchor.setAttribute('tabindex', '0');
-        exitAnchor.setAttribute('aria-label', 'End of interactive chart');
+        exitAnchor.setAttribute('aria-label', exitAnchorLabel);
 
         // Hide exit anchor
         merge(true, exitAnchor.style, {

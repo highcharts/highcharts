@@ -56,16 +56,9 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
  */
 var RangeSelectorComponent = function (chart) {
     this.initBase(chart);
-    this.init();
 };
 RangeSelectorComponent.prototype = new AccessibilityComponent();
 H.extend(RangeSelectorComponent.prototype, {
-
-    /**
-     * Init the component.
-     */
-    init: function () {},
-
 
     /**
      * Called on first render/updates to the chart, including options changes.
