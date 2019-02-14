@@ -5,6 +5,27 @@
  */
 
 /**
+ * @interface Highcharts.RangeSelectorButtonThemeOptionsObject
+ * @extends Highcharts.SVGAttributes
+ *//**
+ * @name Highcharts.RangeSelectorButtonThemeOptionsObject#states
+ * @type {Highcharts.RangeSelectorButtonThemeStatesOptionsObject|undefined}
+ */
+
+/**
+ * @interface Highcharts.RangeSelectorButtonThemeStatesOptionsObject
+ *//**
+ * @name Highcharts.RangeSelectorButtonThemeStatesOptionsObject#disabled
+ * @type {Highcharts.SVGAttributes|undefined}
+ *//**
+ * @name Highcharts.RangeSelectorButtonThemeStatesOptionsObject#hover
+ * @type {Highcharts.SVGAttributes|undefined}
+ *//**
+ * @name Highcharts.RangeSelectorButtonThemeStatesOptionsObject#select
+ * @type {Highcharts.SVGAttributes|undefined}
+ */
+
+/**
  * Callback function to react on button clicks.
  *
  * @callback Highcharts.RangeSelectorClickCallbackFunction
@@ -268,7 +289,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/styling/
          *         Styling the buttons and inputs
          *
-         * @type {Highcharts.SVGAttributes}
+         * @type {Highcharts.RangeSelectorButtonThemeOptionsObject}
          */
         buttonTheme: {
             /** @ignore */
