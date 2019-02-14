@@ -136,7 +136,7 @@ Highcharts.chart('container', {
         keys: ['from', 'to'],
         data: dataset.data,
         nodes: dataset.nodes,
-        type: 'orgchart',
+        type: 'organization',
         name: 'Highcharts Org Chart POC',
         colorByPoint: false,
         color: '#007ad0',

@@ -12,7 +12,7 @@ import H from '../parts/Globals.js';
 
 var base = H.seriesTypes.sankey.prototype;
 H.seriesType(
-    'orgchart',
+    'organization',
     'sankey',
     {
         borderColor: '${palette.neutralColor60}',
