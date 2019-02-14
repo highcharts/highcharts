@@ -1651,7 +1651,8 @@ if (seriesTypes.pie) {
                     // after the pie has reached minSize (#223).
                     if (dataLabel.sideOverflow) {
                         dataLabel._attr.width =
-                            dataLabel.getBBox().width - dataLabel.sideOverflow;
+                            Math.max(dataLabel.getBBox().width -
+                            dataLabel.sideOverflow, 0);
 
                         dataLabel.css({
                             width: dataLabel._attr.width + 'px',
