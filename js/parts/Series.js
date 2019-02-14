@@ -5307,7 +5307,8 @@ H.Series = H.seriesType(
 
             // SVGRenderer needs to know this before drawing elements (#1089,
             // #1795)
-            group.inverted = series.isCartesian ? inverted : false;
+            group.inverted = series.isCartesian || series.invertable ?
+                inverted : false;
 
             // draw the graph if any
             if (series.drawGraph) {

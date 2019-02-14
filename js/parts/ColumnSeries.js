@@ -909,7 +909,7 @@ seriesType('column', 'line'
                             point.selected && 'select'
                         ))
                             .shadow(
-                                options.shadow,
+                                point.allowShadow !== false && options.shadow,
                                 null,
                                 options.stacking && !options.borderRadius
                             );

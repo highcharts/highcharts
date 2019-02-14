@@ -165,6 +165,7 @@ seriesType('sankey', 'column'
 
     }, {
         isCartesian: false,
+        invertable: true,
         forceDL: true,
         orderNodes: true,
         // Create a single node that holds information on incoming and outgoing
@@ -640,8 +641,9 @@ seriesType('sankey', 'column'
             // Then translate links
             this.nodes.forEach(function (node) {
                 // Translate the links from this node
-                node.linksFrom.forEach(function (point) {
-                    series.translateLink(point);
+                node.linksFrom.forEach(function (linkPoint) {
+                    series.translateLink(linkPoint);
+                    linkPoint.allowShadow = false;
                 });
             });
         },

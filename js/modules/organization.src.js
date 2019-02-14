@@ -1,7 +1,7 @@
 /* *
- * X-range series module
+ * Organization chart module
  *
- * (c) 2010-2019 Torstein Honsi, Lars A. V. Cabrera
+ * (c) 2018-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
