@@ -14,9 +14,7 @@ test_seriesLine();
  * Tests Highcharts.seriesTypes.line in a simple use case.
  */
 function test_seriesLine() {
-
-    const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
+    const lineData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     Highcharts.stockChart('container', {
         chart: {
             borderWidth: 1
@@ -26,12 +24,12 @@ function test_seriesLine() {
         },
         navigator: {
             series: {
-                data: data
+                data: lineData
             }
         },
         series: [{
             type: 'line',
-            data: data,
+            data: lineData,
             tooltip: {
                 valueDecimals: 2
             }
