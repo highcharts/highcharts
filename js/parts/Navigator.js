@@ -370,7 +370,7 @@ extend(defaultOptions, {
              * Unless data is explicitly defined, the data is borrowed from the
              * first series in the chart.
              *
-             * @type      {Array<null|number|object|Array<null|number|string>>}
+             * @type      {Array<number|Array<number|string|null>|object|null>}
              * @product   highstock
              * @apioption navigator.series.data
              */
