@@ -194,7 +194,7 @@
  * @type {number|undefined}
  *//**
  * @name Highcharts.TooltipFormatterContextObject#point
- * @type {Highcharts.Point}
+ * @type {Highcharts.Point|object}
  *//**
  * @name Highcharts.TooltipFormatterContextObject#points
  * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
