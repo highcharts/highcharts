@@ -196,6 +196,9 @@
  * @name Highcharts.TooltipFormatterContextObject#point
  * @type {Highcharts.Point}
  *//**
+ * @name Highcharts.TooltipFormatterContextObject#points
+ * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
+ *//**
  * @name Highcharts.TooltipFormatterContextObject#series
  * @type {Highcharts.Series}
  *//**
