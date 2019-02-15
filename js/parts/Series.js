@@ -130,11 +130,11 @@
  * @type {Function}
  *//**
  * Related series.
- * @name Highcharts.SeriesCheckboxClickEventObject#target
+ * @name Highcharts.SeriesLegendItemClickEventObject#target
  * @type {Highcharts.Series}
  *//**
  * Event type.
- * @name Highcharts.SeriesCheckboxClickEventObject#type
+ * @name Highcharts.SeriesLegendItemClickEventObject#type
  * @type {"checkboxClick"}
  */
 
