@@ -82,7 +82,7 @@
  * Common information for a click event on a series.
  *
  * @interface Highcharts.SeriesClickEventObject
- * @implements {global.Event}
+ * @extends {global.Event}
  *//**
  * Nearest point on the graph.
  * @name Highcharts.SeriesClickEventObject#point
@@ -197,7 +197,7 @@
  * Common information for a click event on a series point.
  *
  * @interface Highcharts.SeriesPointClickEventObject
- * @implements {Highcharts.PointerEventObject}
+ * @extends {Highcharts.PointerEventObject}
  *//**
  * Clicked point.
  * @name Highcharts.SeriesPointClickEventObject#point
@@ -257,7 +257,7 @@
  * Information about the select event.
  *
  * @interface Highcharts.SeriesPointSelectEventObject
- * @implements {global.Event}
+ * @extends {global.Event}
  *//**
  * @name Highcharts.SeriesPointSelectEventObject#accumulate
  * @type {boolean}
@@ -280,7 +280,7 @@
  * Information about the unselect event.
  *
  * @interface Highcharts.SeriesPointUnselectEventObject
- * @implements {global.Event}
+ * @extends {global.Event}
  *//**
  * @name Highcharts.SeriesPointUnselectEventObject#accumulate
  * @type {boolean}
@@ -303,7 +303,7 @@
  * Information about the update event.
  *
  * @interface Highcharts.SeriesPointUpdateEventObject
- * @implements {global.Event}
+ * @extends {global.Event}
  *//**
  * Options data of the update event.
  * @name Highcharts.SeriesPointUpdateEventObject#options

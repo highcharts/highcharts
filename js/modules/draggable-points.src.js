@@ -75,7 +75,7 @@
  *
  * @interface Highcharts.SeriesPointDragStartEventObject
  *
- * @implements {global.MouseDownEvent}
+ * @extends {global.MouseDownEvent}
  *//**
  * Data property being dragged.
  * @name Highcharts.SeriesPointDragStartEventObject#updateProp
