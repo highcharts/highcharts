@@ -60,7 +60,7 @@
     "gulp": "^4.0.0",
     "gulp-jsdoc3": "^2.0.0",
     "gzip-size": "^5.0.0",
-    "highcharts-api-docs": "github:highcharts/api-docs#v0.2.5",
+    "highcharts-api-docs": "github:highcharts/api-docs#v0.2.6",
     "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.2.3",
     "highcharts-docstrap": "github:highcharts/highcharts-docstrap#v1.3.0",
     "husky": "latest",
