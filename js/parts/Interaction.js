@@ -1021,6 +1021,13 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
         // hover this
         series.setState('hover');
+
+        /**
+         * Contains the original hovered series.
+         *
+         * @name Highcharts.Chart#hoverSeries
+         * @type {Highcharts.Series|null}
+         */
         chart.hoverSeries = series;
     },
 
