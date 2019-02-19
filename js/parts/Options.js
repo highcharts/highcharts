@@ -3094,20 +3094,20 @@ H.defaultOptions = {
 
         /**
          * The name of a symbol to use for the border around the tooltip. Can
-         * be one of: `"callout"`, `"circle"` or `"square"`. When
-         * [tooltip.split](#tooltip.split) option is enabled, shape is applied
-         * to all boxes except header, which is controlled by
+         * be one of: `"callout"`, `"circle"`, or `"square"`. When
+         * [tooltip.split](#tooltip.split)
+         * option is enabled, shape is applied to all boxes except header, which
+         * is controlled by
          * [tooltip.headerShape](#tooltip.headerShape).
          *
          * Custom callbacks for symbol path generation can also be added to
          * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
          * [series.marker.symbol](plotOptions.line.marker.symbol).
          *
-         * @type       {string}
-         * @default    callout
-         * @since      4.0
-         * @validvalue ["callout", "square"]
-         * @apioption  tooltip.shape
+         * @type      {Highcharts.TooltipShapeValue}
+         * @default   callout
+         * @since     4.0
+         * @apioption tooltip.shape
          */
 
         /**
