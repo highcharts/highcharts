@@ -13,7 +13,7 @@
 /**
  * Possible rotation options for data labels in the sunburst series.
  *
- * @typedef {"auto"|"perpendicular"|"parallel"} Highcharts.SeriesSunburstDataLabelsRotationValues
+ * @typedef {"auto"|"perpendicular"|"parallel"} Highcharts.SeriesSunburstDataLabelsRotationValue
  */
 
 /**
@@ -36,7 +36,7 @@
  * The `series.rotation` option takes precedence over `rotationMode`.
  *
  * @name Highcharts.SeriesSunburstDataLabelsOptionsObject#rotationMode
- * @type {Highcharts.SeriesSunburstDataLabelsRotationValues|undefined}
+ * @type {Highcharts.SeriesSunburstDataLabelsRotationValue|undefined}
  * @since 6.0.0
  */
 

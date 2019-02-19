@@ -7,18 +7,18 @@
  */
 
 /**
- * @interface Highcharts.LegendBubbleLegendFormatterContextObject
+ * @interface Highcharts.BubbleLegendFormatterContextObject
  *//**
  * The center y position of the range.
- * @name Highcharts.LegendBubbleLegendFormatterContextObject#center
+ * @name Highcharts.BubbleLegendFormatterContextObject#center
  * @type {number}
  *//**
  * The radius of the bubble range.
- * @name Highcharts.LegendBubbleLegendFormatterContextObject#radius
+ * @name Highcharts.BubbleLegendFormatterContextObject#radius
  * @type {number}
  *//**
  * The bubble value.
- * @name Highcharts.LegendBubbleLegendFormatterContextObject#value
+ * @name Highcharts.BubbleLegendFormatterContextObject#value
  * @type {number}
  */
 
@@ -176,7 +176,7 @@ if (!H.BubbleLegend) {
                      *
                      * - `this.center`: The center y position of the range.
                      *
-                     * @type {Highcharts.FormatterCallbackFunction<Highcharts.LegendBubbleLegendFormatterContextObject>}
+                     * @type {Highcharts.FormatterCallbackFunction<Highcharts.BubbleLegendFormatterContextObject>}
                      */
                     formatter: undefined,
                     /**
