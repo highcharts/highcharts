@@ -6,6 +6,10 @@
  *
  * */
 
+/**
+ * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
+ */
+
 'use strict';
 
 import H from './Globals.js';
@@ -83,8 +87,7 @@ var addEvent = H.addEvent,
  * @sample {highstock} stock/plotoptions/series-datagrouping-approximation
  *         Approximation callback with custom data
  *
- * @type       {string|Function}
- * @validvalue ["average", "averages", "open", "high", "low", "close", "sum"]
+ * @type       {Highcharts.DataGroupingApproximationValue|Function}
  * @product    highstock
  * @apioption  plotOptions.series.dataGrouping.approximation
  */

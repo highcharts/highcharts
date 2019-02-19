@@ -182,12 +182,11 @@ if (!H.BubbleLegend) {
                     /**
                      * The alignment of the labels compared to the bubble
                      * legend. Can be one of `left`, `center` or `right`.
-                     * @validvalue ["left", "center", "right"]
                      *
                      * @sample highcharts/bubble-legend/connectorandlabels/
                      *         Labels on left
                      *
-                     * @validvalue ["left", "center", "right"]
+                     * @type {Highcharts.AlignValue}
                      */
                     align: 'right',
                     /**

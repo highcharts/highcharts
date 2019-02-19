@@ -468,8 +468,8 @@ extend(defaultOptions, {
              * @sample {highstock} stock/rangeselector/input-button-position/
              *         Alignment
              *
-             * @since      6.0.0
-             * @validvalue ["left", "center", "right"]
+             * @type  {Highcharts.AlignValue}
+             * @since 6.0.0
              */
             align: 'left',
 
