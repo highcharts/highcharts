@@ -293,7 +293,8 @@ seriesType(
         levelIsConstant: true,
         /**
          * Options for the button appearing when drilling down in a treemap.
-         * Deprecated and replaced by [traverseUpButton](#plotOptions.treemap.traverseUpButton).
+         * Deprecated and replaced by
+         * [traverseUpButton](#plotOptions.treemap.traverseUpButton).
          *
          * @deprecated
          */
@@ -310,17 +311,17 @@ seriesType(
                  * Vertical alignment of the button.
                  *
                  * @deprecated
-                 * @default    top
-                 * @validvalue ["top", "middle", "bottom"]
-                 * @product    highcharts
-                 * @apioption  plotOptions.treemap.drillUpButton.position.verticalAlign
+                 * @type      {Highcharts.VerticalAlignValue}
+                 * @default   top
+                 * @product   highcharts
+                 * @apioption plotOptions.treemap.drillUpButton.position.verticalAlign
                  */
 
                 /**
                  * Horizontal alignment of the button.
                  *
                  * @deprecated
-                 * @validvalue ["left", "center", "right"]
+                 * @type {Highcharts.AlignValue}
                  */
                 align: 'right',
 
@@ -353,16 +354,16 @@ seriesType(
                 /**
                  * Vertical alignment of the button.
                  *
-                 * @default    top
-                 * @validvalue ["top", "middle", "bottom"]
-                 * @product    highcharts
-                 * @apioption  plotOptions.treemap.traverseUpButton.position.verticalAlign
+                 * @type      {Highcharts.VerticalAlignValue}
+                 * @default   top
+                 * @product   highcharts
+                 * @apioption plotOptions.treemap.traverseUpButton.position.verticalAlign
                  */
 
                 /**
                  * Horizontal alignment of the button.
                  *
-                 * @validvalue ["left", "center", "right"]
+                 * @type {Highcharts.AlignValue}
                  */
                 align: 'right',
 

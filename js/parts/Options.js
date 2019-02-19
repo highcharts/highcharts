@@ -1835,8 +1835,9 @@ H.defaultOptions = {
          */
 
         /**
-         * The vertical alignment of the title. Can be one of "top", "middle"
-         * and "bottom". When a value is given, the title behaves as floating.
+         * The vertical alignment of the title. Can be one of `"top"`,
+         * `"middle"` and `"bottom"`. When a value is given, the title behaves
+         * as floating.
          *
          * @sample {highcharts} highcharts/subtitle/verticalalign/
          *         Footnote at the bottom right of plot area

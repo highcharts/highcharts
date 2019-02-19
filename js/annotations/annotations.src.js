@@ -216,9 +216,10 @@ merge(
                  * The alignment of the annotation's label. If right,
                  * the right side of the label should be touching the point.
                  *
-                 * @validvalue ["left", "center", "right"]
                  * @sample highcharts/annotations/label-position/
                  *         Set labels position
+                 *
+                 * @type {Highcharts.AlignValue}
                  */
                 align: 'center',
 
@@ -402,10 +403,10 @@ merge(
                 /**
                  * The vertical alignment of the annotation's label.
                  *
-                 * @type {string}
-                 * @validvalue ["top", "middle", "bottom"]
                  * @sample highcharts/annotations/label-position/
                  *         Set labels position
+                 *
+                 * @type {Highcharts.VerticalAlignValue}
                  */
                 verticalAlign: 'bottom',
 

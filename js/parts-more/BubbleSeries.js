@@ -125,9 +125,8 @@ seriesType('bubble', 'scatter', {
          * @sample     {highcharts} highcharts/plotoptions/series-marker-symbol/
          *             General chart with predefined, graphic and custom markers
          *
-         * @since      5.0.11
-         * @validvalue ["circle", "square", "diamond", "triangle",
-         *             "triangle-down"]
+         * @type  {Highcharts.SymbolKeyValue|string}
+         * @since 5.0.11
          */
         symbol: 'circle'
 

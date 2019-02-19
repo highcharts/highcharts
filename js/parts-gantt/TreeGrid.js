@@ -590,7 +590,7 @@ override(GridAxis.prototype, {
                          * The symbol type. Points to a definition function in
                          * the `Highcharts.Renderer.symbols` collection.
                          *
-                         * @validvalue ["arc", "circle", "diamond", "square", "triangle", "triangle-down"]
+                         * @type {Highcharts.SymbolKeyValue}
                          */
                         type: 'triangle',
                         x: -5,

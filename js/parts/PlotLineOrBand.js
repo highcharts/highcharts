@@ -750,11 +750,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotlines-label-verticalalign-middle/
      *         Vertically centered label
      *
-     * @type       {Highcharts.VerticalAlignValue}
-     * @default    {highcharts} top
-     * @default    {highstock} top
-     * @since      2.1
-     * @apioption  xAxis.plotLines.label.verticalAlign
+     * @type      {Highcharts.VerticalAlignValue}
+     * @default   {highcharts} top
+     * @default   {highstock} top
+     * @since     2.1
+     * @apioption xAxis.plotLines.label.verticalAlign
      */
 
     /**

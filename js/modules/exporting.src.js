@@ -71,6 +71,12 @@
  * @type {boolean|undefined}
  */
 
+/**
+ * Possible MIME types for exporting.
+ *
+ * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -277,8 +283,8 @@ merge(true, defaultOptions.navigation, {
          */
 
         /**
-         * The vertical alignment of the buttons. Can be one of "top", "middle"
-         * or "bottom".
+         * The vertical alignment of the buttons. Can be one of `"top"`,
+         * `"middle"` or `"bottom"`.
          *
          * @sample highcharts/navigation/buttonoptions-verticalalign/
          *         Buttons at lower right
@@ -642,8 +648,8 @@ defaultOptions.exporting = {
      * without specifying a `type` option. Possible values are `image/png`,
      *  `image/jpeg`, `application/pdf` and `image/svg+xml`.
      *
-     * @since      2.0
-     * @validvalue ["image/png", "image/jpeg", "application/pdf", "image/svg+xml"]
+     * @type  {Highcharts.ExportingMimeTypeValue}
+     * @since 2.0
      */
     type: 'image/png',
 
@@ -760,8 +766,8 @@ defaultOptions.exporting = {
              * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
              *         Custom shape as symbol
              *
-             * @since      2.0
-             * @validvalue ["menu", "menuball", "exportIcon", "circle", "square", "diamond", "triangle", "triangle-down"]
+             * @type  {Highcharts.SymbolKeyValue|"exportIcon"|"menu"|"menuball"|string}
+             * @since 2.0
              */
             symbol: 'menu',
 
