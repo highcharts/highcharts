@@ -79,31 +79,60 @@ seriesType('networkgraph', 'line', {
                 this.point.toNode.name;
         },
         /**
-         * Options for a _node_ label text which should follow link connection.
+         * Options for a _node_ label text which should follow marker's shape.
          *
+         * **Note:**
+         * Only SVG-based renderer supports this option.
+         *
+         * @sample highcharts/series-networkgraph/textpath-datalabels
+         *          Networkgraph with labels around nodes
          * @since   7.1.0
          */
         textPath: {
-            enabled: false,
-            attributes: {
-                startOffset: '50%',
-                'text-anchor': 'middle',
-                dy: -3
-            }
+            /**
+             * Presentation attributes for the text path.
+             *
+             * @default     {"textAnchor": "middle", "startOffset": "50%", "dy": -5}
+             * @sample      highcharts/series-networkgraph/link-datalabels
+             *              Data labels moved into the nodes
+             *
+             * @type        {Highcharts.SVGAttributes}
+             * @apioption plotOptions.networkgraph.dataLabels.textPath.attributes
+             */
+
+            /**
+             * Enable or disable `textPath` option for marker's data labels.
+             *
+             * @see [linkTextPath](#plotOptions.networkgraph.dataLabels.linkTextPath) option
+             */
+            enabled: false
         },
 
         /**
          * Options for a _link_ label text which should follow link connection.
          *
+         * @sample highcharts/series-networkgraph/link-datalabels
+         *         Networkgraph with dataLabels on links
          * @since   7.1.0
          */
         linkTextPath: {
-            enabled: true,
-            attributes: {
-                startOffset: '50%',
-                'text-anchor': 'middle',
-                dy: -3
-            }
+            /**
+             * Presentation attributes for the text path.
+             *
+             * @default     {"textAnchor": "middle", "startOffset": "50%", "dy": -5}
+             * @sample      highcharts/series-networkgraph/link-datalabels
+             *              Data labels moved under the links
+             *
+             * @type        {Highcharts.SVGAttributes}
+             * @apioption plotOptions.networkgraph.dataLabels.linkTextPath.attributes
+             */
+
+            /**
+             * Enable or disable `textPath` option for link's data labels.
+             *
+             * @see [textPath](#plotOptions.networkgraph.dataLabels.textPath) option
+             */
+            enabled: true
         },
 
         /**
