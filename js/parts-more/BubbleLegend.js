@@ -270,7 +270,7 @@ if (!H.BubbleLegend) {
                  * @sample highcharts/bubble-legend/ranges/
                  *         Size by width
                  *
-                 * @validvalue ["area", "width"]
+                 * @type {Highcharts.BubbleSizeByValue}
                  */
                 sizeBy: 'area',
                 /**

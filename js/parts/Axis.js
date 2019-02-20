@@ -48,43 +48,6 @@
  */
 
 /**
- * The returned object literal from the {@link Highcharts.Axis#getExtremes}
- * function.
- *
- * @interface Highcharts.ExtremesObject
- *//**
- * The maximum value of the axis' associated series.
- * @name Highcharts.ExtremesObject#dataMax
- * @type {number}
- *//**
- * The minimum value of the axis' associated series.
- * @name Highcharts.ExtremesObject#dataMin
- * @type {number}
- *//**
- * The maximum axis value, either automatic or set manually. If the `max` option
- * is not set, `maxPadding` is 0 and `endOnTick` is false, this value will be
- * the same as `dataMax`.
- * @name Highcharts.ExtremesObject#max
- * @type {number}
- *//**
- * The minimum axis value, either automatic or set manually. If the `min` option
- * is not set, `minPadding` is 0 and `startOnTick` is false, this value will be
- * the same as `dataMin`.
- * @name Highcharts.ExtremesObject#min
- * @type {number}
- *//**
- * The user defined maximum, either from the `max` option or from a zoom or
- * `setExtremes` action.
- * @name Highcharts.ExtremesObject#userMax
- * @type {number}
- *//**
- * The user defined minimum, either from the `min` option or from a zoom or
- * `setExtremes` action.
- * @name Highcharts.ExtremesObject#userMin
- * @type {number}
- */
-
-/**
  * @callback Highcharts.AxisPointBreakEventCallbackFunction
  *
  * @param {Highcharts.Axis} this
@@ -163,6 +126,47 @@
 
 /**
  * @typedef {"high"|"low"|"middle"} Highcharts.AxisTitleAlignValue
+ */
+
+/**
+ * @typedef {"linear"|"logarithmic"|"datetime"|"category"|"treegrid"} Highcharts.AxisTypeValue
+ */
+
+/**
+ * The returned object literal from the {@link Highcharts.Axis#getExtremes}
+ * function.
+ *
+ * @interface Highcharts.ExtremesObject
+ *//**
+ * The maximum value of the axis' associated series.
+ * @name Highcharts.ExtremesObject#dataMax
+ * @type {number}
+ *//**
+ * The minimum value of the axis' associated series.
+ * @name Highcharts.ExtremesObject#dataMin
+ * @type {number}
+ *//**
+ * The maximum axis value, either automatic or set manually. If the `max` option
+ * is not set, `maxPadding` is 0 and `endOnTick` is false, this value will be
+ * the same as `dataMax`.
+ * @name Highcharts.ExtremesObject#max
+ * @type {number}
+ *//**
+ * The minimum axis value, either automatic or set manually. If the `min` option
+ * is not set, `minPadding` is 0 and `startOnTick` is false, this value will be
+ * the same as `dataMin`.
+ * @name Highcharts.ExtremesObject#min
+ * @type {number}
+ *//**
+ * The user defined maximum, either from the `max` option or from a zoom or
+ * `setExtremes` action.
+ * @name Highcharts.ExtremesObject#userMax
+ * @type {number}
+ *//**
+ * The user defined minimum, either from the `min` option or from a zoom or
+ * `setExtremes` action.
+ * @name Highcharts.ExtremesObject#userMin
+ * @type {number}
  */
 
 /**
@@ -2092,8 +2096,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/type-log-negative/
          *         Logarithmic with extension to emulate negative values
          *
-         * @product    highcharts gantt
-         * @validvalue ["linear", "logarithmic", "datetime", "category"]
+         * @type    {Highcharts.AxisTypeValue}
+         * @product highcharts gantt
          */
         type: 'linear',
 
@@ -2115,12 +2119,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {gantt} gantt/treegrid-axis/demo
          *         Treegrid axis
          *
-         * @default    {highcharts} linear
-         * @default    {gantt} treegrid
-         * @product    highcharts gantt
-         * @validvalue ["linear", "logarithmic", "datetime", "category",
-         *             "treegrid"]
-         * @apioption  yAxis.type
+         * @type      {Highcharts.AxisTypeValue}
+         * @default   {highcharts} linear
+         * @default   {gantt} treegrid
+         * @product   highcharts gantt
+         * @apioption yAxis.type
          */
 
         /**

@@ -4,6 +4,10 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -183,10 +187,9 @@ seriesType('bubble', 'scatter', {
      * @sample {highcharts} highcharts/plotoptions/bubble-sizeby/
      *         Comparison of area and size
      *
-     * @type       {string}
+     * @type       {Highcharts.BubbleSizeByValue}
      * @default    area
      * @since      3.0.7
-     * @validvalue ["area", "width"]
      * @apioption  plotOptions.bubble.sizeBy
      */
 

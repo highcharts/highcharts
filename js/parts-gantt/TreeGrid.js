@@ -288,7 +288,7 @@ var onTickHoverExit = function (label, options) {
 
 /**
  * Builds the tree of categories and calculates its positions.
- *
+ * @private
  * @param {object} e Event object
  * @param {object} e.target The chart instance which the event was fired on.
  * @param {object[]} e.target.axes The axes of the chart.

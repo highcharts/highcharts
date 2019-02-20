@@ -103,6 +103,13 @@
  */
 
 /**
+ * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
+ * of a line graph.
+ *
+ * @typedef {"butt"|"round"|"square"|string} Highcharts.SeriesLinecapValue
+ */
+
+/**
  * Gets fired when the legend item belonging to the series is clicked. The
  * default action is to toggle the visibility of the series. This can be
  * prevented by returning `false` or calling `event.preventDefault()`.
@@ -577,8 +584,7 @@ H.Series = H.seriesType(
          * of a line graph. Round means that lines are rounded in the ends and
          * bends.
          *
-         * @type       {string}
-         * @validvalue ["round", "butt", "square"]
+         * @type       {Highcharts.SeriesLinecapValue}
          * @default    round
          * @since      3.0.7
          * @apioption  plotOptions.line.linecap
@@ -909,10 +915,9 @@ H.Series = H.seriesType(
         /**
          * The line cap used for line ends and line joins on the graph.
          *
-         * @type       {string}
+         * @type       {Highcharts.SeriesLinecapValue}
          * @default    round
          * @product    highcharts highstock
-         * @validvalue ["round", "square"]
          * @apioption  plotOptions.series.linecap
          */
 
@@ -5240,8 +5245,7 @@ H.Series = H.seriesType(
  * of a line graph. Round means that lines are rounded in the ends and
  * bends.
  *
- * @type       {string}
- * @validvalue ["round", "butt", "square"]
+ * @type       {Highcharts.SeriesLinecapValue}
  * @default    round
  * @since      3.0.7
  * @apioption  plotOptions.line.linecap

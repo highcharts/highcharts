@@ -621,6 +621,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/parts/Time.js',
         './js/parts-gantt/GanttChart.js',
         './js/parts-gantt/TreeGrid.js',
+        './js/parts-map/ColorAxis.js',
         './js/parts-map/GeoJSON.js',
         './js/parts-map/Map.js',
         './js/parts-map/MapNavigation.js',

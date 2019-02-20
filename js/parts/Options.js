@@ -5,6 +5,14 @@
  */
 
 /**
+ * @typedef {"plot"|"chart"} Highcharts.ButtonAlignValue
+ */
+
+/**
+ * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonAlign2Value
+ */
+
+/**
  * Gets fired when a series is added to the chart after load time, using the
  * `addSeries` method. Returning `false` prevents the series from being added.
  *
@@ -1089,10 +1097,9 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/
              *         Relative to the chart
              *
-             * @type       {string}
+             * @type       {Highcharts.ButtonAlignValue}
              * @default    plot
              * @since      2.2
-             * @validvalue ["plot", "chart"]
              * @apioption  chart.resetZoomButton.relativeTo
              */
 
