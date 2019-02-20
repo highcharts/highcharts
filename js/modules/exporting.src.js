@@ -109,13 +109,13 @@ var defaultOptions = H.defaultOptions,
 
 // Add language
 extend(defaultOptions.lang
-/**
- * @optionparent lang
- */
+    /**
+     * @optionparent lang
+     */
     , {
 
         /**
-         * Exporting module only. View the chart in full scren
+         * Exporting module only. View the chart in full screen.
          *
          * @since next
          */
@@ -123,46 +123,46 @@ extend(defaultOptions.lang
 
 
         /**
-     * Exporting module only. The text for the menu item to print the chart.
-     *
-     * @since 3.0.1
-     */
+         * Exporting module only. The text for the menu item to print the chart.
+         *
+         * @since 3.0.1
+         */
         printChart: 'Print chart',
 
         /**
-     * Exporting module only. The text for the PNG download menu item.
-     *
-     * @since 2.0
-     */
+         * Exporting module only. The text for the PNG download menu item.
+         *
+         * @since 2.0
+         */
         downloadPNG: 'Download PNG image',
 
         /**
-     * Exporting module only. The text for the JPEG download menu item.
-     *
-     * @since 2.0
-     */
+         * Exporting module only. The text for the JPEG download menu item.
+         *
+         * @since 2.0
+         */
         downloadJPEG: 'Download JPEG image',
 
         /**
-     * Exporting module only. The text for the PDF download menu item.
-     *
-     * @since 2.0
-     */
+         * Exporting module only. The text for the PDF download menu item.
+         *
+         * @since 2.0
+         */
         downloadPDF: 'Download PDF document',
 
         /**
-     * Exporting module only. The text for the SVG download menu item.
-     *
-     * @since 2.0
-     */
+         * Exporting module only. The text for the SVG download menu item.
+         *
+         * @since 2.0
+         */
         downloadSVG: 'Download SVG vector image',
 
         /**
-     * Exporting module menu. The tooltip title for the context menu holding
-     * print and export menu items.
-     *
-     * @since 3.0
-     */
+         * Exporting module menu. The tooltip title for the context menu holding
+         * print and export menu items.
+         *
+         * @since 3.0
+         */
         contextButtonTitle: 'Chart context menu'
 
     });

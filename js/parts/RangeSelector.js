@@ -5,6 +5,12 @@
  */
 
 /**
+ * Define the time span for the button
+ *
+ * @typedef {"all"|"day"|"millisecond"|"minute"|"month"|"second"|"week"|"ytd"} Highcharts.RangeSelectorButtonTypeValue
+ */
+
+/**
  * Callback function to react on button clicks.
  *
  * @callback Highcharts.RangeSelectorClickCallbackFunction
@@ -212,8 +218,7 @@ extend(defaultOptions, {
          * Defined the time span for the button. Can be one of `millisecond`,
          * `second`, `minute`, `hour`, `day`, `week`, `month`, `ytd`, `all`.
          *
-         * @type       {string}
-         * @validvalue ["millisecond", "second", "minute", "day", "week", "month", "ytd", "all"]
+         * @type       {Highcharts.RangeSelectorButtonTypeValue}
          * @apioption  rangeSelector.buttons.type
          */
 

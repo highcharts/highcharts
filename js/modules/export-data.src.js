@@ -28,6 +28,7 @@ var defined = Highcharts.defined,
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.
+ * @private
  * @param  {string} html The input string
  * @return {string} The excaped string
  */

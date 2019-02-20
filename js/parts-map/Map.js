@@ -51,7 +51,7 @@ defaultOptions.mapNavigation = {
          * What box to align the buttons to. Possible values are `plotBox`
          * and `spacingBox`.
          *
-         * @validvalue ["plotBox", "spacingBox"]
+         * @type {Highcharts.ButtonAlign2Value}
          */
         alignTo: 'plotBox',
 
