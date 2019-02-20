@@ -140,7 +140,8 @@ H.extend(MenuComponent.prototype, {
      */
     onChartUpdate: function () {
         var component = this,
-            chart = this.chart;
+            chart = this.chart,
+            a11yOptions = chart.options.accessibility;
 
         // Set screen reader properties on export menu
         if (
@@ -174,7 +175,9 @@ H.extend(MenuComponent.prototype, {
             );
 
             // Set props on group
-            chart.exportingGroup.element.setAttribute('role', 'region');
+            if (a11yOptions.landmarkVerbosityMode === 'all') {
+                chart.exportingGroup.element.setAttribute('role', 'region');
+            }
             chart.exportingGroup.element.setAttribute('aria-hidden', 'false');
             chart.exportingGroup.element.setAttribute(
                 'aria-label',
@@ -211,7 +214,7 @@ H.extend(MenuComponent.prototype, {
             exportList = chart.exportDivElements,
             contextMenu = chart.contextMenu;
 
-        if (exportList) {
+        if (exportList && exportList.length) {
             // Set tabindex on the menu items to allow focusing by script
             // Set role to give screen readers a chance to pick up the contents
             exportList.forEach(function (item) {

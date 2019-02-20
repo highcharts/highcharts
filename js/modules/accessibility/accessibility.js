@@ -11,6 +11,8 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+import KeyboardNavigationModule from './KeyboardNavigationModule.js';
+import AccessibilityComponent from './AccessibilityComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './components/LegendComponent.js';
 import MenuComponent from './components/MenuComponent.js';
@@ -23,10 +25,16 @@ import defaultOptions from './options.js';
 import '../../modules/accessibility/a11y-i18n.js';
 
 var addEvent = H.addEvent,
-    pick = H.pick;
+    pick = H.pick,
+    merge = H.merge,
+    extend = H.extend;
 
 // Add default options
-H.merge(true, H.defaultOptions, defaultOptions);
+merge(true, H.defaultOptions, defaultOptions);
+
+// Expose classes on Highcharts namespace
+H.KeyboardNavigationModule = KeyboardNavigationModule;
+H.AccessibilityComponent = AccessibilityComponent;
 
 
 /*
@@ -154,7 +162,8 @@ H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
  */
 H.Axis.prototype.getDescription = function () {
     return (
-        this.userOptions && this.userOptions.description ||
+        this.userOptions && this.userOptions.accessibility &&
+            this.userOptions.accessibility.description ||
         this.axisTitle && this.axisTitle.textStr ||
         this.options.id ||
         this.categories && 'categories' ||
@@ -187,6 +196,7 @@ Accessibility.prototype = {
      *        Chart object
      */
     init: function (chart) {
+        var a11yOptions = chart.options.accessibility;
         this.chart = chart;
 
         // Copy over any deprecated options that are used. We could do this on
@@ -203,9 +213,12 @@ Accessibility.prototype = {
             series: new SeriesComponent(chart),
             zoom: new ZoomComponent(chart)
         };
+        if (a11yOptions.customComponents) {
+            extend(this.components, a11yOptions.customComponents);
+        }
 
         this.keyboardNavigation = new KeyboardNavigation(chart, components);
-        if (chart.options.accessibility.enabled) {
+        if (a11yOptions.enabled) {
             this.update();
         } else {
             chart.renderTo.setAttribute('aria-hidden', true);
@@ -218,7 +231,7 @@ Accessibility.prototype = {
      */
     update: function () {
         var components = this.components,
-            accessibilityOptions = this.chart.options.accessibility;
+            a11yOptions = this.chart.options.accessibility;
 
         // Update the chart type list as this is used by multiple modules
         this.chart.types = this.getChartTypes();
@@ -230,7 +243,7 @@ Accessibility.prototype = {
 
         // Update keyboard navigation
         this.keyboardNavigation.update(
-            accessibilityOptions.keyboardNavigation.order
+            a11yOptions.keyboardNavigation.order
         );
     },
 
@@ -282,6 +295,7 @@ Accessibility.prototype = {
      *  series.skipKeyboardNavigation ->
      *      series.accessibility.keyboardNavigation.enabled
      *  point.description -> point.accessibility.description
+     *  axis.description -> axis.accessibility.description
      *
      * @private
      */
@@ -326,6 +340,16 @@ Accessibility.prototype = {
             if (chartOptions[prop]) {
                 a11yOptions[prop] = chartOptions[prop];
                 warn('chart.' + prop, 'accessibility.' + prop);
+            }
+        });
+
+        // Deal with axis description
+        chart.axes.forEach(function (axis) {
+            var opts = axis.options;
+            if (opts && opts.description) {
+                opts.accessibility = opts.accessibility || {};
+                opts.accessibility.description = opts.description;
+                warn('axis.description', 'axis.accessibility.description');
             }
         });
 
@@ -382,7 +406,25 @@ addEvent(H.Chart, 'load', function () {
 });
 
 // Update with chart/series/point updates
-addEvent(H.Chart, 'update', function () {
+addEvent(H.Chart, 'afterUpdate', function (e) {
+    // Merge new options
+    var newOptions = e.options.accessibility;
+    if (newOptions) {
+        // Handle custom component updating specifically
+        if (newOptions.customComponents) {
+            this.options.accessibility.customComponents =
+                newOptions.customComponents;
+            delete newOptions.customComponents;
+        }
+        merge(true, this.options.accessibility, newOptions);
+        // Recreate from scratch if we have custom components
+        if (this.accessibility && this.accessibility.destroy) {
+            this.accessibility.destroy();
+            delete this.accessibility;
+        }
+    }
+
+    // Update/destroy
     var accessibilityOptions = this.options.accessibility;
     if (accessibilityOptions && accessibilityOptions.enabled) {
         if (this.accessibility) {
@@ -403,7 +445,7 @@ addEvent(H.Point, 'update', function () {
         this.series.chart.accessibility.update();
     }
 });
-['update', 'updatedData'].forEach(function (event) {
+['afterUpdate', 'updatedData'].forEach(function (event) {
     addEvent(H.Series, event, function () {
         if (this.chart.accessibility) {
             this.chart.accessibility.update();

@@ -29,7 +29,9 @@ Highcharts.chart('container', {
         title: {
             text: 'Time'
         },
-        description: 'Time from January 2009 to July 2015',
+        accessibility: {
+            description: 'Time from January 2009 to July 2015'
+        },
         categories: ['January 2009', 'December 2010', 'May 2012', 'January 2014', 'July 2015']
     },
 

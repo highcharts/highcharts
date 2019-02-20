@@ -88,6 +88,7 @@ H.extend(LegendComponent.prototype, {
      */
     onChartUpdate: function () {
         var chart = this.chart,
+            a11yOptions = chart.options.accessibility,
             legend = chart.legend || {},
             group = legend.group,
             items = legend.allItems,
@@ -114,10 +115,12 @@ H.extend(LegendComponent.prototype, {
         // Set ARIA on legend items
         if (group && group.element && items.length) {
             group.attr({
-                role: 'region',
                 'aria-hidden': false,
                 'aria-label': chart.langFormat('accessibility.legendLabel')
             });
+            if (a11yOptions.landmarkVerbosityMode === 'all') {
+                group.attr('role', 'region');
+            }
 
             if (this.box && this.box.element) {
                 this.box.attr('aria-hidden', 'true');

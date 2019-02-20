@@ -14,10 +14,17 @@ import Highcharts from '../../parts/Globals.js';
 
 /**
  * The AccessibilityComponent base class, representing a part of the chart that
- * has accessibility logic connected to it. Must call initBase after inheriting.
+ * has accessibility logic connected to it.
  *
- * @private
+ * A component:
+ *  - Must call initBase after inheriting.
+ *  - Can override any of the following functions: init(), destroy(),
+ *      getKeyboardNavigation(), onChartUpdate().
+ *  - Should take care to destroy added elements and unregister event handlers
+ *      on destroy.
+ *
  * @class
+ * @name Highcharts.AccessibilityComponent
  */
 function AccessibilityComponent() {}
 AccessibilityComponent.prototype = {

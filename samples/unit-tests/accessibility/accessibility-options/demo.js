@@ -143,3 +143,34 @@ QUnit.test('Chart description', function (assert) {
         'Chart description included in screen reader region'
     );
 });
+
+QUnit.test('Landmark verbosity', function (assert) {
+    var numRegions = function (chart) {
+            return (
+                chart.renderTo.outerHTML.match(/role="region"/g) || []
+            ).length;
+        },
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                landmarkVerbosityMode: 'disabled'
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6]
+            }]
+        });
+    assert.strictEqual(numRegions(chart), 0, 'No landmarks in chart');
+
+    chart.update({
+        accessibility: {
+            landmarkVerbosityMode: 'one'
+        }
+    });
+    assert.strictEqual(numRegions(chart), 1, 'One landmark in chart');
+
+    chart.update({
+        accessibility: {
+            landmarkVerbosityMode: 'all'
+        }
+    });
+    assert.ok(numRegions(chart) > 1, 'More than one landmark');
+});

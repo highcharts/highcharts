@@ -18,9 +18,8 @@ var doc = H.win.document;
  * Abstraction layer for keyboard navigation. Keep a map of keyCodes to handler
  * functions.
  *
- * @private
  * @class
- * @name KeyboardNavigationModule
+ * @name Highcharts.KeyboardNavigationModule
  *
  * @param {Highcharts.Chart} chart The chart this module should act on.
  * @param {object} options
@@ -59,7 +58,6 @@ KeyboardNavigationModule.prototype = {
     /**
      * Utility function to attempt to fake a click event on an element.
      *
-     * @private
      * @function KeyboardNavigationModule#fakeClickEvent
      * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement}
      * @returns {undefined}

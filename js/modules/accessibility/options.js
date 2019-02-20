@@ -49,6 +49,46 @@ var options = {
         addTableShortcut: true,
 
         /**
+         * Date format to use to describe range of datetime axes.
+         *
+         * For an overview of the replacement codes, see
+         * [dateFormat](/class-reference/Highcharts#dateFormat).
+         *
+         * @see [pointDateFormat](#accessibility.pointDateFormat)
+         * @since next
+         */
+        axisRangeDateFormat: '%Y-%m-%d %H:%M:%S',
+
+        /**
+         * Amount of landmarks/regions to create for screen reader users. This
+         * can make navigation easier, but if there are lots of charts on the
+         * page, it can create clutter. Three modes are available:
+         *  all: Adds regions for all series, legend, menu, information
+         *      region.
+         *  one: Adds a single landmark per chart.
+         *  disabled: No landmarks are added.
+         *
+         * @since next
+         * @validvalue ["all", "one", "disabled"]
+         */
+        landmarkVerbosityMode: 'all',
+
+        /**
+         * A hook for adding custom components to the accessibility module.
+         * Should be an object mapping component names to instances of the
+         * Highcharts.AccessibilityComponent class. Remember to add the
+         * component to the
+         * [keyboardNavigation.order](#accessibility.keyboardNavigation.order)
+         * for the keyboard navigation to be usable.
+         *
+         * @since next
+         * @type {*}
+         * @sample highcharts/accessibility/custom-component
+         *         Custom accessibility component
+         * @apioption accessibility.customComponents
+         */
+
+        /**
          * A text description of the chart.
          *
          * If the Accessibility module is loaded, this is included by default
@@ -342,6 +382,28 @@ var options = {
      * @type       {boolean}
      * @since      next
      * @apioption  plotOptions.series.accessibility.keyboardNavigation.enabled
+     */
+
+    /**
+     * Accessibility options for an axis. Requires the accessibility module.
+     *
+     * @since      next
+     * @apioption  xAxis.accessibility
+     */
+
+    /**
+     * Description for an axis to expose to screen reader users.
+     *
+     * @since      next
+     * @apioption  xAxis.accessibility.description
+     */
+
+    /**
+     * Range description for an axis. Overrides the default range description.
+     * Set to empty to disable range description for this axis.
+     *
+     * @since      next
+     * @apioption  xAxis.accessibility.rangeDescription
      */
 
 

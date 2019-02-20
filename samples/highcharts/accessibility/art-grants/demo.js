@@ -162,7 +162,10 @@ Highcharts.chart('container', {
 
     xAxis: {
         visible: false,
-        description: 'Grant applicants'
+        accessibility: {
+            description: 'Grant applicants',
+            rangeDescription: ''
+        }
     },
 
     yAxis: [{
@@ -178,7 +181,9 @@ Highcharts.chart('container', {
         },
         gridLineWidth: 1
     }, {
-        description: 'Grant category totals',
+        accessibility: {
+            description: 'Grant category totals'
+        },
         opposite: true,
         min: 0,
         max: 2400000,

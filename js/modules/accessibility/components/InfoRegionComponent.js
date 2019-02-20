@@ -109,9 +109,11 @@ H.extend(InfoRegionComponent.prototype, {
      */
     init: function () {
         // Add ID and summary attr to table HTML
-        var chart = this.chart;
+        var chart = this.chart,
+            component = this;
         this.addEvent(chart, 'afterGetTable', function (e) {
             if (chart.options.accessibility.enabled) {
+                component.tableAnchor.setAttribute('aria-expanded', true);
                 e.html = e.html
                     .replace(
                         '<table ',
@@ -142,7 +144,9 @@ H.extend(InfoRegionComponent.prototype, {
                 this.chartHeading || this.createElement('h4');
 
         hiddenSection.setAttribute('id', hiddenSectionId);
-        hiddenSection.setAttribute('role', 'region');
+        if (a11yOptions.landmarkVerbosityMode === 'all') {
+            hiddenSection.setAttribute('role', 'region');
+        }
         hiddenSection.setAttribute('aria-hidden', false);
         hiddenSection.setAttribute(
             'aria-label',
@@ -164,6 +168,8 @@ H.extend(InfoRegionComponent.prototype, {
             tableShortcutAnchor.href = '#' + tableId;
             // Make this unreachable by user tabbing
             tableShortcutAnchor.setAttribute('tabindex', '-1');
+            tableShortcutAnchor.setAttribute('role', 'button');
+            tableShortcutAnchor.setAttribute('aria-expanded', false);
             tableShortcutAnchor.onclick =
                 chart.options.accessibility.onTableAnchorClick || function () {
                     chart.viewData();
@@ -220,27 +226,12 @@ H.extend(InfoRegionComponent.prototype, {
                 chartTypes[0] === 'map'
             ) && {} || this.getAxesDescription();
 
-        return '<h3>' +
-        (
-            options.title.text ?
-                this.htmlencode(options.title.text) :
-                chart.langFormat(
-                    'accessibility.defaultChartTitle', formatContext
-                )
-        ) +
-        (
+        return (
             options.subtitle && options.subtitle.text ?
-                '. ' + this.htmlencode(options.subtitle.text) :
-                ''
-        ) +
-        '</h3>' + (
-            options.accessibility.description ? (
-                '<h4>' + chart.langFormat(
-                    'accessibility.longDescriptionHeading',
-                    formatContext
-                ) +
-                '</h4><div>' + options.accessibility.description + '</div>'
-            ) : ''
+                '<div>' + this.htmlencode(options.subtitle.text) + '</div>' : ''
+        ) + (
+            options.accessibility.description ?
+                '<div>' + options.accessibility.description + '</div>' : ''
         ) + '<h4>' + chart.langFormat(
             'accessibility.structureHeading', formatContext
         ) + '</h4><div>' +
@@ -264,6 +255,7 @@ H.extend(InfoRegionComponent.prototype, {
      */
     getAxesDescription: function () {
         var chart = this.chart,
+            component = this,
             numXAxes = chart.xAxis.length,
             numYAxes = chart.yAxis.length,
             desc = {};
@@ -277,6 +269,9 @@ H.extend(InfoRegionComponent.prototype, {
                     chart: chart,
                     names: chart.xAxis.map(function (axis) {
                         return axis.getDescription();
+                    }),
+                    ranges: chart.xAxis.map(function (axis) {
+                        return component.getAxisRangeDescription(axis);
                     }),
                     numAxes: numXAxes
                 }
@@ -293,12 +288,91 @@ H.extend(InfoRegionComponent.prototype, {
                     names: chart.yAxis.map(function (axis) {
                         return axis.getDescription();
                     }),
+                    ranges: chart.yAxis.map(function (axis) {
+                        return component.getAxisRangeDescription(axis);
+                    }),
                     numAxes: numYAxes
                 }
             );
         }
 
         return desc;
+    },
+
+
+    /**
+     * Return string with text description of the axis range.
+     * @private
+     * @param {Highcharts.Axis} axis The axis to get range desc of.
+     * @return {string} A string with the range description for the axis.
+     */
+    getAxisRangeDescription: function (axis) {
+        var chart = this.chart,
+            axisOptions = axis.options || {};
+
+        // Handle overridden range description
+        if (
+            axisOptions.accessibility &&
+            axisOptions.accessibility.rangeDescription !== undefined
+        ) {
+            return axisOptions.accessibility.rangeDescription;
+        }
+
+        // Handle category axes
+        if (axis.categories) {
+            return chart.langFormat(
+                'accessibility.axis.rangeCategories',
+                {
+                    chart: chart,
+                    axis: axis,
+                    numCategories: axis.categories.length
+                }
+            );
+        }
+
+        // Use range, not from-to?
+        if (axis.isDatetimeAxis && axis.min === 0) {
+            var range = {},
+                rangeUnit = 'Seconds';
+            range.Seconds = (axis.max - axis.min) / 1000;
+            range.Minutes = range.seconds / 60;
+            range.Hours = range.minutes / 60;
+            range.Days = range.hours / 24;
+            ['Minutes', 'Hours', 'Days'].forEach(function (unit) {
+                if (range[unit] > 2) {
+                    rangeUnit = unit;
+                }
+            });
+
+            // We have the range and the unit to use, find the desc format
+            return chart.langFormat(
+                'accessibility.axis.timeRange' + rangeUnit,
+                {
+                    chart: chart,
+                    axis: axis,
+                    range: range[rangeUnit]
+                }
+            );
+        }
+
+        // Just use from and to.
+        // We have the range and the unit to use, find the desc format
+        var a11yOptions = chart.options.accessibility;
+        return chart.langFormat(
+            'accessibility.axis.rangeFromTo',
+            {
+                chart: chart,
+                axis: axis,
+                rangeFrom: axis.isDatetimeAxis ?
+                    chart.time.dateFormat(
+                        a11yOptions.axisRangeDateFormat, axis.min
+                    ) : axis.min,
+                rangeTo: axis.isDatetimeAxis ?
+                    chart.time.dateFormat(
+                        a11yOptions.axisRangeDateFormat, axis.max
+                    ) : axis.max
+            }
+        );
     }
 
 });

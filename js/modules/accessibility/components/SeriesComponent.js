@@ -673,6 +673,9 @@ H.extend(SeriesComponent.prototype, {
                 series.points.forEach(function (point) {
                     if (point.graphic) {
                         point.graphic.element.setAttribute('role', 'img');
+                        point.graphic.element.setAttribute(
+                            'aria-roledescription', 'datapoint'
+                        );
                         point.graphic.element.setAttribute('tabindex', '-1');
                         point.graphic.element.setAttribute('aria-label',
                             component.stripTags(
@@ -690,10 +693,15 @@ H.extend(SeriesComponent.prototype, {
 
             // Make series element accessible
             if (chart.series.length > 1 || a11yOptions.describeSingleSeries) {
-                seriesEl.setAttribute(
-                    'role',
-                    seriesA11yOptions.exposeAsGroupOnly ? 'img' : 'region'
-                );
+                // Handle role attribute
+                if (seriesA11yOptions.exposeAsGroupOnly) {
+                    seriesEl.setAttribute('role', 'img');
+                    seriesEl.setAttribute('aria-roledescription', 'dataseries');
+                } else if (a11yOptions.landmarkVerbosityMode === 'all') {
+                    seriesEl.setAttribute('role', 'region');
+                    seriesEl.setAttribute('aria-roledescription', 'dataseries');
+                } /* else do not add role */
+
                 seriesEl.setAttribute('tabindex', '-1');
                 seriesEl.setAttribute(
                     'aria-label',

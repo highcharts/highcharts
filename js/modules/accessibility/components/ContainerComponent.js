@@ -35,6 +35,7 @@ H.extend(ContainerComponent.prototype, {
      */
     onChartUpdate: function () {
         var chart = this.chart,
+            a11yOptions = chart.options.accessibility,
             titleElement,
             descElement = chart.container.getElementsByTagName('desc')[0],
             textElements = chart.container.getElementsByTagName('text'),
@@ -60,7 +61,11 @@ H.extend(ContainerComponent.prototype, {
             descElement.parentNode.insertBefore(titleElement, descElement);
         }
 
-        chart.renderTo.setAttribute('role', 'region');
+        if (a11yOptions.landmarkVerbosityMode !== 'disabled') {
+            chart.renderTo.setAttribute('role', 'region');
+        } else {
+            chart.renderTo.removeAttribute('role');
+        }
         chart.renderTo.setAttribute('aria-hidden', false);
         chart.renderTo.setAttribute(
             'aria-label',
