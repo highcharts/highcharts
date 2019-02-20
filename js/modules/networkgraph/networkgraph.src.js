@@ -167,6 +167,8 @@ seriesType('networkgraph', 'line', {
          *
          * @see         [layoutAlgorithm.theta](#series.networkgraph.layoutAlgorithm.theta)
          * @validvalue  ["barnes-hut", "none"]
+         * @sample      highcharts/series-networkgraph/barnes-hut-approximation/
+         *              A graph with Barnes-Hut approximation
          * @since       7.1.0
          */
         approximation: 'none',
@@ -189,8 +191,8 @@ seriesType('networkgraph', 'line', {
          * In Highcharts v7.0.x only `'euler'` integration was supported.
          *
          * @since       7.1.0
-         * @sample      highcharts/series-networkgraph/forces/
-         *              Custom forces with Euler integration
+         * @sample      highcharts/series-networkgraph/integration-comparison/
+         *              Comparison of Verlet and Euler integrations
          * @validvalue  ["euler", "verlet"]
          */
         integration: 'verlet',
