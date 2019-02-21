@@ -118,7 +118,7 @@ H.extend(LegendComponent.prototype, {
                 'aria-hidden': false,
                 'aria-label': chart.langFormat('accessibility.legendLabel')
             });
-            if (a11yOptions.landmarkVerbosityMode === 'all') {
+            if (a11yOptions.landmarkVerbosity === 'all') {
                 group.attr('role', 'region');
             }
 
@@ -145,25 +145,10 @@ H.extend(LegendComponent.prototype, {
                     if (label) {
                         itemGroup.attr('aria-label', label);
                     }
-                    text.attr('aria-hidden', 'false');
+                    component.unhideElementFromScreenReaders(text.element);
                 }
             });
         }
-    },
-
-
-    /**
-     * Accessibility disabled/chart destroyed.
-     */
-    destroy: function () {
-        var group = this.chart.legend && this.chart.legend.group;
-        if (group) {
-            group.attr({
-                'aria-label': '',
-                'aria-hidden': true
-            });
-        }
-        this.destroyBase();
     },
 
 

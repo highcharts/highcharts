@@ -65,17 +65,18 @@ H.extend(RangeSelectorComponent.prototype, {
      */
     onChartUpdate: function () {
         var chart = this.chart,
+            component = this,
             rangeSelector = chart.rangeSelector;
 
-        if (
-            rangeSelector &&
-            rangeSelector.buttons &&
-            rangeSelector.buttons.length
-        ) {
-            // Make sure buttons are accessible and focusable
+        if (!rangeSelector) {
+            return;
+        }
+
+        // Make sure buttons are accessible and focusable
+        if (rangeSelector.buttons && rangeSelector.buttons.length) {
             rangeSelector.buttons.forEach(function (button) {
+                component.unhideElementFromScreenReaders(button.element);
                 button.element.setAttribute('tabindex', '-1');
-                button.element.setAttribute('aria-hidden', 'false');
                 button.element.setAttribute('role', 'button');
                 button.element.setAttribute(
                     'aria-label',
@@ -89,12 +90,16 @@ H.extend(RangeSelectorComponent.prototype, {
                 );
             });
         }
-        if (rangeSelector && rangeSelector.maxInput && rangeSelector.minInput) {
+
+        // Make sure input boxes are accessible and focusable
+        if (rangeSelector.maxInput && rangeSelector.minInput) {
             ['minInput', 'maxInput'].forEach(function (key, i) {
                 if (rangeSelector[key]) {
+                    component.unhideElementFromScreenReaders(
+                        rangeSelector[key]
+                    );
                     rangeSelector[key].setAttribute('tabindex', '-1');
                     rangeSelector[key].setAttribute('role', 'textbox');
-                    rangeSelector[key].setAttribute('aria-hidden', 'false');
                     rangeSelector[key].setAttribute(
                         'aria-label',
                         chart.langFormat(

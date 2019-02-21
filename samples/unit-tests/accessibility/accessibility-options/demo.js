@@ -152,7 +152,7 @@ QUnit.test('Landmark verbosity', function (assert) {
         },
         chart = Highcharts.chart('container', {
             accessibility: {
-                landmarkVerbosityMode: 'disabled'
+                landmarkVerbosity: 'disabled'
             },
             series: [{
                 data: [1, 2, 3, 4, 5, 6]
@@ -162,14 +162,14 @@ QUnit.test('Landmark verbosity', function (assert) {
 
     chart.update({
         accessibility: {
-            landmarkVerbosityMode: 'one'
+            landmarkVerbosity: 'one'
         }
     });
     assert.strictEqual(numRegions(chart), 1, 'One landmark in chart');
 
     chart.update({
         accessibility: {
-            landmarkVerbosityMode: 'all'
+            landmarkVerbosity: 'all'
         }
     });
     assert.ok(numRegions(chart) > 1, 'More than one landmark');

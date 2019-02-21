@@ -435,7 +435,7 @@ H.extend(SeriesComponent.prototype, {
      */
     init: function () {
         // On destroy, we need to clean up the focus border and the state.
-        H.addEvent(H.Series, 'destroy', function () {
+        this.addEvent(H.Series, 'destroy', function () {
             var chart = this.chart;
 
             if (
@@ -446,6 +446,13 @@ H.extend(SeriesComponent.prototype, {
                 if (chart.focusElement) {
                     chart.focusElement.removeFocusBorder();
                 }
+            }
+        });
+
+        // Hide tooltip when it is shown
+        this.addEvent(H.Tooltip, 'refresh', function () {
+            if (this.label && this.label.element) {
+                this.label.element.setAttribute('aria-hidden', true);
             }
         });
     },
@@ -652,6 +659,9 @@ H.extend(SeriesComponent.prototype, {
             seriesEl = component.getSeriesElement(series);
 
         if (seriesEl) {
+            // Unhide series
+            this.unhideElementFromScreenReaders(seriesEl);
+
             // For some series types the order of elements do not match the
             // order of points in series. In that case we have to reverse them
             // in order for AT to read them out in an understandable order
@@ -697,7 +707,7 @@ H.extend(SeriesComponent.prototype, {
                 if (seriesA11yOptions.exposeAsGroupOnly) {
                     seriesEl.setAttribute('role', 'img');
                     seriesEl.setAttribute('aria-roledescription', 'dataseries');
-                } else if (a11yOptions.landmarkVerbosityMode === 'all') {
+                } else if (a11yOptions.landmarkVerbosity === 'all') {
                     seriesEl.setAttribute('role', 'region');
                     seriesEl.setAttribute('aria-roledescription', 'dataseries');
                 } /* else do not add role */

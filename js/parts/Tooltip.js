@@ -853,6 +853,8 @@ H.Tooltip.prototype = {
 
             this.isHidden = false;
         }
+
+        H.fireEvent(this, 'refresh');
     },
 
     /**

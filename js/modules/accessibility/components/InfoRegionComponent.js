@@ -144,10 +144,9 @@ H.extend(InfoRegionComponent.prototype, {
                 this.chartHeading || this.createElement('h4');
 
         hiddenSection.setAttribute('id', hiddenSectionId);
-        if (a11yOptions.landmarkVerbosityMode === 'all') {
+        if (a11yOptions.landmarkVerbosity === 'all') {
             hiddenSection.setAttribute('role', 'region');
         }
-        hiddenSection.setAttribute('aria-hidden', false);
         hiddenSection.setAttribute(
             'aria-label',
             chart.langFormat(
@@ -187,23 +186,14 @@ H.extend(InfoRegionComponent.prototype, {
         chartHeading.innerHTML = chart.langFormat(
             'accessibility.chartHeading', { chart: chart }
         );
+        chartHeading.setAttribute('aria-hidden', false);
         chart.renderTo.insertBefore(chartHeading, chart.renderTo.firstChild);
         chart.renderTo.insertBefore(hiddenSection, chart.renderTo.firstChild);
+        this.unhideElementFromScreenReaders(hiddenSection);
 
-        // Hide the section and the chart heading
+        // Visually hide the section and the chart heading
         merge(true, chartHeading.style, hiddenStyle);
         merge(true, hiddenSection.style, hiddenStyle);
-    },
-
-
-    /**
-     * Accessibility disabled/chart destroyed.
-     */
-    destroy: function () {
-        if (this.screenReaderRegion) {
-            this.screenReaderRegion.setAttribute('aria-hidden', true);
-        }
-        this.destroyBase();
     },
 
 

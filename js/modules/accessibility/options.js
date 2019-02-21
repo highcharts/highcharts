@@ -71,7 +71,7 @@ var options = {
          * @since next
          * @validvalue ["all", "one", "disabled"]
          */
-        landmarkVerbosityMode: 'all',
+        landmarkVerbosity: 'all',
 
         /**
          * A hook for adding custom components to the accessibility module.

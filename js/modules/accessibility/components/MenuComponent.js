@@ -166,7 +166,6 @@ H.extend(MenuComponent.prototype, {
 
             // Set props on button
             button.setAttribute('role', 'button');
-            button.setAttribute('aria-hidden', 'false');
             button.setAttribute(
                 'aria-label',
                 chart.langFormat(
@@ -174,11 +173,20 @@ H.extend(MenuComponent.prototype, {
                 )
             );
 
+            // Hide button children
+            if (button.childNodes) {
+                button.childNodes.forEach(function (node) {
+                    node.setAttribute('aria-hidden', true);
+                });
+            }
+
             // Set props on group
-            if (a11yOptions.landmarkVerbosityMode === 'all') {
+            if (a11yOptions.landmarkVerbosity === 'all') {
                 chart.exportingGroup.element.setAttribute('role', 'region');
             }
-            chart.exportingGroup.element.setAttribute('aria-hidden', 'false');
+            component.unhideElementFromScreenReaders(
+                chart.exportingGroup.element
+            );
             chart.exportingGroup.element.setAttribute(
                 'aria-label',
                 chart.langFormat(
@@ -191,28 +199,13 @@ H.extend(MenuComponent.prototype, {
 
 
     /**
-     * Accessibility disabled/chart destroyed.
-     */
-    destroy: function () {
-        var chart = this.chart;
-        if (chart.exportingGroup && chart.exportingGroup.element) {
-            chart.exportingGroup.element.setAttribute(
-                'aria-hidden', 'true'
-            );
-            chart.exportingGroup.element.removeAttribute('aria-label');
-        }
-        this.destroyBase();
-    },
-
-
-    /**
      * Add ARIA to context menu
      * @private
      */
     addAccessibleContextMenuAttribs: function () {
         var chart = this.chart,
             exportList = chart.exportDivElements,
-            contextMenu = chart.contextMenu;
+            contextMenu = chart.exportContextMenu;
 
         if (exportList && exportList.length) {
             // Set tabindex on the menu items to allow focusing by script
@@ -221,7 +214,6 @@ H.extend(MenuComponent.prototype, {
                 if (item.tagName === 'DIV' &&
                     !(item.children && item.children.length)) {
                     item.setAttribute('role', 'menuitem');
-                    item.setAttribute('aria-hidden', 'false');
                     item.setAttribute('tabindex', -1);
                 }
             });
@@ -233,10 +225,9 @@ H.extend(MenuComponent.prototype, {
                     'accessibility.exporting.chartMenuLabel', { chart: chart }
                 )
             );
-            exportList[0].parentNode.setAttribute('aria-hidden', 'false');
         }
-        if (contextMenu && contextMenu.element) {
-            contextMenu.element.setAttribute('aria-hidden', 'false');
+        if (contextMenu) {
+            this.unhideElementFromScreenReaders(contextMenu);
         }
     },
 

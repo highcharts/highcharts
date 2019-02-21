@@ -218,11 +218,7 @@ Accessibility.prototype = {
         }
 
         this.keyboardNavigation = new KeyboardNavigation(chart, components);
-        if (a11yOptions.enabled) {
-            this.update();
-        } else {
-            chart.renderTo.setAttribute('aria-hidden', true);
-        }
+        this.update();
     },
 
 
@@ -252,6 +248,8 @@ Accessibility.prototype = {
      * Destroy all elements.
      */
     destroy: function () {
+        var chart = this.chart || {};
+
         // Destroy components
         var components = this.components;
         Object.keys(components).forEach(function (componentName) {
@@ -261,9 +259,14 @@ Accessibility.prototype = {
         // Kill keyboard nav
         this.keyboardNavigation.destroy();
 
+        // Hide container from screen readers if it exists
+        if (chart.renderTo) {
+            chart.renderTo.setAttribute('aria-hidden', true);
+        }
+
         // Remove focus border if it exists
-        if (this.chart.focusElement) {
-            this.chart.focusElement.removeFocusBorder();
+        if (chart.focusElement) {
+            chart.focusElement.removeFocusBorder();
         }
     },
 
@@ -400,8 +403,13 @@ Accessibility.prototype = {
 // Init on chart when loaded
 addEvent(H.Chart, 'load', function () {
     var accessibilityOptions = this.options && this.options.accessibility;
-    if (accessibilityOptions && accessibilityOptions.enabled) {
-        this.accessibility = new Accessibility(this);
+    if (this.renderTo) {
+        // Start with hidden chart always
+        this.renderTo.setAttribute('aria-hidden', true);
+        // Init accessibility if enabled
+        if (accessibilityOptions && accessibilityOptions.enabled) {
+            this.accessibility = new Accessibility(this);
+        }
     }
 });
 

@@ -422,6 +422,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 .align(btnOptions.position, false, alignTo);
         });
 
+        fireEvent(this, 'afterShowResetZoom');
     },
 
     /**

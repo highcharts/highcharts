@@ -55,9 +55,49 @@ H.Axis.prototype.panStep = function (direction, granularity) {
  */
 var ZoomComponent = function (chart) {
     this.initBase(chart);
+    this.init();
 };
 ZoomComponent.prototype = new AccessibilityComponent();
 H.extend(ZoomComponent.prototype, {
+
+    /**
+     * Init the component
+     */
+    init: function () {
+        var component = this;
+        this.addEvent(this.chart, 'afterShowResetZoom', function () {
+            // Make reset zoom button accessible
+            if (this.resetZoomButton && this.resetZoomButton.text) {
+                component.unhideElementFromScreenReaders(
+                    this.resetZoomButton.text.element
+                );
+            }
+        });
+    },
+
+    /**
+     * Called when chart is updated
+     */
+    onChartUpdate: function () {
+        var chart = this.chart,
+            component = this;
+
+        // Make map zoom buttons accessible
+        if (chart.mapNavButtons) {
+            chart.mapNavButtons.forEach(function (button, i) {
+                component.unhideElementFromScreenReaders(button.element);
+                button.element.setAttribute('tabindex', -1);
+                button.element.setAttribute('role', 'button');
+                button.element.setAttribute(
+                    'aria-label',
+                    chart.langFormat(
+                        'accessibility.mapZoom' + (i ? 'Out' : 'In'),
+                        { chart: chart }
+                    )
+                );
+            });
+        }
+    },
 
     /**
      * Get keyboard navigation module for map zoom.
@@ -143,19 +183,6 @@ H.extend(ZoomComponent.prototype, {
                 var zoomIn = chart.mapNavButtons[0],
                     zoomOut = chart.mapNavButtons[1],
                     initialButton = direction > 0 ? zoomIn : zoomOut;
-
-                chart.mapNavButtons.forEach(function (button, i) {
-                    button.element.setAttribute('tabindex', -1);
-                    button.element.setAttribute('role', 'button');
-                    button.element.setAttribute(
-                        'aria-label',
-                        chart.langFormat(
-                            'accessibility.mapZoom' + (i ? 'Out' : 'In'),
-                            { chart: chart }
-                        )
-                    );
-                });
-
                 chart.setFocusToElement(initialButton.box, initialButton);
                 initialButton.setState(2);
                 component.focusedMapNavButtonIx = direction > 0 ? 0 : 1;

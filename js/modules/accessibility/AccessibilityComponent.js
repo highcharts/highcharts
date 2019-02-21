@@ -76,6 +76,28 @@ AccessibilityComponent.prototype = {
     },
 
     /**
+     * Unhide an element from screen readers. Also unhides parents, and hides
+     * siblings that are not explicitly unhidden.
+     * @private
+     * @param {HTMLDOMElement|SVGDOMElement} element The element to unhide
+     */
+    unhideElementFromScreenReaders: function (element) {
+        element.setAttribute('aria-hidden', false);
+        if (element === this.chart.renderTo || !element.parentNode) {
+            return;
+        }
+
+        // Hide siblings unless their hidden state is already explicitly set
+        element.parentNode.childNodes.forEach(function (node) {
+            if (!node.hasAttribute('aria-hidden')) {
+                node.setAttribute('aria-hidden', true);
+            }
+        });
+        // Repeat for parent
+        this.unhideElementFromScreenReaders(element.parentNode);
+    },
+
+    /**
      * Should remove any event handlers added, as well as any DOM elements.
      * @private
      */

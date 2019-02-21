@@ -37,8 +37,6 @@ H.extend(ContainerComponent.prototype, {
         var chart = this.chart,
             a11yOptions = chart.options.accessibility,
             titleElement,
-            descElement = chart.container.getElementsByTagName('desc')[0],
-            textElements = chart.container.getElementsByTagName('text'),
             titleId = 'highcharts-title-' + chart.index,
             chartTitle = chart.options.title.text || chart.langFormat(
                 'accessibility.defaultChartTitle', { chart: chart }
@@ -58,15 +56,16 @@ H.extend(ContainerComponent.prototype, {
                 );
             titleElement.textContent = svgContainerTitle;
             titleElement.id = titleId;
-            descElement.parentNode.insertBefore(titleElement, descElement);
+            chart.renderTo.insertBefore(
+                titleElement, chart.renderTo.firstChild
+            );
         }
 
-        if (a11yOptions.landmarkVerbosityMode !== 'disabled') {
+        if (a11yOptions.landmarkVerbosity !== 'disabled') {
             chart.renderTo.setAttribute('role', 'region');
         } else {
             chart.renderTo.removeAttribute('role');
         }
-        chart.renderTo.setAttribute('aria-hidden', false);
         chart.renderTo.setAttribute(
             'aria-label',
             chart.langFormat(
@@ -77,15 +76,6 @@ H.extend(ContainerComponent.prototype, {
                 }
             )
         );
-
-        // Hide desc & text elements from screen readers
-        // TODO: Expand to hide everything we don't want?
-        [].forEach.call(textElements, function (el) {
-            if (el.getAttribute('aria-hidden') !== 'false') {
-                el.setAttribute('aria-hidden', 'true');
-            }
-        });
-        descElement.setAttribute('aria-hidden', 'true');
     },
 
 

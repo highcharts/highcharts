@@ -260,6 +260,7 @@ KeyboardNavigation.prototype = {
 
         exitAnchor.setAttribute('tabindex', '0');
         exitAnchor.setAttribute('aria-label', exitAnchorLabel);
+        exitAnchor.setAttribute('aria-hidden', false);
 
         // Hide exit anchor
         merge(true, exitAnchor.style, {
