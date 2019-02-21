@@ -11,7 +11,8 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-var doc = H.win.document;
+var doc = H.win.document,
+    find = H.find;
 
 
 /**
@@ -82,7 +83,7 @@ KeyboardNavigationModule.prototype = {
     run: function (e) {
         var keyCode = e.which || e.keyCode,
             response = this.response.noHandler,
-            handlerCodeSet = this.keyCodeMap.find(function (codeSet) {
+            handlerCodeSet = find(this.keyCodeMap, function (codeSet) {
                 return codeSet[0].indexOf(keyCode) > -1;
             });
 

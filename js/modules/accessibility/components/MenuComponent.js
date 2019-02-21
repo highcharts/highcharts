@@ -175,9 +175,12 @@ H.extend(MenuComponent.prototype, {
 
             // Hide button children
             if (button.childNodes) {
-                button.childNodes.forEach(function (node) {
-                    node.setAttribute('aria-hidden', true);
-                });
+                Array.prototype.forEach.call(
+                    button.childNodes,
+                    function (node) {
+                        node.setAttribute('aria-hidden', true);
+                    }
+                );
             }
 
             // Set props on group

@@ -88,11 +88,14 @@ AccessibilityComponent.prototype = {
         }
 
         // Hide siblings unless their hidden state is already explicitly set
-        element.parentNode.childNodes.forEach(function (node) {
-            if (!node.hasAttribute('aria-hidden')) {
-                node.setAttribute('aria-hidden', true);
+        Array.prototype.forEach.call(
+            element.parentNode.childNodes,
+            function (node) {
+                if (!node.hasAttribute('aria-hidden')) {
+                    node.setAttribute('aria-hidden', true);
+                }
             }
-        });
+        );
         // Repeat for parent
         this.unhideElementFromScreenReaders(element.parentNode);
     },
