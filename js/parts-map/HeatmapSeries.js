@@ -33,7 +33,7 @@ var colorPointMixin = H.colorPointMixin,
  */
 seriesType(
     'heatmap',
-    'scatter'
+    'scatter',
 
     /**
      * A heatmap is a graphical representation of data where the individual
@@ -53,7 +53,7 @@ seriesType(
      * @product      highcharts highmaps
      * @optionparent plotOptions.heatmap
      */
-    , {
+    {
 
         /**
          * Animation is disabled by default on the heatmap series.
@@ -126,13 +126,19 @@ seriesType(
         nullColor: '${palette.neutralColor3}',
 
         dataLabels: {
+            /** @ignore-option */
             formatter: function () { // #2945
                 return this.point.value;
             },
+            /** @ignore-option */
             inside: true,
+            /** @ignore-option */
             verticalAlign: 'middle',
+            /** @ignore-option */
             crop: false,
+            /** @ignore-option */
             overflow: false,
+            /** @ignore-option */
             padding: 0 // #3837
         },
 
@@ -277,6 +283,17 @@ seriesType(
             this.points.forEach(function (point) {
                 point.graphic[func](this.colorAttribs(point));
             }, this);
+        },
+
+        // Override to also allow null points, used when building the k-d-tree
+        // for tooltips in boost mode.
+        getValidPoints: function (points, insideOnly) {
+            return Series.prototype.getValidPoints.call(
+                this,
+                points,
+                insideOnly,
+                true
+            );
         },
 
         /**

@@ -41,6 +41,32 @@ QUnit.test(
             0,
             'All series, including navSeries, removed without errors (#5581)'
         );
+
+        chart = Highcharts.stockChart('container', {
+            xAxis: {
+                min: 1318607700000
+            },
+            series: [{
+                data: [
+                    [1318607640000, 420.32],
+                    [1318607700000, 420.58],
+                    [1318607760000, 421.07],
+                    [1318607820000, 421.46],
+                    [1318607880000, 421.69],
+                    [1318607940000, 421.94]
+                ]
+            }]
+        });
+
+        chart.series[0].addPoint([1318608000000, 422.03], false, true);
+        chart.series[0].addPoint([1318608060000, 421.23], false, true);
+        chart.series[0].addPoint([1318608120000, 421.97], true, true);
+
+        assert.strictEqual(
+            chart.navigator.xAxis.min,
+            1318607820000,
+            'xAxis.min should be omitted in navigator when ordinal is enabled (#9994)'
+        );
     }
 );
 
@@ -378,25 +404,25 @@ QUnit.test('Add point and disabled navigator (#3452)', function (assert) {
 
 QUnit.test('Empty scroller with Axis min set (#5172)', function (assert) {
     var chart = Highcharts.chart('container', {
-        "xAxis": {
-            "min": 0
+        xAxis: {
+            min: 0
         },
-        "series": [{
-            "id": "navigator",
-            "name": null,
-            "data": []
+        series: [{
+            id: "navigator",
+            name: null,
+            data: []
         }, {
-            "id": "my_data",
-            "name": null,
-            "data": []
+            id: "my_data",
+            name: null,
+            data: []
         }],
-        "navigator": {
-            "enabled": true,
-            "series": {
-                "id": "navigator"
+        navigator: {
+            enabled: true,
+            series: {
+                id: "navigator"
             },
-            "xAxis": {
-                "min": 0
+            xAxis: {
+                min: 0
             }
         }
     });
@@ -457,8 +483,7 @@ QUnit.test('Update navigator series on series update (#4923)', function (assert)
 });
 
 
-QUnit.test('Moving navigator with no series should not break axis (#7411)',
-function (assert) {
+QUnit.test('Moving navigator with no series should not break axis (#7411)', function (assert) {
     var chart = Highcharts.stockChart('container', {
             chart: {
                 animation: false
@@ -568,8 +593,7 @@ QUnit.test('Chart update enables navigator (#7067)', function (assert) {
         'undefined',
         'undefined'
     ],
-        'Chart should have no navigator.'
-    );
+    'Chart should have no navigator.');
 
     chart.update({
         navigator: {
@@ -584,8 +608,7 @@ QUnit.test('Chart update enables navigator (#7067)', function (assert) {
         'undefined',
         'undefined'
     ],
-        'Chart should have a navigator instance.'
-    );
+    'Chart should have a navigator instance.');
 
     assert.ok(
         chart.navigator &&
@@ -718,5 +741,60 @@ QUnit.test('stickToMin and stickToMax', function (assert) {
         extremes.max - chart.fixedRange,
         'stickToMax, multiple series with different ranges: ' +
             'Correct extremes after rangeSelector use and adding points(#9075)'
+    );
+});
+
+QUnit.test('Update an unrelated dynamically added chart series (#8430)', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [],
+        navigator: {
+            adaptToUpdatedData: false,
+            series: {
+                id: "navigator",
+                data: []
+            }
+        }
+    });
+
+    chart.addSeries({
+        id: "series1"
+    });
+
+    chart.get("navigator").setData([
+        { x: 0, y: 1 },
+        { x: 1, y: 10 }
+    ]);
+
+    chart.get("series1").update({});
+
+    assert.strictEqual(
+        chart.navigator.series[0].points.length,
+        2,
+        'Correct number of points in navigator series (#8430).'
+    );
+});
+
+QUnit.test('Add a navigator by chart update (#7067)', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3]
+        }],
+        navigator: {
+            enabled: false
+        },
+        scrollbar: {
+            enabled: false
+        }
+    });
+
+    chart.update({
+        navigator: {
+            enabled: true
+        }
+    });
+
+    assert.ok(
+        chart.navigator.size,
+        'Navigator correctly added (#7067).'
     );
 });

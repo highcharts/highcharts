@@ -146,3 +146,42 @@ QUnit.test('Polar with overlapping axis labels', assert => {
         'The axis should have no hidden labels'
     );
 });
+
+QUnit.test('Data validation', assert => {
+    const chart = Highcharts.chart('container', {
+
+        chart: {
+            polar: true
+        },
+
+        yAxis: {
+            min: -10
+        },
+
+        series: [{
+            data: [15, 20, 5, 2, -25]
+        }]
+
+    });
+
+    // #10082
+    assert.deepEqual(
+        chart.series[0].points.map(p => p.isNull),
+        [false, false, false, false, true],
+        'Values below Y axis mininum should be treated as null'
+    );
+
+    chart.series[0].points[4].update(25);
+    assert.deepEqual(
+        chart.series[0].points.map(p => p.isNull),
+        [false, false, false, false, false],
+        '... and it should respond to update'
+    );
+
+    chart.series[0].points[2].update(-25);
+    assert.deepEqual(
+        chart.series[0].points.map(p => p.isNull),
+        [false, false, true, false, false],
+        '... both ways'
+    );
+});

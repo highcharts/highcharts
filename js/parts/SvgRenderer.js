@@ -9,7 +9,7 @@
 /**
  * The horizontal alignment of an element.
  *
- * @typedef {"center"|"left"|"right"} Highcharts.AlignType
+ * @typedef {"center"|"left"|"right"} Highcharts.AlignValue
  */
 
 /**
@@ -20,14 +20,14 @@
  * Horizontal alignment. Can be one of `left`, `center` and `right`.
  *
  * @name Highcharts.AlignObject#align
- * @type {Highcharts.AlignType|undefined}
+ * @type {Highcharts.AlignValue|undefined}
  *
  * @default left
  *//**
  * Vertical alignment. Can be one of `top`, `middle` and `bottom`.
  *
  * @name Highcharts.AlignObject#verticalAlign
- * @type {Highcharts.VerticalAlignType|undefined}
+ * @type {Highcharts.VerticalAlignValue|undefined}
  *
  * @default top
  *//**
@@ -342,7 +342,7 @@
 /**
  * The vertical alignment of an element.
  *
- * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignType
+ * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
  */
 
 'use strict';
@@ -426,7 +426,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
     /**
      * Initialize the SVG element. This function only exists to make the
-     * initiation process overridable. It should not be called directly.
+     * initialization process overridable. It should not be called directly.
      *
      * @function Highcharts.SVGElement#init
      *
@@ -500,9 +500,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             animate(this, params, animOptions);
         } else {
             this.attr(params, null, complete);
-            if (animOptions.step) {
-                animOptions.step.call(this);
-            }
+
+            // Call the end step synchronously
+            H.objectEach(params, function (val, prop) {
+                if (animOptions.step) {
+                    animOptions.step.call(this, val, { prop: prop, pos: 1 });
+                }
+            }, this);
         }
         return this;
     },
@@ -2221,9 +2225,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     alignSetter: function (value) {
         var convert = { left: 'start', center: 'middle', right: 'end' };
-
-        this.alignValue = value;
-        this.element.setAttribute('text-anchor', convert[value]);
+        if (convert[value]) {
+            this.alignValue = value;
+            this.element.setAttribute('text-anchor', convert[value]);
+        }
     },
     /**
      * @private
@@ -2535,7 +2540,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     SVG_NS: SVG_NS,
 
     /**
-     * Initialize the SVGRenderer. Overridable initiator function that takes
+     * Initialize the SVGRenderer. Overridable initializer function that takes
      * the same parameters as the constructor.
      *
      * @function Highcharts.SVGRenderer#init
@@ -4698,11 +4703,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *        `rect`. Other possible values are `callout` or other shapes
      *        defined in {@link Highcharts.SVGRenderer#symbols}.
      *
-     * @param {string} [shape='rect']
-     *        The shape of the label's border/background, if any. Defaults to
-     *        `rect`. Other possible values are `callout` or other shapes
-     *        defined in {@link Highcharts.SVGRenderer#symbols}.
-     *
      * @param {number} [anchorX]
      *        In case the `shape` has a pointer, like a flag, this is the
      *        coordinates it should be pinned to.
@@ -4947,7 +4947,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // apply these to the box and the text alike
         wrapper.textSetter = function (value) {
             if (value !== undefined) {
-                text.textSetter(value);
+                // Must use .attr to ensure transforms are done (#10009)
+                text.attr({
+                    text: value
+                });
             }
             updateBoxSize();
             updateTextPadding();

@@ -411,7 +411,7 @@ H.Series.prototype.drawBreaks = function (axis, keys) {
  */
 H.Series.prototype.gappedPath = function () {
     var currentDataGrouping = this.currentDataGrouping,
-        groupingSize = currentDataGrouping && currentDataGrouping.totalRange,
+        groupingSize = currentDataGrouping && currentDataGrouping.gapSize,
         gapSize = this.options.gapSize,
         points = this.points.slice(),
         i = points.length - 1,

@@ -247,7 +247,10 @@ seriesType('windbarb', 'column'
 
                 // Check if it's inside the plot area, but only for the X
                 // dimension.
-                if (chart.isInsidePlot(plotX, 0, false)) {
+                if (
+                    this.options.clip === false ||
+                    chart.isInsidePlot(plotX, 0, false)
+                ) {
 
                     // Create the graphic the first time
                     if (!point.graphic) {
@@ -280,7 +283,7 @@ seriesType('windbarb', 'column'
             }, this);
         },
 
-        // Fade in the arrows on initiating series.
+        // Fade in the arrows on initializing series.
         animate: function (init) {
             if (init) {
                 this.markerGroup.attr({

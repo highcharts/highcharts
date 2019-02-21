@@ -115,6 +115,7 @@ seriesType('funnel', 'pie',
     size: true, // to avoid adapting to data label size in Pie.drawDataLabels
 
     dataLabels: {
+        /** @ignore-option */
         connectorWidth: 1
     },
 
@@ -448,7 +449,7 @@ seriesType('funnel', 'pie',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|*>}
+ * @type      {Array<number|null|*>}
  * @extends   series.pie.data
  * @excluding sliced
  * @product   highcharts
@@ -544,7 +545,7 @@ seriesType('pyramid', 'funnel',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|*>}
+ * @type      {Array<number|null|*>}
  * @extends   series.pie.data
  * @excluding sliced
  * @product   highcharts

@@ -298,6 +298,76 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
 
 });
 
+QUnit.test('Series.update and events', assert => {
+    const clicks = {
+        option: 0,
+        added: 0
+    };
+    let updated = false;
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 400,
+            height: 300
+        },
+        series: [{
+            data: [3, 1, 2],
+            type: 'column',
+
+            // Add an event by option
+            events: {
+                click: () => clicks.option++
+            },
+            animation: false
+        }]
+    });
+
+    // Add an event programmatically
+    Highcharts.addEvent(chart.series[0], 'click', () => clicks.added++);
+    Highcharts.addEvent(chart.series[0], 'afterUpdate', () => {
+        updated = true;
+    });
+
+    const controller = new TestController(chart);
+    controller.moveTo(100, 120);
+    controller.click(100, 120);
+
+    assert.strictEqual(
+        clicks.option,
+        1,
+        'The click event option should work'
+    );
+    assert.strictEqual(
+        clicks.added,
+        1,
+        'The added click handler should work'
+    );
+
+    // Run update with some arbitrary properties
+    chart.series[0].update({
+        colorByPoint: true,
+        dataLabels: {
+            enabled: true
+        }
+    });
+
+    controller.moveTo(100, 120);
+    controller.click(100, 120);
+    assert.strictEqual(
+        clicks.option,
+        2,
+        'The click event option should work after update'
+    );
+    assert.strictEqual(
+        clicks.added,
+        2,
+        'The added click handler should work after update'
+    );
+    assert.ok(
+        updated,
+        'The afterUpdate handler has run'
+    );
+});
+
 QUnit.test('Series.update and setData', function (assert) {
 
     var chart = Highcharts.chart('container', {

@@ -16,7 +16,8 @@ import Tree from './Tree.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import '../modules/broken-axis.src.js';
 
-var argsToArray = function (args) {
+var addEvent = H.addEvent,
+    argsToArray = function (args) {
         return Array.prototype.slice.call(args, 1);
     },
     defined = H.defined,
@@ -88,7 +89,6 @@ var getTickPositions = function (axis) {
     return Object.keys(axis.mapOfPosToGridNode).reduce(
         function (arr, key) {
             var pos = +key;
-
             if (
                 axis.min <= pos &&
                 axis.max >= pos &&
@@ -287,6 +287,62 @@ var onTickHoverExit = function (label, options) {
 };
 
 /**
+ * Builds the tree of categories and calculates its positions.
+ *
+ * @param {object} e Event object
+ * @param {object} e.target The chart instance which the event was fired on.
+ * @param {object[]} e.target.axes The axes of the chart.
+ */
+var onBeforeRender = function (e) {
+    var chart = e.target,
+        axes = chart.axes;
+
+    axes
+        .filter(function (axis) {
+            return axis.options.type === 'treegrid';
+        })
+        .forEach(function (axis) {
+            var labelOptions = axis.options && axis.options.labels,
+                removeFoundExtremesEvent;
+
+            // setScale is fired after all the series is initialized,
+            // which is an ideal time to update the axis.categories.
+            axis.updateYNames();
+
+            // Update yData now that we have calculated the y values
+            // TODO: it would be better to be able to calculate y values
+            // before Series.setData
+            axis.series.forEach(function (series) {
+                series.yData = series.options.data.map(function (data) {
+                    return data.y;
+                });
+            });
+
+            // Calculate the label options for each level in the tree.
+            axis.mapOptionsToLevel = getLevelOptions({
+                defaults: labelOptions,
+                from: 1,
+                levels: labelOptions.levels,
+                to: axis.tree.height
+            });
+
+            // Collapse all the nodes belonging to a point where collapsed
+            // equals true.
+            // Can be called from beforeRender, if getBreakFromNode removes
+            // its dependency on axis.max.
+            removeFoundExtremesEvent =
+                H.addEvent(axis, 'foundExtremes', function () {
+                    axis.collapsedNodes.forEach(function (node) {
+                        var breaks = collapse(axis, node);
+
+                        axis.setBreaks(breaks, false);
+                    });
+                    removeFoundExtremesEvent();
+                });
+        });
+};
+
+/**
  * Creates a tree structure of the data, and the treegrid. Calculates
  * categories, and y-values of points based on the tree.
  *
@@ -464,51 +520,6 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
     };
 };
 
-H.addEvent(H.Chart, 'beforeRender', function () {
-
-    this.axes.forEach(function (axis) {
-        if (axis.userOptions.type === 'treegrid') {
-            var labelOptions = axis.options && axis.options.labels,
-                removeFoundExtremesEvent;
-
-            // beforeRender is fired after all the series is initialized,
-            // which is an ideal time to update the axis.categories.
-            axis.updateYNames();
-
-            // Update yData now that we have calculated the y values
-            // TODO: it would be better to be able to calculate y values
-            // before Series.setData
-            axis.series.forEach(function (series) {
-                series.yData = series.options.data.map(function (data) {
-                    return data.y;
-                });
-            });
-
-            // Calculate the label options for each level in the tree.
-            axis.mapOptionsToLevel = getLevelOptions({
-                defaults: labelOptions,
-                from: 1,
-                levels: labelOptions.levels,
-                to: axis.tree.height
-            });
-
-            // Collapse all the nodes belonging to a point where collapsed
-            // equals true.
-            // Can be called from beforeRender, if getBreakFromNode removes
-            // its dependency on axis.max.
-            removeFoundExtremesEvent =
-                H.addEvent(axis, 'foundExtremes', function () {
-                    axis.collapsedNodes.forEach(function (node) {
-                        var breaks = collapse(axis, node);
-
-                        axis.setBreaks(breaks, false);
-                    });
-                    removeFoundExtremesEvent();
-                });
-        }
-    });
-});
-
 override(GridAxis.prototype, {
     init: function (proceed, chart, userOptions) {
         var axis = this,
@@ -516,6 +527,12 @@ override(GridAxis.prototype, {
 
         // Set default and forced options for TreeGrid
         if (isTreeGrid) {
+
+            // Add event for updating the categories of a treegrid.
+            // NOTE Preferably these events should be set on the axis.
+            addEvent(chart, 'beforeRender', onBeforeRender);
+            addEvent(chart, 'beforeRedraw', onBeforeRender);
+
             userOptions = merge({
                 // Default options
                 grid: {
@@ -697,7 +714,7 @@ override(GridAxis.prototype, {
             options = axis.options,
             isTreeGrid = options.type === 'treegrid';
 
-        if (isTreeGrid && this.mapOfPosToGridNode) {
+        if (isTreeGrid) {
             axis.min = pick(axis.userMin, options.min, axis.dataMin);
             axis.max = pick(axis.userMax, options.max, axis.dataMax);
 
@@ -709,7 +726,9 @@ override(GridAxis.prototype, {
 
             axis.tickmarkOffset = 0.5;
             axis.tickInterval = 1;
-            axis.tickPositions = getTickPositions(axis);
+            axis.tickPositions = this.mapOfPosToGridNode ?
+                getTickPositions(axis) :
+                [];
         } else {
             proceed.apply(axis, argsToArray(arguments));
         }

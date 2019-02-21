@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "7.0.2",
+  "version": "7.0.3",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
@@ -62,8 +62,8 @@
     "gulp-jsdoc3": "^2.0.0",
     "gulp-typedoc": "^2.2.1",
     "gzip-size": "^5.0.0",
-    "highcharts-api-docs": "github:highcharts/api-docs#v0.2.3",
-    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.1.1",
+    "highcharts-api-docs": "github:highcharts/api-docs#v0.2.5",
+    "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.2.3",
     "highcharts-docstrap": "github:highcharts/highcharts-docstrap#v1.3.0",
     "husky": "latest",
     "js-yaml": "^3.12.1",
@@ -108,5 +108,9 @@
       "git add"
     ]
   },
-  "license": "SEE LICENSE IN <license.txt>"
+  "license": "SEE LICENSE IN <license.txt>",
+  "dependencies": {
+    "jspdf-yworks": "^2.0.1",
+    "svg2pdf.js": "^1.3.2"
+  }
 }

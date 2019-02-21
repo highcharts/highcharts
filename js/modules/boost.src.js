@@ -274,6 +274,15 @@
  * @apioption boost.allowForce
  */
 
+/**
+ * Sets the color blending in the boost module.
+ *
+ * @type       {string}
+ * @default    undefined
+ * @validvalue ["add", "multiply", "darken"]
+ * @apioption  plotOptions.series.boostBlending
+ */
+
 /* global Float32Array */
 
 'use strict';
@@ -1928,7 +1937,12 @@ function GLRenderer(postRenderCallback) {
                 continue;
             }
 
-            if (x >= xMin && x <= xMax) {
+            // The first point before and first after extremes should be
+            // rendered (#9962)
+            if (
+                (nx >= xMin || x >= xMin) &&
+                (px <= xMax || x <= xMax)
+            ) {
                 isXInside = true;
             }
 
@@ -2349,7 +2363,9 @@ function GLRenderer(postRenderCallback) {
                 gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
                 gl.blendEquation(gl.FUNC_ADD);
 
-            } else if (options.boostBlending === 'mult') {
+            } else if (options.boostBlending === 'mult' ||
+                options.boostBlending === 'multiply'
+            ) {
                 gl.blendFunc(gl.DST_COLOR, gl.ZERO);
 
             } else if (options.boostBlending === 'darken') {

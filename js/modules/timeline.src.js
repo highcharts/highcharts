@@ -100,25 +100,7 @@ undocumentedSeriesType('timeline', 'line',
              */
             connectorColor: '${palette.neutralColor100}',
             backgroundColor: '${palette.backgroundColor}',
-            /* *
-             * @type      {Highcharts.FormatterCallbackFunction<object>}
-             * @default function () {
-             *   var format;
-             *
-             *   if (!this.series.chart.styledMode) {
-             *       format = '<span style="color:' + this.point.color +
-             *           '">● </span><span style="font-weight: bold;" > ' +
-             *           (this.point.date || '') + '</span><br/>' +
-             *           (this.point.label || '');
-             *   } else {
-             *       format = '<span>● </span>' +
-             *           '<span>' + (this.point.date || '') +
-             *           '</span><br/>' + (this.point.label || '');
-             *   }
-             *   return format;
-             * }
-             * @apioption plotOptions.timeline.dataLabels.formatter
-             */
+            /** @ignore-option */
             formatter: function () {
                 var format;
 
@@ -718,7 +700,7 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
  * @sample {highcharts} highcharts/series-timeline/alternate-labels
  *         Alternate labels
  *
- * @type      {Array<number|*>}
+ * @type      {Array<*>}
  * @extends   series.line.data
  * @excluding marker, x, y
  * @product   highcharts

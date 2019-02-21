@@ -1,10 +1,8 @@
-
 Highcharts.chart('container', {
     series: [{
         type: "treemap",
         layoutAlgorithm: 'squarified',
-        allowDrillToNode: true,
-        interactByLeaf: true,
+        allowTraversingTree: true,
         data: [{
             id: "id_1",
             name: 'A'
@@ -47,6 +45,6 @@ Highcharts.chart('container', {
         text: 'Highcharts Treemap'
     },
     subtitle: {
-        text: 'The A node has children (A1-A3) and allows drilling'
+        text: 'The A node has children (A1-A3) and allows traversing the tree'
     }
 });

@@ -83,10 +83,10 @@ seriesType(
      *
      * @extends      plotOptions.line
      * @since        6.0.0
-     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
-     *               navigatorOptions, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointRange, pointStart, showInNavigator,
-     *               stacking, useOhlcData
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking,
+     *               useOhlcData
      * @product      highstock
      * @optionparent plotOptions.sma
      */
@@ -113,6 +113,17 @@ seriesType(
          */
         linkedTo: undefined,
         /**
+         * Whether to compare indicator to the main series values
+         * or indicator values.
+         *
+         * @sample {highstock} stock/plotoptions/series-comparetomain/
+         *         Difference between comparing SMA values to the main series
+         *         and its own values.
+         *
+         * @type {boolean}
+         */
+        compareToMain: false,
+        /**
          * Paramters used in calculation of regression series' points.
          */
         params: {
@@ -134,6 +145,17 @@ seriesType(
      * @lends Highcharts.Series.prototype
      */
     {
+        processData: function () {
+            var series = this,
+                compareToMain = series.options.compareToMain,
+                linkedParent = series.linkedParent;
+
+            Series.prototype.processData.apply(series, arguments);
+
+            if (linkedParent && linkedParent.compareValue && compareToMain) {
+                series.compareValue = linkedParent.compareValue;
+            }
+        },
         bindTo: {
             series: true,
             eventName: 'updatedData'
@@ -184,7 +206,8 @@ seriesType(
             indicator.dataEventsToUnbind = [];
 
             function recalculateValues() {
-                var oldDataLength = (indicator.xData || []).length,
+                var oldData = indicator.points || [],
+                    oldDataLength = (indicator.xData || []).length,
                     processedData = indicator.getValues(
                         indicator.linkedParent,
                         indicator.options.params
@@ -192,21 +215,76 @@ seriesType(
                         values: [],
                         xData: [],
                         yData: []
-                    };
+                    },
+                    croppedDataValues = [],
+                    overwriteData = true,
+                    oldFirstPointIndex,
+                    oldLastPointIndex,
+                    croppedData,
+                    min,
+                    max,
+                    i;
 
-                // If number of points is the same, we need to update points to
-                // reflect changes in all, x and y's, values. However, do it
-                // only for non-grouped data - grouping does it for us (#8572)
+                // We need to update points to reflect changes in all,
+                // x and y's, values. However, do it only for non-grouped
+                // data - grouping does it for us (#8572)
                 if (
                     oldDataLength &&
-                    oldDataLength === processedData.xData.length &&
-                    !indicator.cropped && // #8968
                     !indicator.hasGroupedData &&
                     indicator.visible &&
                     indicator.points
                 ) {
-                    indicator.updateData(processedData.values);
-                } else {
+                    // When data is cropped update only avaliable points (#9493)
+                    if (indicator.cropped) {
+                        if (indicator.xAxis) {
+                            min = indicator.xAxis.min;
+                            max = indicator.xAxis.max;
+                        }
+
+                        croppedData = indicator.cropData(
+                            processedData.xData,
+                            processedData.yData,
+                            min,
+                            max
+                        );
+
+                        for (i = 0; i < croppedData.xData.length; i++) {
+                            croppedDataValues.push([
+                                croppedData.xData[i],
+                                croppedData.yData[i]
+                            ]);
+                        }
+
+                        oldFirstPointIndex = processedData.xData.indexOf(
+                            indicator.xData[0]
+                        );
+                        oldLastPointIndex = processedData.xData.indexOf(
+                            indicator.xData[indicator.xData.length - 1]
+                        );
+
+                        // Check if indicator points should be shifted (#8572)
+                        if (
+                            oldFirstPointIndex === -1 &&
+                            oldLastPointIndex === processedData.xData.length - 2
+                        ) {
+                            if (croppedDataValues[0][0] === oldData[0].x) {
+                                croppedDataValues.shift();
+                            }
+                        }
+
+                        indicator.updateData(croppedDataValues);
+
+                    // Omit addPoint() and removePoint() cases
+                    } else if (
+                        processedData.xData.length !== oldDataLength - 1 &&
+                        processedData.xData.length !== oldDataLength + 1
+                    ) {
+                        overwriteData = false;
+                        indicator.updateData(processedData.values);
+                    }
+                }
+
+                if (overwriteData) {
                     indicator.xData = processedData.xData;
                     indicator.yData = processedData.yData;
                     indicator.options.data = processedData.values;

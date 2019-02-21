@@ -1,6 +1,6 @@
-
 Highcharts.chart('container', {
     chart: {
+        zoomType: 'x',
         description: 'Random data on a date axis.'
     },
     xAxis: {

@@ -502,8 +502,8 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
         distToPointSquared = Number.MAX_VALUE,
         dist,
         connectorPoint,
-        connectorEnabled = this.options.label.connectorAllowed,
         onArea = pick(this.options.label.onArea, !!this.area),
+        findDistanceToOthers = onArea || this.options.label.connectorAllowed,
         chart = this.chart,
         series,
         points,
@@ -589,7 +589,7 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
                 // Find the squared distance from the center of the label. On
                 // area series, avoid its own graph.
                 if (
-                    (connectorEnabled || withinRange) &&
+                    (findDistanceToOthers || withinRange) &&
                     (this !== series || onArea)
                 ) {
                     xDist = x + bBox.width / 2 - points[j].chartX;
@@ -604,7 +604,7 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
             // Do we need a connector?
             if (
                 !onArea &&
-                connectorEnabled &&
+                findDistanceToOthers &&
                 this === series &&
                 (
                     (checkDistance && !withinRange) ||
@@ -660,7 +660,7 @@ Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
 };
 
 /**
- * The main initiator method that runs on chart level after initiation and
+ * The main initialize method that runs on chart level after initialization and
  * redraw. It runs in  a timeout to prevent locking, and loops over all series,
  * taking all series and labels into account when placing the labels.
  *
@@ -708,11 +708,35 @@ Chart.prototype.drawSeriesLabels = function () {
             onArea = pick(labelOptions.onArea, !!series.area),
             label = series.labelBySeries,
             minFontSize = labelOptions.minFontSize,
-            maxFontSize = labelOptions.maxFontSize;
+            maxFontSize = labelOptions.maxFontSize,
+            dataExtremes,
+            areaMin,
+            areaMax;
+
+        // Stay within the area data bounds (#10038)
+        if (onArea && !inverted) {
+            dataExtremes = [
+                series.xAxis.toPixels(series.xData[0]),
+                series.xAxis.toPixels(
+                    series.xData[series.xData.length - 1]
+                )
+            ];
+            areaMin = Math.min.apply(Math, dataExtremes);
+            areaMax = Math.max.apply(Math, dataExtremes);
+        }
 
         function insidePane(x, y, bBox) {
-            return x > paneLeft && x <= paneLeft + paneWidth - bBox.width &&
-                y >= paneTop && y <= paneTop + paneHeight - bBox.height;
+            var leftBound = Math.max(paneLeft, pick(areaMin, -Infinity)),
+                rightBound = Math.min(
+                    paneLeft + paneWidth,
+                    pick(areaMax, Infinity)
+                );
+            return (
+                x > leftBound &&
+                x <= rightBound - bBox.width &&
+                y >= paneTop &&
+                y <= paneTop + paneHeight - bBox.height
+            );
         }
 
         function destroyLabel() {

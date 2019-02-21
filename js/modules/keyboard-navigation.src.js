@@ -47,6 +47,9 @@ H.extend(H.SVGElement.prototype, {
         var bb = this.getBBox(),
             pad = pick(margin, 3);
 
+        bb.x += this.translateX ? this.translateX : 0;
+        bb.y += this.translateY ? this.translateY : 0;
+
         this.focusBorder = this.renderer.rect(
             bb.x - pad,
             bb.y - pad,
@@ -91,24 +94,6 @@ H.Series.prototype.keyboardMoveVertical = true;
         H.seriesTypes[type].prototype.keyboardMoveVertical = false;
     }
 });
-
-
-/**
- * Strip HTML tags away from a string. Used for aria-label attributes, painting
- * on a canvas will fail if the text contains tags.
- *
- * @private
- * @function stripTags
- *
- * @param  {string} s
- *         The input string
- *
- * @return {string}
- *         The filtered string
- */
-function stripTags(s) {
-    return typeof s === 'string' ? s.replace(/<\/?[^>]+(>|$)/g, '') : s;
-}
 
 
 /**
@@ -1117,6 +1102,31 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
             }
         }),
 
+        // Reset zoom
+        navModuleFactory('resetZoom', [
+            // Tab/Up/Down/Left/Right - just move
+            [[9, 37, 38, 39, 40], function (keyCode, e) {
+                return this.move((
+                    keyCode === 9 && e.shiftKey ||
+                    keyCode === 38 || keyCode === 37
+                ) ? -1 : 1);
+            }],
+            // Space/Enter - select
+            [[13, 32], function () {
+                chart.zoomOut();
+            }]
+        ], {
+            // Only run if we have a reset zoom button
+            validate: function () {
+                return chart.resetZoomButton && chart.resetZoomButton.box;
+            },
+            init: function () {
+                chart.setFocusToElement(
+                    chart.resetZoomButton.box, chart.resetZoomButton
+                );
+            }
+        }),
+
         // Exporting
         navModuleFactory('exporting', [
             // Left/Up
@@ -1401,21 +1411,10 @@ H.Chart.prototype.addKeyboardNavigationModules = function () {
                     chart.options.legend.keyboardNavigation.enabled) !== false;
             },
 
-            // Make elements focusable and accessible
+            // Make elements focusable
             init: function (direction) {
                 chart.legend.allItems.forEach(function (item) {
                     item.legendGroup.element.setAttribute('tabindex', '-1');
-                    item.legendGroup.element.setAttribute('role', 'button');
-                    item.legendGroup.element.setAttribute(
-                        'aria-label',
-                        chart.langFormat(
-                            'accessibility.legendItem',
-                            {
-                                chart: chart,
-                                itemName: stripTags(item.name)
-                            }
-                        )
-                    );
                 });
                 // Focus first/last item
                 chart.highlightLegendItem(
@@ -1448,8 +1447,7 @@ H.Chart.prototype.addExitAnchor = function () {
     // Hide exit anchor
     merge(true, chart.tabExitAnchor.style, {
         position: 'absolute',
-        left: '-9999px',
-        top: 'auto',
+        top: '-999em',
         width: '1px',
         height: '1px',
         overflow: 'hidden'

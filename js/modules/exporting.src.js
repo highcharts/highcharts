@@ -219,7 +219,7 @@ merge(true, defaultOptions.navigation, {
          * @sample highcharts/navigation/buttonoptions-align/
          *         Center aligned
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'right',
@@ -275,7 +275,7 @@ merge(true, defaultOptions.navigation, {
          * @sample highcharts/navigation/buttonoptions-verticalalign/
          *         Buttons at lower right
          *
-         * @type  {Highcharts.VerticalAlignType}
+         * @type  {Highcharts.VerticalAlignValue}
          * @since 2.0
          */
         verticalAlign: 'top',
@@ -981,20 +981,26 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {string}
      */
     sanitizeSVG: function (svg, options) {
+
+        var split = svg.indexOf('</svg>') + 6,
+            html = svg.substr(split);
+
+        // Remove any HTML added to the container after the SVG (#894, #9087)
+        svg = svg.substr(0, split);
+
         // Move HTML into a foreignObject
         if (options && options.exporting && options.exporting.allowHTML) {
-            var html = svg.match(/<\/svg>(.*?$)/);
-
-            if (html && html[1]) {
+            if (html) {
                 html = '<foreignObject x="0" y="0" ' +
                             'width="' + options.chart.width + '" ' +
                             'height="' + options.chart.height + '">' +
                     '<body xmlns="http://www.w3.org/1999/xhtml">' +
-                    html[1] +
+                    html +
                     '</body>' +
                     '</foreignObject>';
                 svg = svg.replace('</svg>', html + '</svg>');
             }
+
         }
 
         svg = svg
@@ -1009,8 +1015,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             )
             .replace(/ (|NS[0-9]+\:)href=/g, ' xlink:href=') // #3567
             .replace(/\n/, ' ')
-            // Any HTML added to the container after the SVG (#894)
-            .replace(/<\/svg>.*?$/, '</svg>')
             // Batik doesn't support rgba fills and strokes (#3095)
             .replace(
                 /(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, // eslint-disable-line max-len
@@ -1348,7 +1352,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // hide all body content
-        childNodes.forEach(function (node, i) {
+        [].forEach.call(childNodes, function (node, i) {
             if (node.nodeType === 1) {
                 origDisplay[i] = node.style.display;
                 node.style.display = 'none';
@@ -1372,7 +1376,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 moveContainers(chart.renderTo);
 
                 // restore all body content
-                childNodes.forEach(function (node, i) {
+                [].forEach.call(childNodes, function (node, i) {
                     if (node.nodeType === 1) {
                         node.style.display = origDisplay[i];
                     }
