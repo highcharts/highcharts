@@ -97,10 +97,7 @@ H.extend(LegendComponent.prototype, {
         // Skip everything if we do not have legend items
         if (!items) {
             if (group) {
-                group.attr({
-                    'aria-label': '',
-                    'aria-hidden': true
-                });
+                group.attr('aria-hidden', true);
             }
             return;
         }

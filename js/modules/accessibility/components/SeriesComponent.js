@@ -639,7 +639,6 @@ H.extend(SeriesComponent.prototype, {
     hideSeriesFromScreenReader: function (series) {
         var seriesEl = this.getSeriesElement(series);
         if (seriesEl) {
-            seriesEl.setAttribute('aria-label', '');
             seriesEl.setAttribute('aria-hidden', true);
         }
     },
