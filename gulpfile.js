@@ -1700,4 +1700,5 @@ gulp.task('common', gulp.series('scripts', 'browserify', 'webpack'));
 /**
  * TypeScript source code documentation
  */
-gulp.task('tsdoc', () => require('./tools/gulptasks/tsdoc')());
+require('./tools/gulptasks/tsdoc');
+require('./tools/gulptasks/tsdoc-watch');
