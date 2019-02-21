@@ -62,7 +62,7 @@ QUnit.test('setTickPositions', assert => {
     /**
      * Should not modify min and max when axis type is category.
      */
-    axis.hasNames = true;
+    axis.categories = ['Test'];
     axis.min = axis.max = 0;
     axis.setTickPositions();
     assert.strictEqual(
