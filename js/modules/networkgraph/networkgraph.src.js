@@ -757,14 +757,18 @@ addEvent(
                                 chart.container,
                                 'mousemove',
                                 function (e) {
-                                    return point.series.onMouseMove(point, e);
+                                    return point &&
+                                        point.series &&
+                                        point.series.onMouseMove(point, e);
                                 }
                             ));
                             unbinders.push(addEvent(
                                 chart.container.ownerDocument,
                                 'mouseup',
                                 function (e) {
-                                    return point.series.onMouseUp(point, e);
+                                    return point &&
+                                        point.series &&
+                                        point.series.onMouseUp(point, e);
                                 }
                             ));
                         }
