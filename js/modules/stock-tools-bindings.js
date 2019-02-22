@@ -240,6 +240,8 @@ bindingsUtils.manageIndicators = function (data) {
             }, false, false);
             seriesConfig.yAxis = yAxis.options.id;
             navigation.resizeYAxes();
+        } else {
+            seriesConfig.yAxis = chart.get(data.linkedTo).options.yAxis;
         }
 
         if (indicatorsWithVolume.indexOf(data.type) >= 0) {
