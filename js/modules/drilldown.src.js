@@ -307,7 +307,7 @@ defaultOptions.drilldown = {
          * What box to align the button to. Can be either `plotBox` or
          * `spacingBox`.
          *
-         * @type       {Highcharts.ButtonAlign2Value}
+         * @type       {Highcharts.ButtonRelativeToValue}
          * @default    plotBox
          * @since      3.0.8
          * @product    highcharts highmaps
