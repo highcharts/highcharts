@@ -532,12 +532,25 @@ seriesType('networkgraph', 'line', {
         }
     },
     /**
+     * Destroy all nodes (points), generatePoints() will take care of creating
+     * them again.
+     */
+    setData: function () {
+        if (this.nodes) {
+            this.nodes.forEach(function (node) {
+                node.destroy();
+            });
+            this.nodes.length = 0;
+        }
+
+        Series.prototype.setData.apply(this, arguments);
+    },
+    /**
      * Destroy all nodes (points) that were created for this series.
      */
     destroy: function () {
-        this.nodes.forEach(function (node) {
-            node.destroy();
-        });
+        this.data = [].concat(this.points, this.nodes);
+
         return Series.prototype.destroy.apply(this, arguments);
     }
 }, {
@@ -664,23 +677,10 @@ seriesType('networkgraph', 'line', {
             to.plotY
         ];*/
     },
-    /**
-     * Remove point, first from the layout, then run original method.
-     *
-     * @return {undefined}
-     */
-    remove: function () {
-        if (this.isNode) {
-            this.series.layout.removeNode(this);
-        } else {
-            this.series.layout.removeLink(this);
-        }
-
-        return Point.prototype.remove.apply(this, arguments);
-    },
 
     /**
      * Destroy point. If it's a node, remove all links coming out of this node.
+     * Then remove point from the layout.
      *
      * @return {undefined}
      */
@@ -693,6 +693,9 @@ seriesType('networkgraph', 'line', {
                     }
                 }
             );
+            this.series.layout.removeNode(this);
+        } else {
+            this.series.layout.removeLink(this);
         }
 
         return Point.prototype.destroy.apply(this, arguments);
