@@ -233,7 +233,6 @@ QUnit.test('Chart lang can be configured', function (assert) {
         lang: {
             accessibility: {
                 chartContainerLabel: 'testing',
-                structureHeading: 'testing2',
                 chartTypes: {
                     lineSingle: 'testing3'
                 }
@@ -247,8 +246,6 @@ QUnit.test('Chart lang can be configured', function (assert) {
 
     assert.ok(
         chart.accessibility.components.infoRegion.screenReaderRegion
-            .innerHTML.indexOf(
-                '<h4>testing2</h4><div>testing3</div>'
-            ) > -1
+            .innerHTML.indexOf('<h4>testing3</h4>') > -1
     );
 });

@@ -205,16 +205,12 @@ H.extend(InfoRegionComponent.prototype, {
         var chart = this.chart,
             options = chart.options,
             chartTypes = chart.types,
-            formatContext = {
-                chart: chart,
-                numSeries: chart.series && chart.series.length
-            },
             // Build axis info - but not for pies and maps. Consider not
             // adding for certain other types as well (funnel, pyramid?)
             axesDesc = (
                 chartTypes.length === 1 && chartTypes[0] === 'pie' ||
                 chartTypes[0] === 'map'
-            ) && {} || this.getAxesDescription();
+            ) ? {} : this.getAxesDescription();
 
         return (
             options.subtitle && options.subtitle.text ?
@@ -222,13 +218,11 @@ H.extend(InfoRegionComponent.prototype, {
         ) + (
             options.accessibility.description ?
                 '<div>' + options.accessibility.description + '</div>' : ''
-        ) + '<h4>' + chart.langFormat(
-            'accessibility.structureHeading', formatContext
-        ) + '</h4><div>' +
+        ) + '<h4>' +
         (
             options.accessibility.typeDescription ||
             chart.getTypeDescription(chartTypes)
-        ) + '</div>' +
+        ) + '</h4>' +
         (axesDesc.xAxis ? (
             '<div>' + axesDesc.xAxis + '</div>'
         ) : '') +

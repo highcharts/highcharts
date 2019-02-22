@@ -323,9 +323,6 @@ H.setOptions({
             /* eslint-disable max-len */
             screenReaderRegionLabel: 'Chart screen reader information.',
             defaultChartTitle: 'Chart',
-            longDescriptionHeading: 'Long description.',
-            noDescription: 'No description available.',
-            structureHeading: 'Structure.',
             viewAsDataTable: 'View as data table.',
             chartHeading: 'Chart graphic.',
             chartContainerLabel: 'Interactive chart. {title}.',
