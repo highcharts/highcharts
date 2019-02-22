@@ -71,13 +71,11 @@ H.extend(LegendComponent.prototype, {
     init: function () {
         // Handle show/hide series/points
         this.addEvent(H.Legend, 'afterColorizeItem', function (e) {
-            var legendGroup = e.item && e.item.legendGroup,
-                pressed = e.visible ? 'false' : 'true';
-            if (legendGroup) {
-                legendGroup.attr('aria-pressed', pressed);
-                if (legendGroup.div) {
-                    legendGroup.div.setAttribute('aria-pressed', pressed);
-                }
+            var legendItem = e.item && e.item.legendItem;
+            if (legendItem && legendItem.element) {
+                legendItem.element.setAttribute(
+                    'aria-pressed', e.visible ? 'false' : 'true'
+                );
             }
         });
     },
@@ -110,13 +108,16 @@ H.extend(LegendComponent.prototype, {
         });
 
         // Set ARIA on legend items
-        if (group && group.element && items.length) {
-            group.attr({
-                'aria-hidden': false,
-                'aria-label': chart.langFormat('accessibility.legendLabel')
-            });
-            if (a11yOptions.landmarkVerbosity === 'all') {
-                group.attr('role', 'region');
+        if (group && items.length) {
+            var groupEl = group.div || group.element;
+            if (groupEl) {
+                groupEl.setAttribute('aria-hidden', false);
+                groupEl.setAttribute('aria-label', chart.langFormat(
+                    'accessibility.legendLabel'
+                ));
+                if (a11yOptions.landmarkVerbosity === 'all') {
+                    groupEl.setAttribute('role', 'region');
+                }
             }
 
             if (this.box && this.box.element) {
@@ -135,12 +136,14 @@ H.extend(LegendComponent.prototype, {
                         }
                     );
                 if (itemGroup && itemGroup.element && text && text.element) {
-                    itemGroup.attr({
+                    text.attr({
                         role: 'button',
                         'aria-pressed': visible ? 'false' : 'true'
                     });
                     if (label) {
-                        itemGroup.attr('aria-label', label);
+                        text.element.parentNode.setAttribute(
+                            'aria-label', label
+                        );
                     }
                     component.unhideElementFromScreenReaders(text.element);
                 }
