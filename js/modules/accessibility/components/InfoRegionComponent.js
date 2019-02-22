@@ -315,18 +315,22 @@ H.extend(InfoRegionComponent.prototype, {
         }
 
         // Use range, not from-to?
-        if (axis.isDatetimeAxis && axis.min === 0) {
+        if (axis.isDatetimeAxis && (axis.min === 0 || axis.dataMin === 0)) {
             var range = {},
                 rangeUnit = 'Seconds';
             range.Seconds = (axis.max - axis.min) / 1000;
-            range.Minutes = range.seconds / 60;
-            range.Hours = range.minutes / 60;
-            range.Days = range.hours / 24;
+            range.Minutes = range.Seconds / 60;
+            range.Hours = range.Minutes / 60;
+            range.Days = range.Hours / 24;
             ['Minutes', 'Hours', 'Days'].forEach(function (unit) {
                 if (range[unit] > 2) {
                     rangeUnit = unit;
                 }
             });
+            range.value = range[rangeUnit].toFixed(
+                rangeUnit !== 'Seconds' &&
+                rangeUnit !== 'Minutes' ? 1 : 0 // Use decimals for days/hours
+            );
 
             // We have the range and the unit to use, find the desc format
             return chart.langFormat(
@@ -334,7 +338,7 @@ H.extend(InfoRegionComponent.prototype, {
                 {
                     chart: chart,
                     axis: axis,
-                    range: range[rangeUnit]
+                    range: range.value.replace('.0', '')
                 }
             );
         }
