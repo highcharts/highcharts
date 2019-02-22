@@ -398,7 +398,12 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             btnOptions = chart.options.chart.resetZoomButton,
             theme = btnOptions.theme,
             states = theme.states,
-            alignTo = btnOptions.relativeTo === 'chart' ? null : 'plotBox';
+            alignTo = (
+                btnOptions.relativeTo === 'chart' ||
+                btnOptions.relativeTo === 'spaceBox' ?
+                    null :
+                    'plotBox'
+            );
 
         function zoomOut() {
             chart.zoomOut();

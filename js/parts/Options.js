@@ -5,11 +5,7 @@
  */
 
 /**
- * @typedef {"plot"|"chart"} Highcharts.ButtonAlignValue
- */
-
-/**
- * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonAlign2Value
+ * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
  */
 
 /**
@@ -1089,15 +1085,15 @@ H.defaultOptions = {
         resetZoomButton: {
 
             /**
-             * What frame the button should be placed related to. Can be either
-             * `plot` or `chart`
+             * What frame the button placement should be related to. Can be
+             * either `plotBox` or `spacingBox`.
              *
              * @sample {highcharts} highcharts/chart/resetzoombutton-relativeto/
              *         Relative to the chart
              * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/
              *         Relative to the chart
              *
-             * @type       {Highcharts.ButtonAlignValue}
+             * @type       {Highcharts.ButtonRelativeToValue}
              * @default    plot
              * @since      2.2
              * @apioption  chart.resetZoomButton.relativeTo
