@@ -29,4 +29,4 @@ function tsdocWatch() {
     );
 }
 
-Gulp.task('tsdoc-watch', tsdocWatch);
+Gulp.task('tsdoc-watch', Gulp.series('tsdoc', tsdocWatch));

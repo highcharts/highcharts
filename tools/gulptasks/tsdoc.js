@@ -49,7 +49,7 @@ function tsdoc(resolve) {
         ignoreCompilerErrors: false,
         includeDeclarations: false,
         json: TARGET_JSON,
-        module: 'amd',
+        module: 'es6',
         name: 'Highcharts',
         out: TARGET_PATH,
         readme: 'README.md',
