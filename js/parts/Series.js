@@ -3339,7 +3339,7 @@ H.Series = H.seriesType(
 
             // Add new points
             pointsToAdd.forEach(function (point) {
-                this.addPoint(point, false);
+                this.addPoint(point, false, null, null, false);
             }, this);
 
             return true;

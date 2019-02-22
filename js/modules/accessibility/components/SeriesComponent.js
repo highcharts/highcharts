@@ -14,17 +14,8 @@ import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationModule from '../KeyboardNavigationModule.js';
 
-
-// If a point has one of the special keys defined, we expose all keys to the
-// screen reader.
-H.Series.prototype.commonKeys = ['name', 'id', 'category', 'x', 'value', 'y'];
-H.Series.prototype.specialKeys = [
-    'z', 'open', 'high', 'q3', 'median', 'q1', 'low', 'close'
-];
-if (H.seriesTypes.pie) {
-    // A pie is always considered simple
-    H.seriesTypes.pie.prototype.specialKeys = [];
-}
+var merge = H.merge,
+    pick = H.pick;
 
 
 /*
@@ -455,6 +446,9 @@ H.extend(SeriesComponent.prototype, {
                 this.label.element.setAttribute('aria-hidden', true);
             }
         });
+
+        // Announce new data
+        this.initAnnouncer();
     },
 
 
@@ -582,6 +576,206 @@ H.extend(SeriesComponent.prototype, {
                 delete chart.highlightedPoint;
             }
         });
+    },
+
+
+    /**
+     * Initialize the new data announcer.
+     * @private
+     */
+    initAnnouncer: function () {
+        var chart = this.chart,
+            a11yOptions = chart.options.accessibility,
+            component = this;
+        this.lastAnnouncementTime = 0;
+        this.dirty = {
+            allSeries: {}
+        };
+
+        // Add the live region
+        this.announceRegion = this.createElement('div');
+        this.announceRegion.setAttribute('aria-hidden', false);
+        this.announceRegion.setAttribute(
+            'aria-live', a11yOptions.announceNewData.interruptUser ?
+                'assertive' : 'polite'
+        );
+        merge(true, this.announceRegion.style, this.hiddenStyle);
+        chart.renderTo.insertBefore(
+            this.announceRegion, chart.renderTo.firstChild
+        );
+
+        // On new data in the series, make sure we add it to the dirty list
+        this.addEvent(H.Series, 'updatedData', function () {
+            if (this.chart.options.accessibility.announceNewData.enabled) {
+                component.dirty.hasDirty = true;
+                component.dirty.allSeries[this.name + this.index] = this;
+            }
+        });
+        // New series
+        this.addEvent(H.Chart, 'afterAddSeries', function (e) {
+            if (this.options.accessibility.announceNewData.enabled) {
+                var series = e.series;
+                component.dirty.hasDirty = true;
+                component.dirty.allSeries[series.name + series.index] = series;
+                // Add it to newSeries storage unless we already have one
+                component.dirty.newSeries = component.dirty.newSeries ===
+                    undefined ? series : null;
+            }
+        });
+        // New point
+        this.addEvent(H.Series, 'addPoint', function (e) {
+            if (this.chart.options.accessibility.announceNewData.enabled) {
+                // Add it to newPoint storage unless we already have one
+                component.dirty.newPoint = component.dirty.newPoint ===
+                    undefined ? e.point : null;
+            }
+        });
+        // On redraw: compile what we know about new data, and build
+        // announcement
+        this.addEvent(H.Chart, 'redraw', function () {
+            if (
+                this.options.accessibility.announceNewData &&
+                component.dirty.hasDirty
+            ) {
+                var newPoint = component.dirty.newPoint,
+                    newPoints;
+                // If we have a single new point, see if we can find it in the
+                // data array. Otherwise we can only pass through options to
+                // the description builder, and it is a bit sparse in info.
+                if (newPoint) {
+                    newPoints = newPoint.series.data.filter(function (point) {
+                        return point.x === newPoint.x && point.y === newPoint.y;
+                    });
+                    // We have list of points with the same x and y values. If
+                    // this list is one point long, we have our new point.
+                    newPoint = newPoints.length === 1 ? newPoints[0] : newPoint;
+                }
+                // Queue the announcement
+                component.announceNewData(
+                    Object.keys(component.dirty.allSeries).map(function (ix) {
+                        return component.dirty.allSeries[ix];
+                    }),
+                    component.dirty.newSeries,
+                    newPoint
+                );
+                // Reset
+                component.dirty = {
+                    allSeries: {}
+                };
+            }
+        });
+    },
+
+
+    /**
+     * Handle announcement to user that there is new data.
+     * @private
+     * @param {Array<Highcharts.Series>} dirtySeries
+     *          Array of series with new data.
+     * @param {Highcharts.Series} [newSeries]
+     *          If a single new series was added, a reference to this series.
+     * @param {Highcharts.Point} [newPoint]
+     *          If a single point was added, a reference to this point.
+     */
+    announceNewData: function (dirtySeries, newSeries, newPoint) {
+        var chart = this.chart,
+            annOptions = chart.options.accessibility.announceNewData;
+        if (annOptions.enabled) {
+            var component = this,
+                now = +new Date(),
+                dTime = now - this.lastAnnouncementTime,
+                time = Math.max(0, annOptions.minAnnounceInterval - dTime),
+                allSeries;
+
+            // Add affected series from existing queued announcement
+            if (this.queuedAnnouncement) {
+                var uniqueSeries = (this.queuedAnnouncement.series || [])
+                    .concat(dirtySeries)
+                    .reduce(function (acc, cur) {
+                        acc[cur.name + cur.index] = cur;
+                        return acc;
+                    }, {});
+                allSeries = Object.keys(uniqueSeries).map(function (ix) {
+                    return uniqueSeries[ix];
+                });
+            } else {
+                allSeries = [].concat(dirtySeries);
+            }
+
+            // Build message and announce
+            var message = this.buildAnnouncementMessage(
+                allSeries, newSeries, newPoint
+            );
+            if (message) {
+                // Is there already one queued?
+                if (this.queuedAnnouncement) {
+                    clearTimeout(this.queuedAnnouncementTimer);
+                }
+
+                // Build the announcement
+                this.queuedAnnouncement = {
+                    time: now,
+                    message: message,
+                    series: allSeries
+                };
+
+                // Queue the announcement
+                component.queuedAnnouncementTimer = setTimeout(function () {
+                    if (component && component.announceRegion) {
+                        component.lastAnnouncementTime = +new Date();
+                        component.announceRegion.innerHTML = component
+                            .queuedAnnouncement.message;
+                        delete component.queuedAnnouncement;
+                        delete component.queuedAnnouncementTimer;
+                    }
+                }, time);
+            }
+        }
+    },
+
+
+    /**
+     * Handle announcement to user that there is new data.
+     * @private
+     * @param {Array<Highcharts.Series>} dirtySeries
+     *          Array of series with new data.
+     * @param {Highcharts.Series} [newSeries]
+     *          If a single new series was added, a reference to this series.
+     * @param {Highcharts.Point} [newPoint]
+     *          If a single point was added, a reference to this point.
+     * @return {String} The announcement message to give to user.
+     */
+    buildAnnouncementMessage: function (dirtySeries, newSeries, newPoint) {
+        var chart = this.chart,
+            annOptions = chart.options.accessibility.announceNewData;
+
+        // User supplied formatter?
+        if (annOptions.announcementFormatter) {
+            var formatterRes = annOptions.announcementFormatter(
+                dirtySeries, newSeries, newPoint
+            );
+            if (formatterRes !== false) {
+                return formatterRes.length ? formatterRes : null;
+            }
+        }
+
+        // Default formatter - use lang options
+        var multiple = H.charts && H.charts.length > 1 ? 'Multiple' : 'Single',
+            langKey = newSeries ? 'newSeriesAnnounce' + multiple :
+                newPoint ? 'newPointAnnounce' + multiple : 'newDataAnnounce';
+        return chart.langFormat(
+            'accessibility.announceNewData.' + langKey, {
+                chartTitle: this.stripTags(
+                    chart.options.title.text || chart.langFormat(
+                        'accessibility.defaultChartTitle', { chart: chart }
+                    )
+                ),
+                seriesDesc: newSeries ?
+                    this.defaultSeriesDescriptionFormatter(newSeries) : null,
+                pointDesc: newPoint ?
+                    this.defaultPointDescriptionFormatter(newPoint) : null
+            }
+        );
     },
 
 
@@ -785,7 +979,6 @@ H.extend(SeriesComponent.prototype, {
         var series = point.series,
             chart = series.chart,
             a11yOptions = chart.options.accessibility,
-            infoString = '',
             description = point.options && point.options.accessibility &&
                 point.options.accessibility.description,
             dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
@@ -806,45 +999,23 @@ H.extend(SeriesComponent.prototype, {
                     ),
                     point.x
                 ),
-            hasSpecialKey = H.find(series.specialKeys, function (key) {
-                return point[key] !== undefined;
-            });
-
-        // If the point has one of the less common properties defined, display
-        // all that are defined
-        if (hasSpecialKey) {
-            if (dateTimePoint) {
-                infoString = timeDesc;
-            }
-            series.commonKeys.concat(series.specialKeys).forEach(
-                function (key) {
-                    if (
-                        point[key] !== undefined &&
-                        !(dateTimePoint && key === 'x')
-                    ) {
-                        infoString += (infoString ? '. ' : '') +
-                            key + ', ' +
-                            point[key];
-                    }
-                }
-            );
-        } else {
-            // Pick and choose properties for a succint label
-            var pointCategory = series.xAxis && series.xAxis.categories &&
+            pointCategory = series.xAxis && series.xAxis.categories &&
                     point.category !== undefined && '' + point.category;
-            infoString =
-                (
-                    point.name ||
-                    timeDesc ||
-                    pointCategory || (
-                        point.id && point.id.indexOf('highcharts-') < 0 ?
-                            point.id : ('x, ' + point.x)
-                    )
-                ) + ', ' +
-                (point.value !== undefined ? point.value : point.y);
-        }
 
-        return (point.index + 1) + '. ' + infoString + '.' +
+        // Pick and choose properties for a succint label
+        var xDesc = point.name || timeDesc || pointCategory || (
+                point.id && point.id.indexOf('highcharts-') < 0 ?
+                    point.id : ('x, ' + point.x)
+            ),
+            valueDesc = point.series.pointArrayMap ?
+                point.series.pointArrayMap.reduce(function (desc, key) {
+                    return desc + (desc.length ? ', ' : '') + key + ': ' +
+                        pick(point[key], point.options[key]);
+                }, '') :
+                (point.value !== undefined ? point.value : point.y);
+
+        return (point.index !== undefined ? (point.index + 1) + '. ' : '') +
+            xDesc + ', ' + valueDesc + '.' +
             (description ? ' ' + description : '') +
             (chart.series.length > 1 && series.name ? ' ' + series.name : '');
     }

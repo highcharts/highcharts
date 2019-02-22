@@ -39,6 +39,7 @@ AccessibilityComponent.prototype = {
         this.chart = chart;
         this.eventRemovers = [];
         this.domElements = [];
+        // Key code enum for common keys
         this.keyCodes = {
             left: 37,
             right: 39,
@@ -48,6 +49,14 @@ AccessibilityComponent.prototype = {
             space: 32,
             esc: 27,
             tab: 9
+        };
+        // CSS Styles for hiding elements visually but keeping them visible to
+        // AT.
+        this.hiddenStyle = {
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            overflow: 'hidden'
         };
     },
 

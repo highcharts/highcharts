@@ -14,13 +14,7 @@ import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 
 var doc = H.win.document,
-    merge = H.merge,
-    hiddenStyle = {
-        position: 'absolute',
-        width: '1px',
-        height: '1px',
-        overflow: 'hidden'
-    };
+    merge = H.merge;
 
 
 /**
@@ -192,8 +186,8 @@ H.extend(InfoRegionComponent.prototype, {
         this.unhideElementFromScreenReaders(hiddenSection);
 
         // Visually hide the section and the chart heading
-        merge(true, chartHeading.style, hiddenStyle);
-        merge(true, hiddenSection.style, hiddenStyle);
+        merge(true, chartHeading.style, this.hiddenStyle);
+        merge(true, hiddenSection.style, this.hiddenStyle);
     },
 
 
