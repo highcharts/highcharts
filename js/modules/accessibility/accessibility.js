@@ -460,7 +460,9 @@ addEvent(H.Point, 'update', function () {
         }
     });
 });
-['addSeries', 'removeSeries'].forEach(function (event) {
+[
+    'afterApplyDrilldown', 'drillupall', 'addSeries', 'removeSeries'
+].forEach(function (event) {
     addEvent(H.Chart, event, function () {
         if (this.accessibility) {
             this.accessibility.update();

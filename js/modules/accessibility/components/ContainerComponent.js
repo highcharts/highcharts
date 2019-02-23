@@ -45,6 +45,11 @@ H.extend(ContainerComponent.prototype, {
                 'accessibility.svgContainerTitle', {
                     chartTitle: chartTitle
                 }
+            )),
+            svgContainerLabel = this.stripTags(chart.langFormat(
+                'accessibility.svgContainerLabel', {
+                    chartTitle: chartTitle
+                }
             ));
 
         // Add SVG title tag if it is set
@@ -61,6 +66,12 @@ H.extend(ContainerComponent.prototype, {
             );
         }
 
+        // Add label to SVG container
+        if (chart.renderer.box && svgContainerLabel.length) {
+            chart.renderer.box.setAttribute('aria-label', svgContainerLabel);
+        }
+
+        // Add role and label to the div
         if (a11yOptions.landmarkVerbosity !== 'disabled') {
             chart.renderTo.setAttribute('role', 'region');
         } else {

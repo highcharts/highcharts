@@ -73,6 +73,20 @@ H.extend(ZoomComponent.prototype, {
                 );
             }
         });
+
+        // Make drill-up button accessible and focusable
+        this.addEvent(this.chart, 'afterApplyDrilldown', function () {
+            var button = this.drillUpButton;
+            if (button) {
+                button.attr({
+                    tabindex: -1,
+                    role: 'button'
+                });
+                component.unhideElementFromScreenReaders(
+                    button.text && button.text.element || button.element
+                );
+            }
+        });
     },
 
     /**
@@ -192,11 +206,14 @@ H.extend(ZoomComponent.prototype, {
 
 
     /**
-     * Get keyboard navigation module for reset zoom.
+     * Get keyboard navigation module for a simple chart button. Provide the
+     * button reference for the chart, and a function to call on click.
+     *
      * @private
+     * @param {string} buttonProp The property on chart referencing the button.
      * @returns {KeyboardNavigationModule} The module object
      */
-    getResetZoomNavigation: function () {
+    simpleButtonNavigation: function (buttonProp, onClick) {
         var keys = this.keyCodes,
             chart = this.chart;
 
@@ -217,20 +234,20 @@ H.extend(ZoomComponent.prototype, {
                 [[
                     keys.space, keys.enter
                 ], function () {
-                    chart.zoomOut();
+                    onClick(chart);
                     return this.response.success;
                 }]
             ],
 
-            // Only run if we have a reset zoom button
+            // Only run if we have the button
             validate: function () {
-                return chart.resetZoomButton && chart.resetZoomButton.box;
+                return chart[buttonProp] && chart[buttonProp].box;
             },
 
             // Focus button initially
             init: function () {
                 chart.setFocusToElement(
-                    chart.resetZoomButton.box, chart.resetZoomButton
+                    chart[buttonProp].box, chart[buttonProp]
                 );
             }
         });
@@ -242,7 +259,15 @@ H.extend(ZoomComponent.prototype, {
      * @returns {Array<KeyboardNavigationModule>} List of module objects
      */
     getKeyboardNavigation: function () {
-        return [this.getResetZoomNavigation(), this.getMapZoomNavigation()];
+        return [
+            this.simpleButtonNavigation('resetZoomButton', function (chart) {
+                chart.zoomOut();
+            }),
+            this.simpleButtonNavigation('drillUpButton', function (chart) {
+                chart.drillUp();
+            }),
+            this.getMapZoomNavigation()
+        ];
     }
 
 });

@@ -326,6 +326,7 @@ H.setOptions({
             viewAsDataTable: 'View as data table.',
             chartHeading: 'Chart graphic.',
             chartContainerLabel: 'Interactive chart. {title}.',
+            svgContainerLabel: 'Interactive chart',
             rangeSelectorMinInput: 'Select start date.',
             rangeSelectorMaxInput: 'Select end date.',
             tableSummary: 'Table representation of chart.',

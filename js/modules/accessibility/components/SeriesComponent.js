@@ -606,13 +606,16 @@ H.extend(SeriesComponent.prototype, {
 
         // On new data in the series, make sure we add it to the dirty list
         this.addEvent(H.Series, 'updatedData', function () {
-            if (this.chart.options.accessibility.announceNewData.enabled) {
+            if (
+                this.chart === chart &&
+                this.chart.options.accessibility.announceNewData.enabled
+            ) {
                 component.dirty.hasDirty = true;
                 component.dirty.allSeries[this.name + this.index] = this;
             }
         });
         // New series
-        this.addEvent(H.Chart, 'afterAddSeries', function (e) {
+        this.addEvent(chart, 'afterAddSeries', function (e) {
             if (this.options.accessibility.announceNewData.enabled) {
                 var series = e.series;
                 component.dirty.hasDirty = true;
@@ -624,7 +627,8 @@ H.extend(SeriesComponent.prototype, {
         });
         // New point
         this.addEvent(H.Series, 'addPoint', function (e) {
-            if (this.chart.options.accessibility.announceNewData.enabled) {
+            if (this.chart === chart &&
+                this.chart.options.accessibility.announceNewData.enabled) {
                 // Add it to newPoint storage unless we already have one
                 component.dirty.newPoint = component.dirty.newPoint ===
                     undefined ? e.point : null;
@@ -632,7 +636,7 @@ H.extend(SeriesComponent.prototype, {
         });
         // On redraw: compile what we know about new data, and build
         // announcement
-        this.addEvent(H.Chart, 'redraw', function () {
+        this.addEvent(chart, 'redraw', function () {
             if (
                 this.options.accessibility.announceNewData &&
                 component.dirty.hasDirty
@@ -725,6 +729,21 @@ H.extend(SeriesComponent.prototype, {
                         component.lastAnnouncementTime = +new Date();
                         component.announceRegion.innerHTML = component
                             .queuedAnnouncement.message;
+
+                        // Delete contents after a second to avoid user
+                        // finding the live region in the DOM.
+                        if (component.clearAnnouncementContainerTimer) {
+                            clearTimeout(
+                                component.clearAnnouncementContainerTimer
+                            );
+                        }
+                        component.clearAnnouncementContainerTimer = setTimeout(
+                            function () {
+                                component.announceRegion.innerHTML = '';
+                                delete
+                                component.clearAnnouncementContainerTimer;
+                            }, 1000
+                        );
                         delete component.queuedAnnouncement;
                         delete component.queuedAnnouncementTimer;
                     }
