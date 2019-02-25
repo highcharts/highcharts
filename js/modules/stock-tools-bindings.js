@@ -190,6 +190,7 @@ bindingsUtils.manageIndicators = function (data) {
             'ppo',
             'natr',
             'williamsr',
+            'stochastic',
             'linearRegression',
             'linearRegressionSlope',
             'linearRegressionIntercept',
