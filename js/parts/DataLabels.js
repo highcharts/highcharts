@@ -1264,6 +1264,9 @@ if (seriesTypes.pie) {
             seriesCenter = series.center,
             radius = seriesCenter[2] / 2,
             centerY = seriesCenter[1],
+            reversed = series.options.reversed,
+            dataLabelsInsideFunnel = options.inside &&
+                (series.type === 'funnel' || series.type === 'pyramid'),
             dataLabel,
             dataLabelWidth,
             // labelPos,
@@ -1357,7 +1360,15 @@ if (seriesTypes.pie) {
                 naturalY,
                 sideOverflow,
                 size,
-                distributionLength;
+                distributionLength,
+                pointPlotY,
+                pointWidthAt,
+                halfPointH, // half of the point height
+                halfLabelH, // half of the dataLabel height
+                seriesOffsetX,
+                dataLabelX,
+                dataLabelY,
+                widthAt;
 
             if (!length) {
                 return;
@@ -1464,26 +1475,82 @@ if (seriesTypes.pie) {
                     align: labelPosition.alignment
                 };
 
-                dataLabel._pos = {
-                    x: (
-                        x +
-                        options.x +
-                        ({
-                            left: connectorPadding,
-                            right: -connectorPadding
-                        }[labelPosition.alignment] || 0)
-                    ),
+                // DataLabels inside funnel and pyramid (#10036)
+                if (dataLabelsInsideFunnel) {
+                    dataLabelWidth = dataLabel.width;
+                    pointPlotY =
+                        reversed ? 2 * centerY - point.plotY : point.plotY;
+                    halfPointH = Math.abs(
+                        point.shapeArgs.d[2] - point.shapeArgs.d[7]
+                    ) / 2;
+                    halfLabelH = dataLabel.height / 2;
+                    seriesOffsetX = series.centerX - plotWidth / 2;
+
+                    // disable connectors
+                    connectorWidth = 0;
+
+                    widthAt = pointPlotY;
+
+                    // vertical alignment of the inner dataLabel
+                    if (options.verticalAlign === 'center') {
+                        dataLabelY =
+                            point.plotY - halfLabelH + options.y;
+                    } else if (options.verticalAlign === 'top') {
+                        dataLabelY = point.plotY - halfPointH +
+                            options.padding + options.y;
+
+                        widthAt = reversed ?
+                            pointPlotY + halfPointH - halfLabelH :
+                            pointPlotY - halfPointH + halfLabelH;
+                    } else if (options.verticalAlign === 'bottom') {
+                        dataLabelY = point.plotY + halfPointH -
+                            dataLabel.height - options.padding + options.y;
+
+                        widthAt = reversed ?
+                            pointPlotY - halfPointH + halfLabelH :
+                            pointPlotY + halfPointH - halfLabelH;
+                    } else {
+                        // 10 is for the baseline (label vs text)
+                        dataLabelY = y + options.y - 10;
+                    }
+
+                    pointWidthAt = series.getWidthAt(widthAt);
+
+                    // horizontal alignment of the inner dataLabel
+                    if (options.align === 'left') {
+                        dataLabelX = series.centerX - pointWidthAt / 2 +
+                            options.x + options.padding;
+                    } else if (options.align === 'right') {
+                        dataLabelX = series.centerX + pointWidthAt / 2 -
+                            dataLabelWidth + options.x - options.padding;
+                    } else {
+                        dataLabelX = plotWidth / 2 - dataLabelWidth / 2 +
+                            seriesOffsetX + options.x;
+                    }
+
+                    labelPosition.final.x = dataLabelX;
+                    labelPosition.final.y = dataLabelY;
+                    labelPosition.alignment = options.align;
+                } else {
+                    dataLabelX = x + options.x + ({
+                        left: connectorPadding,
+                        right: -connectorPadding
+                    }[labelPosition.alignment] || 0);
 
                     // 10 is for the baseline (label vs text)
-                    y: y + options.y - 10
+                    dataLabelY = y + options.y - 10;
+
+                    labelPosition.final.x = x;
+                    labelPosition.final.y = y;
+                }
+
+                dataLabel._pos = {
+                    x: dataLabelX,
+                    y: dataLabelY
                 };
-                // labelPos.x = x;
-                // labelPos.y = y;
-                labelPosition.final.x = x;
-                labelPosition.final.y = y;
 
                 // Detect overflowing data labels
-                if (pick(options.crop, true)) {
+                if (pick(options.crop, true) && !dataLabelsInsideFunnel) {
                     dataLabelWidth = dataLabel.getBBox().width;
 
                     sideOverflow = null;
