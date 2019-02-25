@@ -205,10 +205,10 @@ Axis.prototype.setBreaks = function (breaks, redraw) {
                     breaks = this.options.breaks;
 
                 while ((axisBreak = findBreakAt(newMin, breaks))) {
-                    newMin = axisBreak.from;
+                    newMin = axisBreak.to;
                 }
                 while ((axisBreak = findBreakAt(newMax, breaks))) {
-                    newMax = axisBreak.to;
+                    newMax = axisBreak.from;
                 }
 
                 // If both min and max is within the same break.
