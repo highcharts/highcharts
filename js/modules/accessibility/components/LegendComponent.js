@@ -42,7 +42,9 @@ H.Chart.prototype.highlightLegendItem = function (ix) {
             this.legend.scroll(1 + items[ix].pageIx - this.legend.currentPage);
         }
         // Focus
-        this.setFocusToElement(items[ix].legendItem, items[ix].legendGroup);
+        this.setFocusToElement(
+            items[ix].legendItem, items[ix].a11yProxyElement
+        );
         H.fireEvent(items[ix].legendGroup.element, 'mouseover');
         return true;
     }
@@ -70,10 +72,10 @@ H.extend(LegendComponent.prototype, {
      */
     init: function () {
         // Handle show/hide series/points
-        this.addEvent(H.Legend, 'afterColorizeItem', function (e) {
-            var legendItem = e.item && e.item.legendItem;
-            if (legendItem && legendItem.element) {
-                legendItem.element.setAttribute(
+        this.addEvent(this.chart.legend, 'afterColorizeItem', function (e) {
+            var legendItem = e.item;
+            if (legendItem && legendItem.a11yProxyElement) {
+                legendItem.a11yProxyElement.setAttribute(
                     'aria-pressed', e.visible ? 'false' : 'true'
                 );
             }
@@ -87,68 +89,53 @@ H.extend(LegendComponent.prototype, {
     onChartUpdate: function () {
         var chart = this.chart,
             a11yOptions = chart.options.accessibility,
-            legend = chart.legend || {},
-            group = legend.group,
-            items = legend.allItems,
+            items = chart.legend && chart.legend.allItems,
             component = this;
 
-        // Skip everything if we do not have legend items
-        if (!items) {
-            if (group) {
-                group.attr('aria-hidden', true);
-            }
+        // Always Remove group if exists
+        this.removeElement(this.legendProxyGroup);
+
+        // Skip everything if we do not have legend items, or if we have a
+        // color axis
+        if (
+            !items || !items.length ||
+            chart.colorAxis && chart.colorAxis.length
+        ) {
             return;
         }
 
-        // Make elements focusable
+        // Add proxy group
+        this.legendProxyGroup = this.legendProxyGroup ||
+            this.addProxyGroup({
+                'aria-label': chart.langFormat(
+                    'accessibility.legendLabel'
+                ),
+                'role': a11yOptions.landmarkVerbosity === 'all' ?
+                    'region' : null
+            });
+
+        // Proxy the legend items
         items.forEach(function (item) {
-            if (item.legendGroup && item.legendGroup.element) {
-                item.legendGroup.element.setAttribute('tabindex', '-1');
+            if (item.legendItem && item.legendItem.element) {
+                item.a11yProxyElement = component.createProxyButton(
+                    item.legendItem,
+                    component.legendProxyGroup,
+                    {
+                        tabindex: -1,
+                        'aria-pressed': !item.visible,
+                        'aria-label': chart.langFormat(
+                            'accessibility.legendItem',
+                            {
+                                chart: chart,
+                                itemName: component.stripTags(item.name)
+                            }
+                        )
+                    },
+                    // Consider useHTML
+                    item.legendGroup.div ? item.legendItem : item.legendGroup
+                );
             }
         });
-
-        // Set ARIA on legend items
-        if (group && items.length) {
-            var groupEl = group.div || group.element;
-            if (groupEl) {
-                groupEl.setAttribute('aria-hidden', false);
-                groupEl.setAttribute('aria-label', chart.langFormat(
-                    'accessibility.legendLabel'
-                ));
-                if (a11yOptions.landmarkVerbosity === 'all') {
-                    groupEl.setAttribute('role', 'region');
-                }
-            }
-
-            if (this.box && this.box.element) {
-                this.box.attr('aria-hidden', 'true');
-            }
-
-            items.forEach(function (item) {
-                var itemGroup = item.legendGroup,
-                    text = item.legendItem,
-                    visible = item.visible,
-                    label = chart.langFormat(
-                        'accessibility.legendItem',
-                        {
-                            chart: chart,
-                            itemName: component.stripTags(item.name)
-                        }
-                    );
-                if (itemGroup && itemGroup.element && text && text.element) {
-                    text.attr({
-                        role: 'button',
-                        'aria-pressed': visible ? 'false' : 'true'
-                    });
-                    if (label) {
-                        text.element.parentNode.setAttribute(
-                            'aria-label', label
-                        );
-                    }
-                    component.unhideElementFromScreenReaders(text.element);
-                }
-            });
-        }
     },
 
 
@@ -201,7 +188,7 @@ H.extend(LegendComponent.prototype, {
                         component.highlightedLegendItemIx
                     ].legendItem.element;
 
-                    this.fakeClickEvent(
+                    component.fakeClickEvent(
                         !chart.legend.options.useHTML ? // #8561
                             legendElement.parentNode : legendElement
                     );

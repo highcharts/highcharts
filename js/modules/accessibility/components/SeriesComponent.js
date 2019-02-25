@@ -425,11 +425,14 @@ H.extend(SeriesComponent.prototype, {
      * Init the component.
      */
     init: function () {
+        var component = this;
+
         // On destroy, we need to clean up the focus border and the state.
         this.addEvent(H.Series, 'destroy', function () {
             var chart = this.chart;
 
             if (
+                chart === component.chart &&
                 chart.highlightedPoint &&
                 chart.highlightedPoint.series === this
             ) {
@@ -442,7 +445,11 @@ H.extend(SeriesComponent.prototype, {
 
         // Hide tooltip when it is shown
         this.addEvent(H.Tooltip, 'refresh', function () {
-            if (this.label && this.label.element) {
+            if (
+                this.chart === component.chart &&
+                this.label &&
+                this.label.element
+            ) {
                 this.label.element.setAttribute('aria-hidden', true);
             }
         });

@@ -25,9 +25,11 @@ import defaultOptions from './options.js';
 import '../../modules/accessibility/a11y-i18n.js';
 
 var addEvent = H.addEvent,
+    doc = H.win.document,
     pick = H.pick,
     merge = H.merge,
     extend = H.extend;
+
 
 // Add default options
 merge(true, H.defaultOptions, defaultOptions);
@@ -107,33 +109,33 @@ H.extend(H.SVGElement.prototype, {
  * @param {Highcharts.SVGElement} svgElement
  *        Element to draw the border around.
  *
- * @param {Highcharts.SVGElement} [focusElement]
+ * @param {SVGDOMElement|HTMLDOMElement} [focusElement]
  *        If supplied, it draws the border around svgElement and sets the focus
  *        to focusElement.
  */
 H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
     var focusBorderOptions = this.options.accessibility
             .keyboardNavigation.focusBorder,
-        browserFocusElement = focusElement || svgElement;
+        browserFocusElement = focusElement || svgElement.element;
 
     // Set browser focus if possible
     if (
-        browserFocusElement.element &&
-        browserFocusElement.element.focus
+        browserFocusElement &&
+        browserFocusElement.focus
     ) {
         // If there is no focusin-listener, add one to work around Edge issue
         // where Narrator is not reading out points despite calling focus().
         if (!(
-            browserFocusElement.element.hcEvents &&
-            browserFocusElement.element.hcEvents.focusin
+            browserFocusElement.hcEvents &&
+            browserFocusElement.hcEvents.focusin
         )) {
-            addEvent(browserFocusElement.element, 'focusin', function () {});
+            addEvent(browserFocusElement, 'focusin', function () {});
         }
 
-        browserFocusElement.element.focus();
+        browserFocusElement.focus();
         // Hide default focus ring
         if (focusBorderOptions.hideBrowserFocusOutline) {
-            browserFocusElement.css({ outline: 'none' });
+            browserFocusElement.style.outline = 'none';
         }
     }
     if (focusBorderOptions.enabled) {
@@ -198,6 +200,12 @@ Accessibility.prototype = {
     init: function (chart) {
         var a11yOptions = chart.options.accessibility;
         this.chart = chart;
+
+        // Abort on old browsers
+        if (!doc.addEventListener || !chart.renderer.isSVG) {
+            chart.renderTo.setAttribute('aria-hidden', true);
+            return;
+        }
 
         // Copy over any deprecated options that are used. We could do this on
         // every update, but it is probably not needed.

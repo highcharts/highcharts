@@ -164,7 +164,7 @@ H.extend(ZoomComponent.prototype, {
                     button = chart.mapNavButtons[
                         component.focusedMapNavButtonIx
                     ];
-                    chart.setFocusToElement(button.box, button);
+                    chart.setFocusToElement(button.box, button.element);
                     button.setState(2);
 
                     return this.response.success;
@@ -174,7 +174,7 @@ H.extend(ZoomComponent.prototype, {
                 [[
                     keys.space, keys.enter
                 ], function () {
-                    this.fakeClickEvent(
+                    component.fakeClickEvent(
                         chart.mapNavButtons[
                             component.focusedMapNavButtonIx
                         ].element
@@ -197,7 +197,9 @@ H.extend(ZoomComponent.prototype, {
                 var zoomIn = chart.mapNavButtons[0],
                     zoomOut = chart.mapNavButtons[1],
                     initialButton = direction > 0 ? zoomIn : zoomOut;
-                chart.setFocusToElement(initialButton.box, initialButton);
+                chart.setFocusToElement(
+                    initialButton.box, initialButton.element
+                );
                 initialButton.setState(2);
                 component.focusedMapNavButtonIx = direction > 0 ? 0 : 1;
             }
@@ -247,7 +249,7 @@ H.extend(ZoomComponent.prototype, {
             // Focus button initially
             init: function () {
                 chart.setFocusToElement(
-                    chart[buttonProp].box, chart[buttonProp]
+                    chart[buttonProp].box, chart[buttonProp].element
                 );
             }
         });

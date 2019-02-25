@@ -11,8 +11,7 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-var doc = H.win.document,
-    find = H.find;
+var find = H.find;
 
 
 /**
@@ -55,22 +54,6 @@ function KeyboardNavigationModule(chart, options) {
     };
 }
 KeyboardNavigationModule.prototype = {
-
-    /**
-     * Utility function to attempt to fake a click event on an element.
-     *
-     * @function KeyboardNavigationModule#fakeClickEvent
-     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement}
-     * @returns {undefined}
-     */
-    fakeClickEvent: function (element) {
-        if (element && element.onclick && doc.createEvent) {
-            var fakeEvent = doc.createEvent('Events');
-            fakeEvent.initEvent('click', true, false);
-            element.onclick(fakeEvent);
-        }
-    },
-
 
     /**
      * Find handler function(s) for key code in the keyCodeMap and run it.

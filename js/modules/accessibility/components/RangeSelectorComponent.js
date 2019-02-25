@@ -37,7 +37,7 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
     // Select new
     this.highlightedRangeSelectorItemIx = ix;
     if (buttons[ix]) {
-        this.setFocusToElement(buttons[ix].box, buttons[ix]);
+        this.setFocusToElement(buttons[ix].box, buttons[ix].element);
         this.oldRangeSelectorItemState = buttons[ix].state;
         buttons[ix].setState(2);
         return true;
@@ -121,7 +121,8 @@ H.extend(RangeSelectorComponent.prototype, {
     getRangeSelectorButtonNavigation: function () {
         var chart = this.chart,
             keys = this.keyCodes,
-            a11yOptions = chart.options.accessibility;
+            a11yOptions = chart.options.accessibility,
+            component = this;
 
         return new KeyboardNavigationModule(chart, {
             keyCodeMap: [
@@ -154,7 +155,7 @@ H.extend(RangeSelectorComponent.prototype, {
                 ], function () {
                     // Don't allow click if button used to be disabled
                     if (chart.oldRangeSelectorItemState !== 3) {
-                        this.fakeClickEvent(
+                        component.fakeClickEvent(
                             chart.rangeSelector.buttons[
                                 chart.highlightedRangeSelectorItemIx
                             ].element

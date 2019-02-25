@@ -143,6 +143,9 @@ H.extend(MenuComponent.prototype, {
             chart = this.chart,
             a11yOptions = chart.options.accessibility;
 
+        // Always start with a clean slate
+        this.removeElement(this.exportProxyGroup);
+
         // Set screen reader properties on export menu
         if (
             chart.exportSVGElements &&
@@ -150,10 +153,11 @@ H.extend(MenuComponent.prototype, {
             chart.exportSVGElements[0].element
         ) {
             // Set event handler on button if not already done
-            var button = chart.exportSVGElements[0].element,
-                oldExportCallback = button.onclick;
-            if (this.wrappedButton !== button) {
-                button.onclick = function () {
+            var button = chart.exportSVGElements[0],
+                buttonElement = button.element,
+                oldExportCallback = buttonElement.onclick;
+            if (this.wrappedButton !== buttonElement) {
+                buttonElement.onclick = function () {
                     oldExportCallback.apply(
                         this,
                         Array.prototype.slice.call(arguments)
@@ -161,41 +165,31 @@ H.extend(MenuComponent.prototype, {
                     component.addAccessibleContextMenuAttribs();
                     chart.highlightExportItem(0);
                 };
-                this.wrappedButton = button;
+                this.wrappedButton = buttonElement;
             }
 
-            // Set props on button
-            button.setAttribute('role', 'button');
-            button.setAttribute(
-                'aria-label',
-                chart.langFormat(
-                    'accessibility.exporting.menuButtonLabel', { chart: chart }
-                )
-            );
+            // Proxy button and group
+            this.exportProxyGroup = this.exportProxyGroup ||
+                    this.addProxyGroup(
+                        // Wrap in a region div if verbosity is high
+                        a11yOptions.landmarkVerbosity === 'all' ? {
+                            'aria-label': chart.langFormat(
+                                'accessibility.exporting.exportRegionLabel',
+                                { chart: chart }
+                            ),
+                            'role': 'region'
+                        } : null
+                    );
 
-            // Hide button children
-            if (button.childNodes) {
-                Array.prototype.forEach.call(
-                    button.childNodes,
-                    function (node) {
-                        node.setAttribute('aria-hidden', true);
-                    }
-                );
-            }
-
-            // Set props on group
-            if (a11yOptions.landmarkVerbosity === 'all') {
-                chart.exportingGroup.element.setAttribute('role', 'region');
-            }
-            component.unhideElementFromScreenReaders(
-                chart.exportingGroup.element
-            );
-            chart.exportingGroup.element.setAttribute(
-                'aria-label',
-                chart.langFormat(
-                    'accessibility.exporting.exportRegionLabel',
-                    { chart: chart }
-                )
+            this.exportButtonProxy = this.createProxyButton(
+                button,
+                this.exportProxyGroup,
+                {
+                    'aria-label': chart.langFormat(
+                        'accessibility.exporting.menuButtonLabel',
+                        { chart: chart }
+                    )
+                }
             );
         }
     },
@@ -241,7 +235,8 @@ H.extend(MenuComponent.prototype, {
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,
             chart = this.chart,
-            a11yOptions = chart.options.accessibility;
+            a11yOptions = chart.options.accessibility,
+            component = this;
 
         return new KeyboardNavigationModule(chart, {
             keyCodeMap: [
@@ -293,7 +288,7 @@ H.extend(MenuComponent.prototype, {
                 [[
                     keys.enter, keys.space
                 ], function () {
-                    this.fakeClickEvent(
+                    component.fakeClickEvent(
                         chart.exportDivElements[chart.highlightedExportItemIx]
                     );
                     return this.response.success;

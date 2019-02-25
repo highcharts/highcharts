@@ -11,6 +11,11 @@
 'use strict';
 import Highcharts from '../../parts/Globals.js';
 
+var win = Highcharts.win,
+    doc = win.document,
+    merge = Highcharts.merge,
+    addEvent = Highcharts.addEvent;
+
 
 /**
  * The AccessibilityComponent base class, representing a part of the chart that
@@ -60,6 +65,7 @@ AccessibilityComponent.prototype = {
         };
     },
 
+
     /**
      * Add an event to an element and keep track of it for destroy().
      * Same args as Highcharts.addEvent
@@ -70,6 +76,7 @@ AccessibilityComponent.prototype = {
         this.eventRemovers.push(remover);
         return remover;
     },
+
 
     /**
      * Create an element and keep track of it for destroy().
@@ -83,6 +90,211 @@ AccessibilityComponent.prototype = {
         this.domElements.push(el);
         return el;
     },
+
+
+    /**
+     * Utility function to clone a mouse event for re-dispatching.
+     * @private
+     * @param {EventObject} event The event to clone.
+     * @returns {EventObject} The cloned event
+     */
+    cloneMouseEvent: function (event) {
+        if (typeof win.MouseEvent === 'function') {
+            return new win.MouseEvent(event.type, event);
+        }
+        // No MouseEvent support, try using initMouseEvent
+        if (doc.createEvent) {
+            var evt = doc.createEvent('MouseEvent');
+            if (evt.initMouseEvent) {
+                evt.initMouseEvent(
+                    event.type,
+                    event.canBubble,
+                    event.cancelable,
+                    event.view,
+                    event.detail,
+                    event.screenX,
+                    event.screenY,
+                    event.clientX,
+                    event.clientY,
+                    event.ctrlKey,
+                    event.altKey,
+                    event.shiftKey,
+                    event.metaKey,
+                    event.button,
+                    event.relatedTarget
+                );
+                return evt;
+            }
+
+            // Fallback to basic Event
+            evt = doc.createEvent('Event');
+            if (evt.initEvent) {
+                evt.initEvent(event.type, true, true);
+                return evt;
+            }
+        }
+    },
+
+
+    /**
+     * Utility function to attempt to fake a click event on an element.
+     * @private
+     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
+     */
+    fakeClickEvent: function (element) {
+        if (element && element.onclick && doc.createEvent) {
+            var fakeEvent = doc.createEvent('Event');
+            fakeEvent.initEvent('click', true, false);
+            element.onclick(fakeEvent);
+        }
+    },
+
+
+    /**
+     * Create an invisible proxy HTML button in the same position as an SVG
+     * element
+     * @private
+     * @param {Highcharts.SVGElement} svgElement The wrapped svg el to proxy.
+     * @param {HTMLElement} parentGroup The proxy group element in the proxy
+     *          container to add this button to.
+     * @param {object} [attributes] Additional attributes to set.
+     * @param {Highcharts.SVGElement} [posElement] Element to use for
+     *          positioning instead of svgElement.
+     * @returns {HTMLElement} The proxy button.
+     */
+    createProxyButton: function (
+        svgElement, parentGroup, attributes, posElement
+    ) {
+        var svgEl = svgElement.element,
+            component = this,
+            proxy = this.createElement('button'),
+            attrs = merge({
+                'aria-label': svgEl.getAttribute('aria-label')
+            }, attributes),
+            positioningElement = posElement || svgElement,
+            pos = this.getElementPosition(positioningElement),
+            bBox = positioningElement.width ? null :
+                positioningElement.element &&
+                positioningElement.element.getBoundingClientRect();
+
+        Object.keys(attrs).forEach(function (prop) {
+            if (attrs[prop] !== null) {
+                proxy.setAttribute(prop, attrs[prop]);
+            }
+        });
+
+        merge(true, proxy.style, {
+            'border-width': 0,
+            'background-color': 'transparent',
+            position: 'absolute',
+            width: (svgElement.width || bBox.width || 1) + 'px',
+            height: (svgElement.height || bBox.height || 1) + 'px',
+            display: 'block',
+            cursor: 'pointer',
+            outline: 'none',
+            opacity: 0.001,
+            filter: 'alpha(opacity=1)',
+            '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)',
+            zIndex: 999,
+            padding: 0,
+            margin: 0,
+            left: pos.x + 'px',
+            top: pos.y - this.chart.containerHeight + 'px'
+        });
+
+        // Proxy mouse events
+        [
+            'click', 'mouseover', 'mouseenter', 'mouseleave', 'mouseout'
+        ].forEach(function (evtType) {
+            addEvent(proxy, evtType, function (e) {
+                var clonedEvent = component.cloneMouseEvent(e);
+                if (svgEl) {
+                    if (clonedEvent) {
+                        if (svgEl.fireEvent) {
+                            svgEl.fireEvent(clonedEvent);
+                        } else if (svgEl.dispatchEvent) {
+                            svgEl.dispatchEvent(clonedEvent);
+                        }
+                    } else if (svgEl['on' + evtType]) {
+                        svgEl['on' + evtType](e);
+                    }
+                }
+            });
+        });
+
+        // Add to chart div and unhide from screen readers
+        parentGroup.appendChild(proxy);
+        if (!attrs['aria-hidden']) {
+            this.unhideElementFromScreenReaders(proxy);
+        }
+        return proxy;
+    },
+
+
+    /**
+     * Get the position relative to chart container for a wrapped SVG element.
+     * @private
+     * @param {Highcharts.SVGElement} element The element to calculate position
+     *          for.
+     * @returns {object} Object with x and y props for the position.
+     */
+    getElementPosition: function (element) {
+        var el = element.element,
+            parentPos = element.parentGroup ?
+                this.getElementPosition(element.parentGroup) : { x: 0, y: 0 };
+        return {
+            x: (element.translateX || 0) +
+                (el && parseFloat(el.getAttribute('x')) || 0) + parentPos.x,
+            y: (element.translateY || 0) +
+                (el && parseFloat(el.getAttribute('y')) / 2 || 0) + parentPos.y
+        };
+    },
+
+
+    /**
+     * Add a new proxy group to the proxy container. Creates the proxy container
+     * if it does not exist.
+     * @private
+     * @param {object} attrs The attributes to set on the new group div.
+     * @returns {HTMLDOMElement} The new proxy group element.
+     */
+    addProxyGroup: function (attrs) {
+        var chart = this.chart,
+            proxyContainer = chart.a11yProxyContainer;
+
+        // Add root proxy container if it does not exist
+        if (!proxyContainer) {
+            chart.a11yProxyContainer = doc.createElement('div');
+            chart.a11yProxyContainer.style.position = 'relative';
+            chart.renderTo.insertBefore(
+                chart.a11yProxyContainer,
+                chart.container.nextSibling
+            );
+        }
+
+        // Create the group and add it
+        var groupDiv = this.createElement('div');
+        Object.keys(attrs || {}).forEach(function (prop) {
+            if (attrs[prop] !== null) {
+                groupDiv.setAttribute(prop, attrs[prop]);
+            }
+        });
+        chart.a11yProxyContainer.appendChild(groupDiv);
+        return groupDiv;
+    },
+
+
+    /**
+     * Utility function for removing an element from the DOM.
+     * @private
+     * @param {HTMLDOMElement} element The element to remove.
+     */
+    removeElement: function (element) {
+        if (element && element.parentNode) {
+            element.parentNode.removeChild(element);
+        }
+    },
+
 
     /**
      * Unhide an element from screen readers. Also unhides parents, and hides
@@ -109,22 +321,28 @@ AccessibilityComponent.prototype = {
         this.unhideElementFromScreenReaders(element.parentNode);
     },
 
+
     /**
      * Should remove any event handlers added, as well as any DOM elements.
      * @private
      */
     destroyBase: function () {
+        // Destroy proxy container
+        var chart = this.chart || {},
+            component = this;
+        this.removeElement(chart.a11yProxyContainer);
+
+        // Remove event callbacks and dom elements
         this.eventRemovers.forEach(function (remover) {
             remover();
         });
         this.domElements.forEach(function (element) {
-            if (element && element.parentNode) {
-                element.parentNode.removeChild(element);
-            }
+            component.removeElement(element);
         });
         this.eventRemovers = [];
         this.domElements = [];
     },
+
 
     /**
      * Utility function to strip tags from a string. Used for aria-label
@@ -136,6 +354,7 @@ AccessibilityComponent.prototype = {
     stripTags: function (s) {
         return typeof s === 'string' ? s.replace(/<\/?[^>]+(>|$)/g, '') : s;
     },
+
 
     /**
      * HTML encode some characters vulnerable for XSS.

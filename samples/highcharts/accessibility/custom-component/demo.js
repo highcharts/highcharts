@@ -51,7 +51,8 @@ Highcharts.extend(CustomComponent.prototype, {
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,
             chart = this.chart,
-            namespace = chart.myNamespace || {};
+            namespace = chart.myNamespace || {},
+            component = this;
 
         return new Highcharts.KeyboardNavigationModule(chart, {
             keyCodeMap: [
@@ -76,7 +77,7 @@ Highcharts.extend(CustomComponent.prototype, {
                     var buttonElement = namespace.myButton &&
                             namespace.myButton.element;
                     if (buttonElement) {
-                        this.fakeClickEvent(buttonElement);
+                        component.fakeClickEvent(buttonElement);
                     }
                     return this.response.success;
                 }]

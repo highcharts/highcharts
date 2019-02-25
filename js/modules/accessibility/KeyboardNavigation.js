@@ -340,6 +340,11 @@ KeyboardNavigation.prototype = {
         if (this.unbindKeydownHandler) {
             this.unbindKeydownHandler();
         }
+
+        // Remove mouseup handler
+        if (this.unbindMouseUpHandler) {
+            this.unbindMouseUpHandler();
+        }
     }
 };
 
