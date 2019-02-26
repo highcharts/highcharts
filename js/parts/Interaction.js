@@ -286,8 +286,11 @@ extend(Legend.prototype, {
         (useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
             item.setState('hover');
 
-            // A CSS class to dim or hide other than the hovered series
-            boxWrapper.addClass(activeClass);
+            // A CSS class to dim or hide other than the hovered series.
+            // Works only if hovered series is visible (#10071).
+            if (item.visible) {
+                boxWrapper.addClass(activeClass);
+            }
 
             if (!styledMode) {
                 legendItem.css(legend.options.itemHoverStyle);
