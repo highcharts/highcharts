@@ -1017,6 +1017,9 @@ var stockToolsBindings = {
                     }, {
                         x: x,
                         y: y
+                    }, {
+                        x: x,
+                        y: y
                     }]
                 },
                 labelOptions: {
@@ -1029,7 +1032,8 @@ var stockToolsBindings = {
         /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1),
-            bindingsUtils.updateNthPoint(2)
+            bindingsUtils.updateNthPoint(2),
+            bindingsUtils.updateNthPoint(3)
         ]
     },
     /**
@@ -1067,6 +1071,9 @@ var stockToolsBindings = {
                     }, {
                         x: x,
                         y: y
+                    }, {
+                        x: x,
+                        y: y
                     }]
                 },
                 labelOptions: {
@@ -1081,7 +1088,8 @@ var stockToolsBindings = {
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2),
             bindingsUtils.updateNthPoint(3),
-            bindingsUtils.updateNthPoint(4)
+            bindingsUtils.updateNthPoint(4),
+            bindingsUtils.updateNthPoint(5)
         ]
     },
     /**
