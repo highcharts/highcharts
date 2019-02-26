@@ -37,6 +37,8 @@ var chart = Highcharts.chart('container', {
 });
 
 // Add random point when clicking button
-document.getElementById('add').onclick = function () {
+var button = document.getElementById('add');
+button.onclick = function () {
+    button.focus();
     chart.series[0].addPoint(Math.round(Math.random() * 10));
 };

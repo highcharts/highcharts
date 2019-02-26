@@ -381,7 +381,7 @@ var options = {
              * to 0 to allow all announcements, but be warned that frequent
              * announcements are disturbing to users.
              */
-            minAnnounceInterval: 10000,
+            minAnnounceInterval: 5000,
 
             /**
              * Choose whether or not the announcements should interrupt the
