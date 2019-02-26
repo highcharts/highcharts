@@ -303,7 +303,7 @@ H.extend(InfoRegionComponent.prototype, {
                 {
                     chart: chart,
                     axis: axis,
-                    numCategories: axis.categories.length
+                    numCategories: axis.max - axis.min + 1
                 }
             );
         }

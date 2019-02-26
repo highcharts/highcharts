@@ -332,6 +332,8 @@ H.setOptions({
             tableSummary: 'Table representation of chart.',
             mapZoomIn: 'Zoom chart',
             mapZoomOut: 'Zoom out chart',
+            resetZoomButton: 'Reset zoom',
+            drillUpButton: '{buttonText}',
             rangeSelectorButton: 'Select range {buttonText}',
             legendLabel: 'Toggle series visibility',
             legendItem: 'Toggle visibility of {itemName}',

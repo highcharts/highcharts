@@ -64,30 +64,62 @@ H.extend(ZoomComponent.prototype, {
      * Init the component
      */
     init: function () {
-        var component = this;
-        this.addEvent(this.chart, 'afterShowResetZoom', function () {
+        var component = this,
+            chart = this.chart,
+            proxyButton = function (buttonEl, buttonProp, groupProp, label) {
+                component.removeElement(component[groupProp]);
+                component[groupProp] = component.addProxyGroup();
+                component[buttonProp] = component.createProxyButton(
+                    buttonEl,
+                    component[groupProp],
+                    {
+                        'aria-label': label,
+                        tabindex: -1
+                    }
+                );
+            };
+
+        // Add events for proxying resetZoom and drillUp buttons
+        this.addEvent(chart, 'afterShowResetZoom', function () {
             // Make reset zoom button accessible
-            if (this.resetZoomButton && this.resetZoomButton.text) {
-                component.unhideElementFromScreenReaders(
-                    this.resetZoomButton.text.element
+            if (this.resetZoomButton) {
+                proxyButton(
+                    this.resetZoomButton,
+                    'resetZoomProxyButton',
+                    'resetZoomProxyGroup',
+                    chart.langFormat(
+                        'accessibility.resetZoomButton',
+                        { chart: chart }
+                    )
                 );
             }
         });
-
-        // Make drill-up button accessible and focusable
-        this.addEvent(this.chart, 'afterApplyDrilldown', function () {
-            var button = this.drillUpButton;
-            if (button) {
-                button.attr({
-                    tabindex: -1,
-                    role: 'button'
-                });
-                component.unhideElementFromScreenReaders(
-                    button.text && button.text.element || button.element
+        this.addEvent(chart, 'afterApplyDrilldown', function () {
+            if (this.drillUpButton) {
+                proxyButton(
+                    this.drillUpButton,
+                    'drillUpProxyButton',
+                    'drillUpProxyGroup',
+                    chart.langFormat(
+                        'accessibility.drillUpButton',
+                        {
+                            chart: chart,
+                            buttonText: chart.getDrilldownBackText()
+                        }
+                    )
                 );
+            }
+        });
+        this.addEvent(chart, 'drillupall', function () {
+            component.removeElement(component.drillUpProxyGroup);
+        });
+        this.addEvent(chart, 'selection', function (e) {
+            if (e.resetSelection) {
+                component.removeElement(component.resetZoomProxyGroup);
             }
         });
     },
+
 
     /**
      * Called when chart is updated
@@ -112,6 +144,7 @@ H.extend(ZoomComponent.prototype, {
             });
         }
     },
+
 
     /**
      * Get keyboard navigation module for map zoom.
@@ -215,8 +248,9 @@ H.extend(ZoomComponent.prototype, {
      * @param {string} buttonProp The property on chart referencing the button.
      * @returns {KeyboardNavigationModule} The module object
      */
-    simpleButtonNavigation: function (buttonProp, onClick) {
+    simpleButtonNavigation: function (buttonProp, proxyProp, onClick) {
         var keys = this.keyCodes,
+            component = this,
             chart = this.chart;
 
         return new KeyboardNavigationModule(chart, {
@@ -243,13 +277,14 @@ H.extend(ZoomComponent.prototype, {
 
             // Only run if we have the button
             validate: function () {
-                return chart[buttonProp] && chart[buttonProp].box;
+                return chart[buttonProp] && chart[buttonProp].box &&
+                    component[proxyProp];
             },
 
             // Focus button initially
             init: function () {
                 chart.setFocusToElement(
-                    chart[buttonProp].box, chart[buttonProp].element
+                    chart[buttonProp].box, component[proxyProp]
                 );
             }
         });
@@ -262,12 +297,20 @@ H.extend(ZoomComponent.prototype, {
      */
     getKeyboardNavigation: function () {
         return [
-            this.simpleButtonNavigation('resetZoomButton', function (chart) {
-                chart.zoomOut();
-            }),
-            this.simpleButtonNavigation('drillUpButton', function (chart) {
-                chart.drillUp();
-            }),
+            this.simpleButtonNavigation(
+                'resetZoomButton',
+                'resetZoomProxyButton',
+                function (chart) {
+                    chart.zoomOut();
+                }
+            ),
+            this.simpleButtonNavigation(
+                'drillUpButton',
+                'drillUpProxyButton',
+                function (chart) {
+                    chart.drillUp();
+                }
+            ),
             this.getMapZoomNavigation()
         ];
     }

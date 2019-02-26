@@ -169,17 +169,16 @@ H.extend(MenuComponent.prototype, {
             }
 
             // Proxy button and group
-            this.exportProxyGroup = this.exportProxyGroup ||
-                    this.addProxyGroup(
-                        // Wrap in a region div if verbosity is high
-                        a11yOptions.landmarkVerbosity === 'all' ? {
-                            'aria-label': chart.langFormat(
-                                'accessibility.exporting.exportRegionLabel',
-                                { chart: chart }
-                            ),
-                            'role': 'region'
-                        } : null
-                    );
+            this.exportProxyGroup = this.addProxyGroup(
+                // Wrap in a region div if verbosity is high
+                a11yOptions.landmarkVerbosity === 'all' ? {
+                    'aria-label': chart.langFormat(
+                        'accessibility.exporting.exportRegionLabel',
+                        { chart: chart }
+                    ),
+                    'role': 'region'
+                } : null
+            );
 
             this.exportButtonProxy = this.createProxyButton(
                 button,

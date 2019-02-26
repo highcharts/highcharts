@@ -47,7 +47,7 @@ Highcharts.chart('container', {
         accessibility: {
             pointDescriptionFormatter: function (point) {
                 return point.index + '. ' + point.name + ', ' + point.y +
-                    '. Click to drill down.';
+                    '. Clickable.';
             }
         },
         data: [

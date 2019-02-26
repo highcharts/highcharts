@@ -611,6 +611,20 @@ H.extend(SeriesComponent.prototype, {
             this.announceRegion, chart.renderTo.firstChild
         );
 
+        // After drilldown, make sure we reset time counter, and also that we
+        // highlight first point.
+        this.addEvent(this.chart, 'afterApplyDrilldown', function () {
+            chart.highlightedPoint = null;
+            if (chart.options.accessibility.announceNewData.enabled) {
+                if (this.series && this.series.length) {
+                    this.series[0].highlightFirstValidPoint();
+                }
+                component.lastAnnouncementTime = 0;
+                if (chart.focusElement) {
+                    chart.focusElement.removeFocusBorder();
+                }
+            }
+        });
         // On new data in the series, make sure we add it to the dirty list
         this.addEvent(H.Series, 'updatedData', function () {
             if (

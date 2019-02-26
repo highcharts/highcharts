@@ -105,14 +105,13 @@ H.extend(LegendComponent.prototype, {
         }
 
         // Add proxy group
-        this.legendProxyGroup = this.legendProxyGroup ||
-            this.addProxyGroup({
-                'aria-label': chart.langFormat(
-                    'accessibility.legendLabel'
-                ),
-                'role': a11yOptions.landmarkVerbosity === 'all' ?
-                    'region' : null
-            });
+        this.legendProxyGroup = this.addProxyGroup({
+            'aria-label': chart.langFormat(
+                'accessibility.legendLabel'
+            ),
+            'role': a11yOptions.landmarkVerbosity === 'all' ?
+                'region' : null
+        });
 
         // Proxy the legend items
         items.forEach(function (item) {
