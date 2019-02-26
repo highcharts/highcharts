@@ -919,7 +919,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highcharts|highstock} highcharts/xaxis/labels-autorotation-0-90/
              *         Custom graded auto rotation
              *
-             * @type      {Array<number>}
+             * @type      {Array<number>|false}
              * @default   [-45]
              * @since     4.1.0
              * @product   highcharts highstock gantt
