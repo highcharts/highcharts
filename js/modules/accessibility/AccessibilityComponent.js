@@ -160,10 +160,11 @@ AccessibilityComponent.prototype = {
      * @param {object} [attributes] Additional attributes to set.
      * @param {Highcharts.SVGElement} [posElement] Element to use for
      *          positioning instead of svgElement.
+     * @param {boolean} [singlePixel] Size should be a single pixel
      * @returns {HTMLElement} The proxy button.
      */
     createProxyButton: function (
-        svgElement, parentGroup, attributes, posElement
+        svgElement, parentGroup, attributes, posElement, singlePixel
     ) {
         var svgEl = svgElement.element,
             component = this,
@@ -172,10 +173,21 @@ AccessibilityComponent.prototype = {
                 'aria-label': svgEl.getAttribute('aria-label')
             }, attributes),
             positioningElement = posElement || svgElement,
-            pos = this.getElementPosition(positioningElement),
-            bBox = positioningElement.width ? null :
-                positioningElement.element &&
-                positioningElement.element.getBoundingClientRect();
+            bBox = this.getElementPosition(positioningElement);
+
+        // If we don't support getBoundingClientRect, no button is made
+        if (!bBox) {
+            return;
+        }
+
+        // Handle width/height
+        if (singlePixel) {
+            bBox.x = bBox.x + bBox.width / 2;
+            bBox.y = bBox.y + bBox.height / 2;
+            bBox.width = 1;
+            bBox.height = 1;
+            proxy.innerHTML = attrs['aria-label'];
+        }
 
         Object.keys(attrs).forEach(function (prop) {
             if (attrs[prop] !== null) {
@@ -187,10 +199,11 @@ AccessibilityComponent.prototype = {
             'border-width': 0,
             'background-color': 'transparent',
             position: 'absolute',
-            width: (svgElement.width || bBox.width || 1) + 'px',
-            height: (svgElement.height || bBox.height || 1) + 'px',
+            width: (bBox.width || 1) + 'px',
+            height: (bBox.height || 1) + 'px',
             display: 'block',
             cursor: 'pointer',
+            overflow: 'hidden',
             outline: 'none',
             opacity: 0.001,
             filter: 'alpha(opacity=1)',
@@ -198,8 +211,8 @@ AccessibilityComponent.prototype = {
             zIndex: 999,
             padding: 0,
             margin: 0,
-            left: pos.x + 'px',
-            top: pos.y - this.chart.containerHeight + 'px'
+            left: bBox.x + 'px',
+            top: bBox.y - this.chart.containerHeight + 'px'
         });
 
         // Proxy mouse events
@@ -240,14 +253,17 @@ AccessibilityComponent.prototype = {
      */
     getElementPosition: function (element) {
         var el = element.element,
-            parentPos = element.parentGroup ?
-                this.getElementPosition(element.parentGroup) : { x: 0, y: 0 };
-        return {
-            x: (element.translateX || 0) +
-                (el && parseFloat(el.getAttribute('x')) || 0) + parentPos.x,
-            y: (element.translateY || 0) +
-                (el && parseFloat(el.getAttribute('y')) / 2 || 0) + parentPos.y
-        };
+            div = this.chart.renderTo;
+        if (div && el && el.getBoundingClientRect) {
+            var rectEl = el.getBoundingClientRect(),
+                rectDiv = div.getBoundingClientRect();
+            return {
+                x: rectEl.x - rectDiv.x,
+                y: rectEl.y - rectDiv.y,
+                width: rectEl.width,
+                height: rectEl.height
+            };
+        }
     },
 
 

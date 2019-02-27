@@ -430,7 +430,6 @@ H.extend(SeriesComponent.prototype, {
         // On destroy, we need to clean up the focus border and the state.
         this.addEvent(H.Series, 'destroy', function () {
             var chart = this.chart;
-
             if (
                 chart === component.chart &&
                 chart.highlightedPoint &&
@@ -454,7 +453,54 @@ H.extend(SeriesComponent.prototype, {
             }
         });
 
-        // Announce new data
+        // Update point proxies for speech input
+        var addSeriesOverlays = function (series) {
+            var speechOptions = series.chart.options.accessibility
+                .speechInputOverlay;
+            if (
+                series.points &&
+                (
+                    series.points.length <
+                        speechOptions.pointOverlayThreshold ||
+                    speechOptions.pointOverlayThreshold === false
+                )
+            ) {
+                series.points.forEach(function (point) {
+                    component.addPointProxy(point);
+                });
+            }
+        };
+        this.addEvent(this.chart, 'render', function () {
+            // Always remove proxies and start over
+            component.removeElement(component.pointProxyGroup);
+            // Add new proxies
+            var speechOptions = this.options.accessibility.speechInputOverlay;
+            if (speechOptions.enabled && this.series) {
+                component.pointProxyGroup = component.addProxyGroup({
+                    'aria-hidden': true,
+                    role: 'presentation'
+                });
+            }
+        });
+        this.addEvent(H.Series, 'render', function () {
+            var speechOptions = this.chart.options.accessibility
+                .speechInputOverlay;
+            if (speechOptions.enabled) {
+                // If not rendered, afterAnimate handles this
+                if (this.hasRendered) {
+                    addSeriesOverlays(this);
+                }
+            }
+        });
+        this.addEvent(H.Series, 'afterAnimate', function () {
+            var speechOptions = this.chart.options.accessibility
+                .speechInputOverlay;
+            if (this.chart === component.chart && speechOptions.enabled) {
+                addSeriesOverlays(this);
+            }
+        });
+
+        // Set up announcing of new data
         this.initAnnouncer();
     },
 
@@ -583,6 +629,35 @@ H.extend(SeriesComponent.prototype, {
                 delete chart.highlightedPoint;
             }
         });
+    },
+
+
+    /**
+     * Add a proxy button for a point if it is clickable. This button is hidden
+     * from AT, but visible to most speech input software.
+     * @private
+     * @param {Highcharts.Point} point The point to add the proxy for.
+     */
+    addPointProxy: function (point) {
+        var seriesOpts = point.series.options || {},
+            seriesPointEvents = seriesOpts.point && seriesOpts.point.events;
+        if (
+            point && point.graphic && point.graphic.element &&
+            (
+                point.hcEvents && point.hcEvents.click ||
+                seriesPointEvents && seriesPointEvents.click ||
+                (
+                    point.options &&
+                    point.options.events &&
+                    point.options.events.click
+                )
+            )
+        ) {
+            this.createProxyButton(point.graphic, this.pointProxyGroup, {
+                'aria-hidden': true,
+                tabindex: -1
+            }, null, true);
+        }
     },
 
 
@@ -915,6 +990,7 @@ H.extend(SeriesComponent.prototype, {
             ) {
                 series.points.forEach(function (point) {
                     if (point.graphic) {
+                        // Add screen reader info to point graphic
                         point.graphic.element.setAttribute('role', 'img');
                         point.graphic.element.setAttribute('tabindex', '-1');
                         point.graphic.element.setAttribute('aria-label',

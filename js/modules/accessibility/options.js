@@ -331,12 +331,12 @@ var options = {
 
         /**
          * Options for announcing new data to screen reader users. Useful
-         * for dynamic data applications.
+         * for dynamic data applications and drilldown.
          *
          * Keep in mind that frequent announcements will not be useful to
          * users, as they won't have time to explore the new data. For these
-         * applications, consider making snapshots of the data accessible,
-         * or do the announcements in batches.
+         * applications, consider making snapshots of the data accessible, and
+         * do the announcements in batches.
          *
          * @since next
          */
@@ -390,8 +390,31 @@ var options = {
              * there is a specific reason to do so.
              */
             interruptUser: false
-        }
+        },
 
+        /**
+         * Options for the button overlays that are placed on the chart for
+         * speech input support. Enabling this allows speech input software to
+         * identify clickable points. By default it is enabled for charts with
+         * few data points.
+         *
+         * @since next
+         */
+        speechInputOverlay: {
+            /**
+             * Enable the speech input overlay.
+             */
+            enabled: true,
+
+            /**
+             * The maximum number of points allowed in a series before the
+             * speech input overlay is disabled. Set to `false` to always add
+             * the speech input overlay. Note that for charts with thousands of
+             * data points without data grouping, this could cause a notable
+             * performance impact.
+             */
+            pointOverlayThreshold: 200
+        }
     },
 
 
