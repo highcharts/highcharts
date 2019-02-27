@@ -289,6 +289,9 @@
  *
  * @interface Highcharts.SymbolDictionary
  *//**
+ * @name Highcharts.SymbolDictionary#[key:string]
+ * @type {*}
+ *//**
  * @name Highcharts.SymbolDictionary#arc
  * @type {Function|undefined}
  *//**
