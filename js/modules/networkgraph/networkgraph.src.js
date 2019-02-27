@@ -238,6 +238,8 @@ seriesType('networkgraph', 'line', {
      * links.
      */
     createNode: H.NodesMixin.createNode,
+    setData: H.NodesMixin.setData,
+    destroy: H.NodesMixin.destroy,
 
     /**
      * Extend init with base event, which should stop simulation during update.
@@ -260,60 +262,14 @@ seriesType('networkgraph', 'line', {
      * but pushed to the this.nodes array.
      */
     generatePoints: function () {
-        var nodeLookup = {},
-            chart = this.chart;
+        H.NodesMixin.generatePoints.apply(this, arguments);
 
-        H.Series.prototype.generatePoints.call(this);
-
-        if (!this.nodes) {
-            this.nodes = []; // List of Point-like node items
-        }
-        this.colorCounter = 0;
-
-        // Reset links from previous run
-        this.nodes.forEach(function (node) {
-            node.linksFrom.length = 0;
-            node.linksTo.length = 0;
-        });
-
-        // Create the node list and set up links
-        this.points.forEach(function (point) {
-            if (defined(point.from)) {
-                if (!nodeLookup[point.from]) {
-                    nodeLookup[point.from] = this.createNode(point.from);
-                }
-                nodeLookup[point.from].linksFrom.push(point);
-                point.fromNode = nodeLookup[point.from];
-
-                // Point color defaults to the fromNode's color
-                if (chart.styledMode) {
-                    point.colorIndex = pick(
-                        point.options.colorIndex,
-                        nodeLookup[point.from].colorIndex
-                    );
-                } else {
-                    point.color =
-                        point.options.color || nodeLookup[point.from].color;
-                }
-
-            }
-            if (defined(point.to)) {
-                if (!nodeLookup[point.to]) {
-                    nodeLookup[point.to] = this.createNode(point.to);
-                }
-                nodeLookup[point.to].linksTo.push(point);
-                point.toNode = nodeLookup[point.to];
-            }
-
-            point.name = point.name || point.id; // for use in formats
-        }, this);
-
-
+        // In networkgraph, it's fine to define stanalone nodes, create them:
         if (this.options.nodes) {
             this.options.nodes.forEach(
                 function (nodeOptions) {
-                    if (!nodeLookup[nodeOptions.id]) {
-                        nodeLookup[nodeOptions.id] = this
+                    if (!this.nodeLookup[nodeOptions.id]) {
+                        this.nodeLookup[nodeOptions.id] = this
                             .createNode(nodeOptions.id);
                     }
                 },
@@ -530,28 +486,6 @@ seriesType('networkgraph', 'line', {
                 delete point.fixedPosition;
             }
         }
-    },
-    /**
-     * Destroy all nodes (points), generatePoints() will take care of creating
-     * them again.
-     */
-    setData: function () {
-        if (this.nodes) {
-            this.nodes.forEach(function (node) {
-                node.destroy();
-            });
-            this.nodes.length = 0;
-        }
-
-        Series.prototype.setData.apply(this, arguments);
-    },
-    /**
-     * Destroy all nodes (points) that were created for this series.
-     */
-    destroy: function () {
-        this.data = [].concat(this.points, this.nodes);
-
-        return Series.prototype.destroy.apply(this, arguments);
     }
 }, {
     /**
