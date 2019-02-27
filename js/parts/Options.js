@@ -569,9 +569,9 @@ H.defaultOptions = {
          *
          * @see [mapData](#series.map.mapData)
          *
-         * @sample    map/demo/geojson
+         * @sample    maps/demo/geojson
          *            Loading geoJSON data
-         * @sample    map/chart/topojson
+         * @sample    maps/chart/topojson
          *            Loading topoJSON converted to geoJSON
          *
          * @type      {string|Array<*>}
