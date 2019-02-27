@@ -921,10 +921,12 @@ H.setOptions({
          * charts on the same page should have separate class names to prevent
          * duplicating events.
          *
+         * Default value of versions < 7.0.4 `highcharts-bindings-wrapper`
+         *
          * @since     7.0.0
          * @type      {string}
          */
-        bindingsClassName: 'highcharts-bindings-wrapper',
+        bindingsClassName: 'highcharts-bindings-container',
         /**
          * Bindings definitions for custom HTML buttons. Each binding implements
          * simple event-driven interface:
