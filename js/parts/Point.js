@@ -49,6 +49,14 @@
  * @type {number|undefined}
  */
 
+/**
+ * @interface Highcharts.PointObject
+ *//**
+ * Custom properties set by custom data options.
+ * @name Highcharts.Point#[property:string]
+ * @type {*}
+ */
+
 'use strict';
 
 import Highcharts from './Globals.js';
@@ -75,6 +83,7 @@ var Point,
  *
  * @class
  * @name Highcharts.Point
+ * @implements {Highcharts.PointObject}
  */
 Highcharts.Point = Point = function () {};
 Highcharts.Point.prototype = {
