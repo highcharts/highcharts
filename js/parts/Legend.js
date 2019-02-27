@@ -607,8 +607,13 @@ Highcharts.Legend.prototype = {
             this.itemX - padding + itemWidth > maxLegendWidth
         ) {
             this.itemX = padding;
-            this.itemY += itemMarginTop + this.lastLineHeight +
-                itemMarginBottom;
+            if (this.lastLineHeight) { // Not for the first line (#10167)
+                this.itemY += (
+                    itemMarginTop +
+                    this.lastLineHeight +
+                    itemMarginBottom
+                );
+            }
             this.lastLineHeight = 0; // reset for next line (#915, #3976)
         }
 
