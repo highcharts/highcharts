@@ -1,4 +1,4 @@
-/**
+/* *
  * Highcharts cylinder - a 3D series
  *
  * (c) 2010-2019 Highsoft AS
