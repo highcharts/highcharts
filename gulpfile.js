@@ -1492,17 +1492,20 @@ const jsdocWatch = () => {
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'
     ];
-    if (argv.watch) {
-        gulp.watch(watchFiles, gulp.series('jsdoc'));
-        console.log('Watching file changes in JS files and templates');
-
-    } else {
-        console.log('Tip: use the --watch argument to watch JS file changes');
-    }
 
     if (!apiServerRunning) {
+
         jsdocServer();
+
         apiServerRunning = true;
+
+        if (argv.watch) {
+            gulp.watch(watchFiles, gulp.series('jsdoc'));
+            console.log('Watching file changes in JS files and templates');
+
+        } else {
+            console.log('Tip: use the --watch argument to watch JS file changes');
+        }
     }
 
     return generateClassReferences(optionsClassReference)
