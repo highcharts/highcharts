@@ -823,6 +823,12 @@ seriesType('column', 'line'
                 fill = (
                     point.options.color || (zone && zone.color) || this.color
                 );
+
+                if (zone) {
+                    stroke = zone.borderColor || stroke;
+                    dashstyle = zone.dashStyle || dashstyle;
+                    strokeWidth = zone.borderWidth || strokeWidth;
+                }
             }
 
             // Select or hover states
