@@ -1,4 +1,4 @@
-/**
+/* *
  * Highcharts funnel3d series module
  *
  * (c) 2010-2019 Highsoft AS
