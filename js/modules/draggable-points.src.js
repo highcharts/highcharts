@@ -74,8 +74,7 @@
  * Contains common information for a drag event on series point.
  *
  * @interface Highcharts.SeriesPointDragStartEventObject
- *
- * @extends {global.MouseDownEvent}
+ * @extends global.MouseEvent
  *//**
  * Data property being dragged.
  * @name Highcharts.SeriesPointDragStartEventObject#updateProp
