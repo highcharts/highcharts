@@ -13,8 +13,7 @@
 import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 
-var doc = H.win.document,
-    merge = H.merge;
+var merge = H.merge;
 
 
 /**
@@ -117,6 +116,18 @@ H.extend(InfoRegionComponent.prototype, {
                     );
             }
         });
+
+        // Focus table after viewing
+        this.addEvent(chart, 'afterViewData', function (tableDiv) {
+            // Use small delay to give browsers & AT time to register new table
+            setTimeout(function () {
+                var table = tableDiv &&
+                    tableDiv.getElementsByTagName('table')[0];
+                if (table && table.focus) {
+                    table.focus();
+                }
+            }, 300);
+        });
     },
 
 
@@ -166,10 +177,6 @@ H.extend(InfoRegionComponent.prototype, {
             tableShortcutAnchor.onclick =
                 chart.options.accessibility.onTableAnchorClick || function () {
                     chart.viewData();
-                    setTimeout(function () {
-                        // Give browser time to load before attempting focus
-                        doc.getElementById(tableId).focus();
-                    }, 300);
                 };
             tableShortcut.appendChild(tableShortcutAnchor);
             hiddenSection.appendChild(tableShortcut);
