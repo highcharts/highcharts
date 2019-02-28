@@ -84,9 +84,10 @@ H.extend(LegendComponent.prototype, {
 
 
     /**
-     * Called on first render/updates to the chart, including options changes.
+     * The legend needs updates on every render, in order to update positioning
+     * of the proxy overlays.
      */
-    onChartUpdate: function () {
+    onChartRender: function () {
         var chart = this.chart,
             a11yOptions = chart.options.accessibility,
             items = chart.legend && chart.legend.allItems,

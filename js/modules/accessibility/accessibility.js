@@ -421,6 +421,17 @@ addEvent(H.Chart, 'load', function () {
     }
 });
 
+// Send render updates to components
+addEvent(H.Chart, 'render', function (e) {
+    var components = this.accessibility && this.accessibility.components;
+    if (components) {
+        // Update markup
+        Object.keys(components).forEach(function (componentName) {
+            components[componentName].onChartRender(e);
+        });
+    }
+});
+
 // Update with chart/series/point updates
 addEvent(H.Chart, 'afterUpdate', function (e) {
     // Merge new options

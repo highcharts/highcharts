@@ -136,9 +136,10 @@ MenuComponent.prototype = new AccessibilityComponent();
 H.extend(MenuComponent.prototype, {
 
     /**
-     * Called on first render/updates to the chart, including options changes.
+     * Called on each render of the chart. We need to update positioning of the
+     * proxy overlay.
      */
-    onChartUpdate: function () {
+    onChartRender: function () {
         var component = this,
             chart = this.chart,
             a11yOptions = chart.options.accessibility;

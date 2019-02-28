@@ -274,6 +274,12 @@ KeyboardNavigation.prototype = {
 
         chart.renderTo.appendChild(exitAnchor);
 
+        // Update position on render
+        this.unbindExitAnchorUpdate = addEvent(chart, 'render', function () {
+            this.renderTo.appendChild(exitAnchor);
+        });
+
+        // Handle focus
         this.unbindExitAnchorFocus = addEvent(
             exitAnchor,
             'focus',

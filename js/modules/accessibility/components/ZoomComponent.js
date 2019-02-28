@@ -61,67 +61,6 @@ ZoomComponent.prototype = new AccessibilityComponent();
 H.extend(ZoomComponent.prototype, {
 
     /**
-     * Init the component
-     */
-    init: function () {
-        var component = this,
-            chart = this.chart,
-            proxyButton = function (buttonEl, buttonProp, groupProp, label) {
-                component.removeElement(component[groupProp]);
-                component[groupProp] = component.addProxyGroup();
-                component[buttonProp] = component.createProxyButton(
-                    buttonEl,
-                    component[groupProp],
-                    {
-                        'aria-label': label,
-                        tabindex: -1
-                    }
-                );
-            };
-
-        // Add events for proxying resetZoom and drillUp buttons
-        this.addEvent(chart, 'afterShowResetZoom', function () {
-            // Make reset zoom button accessible
-            if (this.resetZoomButton) {
-                proxyButton(
-                    this.resetZoomButton,
-                    'resetZoomProxyButton',
-                    'resetZoomProxyGroup',
-                    chart.langFormat(
-                        'accessibility.resetZoomButton',
-                        { chart: chart }
-                    )
-                );
-            }
-        });
-        this.addEvent(chart, 'afterApplyDrilldown', function () {
-            if (this.drillUpButton) {
-                proxyButton(
-                    this.drillUpButton,
-                    'drillUpProxyButton',
-                    'drillUpProxyGroup',
-                    chart.langFormat(
-                        'accessibility.drillUpButton',
-                        {
-                            chart: chart,
-                            buttonText: chart.getDrilldownBackText()
-                        }
-                    )
-                );
-            }
-        });
-        this.addEvent(chart, 'drillupall', function () {
-            component.removeElement(component.drillUpProxyGroup);
-        });
-        this.addEvent(chart, 'selection', function (e) {
-            if (e.resetSelection) {
-                component.removeElement(component.resetZoomProxyGroup);
-            }
-        });
-    },
-
-
-    /**
      * Called when chart is updated
      */
     onChartUpdate: function () {
@@ -142,6 +81,53 @@ H.extend(ZoomComponent.prototype, {
                     )
                 );
             });
+        }
+    },
+
+
+    /**
+     * Update proxy overlays on every render.
+     */
+    onChartRender: function () {
+        var component = this,
+            chart = this.chart,
+            proxyButton = function (buttonEl, buttonProp, groupProp, label) {
+                component.removeElement(component[groupProp]);
+                component[groupProp] = component.addProxyGroup();
+                component[buttonProp] = component.createProxyButton(
+                    buttonEl,
+                    component[groupProp],
+                    {
+                        'aria-label': label,
+                        tabindex: -1
+                    }
+                );
+            };
+
+        // Always start with a clean slate
+        component.removeElement(component.drillUpProxyGroup);
+        component.removeElement(component.resetZoomProxyGroup);
+
+        if (this.resetZoomButton) {
+            proxyButton(
+                this.resetZoomButton, 'resetZoomProxyButton',
+                'resetZoomProxyGroup', chart.langFormat(
+                    'accessibility.resetZoomButton',
+                    { chart: chart }
+                )
+            );
+        }
+        if (this.drillUpButton) {
+            proxyButton(
+                this.drillUpButton, 'drillUpProxyButton',
+                'drillUpProxyGroup', chart.langFormat(
+                    'accessibility.drillUpButton',
+                    {
+                        chart: chart,
+                        buttonText: chart.getDrilldownBackText()
+                    }
+                )
+            );
         }
     },
 

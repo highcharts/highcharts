@@ -442,7 +442,7 @@ H.extend(SeriesComponent.prototype, {
             }
         });
 
-        // Hide tooltip when it is shown
+        // Hide tooltip from screen readers when it is shown
         this.addEvent(H.Tooltip, 'refresh', function () {
             if (
                 this.chart === component.chart &&

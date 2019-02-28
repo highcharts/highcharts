@@ -282,11 +282,12 @@ AccessibilityComponent.prototype = {
         if (!proxyContainer) {
             chart.a11yProxyContainer = doc.createElement('div');
             chart.a11yProxyContainer.style.position = 'relative';
-            chart.renderTo.insertBefore(
-                chart.a11yProxyContainer,
-                chart.container.nextSibling
-            );
         }
+        // Add it if it is new, else make sure we move it to the end
+        chart.renderTo.insertBefore(
+            chart.a11yProxyContainer,
+            chart.container.nextSibling
+        );
 
         // Create the group and add it
         var groupDiv = this.createElement('div');
@@ -406,6 +407,11 @@ AccessibilityComponent.prototype = {
      * Note that this is also called on first render of chart.
      */
     onChartUpdate: function () {},
+
+    /**
+     * Called on every chart render.
+     */
+    onChartRender: function () {},
 
     /**
      * Called when accessibility is disabled or chart is destroyed.
