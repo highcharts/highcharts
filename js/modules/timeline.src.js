@@ -359,6 +359,7 @@ seriesType('timeline', 'line',
         },
         processData: function () {
             var series = this,
+                xAxis = series.xAxis,
                 xMap = [],
                 visiblePoints = 0,
                 i;
@@ -374,10 +375,18 @@ seriesType('timeline', 'line',
 
             series.visiblePointsCount = visiblePoints;
 
-            if (series.xAxis.isDatetimeAxis) {
+            if (xAxis.isDatetimeAxis) {
                 for (i = 0; i < series.xData.length; i++) {
                     series.yData[i] = 1;
                 }
+
+                visiblePoints = series.visibilityMap.filter(function (p) {
+                    return p;
+                });
+
+                // Adjust axis extremes to currently visible points.
+                xAxis.min = visiblePoints[0].x;
+                xAxis.max = visiblePoints[visiblePoints.length - 1].x;
             } else {
                 // Generate xData map.
                 for (i = 0; i < visiblePoints; i++) {
@@ -553,10 +562,8 @@ seriesType('timeline', 'line',
         setVisible: function (vis, redraw) {
             var point = this,
                 series = point.series,
-                axis = series.xAxis,
                 chart = series.chart,
-                ignoreHiddenPoint = series.options.ignoreHiddenPoint,
-                visiblePoints;
+                ignoreHiddenPoint = series.options.ignoreHiddenPoint;
 
             redraw = pick(redraw, ignoreHiddenPoint);
 
@@ -591,19 +598,6 @@ seriesType('timeline', 'line',
                 // Handle ignore hidden slices
                 if (ignoreHiddenPoint) {
                     series.isDirty = true;
-                }
-
-                visiblePoints = series.getVisibilityMap()
-                    .filter(function (point) {
-                        return point;
-                    });
-
-                if (axis.isDatetimeAxis) {
-                    axis.setExtremes(
-                        visiblePoints[0].x,
-                        visiblePoints[visiblePoints.length - 1].x,
-                        false
-                    );
                 }
 
                 // Process new data
