@@ -220,4 +220,21 @@ QUnit.test('Histogram', function (assert) {
         'Histogram has appropriate pointRange value, when multiple series on the same axis, #9128, #10025'
     );
 
+    chart.update({
+        series: [{
+            id: 'baseSeries',
+            data: [132.8, 137, 139, 142, 145, 148, 151, 151.4]
+        }, {
+            baseSeries: 'baseSeries',
+            type: 'histogram',
+            binsNumber: 7
+        }]
+    }, true, true);
+
+    assert.strictEqual(
+        chart.series[1].data.length,
+        chart.series[1].options.binsNumber,
+        'Histogram produces correct number of bins set by user.'
+    );
+
 });
