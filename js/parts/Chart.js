@@ -950,10 +950,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
     /**
      * Internal function to get the chart width and height according to options
-     * and container size. Sets
-     * {@link Chart.chartWidth} and
+     * and container size. Sets {@link Chart.chartWidth} and
      * {@link Chart.chartHeight}.
      *
+     * @private
      * @function Highcharts.Chart#getChartSize
      */
     getChartSize: function () {
