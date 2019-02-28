@@ -311,6 +311,13 @@ seriesType('funnel', 'pie',
                 point.plotY
             ];
 
+            point.dlBox = {
+                x: x3,
+                y: y1,
+                width: x4 - x3,
+                height: Math.abs(pick(y3, y5) - y1)
+            };
+
             // Slice is a noop on funnel points
             point.slice = noop;
 
@@ -394,8 +401,11 @@ seriesType('funnel', 'pie',
             };
         }
 
-        seriesTypes.pie.prototype.drawDataLabels.call(this);
-    }
+        seriesTypes[series.options.dataLabels.inside ? 'column' : 'pie']
+            .prototype.drawDataLabels.call(this);
+    },
+
+    alignDataLabel: seriesTypes.column.prototype.alignDataLabel
 
 });
 
