@@ -1624,8 +1624,13 @@ function defaultWatch() {
         return promise;
     };
     return styles().then(() => {
-        if (shouldBuild()) {
+        if (shouldBuild() ||
+            (argv.force && !argv.watch) ||
+            process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS
+        ) {
+            process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS = true;
             fnFirstBuild();
+            delete process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS;
             console.log(msgBuildAll);
         } else {
             console.log('✓'.green, 'Code up to date.'.gray);
