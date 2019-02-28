@@ -160,11 +160,12 @@ AccessibilityComponent.prototype = {
      * @param {object} [attributes] Additional attributes to set.
      * @param {Highcharts.SVGElement} [posElement] Element to use for
      *          positioning instead of svgElement.
-     * @param {boolean} [singlePixel] Size should be a single pixel
+     * @param {function} [preClickEvent] Function to call before click event
+     *          fires.
      * @returns {HTMLElement} The proxy button.
      */
     createProxyButton: function (
-        svgElement, parentGroup, attributes, posElement, singlePixel
+        svgElement, parentGroup, attributes, posElement, preClickEvent
     ) {
         var svgEl = svgElement.element,
             component = this,
@@ -178,15 +179,6 @@ AccessibilityComponent.prototype = {
         // If we don't support getBoundingClientRect, no button is made
         if (!bBox) {
             return;
-        }
-
-        // Handle width/height
-        if (singlePixel) {
-            bBox.x = bBox.x + bBox.width / 2;
-            bBox.y = bBox.y + bBox.height / 2;
-            bBox.width = 1;
-            bBox.height = 1;
-            proxy.innerHTML = attrs['aria-label'];
         }
 
         Object.keys(attrs).forEach(function (prop) {
@@ -214,6 +206,11 @@ AccessibilityComponent.prototype = {
             left: bBox.x + 'px',
             top: bBox.y - this.chart.containerHeight + 'px'
         });
+
+        // Handle pre-click
+        if (preClickEvent) {
+            addEvent(proxy, 'click', preClickEvent);
+        }
 
         // Proxy mouse events
         [
@@ -284,10 +281,12 @@ AccessibilityComponent.prototype = {
             chart.a11yProxyContainer.style.position = 'relative';
         }
         // Add it if it is new, else make sure we move it to the end
-        chart.renderTo.insertBefore(
-            chart.a11yProxyContainer,
-            chart.container.nextSibling
-        );
+        if (chart.container.nextSibling !== chart.a11yProxyContainer) {
+            chart.renderTo.insertBefore(
+                chart.a11yProxyContainer,
+                chart.container.nextSibling
+            );
+        }
 
         // Create the group and add it
         var groupDiv = this.createElement('div');

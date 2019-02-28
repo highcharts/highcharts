@@ -61,6 +61,22 @@ ZoomComponent.prototype = new AccessibilityComponent();
 H.extend(ZoomComponent.prototype, {
 
     /**
+     * Initialize the component
+     */
+    init: function () {
+        var component = this,
+            chart = this.chart;
+        [
+            'afterShowResetZoom', 'afterApplyDrilldown', 'drillupall'
+        ].forEach(function (eventType) {
+            component.addEvent(chart, eventType, function () {
+                component.updateProxyOverlays();
+            });
+        });
+    },
+
+
+    /**
      * Called when chart is updated
      */
     onChartUpdate: function () {
@@ -86,9 +102,18 @@ H.extend(ZoomComponent.prototype, {
 
 
     /**
-     * Update proxy overlays on every render.
+     * Update the proxy overlays on every new render to ensure positions are
+     * correct.
      */
     onChartRender: function () {
+        this.updateProxyOverlays();
+    },
+
+
+    /**
+     * Update proxy overlays, recreating the buttons.
+     */
+    updateProxyOverlays: function () {
         var component = this,
             chart = this.chart,
             proxyButton = function (buttonEl, buttonProp, groupProp, label) {
@@ -108,18 +133,19 @@ H.extend(ZoomComponent.prototype, {
         component.removeElement(component.drillUpProxyGroup);
         component.removeElement(component.resetZoomProxyGroup);
 
-        if (this.resetZoomButton) {
+        if (chart.resetZoomButton) {
             proxyButton(
-                this.resetZoomButton, 'resetZoomProxyButton',
+                chart.resetZoomButton, 'resetZoomProxyButton',
                 'resetZoomProxyGroup', chart.langFormat(
                     'accessibility.resetZoomButton',
                     { chart: chart }
                 )
             );
         }
-        if (this.drillUpButton) {
+
+        if (chart.drillUpButton) {
             proxyButton(
-                this.drillUpButton, 'drillUpProxyButton',
+                chart.drillUpButton, 'drillUpProxyButton',
                 'drillUpProxyGroup', chart.langFormat(
                     'accessibility.drillUpButton',
                     {

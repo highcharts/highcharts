@@ -149,6 +149,9 @@ H.extend(MenuComponent.prototype, {
 
         // Set screen reader properties on export menu
         if (
+            chart.options.exporting &&
+            chart.options.exporting.enabled !== false &&
+            chart.options.exporting.accessibility.enabled &&
             chart.exportSVGElements &&
             chart.exportSVGElements[0] &&
             chart.exportSVGElements[0].element

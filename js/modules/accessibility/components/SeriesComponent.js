@@ -453,53 +453,6 @@ H.extend(SeriesComponent.prototype, {
             }
         });
 
-        // Update point proxies for speech input
-        var addSeriesOverlays = function (series) {
-            var speechOptions = series.chart.options.accessibility
-                .speechInputOverlay;
-            if (
-                series.points &&
-                (
-                    series.points.length <
-                        speechOptions.pointOverlayThreshold ||
-                    speechOptions.pointOverlayThreshold === false
-                )
-            ) {
-                series.points.forEach(function (point) {
-                    component.addPointProxy(point);
-                });
-            }
-        };
-        this.addEvent(this.chart, 'render', function () {
-            // Always remove proxies and start over
-            component.removeElement(component.pointProxyGroup);
-            // Add new proxies
-            var speechOptions = this.options.accessibility.speechInputOverlay;
-            if (speechOptions.enabled && this.series) {
-                component.pointProxyGroup = component.addProxyGroup({
-                    'aria-hidden': true,
-                    role: 'presentation'
-                });
-            }
-        });
-        this.addEvent(H.Series, 'render', function () {
-            var speechOptions = this.chart.options.accessibility
-                .speechInputOverlay;
-            if (speechOptions.enabled) {
-                // If not rendered, afterAnimate handles this
-                if (this.hasRendered) {
-                    addSeriesOverlays(this);
-                }
-            }
-        });
-        this.addEvent(H.Series, 'afterAnimate', function () {
-            var speechOptions = this.chart.options.accessibility
-                .speechInputOverlay;
-            if (this.chart === component.chart && speechOptions.enabled) {
-                addSeriesOverlays(this);
-            }
-        });
-
         // Set up announcing of new data
         this.initAnnouncer();
     },
@@ -633,16 +586,15 @@ H.extend(SeriesComponent.prototype, {
 
 
     /**
-     * Add a proxy button for a point if it is clickable. This button is hidden
-     * from AT, but visible to most speech input software.
+     * Returns true if a point should be clickable.
      * @private
-     * @param {Highcharts.Point} point The point to add the proxy for.
+     * @param {Highcharts.Point} point The point to test.
+     * @returns {boolean} True if the point can be clicked.
      */
-    addPointProxy: function (point) {
+    isPointClickable: function (point) {
         var seriesOpts = point.series.options || {},
             seriesPointEvents = seriesOpts.point && seriesOpts.point.events;
-        if (
-            point && point.graphic && point.graphic.element &&
+        return point && point.graphic && point.graphic.element &&
             (
                 point.hcEvents && point.hcEvents.click ||
                 seriesPointEvents && seriesPointEvents.click ||
@@ -651,13 +603,7 @@ H.extend(SeriesComponent.prototype, {
                     point.options.events &&
                     point.options.events.click
                 )
-            )
-        ) {
-            this.createProxyButton(point.graphic, this.pointProxyGroup, {
-                'aria-hidden': true,
-                tabindex: -1
-            }, null, true);
-        }
+            );
     },
 
 
@@ -687,12 +633,17 @@ H.extend(SeriesComponent.prototype, {
         );
 
         // After drilldown, make sure we reset time counter, and also that we
-        // highlight first point.
+        // highlight the first series.
         this.addEvent(this.chart, 'afterApplyDrilldown', function () {
             chart.highlightedPoint = null;
             if (chart.options.accessibility.announceNewData.enabled) {
                 if (this.series && this.series.length) {
-                    this.series[0].highlightFirstValidPoint();
+                    var el = component.getSeriesElement(this.series[0]);
+                    if (el.focus && el.getAttribute('aria-label')) {
+                        el.focus();
+                    } else {
+                        this.series[0].highlightFirstValidPoint();
+                    }
                 }
                 component.lastAnnouncementTime = 0;
                 if (chart.focusElement) {
@@ -989,11 +940,11 @@ H.extend(SeriesComponent.prototype, {
                 !seriesA11yOptions.exposeAsGroupOnly
             ) {
                 series.points.forEach(function (point) {
-                    if (point.graphic) {
-                        // Add screen reader info to point graphic
-                        point.graphic.element.setAttribute('role', 'img');
-                        point.graphic.element.setAttribute('tabindex', '-1');
-                        point.graphic.element.setAttribute('aria-label',
+                    var pointEl = point.graphic && point.graphic.element;
+                    if (pointEl) {
+                        pointEl.setAttribute('role', 'img');
+                        pointEl.setAttribute('tabindex', '-1');
+                        pointEl.setAttribute('aria-label',
                             component.stripTags(
                                 seriesA11yOptions.pointDescriptionFormatter &&
                                 seriesA11yOptions

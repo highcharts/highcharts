@@ -93,6 +93,13 @@ H.extend(LegendComponent.prototype, {
             items = chart.legend && chart.legend.allItems,
             component = this;
 
+        // Ignore render after proxy clicked. No need to destroy it, and
+        // destroying also kills focus.
+        if (component.legendProxyButtonClicked) {
+            delete component.legendProxyButtonClicked;
+            return;
+        }
+
         // Always Remove group if exists
         this.removeElement(this.legendProxyGroup);
 
@@ -100,7 +107,8 @@ H.extend(LegendComponent.prototype, {
         // color axis
         if (
             !items || !items.length ||
-            chart.colorAxis && chart.colorAxis.length
+            chart.colorAxis && chart.colorAxis.length ||
+            !chart.options.legend.accessibility.enabled
         ) {
             return;
         }
@@ -132,7 +140,12 @@ H.extend(LegendComponent.prototype, {
                         )
                     },
                     // Consider useHTML
-                    item.legendGroup.div ? item.legendItem : item.legendGroup
+                    item.legendGroup.div ? item.legendItem : item.legendGroup,
+                    // Additional click event (fires first)
+                    function () {
+                        // Keep track of when we should ignore next render
+                        component.legendProxyButtonClicked = true;
+                    }
                 );
             }
         });
@@ -184,14 +197,12 @@ H.extend(LegendComponent.prototype, {
                 [[
                     keys.enter, keys.space
                 ], function () {
-                    var legendElement = chart.legend.allItems[
+                    var legendItem = chart.legend.allItems[
                         component.highlightedLegendItemIx
-                    ].legendItem.element;
-
-                    component.fakeClickEvent(
-                        !chart.legend.options.useHTML ? // #8561
-                            legendElement.parentNode : legendElement
-                    );
+                    ];
+                    if (legendItem && legendItem.a11yProxyElement) {
+                        H.fireEvent(legendItem.a11yProxyElement, 'click');
+                    }
                     return this.response.success;
                 }]
             ],
