@@ -192,7 +192,7 @@ seriesType('timeline', 'line',
 
                     // New way of calculating closestPointRangePx value, which
                     // respects the real point visibility is needed.
-                    if (point.visible) {
+                    if (point.visible && !point.isNull) {
                         if (defined(lastPlotX)) {
                             closestPointRangePx = Math.min(
                                 closestPointRangePx,
