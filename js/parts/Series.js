@@ -2773,6 +2773,7 @@ H.Series = H.seriesType(
          * Get the series' color based on either the options or pulled from
          * global options.
          *
+         * @private
          * @function Highcharts.Series#getColor
          */
         getColor: function () {
@@ -2796,6 +2797,7 @@ H.Series = H.seriesType(
          * Get the series' symbol based on either the options or pulled from
          * global options.
          *
+         * @private
          * @function Highcharts.Series#getSymbol
          */
         getSymbol: function () {
@@ -3498,6 +3500,7 @@ H.Series = H.seriesType(
          * Calculate Y extremes for the visible data. The result is set as
          * `dataMin` and `dataMax` on the Series item.
          *
+         * @private
          * @function Highcharts.Series#getExtremes
          *
          * @param {Array<number>} [yData]
@@ -4324,7 +4327,7 @@ H.Series = H.seriesType(
          *
          * @param {boolean} connectCliffs
          *
-         * @return {Array<number|string>}
+         * @return {Highcharts.SVGPathArray}
          */
         getGraphPath: function (points, nullsAsZeroes, connectCliffs) {
             var series = this,
