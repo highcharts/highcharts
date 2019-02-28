@@ -337,6 +337,10 @@ KeyboardNavigation.prototype = {
             this.unbindExitAnchorFocus();
             delete this.unbindExitAnchorFocus;
         }
+        if (this.unbindExitAnchorUpdate) {
+            this.unbindExitAnchorUpdate();
+            delete this.unbindExitAnchorUpdate;
+        }
         if (this.exitAnchor && this.exitAnchor.parentNode) {
             this.exitAnchor.parentNode.removeChild(this.exitAnchor);
             delete this.exitAnchor;
