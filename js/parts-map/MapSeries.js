@@ -1052,8 +1052,6 @@ seriesType(
     // Point class
     }), extend({
 
-        dataLabelOnNull: true,
-
         // Extend the Point object to split paths
         applyOptions: function (options, x) {
 
