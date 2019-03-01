@@ -47,7 +47,7 @@ seriesType('funnel3d', 'column',
      * @sample       {highcharts} highcharts/demo/funnel3d/ Funnel3d
      * @since        7.1.0
      * @excluding    allAreas,boostThreshold,colorAxis,compare,compareBase
-     * @optionparent plotOptions.cylinder
+     * @optionparent plotOptions.funnel3d
      */
     {
         /** @ignore-option */
