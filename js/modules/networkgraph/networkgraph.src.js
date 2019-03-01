@@ -281,6 +281,8 @@ seriesType('networkgraph', 'line', {
          *
          * @see         [layoutAlgorithm.theta](#series.networkgraph.layoutAlgorithm.theta)
          * @validvalue  ["barnes-hut", "none"]
+         * @sample      highcharts/series-networkgraph/barnes-hut-approximation/
+         *              A graph with Barnes-Hut approximation
          * @since       7.1.0
          */
         approximation: 'none',
@@ -303,8 +305,8 @@ seriesType('networkgraph', 'line', {
          * In Highcharts v7.0.x only `'euler'` integration was supported.
          *
          * @since       7.1.0
-         * @sample      highcharts/series-networkgraph/forces/
-         *              Custom forces with Euler integration
+         * @sample      highcharts/series-networkgraph/integration-comparison/
+         *              Comparison of Verlet and Euler integrations
          * @validvalue  ["euler", "verlet"]
          */
         integration: 'verlet',
@@ -330,6 +332,10 @@ seriesType('networkgraph', 'line', {
     },
     showInLegend: false
 }, {
+    /**
+     * Array of internal forces. Each force should be later defined in
+     * integrations.js.
+     */
     forces: ['barycenter', 'repulsive', 'attractive'],
     isNetworkgraph: true,
     drawGraph: null,
@@ -346,7 +352,13 @@ seriesType('networkgraph', 'line', {
      * links.
      */
     createNode: H.NodesMixin.createNode,
+    setData: H.NodesMixin.setData,
+    destroy: H.NodesMixin.destroy,
 
+    /**
+     * Extend init with base event, which should stop simulation during update.
+     * After data is updated, `chart.render` resumes the simulation.
+     */
     init: function () {
 
         Series.prototype.init.apply(this, arguments);
@@ -365,61 +377,14 @@ seriesType('networkgraph', 'line', {
      * but pushed to the this.nodes array.
      */
     generatePoints: function () {
-        var nodeLookup = {},
-            chart = this.chart;
+        H.NodesMixin.generatePoints.apply(this, arguments);
 
-        H.Series.prototype.generatePoints.call(this);
-
-        if (!this.nodes) {
-            this.nodes = []; // List of Point-like node items
-        }
-        this.colorCounter = 0;
-
-        // Reset links from previous run
-        this.nodes.forEach(function (node) {
-            node.linksFrom.length = 0;
-            node.linksTo.length = 0;
-        });
-
-        // Create the node list and set up links
-        this.points.forEach(function (point) {
-            if (defined(point.from)) {
-                if (!nodeLookup[point.from]) {
-                    nodeLookup[point.from] = this.createNode(point.from);
-                }
-                nodeLookup[point.from].linksFrom.push(point);
-                point.fromNode = nodeLookup[point.from];
-
-                // Point color defaults to the fromNode's color
-                if (chart.styledMode) {
-                    point.colorIndex = pick(
-                        point.options.colorIndex,
-                        nodeLookup[point.from].colorIndex
-                    );
-                } else {
-                    point.color =
-                        point.options.color || nodeLookup[point.from].color;
-                }
-
-            }
-            if (defined(point.to)) {
-                if (!nodeLookup[point.to]) {
-                    nodeLookup[point.to] = this.createNode(point.to);
-                }
-                nodeLookup[point.to].linksTo.push(point);
-                point.toNode = nodeLookup[point.to];
-            }
-
-            point.formatPrefix = 'link';
-            point.name = point.name || point.id; // for use in formats
-        }, this);
-
-
+        // In networkgraph, it's fine to define stanalone nodes, create them:
         if (this.options.nodes) {
             this.options.nodes.forEach(
                 function (nodeOptions) {
-                    if (!nodeLookup[nodeOptions.id]) {
-                        nodeLookup[nodeOptions.id] = this
+                    if (!this.nodeLookup[nodeOptions.id]) {
+                        this.nodeLookup[nodeOptions.id] = this
                             .createNode(nodeOptions.id);
                     }
                 },
@@ -430,11 +395,16 @@ seriesType('networkgraph', 'line', {
         this.nodes.forEach(function (node) {
             node.degree = node.getDegree();
         });
+        this.data.forEach(function (link) {
+            link.formatPrefix = 'link';
+        });
     },
 
-    // Extend the default marker attribs by using a non-rounded X position,
-    // otherwise the nodes will jump from pixel to pixel which looks a bit jaggy
-    // when approaching equilibrium.
+    /**
+     * Extend the default marker attribs by using a non-rounded X position,
+     * otherwise the nodes will jump from pixel to pixel which looks a bit jaggy
+     * when approaching equilibrium.
+     */
     markerAttribs: function (point, state) {
         var attribs = Series.prototype.markerAttribs.call(this, point, state);
 
@@ -443,7 +413,7 @@ seriesType('networkgraph', 'line', {
     },
 
     /**
-     * Run pre-translation by generating the nodeColumns.
+     * Run pre-translation and register nodes&links to the deffered layout.
      */
     translate: function () {
         if (!this.processedXData) {
@@ -466,6 +436,15 @@ seriesType('networkgraph', 'line', {
         });
     },
 
+    /**
+     * Defer the layout.
+     * Each series first registers all nodes and links, then layout calculates
+     * all nodes positions and calls `series.render()` in every simulation step.
+     *
+     * Note:
+     * Animation is done through `requestAnimationFrame` directly, without
+     * `Highcharts.animate()` use.
+     */
     deferLayout: function () {
         var layoutOptions = this.options.layoutAlgorithm,
             graphLayoutsStorage = this.chart.graphLayoutsStorage,
@@ -535,7 +514,7 @@ seriesType('networkgraph', 'line', {
         }
     },
 
-    // Networkgraph has two separate collecions of nodes and lins, render
+    // Networkgraph has two separate collecions of nodes and lines, render
     // dataLabels for both sets:
     drawDataLabels: function () {
         var textPath = this.options.dataLabels.textPath;
@@ -552,8 +531,12 @@ seriesType('networkgraph', 'line', {
         this.points = this.nodes;
         this.options.dataLabels.textPath = textPath;
     },
-    /*
-     * Draggable mode:
+
+    // Draggable mode:
+    /**
+     * Redraw halo on mousemove during the drag&drop action.
+     *
+     * @param {Highcharts.Point} point The point that should show halo.
      */
     redrawHalo: function (point) {
         if (point && this.halo) {
@@ -564,6 +547,12 @@ seriesType('networkgraph', 'line', {
             });
         }
     },
+    /**
+     * Mouse down action, initializing drag&drop mode.
+     *
+     * @param {global.Event} event Browser event, before normalization.
+     * @param {Highcharts.Point} point The point that event occured.
+     */
     onMouseDown: function (point, event) {
         var normalizedEvent = this.chart.pointer.normalize(event);
 
@@ -576,6 +565,12 @@ seriesType('networkgraph', 'line', {
 
         point.inDragMode = true;
     },
+    /**
+     * Mouse move action during drag&drop.
+     *
+     * @param {global.Event} event Browser event, before normalization.
+     * @param {Highcharts.Point} point The point that event occured.
+     */
     onMouseMove: function (point, event) {
         if (point.fixedPosition && point.inDragMode) {
             var series = this,
@@ -617,6 +612,11 @@ seriesType('networkgraph', 'line', {
             }
         }
     },
+    /**
+     * Mouse up action, finalizing drag&drop.
+     *
+     * @param {Highcharts.Point} point The point that event occured.
+     */
     onMouseUp: function (point) {
         if (point.fixedPosition) {
             this.layout.run();
@@ -625,40 +625,53 @@ seriesType('networkgraph', 'line', {
                 delete point.fixedPosition;
             }
         }
-    },
-    destroy: function () {
-        this.nodes.forEach(function (node) {
-            node.destroy();
-        });
-        return Series.prototype.destroy.apply(this, arguments);
     }
 }, {
+    /**
+     * Basic `point.init()` and additional styles applied when
+     * `series.draggable` is enabled.
+     */
     init: function () {
         Point.prototype.init.apply(this, arguments);
 
-        addEvent(
-            this,
-            'mouseOver',
-            function () {
-                H.css(this.series.chart.container, { cursor: 'move' });
-            }
-        );
-        addEvent(
-            this,
-            'mouseOut',
-            function () {
-                H.css(this.series.chart.container, { cursor: 'default' });
-            }
-        );
+        if (
+            this.series.options.draggable &&
+            !this.series.chart.styledMode
+        ) {
+            addEvent(
+                this,
+                'mouseOver',
+                function () {
+                    H.css(this.series.chart.container, { cursor: 'move' });
+                }
+            );
+            addEvent(
+                this,
+                'mouseOut',
+                function () {
+                    H.css(this.series.chart.container, { cursor: 'default' });
+                }
+            );
+        }
 
         return this;
     },
+    /**
+     * Return degree of a node. If node has no connections, it still has deg=1.
+     *
+     * @return {number}
+     */
     getDegree: function () {
         var deg = this.isNode ? this.linksFrom.length + this.linksTo.length : 0;
 
         return deg === 0 ? 1 : deg;
     },
     // Links:
+    /**
+     * Get presentational attributes of link connecting two nodes.
+     *
+     * @return {Highcharts.SVGAttributes}
+     */
     getLinkAttribues: function () {
         var linkOptions = this.series.options.link,
             pointOptions = this.options;
@@ -669,6 +682,9 @@ seriesType('networkgraph', 'line', {
             dashstyle: pointOptions.dashStyle || linkOptions.dashStyle
         };
     },
+    /**
+     * Render link and add it to the DOM.
+     */
     renderLink: function () {
         if (!this.graphic) {
             this.graphic = this.series.chart.renderer
@@ -679,6 +695,9 @@ seriesType('networkgraph', 'line', {
                 .add(this.series.group);
         }
     },
+    /**
+     * Redraw link's path.
+     */
     redrawLink: function () {
         var path = this.getLinkPath();
         if (this.graphic) {
@@ -692,6 +711,13 @@ seriesType('networkgraph', 'line', {
             this.plotY = (path[2] + path[5]) / 2;
         }
     },
+    /**
+     * Get mass fraction applied on two nodes connected to each other. By
+     * default, when mass is equal to `1`, mass fraction for both nodes equal to
+     * 0.5.
+     *
+     * @return {object} For example `{ fromNode: 0.5, toNode: 0.5 }`
+     */
     getMass: function () {
         var m1 = this.fromNode.mass,
             m2 = this.toNode.mass,
@@ -702,6 +728,12 @@ seriesType('networkgraph', 'line', {
             toNode: 1 - m2 / sum
         };
     },
+
+    /**
+     * Get link path connecting two nodes.
+     *
+     * @return {Array<Highcharts.SVGPathArray>} Path: `['M', x, y, 'L', x, y]`
+     */
     getLinkPath: function () {
         var left = this.fromNode,
             right = this.toNode;
@@ -734,20 +766,17 @@ seriesType('networkgraph', 'line', {
             to.plotY
         ];*/
     },
+
     isValid: function () {
         return !this.isNode || defined(this.id);
     },
-    remove: function () {
-        if (this.isNode) {
-            this.series.layout.removeNode(this);
-        } else {
-            this.series.layout.removeLink(this);
-        }
 
-        return Point.prototype.remove.apply(this, arguments);
-    },
-
-    // Default utils:
+    /**
+     * Destroy point. If it's a node, remove all links coming out of this node.
+     * Then remove point from the layout.
+     *
+     * @return {undefined}
+     */
     destroy: function () {
         if (this.isNode) {
             this.linksFrom.forEach(
@@ -761,6 +790,9 @@ seriesType('networkgraph', 'line', {
                     }
                 }
             );
+            this.series.layout.removeNode(this);
+        } else {
+            this.series.layout.removeLink(this);
         }
 
         return Point.prototype.destroy.apply(this, arguments);
@@ -822,14 +854,18 @@ addEvent(
                                 chart.container,
                                 'mousemove',
                                 function (e) {
-                                    return point.series.onMouseMove(point, e);
+                                    return point &&
+                                        point.series &&
+                                        point.series.onMouseMove(point, e);
                                 }
                             ));
                             unbinders.push(addEvent(
                                 chart.container.ownerDocument,
                                 'mouseup',
                                 function (e) {
-                                    return point.series.onMouseUp(point, e);
+                                    return point &&
+                                        point.series &&
+                                        point.series.onMouseUp(point, e);
                                 }
                             ));
                         }

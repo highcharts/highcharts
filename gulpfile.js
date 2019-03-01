@@ -595,6 +595,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/modules/data.src.js',
         './js/modules/offline-exporting.src.js',
         './js/modules/pattern-fill.src.js',
+        './js/modules/networkgraph/*.js',
         './js/modules/sonification/*.js',
         './js/annotations/annotations.src.js'
         /*

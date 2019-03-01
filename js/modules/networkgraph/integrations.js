@@ -11,14 +11,39 @@ import H from '../../parts/Globals.js';
 
 H.networkgraphIntegrations = {
     verlet: {
+        /**
+         * Attractive force funtion. Can be replaced by API's
+         * `layoutAlgorithm.attractiveForce`
+         *
+         * @param {number} d current distance between two nodes
+         * @param {number} k expected distance between two nodes
+         *
+         * @return {number} force
+         */
         attractiveForceFunction: function (d, k) {
             // Used in API:
             return (k - d) / d;
         },
+        /**
+         * Repulsive force funtion. Can be replaced by API's
+         * `layoutAlgorithm.repulsiveForce`
+         *
+         * @param {number} d current distance between two nodes
+         * @param {number} k expected distance between two nodes
+         *
+         * @return {number} force
+         */
         repulsiveForceFunction: function (d, k) {
             // Used in API:
             return (k - d) / d * (k > d ? 1 : 0); // Force only for close nodes
         },
+        /**
+         * Barycenter force. Calculate and applys barycenter forces on the
+         * nodes. Making them closer to the center of their barycenter point.
+         *
+         * In Verlet integration, force is applied on a node immidatelly to it's
+         * `plotX` and `plotY` position.
+         */
         barycenter: function () {
             var gravitationalConstant = this.options.gravitationalConstant,
                 xFactor = this.barycenter.xFactor,
@@ -37,6 +62,17 @@ H.networkgraphIntegrations = {
                 }
             });
         },
+        /**
+         * Repulsive force.
+         *
+         * In Verlet integration, force is applied on a node immidatelly to it's
+         * `plotX` and `plotY` position.
+         *
+         * @param {Highcharts.Point} node node that should be translated by
+         *                          force.
+         * @param {number} force force calcualated in `repulsiveForceFunction`
+         * @param {object} distance Distance between two nodes e.g. `{x, y}`
+         */
         repulsive: function (node, force, distanceXY) {
             var factor = force * this.diffTemperature / node.mass / node.degree;
 
@@ -45,6 +81,16 @@ H.networkgraphIntegrations = {
                 node.plotY += distanceXY.y * factor;
             }
         },
+        /**
+         * Attractive force.
+         *
+         * In Verlet integration, force is applied on a node immidatelly to it's
+         * `plotX` and `plotY` position.
+         *
+         * @param {Highcharts.Point} link link that connects two nodes
+         * @param {number} force force calcualated in `repulsiveForceFunction`
+         * @param {object} distance Distance between two nodes e.g. `{x, y}`
+         */
         attractive: function (link, force, distanceXY) {
             var massFactor = link.getMass(),
                 translatedX = -distanceXY.x * force * this.diffTemperature,
@@ -63,30 +109,37 @@ H.networkgraphIntegrations = {
                     link.toNode.degree;
             }
         },
+        /**
+         * Integration method.
+         *
+         * In Verlet integration, forces are applied on node immidatelly to it's
+         * `plotX` and `plotY` position.
+         *
+         * Verlet without velocity:
+         *
+         *    x(n+1) = 2 * x(n) - x(n-1) + A(T) * deltaT ^ 2
+         *
+         * where:
+         *     - x(n+1) - new position
+         *     - x(n) - current position
+         *     - x(n-1) - previous position
+         *
+         * Assuming A(t) = 0 (no acceleration) and (deltaT = 1) we get:
+         *
+         *     x(n+1) = x(n) + (x(n) - x(n-1))
+         *
+         * where:
+         *     - (x(n) - x(n-1)) - position change
+         *
+         * TO DO:
+         * Consider Verlet with velocity to support additional
+         * forces. Or even Time-Corrected Verlet by Jonathan
+         * "lonesock" Dummer
+         *
+         * @param {object} layout layout object
+         * @param {Highcharts.Point} node node that should be translated
+         */
         integrate: function (layout, node) {
-            /*
-            Verlet without velocity:
-
-                x(n+1) = 2 * x(n) - x(n-1) + A(T) * deltaT ^ 2
-
-            where:
-                - x(n+1) - new position
-                - x(n) - current position
-                - x(n-1) - previous position
-
-            Assuming A(t) = 0 (no acceleration) and (deltaT = 1) we
-            get:
-
-                x(n+1) = x(n) + (x(n) - x(n-1))
-
-            where:
-                - (x(n) - x(n-1)) - position change
-
-            TO DO:
-            Consider Verlet with velocity to support additional
-            forces. Or even Time-Corrected Verlet by Jonathan
-            "lonesock" Dummer
-            */
             var prevX = node.prevX,
                 prevY = node.prevY,
                 diffX = (node.plotX + node.dispX - prevX),
@@ -105,6 +158,13 @@ H.networkgraphIntegrations = {
                 y: diffY * -layout.options.friction
             });
         },
+        /**
+         * Estiamte the best possible distance between two nodes, making graph
+         * readable.
+         *
+         * @param {object} layout layout object
+         * @return {number}
+         */
         getK: function (layout) {
             return Math.pow(
                 layout.box.width * layout.box.height / layout.nodes.length,
@@ -113,30 +173,53 @@ H.networkgraphIntegrations = {
         }
     },
     euler: {
+        /**
+         * Attractive force funtion. Can be replaced by API's
+         * `layoutAlgorithm.attractiveForce`
+         *
+         * Other forces that can be used:
+         *
+         * basic, not recommended:
+         *    `function (d, k) { return d / k }`
+         *
+         * @param {number} d current distance between two nodes
+         * @param {number} k expected distance between two nodes
+         *
+         * @return {number} force
+         */
         attractiveForceFunction: function (d, k) {
-            /*
-            basic, not recommended:
-            return d / k;
-            */
             return d * d / k;
         },
+        /**
+         * Repulsive force funtion. Can be replaced by API's
+         * `layoutAlgorithm.repulsiveForce`.
+         *
+         * Other forces that can be used:
+         *
+         * basic, not recommended:
+         *    `function (d, k) { return k / d }`
+         *
+         * standard:
+         *    `function (d, k) { return k * k / d }`
+         *
+         * grid-variant:
+         *    `function (d, k) { return k * k / d * (2 * k - d > 0 ? 1 : 0) }`
+         *
+         * @param {number} d current distance between two nodes
+         * @param {number} k expected distance between two nodes
+         *
+         * @return {number} force
+         */
         repulsiveForceFunction: function (d, k) {
-            /*
-            basic, not recommended:
-            return k / d;
-            */
-
-            /*
-            standard:
-            return k * k / d;
-            */
-
-            /*
-            grid-variant:
-            return k * k / d * (2 * k - d > 0 ? 1 : 0);
-            */
             return k * k / d;
         },
+        /**
+         * Barycenter force. Calculate and applys barycenter forces on the
+         * nodes. Making them closer to the center of their barycenter point.
+         *
+         * In Euler integration, force is stored in a node, not changing it's
+         * position. Later, in `integrate()` forces are applied on nodes.
+         */
         barycenter: function () {
             var gravitationalConstant = this.options.gravitationalConstant,
                 xFactor = this.barycenter.xFactor,
@@ -154,10 +237,28 @@ H.networkgraphIntegrations = {
                 }
             });
         },
+        /**
+         * Repulsive force.
+         *
+         * @param {Highcharts.Point} node node that should be translated by
+         *                          force.
+         * @param {number} force force calcualated in `repulsiveForceFunction`
+         * @param {object} distance Distance between two nodes e.g. `{x, y}`
+         */
         repulsive: function (node, force, distanceXY, distanceR) {
             node.dispX += (distanceXY.x / distanceR) * force / node.degree;
             node.dispY += (distanceXY.y / distanceR) * force / node.degree;
         },
+        /**
+         * Attractive force.
+         *
+         * In Euler integration, force is stored in a node, not changing it's
+         * position. Later, in `integrate()` forces are applied on nodes.
+         *
+         * @param {Highcharts.Point} link link that connects two nodes
+         * @param {number} force force calcualated in `repulsiveForceFunction`
+         * @param {object} distance Distance between two nodes e.g. `{x, y}`
+         */
         attractive: function (link, force, distanceXY, distanceR) {
             var massFactor = link.getMass(),
                 translatedX = (distanceXY.x / distanceR) * force,
@@ -177,31 +278,44 @@ H.networkgraphIntegrations = {
                     link.toNode.degree;
             }
         },
+        /**
+         * Integration method.
+         *
+         * In Euler integration, force were stored in a node, not changing it's
+         * position. Now, in the integrator method, we apply changes.
+         *
+         * Euler:
+         *
+         * Basic form:
+         * `x(n+1) = x(n) + v(n)`
+         *
+         * With Rengoild-Fruchterman we get:
+         * <pre>
+         *       x(n+1) = x(n) +
+         *           v(n) / length(v(n)) *
+         *           min(v(n), temperature(n))
+         * </pre>
+         * where:
+         * <pre>
+         *       x(n+1) - next position
+         *       x(n) - current position
+         *       v(n) - velocity (comes from net force)
+         *       temperature(n) - current temperature
+         * </pre>
+         *
+         * Known issues:
+         * Oscillations when force vector has the same magnitude but opposite
+         * direction in the next step. Potentially solved by decreasing force by
+         * `v * (1 / node.degree)`
+         *
+         * Note:
+         * Actually `min(v(n), temperature(n))` replaces simulated annealing.
+         *
+         * @param {object} layout layout object
+         * @param {Highcharts.Point} node node that should be translated
+         */
         integrate: function (layout, node) {
             var distanceR;
-            /*
-            Euler:
-            Basic form: x(n+1) = x(n) + v(n)
-
-            With Rengoild-Fruchterman we get:
-
-                x(n+1) = x(n) +
-                    v(n) / length(v(n)) *
-                    min(v(n), temperature(n))
-
-            where:
-                x(n+1) - next position
-                x(n) - current position
-                v(n) - velocity (comes from net force)
-                temperature(n) - current temperature
-
-            Issues:
-                Oscillations when force vector has the same
-                magnitude but opposite direction in the next step.
-
-            Actually "min(v(n), temperature(n))" replaces
-            simulated annealing.
-            */
 
             node.dispX += node.dispX * layout.options.friction;
             node.dispY += node.dispY * layout.options.friction;
@@ -218,6 +332,13 @@ H.networkgraphIntegrations = {
                     Math.min(Math.abs(node.dispY), layout.temperature);
             }
         },
+        /**
+         * Estiamte the best possible distance between two nodes, making graph
+         * readable.
+         *
+         * @param {object} layout layout object
+         * @return {number}
+         */
         getK: function (layout) {
             return Math.pow(
                 layout.box.width * layout.box.height / layout.nodes.length,
