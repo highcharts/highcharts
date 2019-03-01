@@ -236,6 +236,11 @@ Highcharts.Point.prototype = {
             point.x === null || !isNumber(point.y, true)
         ); // #3571, check for NaN
 
+        if (point.isNull && !defined(point.formatPrefix)) { // #9233
+            // debugger;
+            point.formatPrefix = 'null';
+        }
+
         // The point is initially selected by options (#5777)
         if (point.selected) {
             point.state = 'select';

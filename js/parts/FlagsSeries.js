@@ -22,7 +22,8 @@ var addEvent = H.addEvent,
     SVGRenderer = H.SVGRenderer,
     TrackerMixin = H.TrackerMixin,
     VMLRenderer = H.VMLRenderer,
-    symbols = SVGRenderer.prototype.symbols;
+    symbols = SVGRenderer.prototype.symbols,
+    Point = H.Point;
 
 /**
  * The Flags series.
@@ -599,7 +600,17 @@ seriesType(
          */
         invertGroups: noop
 
+    }, /** @lends seriesTypes.column.prototype.pointClass.prototype */ {
+        applyOptions: function () {
+            // #9233: Every point in flag series has y = null. Avoid applying
+            // null point formatting to it - it should be treated as a regular
+            // point.
+            this.formatPrefix = 'point';
+            Point.prototype.applyOptions.apply(this, arguments);
+            return this;
+        }
     }
+
 );
 
 // create the flag icon with anchor
