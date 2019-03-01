@@ -713,7 +713,7 @@ Series.prototype.drawDataLabels = function () {
         dataLabelsGroup = series.plotGroup(
             'dataLabelsGroup',
             'data-labels',
-            defer && !hasRendered ? 'hidden' : 'visible', // #5133
+            defer && !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
             seriesDlOptions.zIndex || 6
         );
 
