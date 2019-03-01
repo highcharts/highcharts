@@ -156,6 +156,19 @@ seriesType('networkgraph', 'line', {
          */
         theta: 0.5,
         /**
+         * Verlet integration only.
+         * Max speed that node can get in one iteration. In terms of simulation,
+         * it's a maximum translation (in pixels) that node can move (in both, x
+         * and y, dimensions). While `friction` is applied on all nodes, max
+         * speed is applied only for nodes that move very fast, for example
+         * small or disconnected ones.
+         *
+         * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
+         * @see         [layoutAlgorithm.friction](#series.networkgraph.layoutAlgorithm.friction)
+         * @since       7.1.0
+         */
+        maxSpeed: 10,
+        /**
          * Approximation used to calculate repulsive forces affecting nodes.
          * By default, when calculateing net force, nodes are compared against
          * each other, which gives O(N^2) complexity. Using Barnes-Hut

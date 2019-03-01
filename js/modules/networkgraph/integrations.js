@@ -140,22 +140,29 @@ H.networkgraphIntegrations = {
          * @param {Highcharts.Point} node node that should be translated
          */
         integrate: function (layout, node) {
-            var prevX = node.prevX,
+            var friction = -layout.options.friction,
+                maxSpeed = layout.options.maxSpeed,
+                prevX = node.prevX,
                 prevY = node.prevY,
-                diffX = (node.plotX + node.dispX - prevX),
-                diffY = (node.plotY + node.dispY - prevY);
+                // Apply friciton:
+                diffX = (node.plotX + node.dispX - prevX) * friction,
+                diffY = (node.plotY + node.dispY - prevY) * friction;
+
+            // Apply max speed:
+            diffX = Math.sign(diffX) * Math.min(maxSpeed, Math.abs(diffX));
+            diffY = Math.sign(diffY) * Math.min(maxSpeed, Math.abs(diffY));
 
             // Store for the next iteration:
             node.prevX = node.plotX + node.dispX;
             node.prevY = node.plotY + node.dispY;
 
-            // Update positions, apply friction:
-            node.plotX += diffX * -layout.options.friction;
-            node.plotY += diffY * -layout.options.friction;
+            // Update positions:
+            node.plotX += diffX;
+            node.plotY += diffY;
 
             node.temperature = layout.vectorLength({
-                x: diffX * -layout.options.friction,
-                y: diffY * -layout.options.friction
+                x: diffX,
+                y: diffY
             });
         },
         /**
