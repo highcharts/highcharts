@@ -479,13 +479,6 @@ Series.prototype.drawDataLabels = function () {
 
                     dataLabel.attr(attr);
 
-                    if (labelOptions.textPath) {
-                        dataLabel.setTextPath(
-                            point.graphic,
-                            labelOptions.textPath
-                        );
-                    }
-
                     if (!chart.styledMode) {
                         // Styles must be applied before add in order to read
                         // text bounding box
@@ -494,6 +487,13 @@ Series.prototype.drawDataLabels = function () {
 
                     if (!dataLabel.added) {
                         dataLabel.add(dataLabelsGroup);
+                    }
+
+                    if (labelOptions.textPath) {
+                        dataLabel.setTextPath(
+                            point.graphic,
+                            labelOptions.textPath
+                        );
                     }
 
                     // Now the data label is created and placed at 0,0, so we

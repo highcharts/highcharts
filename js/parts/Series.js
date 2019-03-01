@@ -5294,10 +5294,15 @@ H.Series = H.seriesType(
             // #1795)
             group.inverted = series.isCartesian ? inverted : false;
 
-            // draw the graph if any
+            // Draw the graph if any
             if (series.drawGraph) {
                 series.drawGraph();
                 series.applyZones();
+            }
+
+            // Draw the points
+            if (series.visible) {
+                series.drawPoints();
             }
 
             /* series.points.forEach(function (point) {
@@ -5306,16 +5311,16 @@ H.Series = H.seriesType(
                 }
             }); */
 
-            // draw the data labels (inn pies they go before the points)
+            // Draw the data labels
             if (series.drawDataLabels) {
                 series.drawDataLabels();
             }
 
-            // draw the points
-            if (series.visible) {
-                series.drawPoints();
+            // In pie charts, slices are added to the DOM, but actual rendering
+            // is postponed until labels reserved their space
+            if (series.redrawPoints) {
+                series.redrawPoints();
             }
-
 
             // draw the mouse tracking area
             if (
