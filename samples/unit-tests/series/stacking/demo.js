@@ -223,21 +223,32 @@ QUnit.test('Updating to null value (#7493)', function (assert) {
     );
 
     chart.update({
+        chart: {
+            type: "column"
+        },
         xAxis: {
-            type: 'category'
+            type: "category"
+        },
+        plotOptions: {
+            series: {
+                stacking: "normal"
+            }
         },
         series: [{
-            type: 'column',
-            stacking: 'normal',
             data: [{
-                name: '2',
-                y: null
-            }, {
-                name: '2',
-                y: 2
+                name: "name1",
+                y: 27.06
             }]
+        }, {
+            data: [{
+                name: "name1",
+                y: 17.77
+            }, {
+                name: "name2",
+                y: 20.66
+            }, null]
         }]
-    });
+    }, true, true, false);
 
     assert.ok(true, 'Stacking the same column series with null values (#10160)');
 

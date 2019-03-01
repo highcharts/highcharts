@@ -3641,14 +3641,6 @@ H.Series = H.seriesType(
                 );
 
                 // Calculate the bottom y value for stacked series
-                if (stacking) {
-                    stackIndicator = series.getStackIndicator(
-                        stackIndicator,
-                        xValue,
-                        series.index
-                    );
-                }
-
                 if (
                     stacking &&
                     series.visible &&
@@ -3656,8 +3648,16 @@ H.Series = H.seriesType(
                     stack &&
                     stack[xValue]
                 ) {
+                    stackIndicator = series.getStackIndicator(
+                        stackIndicator,
+                        xValue,
+                        series.index
+                    );
                     pointStack = stack[xValue];
                     stackValues = pointStack.points[stackIndicator.key];
+                }
+
+                if (isArray(stackValues)) {
                     yBottom = stackValues[0];
                     yValue = stackValues[1];
 
