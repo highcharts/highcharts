@@ -1303,7 +1303,7 @@ seriesType('pie', 'line',
  * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/
  *         Confirm toggle visibility
  *
- * @type      {Function}
+ * @type      {Highcharts.PointLegendItemClickCallbackFunction}
  * @since     1.2.0
  * @product   highcharts
  * @apioption plotOptions.pie.point.events.legendItemClick
