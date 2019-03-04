@@ -489,6 +489,13 @@ Series.prototype.drawDataLabels = function () {
                         dataLabel.add(dataLabelsGroup);
                     }
 
+                    if (labelOptions.textPath) {
+                        dataLabel.setTextPath(
+                            point.graphic,
+                            labelOptions.textPath
+                        );
+                    }
+
                     // Now the data label is created and placed at 0,0, so we
                     // need to align it
                     series.alignDataLabel(

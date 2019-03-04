@@ -43,7 +43,121 @@ seriesType('networkgraph', 'line', {
         enabled: true
     },
     dataLabels: {
-        format: '{key}'
+        /**
+         * The
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _links_ in the networkgraph.
+         *
+         * @type {string}
+         * @since 7.1.0
+         * @apioption plotOptions.networkgraph.dataLabels.linkFormat
+         * @default undefined
+         */
+
+        /**
+         * The
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _node_ in the networkgraph.
+         *
+         * In v7.0 defaults to `{key}`, since v7.1 defaults to `undefined` and
+         * `formatter` is used instead.
+         *
+         * @type {string}
+         * @apioption plotOptions.networkgraph.dataLabels.format
+         */
+
+        /**
+         * Callback to format data labels for _links_ in the sankey diagram.
+         * The `linkFormat` option takes precedence over the `linkFormatter`.
+         *
+         * @type  {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
+         * @since 7.1.0
+         * @default function () { return this.point.fromNode.name + ' \u2192 ' + this.point.toNode.name; }
+         */
+        linkFormatter: function () {
+            return this.point.fromNode.name + '<br>' +
+                this.point.toNode.name;
+        },
+        /**
+         * Options for a _node_ label text which should follow marker's shape.
+         *
+         * **Note:**
+         * Only SVG-based renderer supports this option.
+         *
+         * @sample highcharts/series-networkgraph/textpath-datalabels
+         *          Networkgraph with labels around nodes
+         * @since   7.1.0
+         */
+        textPath: {
+            /**
+             * Presentation attributes for the text path.
+             *
+             * @default     {"textAnchor": "middle", "startOffset": "50%", "dy": -5}
+             * @sample      highcharts/series-networkgraph/link-datalabels
+             *              Data labels moved into the nodes
+             *
+             * @type        {Highcharts.SVGAttributes}
+             * @apioption plotOptions.networkgraph.dataLabels.textPath.attributes
+             */
+
+            /**
+             * Enable or disable `textPath` option for marker's data labels.
+             *
+             * @see [linkTextPath](#plotOptions.networkgraph.dataLabels.linkTextPath) option
+             */
+            enabled: false
+        },
+
+        /**
+         * Options for a _link_ label text which should follow link connection.
+         *
+         * @sample highcharts/series-networkgraph/link-datalabels
+         *         Networkgraph with dataLabels on links
+         * @since   7.1.0
+         */
+        linkTextPath: {
+            /**
+             * Presentation attributes for the text path.
+             *
+             * @default     {"textAnchor": "middle", "startOffset": "50%", "dy": -5}
+             * @sample      highcharts/series-networkgraph/link-datalabels
+             *              Data labels moved under the links
+             *
+             * @type        {Highcharts.SVGAttributes}
+             * @apioption plotOptions.networkgraph.dataLabels.linkTextPath.attributes
+             */
+
+            /**
+             * Enable or disable `textPath` option for link's data labels.
+             *
+             * @see [textPath](#plotOptions.networkgraph.dataLabels.textPath) option
+             */
+            enabled: true
+        },
+
+        /**
+         * Callback JavaScript function to format the data label for a node.
+         * Note that if a `format` is defined, the format takes precedence and
+         * the formatter is ignored. Available data are:
+         *
+         * - `this.point`: The point (node) object. The node name, if defined,
+         *   is available through `this.point.name`. Arrays:
+         *   `this.point.linksFrom` and `this.point.linksTo` contains all nodes
+         *   connected to this point.
+         *
+         * - `this.series`: The series object. The series name is available
+         *   through`this.series.name`.
+         *
+         * - `this.key`: The ID of the node.
+         *
+         * - `this.color`: The color of the node.
+         *
+         * @type    {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
+         * @default function () { return this.key; }
+         */
+        formatter: function () {
+            return this.key;
+        }
     },
     /**
      * Link style options
@@ -259,6 +373,7 @@ seriesType('networkgraph', 'line', {
      * After data is updated, `chart.render` resumes the simulation.
      */
     init: function () {
+
         Series.prototype.init.apply(this, arguments);
 
         addEvent(this, 'updatedData', function () {
@@ -292,6 +407,9 @@ seriesType('networkgraph', 'line', {
 
         this.nodes.forEach(function (node) {
             node.degree = node.getDegree();
+        });
+        this.data.forEach(function (link) {
+            link.formatPrefix = 'link';
         });
     },
 
@@ -398,12 +516,33 @@ seriesType('networkgraph', 'line', {
             this.redrawHalo(hoverPoint);
         }
 
-        this.nodes.forEach(function (node) {
-            if (node.dataLabel) {
-                dataLabels.push(node.dataLabel);
-            }
-        });
-        H.Chart.prototype.hideOverlappingLabels(dataLabels);
+        if (this.chart.hasRendered && !this.options.dataLabels.allowOverlap) {
+            this.nodes.concat(this.points).forEach(function (node) {
+                if (node.dataLabel) {
+                    dataLabels.push(node.dataLabel);
+                }
+            });
+
+            this.chart.hideOverlappingLabels(dataLabels);
+        }
+    },
+
+    // Networkgraph has two separate collecions of nodes and lines, render
+    // dataLabels for both sets:
+    drawDataLabels: function () {
+        var textPath = this.options.dataLabels.textPath;
+
+        // Render node labels:
+        Series.prototype.drawDataLabels.apply(this, arguments);
+
+        // Render link labels:
+        this.points = this.data;
+        this.options.dataLabels.textPath = this.options.dataLabels.linkTextPath;
+        Series.prototype.drawDataLabels.apply(this, arguments);
+
+        // Restore nodes
+        this.points = this.nodes;
+        this.options.dataLabels.textPath = textPath;
     },
 
     // Draggable mode:
@@ -550,7 +689,7 @@ seriesType('networkgraph', 'line', {
         var linkOptions = this.series.options.link,
             pointOptions = this.options;
 
-        return {
+        return this.series.chart.styledMode ? {} : {
             'stroke-width': pick(pointOptions.width, linkOptions.width),
             stroke: pointOptions.color || linkOptions.color,
             dashstyle: pointOptions.dashStyle || linkOptions.dashStyle
@@ -563,7 +702,7 @@ seriesType('networkgraph', 'line', {
         if (!this.graphic) {
             this.graphic = this.series.chart.renderer
                 .path(
-                    this.getLinkPath(this.fromNode, this.toNode)
+                    this.getLinkPath()
                 )
                 .attr(this.getLinkAttribues())
                 .add(this.series.group);
@@ -573,10 +712,16 @@ seriesType('networkgraph', 'line', {
      * Redraw link's path.
      */
     redrawLink: function () {
+        var path = this.getLinkPath();
         if (this.graphic) {
-            this.graphic.animate({
-                d: this.getLinkPath(this.fromNode, this.toNode)
-            });
+            this.shapeArgs = {
+                d: path
+            };
+            this.graphic.animate(this.shapeArgs);
+
+            // Required for dataLabels:
+            this.plotX = (path[1] + path[4]) / 2;
+            this.plotY = (path[2] + path[5]) / 2;
         }
     },
     /**
@@ -596,21 +741,31 @@ seriesType('networkgraph', 'line', {
             toNode: 1 - m2 / sum
         };
     },
+
     /**
      * Get link path connecting two nodes.
      *
      * @return {Array<Highcharts.SVGPathArray>} Path: `['M', x, y, 'L', x, y]`
      */
-    getLinkPath: function (from, to) {
+    getLinkPath: function () {
+        var left = this.fromNode,
+            right = this.toNode;
+
+        // Start always from left to the right node, to prevent rendering labels
+        // upside down
+        if (left.plotX > right.plotX) {
+            left = this.toNode;
+            right = this.fromNode;
+        }
+
         return [
             'M',
-            from.plotX,
-            from.plotY,
+            left.plotX,
+            left.plotY,
             'L',
-            to.plotX,
-            to.plotY
+            right.plotX,
+            right.plotY
         ];
-
         /*
         IDEA: different link shapes?
         return [
@@ -625,6 +780,10 @@ seriesType('networkgraph', 'line', {
         ];*/
     },
 
+    isValid: function () {
+        return !this.isNode || defined(this.id);
+    },
+
     /**
      * Destroy point. If it's a node, remove all links coming out of this node.
      * Then remove point from the layout.
@@ -637,6 +796,10 @@ seriesType('networkgraph', 'line', {
                 function (linkFrom) {
                     if (linkFrom.graphic) {
                         linkFrom.graphic = linkFrom.graphic.destroy();
+                    }
+
+                    if (linkFrom.dataLabel) {
+                        linkFrom.dataLabel = linkFrom.dataLabel.destroy();
                     }
                 }
             );

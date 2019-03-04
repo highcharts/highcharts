@@ -810,7 +810,7 @@ seriesType('pie', 'line',
      * @private
      * @function Highcharts.seriesTypes.pie#drawPoints
      */
-        drawPoints: function () {
+        redrawPoints: function () {
             var series = this,
                 chart = series.chart,
                 renderer = chart.renderer,
@@ -856,7 +856,7 @@ seriesType('pie', 'line',
                     }
 
                     // Draw the slice
-                    if (graphic) {
+                    if (!point.delayedRendering) {
                         graphic
                             .setRadialReference(series.center);
 
@@ -866,12 +866,10 @@ seriesType('pie', 'line',
                         graphic.animate(extend(shapeArgs, groupTranslation));
                     } else {
 
-                        point.graphic = graphic = renderer[point.shapeType](
-                            shapeArgs
-                        )
+                        graphic
                             .setRadialReference(series.center)
-                            .attr(groupTranslation)
-                            .add(series.group);
+                            .attr(shapeArgs)
+                            .attr(groupTranslation);
 
                         if (!chart.styledMode) {
                             graphic
@@ -879,6 +877,8 @@ seriesType('pie', 'line',
                                 .attr({ 'stroke-linejoin': 'round' })
                                 .shadow(shadow, shadowGroup);
                         }
+
+                        point.delayRendering = false;
                     }
 
                     graphic.attr({
@@ -894,6 +894,23 @@ seriesType('pie', 'line',
 
         },
 
+        /**
+         * Slices in pie chart are initialized in DOM, but it's shapes and
+         * animations are normally run in `drawPoints()`.
+         *
+         * @private
+         */
+        drawPoints: function () {
+            var renderer = this.chart.renderer;
+
+            this.points.forEach(function (point) {
+                if (!point.graphic) {
+                    point.graphic = renderer[point.shapeType](point.shapeArgs)
+                        .add(point.series.group);
+                    point.delayedRendering = true;
+                }
+            });
+        },
         /**
      * @private
      * @deprecated
