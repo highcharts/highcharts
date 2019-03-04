@@ -221,7 +221,7 @@ Highcharts.Point.prototype = {
             point.x === null || !isNumber(point.y, true)
         ); // #3571, check for NaN
 
-        if (point.isNull && !defined(point.formatPrefix)) { // #9233
+        if (point.isNull) { // #9233
             point.formatPrefix = 'null';
         }
 
