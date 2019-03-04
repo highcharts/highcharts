@@ -6,7 +6,6 @@
 
         const data = rows.slice(1)
             .map(row => {
-                console.log(row);
                 return rows[0].reduce((ob, key, i) => {
                     ob[key] = row[i];
                     return ob;
