@@ -10,9 +10,15 @@
                 return ob;
             }, {}));
 
+        const columns = rows[0].map((data, i) => ({
+            data,
+            type: i === 0 ? 'text' : 'numeric'
+        }));
+
         chart.table = new Handsontable(document.getElementById('table'), {
             data: data,
             colHeaders: rows[0],
+            columns: columns,
             columnSorting: true,
             rowHeaders: true
         });
