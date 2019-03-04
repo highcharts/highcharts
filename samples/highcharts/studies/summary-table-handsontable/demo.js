@@ -5,12 +5,10 @@
         const rows = chart.getDataRows();
 
         const data = rows.slice(1)
-            .map(row => {
-                return rows[0].reduce((ob, key, i) => {
-                    ob[key] = row[i];
-                    return ob;
-                }, {});
-            });
+            .map(row => rows[0].reduce((ob, key, i) => {
+                ob[key] = row[i];
+                return ob;
+            }, {}));
 
         chart.table = new Handsontable(document.getElementById('table'), {
             data: data,
