@@ -472,7 +472,7 @@ addEvent(H.Point, 'update', function () {
         this.series.chart.accessibility.update();
     }
 });
-['afterUpdate', 'updatedData'].forEach(function (event) {
+['afterUpdate', 'updatedData', 'remove'].forEach(function (event) {
     addEvent(H.Series, event, function () {
         if (this.chart.accessibility) {
             this.chart.accessibility.update();
@@ -480,7 +480,7 @@ addEvent(H.Point, 'update', function () {
     });
 });
 [
-    'afterApplyDrilldown', 'drillupall', 'addSeries', 'removeSeries'
+    'afterApplyDrilldown', 'drillupall', 'afterAddSeries'
 ].forEach(function (event) {
     addEvent(H.Chart, event, function () {
         if (this.accessibility) {
