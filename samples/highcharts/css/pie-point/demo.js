@@ -1,6 +1,10 @@
 
 Highcharts.chart('container', {
 
+    chart: {
+        styledMode: true
+    },
+
     title: {
         text: 'Pie point CSS'
     },

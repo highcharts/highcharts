@@ -9,6 +9,7 @@ Highcharts.chart('container', {
     plotOptions: {
         pie: {
             dataLabels: {
+                padding: 0,
                 connectorPadding: 0
             }
         }

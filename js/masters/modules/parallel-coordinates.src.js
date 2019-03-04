@@ -3,7 +3,7 @@
  *
  * Support for parallel coordinates in Highcharts
  *
- * (c) 2010-2017 Pawel Fus
+ * (c) 2010-2019 Pawel Fus
  *
  * License: www.highcharts.com/license
  */

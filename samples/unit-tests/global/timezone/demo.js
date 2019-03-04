@@ -333,9 +333,9 @@ QUnit.test('Midnight ticks should show date (#3359)', function (assert) {
                 type: 'datetime'
             },
             series: [{
-                data: Highcharts.map(new Array(5), Math.random),
+                data: Array.apply(null, { length: 48 }).map(Math.random),
                 pointStart: Date.UTC(2013, 0, 1, 12),
-                pointInterval: 432e5 // 12 hours
+                pointInterval: 36e5 // one hour
             }]
         });
         return chart;
@@ -349,8 +349,8 @@ QUnit.test('Midnight ticks should show date (#3359)', function (assert) {
         return tickLabels;
     }
     var defaultHighchartsOptions = Highcharts.getOptions().global.timezoneOffset;
-    var minus60OffsetXLabels = ["2. Jan", "12:00", "3. Jan", "12:00"];
-    var plus60OffsetXLabels = ['12:00', '2. Jan', '12:00', '3. Jan'];
+    var minus60OffsetXLabels = ['16:00', '2. Jan', '08:00', '16:00', '3. Jan', '08:00'];
+    var plus60OffsetXLabels = ['16:00', '2. Jan', '08:00', '16:00', '3. Jan', '0…08:00'];
     var chartMinus60OffsetXLabels = getCurrentTickLabels(
         initChart(-60).xAxis[0].labelGroup.element.childNodes || []
     );
@@ -373,6 +373,6 @@ QUnit.test('Midnight ticks should show date (#3359)', function (assert) {
         plus60OffsetXLabels,
         'Midnight ticks is not showing properly'
     );
-   // reset options
+    // reset options
     initChart(defaultHighchartsOptions);
 });

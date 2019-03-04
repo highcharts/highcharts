@@ -36,7 +36,8 @@ QUnit.test('Check tooltip position for different axis options (#6327).', functio
         ser0 = chart.series[2],
         ser1 = chart.series[3],
         flag0 = ser0.points[0],
-        flag1 = ser1.points[0];
+        flag1 = ser1.points[0],
+        controller = new TestController(chart);
 
     assert.strictEqual(
         flag0.tooltipPos[1],
@@ -48,4 +49,26 @@ QUnit.test('Check tooltip position for different axis options (#6327).', functio
         flag1.plotY + yAxis1.pos - chart.plotTop + ser0.options.y,
         'Tooltip will be correctly placed for the bottom flag'
     );
+
+    yAxis1.update({
+        max: 2.5,
+        endOnTick: false
+    });
+
+    // Skip this test for IE, where clip-paths are removed
+    if (
+        TestUtilities.browser !== 'Edge' &&
+        TestUtilities.browser !== 'MSIE'
+    ) {
+        controller.mouseOver(
+            chart.series[1].points[1].plotX + yAxis1.left,
+            chart.series[1].points[1].plotY + yAxis1.top - 20
+        );
+
+        assert.strictEqual(
+            chart.tooltip.isHidden,
+            true,
+            'Flag clipped (#8546).'
+        );
+    }
 });

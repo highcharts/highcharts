@@ -33,7 +33,6 @@ QUnit.test('softMin and softMax', function (assert) {
     });
 
 
-
     assert.strictEqual(
         chart.yAxis[0].min,
         0,
@@ -72,6 +71,15 @@ QUnit.test('softMin and softMax', function (assert) {
         chart.yAxis[0].max,
         100,
         'Soft max should allow zoom'
+    );
+
+    chart.yAxis[0].setExtremes();
+    chart.series[0].setData([-100, -101, -102]);
+
+    assert.strictEqual(
+        chart.yAxis[0].max,
+        100,
+        'Soft max should be respected'
     );
 
 });

@@ -1,28 +1,28 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Axis.js';
+
 var addEvent = H.addEvent,
     Axis = H.Axis,
-    each = H.each,
     pick = H.pick;
 
-/**
- * Override to use the extreme coordinates from the SVG shape, not the
- * data values
- */
+// Override to use the extreme coordinates from the SVG shape, not the data
+// values
 addEvent(Axis, 'getSeriesExtremes', function () {
     var xData = [];
 
     // Remove the xData array and cache it locally so that the proceed method
     // doesn't use it
     if (this.isXAxis) {
-        each(this.series, function (series, i) {
+        this.series.forEach(function (series, i) {
             if (series.useMapGeometry) {
                 xData[i] = series.xData;
                 series.xData = [];
@@ -44,7 +44,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
     if (this.isXAxis) {
         dataMin = pick(this.dataMin, Number.MAX_VALUE);
         dataMax = pick(this.dataMax, -Number.MAX_VALUE);
-        each(this.series, function (series, i) {
+        this.series.forEach(function (series, i) {
             if (series.useMapGeometry) {
                 dataMin = Math.min(dataMin, pick(series.minX, dataMin));
                 dataMax = Math.max(dataMax, pick(series.maxX, dataMax));
@@ -62,9 +62,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function () {
 
 });
 
-/**
- * Override axis translation to make sure the aspect ratio is always kept
- */
+// Override axis translation to make sure the aspect ratio is always kept
 addEvent(Axis, 'afterSetAxisTranslation', function () {
     var chart = this.chart,
         mapRatio,
@@ -78,7 +76,7 @@ addEvent(Axis, 'afterSetAxisTranslation', function () {
 
     // Check for map-like series
     if (this.coll === 'yAxis' && xAxis.transA !== undefined) {
-        each(this.series, function (series) {
+        this.series.forEach(function (series) {
             if (series.preserveAspectRatio) {
                 preserveAspectRatio = true;
             }
@@ -120,9 +118,7 @@ addEvent(Axis, 'afterSetAxisTranslation', function () {
     }
 });
 
-/**
- * Override Axis.render in order to delete the fixTo prop
- */
+// Override Axis.render in order to delete the fixTo prop
 addEvent(Axis, 'render', function () {
     this.fixTo = null;
 });

@@ -91,3 +91,97 @@ QUnit.test('Polar reversed yaxis (#2848)', function (assert) {
     }
 
 });
+
+QUnit.test('Polar with overlapping axis labels', assert => {
+
+    const data = [];
+
+    for (let i = 0; i < 100; i++) {
+        data.push({
+            name: 'name' + i,
+            y: i % 20
+        });
+    }
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'line',
+            polar: true
+        },
+        title: {
+            text: 'Polar Chart - overlapping axis label (With Category)'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            type: 'column',
+            data: data
+        }]
+    });
+
+    assert.ok(
+        chart.xAxis[0].tickPositions.some(
+            pos => chart.xAxis[0].ticks[pos]
+                .label
+                .element
+                .getAttribute('opacity') === '0'
+        ),
+        'The axis should have some hidden labels'
+    );
+
+    chart.xAxis[0].update({
+        labels: {
+            allowOverlap: true
+        }
+    });
+
+    assert.notOk(
+        chart.xAxis[0].tickPositions.some(
+            pos => chart.xAxis[0].ticks[pos]
+                .label
+                .element
+                .getAttribute('opacity') === '0'
+        ),
+        'The axis should have no hidden labels'
+    );
+});
+
+QUnit.test('Data validation', assert => {
+    const chart = Highcharts.chart('container', {
+
+        chart: {
+            polar: true
+        },
+
+        yAxis: {
+            min: -10
+        },
+
+        series: [{
+            data: [15, 20, 5, 2, -25]
+        }]
+
+    });
+
+    // #10082
+    assert.deepEqual(
+        chart.series[0].points.map(p => p.isNull),
+        [false, false, false, false, true],
+        'Values below Y axis mininum should be treated as null'
+    );
+
+    chart.series[0].points[4].update(25);
+    assert.deepEqual(
+        chart.series[0].points.map(p => p.isNull),
+        [false, false, false, false, false],
+        '... and it should respond to update'
+    );
+
+    chart.series[0].points[2].update(-25);
+    assert.deepEqual(
+        chart.series[0].points.map(p => p.isNull),
+        [false, false, true, false, false],
+        '... both ways'
+    );
+});

@@ -1,0 +1,6 @@
+---
+ name: Highcharts Scatter Chart with Jitter
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

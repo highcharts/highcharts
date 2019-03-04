@@ -342,6 +342,14 @@ var HighchartsConfig = {
         },
         'baseUrl': 'parts-more'
     }, {
+        'name': 'ColumnPyramidSeries',
+        'component': 'Columnpyramid',
+        'group': 'Chart and Serie types',
+        'depends': {
+            'component': ['Core', 'Column']
+        },
+        'baseUrl': 'parts-more'
+    }, {
         'name': 'GaugeSeries',
         'component': 'Gauge',
         'group': 'Chart and Serie types',
@@ -377,6 +385,14 @@ var HighchartsConfig = {
     }, {
         'name': 'BubbleSeries',
         'component': 'Bubble',
+        'group': 'Chart and Serie types',
+        'depends': {
+            'component': ['Core', 'Scatter']
+        },
+        'baseUrl': 'parts-more'
+    }, {
+        'name': 'PackedBubbleSeries',
+        'component': 'Packedbubble',
         'group': 'Chart and Serie types',
         'depends': {
             'component': ['Core', 'Scatter']
@@ -610,6 +626,12 @@ var HighchartsConfig = {
             'description': ''
         },
         'Columnrange': {
+            'description': ''
+        },
+        'Columnpyramid': {
+            'description': ''
+        },
+        'Packedbubble': {
             'description': ''
         },
         'Gauge': {

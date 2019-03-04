@@ -1,4 +1,4 @@
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/us-population-density.json', function (data) {
+$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-population-density.json', function (data) {
 
     // Make codes uppercase to match the map data
     $.each(data, function () {
@@ -10,6 +10,7 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb2
 
         chart: {
             map: 'countries/us/us-all',
+            styledMode: true,
             borderWidth: 1
         },
 

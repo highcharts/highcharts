@@ -1,38 +1,37 @@
-/**
- * (c) 2010-2017 Torstein Honsi
+/* *
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
-/* ****************************************************************************
- * Start PlotBand series code                                                 *
- *****************************************************************************/
-/**
- * This is an experiment of implementing plotBands and plotLines as a series.
- * It could solve problems with export, updating etc., add tooltip and mouse
- * events, and provide a more compact and consistent implementation.
- * Demo: http://jsfiddle.net/highcharts/5Rbf6/
- */
+
+/* ************************************************************************** *
+ *  Start PlotBand series code                                                *
+ * ************************************************************************** */
+
+/* This is an experiment of implementing plotBands and plotLines as a series.
+   It could solve problems with export, updating etc., add tooltip and mouse
+   events, and provide a more compact and consistent implementation.
+   Demo: https://jsfiddle.net/highcharts/5Rbf6/ */
+
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
 import './Options.js';
 var seriesType = H.seriesType,
-    each = H.each,
     Series = H.Series;
 
 seriesType('plotband', 'column', {
     lineWidth: 0,
     threshold: null
 }, {
-    /*= if (build.classic) { =*/
     // mapping between SVG attributes and the corresponding options
     pointAttrToOptions: {
         fill: 'color',
         stroke: 'lineColor',
         'stroke-width': 'lineWidth'
     },
-    /*= } =*/
     animate: function () {},
 
     translate: function () {
@@ -42,7 +41,7 @@ seriesType('plotband', 'column', {
 
         Series.prototype.translate.apply(series);
 
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
             var onXAxis = point.onXAxis,
                 ownAxis = onXAxis ? xAxis : yAxis,
                 otherAxis = onXAxis ? yAxis : xAxis,
@@ -69,6 +68,7 @@ seriesType('plotband', 'column', {
 
 
 });
-/* ****************************************************************************
- * End PlotBand series code                                                   *
- *****************************************************************************/
+
+/* ************************************************************************** *
+ *  End PlotBand series code                                                  *
+ * ************************************************************************** */

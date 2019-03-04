@@ -1,46 +1,49 @@
-/**
- * (c) 2010-2017 Torstein Honsi
+/* *
+ * (c) 2010-2019 Torstein Honsi
+ *
+ * Extensions to the SVGRenderer class to enable 3D shapes
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Color.js';
 import '../parts/SvgRenderer.js';
+
 var cos = Math.cos,
     PI = Math.PI,
     sin = Math.sin;
-
 
 var animObject = H.animObject,
     charts = H.charts,
     color = H.color,
     defined = H.defined,
     deg2rad = H.deg2rad,
-    each = H.each,
     extend = H.extend,
-    inArray = H.inArray,
-    map = H.map,
     merge = H.merge,
     perspective = H.perspective,
     pick = H.pick,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
-    wrap = H.wrap;
+
+    dFactor,
+    element3dMethods,
+    cuboidMethods;
+
 /*
     EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 */
-// HELPER METHODS //
+// HELPER METHODS
+dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
-var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
-
-/** Method to construct a curved path
-  * Can 'wrap' around more then 180 degrees
-  */
+// Method to construct a curved path. Can 'wrap' around more then 180 degrees
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
     var result = [],
         arcAngle = end - start;
+
     if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
         result = result.concat(
             curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy)
@@ -75,50 +78,11 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
     ];
 }
 
-/*= if (!build.classic) { =*/
-/**
- * Override the SVGRenderer initiator to add definitions used by brighter and
- * darker faces of the cuboids.
- */
-wrap(SVGRenderer.prototype, 'init', function (proceed) {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    each([{
-        name: 'darker',
-        slope: 0.6
-    }, {
-        name: 'brighter',
-        slope: 1.4
-    }], function (cfg) {
-        this.definition({
-            tagName: 'filter',
-            id: 'highcharts-' + cfg.name,
-            children: [{
-                tagName: 'feComponentTransfer',
-                children: [{
-                    tagName: 'feFuncR',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncG',
-                    type: 'linear',
-                    slope: cfg.slope
-                }, {
-                    tagName: 'feFuncB',
-                    type: 'linear',
-                    slope: cfg.slope
-                }]
-            }]
-        });
-    }, this);
-});
-/*= } =*/
-
 SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
 
     // Put "L x y" for each point
-    each(points, function (point) {
+    points.forEach(function (point) {
         result.push('L', point.x, point.y);
     });
 
@@ -136,10 +100,10 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 };
 
 SVGRenderer.prototype.toLineSegments = function (points) {
-    var result = [];
+    var result = [],
+        m = true;
 
-    var m = true;
-    each(points, function (point) {
+    points.forEach(function (point) {
         result.push(m ? 'M' : 'L', point.x, point.y);
         m = !m;
     });
@@ -147,19 +111,18 @@ SVGRenderer.prototype.toLineSegments = function (points) {
     return result;
 };
 
-/**
- * A 3-D Face is defined by it's 3D vertexes, and is only
- * visible if it's vertexes are counter-clockwise (Back-face culling).
- * It is used as a polyhedron Element
- */
+// A 3-D Face is defined by it's 3D vertexes, and is only visible if it's
+// vertexes are counter-clockwise (Back-face culling). It is used as a
+// polyhedron Element
 SVGRenderer.prototype.face3d = function (args) {
     var renderer = this,
         ret = this.createElement('path');
+
     ret.vertexes = [];
     ret.insidePlotArea = false;
     ret.enabled = true;
 
-    wrap(ret, 'attr', function (proceed, hash) {
+    ret.attr = function (hash) {
         if (
             typeof hash === 'object' &&
             (
@@ -191,10 +154,10 @@ SVGRenderer.prototype.face3d = function (args) {
             hash.d = path;
             hash.visibility = visibility;
         }
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.attr.apply(this, arguments);
+    };
 
-    wrap(ret, 'animate', function (proceed, params) {
+    ret.animate = function (params) {
         if (
             typeof params === 'object' &&
             (
@@ -227,27 +190,25 @@ SVGRenderer.prototype.face3d = function (args) {
             this.attr('visibility', visibility);
         }
 
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.animate.apply(this, arguments);
+    };
 
     return ret.attr(args);
 };
 
-/**
- * A Polyhedron is a handy way of defining a group of 3-D faces. It's only
- * attribute is `faces`, an array of attributes of each one of it's Face3D
- * instances.
- */
+// A Polyhedron is a handy way of defining a group of 3-D faces. It's only
+// attribute is `faces`, an array of attributes of each one of it's Face3D
+// instances.
 SVGRenderer.prototype.polyhedron = function (args) {
     var renderer = this,
         result = this.g(),
         destroy = result.destroy;
 
-    /*= if (build.classic) { =*/
-    result.attr({
-        'stroke-linejoin': 'round'
-    });
-    /*= } =*/
+    if (!this.styledMode) {
+        result.attr({
+            'stroke-linejoin': 'round'
+        });
+    }
 
     result.faces = [];
 
@@ -260,33 +221,31 @@ SVGRenderer.prototype.polyhedron = function (args) {
         return destroy.call(this);
     };
 
-    wrap(
-        result,
-        'attr',
-        function (proceed, hash, val, complete, continueAnimation) {
-            if (typeof hash === 'object' && defined(hash.faces)) {
-                while (result.faces.length > hash.faces.length) {
-                    result.faces.pop().destroy();
-                }
-                while (result.faces.length < hash.faces.length) {
-                    result.faces.push(renderer.face3d().add(result));
-                }
-                for (var i = 0; i < hash.faces.length; i++) {
-                    result.faces[i].attr(
-                        hash.faces[i],
-                        null,
-                        complete,
-                        continueAnimation
-                    );
-                }
-                delete hash.faces;
+    result.attr = function (hash, val, complete, continueAnimation) {
+        if (typeof hash === 'object' && defined(hash.faces)) {
+            while (result.faces.length > hash.faces.length) {
+                result.faces.pop().destroy();
             }
-            return proceed.apply(this, [].slice.call(arguments, 1));
+            while (result.faces.length < hash.faces.length) {
+                result.faces.push(renderer.face3d().add(result));
+            }
+            for (var i = 0; i < hash.faces.length; i++) {
+                if (renderer.styledMode) {
+                    delete hash.faces[i].fill;
+                }
+                result.faces[i].attr(
+                    hash.faces[i],
+                    null,
+                    complete,
+                    continueAnimation
+                );
+            }
+            delete hash.faces;
         }
+        return SVGElement.prototype.attr.apply(this, arguments);
+    };
 
-    );
-
-    wrap(result, 'animate', function (proceed, params, duration, complete) {
+    result.animate = function (params, duration, complete) {
         if (params && params.faces) {
             while (result.faces.length > params.faces.length) {
                 result.faces.pop().destroy();
@@ -299,126 +258,180 @@ SVGRenderer.prototype.polyhedron = function (args) {
             }
             delete params.faces;
         }
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.animate.apply(this, arguments);
+    };
 
     return result.attr(args);
 };
 
-// CUBOIDS //
-SVGRenderer.prototype.cuboid = function (shapeArgs) {
+// Base, abstract prototype member for 3D elements
+element3dMethods = {
+    // The init is used by base - renderer.Element
+    initArgs: function (args) {
+        var elem3d = this,
+            renderer = elem3d.renderer,
+            paths = renderer[elem3d.pathType + 'Path'](args),
+            zIndexes = paths.zIndexes;
 
-    var result = this.g(),
-        destroy = result.destroy,
-        paths = this.cuboidPath(shapeArgs);
-
-    /*= if (build.classic) { =*/
-    result.attr({
-        'stroke-linejoin': 'round'
-    });
-    /*= } =*/
-
-    // Create the 3 sides. // Front, top and side are never overlapping in our
-    // case so it is redundant to set zIndex of every element.
-    result.front = this.path(paths[0]).attr({
-        'class': 'highcharts-3d-front'
-    }).add(result);
-    result.top = this.path(paths[1]).attr({
-        'class': 'highcharts-3d-top'
-    }).add(result);
-    result.side = this.path(paths[2]).attr({
-        'class': 'highcharts-3d-side'
-    }).add(result);
-
-    // apply the fill everywhere, the top a bit brighter, the side a bit darker
-    result.fillSetter = function (fill) {
-        this.front.attr({
-            fill: fill
+        // build parts
+        elem3d.parts.forEach(function (part) {
+            elem3d[part] = renderer.path(paths[part]).attr({
+                'class': 'highcharts-3d-' + part,
+                zIndex: zIndexes[part] || 0
+            }).add(elem3d);
         });
-        this.top.attr({
-            fill: color(fill).brighten(0.1).get()
+
+        elem3d.attr({
+            'stroke-linejoin': 'round',
+            zIndex: zIndexes.group
         });
-        this.side.attr({
-            fill: color(fill).brighten(-0.1).get()
+
+        // store original destroy
+        elem3d.originalDestroy = elem3d.destroy;
+        elem3d.destroy = elem3d.destroyParts;
+    },
+
+    // Single property setter that applies options to each part
+    singleSetterForParts: function (
+        prop, val, values, verb, duration, complete
+    ) {
+        var elem3d = this,
+            newAttr = {},
+            optionsToApply = [null, null, (verb || 'attr'), duration, complete],
+            hasZIndexes = values && values.zIndexes;
+
+        if (!values) {
+            newAttr[prop] = val;
+            optionsToApply[0] = newAttr;
+        } else {
+            H.objectEach(values, function (partVal, part) {
+                newAttr[part] = {};
+                newAttr[part][prop] = partVal;
+
+                // include zIndexes if provided
+                if (hasZIndexes) {
+                    newAttr[part].zIndex = values.zIndexes[part] || 0;
+                }
+            });
+            optionsToApply[1] = newAttr;
+        }
+
+        return elem3d.processParts.apply(elem3d, optionsToApply);
+    },
+
+    // Calls function for each part. Used for attr, animate and destroy.
+    processParts: function (props, partsProps, verb, duration, complete) {
+        var elem3d = this;
+
+        elem3d.parts.forEach(function (part) {
+            // if different props for different parts
+            if (partsProps) {
+                props = H.pick(partsProps[part], false);
+            }
+
+            // only if something to set, but allow undefined
+            if (props !== false) {
+                elem3d[part][verb](props, duration, complete);
+            }
         });
-        this.color = fill;
+        return elem3d;
+    },
 
-        // for animation getter (#6776)
-        result.fill = fill;
+    // Destroy all parts
+    destroyParts: function () {
+        this.processParts(null, null, 'destroy');
+        return this.originalDestroy();
+    }
+};
 
-        return this;
-    };
+// CUBOID
+cuboidMethods = H.merge(element3dMethods, {
+    parts: ['front', 'top', 'side'],
+    pathType: 'cuboid',
 
-    // apply opacaity everywhere
-    result.opacitySetter = function (opacity) {
-        this.front.attr({ opacity: opacity });
-        this.top.attr({ opacity: opacity });
-        this.side.attr({ opacity: opacity });
-        return this;
-    };
-
-    result.attr = function (args, val, complete, continueAnimation) {
-
+    attr: function (args, val, complete, continueAnimation) {
         // Resolve setting attributes by string name
         if (typeof args === 'string' && typeof val !== 'undefined') {
             var key = args;
+
             args = {};
             args[key] = val;
         }
 
         if (args.shapeArgs || defined(args.x)) {
-            var shapeArgs = args.shapeArgs || args;
-            var paths = this.renderer.cuboidPath(shapeArgs);
-            this.front.attr({ d: paths[0] });
-            this.top.attr({ d: paths[1] });
-            this.side.attr({ d: paths[2] });
-        } else {
-            // getter returns value
-            return SVGElement.prototype.attr.call(
-                this, args, undefined, complete, continueAnimation
+            return this.singleSetterForParts(
+                'd',
+                null,
+                this.renderer[this.pathType + 'Path'](args.shapeArgs || args)
             );
         }
 
-        return this;
-    };
-
-    result.animate = function (args, duration, complete) {
+        return SVGElement.prototype.attr.call(
+            this, args, undefined, complete, continueAnimation
+        );
+    },
+    animate: function (args, duration, complete) {
         if (defined(args.x) && defined(args.y)) {
-            var paths = this.renderer.cuboidPath(args);
-            this.front.animate({ d: paths[0] }, duration, complete);
-            this.top.animate({ d: paths[1] }, duration, complete);
-            this.side.animate({ d: paths[2] }, duration, complete);
+            var paths = this.renderer[this.pathType + 'Path'](args);
+
+            this.singleSetterForParts(
+                'd', null, paths, 'animate', duration, complete
+            );
+
             this.attr({
-                zIndex: -paths[3] // #4774
+                zIndex: paths.zIndexes.group
             });
         } else if (args.opacity) {
-            this.front.animate(args, duration, complete);
-            this.top.animate(args, duration, complete);
-            this.side.animate(args, duration, complete);
+            this.processParts(args, null, 'animate', duration, complete);
         } else {
             SVGElement.prototype.animate.call(this, args, duration, complete);
         }
         return this;
-    };
+    },
+    fillSetter: function (fill) {
+        this.singleSetterForParts('fill', null, {
+            front: fill,
+            top: color(fill).brighten(0.1).get(),
+            side: color(fill).brighten(-0.1).get()
+        });
 
-    // destroy all children
-    result.destroy = function () {
-        this.front.destroy();
-        this.top.destroy();
-        this.side.destroy();
+        // fill for animation getter (#6776)
+        this.color = this.fill = fill;
 
-        return destroy.call(this);
-    };
+        return this;
+    },
+    opacitySetter: function (opacity) {
+        return this.singleSetterForParts('opacity', opacity);
+    }
+});
 
-    // Apply the Z index to the cuboid group
-    result.attr({ zIndex: -paths[3] });
-
-    return result;
+// set them up
+SVGRenderer.prototype.elements3d = {
+    base: element3dMethods,
+    cuboid: cuboidMethods
 };
 
-/**
- *    Generates a cuboid
- */
+// return result, generalization
+SVGRenderer.prototype.element3d = function (type, shapeArgs) {
+    // base
+    var ret = this.g();
+
+    // extend
+    H.extend(ret, this.elements3d[type]);
+
+    // init
+    ret.initArgs(shapeArgs);
+
+    // return
+    return ret;
+};
+
+// generelized, so now use simply
+SVGRenderer.prototype.cuboid = function (shapeArgs) {
+    return this.element3d('cuboid', shapeArgs);
+};
+
+// Generates a cuboid path and zIndexes
 H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     var x = shapeArgs.x,
         y = shapeArgs.y,
@@ -449,42 +462,44 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         // (needs to be set because of stacking)
         incrementY = 10,
         incrementZ = 100,
-        zIndex = 0;
+        zIndex = 0,
 
-    // The 8 corners of the cube
-    var pArr = [{
-        x: x,
-        y: y,
-        z: z
-    }, {
-        x: x + w,
-        y: y,
-        z: z
-    }, {
-        x: x + w,
-        y: y + h,
-        z: z
-    }, {
-        x: x,
-        y: y + h,
-        z: z
-    }, {
-        x: x,
-        y: y + h,
-        z: z + d
-    }, {
-        x: x + w,
-        y: y + h,
-        z: z + d
-    }, {
-        x: x + w,
-        y: y,
-        z: z + d
-    }, {
-        x: x,
-        y: y,
-        z: z + d
-    }];
+        // The 8 corners of the cube
+        pArr = [{
+            x: x,
+            y: y,
+            z: z
+        }, {
+            x: x + w,
+            y: y,
+            z: z
+        }, {
+            x: x + w,
+            y: y + h,
+            z: z
+        }, {
+            x: x,
+            y: y + h,
+            z: z
+        }, {
+            x: x,
+            y: y + h,
+            z: z + d
+        }, {
+            x: x + w,
+            y: y + h,
+            z: z + d
+        }, {
+            x: x + w,
+            y: y,
+            z: z + d
+        }, {
+            x: x,
+            y: y,
+            z: z + d
+        }],
+
+        pickShape;
 
     // apply perspective
     pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
@@ -494,18 +509,19 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         return pArr[i];
     }
 
-    /*
+    /* *
      * First value - path with specific side
      * Second  value - added information about side for later calculations.
      * Possible second values are 0 for path1, 1 for path2 and -1 for no path
      * chosen.
      */
-    var pickShape = function (path1, path2) {
+    pickShape = function (path1, path2) {
         var ret = [
-                [], -1
+            [], -1
         ];
-        path1 = map(path1, mapPath);
-        path2 = map(path2, mapPath);
+
+        path1 = path1.map(mapPath);
+        path2 = path2.map(mapPath);
         if (H.shapeArea(path1) < 0) {
             ret = [path1, 0];
         } else if (H.shapeArea(path2) < 0) {
@@ -536,16 +552,14 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     path3 = shape[0];
     isRight = shape[1];
 
-    /*
-     * New block used for calculating zIndex. It is basing on X, Y and Z
-     * position of specific columns. All zIndexes (for X, Y and Z values) are
-     * added to the final zIndex, where every value has different priority. The
-     * biggest priority is in X and Z directions, the lowest index is for
-     * stacked columns (Y direction and the same X and Z positions). Big
-     * differences between priorities is made because we need to ensure that
-     * even for big changes in Y and Z parameters all columns will be drawn
-     * correctly.
-     */
+    /* New block used for calculating zIndex. It is basing on X, Y and Z
+       position of specific columns. All zIndexes (for X, Y and Z values) are
+       added to the final zIndex, where every value has different priority. The
+       biggest priority is in X and Z directions, the lowest index is for
+       stacked columns (Y direction and the same X and Z positions). Big
+       differences between priorities is made because we need to ensure that
+       even for big changes in Y and Z parameters all columns will be drawn
+       correctly. */
 
     if (isRight === 1) {
         zIndex += incrementX * (1000 - x);
@@ -566,14 +580,18 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         zIndex += incrementZ * (1000 - z);
     }
 
-    zIndex = -Math.round(zIndex);
+    return {
+        front: this.toLinePath(path1, true),
+        top: this.toLinePath(path2, true),
+        side: this.toLinePath(path3, true),
+        zIndexes: {
+            group: Math.round(zIndex)
+        },
 
-    return [
-        this.toLinePath(path1, true),
-        this.toLinePath(path2, true),
-        this.toLinePath(path3, true),
-        zIndex
-    ]; // #4774
+        // additional info about zIndexes
+        isFront: isFront,
+        isTop: isTop
+    }; // #4774
 };
 
 // SECTORS //
@@ -583,18 +601,17 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         renderer = wrapper.renderer,
         customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end'];
 
-    /**
-     * Get custom attributes. Don't mutate the original object and return an
-     * object with only custom attr.
-     */
+    // Get custom attributes. Don't mutate the original object and return an
+    // object with only custom attr.
     function suckOutCustom(params) {
         var hasCA = false,
-            ca = {};
+            ca = {},
+            key;
 
         params = merge(params); // Don't mutate the original object
 
-        for (var key in params) {
-            if (inArray(key, customAttribs) !== -1) {
+        for (key in params) {
+            if (customAttribs.indexOf(key) !== -1) {
                 ca[key] = params[key];
                 delete params[key];
                 hasCA = true;
@@ -605,8 +622,8 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 
     attribs = merge(attribs);
 
-    attribs.alpha *= deg2rad;
-    attribs.beta *= deg2rad;
+    attribs.alpha = (attribs.alpha || 0) * deg2rad;
+    attribs.beta = (attribs.beta || 0) * deg2rad;
 
     // Create the different sub sections of the shape
     wrapper.top = renderer.path();
@@ -615,17 +632,16 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     wrapper.inn = renderer.path();
     wrapper.out = renderer.path();
 
-    /**
-     * Add all faces
-     */
+    // Add all faces
     wrapper.onAdd = function () {
         var parent = wrapper.parentGroup,
             className = wrapper.attr('class');
+
         wrapper.top.add(wrapper);
 
         // These faces are added outside the wrapper group because the z index
         // relates to neighbour elements as well
-        each(['out', 'inn', 'side1', 'side2'], function (face) {
+        ['out', 'inn', 'side1', 'side2'].forEach(function (face) {
             wrapper[face]
                 .attr({
                     'class': className + ' highcharts-3d-side'
@@ -635,18 +651,17 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     };
 
     // Cascade to faces
-    each(['addClass', 'removeClass'], function (fn) {
+    ['addClass', 'removeClass'].forEach(function (fn) {
         wrapper[fn] = function () {
             var args = arguments;
-            each(['top', 'out', 'inn', 'side1', 'side2'], function (face) {
+
+            ['top', 'out', 'inn', 'side1', 'side2'].forEach(function (face) {
                 wrapper[face][fn].apply(wrapper[face], args);
             });
         };
     });
 
-    /**
-     * Compute the transformed paths and set them to the composite shapes
-     */
+    // Compute the transformed paths and set them to the composite shapes
     wrapper.setPaths = function (attribs) {
 
         var paths = wrapper.renderer.arc3dPath(attribs),
@@ -689,23 +704,21 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
 
     // Apply the same value to all. These properties cascade down to the
     // children when set to the composite arc3d.
-    each(
-        ['opacity', 'translateX', 'translateY', 'visibility'],
+    ['opacity', 'translateX', 'translateY', 'visibility'].forEach(
         function (setter) {
             wrapper[setter + 'Setter'] = function (value, key) {
                 wrapper[key] = value;
-                each(['out', 'inn', 'side1', 'side2', 'top'], function (el) {
+                ['out', 'inn', 'side1', 'side2', 'top'].forEach(function (el) {
                     wrapper[el].attr(key, value);
                 });
             };
         }
     );
 
-    /**
-     * Override attr to remove shape attributes and use those to set child paths
-     */
-    wrap(wrapper, 'attr', function (proceed, params) {
+    // Override attr to remove shape attributes and use those to set child paths
+    wrapper.attr = function (params) {
         var ca;
+
         if (typeof params === 'object') {
             ca = suckOutCustom(params);
             if (ca) {
@@ -713,18 +726,17 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
                 wrapper.setPaths(wrapper.attribs);
             }
         }
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    });
+        return SVGElement.prototype.attr.apply(wrapper, arguments);
+    };
 
-    /**
-     * Override the animate function by sucking out custom parameters related to
-     * the shapes directly, and update the shapes from the animation step.
-     */
-    wrap(wrapper, 'animate', function (proceed, params, animation, complete) {
+    // Override the animate function by sucking out custom parameters related to
+    // the shapes directly, and update the shapes from the animation step.
+    wrapper.animate = function (params, animation, complete) {
         var ca,
             from = this.attribs,
             to,
-            anim;
+            anim,
+            randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
 
         // Attribute-line properties connected to 3D. These shouldn't have been
         // in the attribs collection in the first place.
@@ -739,8 +751,10 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         if (anim.duration) {
             ca = suckOutCustom(params);
             // Params need to have a property in order for the step to run
-            // (#5765, #7437)
-            params.dummy = wrapper.dummy++;
+            // (#5765, #7097, #7437)
+            wrapper[randomProp] = 0;
+            params[randomProp] = 1;
+            wrapper[randomProp + 'Setter'] = H.noop;
 
             if (ca) {
                 to = ca;
@@ -750,7 +764,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
                             (pick(to[key], from[key]) - from[key]) * fx.pos;
                     }
 
-                    if (fx.prop === 'dummy') {
+                    if (fx.prop === randomProp) {
                         fx.elem.setPaths(merge(from, {
                             x: interpolate('x'),
                             y: interpolate('y'),
@@ -764,9 +778,13 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
             }
             animation = anim; // Only when duration (#5572)
         }
-        return proceed.call(this, params, animation, complete);
-    });
-    wrapper.dummy = 0;
+        return SVGElement.prototype.animate.call(
+            this,
+            params,
+            animation,
+            complete
+        );
+    };
 
     // destroy all children
     wrapper.destroy = function () {
@@ -786,50 +804,50 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         this.side1.hide();
         this.side2.hide();
     };
-    wrapper.show = function () {
-        this.top.show();
-        this.out.show();
-        this.inn.show();
-        this.side1.show();
-        this.side2.show();
+    wrapper.show = function (inherit) {
+        this.top.show(inherit);
+        this.out.show(inherit);
+        this.inn.show(inherit);
+        this.side1.show(inherit);
+        this.side2.show(inherit);
     };
     return wrapper;
 };
 
-/**
- * Generate the paths required to draw a 3D arc
- */
+// Generate the paths required to draw a 3D arc
 SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     var cx = shapeArgs.x, // x coordinate of the center
         cy = shapeArgs.y, // y coordinate of the center
         start = shapeArgs.start, // start angle
         end = shapeArgs.end - 0.00001, // end angle
         r = shapeArgs.r, // radius
-        ir = shapeArgs.innerR, // inner radius
-        d = shapeArgs.depth, // depth
+        ir = shapeArgs.innerR || 0, // inner radius
+        d = shapeArgs.depth || 0, // depth
         alpha = shapeArgs.alpha, // alpha rotation of the chart
         beta = shapeArgs.beta; // beta rotation of the chart
 
     // Derived Variables
-    var cs = Math.cos(start),        // cosinus of the start angle
-        ss = Math.sin(start),        // sinus of the start angle
-        ce = Math.cos(end),            // cosinus of the end angle
-        se = Math.sin(end),            // sinus of the end angle
-        rx = r * Math.cos(beta),        // x-radius
-        ry = r * Math.cos(alpha),    // y-radius
-        irx = ir * Math.cos(beta),    // x-radius (inner)
-        iry = ir * Math.cos(alpha),    // y-radius (inner)
-        dx = d * Math.sin(beta),        // distance between top and bottom in x
-        dy = d * Math.sin(alpha);    // distance between top and bottom in y
+    var cs = Math.cos(start), // cosinus of the start angle
+        ss = Math.sin(start), // sinus of the start angle
+        ce = Math.cos(end), // cosinus of the end angle
+        se = Math.sin(end), // sinus of the end angle
+        rx = r * Math.cos(beta), // x-radius
+        ry = r * Math.cos(alpha), // y-radius
+        irx = ir * Math.cos(beta), // x-radius (inner)
+        iry = ir * Math.cos(alpha), // y-radius (inner)
+        dx = d * Math.sin(beta), // distance between top and bottom in x
+        dy = d * Math.sin(alpha); // distance between top and bottom in y
 
     // TOP
     var top = ['M', cx + (rx * cs), cy + (ry * ss)];
+
     top = top.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
     top = top.concat([
         'L', cx + (irx * ce), cy + (iry * se)
     ]);
     top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
     top = top.concat(['Z']);
+
     // OUTSIDE
     var b = (beta > 0 ? Math.PI / 2 : 0),
         a = (alpha > 0 ? 0 : Math.PI / 2);
@@ -863,6 +881,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     // startAngle
 
     var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
+
     out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 
     // When shape is wide, it can cross both, (c) and (d) edges, when using
@@ -918,6 +937,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 
     // INSIDE
     var inn = ['M', cx + (irx * cs), cy + (iry * ss)];
+
     inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
     inn = inn.concat([
         'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy

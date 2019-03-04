@@ -8,6 +8,7 @@
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Chart.js';
@@ -16,8 +17,6 @@ import '../parts/Point.js';
 
 var win = H.win,
     doc = win.document,
-    each = H.each,
-    map = H.map,
     erase = H.erase,
     addEvent = H.addEvent,
     merge = H.merge,
@@ -25,8 +24,7 @@ var win = H.win,
     // screen readers
     hiddenStyle = {
         position: 'absolute',
-        left: '-9999px',
-        top: 'auto',
+        top: '-999em',
         width: '1px',
         height: '1px',
         overflow: 'hidden'
@@ -46,8 +44,15 @@ if (H.seriesTypes.pie) {
 
 /**
  * HTML encode some characters vulnerable for XSS.
- * @param  {string} html The input string
- * @return {string} The excaped string
+ *
+ * @private
+ * @function htmlencode
+ *
+ * @param {string} html
+ *        The input string.
+ *
+ * @return {string}
+ *         The excaped string.
  */
 function htmlencode(html) {
     return html
@@ -63,28 +68,32 @@ function htmlencode(html) {
 /**
  * Strip HTML tags away from a string. Used for aria-label attributes, painting
  * on a canvas will fail if the text contains tags.
- * @param  {String} s The input string
- * @return {String}   The filtered string
+ *
+ * @private
+ * @function stripTags
+ *
+ * @param {string} s
+ *        The input string.
+ *
+ * @return {string}
+ *         The filtered string.
  */
 function stripTags(s) {
     return typeof s === 'string' ? s.replace(/<\/?[^>]+(>|$)/g, '') : s;
 }
 
 
-/**
- * Accessibility options
- */
+// Accessibility options
 H.setOptions({
 
     /**
      * Options for configuring accessibility for the chart. Requires the
-     * [accessibility module](//code.highcharts.com/modules/accessibility.
-     * js) to be loaded. For a description of the module and information
-     * on its features, see [Highcharts Accessibility](http://www.highcharts.
-     * com/docs/chart-concepts/accessibility).
+     * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
+     * to be loaded. For a description of the module and information
+     * on its features, see
+     * [Highcharts Accessibility](http://www.highcharts.com/docs/chart-concepts/accessibility).
      *
-     * @since 5.0.0
-     * @type {Object}
+     * @since        5.0.0
      * @optionparent accessibility
      */
     accessibility: {
@@ -93,9 +102,9 @@ H.setOptions({
          * Whether or not to add series descriptions to charts with a single
          * series.
          *
-         * @type {Boolean}
-         * @default false
-         * @since 5.0.0
+         * @type      {boolean}
+         * @default   false
+         * @since     5.0.0
          * @apioption accessibility.describeSingleSeries
          */
 
@@ -106,8 +115,8 @@ H.setOptions({
          * By default Highcharts will insert and set focus to a data table
          * representation of the chart.
          *
-         * @type {Function}
-         * @since 5.0.0
+         * @type      {Function}
+         * @since     5.0.0
          * @apioption accessibility.onTableAnchorClick
          */
 
@@ -120,9 +129,10 @@ H.setOptions({
          * For an overview of the replacement codes, see
          * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
-         * @type {String}
          * @see [pointDateFormatter](#accessibility.pointDateFormatter)
-         * @since 5.0.0
+         *
+         * @type      {string}
+         * @since     5.0.0
          * @apioption accessibility.pointDateFormat
          */
 
@@ -133,9 +143,10 @@ H.setOptions({
          * Should return a date format string compatible with
          * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
-         * @type {Function}
          * @see [pointDateFormat](#accessibility.pointDateFormat)
-         * @since 5.0.0
+         *
+         * @type      {Function}
+         * @since     5.0.0
          * @apioption accessibility.pointDateFormatter
          */
 
@@ -146,9 +157,10 @@ H.setOptions({
          * Should return a String with the description of the point for a screen
          * reader user.
          *
-         * @type {Function}
          * @see [point.description](#series.line.data.description)
-         * @since 5.0.0
+         *
+         * @type      {Function}
+         * @since     5.0.0
          * @apioption accessibility.pointDescriptionFormatter
          */
 
@@ -158,17 +170,16 @@ H.setOptions({
          * series to describe. Should return a String with the description of
          * the series for a screen reader user.
          *
-         * @type {Function}
          * @see [series.description](#plotOptions.series.description)
-         * @since 5.0.0
+         *
+         * @type      {Function}
+         * @since     5.0.0
          * @apioption accessibility.seriesDescriptionFormatter
          */
 
         /**
          * Enable accessibility features for the chart.
          *
-         * @type {Boolean}
-         * @default true
          * @since 5.0.0
          */
         enabled: true,
@@ -179,7 +190,7 @@ H.setOptions({
          *
          * Set to `false` to disable.
          *
-         * @type {Number|Boolean}
+         * @type  {false|number}
          * @since 5.0.0
          */
         pointDescriptionThreshold: false, // set to false to disable
@@ -193,9 +204,9 @@ H.setOptions({
          * The link to view the chart as a data table will be added
          * automatically after the custom HTML content.
          *
-         * @type {Function}
+         * @type    {Function}
          * @default undefined
-         * @since 5.0.0
+         * @since   5.0.0
          */
         screenReaderSectionFormatter: function (chart) {
             var options = chart.options,
@@ -212,43 +223,45 @@ H.setOptions({
                 ) && {} || chart.getAxesDescription();
 
             return '<div>' + chart.langFormat(
-                        'accessibility.navigationHint', formatContext
-                    ) + '</div><h3>' +
-                    (
-                        options.title.text ?
-                            htmlencode(options.title.text) :
-                            chart.langFormat(
-                                'accessibility.defaultChartTitle', formatContext
-                            )
+                'accessibility.navigationHint', formatContext
+            ) + '</div><h3>' +
+            (
+                options.title.text ?
+                    htmlencode(options.title.text) :
+                    chart.langFormat(
+                        'accessibility.defaultChartTitle', formatContext
+                    )
+            ) +
+            (
+                options.subtitle && options.subtitle.text ?
+                    '. ' + htmlencode(options.subtitle.text) :
+                    ''
+            ) +
+            '</h3>' + (
+                options.chart.description ? (
+                    '<h4>' + chart.langFormat(
+                        'accessibility.longDescriptionHeading',
+                        formatContext
                     ) +
-                    (
-                        options.subtitle && options.subtitle.text ?
-                            '. ' + htmlencode(options.subtitle.text) :
-                            ''
-                    ) +
-                    '</h3><h4>' + chart.langFormat(
-                        'accessibility.longDescriptionHeading', formatContext
-                    ) + '</h4><div>' +
-                    (
-                        options.chart.description || chart.langFormat(
-                            'accessibility.noDescription', formatContext
-                        )
-                    ) +
-                    '</div><h4>' + chart.langFormat(
-                        'accessibility.structureHeading', formatContext
-                    ) + '</h4><div>' +
-                    (
-                        options.chart.typeDescription ||
-                        chart.getTypeDescription()
-                    ) + '</div>' +
-                    (axesDesc.xAxis ? (
-                        '<div>' + axesDesc.xAxis + '</div>'
-                    ) : '') +
-                    (axesDesc.yAxis ? (
-                        '<div>' + axesDesc.yAxis + '</div>'
-                    ) : '');
+                    '</h4><div>' + options.chart.description + '</div>'
+                ) : ''
+            ) + '<h4>' + chart.langFormat(
+                'accessibility.structureHeading', formatContext
+            ) + '</h4><div>' +
+            (
+                options.chart.typeDescription ||
+                chart.getTypeDescription()
+            ) + '</div>' +
+            (axesDesc.xAxis ? (
+                '<div>' + axesDesc.xAxis + '</div>'
+            ) : '') +
+            (axesDesc.yAxis ? (
+                '<div>' + axesDesc.yAxis + '</div>'
+            ) : '');
         }
+
     }
+
 });
 
 /**
@@ -258,14 +271,14 @@ H.setOptions({
  * as a long description of the chart and its contents in the hidden
  * screen reader information region.
  *
- * @type {String}
  * @see [typeDescription](#chart.typeDescription)
- * @default undefined
- * @since 5.0.0
+ *
+ * @type      {string}
+ * @since     5.0.0
  * @apioption chart.description
  */
 
- /**
+/**
  * A text description of the chart type.
  *
  * If the Accessibility module is loaded, this will be included in the
@@ -276,16 +289,23 @@ H.setOptions({
  * more complex charts it is recommended to specify this property for
  * clarity.
  *
- * @type {String}
- * @default undefined
- * @since 5.0.0
+ * @type      {string}
+ * @since     5.0.0
  * @apioption chart.typeDescription
  */
 
 
-// Utility function. Reverses child nodes of a DOM element
+/**
+ * Utility function. Reverses child nodes of a DOM element.
+ *
+ * @private
+ * @function reverseChildNodes
+ *
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} node
+ */
 function reverseChildNodes(node) {
     var i = node.childNodes.length;
+
     while (i--) {
         node.appendChild(node.childNodes[i]);
     }
@@ -300,7 +320,12 @@ H.addEvent(H.Series, 'afterRender', function () {
 });
 
 
-// Put accessible info on series and points of a series
+/**
+ * Put accessible info on series and points of a series.
+ *
+ * @private
+ * @function Highcharts.Series#setA11yDescription
+ */
 H.Series.prototype.setA11yDescription = function () {
     var a11yOptions = this.chart.options.accessibility,
         firstPointEl = (
@@ -332,7 +357,7 @@ H.Series.prototype.setA11yDescription = function () {
                 a11yOptions.pointDescriptionThreshold === false
             )
         ) {
-            each(this.points, function (point) {
+            this.points.forEach(function (point) {
                 if (point.graphic) {
                     point.graphic.element.setAttribute('role', 'img');
                     point.graphic.element.setAttribute('tabindex', '-1');
@@ -366,7 +391,14 @@ H.Series.prototype.setA11yDescription = function () {
 };
 
 
-// Return string with information about series
+/**
+ * Return string with information about series.
+ *
+ * @private
+ * @function Highcharts.Series#buildSeriesInfoString
+ *
+ * @return {string}
+ */
 H.Series.prototype.buildSeriesInfoString = function () {
     var chart = this.chart,
         desc = this.description || this.options.description,
@@ -407,35 +439,43 @@ H.Series.prototype.buildSeriesInfoString = function () {
         );
 
     return summary + (description ? ' ' + description : '') + (
-            chart.yAxis.length > 1 && this.yAxis ?
-                ' ' + yAxisInfo : ''
-        ) + (
-            chart.xAxis.length > 1 && this.xAxis ?
-                ' ' + xAxisInfo : ''
-        );
+        chart.yAxis.length > 1 && this.yAxis ?
+            ' ' + yAxisInfo : ''
+    ) + (
+        chart.xAxis.length > 1 && this.xAxis ?
+            ' ' + xAxisInfo : ''
+    );
 };
 
 
-// Return string with information about point
+/**
+ * Return string with information about point.
+ *
+ * @private
+ * @function Highcharts.Point#buildPointInfoString
+ *
+ * @return {string}
+ */
 H.Point.prototype.buildPointInfoString = function () {
     var point = this,
         series = point.series,
-        a11yOptions = series.chart.options.accessibility,
+        chart = series.chart,
+        a11yOptions = chart.options.accessibility,
         infoString = '',
         dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
         timeDesc =
             dateTimePoint &&
-            series.chart.time.dateFormat(
+            chart.time.dateFormat(
                 a11yOptions.pointDateFormatter &&
                 a11yOptions.pointDateFormatter(point) ||
                 a11yOptions.pointDateFormat ||
                 H.Tooltip.prototype.getXDateFormat.call(
                     {
                         getDateFormat: H.Tooltip.prototype.getDateFormat,
-                        chart: series.chart
+                        chart: chart
                     },
                     point,
-                    series.chart.options.tooltip,
+                    chart.options.tooltip,
                     series.xAxis
                 ),
                 point.x
@@ -450,7 +490,7 @@ H.Point.prototype.buildPointInfoString = function () {
         if (dateTimePoint) {
             infoString = timeDesc;
         }
-        each(series.commonKeys.concat(series.specialKeys), function (key) {
+        series.commonKeys.concat(series.specialKeys).forEach(function (key) {
             if (point[key] !== undefined && !(dateTimePoint && key === 'x')) {
                 infoString += (infoString ? '. ' : '') +
                     key + ', ' +
@@ -471,11 +511,19 @@ H.Point.prototype.buildPointInfoString = function () {
     }
 
     return (this.index + 1) + '. ' + infoString + '.' +
-        (this.description ? ' ' + this.description : '');
+        (this.description ? ' ' + this.description : '') +
+        (chart.series.length > 1 && series.name ? ' ' + series.name : '');
 };
 
 
-// Get descriptive label for axis
+/**
+ * Get descriptive label for axis.
+ *
+ * @private
+ * @function Highcharts.Axis#getDescription
+ *
+ * @return {string}
+ */
 H.Axis.prototype.getDescription = function () {
     return (
         this.userOptions && this.userOptions.description ||
@@ -491,6 +539,7 @@ H.Axis.prototype.getDescription = function () {
 // Whenever adding or removing series, keep track of types present in chart
 addEvent(H.Series, 'afterInit', function () {
     var chart = this.chart;
+
     if (chart.options.accessibility.enabled) {
         chart.types = chart.types || [];
 
@@ -507,7 +556,7 @@ addEvent(H.Series, 'remove', function () {
 
     // Check if any of the other series have the same type as this one.
     // Otherwise remove it from the list.
-    each(chart.series, function (s) {
+    chart.series.forEach(function (s) {
         if (
             s !== removedSeries &&
             chart.types.indexOf(removedSeries.type) < 0
@@ -521,9 +570,16 @@ addEvent(H.Series, 'remove', function () {
 });
 
 
-// Return simplified description of chart type. Some types will not be familiar
-// to most screen reader users, but in those cases we try to add a description
-// of the type.
+/**
+ * Return simplified description of chart type. Some types will not be familiar
+ * to most screen reader users, but in those cases we try to add a description
+ * of the type.
+ *
+ * @private
+ * @function Highcharts.Chart#getTypeDescription
+ *
+ * @return {string}
+ */
 H.Chart.prototype.getTypeDescription = function () {
     var firstType = this.types && this.types[0],
         firstSeries = this.series && this.series[0] || {},
@@ -544,7 +600,9 @@ H.Chart.prototype.getTypeDescription = function () {
         return this.langFormat(
             'accessibility.chartTypes.emptyChart', formatContext
         );
-    } else if (firstType === 'map') {
+    }
+
+    if (firstType === 'map') {
         return mapTitle ?
             this.langFormat(
                 'accessibility.chartTypes.mapTypeDescription',
@@ -554,7 +612,9 @@ H.Chart.prototype.getTypeDescription = function () {
                 'accessibility.chartTypes.unknownMap',
                 formatContext
             );
-    } else if (this.types.length > 1) {
+    }
+
+    if (this.types.length > 1) {
         return this.langFormat(
             'accessibility.chartTypes.combinationChart', formatContext
         );
@@ -574,7 +634,14 @@ H.Chart.prototype.getTypeDescription = function () {
 };
 
 
-// Return object with text description of each of the chart's axes
+/**
+ * Return object with text description of each of the chart's axes.
+ *
+ * @private
+ * @function Highcharts.Chart#getAxesDescription
+ *
+ * @return {*}
+ */
 H.Chart.prototype.getAxesDescription = function () {
     var numXAxes = this.xAxis.length,
         numYAxes = this.yAxis.length,
@@ -587,7 +654,7 @@ H.Chart.prototype.getAxesDescription = function () {
             ),
             {
                 chart: this,
-                names: map(this.xAxis, function (axis) {
+                names: this.xAxis.map(function (axis) {
                     return axis.getDescription();
                 }),
                 numAxes: numXAxes
@@ -602,7 +669,7 @@ H.Chart.prototype.getAxesDescription = function () {
             ),
             {
                 chart: this,
-                names: map(this.yAxis, function (axis) {
+                names: this.yAxis.map(function (axis) {
                     return axis.getDescription();
                 }),
                 numAxes: numYAxes
@@ -614,13 +681,19 @@ H.Chart.prototype.getAxesDescription = function () {
 };
 
 
-// Set a11y attribs on exporting menu
+/**
+ * Set a11y attribs on exporting menu.
+ *
+ * @private
+ * @function Highcharts.Chart#addAccessibleContextMenuAttribs
+ */
 H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
     var exportList = this.exportDivElements;
+
     if (exportList) {
         // Set tabindex on the menu items to allow focusing by script
         // Set role to give screen readers a chance to pick up the contents
-        each(exportList, function (item) {
+        exportList.forEach(function (item) {
             if (item.tagName === 'DIV' &&
                 !(item.children && item.children.length)) {
                 item.setAttribute('role', 'menuitem');
@@ -629,7 +702,8 @@ H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
         });
         // Set accessibility properties on parent div
         exportList[0].parentNode.setAttribute('role', 'menu');
-        exportList[0].parentNode.setAttribute('aria-label',
+        exportList[0].parentNode.setAttribute(
+            'aria-label',
             this.langFormat(
                 'accessibility.exporting.chartMenuLabel', { chart: this }
             )
@@ -638,15 +712,23 @@ H.Chart.prototype.addAccessibleContextMenuAttribs = function () {
 };
 
 
-// Add screen reader region to chart.
-// tableId is the HTML id of the table to focus when clicking the table anchor
-// in the screen reader region.
+/**
+ * Add screen reader region to chart. tableId is the HTML id of the table to
+ * focus when clicking the table anchor in the screen reader region.
+ *
+ * @private
+ * @function Highcharts.Chart#addScreenReaderRegion
+ *
+ * @param {string} id
+ *
+ * @param {string} tableId
+ */
 H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
     var chart = this,
         hiddenSection = chart.screenReaderRegion = doc.createElement('div'),
         tableShortcut = doc.createElement('h4'),
         tableShortcutAnchor = doc.createElement('a'),
-        chartHeading = doc.createElement('h4');
+        chartHeading = chart.screenReaderHeading = doc.createElement('h4');
 
     hiddenSection.setAttribute('id', id);
     hiddenSection.setAttribute('role', 'region');
@@ -691,7 +773,61 @@ H.Chart.prototype.addScreenReaderRegion = function (id, tableId) {
 };
 
 
-// Make chart container accessible, and wrap table functionality
+// Add ARIA to legend
+addEvent(H.Legend, 'afterRender', function () {
+    var group = this.group,
+        items = this.allItems,
+        chart = this.chart;
+    if (group && items && items.length) {
+        group.attr({
+            role: 'region',
+            'aria-label': chart.langFormat('accessibility.legendLabel')
+        });
+
+        if (this.box) {
+            this.box.attr('aria-hidden', 'true');
+        }
+
+        items.forEach(function (item) {
+            var itemGroup = item.legendGroup,
+                text = item.legendItem,
+                visible = item.visible,
+                label = chart.langFormat(
+                    'accessibility.legendItem',
+                    {
+                        chart: chart,
+                        itemName: stripTags(item.name)
+                    }
+                );
+            if (itemGroup && text) {
+                itemGroup.attr({
+                    role: 'button',
+                    'aria-pressed': visible ? 'false' : 'true'
+                });
+                if (label) {
+                    itemGroup.attr('aria-label', label);
+                }
+                text.attr('aria-hidden', 'false');
+            }
+        });
+    }
+});
+
+
+// Handle show/hide series/points
+addEvent(H.Legend, 'afterColorizeItem', function (e) {
+    var legendGroup = e.item && e.item.legendGroup,
+        pressed = e.visible ? 'false' : 'true';
+    if (legendGroup) {
+        legendGroup.attr('aria-pressed', pressed);
+        if (legendGroup.div) {
+            legendGroup.div.setAttribute('aria-pressed', pressed);
+        }
+    }
+});
+
+
+// Make chart container accessible, and wrap table functionality.
 H.Chart.prototype.callbacks.push(function (chart) {
     var options = chart.options,
         a11yOptions = options.accessibility;
@@ -718,9 +854,9 @@ H.Chart.prototype.callbacks.push(function (chart) {
     // Add SVG title tag if it is set
     if (svgContainerTitle.length) {
         titleElement = doc.createElementNS(
-                'http://www.w3.org/2000/svg',
-                'title'
-            );
+            'http://www.w3.org/2000/svg',
+            'title'
+        );
         titleElement.textContent = svgContainerTitle;
         titleElement.id = titleId;
         descElement.parentNode.insertBefore(titleElement, descElement);
@@ -747,6 +883,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
         // Set event handler on button
         var button = chart.exportSVGElements[0].element,
             oldExportCallback = button.onclick;
+
         button.onclick = function () {
             oldExportCallback.apply(
                 this,
@@ -767,7 +904,8 @@ H.Chart.prototype.callbacks.push(function (chart) {
 
         // Set props on group
         chart.exportingGroup.element.setAttribute('role', 'region');
-        chart.exportingGroup.element.setAttribute('aria-label',
+        chart.exportingGroup.element.setAttribute(
+            'aria-label',
             chart.langFormat(
                 'accessibility.exporting.exportRegionLabel', { chart: chart }
             )
@@ -778,7 +916,7 @@ H.Chart.prototype.callbacks.push(function (chart) {
     // to do this regardless of whether or not these are visible, as they are
     // by default part of the page's tabindex unless we set them to -1.
     if (chart.rangeSelector) {
-        each(['minInput', 'maxInput'], function (key, i) {
+        ['minInput', 'maxInput'].forEach(function (key, i) {
             if (chart.rangeSelector[key]) {
                 chart.rangeSelector[key].setAttribute('tabindex', '-1');
                 chart.rangeSelector[key].setAttribute('role', 'textbox');
@@ -794,21 +932,23 @@ H.Chart.prototype.callbacks.push(function (chart) {
     }
 
     // Hide text elements from screen readers
-    each(textElements, function (el) {
-        el.setAttribute('aria-hidden', 'true');
+    [].forEach.call(textElements, function (el) {
+        if (el.getAttribute('aria-hidden') !== 'false') {
+            el.setAttribute('aria-hidden', 'true');
+        }
     });
 
     // Add top-secret screen reader region
     chart.addScreenReaderRegion(hiddenSectionId, tableId);
 
     // Add ID and summary attr to table HTML
-    H.wrap(chart, 'getTable', function (proceed) {
-        return proceed.apply(this, Array.prototype.slice.call(arguments, 1))
+    addEvent(chart, 'afterGetTable', function (e) {
+        e.html = e.html
             .replace(
-                '<table>',
-                '<table id="' + tableId + '" summary="' + chart.langFormat(
+                '<table ',
+                '<table summary="' + chart.langFormat(
                     'accessibility.tableSummary', { chart: chart }
-                ) + '">'
+                ) + '"'
             );
     });
 });

@@ -47,6 +47,20 @@ QUnit.test('Tooltip positioned correctly through the getPosition function.', fun
         Math.round(chart.series[0].points[5].plotY) + chart.plotTop,
         'Tooltip points to the middle of the top side of last column (#7242)'
     );
+
+    // Add one point
+    const x = chart.tooltip.label.translateX;
+    chart.series[0].points[5].onMouseOver();
+
+    chart.series[0].addPoint({
+        x: 6,
+        y: 1
+    });
+    assert.notEqual(
+        chart.tooltip.label.translateX,
+        x,
+        'The tooltip should move with its point'
+    );
 });
 // Highcharts v4.0.3, Issue #424
 // Tooltip is positioned on the top series if multiple y axis is used.
@@ -80,7 +94,7 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
         columnXPos = columnPoint.plotX,
         columnYPos = chart.series[1].group.translateY + columnPoint.plotY;
 
-    controller.moveToElement(chart.container, (lineXPos + 1), (lineYPos + 1));
+    controller.moveTo((lineXPos + 1), (lineYPos + 1));
     assert.ok(
         !chart.tooltip.isHidden,
         'Tooltip should be visible.'
@@ -95,7 +109,7 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
         chart.tooltip.isHidden,
         'Tooltip should be hidden.'
     );
-    controller.moveToElement(chart.container, (columnXPos + 1), (columnYPos + 1));
+    controller.moveTo((columnXPos + 1), (columnYPos + 1));
     assert.ok(
         !chart.tooltip.isHidden,
         'Tooltip should be visible.'

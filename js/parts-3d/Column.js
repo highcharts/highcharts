@@ -1,31 +1,30 @@
-/**
- * (c) 2010-2017 Torstein Honsi
+/* *
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Series.js';
+
 var addEvent = H.addEvent,
-    each = H.each,
     perspective = H.perspective,
     pick = H.pick,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    inArray = H.inArray,
     svg = H.svg,
     wrap = H.wrap;
-
-
 
 /**
  * Depth of the columns in a 3D column chart. Requires `highcharts-3d.js`.
  *
- * @type {Number}
- * @default 25
- * @since 4.0
- * @product highcharts
+ * @type      {number}
+ * @default   25
+ * @since     4.0
+ * @product   highcharts
  * @apioption plotOptions.column.depth
  */
 
@@ -33,17 +32,17 @@ var addEvent = H.addEvent,
  * 3D columns only. The color of the edges. Similar to `borderColor`,
  *  except it defaults to the same color as the column.
  *
- * @type {Color}
- * @product highcharts
+ * @type      {Highcharts.ColorString}
+ * @product   highcharts
  * @apioption plotOptions.column.edgeColor
  */
 
 /**
  * 3D columns only. The width of the colored edges.
  *
- * @type {Number}
- * @default 1
- * @product highcharts
+ * @type      {number}
+ * @default   1
+ * @product   highcharts
  * @apioption plotOptions.column.edgeWidth
  */
 
@@ -51,10 +50,10 @@ var addEvent = H.addEvent,
  * The spacing between columns on the Z Axis in a 3D chart. Requires
  * `highcharts-3d.js`.
  *
- * @type {Number}
- * @default 1
- * @since 4.0
- * @product highcharts
+ * @type      {number}
+ * @default   1
+ * @since     4.0
+ * @product   highcharts
  * @apioption plotOptions.column.groupZPadding
  */
 
@@ -103,7 +102,7 @@ seriesTypes.column.prototype.translate3dShapes = function () {
     }
 
     z += (seriesOptions.groupZPadding || 1);
-    each(series.data, function (point) {
+    series.data.forEach(function (point) {
         // #7103 Reset outside3dPlot flag
         point.outside3dPlot = null;
         if (point.y !== null) {
@@ -115,7 +114,7 @@ seriesTypes.column.prototype.translate3dShapes = function () {
                 borderlessBase; // Crisped rects can have +/- 0.5 pixels offset.
 
             // #3131 We need to check if column is inside plotArea.
-            each(dimensions, function (d) {
+            dimensions.forEach(function (d) {
                 borderlessBase = shapeArgs[d[0]] - borderCrisp;
                 if (borderlessBase < 0) {
                     // If borderLessBase is smaller than 0, it is needed to set
@@ -154,7 +153,11 @@ seriesTypes.column.prototype.translate3dShapes = function () {
                 }
             });
 
-            point.shapeType = 'cuboid';
+            // Change from 2d to 3d
+            if (point.shapeType === 'rect') {
+                point.shapeType = 'cuboid';
+            }
+
             shapeArgs.z = z;
             shapeArgs.depth = depth;
             shapeArgs.insidePlotArea = true;
@@ -184,10 +187,10 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 
         if (svg) { // VML is too slow anyway
             if (init) {
-                each(series.data, function (point) {
+                series.data.forEach(function (point) {
                     if (point.y !== null) {
                         point.height = point.shapeArgs.height;
-                        point.shapey = point.shapeArgs.y;    // #2968
+                        point.shapey = point.shapeArgs.y; // #2968
                         point.shapeArgs.height = 1;
                         if (!reversed) {
                             if (point.stackY) {
@@ -198,8 +201,8 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                                     point.plotY +
                                     (
                                         point.negative ?
-                                        -point.height :
-                                        point.height
+                                            -point.height :
+                                            point.height
                                     );
                             }
                         }
@@ -207,10 +210,10 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                 });
 
             } else { // run the animation
-                each(series.data, function (point) {
+                series.data.forEach(function (point) {
                     if (point.y !== null) {
                         point.shapeArgs.height = point.height;
-                        point.shapeArgs.y = point.shapey;    // #2968
+                        point.shapeArgs.y = point.shapey; // #2968
                         // null value do not have a graphic
                         if (point.graphic) {
                             point.graphic.animate(
@@ -231,12 +234,9 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
     }
 });
 
-/*
- * In case of 3d columns there is no sense to add this columns
- * to a specific series group - if series is added to a group
- * all columns will have the same zIndex in comparison with different series
- */
-
+// In case of 3d columns there is no sense to add this columns to a specific
+// series group - if series is added to a group all columns will have the same
+// zIndex in comparison with different series.
 wrap(
     seriesTypes.column.prototype,
     'plotGroup',
@@ -254,23 +254,21 @@ wrap(
     }
 );
 
-/*
- * When series is not added to group it is needed to change
- * setVisible method to allow correct Legend funcionality
- * This wrap is basing on pie chart series
- */
+// When series is not added to group it is needed to change setVisible method to
+// allow correct Legend funcionality. This wrap is basing on pie chart series.
 wrap(
     seriesTypes.column.prototype,
     'setVisible',
     function (proceed, vis) {
         var series = this,
             pointVis;
+
         if (series.chart.is3d()) {
-            each(series.data, function (point) {
+            series.data.forEach(function (point) {
                 point.visible = point.options.visible = vis =
                     vis === undefined ? !point.visible : vis;
                 pointVis = vis ? 'visible' : 'hidden';
-                series.options.data[inArray(point, series.data)] =
+                series.options.data[series.data.indexOf(point)] =
                     point.options;
                 if (point.graphic) {
                     point.graphic.attr({
@@ -296,6 +294,7 @@ addEvent(Series, 'afterInit', function () {
             var stacks = this.chart.retrieveStacks(stacking),
                 stack = seriesOptions.stack || 0,
                 i; // position within the stack
+
             for (i = 0; i < stacks[stack].series.length; i++) {
                 if (stacks[stack].series[i] === this) {
                     break;
@@ -315,7 +314,6 @@ addEvent(Series, 'afterInit', function () {
     }
 });
 
-/*= if (build.classic) { =*/
 function pointAttribs(proceed) {
     var attr = proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -336,14 +334,13 @@ if (seriesTypes.columnrange) {
     seriesTypes.columnrange.prototype.setVisible =
         seriesTypes.column.prototype.setVisible;
 }
-/*= } =*/
 
 wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 
-    // Only do this for 3D columns and columnranges
+    // Only do this for 3D columns and it's derived series
     if (
         this.chart.is3d() &&
-        (this.type === 'column' || this.type === 'columnrange')
+        this instanceof seriesTypes.column
     ) {
         var series = this,
             chart = series.chart;
@@ -353,6 +350,7 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
             point = args[1];
 
         var pos = ({ x: alignTo.x, y: alignTo.y, z: series.z });
+
         pos = perspective([pos], chart, true)[0];
         alignTo.x = pos.x;
         // #7103 If point is outside of plotArea, hide data label.
@@ -373,6 +371,7 @@ wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) { // #3946
             y: stackBox.y,
             z: 0
         });
+
         pos = H.perspective([pos], chart, true)[0];
         stackBox.x = pos.x;
         stackBox.y = pos.y;
@@ -382,6 +381,8 @@ wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) { // #3946
 });
 
 /*
+    @merge v6.2
+    @todo
     EXTENSION FOR 3D CYLINDRICAL COLUMNS
     Not supported
 */

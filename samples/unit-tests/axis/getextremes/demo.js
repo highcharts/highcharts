@@ -37,9 +37,7 @@ QUnit.test('Mouse interaction', function (assert) {
     // Drag
     var controller = new TestController(chart);
 
-    controller.mousedown(200, 200);
-    controller.mousemove(300, 200);
-    controller.mouseup();
+    controller.pan([200, 200], [300, 200]);
 
     assert.close(
         chart.xAxis[0].getExtremes().min,

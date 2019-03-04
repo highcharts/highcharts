@@ -16,7 +16,7 @@ Highcharts.data({
                 $div = $('<div></div>')
                     .dialog({
                         title: this.name,
-                        width: 400,
+                        width: 320,
                         height: 300
                     });
 
@@ -24,7 +24,7 @@ Highcharts.data({
                 chart: {
                     renderTo: $div[0],
                     type: 'pie',
-                    width: 370,
+                    width: 290,
                     height: 240
                 },
                 title: {
@@ -35,11 +35,11 @@ Highcharts.data({
                     data: [{
                         name: 'Trump',
                         color: '#0200D0',
-                        y: parseInt(columns[4][row], 10)
+                        y: parseInt(columns[3][row], 10)
                     }, {
                         name: 'Clinton',
                         color: '#C40401',
-                        y: parseInt(columns[3][row], 10)
+                        y: parseInt(columns[2][row], 10)
                     }],
                     dataLabels: {
                         format: '<b>{point.name}</b> {point.percentage:.1f}%'

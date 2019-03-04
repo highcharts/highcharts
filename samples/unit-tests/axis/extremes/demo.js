@@ -158,27 +158,65 @@ QUnit.test('Zoom next to edge on category axis (#6731)', function (assert) {
     );
 });
 
-QUnit.test('Zooming between points (#7061)', function (assert) {
+QUnit.test('Zooming', function (assert) {
     var chart = Highcharts.chart('container', {
-        chart: {
-            zoomType: 'x'
-        },
-        xAxis: {
-            minRange: 0.5
-        },
+            chart: {
+                zoomType: 'x'
+            },
+            xAxis: {
+                minRange: 0.5
+            },
 
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
-                135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }]
-    });
+            series: [{
+                data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
+                    135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+            }],
+
+            navigator: {
+                enabled: true
+            }
+        }),
+        controller = TestController(chart);
+
     chart.xAxis[0].setExtremes(2.3, 2.7);
 
     assert.strictEqual(
         typeof chart.yAxis[0].min,
         'number',
-        'Y axis has data'
+        'Y axis has data. Zooming between points (#7061)'
     );
+
+    chart.xAxis[0].setExtremes();
+
+    controller.mouseDown(100, 200);
+    controller.mouseMove(200, 200);
+    controller.mouseUp();
+
+    assert.strictEqual(
+        Highcharts.isObject(chart.resetZoomButton),
+        false,
+        'No reset zoom button - blocked by navigator (#9285)'
+    );
+
+    chart.xAxis[0].setExtremes();
+
+    chart.update({
+        navigator: {
+            enabled: false
+        }
+    });
+
+    controller.mouseDown(100, 200);
+    controller.mouseMove(200, 200);
+    controller.mouseUp();
+
+    assert.strictEqual(
+        Highcharts.isObject(chart.resetZoomButton),
+        true,
+        'Chart has reset zoom button after zoom (#9285)'
+    );
+
+
 });
 
 
@@ -321,45 +359,48 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
 
         try {
 
-            assert.deepEqual([
-                typeof xAxis.userMin,
-                typeof xAxis.userMax
-            ], [
-                'undefined',
-                'undefined'
-            ],
+            assert.deepEqual(
+                [
+                    typeof xAxis.userMin,
+                    typeof xAxis.userMax
+                ], [
+                    'undefined',
+                    'undefined'
+                ],
                 'The user range of x-axis should be undefined.'
             );
 
             xAxis.setExtremes(5, 11, true, false);
 
-            assert.deepEqual([
-                xAxis.userMin,
-                xAxis.userMax
-            ], [
-                5,
-                11
-            ],
+            assert.deepEqual(
+                [
+                    xAxis.userMin,
+                    xAxis.userMax
+                ], [
+                    5,
+                    11
+                ],
                 'The user range of x-axis should be set.'
             );
 
-            controller.touchstart(300, 100, {
+            controller.touchStart(300, 100, {
                 preventDefault: function () {}
             });
 
-            controller.touchmove(100, 100, {
+            controller.touchMove(100, 100, {
                 preventDefault: function () {}
             });
 
-            controller.touchend(100, 100);
+            controller.touchEnd(100, 100);
 
-            assert.deepEqual([
-                xAxis.userMin,
-                xAxis.userMax
-            ], [
-                5,
-                11
-            ],
+            assert.deepEqual(
+                [
+                    xAxis.userMin,
+                    xAxis.userMax
+                ], [
+                    5,
+                    11
+                ],
                 'The user range of x-axis should be unchanged.'
             );
 
@@ -371,4 +412,66 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
 
     });
 
+});
+
+// Highcharts v4.0.1, Issue #3104
+// Touch panning falls back to data range, ignores axis min and max
+QUnit.test('Touch panning falls back to data range (#3104)', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            zoomType: 'x'
+        },
+        xAxis: {
+            min: 0,
+            max: 10
+        },
+        series: [{
+            name: 'blue',
+            color: 'blue',
+            data: [1, 4, 3, 4, 5, 5, 4],
+            pointStart: 4
+        }]
+    }, function (chart) {
+        chart.xAxis[0].setExtremes(2, 15, true, false);
+    });
+    var controller = new TestController(chart),
+        tickPositions = chart.axes[0].tickPositions,
+        touchPointX = (chart.plotSizeX + chart.plotLeft) / 2,
+        touchPointY = (chart.plotSizeY + chart.plotTop) / 2;
+
+    controller.slide(
+        [touchPointX, touchPointY],
+        [touchPointX + 100, touchPointY],
+        undefined,
+        true
+    );
+
+    var tickPositionsAfterSlide =  chart.axes[0].tickPositions;
+
+    assert.deepEqual(
+        tickPositions,
+        tickPositionsAfterSlide,
+        "Tick positions has changed after touch sliding"
+    );
+});
+
+QUnit.test('Column zooming and Y axis extremes (#9944)', assert => {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            categories: ['One', 'Two', 'Three', 'Four'],
+            minRange: 0.1
+        },
+        series: [{
+            type: 'column',
+            data: [10, 1, 1, 1]
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(0.9, 1.1);
+
+    assert.ok(
+        chart.yAxis[0].max < 5,
+        'The Y axis should adapt to the visible data (#9044)'
+    );
 });

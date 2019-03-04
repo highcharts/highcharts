@@ -1,21 +1,31 @@
-/**
- * (c) 2010-2017 Torstein Honsi
+/* *
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 
-var each = H.each,
-    defined = H.defined,
+var defined = H.defined,
     seriesTypes = H.seriesTypes,
     stableSort = H.stableSort;
 
+/**
+ * @private
+ * @mixin onSeriesMixin
+ */
 var onSeriesMixin = {
 
     /**
      * Override getPlotBox. If the onSeries option is valid, return the plot box
      * of the onSeries, otherwise proceed as usual.
+     *
+     * @private
+     * @function onSeriesMixin.getPlotBox
+     *
+     * @return {Highcharts.SeriesPlotBoxObject}
      */
     getPlotBox: function () {
         return H.Series.prototype.getPlotBox.call(
@@ -28,6 +38,9 @@ var onSeriesMixin = {
 
     /**
      * Extend the translate method by placing the point on the related series
+     *
+     * @private
+     * @function onSeriesMixin.translate
      */
     translate: function () {
 
@@ -108,7 +121,7 @@ var onSeriesMixin = {
         }
 
         // Add plotY position and handle stacking
-        each(points, function (point, i) {
+        points.forEach(function (point, i) {
 
             var stackIndex;
 
@@ -128,9 +141,8 @@ var onSeriesMixin = {
                         point.plotX = defined(point.y) ?
                             yAxis.translate(point.y, 0, 0, 0, 1) : 0;
                     } else {
-                        point.plotY = chart.chartHeight - xAxis.bottom -
-                            (xAxis.opposite ? xAxis.height : 0) +
-                            xAxis.offset - yAxis.top; // #3517
+                        point.plotY = (xAxis.opposite ? 0 : series.yAxis.len) +
+                            xAxis.offset; // For the windbarb demo
                     }
                 } else {
                     point.shapeArgs = {}; // 847
@@ -151,4 +163,5 @@ var onSeriesMixin = {
         this.onSeries = onSeries;
     }
 };
+
 export default onSeriesMixin;

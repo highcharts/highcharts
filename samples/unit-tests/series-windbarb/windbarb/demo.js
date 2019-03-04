@@ -24,6 +24,7 @@ QUnit.test('Inside or outside plot area', function (assert) {
 
         series: [{
             type: 'windbarb',
+            cropThreshold: 0, // Not supported, broke chart (#8713)
             data: [
                 [9.8, 177.9],
                 [10.1, 177.2],

@@ -57,6 +57,7 @@ QUnit.test('Drill down on points and categories', function (assert) {
             drilldown: {
                 series: [{
                     id: 'republican-2010',
+                    name: 'republican-2010 series',
                     data: [
                         ['East', 4],
                         ['West', 2],
@@ -129,8 +130,8 @@ QUnit.test('Drill down on points and categories', function (assert) {
     );
     assert.equal(
         chart.series[0].name,
-        'Series 3',
-        'First series name should be `Series 3`'
+        'republican-2010 series',
+        'First series name should be `republican-2010 series`'
     );
 
     // ... and, we're back
@@ -150,8 +151,8 @@ QUnit.test('Drill down on points and categories', function (assert) {
     );
     assert.equal(
         chart.series[0].name,
-        'Series 3',
-        'Name of first series should be `Series 3`'
+        'republican-2010 series',
+        'Name of first series should be `republican-2010 series`'
     );
 
 });

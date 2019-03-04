@@ -3,7 +3,7 @@
  *
  * Money Flow Index indicator for Highstock
  *
- * (c) 2010-2017 Grzegorz Blachliński
+ * (c) 2010-2019 Grzegorz Blachliński
  *
  * License: www.highcharts.com/license
  */

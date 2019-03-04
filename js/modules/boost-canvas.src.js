@@ -1,4 +1,4 @@
-/**
+/* *
  * License: www.highcharts.com/license
  * Author: Torstein Honsi, Christer Vasseng
  *
@@ -8,7 +8,9 @@
  * It is recommended to include this module in conditional comments targeting
  * IE9 and IE10.
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Color.js';
@@ -21,7 +23,6 @@ var win = H.win,
     Color = H.Color,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    each = H.each,
     extend = H.extend,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
@@ -32,14 +33,24 @@ var win = H.win,
     CHUNK_SIZE = 50000,
     destroyLoadingDiv;
 
+/**
+ * Initialize the canvas boost.
+ *
+ * @function Highcharts.initCanvasBoost
+ */
 H.initCanvasBoost = function () {
     if (H.seriesTypes.heatmap) {
         H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
-            var ctx = this.getContext();
+            var chart = this.chart,
+                ctx = this.getContext(),
+                inverted = this.chart.inverted,
+                xAxis = this.xAxis,
+                yAxis = this.yAxis;
+
             if (ctx) {
 
                 // draw the columns
-                each(this.points, function (point) {
+                this.points.forEach(function (point) {
                     var plotY = point.plotY,
                         shapeArgs,
                         pointAttr;
@@ -51,19 +62,29 @@ H.initCanvasBoost = function () {
                     ) {
                         shapeArgs = point.shapeArgs;
 
-                        /*= if (build.classic) { =*/
-                        pointAttr = point.series.pointAttribs(point);
-                        /*= } else { =*/
-                        pointAttr = point.series.colorAttribs(point);
-                        /*= } =*/
+                        if (!chart.styledMode) {
+                            pointAttr = point.series.pointAttribs(point);
+                        } else {
+                            pointAttr = point.series.colorAttribs(point);
+                        }
 
                         ctx.fillStyle = pointAttr.fill;
-                        ctx.fillRect(
-                            shapeArgs.x,
-                            shapeArgs.y,
-                            shapeArgs.width,
-                            shapeArgs.height
-                        );
+
+                        if (inverted) {
+                            ctx.fillRect(
+                                yAxis.len - shapeArgs.y + xAxis.left,
+                                xAxis.len - shapeArgs.x + yAxis.top,
+                                -shapeArgs.height,
+                                -shapeArgs.width
+                            );
+                        } else {
+                            ctx.fillRect(
+                                shapeArgs.x + xAxis.left,
+                                shapeArgs.y + yAxis.top,
+                                shapeArgs.width,
+                                shapeArgs.height
+                            );
+                        }
                     }
                 });
 
@@ -72,7 +93,8 @@ H.initCanvasBoost = function () {
             } else {
                 this.chart.showLoading(
                     'Your browser doesn\'t support HTML5 canvas, <br>' +
-                    'please use a modern browser');
+                    'please use a modern browser'
+                );
 
                 // Uncomment this to provide low-level (slow) support in oldIE.
                 // It will cause script errors on charts with more than a few
@@ -88,6 +110,9 @@ H.initCanvasBoost = function () {
         /**
          * Create a hidden canvas to draw the graph on. The contents is later
          * copied over to an SVG image element.
+         *
+         * @private
+         * @function Highcharts.Series#getContext
          */
         getContext: function () {
             var chart = this.chart,
@@ -117,13 +142,13 @@ H.initCanvasBoost = function () {
                     width,
                     height
                 )
-                .addClass('highcharts-boost-canvas')
-                .add(targetGroup);
+                    .addClass('highcharts-boost-canvas')
+                    .add(targetGroup);
 
                 target.ctx = ctx = target.canvas.getContext('2d');
 
                 if (chart.inverted) {
-                    each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
+                    ['moveTo', 'lineTo', 'rect', 'arc'].forEach(function (fn) {
                         wrap(ctx, fn, swapXY);
                     });
                 }
@@ -179,6 +204,9 @@ H.initCanvasBoost = function () {
 
         /**
          * Draw the canvas image inside an SVG image
+         *
+         * @private
+         * @function Highcharts.Series#canvasToSVG
          */
         canvasToSVG: function () {
             if (!this.chart.isChartSeriesBoosting()) {
@@ -251,13 +279,13 @@ H.initCanvasBoost = function () {
                 maxVal,
                 minI,
                 maxI,
-                kdIndex,
+                index,
                 sdata = isStacked ? series.data : (xData || rawData),
                 fillColor = series.fillOpacity ?
-                        new Color(series.color).setOpacity(
-                            pick(options.fillOpacity, 0.75)
-                        ).get() :
-                        series.color,
+                    new Color(series.color).setOpacity(
+                        pick(options.fillOpacity, 0.75)
+                    ).get() :
+                    series.color,
 
                 stroke = function () {
                     if (doFill) {
@@ -329,15 +357,25 @@ H.initCanvasBoost = function () {
                     };
                 },
 
-                addKDPoint = function (clientX, plotY, i) {
-                    // Avoid more string concatination than required
-                    kdIndex = clientX + ',' + plotY;
+                compareX = options.findNearestPointBy === 'x',
 
-                    // The k-d tree requires series points. Reduce the amount of
-                    // points, since the time to build the tree increases
-                    // exponentially.
-                    if (enableMouseTracking && !pointTaken[kdIndex]) {
-                        pointTaken[kdIndex] = true;
+                xDataFull = (
+                    this.xData ||
+                    this.options.xData ||
+                    this.processedXData ||
+                    false
+                ),
+
+
+                addKDPoint = function (clientX, plotY, i) {
+                    // Shaves off about 60ms compared to repeated concatenation
+                    index = compareX ? clientX : clientX + ',' + plotY;
+
+                    // The k-d tree requires series points.
+                    // Reduce the amount of points, since the time to build the
+                    // tree increases exponentially.
+                    if (enableMouseTracking && !pointTaken[index]) {
+                        pointTaken[index] = true;
 
                         if (chart.inverted) {
                             clientX = xAxis.len - clientX;
@@ -345,6 +383,7 @@ H.initCanvasBoost = function () {
                         }
 
                         points.push({
+                            x: xDataFull ? xDataFull[cropStart + i] : false,
                             clientX: clientX,
                             plotX: clientX,
                             plotY: plotY,
@@ -559,6 +598,7 @@ H.initCanvasBoost = function () {
             }, function () {
                 var loadingDiv = chart.loadingDiv,
                     loadingShown = chart.loadingShown;
+
                 stroke();
 
                 // if (series.boostCopy || series.chart.boostCopy) {

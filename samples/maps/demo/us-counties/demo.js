@@ -1,5 +1,5 @@
 
-$.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb27fc17ebca3f5b770/samples/data/us-counties-unemployment.json', function (data) {
+$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-counties-unemployment.json', function (data) {
 
     /**
      * Data parsed from http://www.bls.gov/lau/#tables
@@ -78,17 +78,20 @@ $.getJSON('https://cdn.rawgit.com/highcharts/highcharts/057b672172ccc6c08fe7dbb2
                 hover: {
                     color: '#a4edba'
                 }
-            }
+            },
+            shadow: false
         }, {
             type: 'mapline',
             name: 'State borders',
             data: borderLines,
-            color: 'white'
+            color: 'white',
+            shadow: false
         }, {
             type: 'mapline',
             name: 'Separator',
             data: separatorLines,
-            color: 'gray'
+            color: 'gray',
+            shadow: false
         }]
     });
 });

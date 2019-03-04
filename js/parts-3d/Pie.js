@@ -1,28 +1,29 @@
-/**
- * (c) 2010-2017 Torstein Honsi
+/* *
+ * (c) 2010-2019 Torstein Honsi
  *
  * 3D pie series
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
+
 var deg2rad = H.deg2rad,
-    each = H.each,
     pick = H.pick,
     seriesTypes = H.seriesTypes,
     svg = H.svg,
     wrap = H.wrap;
 
-
 /**
  * The thickness of a 3D pie. Requires `highcharts-3d.js`
  *
- * @type {Number}
- * @default 0
- * @since 4.0
- * @product highcharts
+ * @type      {number}
+ * @default   0
+ * @since     4.0
+ * @product   highcharts
  * @apioption plotOptions.pie.depth
  */
 
@@ -50,7 +51,7 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
         z = 0;
     }
 
-    each(series.data, function (point) {
+    series.data.forEach(function (point) {
 
         var shapeArgs = point.shapeArgs,
             angle;
@@ -85,11 +86,11 @@ wrap(
     'haloPath',
     function (proceed) {
         var args = arguments;
+
         return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);
     }
 );
 
-/*= if (build.classic) { =*/
 wrap(
     seriesTypes.pie.prototype,
     'pointAttribs',
@@ -97,7 +98,7 @@ wrap(
         var attr = proceed.call(this, point, state),
             options = this.options;
 
-        if (this.chart.is3d()) {
+        if (this.chart.is3d() && !this.chart.styledMode) {
             attr.stroke = options.edgeColor || point.color || this.color;
             attr['stroke-width'] = pick(options.edgeWidth, 1);
         }
@@ -105,45 +106,33 @@ wrap(
         return attr;
     }
 );
-/*= } =*/
-
-wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    if (this.chart.is3d()) {
-        each(this.points, function (point) {
-            var graphic = point.graphic;
-
-            // #4584 Check if has graphic - null points don't have it
-            if (graphic) {
-                // Hide null or 0 points (#3006, 3650)
-                graphic[point.y && point.visible ? 'show' : 'hide']();
-            }
-        });
-    }
-});
 
 wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
     if (this.chart.is3d()) {
         var series = this,
             chart = series.chart,
             options3d = chart.options.chart.options3d;
-        each(series.data, function (point) {
+
+        series.data.forEach(function (point) {
             var shapeArgs = point.shapeArgs,
                 r = shapeArgs.r,
                 // #3240 issue with datalabels for 0 and null values
                 a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad,
                 b1 = (shapeArgs.beta || options3d.beta) * deg2rad,
                 a2 = (shapeArgs.start + shapeArgs.end) / 2,
-                labelPos = point.labelPos,
-                labelIndexes = [0, 2, 4], // [x1, y1, x2, y2, x3, y3]
+                labelPosition = point.labelPosition,
+                connectorPosition = labelPosition.connectorPosition,
                 yOffset = (-r * (1 - Math.cos(a1)) * Math.sin(a2)),
                 xOffset = r * (Math.cos(b1) - 1) * Math.cos(a2);
 
             // Apply perspective on label positions
-            each(labelIndexes, function (index) {
-                labelPos[index] += xOffset;
-                labelPos[index + 1] += yOffset;
+            [
+                labelPosition.natural,
+                connectorPosition.breakAt,
+                connectorPosition.touchingSliceAt
+            ].forEach(function (coordinates) {
+                coordinates.x += xOffset;
+                coordinates.y += yOffset;
             });
         });
     }

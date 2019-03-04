@@ -1,0 +1,9 @@
+---
+ name: Gantt Logistics Demo
+ js_wrap: b
+ authors:
+   - Jon Arild Nygård
+   - Torstein Hønsi
+   - Øystein Moseng
+ skipTest: true
+...

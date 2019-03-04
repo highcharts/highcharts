@@ -22,18 +22,17 @@ QUnit.test("Shared tooltip should compare point.distX, not point.dist to find ab
                 }
             }
         }).highcharts(),
-        offset = $("#container").offset(),
         series = chart.series[1],
         point = series.points[2];
 
     var controller = new TestController(chart);
 
-    controller.mousemove(
+    controller.mouseMove(
         chart.plotLeft + point.plotX,
         chart.plotTop + 5
     );
 
-    controller.mousemove(
+    controller.mouseMove(
         chart.plotLeft + point.plotX,
         chart.plotTop + chart.plotHeight - 15
     );
@@ -52,5 +51,6 @@ QUnit.test("Shared tooltip should compare point.distX, not point.dist to find ab
     assert.strictEqual(
         chart.hoverPoints.indexOf(point) >= 0,
         true,
-        "Proper hovered point.");
+        "Proper hovered point."
+    );
 });

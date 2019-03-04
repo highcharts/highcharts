@@ -54,13 +54,13 @@ QUnit.test('Histogram', function (assert) {
 
     assert.deepEqual(
         histogram.xData,
-        [20, 30, 40, 50, 60, 70, 80, 90],
+        [22, 32, 42, 52, 62, 72, 82],
         'Bins ranges are calculated correctly'
     );
 
     assert.deepEqual(
         histogram.yData,
-        [2, 4, 4, 5, 3, 1, 0, 1],
+        [2, 4, 4, 6, 2, 1, 1],
         'Bins frequencies are calculated correctly'
     );
 
@@ -70,13 +70,13 @@ QUnit.test('Histogram', function (assert) {
 
     assert.deepEqual(
         histogram.xData,
-        [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90],
+        [22, 27, 32, 37, 42, 47, 52, 57, 62, 67, 72, 77, 82, 87],
         'After updating histogram\'s bin width bin ranges are calculated correctly'
     );
 
     assert.deepEqual(
         histogram.yData,
-        [1, 1, 0, 4, 0, 4, 1, 4, 1, 2, 1, 0, 0, 0, 1],
+        [2, 0, 2, 2, 3, 1, 4, 2, 0, 2, 1, 0, 0, 1],
         'After updating histogram\'s bin width bin frequencies are calculated correctly'
     );
 
@@ -121,9 +121,10 @@ QUnit.test('Histogram', function (assert) {
         baseSeries: 's2',
         binWidth: 1
     });
+
     assert.deepEqual(
         addedHistogram && addedHistogram.yData,
-        [4, 3, 1],
+        [4, 4],
         'Added histogram dynamically is calculated correctly'
     );
 
@@ -151,9 +152,9 @@ QUnit.test('Histogram', function (assert) {
             return point.x;
         }),
         [
-            0, 45.05, 90.1, 135.15, 180.2, 225.25, 270.3, 315.35, 360.4, 405.45,
-            450.5, 495.55, 540.6, 585.65, 630.7, 675.75, 720.8, 765.85, 810.9,
-            855.95, 901
+            20, 65.05, 110.1, 155.15, 200.2, 245.25, 290.3, 335.35, 380.4,
+            425.45, 470.5, 515.55, 560.6, 605.65, 650.7, 695.75, 740.8,
+            785.85, 830.9, 875.95
         ],
         'Histogram produces correct bins, #7976'
     );
@@ -162,10 +163,27 @@ QUnit.test('Histogram', function (assert) {
         h4 && Highcharts.map(h4.points, function (point) {
             return point.y;
         }),
-        [33, 170, 100, 54, 20, 7, 7, 3, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1],
+        [100, 160, 71, 40, 8, 8, 5, 4, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
         'Histogram does not produce points with NaN y values, #7976'
     );
 
+    chart.addSeries({
+        id: 'floatData',
+        data: [33.16760851774859, 30.021835456328144, 32.44462948560892, 32.05988301568796, 30.867648930865755, 32.19147683815367, 32.66328232655957, 29.711692262612182, 29.521720801728208, 30.664639033433204, 31.968056265142028, 32.10721235022374, 29.79755475194929, 31.406572728550902, 32.88348881596304, 31.506079222840953, 31.506079222840953, 31.506079222840953, 33.12216452433281, 29.990519216283296, 32.974232283904655, 31.064286659033176, 31.12067983726177, 31.392519037070734, 28.97179396681863, 28.699234545713068, 31.44281128068294, 28.81435219638538, 33.01179075584821, 31.28194091945461, 31.606757143282852, 29.819697680843685, 29.819697680843685, 30.53378932780897, 29.951550386910295, 31.47763812568406, 28.392696528424878, 28.392696528424878, 28.392696528424878, 30.53378932780897, 32.305029082782085, 32.305029082782085, 28.095141068806992, 32.305029082782085]
+    });
+
+    var h5 = chart.addSeries({
+        baseSeries: 'floatData',
+        type: 'histogram'
+    });
+
+    assert.deepEqual(
+        h5 && Highcharts.map(h5.points, function (point) {
+            return point.y;
+        }),
+        [6, 2, 7, 4, 11, 7, 7],
+        'Histogram does not produce points with NaN y values, when baseSeries data has float values'
+    );
 
     baseSeries.remove();
     assert.ok(
@@ -178,4 +196,45 @@ QUnit.test('Histogram', function (assert) {
         Highcharts.inArray(histogram, chart.series) === -1,
         'Histogram is removed after histogram.remove()'
     );
+
+    chart.update({
+        series: [{
+            id: 's1',
+            data: [1, 1.2, 1.4, 1.6, 1.8]
+        }, {
+            id: 's2',
+            data: [2, 2.3, 2.6, 2.9, 3.2]
+        }, {
+            baseSeries: 's1',
+            type: 'histogram'
+        }, {
+            baseSeries: 's2',
+            type: 'histogram'
+        }]
+    }, true, true);
+
+    assert.strictEqual(
+        // Rounding is applied in order to crisp column edges
+        Math.round(chart.series[3].barW),
+        Math.round(chart.series[3].closestPointRangePx),
+        'Histogram has appropriate pointRange value, when multiple series on the same axis, #9128, #10025'
+    );
+
+    chart.update({
+        series: [{
+            id: 'baseSeries',
+            data: [132.8, 137, 139, 142, 145, 148, 151, 151.4]
+        }, {
+            baseSeries: 'baseSeries',
+            type: 'histogram',
+            binsNumber: 7
+        }]
+    }, true, true);
+
+    assert.strictEqual(
+        chart.series[1].data.length,
+        chart.series[1].options.binsNumber,
+        'Histogram produces correct number of bins set by user.'
+    );
+
 });

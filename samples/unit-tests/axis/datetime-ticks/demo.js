@@ -234,7 +234,7 @@ QUnit.test(
             },
 
             series: [{
-                data: Highcharts.map(new Array(48), Math.random),
+                data: new Array(48).fill(undefined).map(Math.random),
                 pointStart: Date.UTC(2013, 0, 1, 12),
                 pointInterval: 36e5 // one hour
             }]

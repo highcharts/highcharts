@@ -19,3 +19,6 @@
 	stroke: #3D9200;
 	stroke-width: 3px;
 }
+.highcharts-plot-line-label tspan {
+	fill: gray;
+}

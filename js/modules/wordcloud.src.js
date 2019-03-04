@@ -1,24 +1,27 @@
-/**
- * (c) 2016 Highsoft AS
+/* *
+ * Experimental Highcharts module which enables visualization of a word cloud.
+ *
+ * (c) 2016-2019 Highsoft AS
+ *
  * Authors: Jon Arild Nygard
  *
  * License: www.highcharts.com/license
- *
- * This is an experimental Highcharts module which enables visualization
- * of a word cloud.
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import drawPoint from '../mixins/draw-point.js';
 import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
-var each = H.each,
-    extend = H.extend,
+
+var extend = H.extend,
     isArray = H.isArray,
     isNumber = H.isNumber,
     isObject = H.isObject,
+    merge = H.merge,
+    noop = H.noop,
     find = H.find,
-    reduce = H.reduce,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
     getPolygon = polygon.getPolygon,
     isPolygonsColliding = polygon.isPolygonsColliding,
@@ -26,37 +29,52 @@ var each = H.each,
     Series = H.Series;
 
 /**
- * isRectanglesIntersecting - Detects if there is a collision between two
- *     rectangles.
+ * Detects if there is a collision between two rectangles.
  *
- * @param  {object} r1 First rectangle.
- * @param  {object} r2 Second rectangle.
- * @return {boolean} Returns true if the rectangles overlap.
+ * @private
+ * @function isRectanglesIntersecting
+ *
+ * @param {object} r1
+ *        First rectangle.
+ *
+ * @param {object} r2
+ *        Second rectangle.
+ *
+ * @return {boolean}
+ *         Returns true if the rectangles overlap.
  */
-var isRectanglesIntersecting = function isRectanglesIntersecting(r1, r2) {
+function isRectanglesIntersecting(r1, r2) {
     return !(
         r2.left > r1.right ||
         r2.right < r1.left ||
         r2.top > r1.bottom ||
         r2.bottom < r1.top
     );
-};
+}
 
 /**
- * intersectsAnyWord - Detects if a word collides with any previously placed
- *     words.
+ * Detects if a word collides with any previously placed words.
  *
- * @param  {Point} point Point which the word is connected to.
- * @param  {Array} points Previously placed points to check against.
- * @return {boolean} Returns true if there is collision.
+ * @private
+ * @function intersectsAnyWord
+ *
+ * @param {Highcharts.Point} point
+ *        Point which the word is connected to.
+ *
+ * @param {Array<Highcharts.Point>} points
+ *        Previously placed points to check against.
+ *
+ * @return {boolean}
+ *         Returns true if there is collision.
  */
-var intersectsAnyWord = function intersectsAnyWord(point, points) {
+function intersectsAnyWord(point, points) {
     var intersects = false,
         rect = point.rect,
         polygon = point.polygon,
         lastCollidedWith = point.lastCollidedWith,
         isIntersecting = function (p) {
             var result = isRectanglesIntersecting(rect, p.rect);
+
             if (result && (point.rotation % 90 || p.roation % 90)) {
                 result = isPolygonsColliding(
                     polygon,
@@ -81,6 +99,7 @@ var intersectsAnyWord = function intersectsAnyWord(point, points) {
     if (!intersects) {
         intersects = !!find(points, function (p) {
             var result = isIntersecting(p);
+
             if (result) {
                 point.lastCollidedWith = p;
             }
@@ -88,22 +107,33 @@ var intersectsAnyWord = function intersectsAnyWord(point, points) {
         });
     }
     return intersects;
-};
+}
 
 /**
- * archimedeanSpiral - Gives a set of cordinates for an Archimedian Spiral.
+ * Gives a set of cordinates for an Archimedian Spiral.
  *
- * @param {number} attempt How far along the spiral we have traversed.
- * @param {object} params Additional parameters.
- * @param {object} params.field Size of field.
- * @return {boolean|object} Resulting coordinates, x and y. False if the word
- * should be dropped from the visualization.
+ * @private
+ * @function archimedeanSpiral
+ *
+ * @param {number} attempt
+ *        How far along the spiral we have traversed.
+ *
+ * @param {object} params
+ *        Additional parameters.
+ *
+ * @param {object} params.field
+ *        Size of field.
+ *
+ * @return {boolean|object}
+ *         Resulting coordinates, x and y. False if the word should be dropped
+ *         from the visualization.
  */
-var archimedeanSpiral = function archimedeanSpiral(attempt, params) {
+function archimedeanSpiral(attempt, params) {
     var field = params.field,
         result = false,
         maxDelta = (field.width * field.width) + (field.height * field.height),
-        t = attempt * 0.2;
+        t = attempt * 0.8; // 0.2 * 4 = 0.8. Enlarging the spiral.
+
     // Emergency brake. TODO make spiralling logic more foolproof.
     if (attempt <= 10000) {
         result = {
@@ -115,51 +145,61 @@ var archimedeanSpiral = function archimedeanSpiral(attempt, params) {
         }
     }
     return result;
-};
+}
 
 /**
- * squareSpiral - Gives a set of cordinates for an rectangular spiral.
+ * Gives a set of cordinates for an rectangular spiral.
  *
- * @param {number} attempt How far along the spiral we have traversed.
- * @param {object} params Additional parameters.
- * @return {boolean|object} Resulting coordinates, x and y. False if the word
- * should be dropped from the visualization.
+ * @private
+ * @function squareSpiral
+ *
+ * @param {number} attempt
+ *        How far along the spiral we have traversed.
+ *
+ * @param {object} params
+ *        Additional parameters.
+ *
+ * @return {boolean|object}
+ *         Resulting coordinates, x and y. False if the word should be dropped
+ *         from the visualization.
  */
-var squareSpiral = function squareSpiral(attempt) {
-    var k = Math.ceil((Math.sqrt(attempt) - 1) / 2),
+function squareSpiral(attempt) {
+    var a = attempt * 4,
+        k = Math.ceil((Math.sqrt(a) - 1) / 2),
         t = 2 * k + 1,
         m = Math.pow(t, 2),
         isBoolean = function (x) {
             return typeof x === 'boolean';
         },
         result = false;
+
     t -= 1;
     if (attempt <= 10000) {
-        if (isBoolean(result) && attempt >= m - t) {
+        if (isBoolean(result) && a >= m - t) {
             result = {
-                x: k - (m - attempt),
+                x: k - (m - a),
                 y: -k
             };
         }
         m -= t;
-        if (isBoolean(result) && attempt >= m - t) {
+        if (isBoolean(result) && a >= m - t) {
             result = {
                 x: -k,
-                y: -k + (m - attempt)
+                y: -k + (m - a)
             };
         }
 
         m -= t;
         if (isBoolean(result)) {
-            if (attempt >= m - t) {
+            if (a >= m - t) {
                 result = {
-                    x: -k + (m - attempt),
+                    x: -k + (m - a),
                     y: k
                 };
             } else {
                 result = {
                     x: k,
-                    y: k - (m - attempt - t)
+                    y: k - (m - a - t)
                 };
             }
         }
@@ -167,79 +207,116 @@ var squareSpiral = function squareSpiral(attempt) {
         result.y *= 5;
     }
     return result;
-};
+}
 
 /**
- * rectangularSpiral - Gives a set of cordinates for an rectangular spiral.
+ * Gives a set of cordinates for an rectangular spiral.
  *
- * @param {number} attempt How far along the spiral we have traversed.
- * @param {object} params Additional parameters.
- * @return {boolean|object} Resulting coordinates, x and y. False if the word
- * should be dropped from the visualization.
+ * @private
+ * @function rectangularSpiral
+ *
+ * @param {number} attempt
+ *        How far along the spiral we have traversed.
+ *
+ * @param {object} params
+ *        Additional parameters.
+ *
+ * @return {boolean|object}
+ *         Resulting coordinates, x and y. False if the word should be dropped
+ *         from the visualization.
  */
-var rectangularSpiral = function rectangularSpiral(attempt, params) {
+function rectangularSpiral(attempt, params) {
     var result = squareSpiral(attempt, params),
         field = params.field;
+
     if (result) {
-        result.x *= field.ratio;
+        result.x *= field.ratioX;
+        result.y *= field.ratioY;
     }
     return result;
-};
+}
 
 /**
- * getRandomPosition
+ * @private
+ * @function getRandomPosition
  *
- * @param  {number} size
+ * @param {number} size
+ *
  * @return {number}
  */
-var getRandomPosition = function getRandomPosition(size) {
+function getRandomPosition(size) {
     return Math.round((size * (Math.random() + 0.5)) / 2);
-};
+}
 
 /**
- * getScale - Calculates the proper scale to fit the cloud inside the plotting
- *     area.
+ * Calculates the proper scale to fit the cloud inside the plotting area.
  *
- * @param  {number} targetWidth  Width of target area.
- * @param  {number} targetHeight Height of target area.
- * @param  {object} field The playing field.
- * @param  {Series} series Series object.
- * @return {number} Returns the value to scale the playing field up to the size
- *     of the target area.
+ * @private
+ * @function getScale
+ *
+ * @param {number} targetWidth
+ *        Width of target area.
+ *
+ * @param {number} targetHeight
+ *        Height of target area.
+ *
+ * @param {object} field
+ *        The playing field.
+ *
+ * @param {Highcharts.Series} series
+ *        Series object.
+ *
+ * @return {number}
+ *         Returns the value to scale the playing field up to the size of the
+ *         target area.
  */
-var getScale = function getScale(targetWidth, targetHeight, field) {
+function getScale(targetWidth, targetHeight, field) {
     var height = Math.max(Math.abs(field.top), Math.abs(field.bottom)) * 2,
         width = Math.max(Math.abs(field.left), Math.abs(field.right)) * 2,
-        scaleX = 1 / width * targetWidth,
-        scaleY = 1 / height * targetHeight;
+        scaleX = width > 0 ? 1 / width * targetWidth : 1,
+        scaleY = height > 0 ? 1 / height * targetHeight : 1;
+
     return Math.min(scaleX, scaleY);
-};
+}
 
 /**
- * getPlayingField - Calculates what is called the playing field.
- *    The field is the area which all the words are allowed to be positioned
- *    within. The area is proportioned to match the target aspect ratio.
+ * Calculates what is called the playing field. The field is the area which all
+ * the words are allowed to be positioned within. The area is proportioned to
+ * match the target aspect ratio.
  *
- * @param  {number} targetWidth Width of the target area.
- * @param  {number} targetHeight Height of the target area.
- * @param  {array} data Array of {@link Point} objects.
- * @param  {object} data.dimensions The height and width of the word.
- * @return {object} The width and height of the playing field.
+ * @private
+ * @function getPlayingField
+ *
+ * @param {number} targetWidth
+ *        Width of the target area.
+ *
+ * @param {number} targetHeight
+ *        Height of the target area.
+ *
+ * @param {Array<Highcharts.Point>} data
+ *        Array of points.
+ *
+ * @param {object} data.dimensions
+ *        The height and width of the word.
+ *
+ * @return {object}
+ *         The width and height of the playing field.
  */
-var getPlayingField = function getPlayingField(
+function getPlayingField(
     targetWidth,
     targetHeight,
     data
 ) {
-    var ratio = targetWidth / targetHeight,
-        info = reduce(data, function (obj, point) {
-            var dimensions = point.dimensions;
+    var info = data.reduce(function (obj, point) {
+            var dimensions = point.dimensions,
+                x = Math.max(dimensions.width, dimensions.height);
+
             // Find largest height.
             obj.maxHeight = Math.max(obj.maxHeight, dimensions.height);
             // Find largest width.
             obj.maxWidth = Math.max(obj.maxWidth, dimensions.width);
-            // Sum up the total area of all the words.
-            obj.area += dimensions.width * dimensions.height;
+            // Sum up the total maximum area of all the words.
+            obj.area += x * x;
             return obj;
         }, {
             maxHeight: 0,
@@ -249,29 +326,49 @@ var getPlayingField = function getPlayingField(
         /**
          * Use largest width, largest height, or root of total area to give size
          * to the playing field.
-         * Add extra 100 percentage to ensure enough space.
          */
-        x = 1.1 * Math.max(info.maxHeight, info.maxWidth, Math.sqrt(info.area));
+        x = Math.max(
+            info.maxHeight, // Have enough space for the tallest word
+            info.maxWidth, // Have enough space for the broadest word
+            // Adjust 15% to account for close packing of words
+            Math.sqrt(info.area) * 0.85
+        ),
+        ratioX = targetWidth > targetHeight ? targetWidth / targetHeight : 1,
+        ratioY = targetHeight > targetWidth ? targetHeight / targetWidth : 1;
+
     return {
-        width: x * ratio,
-        height: x,
-        ratio: ratio
+        width: x * ratioX,
+        height: x * ratioY,
+        ratioX: ratioX,
+        ratioY: ratioY
     };
-};
+}
 
 
 /**
- * getRotation - Calculates a number of degrees to rotate, based upon a number
- *     of orientations within a range from-to.
+ * Calculates a number of degrees to rotate, based upon a number of orientations
+ * within a range from-to.
  *
- * @param  {number} orientations Number of orientations.
- * @param  {number} index Index of point, used to decide orientation.
- * @param  {number} from The smallest degree of rotation.
- * @param  {number} to The largest degree of rotation.
- * @return {boolean|number} Returns the resulting rotation for the word. Returns
- * false if invalid input parameters.
+ * @private
+ * @function getRotation
+ *
+ * @param {number} orientations
+ *        Number of orientations.
+ *
+ * @param {number} index
+ *        Index of point, used to decide orientation.
+ *
+ * @param {number} from
+ *        The smallest degree of rotation.
+ *
+ * @param {number} to
+ *        The largest degree of rotation.
+ *
+ * @return {boolean|number}
+ *         Returns the resulting rotation for the word. Returns false if invalid
+ *         input parameters.
  */
-var getRotation = function getRotation(orientations, index, from, to) {
+function getRotation(orientations, index, from, to) {
     var result = false, // Default to false
         range,
         intervals,
@@ -293,73 +390,116 @@ var getRotation = function getRotation(orientations, index, from, to) {
         result = from + (orientation * intervals);
     }
     return result;
-};
+}
 
 /**
- * outsidePlayingField - Detects if a word is placed outside the playing field.
+ * Calculates the spiral positions and store them in scope for quick access.
  *
- * @param  {Point} point Point which the word is connected to.
- * @param  {object} field The width and height of the playing field.
- * @return {boolean} Returns true if the word is placed outside the field.
+ * @private
+ * @function getSpiral
+ *
+ * @param {Function} fn
+ *        The spiral function.
+ *
+ * @param {object} params
+ *        Additional parameters for the spiral.
+ *
+ * @return {Function}
+ *         Function with access to spiral positions.
  */
-var outsidePlayingField = function outsidePlayingField(rect, field) {
+function getSpiral(fn, params) {
+    var length = 10000,
+        i,
+        arr = [];
+
+    for (i = 1; i < length; i++) {
+        arr.push(fn(i, params));
+    }
+
+    return function (attempt) {
+        return attempt <= length ? arr[attempt - 1] : false;
+    };
+}
+
+/**
+ * Detects if a word is placed outside the playing field.
+ *
+ * @private
+ * @function outsidePlayingField
+ *
+ * @param {Highcharts.Point} point
+ *        Point which the word is connected to.
+ *
+ * @param {object} field
+ *        The width and height of the playing field.
+ *
+ * @return {boolean}
+ *         Returns true if the word is placed outside the field.
+ */
+function outsidePlayingField(rect, field) {
     var playingField = {
         left: -(field.width / 2),
         right: field.width / 2,
         top: -(field.height / 2),
         bottom: field.height / 2
     };
+
     return !(
         playingField.left < rect.left &&
         playingField.right > rect.right &&
         playingField.top < rect.top &&
         playingField.bottom > rect.bottom
     );
-};
+}
 
 /**
- * intersectionTesting - Check if a point intersects with previously placed
- * words, or if it goes outside the field boundaries. If a collision, then try
- * to adjusts the position.
+ * Check if a point intersects with previously placed words, or if it goes
+ * outside the field boundaries. If a collision, then try to adjusts the
+ * position.
  *
- * @param  {object} point Point to test for intersections.
- * @param  {object} options Options object.
- * @return {boolean|object} Returns an object with how much to correct the
- * positions. Returns false if the word should not be placed at all.
+ * @private
+ * @function intersectionTesting
+ *
+ * @param {Highcharts.Point} point
+ *        Point to test for intersections.
+ *
+ * @param {object} options
+ *        Options object.
+ *
+ * @return {boolean|object}
+ *         Returns an object with how much to correct the positions. Returns
+ *         false if the word should not be placed at all.
  */
-var intersectionTesting = function intersectionTesting(point, options) {
+function intersectionTesting(point, options) {
     var placed = options.placed,
         field = options.field,
         rectangle = options.rectangle,
         polygon = options.polygon,
         spiral = options.spiral,
         attempt = 1,
-        interval = 4,
         delta = {
             x: 0,
             y: 0
         },
         // Make a copy to update values during intersection testing.
         rect = point.rect = extend({}, rectangle);
+
     point.polygon = polygon;
     point.rotation = options.rotation;
 
-    /**
-     * while w intersects any previously placed words:
-     *    do {
-     *      move w a little bit along a spiral path
-     *    } while any part of w is outside the playing field and
-     *        the spiral radius is still smallish
-     */
+    /* while w intersects any previously placed words:
+         do {
+           move w a little bit along a spiral path
+         } while any part of w is outside the playing field and
+                 the spiral radius is still smallish */
     while (
+        delta !== false &&
         (
             intersectsAnyWord(point, placed) ||
             outsidePlayingField(rect, field)
-        ) && delta !== false
+        )
     ) {
-        delta = spiral(interval * attempt, {
-            field: field
-        });
+        delta = spiral(attempt);
         if (isObject(delta)) {
             // Update the DOMRect with new positions.
             rect.left = rectangle.left + delta.x;
@@ -371,18 +511,72 @@ var intersectionTesting = function intersectionTesting(point, options) {
         attempt++;
     }
     return delta;
-};
+}
 
 /**
- * updateFieldBoundaries - If a rectangle is outside a give field, then the
- * boundaries of the field is adjusted accordingly. Modifies the field object
- * which is passed as the first parameter.
+ * Extends the playing field to have enough space to fit a given word.
  *
- * @param  {object} field The bounding box of a playing field.
- * @param  {object} placement The bounding box for a placed point.
- * @return {object} Returns a modified field object.
+ * @private
+ * @function extendPlayingField
+ *
+ * @param {object} field
+ *        The width, height and ratios of a playing field.
+ *
+ * @param {object} rectangle
+ *        The bounding box of the word to add space for.
+ *
+ * @return {object}
+ *         Returns the extended playing field with updated height and width.
  */
-var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
+function extendPlayingField(field, rectangle) {
+    var height, width, ratioX, ratioY, x, extendWidth, extendHeight, result;
+
+    if (isObject(field) && isObject(rectangle)) {
+        height = (rectangle.bottom - rectangle.top);
+        width = (rectangle.right - rectangle.left);
+        ratioX = field.ratioX;
+        ratioY = field.ratioY;
+
+        // Use the same variable to extend both the height and width.
+        x = ((width * ratioX) > (height * ratioY)) ? width : height;
+
+        // Multiply variable with ratios to preserve aspect ratio.
+        extendWidth = x * ratioX;
+        extendHeight = x * ratioY;
+
+        // Calculate the size of the new field after adding space for the word.
+        result = merge(field, {
+            // Add space on the left and right.
+            width: field.width + (extendWidth * 2),
+            // Add space on the top and bottom.
+            height: field.height + (extendHeight * 2)
+        });
+    } else {
+        result = field;
+    }
+
+    // Return the new extended field.
+    return result;
+}
+
+/**
+ * If a rectangle is outside a give field, then the boundaries of the field is
+ * adjusted accordingly. Modifies the field object which is passed as the first
+ * parameter.
+ *
+ * @private
+ * @function updateFieldBoundaries
+ *
+ * @param {object} field
+ *        The bounding box of a playing field.
+ *
+ * @param {object} placement
+ *        The bounding box for a placed point.
+ *
+ * @return {object}
+ *         Returns a modified field object.
+ */
+function updateFieldBoundaries(field, rectangle) {
     // TODO improve type checking.
     if (!isNumber(field.left) || field.left > rectangle.left) {
         field.left = rectangle.left;
@@ -397,39 +591,46 @@ var updateFieldBoundaries = function updateFieldBoundaries(field, rectangle) {
         field.bottom = rectangle.bottom;
     }
     return field;
-};
+}
 
 /**
  * A word cloud is a visualization of a set of words, where the size and
  * placement of a word is determined by how it is weighted.
  *
- * @extends {plotOptions.column}
- * @sample highcharts/demo/wordcloud Word Cloud chart
- * @excluding allAreas, boostThreshold, clip, colorAxis, compare, compareBase,
- *            crisp, cropTreshold, dataGrouping, dataLabels, depth, edgeColor,
- *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
- *            groupZPadding, joinBy, maxPointWidth, minPointLength,
- *            navigatorOptions, negativeColor, pointInterval, pointIntervalUnit,
- *            pointPadding, pointPlacement, pointRange, pointStart, pointWidth,
- *            pointStart, pointWidth, shadow, showCheckbox, showInNavigator,
- *            softThreshold, stacking, threshold, zoneAxis, zones
- * @product highcharts
- * @since  6.0.0
+ * @sample highcharts/demo/wordcloud
+ *         Word Cloud chart
+ *
+ * @extends      plotOptions.column
+ * @excluding    allAreas, boostThreshold, clip, colorAxis, compare,
+ *               compareBase, crisp, cropTreshold, dataGrouping, dataLabels,
+ *               depth, edgeColor, findNearestPointBy, getExtremesFromAll,
+ *               grouping, groupPadding, groupZPadding, joinBy, maxPointWidth,
+ *               minPointLength, navigatorOptions, negativeColor, pointInterval,
+ *               pointIntervalUnit, pointPadding, pointPlacement, pointRange,
+ *               pointStart, pointWidth, pointStart, pointWidth, shadow,
+ *               showCheckbox, showInNavigator, softThreshold, stacking,
+ *               threshold, zoneAxis, zones
+ * @product      highcharts
+ * @since        6.0.0
  * @optionparent plotOptions.wordcloud
  */
 var wordCloudOptions = {
+    /**
+     * If there is no space for a word on the playing field, then this option
+     * will allow the playing field to be extended to fit the word. If false
+     * then the word will be dropped from the visualization.
+     *
+     * NB! This option is currently not decided to be published in the API, and
+     * is therefore marked as private.
+     *
+     * @private
+     */
+    allowExtendPlayingField: true,
     animation: {
         duration: 500
     },
     borderWidth: 0,
-    clip: false, // Something goes wrong with clip. // TODO fix this
-    /**
-     * When using automatic point colors pulled from the `options.colors`
-     * collection, this option determines whether the chart should receive
-     * one color per series or one color per point.
-     *
-     * @see [series colors](#plotOptions.column.colors)
-     */
+    clip: false, // Something goes wrong with clip. // @todo fix this
     colorByPoint: true,
     /**
      * A threshold determining the minimum font size that can be applied to a
@@ -445,9 +646,9 @@ var wordCloudOptions = {
     /**
      * This option decides which algorithm is used for placement, and rotation
      * of a word. The choice of algorith is therefore a crucial part of the
-     * resulting layout of the wordcloud.
-     * It is possible for users to add their own custom placement strategies
-     * for use in word cloud. Read more about it in our
+     * resulting layout of the wordcloud. It is possible for users to add their
+     * own custom placement strategies for use in word cloud. Read more about it
+     * in our
      * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-placement-strategies)
      *
      * @validvalue: ["center", "random"]
@@ -455,6 +656,7 @@ var wordCloudOptions = {
     placementStrategy: 'center',
     /**
      * Rotation options for the words in the wordcloud.
+     *
      * @sample highcharts/plotoptions/wordcloud-rotation
      *         Word cloud with rotation
      */
@@ -475,7 +677,7 @@ var wordCloudOptions = {
     },
     showInLegend: false,
     /**
-     * Spiral used for placing a word after the inital position experienced a
+     * Spiral used for placing a word after the initial position experienced a
      * collision with either another word or the borders.
      * It is possible for users to add their own custom spiralling algorithms
      * for use in word cloud. Read more about it in our
@@ -487,11 +689,13 @@ var wordCloudOptions = {
     /**
      * CSS styles for the words.
      *
-     * @type {CSSObject}
+     * @type    {Highcharts.CSSObject}
      * @default {"fontFamily":"sans-serif", "fontWeight": "900"}
      */
     style: {
+        /** @ignore-option */
         fontFamily: 'sans-serif',
+        /** @ignore-option */
         fontWeight: '900'
     },
     tooltip: {
@@ -500,11 +704,11 @@ var wordCloudOptions = {
     }
 };
 
-/**
- * Properties of the WordCloud series.
- */
+// Properties of the WordCloud series.
 var wordCloudSeries = {
     animate: Series.prototype.animate,
+    animateDrilldown: noop,
+    animateDrillupFrom: noop,
     bindAxes: function () {
         var wordcloudAxis = {
             endOnTick: false,
@@ -515,21 +719,41 @@ var wordCloudSeries = {
             title: null,
             tickPositions: []
         };
+
         Series.prototype.bindAxes.call(this);
         extend(this.yAxis.options, wordcloudAxis);
         extend(this.xAxis.options, wordcloudAxis);
     },
+
+    pointAttribs: function (point, state) {
+        var attribs = H.seriesTypes.column.prototype
+            .pointAttribs.call(this, point, state);
+
+        delete attribs.stroke;
+        delete attribs['stroke-width'];
+
+        return attribs;
+
+    },
+
     /**
-     * deriveFontSize - Calculates the fontSize of a word based on its weight.
+     * Calculates the fontSize of a word based on its weight.
      *
-     * @param {number} [relativeWeight] The weight of the word, on a scale 0-1.
-     * Defaults to 0.
-     * @param {number} [maxFontSize] The maximum font size of a word. Defaults
-     * to 1.
-     * @param {number} [minFontSize] The minimum font size of a word. Defaults
-     * to 1.
-     * @returns {number} Returns the resulting fontSize of a word. If
-     * minFontSize is larger then maxFontSize the result will equal minFontSize.
+     * @private
+     * @function Highcharts.Series#deriveFontSize
+     *
+     * @param {number} [relativeWeight=0]
+     *        The weight of the word, on a scale 0-1.
+     *
+     * @param {number} [maxFontSize=1]
+     *        The maximum font size of a word.
+     *
+     * @param {number} [minFontSize=1]
+     *        The minimum font size of a word.
+     *
+     * @return {number}
+     *         Returns the resulting fontSize of a word. If minFontSize is
+     *         larger then maxFontSize the result will equal minFontSize.
      */
     deriveFontSize: function deriveFontSize(
         relativeWeight,
@@ -539,6 +763,7 @@ var wordCloudSeries = {
         var weight = isNumber(relativeWeight) ? relativeWeight : 0,
             max = isNumber(maxFontSize) ? maxFontSize : 1,
             min = isNumber(minFontSize) ? minFontSize : 1;
+
         return Math.floor(Math.max(min, weight * max));
     },
     drawPoints: function () {
@@ -550,13 +775,14 @@ var wordCloudSeries = {
             group = series.group,
             options = series.options,
             animation = options.animation,
+            allowExtendPlayingField = options.allowExtendPlayingField,
             renderer = chart.renderer,
             testElement = renderer.text().add(group),
             placed = [],
             placementStrategy = series.placementStrategy[
                 options.placementStrategy
             ],
-            spiral = series.spirals[options.spiral],
+            spiral,
             rotation = options.rotation,
             scale,
             weights = series.points
@@ -572,7 +798,7 @@ var wordCloudSeries = {
 
         // Get the dimensions for each word.
         // Used in calculating the playing field.
-        each(data, function (point) {
+        data.forEach(function (point) {
             var relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -598,9 +824,11 @@ var wordCloudSeries = {
 
         // Calculate the playing field.
         field = getPlayingField(xAxis.len, yAxis.len, data);
-
+        spiral = getSpiral(series.spirals[options.spiral], {
+            field: field
+        });
         // Draw all the points.
-        each(data, function (point) {
+        data.forEach(function (point) {
             var relativeWeight = 1 / maxWeight * point.weight,
                 fontSize = series.deriveFontSize(
                     relativeWeight,
@@ -608,8 +836,7 @@ var wordCloudSeries = {
                     options.minFontSize
                 ),
                 css = extend({
-                    fontSize: fontSize + 'px',
-                    fill: point.color
+                    fontSize: fontSize + 'px'
                 }, options.style),
                 placement = placementStrategy(point, {
                     data: data,
@@ -617,14 +844,17 @@ var wordCloudSeries = {
                     placed: placed,
                     rotation: rotation
                 }),
-                attr = {
-                    align: 'center',
-                    'alignment-baseline': 'middle',
-                    x: placement.x,
-                    y: placement.y,
-                    text: point.name,
-                    rotation: placement.rotation
-                },
+                attr = extend(
+                    series.pointAttribs(point, point.selected && 'select'),
+                    {
+                        align: 'center',
+                        'alignment-baseline': 'middle',
+                        x: placement.x,
+                        y: placement.y,
+                        text: point.name,
+                        rotation: placement.rotation
+                    }
+                ),
                 polygon = getPolygon(
                     placement.x,
                     placement.y,
@@ -643,10 +873,23 @@ var wordCloudSeries = {
                 }),
                 animate;
 
-            /**
-             * Check if point was placed, if so delete it,
-             * otherwise place it on the correct positions.
-             */
+            // If there is no space for the word, extend the playing field.
+            if (!delta && allowExtendPlayingField) {
+                // Extend the playing field to fit the word.
+                field = extendPlayingField(field, rectangle);
+
+                // Run intersection testing one more time to place the word.
+                delta = intersectionTesting(point, {
+                    rectangle: rectangle,
+                    polygon: polygon,
+                    field: field,
+                    placed: placed,
+                    spiral: spiral,
+                    rotation: placement.rotation
+                });
+            }
+            // Check if point was placed, if so delete it, otherwise place it on
+            // the correct positions.
             if (isObject(delta)) {
                 attr.x += delta.x;
                 attr.y += delta.y;
@@ -679,8 +922,8 @@ var wordCloudSeries = {
             }
 
             point.draw({
-                animate: animate,
-                attr: attr,
+                animatableAttribs: animate,
+                attribs: attr,
                 css: css,
                 group: group,
                 renderer: renderer,
@@ -692,9 +935,7 @@ var wordCloudSeries = {
         // Destroy the element after use.
         testElement = testElement.destroy();
 
-        /**
-         * Scale the series group to fit within the plotArea.
-         */
+        // Scale the series group to fit within the plotArea.
         scale = getScale(xAxis.len, yAxis.len, field);
         series.group.attr({
             scaleX: scale,
@@ -703,6 +944,7 @@ var wordCloudSeries = {
     },
     hasData: function () {
         var series = this;
+
         return (
             isObject(series) &&
             series.visible === true &&
@@ -710,23 +952,23 @@ var wordCloudSeries = {
             series.points.length > 0
         );
     },
-    /**
-     * Strategies used for deciding rotation and initial position of a word.
-     * To implement a custom strategy, have a look at the function
-     *     randomPlacement for example.
-     */
+    // Strategies used for deciding rotation and initial position of a word. To
+    // implement a custom strategy, have a look at the function random for
+    // example.
     placementStrategy: {
-        random: function randomPlacement(point, options) {
+        random: function (point, options) {
             var field = options.field,
                 r = options.rotation;
+
             return {
                 x: getRandomPosition(field.width) - (field.width / 2),
                 y: getRandomPosition(field.height) - (field.height / 2),
                 rotation: getRotation(r.orientations, point.index, r.from, r.to)
             };
         },
-        center: function centerPlacement(point, options) {
+        center: function (point, options) {
             var r = options.rotation;
+
             return {
                 x: 0,
                 y: 0,
@@ -735,18 +977,16 @@ var wordCloudSeries = {
         }
     },
     pointArrayMap: ['weight'],
-    /**
-     * Spirals used for placing a word after the inital position experienced a
-     *     collision with either another word or the borders.
-     * To implement a custom spiral, look at the function archimedeanSpiral for
-     *    example.
-     */
+    // Spirals used for placing a word after the initial position experienced a
+    // collision with either another word or the borders. To implement a custom
+    // spiral, look at the function archimedeanSpiral for example.
     spirals: {
         'archimedean': archimedeanSpiral,
         'rectangular': rectangularSpiral,
         'square': squareSpiral
     },
     utils: {
+        extendPlayingField: extendPlayingField,
         getRotation: getRotation,
         isPolygonsColliding: isPolygonsColliding,
         rotate2DToOrigin: polygon.rotate2DToOrigin,
@@ -763,6 +1003,7 @@ var wordCloudSeries = {
             height = yAxis ? yAxis.len : chart.plotHeight,
             x = xAxis ? xAxis.left : chart.plotLeft,
             y = yAxis ? yAxis.top : chart.plotTop;
+
         return {
             translateX: x + (width / 2),
             translateY: y + (height / 2),
@@ -772,85 +1013,87 @@ var wordCloudSeries = {
     }
 };
 
-/**
- * Properties of the Sunburst series.
- */
+// Properties of the Sunburst series.
 var wordCloudPoint = {
     draw: drawPoint,
     shouldDraw: function shouldDraw() {
         var point = this;
+
         return !point.isNull;
     },
     weight: 1
 };
 
 /**
- * A `wordcloud` series. If the [type](#series.wordcloud.type) option is
- * not specified, it is inherited from [chart.type](#chart.type).
+ * A `wordcloud` series. If the [type](#series.wordcloud.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @extends series,plotOptions.wordcloud
- * @product highcharts
+ * @extends   series,plotOptions.wordcloud
+ * @product   highcharts
  * @apioption series.wordcloud
  */
 
 /**
- * An array of data points for the series. For the `wordcloud` series
- * type, points can be given in the following ways:
+ * An array of data points for the series. For the `wordcloud` series type,
+ * points can be given in the following ways:
  *
- * 1.  An array of arrays with 2 values. In this case, the values
- * correspond to `name,weight`.
+ * 1. An array of arrays with 2 values. In this case, the values correspond to
+ *    `name,weight`.
+ *    ```js
+ *    data: [
+ *        ['Lorem', 4],
+ *        ['Ipsum', 1]
+ *    ]
+ *    ```
  *
- *  ```js
- *     data: [
- *         ['Lorem', 4],
- *         ['Ipsum', 1]
- *     ]
- *  ```
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.arearange.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        name: "Lorem",
+ *        weight: 4
+ *    }, {
+ *        name: "Ipsum",
+ *        weight: 1
+ *    }]
+ *    ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series'
- * [turboThreshold](#series.arearange.turboThreshold), this option is not
- * available.
- *
- *  ```js
- *     data: [{
- *         name: "Lorem",
- *         weight: 4
- *     }, {
- *         name: "Ipsum",
- *         weight: 1
- *     }]
- *  ```
- *
- * @type {Array<Object|Array>}
- * @extends series.line.data
- * @excluding drilldown,marker,x,y
- * @product highcharts
+ * @type      {Array<Array<string,number>|*>}
+ * @extends   series.line.data
+ * @excluding drilldown, marker, x, y
+ * @product   highcharts
  * @apioption series.wordcloud.data
  */
 
 /**
-* The name decides the text for a word.
-*
-* @type {String}
-* @default undefined
-* @since 6.0.0
-* @product highcharts
-* @apioption series.sunburst.data.name
-*/
+ * The name decides the text for a word.
+ *
+ * @type      {string}
+ * @since     6.0.0
+ * @product   highcharts
+ * @apioption series.sunburst.data.name
+ */
 
 /**
-* The weighting of a word. The weight decides the relative size of a word
-* compared to the rest of the collection.
-*
-* @type {Number}
-* @default undefined
-* @since 6.0.0
-* @product highcharts
-* @apioption series.sunburst.data.weight
-*/
+ * The weighting of a word. The weight decides the relative size of a word
+ * compared to the rest of the collection.
+ *
+ * @type      {number}
+ * @since     6.0.0
+ * @product   highcharts
+ * @apioption series.sunburst.data.weight
+ */
+
+/**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.wordcloud
+ *
+ * @augments Highcharts.Series
+ */
 H.seriesType(
     'wordcloud',
     'column',

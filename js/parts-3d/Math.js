@@ -1,14 +1,15 @@
-/**
- * (c) 2010-2017 Torstein Honsi
+/* *
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
-/**
- *    Mathematical Functionility
- */
+
+// Mathematical Functionility
 var deg2rad = H.deg2rad,
     pick = H.pick;
 
@@ -36,6 +37,9 @@ var deg2rad = H.deg2rad,
  * |      cosB     |   0    |    - sinB     |     | x |     | px |
  * | - sinA * sinB |  cosA  | - sinA * cosB |  x  | y |  =  | py |
  * |  cosA * sinB  |  sinA  |  cosA * cosB  |     | z |     | pz |
+ *
+ * @private
+ * @function rotate3D
  */
 /* eslint-enable max-len */
 function rotate3D(x, y, z, angles) {
@@ -52,8 +56,9 @@ function rotate3D(x, y, z, angles) {
 // needed also outside of perspective() function (#8042).
 H.perspective3D = function (coordinate, origin, distance) {
     var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
-    distance / (coordinate.z + origin.z + distance) :
-    1;
+        distance / (coordinate.z + origin.z + distance) :
+        1;
+
     return {
         x: coordinate.x * projection,
         y: coordinate.y * projection
@@ -62,12 +67,21 @@ H.perspective3D = function (coordinate, origin, distance) {
 
 /**
  * Transforms a given array of points according to the angles in chart.options.
- * Parameters:
- *        - points: the array of points
- *        - chart: the chart
- *        - insidePlotArea: wether to verifiy the points are inside the plotArea
- * Returns:
- *        - an array of transformed points
+ *
+ * @private
+ * @function Highcharts.perspective
+ *
+ * @param {Array<Highcharts.Point>} points
+ *        The array of points
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart
+ *
+ * @param {boolean} [insidePlotArea]
+ *        Wether to verifiy the points are inside the plotArea
+ *
+ * @return {Array<Highcharts.Point>}
+ *         An array of transformed points
  */
 H.perspective = function (points, chart, insidePlotArea) {
     var options3d = chart.options.chart.options3d,
@@ -94,7 +108,7 @@ H.perspective = function (points, chart, insidePlotArea) {
     }
 
     // Transform each point
-    return H.map(points, function (point) {
+    return points.map(function (point) {
         var rotated = rotate3D(
                 (inverted ? point.y : point.x) - origin.x,
                 (inverted ? point.x : point.y) - origin.y,
@@ -120,11 +134,18 @@ H.perspective = function (points, chart, insidePlotArea) {
 /**
  * Calculate a distance from camera to points - made for calculating zIndex of
  * scatter points.
- * Parameters:
- *        - coordinates: The coordinates of the specific point
- *        - chart: the chart
- * Returns:
- *        - a distance from camera to point
+ *
+ * @private
+ * @function Highcharts.pointCameraDistance
+ *
+ * @param {object} coordinates
+ *        The coordinates of the specific point
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart
+ *
+ * @return {number}
+ *         A distance from camera to point
  */
 H.pointCameraDistance = function (coordinates, chart) {
     var options3d = chart.options.chart.options3d,
@@ -139,17 +160,26 @@ H.pointCameraDistance = function (coordinates, chart) {
             Math.pow(cameraPosition.y - coordinates.plotY, 2) +
             Math.pow(cameraPosition.z - coordinates.plotZ, 2)
         );
+
     return distance;
 };
 
 /**
  * Calculate area of a 2D polygon using Shoelace algorithm
  * http://en.wikipedia.org/wiki/Shoelace_formula
+ *
+ * @private
+ * @function Highcharts.shapeArea
+ *
+ * @param {Array<object>} vertexes
+ *
+ * @return {number}
  */
 H.shapeArea = function (vertexes) {
     var area = 0,
         i,
         j;
+
     for (i = 0; i < vertexes.length; i++) {
         j = (i + 1) % vertexes.length;
         area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
@@ -159,8 +189,18 @@ H.shapeArea = function (vertexes) {
 
 /**
  * Calculate area of a 3D polygon after perspective projection
+ *
+ * @private
+ * @function Highcharts.shapeArea3d
+ *
+ * @param {Array<object>} vertexes
+ *
+ * @param {Highcharts.Chart} chart
+ *
+ * @param {boolean} [insidePlotArea]
+ *
+ * @return {number}
  */
 H.shapeArea3d = function (vertexes, chart, insidePlotArea) {
     return H.shapeArea(H.perspective(vertexes, chart, insidePlotArea));
 };
-

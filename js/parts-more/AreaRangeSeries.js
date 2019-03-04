@@ -1,16 +1,80 @@
-/**
- * (c) 2010-2017 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
+/**
+ * Extended data labels for range series types. Range series data labels use no
+ * `x` and `y` options. Instead, they have `xLow`, `xHigh`, `yLow` and `yHigh`
+ * options to allow the higher and lower data label sets individually.
+ *
+ * @interface Highcharts.PlotAreaRangeDataLabelsOptionsObject
+ * @extends Highcharts.DataLabelsOptionsObject
+ * @since 2.3.0
+ * @product highcharts highstock
+ *//**
+ * X offset of the lower data labels relative to the point value.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
+ *      Data labels on range series
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
+ *      Data labels on range series
+ *
+ * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#xLow
+ * @type {number|undefined}
+ * @default 0
+ * @since 2.3.0
+ * @product highcharts highstock
+ *//**
+ * X offset of the higher data labels relative to the point value.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
+ *      Data labels on range series
+ *
+ * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#xHigh
+ * @type {number|undefined}
+ * @default 0
+ * @since 2.3.0
+ * @product highcharts highstock
+ *//**
+ * Y offset of the lower data labels relative to the point value.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
+ *      Data labels on range series
+ *
+ * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#yLow
+ * @type {number|undefined}
+ * @default 0
+ * @since 2.3.0
+ * @product highcharts highstock
+ *//**
+ * Y offset of the higher data labels relative to the point value.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
+ *      Data labels on range series
+ *
+ * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#yHigh
+ * @type {number|undefined}
+ * @default 0
+ * @since 2.3.0
+ * @product highcharts highstock
  */
+
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
-var each = H.each,
-    noop = H.noop,
+
+var noop = H.noop,
     pick = H.pick,
+    extend = H.extend,
+    isArray = H.isArray,
     defined = H.defined,
     Series = H.Series,
     seriesType = H.seriesType,
@@ -19,28 +83,28 @@ var each = H.each,
     pointProto = H.Point.prototype;
 
 /**
- * The area range series is a carteseian series with higher and lower values
- * for each point along an X axis, where the area between the values is shaded.
+ * The area range series is a carteseian series with higher and lower values for
+ * each point along an X axis, where the area between the values is shaded.
  * Requires `highcharts-more.js`.
+ *
+ * @sample {highcharts} highcharts/demo/arearange/
+ *         Area range chart
+ * @sample {highstock} stock/demo/arearange/
+ *         Area range chart
  *
  * @extends      plotOptions.area
  * @product      highcharts highstock
- * @sample       {highcharts} highcharts/demo/arearange/
- *               Area range chart
- * @sample       {highstock} stock/demo/arearange/
- *               Area range chart
- * @excluding    stack,stacking
+ * @excluding    stack, stacking
  * @optionparent plotOptions.arearange
  */
 seriesType('arearange', 'area', {
-    /*= if (build.classic) { =*/
 
     /**
      * Whether to apply a drop shadow to the graph line. Since 2.3 the shadow
      * can be an object configuration containing `color`, `offsetX`, `offsetY`,
      * `opacity` and `width`.
      *
-     * @type      {Boolean|Object}
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
      * @product   highcharts
      * @apioption plotOptions.arearange.shadow
      */
@@ -52,17 +116,12 @@ seriesType('arearange', 'area', {
      * @product highcharts highstock
      */
     lineWidth: 1,
-    /*= } =*/
 
     threshold: null,
 
     tooltip: {
-        /*= if (!build.classic) { =*/
-        pointFormat: '<span class="highcharts-color-{series.colorIndex}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>',
-        /*= } else { =*/
-
-        pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // eslint-disable-line no-dupe-keys
-        /*= } =*/
+        pointFormat: '<span style="color:{series.color}">\u25CF</span> ' +
+            '{series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
     },
 
     /**
@@ -75,86 +134,36 @@ seriesType('arearange', 'area', {
     trackByArea: true,
 
     /**
-     * Extended data labels for range series types. Range series data labels
-     * have no `x` and `y` options. Instead, they have `xLow`, `xHigh`,
-     * `yLow` and `yHigh` options to allow the higher and lower data label
-     * sets individually.
-     *
-     * @type      {Object}
-     * @extends   plotOptions.series.dataLabels
-     * @excluding x,y
-     * @since     2.3.0
-     * @product   highcharts highstock
+     * @type {Highcharts.DataLabelsOptionsObject|Highcharts.PlotAreaRangeDataLabelsOptionsObject}
      */
     dataLabels: {
-
+        /** @ignore-option */
         align: null,
+        /** @ignore-option */
         verticalAlign: null,
-
-        /**
-         * X offset of the lower data labels relative to the point value.
-         *
-         * @sample  {highcharts} highcharts/plotoptions/arearange-datalabels/
-         *          Data labels on range series
-         * @sample  {highstock} highcharts/plotoptions/arearange-datalabels/
-         *          Data labels on range series
-         * @since   2.3.0
-         * @product highcharts highstock
-         */
+        /** @ignore-option */
         xLow: 0,
-
-        /**
-         * X offset of the higher data labels relative to the point value.
-         *
-         * @sample  {highcharts|highstock}
-         *          highcharts/plotoptions/arearange-datalabels/
-         *          Data labels on range series
-         * @since   2.3.0
-         * @product highcharts highstock
-         */
+        /** @ignore-option */
         xHigh: 0,
-
-        /**
-         * Y offset of the lower data labels relative to the point value.
-         *
-         * @sample  {highcharts|highstock}
-         *          highcharts/plotoptions/arearange-datalabels/
-         *          Data labels on range series
-         * @default 16
-         * @since   2.3.0
-         * @product highcharts highstock
-         */
+        /** @ignore-option */
         yLow: 0,
-
-        /**
-         * Y offset of the higher data labels relative to the point value.
-         *
-         * @sample  {highcharts|highstock}
-         *          highcharts/plotoptions/arearange-datalabels/
-         *          Data labels on range series
-         * @default -6
-         * @since   2.3.0
-         * @product highcharts highstock
-         */
+        /** @ignore-option */
         yHigh: 0
     }
 
 // Prototype members
 }, {
     pointArrayMap: ['low', 'high'],
-    dataLabelCollections: ['dataLabel', 'dataLabelUpper'],
     toYData: function (point) {
         return [point.low, point.high];
     },
     pointValKey: 'low',
     deferTranslatePolar: true,
 
-    /**
-     * Translate a point's plotHigh from the internal angle and radius
-     * measures to true plotHigh coordinates. This is an addition of the
-     * toXY method found in Polar.js, because it runs too early for
-     * arearanges to be considered (#3419).
-     */
+    // Translate a point's plotHigh from the internal angle and radius measures
+    // to true plotHigh coordinates. This is an addition of the toXY method
+    // found in Polar.js, because it runs too early for arearanges to be
+    // considered (#3419).
     highToXY: function (point) {
         // Find the polar plotX and plotY
         var chart = this.chart,
@@ -162,14 +171,13 @@ seriesType('arearange', 'area', {
                 point.rectPlotX,
                 this.yAxis.len - point.plotHigh
             );
+
         point.plotHighX = xy.x - chart.plotLeft;
         point.plotHigh = xy.y - chart.plotTop;
         point.plotLowX = point.plotX;
     },
 
-    /**
-     * Translate data points from raw values x and y to plotX and plotY
-     */
+    // Translate data points from raw values x and y to plotX and plotY.
     translate: function () {
         var series = this,
             yAxis = series.yAxis,
@@ -178,7 +186,7 @@ seriesType('arearange', 'area', {
         seriesTypes.area.prototype.translate.apply(series);
 
         // Set plotLow and plotHigh
-        each(series.points, function (point) {
+        series.points.forEach(function (point) {
 
             var low = point.low,
                 high = point.high,
@@ -204,7 +212,7 @@ seriesType('arearange', 'area', {
 
         // Postprocess plotHigh
         if (this.chart.polar) {
-            each(this.points, function (point) {
+            this.points.forEach(function (point) {
                 series.highToXY(point);
                 point.tooltipPos = [
                     (point.plotHighX + point.plotLowX) / 2,
@@ -214,10 +222,8 @@ seriesType('arearange', 'area', {
         }
     },
 
-    /**
-     * Extend the line series' getSegmentPath method by applying the segment
-     * path to both lower and higher values of the range
-     */
+    // Extend the line series' getSegmentPath method by applying the segment
+    // path to both lower and higher values of the range.
     getGraphPath: function (points) {
 
         var highPoints = [],
@@ -238,11 +244,9 @@ seriesType('arearange', 'area', {
         points = points || this.points;
         i = points.length;
 
-        /**
-         * Create the top line and the top part of the area fill. The area
-         * fill compensates for null points by drawing down to the lower graph,
-         * moving across the null gap and starting again at the lower graph.
-         */
+        // Create the top line and the top part of the area fill. The area fill
+        // compensates for null points by drawing down to the lower graph,
+        // moving across the null gap and starting again at the lower graph.
         i = points.length;
         while (i--) {
             point = points[i];
@@ -324,37 +328,59 @@ seriesType('arearange', 'area', {
         return linePath;
     },
 
-    /**
-     * Extend the basic drawDataLabels method by running it for both lower
-     * and higher values.
-     */
+    // Extend the basic drawDataLabels method by running it for both lower and
+    // higher values.
     drawDataLabels: function () {
 
-        var data = this.data,
+        var data = this.points,
             length = data.length,
             i,
             originalDataLabels = [],
             dataLabelOptions = this.options.dataLabels,
-            align = dataLabelOptions.align,
-            verticalAlign = dataLabelOptions.verticalAlign,
-            inside = dataLabelOptions.inside,
             point,
             up,
-            inverted = this.chart.inverted;
+            inverted = this.chart.inverted,
+            upperDataLabelOptions,
+            lowerDataLabelOptions;
 
-        if (dataLabelOptions.enabled || this._hasPointLabels) {
+        // Split into upper and lower options. If data labels is an array, the
+        // first element is the upper label, the second is the lower.
+        //
+        // TODO: We want to change this and allow multiple labels for both upper
+        // and lower values in the future - introducing some options for which
+        // point value to use as Y for the dataLabel, so that this could be
+        // handled in Series.drawDataLabels. This would also improve performance
+        // since we now have to loop over all the points multiple times to work
+        // around the data label logic.
+        if (isArray(dataLabelOptions)) {
+            if (dataLabelOptions.length > 1) {
+                upperDataLabelOptions = dataLabelOptions[0];
+                lowerDataLabelOptions = dataLabelOptions[1];
+            } else {
+                upperDataLabelOptions = dataLabelOptions[0];
+                lowerDataLabelOptions = { enabled: false };
+            }
+        } else {
+            upperDataLabelOptions = extend({}, dataLabelOptions); // Make copy;
+            upperDataLabelOptions.x = dataLabelOptions.xHigh;
+            upperDataLabelOptions.y = dataLabelOptions.yHigh;
+            lowerDataLabelOptions = extend({}, dataLabelOptions); // Make copy
+            lowerDataLabelOptions.x = dataLabelOptions.xLow;
+            lowerDataLabelOptions.y = dataLabelOptions.yLow;
+        }
 
-            // Step 1: set preliminary values for plotY and dataLabel
+        // Draw upper labels
+        if (upperDataLabelOptions.enabled || this._hasPointLabels) {
+            // Set preliminary values for plotY and dataLabel
             // and draw the upper labels
             i = length;
             while (i--) {
                 point = data[i];
                 if (point) {
-                    up = inside ?
+                    up = upperDataLabelOptions.inside ?
                         point.plotHigh < point.plotLow :
                         point.plotHigh > point.plotLow;
 
-                    // Set preliminary values
                     point.y = point.high;
                     point._plotY = point.plotY;
                     point.plotY = point.plotHigh;
@@ -367,70 +393,90 @@ seriesType('arearange', 'area', {
                     // Set the default offset
                     point.below = up;
                     if (inverted) {
-                        if (!align) {
-                            dataLabelOptions.align = up ? 'right' : 'left';
+                        if (!upperDataLabelOptions.align) {
+                            upperDataLabelOptions.align = up ? 'right' : 'left';
                         }
                     } else {
-                        if (!verticalAlign) {
-                            dataLabelOptions.verticalAlign = up ?
+                        if (!upperDataLabelOptions.verticalAlign) {
+                            upperDataLabelOptions.verticalAlign = up ?
                                 'top' :
                                 'bottom';
                         }
                     }
-
-                    dataLabelOptions.x = dataLabelOptions.xHigh;
-                    dataLabelOptions.y = dataLabelOptions.yHigh;
                 }
             }
+
+            this.options.dataLabels = upperDataLabelOptions;
 
             if (seriesProto.drawDataLabels) {
                 seriesProto.drawDataLabels.apply(this, arguments); // #1209
             }
 
-            // Step 2: reorganize and handle data labels for the lower values
+            // Reset state after the upper labels were created. Move
+            // it to point.dataLabelUpper and reassign the originals.
+            // We do this here to support not drawing a lower label.
             i = length;
             while (i--) {
                 point = data[i];
                 if (point) {
-                    up = inside ?
-                        point.plotHigh < point.plotLow :
-                        point.plotHigh > point.plotLow;
-
-                    // Move the generated labels from step 1, and reassign
-                    // the original data labels
                     point.dataLabelUpper = point.dataLabel;
                     point.dataLabel = originalDataLabels[i];
-
-                    // Reset values
+                    delete point.dataLabels;
                     point.y = point.low;
                     point.plotY = point._plotY;
+                }
+            }
+        }
+
+        // Draw lower labels
+        if (lowerDataLabelOptions.enabled || this._hasPointLabels) {
+            i = length;
+            while (i--) {
+                point = data[i];
+                if (point) {
+                    up = lowerDataLabelOptions.inside ?
+                        point.plotHigh < point.plotLow :
+                        point.plotHigh > point.plotLow;
 
                     // Set the default offset
                     point.below = !up;
                     if (inverted) {
-                        if (!align) {
-                            dataLabelOptions.align = up ? 'left' : 'right';
+                        if (!lowerDataLabelOptions.align) {
+                            lowerDataLabelOptions.align = up ? 'left' : 'right';
                         }
                     } else {
-                        if (!verticalAlign) {
-                            dataLabelOptions.verticalAlign = up ?
+                        if (!lowerDataLabelOptions.verticalAlign) {
+                            lowerDataLabelOptions.verticalAlign = up ?
                                 'bottom' :
                                 'top';
                         }
-
                     }
-
-                    dataLabelOptions.x = dataLabelOptions.xLow;
-                    dataLabelOptions.y = dataLabelOptions.yLow;
                 }
             }
+
+            this.options.dataLabels = lowerDataLabelOptions;
+
             if (seriesProto.drawDataLabels) {
                 seriesProto.drawDataLabels.apply(this, arguments);
             }
         }
 
-        dataLabelOptions.align = align;
-        dataLabelOptions.verticalAlign = verticalAlign;
+        // Merge upper and lower into point.dataLabels for later destroying
+        if (upperDataLabelOptions.enabled) {
+            i = length;
+            while (i--) {
+                point = data[i];
+                if (point) {
+                    point.dataLabels = [point.dataLabelUpper, point.dataLabel]
+                        .filter(function (label) {
+                            return !!label;
+                        });
+                }
+            }
+        }
+
+        // Reset options
+        this.options.dataLabels = dataLabelOptions;
     },
 
     alignDataLabel: function () {
@@ -584,7 +630,7 @@ seriesType('arearange', 'area', {
     destroyElements: function () {
         var graphics = ['lowerGraphic', 'upperGraphic'];
 
-        each(graphics, function (graphicName) {
+        graphics.forEach(function (graphicName) {
             if (this[graphicName]) {
                 this[graphicName] = this[graphicName].destroy();
             }
@@ -599,44 +645,41 @@ seriesType('arearange', 'area', {
 
 
 /**
- * A `arearange` series. If the [type](#series.arearange.type) option
- * is not specified, it is inherited from [chart.type](#chart.type).
+ * A `arearange` series. If the [type](#series.arearange.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
  *
  *
- * @type      {Object}
  * @extends   series,plotOptions.arearange
- * @excluding dataParser,dataURL,stack,stacking
+ * @excluding dataParser, dataURL, stack, stacking
  * @product   highcharts highstock
  * @apioption series.arearange
  */
 
 /**
- * An array of data points for the series. For the `arearange` series
- * type, points can be given in the following ways:
+ * An array of data points for the series. For the `arearange` series type,
+ * points can be given in the following ways:
  *
  * 1.  An array of arrays with 3 or 2 values. In this case, the values
- * correspond to `x,low,high`. If the first value is a string, it is
- * applied as the name of the point, and the `x` value is inferred.
- * The `x` value can also be omitted, in which case the inner arrays
- * should be of length 2\. Then the `x` value is automatically calculated,
- * either starting at 0 and incremented by 1, or from `pointStart`
- * and `pointInterval` given in the series options.
- *
- *  ```js
+ *     correspond to `x,low,high`. If the first value is a string, it is
+ *     applied as the name of the point, and the `x` value is inferred.
+ *     The `x` value can also be omitted, in which case the inner arrays
+ *     should be of length 2\. Then the `x` value is automatically calculated,
+ *     either starting at 0 and incremented by 1, or from `pointStart`
+ *     and `pointInterval` given in the series options.
+ *     ```js
  *     data: [
  *         [0, 8, 3],
  *         [1, 1, 1],
  *         [2, 6, 8]
  *     ]
- *  ```
+ *     ```
  *
- * 2.  An array of objects with named values. The objects are point
- * configuration objects as seen below. If the total number of data
- * points exceeds the series'
- * [turboThreshold](#series.arearange.turboThreshold),
- * this option is not available.
- *
- *  ```js
+ * 2.  An array of objects with named values. The following snippet shows only a
+ *     few settings, see the complete options set below. If the total number of
+ *     data points exceeds the series'
+ *     [turboThreshold](#series.arearange.turboThreshold),
+ *     this option is not available.
+ *     ```js
  *     data: [{
  *         x: 1,
  *         low: 9,
@@ -650,21 +693,20 @@ seriesType('arearange', 'area', {
  *         name: "Point1",
  *         color: "#FF00FF"
  *     }]
- *  ```
+ *     ```
  *
- * @type      {Array<Object|Array>}
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.line.data
- * @excluding marker,y
- * @sample    {highcharts} highcharts/chart/reflow-true/
- *            Numerical values
- * @sample    {highcharts} highcharts/series/data-array-of-arrays/
- *            Arrays of numeric x and y
- * @sample    {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *            Arrays of datetime x and y
- * @sample    {highcharts} highcharts/series/data-array-of-name-value/
- *            Arrays of point.name and y
- * @sample    {highcharts} highcharts/series/data-array-of-objects/
- *            Config objects
+ * @excluding marker, y
  * @product   highcharts highstock
  * @apioption series.arearange.data
  */
@@ -672,7 +714,7 @@ seriesType('arearange', 'area', {
 /**
  * The high or maximum value for each data point.
  *
- * @type      {Number}
+ * @type      {number}
  * @product   highcharts highstock
  * @apioption series.arearange.data.high
  */
@@ -680,13 +722,13 @@ seriesType('arearange', 'area', {
 /**
  * The low or minimum value for each data point.
  *
- * @type      {Number}
+ * @type      {number}
  * @product   highcharts highstock
  * @apioption series.arearange.data.low
  */
 
- /**
- * @excluding x,y
+/**
+ * @excluding x, y
  * @product   highcharts highstock
  * @apioption series.arearange.dataLabels
  */
