@@ -25,7 +25,8 @@ var minute = 1000 * 60,
                 announcementFormatter: function (allSeries, newSeries, newPoint) {
                     if (newPoint) {
                         return 'Account balance updated. New data point: Time ' +
-                            newPoint.getA11yTimeDescription() + ', $' + newPoint.y + '.';
+                            newPoint.getA11yTimeDescription() + ', $' +
+                            Highcharts.numberFormat(newPoint.y, 0, '', ',') + '.';
                     }
                     return false;
                 }

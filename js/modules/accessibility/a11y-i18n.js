@@ -340,6 +340,18 @@ H.setOptions({
             /* eslint-enable max-len */
 
             /**
+             * Thousands separator to use when formatting numbers for screen
+             * readers. Note that many screen readers will not handle space as a
+             * thousands separator, and will consider "11 700" as two numbers.
+             *
+             * Set to `null` to use the separator defined in
+             * [lang.thousandsSep](lang.thousandsSep).
+             *
+             * @since next
+             */
+            thousandsSep: ',',
+
+            /**
              * Title element text for the chart SVG element. Leave this
              * empty to disable adding the title element. Browsers will display
              * this content when hovering over elements in the chart. Assistive

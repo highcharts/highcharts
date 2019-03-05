@@ -1090,6 +1090,20 @@ H.extend(SeriesComponent.prototype, {
             description = point.options && point.options.accessibility &&
                 point.options.accessibility.description,
             timeDesc = point.getA11yTimeDescription(),
+            numberFormat = function (value) {
+                if (H.isNumber(value)) {
+                    var lang = H.defaultOptions.lang;
+                    return H.numberFormat(
+                        value,
+                        a11yOptions.pointValueDecimals ||
+                            tooltipOptions.valueDecimals || -1,
+                        lang.decimalPoint,
+                        lang.accessibility.thousandsSep ||
+                            lang.thousandsSep
+                    );
+                }
+                return value;
+            },
             pointCategory = series.xAxis && series.xAxis.categories &&
                     point.category !== undefined && '' + point.category;
 
@@ -1101,13 +1115,14 @@ H.extend(SeriesComponent.prototype, {
             valueDesc = point.series.pointArrayMap ?
                 point.series.pointArrayMap.reduce(function (desc, key) {
                     return desc + (desc.length ? ', ' : '') + key + ': ' +
-                        valuePrefix + pick(point[key], point.options[key]) +
-                        valueSuffix;
+                    valuePrefix + numberFormat(
+                        pick(point[key], point.options[key])
+                    ) + valueSuffix;
                 }, '') :
                 (
                     point.value !== undefined ?
-                        valuePrefix + point.value + valueSuffix :
-                        valuePrefix + point.y + valueSuffix
+                        valuePrefix + numberFormat(point.value) + valueSuffix :
+                        valuePrefix + numberFormat(point.y) + valueSuffix
                 );
 
         return (point.index !== undefined ? (point.index + 1) + '. ' : '') +

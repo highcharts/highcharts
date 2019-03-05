@@ -189,6 +189,15 @@ var options = {
          */
 
         /**
+         * Decimals to use for the values in the point descriptions. Uses
+         * [tooltip.valueDecimals](#tooltip.valueDecimals) if not defined.
+         *
+         * @type      {string}
+         * @since     next
+         * @apioption accessibility.pointValueDecimals
+         */
+
+        /**
          * Formatter function to use instead of the default for point
          * descriptions.
          * Receives one argument, `point`, referring to the point to describe.
