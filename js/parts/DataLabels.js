@@ -1812,10 +1812,9 @@ if (seriesTypes.column) {
             series = point.series,
             // data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
-            yAxis = series.yAxis,
             below = pick(
                 point.below, // range series
-                point.plotY > pick(this.translatedThreshold, yAxis && yAxis.len)
+                point.plotY > pick(this.translatedThreshold, series.yAxis.len)
             ),
             // draw it inside the box?
             inside = pick(options.inside, !!this.options.stacking),
@@ -1829,12 +1828,12 @@ if (seriesTypes.column) {
                 alignTo.height += alignTo.y;
                 alignTo.y = 0;
             }
-            overshoot = yAxis ? alignTo.y + alignTo.height - yAxis.len : 0;
+            overshoot = alignTo.y + alignTo.height - series.yAxis.len;
             if (overshoot > 0) {
                 alignTo.height -= overshoot;
             }
 
-            if (inverted && yAxis) {
+            if (inverted) {
                 alignTo = {
                     x: series.yAxis.len - alignTo.y - alignTo.height,
                     y: series.xAxis.len - alignTo.x - alignTo.width,
