@@ -930,7 +930,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highcharts|highstock} highcharts/xaxis/labels-autorotation-0-90/
              *         Custom graded auto rotation
              *
-             * @type      {Array<number>}
+             * @type      {Array<number>|false}
              * @default   [-45]
              * @since     4.1.0
              * @product   highcharts highstock gantt
@@ -4453,14 +4453,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 axis.min < threshold &&
                 axis.dataMin >= threshold
             ) {
-                axis.min = threshold;
+                axis.min = axis.options.minRange ?
+                    axis.max - axis.minRange :
+                    threshold;
 
             } else if (
                 !defined(hardMax) &&
                 axis.max > threshold &&
                 axis.dataMax <= threshold
             ) {
-                axis.max = threshold;
+                axis.max = axis.options.minRange ?
+                    axis.min + axis.minRange :
+                    threshold;
             }
         }
 

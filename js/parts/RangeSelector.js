@@ -273,7 +273,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/styling/
          *         Styling the buttons and inputs
          *
-         * @type {Highcharts.SVGAttributes}
+         * @type {Highcharts.RangeSelectorButtonThemeOptionsObject}
          */
         buttonTheme: {
             /** @ignore */
@@ -1237,6 +1237,7 @@ RangeSelector.prototype = {
                 // clicking inside the SVG (#4710)
                 updateExtremes();
                 rangeSelector.hideInput(name);
+                input.blur(); // #4606
             }
         };
 

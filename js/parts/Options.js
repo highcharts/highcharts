@@ -200,6 +200,9 @@
  * @name Highcharts.TooltipFormatterContextObject#point
  * @type {Highcharts.Point}
  *//**
+ * @name Highcharts.TooltipFormatterContextObject#points
+ * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
+ *//**
  * @name Highcharts.TooltipFormatterContextObject#series
  * @type {Highcharts.Series}
  *//**
@@ -570,9 +573,9 @@ H.defaultOptions = {
          *
          * @see [mapData](#series.map.mapData)
          *
-         * @sample    map/demo/geojson
+         * @sample    maps/demo/geojson
          *            Loading geoJSON data
-         * @sample    map/chart/topojson
+         * @sample    maps/chart/topojson
          *            Loading topoJSON converted to geoJSON
          *
          * @type      {string|Array<*>}
@@ -1112,14 +1115,11 @@ H.defaultOptions = {
              *         Theming the button
              *
              * @type {Highcharts.SVGAttributes}
+             * @default {"zIndex":6}
              * @since 2.2
              */
             theme: {
-
-                /**
-                 * The Z index for the reset zoom button. The default value
-                 * places it below the tooltip that has Z index 7.
-                 */
+                /** @ignore-option */
                 zIndex: 6
             },
 

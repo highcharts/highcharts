@@ -82,7 +82,7 @@
  * Common information for a click event on a series.
  *
  * @interface Highcharts.SeriesClickEventObject
- * @implements {global.Event}
+ * @extends global.Event
  *//**
  * Nearest point on the graph.
  * @name Highcharts.SeriesClickEventObject#point
@@ -204,7 +204,7 @@
  * Common information for a click event on a series point.
  *
  * @interface Highcharts.SeriesPointClickEventObject
- * @implements {Highcharts.PointerEventObject}
+ * @extends Highcharts.PointerEventObject
  *//**
  * Clicked point.
  * @name Highcharts.SeriesPointClickEventObject#point
@@ -264,7 +264,7 @@
  * Information about the select event.
  *
  * @interface Highcharts.SeriesPointSelectEventObject
- * @implements {global.Event}
+ * @extends global.Event
  *//**
  * @name Highcharts.SeriesPointSelectEventObject#accumulate
  * @type {boolean}
@@ -287,7 +287,7 @@
  * Information about the unselect event.
  *
  * @interface Highcharts.SeriesPointUnselectEventObject
- * @implements {global.Event}
+ * @extends global.Event
  *//**
  * @name Highcharts.SeriesPointUnselectEventObject#accumulate
  * @type {boolean}
@@ -310,7 +310,7 @@
  * Information about the update event.
  *
  * @interface Highcharts.SeriesPointUpdateEventObject
- * @implements {global.Event}
+ * @extends global.Event
  *//**
  * Options data of the update event.
  * @name Highcharts.SeriesPointUpdateEventObject#options
@@ -1911,9 +1911,6 @@ H.Series = H.seriesType(
          */
         softThreshold: true,
 
-        /**
-         * A wrapper object for all the series options in specific states.
-         */
         states: {
 
             /**
@@ -1959,7 +1956,7 @@ H.Series = H.seriesType(
                  *
                  * @type    {boolean|Highcharts.AnimationOptionsObject}
                  * @since   5.0.8
-                 * @product highcharts
+                 * @product highcharts highstock
                  */
                 animation: {
 
@@ -2019,7 +2016,7 @@ H.Series = H.seriesType(
                  * line-type series as well as outside the hovered slice in pie
                  * charts. By default the halo is filled by the current point or
                  * series color with an opacity of 0.25\. The halo can be
-                 * disabled by setting the `halo` option to `false`.
+                 * disabled by setting the `halo` option to `null`.
                  *
                  * In styled mode, the halo is styled with the
                  * `.highcharts-halo` class, with colors inherited from
@@ -2030,6 +2027,7 @@ H.Series = H.seriesType(
                  * @sample {highstock} highcharts/plotoptions/halo/
                  *         Halo options
                  *
+                 * @type    {null|*}
                  * @since   4.0
                  * @product highcharts highstock
                  */
@@ -2075,10 +2073,10 @@ H.Series = H.seriesType(
             /**
              * Specific options for point in selected states, after being
              * selected by
-             * [allowPointSelect](#plotOptions.series.allowPointSelect) or
-             * programmatically.
+             * [allowPointSelect](#plotOptions.series.allowPointSelect)
+             * or programmatically.
              *
-             * @sample {highmaps} maps/plotoptions/series-allowpointselect/
+             * @sample maps/plotoptions/series-allowpointselect/
              *         Allow point select demo
              *
              * @extends   plotOptions.series.states.hover
@@ -2353,11 +2351,15 @@ H.Series = H.seriesType(
             series.getColor();
             series.getSymbol();
 
-            // Set the data
+            // Initialize the parallel data arrays
             series.parallelArrays.forEach(function (key) {
-                series[key + 'Data'] = [];
+                if (!series[key + 'Data']) {
+                    series[key + 'Data'] = [];
+                }
             });
-            series.setData(options.data, false);
+            if (!series.points) {
+                series.setData(options.data, false);
+            }
 
             // Mark cartesian
             if (series.isCartesian) {
@@ -2838,12 +2840,15 @@ H.Series = H.seriesType(
                 i,
                 point,
                 lastIndex,
-                requireSorting = this.requireSorting;
+                requireSorting = this.requireSorting,
+                equalLength = data.length === oldData.length,
+                matchedById,
+                succeeded = true;
 
             this.xIncrement = null;
 
             // Iterate the new data
-            data.forEach(function (pointOptions) {
+            data.forEach(function (pointOptions, i) {
                 var id,
                     matchingPoint,
                     x,
@@ -2862,8 +2867,13 @@ H.Series = H.seriesType(
 
                 if (id || isNumber(x)) {
                     if (id) {
-                        matchingPoint = this.chart.get(id);
+                        matchingPoint = oldData.find(function (point) {
+                            return point.id === id;
+                        });
                         pointIndex = matchingPoint && matchingPoint.index;
+                        if (pointIndex !== undefined) {
+                            matchedById = true;
+                        }
                     }
 
                     // Search for the same X in the existing data set
@@ -2886,14 +2896,19 @@ H.Series = H.seriesType(
                     if (
                         pointIndex === -1 ||
                         pointIndex === undefined ||
-                        (oldData[pointIndex] &&
+                        (
+                            !matchedById &&
+                            oldData[pointIndex] &&
                             oldData[pointIndex].touched
                         )
                     ) {
                         pointsToAdd.push(pointOptions);
 
                     // Matching X found, update
-                    } else if (pointOptions !== options.data[pointIndex]) {
+                    } else if (
+                        oldData[pointIndex] &&
+                        pointOptions !== options.data[pointIndex]
+                    ) {
                         oldData[pointIndex].update(
                             pointOptions,
                             false,
@@ -2914,7 +2929,17 @@ H.Series = H.seriesType(
                     } else if (oldData[pointIndex]) {
                         oldData[pointIndex].touched = true;
                     }
-                    hasUpdatedByKey = true;
+
+                    // If the length is equal and some of the nodes had a
+                    // match in the same position, we don't want to remove
+                    // non-matches.
+                    if (
+                        !equalLength ||
+                        i !== pointIndex ||
+                        this.hasDerivedData
+                    ) {
+                        hasUpdatedByKey = true;
+                    }
                 }
             }, this);
 
@@ -2923,15 +2948,14 @@ H.Series = H.seriesType(
                 i = oldData.length;
                 while (i--) {
                     point = oldData[i];
-                    if (!point.touched) {
+                    if (point && !point.touched) {
                         point.remove(false);
                     }
-                    point.touched = false;
                 }
 
-            // If we did not find keys (x-values), and the length is the same,
-            // update one-to-one
-            } else if (data.length === oldData.length) {
+            // If we did not find keys (ids or x-values), and the length is the
+            // same, update one-to-one
+            } else if (equalLength) {
                 data.forEach(function (point, i) {
                     // .update doesn't exist on a linked, hidden series (#3709)
                     if (oldData[i].update && point !== options.data[i]) {
@@ -2941,6 +2965,16 @@ H.Series = H.seriesType(
 
             // Did not succeed in updating data
             } else {
+                succeeded = false;
+            }
+
+            oldData.forEach(function (point) {
+                if (point) {
+                    point.touched = false;
+                }
+            });
+
+            if (!succeeded) {
                 return false;
             }
 
@@ -3024,9 +3058,8 @@ H.Series = H.seriesType(
             dataLength = data.length;
             redraw = pick(redraw, true);
 
-            // If the point count is the same as is was, just run Point.update
-            // which is cheaper, allows animation, and keeps references to
-            // points.
+            // First try to run Point.update which is cheaper, allows animation,
+            // and keeps references to points.
             if (
                 updatePoints !== false &&
                 dataLength &&
@@ -3665,6 +3698,9 @@ H.Series = H.seriesType(
                     );
                     pointStack = stack[xValue];
                     stackValues = pointStack.points[stackIndicator.key];
+                }
+
+                if (isArray(stackValues)) {
                     yBottom = stackValues[0];
                     yValue = stackValues[1];
 
@@ -3969,6 +4005,7 @@ H.Series = H.seriesType(
                 point,
                 symbol,
                 graphic,
+                verb,
                 options = series.options,
                 seriesMarkerOptions = options.marker,
                 pointMarkerOptions,
@@ -3995,6 +4032,7 @@ H.Series = H.seriesType(
                 for (i = 0; i < points.length; i++) {
                     point = points[i];
                     graphic = point.graphic;
+                    verb = graphic ? 'animate' : 'attr';
                     pointMarkerOptions = point.marker || {};
                     hasPointMarker = !!point.marker;
                     enabled = (
@@ -4054,7 +4092,7 @@ H.Series = H.seriesType(
 
                         // Presentational attributes
                         if (graphic && !chart.styledMode) {
-                            graphic.attr(
+                            graphic[verb](
                                 series.pointAttribs(
                                     point,
                                     point.selected && 'select'
@@ -4481,6 +4519,7 @@ H.Series = H.seriesType(
             props.forEach(function (prop, i) {
                 var graphKey = prop[0],
                     graph = series[graphKey],
+                    verb = graph ? 'animate' : 'attr',
                     attribs;
 
                 if (graph) {
@@ -4491,33 +4530,32 @@ H.Series = H.seriesType(
 
                 } else if (graphPath.length) { // #1487
 
-                    series[graphKey] = series.chart.renderer.path(graphPath)
+                    series[graphKey] = graph = series.chart.renderer
+                        .path(graphPath)
                         .addClass(prop[1])
                         .attr({ zIndex: 1 }) // #1069
                         .add(series.group);
+                }
 
+                if (graph && !styledMode) {
 
-                    if (!styledMode) {
-                        attribs = {
-                            'stroke': prop[2],
-                            'stroke-width': options.lineWidth,
-                            // Polygon series use filled graph
-                            'fill': (series.fillGraph && series.color) || 'none'
-                        };
+                    attribs = {
+                        'stroke': prop[2],
+                        'stroke-width': options.lineWidth,
+                        // Polygon series use filled graph
+                        'fill': (series.fillGraph && series.color) || 'none'
+                    };
 
-                        if (prop[3]) {
-                            attribs.dashstyle = prop[3];
-                        } else if (options.linecap !== 'square') {
-                            attribs['stroke-linecap'] =
-                                attribs['stroke-linejoin'] = 'round';
-                        }
-
-                        graph = series[graphKey]
-                            .attr(attribs)
-                            // Add shadow to normal series (0) or to first
-                            // zone (1) #3932
-                            .shadow((i < 2) && options.shadow);
+                    if (prop[3]) {
+                        attribs.dashstyle = prop[3];
+                    } else if (options.linecap !== 'square') {
+                        attribs['stroke-linecap'] =
+                            attribs['stroke-linejoin'] = 'round';
                     }
+                    graph[verb](attribs)
+                        // Add shadow to normal series (0) or to first
+                        // zone (1) #3932
+                        .shadow((i < 2) && options.shadow);
                 }
 
                 // Helpers for animation

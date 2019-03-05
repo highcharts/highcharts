@@ -275,10 +275,13 @@
  * @interface Highcharts.SVGAttributes
  *//**
  * @name Highcharts.SVGAttributes#[key:string]
- * @type {boolean|number|string|Array<number|string>|Dictionary<boolean|number|string|undefined>|undefined}
+ * @type {any}
  *//**
  * @name Highcharts.SVGAttributes#d
  * @type {string|Highcharts.SVGPathArray|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#fill
+ * @type {Highcharts.ColorString|undefined}
  *//**
  * @name Highcharts.SVGAttributes#inverted
  * @type {boolean|undefined}

@@ -31,7 +31,7 @@ var objectEach = H.objectEach,
  **/
 var binsNumberFormulas = {
     'square-root': function (baseSeries) {
-        return Math.round(Math.sqrt(baseSeries.options.data.length));
+        return Math.ceil(Math.sqrt(baseSeries.options.data.length));
     },
 
     'sturges': function (baseSeries) {
@@ -144,7 +144,20 @@ seriesType('histogram', 'column', {
 
         // If binWidth is 0 then max and min are equaled,
         // increment the x with some positive value to quit the loop
-        for (x = min; x < max; x = correctFloat(x + binWidth)) {
+        for (
+            x = min;
+            // This condition is needed because of the margin of error while
+            // operating on decimal numbers. Without that, additional bin was
+            // sometimes noticeable on the graph, because of too small precision
+            // of float correction.
+            x < max &&
+                (
+                    series.userOptions.binWidth ||
+                    correctFloat(max - x) >= binWidth ||
+                    correctFloat(min + (frequencies.length * binWidth) - x) <= 0
+                );
+            x = correctFloat(x + binWidth)
+        ) {
             frequencies.push(x);
             bins[x] = 0;
         }

@@ -10,6 +10,7 @@
 
 import H from '../parts/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
+import drawPoint from '../mixins/draw-point.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -109,6 +110,7 @@ seriesType(
          */
         allowTraversingTree: false,
 
+        animationLimit: 250,
         /**
          * When the series contains less points than the crop threshold, all
          * points are drawn, event if the points fall outside the visible plot
@@ -870,7 +872,6 @@ seriesType(
                         yAxis.translate(values.y + values.height, 0, 0, 0, 1)
                     ) - crispCorr;
                     // Set point values
-                    point.shapeType = 'rect';
                     point.shapeArgs = {
                         x: Math.min(x1, x2),
                         y: Math.min(y1, y2),
@@ -1391,54 +1392,86 @@ seriesType(
             return attr;
         },
 
-        // Extending ColumnSeries drawPoints
+        // Override drawPoints
         drawPoints: function () {
             var series = this,
+                chart = series.chart,
+                renderer = chart.renderer,
                 points = series.points.filter(function (n) {
                     return n.node.visible;
-                });
+                }),
+                styledMode = chart.styledMode,
+                options = series.options,
+                shadow = styledMode ? {} : options.shadow,
+                borderRadius = options.borderRadius,
+                withinAnimationLimit =
+                    chart.pointCount < options.animationLimit,
+                allowTraversingTree = options.allowTraversingTree;
 
             points.forEach(function (point) {
-                var groupKey = 'level-group-' + point.node.levelDynamic;
+                var levelDynamic = point.node.levelDynamic,
+                    animate = {},
+                    attr = {},
+                    css = {},
+                    groupKey = 'level-group-' + levelDynamic,
+                    hasGraphic = !!point.graphic,
+                    shouldAnimate = withinAnimationLimit && hasGraphic,
+                    shapeArgs = point.shapeArgs;
+
+                if (borderRadius) {
+                    attr.r = borderRadius;
+                }
+
+                merge(
+                    true, // Extend object
+                    // Which object to extend
+                    shouldAnimate ? animate : attr,
+                    // Add shapeArgs to animate/attr if graphic exists
+                    hasGraphic ? shapeArgs : {},
+                    // Add style attribs if !styleMode
+                    styledMode ?
+                        {} :
+                        series.pointAttribs(point, point.selected && 'select')
+                );
+
+                // In styled mode apply point.color. Use CSS, otherwise the fill
+                // used in the style sheet will take precedence over the fill
+                // attribute.
+                if (series.colorAttribs && styledMode) {
+                    // Heatmap is loaded
+                    extend(css, series.colorAttribs(point));
+                }
 
                 if (!series[groupKey]) {
-                    series[groupKey] = series.chart.renderer.g(groupKey)
+                    series[groupKey] = renderer.g(groupKey)
                         .attr({
-                        // @todo Set the zIndex based upon the number of levels,
-                        // instead of using 1000
-                            zIndex: 1000 - point.node.levelDynamic
+                            // @todo Set the zIndex based upon the number of
+                            // levels, instead of using 1000
+                            zIndex: 1000 - levelDynamic
                         })
                         .add(series.group);
                 }
-                point.group = series[groupKey];
 
-            });
-            // Call standard drawPoints
-            seriesTypes.column.prototype.drawPoints.call(this);
-
-            // In styled mode apply point.color. Use CSS, otherwise the fill
-            // used in the style sheet will take precedence over the fill
-            // attribute.
-            if (this.colorAttribs && series.chart.styledMode) {
-                // Heatmap is loaded
-                this.points.forEach(function (point) {
-                    if (point.graphic) {
-                        point.graphic.css(this.colorAttribs(point));
-                    }
-                }, this);
-            }
-
-            // If setRootNode is allowed, set a point cursor on clickables & add
-            // drillId to point
-            if (series.options.allowTraversingTree) {
-                points.forEach(function (point) {
-                    if (point.graphic) {
-                        point.drillId = series.options.interactByLeaf ?
-                            series.drillToByLeaf(point) :
-                            series.drillToByGroup(point);
-                    }
+                // Draw the point
+                point.draw({
+                    animatableAttribs: animate,
+                    attribs: attr,
+                    css: css,
+                    group: series[groupKey],
+                    renderer: renderer,
+                    shadow: shadow,
+                    shapeArgs: shapeArgs,
+                    shapeType: 'rect'
                 });
-            }
+
+                // If setRootNode is allowed, set a point cursor on clickables &
+                // add drillId to point
+                if (allowTraversingTree && point.graphic) {
+                    point.drillId = options.interactByLeaf ?
+                        series.drillToByLeaf(point) :
+                        series.drillToByGroup(point);
+                }
+            });
         },
         // Add drilling on the suitable points
         onClickDrillToNode: function (event) {
@@ -1674,6 +1707,7 @@ seriesType(
 
         // Point class
     }, {
+        draw: drawPoint,
         getClassName: function () {
             var className = H.Point.prototype.getClassName.call(this),
                 series = this.series,
@@ -1715,7 +1749,11 @@ seriesType(
                 });
             }
         },
-        setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
+        setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible,
+        shouldDraw: function () {
+            var point = this;
+            return isNumber(point.plotY) && point.y !== null;
+        }
     }
 );
 

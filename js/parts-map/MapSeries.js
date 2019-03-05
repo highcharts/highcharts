@@ -223,10 +223,17 @@ seriesType(
          * @apioption plotOptions.series.zIndex
          */
 
+        /**
+         * @apioption plotOptions.series.states
+         */
         states: {
 
+            /**
+             * @apioption plotOptions.series.hover
+             */
             hover: {
 
+                /** @ignore-option */
                 halo: null,
 
                 /**
@@ -266,35 +273,38 @@ seriesType(
                  * @apioption plotOptions.series.states.hover.brightness
                  */
                 brightness: 0.2
-
             },
 
             /**
-             * Overrides for the normal state.
-             *
-             * @product   highmaps
              * @apioption plotOptions.series.states.normal
              */
             normal: {
 
                 /**
-                 * Animation options for the fill color when returning from
-                 * hover state to normal state. The animation adds some latency
-                 * in order to reduce the effect of flickering when hovering in
-                 * and out of for example an uneven coastline.
+                 * @productdesc {highmaps}
+                 * The animation adds some latency in order to reduce the effect
+                 * of flickering when hovering in and out of for example an
+                 * uneven coastline.
                  *
-                 * @sample maps/plotoptions/series-states-animation-false/
+                 * @sample {highmaps} maps/plotoptions/series-states-animation-false/
                  *         No animation of fill color
                  *
-                 * @type      {boolean|Highcharts.AnimationOptionsObject}
-                 * @default   true
-                 * @product   highmaps
                  * @apioption plotOptions.series.states.normal.animation
                  */
                 animation: true
             },
 
+            /**
+             * @apioption plotOptions.series.states.select
+             */
             select: {
+
+                /**
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @default   ${palette.neutralColor20}
+                 * @product   highmaps
+                 * @apioption plotOptions.series.states.select.color
+                 */
                 color: '${palette.neutralColor20}'
             }
         }

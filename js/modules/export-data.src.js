@@ -974,13 +974,15 @@ if (exportingOptions) {
         }
     });
 
-    exportingOptions.buttons.contextButton.menuItems.push(
-        'separator',
-        'downloadCSV',
-        'downloadXLS',
-        'viewData',
-        'openInCloud'
-    );
+    if (exportingOptions.buttons) {
+        exportingOptions.buttons.contextButton.menuItems.push(
+            'separator',
+            'downloadCSV',
+            'downloadXLS',
+            'viewData',
+            'openInCloud'
+        );
+    }
 }
 
 // Series specific

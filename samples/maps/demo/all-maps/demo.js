@@ -1,4 +1,3 @@
-
 /**
  * This is a complicated demo of Highmaps, not intended to get you up to speed
  * quickly, but to show off some basic maps and features in one single place.
@@ -156,8 +155,8 @@ $("#mapDropdown").change(function () {
                     enabled: showDataLabels,
                     formatter: function () {
                         return mapKey === 'custom/world' || mapKey === 'countries/us/us-all' ?
-                                (this.point.properties && this.point.properties['hc-a2']) :
-                                this.point.name;
+                            (this.point.properties && this.point.properties['hc-a2']) :
+                            this.point.name;
                     }
                 },
                 point: {

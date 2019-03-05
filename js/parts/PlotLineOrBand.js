@@ -179,7 +179,7 @@ H.PlotLineOrBand.prototype = {
             }
         } else if (svgElem) {
             if (path) {
-                svgElem.show();
+                svgElem.show(true);
                 svgElem.animate({ d: path });
             } else {
                 svgElem.hide();
@@ -289,7 +289,7 @@ H.PlotLineOrBand.prototype = {
             width: arrayMax(xBounds) - x,
             height: arrayMax(yBounds) - y
         });
-        label.show();
+        label.show(true);
     },
 
     /**
@@ -750,11 +750,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotlines-label-verticalalign-middle/
      *         Vertically centered label
      *
-     * @type      {Highcharts.VerticalAlignValue}
-     * @default   {highcharts} top
-     * @default   {highstock} top
-     * @since     2.1
-     * @apioption xAxis.plotLines.label.verticalAlign
+     * @type       {Highcharts.VerticalAlignValue}
+     * @default    {highcharts} top
+     * @default    {highstock} top
+     * @since      2.1
+     * @apioption  xAxis.plotLines.label.verticalAlign
      */
 
     /**

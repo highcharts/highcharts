@@ -292,7 +292,7 @@ gulp.task('scripts', gulp.series('update', scriptsWatch));
  *     files, see the lintSamples function.
  * @return undefined Returns nothing
  */
-const lint = () => {
+const lint = () => new Promise((resolve, reject) => {
     const CLIEngine = require('eslint').CLIEngine;
     const cli = new CLIEngine({
         fix: argv.fix
@@ -302,9 +302,13 @@ const lint = () => {
     const report = cli.executeOnFiles(pattern);
     if (argv.fix) {
         CLIEngine.outputFixes(report);
+        console.log(formatter(report.results));
+        reject(new Error('ESLint error'));
+    } else {
+        console.log(formatter(report.results));
+        resolve();
     }
-    console.log(formatter(report.results));
-};
+});
 gulp.task('lint', gulp.series('update', lint));
 
 /**
@@ -1143,7 +1147,7 @@ const createAllExamples = () => new Promise(resolve => {
 });
 
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
-    const generate = require('highcharts-documentation-generators').ApiDocs;
+    const generate = require('highcharts-documentation-generators').ApiDocs; // eslint-disable-line
     const message = {
         start: 'Started generating API documentation.',
         noSeries: 'Missing series in tree.json. Run merge script.',
@@ -1489,17 +1493,20 @@ const jsdocWatch = () => {
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'
     ];
-    if (argv.watch) {
-        gulp.watch(watchFiles, gulp.series('jsdoc'));
-        console.log('Watching file changes in JS files and templates');
-
-    } else {
-        console.log('Tip: use the --watch argument to watch JS file changes');
-    }
 
     if (!apiServerRunning) {
+
         jsdocServer();
+
         apiServerRunning = true;
+
+        if (argv.watch) {
+            gulp.watch(watchFiles, gulp.series('jsdoc'));
+            console.log('Watching file changes in JS files and templates');
+
+        } else {
+            console.log('Tip: use the --watch argument to watch JS file changes');
+        }
     }
 
     return generateClassReferences(optionsClassReference)

@@ -8,4 +8,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../modules/boost.src.js';
+import '../../modules/boost/boost.js';
