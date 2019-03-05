@@ -516,8 +516,6 @@ var onBeforeRender = function (e) {
             // Assign values to the axis.
             axis.categories = treeGrid.categories;
             axis.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
-            // Used on init to start a node as collapsed
-            axis.collapsedNodes = treeGrid.collapsedNodes;
             axis.hasNames = true;
             axis.tree = treeGrid.tree;
 
@@ -547,7 +545,7 @@ var onBeforeRender = function (e) {
             // its dependency on axis.max.
             removeFoundExtremesEvent =
                 H.addEvent(axis, 'foundExtremes', function () {
-                    axis.collapsedNodes.forEach(function (node) {
+                    treeGrid.collapsedNodes.forEach(function (node) {
                         var breaks = collapse(axis, node);
 
                         axis.setBreaks(breaks, false);
