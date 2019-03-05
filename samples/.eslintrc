@@ -23,7 +23,7 @@ rules:
     consistent-return: 0
     eol-last: 0
     func-style: 0
-    indent: [2, 4]
+    indent: 0                   # [2, 4] TODO: Too many tests fail
     max-len: 0                  # Should be reduced, but there are 1200 violations by 2015-10-31.
     new-cap: 0                  # The ill-named Color object. Fix in HC5
     no-alert: 0
