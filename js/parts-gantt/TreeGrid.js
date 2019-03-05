@@ -481,11 +481,18 @@ var onBeforeRender = function (e) {
         })
         .forEach(function (axis) {
             var labelOptions = axis.options && axis.options.labels,
-                removeFoundExtremesEvent;
+                removeFoundExtremesEvent,
+                // setScale is fired after all the series is initialized,
+                // which is an ideal time to update the axis.categories.
+                treeGrid = axis.updateYNames();
 
-            // setScale is fired after all the series is initialized,
-            // which is an ideal time to update the axis.categories.
-            axis.updateYNames();
+            // Assign values to the axis.
+            axis.categories = treeGrid.categories;
+            axis.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
+            // Used on init to start a node as collapsed
+            axis.collapsedNodes = treeGrid.collapsedNodes;
+            axis.hasNames = true;
+            axis.tree = treeGrid.tree;
 
             // Update yData now that we have calculated the y values
             axis.series.forEach(function (series) {
@@ -959,7 +966,6 @@ GridAxis.prototype.updateYNames = function () {
         isYAxis = !axis.isXAxis,
         series = axis.series,
         numberOfSeries = 0,
-        treeGrid,
         data;
 
     if (isTreeGrid && isYAxis) {
@@ -984,19 +990,11 @@ GridAxis.prototype.updateYNames = function () {
         }, []);
 
         // Calculate categories and the hierarchy for the grid.
-        treeGrid = getTreeGridFromData(
+        return getTreeGridFromData(
             data,
             uniqueNames,
             (uniqueNames === true) ? numberOfSeries : 1
         );
-
-        // Assign values to the axis.
-        axis.categories = treeGrid.categories;
-        axis.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
-        // Used on init to start a node as collapsed
-        axis.collapsedNodes = treeGrid.collapsedNodes;
-        axis.hasNames = true;
-        axis.tree = treeGrid.tree;
     }
 };
 
