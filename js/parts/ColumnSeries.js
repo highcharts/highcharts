@@ -739,7 +739,8 @@ seriesType('column', 'line'
 
                 // Register shape type and arguments to be used in drawPoints
                 // Allow shapeType defined on pointClass level
-                point.shapeType = point.shapeType || 'rect';
+                point.shapeType =
+                    series.pointClass.prototype.shapeType || 'rect';
                 point.shapeArgs = series.crispCol.apply(
                     series,
                     point.isNull ?
@@ -889,6 +890,15 @@ seriesType('column', 'line'
                 if (isNumber(plotY) && point.y !== null) {
                     shapeArgs = point.shapeArgs;
 
+                    // When updating a series between 2d and 3d or cartesian and
+                    // polar, the shape type changes.
+                    if (
+                        graphic &&
+                        graphic.element.nodeName !== point.shapeType
+                    ) {
+                        graphic = graphic.destroy();
+                    }
+
                     if (graphic) { // update
                         graphic[verb](
                             merge(shapeArgs)
@@ -902,7 +912,7 @@ seriesType('column', 'line'
 
                     // Border radius is not stylable (#6900)
                     if (options.borderRadius) {
-                        graphic.attr({
+                        graphic[verb]({
                             r: options.borderRadius
                         });
                     }
