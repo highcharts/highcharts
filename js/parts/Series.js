@@ -2853,9 +2853,9 @@ H.Series = H.seriesType(
                     if (
                         pointIndex === -1 ||
                         pointIndex === undefined ||
+                        oldData[pointIndex] === undefined ||
                         (
                             !matchedById &&
-                            oldData[pointIndex] &&
                             oldData[pointIndex].touched
                         )
                     ) {
