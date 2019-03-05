@@ -171,6 +171,24 @@ var options = {
          */
 
         /**
+         * Prefix to add to the values in the point descriptions. Uses
+         * [tooltip.valuePrefix](#tooltip.valuePrefix) if not defined.
+         *
+         * @type      {string}
+         * @since     next
+         * @apioption accessibility.pointValuePrefix
+         */
+
+        /**
+         * Suffix to add to the values in the point descriptions. Uses
+         * [tooltip.valueSuffix](#tooltip.valueSuffix) if not defined.
+         *
+         * @type      {string}
+         * @since     next
+         * @apioption accessibility.pointValueSuffix
+         */
+
+        /**
          * Formatter function to use instead of the default for point
          * descriptions.
          * Receives one argument, `point`, referring to the point to describe.

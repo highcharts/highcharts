@@ -407,6 +407,40 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
 
 
 /**
+ * Get accessible time description for a point on a datetime axis.
+ *
+ * @private
+ * @function Highcharts.Point#getTimeDescription
+ *
+ * @return {string}
+ *         The description as string.
+ */
+H.Point.prototype.getA11yTimeDescription = function () {
+    var point = this,
+        series = point.series,
+        chart = series.chart,
+        a11yOptions = chart.options.accessibility;
+    if (series.xAxis && series.xAxis.isDatetimeAxis) {
+        return chart.time.dateFormat(
+            a11yOptions.pointDateFormatter &&
+            a11yOptions.pointDateFormatter(point) ||
+            a11yOptions.pointDateFormat ||
+            H.Tooltip.prototype.getXDateFormat.call(
+                {
+                    getDateFormat: H.Tooltip.prototype.getDateFormat,
+                    chart: chart
+                },
+                point,
+                chart.options.tooltip,
+                series.xAxis
+            ),
+            point.x
+        );
+    }
+};
+
+
+/**
  * The SeriesComponent class
  *
  * @private
@@ -839,7 +873,9 @@ H.extend(SeriesComponent.prototype, {
                 seriesDesc: newSeries ?
                     this.defaultSeriesDescriptionFormatter(newSeries) : null,
                 pointDesc: newPoint ?
-                    this.defaultPointDescriptionFormatter(newPoint) : null
+                    this.defaultPointDescriptionFormatter(newPoint) : null,
+                point: newPoint,
+                series: newSeries
             }
         );
     },
@@ -1046,26 +1082,14 @@ H.extend(SeriesComponent.prototype, {
         var series = point.series,
             chart = series.chart,
             a11yOptions = chart.options.accessibility,
+            tooltipOptions = point.series.tooltipOptions || {},
+            valuePrefix = a11yOptions.pointValuePrefix ||
+                tooltipOptions.valuePrefix || '',
+            valueSuffix = a11yOptions.pointValueSuffix ||
+                tooltipOptions.valueSuffix || '',
             description = point.options && point.options.accessibility &&
                 point.options.accessibility.description,
-            dateTimePoint = series.xAxis && series.xAxis.isDatetimeAxis,
-            timeDesc =
-                dateTimePoint &&
-                chart.time.dateFormat(
-                    a11yOptions.pointDateFormatter &&
-                    a11yOptions.pointDateFormatter(point) ||
-                    a11yOptions.pointDateFormat ||
-                    H.Tooltip.prototype.getXDateFormat.call(
-                        {
-                            getDateFormat: H.Tooltip.prototype.getDateFormat,
-                            chart: chart
-                        },
-                        point,
-                        chart.options.tooltip,
-                        series.xAxis
-                    ),
-                    point.x
-                ),
+            timeDesc = point.getA11yTimeDescription(),
             pointCategory = series.xAxis && series.xAxis.categories &&
                     point.category !== undefined && '' + point.category;
 
@@ -1077,9 +1101,14 @@ H.extend(SeriesComponent.prototype, {
             valueDesc = point.series.pointArrayMap ?
                 point.series.pointArrayMap.reduce(function (desc, key) {
                     return desc + (desc.length ? ', ' : '') + key + ': ' +
-                        pick(point[key], point.options[key]);
+                        valuePrefix + pick(point[key], point.options[key]) +
+                        valueSuffix;
                 }, '') :
-                (point.value !== undefined ? point.value : point.y);
+                (
+                    point.value !== undefined ?
+                        valuePrefix + point.value + valueSuffix :
+                        valuePrefix + point.y + valueSuffix
+                );
 
         return (point.index !== undefined ? (point.index + 1) + '. ' : '') +
             xDesc + ', ' + valueDesc + '.' +

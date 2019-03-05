@@ -19,8 +19,16 @@ var minute = 1000 * 60,
         },
         accessibility: {
             description: 'Displays balance of your bank accounts over time.',
+            pointValuePrefix: '$',
             announceNewData: {
-                enabled: true
+                enabled: true,
+                announcementFormatter: function (allSeries, newSeries, newPoint) {
+                    if (newPoint) {
+                        return 'Account balance updated. New data point: Time ' +
+                            newPoint.getA11yTimeDescription() + ', $' + newPoint.y + '.';
+                    }
+                    return false;
+                }
             }
         },
         tooltip: {
