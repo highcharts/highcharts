@@ -890,6 +890,15 @@ seriesType('column', 'line'
                 if (isNumber(plotY) && point.y !== null) {
                     shapeArgs = point.shapeArgs;
 
+                    // When updating a series between 2d and 3d or cartesian and
+                    // polar, the shape type changes.
+                    if (
+                        graphic &&
+                        graphic.element.nodeName !== point.shapeType
+                    ) {
+                        graphic = graphic.destroy();
+                    }
+
                     if (graphic) { // update
                         graphic[verb](
                             merge(shapeArgs)

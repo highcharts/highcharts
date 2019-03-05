@@ -1180,9 +1180,14 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                         // cases, and in the future we may add smarter checks
                         // for what we need to destroy based on what options
                         // we're setting.
-                        point.destroyElements();
+                        if (
+                            this.options.marker &&
+                            this.options.marker.enabled === false
+                        ) {
+                            point.destroyElements();
+                        }
                     }
-                });
+                }, this);
             }
 
             // Update the Z index of groups (#3380, #7397)

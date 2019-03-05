@@ -606,15 +606,26 @@ undocumentedSeriesType('timeline', 'line',
         },
         drawConnector: function () {
             var point = this,
+                series = point.series;
+
+            point.connector = series.chart.renderer
+                .path(point.getConnectorPath())
+                .add(series.connectorsGroup);
+        },
+        alignConnector: function () {
+            var point = this,
                 series = point.series,
+                connector = point.connector,
+                bBox = connector.getBBox(),
+                isVisible = bBox.y > 0,
                 dlOptions = point.dataLabel.options = merge(
                     {}, series.options.dataLabels,
                     point.options.dataLabels
                 );
 
-            point.connector = series.chart.renderer
-                .path(point.getConnectorPath())
-                .add(series.connectorsGroup);
+            connector[isVisible ? 'animate' : 'attr']({
+                d: point.getConnectorPath()
+            });
 
             if (!series.chart.styledMode) {
                 point.connector.attr({
@@ -623,16 +634,6 @@ undocumentedSeriesType('timeline', 'line',
                     opacity: point.dataLabel.opacity
                 });
             }
-        },
-        alignConnector: function () {
-            var point = this,
-                connector = point.connector,
-                bBox = connector.getBBox(),
-                isVisible = bBox.y > 0;
-
-            connector[isVisible ? 'animate' : 'attr']({
-                d: point.getConnectorPath()
-            });
         }
     });
 
