@@ -5,6 +5,29 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * The default pathfinder algorithm to use for a chart. It is possible to define
+ * your own algorithms by adding them to the
+ * `Highcharts.Pathfinder.prototype.algorithms`
+ * object before the chart has been created.
+ *
+ * The default algorithms are as follows:
+ *
+ * `straight`:      Draws a straight line between the connecting
+ *                  points. Does not avoid other points when drawing.
+ *
+ * `simpleConnect`: Finds a path between the points using right angles
+ *                  only. Takes only starting/ending points into
+ *                  account, and will not avoid other points.
+ *
+ * `fastAvoid`:     Finds a path between the points using right angles
+ *                  only. Will attempt to avoid other points, but its
+ *                  focus is performance over accuracy. Works well with
+ *                  less dense datasets.
+ *
+ * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -124,9 +147,9 @@ extend(H.defaultOptions, {
          * @sample gantt/pathfinder/demo
          *         Different types used
          *
-         * @default    undefined
-         * @since      6.2.0
-         * @validvalue ["straight", "simpleConnect", "fastAvoid"]
+         * @type    {Highcharts.PathfinderTypeValue}
+         * @default undefined
+         * @since   6.2.0
          */
         type: 'straight',
 
@@ -202,14 +225,14 @@ extend(H.defaultOptions, {
             /**
              * Horizontal alignment of the markers relative to the points.
              *
-             * @type {Highcharts.AlignType}
+             * @type {Highcharts.AlignValue}
              */
             align: 'center',
 
             /**
              * Vertical alignment of the markers relative to the points.
              *
-             * @type {Highcharts.VerticalAlignType}
+             * @type {Highcharts.VerticalAlignValue}
              */
             verticalAlign: 'middle',
 

@@ -271,6 +271,11 @@ if (!H.polarExtended) {
                     // Translate plotX, plotY from angle and radius to true plot
                     // coordinates
                     this.toXY(points[i]);
+
+                    // Treat points below Y axis min as null (#10082)
+                    if (!this.yAxis.reversed && points[i].y < this.yAxis.min) {
+                        points[i].isNull = true;
+                    }
                 }
             }
 

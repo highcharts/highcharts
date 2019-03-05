@@ -95,7 +95,7 @@ QUnit.test('Indentation', function (assert) {
 QUnit.test('Tree.getNode', function (assert) {
     var getNode = Highcharts.Axis.prototype.utils.getNode,
         mapOfIdToChildren = {
-            'test': [{
+            test: [{
                 start: 5,
                 end: 10
             }, {
@@ -138,7 +138,7 @@ QUnit.test('Tree.getNode', function (assert) {
     // Test aggregation of data from milestones.
     data = {};
     mapOfIdToChildren = {
-        'test': [{
+        test: [{
             start: 1,
             milestone: true
         }]
@@ -153,5 +153,64 @@ QUnit.test('Tree.getNode', function (assert) {
         node.data.end,
         1,
         'should use child.start as end if child is a milestone.'
+    );
+});
+
+QUnit.test('Chart.addSeries', assert => {
+    const chart = Highcharts.chart('container', {
+        yAxis: [{
+            type: 'treegrid'
+        }]
+    });
+    const series = {
+        data: [{
+            start: 1,
+            end: 2,
+            name: 'Category 1'
+        }, {
+            start: 0,
+            end: 3,
+            name: 'Category 2'
+        }, {
+            start: 2,
+            end: 3,
+            name: 'Category 3'
+        }]
+    };
+    const getYValues = ({ series }) => series.reduce(
+        (arr, series) => arr.concat(series.points.map(point => point.y)), []
+    );
+
+    assert.deepEqual(
+        getYValues(chart),
+        [],
+        'should y values in the chart should equal []'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].min,
+        undefined,
+        'should have axis min equal to undefined when no series.'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].max,
+        undefined,
+        'should have axis max equal to undefined.'
+    );
+
+    chart.addSeries(series);
+    assert.deepEqual(
+        getYValues(chart),
+        [0, 1, 2],
+        'should y values in the chart should equal [0, 1, 2]'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].min,
+        0,
+        'should have axis min equal to 0.'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].max,
+        2,
+        'should have axis min equal to 0.'
     );
 });

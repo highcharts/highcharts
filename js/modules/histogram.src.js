@@ -125,15 +125,18 @@ seriesType('histogram', 'column', {
     },
 
     derivedData: function (baseData, binsNumber, binWidth) {
-        var max = arrayMax(baseData),
-            min = arrayMin(baseData),
+        var series = this,
+            max = arrayMax(baseData),
+            // Float correction needed, because first frequency value is not
+            // corrected when generating frequencies (within for loop).
+            min = correctFloat(arrayMin(baseData)),
             frequencies = [],
             bins = {},
             data = [],
             x,
             fitToBin;
 
-        binWidth = this.binWidth = correctFloat(
+        binWidth = series.binWidth = series.options.pointRange = correctFloat(
             isNumber(binWidth) ?
                 (binWidth || 1) :
                 (max - min) / binsNumber

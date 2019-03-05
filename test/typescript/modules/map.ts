@@ -3,6 +3,9 @@ import MapModule from 'highcharts/modules/map';
 
 MapModule(Highcharts);
 
+test_simple();
+test_series();
+
 function test_simple() {
     Highcharts.mapChart('container', {
         series: [{

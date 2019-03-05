@@ -12,10 +12,10 @@
  * 
  * */
 
-const childProcess = require('child_process');
+const ChildProcess = require('child_process');
 const deepEqual = require('fast-deep-equal');
-const fs = require('fs');
-const path = require('path');
+const FS = require('fs');
+const Path = require('path');
 
 /* *
  *
@@ -202,13 +202,15 @@ function isPrivate (doclet) {
             doclet.name[0] === '_' ||
             name.indexOf('~') > -1
         );
-
+    
     if (isPrivate) {
         privateMembers.push(name);
         return true;
     } else {
         // looking for a parent member that is private
-        return (privateMembers.some(member => (name.indexOf(member) === 0)));
+        return privateMembers.some(member => (
+            name === member || name.indexOf(member + '.') === 0
+        ));
     }
 }
 
@@ -581,10 +583,9 @@ function getNodeFor (name, overload, searchOnly) {
 
     let found = false,
         node = globalNamespace,
-        spaceNames = getNamespaces(name),
-        indexEnd = (spaceNames.length - 1);
+        spaceNames = getNamespaces(name);
 
-    spaceNames.forEach((spaceName, index) => {
+    spaceNames.forEach((spaceName) => {
 
         if (!node) {
             return;
@@ -621,18 +622,18 @@ function getNodeFor (name, overload, searchOnly) {
 
         if (searchOnly) {
             node = undefined;
+            return;
         }
-        else {
-            let newNode = {
-                doclet: {
-                    name: spaceName
-                }
-            };
 
-            node.children.push(newNode);
+        let newNode = {
+            doclet: {
+                name: spaceName
+            }
+        };
 
-            node = newNode;
-        }
+        node.children.push(newNode);
+
+        node = newNode;
     });
 
     return node;
@@ -1192,8 +1193,8 @@ function parseBegin (e) {
     };
 
     globalNamespace.meta = {
-        branch: childProcess.execSync('git rev-parse --abbrev-ref HEAD', {cwd: rootPath}).toString().trim(),
-        commit: childProcess.execSync('git rev-parse --short HEAD', {cwd: rootPath}).toString().trim(),
+        branch: ChildProcess.execSync('git rev-parse --abbrev-ref HEAD', {cwd: rootPath}).toString().trim(),
+        commit: ChildProcess.execSync('git rev-parse --short HEAD', {cwd: rootPath}).toString().trim(),
         date: (new Date()).toString(),
         files: [],
         version: require(rootPath  + '/package.json').version
@@ -1212,7 +1213,7 @@ function parseBegin (e) {
  */
 function fileBegin (e) {
 
-    currentFilePath = path.relative(rootPath, e.filename);
+    currentFilePath = Path.relative(rootPath, e.filename);
     globalNamespace.meta.files.push({
         path: currentFilePath,
         line: 0
@@ -1238,9 +1239,7 @@ function newDoclet (e) {
         Object.keys(doclet)
     );
 
-    if (isPrivate(doclet) ||
-        isUndocumented(doclet)
-    ) {
+    if (isPrivate(doclet) || isUndocumented(doclet)) {
         return;
     }
 
@@ -1316,8 +1315,8 @@ function processingComplete (e) {
     filterNodes(globalNamespace);
     sortNodes(globalNamespace);
 
-    fs.writeFileSync(
-        path.join(rootPath, 'tree-namespace.json'),
+    FS.writeFileSync(
+        Path.join(rootPath, 'tree-namespace.json'),
         JSON.stringify(globalNamespace, undefined, '\t')
     );
 }

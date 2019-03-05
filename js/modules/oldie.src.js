@@ -1409,7 +1409,7 @@ if (!svg) {
 
             // Recursively invert child elements, needed for nested composite
             // shapes like box plots and error bars. #1680, #1806.
-            element.childNodes.forEach(function (child) {
+            [].forEach.call(element.childNodes, function (child) {
                 ren.invertChild(child, element);
             });
         },

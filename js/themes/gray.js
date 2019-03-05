@@ -1,14 +1,17 @@
-/**
- * (c) 2010-2019 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
+ *  (c) 2010-2019 Torstein Honsi
  *
- * Gray theme for Highcharts JS
- * @author Torstein Honsi
- */
+ *  License: www.highcharts.com/license
+ *
+ *  Gray theme for Highcharts JS
+ *
+ * */
 
 'use strict';
+
 import Highcharts from '../parts/Globals.js';
+
 Highcharts.theme = {
     colors: ['#DDDF0D', '#7798BF', '#55BF3B', '#DF5353', '#aaeeee',
         '#ff0066', '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'],

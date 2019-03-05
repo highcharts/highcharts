@@ -202,7 +202,7 @@ function test_seriesLine() {
         }, {
             type: 'line',
             name: 'Project Development',
-            data: [0, 0, 7988, 12169, 15112, 22452, 34400, 34227]
+            data: [null, { y: null }, 7988, 12169, 15112, 22452, 34400, 34227]
         }, {
             type: 'line',
             name: 'Other',

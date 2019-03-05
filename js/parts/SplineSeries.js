@@ -233,8 +233,8 @@ seriesType(
  * 3. An array of objects with named values. The following snippet shows only a
  *    few settings, see the complete options set below. If the total number of
  *    data points exceeds the series'
- *    [turboThreshold](#series.spline.turboThreshold), this option is not
- *    available.
+ *    [turboThreshold](#series.spline.turboThreshold),
+ *    this option is not available.
  *    ```js
  *    data: [{
  *        x: 1,
@@ -260,7 +260,7 @@ seriesType(
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<(number|string),number>|*>}
+ * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.spline.data

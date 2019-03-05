@@ -25,6 +25,14 @@ Highcharts.chart('container', {
         opacity: 0.4,
         borderWidth: 0,
         data: [{
+            sets: ['Knows If You Have Been Naughty Or Nice'],
+            value: 4,
+            color: "#b3e5fc",
+            dataLabels: {
+                x: -40,
+                y: 10
+            }
+        }, {
             sets: ['Great Power Great Responsibility'],
             value: 4,
             color: '#bee175',
@@ -42,14 +50,6 @@ Highcharts.chart('container', {
                 style: {
                     width: 200
                 }
-            }
-        }, {
-            sets: ['Knows If You Have Been Naughty Or Nice'],
-            value: 4,
-            color: "#b3e5fc",
-            dataLabels: {
-                x: -40,
-                y: 10
             }
         }, {
             sets: ['Great Power Great Responsibility', 'Wears Red Suit'],

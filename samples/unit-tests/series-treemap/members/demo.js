@@ -160,19 +160,9 @@ QUnit.module('setRootNode', () => {
         },
         nodeMap: {
             '': {},
-            A: { parent: '' }
+            A: { parent: '', name: 'A' }
         },
-        drillUpButton: {
-            name: undefined,
-            destroy: function () {
-                this.name = undefined;
-                return this;
-            }
-        },
-        rootNode: '',
-        showDrillUpButton: function (name) {
-            this.drillUpButton.name = name;
-        }
+        rootNode: ''
     };
 
     QUnit.test('should set property rootNode on the series.', assert => {
@@ -182,11 +172,6 @@ QUnit.module('setRootNode', () => {
             series.rootNode,
             'A',
             'Drill to A: Root node updated'
-        );
-        assert.strictEqual(
-            series.drillUpButton.name,
-            'A',
-            'Drill to A: drill up button displayed'
         );
         assert.strictEqual(
             series.chart.redrawed,
@@ -200,11 +185,6 @@ QUnit.module('setRootNode', () => {
             series.rootNode,
             '',
             'Drill to \'\': Root node updated'
-        );
-        assert.strictEqual(
-            series.drillUpButton.name,
-            undefined,
-            'Drill to \'\': drill up button destroyed'
         );
         assert.strictEqual(
             series.chart.redrawed,
@@ -290,4 +270,56 @@ QUnit.test('seriesTypes.treemap.onClickDrillToNode', function (assert) {
         '',
         'On click drill to \'\': point.state is updated.'
     );
+});
+
+QUnit.test('traverseUpButton', assert => {
+    const { treemap: options } = Highcharts.defaultOptions.plotOptions;
+    const { renderTraverseUpButton } = Highcharts.seriesTypes.treemap.prototype;
+    const { SVGRenderer } = Highcharts;
+    const container = document.getElementById('container');
+    const renderer = new SVGRenderer(
+        container,
+        200,
+        200
+    );
+    const series = {
+        chart: { renderer: renderer },
+        nodeMap: {
+            '': {},
+            A: { parent: '', name: 'A' }
+        },
+        options: options
+    };
+    const after = () => {
+        container.removeChild(renderer.box);
+        renderer.destroy();
+    };
+
+    // Render button when root id is ''
+    renderTraverseUpButton.call(series, '');
+    assert.strictEqual(
+        series.drillUpButton,
+        undefined,
+        'should destroy traverseUpButton when root id is \'\'.'
+    );
+
+    // Render button when root id is 'A'
+    renderTraverseUpButton.call(series, 'A');
+    assert.strictEqual(
+        series.drillUpButton.text.textStr,
+        'A',
+        'should set name to "A" when root is "A" and traverseUpButton.text is undefined.'
+    );
+
+    // Render button with custom text
+    series.options.traverseUpButton.text = 'My Custom Text';
+    renderTraverseUpButton.call(series, 'A');
+    assert.strictEqual(
+        series.drillUpButton.text.textStr,
+        'My Custom Text',
+        'should set name to "My Custom Text" when traverseUpButton.text is set to "My Custom Text".'
+    );
+
+    // Clean up after the tests
+    after();
 });

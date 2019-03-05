@@ -1,4 +1,4 @@
-This directory contains overrides for templates in the `ink-docstrap/templates/tmpl`
-directory.
+This directory contains deprecated overrides for templates in the
+`ink-docstrap/templates/tmpl` directory.
 
-They are copied and overriden when `gulp jsdoc` runs.
+They were copied and overriden when `gulp jsdoc` ran.

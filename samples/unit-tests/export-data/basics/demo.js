@@ -620,7 +620,7 @@ QUnit.test('Stock chart', function (assert) {
 
         navigator: {
             series: {
-                includeInCSVExport: false
+                includeInDataExport: false
             }
         },
         series: [{

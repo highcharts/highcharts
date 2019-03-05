@@ -9,7 +9,7 @@
 /**
  * The horizontal alignment of an element.
  *
- * @typedef {"center"|"left"|"right"} Highcharts.AlignType
+ * @typedef {"center"|"left"|"right"} Highcharts.AlignValue
  */
 
 /**
@@ -20,14 +20,14 @@
  * Horizontal alignment. Can be one of `left`, `center` and `right`.
  *
  * @name Highcharts.AlignObject#align
- * @type {Highcharts.AlignType|undefined}
+ * @type {Highcharts.AlignValue|undefined}
  *
  * @default left
  *//**
  * Vertical alignment. Can be one of `top`, `middle` and `bottom`.
  *
  * @name Highcharts.AlignObject#verticalAlign
- * @type {Highcharts.VerticalAlignType|undefined}
+ * @type {Highcharts.VerticalAlignValue|undefined}
  *
  * @default top
  *//**
@@ -283,22 +283,41 @@
  */
 
 /**
- * An extendable collection of functions for defining symbol paths.
+ * An extendable collection of functions for defining symbol paths. Symbols are
+ * used internally for point markers, button and label borders and backgrounds,
+ * or custom shapes. Extendable by adding to {@link SVGRenderer#symbols}.
  *
- * @typedef Highcharts.SymbolDictionary
- *
- * @property {Function|undefined} [key:Highcharts.SymbolKey]
+ * @interface Highcharts.SymbolDictionary
+ *//**
+ * @name [key:string]
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#arc
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#callout
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#circle
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#diamond
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#square
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#triangle
+ * @type {Function|undefined}
  */
 
 /**
- * Can be one of `arc`, `callout`, `circle`, `diamond`, `square`,
- * `triangle`, `triangle-down`. Symbols are used internally for point
- * markers, button and label borders and backgrounds, or custom shapes.
- * Extendable by adding to {@link SVGRenderer#symbols}.
+ * Can be one of `arc`, `callout`, `circle`, `diamond`, `square`, `triangle`,
+ * and `triangle-down`. Symbols are used internally for point markers, button
+ * and label borders and backgrounds, or custom shapes. Extendable by adding to
+ * {@link SVGRenderer#symbols}.
  *
- * @typedef {string} Highcharts.SymbolKey
- * @validvalue ["arc", "callout", "circle", "diamond", "square", "triangle",
- *             "triangle-down"]
+ * @typedef {"arc"|"callout"|"circle"|"diamond"|"square"|"triangle"|"triangle-down"} Highcharts.SymbolKeyValue
  */
 
 /**
@@ -310,39 +329,39 @@
  * points to.
  *
  * @name Highcharts.SymbolOptionsObject#anchorX
- * @type {number}
+ * @type {number|undefined}
  *//**
  * The anchor Y position for the `callout` symbol. This is where the chevron
  * points to.
  *
  * @name Highcharts.SymbolOptionsObject#anchorY
- * @type {number}
+ * @type {number|undefined}
  *//**
  * The end angle of an `arc` symbol.
  *
  * @name Highcharts.SymbolOptionsObject#end
- * @type {number}
+ * @type {number|undefined}
  *//**
  * Whether to draw `arc` symbol open or closed.
  *
  * @name Highcharts.SymbolOptionsObject#open
- * @type {boolean}
+ * @type {boolean|undefined}
  *//**
  * The radius of an `arc` symbol, or the border radius for the `callout` symbol.
  *
  * @name Highcharts.SymbolOptionsObject#r
- * @type {number}
+ * @type {number|undefined}
  *//**
  * The start angle of an `arc` symbol.
  *
  * @name Highcharts.SymbolOptionsObject#start
- * @type {number}
+ * @type {number|undefined}
  */
 
 /**
  * The vertical alignment of an element.
  *
- * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignType
+ * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
  */
 
 'use strict';
@@ -2229,9 +2248,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     alignSetter: function (value) {
         var convert = { left: 'start', center: 'middle', right: 'end' };
-
-        this.alignValue = value;
-        this.element.setAttribute('text-anchor', convert[value]);
+        if (convert[value]) {
+            this.alignValue = value;
+            this.element.setAttribute('text-anchor', convert[value]);
+        }
     },
     /**
      * @private
@@ -3650,7 +3670,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {Highcharts.SVGAttributes} [disabledState]
      *        SVG attributes for the disabled state.
      *
-     * @param {Highcharts.SymbolKey} [shape=rect]
+     * @param {Highcharts.SymbolKeyValue} [shape=rect]
      *        The shape type.
      *
      * @return {Highcharts.SVGElement}
@@ -5102,7 +5122,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // apply these to the box and the text alike
         wrapper.textSetter = function (value) {
             if (value !== undefined) {
-                text.textSetter(value);
+                // Must use .attr to ensure transforms are done (#10009)
+                text.attr({
+                    text: value
+                });
             }
             updateBoxSize();
             updateTextPadding();

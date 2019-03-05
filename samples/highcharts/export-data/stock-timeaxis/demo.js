@@ -6,7 +6,7 @@ var chart = new Highcharts.StockChart({
 
     navigator: {
         series: {
-            includeInCSVExport: false
+            includeInDataExport: false
         }
     },
     series: [{

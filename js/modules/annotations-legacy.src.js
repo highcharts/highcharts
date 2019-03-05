@@ -577,6 +577,15 @@ Annotation.prototype = {
         visible: true,
 
         /**
+         * Allow an annotation to be draggable by a user. Possible
+         * values are `"x"`, `"xy"`, `"y"` and `""` (disabled).
+         *
+         * @sample highcharts/annotations/draggable/
+         *         Annotations draggable: 'xy'
+         */
+        draggable: 'xy',
+
+        /**
          * Options for annotation's labels. Each label inherits options
          * from the labelOptions object. An option from the labelOptions can be
          * overwritten by config for a specific label.
@@ -590,7 +599,7 @@ Annotation.prototype = {
              * @sample highcharts/annotations/label-position/
              *         Set labels position
              *
-             * @type {Highcharts.AlignType}
+             * @type {Highcharts.AlignValue}
              */
             align: 'center',
 
@@ -784,7 +793,7 @@ Annotation.prototype = {
              * @sample highcharts/annotations/label-position/
              *         Set labels position
              *
-             * @type {Highcharts.VerticalAlignType}
+             * @type {Highcharts.VerticalAlignValue}
              */
             verticalAlign: 'bottom',
 

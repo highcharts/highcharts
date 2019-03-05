@@ -1,15 +1,19 @@
-/**
- * (c) 2010-2019 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
+ *  (c) 2010-2019 Torstein Honsi
  *
- * Grid-light theme for Highcharts JS
- * @author Torstein Honsi
- */
+ *  License: www.highcharts.com/license
+ *
+ *  Grid-light theme for Highcharts JS
+ *
+ * */
 
 'use strict';
-import Highcharts from '../parts/Globals.js';
+
 /* global document */
+
+import Highcharts from '../parts/Globals.js';
+
 // Load the fonts
 Highcharts.createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Dosis:400,600',

@@ -5,6 +5,10 @@
  */
 
 /**
+ * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
+ */
+
+/**
  * Gets fired when a series is added to the chart after load time, using the
  * `addSeries` method. Returning `false` prevents the series from being added.
  *
@@ -135,11 +139,47 @@
  * @param {Highcharts.Chart} this
  *        The chart on which the event occured.
  *
- * @param {global.Event} event
+ * @param {global.ChartSelectionContextObject} event
  *        Event informations
  *
  * @return {boolean|undefined}
  *         Return false to prevent the default action, usually zoom.
+ */
+
+/**
+ * The primary axes are `xAxis[0]` and `yAxis[0]`. Remember the unit of a
+ * datetime axis is milliseconds since 1970-01-01 00:00:00.
+ *
+ * @interface Highcharts.ChartSelectionContextObject
+ * @extends global.Event
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
+ * @name Highcharts.ChartSelectionContextObject#xAxis
+ * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
+ *//**
+ * Arrays containing the axes of each dimension and each axis' min and max
+ * values.
+ * @name Highcharts.ChartSelectionContextObject#yAxis
+ * @type {Array<Highcharts.ChartSelectionAxisContextObject>}
+ */
+
+/**
+ * Axis context of the selection.
+ *
+ * @interface Highcharts.ChartSelectionAxisContextObject
+ *//**
+ * The selected Axis.
+ * @name Highcharts.ChartSelectionAxisContextObject#axis
+ * @type {Highcharts.Axis}
+ *//**
+ * The maximum axis value, either automatic or set manually.
+ * @name Highcharts.ChartSelectionAxisContextObject#max
+ * @type {number}
+ *//**
+ * The minimum axis value, either automatic or set manually.
+ * @name Highcharts.ChartSelectionAxisContextObject#min
+ * @type {number}
  */
 
 /**
@@ -526,9 +566,14 @@ H.defaultOptions = {
         /**
          * Default `mapData` for all series. If set to a string, it functions
          * as an index into the `Highcharts.maps` array. Otherwise it is
-         * interpreted s map data.
+         * interpreted as map data.
          *
          * @see [mapData](#series.map.mapData)
+         *
+         * @sample    map/demo/geojson
+         *            Loading geoJSON data
+         * @sample    map/chart/topojson
+         *            Loading topoJSON converted to geoJSON
          *
          * @type      {string|Array<*>}
          * @since     5.0.0
@@ -1040,18 +1085,17 @@ H.defaultOptions = {
         resetZoomButton: {
 
             /**
-             * What frame the button should be placed related to. Can be either
-             * `plot` or `chart`
+             * What frame the button placement should be related to. Can be
+             * either `plotBox` or `spacingBox`.
              *
              * @sample {highcharts} highcharts/chart/resetzoombutton-relativeto/
              *         Relative to the chart
              * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/
              *         Relative to the chart
              *
-             * @type       {string}
+             * @type       {Highcharts.ButtonRelativeToValue}
              * @default    plot
              * @since      2.2
-             * @validvalue ["plot", "chart"]
              * @apioption  chart.resetZoomButton.relativeTo
              */
 
@@ -1067,6 +1111,7 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/chart/resetzoombutton-theme/
              *         Theming the button
              *
+             * @type {Highcharts.SVGAttributes}
              * @since 2.2
              */
             theme: {
@@ -1106,7 +1151,7 @@ H.defaultOptions = {
                 /**
                  * The vertical alignment of the button.
                  *
-                 * @type       {Highcharts.VerticalAlignType}
+                 * @type       {Highcharts.VerticalAlignValue}
                  * @default    top
                  * @apioption  chart.resetZoomButton.position.verticalAlign
                  */
@@ -1639,7 +1684,7 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/title-verticalalign/
          *         Chart title in bottom right corner
          *
-         * @type      {Highcharts.VerticalAlignType}
+         * @type      {Highcharts.VerticalAlignValue}
          * @since     2.1
          * @apioption title.verticalAlign
          */
@@ -1701,7 +1746,7 @@ H.defaultOptions = {
          *         Aligned to the plot area (x = 50px = margin left - spacing
          *         left)
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'center',
@@ -1793,15 +1838,16 @@ H.defaultOptions = {
          */
 
         /**
-         * The vertical alignment of the title. Can be one of "top", "middle"
-         * and "bottom". When a value is given, the title behaves as floating.
+         * The vertical alignment of the title. Can be one of `"top"`,
+         * `"middle"` and `"bottom"`. When a value is given, the title behaves
+         * as floating.
          *
          * @sample {highcharts} highcharts/subtitle/verticalalign/
          *         Footnote at the bottom right of plot area
          * @sample {highstock} stock/chart/subtitle-footnote
          *         Footnote at the bottom right of plot area
          *
-         * @type      {Highcharts.VerticalAlignType}
+         * @type      {Highcharts.VerticalAlignValue}
          * @since     2.1
          * @apioption subtitle.verticalAlign
          */
@@ -1855,7 +1901,7 @@ H.defaultOptions = {
          * @sample {highstock} stock/chart/subtitle-footnote
          *         Footnote at bottom right of plot area
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'center',
@@ -2020,7 +2066,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/alignment/
          *         Legend alignment
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'center',
@@ -2649,7 +2695,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/legend/alignment/
          *         Legend alignment
          *
-         * @type  {Highcharts.VerticalAlignType}
+         * @type  {Highcharts.VerticalAlignValue}
          * @since 2.0
          */
         verticalAlign: 'bottom',
@@ -2968,6 +3014,8 @@ H.defaultOptions = {
          *         Formatting with shared tooltip
          * @sample {highcharts|highstock} highcharts/tooltip/formatter-split/
          *         Formatting with split tooltip
+         * @sample highcharts/tooltip/formatter-conditional-default/
+         *         Extending default formatter
          * @sample {highstock} stock/tooltip/formatter/
          *         Formatting with shared tooltip
          * @sample {highmaps} maps/tooltip/formatter/
@@ -3049,20 +3097,20 @@ H.defaultOptions = {
 
         /**
          * The name of a symbol to use for the border around the tooltip. Can
-         * be one of: `"callout"`, `"circle"` or `"square"`. When
-         * [tooltip.split](#tooltip.split) option is enabled, shape is applied
-         * to all boxes except header, which is controlled by
+         * be one of: `"callout"`, `"circle"`, or `"square"`. When
+         * [tooltip.split](#tooltip.split)
+         * option is enabled, shape is applied to all boxes except header, which
+         * is controlled by
          * [tooltip.headerShape](#tooltip.headerShape).
          *
          * Custom callbacks for symbol path generation can also be added to
          * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
          * [series.marker.symbol](plotOptions.line.marker.symbol).
          *
-         * @type       {string}
-         * @default    callout
-         * @since      4.0
-         * @validvalue ["callout", "square"]
-         * @apioption  tooltip.shape
+         * @type      {Highcharts.TooltipShapeValue}
+         * @default   callout
+         * @since     4.0
+         * @apioption tooltip.shape
          */
 
         /**
@@ -3537,7 +3585,7 @@ H.defaultOptions = {
             /**
              * Horizontal alignment of the credits.
              *
-             * @type {Highcharts.AlignType}
+             * @type {Highcharts.AlignValue}
              */
             align: 'right',
 
@@ -3549,7 +3597,7 @@ H.defaultOptions = {
             /**
              * Vertical alignment of the credits.
              *
-             * @type {Highcharts.VerticalAlignType}
+             * @type {Highcharts.VerticalAlignValue}
              */
             verticalAlign: 'bottom',
 

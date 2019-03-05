@@ -71,6 +71,12 @@
  * @type {boolean|undefined}
  */
 
+/**
+ * Possible MIME types for exporting.
+ *
+ * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -103,52 +109,60 @@ var defaultOptions = H.defaultOptions,
 
 // Add language
 extend(defaultOptions.lang
-/**
- * @optionparent lang
- */
+    /**
+     * @optionparent lang
+     */
     , {
 
         /**
-     * Exporting module only. The text for the menu item to print the chart.
-     *
-     * @since 3.0.1
-     */
+         * Exporting module only. View the chart in full screen.
+         *
+         * @since next
+         */
+        viewFullscreen: 'View in full screen',
+
+
+        /**
+         * Exporting module only. The text for the menu item to print the chart.
+         *
+         * @since 3.0.1
+         */
         printChart: 'Print chart',
 
         /**
-     * Exporting module only. The text for the PNG download menu item.
-     *
-     * @since 2.0
-     */
+         * Exporting module only. The text for the PNG download menu item.
+         *
+         * @since 2.0
+         */
         downloadPNG: 'Download PNG image',
 
         /**
-     * Exporting module only. The text for the JPEG download menu item.
-     *
-     * @since 2.0
-     */
+         * Exporting module only. The text for the JPEG download menu item.
+         *
+         * @since 2.0
+         */
         downloadJPEG: 'Download JPEG image',
 
         /**
-     * Exporting module only. The text for the PDF download menu item.
-     *
-     * @since 2.0
-     */
+         * Exporting module only. The text for the PDF download menu item.
+         *
+         * @since 2.0
+         */
         downloadPDF: 'Download PDF document',
 
         /**
-     * Exporting module only. The text for the SVG download menu item.
-     *
-     * @since 2.0
-     */
+         * Exporting module only. The text for the SVG download menu item.
+         *
+         * @since 2.0
+         */
         downloadSVG: 'Download SVG vector image',
 
         /**
-     * Exporting module menu. The tooltip title for the context menu holding
-     * print and export menu items.
-     *
-     * @since 3.0
-     */
+         * Exporting module menu. The tooltip title for the context menu holding
+         * print and export menu items.
+         *
+         * @since 3.0
+         */
         contextButtonTitle: 'Chart context menu'
 
     });
@@ -219,7 +233,7 @@ merge(true, defaultOptions.navigation, {
          * @sample highcharts/navigation/buttonoptions-align/
          *         Center aligned
          *
-         * @type  {Highcharts.AlignType}
+         * @type  {Highcharts.AlignValue}
          * @since 2.0
          */
         align: 'right',
@@ -269,13 +283,13 @@ merge(true, defaultOptions.navigation, {
          */
 
         /**
-         * The vertical alignment of the buttons. Can be one of "top", "middle"
-         * or "bottom".
+         * The vertical alignment of the buttons. Can be one of `"top"`,
+         * `"middle"` or `"bottom"`.
          *
          * @sample highcharts/navigation/buttonoptions-verticalalign/
          *         Buttons at lower right
          *
-         * @type  {Highcharts.VerticalAlignType}
+         * @type  {Highcharts.VerticalAlignValue}
          * @since 2.0
          */
         verticalAlign: 'top',
@@ -634,8 +648,8 @@ defaultOptions.exporting = {
      * without specifying a `type` option. Possible values are `image/png`,
      *  `image/jpeg`, `application/pdf` and `image/svg+xml`.
      *
-     * @since      2.0
-     * @validvalue ["image/png", "image/jpeg", "application/pdf", "image/svg+xml"]
+     * @type  {Highcharts.ExportingMimeTypeValue}
+     * @since 2.0
      */
     type: 'image/png',
 
@@ -752,8 +766,8 @@ defaultOptions.exporting = {
              * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
              *         Custom shape as symbol
              *
-             * @since      2.0
-             * @validvalue ["menu", "menuball", "exportIcon", "circle", "square", "diamond", "triangle", "triangle-down"]
+             * @type  {Highcharts.SymbolKeyValue|"exportIcon"|"menu"|"menuball"|string}
+             * @since 2.0
              */
             symbol: 'menu',
 
@@ -781,8 +795,8 @@ defaultOptions.exporting = {
              * items. The config options are defined in the
              * `menuItemDefinitions` option.
              *
-             * By default, there is the "Print" menu item plus one menu item
-             * for each of the available export types.
+             * By default, there is the "View in full screen" and "Print" menu
+             * items, plus one menu item for each of the available export types.
              *
              * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
              *         Menu item definitions
@@ -792,10 +806,11 @@ defaultOptions.exporting = {
              *         Menu item definitions
              *
              * @type    {Array<string>}
-             * @default ["printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG"]
+             * @default ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadPDF", "downloadSVG"]
              * @since   2.0
              */
             menuItems: [
+                'viewFullscreen',
                 'printChart',
                 'separator',
                 'downloadPNG',
@@ -828,10 +843,20 @@ defaultOptions.exporting = {
      *         Menu item definitions
      *
      * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
-     * @default {"printChart": {}, "separator": {}, "downloadPNG": {}, "downloadJPEG": {}, "downloadPDF": {}, "downloadSVG": {}}
+     * @default {"viewFullscreen": {}, "printChart": {}, "separator": {}, "downloadPNG": {}, "downloadJPEG": {}, "downloadPDF": {}, "downloadSVG": {}}
      * @since   5.0.13
      */
     menuItemDefinitions: {
+
+        /**
+         * @ignore
+         */
+        viewFullscreen: {
+            textKey: 'viewFullscreen',
+            onclick: function () {
+                this.fullscreen = new H.FullScreen(this.container);
+            }
+        },
 
         /**
          * @ignore
@@ -1348,7 +1373,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // hide all body content
-        childNodes.forEach(function (node, i) {
+        [].forEach.call(childNodes, function (node, i) {
             if (node.nodeType === 1) {
                 origDisplay[i] = node.style.display;
                 node.style.display = 'none';
@@ -1372,7 +1397,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 moveContainers(chart.renderTo);
 
                 // restore all body content
-                childNodes.forEach(function (node, i) {
+                [].forEach.call(childNodes, function (node, i) {
                     if (node.nodeType === 1) {
                         node.style.display = origDisplay[i];
                     }

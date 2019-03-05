@@ -1,16 +1,20 @@
-/**
- * (c) 2010-2019 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
+ *  (c) 2010-2019 Torstein Honsi
  *
- * Dark theme for Highcharts JS
- * @author Torstein Honsi
- */
+ *  License: www.highcharts.com/license
+ *
+ *  Dark theme for Highcharts JS
+ *
+ * */
 
 'use strict';
+
 /* global document */
+
 // Load the fonts
 import Highcharts from '../parts/Globals.js';
+
 Highcharts.createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Unica+One',
     rel: 'stylesheet',

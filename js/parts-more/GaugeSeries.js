@@ -58,75 +58,28 @@ seriesType('gauge', 'line', {
      * Data labels for the gauge. For gauges, the data labels are enabled
      * by default and shown in a bordered box below the point.
      *
-     * @extends plotOptions.series.dataLabels
      * @since   2.3.0
      * @product highcharts
      */
     dataLabels: {
-
-        /**
-         * Enable or disable the data labels.
-         *
-         * @since   2.3.0
-         * @product highcharts highmaps
-         */
-        enabled: true,
-
-        defer: false,
-
-        /**
-         * The y position offset of the label relative to the center of the
-         * gauge.
-         *
-         * @since   2.3.0
-         * @product highcharts highmaps
-         */
-        y: 15,
-
-        /**
-         * The border radius in pixels for the gauge's data label.
-         *
-         * @since   2.3.0
-         * @product highcharts highmaps
-         */
+        /** @ignore-option */
+        borderColor: '${palette.neutralColor20}',
+        /** @ignore-option */
         borderRadius: 3,
-
-        crop: false,
-
-        /**
-         * The vertical alignment of the data label.
-         *
-         * @product highcharts highmaps
-         */
-        verticalAlign: 'top',
-
-        /**
-         * The Z index of the data labels. A value of 2 display them behind
-         * the dial.
-         *
-         * @since   2.1.5
-         * @product highcharts highmaps
-         */
-        zIndex: 2,
-
-        /**
-         * The border width in pixels for the gauge data label.
-         *
-         * @since   2.3.0
-         * @product highcharts highmaps
-         */
+        /** @ignore-option */
         borderWidth: 1,
-
-        /**
-         * The border color for the data label.
-         *
-         * @type    {Highcharts.ColorString}
-         * @default #cccccc
-         * @since   2.3.0
-         * @product highcharts highmaps
-         */
-        borderColor: '${palette.neutralColor20}'
-
+        /** @ignore-option */
+        crop: false,
+        /** @ignore-option */
+        defer: false,
+        /** @ignore-option */
+        enabled: true,
+        /** @ignore-option */
+        verticalAlign: 'top',
+        /** @ignore-option */
+        y: 15,
+        /** @ignore-option */
+        zIndex: 2
     },
 
     /**
@@ -610,7 +563,7 @@ seriesType('gauge', 'line', {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|*>}
+ * @type      {Array<number|null|*>}
  * @extends   series.line.data
  * @excluding drilldown, marker, x
  * @product   highcharts

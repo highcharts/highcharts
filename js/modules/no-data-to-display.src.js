@@ -101,14 +101,14 @@ defaultOptions.noData = {
         /**
          * Horizontal alignment of the label.
          *
-         * @type {Highcharts.AlignType}
+         * @type {Highcharts.AlignValue}
          */
         align: 'center',
 
         /**
          * Vertical alignment of the label.
          *
-         * @type {Highcharts.VerticalAlignType}
+         * @type {Highcharts.VerticalAlignValue}
          */
         verticalAlign: 'middle'
     },

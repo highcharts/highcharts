@@ -83,10 +83,10 @@ seriesType(
      *
      * @extends      plotOptions.line
      * @since        6.0.0
-     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
-     *               navigatorOptions, pointInterval, pointIntervalUnit,
-     *               pointPlacement, pointRange, pointStart, showInNavigator,
-     *               stacking, useOhlcData
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking,
+     *               useOhlcData
      * @product      highstock
      * @optionparent plotOptions.sma
      */
@@ -113,6 +113,17 @@ seriesType(
          */
         linkedTo: undefined,
         /**
+         * Whether to compare indicator to the main series values
+         * or indicator values.
+         *
+         * @sample {highstock} stock/plotoptions/series-comparetomain/
+         *         Difference between comparing SMA values to the main series
+         *         and its own values.
+         *
+         * @type {boolean}
+         */
+        compareToMain: false,
+        /**
          * Paramters used in calculation of regression series' points.
          */
         params: {
@@ -134,6 +145,17 @@ seriesType(
      * @lends Highcharts.Series.prototype
      */
     {
+        processData: function () {
+            var series = this,
+                compareToMain = series.options.compareToMain,
+                linkedParent = series.linkedParent;
+
+            Series.prototype.processData.apply(series, arguments);
+
+            if (linkedParent && linkedParent.compareValue && compareToMain) {
+                series.compareValue = linkedParent.compareValue;
+            }
+        },
         bindTo: {
             series: true,
             eventName: 'updatedData'

@@ -6,6 +6,12 @@
  *
  * */
 
+/**
+ * Color axis types
+ *
+ * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -84,6 +90,7 @@ if (!H.ColorAxis) {
          *               plotBands, plotLines, showEmpty, title
          * @product      highcharts highmaps
          * @optionparent colorAxis
+         * @ignore
          */
         defaultColorAxisOptions: {
 
@@ -419,11 +426,10 @@ if (!H.ColorAxis) {
              * The type of interpolation to use for the color axis. Can be
              * `linear` or `logarithmic`.
              *
-             * @type       {string}
-             * @default    linear
-             * @product    highcharts highmaps
-             * @validvalue ["linear", "logarithmic"]
-             * @apioption  colorAxis.type
+             * @type      {Highcharts.ColorAxisTypeValue}
+             * @default   linear
+             * @product   highcharts highmaps
+             * @apioption colorAxis.type
              */
 
             /**
