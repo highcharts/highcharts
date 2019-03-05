@@ -1,4 +1,3 @@
-
 QUnit.test('Series.update', function (assert) {
 
     var chart = Highcharts.chart('container', {
@@ -671,7 +670,8 @@ QUnit.test('Z index changed after update (#3094)', function (assert) {
 
     controller.setPosition(
         (clientWidth / 2),
-        (clientHeight / 2));
+        (clientHeight / 2)
+    );
 
     var columnYValue = controller.getPosition().relatedTarget.point.y;
     assert.strictEqual(
@@ -691,7 +691,7 @@ QUnit.test('Z index changed after update (#3094)', function (assert) {
     );
     assert.strictEqual(
         chart.series[0].dataLabelsGroup.visibility,
-        "visible",
+        "inherit",
         "Data label should be visible"
     );
 });

@@ -1066,6 +1066,13 @@ function addInterface (doclet) {
     let node = updateNodeFor(doclet),
         types = getTypes(doclet);
 
+    if (doclet.comment.indexOf('@implements ') > -1) {
+        console.log(
+            'Warning: `@implements` is not supported for interfaces. Found at ' +
+            doclet.name + ' interface. Do you mean `@extends`?'
+        );
+    }
+
     if (!node.doclet.parameters) {
         node.doclet.parameters = getParameters(doclet);
     }

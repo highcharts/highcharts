@@ -142,36 +142,6 @@ QUnit.test('Bindings general tests', function (assert) {
         }
     );
 
-
-    // Flags tests:
-    // TO DO: Enable once Flag form will be ready
-    /*
-    Highcharts.each(
-        [
-            'flag-circlepin',
-            'flag-diamondpin',
-            'flag-squarepin',
-            'flag-simplepin'
-        ],
-        function (name) {
-            var seriesLength = chart.series.length;
-
-            selectButton(name);
-
-            controller.click(
-                points[2].plotX,
-                points[2].plotY
-            );
-
-            assert.strictEqual(
-                chart.series.length,
-                seriesLength + 1,
-                'Flag: ' + name + ' added without errors.'
-            );
-        }
-    );
-    */
-
     // Individual button events:
 
     // Current Price Indicator
@@ -339,9 +309,7 @@ QUnit.test('Bindings general tests', function (assert) {
     var button = document.querySelectorAll(
             '.highcharts-popup .highcharts-annotation-remove-button'
         )[0],
-        buttonOffset = Highcharts.offset(
-            button
-        );
+        buttonOffset = Highcharts.offset(button);
 
     controller.click(
         buttonOffset.left + 5,
@@ -356,6 +324,40 @@ QUnit.test('Bindings general tests', function (assert) {
         chart.navigationBindings.popup.container.style.display,
         'none',
         'Annotations toolbar hidden.'
+    );
+
+    // Test flags:
+    var seriesLength = chart.series.length;
+
+    selectButton('flag-circlepin');
+    // Register flag position
+    controller.click(
+        points[2].plotX,
+        points[2].plotY
+    );
+
+    // Styles in Karma are not loaded!
+    chart.navigationBindings.popup.container.style.position = 'absolute';
+    chart.navigationBindings.popup.container.style.top = '0px';
+    button = document.querySelectorAll(
+        '.highcharts-popup .highcharts-popup-bottom-row button'
+    )[0];
+    buttonOffset = Highcharts.offset(button);
+    controller.click(
+        buttonOffset.left + 5,
+        buttonOffset.top + 5
+    );
+
+    assert.strictEqual(
+        chart.series.length,
+        seriesLength + 1,
+        'Flag: flag-circlepin series created.'
+    );
+
+    assert.strictEqual(
+        chart.series[seriesLength].points.length,
+        1,
+        'Flag: no duplicated flags.'
     );
 
     // #9740:

@@ -283,22 +283,32 @@
  */
 
 /**
- * An extendable collection of functions for defining symbol paths.
+ * An extendable collection of functions for defining symbol paths. Symbols are
+ * used internally for point markers, button and label borders and backgrounds,
+ * or custom shapes. Extendable by adding to {@link SVGRenderer#symbols}.
  *
- * @typedef Highcharts.SymbolDictionary
- *
- * @property {Function|undefined} [key:Highcharts.SymbolKey]
- */
-
-/**
- * Can be one of `arc`, `callout`, `circle`, `diamond`, `square`,
- * `triangle`, `triangle-down`. Symbols are used internally for point
- * markers, button and label borders and backgrounds, or custom shapes.
- * Extendable by adding to {@link SVGRenderer#symbols}.
- *
- * @typedef {string} Highcharts.SymbolKey
- * @validvalue ["arc", "callout", "circle", "diamond", "square", "triangle",
- *             "triangle-down"]
+ * @interface Highcharts.SymbolDictionary
+ *//**
+ * @name Highcharts.SymbolDictionary#[key:string]
+ * @type {*}
+ *//**
+ * @name Highcharts.SymbolDictionary#arc
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#callout
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#circle
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#diamond
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#square
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#triangle
+ * @type {Function|undefined}
  */
 
 /**
@@ -3495,7 +3505,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {Highcharts.SVGAttributes} [disabledState]
      *        SVG attributes for the disabled state.
      *
-     * @param {Highcharts.SymbolKey} [shape=rect]
+     * @param {string} [shape=rect]
      *        The shape type.
      *
      * @return {Highcharts.SVGElement}

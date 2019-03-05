@@ -358,3 +358,159 @@ QUnit.test('Zooming scatter charts', function (assert) {
     );
 
 });
+
+QUnit.test('Zooming chart with multiple panes', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        chart: {
+            zoomType: 'xy'
+        },
+        yAxis: [{
+            height: '60%'
+        }, {
+            top: '65%',
+            height: '35%'
+        }],
+        series: [{
+            type: 'candlestick',
+            name: 'AAPL',
+            data: [
+                [1543242600000, 174.24, 174.95, 170.26, 174.62],
+                [1543329000000, 171.51, 174.77, 170.88, 174.24],
+                [1543415400000, 176.73, 181.29, 174.93, 180.94],
+                [1543501800000, 182.66, 182.81, 177.78, 179.55],
+                [1543588200000, 180.29, 180.33, 177.03, 178.58],
+                [1543847400000, 184.46, 184.94, 181.21, 184.82]
+            ]
+        }, {
+            type: 'column',
+            name: 'Volume',
+            data: [
+                [1543242600000, 44998500],
+                [1543329000000, 41387400],
+                [1543415400000, 46062500],
+                [1543501800000, 41770000],
+                [1543588200000, 39531500],
+                [1543847400000, 40802500]
+            ],
+            yAxis: 1
+        }]
+    });
+
+    var controller = TestController(chart);
+
+    // Zoom on the first pane
+    controller.pan([100, 80], [200, 120]);
+
+    assert.deepEqual(
+        [
+            chart.yAxis[0].min,
+            chart.yAxis[0].max,
+            chart.yAxis[1].min,
+            chart.yAxis[1].max
+        ],
+        [
+            170,
+            185,
+            0,
+            50000000
+        ],
+        'y-zoom on the first pane did not affect y-zoom on the second pane (#1289)'
+    );
+
+    chart.zoomOut();
+
+    // Zoom on the second pane
+    controller.pan([50, 210], [550, 270]);
+
+    assert.deepEqual(
+        [
+            chart.yAxis[0].min,
+            chart.yAxis[0].max,
+            chart.yAxis[1].min,
+            chart.yAxis[1].max
+        ],
+        [
+            160,
+            190,
+            35000000,
+            45000000
+        ],
+        'y-zoom on the second pane did not affect y-zoom on the first pane (#1289)'
+    );
+
+    chart = Highcharts.stockChart('container', {
+        chart: {
+            zoomType: 'y',
+            inverted: true
+        },
+        yAxis: [{
+            width: '60%'
+        }, {
+            left: '65%',
+            width: '35%'
+        }],
+        series: [{
+            type: 'candlestick',
+            name: 'AAPL',
+            data: [
+                [1543242600000, 174.24, 174.95, 170.26, 174.62],
+                [1543329000000, 171.51, 174.77, 170.88, 174.24],
+                [1543415400000, 176.73, 181.29, 174.93, 180.94],
+                [1543501800000, 182.66, 182.81, 177.78, 179.55],
+                [1543588200000, 180.29, 180.33, 177.03, 178.58],
+                [1543847400000, 184.46, 184.94, 181.21, 184.82]
+            ]
+        }, {
+            type: 'column',
+            name: 'Volume',
+            data: [
+                [1543242600000, 44998500],
+                [1543329000000, 41387400],
+                [1543415400000, 46062500],
+                [1543501800000, 41770000],
+                [1543588200000, 39531500],
+                [1543847400000, 40802500]
+            ],
+            yAxis: 1
+        }]
+    });
+
+    controller = TestController(chart);
+    controller.pan([180, 200], [250, 300]);
+
+    assert.deepEqual(
+        [
+            chart.yAxis[0].min,
+            chart.yAxis[0].max,
+            chart.yAxis[1].min,
+            chart.yAxis[1].max
+        ],
+        [
+            170,
+            175,
+            0,
+            60000000
+        ],
+        'y-zoom on the first pane did not affect y-zoom on the second pane when chart inverted (#1289)'
+    );
+
+    chart.zoomOut();
+
+    controller.pan([500, 200], [530, 300]);
+
+    assert.deepEqual(
+        [
+            chart.yAxis[0].min,
+            chart.yAxis[0].max,
+            chart.yAxis[1].min,
+            chart.yAxis[1].max
+        ],
+        [
+            165,
+            190,
+            39531499.5,
+            39531500.5
+        ],
+        'y-zoom on the second pane did not affect y-zoom on the first pane when chart inverted (#1289)'
+    );
+});

@@ -597,8 +597,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Update size. Redraw is forced.
         newWidth = optionsChart && optionsChart.width;
         newHeight = optionsChart && optionsChart.height;
-        if ((isNumber(newWidth) && newWidth !== chart.chartWidth) ||
-                (isNumber(newHeight) && newHeight !== chart.chartHeight)) {
+        if (H.isString(newHeight)) {
+            newHeight = H.relativeLength(
+                newHeight,
+                newWidth || chart.chartWidth
+            );
+        }
+        if (
+            (isNumber(newWidth) && newWidth !== chart.chartWidth) ||
+            (isNumber(newHeight) && newHeight !== chart.chartHeight)
+        ) {
             chart.setSize(newWidth, newHeight, animation);
         } else if (pick(redraw, true)) {
             chart.redraw(animation);

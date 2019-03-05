@@ -65,3 +65,72 @@ QUnit.test('Negative color with crushed chart (#9200)', function (assert) {
         'There should be no NaNs in the SVG'
     );
 });
+
+QUnit.test('Zones and column presentational props (#6234)', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'column',
+            data: [1, 3, 2, 4],
+            zoneAxis: 'x',
+            color: 'blue',
+            zones: [{
+                value: 2
+            }, {
+                color: 'red',
+                dashStyle: 'dash',
+                borderColor: 'blue',
+                borderWidth: 10
+            }]
+
+        }]
+    });
+    const points = chart.series[0].points;
+
+    assert.strictEqual(
+        points[0].graphic.element.getAttribute('fill'),
+        'blue',
+        'No zones fill'
+    );
+
+    assert.strictEqual(
+        points[0].graphic.element.getAttribute('stroke'),
+        '#ffffff',
+        'No zones stroke'
+    );
+
+    assert.strictEqual(
+        points[0].graphic.element.getAttribute('stroke-width'),
+        '1',
+        'No zones stroke width'
+    );
+
+    assert.strictEqual(
+        points[0].graphic.element.getAttribute('stroke-dasharray'),
+        null,
+        'No zones dash array'
+    );
+
+    assert.strictEqual(
+        points[2].graphic.element.getAttribute('fill'),
+        'red',
+        'Zones fill'
+    );
+
+    assert.strictEqual(
+        points[2].graphic.element.getAttribute('stroke'),
+        'blue',
+        'Zones stroke'
+    );
+
+    assert.strictEqual(
+        points[2].graphic.element.getAttribute('stroke-width'),
+        '10',
+        'Zones stroke width'
+    );
+
+    assert.strictEqual(
+        points[2].graphic.element.getAttribute('stroke-dasharray'),
+        '40,30',
+        'Zones dash array'
+    );
+});

@@ -1,5 +1,3 @@
-
-
 QUnit.test('Soft threshold', function (assert) {
     var chart,
         $container = $('#container');
@@ -92,8 +90,6 @@ QUnit.test('Soft threshold', function (assert) {
         'Area - low dangling data'
     );
 
-
-
     chart.series[0].setData([1001, 1002, 1003]);
     chart.addSeries({
         type: 'line',
@@ -103,6 +99,54 @@ QUnit.test('Soft threshold', function (assert) {
         chart.yAxis[0].min,
         0,
         'Combined - high dangling data'
+    );
+
+    chart.series[1].remove();
+    chart.series[0].update({
+        type: 'line',
+        data: [0, 0, 0]
+    });
+    assert.deepEqual(
+        chart.yAxis[0].tickPositions,
+        [0],
+        'Y axis should have a single tick'
+    );
+    chart.yAxis[0].update({
+        min: 0
+    });
+    assert.deepEqual(
+        chart.yAxis[0].tickPositions,
+        [0],
+        'Hard min, Y axis should have a single tick'
+    );
+
+    chart.yAxis[0].update({
+        minRange: 1
+    });
+    assert.deepEqual(
+        [chart.yAxis[0].min, chart.yAxis[0].max],
+        [0, 1],
+        'Hard min and minRange'
+    );
+
+    chart.yAxis[0].update({
+        min: null,
+        max: 0
+    });
+    assert.deepEqual(
+        [chart.yAxis[0].min, chart.yAxis[0].max],
+        [-1, 0],
+        'Hard max and minRange'
+    );
+
+    chart.yAxis[0].update({
+        min: null,
+        max: null
+    });
+    assert.notEqual(
+        chart.yAxis[0].min,
+        chart.yAxis[0].max,
+        'Flat data, auto extremes and minRange'
     );
 });
 
