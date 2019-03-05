@@ -1215,7 +1215,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         './js/parts-gantt'
     ];
     const configJSDoc = {
-        plugins: ['./tools/jsdoc/plugins/highcharts.jsdoc']
+        plugins: ['./node_modules/highcharts-documentation-generators/jsdoc/plugins/highcharts.jsdoc']
     };
     const jsdoc = require('gulp-jsdoc3');
     return new Promise((resolve, reject) => {
@@ -1427,7 +1427,7 @@ const jsdocNamespace = () => {
             'highmaps'
         ],
         gulpOptions = [codeFiles, { read: false }],
-        jsdoc3Options = { plugins: ['tools/jsdoc/plugins/highcharts.namespace'] };
+        jsdoc3Options = { plugins: ['node_modules/highcharts-documentation-generators/jsdoc/plugins/highcharts.namespace'] };
 
     if (codeFiles.length === 0) {
         console.error('No files in tsconfig.json found.');
