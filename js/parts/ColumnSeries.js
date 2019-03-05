@@ -912,7 +912,7 @@ seriesType('column', 'line'
 
                     // Border radius is not stylable (#6900)
                     if (options.borderRadius) {
-                        graphic.attr({
+                        graphic[verb]({
                             r: options.borderRadius
                         });
                     }

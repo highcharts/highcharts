@@ -4526,10 +4526,7 @@ H.Series = H.seriesType(
                         .path(graphPath)
                         .addClass(prop[1])
                         .attr({ zIndex: 1 }) // #1069
-                        .add(series.group)
-                        // Add shadow to normal series (0) or to first
-                        // zone (1) #3932
-                        .shadow((i < 2) && options.shadow);
+                        .add(series.group);
                 }
 
                 if (graph && !styledMode) {
@@ -4547,7 +4544,10 @@ H.Series = H.seriesType(
                         attribs['stroke-linecap'] =
                             attribs['stroke-linejoin'] = 'round';
                     }
-                    graph[verb](attribs);
+                    graph[verb](attribs)
+                        // Add shadow to normal series (0) or to first
+                        // zone (1) #3932
+                        .shadow((i < 2) && options.shadow);
                 }
 
                 // Helpers for animation

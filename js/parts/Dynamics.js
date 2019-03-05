@@ -1087,19 +1087,21 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // animation has first run. This happens when calling update
             // directly after chart initialization, or when applying responsive
             // rules (#6912).
-            animation = series.finishedAnimating && { animation: false };
+            animation = series.finishedAnimating && { animation: false },
+            kinds = {};
 
         if (keepPoints) {
             preserve.push(
-                'area',
                 'data',
                 'isDirtyData',
-                'graph',
                 'points',
                 'processedXData',
                 'processedYData',
                 'xIncrement'
             );
+            if (options.visible !== false) {
+                preserve.push('area', 'graph');
+            }
             series.parallelArrays.forEach(function (key) {
                 preserve.push(key + 'Data');
             });
@@ -1148,22 +1150,29 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         series.init(chart, options);
 
         if (keepPoints && this.points) {
+
+            // What kind of elements to destroy
+            if (newOptions.visible === false) {
+                kinds.graphic = 1;
+                kinds.dataLabel = 1;
+            } else {
+                if (newOptions.marker && newOptions.marker.enabled === false) {
+                    kinds.graphic = 1;
+                }
+                if (
+                    newOptions.dataLabels &&
+                    newOptions.dataLabels.enabled === false
+                ) {
+                    kinds.dataLabel = 1;
+                }
+            }
             this.points.forEach(function (point) {
                 if (point && point.series) {
                     point.resolveColor();
-                    // Destroy all elements in order to recreate based on
-                    // updated series options. This is not necessary in all
-                    // cases, and in the future we may add smarter checks
-                    // for what we need to destroy based on what options
-                    // we're setting.
-                    if (
-                        (
-                            newOptions.marker &&
-                            newOptions.marker.enabled === false
-                        ) ||
-                        newOptions.visible === false
-                    ) {
-                        point.destroyElements();
+                    // Destroy elements in order to recreate based on updated
+                    // series options.
+                    if (Object.keys(kinds).length) {
+                        point.destroyElements(kinds);
                     }
                 }
             }, this);

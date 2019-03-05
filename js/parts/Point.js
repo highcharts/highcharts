@@ -480,41 +480,39 @@ Highcharts.Point.prototype = {
      * @private
      * @function Highcharts.Point#destroyElements
      */
-    destroyElements: function () {
+    destroyElements: function (kinds) {
         var point = this,
-            props = [
-                'graphic',
-                'dataLabel',
-                'dataLabelUpper',
-                'connector',
-                'shadowGroup'
-            ],
+            props = [],
             prop,
-            i = 6;
+            i;
 
+        kinds = kinds || { graphic: 1, dataLabel: 1 };
+        if (kinds.graphic) {
+            props.push('graphic', 'shadowGroup');
+        }
+        if (kinds.dataLabel) {
+            props.push('dataLabel', 'dataLabelUpper', 'connector');
+        }
+
+        i = props.length;
         while (i--) {
             prop = props[i];
             if (point[prop]) {
                 point[prop] = point[prop].destroy();
             }
         }
-        // Handle point.dataLabels and point.connectors
-        if (point.dataLabels) {
-            point.dataLabels.forEach(function (label) {
-                if (label.element) {
-                    label.destroy();
-                }
-            });
-            delete point.dataLabels;
-        }
-        if (point.connectors) {
-            point.connectors.forEach(function (connector) {
-                if (connector.element) {
-                    connector.destroy();
-                }
-            });
-            delete point.connectors;
-        }
+
+        ['dataLabel', 'connector'].forEach(function (prop) {
+            var plural = prop + 's';
+            if (kinds[prop] && point[plural]) {
+                point[plural].forEach(function (item) {
+                    if (item.element) {
+                        item.destroy();
+                    }
+                });
+                delete point[plural];
+            }
+        });
     },
 
     /**
