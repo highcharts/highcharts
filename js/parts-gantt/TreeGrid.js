@@ -480,11 +480,38 @@ var onBeforeRender = function (e) {
             return axis.options.type === 'treegrid';
         })
         .forEach(function (axis) {
-            var labelOptions = axis.options && axis.options.labels,
+            var options = axis.options || {},
+                labelOptions = options.labels,
                 removeFoundExtremesEvent,
+                uniqueNames = options.uniqueNames,
+                numberOfSeries = 0,
+                // Concatenate data from all series assigned to this axis.
+                data = axis.series.reduce(function (arr, s) {
+                    if (s.visible) {
+                        // Push all data to array
+                        s.options.data.forEach(function (data) {
+                            if (isObject(data)) {
+                                // Set series index on data. Removed again after
+                                // use.
+                                data.seriesIndex = numberOfSeries;
+                                arr.push(data);
+                            }
+                        });
+
+                        // Increment series index
+                        if (uniqueNames === true) {
+                            numberOfSeries++;
+                        }
+                    }
+                    return arr;
+                }, []),
                 // setScale is fired after all the series is initialized,
                 // which is an ideal time to update the axis.categories.
-                treeGrid = axis.updateYNames();
+                treeGrid = getTreeGridFromData(
+                    data,
+                    uniqueNames,
+                    (uniqueNames === true) ? numberOfSeries : 1
+                );
 
             // Assign values to the axis.
             axis.categories = treeGrid.categories;
@@ -957,46 +984,6 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
         axis.setBreaks(breaks, pick(redraw, true));
     }
 });
-
-GridAxis.prototype.updateYNames = function () {
-    var axis = this,
-        options = axis.options,
-        isTreeGrid = options.type === 'treegrid',
-        uniqueNames = options.uniqueNames,
-        isYAxis = !axis.isXAxis,
-        series = axis.series,
-        numberOfSeries = 0,
-        data;
-
-    if (isTreeGrid && isYAxis) {
-        // Concatenate data from all series assigned to this axis.
-        data = series.reduce(function (arr, s) {
-            if (s.visible) {
-                // Push all data to array
-                s.options.data.forEach(function (data) {
-                    if (isObject(data)) {
-                        // Set series index on data. Removed again after use.
-                        data.seriesIndex = numberOfSeries;
-                        arr.push(data);
-                    }
-                });
-
-                // Increment series index
-                if (uniqueNames === true) {
-                    numberOfSeries++;
-                }
-            }
-            return arr;
-        }, []);
-
-        // Calculate categories and the hierarchy for the grid.
-        return getTreeGridFromData(
-            data,
-            uniqueNames,
-            (uniqueNames === true) ? numberOfSeries : 1
-        );
-    }
-};
 
 // Make utility functions available for testing.
 GridAxis.prototype.utils = {
