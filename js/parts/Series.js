@@ -3997,6 +3997,7 @@ H.Series = H.seriesType(
                 point,
                 symbol,
                 graphic,
+                verb,
                 options = series.options,
                 seriesMarkerOptions = options.marker,
                 pointMarkerOptions,
@@ -4023,6 +4024,7 @@ H.Series = H.seriesType(
                 for (i = 0; i < points.length; i++) {
                     point = points[i];
                     graphic = point.graphic;
+                    verb = graphic ? 'animate' : 'attr';
                     pointMarkerOptions = point.marker || {};
                     hasPointMarker = !!point.marker;
                     enabled = (
@@ -4082,7 +4084,7 @@ H.Series = H.seriesType(
 
                         // Presentational attributes
                         if (graphic && !chart.styledMode) {
-                            graphic.attr(
+                            graphic[verb](
                                 series.pointAttribs(
                                     point,
                                     point.selected && 'select'
@@ -4509,6 +4511,7 @@ H.Series = H.seriesType(
             props.forEach(function (prop, i) {
                 var graphKey = prop[0],
                     graph = series[graphKey],
+                    verb = graph ? 'animate' : 'attr',
                     attribs;
 
                 if (graph) {
@@ -4519,33 +4522,32 @@ H.Series = H.seriesType(
 
                 } else if (graphPath.length) { // #1487
 
-                    series[graphKey] = series.chart.renderer.path(graphPath)
+                    series[graphKey] = graph = series.chart.renderer
+                        .path(graphPath)
                         .addClass(prop[1])
                         .attr({ zIndex: 1 }) // #1069
-                        .add(series.group);
+                        .add(series.group)
+                        // Add shadow to normal series (0) or to first
+                        // zone (1) #3932
+                        .shadow((i < 2) && options.shadow);
+                }
 
+                if (graph && !styledMode) {
 
-                    if (!styledMode) {
-                        attribs = {
-                            'stroke': prop[2],
-                            'stroke-width': options.lineWidth,
-                            // Polygon series use filled graph
-                            'fill': (series.fillGraph && series.color) || 'none'
-                        };
+                    attribs = {
+                        'stroke': prop[2],
+                        'stroke-width': options.lineWidth,
+                        // Polygon series use filled graph
+                        'fill': (series.fillGraph && series.color) || 'none'
+                    };
 
-                        if (prop[3]) {
-                            attribs.dashstyle = prop[3];
-                        } else if (options.linecap !== 'square') {
-                            attribs['stroke-linecap'] =
-                                attribs['stroke-linejoin'] = 'round';
-                        }
-
-                        graph = series[graphKey]
-                            .attr(attribs)
-                            // Add shadow to normal series (0) or to first
-                            // zone (1) #3932
-                            .shadow((i < 2) && options.shadow);
+                    if (prop[3]) {
+                        attribs.dashstyle = prop[3];
+                    } else if (options.linecap !== 'square') {
+                        attribs['stroke-linecap'] =
+                            attribs['stroke-linejoin'] = 'round';
                     }
+                    graph[verb](attribs);
                 }
 
                 // Helpers for animation

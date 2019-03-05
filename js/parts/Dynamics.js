@@ -1091,8 +1091,10 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
         if (keepPoints) {
             preserve.push(
+                'area',
                 'data',
                 'isDirtyData',
+                'graph',
                 'points',
                 'processedXData',
                 'processedYData',
