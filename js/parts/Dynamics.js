@@ -1045,7 +1045,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
         options = H.cleanRecursively(options, this.userOptions);
 
-        var series = this,
+        var newOptions = options,
+            series = this,
             chart = series.chart,
             // must use user options when changing type because series.options
             // is merged in with type specific plotOptions
@@ -1056,7 +1057,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 oldOptions.type ||
                 chart.options.chart.type
             ),
-            regeneratePoints = Boolean(
+            keepPoints = !(
                 // Indicators, histograms etc recalculate the data. It should be
                 // possible to omit this.
                 this.hasDerivedData ||
@@ -1086,130 +1087,106 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             // animation has first run. This happens when calling update
             // directly after chart initialization, or when applying responsive
             // rules (#6912).
-            animation = series.finishedAnimating && { animation: false },
-            allowSoftUpdate = [
-                'data',
-                'name',
-                'turboThreshold'
-            ],
-            keys = Object.keys(options),
-            doSoftUpdate = keys.length > 0;
+            animation = series.finishedAnimating && { animation: false };
 
-        // Running Series.update to update the data only is an intuitive usage,
-        // so we want to make sure that when used like this, we run the
-        // cheaper setData function and allow animation instead of completely
-        // recreating the series instance. This includes sideways animation when
-        // adding points to the data set. The `name` should also support soft
-        // update because the data module sets name and data when setting new
-        // data by `chart.update`.
-        keys.forEach(function (key) {
-            if (allowSoftUpdate.indexOf(key) === -1) {
-                doSoftUpdate = false;
-            }
-        });
-        if (doSoftUpdate) {
+        if (keepPoints) {
+            preserve.push(
+                'data',
+                'isDirtyData',
+                'points',
+                'processedXData',
+                'processedYData',
+                'xIncrement'
+            );
+            series.parallelArrays.forEach(function (key) {
+                preserve.push(key + 'Data');
+            });
+
             if (options.data) {
                 this.setData(options.data, false);
             }
-            if (options.name) {
-                this.setName(options.name, false);
-            }
-        } else {
-            if (!regeneratePoints) {
-                preserve.push(
-                    'data',
-                    'isDirtyData',
-                    'points',
-                    'processedXData',
-                    'processedYData',
-                    'xIncrement'
-                );
-                series.parallelArrays.forEach(function (key) {
-                    preserve.push(key + 'Data');
-                });
-
-                if (options.data) {
-                    this.setData(options.data, false);
-                }
-            }
-
-            // Do the merge, with some forced options
-            options = merge(oldOptions, animation, {
-                index: series.index,
-                pointStart: pick(
-                    // when updating from blank (#7933)
-                    oldOptions.pointStart,
-                    // when updating after addPoint
-                    series.xData[0]
-                )
-            }, regeneratePoints && { data: series.options.data }, options);
-
-            // Make sure preserved properties are not destroyed (#3094)
-            preserve = groups.concat(preserve);
-            preserve.forEach(function (prop) {
-                preserve[prop] = series[prop];
-                delete series[prop];
-            });
-
-            // Destroy the series and delete all properties. Reinsert all
-            // methods and properties from the new type prototype (#2270,
-            // #3719).
-            series.remove(false, null, false, true);
-            for (n in initialSeriesProto) {
-                series[n] = undefined;
-            }
-            if (seriesTypes[newType || initialType]) {
-                extend(series, seriesTypes[newType || initialType].prototype);
-            } else {
-                H.error(17, true, chart);
-            }
-
-            // Re-register groups (#3094) and other preserved properties
-            preserve.forEach(function (prop) {
-                series[prop] = preserve[prop];
-            });
-
-            series.init(chart, options);
-
-            if (!regeneratePoints && this.points) {
-                this.points.forEach(function (point) {
-                    if (point && point.series) {
-                        point.resolveColor();
-                        // Destroy all elements in order to recreate based on
-                        // updated series options. This is not necessary in all
-                        // cases, and in the future we may add smarter checks
-                        // for what we need to destroy based on what options
-                        // we're setting.
-                        if (
-                            this.options.marker &&
-                            this.options.marker.enabled === false
-                        ) {
-                            point.destroyElements();
-                        }
-                    }
-                }, this);
-            }
-
-            // Update the Z index of groups (#3380, #7397)
-            if (options.zIndex !== oldOptions.zIndex) {
-                groups.forEach(function (groupName) {
-                    if (series[groupName]) {
-                        series[groupName].attr({
-                            zIndex: options.zIndex
-                        });
-                    }
-                });
-            }
-
-
-            series.initialType = initialType;
-            chart.linkSeries(); // Links are lost in series.remove (#3028)
-
         }
+
+        // Do the merge, with some forced options
+        options = merge(oldOptions, animation, {
+            index: series.index,
+            pointStart: pick(
+                // when updating from blank (#7933)
+                oldOptions.pointStart,
+                // when updating after addPoint
+                series.xData[0]
+            )
+        }, !keepPoints && { data: series.options.data }, options);
+
+        // Make sure preserved properties are not destroyed (#3094)
+        preserve = groups.concat(preserve);
+        preserve.forEach(function (prop) {
+            preserve[prop] = series[prop];
+            delete series[prop];
+        });
+
+        // Destroy the series and delete all properties. Reinsert all
+        // methods and properties from the new type prototype (#2270,
+        // #3719).
+        series.remove(false, null, false, true);
+        for (n in initialSeriesProto) {
+            series[n] = undefined;
+        }
+        if (seriesTypes[newType || initialType]) {
+            extend(series, seriesTypes[newType || initialType].prototype);
+        } else {
+            H.error(17, true, chart);
+        }
+
+        // Re-register groups (#3094) and other preserved properties
+        preserve.forEach(function (prop) {
+            series[prop] = preserve[prop];
+        });
+
+        series.init(chart, options);
+
+        if (keepPoints && this.points) {
+            this.points.forEach(function (point) {
+                if (point && point.series) {
+                    point.resolveColor();
+                    // Destroy all elements in order to recreate based on
+                    // updated series options. This is not necessary in all
+                    // cases, and in the future we may add smarter checks
+                    // for what we need to destroy based on what options
+                    // we're setting.
+                    if (
+                        (
+                            newOptions.marker &&
+                            newOptions.marker.enabled === false
+                        ) ||
+                        newOptions.visible === false
+                    ) {
+                        point.destroyElements();
+                    }
+                }
+            }, this);
+        }
+
+        // Update the Z index of groups (#3380, #7397)
+        if (options.zIndex !== oldOptions.zIndex) {
+            groups.forEach(function (groupName) {
+                if (series[groupName]) {
+                    series[groupName].attr({
+                        zIndex: options.zIndex
+                    });
+                }
+            });
+        }
+
+
+        series.initialType = initialType;
+        chart.linkSeries(); // Links are lost in series.remove (#3028)
+
+
         fireEvent(this, 'afterUpdate');
 
         if (pick(redraw, true)) {
-            chart.redraw(doSoftUpdate || !regeneratePoints ? undefined : false);
+            chart.redraw(keepPoints ? undefined : false);
         }
     },
 
