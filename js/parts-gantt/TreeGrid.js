@@ -310,12 +310,15 @@ var onBeforeRender = function (e) {
             axis.updateYNames();
 
             // Update yData now that we have calculated the y values
-            // TODO: it would be better to be able to calculate y values
-            // before Series.setData
             axis.series.forEach(function (series) {
-                series.yData = series.options.data.map(function (data) {
-                    return data.y;
+                var data = series.options.data.map(function (d) {
+                    return isObject(d) ? merge(d) : d;
                 });
+
+                // Avoid destroying points when series is not visible
+                if (series.visible) {
+                    series.setData(data, false);
+                }
             });
 
             // Calculate the label options for each level in the tree.
