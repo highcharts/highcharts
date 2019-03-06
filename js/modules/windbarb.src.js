@@ -14,6 +14,41 @@ import onSeriesMixin from '../mixins/on-series.js';
 var noop = H.noop,
     seriesType = H.seriesType;
 
+// Once off, register the windbarb approximation for data grouping.This can be
+// called anywhere (not necessarily in the translate function), but must happen
+// after the data grouping module is loaded and before the wind barb series uses
+// it.
+function registerApproximation() {
+    if (H.approximations && !H.approximations.windbarb) {
+        H.approximations.windbarb = function (values, directions) {
+            var vectorX = 0,
+                vectorY = 0,
+                i,
+                len = values.length;
+
+            for (i = 0; i < len; i++) {
+                vectorX += values[i] * Math.cos(
+                    directions[i] * H.deg2rad
+                );
+                vectorY += values[i] * Math.sin(
+                    directions[i] * H.deg2rad
+                );
+            }
+
+            return [
+                // Wind speed
+                values.reduce(function (sum, value) {
+                    return sum + value;
+                }, 0) / values.length,
+                // Wind direction
+                Math.atan2(vectorY, vectorX) / H.deg2rad
+            ];
+        };
+    }
+}
+
+registerApproximation();
+
 /**
  * @private
  * @class
@@ -105,40 +140,7 @@ seriesType('windbarb', 'column'
         trackerGroups: ['markerGroup'],
 
         init: function (chart, options) {
-            // Once off, register the windbarb approximation for data grouping.
-            // This can be added anywhere (not necessarily in the translate
-            // function), but must happen after the data grouping module is
-            // loaded and before the wind barb series uses it.
-            if (H.approximations && !H.approximations.windbarb) {
-                H.approximations.windbarb = function (values, directions) {
-                    var vectorX = 0,
-                        vectorY = 0,
-                        i,
-                        len = values.length;
-
-                    for (i = 0; i < len; i++) {
-                        vectorX += values[i] * Math.cos(
-                            directions[i] * H.deg2rad
-                        );
-                        vectorY += values[i] * Math.sin(
-                            directions[i] * H.deg2rad
-                        );
-                    }
-
-                    return [
-                        // Wind speed
-                        Math.round(
-                            10 *
-                            Math.sqrt(
-                                Math.pow(vectorX, 2) + Math.pow(vectorY, 2)
-                            ) /
-                            len
-                        ) / 10,
-                        // Wind direction
-                        Math.atan2(vectorY, vectorX) / H.deg2rad
-                    ];
-                };
-            }
+            registerApproximation();
             H.Series.prototype.init.call(this, chart, options);
         },
 
