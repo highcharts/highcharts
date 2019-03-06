@@ -92,6 +92,11 @@ QUnit.module('Styled mode for series types', function () {
                     }];
                 }
 
+                if (type === 'networkgraph') {
+                    cfg.series[0].keys = ['from', 'to'];
+                    cfg.series[1].keys = ['from', 'to'];
+                }
+
                 var chart = Highcharts.chart('container', cfg);
 
                 assert.strictEqual(
@@ -107,4 +112,3 @@ QUnit.module('Styled mode for series types', function () {
     });
 
 });
-
