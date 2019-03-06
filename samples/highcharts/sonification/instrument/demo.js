@@ -73,21 +73,22 @@ button2.onclick = function () {
 button3.onclick = function () {
     var duration = 20;
     for (var i = 0; i < 60; ++i) {
-        setTimeout(i % 2 ?
-            function play() {
-                sine3.play({
-                    frequency: 1760, // A6
-                    volume: 0.4,
-                    duration: duration
-                });
-            } :
-            function () {
-                sine3.play({
-                    frequency: 1318.51, // E6
-                    volume: 0.4,
-                    duration: duration
-                });
-            },
+        setTimeout(
+            i % 2 ?
+                function play() {
+                    sine3.play({
+                        frequency: 1760, // A6
+                        volume: 0.4,
+                        duration: duration
+                    });
+                } :
+                function () {
+                    sine3.play({
+                        frequency: 1318.51, // E6
+                        volume: 0.4,
+                        duration: duration
+                    });
+                },
             i * 50
         );
     }

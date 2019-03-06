@@ -1,5 +1,5 @@
 /* eslint-env node, es6 */
-/* eslint-disable func-style */
+/* eslint-disable */
 
 'use strict';
 const {

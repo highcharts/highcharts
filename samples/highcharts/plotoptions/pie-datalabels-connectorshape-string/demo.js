@@ -73,6 +73,4 @@ Highcharts.chart('container', {
             }
         }
     }
-}
-
-);
+});

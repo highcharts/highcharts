@@ -56,7 +56,7 @@ QUnit.module('defaultOptions', function () {
          * dataLabels.formatter
          */
         assert.strictEqual(
-            formatter.call(undefined),
+            formatter.call(),
             '',
             'should have dataLabels.formatter return "" when context is undefined.'
         );

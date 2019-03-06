@@ -603,7 +603,14 @@ seriesType(
          */
         invertGroups: noop
 
+    }, /** @lends seriesTypes.column.prototype.pointClass.prototype */ {
+        isValid: function () {
+            // #9233 - Prevent from treating flags as null points (even if
+            // they have no y values defined).
+            return H.isNumber(this.y) || this.y === undefined;
+        }
     }
+
 );
 
 // create the flag icon with anchor

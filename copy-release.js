@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /* eslint-env node, es6 */
-/* eslint valid-jsdoc: 0, no-console: 0 */
+/* eslint-disable */
 /* eslint func-style: ["error", "declaration", { "allowArrowFunctions": true }] */
 
 /**
