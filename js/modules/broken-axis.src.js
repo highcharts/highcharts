@@ -15,6 +15,7 @@ var addEvent = H.addEvent,
     pick = H.pick,
     extend = H.extend,
     isArray = H.isArray,
+    find = H.find,
     fireEvent = H.fireEvent,
     Axis = H.Axis,
     Series = H.Series;
@@ -29,7 +30,7 @@ var addEvent = H.addEvent,
  * false if no break is found.
  */
 var findBreakAt = function (x, breaks) {
-    return breaks.find(function (b) {
+    return find(breaks, function (b) {
         return b.from < x && x < b.to;
     });
 };
