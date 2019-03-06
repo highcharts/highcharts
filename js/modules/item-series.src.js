@@ -361,9 +361,7 @@ H.seriesType(
             // data labels
             } else {
                 this.points.forEach(function (point) {
-                    if (point.dataLabel) {
-                        point.dataLabel = point.dataLabel.destroy();
-                    }
+                    point.destroyElements({ dataLabel: 1 });
                 });
             }
         },
