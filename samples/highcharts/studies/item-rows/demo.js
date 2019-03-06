@@ -516,7 +516,8 @@ document.getElementById('innersize').addEventListener('change', function () {
             },
             connectorShapes: piePoint.connectorShapes,
             getConnectorPath: piePoint.getConnectorPath,
-            setVisible: piePoint.setVisible
+            setVisible: piePoint.setVisible,
+            getTranslate: piePoint.getTranslate
         }
     );
 
