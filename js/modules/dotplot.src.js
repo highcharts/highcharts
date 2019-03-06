@@ -2,7 +2,7 @@
  *
  *  (c) 2009-2019 Torstein Honsi
  *
- *  Item series type for Highcharts
+ *  Dot plot series type for Highcharts
  *
  *  License: www.highcharts.com/license
  *
@@ -29,11 +29,11 @@ var extend = H.extend,
 /**
  * @private
  * @class
- * @name Highcharts.seriesTypes.item
+ * @name Highcharts.seriesTypes.dotplot
  *
  * @augments Highcharts.Series
  */
-seriesType('item', 'column', {
+seriesType('dotplot', 'column', {
     itemPadding: 0.2,
     marker: {
         symbol: 'circle',
