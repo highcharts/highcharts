@@ -1312,6 +1312,14 @@ const uploadAPIDocs = () => {
 };
 gulp.task('upload-api', uploadAPIDocs);
 
+/**
+ * Usage: npx gulp get-filesizes --out old.json
+ *
+ * Options:
+ *   --file     Specify which files to get filesizes of. If not specified it
+ *              will default to all distributed files.
+ *   --out      Specify where to store the result. Defaults "./filesizes.json"
+ */
 gulp.task('get-filesizes', () => {
     const isSourceFile = path => (
         path.endsWith('.src.js') && !path.includes('es-modules')
@@ -1325,6 +1333,15 @@ gulp.task('get-filesizes', () => {
     return getFileSizes(files, out);
 });
 
+/**
+ * Usage: npx gulp compare-filesizes --old old.json --new new.json
+ *
+ * Options:
+ *   --old      Specify path to the "oldest" filesizes to compare. Required.
+ *   --new      Specify path to the "newest" filesizes to compare. Required.
+ *   --out      Specify where to store the resulting information. If not
+ *              specifyed then the information will be outputted to the console.
+ */
 gulp.task('compare-filesizes', () => {
     const out = argv.out;
     const pathOld = argv.old;
