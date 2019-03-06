@@ -195,5 +195,32 @@ unsupportedSeriesType('dependencywheel', 'sankey', {
             });
 
         });
+    },
+
+    animate: function (init) {
+        if (!init) {
+            var duration = H.animObject(this.options.animation).duration,
+                step = (duration / 2) / this.nodes.length;
+            this.nodes.forEach(function (point, i) {
+                var graphic = point.graphic;
+                if (graphic) {
+                    graphic.attr({ opacity: 0 });
+                    setTimeout(function () {
+                        graphic.attr({ opacity: 1 });
+                    }, step * i);
+                }
+            }, this);
+            this.points.forEach(function (point) {
+                var graphic = point.graphic;
+                if (!point.isNode && graphic) {
+                    graphic.attr({ opacity: 0 })
+                        .animate({
+                            opacity: 1
+                        }, this.options.animation);
+                }
+            }, this);
+
+            this.animate = null;
+        }
     }
 });
