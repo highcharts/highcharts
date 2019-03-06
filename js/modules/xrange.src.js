@@ -240,6 +240,7 @@ seriesType('xrange', 'column'
                 // Search in data, since broken-axis can remove points inside a
                 // break.
                 points = series.data,
+                oldData = series.points,
                 id = options.id,
                 point,
                 pointIndex;
@@ -255,7 +256,8 @@ seriesType('xrange', 'column'
                 point = points.find(function (point) {
                     return (
                         point.x === options.x &&
-                        point.x2 === options.x2
+                        point.x2 === options.x2 &&
+                        !(oldData[pointIndex] && oldData[pointIndex].touched)
                     );
                 });
                 pointIndex = point ? point.index : undefined;
