@@ -1715,46 +1715,10 @@ gulp.task('dist', () => Promise.resolve()
     .then(gulpify('dtsLint', dtsLint))
     .then(gulpify('ant-dist', antDist)));
 
-gulp.task('browserify', function () {
-    return new Promise((resolve, reject) => {
-        const browserify = require('browserify');
-        browserify('./samples/highcharts/common-js/browserify/app.js')
-            .bundle(function (error, buffer) {
-                if (error) {
-                    reject(error);
-                } else {
-                    fs.writeFileSync(
-                        './samples/highcharts/common-js/browserify/demo.js',
-                        buffer
-                    );
-                    resolve();
-                }
-            });
-    });
-});
 
-gulp.task('webpack', function () {
-    return new Promise((resolve, reject) => {
-        const webpack = require('webpack');
-        webpack({
-            entry: './samples/highcharts/common-js/browserify/app.js', // Share the same unit tests
-            output: {
-                filename: './samples/highcharts/common-js/webpack/demo.js'
-            }
-        }, function (error) {
-            if (error) {
-                reject(new Error('Webpack failed.'));
-            } else {
-                resolve();
-            }
-        });
-    });
-});
-
-gulp.task('common', gulp.series('scripts', 'browserify', 'webpack'));
-
-/**
- * TypeScript source code documentation
- */
+require('./tools/gulptasks/browserify');
 require('./tools/gulptasks/tsdoc');
 require('./tools/gulptasks/tsdoc-watch');
+require('./tools/gulptasks/webpack');
+
+gulp.task('common', gulp.series('scripts', 'browserify', 'webpack'));
