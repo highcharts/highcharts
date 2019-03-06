@@ -68,16 +68,46 @@ seriesType('windbarb', 'column'
  *
  * @extends      plotOptions.column
  * @excluding    boostThreshold, marker, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, gapSize, gapUnit, dataGrouping,
- *               linecap, shadow, stacking, step
+ *               cropThreshold, dashStyle, dragDrop, gapSize, gapUnit, linecap,
+ *               shadow, stacking, step
  * @since        6.0.0
  * @product      highcharts highstock
  * @optionparent plotOptions.windbarb
  */
     , {
+        /**
+         * Data grouping options for the wind barbs. In Highcharts, this
+         * requires the `modules/datagrouping.js` module to be loaded. In
+         * Highstock, data grouping is included.
+         *
+         * @sample  highcharts/plotoptions/windbarb-datagrouping
+         *          Wind barb with data grouping
+         *
+         * @since   7.1.0
+         * @product highcharts highstock
+         */
         dataGrouping: {
+            /**
+             * Whether to enable data grouping.
+             *
+             * @product highcharts highstock
+             */
             enabled: true,
+            /**
+             * Approximation function for the data grouping. The default
+             * returns an average of wind speed and a vector average direction
+             * weighted by wind speed.
+             *
+             * @product highcharts highstock
+             *
+             * @type {String|Function}
+             */
             approximation: 'windbarb',
+            /**
+             * The approximate data group width.
+             *
+             * @product highcharts highstock
+             */
             groupPixelWidth: 30
         },
         /**
