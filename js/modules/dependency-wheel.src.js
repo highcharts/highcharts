@@ -282,6 +282,7 @@ H.seriesType(
  * @extends   series.sankey.nodes
  * @type      {Array<*>}
  * @product   highcharts
+ * @excluding offset
  * @apioption series.dependencywheel.nodes
  */
 
@@ -309,5 +310,6 @@ H.seriesType(
  * @type      {Array<*>}
  * @extends   series.sankey.data
  * @product   highcharts
+ * @excluding outgoing
  * @apioption series.dependencywheel.data
  */

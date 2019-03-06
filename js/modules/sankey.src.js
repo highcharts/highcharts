@@ -769,7 +769,7 @@ seriesType('sankey', 'column'
  *
  * @type      {Array<*>}
  * @extends   series.line.data
- * @excluding drilldown, marker, x, y
+ * @excluding dragDrop, drilldown, marker, x, y
  * @product   highcharts
  * @apioption series.sankey.data
  */
