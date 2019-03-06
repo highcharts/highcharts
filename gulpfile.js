@@ -638,6 +638,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/modules/offline-exporting.src.js',
         './js/modules/pattern-fill.src.js',
         './js/modules/sankey.src.js',
+        './js/modules/networkgraph/*.js',
         './js/modules/sonification/*.js',
         './js/annotations/annotations.src.js'
         /*
@@ -1214,7 +1215,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         './js/parts-gantt'
     ];
     const configJSDoc = {
-        plugins: ['./tools/jsdoc/plugins/highcharts.jsdoc']
+        plugins: ['./node_modules/highcharts-documentation-generators/jsdoc/plugins/highcharts.jsdoc']
     };
     const jsdoc = require('gulp-jsdoc3');
     return new Promise((resolve, reject) => {
@@ -1426,7 +1427,7 @@ const jsdocNamespace = () => {
             'highmaps'
         ],
         gulpOptions = [codeFiles, { read: false }],
-        jsdoc3Options = { plugins: ['tools/jsdoc/plugins/highcharts.namespace'] };
+        jsdoc3Options = { plugins: ['node_modules/highcharts-documentation-generators/jsdoc/plugins/highcharts.namespace'] };
 
     if (codeFiles.length === 0) {
         console.error('No files in tsconfig.json found.');

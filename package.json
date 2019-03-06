@@ -50,7 +50,6 @@
     "eslint-plugin-highcharts": "file:tools/eslint-plugin-highcharts",
     "eslint-plugin-node": "latest",
     "eslint-plugin-security": "latest",
-    "fast-deep-equal": "^2.0.1",
     "fs-extra": "^2.1.2",
     "gifencoder": "^1.1.0",
     "glob": "^7.1.3",

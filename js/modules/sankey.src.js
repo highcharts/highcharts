@@ -109,9 +109,7 @@ import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 
-var defined = H.defined,
-    seriesType = H.seriesType,
-    pick = H.pick,
+var seriesType = H.seriesType,
     Point = H.Point;
 
 /**
@@ -138,19 +136,21 @@ seriesType('sankey', 'column'
      * @since        6.0.0
      * @product      highcharts
      * @excluding    animationLimit, boostThreshold, borderColor, borderRadius,
-     *               borderWidth, crisp, cropThreshold, depth, edgeColor,
-     *               edgeWidth, findNearestPointBy, grouping, groupPadding,
-     *               groupZPadding, maxPointWidth, negativeColor, pointInterval,
-     *               pointIntervalUnit, pointPadding, pointPlacement,
-     *               pointRange, pointStart, pointWidth, shadow, softThreshold,
-     *               stacking, threshold, zoneAxis, zones
+     *               borderWidth, crisp, cropThreshold, depth, dragDrop,
+     *               edgeColor, edgeWidth, findNearestPointBy,
+     *               getExtremesFromAll, grouping, groupPadding, groupZPadding,
+     *               label, linkedTo, maxPointWidth, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPadding,
+     *               pointPlacement, pointRange, pointStart, pointWidth, shadow,
+     *               softThreshold, stacking, threshold, zoneAxis, zones
      * @optionparent plotOptions.sankey
      */
     , {
         colorByPoint: true,
         /**
-         * Higher numbers makes the links in a sankey diagram render more
-         * curved. A `curveFactor` of 0 makes the lines straight.
+         * Higher numbers makes the links in a sankey diagram or dependency
+         * wheelrender more curved. A `curveFactor` of 0 makes the lines
+         * straight.
          */
         curveFactor: 0.33,
         /**
@@ -189,16 +189,18 @@ seriesType('sankey', 'column'
             inside: true
         },
         /**
-         * Opacity for the links between nodes in the sankey diagram.
+         * Opacity for the links between nodes in the sankey diagram or
+         * dependency wheel.
          */
         linkOpacity: 0.5,
         /**
-         * The pixel width of each node in a sankey diagram, or the height in
-         * case the chart is inverted.
+         * The pixel width of each node in a sankey diagram or dependency wheel,
+         * or the height in case the chart is inverted.
          */
         nodeWidth: 20,
         /**
-         * The padding between nodes in a sankey diagram, in pixels.
+         * The padding between nodes in a sankey diagram or dependency wheel, in
+         * pixels.
          */
         nodePadding: 10,
         showInLegend: false,
@@ -246,6 +248,8 @@ seriesType('sankey', 'column'
         // Create a single node that holds information on incoming and outgoing
         // links.
         createNode: H.NodesMixin.createNode,
+        setData: H.NodesMixin.setData,
+        destroy: H.NodesMixin.destroy,
 
         getNodePadding: function () {
             return this.options.nodePadding;
@@ -361,57 +365,7 @@ seriesType('sankey', 'column'
         // Extend generatePoints by adding the nodes, which are Point objects
         // but pushed to the this.nodes array.
         generatePoints: function () {
-
-            var nodeLookup = {},
-                chart = this.chart;
-
-            H.Series.prototype.generatePoints.call(this);
-
-            if (!this.nodes) {
-                this.nodes = []; // List of Point-like node items
-            }
-            this.colorCounter = 0;
-
-            // Reset links from previous run
-            this.nodes.forEach(function (node) {
-                node.linksFrom.length = 0;
-                node.linksTo.length = 0;
-                node.level = undefined;
-            });
-
-            // Create the node list and set up links
-            this.points.forEach(function (point) {
-                if (defined(point.from)) {
-                    if (!nodeLookup[point.from]) {
-                        nodeLookup[point.from] = this.createNode(point.from);
-                    }
-                    nodeLookup[point.from].linksFrom.push(point);
-                    point.fromNode = nodeLookup[point.from];
-
-                    // Point color defaults to the fromNode's color
-                    if (chart.styledMode) {
-                        point.colorIndex = pick(
-                            point.options.colorIndex,
-                            nodeLookup[point.from].colorIndex
-                        );
-                    } else {
-                        point.color =
-                        point.options.color || nodeLookup[point.from].color;
-                    }
-
-                }
-                if (defined(point.to)) {
-                    if (!nodeLookup[point.to]) {
-                        nodeLookup[point.to] = this.createNode(point.to);
-                    }
-                    nodeLookup[point.to].linksTo.push(point);
-                    point.toNode = nodeLookup[point.to];
-                }
-
-                // for use in formats
-                point.name = point.name || point.options.id;
-
-            }, this);
+            H.NodesMixin.generatePoints.apply(this, arguments);
 
             // Order the nodes, starting with the root node(s) (#9818)
             function order(node, level) {
@@ -438,17 +392,6 @@ seriesType('sankey', 'column'
                     return a.level - b.level;
                 });
             }
-        },
-
-        // Destroy all nodes on setting new data
-        setData: function () {
-            if (this.nodes) {
-                this.nodes.forEach(function (node) {
-                    node.destroy();
-                });
-                this.nodes.length = 0;
-            }
-            H.Series.prototype.setData.apply(this, arguments);
         },
 
         // Run translation operations for one node
@@ -692,14 +635,7 @@ seriesType('sankey', 'column'
             H.seriesTypes.column.prototype.render.call(this);
             this.points = points;
         },
-        animate: H.Series.prototype.animate,
-
-
-        destroy: function () {
-        // Nodes must also be destroyed (#8682, #9300)
-            this.data = [].concat(this.points, this.nodes);
-            H.Series.prototype.destroy.call(this);
-        }
+        animate: H.Series.prototype.animate
     }, {
         getClassName: function () {
             return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
@@ -833,7 +769,7 @@ seriesType('sankey', 'column'
  *
  * @type      {Array<*>}
  * @extends   series.line.data
- * @excluding drilldown, marker, x, y
+ * @excluding dragDrop, drilldown, marker, x, y
  * @product   highcharts
  * @apioption series.sankey.data
  */
