@@ -269,7 +269,7 @@ H.extend(
         /**
          * Insert nodes into the QuadTree
          *
-         * @param {Array<Highcharts.Points>} points
+         * @param {Array<Highcharts.Point>} points
          */
         insertNodes: function (nodes) {
             nodes.forEach(function (node) {

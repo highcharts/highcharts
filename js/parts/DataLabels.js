@@ -299,12 +299,12 @@
  * `nullFormat` can be applied only to series which support
  * displaying null points.
  *
- * @name Highcharts.DataLabelsOptionsObject#nullFormat
- * @default undefined
- * @since 7.1.0
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format/|Highmaps-Demo:}
- *         Format data label and tooltip for null point.
- * @type {string|boolean}
+ *      Format data label and tooltip for null point.
+ *
+ * @name Highcharts.DataLabelsOptionsObject#nullFormat
+ * @type {string|boolean|undefined}
+ * @since 7.1.0
  *//**
  * Callback JavaScript function that defines formatting for points
  * with the value of null. Works analogously to
@@ -312,12 +312,12 @@
  * `nullPointFormatter` can be applied only to series which support
  * displaying null points.
  *
- * @name Highcharts.DataLabelsOptionsObject#nullFormatter
- * @default undefined
- * @since 7.1.0
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format/|Highmaps-Demo:}
- *         Format data label and tooltip for null point.
+ *      Format data label and tooltip for null point.
+ *
+ * @name Highcharts.DataLabelsOptionsObject#nullFormatter
  * @type {Highcharts.DataLabelsFormatterCallbackFunction|undefined}
+ * @since 7.1.0
  *//**
  * How to handle data labels that flow outside the plot area. The default is
  * `"justify"`, which aligns them inside the plot area. For columns and bars,

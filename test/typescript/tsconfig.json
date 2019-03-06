@@ -123,6 +123,10 @@
         "../../code/modules/map-parser.src.d.ts",
         "../../test/typescript/modules/map-parser.ts",
 
+        "../../code/modules/networkgraph.d.ts",
+        "../../code/modules/networkgraph.src.d.ts",
+        "../../test/typescript/modules/networkgraph.ts",
+
         "../../code/modules/no-data-to-display.d.ts",
         "../../code/modules/no-data-to-display.src.d.ts",
         "../../test/typescript/modules/no-data-to-display.ts",

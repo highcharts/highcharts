@@ -1800,9 +1800,9 @@ H.Series = H.seriesType(
          *         Data labels enabled
          * @sample highcharts/plotoptions/series-datalabels-multiple
          *         Multiple data labels on a bar series
-             *
+         *
          * @type {Highcharts.DataLabelsOptionsObject}
-             */
+         */
         dataLabels: {
             /** @ignore-option */
             align: 'center',
