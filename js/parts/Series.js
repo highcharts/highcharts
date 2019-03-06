@@ -2774,7 +2774,58 @@ H.Series = H.seriesType(
                 this.chart.options.symbols
             );
         },
+        /**
+         * Finds the index of an existing point that matches the given point
+         * options.
+         *
+         * @private
+         * @function Highcharts.Series#computePointIndex
+         * @param {object} optionsObject The options of the point.
+         * @param {number} lastIndex The index of the last point. Used to
+         * optimize series with required sorting.
+         * @returns {number|undefined} Returns index of a matching point,
+         * returns undefined if no match is found.
+         */
+        computePointIndex: function (optionsObject, lastIndex) {
+            var id = optionsObject.id,
+                x = optionsObject.x,
+                oldData = this.points,
+                matchingPoint,
+                matchedById,
+                pointIndex;
 
+            if (id) {
+                matchingPoint = oldData.find(function (point) {
+                    return point.id === id;
+                });
+                pointIndex = matchingPoint && matchingPoint.index;
+                if (pointIndex !== undefined) {
+                    matchedById = true;
+                }
+            }
+
+            // Search for the same X in the existing data set
+            if (pointIndex === undefined && isNumber(x)) {
+                pointIndex = this.xData.indexOf(x, lastIndex);
+            }
+
+            // Reduce pointIndex if data is cropped
+            if (pointIndex !== -1 &&
+                pointIndex !== undefined &&
+                this.cropped
+            ) {
+                pointIndex = (pointIndex >= this.cropStart) ?
+                    pointIndex - this.cropStart : pointIndex;
+            }
+
+            if (
+                !matchedById &&
+                oldData[pointIndex] && oldData[pointIndex].touched
+            ) {
+                pointIndex = undefined;
+            }
+            return pointIndex;
+        },
         /**
          * @private
          * @borrows LegendSymbolMixin.drawLineMarker as Highcharts.Series#drawLegendSymbol
@@ -2805,7 +2856,6 @@ H.Series = H.seriesType(
                 lastIndex,
                 requireSorting = this.requireSorting,
                 equalLength = data.length === oldData.length,
-                matchedById,
                 succeeded = true;
 
             this.xIncrement = null;
@@ -2813,7 +2863,6 @@ H.Series = H.seriesType(
             // Iterate the new data
             data.forEach(function (pointOptions, i) {
                 var id,
-                    matchingPoint,
                     x,
                     pointIndex,
                     optionsObject = (
@@ -2829,41 +2878,17 @@ H.Series = H.seriesType(
                 id = optionsObject.id;
 
                 if (id || isNumber(x)) {
-                    if (id) {
-                        matchingPoint = oldData.find(function (point) {
-                            return point.id === id;
-                        });
-                        pointIndex = matchingPoint && matchingPoint.index;
-                        if (pointIndex !== undefined) {
-                            matchedById = true;
-                        }
-                    }
-
-                    // Search for the same X in the existing data set
-                    if (pointIndex === undefined && isNumber(x)) {
-                        pointIndex = this.xData.indexOf(x, lastIndex);
-                    }
-
-                    // Reduce pointIndex if data is cropped
-                    if (pointIndex !== -1 &&
-                        pointIndex !== undefined &&
-                        this.cropped
-                    ) {
-                        pointIndex = (pointIndex >= this.cropStart) ?
-                            pointIndex - this.cropStart : pointIndex;
-                    }
+                    pointIndex = this.computePointIndex(
+                        optionsObject,
+                        lastIndex
+                    );
 
                     // Matching X not found
                     // or used already due to ununique x values (#8995),
                     // add point (but later)
                     if (
                         pointIndex === -1 ||
-                        pointIndex === undefined ||
-                        oldData[pointIndex] === undefined ||
-                        (
-                            !matchedById &&
-                            oldData[pointIndex].touched
-                        )
+                        pointIndex === undefined
                     ) {
                         pointsToAdd.push(pointOptions);
 
