@@ -1,7 +1,8 @@
 (function (H) {
     function normalDensity(x, mean, standardDeviation) {
         var translation = x - mean;
-        return Math.exp(-(translation * translation) /
+        return Math.exp(
+            -(translation * translation) /
             (2 * standardDeviation * standardDeviation)
         ) / (standardDeviation * Math.sqrt(2 * Math.PI));
     }

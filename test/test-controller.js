@@ -1,4 +1,4 @@
-/* eslint valid-jsdoc: 0 */
+/* eslint valid-jsdoc: 0, object-shorthand: 0 */
 /* global Highcharts, document, window */
 /**
  * The test controller makes it easy to emulate mouse and touch stuff on the
@@ -196,8 +196,8 @@ window.TestController = function (chart) {
 
             var self = this,
                 fromPosition = self.getPosition(),
-                from = [ fromPosition.x, fromPosition.y ],
-                to = [ chartX, chartY ],
+                from = [fromPosition.x, fromPosition.y],
+                to = [chartX, chartY],
                 interval = 1,
                 relatedTarget = fromPosition.relatedTarget,
                 points = getPointsBetween(from, to, interval);
@@ -644,8 +644,8 @@ window.TestController = function (chart) {
                         mousemove: 2
                     }[type] || 3
                 ).attr({
-                    'fill': 'white',
-                    'stroke': {
+                    fill: 'white',
+                    stroke: {
                         mousedown: 'green',
                         mousemove: 'blue'
                     }[type] || 'red',
@@ -653,7 +653,7 @@ window.TestController = function (chart) {
                         mousedown: 2,
                         mousemove: 1
                     }[type] || 2,
-                    'zIndex': 100
+                    zIndex: 100
                 }).css({
                     'pointer-events': 'none'
                 }).add();

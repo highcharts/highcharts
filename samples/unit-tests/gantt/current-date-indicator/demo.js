@@ -125,7 +125,8 @@
                 // 'Tue, Dec 06 2016, '
                 /^[A-Z][a-z]{2}, [A-Z][a-z]{2} [0-9]{2} [0-9]{4}, /.source +
                 // '21:35:12'
-                /[0-9]{2}:[0-9]{2}$/.source),
+                /[0-9]{2}:[0-9]{2}$/.source
+            ),
             customFormat,
             chart = Highcharts.chart('container', defaultConfig),
             axis = chart.xAxis[0],

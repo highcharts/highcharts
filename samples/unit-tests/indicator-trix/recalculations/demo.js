@@ -27,7 +27,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         chart.series[1].yData.map(function (y) {
             return y.toFixed(4);
         }),
-        [ "0.1598", "0.1143", "0.0825", "-0.0207", "0.0563"],
+        ["0.1598", "0.1143", "0.0825", "-0.0207", "0.0563"],
         'Correct values'
     );
 

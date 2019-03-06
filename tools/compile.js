@@ -15,25 +15,23 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
     const sourcePath = sourceFolder + path;
     const outputPath = sourcePath.replace('.src.js', '.js');
     const src = getFile(sourcePath);
-    const getErrorMessage = (e) => {
-        return [
-            'Compile error in file: ' + path,
-            '- Type: ' + e.type,
-            '- Line: ' + e.lineNo,
-            '- Char : ' + e.charNo,
-            '- Description: ' + e.description
-        ].join('\n');
-    };
+    const getErrorMessage = e => [
+        'Compile error in file: ' + path,
+        '- Type: ' + e.type,
+        '- Line: ' + e.lineNo,
+        '- Char : ' + e.charNo,
+        '- Description: ' + e.description
+    ].join('\n');
     return new Promise((resolve, reject) => {
         const out = closureCompiler.compile({
             compilationLevel: 'SIMPLE_OPTIMIZATIONS',
             jsCode: [{
                 path: filenameIn,
-                src: src
+                src
             }],
             languageIn: 'ES5',
             languageOut: 'ES5',
-            createSourceMap: createSourceMap
+            createSourceMap
         });
         const errors = out.errors;
         if (errors.length) {
@@ -82,7 +80,7 @@ const compile = (files, sourceFolder) => {
     console.log(colors.yellow('Warning: This task may take a few minutes.'));
     const createSourceMap = true;
     const promises = files
-      .map(path => compileSingleFile(path, sourceFolder, createSourceMap));
+        .map(path => compileSingleFile(path, sourceFolder, createSourceMap));
     return Promise.all(promises);
 };
 

@@ -11,7 +11,7 @@ QUnit.test('hasData', function (assert) {
     var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
         hasData = wordcloudPrototype.hasData;
     assert.strictEqual(
-      hasData.call(undefined),
+      hasData.call(),
       false,
       'should return false if series is not an object'
     );
@@ -214,7 +214,7 @@ QUnit.test('deriveFontSize', function (assert) {
  * we can't test something that is not accesible on the Highcharts object.
  */
 QUnit.test('isPolygonsColliding', function (assert) {
-    console.clear();
+    console.clear(); // eslint-disable-line
     var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
         isPolygonsColliding = wordcloudPrototype.utils.isPolygonsColliding,
         polygonA = [[10, 10], [20, 30], [30, 10]],
