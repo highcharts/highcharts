@@ -242,7 +242,10 @@ H.seriesType(
                     if (graphic) {
                         graphic.attr({ opacity: 0 });
                         setTimeout(function () {
-                            graphic.attr({ opacity: 1 });
+                            graphic.animate(
+                                { opacity: 1 },
+                                { duration: step }
+                            );
                         }, step * i);
                     }
                 }, this);
