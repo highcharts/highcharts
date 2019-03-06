@@ -23,19 +23,17 @@ rules:
     consistent-return: 0
     eol-last: 0
     func-style: 0
-    indent: 0                   # [2, 4] TODO: Too many tests fail
+    indent: [2, 4]
     max-len: 0                  # Should be reduced, but there are 1200 violations by 2015-10-31.
     new-cap: 0                  # The ill-named Color object. Fix in HC5
     no-alert: 0
     no-console: 0               # TODO: Fix manually. Output to a visible div instead.
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
-    no-multiple-empty-lines: 0  # TODO: Too many tests fail
     no-undefined: 0
     no-shadow: 0                # 10 violations as of 2015-10-31
     object-curly-spacing: [2, "always"]
     object-shorthand: 0
     quotes: 0                   # We use single quotes in Highcharts, but need to allow JSON data in the demos.
-    quote-props: 0              # TODO: Too many tests fail
     prefer-rest-params: 0
     require-jsdoc: 0
     spaced-comment: 0
