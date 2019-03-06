@@ -2,8 +2,6 @@
  * Copyright (C) Highsoft AS
  */
 
-/* eslint no-use-before-define:off */
-
 const Gulp = require('gulp');
 
 /**
@@ -17,8 +15,7 @@ function tsdocWatch() {
     const Path = require('path');
     const TSDoc = require('./tsdoc');
 
-    Log.warn('Watching', TSDoc.SOURCE_PATH, '...');
-    Log.warn('Watching', TSDoc.TEMPLATE_PATH, '...');
+    Log.warn('Watching', TSDoc.SOURCE_DIRECTORY, '...');
 
     Gulp.watch(
         [
