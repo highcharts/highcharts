@@ -1,7 +1,7 @@
 Highcharts.ganttChart('container', {
 
     title: {
-        text: 'Gantt Chart with Highstock Navigation'
+        text: 'Gantt Chart with Navigation'
     },
 
     yAxis: {

@@ -625,6 +625,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/parts/Time.js',
         './js/parts-gantt/GanttChart.js',
         './js/parts-gantt/TreeGrid.js',
+        './js/parts-map/ColorAxis.js',
         './js/parts-map/GeoJSON.js',
         './js/parts-map/Map.js',
         './js/parts-map/MapNavigation.js',
@@ -1146,7 +1147,7 @@ const createAllExamples = () => new Promise(resolve => {
 });
 
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
-    const generate = require('highcharts-api-docs');
+    const generate = require('highcharts-documentation-generators').ApiDocs; // eslint-disable-line
     const message = {
         start: 'Started generating API documentation.',
         noSeries: 'Missing series in tree.json. Run merge script.',
@@ -1474,7 +1475,7 @@ let apiServerRunning = false;
  */
 const jsdocWatch = () => {
     const optionsClassReference = {
-        templateDir: './node_modules/highcharts-docstrap',
+        templateDir: './node_modules/highcharts-documentation-generators/docstrap',
         destination: './build/api/class-reference/'
     };
     const optionsAPI = {
@@ -1486,23 +1487,26 @@ const jsdocWatch = () => {
     const dir = optionsClassReference.templateDir;
     const watchFiles = [
         './js/!(adapters|builds)/*.js',
-        './node_modules/highcharts-api-docs/include/*.*',
-        './node_modules/highcharts-api-docs/templates/*.handlebars',
+        './node_modules/highcharts-documentation-generators/api-docs/include/*.*',
+        './node_modules/highcharts-documentation-generators/api-docs/templates/*.handlebars',
         dir + '/template/tmpl/*.tmpl',
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'
     ];
-    if (argv.watch) {
-        gulp.watch(watchFiles, gulp.series('jsdoc'));
-        console.log('Watching file changes in JS files and templates');
-
-    } else {
-        console.log('Tip: use the --watch argument to watch JS file changes');
-    }
 
     if (!apiServerRunning) {
+
         jsdocServer();
+
         apiServerRunning = true;
+
+        if (argv.watch) {
+            gulp.watch(watchFiles, gulp.series('jsdoc'));
+            console.log('Watching file changes in JS files and templates');
+
+        } else {
+            console.log('Tip: use the --watch argument to watch JS file changes');
+        }
     }
 
     return generateClassReferences(optionsClassReference)
@@ -1627,8 +1631,13 @@ function defaultWatch() {
         return promise;
     };
     return styles().then(() => {
-        if (shouldBuild()) {
+        if (shouldBuild() ||
+            (argv.force && !argv.watch) ||
+            process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS
+        ) {
+            process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS = true;
             fnFirstBuild();
+            delete process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS;
             console.log(msgBuildAll);
         } else {
             console.log('✓'.green, 'Code up to date.'.gray);

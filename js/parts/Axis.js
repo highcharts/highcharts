@@ -5,12 +5,6 @@
  */
 
 /**
- * @callback Highcharts.AxisEventCallbackFunction
- *
- * @param {Highcharts.Axis} this
- */
-
-/**
  * Options for crosshairs on axes.
  *
  * @product highstock
@@ -19,17 +13,13 @@
  */
 
 /**
- * Formatter function for the text of a crosshair label.
- *
- * @product highstock
- *
- * @callback Highcharts.XAxisCrosshairLabelFormatterCallbackFunction
+ * @typedef {"navigator"|"pan"|"rangeSelectorButton"|"rangeSelectorInput"|"scrollbar"|"traverseUpButton"|"zoom"} Highcharts.AxisExtremesTriggerValue
+ */
+
+/**
+ * @callback Highcharts.AxisEventCallbackFunction
  *
  * @param {Highcharts.Axis} this
- *        Axis context
- *
- * @param {number} value
- *        Y value of the data point
  */
 
 /**
@@ -55,43 +45,6 @@
  * Options for axes.
  *
  * @typedef {Highcharts.XAxisOptions|Highcharts.YAxisOptions|Highcharts.ZAxisOptions} Highcharts.AxisOptions
- */
-
-/**
- * The returned object literal from the {@link Highcharts.Axis#getExtremes}
- * function.
- *
- * @interface Highcharts.ExtremesObject
- *//**
- * The maximum value of the axis' associated series.
- * @name Highcharts.ExtremesObject#dataMax
- * @type {number}
- *//**
- * The minimum value of the axis' associated series.
- * @name Highcharts.ExtremesObject#dataMin
- * @type {number}
- *//**
- * The maximum axis value, either automatic or set manually. If the `max` option
- * is not set, `maxPadding` is 0 and `endOnTick` is false, this value will be
- * the same as `dataMax`.
- * @name Highcharts.ExtremesObject#max
- * @type {number}
- *//**
- * The minimum axis value, either automatic or set manually. If the `min` option
- * is not set, `minPadding` is 0 and `startOnTick` is false, this value will be
- * the same as `dataMin`.
- * @name Highcharts.ExtremesObject#min
- * @type {number}
- *//**
- * The user defined maximum, either from the `max` option or from a zoom or
- * `setExtremes` action.
- * @name Highcharts.ExtremesObject#userMax
- * @type {number}
- *//**
- * The user defined minimum, either from the `min` option or from a zoom or
- * `setExtremes` action.
- * @name Highcharts.ExtremesObject#userMin
- * @type {number}
  */
 
 /**
@@ -151,7 +104,7 @@
  * @type {Highcharts.SVGElement}
  *//**
  * @name Highcharts.AxisSetExtremesEventObject#trigger
- * @type {string}
+ * @type {Highcharts.AxisExtremesTriggerValue|string}
  *//**
  * @name Highcharts.AxisSetExtremesEventObject#type
  * @type {"setExtremes"}
@@ -169,6 +122,65 @@
  * @param {Highcharts.Axis} this
  *
  * @return {Array<number>}
+ */
+
+/**
+ * @typedef {"high"|"low"|"middle"} Highcharts.AxisTitleAlignValue
+ */
+
+/**
+ * @typedef {"linear"|"logarithmic"|"datetime"|"category"|"treegrid"} Highcharts.AxisTypeValue
+ */
+
+/**
+ * The returned object literal from the {@link Highcharts.Axis#getExtremes}
+ * function.
+ *
+ * @interface Highcharts.ExtremesObject
+ *//**
+ * The maximum value of the axis' associated series.
+ * @name Highcharts.ExtremesObject#dataMax
+ * @type {number}
+ *//**
+ * The minimum value of the axis' associated series.
+ * @name Highcharts.ExtremesObject#dataMin
+ * @type {number}
+ *//**
+ * The maximum axis value, either automatic or set manually. If the `max` option
+ * is not set, `maxPadding` is 0 and `endOnTick` is false, this value will be
+ * the same as `dataMax`.
+ * @name Highcharts.ExtremesObject#max
+ * @type {number}
+ *//**
+ * The minimum axis value, either automatic or set manually. If the `min` option
+ * is not set, `minPadding` is 0 and `startOnTick` is false, this value will be
+ * the same as `dataMin`.
+ * @name Highcharts.ExtremesObject#min
+ * @type {number}
+ *//**
+ * The user defined maximum, either from the `max` option or from a zoom or
+ * `setExtremes` action.
+ * @name Highcharts.ExtremesObject#userMax
+ * @type {number}
+ *//**
+ * The user defined minimum, either from the `min` option or from a zoom or
+ * `setExtremes` action.
+ * @name Highcharts.ExtremesObject#userMin
+ * @type {number}
+ */
+
+/**
+ * Formatter function for the text of a crosshair label.
+ *
+ * @product highstock
+ *
+ * @callback Highcharts.XAxisCrosshairLabelFormatterCallbackFunction
+ *
+ * @param {Highcharts.Axis} this
+ *        Axis context
+ *
+ * @param {number} value
+ *        Y value of the data point
  */
 
 'use strict';
@@ -502,11 +514,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
-         * Alignment of the label compared to the axis. Defaults to `left` for
-         * right-side axes, `right` for left-side axes and `center` for
+         * Alignment of the label compared to the axis. Defaults to `"left"` for
+         * right-side axes, `"right"` for left-side axes and `"center"` for
          * horizontal axes.
          *
-         * @type      {string}
+         * @type      {Highcharts.AlignValue}
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.align
@@ -900,8 +912,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highcharts} highcharts/xaxis/labels-reservespace-true/
              *         Left-aligned labels on a vertical category axis
              *
-             * @type       {string}
-             * @validvalue ["left", "center", "right"]
+             * @type       {Highcharts.AlignValue}
              * @apioption  xAxis.labels.align
              */
 
@@ -919,7 +930,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highcharts|highstock} highcharts/xaxis/labels-autorotation-0-90/
              *         Custom graded auto rotation
              *
-             * @type      {Array<number>}
+             * @type      {Array<number>|false}
              * @default   [-45]
              * @since     4.1.0
              * @product   highcharts highstock gantt
@@ -1991,7 +2002,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * - for `align` = `"high"` and `opposite` = `false` `textAlign` is
              *   set to `right`
              *
-             * @type      {string}
+             * @type      {Highcharts.AlignValue}
              * @apioption xAxis.title.textAlign
              */
 
@@ -2038,7 +2049,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highstock} stock/xaxis/title-align/
              *         Aligned to "high" value
              *
-             * @validvalue ["low", "middle", "high"]
+             * @type {Highcharts.AxisTitleAlignValue}
              */
             align: 'middle',
 
@@ -2085,8 +2096,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highcharts} highcharts/yaxis/type-log-negative/
          *         Logarithmic with extension to emulate negative values
          *
-         * @product    highcharts gantt
-         * @validvalue ["linear", "logarithmic", "datetime", "category"]
+         * @type    {Highcharts.AxisTypeValue}
+         * @product highcharts gantt
          */
         type: 'linear',
 
@@ -2108,12 +2119,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {gantt} gantt/treegrid-axis/demo
          *         Treegrid axis
          *
-         * @default    {highcharts} linear
-         * @default    {gantt} treegrid
-         * @product    highcharts gantt
-         * @validvalue ["linear", "logarithmic", "datetime", "category",
-         *             "treegrid"]
-         * @apioption  yAxis.type
+         * @type      {Highcharts.AxisTypeValue}
+         * @default   {highcharts} linear
+         * @default   {gantt} treegrid
+         * @product   highcharts gantt
+         * @apioption yAxis.type
          */
 
         /**
@@ -2594,15 +2604,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * be one of `"left"`, `"center"` or `"right"`. The exact position
              * also depends on the `labels.x` setting.
              *
-             * Angular gauges and solid gauges defaults to `center`.
+             * Angular gauges and solid gauges defaults to `"center"`.
              *
              * @sample {highcharts} highcharts/yaxis/labels-align-left/
              *         Left
              *
-             * @type       {string}
+             * @type       {Highcharts.AlignValue}
              * @default    {highcharts|highmaps} right
              * @default    {highstock} left
-             * @validvalue ["left", "center", "right"]
              * @apioption  yAxis.labels.align
              */
 
@@ -4444,14 +4453,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 axis.min < threshold &&
                 axis.dataMin >= threshold
             ) {
-                axis.min = threshold;
+                axis.min = axis.options.minRange ?
+                    axis.max - axis.minRange :
+                    threshold;
 
             } else if (
                 !defined(hardMax) &&
                 axis.max > threshold &&
                 axis.dataMax <= threshold
             ) {
-                axis.max = threshold;
+                axis.max = axis.options.minRange ?
+                    axis.min + axis.minRange :
+                    threshold;
             }
         }
 
@@ -5199,7 +5212,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @private
      * @param {number} rotation The rotation in degrees as set by either the
      * `rotation` or `autoRotation` options.
-     * @return {string} Can be `center`, `left` or `right`.
+     * @return {Highcharts.AlignValue} Can be `"center"`, `"left"` or `"right"`.
      */
     autoLabelAlign: function (rotation) {
         var angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360,

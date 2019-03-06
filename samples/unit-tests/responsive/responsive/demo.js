@@ -1,4 +1,3 @@
-
 QUnit.test('Adapt height', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -22,6 +21,15 @@ QUnit.test('Adapt height', function (assert) {
                 chartOptions: {
                     chart: {
                         height: 300
+                    }
+                }
+            }, {
+                condition: {
+                    maxWidth: 300
+                },
+                chartOptions: {
+                    chart: {
+                        height: '100%'
                     }
                 }
             }]
@@ -53,6 +61,20 @@ QUnit.test('Adapt height', function (assert) {
         400,
         'Height reset'
     );
+
+    chart.setSize(200);
+
+    assert.strictEqual(
+        chart.chartWidth,
+        200,
+        'Width updated'
+    );
+    assert.strictEqual(
+        chart.chartHeight,
+        200,
+        'Percentage height updated'
+    );
+
 });
 
 QUnit.test('Callback', function (assert) {

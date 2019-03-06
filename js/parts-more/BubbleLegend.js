@@ -7,18 +7,18 @@
  */
 
 /**
- * @interface Highcharts.LegendBubbleLegendFormatterContextObject
+ * @interface Highcharts.BubbleLegendFormatterContextObject
  *//**
  * The center y position of the range.
- * @name Highcharts.LegendBubbleLegendFormatterContextObject#center
+ * @name Highcharts.BubbleLegendFormatterContextObject#center
  * @type {number}
  *//**
  * The radius of the bubble range.
- * @name Highcharts.LegendBubbleLegendFormatterContextObject#radius
+ * @name Highcharts.BubbleLegendFormatterContextObject#radius
  * @type {number}
  *//**
  * The bubble value.
- * @name Highcharts.LegendBubbleLegendFormatterContextObject#value
+ * @name Highcharts.BubbleLegendFormatterContextObject#value
  * @type {number}
  */
 
@@ -175,18 +175,17 @@ setOptions({ // Set default bubble legend options
                  *
                  * - `this.center`: The center y position of the range.
                  *
-                 * @type {Highcharts.FormatterCallbackFunction<Highcharts.LegendBubbleLegendFormatterContextObject>}
+                 * @type {Highcharts.FormatterCallbackFunction<Highcharts.BubbleLegendFormatterContextObject>}
                  */
                 formatter: undefined,
                 /**
                  * The alignment of the labels compared to the bubble
                  * legend. Can be one of `left`, `center` or `right`.
-                 * @validvalue ["left", "center", "right"]
                  *
                  * @sample highcharts/bubble-legend/connectorandlabels/
                  *         Labels on left
                  *
-                 * @validvalue ["left", "center", "right"]
+                 * @type {Highcharts.AlignValue}
                  */
                 align: 'right',
                 /**
@@ -270,7 +269,7 @@ setOptions({ // Set default bubble legend options
              * @sample highcharts/bubble-legend/ranges/
              *         Size by width
              *
-             * @validvalue ["area", "width"]
+             * @type {Highcharts.BubbleSizeByValue}
              */
             sizeBy: 'area',
             /**
@@ -879,8 +878,8 @@ H.BubbleLegend.prototype = {
             // size will not affect to bubbles series.
             if (
                 (horizontal && plotSizeY - calculatedSize >=
-                plotSizeX) || (!horizontal && plotSizeX -
-                calculatedSize >= plotSizeY)
+               plotSizeX) || (!horizontal && plotSizeX -
+               calculatedSize >= plotSizeY)
             ) {
                 calculatedSize = maxPxSize;
             }

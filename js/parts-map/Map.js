@@ -1,8 +1,10 @@
-/**
- * (c) 2010-2019 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -49,7 +51,7 @@ defaultOptions.mapNavigation = {
          * What box to align the buttons to. Possible values are `plotBox`
          * and `spacingBox`.
          *
-         * @validvalue ["plotBox", "spacingBox"]
+         * @type {Highcharts.ButtonRelativeToValue}
          */
         alignTo: 'plotBox',
 

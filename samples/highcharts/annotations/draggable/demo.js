@@ -14,11 +14,11 @@ Highcharts.chart('container', {
     },
 
     annotations: [{
-    labels: [{
-      point: '5',
-      text: 'Max'
-    }],
-    draggable: 'xy' //set by default
-  }],
+        labels: [{
+            point: '5',
+            text: 'Max'
+        }],
+        draggable: 'xy' //set by default
+    }]
 
 });

@@ -7,6 +7,10 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -556,16 +560,16 @@ seriesType('tilemap', 'heatmap'
      */
 
         /**
-     * The shape of the tiles in the tilemap. Possible values are `hexagon`,
-     * `circle`, `diamond`, and `square`.
-     *
-     * @sample maps/demo/circlemap-africa
-     *         Circular tile shapes
-     * @sample maps/demo/diamondmap
-     *         Diamond tile shapes
-     *
-     * @validvalue ["circle", "diamond", "hexagon", "square"]
-     */
+         * The shape of the tiles in the tilemap. Possible values are `hexagon`,
+         * `circle`, `diamond`, and `square`.
+         *
+         * @sample maps/demo/circlemap-africa
+         *         Circular tile shapes
+         * @sample maps/demo/diamondmap
+         *         Diamond tile shapes
+         *
+         * @type {Highcharts.TilemapShapeValue}
+         */
         tileShape: 'hexagon'
 
     }, { // Prototype functions

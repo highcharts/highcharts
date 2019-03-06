@@ -16,6 +16,15 @@ import './Point.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
+// Has a dependency on Navigator due to the use of
+// defaultOptions.navigator
+import './Navigator.js';
+// Has a dependency on Scrollbar due to the use of
+// defaultOptions.scrollbar
+import './Scrollbar.js';
+// Has a dependency on RangeSelector due to the use of
+// defaultOptions.rangeSelector
+import './RangeSelector.js';
 
 var addEvent = H.addEvent,
     arrayMax = H.arrayMax,

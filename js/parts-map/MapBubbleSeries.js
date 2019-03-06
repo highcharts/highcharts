@@ -1,8 +1,10 @@
-/**
- * (c) 2010-2019 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -95,9 +97,8 @@ if (seriesTypes.bubble) {
          * width of the bubble. The default, `area`, corresponds best to the
          * human perception of the size of each bubble.
          *
-         * @type       {string}
+         * @type       {Highcharts.BubbleSizeByValue}
          * @default    area
-         * @validvalue ["area", "width"]
          * @apioption  plotOptions.mapbubble.sizeBy
          */
 

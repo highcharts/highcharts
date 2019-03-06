@@ -1,4 +1,3 @@
-
 QUnit.test('Series.update', function (assert) {
 
     var chart = Highcharts.chart('container', {
@@ -329,7 +328,7 @@ QUnit.test('Series.update and events', assert => {
 
     const controller = new TestController(chart);
     controller.moveTo(100, 120);
-    controller.click(100, 120);
+    controller.click(100, 120, undefined, true);
 
     assert.strictEqual(
         clicks.option,
@@ -350,8 +349,11 @@ QUnit.test('Series.update and events', assert => {
         }
     });
 
-    controller.moveTo(100, 120);
-    controller.click(100, 120);
+    // Move out and in again because the boost module resets hoverPoints
+    controller.moveTo(0, 0);
+    controller.moveTo(100, 140);
+
+    controller.click(100, 140, undefined, true);
     assert.strictEqual(
         clicks.option,
         2,
@@ -671,7 +673,8 @@ QUnit.test('Z index changed after update (#3094)', function (assert) {
 
     controller.setPosition(
         (clientWidth / 2),
-        (clientHeight / 2));
+        (clientHeight / 2)
+    );
 
     var columnYValue = controller.getPosition().relatedTarget.point.y;
     assert.strictEqual(
@@ -691,7 +694,7 @@ QUnit.test('Z index changed after update (#3094)', function (assert) {
     );
     assert.strictEqual(
         chart.series[0].dataLabelsGroup.visibility,
-        "visible",
+        "inherit",
         "Data label should be visible"
     );
 });

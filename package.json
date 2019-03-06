@@ -34,8 +34,7 @@
   "husky": {
     "hooks": {
       "commit-msg": "node tools/validate-commit-msg.js ${HUSKY_GIT_PARAMS}",
-      "pre-commit": "lint-staged && gulp scripts && gulp test",
-      "post-merge": "gulp styles && gulp scripts && npm test"
+      "pre-commit": "lint-staged && gulp scripts && gulp test"
     }
   },
   "devDependencies": {
@@ -62,9 +61,8 @@
     "gulp-jsdoc3": "^2.0.0",
     "gulp-typedoc": "^2.2.1",
     "gzip-size": "^5.0.0",
-    "highcharts-api-docs": "github:highcharts/api-docs#v0.2.5",
     "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.2.3",
-    "highcharts-docstrap": "github:highcharts/highcharts-docstrap#v1.3.0",
+    "highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.1.1",
     "husky": "latest",
     "js-yaml": "^3.12.1",
     "jsdoc": "^3.5.5",
@@ -95,7 +93,7 @@
     "semver": "^5.6.0",
     "semver-sort": "0.0.4",
     "taffydb": "^2.7.3",
-    "typescript": "^3.3.3",
+    "typescript": "latest",
     "vinyl-ftp": "^0.6.1",
     "webpack": "^1.15.0",
     "xml2js": "^0.4.19",

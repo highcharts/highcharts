@@ -11,6 +11,8 @@ import './Axis.js';
 import './Utilities.js';
 import './Chart.js';
 import './Series.js';
+// Has a dependency on Navigator due to the use of Axis.toFixedRange
+import './Navigator.js';
 
 var addEvent = H.addEvent,
     Axis = H.Axis,

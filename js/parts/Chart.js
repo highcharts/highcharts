@@ -241,6 +241,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             // set back the series data
             options.series = userOptions.series = seriesOptions;
+
+            /**
+             * The original options given to the constructor or a chart factory
+             * like {@link Highcharts.chart} and {@link Highcharts.stockChart}.
+             *
+             * @name Highcharts.Chart#userOptions
+             * @type {Highcharts.Options}
+             */
             this.userOptions = userOptions;
 
             var optionsChart = options.chart;
@@ -261,8 +269,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.isResizing = 0;
 
             /**
-             * The options structure for the chart. It contains members for
-             * the sub elements like series, legend, tooltip etc.
+             * The options structure for the chart after merging
+             * {@link #defaultOptions} and {@link #userOptions}. It contains
+             * members for the sub elements like series, legend, tooltip etc.
              *
              * @name Highcharts.Chart#options
              * @type {Highcharts.Options}
@@ -314,8 +323,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             var chart = this;
 
-            // Add the chart to the global lookup
-            chart.index = charts.length;
+            /**
+             * Index position of the chart in the {@link Highcharts#charts}
+             * property.
+             *
+             * @name Highcharts.Chart#index
+             * @type {number}
+             */
+            chart.index = charts.length; // Add the chart to the global lookup
 
             charts.push(chart);
             H.chartCount++;
@@ -950,10 +965,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
     /**
      * Internal function to get the chart width and height according to options
-     * and container size. Sets
-     * {@link Chart.chartWidth} and
+     * and container size. Sets {@link Chart.chartWidth} and
      * {@link Chart.chartHeight}.
      *
+     * @private
      * @function Highcharts.Chart#getChartSize
      */
     getChartSize: function () {
@@ -1815,7 +1830,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             i,
             value;
 
-
+        /**
+         * The flag is set to `true` if a series of the chart is inverted.
+         *
+         * @name Highcharts.Chart#inverted
+         * @type {boolean|undefined}
+         */
         ['inverted', 'angular', 'polar'].forEach(function (key) {
 
             // The default series type's class
