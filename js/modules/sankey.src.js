@@ -136,19 +136,21 @@ seriesType('sankey', 'column'
      * @since        6.0.0
      * @product      highcharts
      * @excluding    animationLimit, boostThreshold, borderColor, borderRadius,
-     *               borderWidth, crisp, cropThreshold, depth, edgeColor,
-     *               edgeWidth, findNearestPointBy, grouping, groupPadding,
-     *               groupZPadding, maxPointWidth, negativeColor, pointInterval,
-     *               pointIntervalUnit, pointPadding, pointPlacement,
-     *               pointRange, pointStart, pointWidth, shadow, softThreshold,
-     *               stacking, threshold, zoneAxis, zones
+     *               borderWidth, crisp, cropThreshold, depth, dragDrop,
+     *               edgeColor, edgeWidth, findNearestPointBy,
+     *               getExtremesFromAll, grouping, groupPadding, groupZPadding,
+     *               label, linkedTo, maxPointWidth, negativeColor,
+     *               pointInterval, pointIntervalUnit, pointPadding,
+     *               pointPlacement, pointRange, pointStart, pointWidth, shadow,
+     *               softThreshold, stacking, threshold, zoneAxis, zones
      * @optionparent plotOptions.sankey
      */
     , {
         colorByPoint: true,
         /**
-         * Higher numbers makes the links in a sankey diagram render more
-         * curved. A `curveFactor` of 0 makes the lines straight.
+         * Higher numbers makes the links in a sankey diagram or dependency
+         * wheelrender more curved. A `curveFactor` of 0 makes the lines
+         * straight.
          */
         curveFactor: 0.33,
         /**
@@ -187,16 +189,18 @@ seriesType('sankey', 'column'
             inside: true
         },
         /**
-         * Opacity for the links between nodes in the sankey diagram.
+         * Opacity for the links between nodes in the sankey diagram or
+         * dependency wheel.
          */
         linkOpacity: 0.5,
         /**
-         * The pixel width of each node in a sankey diagram, or the height in
-         * case the chart is inverted.
+         * The pixel width of each node in a sankey diagram or dependency wheel,
+         * or the height in case the chart is inverted.
          */
         nodeWidth: 20,
         /**
-         * The padding between nodes in a sankey diagram, in pixels.
+         * The padding between nodes in a sankey diagram or dependency wheel, in
+         * pixels.
          */
         nodePadding: 10,
         showInLegend: false,
