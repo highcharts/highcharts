@@ -1,19 +1,15 @@
 QUnit.test('setAxisTranslation', assert => {
-    const { Axis } = Highcharts;
-    const chart = {
-        axes: [],
-        xAxis: [{}],
-        yAxis: []
-    };
-    const axis = new Axis(chart, {
-        categories: ['Test'],
-        isX: false,
-        max: 0,
-        min: 0
+    const { yAxis: [axis] } = Highcharts.chart('container', {
+        yAxis: {
+            type: 'category',
+            categories: ['Category 1'],
+            staticScale: 50
+        },
+        series: [{
+            type: 'xrange',
+            data: [{ x: 1, x2: 2, y: 0 }]
+        }]
     });
-
-    axis.staticScale = 50;
-    axis.setAxisTranslation();
 
     assert.strictEqual(
         axis.minPointOffset,
@@ -38,16 +34,14 @@ QUnit.test('setAxisTranslation', assert => {
 });
 
 QUnit.test('setTickPositions', assert => {
-    const { Axis } = Highcharts;
-    const axis = Object.assign({}, Axis.prototype, {
-        options: {
-            tickPositions: ['Test']
-        },
-        min: 0,
-        max: 0
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'xrange',
+            data: [{ x: 0, x2: 1, y: 0 }]
+        }]
     });
+    const axis = chart.yAxis[0];
 
-    axis.setTickPositions();
     assert.strictEqual(
         axis.max,
         0.5,
@@ -62,9 +56,12 @@ QUnit.test('setTickPositions', assert => {
     /**
      * Should not modify min and max when axis type is category.
      */
-    axis.categories = ['Test'];
-    axis.min = axis.max = 0;
-    axis.setTickPositions();
+    chart.update({
+        yAxis: {
+            type: 'category',
+            categories: ['Category 1']
+        }
+    });
     assert.strictEqual(
         axis.max,
         0,
