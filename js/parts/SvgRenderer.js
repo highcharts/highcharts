@@ -987,12 +987,22 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     addClass: function (className, replace) {
         var currentClassName = this.attr('class') || '';
 
-        if (currentClassName.indexOf(className) === -1) {
-            if (!replace) {
-                className =
-                    (currentClassName + (currentClassName ? ' ' : '') +
-                    className).replace('  ', ' ');
-            }
+        if (!replace) {
+
+            // Filter out existing
+            className = (className || '')
+                .split(/ /g)
+                .reduce(function (newClassName, name) {
+                    if (currentClassName.indexOf(name) === -1) {
+                        newClassName.push(name);
+                    }
+                    return newClassName;
+                }, currentClassName ? [currentClassName] : [])
+                .join(' ');
+
+        }
+
+        if (className !== currentClassName) {
             this.attr('class', className);
         }
 
