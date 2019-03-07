@@ -4452,7 +4452,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 axis.dataMin >= threshold
             ) {
                 axis.min = axis.options.minRange ?
-                    axis.max - axis.minRange :
+                    Math.min(threshold, axis.max - axis.minRange) :
                     threshold;
 
             } else if (
@@ -4461,7 +4461,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 axis.dataMax <= threshold
             ) {
                 axis.max = axis.options.minRange ?
-                    axis.min + axis.minRange :
+                    Math.max(threshold, axis.min + axis.minRange) :
                     threshold;
             }
         }
