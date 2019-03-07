@@ -2,12 +2,24 @@
  * Copyright (C) Highsoft AS
  */
 
-/* eslint no-console:0 */
+/* eslint no-console: 0, no-use-before-define: 0 */
 
 const Colors = require('colors');
 const Time = require('./time');
 
 const startTimeDictionary = {};
+
+/**
+ * Writes a red failure message in gulp style into the console.
+ *
+ * @param {Array<string>} text
+ *        Message text to write
+ *
+ * @return {void}
+ */
+function failure(...text) {
+    console.error(format(text.join(' '), 'red'));
+}
 
 /**
  * Formats a text in gulp style for console output.
@@ -110,6 +122,7 @@ function warn(...text) {
 }
 
 module.exports = {
+    failure,
     finished,
     format,
     message,
