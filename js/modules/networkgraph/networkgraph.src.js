@@ -798,8 +798,12 @@ seriesType('networkgraph', 'line', {
                         linkFrom.graphic = linkFrom.graphic.destroy();
                     }
 
-                    if (linkFrom.dataLabel) {
-                        linkFrom.dataLabel = linkFrom.dataLabel.destroy();
+                    if (linkFrom.dataLabels) {
+                        linkFrom.dataLabels.forEach(function (dataLabel) {
+                            dataLabel.destroy();
+                        });
+                        linkFrom.dataLabels.length = 0;
+                        delete linkFrom.dataLabel;
                     }
                 }
             );
