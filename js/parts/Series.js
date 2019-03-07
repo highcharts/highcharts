@@ -2774,19 +2774,23 @@ H.Series = H.seriesType(
                 this.chart.options.symbols
             );
         },
+
         /**
          * Finds the index of an existing point that matches the given point
          * options.
          *
          * @private
-         * @function Highcharts.Series#computePointIndex
-         * @param {object} optionsObject The options of the point.
-         * @param {number} lastIndex The index of the last point. Used to
-         * optimize series with required sorting.
-         * @returns {number|undefined} Returns index of a matching point,
-         * returns undefined if no match is found.
+         * @function Highcharts.Series#findPointIndex
+         * @param    {object} optionsObject
+         *           The options of the point.
+         * @param    {number} fromIndex
+         *           The index to start searching from, used for optimizing
+         *           series with required sorting.
+         * @returns  {number|undefined}
+         *           Returns the index of a matching point, or undefined if no
+         *           match is found.
          */
-        computePointIndex: function (optionsObject, lastIndex) {
+        findPointIndex: function (optionsObject, fromIndex) {
             var id = optionsObject.id,
                 x = optionsObject.x,
                 oldData = this.points,
@@ -2806,7 +2810,7 @@ H.Series = H.seriesType(
 
             // Search for the same X in the existing data set
             if (pointIndex === undefined && isNumber(x)) {
-                pointIndex = this.xData.indexOf(x, lastIndex);
+                pointIndex = this.xData.indexOf(x, fromIndex);
             }
 
             // Reduce pointIndex if data is cropped
@@ -2826,6 +2830,7 @@ H.Series = H.seriesType(
             }
             return pointIndex;
         },
+
         /**
          * @private
          * @borrows LegendSymbolMixin.drawLineMarker as Highcharts.Series#drawLegendSymbol
@@ -2878,7 +2883,7 @@ H.Series = H.seriesType(
                 id = optionsObject.id;
 
                 if (id || isNumber(x)) {
-                    pointIndex = this.computePointIndex(
+                    pointIndex = this.findPointIndex(
                         optionsObject,
                         lastIndex
                     );

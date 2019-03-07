@@ -230,12 +230,12 @@ seriesType('xrange', 'column'
          * options.
          *
          * @private
-         * @function Highcharts.Series#computePointIndex
+         * @function Highcharts.Series#findPointIndex
          * @param {object} options The options of the point.
          * @returns {number|undefined} Returns index of a matching point,
          * returns undefined if no match is found.
          */
-        computePointIndex: function (options) {
+        findPointIndex: function (options) {
             var series = this,
                 // Search in data, since broken-axis can remove points inside a
                 // break.
