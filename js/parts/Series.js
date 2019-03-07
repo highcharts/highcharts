@@ -2799,9 +2799,7 @@ H.Series = H.seriesType(
                 pointIndex;
 
             if (id) {
-                matchingPoint = oldData.find(function (point) {
-                    return point.id === id;
-                });
+                matchingPoint = this.chart.get(id);
                 pointIndex = matchingPoint && matchingPoint.index;
                 if (pointIndex !== undefined) {
                     matchedById = true;

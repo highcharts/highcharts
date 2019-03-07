@@ -246,7 +246,7 @@ seriesType('xrange', 'column'
                 pointIndex;
 
             if (id) {
-                point = points.find(function (point) {
+                point = H.find(points, function (point) {
                     return point.id === id;
                 });
                 pointIndex = point ? point.index : undefined;
