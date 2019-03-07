@@ -2,23 +2,32 @@
  * Copyright (C) Highsoft AS
  */
 
-const Glob = require('glob');
-const Path = require('path');
-const ProcessLib = require('./lib/process');
+const Gulp = require('gulp');
+
+/* *
+ *
+ *  Tasks
+ *
+ * */
 
 /**
  * Lint test of TypeScript code.
  *
- * @return {Promise}
- *         Promise to keep.
+ * @return {Promise<string>}
+ *         Promise to keep with console output
  */
-function tslint() {
+function task() {
+
+    const Glob = require('glob');
+    const Path = require('path');
+    const ProcessLib = require('./lib/process');
+
     return Promise.all(
         Glob.sync(Path.join('ts', 'masters', 'tsconfig-*.json'))
-            .map(file => ProcessLib.commandLine(
+            .map(file => ProcessLib.exec(
                 'npx tslint --project ' + file
             ))
     );
 }
 
-module.exports = tslint;
+Gulp.task('tslint', task);

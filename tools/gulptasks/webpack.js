@@ -4,9 +4,18 @@
 
 const Gulp = require('gulp');
 
-Gulp.task(
-    'webpack',
-    () => new Promise((resolve, reject) => {
+/* *
+ *
+ *  Tasks
+ *
+ * */
+
+/**
+ * @return {Promise<undefined>}
+ *         Promise to keep
+ */
+function task() {
+    return new Promise((resolve, reject) => {
 
         const webpack = require('webpack');
         const webpackOptions = {
@@ -24,5 +33,7 @@ Gulp.task(
                 resolve();
             }
         });
-    })
-);
+    });
+}
+
+Gulp.task('webpack', task);

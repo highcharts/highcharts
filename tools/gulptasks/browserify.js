@@ -4,12 +4,22 @@
 
 const Gulp = require('gulp');
 
-Gulp.task(
-    'browserify',
-    () => new Promise((resolve, reject) => {
+/* *
+ *
+ *  Tasks
+ *
+ * */
 
-        const browserify = require('browserify');
-        const Fs = require('fs');
+/**
+ * @return {Promise<void>}
+ *         Promise to keep
+ */
+function task() {
+
+    const browserify = require('browserify');
+    const Fs = require('fs');
+
+    return new Promise((resolve, reject) => {
 
         browserify('./samples/highcharts/common-js/browserify/app.js')
             .bundle(function (error, buffer) {
@@ -23,5 +33,7 @@ Gulp.task(
                     resolve();
                 }
             });
-    })
-);
+    });
+}
+
+Gulp.task('browserify', task);

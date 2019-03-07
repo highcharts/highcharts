@@ -3,25 +3,34 @@
  */
 
 const Gulp = require('gulp');
-const Path = require('path');
 
-const SOURCE_CONFIG = Path.join(
-    '.', 'ts', 'masters-not-in-use-yet', 'tsconfig-bullet.json'
-);
+/* *
+ *
+ *  Tasks
+ *
+ * */
 
-const SOURCE_DIRECTORY = Path.join('.', 'ts');
+/**
+ * @return {Promise<undefined>}
+ *         Promise to keep
+ */
+function task() {
 
-const TARGET_JSON = Path.join('.', 'tree-typescript.json');
+    const Generators = require('highcharts-documentation-generators');
+    const Path = require('path');
 
-const TARGET_DIRECTORY = Path.join('.', 'build', 'api');
+    const SOURCE_CONFIG = Path.join(
+        '.', 'ts', 'masters-not-in-use-yet', 'tsconfig-bullet.json'
+    );
 
-Gulp.task('tsdoc', Gulp.series(
-    'clean-api',
-    () => require('highcharts-documentation-generators')
+    const TARGET_JSON = Path.join('.', 'tree-typescript.json');
+
+    const TARGET_DIRECTORY = Path.join('.', 'build', 'api');
+
+    return Generators
         .TypeDoc
         .task(SOURCE_CONFIG, TARGET_DIRECTORY, TARGET_JSON)
-));
+        .then(() => {});
+}
 
-module.exports = {
-    SOURCE_DIRECTORY
-};
+Gulp.task('tsdoc', Gulp.series('clean-api', task));
