@@ -3,10 +3,15 @@
 /* eslint-disable func-style */
 
 'use strict';
+
 const colors = require('colors');
 const exec = require('child_process').exec;
 const glob = require('glob');
-const gulp = require('gulp');
+const Gulp = require('gulp');
+const GulpForwardReference = require('undertaker-forward-reference');
+
+Gulp.registry(new GulpForwardReference());
+
 const argv = require('yargs').argv;
 const fs = require('fs');
 const yaml = require('js-yaml');
@@ -125,7 +130,7 @@ function styles() {
         console.log('Built CSS files from SASS.'.cyan);
     });
 }
-gulp.task('styles', styles);
+Gulp.task('styles', styles);
 
 /**
  * @private
@@ -204,7 +209,7 @@ function update() {
 
     return Promise.resolve();
 }
-gulp.task('update', update);
+Gulp.task('update', update);
 
 /**
  * Update the vendor files for distribution
@@ -238,7 +243,7 @@ function updateVendor() {
     return Promise.all(promises);
 
 }
-gulp.task('update-vendor', updateVendor);
+Gulp.task('update-vendor', updateVendor);
 
 /**
  * Gulp task to run the building process of distribution files. By default it
@@ -282,13 +287,13 @@ function scriptsWatch() {
     if (options.watch) {
         Object.keys(mapOfWatchFn).forEach(key => {
             const fn = mapOfWatchFn[key];
-            gulp.watch(key).on('change', path => fn({ path, type: 'change' }));
+            Gulp.watch(key).on('change', path => fn({ path, type: 'change' }));
         });
     }
 
     return Promise.resolve();
 }
-gulp.task('scripts', gulp.series('update', scriptsWatch));
+Gulp.task('scripts', Gulp.series('update', scriptsWatch));
 
 /**
  * Gulp task to execute ESLint. Pattern defaults to './js/**".'
@@ -313,7 +318,7 @@ const lint = () => new Promise((resolve, reject) => {
         resolve();
     }
 });
-gulp.task('lint', gulp.series('update', lint));
+Gulp.task('lint', Gulp.series('update', lint));
 
 /**
  * Gulp task to execute ESLint on samples.
@@ -334,12 +339,12 @@ const lintSamples = () => {
     ]);
     console.log(formatter(report.results));
 };
-gulp.task('lint-samples', gulp.series('update', lintSamples));
+Gulp.task('lint-samples', Gulp.series('update', lintSamples));
 
 /**
  * Run the test suite.
  */
-gulp.task('test', gulp.series('styles', 'scripts', done => {
+Gulp.task('test', Gulp.series('styles', 'scripts', done => {
 
     const lastRunFile = __dirname + '/test/last-run.json';
 
@@ -590,7 +595,7 @@ Available arguments for 'gulp test':
 /**
  * Run the nightly. The task spawns a child process running node.
  */
-gulp.task('nightly', function () {
+Gulp.task('nightly', function () {
     const spawn = require('child_process').spawn;
     spawn('node', ['nightly.js'].concat(process.argv.slice(3)), {
         cwd: 'utils/samples',
@@ -688,7 +693,7 @@ const generateClassReferences = ({ templateDir, destination }) => {
         success: colors.green('Created class-reference')
     };
     return new Promise((resolve, reject) => {
-        gulp.src(sourceFiles, { read: false })
+        Gulp.src(sourceFiles, { read: false })
             .pipe(jsdoc(optionsJSDoc, function (err) {
                 if (err) {
                     reject(err);
@@ -728,33 +733,12 @@ const compileLib = () => {
         .then(console.log);
 };
 
-const cleanCode = () => {
-    const {
-        removeFile
-    } = require('highcharts-assembler/src/utilities.js');
-    const codeFolder = './code/';
-    const files = getFilesInFolder(codeFolder, true, '');
-    const keep = ['.gitignore', '.htaccess', 'css/readme.md', 'js/modules/readme.md', 'js/readme.md', 'modules/readme.md', 'readme.txt'];
-    const promises = files
-        .filter(file => keep.indexOf(file) === -1)
-        .map(file => removeFile(codeFolder + file));
-    return Promise.all(promises)
-        .then(() => console.log('Successfully removed code directory.'));
-};
-
-const cleanDist = () => removeDirectory('./build/dist')
-    .then(() => {
-        console.log('Successfully removed dist directory.');
-    })
-    .catch(() => {
-        console.log('Tried to remove ./build/dist but it was never there. Moving on...');
-    });
 
 const cleanApi = () => removeDirectory('./build/api')
     .then(() => {
         console.log('Successfully removed api directory.');
     });
-gulp.task('clean-api', cleanApi);
+Gulp.task('clean-api', cleanApi);
 
 const copyToDist = () => {
     const sourceFolder = 'code/';
@@ -911,68 +895,6 @@ const createProductJS = () => {
     writeFile(path, content);
 };
 
-/**
- * Returns a string which tells the time difference between to dates.
- * Difference is formatted as xh xm xs xms. Where x is a number.
- * @param  {Date} d1 First date
- * @param  {Date} d2 Second date
- * @return {string} The time difference between the two dates.
- */
-const timeDifference = (d1, d2) => {
-    const time = [];
-    const seconds = 1000;
-    const minutes = 60 * seconds;
-    const hours = 60 * minutes;
-    let diff = d2 - d1;
-    let x = 0;
-    if (diff > hours) {
-        x = Math.floor(diff / hours);
-        diff -= x * hours;
-        time.push(x + 'h');
-    }
-    if (diff > minutes || (time.length > 0 && diff > 0)) {
-        x = Math.floor(diff / minutes);
-        diff -= x * minutes;
-        time.push(x + 'm');
-    }
-    if (diff > seconds || (time.length > 0 && diff > 0)) {
-        x = Math.floor(diff / seconds);
-        diff -= x * seconds;
-        time.push(x + 's');
-    }
-    if (diff > 0 || time.length === 0) {
-        time.push(diff + 'ms');
-    }
-    return time.join(' ');
-};
-
-/**
- * Mirrors the same feedback which gulp gives when executing its tasks.
- * Says when a task started, when it finished, and how long it took.
- * @param  {string} name Name of task which is being executed.
- * @param  {string} task A function to execute
- * @return {*}      Returns whatever the task function returns when it is finished.
- */
-const gulpify = (name, task) => {
-    // const colors = require('colors');
-    const isPromise = value => (
-        typeof value === 'object' &&
-        typeof value.then === 'function'
-    );
-    return function (...args) {
-        const d1 = new Date();
-        console.log('[' + colors.gray(toTimeString(d1)) + '] Starting \'' + colors.cyan(name) + '\'...');
-        let result = task(...args);
-        if (!isPromise(result)) {
-            result = Promise.resolve(result);
-        }
-        return result.then(() => {
-            const d2 = new Date();
-            console.log('[' + colors.gray(toTimeString(d2)) + '] Finished \'' + colors.cyan(name) + '\' after ' + colors.blue(timeDifference(d1, d2)));
-        });
-    };
-};
-
 const filesize = () => {
     const sourceFolder = './code/';
     // @todo Correct type names to classic and styled and rename the param to
@@ -1043,12 +965,6 @@ const filesize = () => {
             });
         });
 };
-
-/**
- * Run remaining dist tasks in build.xml.
- * @return {Promise} Returns a promise which resolves when scripts is finished.
- */
-const antDist = () => commandLine('ant dist');
 
 /**
  * Gzip a single file.
@@ -1223,7 +1139,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
     };
     const jsdoc = require('gulp-jsdoc3');
     return new Promise((resolve, reject) => {
-        gulp.src(sourceFiles, { read: false })
+        Gulp.src(sourceFiles, { read: false })
             .pipe(jsdoc(configJSDoc, err => {
                 if (!err) {
                     console.log(message.successJSDoc);
@@ -1312,7 +1228,7 @@ const uploadAPIDocs = () => {
             }
         });
 };
-gulp.task('upload-api', uploadAPIDocs);
+Gulp.task('upload-api', uploadAPIDocs);
 
 /**
  * Usage: npx gulp get-filesizes --out old.json
@@ -1322,7 +1238,7 @@ gulp.task('upload-api', uploadAPIDocs);
  *              will default to all distributed files.
  *   --out      Specify where to store the result. Defaults "./filesizes.json"
  */
-gulp.task('get-filesizes', () => {
+Gulp.task('get-filesizes', () => {
     const isSourceFile = path => (
         path.endsWith('.src.js') && !path.includes('es-modules')
     );
@@ -1344,7 +1260,7 @@ gulp.task('get-filesizes', () => {
  *   --out      Specify where to store the resulting information. If not
  *              specifyed then the information will be outputted to the console.
  */
-gulp.task('compare-filesizes', () => {
+Gulp.task('compare-filesizes', () => {
     const out = argv.out;
     const pathOld = argv.old;
     const pathNew = argv.new;
@@ -1444,66 +1360,8 @@ const jsdocServer = () => {
         ('http://localhost:' + docport).cyan
     );
 };
-gulp.task('start-api-server', jsdocServer);
+Gulp.task('start-api-server', jsdocServer);
 
-/**
- * Creates additional JSON-based class references with JSDoc using
- * tsconfig.json.
- */
-const jsdocNamespace = () => {
-
-    const jsdoc3 = require('gulp-jsdoc3');
-
-    const dtsPath = 'test/typescript';
-
-    const codeFiles = JSON
-        .parse(fs.readFileSync(join(dtsPath, 'tsconfig.json'))).files
-        .map(file => join(dtsPath, file))
-        .filter(file => (
-            file.indexOf('test') !== 0 &&
-            file.indexOf('global.d.ts') === -1 &&
-            file.indexOf('.src.d.ts') === -1
-        ))
-        .map(file => file.replace(/.d.ts$/, '.src.js'));
-
-    const productFolders = [
-            'gantt',
-            'highcharts',
-            'highstock',
-            'highmaps'
-        ],
-        gulpOptions = [codeFiles, { read: false }],
-        jsdoc3Options = { plugins: ['node_modules/highcharts-documentation-generators/jsdoc/plugins/highcharts.namespace'] };
-
-    if (codeFiles.length === 0) {
-        console.error('No files in tsconfig.json found.');
-        return Promise.resolve([]);
-    }
-
-    const aGulp = (resolve, reject) => {
-
-        const aJson = error => {
-
-            if (error) {
-                reject(error);
-            }
-
-            Promise
-                .all(productFolders.map(productFolder => copyFile(
-                    'tree-namespace.json',
-                    `build/api/${productFolder}/tree-namespace.json`
-                )))
-                .then(resolve)
-                .catch(reject);
-        };
-
-        gulp.src(...gulpOptions)
-            .pipe(jsdoc3(jsdoc3Options, aJson));
-    };
-
-    return new Promise(aGulp);
-};
-gulp.task('jsdoc-namespace', gulp.series('scripts', jsdocNamespace));
 
 /**
  * Creates JSON-based option references from JSDoc.
@@ -1514,7 +1372,7 @@ const jsdocOptions = () => generateAPIDocs({
     output: './build/api',
     onlyBuildCurrent: true
 });
-gulp.task('jsdoc-options', jsdocOptions);
+Gulp.task('jsdoc-options', jsdocOptions);
 
 let apiServerRunning = false;
 /**
@@ -1548,7 +1406,7 @@ const jsdocWatch = () => {
         apiServerRunning = true;
 
         if (argv.watch) {
-            gulp.watch(watchFiles, gulp.series('jsdoc'));
+            Gulp.watch(watchFiles, Gulp.series('jsdoc'));
             console.log('Watching file changes in JS files and templates');
 
         } else {
@@ -1559,13 +1417,11 @@ const jsdocWatch = () => {
     return generateClassReferences(optionsClassReference)
         .then(() => generateAPIDocs(optionsAPI));
 };
-gulp.task('jsdoc', gulp.series('clean-api', 'jsdoc-namespace', jsdocWatch));
+Gulp.task('jsdoc', Gulp.series('clean-api', 'jsdoc-namespace', jsdocWatch));
 
-gulp.task('create-productjs', createProductJS);
-gulp.task('clean-dist', cleanDist);
-gulp.task('clean-code', cleanCode);
-gulp.task('copy-to-dist', copyToDist);
-gulp.task('filesize', filesize);
+Gulp.task('create-productjs', createProductJS);
+Gulp.task('copy-to-dist', copyToDist);
+Gulp.task('filesize', filesize);
 
 /* *
  *
@@ -1580,7 +1436,7 @@ gulp.task('filesize', filesize);
 function dts() {
     return require('../highcharts-declarations-generator').task();
 }
-gulp.task('dts', gulp.series('jsdoc-options', 'jsdoc-namespace', dts));
+Gulp.task('dts', Gulp.series('jsdoc-options', 'jsdoc-namespace', dts));
 
 /**
  * Test TypeScript declarations in the code folder using tsconfig.json.
@@ -1588,10 +1444,10 @@ gulp.task('dts', gulp.series('jsdoc-options', 'jsdoc-namespace', dts));
 function dtsLint() {
     return commandLine('cd test/typescript && npx dtslint --onlyTestTsNext');
 }
-gulp.task('dtslint', gulp.series('update', 'dts', dtsLint));
+Gulp.task('dtslint', Gulp.series('update', 'dts', dtsLint));
 
-gulp.task('tsc', () => require('./tools/gulptasks/tsc')());
-gulp.task('tslint', gulp.series('tsc', () => require('./tools/gulptasks/tslint')()));
+Gulp.task('tsc', () => require('./tools/gulptasks/tsc')());
+Gulp.task('tslint', Gulp.series('tsc', () => require('./tools/gulptasks/tslint')()));
 
 /* *
  *
@@ -1599,9 +1455,9 @@ gulp.task('tslint', gulp.series('tsc', () => require('./tools/gulptasks/tslint')
  *
  * */
 
-gulp.task('build-modules', buildESModules);
+Gulp.task('build-modules', buildESModules);
 
-gulp.task('compile', () => {
+Gulp.task('compile', () => {
     const messages = {
         usage: 'Run "gulp compile --help" for information on usage.',
         help: [
@@ -1626,9 +1482,9 @@ gulp.task('compile', () => {
     }
     return promise;
 });
-gulp.task('compile-lib', compileLib);
-gulp.task('copy-graphics-to-dist', copyGraphicsToDist);
-gulp.task('examples', createAllExamples);
+Gulp.task('compile-lib', compileLib);
+Gulp.task('copy-graphics-to-dist', copyGraphicsToDist);
+Gulp.task('examples', createAllExamples);
 
 /**
  * Watch changes to JS and SCSS files
@@ -1665,7 +1521,7 @@ function defaultWatch() {
                     console.log('✓'.green, 'Code up to date.'.gray);
                 }
                 // Start watcher again.
-                watcher = gulp.watch(watchlist).on('change', onChange);
+                watcher = Gulp.watch(watchlist).on('change', onChange);
             });
         } else if (posixPath.startsWith('js')) {
             // Build es-modules
@@ -1690,35 +1546,18 @@ function defaultWatch() {
             console.log('✓'.green, 'Code up to date.'.gray);
         }
         // Start watching source files.
-        watcher = gulp.watch(watchlist).on('change', onChange);
+        watcher = Gulp.watch(watchlist).on('change', onChange);
     });
 }
-gulp.task('default', defaultWatch);
-
-/**
- * Create distribution files
- */
-gulp.task('dist', () => Promise.resolve()
-    .then(gulpify('cleanCode', cleanCode))
-    .then(gulpify('styles', styles))
-    .then(gulpify('scripts', getBuildScripts({}).fnFirstBuild))
-    .then(gulpify('lint', lint))
-    .then(gulpify('compile', compileScripts))
-    .then(gulpify('cleanDist', cleanDist))
-    .then(gulpify('copyToDist', copyToDist))
-    .then(gulpify('createProductJS', createProductJS))
-    .then(gulpify('createExamples', createAllExamples))
-    .then(gulpify('copyGraphicsToDist', copyGraphicsToDist))
-    .then(gulpify('jsdoc-namespace', jsdocNamespace))
-    .then(gulpify('jsdoc-options', jsdocOptions))
-    .then(gulpify('dts', dts))
-    .then(gulpify('dtsLint', dtsLint))
-    .then(gulpify('ant-dist', antDist)));
-
+Gulp.task('default', defaultWatch);
 
 require('./tools/gulptasks/browserify');
+require('./tools/gulptasks/dist');
+require('./tools/gulptasks/dist-clean');
+require('./tools/gulptasks/jsdoc-namespace');
+require('./tools/gulptasks/scripts-clean');
 require('./tools/gulptasks/tsdoc');
 require('./tools/gulptasks/tsdoc-watch');
 require('./tools/gulptasks/webpack');
 
-gulp.task('common', gulp.series('scripts', 'browserify', 'webpack'));
+Gulp.task('common', Gulp.series('scripts', 'browserify', 'webpack'));
