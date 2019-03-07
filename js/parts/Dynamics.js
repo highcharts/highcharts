@@ -1037,11 +1037,14 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *        more operations on the chart, it is a good idea to set redraw to
      *        false and call {@link Chart#redraw} after.
      *
+     * @fires Highcharts.Series#event:update
      * @fires Highcharts.Series#event:afterUpdate
      */
     update: function (newOptions, redraw) {
 
         newOptions = H.cleanRecursively(newOptions, this.userOptions);
+
+        fireEvent(this, 'update', { options: newOptions });
 
         var series = this,
             chart = series.chart,

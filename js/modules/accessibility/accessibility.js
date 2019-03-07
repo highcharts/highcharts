@@ -408,32 +408,40 @@ Accessibility.prototype = {
 };
 
 
-// Init on chart when loaded
-addEvent(H.Chart, 'load', function () {
-    var accessibilityOptions = this.options && this.options.accessibility;
-    if (this.renderTo) {
-        // Start with hidden chart always
-        this.renderTo.setAttribute('aria-hidden', true);
-        // Init accessibility if enabled
+// Handle updates to the module and send render updates to components
+addEvent(H.Chart, 'render', function (e) {
+    var a11y = this.accessibility;
+    // Update/destroy
+    if (this.a11yDirty && this.renderTo) {
+        delete this.a11yDirty;
+        var accessibilityOptions = this.options.accessibility;
         if (accessibilityOptions && accessibilityOptions.enabled) {
-            this.accessibility = new Accessibility(this);
+            if (a11y) {
+                a11y.update();
+            } else {
+                this.accessibility = a11y = new Accessibility(this);
+            }
+        } else if (a11y) {
+            // Destroy if after update we have a11y and it is disabled
+            if (a11y.destroy) {
+                a11y.destroy();
+            }
+            delete this.accessibility;
+        } else {
+            // Just hide container
+            this.renderTo.setAttribute('aria-hidden', true);
         }
     }
-});
-
-// Send render updates to components
-addEvent(H.Chart, 'render', function (e) {
-    var components = this.accessibility && this.accessibility.components;
-    if (components) {
-        // Update markup
-        Object.keys(components).forEach(function (componentName) {
-            components[componentName].onChartRender(e);
+    // Update markup regardless
+    if (a11y) {
+        Object.keys(a11y.components).forEach(function (componentName) {
+            a11y.components[componentName].onChartRender(e);
         });
     }
 });
 
 // Update with chart/series/point updates
-addEvent(H.Chart, 'afterUpdate', function (e) {
+addEvent(H.Chart, 'update', function (e) {
     // Merge new options
     var newOptions = e.options.accessibility;
     if (newOptions) {
@@ -444,43 +452,39 @@ addEvent(H.Chart, 'afterUpdate', function (e) {
             delete newOptions.customComponents;
         }
         merge(true, this.options.accessibility, newOptions);
-        // Recreate from scratch if we have custom components
+        // Recreate from scratch
         if (this.accessibility && this.accessibility.destroy) {
             this.accessibility.destroy();
             delete this.accessibility;
         }
     }
 
-    // Update/destroy
-    var accessibilityOptions = this.options.accessibility;
-    if (accessibilityOptions && accessibilityOptions.enabled) {
-        if (this.accessibility) {
-            this.accessibility.update();
-        } else {
-            this.accessibility = new Accessibility(this);
-        }
-    } else if (this.accessibility) {
-        // Destroy if after update we have a11y and it is disabled
-        if (this.accessibility.destroy) {
-            this.accessibility.destroy();
-        }
-        delete this.accessibility;
-    }
+    // Mark dirty for update
+    this.a11yDirty = true;
 });
+
+// Mark dirty for update
 addEvent(H.Point, 'update', function () {
     if (this.series.chart.accessibility) {
-        this.series.chart.accessibility.update();
+        this.series.chart.a11yDirty = true;
     }
 });
-['afterUpdate', 'updatedData', 'remove'].forEach(function (event) {
+['addSeries', 'init'].forEach(function (event) {
+    addEvent(H.Chart, event, function () {
+        this.a11yDirty = true;
+    });
+});
+['update', 'updatedData', 'remove'].forEach(function (event) {
     addEvent(H.Series, event, function () {
         if (this.chart.accessibility) {
-            this.chart.accessibility.update();
+            this.chart.a11yDirty = true;
         }
     });
 });
+
+// Direct updates (events happen after render)
 [
-    'afterApplyDrilldown', 'drillupall', 'afterAddSeries'
+    'afterApplyDrilldown', 'drillupall'
 ].forEach(function (event) {
     addEvent(H.Chart, event, function () {
         if (this.accessibility) {

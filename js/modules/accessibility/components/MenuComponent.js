@@ -131,9 +131,25 @@ H.Chart.prototype.highlightLastExportItem = function () {
  */
 var MenuComponent = function (chart) {
     this.initBase(chart);
+    this.init();
 };
 MenuComponent.prototype = new AccessibilityComponent();
 H.extend(MenuComponent.prototype, {
+
+    /**
+     * Init the component
+     */
+    init: function () {
+        var chart = this.chart;
+        // Hide the export menu from screen readers when it is hidden visually
+        this.addEvent(chart, 'exportMenuHidden', function () {
+            var menu = this.exportContextMenu;
+            if (menu) {
+                menu.setAttribute('aria-hidden', true);
+            }
+        });
+    },
+
 
     /**
      * Called on each render of the chart. We need to update positioning of the

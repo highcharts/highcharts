@@ -51,6 +51,18 @@ H.Chart.prototype.highlightLegendItem = function (ix) {
     return false;
 };
 
+// Keep track of pressed state for legend items
+H.addEvent(H.Legend, 'afterColorizeItem', function (e) {
+    var chart = this.chart,
+        a11yOptions = chart.options.accessibility,
+        legendItem = e.item;
+    if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
+        legendItem.a11yProxyElement.setAttribute(
+            'aria-pressed', e.visible ? 'false' : 'true'
+        );
+    }
+});
+
 
 /**
  * The LegendComponent class
@@ -62,26 +74,9 @@ H.Chart.prototype.highlightLegendItem = function (ix) {
  */
 var LegendComponent = function (chart) {
     this.initBase(chart);
-    this.init();
 };
 LegendComponent.prototype = new AccessibilityComponent();
 H.extend(LegendComponent.prototype, {
-
-    /**
-     * Init the component.
-     */
-    init: function () {
-        // Handle show/hide series/points
-        this.addEvent(this.chart.legend, 'afterColorizeItem', function (e) {
-            var legendItem = e.item;
-            if (legendItem && legendItem.a11yProxyElement) {
-                legendItem.a11yProxyElement.setAttribute(
-                    'aria-pressed', e.visible ? 'false' : 'true'
-                );
-            }
-        });
-    },
-
 
     /**
      * The legend needs updates on every render, in order to update positioning
