@@ -578,7 +578,11 @@ H.Series = H.seriesType(
          * Allow this series' points to be selected by clicking on the graphic
          * (columns, point markers, pie slices, map areas etc).
          *
-         * @see {@link Highcharts.Chart#getSelectedPoints}.
+         * The selected points can be handled by point select and unselect
+         * events, or collectively by the [getSelectedPoints](
+         * Highcharts.Chart#getSelectedPoints) function.
+         *
+         * And alternative way of selecting points is through dragging.
          *
          * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-line/
          *         Line
@@ -586,6 +590,8 @@ H.Series = H.seriesType(
          *         Column
          * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-pie/
          *         Pie
+         * @sample {highcharts} highcharts/chart/events-selection-points/
+         *         Select a range of points through a drag selection
          * @sample {highmaps} maps/plotoptions/series-allowpointselect/
          *         Map area
          * @sample {highmaps} maps/plotoptions/mapbubble-allowpointselect/
