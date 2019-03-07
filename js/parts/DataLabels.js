@@ -920,7 +920,10 @@ Series.prototype.drawDataLabels = function () {
 
                     if (labelOptions.textPath) {
                         dataLabel.setTextPath(
-                            point.graphic,
+                            (
+                                point.getDataLabelPath &&
+                                point.getDataLabelPath(dataLabel)
+                            ) || point.graphic,
                             labelOptions.textPath
                         );
                     }

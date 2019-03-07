@@ -151,6 +151,9 @@ H.seriesType(
                     end = startAngle +
                         factor * (shapeArgs.y + shapeArgs.height);
 
+                // Middle angle
+                node.angle = start + (end - start) / 2;
+
                 node.shapeType = 'arc';
                 node.shapeArgs = {
                     x: centerX,
@@ -261,6 +264,38 @@ H.seriesType(
 
                 this.animate = null;
             }
+        }
+    },
+
+    // Point class
+    {
+        // Return a text path that the data label uses
+        getDataLabelPath: function (label) {
+            var renderer = this.series.chart.renderer,
+                shapeArgs = this.shapeArgs,
+                upperHalf = this.angle < 0 || this.angle > Math.PI,
+                start = shapeArgs.start,
+                end = shapeArgs.end;
+
+            if (!this.dataLabelPath) {
+                this.dataLabelPath = renderer
+                    .arc({ open: true })
+
+                    // Add it inside the data label group so it gets destroyed
+                    // with the label
+                    .add(label);
+            }
+
+            this.dataLabelPath.attr({
+                x: shapeArgs.x,
+                y: shapeArgs.y,
+                r: shapeArgs.r + (this.dataLabel.options.distance || 0),
+                start: (upperHalf ? start : end),
+                end: (upperHalf ? end : start),
+                clockwise: +upperHalf
+            });
+
+            return this.dataLabelPath;
         }
     }
 );

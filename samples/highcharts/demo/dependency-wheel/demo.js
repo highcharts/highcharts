@@ -56,7 +56,18 @@ Highcharts.chart('container', {
             ['Japan', 'Brazil', 1]
         ],
         type: 'dependencywheel',
-        name: 'Dependency wheel series'
+        name: 'Dependency wheel series',
+        dataLabels: {
+            color: '#333',
+            textPath: {
+                enabled: true,
+                attributes: {
+                    dy: 5
+                }
+            },
+            distance: 10
+        },
+        size: '95%'
     }]
 
 });
