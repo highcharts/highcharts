@@ -1706,3 +1706,9 @@ gulp.task('webpack', function () {
 });
 
 gulp.task('common', gulp.series('scripts', 'browserify', 'webpack'));
+
+/**
+ * TypeScript source code documentation
+ */
+require('./tools/gulptasks/tsdoc');
+require('./tools/gulptasks/tsdoc-watch');
