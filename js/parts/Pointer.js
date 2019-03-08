@@ -580,8 +580,23 @@ Highcharts.Pointer.prototype = {
             }
 
             hoverPoint.firePointEvent('mouseOver');
+
+            /**
+             * Contains all hovered points.
+             *
+             * @name Highcharts.Chart#hoverPoints
+             * @type {Array<Highcharts.Point>|null}
+             */
             chart.hoverPoints = points;
+
+            /**
+             * Contains the original hovered point.
+             *
+             * @name Highcharts.Chart#hoverPoint
+             * @type {Highcharts.Point|null}
+             */
             chart.hoverPoint = hoverPoint;
+
             // Draw tooltip if necessary
             if (tooltip) {
                 tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
@@ -662,7 +677,7 @@ Highcharts.Pointer.prototype = {
 
         // Just move the tooltip, #349
         if (allowMove) {
-            if (tooltip && tooltipPoints && tooltipPoints.length) {
+            if (tooltip && tooltipPoints && splat(tooltipPoints).length) {
                 tooltip.refresh(tooltipPoints);
                 if (tooltip.shared && hoverPoints) { // #8284
                     hoverPoints.forEach(function (point) {

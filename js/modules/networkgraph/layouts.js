@@ -8,8 +8,11 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
+import 'integrations.js';
+import 'QuadTree.js';
 
-var pick = H.pick;
+var pick = H.pick,
+    defined = H.defined;
 
 H.layouts = {
     'reingold-fruchterman': function (options) {
@@ -26,6 +29,20 @@ H.layouts = {
         };
 
         this.setInitialRendering(true);
+
+        this.integration = H.networkgraphIntegrations[options.integration];
+
+        this.attractiveForce = pick(
+            options.attractiveForce,
+            this.integration.attractiveForceFunction
+        );
+
+        this.repulsiveForce = pick(
+            options.repulsiveForce,
+            this.integration.repulsiveForceFunction
+        );
+
+        this.approximation = options.approximation;
     }
 };
 
@@ -39,7 +56,10 @@ H.extend(
         run: function () {
             var layout = this,
                 series = this.series,
-                options = this.options;
+                options = this.options,
+                step = 0;
+
+            layout.forces = series[0] && series[0].forces || [];
 
             if (layout.initialRendering) {
                 layout.initPositions();
@@ -52,20 +72,27 @@ H.extend(
 
             // Algorithm:
             function localLayout() {
-                // Barycenter forces:
-                layout.applyBarycenterForces();
+                step++;
 
-                // Repulsive forces:
-                layout.applyRepulsiveForces();
+                if (layout.approximation === 'barnes-hut') {
+                    layout.createQuadTree();
+                    layout.quadTree.calculateMassAndCenter();
+                }
 
-                // Attractive forces:
-                layout.applyAttractiveForces();
+                layout.forces.forEach(function (forceName) {
+                    layout[forceName + 'Forces'](layout.temperature);
+                });
 
                 // Limit to the plotting area and cool down:
                 layout.applyLimits(layout.temperature);
 
-                // Cool down:
-                layout.temperature -= layout.diffTemperature;
+                // Cool down the system:
+                layout.temperature = layout.coolDown(
+                    layout.startTemperature,
+                    layout.diffTemperature,
+                    step
+                );
+
                 layout.prevSystemTemperature = layout.systemTemperature;
                 layout.systemTemperature = layout.getSystemTemperature();
 
@@ -75,8 +102,13 @@ H.extend(
                     });
                     if (
                         layout.maxIterations-- &&
+                        isFinite(layout.temperature) &&
                         !layout.isStable()
                     ) {
+                        if (layout.simulation) {
+                            H.win.cancelAnimationFrame(layout.simulation);
+                        }
+
                         layout.simulation = H.win.requestAnimationFrame(
                             localLayout
                         );
@@ -91,11 +123,15 @@ H.extend(
 
             if (options.enableSimulation) {
                 // Animate it:
+                if (layout.simulation) {
+                    H.win.cancelAnimationFrame(layout.simulation);
+                }
                 layout.simulation = H.win.requestAnimationFrame(localLayout);
             } else {
                 // Synchronous rendering:
                 while (
                     layout.maxIterations-- &&
+                    isFinite(layout.temperature) &&
                     !layout.isStable()
                 ) {
                     localLayout();
@@ -121,11 +157,7 @@ H.extend(
         setK: function () {
             // Optimal distance between nodes,
             // available space around the node:
-            this.k = this.options.linkLength ||
-                Math.pow(
-                    this.box.width * this.box.height / this.nodes.length,
-                    0.4
-                );
+            this.k = this.options.linkLength || this.integration.getK(this);
         },
         addNodes: function (nodes) {
             nodes.forEach(function (node) {
@@ -183,21 +215,44 @@ H.extend(
         },
 
         setTemperature: function () {
-            this.temperature = Math.sqrt(this.nodes.length);
+            this.temperature = this.startTemperature =
+                Math.sqrt(this.nodes.length);
         },
 
         setDiffTemperature: function () {
-            this.diffTemperature = this.temperature /
+            this.diffTemperature = this.startTemperature /
                 (this.options.maxIterations + 1);
         },
         setInitialRendering: function (enable) {
             this.initialRendering = enable;
+        },
+        createQuadTree: function () {
+            this.quadTree = new H.QuadTree(
+                this.box.left,
+                this.box.top,
+                this.box.width,
+                this.box.height
+            );
+
+            this.quadTree.insertNodes(this.nodes);
         },
         initPositions: function () {
             var initialPositions = this.options.initialPositions;
 
             if (H.isFunction(initialPositions)) {
                 initialPositions.call(this);
+                this.nodes.forEach(function (node) {
+                    if (!defined(node.prevX)) {
+                        node.prevX = node.plotX;
+                    }
+                    if (!defined(node.prevY)) {
+                        node.prevY = node.plotY;
+                    }
+
+                    node.dispX = 0;
+                    node.dispY = 0;
+                });
+
             } else if (initialPositions === 'circle') {
                 this.setCircularPositions();
             } else {
@@ -249,11 +304,11 @@ H.extend(
             // Initial positions are laid out along a small circle, appearing
             // as a cluster in the middle
             sortedNodes.forEach(function (node, index) {
-                node.plotX = pick(
+                node.plotX = node.prevX = pick(
                     node.plotX,
                     box.width / 2 + Math.cos(index * angle)
                 );
-                node.plotY = pick(
+                node.plotY = node.prevY = pick(
                     node.plotY,
                     box.height / 2 + Math.sin(index * angle)
                 );
@@ -279,11 +334,11 @@ H.extend(
             // Initial positions:
             nodes.forEach(
                 function (node, index) {
-                    node.plotX = pick(
+                    node.plotX = node.prevX = pick(
                         node.plotX,
                         box.width * unrandom(index)
                     );
-                    node.plotY = pick(
+                    node.plotY = node.prevY = pick(
                         node.plotY,
                         box.height * unrandom(nodesLength + index)
                     );
@@ -293,187 +348,257 @@ H.extend(
                 }
             );
         },
-        applyBarycenterForces: function () {
-            var nodesLength = this.nodes.length,
-                gravitationalConstant = this.options.gravitationalConstant,
+        force: function (name) {
+            this.integration[name].apply(
+                this,
+                Array.prototype.slice.call(arguments, 1)
+            );
+        },
+        barycenterForces: function () {
+            this.getBarycenter();
+            this.force('barycenter');
+        },
+        getBarycenter: function () {
+            var systemMass = 0,
                 cx = 0,
                 cy = 0;
 
-            // Calculate center:
             this.nodes.forEach(function (node) {
-                cx += node.plotX;
-                cy += node.plotY;
+                cx += node.plotX * node.mass;
+                cy += node.plotY * node.mass;
+
+                systemMass += node.mass;
             });
 
             this.barycenter = {
                 x: cx,
-                y: cy
+                y: cy,
+                xFactor: cx / systemMass,
+                yFactor: cy / systemMass
             };
 
-            // Apply forces:
-            this.nodes.forEach(function (node) {
-                var degree = node.getDegree(),
-                    phi = degree * (1 + degree / 2);
-
-                node.dispX = (cx / nodesLength - node.plotX) *
-                    gravitationalConstant * phi;
-                node.dispY = (cy / nodesLength - node.plotY) *
-                    gravitationalConstant * phi;
-            });
+            return this.barycenter;
         },
-        applyRepulsiveForces: function () {
+        barnesHutApproximation: function (node, quadNode) {
             var layout = this,
-                nodes = layout.nodes,
-                options = layout.options,
-                k = this.k;
+                distanceXY = layout.getDistXY(node, quadNode),
+                distanceR = layout.vectorLength(distanceXY),
+                goDeeper,
+                force;
 
-            nodes.forEach(function (node) {
-                nodes.forEach(function (repNode) {
-                    var force,
-                        distanceR,
-                        distanceXY;
-
+            if (node !== quadNode && distanceR !== 0) {
+                if (quadNode.isInternal) {
+                    // Internal node:
                     if (
-                        // Node can not repulse itself:
-                        node !== repNode &&
-                        // Only close nodes affect each other:
-                        /* layout.getDistR(node, repNode) < 2 * k && */
-                        // Not dragged:
-                        !node.fixedPosition
+                        quadNode.boxSize / distanceR < layout.options.theta &&
+                        distanceR !== 0
                     ) {
-                        distanceXY = layout.getDistXY(node, repNode);
-                        distanceR = layout.vectorLength(distanceXY);
+                        // Treat as an external node:
+                        force = layout.repulsiveForce(distanceR, layout.k);
 
-                        if (distanceR !== 0) {
-                            force = options.repulsiveForce.call(
-                                layout, distanceR, k
-                            );
-
-                            node.dispX += (distanceXY.x / distanceR) * force;
-                            node.dispY += (distanceXY.y / distanceR) * force;
-                        }
-                    }
-                });
-            });
-        },
-        applyAttractiveForces: function () {
-            var layout = this,
-                links = layout.links,
-                options = this.options,
-                k = this.k;
-
-            links.forEach(function (link) {
-                if (link.fromNode && link.toNode) {
-                    var distanceXY = layout.getDistXY(
-                            link.fromNode,
-                            link.toNode
-                        ),
-                        distanceR = layout.vectorLength(distanceXY),
-                        force = options.attractiveForce.call(
-                            layout, distanceR, k
+                        layout.force(
+                            'repulsive',
+                            node,
+                            force * quadNode.mass,
+                            distanceXY,
+                            distanceR
                         );
+                        goDeeper = false;
+                    } else {
+                        // Go deeper:
+                        goDeeper = true;
+                    }
+                } else {
+                    // External node, direct force:
+                    force = layout.repulsiveForce(distanceR, layout.k);
+
+                    layout.force(
+                        'repulsive',
+                        node,
+                        force * quadNode.mass,
+                        distanceXY,
+                        distanceR
+                    );
+                }
+            }
+
+            return goDeeper;
+        },
+        repulsiveForces: function () {
+            var layout = this;
+
+            if (layout.approximation === 'barnes-hut') {
+                layout.nodes.forEach(function (node) {
+                    layout.quadTree.visitNodeRecursive(
+                        null,
+                        function (quadNode) {
+                            return layout.barnesHutApproximation(
+                                node,
+                                quadNode
+                            );
+                        }
+                    );
+                });
+            } else {
+                layout.nodes.forEach(function (node) {
+                    layout.nodes.forEach(function (repNode) {
+                        var force,
+                            distanceR,
+                            distanceXY;
+
+                        if (
+                            // Node can not repulse itself:
+                            node !== repNode &&
+                            // Only close nodes affect each other:
+                            /* layout.getDistR(node, repNode) < 2 * k && */
+                            // Not dragged:
+                            !node.fixedPosition
+                        ) {
+                            distanceXY = layout.getDistXY(node, repNode);
+                            distanceR = layout.vectorLength(distanceXY);
+
+                            force = layout.repulsiveForce(distanceR, layout.k);
+
+                            layout.force(
+                                'repulsive',
+                                node,
+                                force * repNode.mass,
+                                distanceXY,
+                                distanceR
+                            );
+                        }
+                    });
+                });
+            }
+        },
+        attractiveForces: function () {
+            var layout = this,
+                distanceXY,
+                distanceR,
+                force;
+
+            layout.links.forEach(function (link) {
+                if (link.fromNode && link.toNode) {
+                    distanceXY = layout.getDistXY(
+                        link.fromNode,
+                        link.toNode
+                    );
+                    distanceR = layout.vectorLength(distanceXY);
 
                     if (distanceR !== 0) {
-                        if (!link.fromNode.fixedPosition) {
-                            link.fromNode.dispX -= (distanceXY.x / distanceR) *
-                                force;
-                            link.fromNode.dispY -= (distanceXY.y / distanceR) *
-                                force;
-                        }
+                        force = layout.attractiveForce(distanceR, layout.k);
 
-                        if (!link.toNode.fixedPosition) {
-                            link.toNode.dispX += (distanceXY.x / distanceR) *
-                                force;
-                            link.toNode.dispY += (distanceXY.y / distanceR) *
-                                force;
-                        }
+                        layout.force(
+                            'attractive',
+                            link,
+                            force,
+                            distanceXY,
+                            distanceR
+                        );
                     }
                 }
             });
         },
-        applyLimits: function (temperature) {
+        applyLimits: function () {
             var layout = this,
-                options = layout.options,
-                nodes = layout.nodes,
-                box = layout.box,
-                distanceR;
+                nodes = layout.nodes;
 
             nodes.forEach(function (node) {
                 if (node.fixedPosition) {
                     return;
                 }
 
-                // Friction:
-                node.dispX += options.friction * node.dispX;
-                node.dispY += options.friction * node.dispY;
+                layout.integration.integrate(layout, node);
 
-                distanceR = node.temperature = layout.vectorLength({
-                    x: node.dispX,
-                    y: node.dispY
-                });
-
-                // Place nodes:
-                if (distanceR !== 0) {
-                    node.plotX += node.dispX / distanceR *
-                        Math.min(Math.abs(node.dispX), temperature);
-                    node.plotY += node.dispY / distanceR *
-                        Math.min(Math.abs(node.dispY), temperature);
-                }
-
-                /*
-                TO DO: Consider elastic collision instead of stopping.
-                o' means end position when hitting plotting area edge:
-
-                - "inealstic":
-                o
-                 \
-                ______
-                |  o'
-                |   \
-                |    \
-
-                - "elastic"/"bounced":
-                o
-                 \
-                ______
-                |  ^
-                | / \
-                |o'  \
-
-                */
-
-                // Limit X-coordinates:
-                node.plotX = Math.round(
-                    Math.max(
-                        Math.min(
-                            node.plotX,
-                            box.width
-                        ),
-                        box.left
-                    )
-                );
-
-                // Limit Y-coordinates:
-                node.plotY = Math.round(
-                    Math.max(
-                        Math.min(
-                            node.plotY,
-                            box.height
-                        ),
-                        box.top
-                    )
-                );
+                layout.applyLimitBox(node, layout.box);
 
                 // Reset displacement:
                 node.dispX = 0;
                 node.dispY = 0;
             });
         },
+        /**
+         * External box that nodes should fall. When hitting an edge, node
+         * should stop or bounce.
+         */
+        applyLimitBox: function (node, box) {
+            /*
+            TO DO: Consider elastic collision instead of stopping.
+            o' means end position when hitting plotting area edge:
+
+            - "inelastic":
+            o
+             \
+            ______
+            |  o'
+            |   \
+            |    \
+
+            - "elastic"/"bounced":
+            o
+             \
+            ______
+            |  ^
+            | / \
+            |o'  \
+
+            Euler sample:
+            if (plotX < 0) {
+                plotX = 0;
+                dispX *= -1;
+            }
+
+            if (plotX > box.width) {
+                plotX = box.width;
+                dispX *= -1;
+            }
+
+            */
+            // Limit X-coordinates:
+            node.plotX = Math.max(
+                Math.min(
+                    node.plotX,
+                    box.width
+                ),
+                box.left
+            );
+
+            // Limit Y-coordinates:
+            node.plotY = Math.max(
+                Math.min(
+                    node.plotY,
+                    box.height
+                ),
+                box.top
+            );
+        },
+        /**
+         * From "A comparison of simulated annealing cooling strategies" by
+         * Nourani and Andresen work.
+         */
+        coolDown: function (temperature, temperatureStep, step) {
+            // Logarithmic:
+            /*
+            return Math.sqrt(this.nodes.length) -
+                Math.log(
+                    step * layout.diffTemperature
+                );
+            */
+
+            // Exponential:
+            /*
+            var alpha = 0.1;
+            layout.temperature = Math.sqrt(layout.nodes.length) *
+                Math.pow(alpha, layout.diffTemperature);
+            */
+            // Linear:
+            return temperature - temperatureStep * step;
+        },
         isStable: function () {
             return Math.abs(
                 this.systemTemperature -
                 this.prevSystemTemperature
-            ) === 0;
+            ) < 0.00001 || this.temperature <= 0;
         },
         getSystemTemperature: function () {
             return this.nodes.reduce(function (value, node) {
@@ -486,10 +611,7 @@ H.extend(
         getDistR: function (nodeA, nodeB) {
             var distance = this.getDistXY(nodeA, nodeB);
 
-            return Math.sqrt(
-                distance.x * distance.x +
-                distance.y * distance.y
-            );
+            return this.vectorLength(distance);
         },
         getDistXY: function (nodeA, nodeB) {
             var xDist = nodeA.plotX - nodeB.plotX,

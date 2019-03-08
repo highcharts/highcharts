@@ -6,7 +6,13 @@
  *   license: MIT (http://opensource.org/licenses/MIT)
  *   author: yFiles for HTML Support Team <yfileshtml@yworks.com>
  *   homepage: https://github.com/yWorks/svg2pdf.js#readme
- *   version: 1.3.0, modified for Highcharts issue #9779
+ *   version: 1.3.1
+ *
+ * cssesc:
+ *   license: MIT (http://opensource.org/licenses/MIT)
+ *   author: Mathias Bynens
+ *   homepage: https://mths.be/cssesc
+ *   version: 2.0.0
  *
  * font-family:
  *   license: MIT (http://opensource.org/licenses/MIT)
@@ -1471,6 +1477,127 @@ module.exports = function transformParse(transformString) {
 };
 
 },{"./matrix":4}],8:[function(require,module,exports){
+/*! https://mths.be/cssesc v1.0.1 by @mathias */
+'use strict';
+
+var object = {};
+var hasOwnProperty = object.hasOwnProperty;
+var merge = function merge(options, defaults) {
+	if (!options) {
+		return defaults;
+	}
+	var result = {};
+	for (var key in defaults) {
+		// `if (defaults.hasOwnProperty(key) { … }` is not needed here, since
+		// only recognized option names are used.
+		result[key] = hasOwnProperty.call(options, key) ? options[key] : defaults[key];
+	}
+	return result;
+};
+
+var regexAnySingleEscape = /[ -,\.\/;-@\[-\^`\{-~]/;
+var regexSingleEscape = /[ -,\.\/;-@\[\]\^`\{-~]/;
+var regexAlwaysEscape = /['"\\]/;
+var regexExcessiveSpaces = /(^|\\+)?(\\[A-F0-9]{1,6})\x20(?![a-fA-F0-9\x20])/g;
+
+// https://mathiasbynens.be/notes/css-escapes#css
+var cssesc = function cssesc(string, options) {
+	options = merge(options, cssesc.options);
+	if (options.quotes != 'single' && options.quotes != 'double') {
+		options.quotes = 'single';
+	}
+	var quote = options.quotes == 'double' ? '"' : '\'';
+	var isIdentifier = options.isIdentifier;
+
+	var firstChar = string.charAt(0);
+	var output = '';
+	var counter = 0;
+	var length = string.length;
+	while (counter < length) {
+		var character = string.charAt(counter++);
+		var codePoint = character.charCodeAt();
+		var value = void 0;
+		// If it’s not a printable ASCII character…
+		if (codePoint < 0x20 || codePoint > 0x7E) {
+			if (codePoint >= 0xD800 && codePoint <= 0xDBFF && counter < length) {
+				// It’s a high surrogate, and there is a next character.
+				var extra = string.charCodeAt(counter++);
+				if ((extra & 0xFC00) == 0xDC00) {
+					// next character is low surrogate
+					codePoint = ((codePoint & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000;
+				} else {
+					// It’s an unmatched surrogate; only append this code unit, in case
+					// the next code unit is the high surrogate of a surrogate pair.
+					counter--;
+				}
+			}
+			value = '\\' + codePoint.toString(16).toUpperCase() + ' ';
+		} else {
+			if (options.escapeEverything) {
+				if (regexAnySingleEscape.test(character)) {
+					value = '\\' + character;
+				} else {
+					value = '\\' + codePoint.toString(16).toUpperCase() + ' ';
+				}
+				// Note: `:` could be escaped as `\:`, but that fails in IE < 8.
+			} else if (/[\t\n\f\r\x0B:]/.test(character)) {
+				if (!isIdentifier && character == ':') {
+					value = character;
+				} else {
+					value = '\\' + codePoint.toString(16).toUpperCase() + ' ';
+				}
+			} else if (character == '\\' || !isIdentifier && (character == '"' && quote == character || character == '\'' && quote == character) || isIdentifier && regexSingleEscape.test(character)) {
+				value = '\\' + character;
+			} else {
+				value = character;
+			}
+		}
+		output += value;
+	}
+
+	if (isIdentifier) {
+		if (/^_/.test(output)) {
+			// Prevent IE6 from ignoring the rule altogether (in case this is for an
+			// identifier used as a selector)
+			output = '\\_' + output.slice(1);
+		} else if (/^-[-\d]/.test(output)) {
+			output = '\\-' + output.slice(1);
+		} else if (/\d/.test(firstChar)) {
+			output = '\\3' + firstChar + ' ' + output.slice(1);
+		}
+	}
+
+	// Remove spaces after `\HEX` escapes that are not followed by a hex digit,
+	// since they’re redundant. Note that this is only possible if the escape
+	// sequence isn’t preceded by an odd number of backslashes.
+	output = output.replace(regexExcessiveSpaces, function ($0, $1, $2) {
+		if ($1 && $1.length % 2) {
+			// It’s not safe to remove the space, so don’t.
+			return $0;
+		}
+		// Strip the space.
+		return ($1 || '') + $2;
+	});
+
+	if (!isIdentifier && options.wrap) {
+		return quote + output + quote;
+	}
+	return output;
+};
+
+// Expose default options (so they can be overridden globally).
+cssesc.options = {
+	'escapeEverything': false,
+	'isIdentifier': false,
+	'quotes': 'single',
+	'wrap': false
+};
+
+cssesc.version = '1.0.1';
+
+module.exports = cssesc;
+
+},{}],9:[function(require,module,exports){
 // parse
 // =====
 
@@ -1690,7 +1817,7 @@ module.exports = {
   stringify: stringify,
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /**
  * A class to parse color values
  * @author Stoyan Stefanov <sstoo@gmail.com>
@@ -1991,7 +2118,7 @@ if (typeof define === "function" && define.amd) {
 return RGBColor;
 })(typeof self !== "undefined" && self || typeof window !== "undefined" && window || this);
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /*
 The MIT License (MIT)
 
@@ -2030,6 +2157,7 @@ SOFTWARE.
   var RGBColor;
   var SvgPath;
   var FontFamily;
+  var cssEsc;
 
   var _pdf; // jsPDF pdf-document
 
@@ -2233,7 +2361,7 @@ SOFTWARE.
       return this.renderedElements[id];
     }
 
-    var node = this.rootSvg.getElementById(id);
+    var node = this.rootSvg.querySelector("#" + cssEsc(id, {isIdentifier: true}));
 
     if (nodeIs(node, "lineargradient")) {
       putGradient(node, "axial", [
@@ -4232,21 +4360,24 @@ SOFTWARE.
   };
 
   if (typeof define === "function" && define.amd) {
-    define(["./rgbcolor", "SvgPath", "font-family"], function (rgbcolor, svgpath, fontFamily) {
+    define(["./rgbcolor", "SvgPath", "font-family", "cssesc"], function (rgbcolor, svgpath, fontFamily, cssesc) {
       RGBColor = rgbcolor;
       SvgPath = svgpath;
       FontFamily = fontFamily;
+      cssEsc = cssesc;
       return svg2pdf;
     });
   } else if (typeof module !== "undefined" && module.exports) {
     RGBColor = require("./rgbcolor.js");
     SvgPath = require("SvgPath");
     FontFamily = require("font-family");
+    cssEsc = require("cssesc");
     module.exports = svg2pdf;
   } else {
     SvgPath = global.SvgPath;
     RGBColor = global.RGBColor;
     FontFamily = global.FontFamily;
+    cssEsc = global.cssesc;
     global.svg2pdf = svg2pdf;
     // for compatibility reasons
     global.svgElementToPdf = svg2pdf;
@@ -4254,6 +4385,6 @@ SOFTWARE.
   return svg2pdf;
 }(typeof self !== "undefined" && self || typeof window !== "undefined" && window || this));
 
-},{"./rgbcolor.js":9,"SvgPath":1,"font-family":8}]},{},[10])(10)
+},{"./rgbcolor.js":10,"SvgPath":1,"cssesc":8,"font-family":9}]},{},[11])(11)
 });
 //# sourceMappingURL=svg2pdf.js.map

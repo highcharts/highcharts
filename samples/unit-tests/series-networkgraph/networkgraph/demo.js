@@ -85,4 +85,12 @@ QUnit.test('Network Graph', function (assert) {
         '2,6',
         'Custom series.data.dashStyle is correct (#9798)'
     );
+
+    chart.series[1].setData([['XX', 'XY']]);
+
+    assert.strictEqual(
+        chart.series[1].nodes.length,
+        2,
+        'Correct number of nodes (#10163)'
+    );
 });

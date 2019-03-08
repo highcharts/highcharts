@@ -1,9 +1,7 @@
-
 Highcharts.chart('container', {
 
     chart: {
         type: 'pie',
-        width: 500,
         borderWidth: 2
     },
 

@@ -30,6 +30,7 @@ var defined = Highcharts.defined,
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.
+ * @private
  * @param  {string} html The input string
  * @return {string} The excaped string
  */
@@ -976,13 +977,15 @@ if (exportingOptions) {
         }
     });
 
-    exportingOptions.buttons.contextButton.menuItems.push(
-        'separator',
-        'downloadCSV',
-        'downloadXLS',
-        'viewData',
-        'openInCloud'
-    );
+    if (exportingOptions.buttons) {
+        exportingOptions.buttons.contextButton.menuItems.push(
+            'separator',
+            'downloadCSV',
+            'downloadXLS',
+            'viewData',
+            'openInCloud'
+        );
+    }
 }
 
 // Series specific

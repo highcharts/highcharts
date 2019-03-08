@@ -167,6 +167,23 @@ QUnit.test('Histogram', function (assert) {
         'Histogram does not produce points with NaN y values, #7976'
     );
 
+    chart.addSeries({
+        id: 'floatData',
+        data: [33.16760851774859, 30.021835456328144, 32.44462948560892, 32.05988301568796, 30.867648930865755, 32.19147683815367, 32.66328232655957, 29.711692262612182, 29.521720801728208, 30.664639033433204, 31.968056265142028, 32.10721235022374, 29.79755475194929, 31.406572728550902, 32.88348881596304, 31.506079222840953, 31.506079222840953, 31.506079222840953, 33.12216452433281, 29.990519216283296, 32.974232283904655, 31.064286659033176, 31.12067983726177, 31.392519037070734, 28.97179396681863, 28.699234545713068, 31.44281128068294, 28.81435219638538, 33.01179075584821, 31.28194091945461, 31.606757143282852, 29.819697680843685, 29.819697680843685, 30.53378932780897, 29.951550386910295, 31.47763812568406, 28.392696528424878, 28.392696528424878, 28.392696528424878, 30.53378932780897, 32.305029082782085, 32.305029082782085, 28.095141068806992, 32.305029082782085]
+    });
+
+    var h5 = chart.addSeries({
+        baseSeries: 'floatData',
+        type: 'histogram'
+    });
+
+    assert.deepEqual(
+        h5 && Highcharts.map(h5.points, function (point) {
+            return point.y;
+        }),
+        [6, 2, 7, 4, 11, 7, 7],
+        'Histogram does not produce points with NaN y values, when baseSeries data has float values'
+    );
 
     baseSeries.remove();
     assert.ok(
@@ -179,4 +196,45 @@ QUnit.test('Histogram', function (assert) {
         Highcharts.inArray(histogram, chart.series) === -1,
         'Histogram is removed after histogram.remove()'
     );
+
+    chart.update({
+        series: [{
+            id: 's1',
+            data: [1, 1.2, 1.4, 1.6, 1.8]
+        }, {
+            id: 's2',
+            data: [2, 2.3, 2.6, 2.9, 3.2]
+        }, {
+            baseSeries: 's1',
+            type: 'histogram'
+        }, {
+            baseSeries: 's2',
+            type: 'histogram'
+        }]
+    }, true, true);
+
+    assert.strictEqual(
+        // Rounding is applied in order to crisp column edges
+        Math.round(chart.series[3].barW),
+        Math.round(chart.series[3].closestPointRangePx),
+        'Histogram has appropriate pointRange value, when multiple series on the same axis, #9128, #10025'
+    );
+
+    chart.update({
+        series: [{
+            id: 'baseSeries',
+            data: [132.8, 137, 139, 142, 145, 148, 151, 151.4]
+        }, {
+            baseSeries: 'baseSeries',
+            type: 'histogram',
+            binsNumber: 7
+        }]
+    }, true, true);
+
+    assert.strictEqual(
+        chart.series[1].data.length,
+        chart.series[1].options.binsNumber,
+        'Histogram produces correct number of bins set by user.'
+    );
+
 });

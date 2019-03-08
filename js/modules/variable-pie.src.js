@@ -6,6 +6,10 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * @typedef {"area"|"radius"} Highcharts.VariablePieSizeByValue
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -104,8 +108,8 @@ seriesType(
          * @sample {highcharts} highcharts/variable-radius-pie/sizeby/
          *         Difference between area and radius sizeBy
          *
-         * @since      6.0.0
-         * @validvalue ["area", "radius"]
+         * @type  {Highcharts.VariablePieSizeByValue}
+         * @since 6.0.0
          */
         sizeBy: 'area',
 

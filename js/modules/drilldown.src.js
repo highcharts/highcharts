@@ -307,11 +307,10 @@ defaultOptions.drilldown = {
          * What box to align the button to. Can be either `plotBox` or
          * `spacingBox`.
          *
-         * @type       {string}
+         * @type       {Highcharts.ButtonRelativeToValue}
          * @default    plotBox
          * @since      3.0.8
          * @product    highcharts highmaps
-         * @validvalue ["plotBox", "spacingBox"]
          * @apioption  drilldown.drillUpButton.relativeTo
          */
 
@@ -349,7 +348,7 @@ defaultOptions.drilldown = {
             /**
              * Vertical alignment of the button.
              *
-             * @type      {Highcharts.VerticalAlignType}
+             * @type      {Highcharts.VerticalAlignValue}
              * @default   top
              * @product   highcharts highmaps
              * @apioption drilldown.drillUpButton.position.verticalAlign
@@ -358,7 +357,7 @@ defaultOptions.drilldown = {
             /**
              * Horizontal alignment.
              *
-             * @type {Highcharts.AlignType}
+             * @type {Highcharts.AlignValue}
              */
             align: 'right',
 

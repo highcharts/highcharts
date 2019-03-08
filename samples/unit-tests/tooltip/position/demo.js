@@ -47,4 +47,18 @@ QUnit.test('Tooltip positioned correctly through the getPosition function.', fun
         Math.round(chart.series[0].points[5].plotY) + chart.plotTop,
         'Tooltip points to the middle of the top side of last column (#7242)'
     );
+
+    // Add one point
+    const x = chart.tooltip.label.translateX;
+    chart.series[0].points[5].onMouseOver();
+
+    chart.series[0].addPoint({
+        x: 6,
+        y: 1
+    });
+    assert.notEqual(
+        chart.tooltip.label.translateX,
+        x,
+        'The tooltip should move with its point'
+    );
 });

@@ -74,8 +74,7 @@
  * Contains common information for a drag event on series point.
  *
  * @interface Highcharts.SeriesPointDragStartEventObject
- *
- * @implements {global.MouseDownEvent}
+ * @extends global.MouseEvent
  *//**
  * Data property being dragged.
  * @name Highcharts.SeriesPointDragStartEventObject#updateProp
@@ -1849,16 +1848,17 @@ H.Chart.prototype.setGuideBoxState = function (state, options) {
         guideBoxOptions = merge(defaultGuideBoxOptions, options),
         stateOptions = merge(guideBoxOptions.default, guideBoxOptions[state]);
 
-    return guideBox.attr({
-        className: stateOptions.className,
-        stroke: stateOptions.lineColor,
-        strokeWidth: stateOptions.lineWidth,
-        fill: stateOptions.color,
-        cursor: stateOptions.cursor,
-        zIndex: stateOptions.zIndex
-    })
-    // Use pointerEvents 'none' to avoid capturing the click event
-    .css({ pointerEvents: 'none' });
+    return guideBox
+        .attr({
+            className: stateOptions.className,
+            stroke: stateOptions.lineColor,
+            strokeWidth: stateOptions.lineWidth,
+            fill: stateOptions.color,
+            cursor: stateOptions.cursor,
+            zIndex: stateOptions.zIndex
+        })
+        // Use pointerEvents 'none' to avoid capturing the click event
+        .css({ pointerEvents: 'none' });
 };
 
 
@@ -2476,8 +2476,8 @@ function mouseUp(e, chart) {
 function mouseDown(e, chart) {
     var dragPoint = chart.hoverPoint,
         dragDropOptions = H.merge(
-            dragPoint.series.options.dragDrop,
-            dragPoint.options.dragDrop
+            dragPoint && dragPoint.series.options.dragDrop,
+            dragPoint && dragPoint.options.dragDrop
         ),
         draggableX = dragDropOptions.draggableX || false,
         draggableY = dragDropOptions.draggableY || false;

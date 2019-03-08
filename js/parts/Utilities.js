@@ -7,16 +7,6 @@
  * */
 
 /**
- * Reference to the global SVGElement class as a workaround for a name conflict
- * in the Highcharts namespace.
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
- *
- * @global
- * @typedef {global.SVGElement} GlobalSVGElement
- */
-
-/**
  * An animation configuration. Animation configurations can also be defined as
  * booleans, where `false` turns off animation and `true` defaults to a duration
  * of 500ms.
@@ -82,7 +72,7 @@
  *//**
  * Style of the mouse cursor when resting over the element.
  * @name Highcharts.CSSObject#cursor
- * @type {Highcharts.CursorType|undefined}
+ * @type {Highcharts.CursorValue|undefined}
  *//**
  * Font family of the element text. Multiple values have to be in decreasing
  * preference order and separated by comma.
@@ -158,13 +148,13 @@
 /**
  * All possible cursor styles.
  *
- * @typedef {"alias"|"all-scroll"|"auto"|"cell"|"col-resize"|"context-menu"|"copy"|"crosshair"|"default"|"e-resize"|"ew-resize"|"grab"|"grabbing"|"help"|"move"|"n-resize"|"ne-resize"|"nesw-resize"|"no-drop"|"none"|"not-allowed"|"ns-resize"|"nw-resize"|"nwse-resize"|"pointer"|"progress"|"row-resize"|"s-resize"|"se-resize"|"sw-resize"|"text"|"vertical-text"|"w-resize"|"wait"|"zoom-in"|"zoom-out"} Highcharts.CursorType
+ * @typedef {"alias"|"all-scroll"|"auto"|"cell"|"col-resize"|"context-menu"|"copy"|"crosshair"|"default"|"e-resize"|"ew-resize"|"grab"|"grabbing"|"help"|"move"|"n-resize"|"ne-resize"|"nesw-resize"|"no-drop"|"none"|"not-allowed"|"ns-resize"|"nw-resize"|"nwse-resize"|"pointer"|"progress"|"row-resize"|"s-resize"|"se-resize"|"sw-resize"|"text"|"vertical-text"|"w-resize"|"wait"|"zoom-in"|"zoom-out"} Highcharts.CursorValue
  */
 
 /**
  * All possible dash styles.
  *
- * @typedef {"Dash"|"DashDot"|"Dot"|"LongDash"|"LongDashDot"|"LongDashDotDot"|"ShortDash"|"ShortDashDot"|"ShortDashDotDot"|"ShortDot"|"Solid"} Highcharts.DashStyleType
+ * @typedef {"Dash"|"DashDot"|"Dot"|"LongDash"|"LongDashDot"|"LongDashDotDot"|"ShortDash"|"ShortDashDot"|"ShortDashDotDot"|"ShortDot"|"Solid"} Highcharts.DashStyleValue
  */
 
 /**
@@ -207,8 +197,10 @@
  * @callback Highcharts.FormatterCallbackFunction<T>
  *
  * @param {T} this
+ *        Context to format
  *
  * @return {string}
+ *         Formatted text
  */
 
 /**
@@ -283,19 +275,19 @@
  * @interface Highcharts.SVGAttributes
  *//**
  * @name Highcharts.SVGAttributes#[key:string]
- * @type {boolean|number|string|Array<number|string>|undefined}
+ * @type {any}
  *//**
  * @name Highcharts.SVGAttributes#d
  * @type {string|Highcharts.SVGPathArray|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#fill
+ * @type {Highcharts.ColorString|undefined}
  *//**
  * @name Highcharts.SVGAttributes#inverted
  * @type {boolean|undefined}
  *//**
  * @name Highcharts.SVGAttributes#matrix
  * @type {Array<number>|undefined}
- *//**
- * @name Highcharts.SVGAttributes#stroke
- * @type {Highcharts.ColorString|undefined}
  *//**
  * @name Highcharts.SVGAttributes#rotation
  * @type {string|undefined}
@@ -311,6 +303,12 @@
  *//**
  * @name Highcharts.SVGAttributes#scaleY
  * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#stroke
+ * @type {Highcharts.ColorString|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#style
+ * @type {string|Highcharts.CSSObject|undefined}
  *//**
  * @name Highcharts.SVGAttributes#translateX
  * @type {number|undefined}
@@ -1652,6 +1650,10 @@ H.normalizeTickInterval = function (
  *        The function to sort it with, like with regular Array.prototype.sort.
  */
 H.stableSort = function (arr, sortFunction) {
+
+    // @todo It seems like Chrome since v70 sorts in a stable way internally,
+    // plus all other browsers do it, so over time we may be able to remove this
+    // function
     var length = arr.length,
         sortValue,
         i;

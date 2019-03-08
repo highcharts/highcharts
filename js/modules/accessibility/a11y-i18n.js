@@ -298,26 +298,22 @@ H.Chart.prototype.langFormat = function (langKey, context, time) {
 H.setOptions({
     lang: {
 
-        /* eslint-disable max-len */
         /**
          * Configure the accessibility strings in the chart. Requires the
-         * [accessibility module](//code.highcharts.com/modules/accessibility.js)
+         * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
          * to be loaded. For a description of the module and information on its
-         * features, see [Highcharts Accessibility](
-         * http://www.highcharts.com/docs/chart-concepts/accessibility).
+         * features, see
+         * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
          *
          * For more dynamic control over the accessibility functionality, see
-         * [accessibility.pointDescriptionFormatter](
-         * accessibility.pointDescriptionFormatter),
-         * [accessibility.seriesDescriptionFormatter](
-         * accessibility.seriesDescriptionFormatter), and
-         * [accessibility.screenReaderSectionFormatter](
-         * accessibility.screenReaderSectionFormatter).
+         * [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter),
+         * [accessibility.seriesDescriptionFormatter](#accessibility.seriesDescriptionFormatter),
+         * and
+         * [accessibility.screenReaderSectionFormatter](#accessibility.screenReaderSectionFormatter).
          *
          * @since        6.0.6
          * @optionparent lang.accessibility
          */
-        /* eslint-enable max-len */
         accessibility: {
 
             /* eslint-disable max-len */
@@ -433,7 +429,7 @@ H.setOptions({
              * @since 6.0.6
              */
             chartTypes: {
-            /* eslint-disable max-len */
+                /* eslint-disable max-len */
                 emptyChart: 'Empty chart',
                 mapTypeDescription: 'Map of {mapTitle} with {numSeries} data series.',
                 unknownMap: 'Map of unspecified region with {numSeries} data series.',
@@ -491,28 +487,27 @@ H.setOptions({
             /**
              * Lang configuration for different series types. For more dynamic
              * control over the series element descriptions, see
-             * [accessibility.seriesDescriptionFormatter](
-             * accessibility.seriesDescriptionFormatter).
+             * [accessibility.seriesDescriptionFormatter](#accessibility.seriesDescriptionFormatter).
              *
              * @since 6.0.6
              */
             series: {
-            /**
-             * Lang configuration for the series main summary. Each series
-             * type has two modes:
-             *
-             * 1. This series type is the only series type used in the
-             *    chart
-             *
-             * 2. This is a combination chart with multiple series types
-             *
-             * If a definition does not exist for the specific series type
-             * and mode, the 'default' lang definitions are used.
-             *
-             * @since 6.0.6
-             */
+                /**
+                 * Lang configuration for the series main summary. Each series
+                 * type has two modes:
+                 *
+                 * 1. This series type is the only series type used in the
+                 *    chart
+                 *
+                 * 2. This is a combination chart with multiple series types
+                 *
+                 * If a definition does not exist for the specific series type
+                 * and mode, the 'default' lang definitions are used.
+                 *
+                 * @since 6.0.6
+                 */
                 summary: {
-                /* eslint-disable max-len */
+                    /* eslint-disable max-len */
                     'default': '{name}, series {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
                     defaultCombination: '{name}, series {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
                     line: '{name}, line {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',

@@ -6,6 +6,10 @@
  *
  * */
 
+/**
+ * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
+ */
+
 'use strict';
 
 import H from './Globals.js';
@@ -83,8 +87,7 @@ var addEvent = H.addEvent,
  * @sample {highstock} stock/plotoptions/series-datagrouping-approximation
  *         Approximation callback with custom data
  *
- * @type       {string|Function}
- * @validvalue ["average", "averages", "open", "high", "low", "close", "sum"]
+ * @type       {Highcharts.DataGroupingApproximationValue|Function}
  * @product    highstock
  * @apioption  plotOptions.series.dataGrouping.approximation
  */
@@ -364,8 +367,7 @@ var groupData = function (xData, yData, groupPositions, approximation) {
         start = 0,
         valuesLen,
         i,
-        j,
-        dataGroupInfo;
+        j;
 
     function getApproximation(approx) {
         if (typeof approx === 'function') {
@@ -412,7 +414,7 @@ var groupData = function (xData, yData, groupPositions, approximation) {
 
             // get group x and y
             pointX = groupPositions[pos];
-            dataGroupInfo = {
+            series.dataGroupInfo = {
                 start: series.cropStart + start,
                 length: values[0].length
             };
@@ -423,9 +425,9 @@ var groupData = function (xData, yData, groupPositions, approximation) {
             // `name` and `color` or custom properties. Implementers can
             // override this from the approximation function, where they can
             // write custom options to `this.dataGroupInfo.options`.
-            if (series.pointClass && !defined(dataGroupInfo.options)) {
+            if (series.pointClass && !defined(series.dataGroupInfo.options)) {
                 // Convert numbers and arrays into objects
-                dataGroupInfo.options = merge(
+                series.dataGroupInfo.options = merge(
                     series.pointClass.prototype
                         .optionsToObject.call(
                             { series: series },
@@ -436,7 +438,7 @@ var groupData = function (xData, yData, groupPositions, approximation) {
                 // Make sure the raw data (x, y, open, high etc) is not copied
                 // over and overwriting approximated data.
                 extendedPointArrayMap.forEach(function (key) { // eslint-disable-line
-                    delete dataGroupInfo.options[key];
+                    delete series.dataGroupInfo.options[key];
                 });
             }
 
@@ -444,7 +446,7 @@ var groupData = function (xData, yData, groupPositions, approximation) {
             if (groupedY !== undefined) {
                 groupedXData.push(pointX);
                 groupedYData.push(groupedY);
-                groupMap.push(dataGroupInfo);
+                groupMap.push(series.dataGroupInfo);
             }
 
             // reset the aggregate arrays
@@ -766,7 +768,8 @@ seriesProto.processData = function () {
                     ]
                 ),
                 groupedXData = groupedData.groupedXData,
-                groupedYData = groupedData.groupedYData;
+                groupedYData = groupedData.groupedYData,
+                gapSize = 0;
 
             // Prevent the smoothed data to spill out left and right, and make
             // sure data is not shifted to the left
@@ -780,7 +783,23 @@ seriesProto.processData = function () {
             }
 
             // Record what data grouping values were used
+            for (i = 1; i < groupPositions.length; i++) {
+                // The grouped gapSize needs to be the largest distance between
+                // the group to capture varying group sizes like months or DST
+                // crossing (#10000). Also check that the gap is not at the
+                // start of a segment.
+                if (
+                    !groupPositions.info.segmentStarts ||
+                    groupPositions.info.segmentStarts.indexOf(i) === -1
+                ) {
+                    gapSize = Math.max(
+                        groupPositions[i] - groupPositions[i - 1],
+                        gapSize
+                    );
+                }
+            }
             currentDataGrouping = groupPositions.info;
+            currentDataGrouping.gapSize = gapSize;
             series.closestPointRange = groupPositions.info.totalRange;
             series.groupMap = groupedData.groupMap;
 

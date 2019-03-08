@@ -9,3 +9,6 @@
 'use strict';
 import '../../parts-gantt/GanttSeries.js';
 import '../../parts-gantt/GanttChart.js';
+import '../../parts/Scrollbar.js';
+import '../../parts/RangeSelector.js';
+import '../../parts/Navigator.js';

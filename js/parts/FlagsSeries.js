@@ -4,6 +4,10 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * @typedef {"flag"|"circlepin"|"squarepin"} Highcharts.FlagShapeValue
+ */
+
 'use strict';
 
 import H from './Globals.js';
@@ -104,8 +108,8 @@ seriesType(
          * @sample {highstock} stock/plotoptions/flags/
          *         Different shapes
          *
-         * @product    highstock
-         * @validvalue ["flag", "circlepin", "squarepin"]
+         * @type    {Highcharts.FlagShapeValue}
+         * @product highstock
          */
         shape: 'flag',
 

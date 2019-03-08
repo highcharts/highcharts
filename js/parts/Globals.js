@@ -38,7 +38,7 @@ var glob = typeof win === 'undefined' ?
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
     );
 
-var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
+var Highcharts = {
     product: '@product.name@',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
@@ -69,7 +69,22 @@ var Highcharts = glob.Highcharts ? glob.Highcharts.error(16, true) : {
      * @name Highcharts.charts
      * @type {Array<Highcharts.Chart>}
      */
-    charts: []
+    charts: [],
+
+    /**
+     * A hook for defining additional date format specifiers. New
+     * specifiers are defined as key-value pairs by using the
+     * specifier as key, and a function which takes the timestamp as
+     * value. This function returns the formatted portion of the
+     * date.
+     *
+     * @sample highcharts/global/dateformats/
+     *         Adding support for week number
+     *
+     * @name Highcharts.dateFormats
+     * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
+     */
+    dateFormats: {}
 };
 
 export default Highcharts;

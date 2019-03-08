@@ -468,7 +468,8 @@ seriesType('area', 'line',
             props.forEach(function (prop) {
                 var areaKey = prop[0],
                     area = series[areaKey],
-                    attribs;
+                    verb = area ? 'animate' : 'attr',
+                    attribs = {};
 
                 // Create or update the area
                 if (area) { // update
@@ -479,26 +480,25 @@ seriesType('area', 'line',
 
                 } else { // create
 
-                    attribs = {
-                        zIndex: 0 // #1069
-                    };
-
-                    if (!series.chart.styledMode) {
-                        attribs.fill = pick(
-                            prop[3],
-                            color(prop[2])
-                                .setOpacity(pick(options.fillOpacity, 0.75))
-                                .get()
-                        );
-                    }
+                    attribs.zIndex = 0; // #1069
 
                     area = series[areaKey] = series.chart.renderer
                         .path(areaPath)
                         .addClass(prop[1])
-                        .attr(attribs)
                         .add(series.group);
                     area.isArea = true;
                 }
+
+                if (!series.chart.styledMode) {
+                    attribs.fill = pick(
+                        prop[3],
+                        color(prop[2])
+                            .setOpacity(pick(options.fillOpacity, 0.75))
+                            .get()
+                    );
+                }
+                area[verb](attribs);
+
                 area.startX = areaPath.xMap;
                 area.shiftUnit = options.step ? 2 : 1;
             });
@@ -571,7 +571,7 @@ seriesType('area', 'line',
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<(number|string),number>|*>}
+ * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.line.data
  * @product   highcharts highstock
  * @apioption series.area.data

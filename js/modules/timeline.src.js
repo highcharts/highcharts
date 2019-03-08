@@ -100,25 +100,7 @@ undocumentedSeriesType('timeline', 'line',
              */
             connectorColor: '${palette.neutralColor100}',
             backgroundColor: '${palette.backgroundColor}',
-            /* *
-             * @type      {Highcharts.FormatterCallbackFunction<object>}
-             * @default function () {
-             *   var format;
-             *
-             *   if (!this.series.chart.styledMode) {
-             *       format = '<span style="color:' + this.point.color +
-             *           '">● </span><span style="font-weight: bold;" > ' +
-             *           (this.point.date || '') + '</span><br/>' +
-             *           (this.point.label || '');
-             *   } else {
-             *       format = '<span>● </span>' +
-             *           '<span>' + (this.point.date || '') +
-             *           '</span><br/>' + (this.point.label || '');
-             *   }
-             *   return format;
-             * }
-             * @apioption plotOptions.timeline.dataLabels.formatter
-             */
+            /** @ignore-option */
             formatter: function () {
                 var format;
 
@@ -624,15 +606,26 @@ undocumentedSeriesType('timeline', 'line',
         },
         drawConnector: function () {
             var point = this,
+                series = point.series;
+
+            point.connector = series.chart.renderer
+                .path(point.getConnectorPath())
+                .add(series.connectorsGroup);
+        },
+        alignConnector: function () {
+            var point = this,
                 series = point.series,
+                connector = point.connector,
+                bBox = connector.getBBox(),
+                isVisible = bBox.y > 0,
                 dlOptions = point.dataLabel.options = merge(
                     {}, series.options.dataLabels,
                     point.options.dataLabels
                 );
 
-            point.connector = series.chart.renderer
-                .path(point.getConnectorPath())
-                .add(series.connectorsGroup);
+            connector[isVisible ? 'animate' : 'attr']({
+                d: point.getConnectorPath()
+            });
 
             if (!series.chart.styledMode) {
                 point.connector.attr({
@@ -641,16 +634,6 @@ undocumentedSeriesType('timeline', 'line',
                     opacity: point.dataLabel.opacity
                 });
             }
-        },
-        alignConnector: function () {
-            var point = this,
-                connector = point.connector,
-                bBox = connector.getBBox(),
-                isVisible = bBox.y > 0;
-
-            connector[isVisible ? 'animate' : 'attr']({
-                d: point.getConnectorPath()
-            });
         }
     });
 
@@ -718,7 +701,7 @@ addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
  * @sample {highcharts} highcharts/series-timeline/alternate-labels
  *         Alternate labels
  *
- * @type      {Array<number|*>}
+ * @type      {Array<*>}
  * @extends   series.line.data
  * @excluding marker, x, y
  * @product   highcharts

@@ -1,4 +1,3 @@
-
 QUnit.test('Series.update', function (assert) {
 
     var chart = Highcharts.chart('container', {
@@ -296,6 +295,79 @@ QUnit.test('Series.update and mouse interaction', function (assert) {
         'Data labels should not be enabled'
     );
 
+});
+
+QUnit.test('Series.update and events', assert => {
+    const clicks = {
+        option: 0,
+        added: 0
+    };
+    let updated = false;
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 400,
+            height: 300
+        },
+        series: [{
+            data: [3, 1, 2],
+            type: 'column',
+
+            // Add an event by option
+            events: {
+                click: () => clicks.option++
+            },
+            animation: false
+        }]
+    });
+
+    // Add an event programmatically
+    Highcharts.addEvent(chart.series[0], 'click', () => clicks.added++);
+    Highcharts.addEvent(chart.series[0], 'afterUpdate', () => {
+        updated = true;
+    });
+
+    const controller = new TestController(chart);
+    controller.moveTo(100, 120);
+    controller.click(100, 120, undefined, true);
+
+    assert.strictEqual(
+        clicks.option,
+        1,
+        'The click event option should work'
+    );
+    assert.strictEqual(
+        clicks.added,
+        1,
+        'The added click handler should work'
+    );
+
+    // Run update with some arbitrary properties
+    chart.series[0].update({
+        colorByPoint: true,
+        dataLabels: {
+            enabled: true
+        }
+    });
+
+    // Move out and in again because the boost module resets hoverPoints
+    controller.moveTo(0, 0);
+    controller.moveTo(100, 140);
+
+    controller.click(100, 140, undefined, true);
+    assert.strictEqual(
+        clicks.option,
+        2,
+        'The click event option should work after update'
+    );
+    assert.strictEqual(
+        clicks.added,
+        2,
+        'The added click handler should work after update'
+    );
+    assert.ok(
+        updated,
+        'The afterUpdate handler has run'
+    );
 });
 
 QUnit.test('Series.update and setData', function (assert) {
@@ -601,7 +673,8 @@ QUnit.test('Z index changed after update (#3094)', function (assert) {
 
     controller.setPosition(
         (clientWidth / 2),
-        (clientHeight / 2));
+        (clientHeight / 2)
+    );
 
     var columnYValue = controller.getPosition().relatedTarget.point.y;
     assert.strictEqual(
@@ -621,7 +694,7 @@ QUnit.test('Z index changed after update (#3094)', function (assert) {
     );
     assert.strictEqual(
         chart.series[0].dataLabelsGroup.visibility,
-        "visible",
+        "inherit",
         "Data label should be visible"
     );
 });

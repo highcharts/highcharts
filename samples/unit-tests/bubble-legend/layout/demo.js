@@ -19,6 +19,13 @@ QUnit.test(
                 }]
             });
 
+        // Check if there is only one bubble-legend
+        assert.strictEqual(
+            chart.legend.allItems.length === 2,
+            true,
+            'Bubble legend correctly added with map module (#10101)'
+        );
+
         chart.legend.update({
             bubbleLegend: {
                 legendIndex: 1

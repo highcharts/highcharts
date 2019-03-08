@@ -247,11 +247,13 @@ Highcharts.chart('container', {
                     fontWeight: 'normal'
                 },
                 formatter: function () {
+                    var format = '';
                     if (this.point === this.series.points[Math.floor(
                         this.series.points.length / 2
                     )]) {
-                        return 'Total: $' + Highcharts.numberFormat(this.y, 0);
+                        format = 'Total: $' + Highcharts.numberFormat(this.y, 0);
                     }
+                    return format;
                 }
             }
         }

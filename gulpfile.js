@@ -203,6 +203,40 @@ function update() {
 gulp.task('update', update);
 
 /**
+ * Update the vendor files for distribution
+ */
+function updateVendor() {
+
+    console.log((
+        'Note: This task only copies the files into the vendor folder.\n' +
+        'To upgrade, run npm update jspdf-yworks && npm update svg2pdf.js`'
+    ).yellow);
+
+    const promises = [
+        [
+            './node_modules/jspdf-yworks/dist/jspdf.debug.js',
+            './vendor/jspdf.src.js'
+        ],
+        [
+            './node_modules/jspdf-yworks/dist/jspdf.min.js',
+            './vendor/jspdf.js'
+        ],
+        [
+            './node_modules/svg2pdf.js/dist/svg2pdf.js',
+            './vendor/svg2pdf.src.js'
+        ],
+        [
+            './node_modules/svg2pdf.js/dist/svg2pdf.min.js',
+            './vendor/svg2pdf.js'
+        ]
+    ].map(([source, target]) => copyFile(source, target));
+
+    return Promise.all(promises);
+
+}
+gulp.task('update-vendor', updateVendor);
+
+/**
  * Gulp task to run the building process of distribution files. By default it
  * builds all the distribution files. Usage: "gulp build".
  *
@@ -250,7 +284,7 @@ function scriptsWatch() {
 
     return Promise.resolve();
 }
-gulp.task('scripts', gulp.series(gulp.parallel('update'), scriptsWatch));
+gulp.task('scripts', gulp.series('update', scriptsWatch));
 
 /**
  * Gulp task to execute ESLint. Pattern defaults to './js/**".'
@@ -258,7 +292,7 @@ gulp.task('scripts', gulp.series(gulp.parallel('update'), scriptsWatch));
  *     files, see the lintSamples function.
  * @return undefined Returns nothing
  */
-const lint = () => {
+const lint = () => new Promise((resolve, reject) => {
     const CLIEngine = require('eslint').CLIEngine;
     const cli = new CLIEngine({
         fix: argv.fix
@@ -268,10 +302,14 @@ const lint = () => {
     const report = cli.executeOnFiles(pattern);
     if (argv.fix) {
         CLIEngine.outputFixes(report);
+        console.log(formatter(report.results));
+        reject(new Error('ESLint error'));
+    } else {
+        console.log(formatter(report.results));
+        resolve();
     }
-    console.log(formatter(report.results));
-};
-gulp.task('lint', gulp.series(gulp.parallel('update'), lint));
+});
+gulp.task('lint', gulp.series('update', lint));
 
 /**
  * Gulp task to execute ESLint on samples.
@@ -292,12 +330,12 @@ const lintSamples = () => {
     ]);
     console.log(formatter(report.results));
 };
-gulp.task('lint-samples', gulp.series(gulp.parallel('update'), lintSamples));
+gulp.task('lint-samples', gulp.series('update', lintSamples));
 
 /**
  * Run the test suite.
  */
-gulp.task('test', gulp.series(gulp.parallel('styles', 'scripts'), done => {
+gulp.task('test', gulp.series('styles', 'scripts', done => {
 
     const lastRunFile = __dirname + '/test/last-run.json';
 
@@ -570,11 +608,13 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/parts/Chart.js',
         './js/parts/Color.js',
         './js/parts/DataGrouping.js',
+        './js/parts/DataLabels.js',
         './js/parts/Dynamics.js',
         './js/parts/Globals.js',
         './js/parts/Interaction.js',
         './js/parts/Legend.js',
         './js/parts/Options.js',
+        './js/parts/PieSeries.js',
         './js/parts/Point.js',
         './js/parts/Pointer.js',
         './js/parts/PlotLineOrBand.js',
@@ -585,17 +625,21 @@ const generateClassReferences = ({ templateDir, destination }) => {
         './js/parts/Time.js',
         './js/parts-gantt/GanttChart.js',
         './js/parts-gantt/TreeGrid.js',
+        './js/parts-map/ColorAxis.js',
         './js/parts-map/GeoJSON.js',
         './js/parts-map/Map.js',
         './js/parts-map/MapNavigation.js',
         './js/parts-map/MapSeries.js',
         './js/modules/accessibility/*.js',
+        './js/parts-more/AreaRangeSeries.js',
         './js/modules/drilldown.src.js',
         './js/modules/exporting.src.js',
         './js/modules/export-data.src.js',
         './js/modules/data.src.js',
         './js/modules/offline-exporting.src.js',
         './js/modules/pattern-fill.src.js',
+        './js/modules/sankey.src.js',
+        './js/modules/networkgraph/*.js',
         './js/modules/sonification/*.js',
         './js/annotations/annotations.src.js'
         /*
@@ -1105,7 +1149,7 @@ const createAllExamples = () => new Promise(resolve => {
 });
 
 const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
-    const generate = require('highcharts-api-docs');
+    const generate = require('highcharts-documentation-generators').ApiDocs; // eslint-disable-line
     const message = {
         start: 'Started generating API documentation.',
         noSeries: 'Missing series in tree.json. Run merge script.',
@@ -1173,7 +1217,7 @@ const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
         './js/parts-gantt'
     ];
     const configJSDoc = {
-        plugins: ['./tools/jsdoc/plugins/highcharts.jsdoc']
+        plugins: ['./node_modules/highcharts-documentation-generators/jsdoc/plugins/highcharts.jsdoc']
     };
     const jsdoc = require('gulp-jsdoc3');
     return new Promise((resolve, reject) => {
@@ -1385,7 +1429,7 @@ const jsdocNamespace = () => {
             'highmaps'
         ],
         gulpOptions = [codeFiles, { read: false }],
-        jsdoc3Options = { plugins: ['tools/jsdoc/plugins/highcharts.namespace'] };
+        jsdoc3Options = { plugins: ['node_modules/highcharts-documentation-generators/jsdoc/plugins/highcharts.namespace'] };
 
     if (codeFiles.length === 0) {
         console.error('No files in tsconfig.json found.');
@@ -1415,7 +1459,7 @@ const jsdocNamespace = () => {
 
     return new Promise(aGulp);
 };
-gulp.task('jsdoc-namespace', gulp.series(gulp.parallel('scripts'), jsdocNamespace));
+gulp.task('jsdoc-namespace', gulp.series('scripts', jsdocNamespace));
 
 /**
  * Creates JSON-based option references from JSDoc.
@@ -1434,7 +1478,7 @@ let apiServerRunning = false;
  */
 const jsdocWatch = () => {
     const optionsClassReference = {
-        templateDir: './node_modules/highcharts-docstrap',
+        templateDir: './node_modules/highcharts-documentation-generators/docstrap',
         destination: './build/api/class-reference/'
     };
     const optionsAPI = {
@@ -1446,29 +1490,32 @@ const jsdocWatch = () => {
     const dir = optionsClassReference.templateDir;
     const watchFiles = [
         './js/!(adapters|builds)/*.js',
-        './node_modules/highcharts-api-docs/include/*.*',
-        './node_modules/highcharts-api-docs/templates/*.handlebars',
+        './node_modules/highcharts-documentation-generators/api-docs/include/*.*',
+        './node_modules/highcharts-documentation-generators/api-docs/templates/*.handlebars',
         dir + '/template/tmpl/*.tmpl',
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'
     ];
-    if (argv.watch) {
-        gulp.watch(watchFiles, gulp.series('jsdoc'));
-        console.log('Watching file changes in JS files and templates');
-
-    } else {
-        console.log('Tip: use the --watch argument to watch JS file changes');
-    }
 
     if (!apiServerRunning) {
+
         jsdocServer();
+
         apiServerRunning = true;
+
+        if (argv.watch) {
+            gulp.watch(watchFiles, gulp.series('jsdoc'));
+            console.log('Watching file changes in JS files and templates');
+
+        } else {
+            console.log('Tip: use the --watch argument to watch JS file changes');
+        }
     }
 
     return generateClassReferences(optionsClassReference)
         .then(() => generateAPIDocs(optionsAPI));
 };
-gulp.task('jsdoc', gulp.series(gulp.parallel('clean-api', 'jsdoc-namespace'), jsdocWatch));
+gulp.task('jsdoc', gulp.series('clean-api', 'jsdoc-namespace', jsdocWatch));
 
 gulp.task('create-productjs', createProductJS);
 gulp.task('clean-dist', cleanDist);
@@ -1490,7 +1537,7 @@ function dts() {
     // eslint-disable-next-line
     return require('../highcharts-declarations-generator').task();
 }
-gulp.task('dts', gulp.series(gulp.parallel('jsdoc-options', 'jsdoc-namespace'), dts));
+gulp.task('dts', gulp.series('jsdoc-options', 'jsdoc-namespace', dts));
 
 /**
  * Test TypeScript declarations in the code folder using tsconfig.json.
@@ -1498,7 +1545,7 @@ gulp.task('dts', gulp.series(gulp.parallel('jsdoc-options', 'jsdoc-namespace'), 
 function dtsLint() {
     return commandLine('cd test/typescript && npx dtslint --onlyTestTsNext');
 }
-gulp.task('dtslint', gulp.series(gulp.parallel('update', 'dts'), dtsLint));
+gulp.task('dtslint', gulp.series('update', 'dts', dtsLint));
 
 gulp.task('tsc', () => require('./tools/gulptasks/tsc')());
 gulp.task('tslint', gulp.series('tsc', () => require('./tools/gulptasks/tslint')()));
@@ -1588,8 +1635,13 @@ function defaultWatch() {
         return promise;
     };
     return styles().then(() => {
-        if (shouldBuild()) {
+        if (shouldBuild() ||
+            (argv.force && !argv.watch) ||
+            process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS
+        ) {
+            process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS = true;
             fnFirstBuild();
+            delete process.env.HIGHCHARTS_DEVELOPMENT_GULP_SCRIPTS;
             console.log(msgBuildAll);
         } else {
             console.log('✓'.green, 'Code up to date.'.gray);
@@ -1621,28 +1673,45 @@ gulp.task('dist', () => Promise.resolve()
     .then(gulpify('ant-dist', antDist)));
 
 gulp.task('browserify', function () {
-    const browserify = require('browserify');
-    browserify('./samples/highcharts/common-js/browserify/app.js')
-        .bundle(function (err, buf) {
-            if (err) {
-                // @todo Do something meaningful with err
-            }
-            fs.writeFileSync('./samples/highcharts/common-js/browserify/demo.js', buf);
-        });
+    return new Promise((resolve, reject) => {
+        const browserify = require('browserify');
+        browserify('./samples/highcharts/common-js/browserify/app.js')
+            .bundle(function (error, buffer) {
+                if (error) {
+                    reject(error);
+                } else {
+                    fs.writeFileSync(
+                        './samples/highcharts/common-js/browserify/demo.js',
+                        buffer
+                    );
+                    resolve();
+                }
+            });
+    });
 });
 
 gulp.task('webpack', function () {
-    const webpack = require('webpack');
-    webpack({
-        entry: './samples/highcharts/common-js/browserify/app.js', // Share the same unit tests
-        output: {
-            filename: './samples/highcharts/common-js/webpack/demo.js'
-        }
-    }, function (err) {
-        if (err) {
-            throw new Error('Webpack failed.');
-        }
+    return new Promise((resolve, reject) => {
+        const webpack = require('webpack');
+        webpack({
+            entry: './samples/highcharts/common-js/browserify/app.js', // Share the same unit tests
+            output: {
+                filename: './samples/highcharts/common-js/webpack/demo.js'
+            }
+        }, function (error) {
+            if (error) {
+                reject(new Error('Webpack failed.'));
+            } else {
+                resolve();
+            }
+        });
     });
 });
 
 gulp.task('common', gulp.series('scripts', 'browserify', 'webpack'));
+
+/**
+ * TypeScript source code documentation
+ */
+require('./tools/gulptasks/tsdoc');
+require('./tools/gulptasks/tsdoc-watch');

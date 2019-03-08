@@ -47,6 +47,10 @@
  * @type {number}
  */
 
+/**
+ * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
+ */
+
 'use strict';
 
 import H from './Globals.js';

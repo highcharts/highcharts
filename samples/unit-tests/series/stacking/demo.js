@@ -222,6 +222,36 @@ QUnit.test('Updating to null value (#7493)', function (assert) {
         'Graph should be broken after update with null'
     );
 
+    chart.update({
+        chart: {
+            type: "column"
+        },
+        xAxis: {
+            type: "category"
+        },
+        plotOptions: {
+            series: {
+                stacking: "normal"
+            }
+        },
+        series: [{
+            data: [{
+                name: "name1",
+                y: 27.06
+            }]
+        }, {
+            data: [{
+                name: "name1",
+                y: 17.77
+            }, {
+                name: "name2",
+                y: 20.66
+            }, null]
+        }]
+    }, true, true, false);
+
+    assert.ok(true, 'Stacking the same column series with null values (#10160)');
+
 });
 
 QUnit.test("StackLabels position with multiple yAxis (#7798)", function (assert) {
