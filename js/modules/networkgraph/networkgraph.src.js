@@ -845,20 +845,19 @@ seriesType('networkgraph', 'line', {
  */
 // Clear previous layouts
 addEvent(Chart, 'predraw', function () {
-    if (this.graphLayoutsStorage) {
-        H.objectEach(
-            this.graphLayoutsStorage,
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(
             function (layout) {
+                layout.clearNodes();
                 layout.stop();
             }
         );
     }
 });
 addEvent(Chart, 'render', function () {
-    if (this.graphLayoutsStorage) {
+    if (this.graphLayoutsLookup) {
         H.setAnimation(false, this);
-        H.objectEach(
-            this.graphLayoutsStorage,
+        this.graphLayoutsLookup.forEach(
             function (layout) {
                 layout.run();
             }
