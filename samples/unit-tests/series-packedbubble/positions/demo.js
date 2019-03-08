@@ -11,6 +11,13 @@ QUnit.test('Bubble positions', function (assert) {
                 marginTop: 46,
                 marginBottom: 53
             },
+            plotOptions: {
+                packedbubble: {
+                    minSize: 75,
+                    maxSize: 100,
+                    useSimulation: false
+                }
+            },
             series: [{
                 data: [50, 80, 50]
             }]
@@ -28,11 +35,10 @@ QUnit.test('Bubble positions', function (assert) {
         [[0, 0, 104, 0, 1], [0, -177, 73, 0, 0], [133, -117, 73, 0, 2]],
         'Positions are correct'
     );
-
     assert.strictEqual(
-        ((data[0].marker.radius >= 76) && (data[0].marker.radius <= 78)) &&
-        ((data[1].marker.radius >= 98) && (data[1].marker.radius <= 100)) &&
-        ((data[2].marker.radius >= 76) && (data[2].marker.radius <= 78)),
+        ((data[0].marker.radius >= 73) && (data[0].marker.radius <= 78)) &&
+        ((data[1].marker.radius >= 98) && (data[1].marker.radius <= 102)) &&
+        ((data[2].marker.radius >= 73) && (data[2].marker.radius <= 78)),
         true,
         'Radius are correct'
     );
