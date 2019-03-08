@@ -21,8 +21,11 @@ const Gulp = require('gulp');
  */
 function task(done) {
 
-    require('./dist-ant.js');
-    require('./jsdoc-namespace.js');
+    require('./dist-ant');
+    require('./dist-copy');
+    require('./dist-examples');
+    require('./dist-productjs');
+    require('./jsdoc-namespace');
 
     return Gulp.series(
         'scripts-clean',
@@ -31,10 +34,9 @@ function task(done) {
         'lint',
         'compile',
         'dist-clean',
-        'copyToDist',
-        'createProductJS',
-        'createExamples',
-        'copyGraphicsToDist',
+        'dist-copy',
+        'dist-examples',
+        'dist-productjs',
         'jsdoc-namespace',
         'jsdoc-options',
         'dts',

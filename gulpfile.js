@@ -1553,7 +1553,11 @@ Gulp.task('default', defaultWatch);
 
 require('./tools/gulptasks/browserify');
 require('./tools/gulptasks/dist');
+require('./tools/gulptasks/dist-ant');
 require('./tools/gulptasks/dist-clean');
+require('./tools/gulptasks/dist-copy');
+require('./tools/gulptasks/dist-examples');
+require('./tools/gulptasks/dist-productjs');
 require('./tools/gulptasks/jsdoc-namespace');
 require('./tools/gulptasks/scripts-clean');
 require('./tools/gulptasks/tsdoc');

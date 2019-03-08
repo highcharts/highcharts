@@ -94,6 +94,45 @@ function copyFile(fileSourcePath, fileTargetPath) {
 }
 
 /**
+ * Get sub-directory paths from a directory.
+ *
+ * @param {string} directoryPath
+ *        Directory to get directories from
+ *
+ * @param {boolean} [includeSubDirectories]
+ *        Set to true to get directories inside sub-directories
+ *
+ * @return {Array<string>}
+ *         Sub-directory paths
+ */
+function getDirectoryPaths(directoryPath, includeSubDirectories) {
+
+    const directoryPaths = [];
+
+    let entryPath;
+    let entryStat;
+
+    if (Fs.existsSync(directoryPath)) {
+        Fs.readdirSync(directoryPath).forEach(entry => {
+
+            entryPath = Path.join(directoryPath, entry);
+            entryStat = Fs.lstatSync(entryPath);
+
+            if (entryStat.isDirectory()) {
+
+                directoryPaths.push(entryPath);
+
+                if (includeSubDirectories) {
+                    directoryPaths.push(...getDirectoryPaths(entryPath));
+                }
+            }
+        });
+    }
+
+    return directoryPaths;
+}
+
+/**
  * Get file paths from a directory.
  *
  * @param {string} directoryPath
@@ -107,25 +146,26 @@ function copyFile(fileSourcePath, fileTargetPath) {
  */
 function getFilePaths(directoryPath, includeSubDirectories) {
 
-    const files = [];
+    const filePaths = [];
 
-    let filePath;
-    let fileStat;
+    let entryPath;
+    let entryStat;
 
-    Fs.readdirSync(directoryPath)
-        .forEach(entry => {
+    if (Fs.existsSync(directoryPath)) {
+        Fs.readdirSync(directoryPath).forEach(entry => {
 
-            filePath = Path.join(directoryPath, entry);
-            fileStat = Fs.lstatSync(filePath);
+            entryPath = Path.join(directoryPath, entry);
+            entryStat = Fs.lstatSync(entryPath);
 
-            if (fileStat.isFile()) {
-                files.push(filePath);
-            } else if (includeSubDirectories && fileStat.isDirectory()) {
-                files.push(...getFilePaths(filePath));
+            if (entryStat.isFile()) {
+                filePaths.push(entryPath);
+            } else if (includeSubDirectories && entryStat.isDirectory()) {
+                filePaths.push(...getFilePaths(entryPath));
             }
         });
+    }
 
-    return files;
+    return filePaths;
 }
 
 /* *
@@ -137,5 +177,6 @@ function getFilePaths(directoryPath, includeSubDirectories) {
 module.exports = {
     copyAllFiles,
     copyFile,
+    getDirectoryPaths,
     getFilePaths
 };
