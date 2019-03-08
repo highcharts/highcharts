@@ -24,7 +24,8 @@ var addEvent = H.addEvent,
     pick = H.pick,
     Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType;
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes;
 
 /**
  * The timeline series type.
@@ -82,8 +83,6 @@ seriesType('timeline', 'line',
              * In styled mode, the connector stroke width is given in the
              * `.highcharts-data-label-connector` class.
              *
-             * @type {Number}
-             * @default 1
              * @sample {highcharts} highcharts/series-timeline/connector-styles
              *         Custom connector width and color
              */
@@ -103,18 +102,17 @@ seriesType('timeline', 'line',
             /**
              * @type      {Highcharts.FormatterCallbackFunction<object>}
              * @default function () {
-             *   var format;
              *
-             *   if (!this.series.chart.styledMode) {
+             *  var format;
+             *
+             *  if (!this.series.chart.styledMode) {
              *       format = '<span style="color:' + this.point.color +
-             *           '">● </span><span style="font-weight: bold;" > ' +
-             *           (this.point.name || '') + '</span><br/>' +
-             *           (this.point.label || '');
+             *           '">● </span>';
              *   } else {
-             *       format = '<span>● </span>' +
-             *           '<span>' + (this.point.name || '') +
-             *           '</span><br/>' + (this.point.label || '');
+             *       format = '<span>● </span>';
              *   }
+             *   format += '<span>' + (this.key || '') + '</span><br/>' +
+             *       (this.point.label || '');
              *   return format;
              * }
              * @apioption plotOptions.timeline.dataLabels.formatter
@@ -124,14 +122,12 @@ seriesType('timeline', 'line',
 
                 if (!this.series.chart.styledMode) {
                     format = '<span style="color:' + this.point.color +
-                        '">● </span><span style="" > ' +
-                        (this.key || '') + '</span><br/>' +
-                        (this.point.label || '');
+                        '">● </span>';
                 } else {
-                    format = '<span>● </span>' +
-                        '<span>' + (this.key || '') +
-                        '</span><br/>' + (this.point.label || '');
+                    format = '<span>● </span>';
                 }
+                format += '<span>' + (this.key || '') + '</span><br/>' +
+                    (this.point.label || '');
                 return format;
             },
             borderWidth: 1,
@@ -140,19 +136,14 @@ seriesType('timeline', 'line',
              * A pixel value defining the distance between the data label
              * and the point. Negative numbers puts the label on top
              * of the point.
-             *
-             * @type {Number}
-             * @default 100
              */
             distance: 100,
             /**
              * Whether to position data labels alternately. For example, if
              * [distance](#plotOptions.timeline.dataLabels.distance) is set
-             * equal to `100`, then the first data label 's distance will be
-             * set equal to `100`, the second one equal to `-100`, and so on.
+             * equal to `100`, then data labels will be positioned alternately
+             * (on both sides of the point) at a distance of 100px.
              *
-             * @type {Boolean}
-             * @default true
              * @sample {highcharts} highcharts/series-timeline/alternate-disabled
              *         Alternate disabled
              */
@@ -209,19 +200,6 @@ seriesType('timeline', 'line',
             // based on the 'dataLabels.distance' and 'dataLabels.alternate'
             // property.
             addEvent(series, 'drawDataLabels', function () {
-
-                // Delete the oldTextWidth parameter, in order to force
-                // adjusting data label wrapper box width. It's needed only when
-                // useHTML is enabled. This prevents the data label text getting
-                // out of the box range.
-                if (series.options.dataLabels.useHTML) {
-                    series.points.forEach(function (p) {
-                        if (p.visible && p.dataLabel) {
-                            delete p.dataLabel.text.oldTextWidth;
-                        }
-                    });
-                }
-
                 // Distribute data labels basing on defined algorithm.
                 series.distributeDL();
             });
@@ -481,7 +459,7 @@ seriesType('timeline', 'line',
             // Call default markerAttribs method, when the xAxis type
             // is set to datetime.
             if (series.xAxis.isDatetimeAxis) {
-                return H.seriesTypes.line.prototype.markerAttribs
+                return seriesTypes.line.prototype.markerAttribs
                     .call(this, point, state);
             }
 
@@ -495,8 +473,7 @@ seriesType('timeline', 'line',
                     pointStateOptions.radius,
                     seriesStateOptions.radius,
                     radius + (
-                        seriesStateOptions.radiusPlus ||
-                        0
+                        seriesStateOptions.radiusPlus || 0
                     )
                 );
             }
@@ -514,22 +491,7 @@ seriesType('timeline', 'line',
 
         },
         bindAxes: function () {
-            var series = this,
-                conf = {
-                    xAxis: {
-                        gridLineWidth: 0,
-                        lineWidth: 0,
-                        title: null,
-                        tickPositions: []
-                    },
-                    yAxis: {
-                        gridLineWidth: 1,
-                        title: null,
-                        labels: {
-                            enabled: false
-                        }
-                    }
-                };
+            var series = this;
 
             Series.prototype.bindAxes.call(series);
 
@@ -538,10 +500,6 @@ seriesType('timeline', 'line',
                 if (axis === 'xAxis' && !series[axis].userOptions.type) {
                     series[axis].categories = series[axis].hasNames = true;
                 }
-                // Merge options
-                series[axis].options = merge(
-                    series[axis].options, conf[axis], series[axis].userOptions
-                );
             });
         }
     },
@@ -557,55 +515,19 @@ seriesType('timeline', 'line',
 
             return point;
         },
-        // The setVisible method is taken from Pie series prototype, in order to
-        // prevent importing whole Pie series.
         setVisible: function (vis, redraw) {
             var point = this,
-                series = point.series,
-                chart = series.chart,
-                ignoreHiddenPoint = series.options.ignoreHiddenPoint;
+                series = point.series;
 
-            redraw = pick(redraw, ignoreHiddenPoint);
+            redraw = pick(redraw, series.options.ignoreHiddenPoint);
 
-            if (vis !== point.visible) {
+            seriesTypes.pie.prototype.pointClass.prototype
+                .setVisible.call(point, vis, false);
+            // Process new data
+            series.processData();
 
-                // If called without an argument, toggle visibility
-                point.visible = point.options.visible = vis =
-                    vis === undefined ? !point.visible : vis;
-                // update userOptions.data
-                series.options.data[series.data.indexOf(point)] = point.options;
-
-                // Show and hide associated elements. This is performed
-                // regardless of redraw or not, because chart.redraw only
-                // handles full series.
-                ['graphic', 'dataLabel', 'connector'].forEach(
-                    function (key) {
-                        if (point[key]) {
-                            point[key][vis ? 'show' : 'hide'](true);
-                        }
-                    }
-                );
-
-                if (point.legendItem) {
-                    chart.legend.colorizeItem(point, vis);
-                }
-
-                // #4170, hide halo after hiding point
-                if (!vis && point.state === 'hover') {
-                    point.setState('');
-                }
-
-                // Handle ignore hidden slices
-                if (ignoreHiddenPoint) {
-                    series.isDirty = true;
-                }
-
-                // Process new data
-                series.processData();
-
-                if (redraw) {
-                    chart.redraw();
-                }
+            if (redraw) {
+                series.chart.redraw();
             }
         },
         setState: function () {
