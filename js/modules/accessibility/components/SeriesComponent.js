@@ -1113,11 +1113,18 @@ H.extend(SeriesComponent.prototype, {
                 }
                 return value;
             },
+            showXDescription = pick(
+                series.xAxis &&
+                series.xAxis.options.accessibility &&
+                series.xAxis.options.accessibility.enabled,
+                !chart.angular
+            ),
             pointCategory = series.xAxis && series.xAxis.categories &&
                     point.category !== undefined && '' + point.category;
 
         // Pick and choose properties for a succint label
-        var xDesc = point.name || timeDesc || pointCategory || (
+        var xDesc = point.name || timeDesc ||
+            pointCategory && pointCategory.replace('<br/>', ' ') || (
                 point.id && point.id.indexOf('highcharts-') < 0 ?
                     point.id : ('x, ' + point.x)
             ),
@@ -1135,7 +1142,7 @@ H.extend(SeriesComponent.prototype, {
                 );
 
         return (point.index !== undefined ? (point.index + 1) + '. ' : '') +
-            xDesc + ', ' + valueDesc + '.' +
+            (showXDescription ? xDesc + ', ' : '') + valueDesc + '.' +
             (description ? ' ' + description : '') +
             (chart.series.length > 1 && series.name ? ' ' + series.name : '');
     }

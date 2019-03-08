@@ -13,7 +13,8 @@
 import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
 
-var merge = H.merge;
+var merge = H.merge,
+    pick = H.pick;
 
 
 /**
@@ -206,12 +207,7 @@ H.extend(InfoRegionComponent.prototype, {
         var chart = this.chart,
             options = chart.options,
             chartTypes = chart.types,
-            // Build axis info - but not for pies and maps. Consider not
-            // adding for certain other types as well (funnel, pyramid?)
-            axesDesc = (
-                chartTypes.length === 1 && chartTypes[0] === 'pie' ||
-                chartTypes[0] === 'map'
-            ) ? {} : this.getAxesDescription();
+            axesDesc = this.getAxesDescription();
 
         return (
             options.subtitle && options.subtitle.text ?
@@ -241,14 +237,28 @@ H.extend(InfoRegionComponent.prototype, {
     getAxesDescription: function () {
         var chart = this.chart,
             component = this,
-            numXAxes = chart.xAxis.length,
-            numYAxes = chart.yAxis.length,
+            xAxes = chart.xAxis,
+            // Figure out when to show axis info in the region
+            showXAxes = xAxes.length > 1 || xAxes[0] &&
+                pick(
+                    xAxes[0].options.accessibility &&
+                    xAxes[0].options.accessibility.enabled,
+                    !chart.angular && chart.hasCartesianSeries &&
+                    chart.types.indexOf('map') < 0
+                ),
+            yAxes = chart.yAxis,
+            showYAxes = yAxes.length > 1 || yAxes[0] &&
+                pick(
+                    yAxes[0].options.accessibility &&
+                    yAxes[0].options.accessibility.enabled,
+                    chart.hasCartesianSeries && chart.types.indexOf('map') < 0
+                ),
             desc = {};
 
-        if (numXAxes) {
+        if (showXAxes) {
             desc.xAxis = chart.langFormat(
                 'accessibility.axis.xAxisDescription' + (
-                    numXAxes > 1 ? 'Plural' : 'Singular'
+                    xAxes.length > 1 ? 'Plural' : 'Singular'
                 ),
                 {
                     chart: chart,
@@ -258,15 +268,15 @@ H.extend(InfoRegionComponent.prototype, {
                     ranges: chart.xAxis.map(function (axis) {
                         return component.getAxisRangeDescription(axis);
                     }),
-                    numAxes: numXAxes
+                    numAxes: xAxes.length
                 }
             );
         }
 
-        if (numYAxes) {
+        if (showYAxes) {
             desc.yAxis = chart.langFormat(
                 'accessibility.axis.yAxisDescription' + (
-                    numYAxes > 1 ? 'Plural' : 'Singular'
+                    yAxes.length > 1 ? 'Plural' : 'Singular'
                 ),
                 {
                     chart: chart,
@@ -276,7 +286,7 @@ H.extend(InfoRegionComponent.prototype, {
                     ranges: chart.yAxis.map(function (axis) {
                         return component.getAxisRangeDescription(axis);
                     }),
-                    numAxes: numYAxes
+                    numAxes: yAxes.length
                 }
             );
         }
@@ -310,7 +320,7 @@ H.extend(InfoRegionComponent.prototype, {
                 {
                     chart: chart,
                     axis: axis,
-                    numCategories: axis.max - axis.min + 1
+                    numCategories: axis.dataMax - axis.dataMin + 1
                 }
             );
         }

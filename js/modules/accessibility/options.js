@@ -481,6 +481,16 @@ var options = {
      */
 
     /**
+     * Enable axis accessibility features, including axis information in the
+     * screen reader information region. If this is disabled on the xAxis, the
+     * x values are not exposed to screen readers for the individual data points
+     * by default.
+     *
+     * @since      next
+     * @apioption  xAxis.accessibility.enabled
+     */
+
+    /**
      * Description for an axis to expose to screen reader users.
      *
      * @since      next
