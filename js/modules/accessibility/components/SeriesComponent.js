@@ -487,6 +487,15 @@ H.extend(SeriesComponent.prototype, {
             }
         });
 
+        // Hide series labels
+        this.addEvent(this.chart, 'afterDrawSeriesLabels', function () {
+            this.series.forEach(function (series) {
+                if (series.labelBySeries) {
+                    series.labelBySeries.attr('aria-hidden', true);
+                }
+            });
+        });
+
         // Set up announcing of new data
         this.initAnnouncer();
     },
