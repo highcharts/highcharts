@@ -18,7 +18,7 @@ const Gulp = require('gulp');
  */
 function task() {
 
-    const ProcessLib = require('./lib/process.js');
+    const ProcessLib = require('./lib/process');
 
     return ProcessLib
         .exec('npx ant dist')

@@ -20,6 +20,7 @@ function task() {
 
     const Fs = require('fs');
     const FsLib = require('./lib/fs');
+    const LogLib = require('./lib/log');
     const Path = require('path');
 
     return new Promise((resolve, reject) => {
@@ -39,7 +40,11 @@ function task() {
             .filter(filePath => filesToKeep.indexOf(filePath) === -1);
 
         try {
+
             filesToDelete.forEach(filePath => Fs.unlinkSync(filePath));
+
+            LogLib.success('Cleaned ' + CODE_DIRECTORY);
+
             resolve();
         } catch (catchedError) {
             reject(catchedError);

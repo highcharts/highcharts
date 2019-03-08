@@ -16,14 +16,17 @@ const Gulp = require('gulp');
  */
 function task() {
 
-    const FsLib = require('./lib/fs.js');
+    const FsLib = require('./lib/fs');
+    const LogLib = require('./lib/log');
     const Path = require('path');
 
-    return new Promise(() => {
+    return new Promise(resolve => {
 
         const codeDirectory = 'code';
         const cssDirectory = 'css';
         const distDirectory = Path.join('build', 'dist');
+        const gfxDirectory = 'gfx';
+        const graphicsDirectory = Path.join('samples', 'graphics');
         const vendorDirectory = 'vendor';
 
         // Files that should not be distributed with certain products
@@ -90,18 +93,7 @@ function task() {
             filePath => Path.join(vendorDirectory, filePath + '.')
         );
 
-        FsLib.copyAllFiles(
-            cssDirectory,
-            Path.join(codeDirectory, 'css'),
-            true
-        );
-
-        FsLib.copyAllFiles(
-            vendorDirectory,
-            Path.join(codeDirectory, 'lib'),
-            false,
-            filePath => (vendorFilter.indexOf(filePath) === '0')
-        );
+        let path;
 
         Object
             .keys(codeFilter)
@@ -109,10 +101,10 @@ function task() {
 
                 const productFilter = codeFilter[product];
 
+                path = Path.join(distDirectory, product, 'code');
+
                 FsLib.copyAllFiles(
-                    codeDirectory,
-                    Path.join(distDirectory, product, 'code'),
-                    true,
+                    codeDirectory, path, true,
                     (sourcePath, targetPath) => {
 
                         if (targetPath.endsWith('.src.js')) {
@@ -121,16 +113,34 @@ function task() {
 
                         return (
                             productFilter.indexOf(codeFilter) === -1 &&
-                            sourcePath.indexOf('.src.') === -1 &&
-                            (
-                                sourcePath.endsWith('.js') ||
-                                sourcePath.endsWith('.js.map') ||
-                                sourcePath.endsWith('.css')
-                            )
+                            sourcePath.indexOf('.src.') === -1
                         );
                     }
                 );
+
+                LogLib.success('Copied to ' + path);
+
+                path = Path.join(distDirectory, product, 'code', 'css');
+                FsLib.copyAllFiles(cssDirectory, path, true);
+                LogLib.success('Copied to ' + path);
+
+                path = Path.join(distDirectory, product, 'code', 'lib');
+                FsLib.copyAllFiles(
+                    vendorDirectory, path, false,
+                    filePath => (vendorFilter.indexOf(filePath) === '0')
+                );
+                LogLib.success('Copied to ' + path);
+
+                path = Path.join(distDirectory, product, 'gfx');
+                FsLib.copyAllFiles(gfxDirectory, path, true);
+                LogLib.success('Copied to ' + path);
+
+                path = Path.join(distDirectory, product, 'graphics');
+                FsLib.copyAllFiles(graphicsDirectory, path, true);
+                LogLib.success('Copied to ' + path);
             });
+
+        resolve();
     });
 }
 
