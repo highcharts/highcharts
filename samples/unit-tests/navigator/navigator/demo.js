@@ -2,22 +2,23 @@ QUnit.test(
     'General Navigator tests',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
-            legend: {
-                enabled: true
-            },
-            yAxis: {
-                labels: {
-                    align: 'left'
-                }
-            },
-            navigator: {
-                height: 100
-            },
-            series: [{
-                data: [1, 2, 3],
-                id: '1'
-            }]
-        });
+                legend: {
+                    enabled: true
+                },
+                yAxis: {
+                    labels: {
+                        align: 'left'
+                    }
+                },
+                navigator: {
+                    height: 100
+                },
+                series: [{
+                    data: [1, 2, 3],
+                    id: '1'
+                }]
+            }),
+            seriesIndexes = [];
 
         chart.series[0].hide();
 
@@ -66,6 +67,31 @@ QUnit.test(
             chart.navigator.xAxis.min,
             1318607820000,
             'xAxis.min should be omitted in navigator when ordinal is enabled (#9994)'
+        );
+
+        chart = Highcharts.stockChart('container', {
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        chart.addSeries({
+            data: [3, 2, 1],
+            showInNavigator: true
+        });
+
+        chart.navigator.baseSeries.forEach(function (base) {
+            seriesIndexes.push(base.index);
+        });
+
+        chart.navigator.series.forEach(function (series) {
+            seriesIndexes.push(series.index);
+        });
+
+        assert.deepEqual(
+            seriesIndexes,
+            [0, 1, 2, 3],
+            'After addSeries() navigator series have appropriate indexes (#10193)'
         );
     }
 );
