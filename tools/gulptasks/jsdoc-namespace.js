@@ -78,4 +78,4 @@ function task() {
     });
 }
 
-Gulp.task('jsdoc-namespace', task);
+Gulp.task('jsdoc-namespace', Gulp.series('scripts', task));

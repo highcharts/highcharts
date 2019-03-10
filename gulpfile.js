@@ -25,7 +25,6 @@ const {
 } = require('highcharts-assembler/src/build.js');
 const {
     getFile,
-    removeDirectory,
     writeFile,
     writeFilePromise
 } = require('highcharts-assembler/src/utilities.js');
@@ -603,108 +602,6 @@ Gulp.task('nightly', function () {
     });
 });
 
-
-/**
- * Automated generation for internal Class reference.
- * Run with --watch argument to watch for changes in the JS files.
- */
-const generateClassReferences = ({ templateDir, destination }) => {
-    const jsdoc = require('gulp-jsdoc3');
-    const sourceFiles = [
-        'README.md',
-        './js/parts/Utilities.js',
-        './js/parts/Axis.js',
-        './js/parts/Chart.js',
-        './js/parts/Color.js',
-        './js/parts/DataGrouping.js',
-        './js/parts/DataLabels.js',
-        './js/parts/Dynamics.js',
-        './js/parts/Globals.js',
-        './js/parts/Interaction.js',
-        './js/parts/Legend.js',
-        './js/parts/Options.js',
-        './js/parts/PieSeries.js',
-        './js/parts/Point.js',
-        './js/parts/Pointer.js',
-        './js/parts/PlotLineOrBand.js',
-        './js/parts/Series.js',
-        './js/parts/StockChart.js',
-        './js/parts/SVGRenderer.js',
-        './js/parts/Tick.js',
-        './js/parts/Time.js',
-        './js/parts-gantt/GanttChart.js',
-        './js/parts-gantt/TreeGrid.js',
-        './js/parts-map/ColorAxis.js',
-        './js/parts-map/GeoJSON.js',
-        './js/parts-map/Map.js',
-        './js/parts-map/MapNavigation.js',
-        './js/parts-map/MapSeries.js',
-        './js/parts-more/AreaRangeSeries.js',
-        './js/modules/drilldown.src.js',
-        './js/modules/exporting.src.js',
-        './js/modules/export-data.src.js',
-        './js/modules/data.src.js',
-        './js/modules/offline-exporting.src.js',
-        './js/modules/pattern-fill.src.js',
-        './js/modules/sankey.src.js',
-        './js/modules/networkgraph/*.js',
-        './js/modules/sonification/*.js',
-        './js/annotations/annotations.src.js'
-        /*
-        './js/annotations/eventEmitterMixin.js',
-        './js/annotations/MockPoint.js',
-        './js/annotations/ControlPoint.js',
-        './js/annotations/controllable/controllableMixin.js',
-        './js/annotations/controllable/ControllableCircle.js',
-        './js/annotations/controllable/ControllableImage.js',
-        './js/annotations/controllable/ControllableLabel.js',
-        './js/annotations/controllable/ControllablePath.js',
-        './js/annotations/controllable/ControllableRect.js',
-        './js/annotations/types/CrookedLine.js',
-        './js/annotations/types/ElliottWave.js',
-        './js/annotations/types/Tunnel.js',
-        './js/annotations/types/Fibonacci.js',
-        './js/annotations/types/InfinityLine.js',
-        './js/annotations/types/Measure.js',
-        './js/annotations/types/Pitchfork.js',
-        './js/annotations/types/VerticalLine.js'*/
-    ];
-    const optionsJSDoc = {
-        navOptions: {
-            theme: 'highsoft'
-        },
-        opts: {
-            destination,
-            private: false,
-            template: templateDir + '/template'
-        },
-        plugins: [
-            templateDir + '/plugins/add-namespace',
-            templateDir + '/plugins/markdown',
-            templateDir + '/plugins/sampletag'
-        ],
-        templates: {
-            logoFile: 'img/highcharts-logo.svg',
-            systemName: 'Highcharts',
-            theme: 'highsoft'
-        }
-    };
-    const message = {
-        success: colors.green('Created class-reference')
-    };
-    return new Promise((resolve, reject) => {
-        Gulp.src(sourceFiles, { read: false })
-            .pipe(jsdoc(optionsJSDoc, function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    console.log(message.success);
-                    resolve(message.success);
-                }
-            }));
-    });
-};
-
 /**
  * Compile the JS files in the /code folder
  */
@@ -732,13 +629,6 @@ const compileLib = () => {
     return compile(files, sourceFolder)
         .then(console.log);
 };
-
-
-const cleanApi = () => removeDirectory('./build/api')
-    .then(() => {
-        console.log('Successfully removed api directory.');
-    });
-Gulp.task('clean-api', cleanApi);
 
 const copyToDist = () => {
     const sourceFolder = 'code/';
@@ -1067,92 +957,6 @@ const createAllExamples = () => new Promise(resolve => {
     resolve();
 });
 
-const generateAPI = (input, output, onlyBuildCurrent) => new Promise((resolve, reject) => {
-    const generate = require('highcharts-documentation-generators').ApiDocs; // eslint-disable-line
-    const message = {
-        start: 'Started generating API documentation.',
-        noSeries: 'Missing series in tree.json. Run merge script.',
-        noTree: 'Missing tree.json. This task is dependent upon the jsdoc task.',
-        success: 'Finished with my Special api.'
-    };
-    console.log(message.start);
-    if (fs.existsSync(input)) {
-        const json = JSON.parse(fs.readFileSync(input, 'utf8'));
-        if (!json.series) {
-            console.log(message.noSeries);
-            reject(new Error(message.noSeries));
-        }
-        generate(json, output, onlyBuildCurrent, () => {
-            console.log(message.success);
-            resolve(message.success);
-        });
-    } else {
-        console.log(message.noTree);
-        reject(message.noTree);
-    }
-});
-
-/**
- * Some random tests for tree.json's consistency
- */
-const testTree = treeFile => new Promise((resolve, reject) => {
-    const tree = JSON.parse(fs.readFileSync(treeFile, 'utf8'));
-    if (Object.keys(tree.plotOptions.children).length < 66) {
-        reject(new Error('Tree.json should contain at least 66 series types'));
-        // } else if (Object.keys(tree.plotOptions.children.pie.children).length < 10) {
-        //    reject('Tree.json should contain at least X properties for pies');
-    } else {
-        resolve();
-    }
-});
-
-/**
- * Creates the Highcharts API
- *
- * @param {object} options The options for generating the API
- * @param {string} options.treeFile Location of the json file to generate the
- *      API from.
- * @param {string} options.output Location of where to output resulting API
- * @param {boolean} options.onlyBuildCurrent Whether or not to build only
- *  only latest version or all of them.
- * @return {Promise} A Promise which resolves into undefined when done.
- */
-const generateAPIDocs = ({ treeFile, output, onlyBuildCurrent }) => {
-    const message = {
-        successJSDoc: colors.green('Created tree.json')
-    };
-    const sourceFiles = [
-        './js/annotations',
-        './js/annotations/types',
-        './js/indicators',
-        './js/modules',
-        './js/modules/networkgraph',
-        './js/modules/sonification',
-        './js/parts',
-        './js/parts-3d',
-        './js/parts-more',
-        './js/parts-map',
-        './js/parts-gantt'
-    ];
-    const configJSDoc = {
-        plugins: ['./node_modules/highcharts-documentation-generators/jsdoc/plugins/highcharts.jsdoc']
-    };
-    const jsdoc = require('gulp-jsdoc3');
-    return new Promise((resolve, reject) => {
-        Gulp.src(sourceFiles, { read: false })
-            .pipe(jsdoc(configJSDoc, err => {
-                if (!err) {
-                    console.log(message.successJSDoc);
-                    resolve(message.successJSDoc);
-                } else {
-                    reject(err);
-                }
-            }));
-    })
-        .then(() => generateAPI(treeFile, output, onlyBuildCurrent))
-        .then(() => testTree(treeFile));
-};
-
 const isString = x => typeof x === 'string';
 
 const uploadAPIDocs = () => {
@@ -1272,152 +1076,6 @@ Gulp.task('compare-filesizes', () => {
     return getCompareFileSizeTable(pathOld, pathNew, out);
 });
 
-const jsdocServer = () => {
-    // Start a server serving up the api reference
-    const http = require('http');
-    const url = require('url');
-    const docport = 9005;
-    const base = '127.0.0.1:' + docport;
-    const apiPath = __dirname + '/build/api/';
-    const mimes = {
-        css: 'text/css',
-        js: 'text/javascript',
-        json: 'application/json',
-        html: 'text/html',
-        ico: 'image/x-icon',
-        png: 'image/png',
-        svg: 'image/svg+xml',
-        xml: 'application/xml'
-    };
-
-    http.createServer((req, res) => {
-        // eslint-disable-next-line node/no-deprecated-api
-        const path = url.parse(req.url, true).pathname;
-
-        let file = false;
-        let redirect = false;
-
-        if (path === '/highcharts' || path === '/' || path === '') {
-            redirect = '/highcharts/';
-        } else if (path === '/highstock') {
-            redirect = '/highstock/';
-        } else if (path === '/highmaps') {
-            redirect = '/highmaps/';
-        }
-        if (redirect) {
-            res.writeHead(302, {
-                Location: redirect
-            });
-            res.end();
-        }
-
-
-        let filePath = path.substr(base + base.length + 1, path.lastIndexOf('/'));
-
-        const send404 = () => {
-            res.end('Ooops, the requested file is 404', 'utf-8');
-        };
-
-        if (filePath[filePath.length - 1] !== '/') {
-            filePath = filePath + '/';
-        }
-
-        if (filePath[0] === '/') {
-            filePath = filePath.substr(1);
-        }
-
-        if (req.method === 'GET') {
-            const lastSlash = path.lastIndexOf('/');
-            if (path.length === 0 || (path.length - 1) === lastSlash) {
-                file = 'index.html';
-            } else {
-                file = path.substr(lastSlash + 1);
-            }
-
-            let ext = file.substr(file.lastIndexOf('.') + 1);
-            if (Object.keys(mimes).indexOf(ext) === -1) {
-                ext = 'html';
-                file += '.html';
-            }
-
-            res.writeHead(200, {
-                'Content-Type': mimes[ext] || mimes.html
-            });
-
-            return fs.readFile(apiPath + filePath + file, (err, data) => {
-                if (err) {
-                    return send404();
-                }
-                return res.end(data);
-            });
-        }
-
-        return send404();
-    }).listen(docport);
-
-    console.log(
-        'Starting API docs server',
-        ('http://localhost:' + docport).cyan
-    );
-};
-Gulp.task('start-api-server', jsdocServer);
-
-
-/**
- * Creates JSON-based option references from JSDoc.
- */
-const jsdocOptions = () => generateAPIDocs({
-    version: getBuildProperties().version,
-    treeFile: './tree.json',
-    output: './build/api',
-    onlyBuildCurrent: true
-});
-Gulp.task('jsdoc-options', jsdocOptions);
-
-let apiServerRunning = false;
-/**
- * Create Highcharts API and class references from JSDOC
- */
-const jsdocWatch = () => {
-    const optionsClassReference = {
-        templateDir: './node_modules/highcharts-documentation-generators/docstrap',
-        destination: './build/api/class-reference/'
-    };
-    const optionsAPI = {
-        version: getBuildProperties().version,
-        treeFile: './tree.json',
-        output: './build/api',
-        onlyBuildCurrent: true
-    };
-    const dir = optionsClassReference.templateDir;
-    const watchFiles = [
-        './js/!(adapters|builds)/*.js',
-        './node_modules/highcharts-documentation-generators/api-docs/include/*.*',
-        './node_modules/highcharts-documentation-generators/api-docs/templates/*.handlebars',
-        dir + '/template/tmpl/*.tmpl',
-        dir + '/template/static/styles/*.css',
-        dir + '/template/static/scripts/*.js'
-    ];
-
-    if (!apiServerRunning) {
-
-        jsdocServer();
-
-        apiServerRunning = true;
-
-        if (argv.watch) {
-            Gulp.watch(watchFiles, Gulp.series('jsdoc'));
-            console.log('Watching file changes in JS files and templates');
-
-        } else {
-            console.log('Tip: use the --watch argument to watch JS file changes');
-        }
-    }
-
-    return generateClassReferences(optionsClassReference)
-        .then(() => generateAPIDocs(optionsAPI));
-};
-Gulp.task('jsdoc', Gulp.series('clean-api', 'jsdoc-namespace', jsdocWatch));
 
 Gulp.task('create-productjs', createProductJS);
 Gulp.task('copy-to-dist', copyToDist);
@@ -1551,17 +1209,46 @@ function defaultWatch() {
 }
 Gulp.task('default', defaultWatch);
 
-require('./tools/gulptasks/browserify');
-require('./tools/gulptasks/dist');
-require('./tools/gulptasks/dist-ant');
-require('./tools/gulptasks/dist-clean');
-require('./tools/gulptasks/dist-copy');
-require('./tools/gulptasks/dist-examples');
-require('./tools/gulptasks/dist-productjs');
-require('./tools/gulptasks/jsdoc-namespace');
-require('./tools/gulptasks/scripts-clean');
-require('./tools/gulptasks/tsdoc');
-require('./tools/gulptasks/tsdoc-watch');
-require('./tools/gulptasks/webpack');
+
+/* *
+ *
+ *  Gulp Tasks
+ *
+ * */
+[
+    'browserify',
+    'dist',
+    'dist-ant',
+    'dist-clean',
+    'dist-copy',
+    'dist-examples',
+    'dist-productjs',
+    'jsdoc',
+    'jsdoc-classes',
+    'jsdoc-clean',
+    'jsdoc-namespace',
+    'jsdoc-options',
+    'jsdoc-server',
+    'jsdoc-watch',
+    'scripts-clean',
+    'tsdoc',
+    'tsdoc-watch',
+    'webpack'
+].forEach(
+    gulpTask => require('./tools/gulptasks/' + gulpTask)
+);
+
+/* *
+ *
+ *  Gulp Task Aliases
+ *
+ * */
 
 Gulp.task('common', Gulp.series('scripts', 'browserify', 'webpack'));
+Gulp.task('clean-api', Gulp.series('jsdoc-clean'));
+Gulp.task('clean-code', Gulp.series('series-clean'));
+Gulp.task('clean-dist', Gulp.series('dist-clean'));
+Gulp.task('copy-graphics-to-dist', Gulp.series('dist-copy'));
+Gulp.task('copy-to-dist', Gulp.series('dist-copy'));
+Gulp.task('create-productjs', Gulp.series('dist-productjs'));
+Gulp.task('start-api-server', Gulp.series('jsdoc-server'));

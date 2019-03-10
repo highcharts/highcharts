@@ -6,6 +6,14 @@ const Gulp = require('gulp');
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+const SOURCE_DIRECTORY = './ts';
+
+/* *
+ *
  *  Tasks
  *
  * */
@@ -17,15 +25,13 @@ const Gulp = require('gulp');
  */
 function task() {
 
-    const Log = require('./lib/log');
-
-    const SOURCE_DIRECTORY = './ts';
+    const LogLib = require('./lib/log');
 
     require('./tsdoc.js');
 
     Gulp.task('tsdoc')();
 
-    Log.warn('Watching', SOURCE_DIRECTORY, '...');
+    LogLib.warn('Watching', SOURCE_DIRECTORY, '...');
 
     Gulp.watch(
         [
