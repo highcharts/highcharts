@@ -1174,6 +1174,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                     if (Object.keys(kinds).length) {
                         point.destroyElements(kinds);
                     }
+                    if (newOptions.showInLegend === false && point.legendItem) {
+                        chart.legend.destroyItem(point);
+                    }
                 }
             }, this);
         }
