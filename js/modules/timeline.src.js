@@ -1,7 +1,6 @@
 /* *
  *
- *  Experimental Timeline Series.
- *  Note: This API is in alpha stage and will be changed before final release.
+ *  Timeline Series.
  *
  *  (c) 2010-2019 Highsoft AS
  *
