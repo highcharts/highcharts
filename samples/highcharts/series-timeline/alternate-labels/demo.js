@@ -2,6 +2,12 @@ Highcharts.chart('container', {
     chart: {
         type: 'timeline'
     },
+    xAxis: {
+        visible: false
+    },
+    yAxis: {
+        visible: false
+    },
     title: {
         text: 'Timeline of Space Exploration'
     },

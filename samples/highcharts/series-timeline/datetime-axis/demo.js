@@ -4,7 +4,15 @@ Highcharts.chart('container', {
         type: 'timeline'
     },
     xAxis: {
-        type: 'datetime'
+        type: 'datetime',
+        visible: false
+    },
+    yAxis: {
+        gridLineWidth: 1,
+        title: null,
+        labels: {
+            enabled: false
+        }
     },
     legend: {
         maxHeight: 70,
