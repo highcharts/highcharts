@@ -60,7 +60,9 @@ H.seriesType(
 
         // Get the semi-circular slots
         getSlots: function () {
-            var [centerX, centerY, diameter, innerSize] = this.center,
+            var center = this.center,
+                diameter = center[2],
+                innerSize = center[3],
                 row,
                 slots = this.slots,
                 x,
@@ -180,8 +182,8 @@ H.seriesType(
                 increment = colCount ? fullAngle / colCount : 0;
                 for (col = 0; col <= colCount; col += 1) {
                     angle = this.startAngleRad + col * increment;
-                    x = centerX + Math.cos(angle) * rowRadius;
-                    y = centerY + Math.sin(angle) * rowRadius;
+                    x = center[0] + Math.cos(angle) * rowRadius;
+                    y = center[1] + Math.sin(angle) * rowRadius;
                     slots.push({ x: x, y: y, angle: angle });
                 }
             }, this);
