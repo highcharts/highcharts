@@ -53,6 +53,55 @@ TrackerMixin = H.TrackerMixin = {
         var series = this,
             chart = series.chart,
             pointer = chart.pointer,
+
+            // Workaround for #6957, a subtle issue causing bad mouseout and
+            // mouseover events in certain conditions:
+            // - The series group has a clip path.
+            // - There's an SVG element on top of that.
+            // - There's a div on top of the SVG.
+            // - False events trigger when we set left and top styles on the div
+            //   and at the same time the transform attribute on the SVG rect.
+            //
+            // Replicated without Highcharts:
+            // https://jsfiddle.net/highcharts/g5kjf84n/show
+            // In the minimal example we could work around it by forcing a
+            // repating through reading the element.offsetWidth between the
+            // style and the transform. That would be a simpler workaround, but
+            // we couldn't make it work in Highcharts.
+            //
+            // This workaround overcomes the issue by temporarily removing the
+            // clip path, then detecting what element lies at the mouse event
+            // location, then applying the clip path again. If the detected
+            // element at the mouse event location is the fromElement, the
+            // event is not real.
+            //
+            // @todo: When the new WebKit-based Edge is out, test it and adapt
+            // the userAgent check so we don't apply the workaround there.
+            issue6957BadMouseOut = function (e) {
+                var element = e.fromElement,
+                    g = series.group.element,
+                    hit,
+                    clipPath;
+
+                if (
+                    /(Trident|Edge)/.test(H.win.navigator.userAgent) &&
+                    chart.tooltip.options.useHTML &&
+                    (clipPath = g.getAttribute('clip-path'))
+                ) {
+                    g.removeAttribute('clip-path');
+
+                    hit = H.doc.elementFromPoint(
+                        e.clientX,
+                        e.clientY
+                    );
+
+                    g.setAttribute('clip-path', clipPath);
+
+                    if (element === hit) {
+                        return true;
+                    }
+                }
+            },
             onMouseOver = function (e) {
                 var point = pointer.getPointFromEvent(e);
 
@@ -61,6 +110,13 @@ TrackerMixin = H.TrackerMixin = {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
                 }
+            },
+            onMouseOut = function (e) {
+                if (issue6957BadMouseOut(e)) {
+                    return;
+                }
+
+                pointer.onTrackerMouseOut(e);
             };
 
         // Add reference to the point
@@ -84,9 +140,7 @@ TrackerMixin = H.TrackerMixin = {
                     series[key]
                         .addClass('highcharts-tracker')
                         .on('mouseover', onMouseOver)
-                        .on('mouseout', function (e) {
-                            pointer.onTrackerMouseOut(e);
-                        });
+                        .on('mouseout', onMouseOut);
                     if (hasTouch) {
                         series[key].on('touchstart', onMouseOver);
                     }
