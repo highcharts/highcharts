@@ -773,7 +773,7 @@ QUnit.test('Correction for X axis labels (#9238)', function (assert) {
             visible: false
         }, {
             visible: true
-        }],
+        }]
     });
 
     assert.strictEqual(

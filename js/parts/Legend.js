@@ -4,6 +4,78 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * Gets fired when the legend item belonging to a point is clicked. The default
+ * action is to toggle the visibility of the point. This can be prevented by
+ * returning `false` or calling `event.preventDefault()`.
+ *
+ * @callback Highcharts.PointLegendItemClickCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        The point on which the event occured.
+ *
+ * @param {Highcharts.PointLegendItemClickEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Information about the legend click event.
+ *
+ * @interface Highcharts.PointLegendItemClickEventObject
+ *//**
+ * Related browser event.
+ * @name Highcharts.PointLegendItemClickEventObject#browserEvent
+ * @type {Highcharts.PointerEvent}
+ *//**
+ * Prevent the default action of toggle the visibility of the point.
+ * @name Highcharts.PointLegendItemClickEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * Related point.
+ * @name Highcharts.PointLegendItemClickEventObject#target
+ * @type {Highcharts.Point}
+ *//**
+ * Event type.
+ * @name Highcharts.PointLegendItemClickEventObject#type
+ * @type {"legendItemClick"}
+ */
+
+/**
+ * Gets fired when the legend item belonging to a series is clicked. The default
+ * action is to toggle the visibility of the series. This can be prevented by
+ * returning `false` or calling `event.preventDefault()`.
+ *
+ * @callback Highcharts.SeriesLegendItemClickCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occured.
+ *
+ * @param {Highcharts.SeriesLegendItemClickEventObject} event
+ *        The event that occured.
+ */
+
+/**
+ * Information about the legend click event.
+ *
+ * @interface Highcharts.SeriesLegendItemClickEventObject
+ *//**
+ * Related browser event.
+ * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
+ * @type {Highcharts.PointerEvent}
+ *//**
+ * Prevent the default action of toggle the visibility of the series.
+ * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * Related series.
+ * @name Highcharts.SeriesLegendItemClickEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesLegendItemClickEventObject#type
+ * @type {"legendItemClick"}
+ */
+
 'use strict';
 
 import Highcharts from './Globals.js';
@@ -538,10 +610,11 @@ Highcharts.Legend.prototype = {
                 legend.setItemEvents(item, li, useHTML);
             }
 
-            // add the HTML checkbox on top
-            if (showCheckbox) {
-                legend.createCheckboxForItem(item);
-            }
+        }
+
+        // Add the HTML checkbox on top
+        if (showCheckbox && !item.checkbox) {
+            legend.createCheckboxForItem(item);
         }
 
         // Colorize the items

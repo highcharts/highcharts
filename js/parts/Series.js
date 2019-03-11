@@ -82,7 +82,7 @@
  * Common information for a click event on a series.
  *
  * @interface Highcharts.SeriesClickEventObject
- * @extends {global.Event}
+ * @extends global.Event
  *//**
  * Nearest point on the graph.
  * @name Highcharts.SeriesClickEventObject#point
@@ -100,42 +100,6 @@
  *
  * @param {global.Event} event
  *        The event that occured.
- */
-
-/**
- * Gets fired when the legend item belonging to the series is clicked. The
- * default action is to toggle the visibility of the series. This can be
- * prevented by returning `false` or calling `event.preventDefault()`.
- *
- * @callback Highcharts.SeriesLegendItemClickCallbackFunction
- *
- * @param {Highcharts.Series} this
- *        The series where the event occured.
- *
- * @param {Highcharts.SeriesLegendItemClickEventObject} event
- *        The event that occured.
- */
-
-/**
- * Information about the event.
- *
- * @interface Highcharts.SeriesLegendItemClickEventObject
- *//**
- * Related browser event.
- * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
- * @type {Highcharts.PointerEvent}
- *//**
- * Prevent the default action of toggle the visibility of the series.
- * @name Highcharts.SeriesLegendItemClickEventObject#preventDefault
- * @type {Function}
- *//**
- * Related series.
- * @name Highcharts.SeriesCheckboxClickEventObject#target
- * @type {Highcharts.Series}
- *//**
- * Event type.
- * @name Highcharts.SeriesCheckboxClickEventObject#type
- * @type {"checkboxClick"}
  */
 
 /**
@@ -197,7 +161,7 @@
  * Common information for a click event on a series point.
  *
  * @interface Highcharts.SeriesPointClickEventObject
- * @extends {Highcharts.PointerEventObject}
+ * @extends Highcharts.PointerEventObject
  *//**
  * Clicked point.
  * @name Highcharts.SeriesPointClickEventObject#point
@@ -257,7 +221,7 @@
  * Information about the select event.
  *
  * @interface Highcharts.SeriesPointSelectEventObject
- * @extends {global.Event}
+ * @extends global.Event
  *//**
  * @name Highcharts.SeriesPointSelectEventObject#accumulate
  * @type {boolean}
@@ -280,7 +244,7 @@
  * Information about the unselect event.
  *
  * @interface Highcharts.SeriesPointUnselectEventObject
- * @extends {global.Event}
+ * @extends global.Event
  *//**
  * @name Highcharts.SeriesPointUnselectEventObject#accumulate
  * @type {boolean}
@@ -303,7 +267,7 @@
  * Information about the update event.
  *
  * @interface Highcharts.SeriesPointUpdateEventObject
- * @extends {global.Event}
+ * @extends global.Event
  *//**
  * Options data of the update event.
  * @name Highcharts.SeriesPointUpdateEventObject#options
@@ -614,7 +578,11 @@ H.Series = H.seriesType(
          * Allow this series' points to be selected by clicking on the graphic
          * (columns, point markers, pie slices, map areas etc).
          *
-         * @see {@link Highcharts.Chart#getSelectedPoints}.
+         * The selected points can be handled by point select and unselect
+         * events, or collectively by the [getSelectedPoints](
+         * Highcharts.Chart#getSelectedPoints) function.
+         *
+         * And alternative way of selecting points is through dragging.
          *
          * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-line/
          *         Line
@@ -622,6 +590,8 @@ H.Series = H.seriesType(
          *         Column
          * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-pie/
          *         Pie
+         * @sample {highcharts} highcharts/chart/events-selection-points/
+         *         Select a range of points through a drag selection
          * @sample {highmaps} maps/plotoptions/series-allowpointselect/
          *         Map area
          * @sample {highmaps} maps/plotoptions/mapbubble-allowpointselect/
@@ -2346,11 +2316,15 @@ H.Series = H.seriesType(
             series.getColor();
             series.getSymbol();
 
-            // Set the data
+            // Initialize the parallel data arrays
             series.parallelArrays.forEach(function (key) {
-                series[key + 'Data'] = [];
+                if (!series[key + 'Data']) {
+                    series[key + 'Data'] = [];
+                }
             });
-            series.setData(options.data, false);
+            if (!series.points) {
+                series.setData(options.data, false);
+            }
 
             // Mark cartesian
             if (series.isCartesian) {
@@ -2802,6 +2776,60 @@ H.Series = H.seriesType(
         },
 
         /**
+         * Finds the index of an existing point that matches the given point
+         * options.
+         *
+         * @private
+         * @function Highcharts.Series#findPointIndex
+         * @param    {object} optionsObject
+         *           The options of the point.
+         * @param    {number} fromIndex
+         *           The index to start searching from, used for optimizing
+         *           series with required sorting.
+         * @returns  {number|undefined}
+         *           Returns the index of a matching point, or undefined if no
+         *           match is found.
+         */
+        findPointIndex: function (optionsObject, fromIndex) {
+            var id = optionsObject.id,
+                x = optionsObject.x,
+                oldData = this.points,
+                matchingPoint,
+                matchedById,
+                pointIndex;
+
+            if (id) {
+                matchingPoint = this.chart.get(id);
+                pointIndex = matchingPoint && matchingPoint.index;
+                if (pointIndex !== undefined) {
+                    matchedById = true;
+                }
+            }
+
+            // Search for the same X in the existing data set
+            if (pointIndex === undefined && isNumber(x)) {
+                pointIndex = this.xData.indexOf(x, fromIndex);
+            }
+
+            // Reduce pointIndex if data is cropped
+            if (pointIndex !== -1 &&
+                pointIndex !== undefined &&
+                this.cropped
+            ) {
+                pointIndex = (pointIndex >= this.cropStart) ?
+                    pointIndex - this.cropStart : pointIndex;
+            }
+
+            if (
+                !matchedById &&
+                oldData[pointIndex] && oldData[pointIndex].touched
+            ) {
+                pointIndex = undefined;
+            }
+            return pointIndex;
+        },
+
+        /**
          * @private
          * @borrows LegendSymbolMixin.drawLineMarker as Highcharts.Series#drawLegendSymbol
          */
@@ -2829,14 +2857,15 @@ H.Series = H.seriesType(
                 i,
                 point,
                 lastIndex,
-                requireSorting = this.requireSorting;
+                requireSorting = this.requireSorting,
+                equalLength = data.length === oldData.length,
+                succeeded = true;
 
             this.xIncrement = null;
 
             // Iterate the new data
-            data.forEach(function (pointOptions) {
+            data.forEach(function (pointOptions, i) {
                 var id,
-                    matchingPoint,
                     x,
                     pointIndex,
                     optionsObject = (
@@ -2852,39 +2881,25 @@ H.Series = H.seriesType(
                 id = optionsObject.id;
 
                 if (id || isNumber(x)) {
-                    if (id) {
-                        matchingPoint = this.chart.get(id);
-                        pointIndex = matchingPoint && matchingPoint.index;
-                    }
-
-                    // Search for the same X in the existing data set
-                    if (pointIndex === undefined && isNumber(x)) {
-                        pointIndex = this.xData.indexOf(x, lastIndex);
-                    }
-
-                    // Reduce pointIndex if data is cropped
-                    if (pointIndex !== -1 &&
-                        pointIndex !== undefined &&
-                        this.cropped
-                    ) {
-                        pointIndex = (pointIndex >= this.cropStart) ?
-                            pointIndex - this.cropStart : pointIndex;
-                    }
+                    pointIndex = this.findPointIndex(
+                        optionsObject,
+                        lastIndex
+                    );
 
                     // Matching X not found
                     // or used already due to ununique x values (#8995),
                     // add point (but later)
                     if (
                         pointIndex === -1 ||
-                        pointIndex === undefined ||
-                        (oldData[pointIndex] &&
-                            oldData[pointIndex].touched
-                        )
+                        pointIndex === undefined
                     ) {
                         pointsToAdd.push(pointOptions);
 
                     // Matching X found, update
-                    } else if (pointOptions !== options.data[pointIndex]) {
+                    } else if (
+                        oldData[pointIndex] &&
+                        pointOptions !== options.data[pointIndex]
+                    ) {
                         oldData[pointIndex].update(
                             pointOptions,
                             false,
@@ -2905,7 +2920,17 @@ H.Series = H.seriesType(
                     } else if (oldData[pointIndex]) {
                         oldData[pointIndex].touched = true;
                     }
-                    hasUpdatedByKey = true;
+
+                    // If the length is equal and some of the nodes had a
+                    // match in the same position, we don't want to remove
+                    // non-matches.
+                    if (
+                        !equalLength ||
+                        i !== pointIndex ||
+                        this.hasDerivedData
+                    ) {
+                        hasUpdatedByKey = true;
+                    }
                 }
             }, this);
 
@@ -2914,15 +2939,14 @@ H.Series = H.seriesType(
                 i = oldData.length;
                 while (i--) {
                     point = oldData[i];
-                    if (!point.touched) {
+                    if (point && !point.touched) {
                         point.remove(false);
                     }
-                    point.touched = false;
                 }
 
-            // If we did not find keys (x-values), and the length is the same,
-            // update one-to-one
-            } else if (data.length === oldData.length) {
+            // If we did not find keys (ids or x-values), and the length is the
+            // same, update one-to-one
+            } else if (equalLength) {
                 data.forEach(function (point, i) {
                     // .update doesn't exist on a linked, hidden series (#3709)
                     if (oldData[i].update && point !== options.data[i]) {
@@ -2932,6 +2956,16 @@ H.Series = H.seriesType(
 
             // Did not succeed in updating data
             } else {
+                succeeded = false;
+            }
+
+            oldData.forEach(function (point) {
+                if (point) {
+                    point.touched = false;
+                }
+            });
+
+            if (!succeeded) {
                 return false;
             }
 
@@ -3015,9 +3049,8 @@ H.Series = H.seriesType(
             dataLength = data.length;
             redraw = pick(redraw, true);
 
-            // If the point count is the same as is was, just run Point.update
-            // which is cheaper, allows animation, and keeps references to
-            // points.
+            // First try to run Point.update which is cheaper, allows animation,
+            // and keeps references to points.
             if (
                 updatePoints !== false &&
                 dataLength &&
@@ -3655,6 +3688,9 @@ H.Series = H.seriesType(
                     );
                     pointStack = stack[xValue];
                     stackValues = pointStack.points[stackIndicator.key];
+                }
+
+                if (isArray(stackValues)) {
                     yBottom = stackValues[0];
                     yValue = stackValues[1];
 
@@ -3959,6 +3995,7 @@ H.Series = H.seriesType(
                 point,
                 symbol,
                 graphic,
+                verb,
                 options = series.options,
                 seriesMarkerOptions = options.marker,
                 pointMarkerOptions,
@@ -3985,6 +4022,7 @@ H.Series = H.seriesType(
                 for (i = 0; i < points.length; i++) {
                     point = points[i];
                     graphic = point.graphic;
+                    verb = graphic ? 'animate' : 'attr';
                     pointMarkerOptions = point.marker || {};
                     hasPointMarker = !!point.marker;
                     enabled = (
@@ -4044,7 +4082,7 @@ H.Series = H.seriesType(
 
                         // Presentational attributes
                         if (graphic && !chart.styledMode) {
-                            graphic.attr(
+                            graphic[verb](
                                 series.pointAttribs(
                                     point,
                                     point.selected && 'select'
@@ -4471,6 +4509,7 @@ H.Series = H.seriesType(
             props.forEach(function (prop, i) {
                 var graphKey = prop[0],
                     graph = series[graphKey],
+                    verb = graph ? 'animate' : 'attr',
                     attribs;
 
                 if (graph) {
@@ -4481,33 +4520,32 @@ H.Series = H.seriesType(
 
                 } else if (graphPath.length) { // #1487
 
-                    series[graphKey] = series.chart.renderer.path(graphPath)
+                    series[graphKey] = graph = series.chart.renderer
+                        .path(graphPath)
                         .addClass(prop[1])
                         .attr({ zIndex: 1 }) // #1069
                         .add(series.group);
+                }
 
+                if (graph && !styledMode) {
 
-                    if (!styledMode) {
-                        attribs = {
-                            'stroke': prop[2],
-                            'stroke-width': options.lineWidth,
-                            // Polygon series use filled graph
-                            'fill': (series.fillGraph && series.color) || 'none'
-                        };
+                    attribs = {
+                        'stroke': prop[2],
+                        'stroke-width': options.lineWidth,
+                        // Polygon series use filled graph
+                        'fill': (series.fillGraph && series.color) || 'none'
+                    };
 
-                        if (prop[3]) {
-                            attribs.dashstyle = prop[3];
-                        } else if (options.linecap !== 'square') {
-                            attribs['stroke-linecap'] =
-                                attribs['stroke-linejoin'] = 'round';
-                        }
-
-                        graph = series[graphKey]
-                            .attr(attribs)
-                            // Add shadow to normal series (0) or to first
-                            // zone (1) #3932
-                            .shadow((i < 2) && options.shadow);
+                    if (prop[3]) {
+                        attribs.dashstyle = prop[3];
+                    } else if (options.linecap !== 'square') {
+                        attribs['stroke-linecap'] =
+                            attribs['stroke-linejoin'] = 'round';
                     }
+                    graph[verb](attribs)
+                        // Add shadow to normal series (0) or to first
+                        // zone (1) #3932
+                        .shadow((i < 2) && options.shadow);
                 }
 
                 // Helpers for animation

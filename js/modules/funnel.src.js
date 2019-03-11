@@ -311,6 +311,14 @@ seriesType('funnel', 'pie',
                 point.plotY
             ];
 
+            point.dlBox = {
+                x: x3,
+                y: y1,
+                topWidth: x2 - x1,
+                bottomWidth: x4 - x3,
+                height: Math.abs(pick(y3, y5) - y1)
+            };
+
             // Slice is a noop on funnel points
             point.slice = noop;
 
@@ -394,9 +402,78 @@ seriesType('funnel', 'pie',
             };
         }
 
-        seriesTypes.pie.prototype.drawDataLabels.call(this);
-    }
+        seriesTypes[series.options.dataLabels.inside ? 'column' : 'pie']
+            .prototype.drawDataLabels.call(this);
+    },
 
+    alignDataLabel: function (
+        point,
+        dataLabel,
+        options,
+        alignTo,
+        isNew
+    ) {
+        var series = point.series,
+            reversed = series.options.reversed,
+            dlBox = point.dlBox || point.shapeArgs,
+            align = options.align,
+            verticalAlign = options.verticalAlign,
+            centerY = series.center[1],
+            pointPlotY = reversed ? 2 * centerY - point.plotY : point.plotY,
+            widthAtLabel = series.getWidthAt(
+                pointPlotY - dlBox.height / 2 + dataLabel.height
+            ),
+            offset = verticalAlign === 'middle' ?
+                (dlBox.topWidth - dlBox.bottomWidth) / 4 :
+                (widthAtLabel - dlBox.bottomWidth) / 2,
+            y = dlBox.y,
+            x = dlBox.x;
+
+        if (verticalAlign === 'middle') {
+            y = dlBox.y - dlBox.height / 2 + dataLabel.height / 2;
+        } else if (verticalAlign === 'top') {
+            y = dlBox.y - dlBox.height + dataLabel.height +
+                options.padding;
+        }
+
+        if (
+            verticalAlign === 'top' && !reversed ||
+            verticalAlign === 'bottom' && reversed ||
+            verticalAlign === 'middle'
+        ) {
+            if (align === 'right') {
+                x = dlBox.x - options.padding + offset;
+            } else if (align === 'left') {
+                x = dlBox.x + options.padding - offset;
+            }
+        }
+
+        alignTo = {
+            x: x,
+            y: reversed ? y - dlBox.height : y,
+            width: dlBox.bottomWidth,
+            height: dlBox.height
+        };
+
+        options.verticalAlign = 'bottom';
+
+        // Call the parent method
+        Highcharts.Series.prototype.alignDataLabel.call(
+            this,
+            point,
+            dataLabel,
+            options,
+            alignTo,
+            isNew
+        );
+
+        // If label was justified and we have contrast, set it:
+        if (point.isLabelJustified && point.contrastColor) {
+            dataLabel.css({
+                color: point.contrastColor
+            });
+        }
+    }
 });
 
 

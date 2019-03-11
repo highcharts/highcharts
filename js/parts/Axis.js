@@ -919,7 +919,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * @sample {highcharts|highstock} highcharts/xaxis/labels-autorotation-0-90/
              *         Custom graded auto rotation
              *
-             * @type      {Array<number>}
+             * @type      {Array<number>|false}
              * @default   [-45]
              * @since     4.1.0
              * @product   highcharts highstock gantt
@@ -3291,6 +3291,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
         axis.min = null;
 
+        var tooltipCrosshairs = (
+            chart.options &&
+            chart.options.tooltip &&
+            chart.options.tooltip.crosshairs
+        );
         /**
          * The processed crosshair options.
          *
@@ -3299,7 +3304,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
         axis.crosshair = pick(
             options.crosshair,
-            splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1],
+            splat(tooltipCrosshairs)[isXAxis ? 0 : 1],
             false
         );
 
@@ -4191,19 +4196,21 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             if (linkedParent) {
                 minPointOffset = linkedParent.minPointOffset;
                 pointRangePadding = linkedParent.pointRangePadding;
+            } else if (hasCategories) {
+                pointRange = Math.max(pointRange, 1);
+                pointRangePadding = 1;
+                minPointOffset = 0.5;
             } else {
                 axis.series.forEach(function (series) {
-                    var seriesPointRange = hasCategories ?
-                            1 :
-                            (
-                                isXAxis ?
-                                    pick(
-                                        series.options.pointRange,
-                                        closestPointRange,
-                                        0
-                                    ) :
-                                    (axis.axisPointRange || 0)
-                            ), // #2806
+                    var seriesPointRange = (
+                            isXAxis ?
+                                pick(
+                                    series.options.pointRange,
+                                    closestPointRange,
+                                    0
+                                ) :
+                                (axis.axisPointRange || 0)
+                        ), // #2806
                         pointPlacement = series.options.pointPlacement;
 
                     pointRange = Math.max(pointRange, seriesPointRange);
@@ -4444,14 +4451,18 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 axis.min < threshold &&
                 axis.dataMin >= threshold
             ) {
-                axis.min = threshold;
+                axis.min = axis.options.minRange ?
+                    Math.min(threshold, axis.max - axis.minRange) :
+                    threshold;
 
             } else if (
                 !defined(hardMax) &&
                 axis.max > threshold &&
                 axis.dataMax <= threshold
             ) {
-                axis.max = threshold;
+                axis.max = axis.options.minRange ?
+                    Math.max(threshold, axis.min + axis.minRange) :
+                    threshold;
             }
         }
 
@@ -4683,7 +4694,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // Substract half a unit (#2619, #2846, #2515, #3390),
             // but not in case of multiple ticks (#6897)
-            if (this.single && tickPositions.length < 2) {
+            if (this.single && tickPositions.length < 2 && !this.categories) {
                 this.min -= 0.5;
                 this.max += 0.5;
             }

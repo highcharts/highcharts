@@ -19,6 +19,6 @@ Highcharts.chart('container', {
       text: 'Max'
     }],
     draggable: 'xy' //set by default
-  }],
+  }]
 
 });

@@ -1254,6 +1254,7 @@ RangeSelector.prototype = {
                 // clicking inside the SVG (#4710)
                 updateExtremes();
                 rangeSelector.hideInput(name);
+                input.blur(); // #4606
             }
         };
 
@@ -1422,7 +1423,7 @@ RangeSelector.prototype = {
                     rangeOptions.text,
                     0,
                     0,
-                    function () {
+                    function (e) {
 
                         // extract events from button object and call
                         var buttonEvents = (
@@ -1433,7 +1434,7 @@ RangeSelector.prototype = {
 
                         if (buttonEvents) {
                             callDefaultEvent =
-                                    buttonEvents.call(rangeOptions);
+                                    buttonEvents.call(rangeOptions, e);
                         }
 
                         if (callDefaultEvent !== false) {

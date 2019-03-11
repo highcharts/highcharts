@@ -179,9 +179,9 @@ import './Series.js';
 var addEvent = H.addEvent,
     CenteredSeriesMixin = H.CenteredSeriesMixin,
     defined = H.defined,
-    extend = H.extend,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
     LegendSymbolMixin = H.LegendSymbolMixin,
+    merge = H.merge,
     noop = H.noop,
     pick = H.pick,
     Point = H.Point,
@@ -826,6 +826,7 @@ seriesType('pie', 'line',
 
             // draw the slices
             series.points.forEach(function (point) {
+                var animateTo = {};
                 graphic = point.graphic;
                 if (!point.isNull) {
                     shapeArgs = point.shapeArgs;
@@ -860,9 +861,10 @@ seriesType('pie', 'line',
                             .setRadialReference(series.center);
 
                         if (!chart.styledMode) {
-                            graphic.attr(pointAttr);
+                            merge(true, animateTo, pointAttr);
                         }
-                        graphic.animate(extend(shapeArgs, groupTranslation));
+                        merge(true, animateTo, shapeArgs, groupTranslation);
+                        graphic.animate(animateTo);
                     } else {
 
                         point.graphic = graphic = renderer[point.shapeType](
@@ -1303,7 +1305,7 @@ seriesType('pie', 'line',
  * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/
  *         Confirm toggle visibility
  *
- * @type      {Function}
+ * @type      {Highcharts.PointLegendItemClickCallbackFunction}
  * @since     1.2.0
  * @product   highcharts
  * @apioption plotOptions.pie.point.events.legendItemClick

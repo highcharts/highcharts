@@ -710,7 +710,6 @@ QUnit.test(
     }
 );
 
-
 QUnit.test('stickToMin and stickToMax', function (assert) {
     var chart = new Highcharts.stockChart('container', {
             xAxis: {

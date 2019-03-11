@@ -28,6 +28,10 @@ const {
     scripts,
     getBuildScripts
 } = require('./tools/build.js');
+const {
+    getCompareFileSizeTable,
+    getFileSizes
+} = require('./tools/compareFilesize.js');
 const compile = require('./tools/compile.js').compile;
 const {
     copyFile,
@@ -1308,6 +1312,48 @@ const uploadAPIDocs = () => {
 };
 gulp.task('upload-api', uploadAPIDocs);
 
+/**
+ * Usage: npx gulp get-filesizes --out old.json
+ *
+ * Options:
+ *   --file     Specify which files to get filesizes of. If not specified it
+ *              will default to all distributed files.
+ *   --out      Specify where to store the result. Defaults "./filesizes.json"
+ */
+gulp.task('get-filesizes', () => {
+    const isSourceFile = path => (
+        path.endsWith('.src.js') && !path.includes('es-modules')
+    );
+    const jsFolder = './js/masters/';
+    const out = argv.out || './filesizes.json';
+    const files = argv.file ?
+        argv.file.split(',') :
+        getFilesInFolder(jsFolder, true, '').filter(isSourceFile);
+
+    return getFileSizes(files, out);
+});
+
+/**
+ * Usage: npx gulp compare-filesizes --old old.json --new new.json
+ *
+ * Options:
+ *   --old      Specify path to the "oldest" filesizes to compare. Required.
+ *   --new      Specify path to the "newest" filesizes to compare. Required.
+ *   --out      Specify where to store the resulting information. If not
+ *              specifyed then the information will be outputted to the console.
+ */
+gulp.task('compare-filesizes', () => {
+    const out = argv.out;
+    const pathOld = argv.old;
+    const pathNew = argv.new;
+    if (!pathOld || !pathNew) {
+        throw new Error(
+            'This task requires paths to the files --old and --new'
+        );
+    }
+    return getCompareFileSizeTable(pathOld, pathNew, out);
+});
+
 const jsdocServer = () => {
     // Start a server serving up the api reference
     const http = require('http');
@@ -1492,17 +1538,20 @@ const jsdocWatch = () => {
         dir + '/template/static/styles/*.css',
         dir + '/template/static/scripts/*.js'
     ];
-    if (argv.watch) {
-        gulp.watch(watchFiles, gulp.series('jsdoc'));
-        console.log('Watching file changes in JS files and templates');
-
-    } else {
-        console.log('Tip: use the --watch argument to watch JS file changes');
-    }
 
     if (!apiServerRunning) {
+
         jsdocServer();
+
         apiServerRunning = true;
+
+        if (argv.watch) {
+            gulp.watch(watchFiles, gulp.series('jsdoc'));
+            console.log('Watching file changes in JS files and templates');
+
+        } else {
+            console.log('Tip: use the --watch argument to watch JS file changes');
+        }
     }
 
     return generateClassReferences(optionsClassReference)

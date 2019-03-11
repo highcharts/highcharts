@@ -98,8 +98,7 @@
         removeEvent = Highcharts.addEvent(chart, 'update',
             function (args) {
                 undoStack.push(treeCopy(chart.options, args.options));
-            }
-        );
+            });
 
         return function () {
 
@@ -238,8 +237,8 @@
             testInitializer = this.testInitializer;
 
         this.testCases.push({
-            chartOptions: chartOptions,
-            testCallback: testCallback
+            chartOptions,
+            testCallback
         });
 
         if (!this.ready) {
@@ -328,10 +327,10 @@
         }
 
         templates[name] = {
-            name: name,
-            chartConstructor: chartConstructor,
-            chartOptions: chartOptions,
-            testInitializer: testInitializer
+            name,
+            chartConstructor,
+            chartOptions,
+            testInitializer
         };
 
     };

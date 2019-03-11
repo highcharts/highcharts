@@ -47,7 +47,8 @@ Highcharts.Chart.prototype.callbacks.push(function (chart) {
         for (var i = 0; i < Math.max(
             first.length, second.length, third.length, fourth.length
         ); ++i) {
-            tbody.insertAdjacentHTML('beforeend',
+            tbody.insertAdjacentHTML(
+                'beforeend',
                 '<tr>' +
                 (first[i] ?
                     '<td>' + first[i][0] + '</td>' +
@@ -243,7 +244,6 @@ Highcharts.chart('container', {
                     )]) {
                         return 'Total: $' + Highcharts.numberFormat(this.y, 0);
                     }
-                    return;
                 }
             }
         }
