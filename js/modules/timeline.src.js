@@ -89,15 +89,16 @@ seriesType('timeline', 'line',
             connectorWidth: 1,
             /**
              * The color of the line connecting the data label to the point.
+             * The default color is the same as the point's color.
              *
              * In styled mode, the connector stroke is given in the
              * `.highcharts-data-label-connector` class.
              *
              * @type {String}
+             * @apioption plotOptions.timeline.dataLabels.connectorColor
              * @sample {highcharts} highcharts/series-timeline/connector-styles
              *         Custom connector width and color
              */
-            connectorColor: '${palette.neutralColor100}',
             backgroundColor: '${palette.backgroundColor}',
             /**
              * @type      {Highcharts.FormatterCallbackFunction<object>}
@@ -205,20 +206,7 @@ seriesType('timeline', 'line',
             });
 
             addEvent(series, 'afterDrawDataLabels', function () {
-                var seriesOptions = series.options,
-                    options = seriesOptions.dataLabels,
-                    hasRendered = series.hasRendered || 0,
-                    defer = pick(options.defer, !!seriesOptions.animation),
-                    connectorsGroup = series.connectorsGroup,
-                    dataLabel;
-
-                // Create (or redraw) the group for all connectors.
-                connectorsGroup = series.plotGroup(
-                    'connectorsGroup',
-                    'data-labels-connectors',
-                    defer && !hasRendered ? 'hidden' : 'visible',
-                    options.zIndex || 5
-                );
+                var dataLabel;
 
                 // Draw or align connector for each point.
                 series.points.forEach(function (point) {
@@ -253,27 +241,6 @@ seriesType('timeline', 'line',
                             point.alignConnector();
                     }
                 });
-                // Animate connectors group. It's animated in the same way like
-                // dataLabels, and also depends on dataLabels.defer parameter.
-                if (defer) {
-                    connectorsGroup.attr({
-                        opacity: +hasRendered
-                    });
-                    if (!hasRendered) {
-                        addEvent(series, 'afterAnimate', function () {
-                            if (series.visible) {
-                                connectorsGroup.show(true);
-                            }
-                            connectorsGroup[
-                                seriesOptions.animation ? 'animate' : 'attr'
-                            ]({
-                                opacity: 1
-                            }, {
-                                duration: 200
-                            });
-                        });
-                    }
-                }
             });
         },
         alignDataLabel: function (point, dataLabel) {
@@ -553,7 +520,7 @@ seriesType('timeline', 'line',
                     y2: isNumber(targetDLPos.y) ? targetDLPos.y : dl.y
                 },
                 negativeDistance = (
-                    coords[direction] < point.series.yAxis.len / 2
+                    dl.alignAttr[direction[0]] < point.series.yAxis.len / 2
                 ),
                 path;
 
@@ -572,6 +539,11 @@ seriesType('timeline', 'line',
             if (negativeDistance) {
                 coords[direction] += dl[inverted ? 'width' : 'height'];
             }
+
+            // Change coordinates so that they will be relative to data label.
+            H.objectEach(coords, function (_coord, i) {
+                coords[i] -= dl.alignAttr[i[0]];
+            });
 
             path = chart.renderer.crispLine([
                 'M',
@@ -594,22 +566,30 @@ seriesType('timeline', 'line',
 
             point.connector = series.chart.renderer
                 .path(point.getConnectorPath())
-                .add(series.connectorsGroup);
+                .add(point.dataLabel);
 
             if (!series.chart.styledMode) {
                 point.connector.attr({
-                    stroke: dlOptions.connectorColor,
+                    stroke: dlOptions.connectorColor || point.color,
                     'stroke-width': dlOptions.connectorWidth,
-                    opacity: point.dataLabel.opacity
-                });
+                    opacity: point.dataLabel.opacity,
+                    zIndex: -1
+                }).addClass(
+                    'highcharts-data-label-connector ' +
+                    'highcharts-color-' + point.colorIndex +
+                    (
+                        point.className ?
+                            ' ' + point.className :
+                            ''
+                    )
+                );
             }
         },
         alignConnector: function () {
             var point = this,
                 connector = point.connector,
                 dl = point.dataLabel,
-                bBox = connector.getBBox(),
-                isVisible = bBox.y > 0 && point.series.chart.isInsidePlot(
+                isVisible = point.series.chart.isInsidePlot(
                     dl.translateX, dl.translateY
                 );
 
@@ -618,34 +598,6 @@ seriesType('timeline', 'line',
             });
         }
     });
-
-// Hide/show connector related with a specific data label, after overlapping
-// detected.
-addEvent(H.Chart, 'afterHideOverlappingLabels', function () {
-    var series = this.series,
-        dataLabel,
-        connector;
-
-    series.forEach(function (series) {
-        if (series.points) {
-            series.points.forEach(function (point) {
-                dataLabel = point.dataLabel;
-                connector = point.connector;
-
-                if (
-                    dataLabel &&
-                    dataLabel.targetPosition &&
-                    connector
-                ) {
-                    connector.attr({
-                        opacity: dataLabel.targetPosition.opacity ||
-                            dataLabel.newOpacity
-                    });
-                }
-            });
-        }
-    });
-});
 
 /**
  * The `timeline` series. If the [type](#series.timeline.type) option is
