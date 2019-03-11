@@ -350,7 +350,7 @@ seriesType('networkgraph', 'line', {
      * integrations.js.
      */
     forces: ['barycenter', 'repulsive', 'attractive'],
-    isNetworkgraph: true,
+    hasDraggableNodes: true,
     drawGraph: null,
     isCartesian: false,
     requireSorting: false,
@@ -480,7 +480,9 @@ seriesType('networkgraph', 'line', {
                 !chartOptions.forExport;
 
             graphLayoutsStorage[layoutOptions.type] = layout =
-                new H.layouts[layoutOptions.type](layoutOptions);
+                new H.layouts[layoutOptions.type]();
+
+            layout.init(layoutOptions);
         }
 
         this.layout = layout;
@@ -820,7 +822,6 @@ addEvent(Chart, 'predraw', function () {
     if (this.graphLayoutsLookup) {
         this.graphLayoutsLookup.forEach(
             function (layout) {
-                layout.clearNodes();
                 layout.stop();
             }
         );
@@ -845,51 +846,50 @@ addEvent(
     'load',
     function () {
         var chart = this,
-            unbinders = [];
+            mousedownUnbinder,
+            mousemoveUnbinder,
+            mouseupUnbinder;
 
         if (chart.container) {
-            unbinders.push(
-                addEvent(
-                    chart.container,
-                    'mousedown',
-                    function (event) {
-                        var point = chart.hoverPoint;
-
-                        if (
-                            point &&
-                            point.series &&
-                            point.series.isNetworkgraph &&
-                            point.series.options.draggable
-                        ) {
-                            point.series.onMouseDown(point, event);
-                            unbinders.push(addEvent(
-                                chart.container,
-                                'mousemove',
-                                function (e) {
-                                    return point &&
-                                        point.series &&
-                                        point.series.onMouseMove(point, e);
-                                }
-                            ));
-                            unbinders.push(addEvent(
-                                chart.container.ownerDocument,
-                                'mouseup',
-                                function (e) {
-                                    return point &&
-                                        point.series &&
-                                        point.series.onMouseUp(point, e);
-                                }
-                            ));
-                        }
+            mousedownUnbinder = addEvent(
+                chart.container,
+                'mousedown',
+                function (event) {
+                    var point = chart.hoverPoint;
+                    if (
+                        point &&
+                        point.series &&
+                        point.series.hasDraggableNodes &&
+                        point.series.options.draggable
+                    ) {
+                        point.series.onMouseDown(point, event);
+                        mousemoveUnbinder = addEvent(
+                            chart.container,
+                            'mousemove',
+                            function (e) {
+                                return point &&
+                                    point.series &&
+                                    point.series.onMouseMove(point, e);
+                            }
+                        );
+                        mouseupUnbinder = addEvent(
+                            chart.container.ownerDocument,
+                            'mouseup',
+                            function (e) {
+                                mousemoveUnbinder();
+                                mouseupUnbinder();
+                                return point &&
+                                    point.series &&
+                                    point.series.onMouseUp(point, e);
+                            }
+                        );
                     }
-                )
+                }
             );
         }
 
         addEvent(chart, 'destroy', function () {
-            unbinders.forEach(function (unbind) {
-                unbind();
-            });
+            mousedownUnbinder();
         });
     }
 );
