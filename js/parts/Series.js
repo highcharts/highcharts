@@ -1694,6 +1694,34 @@ H.Series = H.seriesType(
                      *         3px line width for selected points
                      */
                     lineWidth: 2
+                },
+
+                /**
+                 * The opposite state of a hover for a single point marker.
+                 */
+                inactive: {
+
+                    /**
+                     * Animation when not hovering over the marker.
+                     *
+                     * @type {boolean|Highcharts.AnimationOptionsObject}
+                     */
+                    animation: {
+                        duration: 50
+                    },
+
+                    /**
+                     * Enable or disable the point marker.
+                     *
+                     * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
+                     *         Enabled inactive state
+                     */
+                    enabled: false,
+
+                    /**
+                     * Opacity of inactive markers.
+                     */
+                    opacity: 0.1
                 }
             }
         },
@@ -2087,6 +2115,13 @@ H.Series = H.seriesType(
                 animation: {
                     duration: 0
                 }
+            },
+
+            /**
+             * The opposite state of a hover for series.
+             */
+            inactive: {
+                enabled: false
             }
         },
 
@@ -4216,7 +4251,8 @@ H.Series = H.seriesType(
                 ),
                 zoneColor = point && point.zone && point.zone.color,
                 fill,
-                stroke;
+                stroke,
+                opacity = 1;
 
             color = (
                 pointColorOption ||
@@ -4261,12 +4297,19 @@ H.Series = H.seriesType(
                     seriesStateOptions.lineColor ||
                     stroke
                 );
+
+                opacity = pick(
+                    pointStateOptions.opacity,
+                    seriesStateOptions.opacity,
+                    opacity
+                );
             }
 
             return {
                 'stroke': stroke,
                 'stroke-width': strokeWidth,
-                'fill': fill
+                'fill': fill,
+                'opacity': opacity
             };
         },
 

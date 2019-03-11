@@ -745,6 +745,7 @@ H.Tooltip.prototype = {
      */
     refresh: function (pointOrPoints, mouseEvent) {
         var tooltip = this,
+            chart = this.chart,
             label,
             options = tooltip.options,
             x,
@@ -757,7 +758,7 @@ H.Tooltip.prototype = {
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             currentSeries,
-            styledMode = this.chart.styledMode;
+            styledMode = chart.styledMode;
 
         if (!options.enabled) {
             return;
@@ -774,7 +775,14 @@ H.Tooltip.prototype = {
 
         // shared tooltip, array is sent over
         if (shared && !(point.series && point.series.noSharedTooltip)) {
+            // Set inactive state for all points
+            chart.series.forEach(function (inactiveSeries) {
+                inactiveSeries.setState('inactive', true);
+            });
+
+            // Now set hover state for the choosen ones:
             point.forEach(function (item) {
+                item.series.setState('hover');
                 item.setState('hover');
 
                 pointConfig.push(item.getLabelConfig());

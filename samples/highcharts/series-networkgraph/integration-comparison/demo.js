@@ -17,14 +17,24 @@ function createChart(container, integration, linkLength) {
                     integration: integration,
                     linkLength: linkLength
                 },
-                keys: ['from', 'to']
+                keys: ['from', 'to'],
+                states: {
+                    inactive: {
+                        enabled: true
+                    }
+                },
+                marker: {
+                    radius: 5,
+                    lineWidth: 1,
+                    states: {
+                        inactive: {
+                            enabled: true
+                        }
+                    }
+                }
             }
         },
         series: [{
-            marker: {
-                radius: 5,
-                lineWidth: 1
-            },
             nodes: [{
                 id: 'for',
                 dataLabels: {

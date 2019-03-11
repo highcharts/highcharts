@@ -559,14 +559,21 @@ Highcharts.Pointer.prototype = {
                     p.setState();
                 }
             });
-            // Do mouseover on all points (#3919, #3985, #4410, #5622)
-            (points || []).forEach(function (p) {
-                p.setState('hover');
-            });
+
             // set normal state to previous series
             if (chart.hoverSeries !== hoverSeries) {
                 hoverSeries.onMouseOver();
             }
+
+            // Set inactive state for all points
+            tooltip.chart.series.forEach(function (inactiveSeries) {
+                inactiveSeries.setState('inactive', true);
+            });
+
+            // Do mouseover on all points (#3919, #3985, #4410, #5622)
+            (points || []).forEach(function (p) {
+                p.setState('hover');
+            });
 
             // If tracking is on series in stead of on each point,
             // fire mouseOver on hover point. // #4448

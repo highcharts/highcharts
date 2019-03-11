@@ -745,9 +745,12 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             chart = point.series.chart;
 
         point.firePointEvent('mouseOut');
-        (chart.hoverPoints || []).forEach(function (p) {
-            p.setState();
+
+        // Reset all inactive states
+        chart.series.forEach(function (series) {
+            series.setState('', true);
         });
+
         chart.hoverPoints = chart.hoverPoint = null;
     },
 
@@ -780,9 +783,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @function Highcharts.Point#setState
      *
      * @param {string} [state]
-     *        The new state, can be one of `''` (an empty string), `hover` or
-     *        `select`.
-     *
+     *        The new state, can be one of `''` (an empty string), `hover`,
+     *        `select` or `inactive`.
      * @param {boolean} [move]
      *        State for animation.
      *
@@ -1090,8 +1092,10 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @param {string} [state]
      *        Can be either `hover` or undefined to set to normal state.
+     * @param {boolean} [inherit]
+     *        Determines if state should be inherited by points too.
      */
-    setState: function (state) {
+    setState: function (state, inherit) {
         var series = this,
             options = series.options,
             graph = series.graph,
@@ -1163,6 +1167,14 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                     }
                 }
             }
+        }
+
+        if (inherit && series.points) {
+            series.points.forEach(function (point) {
+                if (point.setState) {
+                    point.setState(state);
+                }
+            });
         }
     },
 

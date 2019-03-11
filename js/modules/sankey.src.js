@@ -211,6 +211,13 @@ seriesType('sankey', 'column'
                  * hover mode.
                  */
                 linkOpacity: 1
+            },
+            inactive: {
+                /**
+                 * Opacity for the links between nodes in the sankey diagram in
+                 * inactive mode.
+                 */
+                linkOpacity: 0.1
             }
         },
         tooltip: {
@@ -631,12 +638,13 @@ seriesType('sankey', 'column'
         render: function () {
             var points = this.points;
 
-            this.points = this.points.concat(this.nodes);
+            this.points = this.points.concat(this.nodes || []);
             H.seriesTypes.column.prototype.render.call(this);
             this.points = points;
         },
         animate: H.Series.prototype.animate
     }, {
+        setState: H.NodesMixin.setNodeState,
         getClassName: function () {
             return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
             Point.prototype.getClassName.call(this);

@@ -67,7 +67,12 @@ Highcharts.chart('container', {
             },
             distance: 10
         },
-        size: '95%'
+        size: '95%',
+        states: {
+            inactive: {
+                enabled: true
+            }
+        }
     }]
 
 });
