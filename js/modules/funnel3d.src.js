@@ -16,6 +16,7 @@ var charts = H.charts,
     color = H.color,
     error = H.error,
     extend = H.extend,
+    merge = H.merge,
     seriesType = H.seriesType,
     relativeLength = H.relativeLength,
 
@@ -366,6 +367,10 @@ funnel3dMethods = H.merge(RendererProto.elements3d.cuboid, {
     sideGroups: [
         'upperGroup', 'lowerGroup'
     ],
+    sideParts: {
+        upperGroup: ['frontUpper', 'backUpper', 'rightUpper'],
+        lowerGroup: ['frontLower', 'backLower', 'rightLower']
+    },
     pathType: 'funnel3d',
 
     // override opacity and color setters to control opacity
@@ -422,39 +427,154 @@ funnel3dMethods = H.merge(RendererProto.elements3d.cuboid, {
 
     fillSetter: function (fill) {
         // extract alpha channel to use the opacitySetter
-        var fillColor = color(fill),
-            alpha = fillColor.rgba[3];
+        var funnel3d = this,
+            fillColor = color(fill),
+            alpha = fillColor.rgba[3],
+            partsWithColor = {
+                // standard color for top and bottom
+                top: color(fill).brighten(0.1).get(),
+                bottom: color(fill).brighten(-0.1).get()
+            };
 
         if (alpha < 1) {
             fillColor.rgba[3] = 1;
             fillColor = fillColor.get('rgb');
 
             // set opacity through the opacitySetter
-            this.attr({
+            funnel3d.attr({
                 opacity: alpha
             });
         } else {
-            // use default for full opacity or gradients
+            // use default for full opacity
             fillColor = fill;
         }
 
-        this.singleSetterForParts('fill', null, {
-            frontUpper: fillColor,
-            backUpper: fillColor,
-            rightUpper: fillColor,
-            frontLower: fillColor,
-            backLower: fillColor,
-            rightLower: fillColor,
+        // gradient support
+        if (fillColor.linearGradient) {
+            // color in steps, as each gradient will generate a key
+            funnel3d.sideGroups.forEach(function (sideGroupName) {
+                var box = funnel3d[sideGroupName].gradientBox,
+                    gradient = fillColor.linearGradient,
+                    alteredGradient = merge(fillColor, {
+                        linearGradient: {
+                            x1: box.x + gradient.x1 * box.width,
+                            y1: box.y + gradient.y1 * box.height,
+                            x2: box.x + gradient.x2 * box.width,
+                            y2: box.y + gradient.y2 * box.height
+                        }
+                    });
 
-            // standard color for top and bottom
-            top: color(fill).brighten(0.1).get(),
-            bottom: color(fill).brighten(-0.1).get()
-        });
+                funnel3d.sideParts[sideGroupName].forEach(function (partName) {
+                    partsWithColor[partName] = alteredGradient;
+                });
+            });
+        } else {
+            merge(true, partsWithColor, {
+                frontUpper: fillColor,
+                backUpper: fillColor,
+                rightUpper: fillColor,
+
+                frontLower: fillColor,
+                backLower: fillColor,
+                rightLower: fillColor
+            });
+
+            if (fillColor.radialGradient) {
+                funnel3d.sideGroups.forEach(function (sideGroupName) {
+                    var gradBox = funnel3d[sideGroupName].gradientBox,
+                        centerX = gradBox.x + gradBox.width / 2,
+                        centerY = gradBox.y + gradBox.height / 2,
+                        diameter = Math.min(gradBox.width, gradBox.height);
+
+                    funnel3d.sideParts[sideGroupName].forEach(
+                        function (partName) {
+                            funnel3d[partName].setRadialReference([
+                                centerX, centerY, diameter
+                            ]);
+                        }
+                    );
+                });
+            }
+        }
+
+        funnel3d.singleSetterForParts('fill', null, partsWithColor);
 
         // fill for animation getter (#6776)
-        this.color = this.fill = fill;
+        funnel3d.color = funnel3d.fill = fill;
 
-        return this;
+        // change gradientUnits to userSpaceOnUse for linearGradient
+        if (fillColor.linearGradient) {
+            [funnel3d.frontLower, funnel3d.frontUpper].forEach(function (part) {
+                var elem = part.element,
+                    grad = elem && funnel3d.renderer.gradients[elem.gradient];
+
+                if (grad && grad.attr('gradientUnits') !== 'userSpaceOnUse') {
+                    grad.attr({
+                        gradientUnits: 'userSpaceOnUse'
+                    });
+                }
+            });
+        }
+
+        return funnel3d;
+    },
+
+    adjustForGradient: function () {
+        var funnel3d = this,
+            bbox;
+
+        funnel3d.sideGroups.forEach(function (sideGroupName) {
+            // use common extremes for groups for matching gradients
+            var topLeftEdge = {
+                    x: Number.MAX_VALUE,
+                    y: Number.MAX_VALUE
+                },
+                bottomRightEdge = {
+                    x: -Number.MAX_VALUE,
+                    y: -Number.MAX_VALUE
+                };
+
+            // get extremes
+            funnel3d.sideParts[sideGroupName].forEach(function (partName) {
+                var part = funnel3d[partName];
+
+                bbox = part.getBBox(true);
+                topLeftEdge = {
+                    x: Math.min(topLeftEdge.x, bbox.x),
+                    y: Math.min(topLeftEdge.y, bbox.y)
+                };
+                bottomRightEdge = {
+                    x: Math.max(bottomRightEdge.x, bbox.x + bbox.width),
+                    y: Math.max(bottomRightEdge.y, bbox.y + bbox.height)
+                };
+            });
+
+            // store for color fillSetter
+            funnel3d[sideGroupName].gradientBox = {
+                x: topLeftEdge.x,
+                width: bottomRightEdge.x - topLeftEdge.x,
+                y: topLeftEdge.y,
+                height: bottomRightEdge.y - topLeftEdge.y
+            };
+        });
+    },
+
+    zIndexSetter: function () {
+        // this.added won't work, because zIndex is set after the prop is set,
+        // but before the graphic is really added
+        if (this.finishedOnAdd) {
+            this.adjustForGradient();
+        }
+
+        // run default
+        return this.renderer.Element.prototype.zIndexSetter.apply(
+            this, arguments
+        );
+    },
+
+    onAdd: function () {
+        this.adjustForGradient();
+        this.finishedOnAdd = true;
     }
 });
 
@@ -462,7 +582,12 @@ RendererProto.elements3d.funnel3d = funnel3dMethods;
 
 RendererProto.funnel3d = function (shapeArgs) {
     var renderer = this,
-        funnel3d = renderer.element3d('funnel3d', shapeArgs);
+        funnel3d = renderer.element3d('funnel3d', shapeArgs),
+        // hide stroke for Firefox
+        strokeAttrs = {
+            'stroke-width': 1,
+            stroke: 'none'
+        };
 
     // create groups for sides for oppacity setter
     funnel3d.upperGroup = renderer.g('funnel3d-upper-group').attr({
@@ -474,6 +599,7 @@ RendererProto.funnel3d = function (shapeArgs) {
         funnel3d.backUpper,
         funnel3d.rightUpper
     ].forEach(function (upperElem) {
+        upperElem.attr(strokeAttrs);
         upperElem.add(funnel3d.upperGroup);
     });
 
@@ -486,6 +612,7 @@ RendererProto.funnel3d = function (shapeArgs) {
         funnel3d.backLower,
         funnel3d.rightLower
     ].forEach(function (lowerElem) {
+        lowerElem.attr(strokeAttrs);
         lowerElem.add(funnel3d.lowerGroup);
     });
 
