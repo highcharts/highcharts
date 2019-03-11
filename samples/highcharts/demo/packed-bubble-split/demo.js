@@ -16,7 +16,9 @@ Highcharts.chart('container', {
             minSize: '20%',
             maxSize: '80%',
             layoutAlgorithm: {
-                splitSeries: false
+                splitSeries: true,
+                seriesInteraction: false,
+                dragBetweenSeries: true
             },
             dataLabels: {
                 format: '{point.name}',
