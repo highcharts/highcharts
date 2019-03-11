@@ -5,6 +5,7 @@
 /* eslint no-undefined: 0 */
 
 const Gulp = require('gulp');
+const Path = require('path');
 
 /* *
  *
@@ -15,9 +16,12 @@ const Gulp = require('gulp');
 const BUILD_PROPERTIES_DATE_REGEXP = (
     /highcharts\.product\.date\s*=\s*([^\s]*)/m
 );
+
 const BUILD_PROPERTIES_VERSION_REGEXP = (
     /highcharts\.product\.version\s*=\s*([^\s]*)/m
 );
+
+const TARGET_FILE = Path.join('build', 'dist', 'product.json');
 
 /* *
  *
@@ -33,9 +37,10 @@ function task() {
 
     const Fs = require('fs');
     const LogLib = require('./lib/log');
-    const Path = require('path');
 
     return new Promise(resolve => {
+
+        LogLib.message('Generating', TARGET_FILE + '...');
 
         const buildProperties = Fs.readFileSync('build.properties');
         const packageJson = JSON.stringify(
@@ -62,7 +67,7 @@ function task() {
         );
 
         Fs.writeFileSync(
-            Path.join('build/dist/product.js'),
+            TARGET_FILE,
             (
                 'var product = ' + JSON.stringify({
                     Highcharts: { date, nr },
@@ -73,7 +78,7 @@ function task() {
             )
         );
 
-        LogLib.success('Created build/dist/product.json');
+        LogLib.success('Created', TARGET_FILE);
 
         resolve();
     });

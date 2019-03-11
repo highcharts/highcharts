@@ -10,7 +10,9 @@ const Gulp = require('gulp');
  *
  * */
 
-const SOURCE_DIRECTORY = './ts';
+const SOURCE_GLOBS = [
+    'ts/**/*'
+];
 
 /* *
  *
@@ -27,18 +29,21 @@ function task() {
 
     const LogLib = require('./lib/log');
 
-    require('./tsdoc.js');
+    return new Promise(resolve => {
 
-    Gulp.task('tsdoc')();
+        require('./tsdoc.js');
 
-    LogLib.warn('Watching', SOURCE_DIRECTORY, '...');
+        const watchProcess = Gulp.watch(SOURCE_GLOBS, Gulp.task('tsdoc'));
 
-    Gulp.watch(
-        [
-            SOURCE_DIRECTORY + '/**/*'
-        ],
-        Gulp.task('tsdoc')
-    );
+        watchProcess.on(
+            'change',
+            filePath => LogLib.warn('Modified', filePath)
+        );
+
+        LogLib.warn('Watching', SOURCE_GLOBS[0] + '...');
+
+        resolve();
+    });
 }
 
-Gulp.task('tsdoc-watch', task);
+Gulp.task('tsdoc-watch', Gulp.series('tsdoc', task));

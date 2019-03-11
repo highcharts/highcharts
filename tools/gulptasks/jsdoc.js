@@ -22,9 +22,13 @@ function task() {
 
     return new Promise(resolve => {
 
-        LogLib.message(
-            'Hint: Run the `jsdoc-watch` task to start the JSDoc server.'
-        );
+        LogLib.success('Created API documentation');
+
+        if (!process.argv.includes('jsdoc-watch')) {
+            LogLib.message(
+                'Hint: Run the `jsdoc-watch` task to start the JSDoc server.'
+            );
+        }
 
         resolve();
     });

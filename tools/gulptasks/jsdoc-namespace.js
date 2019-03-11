@@ -3,6 +3,27 @@
  */
 
 const Gulp = require('gulp');
+const Path = require('path');
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const TREE_FILE = 'tree-namespace.json';
+
+const TSCONFIG_FILE = Path.join('test', 'typescript', 'tsconfig.json');
+
+const TARGET_DIRECTORIES = [
+    'gantt',
+    'highcharts',
+    'highstock',
+    'highmaps'
+].map(
+    directoryName => Path.join('build', 'api', directoryName)
+);
+
 
 /* *
  *
@@ -23,15 +44,12 @@ function task() {
     const Fs = require('fs');
     const jsdoc3 = require('gulp-jsdoc3');
     const LogLib = require('./lib/log');
-    const Path = require('path');
 
     return new Promise((resolve, reject) => {
 
-        const dtsPath = 'test/typescript';
-
         const codeFiles = JSON
-            .parse(Fs.readFileSync(Path.join(dtsPath, 'tsconfig.json'))).files
-            .map(file => Path.join(dtsPath, file))
+            .parse(Fs.readFileSync(TSCONFIG_FILE)).files
+            .map(file => Path.join(Path.dirname(TSCONFIG_FILE), file))
             .filter(file => (
                 file.indexOf('test') !== 0 &&
                 file.indexOf('global.d.ts') === -1 &&
@@ -39,28 +57,25 @@ function task() {
             ))
             .map(file => file.replace(/.d.ts$/, '.src.js'));
 
-        const productFolders = [
-                'gantt',
-                'highcharts',
-                'highstock',
-                'highmaps'
-            ],
-            gulpOptions = [codeFiles, { read: false }],
+        const gulpOptions = [codeFiles, { read: false }],
             jsdoc3Options = {
                 plugins: [
-                    'node_modules/highcharts-documentation-generators/' +
-                    'jsdoc/plugins/highcharts.namespace'
+                    Path.join(
+                        'node_modules', 'highcharts-documentation-generators',
+                        'jsdoc', 'plugins', 'highcharts.namespace'
+                    )
                 ]
             };
 
         if (codeFiles.length === 0) {
-            LogLib.failure('No files in tsconfig.json found.');
-            resolve([]);
+            reject(new Error('No files found in', TSCONFIG_FILE));
+            return;
         }
 
-        LogLib.message('Generating tree-namespace.json...');
+        LogLib.message('Generating', TREE_FILE + '...');
 
-        Gulp.src(...gulpOptions)
+        Gulp
+            .src(...gulpOptions)
             .pipe(jsdoc3(jsdoc3Options, error => {
 
                 if (error) {
@@ -69,13 +84,18 @@ function task() {
                 }
 
                 Promise
-                    .all(productFolders.map(
-                        productFolder => FileSystem.copyFile(
-                            'tree-namespace.json',
-                            `build/api/${productFolder}/tree-namespace.json`
+                    .all(
+                        TARGET_DIRECTORIES.map(
+                            targetDirectory => FileSystem.copyFile(
+                                TREE_FILE,
+                                Path.join(
+                                    targetDirectory,
+                                    Path.basename(TREE_FILE)
+                                )
+                            )
                         )
-                    ))
-                    .then(() => LogLib.success('Created tree-namespace.json'))
+                    )
+                    .then(() => LogLib.success('Created', TREE_FILE))
                     .then(resolve)
                     .catch(reject);
             }));

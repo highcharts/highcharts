@@ -21,7 +21,7 @@ const WATCH_GLOBS = [
  * */
 
 /**
- * Continuesly watching sources to restart the `tsdoc` task.
+ * Continuesly watching sources to restart the `scripts-js` task.
  *
  * @return {Promise<void>}
  *         Promise to keep
@@ -32,10 +32,9 @@ function task() {
 
     return new Promise(resolve => {
 
-        require('./jsdoc.js');
-        require('./jsdoc-server');
+        require('./scripts-js.js');
 
-        const watchProcess = Gulp.watch(WATCH_GLOBS, Gulp.task('jsdoc'));
+        const watchProcess = Gulp.watch(WATCH_GLOBS, Gulp.task('scripts-js'));
 
         watchProcess.on(
             'change',
@@ -44,12 +43,10 @@ function task() {
 
         LogLib.warn('Watching', WATCH_GLOBS[0], '...');
 
-        Gulp.task('jsdoc-server')();
-
         resolve();
     });
 }
 
-require('./jsdoc.js');
+require('./scripts-js.js');
 
-Gulp.task('jsdoc-watch', Gulp.series('jsdoc', task));
+Gulp.task('scripts-watch', Gulp.series('scripts-js', task));

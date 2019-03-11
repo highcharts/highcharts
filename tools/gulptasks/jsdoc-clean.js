@@ -20,9 +20,13 @@ function task() {
 
     const ProcessLib = require('./lib/process');
 
-    return ProcessLib
-        .exec('rm -rf build/api')
-        .then(() => {});
+    return new Promise((resolve, reject) => {
+
+        ProcessLib
+            .exec('rm -rf build/api')
+            .then(resolve)
+            .catch(reject);
+    });
 }
 
 Gulp.task('jsdoc-clean', task);

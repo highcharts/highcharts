@@ -2,6 +2,34 @@
  * Copyright (C) Highsoft AS
  */
 
+const Gulp = require('gulp');
+
+/* *
+ *
+ *  Tasks
+ *
+ * */
+
+/**
+ * @return {Promise<void>}
+ *         Promise to keep
+ */
+function task() {
+
+    const ProcessLib = require('./lib/process');
+
+    return new Promise((resolve, reject) => {
+
+        ProcessLib
+            .exec('npx tsc --project ts')
+            .then(() => resolve())
+            .catch(reject);
+    });
+}
+
+Gulp.task('scripts-ts', task);
+
+
 // const FS = require('fs');
 // const Glob = require('glob');
 // const Path = require('path');
@@ -75,24 +103,3 @@ module.exports = function () {
         });
 };
 */
-
-const Gulp = require('gulp');
-
-/* *
- *
- *  Tasks
- *
- * */
-
-/**
- * @return {Promise<string>}
- *         Execute promise
- */
-function task() {
-
-    const ProcessLib = require('./lib/process');
-
-    return ProcessLib.exec('npx tsc --project ts');
-}
-
-Gulp.task('tsc', task);

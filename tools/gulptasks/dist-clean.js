@@ -20,9 +20,13 @@ function task() {
 
     const ProcessLib = require('./lib/process');
 
-    return ProcessLib
-        .exec('rm -rf build/dist')
-        .then(() => {});
+    return new Promise((resolve, reject) => {
+
+        ProcessLib
+            .exec('rm -rf build/dist')
+            .then(() => resolve())
+            .catch(reject);
+    });
 }
 
 Gulp.task('dist-clean', task);

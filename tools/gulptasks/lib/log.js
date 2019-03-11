@@ -105,8 +105,8 @@ function starting(text) {
  *
  * @return {void}
  */
-function success(text) {
-    console.info(format(text, 'green'));
+function success(...text) {
+    console.info(format(text.join(' '), 'green'));
 }
 
 /**

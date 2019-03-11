@@ -3,6 +3,27 @@
  */
 
 const Gulp = require('gulp');
+const Path = require('path');
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const TARGET_DIRECTORY = 'code';
+
+const FILES_TO_KEEP = [
+    ['.gitignore'],
+    ['.htaccess'],
+    ['css', 'readme.md'],
+    ['js', 'modules', 'readme.md'],
+    ['js', 'readme.md'],
+    ['modules', 'readme.md'],
+    ['readme.txt']
+].map(
+    path => Path.join(TARGET_DIRECTORY, ...path)
+);
 
 /* *
  *
@@ -18,32 +39,23 @@ const Gulp = require('gulp');
  */
 function task() {
 
-    const Fs = require('fs');
-    const FsLib = require('./lib/fs');
+    const FS = require('fs');
+    const FSLib = require('./lib/fs');
     const LogLib = require('./lib/log');
-    const Path = require('path');
 
     return new Promise((resolve, reject) => {
 
-        const CODE_DIRECTORY = 'code';
-
-        const filesToKeep = [
-            ['.gitignore'], ['.htaccess'], ['css', 'readme.md'],
-            ['js', 'modules', 'readme.md'], ['js', 'readme.md'],
-            ['modules', 'readme.md'], ['readme.txt']
-        ].map(
-            path => Path.join(CODE_DIRECTORY, ...path)
-        );
-
-        const filesToDelete = FsLib
-            .getFilePaths(CODE_DIRECTORY, true)
-            .filter(filePath => filesToKeep.indexOf(filePath) === -1);
+        const filesToDelete = FSLib
+            .getFilePaths(TARGET_DIRECTORY, true)
+            .filter(filePath => FILES_TO_KEEP.indexOf(filePath) === -1);
 
         try {
 
-            filesToDelete.forEach(filePath => Fs.unlinkSync(filePath));
+            LogLib.message('Cleaning', TARGET_DIRECTORY, '...');
 
-            LogLib.success('Cleaned ' + CODE_DIRECTORY);
+            filesToDelete.forEach(filePath => FS.unlinkSync(filePath));
+
+            LogLib.success('Cleaned', TARGET_DIRECTORY);
 
             resolve();
         } catch (catchedError) {

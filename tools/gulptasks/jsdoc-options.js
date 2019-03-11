@@ -3,6 +3,7 @@
  */
 
 const Gulp = require('gulp');
+const Path = require('path');
 
 /* *
  *
@@ -10,23 +11,27 @@ const Gulp = require('gulp');
  *
  * */
 
-const FILES = [
-    './js/annotations',
-    './js/annotations/types',
-    './js/indicators',
-    './js/modules',
-    './js/modules/networkgraph',
-    './js/modules/sonification',
-    './js/parts',
-    './js/parts-3d',
-    './js/parts-more',
-    './js/parts-map',
-    './js/parts-gantt'
-];
+const SOURCE_DIRECTORY = 'js';
 
-const SOURCE_FILE = 'tree.json';
+const SOURCE_FILES = [
+    ['annotations'],
+    ['annotations', 'types'],
+    ['indicators'],
+    ['modules'],
+    ['modules', 'networkgraph'],
+    ['modules', 'sonification'],
+    ['parts'],
+    ['parts-3d'],
+    ['parts-more'],
+    ['parts-map'],
+    ['parts-gantt']
+].map(
+    filePath => Path.join(SOURCE_DIRECTORY, ...filePath)
+);
 
-const TARGET_DIRECTORY = 'build/api';
+const TARGET_DIRECTORY = Path.join('build', 'api');
+
+const TREE_FILE = 'tree.json';
 
 /* *
  *
@@ -50,7 +55,7 @@ function createApiDocumentation() {
 
         LogLib.message('Generating', TARGET_DIRECTORY + '...');
 
-        const sourceJSON = JSON.parse(FS.readFileSync(SOURCE_FILE));
+        const sourceJSON = JSON.parse(FS.readFileSync(TREE_FILE));
 
         apiDocs(sourceJSON, TARGET_DIRECTORY, true, error => {
 
@@ -80,15 +85,17 @@ function createTreeJson() {
 
         const jsDocConfig = {
             plugins: [
-                './node_modules/highcharts-documentation-generators/' +
-                'jsdoc/plugins/highcharts.jsdoc'
+                Path.join(
+                    'node_modules', 'highcharts-documentation-generators',
+                    'jsdoc', 'plugins', 'highcharts.jsdoc'
+                )
             ]
         };
 
-        LogLib.success('Generating', SOURCE_FILE + '...');
+        LogLib.success('Generating', TREE_FILE + '...');
 
         Gulp
-            .src(FILES, { read: false })
+            .src(SOURCE_FILES, { read: false })
             .pipe(gulpJSDoc(
                 jsDocConfig,
                 error => {
@@ -96,7 +103,7 @@ function createTreeJson() {
                         LogLib.failure(error);
                         reject(error);
                     } else {
-                        LogLib.success('Created', SOURCE_FILE);
+                        LogLib.success('Created', TREE_FILE);
                         resolve();
                     }
                 }
@@ -116,15 +123,15 @@ function testTreeJson() {
 
     return new Promise(resolve => {
 
-        if (!FS.existsSync(SOURCE_FILE)) {
-            throw new Error(SOURCE_FILE + ' file not found.');
+        if (!FS.existsSync(TREE_FILE)) {
+            throw new Error(TREE_FILE + ' file not found.');
         }
 
-        const treeJson = JSON.parse(FS.readFileSync(SOURCE_FILE, 'utf8'));
+        const treeJson = JSON.parse(FS.readFileSync(TREE_FILE, 'utf8'));
 
         if (Object.keys(treeJson.plotOptions.children).length < 66) {
             throw new Error(
-                SOURCE_FILE + ' file must contain at least 66 series types'
+                TREE_FILE + ' file must contain at least 66 series types'
             );
         } else {
             resolve();

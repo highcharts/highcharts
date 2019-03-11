@@ -3,6 +3,7 @@
  */
 
 const Gulp = require('gulp');
+const Path = require('path');
 
 /* *
  *
@@ -20,6 +21,8 @@ const MIMES = {
     svg: 'image/svg+xml',
     xml: 'application/xml'
 };
+
+const SOURCE_PATH = Path.join(__dirname, '..', '..', 'build', 'api');
 
 /* *
  *
@@ -92,13 +95,11 @@ function task() {
     const FS = require('fs');
     const HTTP = require('http');
     const LogLib = require('./lib/log');
-    const Path = require('path');
     const URL = require('url');
 
     return new Promise(resolve => {
 
         const port = 9005;
-        const sourcePath = Path.join(__dirname, '..', '..', 'build', 'api');
 
         HTTP
             .createServer((request, response) => {
@@ -143,7 +144,7 @@ function task() {
 
                 FS
                     .readFile(
-                        sourcePath + path + file,
+                        SOURCE_PATH + path + file,
                         (error, data) => {
                             if (error) {
                                 response404(response);

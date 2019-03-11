@@ -10,39 +10,33 @@ const Gulp = require('gulp');
  *
  * */
 
-/**
- * Creates distribution files
- *
- * @param {Function} done
- *        Gulp done callback
- *
- * @return {any}
- *         Return of the task series
- */
-function task(done) {
+require('./dist-ant');
+require('./dist-clean');
+require('./dist-copy');
+require('./dist-examples');
+require('./dist-productjs');
+require('./jsdoc-dts');
+require('./lint-dts');
+require('./lint-js');
+require('./scripts-clean');
+require('./scripts-compile');
+require('./scripts-css');
+require('./scripts-js');
 
-    require('./dist-ant');
-    require('./dist-copy');
-    require('./dist-examples');
-    require('./dist-productjs');
-    require('./jsdoc-namespace');
-
-    return Gulp.series(
+Gulp.task(
+    'dist',
+    Gulp.series(
+        'lint-js',
         'scripts-clean',
-        'styles',
-        'scripts',
-        'lint',
-        'compile',
+        'scripts-css',
+        'scripts-js',
+        'scripts-compile',
         'dist-clean',
         'dist-copy',
         'dist-examples',
         'dist-productjs',
-        'jsdoc-namespace',
-        'jsdoc-options',
-        'dts',
-        'dtsLint',
+        'jsdoc-dts',
+        'lint-dts',
         'dist-ant'
-    )(done);
-}
-
-Gulp.task('dist', task);
+    )
+);

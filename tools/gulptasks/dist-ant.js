@@ -20,9 +20,13 @@ function task() {
 
     const ProcessLib = require('./lib/process');
 
-    return ProcessLib
-        .exec('npx ant dist')
-        .then(() => {});
+    return new Promise((resolve, reject) => {
+
+        ProcessLib
+            .exec('npx ant dist')
+            .then(resolve)
+            .catch(reject);
+    });
 }
 
 Gulp.task('dist-ant', task);

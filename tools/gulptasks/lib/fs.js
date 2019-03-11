@@ -168,6 +168,37 @@ function getFilePaths(directoryPath, includeSubDirectories) {
     return filePaths;
 }
 
+
+/**
+ * GZIPs a single file.
+ *
+ * @todo Use in dist task.
+ *
+ * @param {string} fileSourcePath
+ *        Path to source file.
+ *
+ * @param {string} fileTargetPath
+ *        Path to target file.
+ *
+ * @return {Promise<string>}
+ *         Promise to keep
+ */
+function gzipFile(fileSourcePath, fileTargetPath) {
+
+    const FS = require('fs');
+    const ZLib = require('zlib');
+
+    return new Promise((resolve, reject) => {
+
+        FS
+            .createReadStream(fileSourcePath)
+            .pipe(ZLib.createGzip())
+            .pipe(FS.createWriteStream(fileTargetPath))
+            .on('close', () => resolve(fileTargetPath))
+            .on('error', reject);
+    });
+}
+
 /* *
  *
  *  Exports
@@ -178,5 +209,6 @@ module.exports = {
     copyAllFiles,
     copyFile,
     getDirectoryPaths,
-    getFilePaths
+    getFilePaths,
+    gzipFile
 };

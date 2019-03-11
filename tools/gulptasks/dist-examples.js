@@ -5,12 +5,19 @@
 /* eslint no-use-before-define: 0 */
 
 const Gulp = require('gulp');
+const Path = require('path');
 
 /* *
  *
  *  Constants
  *
  * */
+
+const SOURCE_DIRECTORY = 'samples';
+
+const TARGET_DIRECTORY = Path.join('build', 'dist');
+
+const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
 
@@ -58,15 +65,16 @@ function assembleSample(template, variables) {
  */
 function createExamples(title, sourcePath, targetPath, template) {
 
-    const Fs = require('fs');
-    const FsLib = require('./lib/fs');
+    const FS = require('fs');
+    const FSLib = require('./lib/fs');
     const LogLib = require('./lib/log');
     const MkDirP = require('mkdirp');
-    const Path = require('path');
 
     return new Promise(resolve => {
 
-        const directoryPaths = FsLib.getDirectoryPaths(sourcePath);
+        const directoryPaths = FSLib.getDirectoryPaths(sourcePath);
+
+        LogLib.success('Generating', targetPath + '...');
 
         directoryPaths.forEach(directoryPath => {
 
@@ -78,8 +86,8 @@ function createExamples(title, sourcePath, targetPath, template) {
                 (obj, ext) => {
                     path = Path.join(directoryPath, 'demo.' + ext);
                     obj[ext] = (
-                        Fs.existsSync(path) &&
-                        Fs.readFileSync(path).toString() ||
+                        FS.existsSync(path) &&
+                        FS.readFileSync(path).toString() ||
                         ''
                     );
                     return obj;
@@ -95,18 +103,18 @@ function createExamples(title, sourcePath, targetPath, template) {
 
             MkDirP.sync(path);
 
-            Fs.writeFileSync(
+            FS.writeFileSync(
                 Path.join(path, 'index.htm'),
                 convertURLToLocal(sample)
             );
         });
 
-        FsLib.copyFile(
+        FSLib.copyFile(
             Path.join(sourcePath, 'index.htm'),
             Path.join(targetPath, '..', 'index.htm')
         );
 
-        LogLib.success('Created ' + targetPath);
+        LogLib.success('Created', targetPath);
 
         resolve();
     });
@@ -156,8 +164,7 @@ function convertURLToLocal(str) {
  */
 function task() {
 
-    const Fs = require('fs');
-    const Path = require('path');
+    const FS = require('fs');
 
     return new Promise((resolve, reject) => {
 
@@ -180,8 +187,8 @@ function task() {
                 title: 'Highcharts Gantt'
             }
         };
-        const template = Fs
-            .readFileSync('samples/template-example.htm')
+        const template = FS
+            .readFileSync(TEMPLATE_FILE)
             .toString();
 
         Object
@@ -189,13 +196,18 @@ function task() {
             .forEach(product => {
                 promises.push(createExamples(
                     samplesSubfolder[product].title,
-                    Path.join('samples', ...samplesSubfolder[product].path),
-                    Path.join('build', 'dist', product, 'examples'),
+                    Path.join(
+                        SOURCE_DIRECTORY, ...samplesSubfolder[product].path
+                    ),
+                    Path.join(TARGET_DIRECTORY, product, 'examples'),
                     template
                 ));
             });
 
-        Promise.all(promises).then(resolve).catch(reject);
+        Promise
+            .all(promises)
+            .then(resolve)
+            .catch(reject);
     });
 }
 
