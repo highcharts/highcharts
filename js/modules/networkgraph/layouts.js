@@ -15,34 +15,7 @@ var pick = H.pick,
     defined = H.defined;
 
 H.layouts = {
-    'reingold-fruchterman': function (options) {
-        this.options = options;
-        this.nodes = [];
-        this.links = [];
-        this.series = [];
-
-        this.box = {
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0
-        };
-
-        this.setInitialRendering(true);
-
-        this.integration = H.networkgraphIntegrations[options.integration];
-
-        this.attractiveForce = pick(
-            options.attractiveForce,
-            this.integration.attractiveForceFunction
-        );
-
-        this.repulsiveForce = pick(
-            options.repulsiveForce,
-            this.integration.repulsiveForceFunction
-        );
-
-        this.approximation = options.approximation;
+    'reingold-fruchterman': function () {
     }
 };
 
@@ -53,6 +26,35 @@ H.extend(
     */
     H.layouts['reingold-fruchterman'].prototype,
     {
+        init: function (options) {
+            this.options = options;
+            this.nodes = [];
+            this.links = [];
+            this.series = [];
+
+            this.box = {
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0
+            };
+
+            this.setInitialRendering(true);
+
+            this.integration = H.networkgraphIntegrations[options.integration];
+
+            this.attractiveForce = pick(
+                options.attractiveForce,
+                this.integration.attractiveForceFunction
+            );
+
+            this.repulsiveForce = pick(
+                options.repulsiveForce,
+                this.integration.repulsiveForceFunction
+            );
+
+            this.approximation = options.approximation;
+        },
         run: function () {
             var layout = this,
                 series = this.series,
@@ -562,18 +564,18 @@ H.extend(
             node.plotX = Math.max(
                 Math.min(
                     node.plotX,
-                    box.width
+                    box.width - node.marker.radius
                 ),
-                box.left
+                box.left + node.marker.radius
             );
 
             // Limit Y-coordinates:
             node.plotY = Math.max(
                 Math.min(
                     node.plotY,
-                    box.height
+                    box.height - node.marker.radius
                 ),
-                box.top
+                box.top + node.marker.radius
             );
         },
         /**
