@@ -1,3 +1,18 @@
+// Give the points a 3D feel by adding a radial gradient
+Highcharts.setOptions({
+    colors: Highcharts.getOptions().colors.map(function (color) {
+        return {
+            linearGradient: { x1: 0, x2: 1, y1: 1, y2: 1 },
+            stops: [
+                [0, Highcharts.Color(color).brighten(-0.2).get('rgb')],
+                [0.5, color],
+                [1, Highcharts.Color(color).brighten(-0.2).get('rgb')]
+            ]
+        };
+    })
+});
+
+// Set up the chart
 Highcharts.chart('container', {
     chart: {
         type: 'funnel3d',
