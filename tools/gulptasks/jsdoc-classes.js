@@ -73,7 +73,7 @@ const SOURCE_FILES = [
 const TARGET_DIRECTORY = 'build/api/class-reference';
 
 const TEMPLATE_DIRECTORY = (
-    'node_modules/highcharts-documentation-generator/docstrap'
+    'node_modules/highcharts-documentation-generators/docstrap'
 );
 
 /* *
@@ -100,7 +100,7 @@ function task() {
                 theme: 'highsoft'
             },
             opts: {
-                TARGET_DIRECTORY,
+                destination: TARGET_DIRECTORY,
                 private: false,
                 template: TEMPLATE_DIRECTORY + '/template'
             },
@@ -116,14 +116,14 @@ function task() {
             }
         };
 
-        LogLib.message('Generating Class documentation...');
+        LogLib.message('Generating', TARGET_DIRECTORY + '...');
 
         Gulp.src(SOURCE_FILES, { read: false })
             .pipe(gulpJSDoc(jsDocConfig, function (error) {
                 if (error) {
                     reject(error);
                 } else {
-                    LogLib.success('Generating Class documentation done.');
+                    LogLib.success('Created', TARGET_DIRECTORY);
                     resolve();
                 }
             }));

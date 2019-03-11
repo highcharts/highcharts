@@ -98,46 +98,57 @@ function task() {
     return new Promise(resolve => {
 
         const port = 9005;
-        const sourcePath = Path.join(__dirname, 'build', 'api');
+        const sourcePath = Path.join(__dirname, '..', '..', 'build', 'api');
 
         HTTP
             .createServer((request, response) => {
 
                 // eslint-disable-next-line node/no-deprecated-api
-                const path = URL.parse(request.url, true).pathname;
-
-                let redirect = false;
+                let path = URL.parse(request.url, true).pathname;
 
                 if (path === '/highcharts' || path === '/' || path === '') {
-                    redirect = '/highcharts/';
-                } else if (path === '/highstock') {
-                    redirect = '/highstock/';
-                } else if (path === '/highmaps') {
-                    redirect = '/highmaps/';
-                }
-
-                if (redirect) {
-                    response302(redirect);
+                    response302(response, '/highcharts/');
                     return;
                 }
-
+                if (path === '/highstock') {
+                    response302(response, '/highstock/');
+                    return;
+                }
+                if (path === '/highmaps') {
+                    response302(response, '/highmaps/');
+                    return;
+                }
                 if (request.method !== 'GET') {
                     response404(response);
                     return;
                 }
 
-                const file = (Path.basename(path) || 'index.html');
+                let file = Path.basename(path);
+
+                if (path[path.length - 1] === '/') {
+                    file = 'index.html';
+                } else {
+                    file = Path.basename(path);
+                    path = Path.dirname(path) + '/';
+                }
+
+                let ext = Path.extname(file).substr(1);
+
+                if (!MIMES[ext]) {
+                    ext = 'html';
+                    file += '.html';
+                }
+
+                // console.log(sourcePath + path + file);
 
                 FS
                     .readFile(
-                        sourcePath + Path.dirname(path) + file,
+                        sourcePath + path + file,
                         (error, data) => {
                             if (error) {
                                 response404(response);
                             } else {
-                                response200(
-                                    response, data, Path.extname(file).substr(1)
-                                );
+                                response200(response, data, ext);
                             }
                         }
                     );

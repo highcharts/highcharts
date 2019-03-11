@@ -18,6 +18,14 @@ const WATCH_FILES = [
 
 /* *
  *
+ *  Variables
+ *
+ * */
+
+let serverRunning = false;
+
+/* *
+ *
  *  Tasks
  *
  * */
@@ -31,13 +39,26 @@ function task() {
 
     const LogLib = require('./lib/log');
 
-    require('./jsdoc.js');
+    return new Promise(resolve => {
 
-    Gulp.task('jsdoc')();
+        if (!serverRunning) {
 
-    LogLib.warn('Watching `js/`...');
+            require('./jsdoc.js');
+            require('./jsdoc-server');
 
-    Gulp.watch(WATCH_FILES, Gulp.task('jsdoc'));
+            Gulp.watch(WATCH_FILES, Gulp.task('jsdoc'));
+
+            LogLib.warn('Watching js...');
+
+            Gulp.task('jsdoc-server')();
+
+            serverRunning = true;
+        }
+
+        resolve();
+    });
 }
 
-Gulp.task('jsdoc-watch', task);
+require('./jsdoc.js');
+
+Gulp.task('jsdoc-watch', Gulp.series('jsdoc', task));

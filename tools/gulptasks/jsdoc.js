@@ -6,14 +6,6 @@ const Gulp = require('gulp');
 
 /* *
  *
- *  Variables
- *
- * */
-
-let serverRunning = false;
-
-/* *
- *
  *  Tasks
  *
  * */
@@ -26,16 +18,22 @@ let serverRunning = false;
  */
 function task() {
 
-    if (serverRunning) {
-        return;
-    }
+    const LogLib = require('./lib/log');
 
-    require('./jsdoc-server');
+    return new Promise(resolve => {
 
-    Gulp.task('jsdoc-server')();
+        LogLib.message(
+            'Hint: Run the `jsdoc-watch` task to start the JSDoc server.'
+        );
 
-    serverRunning = true;
+        resolve();
+    });
 }
+
+require('./jsdoc-clean');
+require('./jsdoc-classes');
+require('./jsdoc-namespace');
+require('./jsdoc-options');
 
 Gulp.task(
     'jsdoc',

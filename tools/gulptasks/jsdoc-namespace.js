@@ -58,11 +58,14 @@ function task() {
             resolve([]);
         }
 
+        LogLib.message('Generating tree-namespace.json...');
+
         Gulp.src(...gulpOptions)
             .pipe(jsdoc3(jsdoc3Options, error => {
 
                 if (error) {
                     reject(error);
+                    return;
                 }
 
                 Promise
@@ -72,6 +75,7 @@ function task() {
                             `build/api/${productFolder}/tree-namespace.json`
                         )
                     ))
+                    .then(() => LogLib.success('Created tree-namespace.json'))
                     .then(resolve)
                     .catch(reject);
             }));

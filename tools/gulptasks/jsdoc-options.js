@@ -43,19 +43,22 @@ const TARGET_DIRECTORY = 'build/api';
 function createApiDocumentation() {
 
     const apiDocs = require('highcharts-documentation-generators').ApiDocs;
+    const FS = require('fs');
     const LogLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
-        LogLib.message('Generating API documentation...');
+        LogLib.message('Generating', TARGET_DIRECTORY + '...');
 
-        apiDocs(SOURCE_FILE, TARGET_DIRECTORY, true, error => {
+        const sourceJSON = JSON.parse(FS.readFileSync(SOURCE_FILE));
+
+        apiDocs(sourceJSON, TARGET_DIRECTORY, true, error => {
 
             if (error) {
                 LogLib.failure(error);
                 reject(error);
             } else {
-                LogLib.success('Generating API documentation done.');
+                LogLib.success('Created', TARGET_DIRECTORY);
                 resolve();
             }
         });
@@ -82,6 +85,8 @@ function createTreeJson() {
             ]
         };
 
+        LogLib.success('Generating', SOURCE_FILE + '...');
+
         Gulp
             .src(FILES, { read: false })
             .pipe(gulpJSDoc(
@@ -91,7 +96,7 @@ function createTreeJson() {
                         LogLib.failure(error);
                         reject(error);
                     } else {
-                        LogLib.success('Created tree.json');
+                        LogLib.success('Created', SOURCE_FILE);
                         resolve();
                     }
                 }
@@ -111,15 +116,15 @@ function testTreeJson() {
 
     return new Promise(resolve => {
 
-        if (!FS.existsSync('tree.json')) {
-            throw new Error('`tree.json` file not found.');
+        if (!FS.existsSync(SOURCE_FILE)) {
+            throw new Error(SOURCE_FILE + ' file not found.');
         }
 
         const treeJson = JSON.parse(FS.readFileSync(SOURCE_FILE, 'utf8'));
 
         if (Object.keys(treeJson.plotOptions.children).length < 66) {
             throw new Error(
-                '`tree.json` file must contain at least 66 series types'
+                SOURCE_FILE + ' file must contain at least 66 series types'
             );
         } else {
             resolve();
