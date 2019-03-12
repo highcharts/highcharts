@@ -396,6 +396,7 @@ seriesType('networkgraph', 'line', {
     /**
      * Extend init with base event, which should stop simulation during update.
      * After data is updated, `chart.render` resumes the simulation.
+     * @private
      */
     init: function () {
 
@@ -413,6 +414,7 @@ seriesType('networkgraph', 'line', {
     /**
      * Extend generatePoints by adding the nodes, which are Point objects
      * but pushed to the this.nodes array.
+     * @private
      */
     generatePoints: function () {
         H.NodesMixin.generatePoints.apply(this, arguments);
@@ -442,6 +444,7 @@ seriesType('networkgraph', 'line', {
      * Extend the default marker attribs by using a non-rounded X position,
      * otherwise the nodes will jump from pixel to pixel which looks a bit jaggy
      * when approaching equilibrium.
+     * @private
      */
     markerAttribs: function (point, state) {
         var attribs = Series.prototype.markerAttribs.call(this, point, state);
@@ -452,6 +455,7 @@ seriesType('networkgraph', 'line', {
 
     /**
      * Run pre-translation and register nodes&links to the deffered layout.
+     * @private
      */
     translate: function () {
         if (!this.processedXData) {
@@ -482,6 +486,7 @@ seriesType('networkgraph', 'line', {
      * Note:
      * Animation is done through `requestAnimationFrame` directly, without
      * `Highcharts.animate()` use.
+     * @private
      */
     deferLayout: function () {
         var layoutOptions = this.options.layoutAlgorithm,
@@ -519,6 +524,7 @@ seriesType('networkgraph', 'line', {
     /**
      * Extend the render function to also render this.nodes together with
      * the points.
+     * @private
      */
     render: function () {
         var points = this.points,
@@ -573,7 +579,7 @@ seriesType('networkgraph', 'line', {
     // Draggable mode:
     /**
      * Redraw halo on mousemove during the drag&drop action.
-     *
+     * @private
      * @param {Highcharts.Point} point The point that should show halo.
      */
     redrawHalo: function (point) {
@@ -587,7 +593,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Mouse down action, initializing drag&drop mode.
-     *
+     * @private
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
      */
@@ -605,7 +611,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Mouse move action during drag&drop.
-     *
+     * @private
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
      */
@@ -652,7 +658,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Mouse up action, finalizing drag&drop.
-     *
+     * @private
      * @param {Highcharts.Point} point The point that event occured.
      */
     onMouseUp: function (point) {
@@ -668,6 +674,7 @@ seriesType('networkgraph', 'line', {
     /**
      * Basic `point.init()` and additional styles applied when
      * `series.draggable` is enabled.
+     * @private
      */
     init: function () {
         Point.prototype.init.apply(this, arguments);
@@ -696,7 +703,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Return degree of a node. If node has no connections, it still has deg=1.
-     *
+     * @private
      * @return {number}
      */
     getDegree: function () {
@@ -707,7 +714,7 @@ seriesType('networkgraph', 'line', {
     // Links:
     /**
      * Get presentational attributes of link connecting two nodes.
-     *
+     * @private
      * @return {Highcharts.SVGAttributes}
      */
     getLinkAttribues: function () {
@@ -722,6 +729,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Render link and add it to the DOM.
+     * @private
      */
     renderLink: function () {
         if (!this.graphic) {
@@ -735,6 +743,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Redraw link's path.
+     * @private
      */
     redrawLink: function () {
         var path = this.getLinkPath();
@@ -753,7 +762,7 @@ seriesType('networkgraph', 'line', {
      * Get mass fraction applied on two nodes connected to each other. By
      * default, when mass is equal to `1`, mass fraction for both nodes equal to
      * 0.5.
-     *
+     * @private
      * @return {object} For example `{ fromNode: 0.5, toNode: 0.5 }`
      */
     getMass: function () {
@@ -769,7 +778,7 @@ seriesType('networkgraph', 'line', {
 
     /**
      * Get link path connecting two nodes.
-     *
+     * @private
      * @return {Array<Highcharts.SVGPathArray>} Path: `['M', x, y, 'L', x, y]`
      */
     getLinkPath: function () {
@@ -812,8 +821,8 @@ seriesType('networkgraph', 'line', {
     /**
      * Destroy point. If it's a node, remove all links coming out of this node.
      * Then remove point from the layout.
-     *
-     * @return {undefined}
+     * @private
+     * @return {void}
      */
     destroy: function () {
         if (this.isNode) {
@@ -997,56 +1006,56 @@ addEvent(
  */
 
 /**
-  * A collection of options for the individual nodes. The nodes in a
-  * networkgraph diagram are auto-generated instances of `Highcharts.Point`,
-  * but options can be applied here and linked by the `id`.
-  *
-  * @sample highcharts/series-networkgraph/data-options/
-  *         Networkgraph diagram with node options
-  *
-  * @type      {Array<*>}
-  * @product   highcharts
-  * @apioption series.networkgraph.nodes
-  */
+ * A collection of options for the individual nodes. The nodes in a
+ * networkgraph diagram are auto-generated instances of `Highcharts.Point`,
+ * but options can be applied here and linked by the `id`.
+ *
+ * @sample highcharts/series-networkgraph/data-options/
+ *         Networkgraph diagram with node options
+ *
+ * @type      {Array<*>}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes
+ */
 
 /**
-  * The id of the auto-generated node, refering to the `from` or `to` setting of
-  * the link.
-  *
-  * @type      {string}
-  * @product   highcharts
-  * @apioption series.networkgraph.nodes.id
-  */
+ * The id of the auto-generated node, refering to the `from` or `to` setting of
+ * the link.
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.id
+ */
 
 /**
-  * The color of the auto generated node.
-  *
-  * @type      {Highcharts.ColorString}
-  * @product   highcharts
-  * @apioption series.networkgraph.nodes.color
-  */
+ * The color of the auto generated node.
+ *
+ * @type      {Highcharts.ColorString}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.color
+ */
 
 /**
-  * The color index of the auto generated node, especially for use in styled
-  * mode.
-  *
-  * @type      {number}
-  * @product   highcharts
-  * @apioption series.networkgraph.nodes.colorIndex
-  */
+ * The color index of the auto generated node, especially for use in styled
+ * mode.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.colorIndex
+ */
 
 /**
-  * The name to display for the node in data labels and tooltips. Use this when
-  * the name is different from the `id`. Where the id must be unique for each
-  * node, this is not necessary for the name.
-  *
-  * @sample highcharts/series-networkgraph/data-options/
-  *         Networkgraph diagram with node options
-  *
-  * @type      {string}
-  * @product   highcharts
-  * @apioption series.networkgraph.nodes.name
-  */
+ * The name to display for the node in data labels and tooltips. Use this when
+ * the name is different from the `id`. Where the id must be unique for each
+ * node, this is not necessary for the name.
+ *
+ * @sample highcharts/series-networkgraph/data-options/
+ *         Networkgraph diagram with node options
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.name
+ */
 
 /**
  * Mass of the node. By default, each node has mass equal to it's marker radius
