@@ -15,6 +15,7 @@ Highcharts.chart('container', {
             minSize: '20%',
             maxSize: '80%',
             dataLabels: {
+                enabled: true,
                 format: '{point.name}',
                 filter: {
                     property: 'y',

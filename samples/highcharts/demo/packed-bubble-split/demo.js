@@ -14,13 +14,18 @@ Highcharts.chart('container', {
         packedbubble: {
             useSimulation: true,
             minSize: '20%',
-            maxSize: '80%',
+            maxSize: '100%',
+            zMin: 0,
+            zMax: 1000,
             layoutAlgorithm: {
+                gravitationalConstant: 0.05,
                 splitSeries: true,
                 seriesInteraction: false,
-                dragBetweenSeries: true
+                dragBetweenSeries: true,
+                parentNodeLimit: true
             },
             dataLabels: {
+                enabled: true,
                 format: '{point.name}',
                 filter: {
                     property: 'y',

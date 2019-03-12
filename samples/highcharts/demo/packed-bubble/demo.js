@@ -13,12 +13,16 @@ Highcharts.chart('container', {
     plotOptions: {
         packedbubble: {
             useSimulation: true,
-            minSize: '20%',
-            maxSize: '80%',
+            minSize: '30%',
+            maxSize: '120%',
+            zMin: 0,
+            zMax: 1000,
             layoutAlgorithm: {
-                splitSeries: false
+                splitSeries: false,
+                gravitationalConstant: 0.02
             },
             dataLabels: {
+                enabled: true,
                 format: '{point.name}',
                 filter: {
                     property: 'y',

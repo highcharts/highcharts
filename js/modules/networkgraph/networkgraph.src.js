@@ -12,13 +12,14 @@ import '../../parts/Utilities.js';
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import '/layouts.js';
+import '/draggable-nodes.js';
+
 
 var addEvent = H.addEvent,
     defined = H.defined,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     pick = H.pick,
-    Chart = H.Chart,
     Point = H.Point,
     Series = H.Series;
 
@@ -461,6 +462,7 @@ seriesType('networkgraph', 'line', {
     deferLayout: function () {
         var layoutOptions = this.options.layoutAlgorithm,
             graphLayoutsStorage = this.chart.graphLayoutsStorage,
+            graphLayoutsLookup = this.chart.graphLayoutsLookup,
             chartOptions = this.chart.options.chart,
             layout;
 
@@ -470,6 +472,7 @@ seriesType('networkgraph', 'line', {
 
         if (!graphLayoutsStorage) {
             this.chart.graphLayoutsStorage = graphLayoutsStorage = {};
+            this.chart.graphLayoutsLookup = graphLayoutsLookup = [];
         }
 
         layout = graphLayoutsStorage[layoutOptions.type];
@@ -483,6 +486,7 @@ seriesType('networkgraph', 'line', {
                 new H.layouts[layoutOptions.type]();
 
             layout.init(layoutOptions);
+            graphLayoutsLookup.splice(layout.index, 0, layout);
         }
 
         this.layout = layout;
@@ -814,85 +818,6 @@ seriesType('networkgraph', 'line', {
     }
 });
 
-/*
- * Multiple series support:
- */
-// Clear previous layouts
-addEvent(Chart, 'predraw', function () {
-    if (this.graphLayoutsLookup) {
-        this.graphLayoutsLookup.forEach(
-            function (layout) {
-                layout.stop();
-            }
-        );
-    }
-});
-addEvent(Chart, 'render', function () {
-    if (this.graphLayoutsLookup) {
-        H.setAnimation(false, this);
-        this.graphLayoutsLookup.forEach(
-            function (layout) {
-                layout.run();
-            }
-        );
-    }
-});
-
-/*
- * Draggable mode:
- */
-addEvent(
-    Chart,
-    'load',
-    function () {
-        var chart = this,
-            mousedownUnbinder,
-            mousemoveUnbinder,
-            mouseupUnbinder;
-
-        if (chart.container) {
-            mousedownUnbinder = addEvent(
-                chart.container,
-                'mousedown',
-                function (event) {
-                    var point = chart.hoverPoint;
-                    if (
-                        point &&
-                        point.series &&
-                        point.series.hasDraggableNodes &&
-                        point.series.options.draggable
-                    ) {
-                        point.series.onMouseDown(point, event);
-                        mousemoveUnbinder = addEvent(
-                            chart.container,
-                            'mousemove',
-                            function (e) {
-                                return point &&
-                                    point.series &&
-                                    point.series.onMouseMove(point, e);
-                            }
-                        );
-                        mouseupUnbinder = addEvent(
-                            chart.container.ownerDocument,
-                            'mouseup',
-                            function (e) {
-                                mousemoveUnbinder();
-                                mouseupUnbinder();
-                                return point &&
-                                    point.series &&
-                                    point.series.onMouseUp(point, e);
-                            }
-                        );
-                    }
-                }
-            );
-        }
-
-        addEvent(chart, 'destroy', function () {
-            mousedownUnbinder();
-        });
-    }
-);
 
 /**
  * A `networkgraph` series. If the [type](#series.networkgraph.type) option is
