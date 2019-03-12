@@ -14,6 +14,41 @@ import onSeriesMixin from '../mixins/on-series.js';
 var noop = H.noop,
     seriesType = H.seriesType;
 
+// Once off, register the windbarb approximation for data grouping.This can be
+// called anywhere (not necessarily in the translate function), but must happen
+// after the data grouping module is loaded and before the wind barb series uses
+// it.
+function registerApproximation() {
+    if (H.approximations && !H.approximations.windbarb) {
+        H.approximations.windbarb = function (values, directions) {
+            var vectorX = 0,
+                vectorY = 0,
+                i,
+                len = values.length;
+
+            for (i = 0; i < len; i++) {
+                vectorX += values[i] * Math.cos(
+                    directions[i] * H.deg2rad
+                );
+                vectorY += values[i] * Math.sin(
+                    directions[i] * H.deg2rad
+                );
+            }
+
+            return [
+                // Wind speed
+                values.reduce(function (sum, value) {
+                    return sum + value;
+                }, 0) / values.length,
+                // Wind direction
+                Math.atan2(vectorY, vectorX) / H.deg2rad
+            ];
+        };
+    }
+}
+
+registerApproximation();
+
 /**
  * @private
  * @class
@@ -33,16 +68,46 @@ seriesType('windbarb', 'column'
  *
  * @extends      plotOptions.column
  * @excluding    boostThreshold, marker, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, gapSize, gapUnit, dataGrouping,
- *               linecap, shadow, stacking, step
+ *               cropThreshold, dashStyle, dragDrop, gapSize, gapUnit, linecap,
+ *               shadow, stacking, step
  * @since        6.0.0
  * @product      highcharts highstock
  * @optionparent plotOptions.windbarb
  */
     , {
+        /**
+         * Data grouping options for the wind barbs. In Highcharts, this
+         * requires the `modules/datagrouping.js` module to be loaded. In
+         * Highstock, data grouping is included.
+         *
+         * @sample  highcharts/plotoptions/windbarb-datagrouping
+         *          Wind barb with data grouping
+         *
+         * @since   7.1.0
+         * @product highcharts highstock
+         */
         dataGrouping: {
+            /**
+             * Whether to enable data grouping.
+             *
+             * @product highcharts highstock
+             */
             enabled: true,
+            /**
+             * Approximation function for the data grouping. The default
+             * returns an average of wind speed and a vector average direction
+             * weighted by wind speed.
+             *
+             * @product highcharts highstock
+             *
+             * @type {String|Function}
+             */
             approximation: 'windbarb',
+            /**
+             * The approximate data group width.
+             *
+             * @product highcharts highstock
+             */
             groupPixelWidth: 30
         },
         /**
@@ -105,40 +170,7 @@ seriesType('windbarb', 'column'
         trackerGroups: ['markerGroup'],
 
         init: function (chart, options) {
-            // Once off, register the windbarb approximation for data grouping.
-            // This can be added anywhere (not necessarily in the translate
-            // function), but must happen after the data grouping module is
-            // loaded and before the wind barb series uses it.
-            if (H.approximations && !H.approximations.windbarb) {
-                H.approximations.windbarb = function (values, directions) {
-                    var vectorX = 0,
-                        vectorY = 0,
-                        i,
-                        len = values.length;
-
-                    for (i = 0; i < len; i++) {
-                        vectorX += values[i] * Math.cos(
-                            directions[i] * H.deg2rad
-                        );
-                        vectorY += values[i] * Math.sin(
-                            directions[i] * H.deg2rad
-                        );
-                    }
-
-                    return [
-                        // Wind speed
-                        Math.round(
-                            10 *
-                            Math.sqrt(
-                                Math.pow(vectorX, 2) + Math.pow(vectorY, 2)
-                            ) /
-                            len
-                        ) / 10,
-                        // Wind direction
-                        Math.atan2(vectorY, vectorX) / H.deg2rad
-                    ];
-                };
-            }
+            registerApproximation();
             H.Series.prototype.init.call(this, chart, options);
         },
 

@@ -833,7 +833,7 @@ seriesType('pie', 'line',
 
 
                     // If the point is sliced, use special translation, else use
-                    // plot area traslation
+                    // plot area translation
                     groupTranslation = point.getTranslate();
 
                     if (!chart.styledMode) {

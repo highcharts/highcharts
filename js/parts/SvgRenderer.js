@@ -1078,7 +1078,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             'height',
             'innerR',
             'anchorX',
-            'anchorY'
+            'anchorY',
+            'clockwise'
         ].forEach(function (key) {
             wrapper[key] = pick(hash[key], wrapper[key]);
         });
@@ -2434,7 +2435,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 [].slice.call(elem.getElementsByTagName('tspan'))
             );
 
-            // Keep old methods in case of textPath update
+            // Disable some functions
             this.updateTransform = noop;
             this.applyTextOutline = noop;
 
@@ -3954,7 +3955,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *        Center Y position.
      *
      * @param {number} [r=0]
-     *        The outer radius of the arc.
+     *        The outer radius' of the arc.
      *
      * @param {number} [innerR=0]
      *        Inner radius like used in donut charts.
@@ -4510,7 +4511,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 ry, // y radius
                 0, // slanting
                 longArc, // long or short arc
-                1, // clockwise
+                pick(options.clockwise, 1), // clockwise
                 x + rx * cosEnd,
                 y + ry * sinEnd
             ];

@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
 
     chart: {
-        type: 'item'
+        type: 'dotplot'
     },
 
     title: {

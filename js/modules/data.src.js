@@ -1915,6 +1915,26 @@ Highcharts.extend(Data.prototype, {
     },
 
     /**
+     * Get the parsed data in a form that we can apply directly to the
+     * `series.data` config. Array positions can be mapped using the
+     * `series.keys` option.
+     *
+     * @example
+     * const data = Highcharts.data({
+     *   csv: document.getElementById('data').innerHTML
+     * }).getData();
+     *
+     * @function Highcharts.Data#getData
+     *
+     * @return {Array<Array<*>>} Data rows
+     */
+    getData: function () {
+        if (this.columns) {
+            return this.rowsToColumns(this.columns).slice(1);
+        }
+    },
+
+    /**
      * A hook for working directly on the parsed columns
      *
      * @function Highcharts.Data#parsed
