@@ -4258,6 +4258,7 @@ H.Series = H.seriesType(
                 pointColor ||
                 color
             );
+
             fill = (
                 pointMarkerOptions.fillColor ||
                 seriesMarkerOptions.fillColor ||
@@ -4542,7 +4543,11 @@ H.Series = H.seriesType(
             // Presentational properties
             if (!styledMode) {
                 props[0].push(
-                    options.lineColor || this.color,
+                    (
+                        options.lineColor ||
+                        this.color ||
+                        '${palette.neutralColor20}' // when colorByPoint = true
+                    ),
                     options.dashStyle
                 );
             }

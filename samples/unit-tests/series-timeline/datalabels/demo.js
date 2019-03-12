@@ -11,18 +11,17 @@ QUnit.test('Timeline: General tests.', function (assert) {
                 allowOverlap: false
             },
             type: 'timeline',
-            layoutAlgorithm: 'stripes',
             data: [{
-                date: 'Date 1',
+                name: 'Date 1',
                 label: 'Some label',
                 dataLabels: {
                     y: 50
                 }
             }, {
-                date: 'Date 2',
+                name: 'Date 2',
                 label: 'Some label'
             }, {
-                date: 'Date 3',
+                name: 'Date 3',
                 label: 'Some label'
             }]
         }]
@@ -74,7 +73,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
 
     // Add normal point to series.
     series.addPoint({
-        date: "Another Date",
+        name: "Another Date",
         label: "Some label"
     });
 
@@ -106,19 +105,19 @@ QUnit.test('Timeline: General tests.', function (assert) {
 
     // Set new series data.
     series.setData([null, {
-        date: "New Date",
+        name: "New Date",
         label: "Some new label"
     }, {
-        date: "New Date 2",
+        name: "New Date 2",
         label: "Some new label"
     }, {
-        date: "New Date 3",
+        name: "New Date 3",
         label: "Some new label"
     }, {
-        date: "New Date 4",
+        name: "New Date 4",
         label: "Some new label"
     }, {
-        date: "New Date 5",
+        name: "New Date 5",
         label: "Some new label"
     }]);
 
