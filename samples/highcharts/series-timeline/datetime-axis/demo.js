@@ -15,8 +15,7 @@ Highcharts.chart('container', {
         }
     },
     legend: {
-        maxHeight: 70,
-        itemWidth: 200
+        enabled: false
     },
     title: {
         text: 'Timeline of Space Exploration'
@@ -32,12 +31,11 @@ Highcharts.chart('container', {
     series: [{
         dataLabels: {
             allowOverlap: false,
-            formatter: function () {
-                return '<span style="color:' + this.point.color +
-                    '">● </span><span style="font-weight: bold;" > ' +
-                    Highcharts.dateFormat('%d %b %Y', this.point.x) + '</span><br/>' +
-                    (this.point.label || '');
-            }
+            format: '<span style="color:{point.color}">● </span><span style="font-weight: bold;" > ' +
+                '{point.x:%d %b %Y}</span><br/>{point.label}'
+        },
+        marker: {
+            symbol: 'circle'
         },
         data: [{
             x: Date.UTC(1951, 5, 22),

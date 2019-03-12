@@ -14,6 +14,14 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Info source: <a href="https://en.wikipedia.org/wiki/Timeline_of_space_exploration">www.wikipedia.org</a>'
     },
+    colors: [
+        '#4185F3',
+        '#427CDD',
+        '#406AB2',
+        '#3E5A8E',
+        '#3B4A68',
+        '#363C46'
+    ],
     series: [{
         data: [{
             name: 'First dogs',

@@ -16,8 +16,8 @@ Highcharts.chart('container', {
     },
     series: [{
         dataLabels: {
-            connectorColor: '#66e',
-            connectorWidth: 5
+            connectorColor: 'silver',
+            connectorWidth: 2
         },
         data: [{
             name: 'First dogs',

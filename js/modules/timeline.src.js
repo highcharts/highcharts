@@ -63,18 +63,15 @@ seriesType('timeline', 'line',
         stickyTracking: false,
         ignoreHiddenPoint: true,
         legendType: 'point',
-        lineWidth: 0,
+        lineWidth: 4,
         tooltip: {
-            headerFormat: '<span style="color:{point.color}">● </span>' +
-                '<span style="font-size: 10px">{point.key}</span><br/>',
+            headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '<span style="font-size: 10px"> {point.key}</span><br/>',
             pointFormat: '{point.description}'
         },
         states: {
             hover: {
-                lineWidthPlus: 5,
-                halo: {
-                    size: 0
-                }
+                lineWidthPlus: 0
             }
         },
         dataLabels: {
@@ -131,12 +128,14 @@ seriesType('timeline', 'line',
                 } else {
                     format = '<span>● </span>';
                 }
-                format += '<span>' + (this.key || '') + '</span><br/>' +
+                format += '<span class="highcharts-strong">' +
+                    (this.key || '') + '</span><br/>' +
                     (this.point.label || '');
                 return format;
             },
             borderWidth: 1,
-            borderColor: '${palette.neutralColor60}',
+            borderColor: '${palette.neutralColor40}',
+            borderRadius: 3,
             /**
              * A pixel value defining the distance between the data label
              * and the point. Negative numbers puts the label on top
@@ -154,13 +153,27 @@ seriesType('timeline', 'line',
              */
             alternate: true,
             verticalAlign: 'middle',
-            color: '${palette.neutralColor80}'
+            color: '${palette.neutralColor80}',
+            style: {
+                textOutline: 'none',
+                fontWeight: 'normal',
+                fontSize: '12px'
+            },
+
+            /**
+             * Shadow options for the data label.
+             * @type {boolean|Highcharts.CSSObject}
+             */
+            shadow: false
         },
         marker: {
             enabledThreshold: 0,
             symbol: 'square',
+            radius: 6,
+            lineWidth: 2,
             height: 15
-        }
+        },
+        showInLegend: false
     },
     /**
      * @lends Highcharts.Series#
@@ -301,7 +314,7 @@ seriesType('timeline', 'line',
                 dataLabel.css(styles);
 
                 if (!series.chart.styledMode) {
-                    dataLabel.shadow({});
+                    dataLabel.shadow(dataLabelsOptions.shadow);
                 }
             }
             Series.prototype.alignDataLabel.apply(series, arguments);

@@ -1,12 +1,15 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'timeline'
+        type: 'timeline',
+        height: 250
     },
     xAxis: {
         visible: false
     },
     yAxis: {
-        visible: false
+        visible: false,
+        min: 0,
+        max: 1
     },
     title: {
         text: 'Timeline of Space Exploration'
