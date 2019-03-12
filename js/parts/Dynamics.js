@@ -1113,7 +1113,10 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
         // Do the merge, with some forced options
         options = merge(oldOptions, animation, {
-            index: series.index,
+            // When oldOptions.index is null it should't be cleared.
+            // Otherwise navigator series will have wrong indexes (#10193).
+            index: oldOptions.index === undefined ?
+                series.index : oldOptions.index,
             pointStart: pick(
                 // when updating from blank (#7933)
                 oldOptions.pointStart,
