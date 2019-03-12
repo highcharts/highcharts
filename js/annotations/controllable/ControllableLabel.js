@@ -216,7 +216,7 @@ H.merge(
                 .label(
                     '',
                     0,
-                    -9e9,
+                    -9999, // #10055
                     options.shape,
                     null,
                     null,
@@ -282,7 +282,7 @@ H.merge(
             } else {
                 label.attr({
                     x: 0,
-                    y: -9e9
+                    y: -9999 // #10055
                 });
             }
 
