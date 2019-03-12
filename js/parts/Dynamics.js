@@ -1045,12 +1045,12 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
         options = H.cleanRecursively(options, this.userOptions);
 
-        var newOptions = options,
-            series = this,
+        var series = this,
             chart = series.chart,
             // must use user options when changing type because series.options
             // is merged in with type specific plotOptions
             oldOptions = series.userOptions,
+            seriesOptions,
             initialType = series.initialType || series.type,
             newType = (
                 options.type ||
@@ -1149,19 +1149,25 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
         series.init(chart, options);
 
+        // Remove particular elements of the points. Check `series.options`
+        // because we need to consider the options being set on plotOptions as
+        // well.
         if (keepPoints && this.points) {
-
+            seriesOptions = series.options;
             // What kind of elements to destroy
-            if (newOptions.visible === false) {
+            if (seriesOptions.visible === false) {
                 kinds.graphic = 1;
                 kinds.dataLabel = 1;
             } else {
-                if (newOptions.marker && newOptions.marker.enabled === false) {
+                if (
+                    seriesOptions.marker &&
+                    seriesOptions.marker.enabled === false
+                ) {
                     kinds.graphic = 1;
                 }
                 if (
-                    newOptions.dataLabels &&
-                    newOptions.dataLabels.enabled === false
+                    seriesOptions.dataLabels &&
+                    seriesOptions.dataLabels.enabled === false
                 ) {
                     kinds.dataLabel = 1;
                 }
@@ -1174,7 +1180,10 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                     if (Object.keys(kinds).length) {
                         point.destroyElements(kinds);
                     }
-                    if (newOptions.showInLegend === false && point.legendItem) {
+                    if (
+                        seriesOptions.showInLegend === false &&
+                        point.legendItem
+                    ) {
                         chart.legend.destroyItem(point);
                     }
                 }
