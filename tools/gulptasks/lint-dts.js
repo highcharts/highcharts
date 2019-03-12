@@ -35,4 +35,4 @@ function task() {
 
 require('./jsdoc-dts');
 
-Gulp.task('lint-dts', Gulp.series('jsdoc-dts', task));
+Gulp.task('lint-dts', task);
