@@ -157,6 +157,23 @@ QUnit.test('Solid gauge animated color', function (assert) {
         done();
     }, 200);
 
+});
 
+QUnit.test('Solid gauge: legend', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'solidgauge'
+        },
+        series: [{
+            showInLegend: true,
+            colorByPoint: false,
+            data: [10]
+        }]
+    });
 
+    assert.strictEqual(
+        chart.legend.allItems[0].legendSymbol.element.getAttribute('fill'),
+        chart.series[0].points[0].graphic.element.getAttribute('fill'),
+        'Series legend item: color taken from series'
+    );
 });

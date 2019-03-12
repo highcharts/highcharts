@@ -22,6 +22,9 @@ var defined = H.defined,
  * @mixin Highcharts.colorPointMixin
  */
 H.colorPointMixin = {
+
+    dataLabelOnNull: true,
+
     /**
      * Color points have a value option that determines whether or not it is
      * a null point

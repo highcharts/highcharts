@@ -225,7 +225,51 @@ seriesType('xrange', 'column'
 
             return crop;
         },
+        /**
+         * Finds the index of an existing point that matches the given point
+         * options.
+         *
+         * @private
+         * @function Highcharts.Series#findPointIndex
+         * @param {object} options The options of the point.
+         * @returns {number|undefined} Returns index of a matching point,
+         * returns undefined if no match is found.
+         */
+        findPointIndex: function (options) {
+            var series = this,
+                // Search in data, since broken-axis can remove points inside a
+                // break.
+                points = series.data,
+                oldData = series.points,
+                id = options.id,
+                point,
+                pointIndex;
 
+            if (id) {
+                point = H.find(points, function (point) {
+                    return point.id === id;
+                });
+                pointIndex = point ? point.index : undefined;
+            }
+
+            if (pointIndex === undefined) {
+                point = points.find(function (point) {
+                    return (
+                        point.x === options.x &&
+                        point.x2 === options.x2 &&
+                        !(oldData[pointIndex] && oldData[pointIndex].touched)
+                    );
+                });
+                pointIndex = point ? point.index : undefined;
+            }
+
+            // Reduce pointIndex if data is cropped
+            if (series.cropped && pointIndex >= series.cropStart) {
+                pointIndex -= series.cropStart;
+            }
+
+            return pointIndex;
+        },
         /**
      * @private
      * @function Highcharts.Series#translatePoint

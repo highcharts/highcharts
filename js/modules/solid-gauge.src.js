@@ -257,7 +257,7 @@ var solidGaugeOptions = {
 
 // The solidgauge series type
 H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
-
+    drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).
     translate: function () {

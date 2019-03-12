@@ -1406,7 +1406,7 @@ RangeSelector.prototype = {
                     rangeOptions.text,
                     0,
                     0,
-                    function () {
+                    function (e) {
 
                         // extract events from button object and call
                         var buttonEvents = (
@@ -1417,7 +1417,7 @@ RangeSelector.prototype = {
 
                         if (buttonEvents) {
                             callDefaultEvent =
-                                    buttonEvents.call(rangeOptions);
+                                    buttonEvents.call(rangeOptions, e);
                         }
 
                         if (callDefaultEvent !== false) {

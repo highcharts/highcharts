@@ -1,4 +1,5 @@
 /* eslint-env browser */
+/* eslint-disable */
 /* global __karma__, Highcharts, Promise, QUnit */
 
 /**
