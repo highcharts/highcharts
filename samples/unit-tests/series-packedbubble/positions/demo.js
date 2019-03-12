@@ -13,8 +13,6 @@ QUnit.test('Bubble positions', function (assert) {
             },
             plotOptions: {
                 packedbubble: {
-                    minSize: 75,
-                    maxSize: 100,
                     useSimulation: false
                 }
             },

@@ -12,7 +12,9 @@ import 'integrations.js';
 import 'QuadTree.js';
 
 var pick = H.pick,
-    defined = H.defined;
+    defined = H.defined,
+    addEvent = H.addEvent,
+    Chart = H.Chart;
 
 H.layouts = {
     'reingold-fruchterman': function () {
@@ -97,7 +99,6 @@ H.extend(
 
                 layout.prevSystemTemperature = layout.systemTemperature;
                 layout.systemTemperature = layout.getSystemTemperature();
-
                 if (options.enableSimulation) {
                     series.forEach(function (s) {
                         // Chart could be destroyed during the simulation
@@ -528,6 +529,7 @@ H.extend(
          * @private
          */
         applyLimitBox: function (node, box) {
+            var radius = node.marker && node.marker.radius || 0;
             /*
             TO DO: Consider elastic collision instead of stopping.
             o' means end position when hitting plotting area edge:
@@ -564,18 +566,18 @@ H.extend(
             node.plotX = Math.max(
                 Math.min(
                     node.plotX,
-                    box.width - node.marker.radius
+                    box.width - radius
                 ),
-                box.left + node.marker.radius
+                box.left + radius
             );
 
             // Limit Y-coordinates:
             node.plotY = Math.max(
                 Math.min(
                     node.plotY,
-                    box.height - node.marker.radius
+                    box.height - radius
                 ),
-                box.top + node.marker.radius
+                box.top + radius
             );
         },
         /**
@@ -633,3 +635,27 @@ H.extend(
         }
     }
 );
+
+/*
+ * Multiple series support:
+ */
+// Clear previous layouts
+addEvent(Chart, 'predraw', function () {
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(
+            function (layout) {
+                layout.stop();
+            }
+        );
+    }
+});
+addEvent(Chart, 'render', function () {
+    if (this.graphLayoutsLookup) {
+        H.setAnimation(false, this);
+        this.graphLayoutsLookup.forEach(
+            function (layout) {
+                layout.run();
+            }
+        );
+    }
+});

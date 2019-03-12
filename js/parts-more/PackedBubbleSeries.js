@@ -12,7 +12,8 @@ import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
-import '../modules/networkgraph/networkgraph.src.js';
+import '../modules/networkgraph/layouts.js';
+import '../modules/networkgraph/draggable-nodes.js';
 
 
 var seriesType = H.seriesType,
@@ -24,13 +25,12 @@ var seriesType = H.seriesType,
     Chart = H.Chart,
     color = H.Color,
     Reingold = H.layouts['reingold-fruchterman'],
-    NetworkPoint = H.seriesTypes.networkgraph.prototype.pointClass;
+    NetworkPoint = H.seriesTypes.bubble.prototype.pointClass;
 
 
 H.networkgraphIntegrations.packedbubble = {
-
-    repulsiveForceFunction: function (d, k, node) {
-        return Math.min(d, node.marker.radius);
+    repulsiveForceFunction: function (d, k, node, repNode) {
+        return Math.min(d, (node.marker.radius + repNode.marker.radius) / 2);
     },
     barycenter: function () {
         var layout = this,
@@ -183,7 +183,7 @@ H.layouts.packedbubble = H.extendClass(
                 factor = 0.01;
 
             // parentNodeLimit should be used together
-            // with seriesInteraction: false for now
+            // with seriesInteraction: false
             if (
                 layout.options.splitSeries &&
                 !node.isParentNode &&
@@ -202,6 +202,13 @@ H.layouts.packedbubble = H.extendClass(
             }
 
             Reingold.prototype.applyLimitBox.apply(this, arguments);
+        },
+        isStable: function () {
+            return Math.abs(
+                this.systemTemperature -
+                this.prevSystemTemperature
+            ) < 0.00001 || this.temperature <= 0 ||
+                this.systemTemperature / this.nodes.length < 0.01;
         }
     }
 );
@@ -221,6 +228,9 @@ H.layouts.packedbubble = H.extendClass(
  * @sample {highcharts} highcharts/demo/packed-bubble/
  *         Packed-bubble chart
  * @since 7.0.0
+ * @excluding dragDrop, jitter, label, lineCap, pointInterval,
+ * pointIntervalUnit, pointPlacement, pointStart, softThreshold, stacking, step,
+ * threshold, xAxis, yAxis, zoneAxis, zones
  * @optionparent plotOptions.packedbubble
  */
 
@@ -258,21 +268,33 @@ seriesType('packedbubble', 'bubble',
         tooltip: {
             pointFormat: 'Value: {point.value}'
         },
+        /**
+        * Flag to determine if nodes are draggable or not.
+        * @since 7.1.0
+        */
         draggable: true,
         /**
          * An option is giving a possibility to choose between using simulation
          * for calculating bubble positions. These reflects in both animation
-         * and final position of bubbles. Simulation is also adding additional
-         * option to the series graph based on used layout.
-         * in case of big data sets, with any performance issues it is possible
+         * and final position of bubbles. Simulation is also adding
+         * options to the series graph based on used layout.
+         * in case of big data sets, with any performance issues, it is possible
          * to disable animation and pack bubble in simple circular way.
          *
          * @type    {Boolean}
-         * @since   7.1
+         * @since   7.1.0
          * @product highcharts highstock
          * @default false
          */
         useSimulation: false,
+        /**
+         * If parentNode is created for splitted series, parentOption is used
+         * for styling the parent nodes.
+         *
+         * @type    {Object}
+         * @since   7.1.0
+         * @product highcharts highstock
+         */
         parentOptions: {
             fillColor: null,
             lineWidth: 1,
@@ -285,147 +307,149 @@ seriesType('packedbubble', 'bubble',
             },
             allowOverlap: true
         },
+        /**
+         * Options for layout algorithm when simulation is enabled. Inside there
+         * is a possibility f.e. to change the speed, padding and initial
+         * bubbles positions
+         *
+         * @extends plotOptions.networkgraph.layoutAlgorithm
+         * @excluding approximation, attractiveForce, repulsiveForce, theta
+         * @since 7.1.0
+         */
         layoutAlgorithm: {
-            /**
-             * Repulsive force applied on a node. Passed are two arguments:
-             * - `d` - which is current distance between two nodes
-             * - `k` - which is desired distance between two nodes
-             *
-             * In `verlet` integration, defaults to:
-             * `function (d, k) { return (k - d) / d * (k > d ? 1 : 0) }`
-             *
-             * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
-             * @apioption   plotOptions.networkgraph.layoutAlgorithm.repulsiveForce
-             * @sample      highcharts/series-networkgraph/forces/
-             *              Custom forces with Euler integration
-             * @sample      highcharts/series-networkgraph/cuboids/
-             *              Custom forces with Verlet integration
-             * @type        {Function}
-             * @default function (d, k) { return k * k / d; }
-             */
-
-            /**
-             * Attraction force applied on a node which is conected to another
-             * node by a link. Passed are two arguments:
-             * - `d` - which is current distance between two nodes
-             * - `k` - which is desired distance between two nodes
-             *
-             * In `verlet` integration, defaults to:
-             * `function (d, k) { return (k - d) / d; }`
-             *
-             * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
-             * @apioption   plotOptions.networkgraph.layoutAlgorithm.attractiveForce
-             * @sample      highcharts/series-networkgraph/forces/
-             *              Custom forces with Euler integration
-             * @sample      highcharts/series-networkgraph/cuboids/
-             *              Custom forces with Verlet integration
-             * @type        {Function}
-             * @default function (d, k) { return k * k / d; }
-             */
-
-            /**
-             * Ideal length (px) of the link between two nodes.
-             * When not defined,
-             * length is calculated as:
-             * `Math.pow(availableWidth * availableHeight / nodesLength, 0.4);`
-             *
-             * Note: Because of the algorithm specification, length of each link
-             * might be not exactly as specified.
-             *
-             * @type      {number}
-             * @apioption series.networkgraph.layoutAlgorithm.linkLength
-             * @sample    highcharts/series-networkgraph/styled-links/
-             *            Numerical values
-             * @defaults  undefined
-             */
-
             /**
              * Initial layout algorithm for positioning nodes. Can be one of
              * built-in options ("circle", "random") or a function where
              * positions should be set on each node (`this.nodes`)
-             *  as `node.plotX` and `node.plotY`
+             *  as `node.plotX` and `node.plotY`.
              *
              * @sample      highcharts/series-networkgraph/initial-positions/
              *              Initial positions with callback
+             * @since       7.1.0
              * @type        {String|Function}
              * @validvalue  ["circle", "random"]
              */
             initialPositions: 'circle',
+            /**
+             * When initialPositions are set to 'circle', initialPositionRadius
+             * is a distance from the center of circle, in which bubbles are
+             * created.
+             *
+             * @since       7.1.0
+             * @type {Number}
+             * @default 20
+             */
             initialPositionRadius: 20,
+            /**
+             * The distance between two bubbles, when the algorithm starts to
+             * treat two bubbles as overlapping. bubblePadding is also the
+             * expected distance between all the bubbles on simulation end.
+             *
+             * @since       7.1.0
+             * @type {Number}
+             * @default 5
+             */
             bubblePadding: 5,
-            // experimental
-            parentNodeLimit: true,
+            /**
+             * Wheter bubbles should interact with their parentNode to keep them
+             * inside or not.
+             *
+             * @since       7.1.0
+             * @type {boolean}
+             * @default false
+             */
+            parentNodeLimit: false,
+            /**
+             * Wheter series should interact with each other or not. When
+             * parentNodeLimit is set to true, these option should be set to
+             * false to avoid sticking points in wrong series parentNode.
+             *
+             * @since       7.1.0
+             * @type {boolean}
+             * @default true
+             */
             seriesInteraction: true,
+            /**
+             * In case of splitted series, these option allows user to drag and
+             * drop points between series, for changing point related series.
+             *
+             * @since       7.1.0
+             * @type {boolean}
+             * @default false
+             */
             dragBetweenSeries: false,
+            /**
+             * Layout algorithm options for Parent Nodes
+             *
+             * @since       7.1.0
+             * @extends plotOptions.networkgraph.layoutAlgorithm
+             * @excluding approximation, attractiveForce, repulsiveForce, theta
+             */
             parentNodeOptions: {
                 enableSimulation: true,
                 maxIterations: 400,
+                gravitationalConstant: 0.03,
                 maxSpeed: 50,
                 initialPositionRadius: 100,
                 seriesInteraction: true
             },
-            /**
-             * Experimental. Enables live simulation of the algorithm
-             * implementation. All nodes are animated as the forces applies on
-             * them.
-             *
-             * @sample       highcharts/demo/network-graph/
-             *               Live simulation enabled
-             */
             enableSimulation: true,
             /**
-             * Type of the algorithm used when positioning nodes.
+             * Type of the algorithm used when positioning bubbles.
              *
-             * @validvalue  ["reingold-fruchterman"]
+             * @validvalue  ["packedbubble"]
              */
             type: 'packedbubble',
             /**
-             * Integration type. Available options are `'euler'` and `'verlet'`.
+             * Integration type.
              * Integration determines how forces are applied
-             * on particles. In Euler
-             * integration, force is applied direct as
-             * `newPosition += velocity;`.
-             * In Verlet integration, new position
+             * on particles. `packedbubble` integration is based on networkgraph
+             * `Verlet` integration, where new position
              * is based on a previous posittion
              * without velocity:
              * `newPosition += previousPosition - newPosition`.
              *
-             * Note that different integrations give different results as forces
-             * are different.
              *
-             * In Highcharts v7.0.x only `'euler'` integration was supported.
              *
              * @since       7.1.0
              * @sample      highcharts/series-networkgraph/forces/
-             *              Custom forces with Euler integration
-             * @validvalue  ["euler", "verlet"]
+             * @validvalue  ["packedbubble"]
              */
             integration: 'packedbubble',
-            /**
-             * Max number of iterations before algorithm will stop. In general,
-             * algorithm should find positions sooner, but when rendering huge
-             * number of nodes, it is recommended to increase this value as
-             * finding perfect graph positions can require more time.
-             */
             maxIterations: 1000,
-            splitSeries: false,
-            maxSpeed: 5,
             /**
-             * Gravitational const used in the barycenter
-             * force of the algorithm.
+             * Wheter to split series into individual groups or to mix all
+             * series together.
              *
-             * @sample      highcharts/series-networkgraph/forces/
-             *              Custom forces with Euler integration
+             *
+             * @since       7.1.0
+             * @default false
              */
-            gravitationalConstant: 0.0325,
+            splitSeries: false,
             /**
-             * Friction applied on forces to prevent nodes rushing to fast to
-             * the desired positions.
+             * Max speed that node can get in one iteration. In terms of
+             * simulation, it's a maximum translation (in pixels) that node can
+             * move (in both, x and y, dimensions). While `friction` is applied
+             * on all nodes, max speed is applied only for nodes that move
+             * very fast, for example small or disconnected ones.
+             *
+             * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
+             * @see         [layoutAlgorithm.friction](#series.networkgraph.layoutAlgorithm.friction)
+             * @since       7.1.0
              */
+            maxSpeed: 5,
+            gravitationalConstant: 0.01,
             friction: -0.981
         }
     }, {
+        /**
+         * An internal option used for allowing nodes dragging.
+         */
         hasDraggableNodes: true,
+        /**
+         * Array of internal forces. Each force should be later defined in
+         * integrations.js.
+         */
         forces: ['barycenter', 'repulsive'],
         pointArrayMap: ['value'],
         pointValKey: 'value',
@@ -504,18 +528,22 @@ seriesType('packedbubble', 'bubble',
                 }
             } else if (series.layout) {
                 if (series.visible) {
-                    series.layout.addNodes(series.nodes);
+                    series.layout.addNodes(series.points);
                 } else {
-                    series.nodes.forEach(function (node) {
+                    series.points.forEach(function (node) {
                         series.layout.removeNode(node);
                     });
                 }
             }
         },
+        /*
+         * The function responsible for calculating the parent node radius
+         * based on the total surface of iniside-bubbles and the group BBox
+         */
         calculateParentRadius: function () {
             var series = this,
                 bBox,
-                parentPadding = 2,
+                parentPadding = 20,
                 minParentRadius = 20;
 
             if (series.group) {
@@ -535,7 +563,7 @@ seriesType('packedbubble', 'bubble',
                             Math.sqrt(
                                 Math.pow(bBox.width, 2) +
                                 Math.pow(bBox.height, 2)
-                            ) / 2,
+                            ) / 2 + parentPadding,
                             minParentRadius
                         ) :
                         Math.sqrt(
@@ -547,7 +575,7 @@ seriesType('packedbubble', 'bubble',
                 series.parentNode.marker.radius = series.parentNodeRadius;
             }
         },
-        // Created Background/Parent Nodes for splitted series
+        // Create Background/Parent Nodes for splitted series.
         drawGraph: function () {
 
             // if the series is not using layout, don't add parent nodes
@@ -586,6 +614,10 @@ seriesType('packedbubble', 'bubble',
                 series.graph.attr(parentAttribs);
             }
         },
+        /*
+         * Creating parent nodes for splitted series, in which all the bubbles
+         * are rendered.
+         */
         createParentNodes: function () {
             var series = this,
                 chart = series.chart,
@@ -599,13 +631,11 @@ seriesType('packedbubble', 'bubble',
             });
 
             this.calculateParentRadius();
-
             parentNodeLayout.nodes.forEach(function (node) {
                 if (node.seriesIndex === series.index) {
                     nodeAdded = true;
                 }
             });
-
             parentNodeLayout.setArea(0, 0, chart.plotWidth, chart.plotHeight);
 
             if (!nodeAdded) {
@@ -632,6 +662,9 @@ seriesType('packedbubble', 'bubble',
                 parentNodeLayout.addNodes([parentNode]);
             }
         },
+        /*
+         * Function responsible for adding series layout, used for parent nodes.
+         */
         addSeriesLayout: function () {
             var series = this,
                 layoutOptions = series.options.layoutAlgorithm,
@@ -657,10 +690,12 @@ seriesType('packedbubble', 'bubble',
                     parentNodeLayout.index, 0, parentNodeLayout
                 );
             }
-
             series.parentNodeLayout = parentNodeLayout;
             this.createParentNodes();
         },
+        /*
+         * Adding the basic layout to series points.
+         */
         addLayout: function () {
             var series = this,
                 layoutOptions = series.options.layoutAlgorithm,
@@ -692,8 +727,8 @@ seriesType('packedbubble', 'bubble',
 
             series.layout = layout;
 
-            series.nodes.forEach(function (node) {
-                node.mass = Math.max(node.marker.radius / 10, 1);
+            series.points.forEach(function (node) {
+                node.mass = 2;
                 node.degree = 1;
                 node.collisionNmb = 1;
             });
@@ -702,21 +737,21 @@ seriesType('packedbubble', 'bubble',
                 0, 0, series.chart.plotWidth, series.chart.plotHeight
             );
             layout.addSeries(series);
-            layout.addNodes(series.nodes);
+            layout.addNodes(series.points);
         },
+        /*
+         * Function responsible for adding all the layouts to the chart.
+         */
         deferLayout: function () {
             // TODO split layouts to independent methods
             var series = this,
-                points = series.points,
                 layoutOptions = series.options.layoutAlgorithm;
 
             if (!series.visible) {
                 return;
             }
-
-            series.nodes = points;
+            // layout is using nodes for position calculation
             series.addLayout();
-            series.points = points;
 
             if (layoutOptions.splitSeries) {
                 series.addSeriesLayout();
@@ -1063,17 +1098,23 @@ seriesType('packedbubble', 'bubble',
                     plotLeft - minX - (maxX - minX) / 2;
             }
         },
-
+        /**
+         * Calculate min and max bubble value for radius calculation.
+         */
         calculateZExtremes: function () {
             var series = this,
                 chart = series.chart,
-                zMin = series.yData[0],
-                zMax = series.yData[0];
-
+                zMin = this.options.zMin,
+                zMax = this.options.zMax,
+                valMin = series.yData[0],
+                valMax = series.yData[0];
             chart.series.forEach(function (s) {
-                zMax = Math.max(zMax, Math.max.apply(this, s.yData));
-                zMin = Math.min(zMin, Math.min.apply(this, s.yData));
+                valMax = Math.max(valMax, Math.max.apply(this, s.yData));
+                valMin = Math.min(valMin, Math.min.apply(this, s.yData));
             });
+
+            zMin = zMin || valMin;
+            zMax = zMax || valMax;
             return [zMin, zMax];
         },
         /**
@@ -1086,6 +1127,7 @@ seriesType('packedbubble', 'bubble',
                 plotWidth = chart.plotWidth,
                 plotHeight = chart.plotHeight,
                 seriesOptions = series.options,
+                useSimulation = seriesOptions.useSimulation,
                 smallestSize = Math.min(plotWidth, plotHeight),
                 extremes = {},
                 radii = [],
@@ -1097,18 +1139,27 @@ seriesType('packedbubble', 'bubble',
             ['minSize', 'maxSize'].forEach(function (prop) {
                 var length = parseInt(seriesOptions[prop], 10),
                     isPercent = /%$/.test(seriesOptions[prop]);
+
                 extremes[prop] = isPercent ?
                     smallestSize * length / 100 :
                     length * Math.sqrt(allDataPoints.length);
             });
+
             chart.minRadius = minSize = extremes.minSize /
                 Math.sqrt(allDataPoints.length);
             chart.maxRadius = maxSize = extremes.maxSize /
                 Math.sqrt(allDataPoints.length);
-            zExtremes = this.calculateZExtremes();
+
+            zExtremes = useSimulation ?
+                this.calculateZExtremes() :
+                [minSize, maxSize];
 
             (allDataPoints || []).forEach(function (point, i) {
-                value = point[2];
+
+                value = useSimulation ?
+                    Math.max(Math.min(point[2], zExtremes[1]), zExtremes[0]) :
+                    point[2];
+
                 radius = series.getRadius(
                     zExtremes[0],
                     zExtremes[1],
@@ -1124,6 +1175,12 @@ seriesType('packedbubble', 'bubble',
             });
             this.radii = radii;
         },
+        // Draggable mode:
+        /**
+         * Redraw halo on mousemove during the drag&drop action.
+         *
+         * @param {Highcharts.Point} point The point that should show halo.
+         */
         redrawHalo: function (point) {
             if (point && this.halo) {
                 this.halo.attr({
@@ -1133,6 +1190,12 @@ seriesType('packedbubble', 'bubble',
                 });
             }
         },
+        /**
+         * Mouse down action, initializing drag&drop mode.
+         *
+         * @param {global.Event} event Browser event, before normalization.
+         * @param {Highcharts.Point} point The point that event occured.
+         */
         onMouseDown: function (point, event) {
             var normalizedEvent = this.chart.pointer.normalize(event);
 
@@ -1145,6 +1208,12 @@ seriesType('packedbubble', 'bubble',
 
             point.inDragMode = true;
         },
+        /**
+         * Mouse move action during drag&drop.
+         *
+         * @param {global.Event} event Browser event, before normalization.
+         * @param {Highcharts.Point} point The point that event occured.
+         */
         onMouseMove: function (point, event) {
             if (point.fixedPosition && point.inDragMode) {
                 var series = this,
@@ -1186,6 +1255,11 @@ seriesType('packedbubble', 'bubble',
                 }
             }
         },
+        /**
+         * Mouse up action, finalizing drag&drop.
+         *
+         * @param {Highcharts.Point} point The point that event occured.
+         */
         onMouseUp: function (point) {
             if (point.fixedPosition && !point.removed) {
                 var distanceXY,
@@ -1195,7 +1269,10 @@ seriesType('packedbubble', 'bubble',
 
                 if (parentNodeLayout && layout.options.dragBetweenSeries) {
                     parentNodeLayout.nodes.forEach(function (node) {
-                        if (point && point.marker) {
+                        if (
+                            point && point.marker &&
+                            node !== point.series.parentNode
+                        ) {
                             distanceXY = layout.getDistXY(point, node);
                             distanceR = (
                                 layout.vectorLength(distanceXY) -
@@ -1203,16 +1280,12 @@ seriesType('packedbubble', 'bubble',
                                 point.marker.radius
                             );
                             if (distanceR < 0) {
-                                node.series.addPoint({
-                                    x: point.x,
-                                    value: point.value,
+                                node.series.addPoint(H.merge(point.options, {
                                     plotX: point.plotX,
                                     plotY: point.plotY
-                                }, false);
-                                layout.nodes.splice(
-                                    layout.nodes.indexOf(point), 1
-                                );
-                                point.series.removePoint(point.index);
+                                }), false);
+                                layout.removeNode(point);
+                                point.remove();
                             }
                         }
                     });
@@ -1224,8 +1297,20 @@ seriesType('packedbubble', 'bubble',
                 }
             }
         },
+        destroy: function () {
+            if (this.parentNode) {
+                this.parentNodeLayout.removeNode(this.parentNode);
+            }
+            H.Series.prototype.destroy.apply(this, arguments);
+        },
         alignDataLabel: H.Series.prototype.alignDataLabel
     }, {
+        /**
+         * Destroy point.
+         * Then remove point from the layout.
+         *
+         * @return {undefined}
+         */
         destroy: function () {
             if (this.series.layout) {
                 this.series.layout.removeNode(this);
