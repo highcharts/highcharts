@@ -1161,6 +1161,8 @@ H.Toolbar.prototype = {
             chart = stockToolbar.chart,
             guiOptions = stockToolbar.options,
             container = chart.container,
+            navigation = chart.options.navigation,
+            bindingsClassName = navigation && navigation.bindingsClassName,
             listWrapper,
             toolbar,
             wrapper;
@@ -1168,7 +1170,7 @@ H.Toolbar.prototype = {
         // create main container
         stockToolbar.wrapper = wrapper = createElement(DIV, {
             className: PREFIX + 'stocktools-wrapper ' +
-                    guiOptions.className
+                guiOptions.className + ' ' + bindingsClassName
         });
         container.parentNode.insertBefore(wrapper, container);
 
@@ -1239,7 +1241,9 @@ H.Toolbar.prototype = {
 
             toolbar.classList.add(PREFIX + 'hide');
             showhideBtn.classList.toggle(PREFIX + 'arrow-right');
+            wrapper.style.height = showhideBtn.offsetHeight + 'px';
         } else {
+            wrapper.style.height = '100%';
             showhideBtn.style.top = H.getStyle(toolbar, 'padding-top') + 'px';
             showhideBtn.style.left = (
                 wrapper.offsetWidth +

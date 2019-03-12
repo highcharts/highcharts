@@ -286,8 +286,11 @@ extend(Legend.prototype, {
         (useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
             item.setState('hover');
 
-            // A CSS class to dim or hide other than the hovered series
-            boxWrapper.addClass(activeClass);
+            // A CSS class to dim or hide other than the hovered series.
+            // Works only if hovered series is visible (#10071).
+            if (item.visible) {
+                boxWrapper.addClass(activeClass);
+            }
 
             if (!styledMode) {
                 legendItem.css(legend.options.itemHoverStyle);
@@ -398,7 +401,12 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             btnOptions = chart.options.chart.resetZoomButton,
             theme = btnOptions.theme,
             states = theme.states,
-            alignTo = btnOptions.relativeTo === 'chart' ? null : 'plotBox';
+            alignTo = (
+                btnOptions.relativeTo === 'chart' ||
+                btnOptions.relativeTo === 'spaceBox' ?
+                    null :
+                    'plotBox'
+            );
 
         function zoomOut() {
             chart.zoomOut();
@@ -449,6 +457,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             hasZoomed,
             pointer = chart.pointer,
             displayButton = false,
+            mouseDownPos =
+                chart.inverted ? pointer.mouseDownX : pointer.mouseDownY,
             resetZoomButton;
 
         // If zoom is called with no arguments, reset the axes
@@ -461,10 +471,26 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
         } else { // else, zoom in on all axes
             event.xAxis.concat(event.yAxis).forEach(function (axisData) {
                 var axis = axisData.axis,
-                    isXAxis = axis.isXAxis;
+                    axisStartPos = chart.inverted ? axis.left : axis.top,
+                    axisEndPos = chart.inverted ?
+                        axisStartPos + axis.width : axisStartPos + axis.height,
+                    isXAxis = axis.isXAxis,
+                    isWithinPane = false;
+
+                // Check if zoomed area is within the pane (#1289).
+                // In case of multiple panes only one pane should be zoomed.
+                if (
+                    (!isXAxis &&
+                    mouseDownPos >= axisStartPos &&
+                    mouseDownPos <= axisEndPos) ||
+                    isXAxis ||
+                    !H.defined(mouseDownPos)
+                ) {
+                    isWithinPane = true;
+                }
 
                 // don't zoom more than minRange
-                if (pointer[isXAxis ? 'zoomX' : 'zoomY']) {
+                if (pointer[isXAxis ? 'zoomX' : 'zoomY'] && isWithinPane) {
                     hasZoomed = axis.zoom(axisData.min, axisData.max);
                     if (axis.displayBtn) {
                         displayButton = true;
@@ -1003,6 +1029,13 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
         // hover this
         series.setState('hover');
+
+        /**
+         * Contains the original hovered series.
+         *
+         * @name Highcharts.Chart#hoverSeries
+         * @type {Highcharts.Series|null}
+         */
         chart.hoverSeries = series;
     },
 

@@ -1,4 +1,3 @@
-
 QUnit.test('Adapt height', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -22,6 +21,15 @@ QUnit.test('Adapt height', function (assert) {
                 chartOptions: {
                     chart: {
                         height: 300
+                    }
+                }
+            }, {
+                condition: {
+                    maxWidth: 300
+                },
+                chartOptions: {
+                    chart: {
+                        height: '100%'
                     }
                 }
             }]
@@ -53,6 +61,20 @@ QUnit.test('Adapt height', function (assert) {
         400,
         'Height reset'
     );
+
+    chart.setSize(200);
+
+    assert.strictEqual(
+        chart.chartWidth,
+        200,
+        'Width updated'
+    );
+    assert.strictEqual(
+        chart.chartHeight,
+        200,
+        'Percentage height updated'
+    );
+
 });
 
 QUnit.test('Callback', function (assert) {
@@ -545,4 +567,59 @@ QUnit.test('Responsive rules and chart.update', function (assert) {
     );
 
 
+});
+
+QUnit.test('Falsy default', assert => {
+    const chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'pie',
+            width: 300,
+            borderWidth: 1
+        },
+
+        series: [{
+            name: 'Christmas Eve',
+            data: [1, 4, 3]
+        }],
+
+        plotOptions: {
+            pie: {
+                showInLegend: false
+            }
+        },
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 400
+                },
+                chartOptions: {
+                    plotOptions: {
+                        pie: {
+                            showInLegend: true,
+                            dataLabels: {
+                                format: "{point.percentage}",
+                                distance: -20
+                            }
+                        }
+                    }
+                }
+            }]
+        }
+    });
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-legend-item').length,
+        3,
+        'There should be legend items for all points'
+    );
+
+    chart.setSize(500);
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-legend-item').length,
+        0,
+        'Legend items should be removed as per default showInLegend'
+    );
 });

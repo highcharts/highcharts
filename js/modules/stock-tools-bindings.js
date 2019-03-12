@@ -69,7 +69,7 @@ bindingsUtils.addFlagFromForm = function (type) {
     return function (e) {
         var navigation = this,
             chart = navigation.chart,
-            toolbar = chart.toolbar,
+            toolbar = chart.stockTools,
             getFieldType = bindingsUtils.getFieldType,
             point = bindingsUtils.attractToPoint(e, chart),
             pointConfig = {
@@ -110,12 +110,16 @@ bindingsUtils.addFlagFromForm = function (type) {
                                         ]
                                     },
                                     onSubmit: function (updated) {
-                                        point.update(
-                                            navigation.fieldsToOptions(
-                                                updated.fields,
-                                                {}
-                                            )
-                                        );
+                                        if (updated.actionType === 'remove') {
+                                            point.remove();
+                                        } else {
+                                            point.update(
+                                                navigation.fieldsToOptions(
+                                                    updated.fields,
+                                                    {}
+                                                )
+                                            );
+                                        }
                                     }
                                 }
                             );
@@ -186,6 +190,7 @@ bindingsUtils.manageIndicators = function (data) {
             'ppo',
             'natr',
             'williamsr',
+            'stochastic',
             'linearRegression',
             'linearRegressionSlope',
             'linearRegressionIntercept',
@@ -240,6 +245,8 @@ bindingsUtils.manageIndicators = function (data) {
             }, false, false);
             seriesConfig.yAxis = yAxis.options.id;
             navigation.resizeYAxes();
+        } else {
+            seriesConfig.yAxis = chart.get(data.linkedTo).options.yAxis;
         }
 
         if (indicatorsWithVolume.indexOf(data.type) >= 0) {
@@ -1017,6 +1024,9 @@ var stockToolsBindings = {
                     }, {
                         x: x,
                         y: y
+                    }, {
+                        x: x,
+                        y: y
                     }]
                 },
                 labelOptions: {
@@ -1029,7 +1039,8 @@ var stockToolsBindings = {
         /** @ignore */
         steps: [
             bindingsUtils.updateNthPoint(1),
-            bindingsUtils.updateNthPoint(2)
+            bindingsUtils.updateNthPoint(2),
+            bindingsUtils.updateNthPoint(3)
         ]
     },
     /**
@@ -1067,6 +1078,9 @@ var stockToolsBindings = {
                     }, {
                         x: x,
                         y: y
+                    }, {
+                        x: x,
+                        y: y
                     }]
                 },
                 labelOptions: {
@@ -1081,7 +1095,8 @@ var stockToolsBindings = {
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2),
             bindingsUtils.updateNthPoint(3),
-            bindingsUtils.updateNthPoint(4)
+            bindingsUtils.updateNthPoint(4),
+            bindingsUtils.updateNthPoint(5)
         ]
     },
     /**
@@ -1777,7 +1792,7 @@ var stockToolsBindings = {
                 lastVisiblePrice = options.lastVisiblePrice &&
                                 options.lastVisiblePrice.enabled,
                 lastPrice = options.lastPrice && options.lastPrice.enabled,
-                gui = this.chart.stockToolbar;
+                gui = this.chart.stockTools;
 
             if (gui && gui.guiEnabled) {
                 if (lastPrice) {
@@ -1856,7 +1871,7 @@ var stockToolsBindings = {
         className: 'highcharts-toggle-annotations',
         /** @ignore */
         init: function (button) {
-            var gui = this.chart.stockToolbar;
+            var gui = this.chart.stockTools;
 
             this.toggledAnnotations = !this.toggledAnnotations;
 

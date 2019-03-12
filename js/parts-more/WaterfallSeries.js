@@ -88,6 +88,7 @@ seriesType('waterfall', 'column', {
      */
 
     dataLabels: {
+        /** @ignore-option */
         inside: true
     },
 
@@ -118,7 +119,7 @@ seriesType('waterfall', 'column', {
      * In styled mode, the stroke dash-array can be set with the
      * `.highcharts-graph` class.
      *
-     * @type    {Highcharts.DashStyleType}
+     * @type    {Highcharts.DashStyleValue}
      * @since   3.0
      * @product highcharts
      */
@@ -729,7 +730,7 @@ seriesType('waterfall', 'column', {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|Array<(number|string),number>|*>}
+ * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.line.data
  * @excluding marker
  * @product   highcharts

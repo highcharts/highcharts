@@ -1,8 +1,10 @@
 /* *
- * (c) 2010-2019 Torstein Honsi
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 /**
  * Map data object.
@@ -75,13 +77,19 @@ seriesType(
         animation: false, // makes the complex shapes slow
 
         dataLabels: {
+            /** @ignore-option */
             crop: false,
+            /** @ignore-option */
             formatter: function () { // #2945
                 return this.point.value;
             },
+            /** @ignore-option */
             inside: true, // for the color
+            /** @ignore-option */
             overflow: false,
+            /** @ignore-option */
             padding: 0,
+            /** @ignore-option */
             verticalAlign: 'middle'
         },
 
@@ -215,10 +223,17 @@ seriesType(
          * @apioption plotOptions.series.zIndex
          */
 
+        /**
+         * @apioption plotOptions.series.states
+         */
         states: {
 
+            /**
+             * @apioption plotOptions.series.hover
+             */
             hover: {
 
+                /** @ignore-option */
                 halo: null,
 
                 /**
@@ -258,35 +273,38 @@ seriesType(
                  * @apioption plotOptions.series.states.hover.brightness
                  */
                 brightness: 0.2
-
             },
 
             /**
-             * Overrides for the normal state.
-             *
-             * @product   highmaps
              * @apioption plotOptions.series.states.normal
              */
             normal: {
 
                 /**
-                 * Animation options for the fill color when returning from
-                 * hover state to normal state. The animation adds some latency
-                 * in order to reduce the effect of flickering when hovering in
-                 * and out of for example an uneven coastline.
+                 * @productdesc {highmaps}
+                 * The animation adds some latency in order to reduce the effect
+                 * of flickering when hovering in and out of for example an
+                 * uneven coastline.
                  *
-                 * @sample maps/plotoptions/series-states-animation-false/
+                 * @sample {highmaps} maps/plotoptions/series-states-animation-false/
                  *         No animation of fill color
                  *
-                 * @type      {boolean|Highcharts.AnimationOptionsObject}
-                 * @default   true
-                 * @product   highmaps
                  * @apioption plotOptions.series.states.normal.animation
                  */
                 animation: true
             },
 
+            /**
+             * @apioption plotOptions.series.states.select
+             */
             select: {
+
+                /**
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @default   ${palette.neutralColor20}
+                 * @product   highmaps
+                 * @apioption plotOptions.series.states.select.color
+                 */
                 color: '${palette.neutralColor20}'
             }
         }
@@ -886,13 +904,13 @@ seriesType(
             if (!chart.styledMode) {
                 group.element.setAttribute(
                     'stroke-width',
-                    (
+                    pick(
                         series.options[
                             (
                                 series.pointAttrToOptions &&
                                 series.pointAttrToOptions['stroke-width']
                             ) || 'borderWidth'
-                        ] ||
+                        ],
                         1 // Styled mode
                     ) / (scaleX || 1)
                 );
@@ -1128,43 +1146,42 @@ seriesType(
  * An array of data points for the series. For the `map` series type, points can
  * be given in the following ways:
  *
- * 1.  An array of numerical values. In this case, the numerical values will be
- * interpreted as `value` options. Example:
+ * 1. An array of numerical values. In this case, the numerical values will be
+ *    interpreted as `value` options. Example:
+ *    ```js
+ *    data: [0, 5, 3, 5]
+ *    ```
  *
- *  ```js
- *  data: [0, 5, 3, 5]
- *  ```
+ * 2. An array of arrays with 2 values. In this case, the values correspond to
+ *    `[hc-key, value]`. Example:
+ *    ```js
+ *        data: [
+ *            ['us-ny', 0],
+ *            ['us-mi', 5],
+ *            ['us-tx', 3],
+ *            ['us-ak', 5]
+ *        ]
+ *    ```
  *
- * 2.  An array of arrays with 2 values. In this case, the values correspond to
- * `[hc-key, value]`. Example:
+ * 3. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.map.turboThreshold),
+ *    this option is not available.
+ *    ```js
+ *        data: [{
+ *            value: 6,
+ *            name: "Point2",
+ *            color: "#00FF00"
+ *        }, {
+ *            value: 6,
+ *            name: "Point1",
+ *            color: "#FF00FF"
+ *        }]
+ *    ```
  *
- *  ```js
- *     data: [
- *         ['us-ny', 0],
- *         ['us-mi', 5],
- *         ['us-tx', 3],
- *         ['us-ak', 5]
- *     ]
- *  ```
- *
- * 3.  An array of objects with named values. The following snippet shows only a
- * few settings, see the complete options set below. If the total number of data
- * points exceeds the series' [turboThreshold](#series.map.turboThreshold), this
- * option is not available.
- *
- *  ```js
- *     data: [{
- *         value: 6,
- *         name: "Point2",
- *         color: "#00FF00"
- *     }, {
- *         value: 6,
- *         name: "Point1",
- *         color: "#FF00FF"
- *     }]
- *  ```
- *
- * @type      {Array<number|Array<string,number>|*>}
+ * @type      {Array<number|Array<string,(number|null)>|null|*>}
+ * @product   highmaps
  * @apioption series.map.data
  */
 
@@ -1185,8 +1202,8 @@ seriesType(
  * @sample maps/series/data-datalabels/
  *         Disable data labels for individual areas
  *
- * @type {Object}
- * @product highmaps
+ * @type      {Object}
+ * @product   highmaps
  * @apioption series.map.data.dataLabels
  */
 
@@ -1279,7 +1296,7 @@ seriesType(
 /**
  * The numeric value of the data point.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highmaps
  * @apioption series.map.data.value
  */

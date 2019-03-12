@@ -257,7 +257,7 @@ var solidGaugeOptions = {
 
 // The solidgauge series type
 H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
-
+    drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).
     translate: function () {
@@ -453,7 +453,7 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
- * @type      {Array<number|*>}
+ * @type      {Array<number|null|*>}
  * @extends   series.gauge.data
  * @product   highcharts
  * @apioption series.solidgauge.data

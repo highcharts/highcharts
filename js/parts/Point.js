@@ -49,6 +49,14 @@
  * @type {number|undefined}
  */
 
+/**
+ * @interface Highcharts.PointObject
+ *//**
+ * Custom properties set by custom data options.
+ * @name Highcharts.Point#[property:string]
+ * @type {*}
+ */
+
 'use strict';
 
 import Highcharts from './Globals.js';
@@ -75,6 +83,7 @@ var Point,
  *
  * @class
  * @name Highcharts.Point
+ * @implements {Highcharts.PointObject}
  */
 Highcharts.Point = Point = function () {};
 Highcharts.Point.prototype = {
@@ -101,7 +110,30 @@ Highcharts.Point.prototype = {
      */
     init: function (series, options, x) {
 
-        var point = this,
+        /**
+         * The series object associated with the point.
+         *
+         * @name Highcharts.Point#series
+         * @type {Highcharts.Series}
+         */
+        this.series = series;
+
+        this.applyOptions(options, x);
+
+        // Add a unique ID to the point if none is assigned
+        this.id = defined(this.id) ? this.id : uniqueKey();
+
+        this.resolveColor();
+
+        series.chart.pointCount++;
+
+        fireEvent(this, 'afterInit');
+
+        return this;
+    },
+
+    resolveColor: function () {
+        var series = this.series,
             colors,
             optionsChart = series.chart.options.chart,
             colorCount = optionsChart.colorCount,
@@ -109,31 +141,19 @@ Highcharts.Point.prototype = {
             colorIndex;
 
         /**
-         * The series object associated with the point.
-         *
-         * @name Highcharts.Point#series
-         * @type {Highcharts.Series}
-         */
-        point.series = series;
-
-        /**
          * The point's current color.
          *
          * @name Highcharts.Point#color
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        if (!styledMode) {
-            point.color = series.color; // #3445
+        if (!styledMode && !this.options.color) {
+            this.color = series.color; // #3445
         }
-        point.applyOptions(options, x);
-
-        // Add a unique ID to the point if none is assigned
-        point.id = defined(point.id) ? point.id : uniqueKey();
 
         if (series.options.colorByPoint) {
             if (!styledMode) {
                 colors = series.options.colors || series.chart.options.colors;
-                point.color = point.color || colors[series.colorCounter];
+                this.color = this.color || colors[series.colorCounter];
                 colorCount = colors.length;
             }
             colorIndex = series.colorCounter;
@@ -153,14 +173,9 @@ Highcharts.Point.prototype = {
          * @name Highcharts.Point#colorIndex
          * @type {number}
          */
-        point.colorIndex = pick(point.colorIndex, colorIndex);
-
-        series.chart.pointCount++;
-
-        fireEvent(point, 'afterInit');
-
-        return point;
+        this.colorIndex = pick(this.colorIndex, colorIndex);
     },
+
     /**
      * Apply the options containing the x and y data and possible some extra
      * properties. Called on point init or from point.update.
@@ -220,6 +235,10 @@ Highcharts.Point.prototype = {
             point.isValid && !point.isValid(),
             point.x === null || !isNumber(point.y, true)
         ); // #3571, check for NaN
+
+        if (point.isNull) { // #9233
+            point.formatPrefix = 'null';
+        }
 
         // The point is initially selected by options (#5777)
         if (point.selected) {
@@ -465,41 +484,39 @@ Highcharts.Point.prototype = {
      * @private
      * @function Highcharts.Point#destroyElements
      */
-    destroyElements: function () {
+    destroyElements: function (kinds) {
         var point = this,
-            props = [
-                'graphic',
-                'dataLabel',
-                'dataLabelUpper',
-                'connector',
-                'shadowGroup'
-            ],
+            props = [],
             prop,
-            i = 6;
+            i;
 
+        kinds = kinds || { graphic: 1, dataLabel: 1 };
+        if (kinds.graphic) {
+            props.push('graphic', 'shadowGroup');
+        }
+        if (kinds.dataLabel) {
+            props.push('dataLabel', 'dataLabelUpper', 'connector');
+        }
+
+        i = props.length;
         while (i--) {
             prop = props[i];
             if (point[prop]) {
                 point[prop] = point[prop].destroy();
             }
         }
-        // Handle point.dataLabels and point.connectors
-        if (point.dataLabels) {
-            point.dataLabels.forEach(function (label) {
-                if (label.element) {
-                    label.destroy();
-                }
-            });
-            delete point.dataLabels;
-        }
-        if (point.connectors) {
-            point.connectors.forEach(function (connector) {
-                if (connector.element) {
-                    connector.destroy();
-                }
-            });
-            delete point.connectors;
-        }
+
+        ['dataLabel', 'connector'].forEach(function (prop) {
+            var plural = prop + 's';
+            if (kinds[prop] && point[plural]) {
+                point[plural].forEach(function (item) {
+                    if (item.element) {
+                        item.destroy();
+                    }
+                });
+                delete point[plural];
+            }
+        });
     },
 
     /**

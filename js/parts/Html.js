@@ -153,7 +153,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
         // apply inversion
         if (wrapper.inverted) { // wrapper is a group
-            elem.childNodes.forEach(function (child) {
+            [].forEach.call(elem.childNodes, function (child) {
                 renderer.invertChild(child, elem);
             });
         }
@@ -354,6 +354,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
         wrapper.textSetter = function (value) {
             if (value !== element.innerHTML) {
                 delete this.bBox;
+                delete this.oldTextWidth;
             }
             this.textStr = value;
             element.innerHTML = pick(value, '');

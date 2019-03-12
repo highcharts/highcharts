@@ -179,7 +179,7 @@ H.PlotLineOrBand.prototype = {
             }
         } else if (svgElem) {
             if (path) {
-                svgElem.show();
+                svgElem.show(true);
                 svgElem.animate({ d: path });
             } else {
                 svgElem.hide();
@@ -289,7 +289,7 @@ H.PlotLineOrBand.prototype = {
             width: arrayMax(xBounds) - x,
             height: arrayMax(yBounds) - y
         });
-        label.show();
+        label.show(true);
     },
 
     /**
@@ -447,7 +447,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotbands-label/
      *         Plot band with labels
      *
-     * @type      {Highcharts.AlignType}
+     * @type      {Highcharts.AlignValue}
      * @default   center
      * @since     2.1
      * @apioption xAxis.plotBands.label.align
@@ -496,7 +496,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotbands-label-rotation/
      *         Vertical text in center position but text-aligned left
      *
-     * @type       {Highcharts.AlignType}
+     * @type       {Highcharts.AlignValue}
      * @since      2.1
      * @apioption  xAxis.plotBands.label.textAlign
      */
@@ -520,7 +520,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotbands-label/
      *         Plot band with labels
      *
-     * @type       {Highcharts.VerticalAlignType}
+     * @type       {Highcharts.VerticalAlignValue}
      * @default    top
      * @since      2.1
      * @apioption  xAxis.plotBands.label.verticalAlign
@@ -596,7 +596,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @type      {Highcharts.DashStyleType}
+     * @type      {Highcharts.DashStyleValue}
      * @default   Solid
      * @since     1.2
      * @apioption xAxis.plotLines.dashStyle
@@ -679,7 +679,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @type       {Highcharts.AlignType}
+     * @type       {Highcharts.AlignValue}
      * @default    left
      * @since      2.1
      * @apioption  xAxis.plotLines.label.align
@@ -728,7 +728,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotlines-label-textalign/
      *         Text label in bottom position
      *
-     * @type      {Highcharts.AlignType}
+     * @type      {Highcharts.AlignValue}
      * @since     2.1
      * @apioption xAxis.plotLines.label.textAlign
      */
@@ -750,11 +750,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @sample {highcharts} highcharts/xaxis/plotlines-label-verticalalign-middle/
      *         Vertically centered label
      *
-     * @type       {Highcharts.VerticalAlignType}
+     * @type       {Highcharts.VerticalAlignValue}
      * @default    {highcharts} top
      * @default    {highstock} top
      * @since      2.1
-     * @validvalue ["top", "middle", "bottom"]
      * @apioption  xAxis.plotLines.label.verticalAlign
      */
 

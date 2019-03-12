@@ -87,6 +87,94 @@ QUnit.test('RangeSelector.updateButtonStates', function (assert) {
     );
 });
 
+QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
+    const getOptions = () => ({
+        chart: {
+            type: "column",
+            width: 600
+        },
+
+        series: [{
+            data: (function () {
+                const dataArrayTmp = [];
+                for (let i = 0; i < 2 * 24; i++) {
+                    dataArrayTmp.push([i * 120000, 1]);
+                }
+                return dataArrayTmp;
+            }())
+        }],
+
+        rangeSelector: {
+            buttons: [{
+                type: "hour",
+                count: 1,
+                text: "1h"
+            }]
+        }
+    });
+
+    const chart = Highcharts.stockChart('container', getOptions());
+
+    chart.rangeSelector.clickButton(0);
+
+    assert.deepEqual(
+        chart.rangeSelector.buttons.map(b => b.state),
+        [2],
+        'The button should be clicked'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.selected,
+        0,
+        'The selected property should be updated'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.options.selected,
+        0,
+        'The selected option should be updated'
+    );
+
+    // Change the extremes
+    chart.xAxis[0].setExtremes(
+        chart.xAxis[0].min + 12000,
+        chart.xAxis[0].max
+    );
+
+    assert.deepEqual(
+        chart.rangeSelector.buttons.map(b => b.state),
+        [0],
+        'The button should not be clicked'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.selected,
+        null,
+        'The selected property should be updated'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.options.selected,
+        null,
+        'The selected option should be updated'
+    );
+
+    // Update the series
+    chart.update(getOptions());
+
+    assert.deepEqual(
+        chart.rangeSelector.buttons.map(b => b.state),
+        [0],
+        'The button should not be selected after redraw (#9209)'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.selected,
+        null,
+        'The selected property should remain after redraw (#9209)'
+    );
+    assert.strictEqual(
+        chart.rangeSelector.options.selected,
+        null,
+        'The selected option should remain after redraw (#9209)'
+    );
+});
+
 QUnit.test('RangeSelector.getYTDExtremes', function (assert) {
     var getYTDExtremes = Highcharts.RangeSelector.prototype.getYTDExtremes,
         now = +new Date(),

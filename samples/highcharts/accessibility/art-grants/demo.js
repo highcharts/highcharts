@@ -1,4 +1,3 @@
-
 // Workaround to modify the data table.
 // The default format is a bit messy for this dataset.
 Highcharts.Chart.prototype.callbacks.push(function (chart) {
@@ -47,7 +46,8 @@ Highcharts.Chart.prototype.callbacks.push(function (chart) {
         for (var i = 0; i < Math.max(
             first.length, second.length, third.length, fourth.length
         ); ++i) {
-            tbody.insertAdjacentHTML('beforeend',
+            tbody.insertAdjacentHTML(
+                'beforeend',
                 '<tr>' +
                 (first[i] ?
                     '<td>' + first[i][0] + '</td>' +
@@ -227,7 +227,7 @@ Highcharts.chart('container', {
             },
             enableMouseTracking: false,
             skipKeyboardNavigation: true,
-            includeInCSVExport: false,
+            includeInDataExport: false,
             exposeElementToA11y: true,
             linkedTo: ':previous',
             dataLabels: {
@@ -239,11 +239,10 @@ Highcharts.chart('container', {
                 },
                 formatter: function () {
                     if (this.point === this.series.points[Math.floor(
-                            this.series.points.length / 2
+                        this.series.points.length / 2
                     )]) {
                         return 'Total: $' + Highcharts.numberFormat(this.y, 0);
                     }
-                    return;
                 }
             }
         }

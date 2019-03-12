@@ -575,7 +575,18 @@ seriesType('timeline', 'line',
         },
         drawConnector: function () {
             var point = this,
+                series = point.series;
+
+            point.connector = series.chart.renderer
+                .path(point.getConnectorPath())
+                .add(series.connectorsGroup);
+        },
+        alignConnector: function () {
+            var point = this,
                 series = point.series,
+                connector = point.connector,
+                bBox = connector.getBBox(),
+                isVisible = bBox.y > 0,
                 dlOptions = point.dataLabel.options = merge(
                     series.options.dataLabels,
                     point.options.dataLabels
@@ -657,7 +668,7 @@ seriesType('timeline', 'line',
  * @sample {highcharts} highcharts/series-timeline/datetime-axis
  *         Real time intervals
  *
- * @type      {Array<number|*>}
+ * @type      {Array<*>}
  * @extends   series.line.data
  * @excluding marker, y
  * @product   highcharts

@@ -8,7 +8,7 @@ Highcharts.chart('container', {
     },
     subtitle: {
         useHTML: true,
-        text: 'Source: <a href="	http://data.worldbank.org/data-catalog/world-development-indicators">Worldbank</a>'
+        text: 'Source: <a href="http://data.worldbank.org/data-catalog/world-development-indicators">Worldbank</a>'
     },
     yAxis: {
         title: {

@@ -9,7 +9,7 @@
 /**
  * The horizontal alignment of an element.
  *
- * @typedef {"center"|"left"|"right"} Highcharts.AlignType
+ * @typedef {"center"|"left"|"right"} Highcharts.AlignValue
  */
 
 /**
@@ -20,14 +20,14 @@
  * Horizontal alignment. Can be one of `left`, `center` and `right`.
  *
  * @name Highcharts.AlignObject#align
- * @type {Highcharts.AlignType|undefined}
+ * @type {Highcharts.AlignValue|undefined}
  *
  * @default left
  *//**
  * Vertical alignment. Can be one of `top`, `middle` and `bottom`.
  *
  * @name Highcharts.AlignObject#verticalAlign
- * @type {Highcharts.VerticalAlignType|undefined}
+ * @type {Highcharts.VerticalAlignValue|undefined}
  *
  * @default top
  *//**
@@ -283,22 +283,41 @@
  */
 
 /**
- * An extendable collection of functions for defining symbol paths.
+ * An extendable collection of functions for defining symbol paths. Symbols are
+ * used internally for point markers, button and label borders and backgrounds,
+ * or custom shapes. Extendable by adding to {@link SVGRenderer#symbols}.
  *
- * @typedef Highcharts.SymbolDictionary
- *
- * @property {Function|undefined} [key:Highcharts.SymbolKey]
+ * @interface Highcharts.SymbolDictionary
+ *//**
+ * @name [key:string]
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#arc
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#callout
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#circle
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#diamond
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#square
+ * @type {Function|undefined}
+ *//**
+ * @name Highcharts.SymbolDictionary#triangle
+ * @type {Function|undefined}
  */
 
 /**
- * Can be one of `arc`, `callout`, `circle`, `diamond`, `square`,
- * `triangle`, `triangle-down`. Symbols are used internally for point
- * markers, button and label borders and backgrounds, or custom shapes.
- * Extendable by adding to {@link SVGRenderer#symbols}.
+ * Can be one of `arc`, `callout`, `circle`, `diamond`, `square`, `triangle`,
+ * and `triangle-down`. Symbols are used internally for point markers, button
+ * and label borders and backgrounds, or custom shapes. Extendable by adding to
+ * {@link SVGRenderer#symbols}.
  *
- * @typedef {string} Highcharts.SymbolKey
- * @validvalue ["arc", "callout", "circle", "diamond", "square", "triangle",
- *             "triangle-down"]
+ * @typedef {"arc"|"callout"|"circle"|"diamond"|"square"|"triangle"|"triangle-down"} Highcharts.SymbolKeyValue
  */
 
 /**
@@ -310,39 +329,39 @@
  * points to.
  *
  * @name Highcharts.SymbolOptionsObject#anchorX
- * @type {number}
+ * @type {number|undefined}
  *//**
  * The anchor Y position for the `callout` symbol. This is where the chevron
  * points to.
  *
  * @name Highcharts.SymbolOptionsObject#anchorY
- * @type {number}
+ * @type {number|undefined}
  *//**
  * The end angle of an `arc` symbol.
  *
  * @name Highcharts.SymbolOptionsObject#end
- * @type {number}
+ * @type {number|undefined}
  *//**
  * Whether to draw `arc` symbol open or closed.
  *
  * @name Highcharts.SymbolOptionsObject#open
- * @type {boolean}
+ * @type {boolean|undefined}
  *//**
  * The radius of an `arc` symbol, or the border radius for the `callout` symbol.
  *
  * @name Highcharts.SymbolOptionsObject#r
- * @type {number}
+ * @type {number|undefined}
  *//**
  * The start angle of an `arc` symbol.
  *
  * @name Highcharts.SymbolOptionsObject#start
- * @type {number}
+ * @type {number|undefined}
  */
 
 /**
  * The vertical alignment of an element.
  *
- * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignType
+ * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
  */
 
 'use strict';
@@ -678,13 +697,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     applyTextOutline: function (textOutline) {
         var elem = this.element,
             tspans,
-            tspan,
             hasContrast = textOutline.indexOf('contrast') !== -1,
             styles = {},
             color,
             strokeWidth,
-            firstRealChild,
-            i;
+            firstRealChild;
 
         // When the text shadow is set to contrast, use dark stroke for light
         // text and vice versa.
@@ -720,16 +737,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 }
             );
 
-            // Remove shadows from previous runs. Iterate from the end to
-            // support removing items inside the cycle (#6472).
-            i = tspans.length;
-            while (i--) {
-                tspan = tspans[i];
-                if (tspan.getAttribute('class') === 'highcharts-text-outline') {
-                    // Remove then erase
-                    erase(tspans, elem.removeChild(tspan));
-                }
-            }
+            // Remove shadows from previous runs.
+            this.removeTextOutline(tspans);
 
             // For each of the tspans, create a stroked copy behind it.
             firstRealChild = elem.firstChild;
@@ -757,6 +766,20 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 });
                 elem.insertBefore(clone, firstRealChild);
             });
+        }
+    },
+
+    removeTextOutline: function (tspans) {
+        // Iterate from the end to
+        // support removing items inside the cycle (#6472).
+        var i = tspans.length,
+            tspan;
+        while (i--) {
+            tspan = tspans[i];
+            if (tspan.getAttribute('class') === 'highcharts-text-outline') {
+                // Remove then erase
+                erase(tspans, this.element.removeChild(tspan));
+            }
         }
     },
 
@@ -977,12 +1000,22 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     addClass: function (className, replace) {
         var currentClassName = this.attr('class') || '';
 
-        if (currentClassName.indexOf(className) === -1) {
-            if (!replace) {
-                className =
-                    (currentClassName + (currentClassName ? ' ' : '') +
-                    className).replace('  ', ' ');
-            }
+        if (!replace) {
+
+            // Filter out existing
+            className = (className || '')
+                .split(/ /g)
+                .reduce(function (newClassName, name) {
+                    if (currentClassName.indexOf(name) === -1) {
+                        newClassName.push(name);
+                    }
+                    return newClassName;
+                }, currentClassName ? [currentClassName] : [])
+                .join(' ');
+
+        }
+
+        if (className !== currentClassName) {
             this.attr('class', className);
         }
 
@@ -1045,7 +1078,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             'height',
             'innerR',
             'anchorX',
-            'anchorY'
+            'anchorY',
+            'clockwise'
         ].forEach(function (key) {
             wrapper[key] = pick(hash[key], wrapper[key]);
         });
@@ -1944,16 +1978,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             [].forEach.call(
                 ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
                 function (el) {
-                    var clipPathAttr = el.getAttribute('clip-path'),
-                        clipPathId = clipPath.element.id;
+                    var clipPathAttr = el.getAttribute('clip-path');
 
-                    // Include the closing paranthesis in the test to rule out
-                    // id's from 10 and above (#6550). Edge puts quotes inside
-                    // the url, others not.
-                    if (
-                        clipPathAttr.indexOf('(#' + clipPathId + ')') > -1 ||
-                        clipPathAttr.indexOf('("#' + clipPathId + '")') > -1
-                    ) {
+                    if (clipPathAttr.indexOf(clipPath.element.id) > -1) {
                         el.removeAttribute('clip-path');
                     }
                 }
@@ -2225,9 +2252,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     alignSetter: function (value) {
         var convert = { left: 'start', center: 'middle', right: 'end' };
-
-        this.alignValue = value;
-        this.element.setAttribute('text-anchor', convert[value]);
+        if (convert[value]) {
+            this.alignValue = value;
+            this.element.setAttribute('text-anchor', convert[value]);
+        }
     },
     /**
      * @private
@@ -2288,6 +2316,158 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 this.renderer.buildText(this);
             }
         }
+    },
+    /**
+     * @private
+     * @function Highcharts.SVGElement#setTextPath
+     *
+     * TO DO:
+     * @param {Highcharts.SVGElement} - path - path to follow
+     * @param {object} options - Format:
+     * <pre>
+     *              {
+     *                  options: {
+     *                      enabled: boolean,
+     *                      attribues: Highcharts.SVGAttributes
+     *                  }
+     *              }
+     * </pre>
+     *
+     * @return {Highcharts.SVGElement}
+     *         Returns the SVGElement for chaining.
+     */
+    setTextPath: function (path, textPathOptions) {
+        var elem = this.element,
+            attribsMap = {
+                textAnchor: 'text-anchor'
+            },
+            attrs,
+            adder = false,
+            textPathElement,
+            textPathId,
+            textPathWrapper = this.textPathWrapper,
+            tspans,
+            firstTime = !textPathWrapper;
+
+        // Defaults
+        textPathOptions = merge(true, {
+            enabled: true,
+            attributes: {
+                dy: -5,
+                startOffset: '50%',
+                textAnchor: 'middle'
+            }
+        }, textPathOptions);
+        attrs = textPathOptions.attributes;
+
+        if (path && textPathOptions && textPathOptions.enabled) {
+            // label() has padding, text() doesn't
+            if (this.options && this.options.padding) {
+                attrs.dx = -this.options.padding;
+            }
+
+            if (!textPathWrapper) {
+                // Create <textPath>, defer the DOM adder
+                this.textPathWrapper = textPathWrapper =
+                    this.renderer.createElement('textPath');
+                adder = true;
+            }
+
+            textPathElement = textPathWrapper.element;
+
+            // Set ID for the path
+            textPathId = path.element.getAttribute('id');
+            if (!textPathId) {
+                path.element.setAttribute('id', textPathId = H.uniqueKey());
+            }
+
+            // Change DOM structure, by placing <textPath> tag in <text>
+            if (firstTime) {
+                tspans = elem.getElementsByTagName('tspan');
+
+                // Now move all <tspan>'s to the <textPath> node
+                while (tspans.length) {
+                    textPathElement.appendChild(tspans[0]);
+                }
+            }
+
+            // Add <textPath> to the DOM
+            if (adder) {
+                textPathWrapper.add({
+                    // label() is placed in a group, text() is standalone
+                    element: this.text ? this.text.element : elem
+                });
+            }
+
+            // Set basic options:
+            textPathElement.setAttribute(
+                'href',
+                this.renderer.url + '#' + textPathId
+            );
+
+            // Presentation attributes:
+
+            // dx/dy options must by set on <text> (parent),
+            // the rest should be set on <textPath>
+            if (defined(attrs.dy)) {
+                textPathElement.parentNode.setAttribute('dy', attrs.dy);
+                delete attrs.dy;
+            }
+            if (defined(attrs.dx)) {
+                textPathElement.parentNode.setAttribute('dx', attrs.dx);
+                delete attrs.dx;
+            }
+
+            // Additional attributes
+            H.objectEach(attrs, function (val, key) {
+                textPathElement.setAttribute(
+                    attribsMap[key] || key,
+                    val
+                );
+            });
+
+            // Remove translation, text that follows path does not need that
+            elem.removeAttribute('transform');
+
+            // Remove shadows and text outlines
+            this.removeTextOutline.call(
+                textPathWrapper,
+                [].slice.call(elem.getElementsByTagName('tspan'))
+            );
+
+            // Disable some functions
+            this.updateTransform = noop;
+            this.applyTextOutline = noop;
+
+        } else if (textPathWrapper) {
+            // Reset to prototype
+            delete this.updateTransform;
+            delete this.applyTextOutline;
+
+            // Restore DOM structure:
+            this.destroyTextPath(elem, path);
+        }
+
+        return this;
+    },
+
+    destroyTextPath: function (elem, path) {
+        var tspans;
+
+        // Remove ID's:
+        path.element.setAttribute('id', '');
+
+        // Move nodes to <text>
+        tspans = this.textPathWrapper.element.childNodes;
+
+        // Now move all <tspan>'s to the <textPath> node
+        while (tspans.length) {
+            elem.firstChild.appendChild(tspans[0]);
+        }
+        // Remove <textPath>
+        elem.firstChild.removeChild(this.textPathWrapper.element);
+        delete path.textPathWrapper;
+
     },
     /**
      * @private
@@ -3494,7 +3674,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {Highcharts.SVGAttributes} [disabledState]
      *        SVG attributes for the disabled state.
      *
-     * @param {Highcharts.SymbolKey} [shape=rect]
+     * @param {Highcharts.SymbolKeyValue} [shape=rect]
      *        The shape type.
      *
      * @return {Highcharts.SVGElement}
@@ -3775,7 +3955,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *        Center Y position.
      *
      * @param {number} [r=0]
-     *        The outer radius of the arc.
+     *        The outer radius' of the arc.
      *
      * @param {number} [innerR=0]
      *        Inner radius like used in donut charts.
@@ -4259,8 +4439,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         'circle': function (x, y, w, h) {
             // Return a full arc
             return this.arc(x + w / 2, y + h / 2, w / 2, h / 2, {
-                start: 0,
-                end: Math.PI * 2,
+                start: Math.PI * 0.5,
+                end: Math.PI * 2.5,
                 open: false
             });
         },
@@ -4331,7 +4511,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 ry, // y radius
                 0, // slanting
                 longArc, // long or short arc
-                1, // clockwise
+                pick(options.clockwise, 1), // clockwise
                 x + rx * cosEnd,
                 y + ry * sinEnd
             ];
@@ -4505,7 +4685,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     clipRect: function (x, y, width, height) {
         var wrapper,
-            id = H.uniqueKey(),
+            // Add a hyphen at the end to avoid confusion in testing indexes
+            // -1 and -10, -11 etc (#6550)
+            id = H.uniqueKey() + '-',
 
             clipPath = this.createElement('clipPath').attr({
                 id: id
@@ -4696,11 +4878,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} y
      *        The y position of the label's top side or baseline, depending on
      *        the `baseline` parameter.
-     *
-     * @param {string} [shape='rect']
-     *        The shape of the label's border/background, if any. Defaults to
-     *        `rect`. Other possible values are `callout` or other shapes
-     *        defined in {@link Highcharts.SVGRenderer#symbols}.
      *
      * @param {string} [shape='rect']
      *        The shape of the label's border/background, if any. Defaults to
@@ -4951,7 +5128,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // apply these to the box and the text alike
         wrapper.textSetter = function (value) {
             if (value !== undefined) {
-                text.textSetter(value);
+                // Must use .attr to ensure transforms are done (#10009)
+                text.attr({
+                    text: value
+                });
             }
             updateBoxSize();
             updateTextPadding();

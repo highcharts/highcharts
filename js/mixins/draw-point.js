@@ -3,7 +3,9 @@ var isFn = function (x) {
 };
 
 /**
- * Handles the drawing of a point.
+ * Handles the drawing of a component.
+ * Can be used for any type of component that reserves the graphic property, and
+ * provides a shouldDraw on its context.
  *
  * @private
  * @function draw
@@ -11,20 +13,20 @@ var isFn = function (x) {
  * @param {object} params
  *        Parameters.
  *
- * @todo
- * - add type checking.
+ * TODO: add type checking.
+ * TODO: export this function to enable usage
  */
 var draw = function draw(params) {
-    var point = this,
-        graphic = point.graphic,
+    var component = this,
+        graphic = component.graphic,
         animatableAttribs = params.animatableAttribs,
         onComplete = params.onComplete,
         css = params.css,
         renderer = params.renderer;
 
-    if (point.shouldDraw()) {
+    if (component.shouldDraw()) {
         if (!graphic) {
-            point.graphic = graphic =
+            component.graphic = graphic =
                 renderer[params.shapeType](params.shapeArgs).add(params.group);
         }
         graphic
@@ -36,16 +38,40 @@ var draw = function draw(params) {
                 onComplete
             );
     } else if (graphic) {
-        graphic.animate(animatableAttribs, undefined, function () {
-            point.graphic = graphic = graphic.destroy();
+        var destroy = function () {
+            component.graphic = graphic = graphic.destroy();
             if (isFn(onComplete)) {
                 onComplete();
             }
-        });
-    }
-    if (graphic) {
-        graphic.addClass(point.getClassName(), true);
+        };
+
+        // animate only runs complete callback if something was animated.
+        if (Object.keys(animatableAttribs).length) {
+            graphic.animate(animatableAttribs, undefined, function () {
+                destroy();
+            });
+        } else {
+            destroy();
+        }
     }
 };
 
-export default draw;
+/**
+ * An extended version of draw customized for points.
+ * It calls additional methods that is expected when rendering a point.
+ *
+ * @param {object} params Parameters
+ */
+var drawPoint = function drawPoint(params) {
+    var point = this,
+        attribs = params.attribs = params.attribs || {};
+
+    // Assigning class in dot notation does go well in IE8
+    // eslint-disable-next-line dot-notation
+    attribs['class'] = point.getClassName();
+
+    // Call draw to render component
+    draw.call(point, params);
+};
+
+export default drawPoint;

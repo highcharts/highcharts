@@ -1,5 +1,5 @@
 /* eslint-env node, es6 */
-/* eslint-disable func-style */
+/* eslint-disable */
 
 'use strict';
 
@@ -11,7 +11,7 @@ const fs = require('fs');
 
 const asyncForeach = (arr, fn) => {
     const length = arr.length;
-    const generator = (j) => {
+    const generator = j => {
         let promise;
         if (j < length) {
             promise = fn(arr[j], j, arr).then(() => generator(j + 1));
@@ -36,23 +36,23 @@ const asyncBatchForeach = (batchSize, arr, fn) => {
     return generator(0, batchSize);
 };
 
-const uploadFiles = (params) => {
+const uploadFiles = params => {
     const storage = require('./jsdoc/storage/cdn.storage');
     const mimeType = {
-        'css': 'text/css',
-        'eot': 'application/vnd.ms-fontobject',
-        'gif': 'image/gif',
-        'html': 'text/html',
-        'ico': 'image/x-icon',
-        'jpeg': 'image/jpeg',
-        'jpg': 'image/jpeg',
-        'js': 'text/javascript',
-        'json': 'application/json',
-        'png': 'image/png',
-        'svg': 'image/svg+xml',
-        'ttf': 'application/font-sfnt',
-        'woff': 'application/font-woff',
-        'woff2': 'application/font-woff'
+        css: 'text/css',
+        eot: 'application/vnd.ms-fontobject',
+        gif: 'image/gif',
+        html: 'text/html',
+        ico: 'image/x-icon',
+        jpeg: 'image/jpeg',
+        jpg: 'image/jpeg',
+        js: 'text/javascript',
+        json: 'application/json',
+        png: 'image/png',
+        svg: 'image/svg+xml',
+        ttf: 'application/font-sfnt',
+        woff: 'application/font-woff',
+        woff2: 'application/font-woff'
     };
     const {
         batchSize,
@@ -67,22 +67,22 @@ const uploadFiles = (params) => {
         const cdn = storage.strategy.s3({
             Bucket: bucket
         });
-        const uploadFile = (file) => {
+        const uploadFile = file => {
             const { from, to } = file;
             let filePromise;
             if (isString(from) && isString(to)) {
                 // empty encoding -> read as binary buffer
                 const content = fs.readFileSync(from, '');
                 const fileType = from.split('.').pop();
-                let fileMime = mimeType[fileType];
+                const fileMime = mimeType[fileType];
                 if (content && content.length > 0) {
                     filePromise = storage.push(cdn, to, content, fileMime)
                         .then(() => isFunction(callback) && callback())
-                        .catch((err) => {
+                        .catch(err => {
                             const error = {
                                 message: `S3: ${err.pri && err.pri.message}`,
-                                from: from,
-                                to: to
+                                from,
+                                to
                             };
                             errors.push(error);
                             return onError(error);
@@ -90,8 +90,8 @@ const uploadFiles = (params) => {
                 } else {
                     const error = {
                         message: 'Path is not a file',
-                        from: from,
-                        to: to
+                        from,
+                        to
                     };
                     errors.push(error);
                     filePromise = onError(error);
@@ -99,8 +99,8 @@ const uploadFiles = (params) => {
             } else {
                 const error = {
                     message: 'Invalid file information!',
-                    from: from,
-                    to: to
+                    from,
+                    to
                 };
                 errors.push(error);
                 filePromise = onError(error);
@@ -111,7 +111,7 @@ const uploadFiles = (params) => {
             errors
         }));
     } else {
-        result = Promise.reject();
+        result = Promise.reject(new Error());
     }
     return result;
 };

@@ -403,6 +403,9 @@ H.AxisResizer.prototype = {
             plotHeight = chart.plotHeight,
             plotBottom = plotTop + plotHeight,
             yDelta,
+            calculatePercent = function (value) {
+                return value * 100 / plotHeight + '%';
+            },
             normalize = function (val, min, max) {
                 return Math.round(Math.min(Math.max(val, min), max));
             };
@@ -495,8 +498,8 @@ H.AxisResizer.prototype = {
                     axesConfigs.push({
                         axis: axis,
                         options: {
-                            top: Math.round(top),
-                            height: height
+                            top: calculatePercent(top - plotTop),
+                            height: calculatePercent(height)
                         }
                     });
                 } else {
@@ -513,7 +516,7 @@ H.AxisResizer.prototype = {
                     axesConfigs.push({
                         axis: axis,
                         options: {
-                            height: height
+                            height: calculatePercent(height)
                         }
                     });
                 }

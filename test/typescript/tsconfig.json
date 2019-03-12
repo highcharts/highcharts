@@ -19,12 +19,15 @@
         },
         "types": []
     },
+    "include": [
+        "../../test/typescript/classes/**/*.ts",
+        "../../test/typescript/issues/**/*.ts"
+    ],
     "files": [
         "../../code/highcharts.d.ts",
         "../../code/highcharts.src.d.ts",
         "../../test/typescript/globals.ts",
         "../../test/typescript/highcharts.ts",
-        "../../test/typescript/classes/Series.ts",
 
         "../../code/highcharts-3d.d.ts",
         "../../code/highcharts-3d.src.d.ts",
@@ -327,6 +330,46 @@
         "../../code/indicators/wma.src.d.ts",
 
         "../../code/indicators/zigzag.d.ts",
-        "../../code/indicators/zigzag.src.d.ts"
+        "../../code/indicators/zigzag.src.d.ts",
+
+        "../../code/themes/avocado.d.ts",
+        "../../code/themes/avocado.src.d.ts",
+        "../../test/typescript/themes/avocado.ts",
+
+        "../../code/themes/dark-blue.d.ts",
+        "../../code/themes/dark-blue.src.d.ts",
+        "../../test/typescript/themes/dark-blue.ts",
+
+        "../../code/themes/dark-green.d.ts",
+        "../../code/themes/dark-green.src.d.ts",
+        "../../test/typescript/themes/dark-green.ts",
+
+        "../../code/themes/dark-unica.d.ts",
+        "../../code/themes/dark-unica.src.d.ts",
+        "../../test/typescript/themes/dark-unica.ts",
+
+        "../../code/themes/gray.d.ts",
+        "../../code/themes/gray.src.d.ts",
+        "../../test/typescript/themes/gray.ts",
+
+        "../../code/themes/grid-light.d.ts",
+        "../../code/themes/grid-light.src.d.ts",
+        "../../test/typescript/themes/grid-light.ts",
+
+        "../../code/themes/grid.d.ts",
+        "../../code/themes/grid.src.d.ts",
+        "../../test/typescript/themes/grid.ts",
+
+        "../../code/themes/sand-signika.d.ts",
+        "../../code/themes/sand-signika.src.d.ts",
+        "../../test/typescript/themes/sand-signika.ts",
+
+        "../../code/themes/skies.d.ts",
+        "../../code/themes/skies.src.d.ts",
+        "../../test/typescript/themes/skies.ts",
+
+        "../../code/themes/sunset.d.ts",
+        "../../code/themes/sunset.src.d.ts",
+        "../../test/typescript/themes/sunset.ts"
     ]
 }

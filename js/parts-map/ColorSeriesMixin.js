@@ -1,8 +1,10 @@
-/**
- * (c) 2010-2019 Torstein Honsi
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -20,6 +22,9 @@ var defined = H.defined,
  * @mixin Highcharts.colorPointMixin
  */
 H.colorPointMixin = {
+
+    dataLabelOnNull: true,
+
     /**
      * Color points have a value option that determines whether or not it is
      * a null point

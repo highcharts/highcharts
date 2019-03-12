@@ -74,8 +74,7 @@
  * Contains common information for a drag event on series point.
  *
  * @interface Highcharts.SeriesPointDragStartEventObject
- *
- * @implements {global.MouseDownEvent}
+ * @extends global.MouseEvent
  *//**
  * Data property being dragged.
  * @name Highcharts.SeriesPointDragStartEventObject#updateProp
@@ -1849,14 +1848,17 @@ H.Chart.prototype.setGuideBoxState = function (state, options) {
         guideBoxOptions = merge(defaultGuideBoxOptions, options),
         stateOptions = merge(guideBoxOptions.default, guideBoxOptions[state]);
 
-    return guideBox.attr({
-        className: stateOptions.className,
-        stroke: stateOptions.lineColor,
-        strokeWidth: stateOptions.lineWidth,
-        fill: stateOptions.color,
-        cursor: stateOptions.cursor,
-        zIndex: stateOptions.zIndex
-    });
+    return guideBox
+        .attr({
+            className: stateOptions.className,
+            stroke: stateOptions.lineColor,
+            strokeWidth: stateOptions.lineWidth,
+            fill: stateOptions.color,
+            cursor: stateOptions.cursor,
+            zIndex: stateOptions.zIndex
+        })
+        // Use pointerEvents 'none' to avoid capturing the click event
+        .css({ pointerEvents: 'none' });
 };
 
 
@@ -2433,6 +2435,7 @@ function mouseUp(e, chart) {
         chart.cancelClick = true;
 
         // Fire the event, with a default handler that updates the points
+
         point.firePointEvent('drop', {
             origin: dragDropData.origin,
             chartX: e.chartX,
@@ -2471,10 +2474,21 @@ function mouseUp(e, chart) {
  *        The chart we are clicking.
  */
 function mouseDown(e, chart) {
-    var dragPoint = chart.hoverPoint;
+    var dragPoint = chart.hoverPoint,
+        dragDropOptions = H.merge(
+            dragPoint && dragPoint.series.options.dragDrop,
+            dragPoint && dragPoint.options.dragDrop
+        ),
+        draggableX = dragDropOptions.draggableX || false,
+        draggableY = dragDropOptions.draggableY || false;
 
     // Reset cancel click
     chart.cancelClick = false;
+
+    // Ignore if option is disable for the point
+    if (!(draggableX || draggableY)) {
+        return;
+    }
 
     // Ignore if zoom/pan key is pressed
     if (chart.zoomOrPanKeyPressed(e)) {

@@ -8,14 +8,14 @@
 
 /* eslint-disable */
 
-'use strict';
-
 import H from '../parts/Globals.js';
 
-let pick = H.pick,
-    isNumber = H.isNumber,
-    relativeLength = H.relativeLength,
-    seriesType = H.seriesType,
+declare const U: any;
+
+let pick = U.pick,
+    isNumber = U.isNumber,
+    relativeLength = U.relativeLength,
+    seriesType = U.seriesType,
     columnProto = H.seriesTypes.column.prototype;
 
 /**
@@ -150,7 +150,7 @@ seriesType('bullet', 'column',
                     y;
 
                 if (isNumber(targetVal) && targetVal !== null) {
-                    targetOptions = H.merge(
+                    targetOptions = U.merge(
                         options.targetOptions,
                         pointOptions.targetOptions
                     );

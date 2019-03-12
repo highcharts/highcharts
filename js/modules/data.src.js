@@ -568,6 +568,11 @@ Highcharts.extend(Data.prototype, {
             hasData = true;
         }
 
+        if (this.hasURLOption(options)) {
+            clearTimeout(this.liveDataTimeout);
+            hasData = false;
+        }
+
         if (!hasData) {
             // Fetch live data
             hasData = this.fetchLiveData();
@@ -592,6 +597,13 @@ Highcharts.extend(Data.prototype, {
         if (!hasData && options.afterComplete) {
             options.afterComplete();
         }
+    },
+
+    hasURLOption: function (options) {
+        return Boolean(
+            options &&
+            (options.rowsURL || options.csvURL || options.columnsURL)
+        );
     },
 
     /**
@@ -1311,7 +1323,8 @@ Highcharts.extend(Data.prototype, {
      *         The first URL that was tried.
      */
     fetchLiveData: function () {
-        var chart = this.chart,
+        var data = this,
+            chart = this.chart,
             options = this.options,
             maxRetries = 3,
             currentRetries = 0,
@@ -1319,9 +1332,7 @@ Highcharts.extend(Data.prototype, {
             updateIntervalMs = (options.dataRefreshRate || 2) * 1000,
             originalOptions = merge(options);
 
-        if (!options ||
-            (!options.csvURL && !options.rowsURL && !options.columnsURL)
-        ) {
+        if (!this.hasURLOption(options)) {
             return false;
         }
 
@@ -1346,7 +1357,7 @@ Highcharts.extend(Data.prototype, {
                 }
 
                 if (initialFetch) {
-                    clearTimeout(chart.liveDataTimeout);
+                    clearTimeout(data.liveDataTimeout);
                     chart.liveDataURL = url;
                 }
 
@@ -1354,7 +1365,7 @@ Highcharts.extend(Data.prototype, {
                     // Poll
                     if (pollingEnabled && chart.liveDataURL === url) {
                         // We need to stop doing this if the URL has changed
-                        chart.liveDataTimeout =
+                        data.liveDataTimeout =
                             setTimeout(performFetch, updateIntervalMs);
                     }
                 }
@@ -1409,9 +1420,7 @@ Highcharts.extend(Data.prototype, {
 
         performFetch(true);
 
-        return (options &&
-            (options.csvURL || options.rowsURL || options.columnsURL)
-        );
+        return this.hasURLOption(options);
     },
 
 
@@ -1906,6 +1915,26 @@ Highcharts.extend(Data.prototype, {
     },
 
     /**
+     * Get the parsed data in a form that we can apply directly to the
+     * `series.data` config. Array positions can be mapped using the
+     * `series.keys` option.
+     *
+     * @example
+     * const data = Highcharts.data({
+     *   csv: document.getElementById('data').innerHTML
+     * }).getData();
+     *
+     * @function Highcharts.Data#getData
+     *
+     * @return {Array<Array<*>>} Data rows
+     */
+    getData: function () {
+        if (this.columns) {
+            return this.rowsToColumns(this.columns).slice(1);
+        }
+    },
+
+    /**
      * A hook for working directly on the parsed columns
      *
      * @function Highcharts.Data#parsed
@@ -2140,15 +2169,17 @@ Highcharts.extend(Data.prototype, {
                 // Avoid setting axis options unless the type changes. Running
                 // Axis.update will cause the whole structure to be destroyed
                 // and rebuilt, and animation is lost.
-                if (
-                    dataOptions.xAxis &&
-                    chart.xAxis[0] &&
-                    dataOptions.xAxis.type === chart.xAxis[0].options.type
-                ) {
-                    delete dataOptions.xAxis;
-                }
+                if (dataOptions) {
+                    if (
+                        dataOptions.xAxis &&
+                        chart.xAxis[0] &&
+                        dataOptions.xAxis.type === chart.xAxis[0].options.type
+                    ) {
+                        delete dataOptions.xAxis;
+                    }
 
-                chart.update(dataOptions, redraw, true);
+                    chart.update(dataOptions, redraw, true);
+                }
             };
             // Apply it
             merge(true, this.options, options);

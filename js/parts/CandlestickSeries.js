@@ -42,7 +42,7 @@ var candlestickOptions = {
      */
 
     /**
-     * @type      {string|Function}
+     * @type      {Highcharts.DataGroupingApproximationValue|Function}
      * @default   ohlc
      * @product   highstock
      * @apioption plotOptions.candlestick.dataGrouping.approximation

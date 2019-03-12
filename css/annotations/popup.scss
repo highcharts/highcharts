@@ -1,4 +1,4 @@
-$version: "7.0.2";
+$version: "7.0.3";
 
 // Colors for buttons.
 $button-background-color: #f7f7f7;
@@ -33,6 +33,8 @@ $button-hover-color: #e6ebf5;
   max-height: 90%;
   top: 5%;
   left: 15%;
+  overflow-x: hidden;
+  overflow-y: auto;
   width: 75%;
   min-width: 300px;
   max-width: 600px;
