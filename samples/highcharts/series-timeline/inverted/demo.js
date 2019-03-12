@@ -9,6 +9,12 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Info source: <a href="https://en.wikipedia.org/wiki/Timeline_of_space_exploration">www.wikipedia.org</a>'
     },
+    xAxis: {
+        visible: false
+    },
+    yAxis: {
+        visible: false
+    },
     series: [{
         data: [{
             name: 'First dogs',

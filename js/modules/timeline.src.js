@@ -40,7 +40,12 @@ seriesType('timeline', 'line',
     /**
      * The timeline series presents given events along a drawn line.
      *
-     * @sample highcharts/series-timeline/alternate-labels Timeline series
+     * @sample highcharts/series-timeline/alternate-labels
+     *         Timeline series
+     * @sample highcharts/series-timeline/inverted
+     *         Inverted timeline
+     * @sample highcharts/series-timeline/datetime-axis
+     *         With true datetime axis
      *
      * @extends      plotOptions.line
      * @since        7.0.0
