@@ -278,10 +278,10 @@ seriesType('packedbubble', 'bubble',
         /**
          * An option is giving a possibility to choose between using simulation
          * for calculating bubble positions. These reflects in both animation
-         * and final position of bubbles. Simulation is also adding
-         * options to the series graph based on used layout.
-         * in case of big data sets, with any performance issues, it is possible
-         * to disable animation and pack bubble in a simple circular way.
+         * and final position of bubbles. Simulation is also adding options to
+         * the series graph based on used layout. In case of big data sets, with
+         * any performance issues, it is possible to disable animation and pack
+         * bubble in a simple circular way.
          *
          * @type    {Boolean}
          * @since   7.1.0
