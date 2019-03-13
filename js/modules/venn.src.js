@@ -21,6 +21,7 @@ import '../parts/Series.js';
 
 var color = H.Color,
     extend = H.extend,
+    getAreaOfCircle = geometryCircles.getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles =
         geometryCircles.getAreaOfIntersectionBetweenCircles,
     getCircleCircleIntersection = geometryCircles.getCircleCircleIntersection,
@@ -172,9 +173,16 @@ var bisect = function bisect(f, a, b, tolerance, maxIterations) {
 var getDistanceBetweenCirclesByOverlap =
 function getDistanceBetweenCirclesByOverlap(r1, r2, overlap) {
     var maxDistance = r1 + r2,
-        distance = maxDistance;
+        distance;
 
-    if (overlap > 0) {
+    if (overlap <= 0) {
+        // If overlap is below or equal to zero, then there is no overlap.
+        distance = maxDistance;
+    } else if (getAreaOfCircle(r1 < r2 ? r1 : r2) <= overlap) {
+        // When area of overlap is larger than the area of the smallest circle,
+        // then it is completely overlapping.
+        distance = 0;
+    } else {
         distance = bisect(function (x) {
             var actualOverlap = getOverlapBetweenCirclesByDistance(r1, r2, x);
 
