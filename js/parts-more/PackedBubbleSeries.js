@@ -226,7 +226,9 @@ H.layouts.packedbubble = H.extendClass(
  * step,zMin,zMax,sizeBy,connectEnds
  * @product highcharts
  * @sample {highcharts} highcharts/demo/packed-bubble/
- *         Packed-bubble chart
+ *         Packed bubble chart
+ * @sample {highcharts} highcharts/demo/packed-bubble-split/
+ *         Split packed bubble chart
  * @since 7.0.0
  * @excluding dragDrop, jitter, label, lineCap, pointInterval,
  * pointIntervalUnit, pointPlacement, pointStart, softThreshold, stacking, step,
@@ -279,7 +281,7 @@ seriesType('packedbubble', 'bubble',
          * and final position of bubbles. Simulation is also adding
          * options to the series graph based on used layout.
          * in case of big data sets, with any performance issues, it is possible
-         * to disable animation and pack bubble in simple circular way.
+         * to disable animation and pack bubble in a simple circular way.
          *
          * @type    {Boolean}
          * @since   7.1.0
@@ -288,7 +290,7 @@ seriesType('packedbubble', 'bubble',
          */
         useSimulation: false,
         /**
-         * If parentNode is created for splitted series, parentOption is used
+         * If a parentNode is created for a split series, parentOption is used
          * for styling the parent nodes.
          *
          * @type    {Object}
@@ -309,8 +311,8 @@ seriesType('packedbubble', 'bubble',
         },
         /**
          * Options for layout algorithm when simulation is enabled. Inside there
-         * is a possibility f.e. to change the speed, padding and initial
-         * bubbles positions
+         * are options to change the speed, padding, initial bubbles positions
+         * and more.
          *
          * @extends plotOptions.networkgraph.layoutAlgorithm
          * @excluding approximation, attractiveForce, repulsiveForce, theta
@@ -319,9 +321,9 @@ seriesType('packedbubble', 'bubble',
         layoutAlgorithm: {
             /**
              * Initial layout algorithm for positioning nodes. Can be one of
-             * built-in options ("circle", "random") or a function where
-             * positions should be set on each node (`this.nodes`)
-             *  as `node.plotX` and `node.plotY`.
+             * the built-in options ("circle", "random") or a function where
+             * positions should be set on each node (`this.nodes`) as
+             * `node.plotX` and `node.plotY`.
              *
              * @sample      highcharts/series-networkgraph/initial-positions/
              *              Initial positions with callback
@@ -331,9 +333,9 @@ seriesType('packedbubble', 'bubble',
              */
             initialPositions: 'circle',
             /**
-             * When initialPositions are set to 'circle', initialPositionRadius
-             * is a distance from the center of circle, in which bubbles are
-             * created.
+             * When `initialPositions` are set to 'circle',
+             * `initialPositionRadius` is a distance from the center of circle,
+             * in which bubbles are created.
              *
              * @since       7.1.0
              * @type {Number}
@@ -342,7 +344,7 @@ seriesType('packedbubble', 'bubble',
             initialPositionRadius: 20,
             /**
              * The distance between two bubbles, when the algorithm starts to
-             * treat two bubbles as overlapping. bubblePadding is also the
+             * treat two bubbles as overlapping. The `bubblePadding` is also the
              * expected distance between all the bubbles on simulation end.
              *
              * @since       7.1.0
@@ -351,8 +353,8 @@ seriesType('packedbubble', 'bubble',
              */
             bubblePadding: 5,
             /**
-             * Wheter bubbles should interact with their parentNode to keep them
-             * inside or not.
+             * Whether bubbles should interact with their parentNode to keep
+             * them inside.
              *
              * @since       7.1.0
              * @type {boolean}
@@ -360,8 +362,8 @@ seriesType('packedbubble', 'bubble',
              */
             parentNodeLimit: false,
             /**
-             * Wheter series should interact with each other or not. When
-             * parentNodeLimit is set to true, these option should be set to
+             * Whether series should interact with each other or not. When
+             * `parentNodeLimit` is set to true, thi option should be set to
              * false to avoid sticking points in wrong series parentNode.
              *
              * @since       7.1.0
@@ -370,7 +372,7 @@ seriesType('packedbubble', 'bubble',
              */
             seriesInteraction: true,
             /**
-             * In case of splitted series, these option allows user to drag and
+             * In case of split series, this option allows user to drag and
              * drop points between series, for changing point related series.
              *
              * @since       7.1.0
@@ -379,7 +381,7 @@ seriesType('packedbubble', 'bubble',
              */
             dragBetweenSeries: false,
             /**
-             * Layout algorithm options for Parent Nodes
+             * Layout algorithm options for parent nodes.
              *
              * @since       7.1.0
              * @extends plotOptions.networkgraph.layoutAlgorithm
@@ -401,15 +403,11 @@ seriesType('packedbubble', 'bubble',
              */
             type: 'packedbubble',
             /**
-             * Integration type.
-             * Integration determines how forces are applied
-             * on particles. `packedbubble` integration is based on networkgraph
-             * `Verlet` integration, where new position
-             * is based on a previous posittion
-             * without velocity:
+             * Integration type. Integration determines how forces are applied
+             * on particles. The `packedbubble` integration is based on
+             * the networkgraph `verlet` integration, where the new position
+             * is based on a previous position without velocity:
              * `newPosition += previousPosition - newPosition`.
-             *
-             *
              *
              * @since       7.1.0
              * @sample      highcharts/series-networkgraph/forces/
@@ -418,9 +416,8 @@ seriesType('packedbubble', 'bubble',
             integration: 'packedbubble',
             maxIterations: 1000,
             /**
-             * Wheter to split series into individual groups or to mix all
+             * Whether to split series into individual groups or to mix all
              * series together.
-             *
              *
              * @since       7.1.0
              * @default false
@@ -428,10 +425,10 @@ seriesType('packedbubble', 'bubble',
             splitSeries: false,
             /**
              * Max speed that node can get in one iteration. In terms of
-             * simulation, it's a maximum translation (in pixels) that node can
-             * move (in both, x and y, dimensions). While `friction` is applied
-             * on all nodes, max speed is applied only for nodes that move
-             * very fast, for example small or disconnected ones.
+             * simulation, it's a maximum translation (in pixels) that a node
+             * can move (in both, x and y, dimensions). While `friction` is
+             * applied on all nodes, max speed is applied only for nodes that
+             * move very fast, for example small or disconnected ones.
              *
              * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
              * @see         [layoutAlgorithm.friction](#series.networkgraph.layoutAlgorithm.friction)
@@ -575,7 +572,7 @@ seriesType('packedbubble', 'bubble',
                 series.parentNode.marker.radius = series.parentNodeRadius;
             }
         },
-        // Create Background/Parent Nodes for splitted series.
+        // Create Background/Parent Nodes for split series.
         drawGraph: function () {
 
             // if the series is not using layout, don't add parent nodes
@@ -615,7 +612,7 @@ seriesType('packedbubble', 'bubble',
             }
         },
         /*
-         * Creating parent nodes for splitted series, in which all the bubbles
+         * Creating parent nodes for split series, in which all the bubbles
          * are rendered.
          */
         createParentNodes: function () {
