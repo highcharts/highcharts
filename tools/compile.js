@@ -49,7 +49,8 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
                 const sourceMappingURL = filenameOut + '.map';
                 const mapJSON = JSON.parse(out.sourceMap);
                 mapJSON.file = sourceMappingURL;
-                compiledCode = `${compiledCode}\n//# sourceMappingURL=${sourceMappingURL}`;
+                compiledCode =
+                    `${compiledCode}\n//# sourceMappingURL=${sourceMappingURL}`;
 
                 // Write the source map to file.
                 writeFile(outputPath + '.map', JSON.stringify(mapJSON));

@@ -533,7 +533,13 @@ window.TestController = function (chart) {
             if (Pointer) {
                 this.triggerEvent('pointermove', chartX, chartY, extra, debug);
             } else if (MSPointer) {
-                this.triggerEvent('MSPointerMove', chartX, chartY, extra, debug);
+                this.triggerEvent(
+                    'MSPointerMove',
+                    chartX,
+                    chartY,
+                    extra,
+                    debug
+                );
             }
             this.triggerEvent('touchmove', chartX, chartY, extra, debug);
         },
@@ -583,13 +589,19 @@ window.TestController = function (chart) {
             if (Pointer) {
                 this.triggerEvent('pointerdown', chartX, chartY, extra, debug);
             } else if (MSPointer) {
-                this.triggerEvent('MSPointerDown', chartX, chartY, extra, debug);
+                this.triggerEvent(
+                    'MSPointerDown',
+                    chartX,
+                    chartY,
+                    extra,
+                    debug
+                );
             }
         },
         /**
          * Trigger an event. The target element will be found based on the chart
-         * coordinates. This function is called behind the shorthand functions like
-         * .click() and .mousemove().
+         * coordinates. This function is called behind the shorthand functions
+         * like .click() and .mousemove().
          *
          * @param  {string} type
          *         Event type.
@@ -606,9 +618,10 @@ window.TestController = function (chart) {
          *         pressed in a mouse event.
          *
          * @param  {boolean|undefined} [debug]
-         *         Add marks where the event was triggered. Should not be enabled in
-         *         production, as it slows down the test and also leaves an element
-         *         that might catch events and mess up the test result.
+         *         Add marks where the event was triggered. Should not be
+         *         enabled in production, as it slows down the test and also
+         *         leaves an element that might catch events and mess up the
+         *         test result.
          *
          * @return {void}
          */

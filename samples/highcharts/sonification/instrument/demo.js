@@ -1,4 +1,3 @@
-
 var button1 = document.getElementById('play1'),
     button2 = document.getElementById('play2'),
     button3 = document.getElementById('play3'),

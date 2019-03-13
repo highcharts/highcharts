@@ -71,7 +71,7 @@
                     ) {
                         copy[key] = treeCopy(source[key], propertiesTree[key]);
                     } else {
-                        copy[key] = undefined; // eslint-disable-line no-undefined
+                        copy[key] = undefined;
                     }
                 }
                 return copy;

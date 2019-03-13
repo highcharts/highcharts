@@ -310,8 +310,6 @@ QUnit.test('Crossing DST with a wide pointRange (#7432)', function (assert) {
         'Tick should land on midnight'
     );
 
-
-
     Highcharts.setOptions({
         global: {
             timezone: null

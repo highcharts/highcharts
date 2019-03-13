@@ -276,11 +276,11 @@ QUnit.test('Tickinterval categories (#3202)', function (assert) {
             (tick1.left + (tick1Box.width / 2)),
             (point1.left + (point1Box.width / 2)),
             {
-                'Chrome': 0.51,
-                'Edge': 0,
-                'Firefox': 2.5,
-                'MSIE': 0,
-                'Safari': 1.51
+                Chrome: 0.51,
+                Edge: 0,
+                Firefox: 2.5,
+                MSIE: 0,
+                Safari: 1.51
             }[TestUtilities.browser],
             'Tick marks should be on tick when tickInterval != 1'
         );
@@ -289,11 +289,11 @@ QUnit.test('Tickinterval categories (#3202)', function (assert) {
             (tick2.left + (tick2Box.width / 2)),
             (point2.left + (point2Box.width / 2)),
             {
-                'Chrome': 0.51,
-                'Edge': 0,
-                'Firefox': 2.5,
-                'MSIE': 0,
-                'Safari': 0.51
+                Chrome: 0.51,
+                Edge: 0,
+                Firefox: 2.5,
+                MSIE: 0,
+                Safari: 0.51
             }[TestUtilities.browser],
             'Tick marks should be on tick when tickInterval != 1'
         );
@@ -304,8 +304,8 @@ QUnit.test('Tickinterval categories (#3202)', function (assert) {
 // Don't show decimals on yearly X axis
 QUnit.test('Yearly values (#3363)', function (assert) {
     var chart = Highcharts.chart('container', {
-        "series": [{
-            "data": [
+        series: [{
+            data: [
                 [1998, 1],
                 [1999, 2],
                 [2000, 3],

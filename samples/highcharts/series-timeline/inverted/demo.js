@@ -1,12 +1,7 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'timeline'
-    },
-    xAxis: {
-        visible: false
-    },
-    yAxis: {
-        visible: false
+        type: 'timeline',
+        inverted: true
     },
     title: {
         text: 'Timeline of Space Exploration'
@@ -14,11 +9,13 @@ Highcharts.chart('container', {
     subtitle: {
         text: 'Info source: <a href="https://en.wikipedia.org/wiki/Timeline_of_space_exploration">www.wikipedia.org</a>'
     },
+    xAxis: {
+        visible: false
+    },
+    yAxis: {
+        visible: false
+    },
     series: [{
-        dataLabels: {
-            connectorColor: 'silver',
-            connectorWidth: 2
-        },
         data: [{
             name: 'First dogs',
             label: '1951: First dogs in space',

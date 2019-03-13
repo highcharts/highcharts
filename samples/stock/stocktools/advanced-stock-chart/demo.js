@@ -1529,8 +1529,6 @@ function whichAxis(e, chart) {
         }
     });
 
-
-
     function star(x, y, chart) {
         chart.addAnnotation({
             group: { x: x, y: y },
@@ -2407,19 +2405,19 @@ window.onload = function () {
                                 previousYAxis === chart.yAxis[chart.yAxis.length - 2] &&
                                 chart.navigator.yAxis === chart.yAxis[chart.yAxis.length - 1]
                             ) ? // navigator jump
-                            {
-                                resize: {
-                                    enabled: false
-                                }
-                            } :
-                            // Otherwise set new reference for the next axis:
-                            {
-                                resize: {
-                                    controlledAxis: {
-                                        next: [nextAxis.options.id]
+                                {
+                                    resize: {
+                                        enabled: false
+                                    }
+                                } :
+                                // Otherwise set new reference for the next axis:
+                                {
+                                    resize: {
+                                        controlledAxis: {
+                                            next: [nextAxis.options.id]
+                                        }
                                     }
                                 }
-                            }
                         )
                     );
                 } else {
