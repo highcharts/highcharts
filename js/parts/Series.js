@@ -2121,7 +2121,10 @@ H.Series = H.seriesType(
              * The opposite state of a hover for series.
              */
             inactive: {
-                enabled: false
+                enabled: false,
+                animation: {
+                    duration: 50
+                }
             }
         },
 
