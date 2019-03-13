@@ -3954,7 +3954,7 @@ H.Series = H.seriesType(
                 if (chart[sharedClipKey + 'm']) {
                     chart[sharedClipKey + 'm'].animate({
                         width: chart.plotSizeX + 99,
-                        x: 0
+                        x: chart.inverted ? 0 : -99
                     }, animation);
                 }
 
