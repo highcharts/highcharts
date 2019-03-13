@@ -579,51 +579,35 @@ seriesType('timeline', 'line',
 
             point.connector = series.chart.renderer
                 .path(point.getConnectorPath())
-                .add(series.connectorsGroup);
+                .add(point.dataLabel);
+
+            point.alignConnector();
         },
         alignConnector: function () {
             var point = this,
                 series = point.series,
                 connector = point.connector,
-                bBox = connector.getBBox(),
-                isVisible = bBox.y > 0,
+                dl = point.dataLabel,
+                isVisible = point.series.chart.isInsidePlot(
+                    dl.translateX, dl.translateY
+                ),
                 dlOptions = point.dataLabel.options = merge(
                     series.options.dataLabels,
                     point.options.dataLabels
                 );
 
-            point.connector = series.chart.renderer
-                .path(point.getConnectorPath())
-                .add(point.dataLabel);
+            connector[isVisible ? 'animate' : 'attr']({
+                d: point.getConnectorPath()
+            });
 
             if (!series.chart.styledMode) {
-                point.connector.attr({
+                connector.attr({
                     stroke: dlOptions.connectorColor || point.color,
                     'stroke-width': dlOptions.connectorWidth,
                     opacity: point.dataLabel.opacity,
                     zIndex: -1
-                }).addClass(
-                    'highcharts-data-label-connector ' +
-                    'highcharts-color-' + point.colorIndex +
-                    (
-                        point.className ?
-                            ' ' + point.className :
-                            ''
-                    )
-                );
+                });
             }
-        },
-        alignConnector: function () {
-            var point = this,
-                connector = point.connector,
-                dl = point.dataLabel,
-                isVisible = point.series.chart.isInsidePlot(
-                    dl.translateX, dl.translateY
-                );
-
-            connector[isVisible ? 'animate' : 'attr']({
-                d: point.getConnectorPath()
-            });
         }
     });
 
