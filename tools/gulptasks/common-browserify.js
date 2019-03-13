@@ -29,7 +29,7 @@ const TARGET_FILE = Path.join(
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function commonBrowserify() {
 
     const browserify = require('browserify');
     const FS = require('fs');
@@ -52,4 +52,4 @@ function task() {
     });
 }
 
-Gulp.task('common-browserify', task);
+Gulp.task('common-browserify', commonBrowserify);

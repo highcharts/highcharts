@@ -22,7 +22,7 @@ const FILES_TO_KEEP = [
     ['modules', 'readme.md'],
     ['readme.txt']
 ].map(
-    path => Path.join(TARGET_DIRECTORY, ...path)
+    filePath => Path.join(TARGET_DIRECTORY, ...filePath)
 );
 
 /* *
@@ -39,7 +39,6 @@ const FILES_TO_KEEP = [
  */
 function task() {
 
-    const FS = require('fs');
     const FSLib = require('./lib/fs');
     const LogLib = require('./lib/log');
 
@@ -47,13 +46,19 @@ function task() {
 
         const filesToDelete = FSLib
             .getFilePaths(TARGET_DIRECTORY, true)
-            .filter(filePath => FILES_TO_KEEP.indexOf(filePath) === -1);
+            .filter(filePath => !FILES_TO_KEEP.includes(filePath));
+        const directoriesToDelete = FSLib
+            .getDirectoryPaths(TARGET_DIRECTORY, true)
+            .filter(directoryPath => !FILES_TO_KEEP.some(
+                filterPath => filterPath.startsWith(directoryPath)
+            ));
 
         try {
 
             LogLib.message('Cleaning', TARGET_DIRECTORY, '...');
 
-            filesToDelete.forEach(filePath => FS.unlinkSync(filePath));
+            filesToDelete.forEach(FSLib.deleteFile);
+            directoriesToDelete.forEach(FSLib.deleteDirectory);
 
             LogLib.success('Cleaned', TARGET_DIRECTORY);
 

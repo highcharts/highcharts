@@ -14,7 +14,7 @@ require('./dist-ant');
 require('./dist-clean');
 require('./dist-copy');
 require('./dist-examples');
-require('./dist-productjs');
+require('./dist-productsjs');
 require('./jsdoc-dts');
 require('./lint-dts');
 require('./lint-js');
@@ -34,7 +34,7 @@ Gulp.task(
         'dist-clean',
         'dist-copy',
         'dist-examples',
-        'dist-productjs',
+        'dist-productsjs',
         'jsdoc-dts',
         'lint-dts',
         'dist-ant'

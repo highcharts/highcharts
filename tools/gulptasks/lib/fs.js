@@ -4,8 +4,7 @@
 
 /* eslint no-use-before-define: 0 */
 
-const Fs = require('fs');
-const mkDirP = require('mkdirp');
+const FS = require('fs');
 const Path = require('path');
 
 /* *
@@ -88,9 +87,71 @@ function copyAllFiles(
  */
 function copyFile(fileSourcePath, fileTargetPath) {
 
+    const mkDirP = require('mkdirp');
+
     mkDirP.sync(Path.dirname(fileTargetPath));
 
-    Fs.writeFileSync(fileTargetPath, Fs.readFileSync(fileSourcePath));
+    FS.writeFileSync(fileTargetPath, FS.readFileSync(fileSourcePath));
+}
+
+/**
+ * Deletes a directory.
+ *
+ * @param {string} directoryPath
+ *        Directory path
+ *
+ * @param {boolean} [includeEntries]
+ *        Set to true to remove containing entries as well
+ *
+ * @return {boolean}
+ *         True if deleted
+ */
+function deleteDirectory(directoryPath, includeEntries) {
+
+    try {
+
+        if (!FS.existsSync(directoryPath)) {
+            return true;
+        }
+
+        if (includeEntries) {
+            getDirectoryPaths(directoryPath).forEach(deleteDirectory);
+            getFilePaths(directoryPath).forEach(deleteFile);
+        }
+
+        FS.rmdirSync(directoryPath);
+
+        return true;
+    } catch (error) {
+
+        return false;
+    }
+}
+
+/**
+ * Deletes a file.
+ *
+ * @param {string} filePath
+ *        File path
+ *
+ * @return {boolean}
+ *         True if deleted
+ */
+function deleteFile(filePath) {
+
+    try {
+
+        if (!FS.existsSync(filePath)) {
+            return true;
+        }
+
+        FS.unlinkSync(filePath);
+
+        return true;
+    } catch (error) {
+
+        return false;
+    }
 }
 
 /**
@@ -112,18 +173,20 @@ function getDirectoryPaths(directoryPath, includeSubDirectories) {
     let entryPath;
     let entryStat;
 
-    if (Fs.existsSync(directoryPath)) {
-        Fs.readdirSync(directoryPath).forEach(entry => {
+    if (FS.existsSync(directoryPath)) {
+        FS.readdirSync(directoryPath).forEach(entry => {
 
             entryPath = Path.join(directoryPath, entry);
-            entryStat = Fs.lstatSync(entryPath);
+            entryStat = FS.lstatSync(entryPath);
 
             if (entryStat.isDirectory()) {
 
                 directoryPaths.push(entryPath);
 
                 if (includeSubDirectories) {
-                    directoryPaths.push(...getDirectoryPaths(entryPath));
+                    directoryPaths.push(
+                        ...getDirectoryPaths(entryPath, includeSubDirectories)
+                    );
                 }
             }
         });
@@ -151,16 +214,18 @@ function getFilePaths(directoryPath, includeSubDirectories) {
     let entryPath;
     let entryStat;
 
-    if (Fs.existsSync(directoryPath)) {
-        Fs.readdirSync(directoryPath).forEach(entry => {
+    if (FS.existsSync(directoryPath)) {
+        FS.readdirSync(directoryPath).forEach(entry => {
 
             entryPath = Path.join(directoryPath, entry);
-            entryStat = Fs.lstatSync(entryPath);
+            entryStat = FS.lstatSync(entryPath);
 
             if (entryStat.isFile()) {
                 filePaths.push(entryPath);
             } else if (includeSubDirectories && entryStat.isDirectory()) {
-                filePaths.push(...getFilePaths(entryPath));
+                filePaths.push(
+                    ...getFilePaths(entryPath, includeSubDirectories)
+                );
             }
         });
     }
@@ -185,7 +250,6 @@ function getFilePaths(directoryPath, includeSubDirectories) {
  */
 function gzipFile(fileSourcePath, fileTargetPath) {
 
-    const FS = require('fs');
     const ZLib = require('zlib');
 
     return new Promise((resolve, reject) => {
@@ -208,6 +272,8 @@ function gzipFile(fileSourcePath, fileTargetPath) {
 module.exports = {
     copyAllFiles,
     copyFile,
+    deleteDirectory,
+    deleteFile,
     getDirectoryPaths,
     getFilePaths,
     gzipFile

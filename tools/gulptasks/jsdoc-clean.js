@@ -16,7 +16,7 @@ const Gulp = require('gulp');
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function jsdDocClean() {
 
     const ProcessLib = require('./lib/process');
 
@@ -29,4 +29,4 @@ function task() {
     });
 }
 
-Gulp.task('jsdoc-clean', task);
+Gulp.task('jsdoc-clean', jsdDocClean);

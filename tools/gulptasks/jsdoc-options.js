@@ -151,13 +151,18 @@ function testTreeJson() {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function jsDocOptions() {
 
-    return Promise
-        .resolve()
-        .then(createTreeJson)
-        .then(testTreeJson)
-        .then(createApiDocumentation);
+    return new Promise((resolve, reject) => {
+
+        Promise
+            .resolve()
+            .then(createTreeJson)
+            .then(testTreeJson)
+            .then(createApiDocumentation)
+            .then(() => resolve())
+            .catch(reject);
+    });
 }
 
-Gulp.task('jsdoc-options', task);
+Gulp.task('jsdoc-options', jsDocOptions);

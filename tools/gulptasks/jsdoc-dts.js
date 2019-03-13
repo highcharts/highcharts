@@ -17,7 +17,7 @@ const Gulp = require('gulp');
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function jsDocDTS() {
 
     const HighchartsDeclarationsGenerator = require(
         '../../../highcharts-declarations-generator'
@@ -35,4 +35,4 @@ function task() {
 require('./jsdoc-namespace');
 require('./jsdoc-options');
 
-Gulp.task('jsdoc-dts', Gulp.series('jsdoc-namespace', 'jsdoc-options', task));
+Gulp.task('jsdoc-dts', Gulp.series('jsdoc-namespace', 'jsdoc-options', jsDocDTS));

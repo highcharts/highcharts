@@ -31,7 +31,7 @@ Gulp.registry(new GulpForwardReference());
     'dist-clean',
     'dist-copy',
     'dist-examples',
-    'dist-productjs',
+    'dist-productsjs',
     'jsdoc',
     'jsdoc-classes',
     'jsdoc-clean',
@@ -84,7 +84,7 @@ Gulp.registry(new GulpForwardReference());
     'compile-lib': 'scripts-vendor',
     'copy-graphics-to-dist': 'dist-copy',
     'copy-to-dist': 'dist-copy',
-    'create-productjs': 'dist-productjs',
+    'create-productjs': 'dist-productsjs',
     'examples': 'dist-examples',
     'start-api-server': 'jsdoc-server',
     'styles': 'scripts-css'

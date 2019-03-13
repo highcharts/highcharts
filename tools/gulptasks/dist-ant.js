@@ -16,7 +16,7 @@ const Gulp = require('gulp');
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function distAnt() {
 
     const ProcessLib = require('./lib/process');
 
@@ -29,4 +29,4 @@ function task() {
     });
 }
 
-Gulp.task('dist-ant', task);
+Gulp.task('dist-ant', distAnt);

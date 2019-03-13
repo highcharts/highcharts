@@ -92,7 +92,7 @@ const TEMPLATE_DIRECTORY = Path.join(
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function jsDocClasses() {
 
     const gulpJSDoc = require('gulp-jsdoc3');
     const LogLib = require('./lib/log');
@@ -136,4 +136,4 @@ function task() {
     });
 }
 
-Gulp.task('jsdoc-classes', task);
+Gulp.task('jsdoc-classes', jsDocClasses);

@@ -29,7 +29,7 @@ const TARGET_FILE = Path.join(
  * @return {Promise<undefined>}
  *         Promise to keep
  */
-function task() {
+function commonWebpack() {
 
     const LogLib = require('./lib/log');
     const webpack = require('webpack');
@@ -57,4 +57,4 @@ function task() {
     });
 }
 
-Gulp.task('common-webpack', task);
+Gulp.task('common-webpack', commonWebpack);

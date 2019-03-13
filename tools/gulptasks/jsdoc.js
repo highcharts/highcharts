@@ -16,7 +16,7 @@ const Gulp = require('gulp');
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function jsDoc() {
 
     const LogLib = require('./lib/log');
 
@@ -42,6 +42,6 @@ require('./jsdoc-options');
 Gulp.task(
     'jsdoc',
     Gulp.series(
-        'jsdoc-clean', 'jsdoc-classes', 'jsdoc-namespace', 'jsdoc-options', task
+        'jsdoc-clean', 'jsdoc-classes', 'jsdoc-namespace', 'jsdoc-options', jsDoc
     )
 );

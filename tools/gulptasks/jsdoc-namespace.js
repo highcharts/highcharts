@@ -38,7 +38,7 @@ const TARGET_DIRECTORIES = [
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function jsDocNamespace() {
 
     const FileSystem = require('../filesystem');
     const Fs = require('fs');
@@ -102,4 +102,4 @@ function task() {
     });
 }
 
-Gulp.task('jsdoc-namespace', Gulp.series('scripts', task));
+Gulp.task('jsdoc-namespace', Gulp.series('scripts', jsDocNamespace));

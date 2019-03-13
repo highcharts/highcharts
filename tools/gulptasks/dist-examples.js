@@ -162,7 +162,7 @@ function convertURLToLocal(str) {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function distExamples() {
 
     const FS = require('fs');
 
@@ -211,4 +211,4 @@ function task() {
     });
 }
 
-Gulp.task('dist-examples', task);
+Gulp.task('dist-examples', distExamples);

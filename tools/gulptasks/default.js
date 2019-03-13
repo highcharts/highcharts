@@ -27,7 +27,7 @@ const WATCH_GLOBS = [
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function defaultTask() {
 
     const LogLib = require('./lib/log');
 
@@ -55,4 +55,4 @@ function task() {
 require('./scripts-css.js');
 require('./scripts-js.js');
 
-Gulp.task('default', Gulp.series('scripts-css', 'scripts-js', task));
+Gulp.task('default', Gulp.series('scripts-css', 'scripts-js', defaultTask));

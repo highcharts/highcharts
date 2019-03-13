@@ -6,6 +6,21 @@ const Gulp = require('gulp');
 
 /* *
  *
+ *  Constants
+ *
+ * */
+
+const COPY_DIRECTORIES = [
+    'css',
+    'gfx'
+];
+
+const SOURCE_DIRECTORY = 'css';
+
+const TARGET_DIRECTORY = 'code';
+
+/* *
+ *
  *  Tasks
  *
  * */
@@ -21,26 +36,44 @@ function task() {
     const FS = require('fs');
     const FSLib = require('./lib/fs');
     const LogLib = require('./lib/log');
+    const mkDirP = require('mkdirp');
     const Path = require('path');
     const SASS = require('node-sass');
 
     return new Promise(resolve => {
 
-        LogLib.message('Generating CSS...');
+        LogLib.message('Generating css ...');
 
-        FSLib.copyAllFiles('gfx', Path.join('code', 'gfx'), true);
+        COPY_DIRECTORIES.forEach(
+            copyPath => FSLib.copyAllFiles(
+                copyPath,
+                Path.join(TARGET_DIRECTORY, copyPath),
+                true,
+                sourcePath => !sourcePath.endsWith('.scss')
+            )
+        );
+
+        let targetPath;
 
         FSLib
-            .getFilePaths('css', true)
-            .forEach(
-                filePath => FS.writeFileSync(
-                    Path.join('code', filePath),
+            .getFilePaths(SOURCE_DIRECTORY, true)
+            .filter(sourcePath => sourcePath.endsWith('.scss'))
+            .forEach(sourcePath => {
+
+                targetPath = Path.join(
+                    TARGET_DIRECTORY, sourcePath.replace('.scss', '.css')
+                );
+
+                mkDirP.sync(Path.dirname(targetPath));
+
+                FS.writeFileSync(
+                    targetPath,
                     SASS.renderSync({
-                        file: filePath,
+                        file: sourcePath,
                         outputStyle: 'expanded'
                     }).css
-                )
-            );
+                );
+            });
 
         LogLib.success('Created CSS');
 

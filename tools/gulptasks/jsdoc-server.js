@@ -13,12 +13,17 @@ const Path = require('path');
 
 const MIMES = {
     css: 'text/css',
+    eot: 'application/vnd.ms-fontobject',
     js: 'text/javascript',
     json: 'application/json',
     html: 'text/html',
     ico: 'image/x-icon',
     png: 'image/png',
     svg: 'image/svg+xml',
+    ttf: 'font/ttf',
+    txt: 'text/plain',
+    woff: 'font/woff',
+    woff2: 'font/woff2',
     xml: 'application/xml'
 };
 
@@ -71,9 +76,17 @@ function response302(response, path) {
  * @param {ServerResponse} response
  *        HTTP response
  *
+ * @param {string} path
+ *        Missing path
+ *
  * @return {void}
  */
-function response404(response) {
+function response404(response, path) {
+
+    const LogLib = require('./lib/log');
+
+    LogLib.failure('404', path);
+
     response.writeHead(404);
     response.end('Ooops, the requested file is 404', 'utf-8');
 }
@@ -90,7 +103,7 @@ function response404(response) {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function jsDocServer() {
 
     const FS = require('fs');
     const HTTP = require('http');
@@ -120,7 +133,7 @@ function task() {
                     return;
                 }
                 if (request.method !== 'GET') {
-                    response404(response);
+                    response404(response, path);
                     return;
                 }
 
@@ -147,7 +160,7 @@ function task() {
                         SOURCE_PATH + path + file,
                         (error, data) => {
                             if (error) {
-                                response404(response);
+                                response404(response, (path + file));
                             } else {
                                 response200(response, data, ext);
                             }
@@ -164,4 +177,4 @@ function task() {
     });
 }
 
-Gulp.task('jsdoc-server', task);
+Gulp.task('jsdoc-server', jsDocServer);

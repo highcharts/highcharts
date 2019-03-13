@@ -26,7 +26,7 @@ const WATCH_GLOBS = [
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function jsDocWatch() {
 
     const LogLib = require('./lib/log');
 
@@ -52,4 +52,4 @@ function task() {
 
 require('./jsdoc.js');
 
-Gulp.task('jsdoc-watch', Gulp.series('jsdoc', task));
+Gulp.task('jsdoc-watch', Gulp.series('jsdoc', jsDocWatch));

@@ -21,7 +21,7 @@ const BUILD_PROPERTIES_VERSION_REGEXP = (
     /highcharts\.product\.version\s*=\s*([^\s]*)/m
 );
 
-const TARGET_FILE = Path.join('build', 'dist', 'product.json');
+const TARGET_FILE = Path.join('build', 'dist', 'products.js');
 
 /* *
  *
@@ -33,7 +33,7 @@ const TARGET_FILE = Path.join('build', 'dist', 'product.json');
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function distProductsJS() {
 
     const Fs = require('fs');
     const LogLib = require('./lib/log');
@@ -84,4 +84,4 @@ function task() {
     });
 }
 
-Gulp.task('dist-productjs', task);
+Gulp.task('dist-productsjs', distProductsJS);
