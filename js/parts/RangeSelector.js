@@ -216,7 +216,8 @@ extend(defaultOptions, {
 
         /**
          * Defined the time span for the button. Can be one of `millisecond`,
-         * `second`, `minute`, `hour`, `day`, `week`, `month`, `ytd`, `all`.
+         * `second`, `minute`, `hour`, `day`, `week`, `month`, `year`, `ytd`,
+         * and `all`.
          *
          * @type       {Highcharts.RangeSelectorButtonTypeValue}
          * @apioption  rangeSelector.buttons.type
