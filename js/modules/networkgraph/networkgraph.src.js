@@ -130,7 +130,8 @@ var addEvent = H.addEvent,
     seriesTypes = H.seriesTypes,
     pick = H.pick,
     Point = H.Point,
-    Series = H.Series;
+    Series = H.Series,
+    dragNodesMixin = H.dragNodesMixin;
 
 /**
  * A networkgraph is a type of relationship chart, where connnections
@@ -275,6 +276,16 @@ seriesType('networkgraph', 'line', {
          * @validvalue  ["circle", "random"]
          */
         initialPositions: 'circle',
+        /**
+         * When `initialPositions` are set to 'circle',
+         * `initialPositionRadius` is a distance from the center of circle,
+         * in which nodes are created.
+         *
+         * @since       7.1.0
+         * @type {Number}
+         * @default 1
+         */
+        initialPositionRadius: 1,
         /**
          * Experimental. Enables live simulation of the algorithm
          * implementation. All nodes are animated as the forces applies on
@@ -588,94 +599,27 @@ seriesType('networkgraph', 'line', {
      * @private
      * @param {Highcharts.Point} point The point that should show halo.
      */
-    redrawHalo: function (point) {
-        if (point && this.halo) {
-            this.halo.attr({
-                d: point.haloPath(
-                    this.options.states.hover.halo.size
-                )
-            });
-        }
-    },
+    redrawHalo: dragNodesMixin.redrawHalo,
     /**
      * Mouse down action, initializing drag&drop mode.
      * @private
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
      */
-    onMouseDown: function (point, event) {
-        var normalizedEvent = this.chart.pointer.normalize(event);
-
-        point.fixedPosition = {
-            chartX: normalizedEvent.chartX,
-            chartY: normalizedEvent.chartY,
-            plotX: point.plotX,
-            plotY: point.plotY
-        };
-
-        point.inDragMode = true;
-    },
+    onMouseDown: dragNodesMixin.onMouseDown,
     /**
      * Mouse move action during drag&drop.
      * @private
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
      */
-    onMouseMove: function (point, event) {
-        if (point.fixedPosition && point.inDragMode) {
-            var series = this,
-                chart = series.chart,
-                normalizedEvent = chart.pointer.normalize(event),
-                diffX = point.fixedPosition.chartX - normalizedEvent.chartX,
-                diffY = point.fixedPosition.chartY - normalizedEvent.chartY,
-                newPlotX,
-                newPlotY;
-
-            // At least 5px to apply change (avoids simple click):
-            if (Math.abs(diffX) > 5 || Math.abs(diffY) > 5) {
-                newPlotX = point.fixedPosition.plotX - diffX;
-                newPlotY = point.fixedPosition.plotY - diffY;
-
-                if (chart.isInsidePlot(newPlotX, newPlotY)) {
-                    point.plotX = newPlotX;
-                    point.plotY = newPlotY;
-
-                    series.redrawHalo();
-
-                    if (!series.layout.simulation) {
-                        // Start new simulation:
-                        if (!series.layout.enableSimulation) {
-                            // Run only one iteration to speed things up:
-                            series.layout.setMaxIterations(1);
-                        }
-                        // When dragging nodes, we don't need to calculate
-                        // initial positions and rendering nodes:
-                        series.layout.setInitialRendering(false);
-                        series.layout.run();
-                        // Restore defaults:
-                        series.layout.setInitialRendering(true);
-                    } else {
-                        // Extend current simulation:
-                        series.layout.resetSimulation();
-                    }
-                }
-            }
-        }
-    },
+    onMouseMove: dragNodesMixin.onMouseMove,
     /**
      * Mouse up action, finalizing drag&drop.
      * @private
      * @param {Highcharts.Point} point The point that event occured.
      */
-    onMouseUp: function (point) {
-        if (point.fixedPosition) {
-            this.layout.run();
-            point.inDragMode = false;
-            if (!this.options.fixedDraggable) {
-                delete point.fixedPosition;
-            }
-        }
-    }
+    onMouseUp: dragNodesMixin.onMouseUp
 }, {
     /**
      * Basic `point.init()` and additional styles applied when

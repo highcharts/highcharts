@@ -6,6 +6,9 @@ QUnit.test('Bubble min size', function (assert) {
             },
             plotOptions: {
                 packedbubble: {
+                    layoutAlgorithm: {
+                        enableSimulation: false
+                    },
                     minSize: 50,
                     maxSize: 50
                 }

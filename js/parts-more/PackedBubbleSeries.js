@@ -25,7 +25,8 @@ var seriesType = H.seriesType,
     Chart = H.Chart,
     color = H.Color,
     Reingold = H.layouts['reingold-fruchterman'],
-    NetworkPoint = H.seriesTypes.bubble.prototype.pointClass;
+    NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
+    dragNodesMixin = H.dragNodesMixin;
 
 
 H.networkgraphIntegrations.packedbubble = {
@@ -271,7 +272,8 @@ seriesType('packedbubble', 'bubble',
             pointFormat: 'Value: {point.value}'
         },
         /**
-        * Flag to determine if nodes are draggable or not.
+        * Flag to determine if nodes are draggable or not. Available for
+        * graph with useSimulation set to true only.
         * @since 7.1.0
         */
         draggable: true,
@@ -285,29 +287,17 @@ seriesType('packedbubble', 'bubble',
          *
          * @type    {Boolean}
          * @since   7.1.0
+         * @sample  highcharts/series-packedbubble/spiral/
+         *              useSimulation set to false
          * @product highcharts highstock
-         * @default false
+         * @default true
          */
-        useSimulation: false,
-        /**
-         * If a parentNode is created for a split series, parentOption is used
-         * for styling the parent nodes.
-         *
-         * @type    {Object}
-         * @since   7.1.0
-         * @product highcharts highstock
-         */
-        parentOptions: {
-            fillColor: null,
-            lineWidth: 1,
-            lineColor: null,
-            symbol: 'circle'
-        },
+        useSimulation: true,
         dataLabels: {
             formatter: function () {
                 return this.point.value;
             },
-            allowOverlap: true
+            padding: 0
         },
         /**
          * Options for layout algorithm when simulation is enabled. Inside there
@@ -332,15 +322,6 @@ seriesType('packedbubble', 'bubble',
              * @validvalue  ["circle", "random"]
              */
             initialPositions: 'circle',
-            /**
-             * When `initialPositions` are set to 'circle',
-             * `initialPositionRadius` is a distance from the center of circle,
-             * in which bubbles are created.
-             *
-             * @since       7.1.0
-             * @type {Number}
-             * @default 20
-             */
             initialPositionRadius: 20,
             /**
              * The distance between two bubbles, when the algorithm starts to
@@ -393,13 +374,31 @@ seriesType('packedbubble', 'bubble',
                 gravitationalConstant: 0.03,
                 maxSpeed: 50,
                 initialPositionRadius: 100,
-                seriesInteraction: true
+                seriesInteraction: true,
+                /**
+                 * Styling options for parentNodes markers. Similar to
+                 * line.marker options.
+                 *
+                 * @since   7.1.0
+                 * @extends plotOptions.line.marker
+                 * @sample  {highcharts} ighcharts/series-packedbubble/parentnode-style/
+                 *          Bubble size
+                 * @excluding states
+                 */
+                marker: {
+                    fillColor: null,
+                    fillOpacity: 1,
+                    lineWidth: 1,
+                    lineColor: null,
+                    symbol: 'circle'
+                }
             },
             enableSimulation: true,
             /**
              * Type of the algorithm used when positioning bubbles.
              *
              * @validvalue  ["packedbubble"]
+             * @ignore
              */
             type: 'packedbubble',
             /**
@@ -412,6 +411,7 @@ seriesType('packedbubble', 'bubble',
              * @since       7.1.0
              * @sample      highcharts/series-networkgraph/forces/
              * @validvalue  ["packedbubble"]
+             * @ignore
              */
             integration: 'packedbubble',
             maxIterations: 1000,
@@ -507,10 +507,16 @@ seriesType('packedbubble', 'bubble',
             return this;
         },
         render: function () {
-
+            var dataLabels = [];
             Series.prototype.render.apply(this, arguments);
-            this.redrawHalo();
-
+            this.data.forEach(function (point) {
+                if (H.isArray(point.dataLabels)) {
+                    point.dataLabels.forEach(function (dataLabel) {
+                        dataLabels.push(dataLabel);
+                    });
+                }
+            });
+            this.chart.hideOverlappingLabels(dataLabels);
         },
         // Needed because of z-indexing issue if point is added in series.group
         setVisible: function () {
@@ -583,16 +589,16 @@ seriesType('packedbubble', 'bubble',
             var series = this,
                 chart = series.chart,
                 parentAttribs = {},
-                userParentOptions = this.options.parentOptions,
+                nodeMarker = this.layout.options.parentNodeOptions.marker,
                 parentOptions = {
-                    fill: userParentOptions.fillColor ||
+                    fill: nodeMarker.fillColor ||
                         color(series.color).brighten(0.4).get(),
-                    stroke: userParentOptions.lineColor || series.color,
-                    'stroke-width': userParentOptions.lineWidth
+                    opacity: nodeMarker.fillOpacity,
+                    stroke: nodeMarker.lineColor || series.color,
+                    'stroke-width': nodeMarker.lineWidth
                 };
 
             this.calculateParentRadius();
-
             parentAttribs = H.merge({
                 x: series.parentNode.plotX -
                         series.parentNodeRadius + chart.plotLeft,
@@ -601,7 +607,6 @@ seriesType('packedbubble', 'bubble',
                 width: series.parentNodeRadius * 2,
                 height: series.parentNodeRadius * 2
             }, parentOptions);
-
 
             if (!series.graph) {
                 series.graph = chart.renderer.symbol(parentOptions.symbol)
@@ -743,7 +748,6 @@ seriesType('packedbubble', 'bubble',
             // TODO split layouts to independent methods
             var series = this,
                 layoutOptions = series.options.layoutAlgorithm;
-
             if (!series.visible) {
                 return;
             }
@@ -770,8 +774,8 @@ seriesType('packedbubble', 'bubble',
                 i,
                 useSimulation = series.options.useSimulation;
 
-            this.processedXData = this.xData;
-            this.generatePoints();
+            series.processedXData = series.xData;
+            series.generatePoints();
 
             // merged data is an array with all of the data from all series
             if (!defined(chart.allDataPoints)) {
@@ -785,7 +789,7 @@ seriesType('packedbubble', 'bubble',
             if (useSimulation) {
                 positions = chart.allDataPoints;
             } else {
-                positions = this.placeBubbles(chart.allDataPoints);
+                positions = series.placeBubbles(chart.allDataPoints);
                 series.options.draggable = false;
             }
 
@@ -814,7 +818,7 @@ seriesType('packedbubble', 'bubble',
             }
 
             if (useSimulation) {
-                this.deferLayout();
+                series.deferLayout();
             }
         },
         /**
@@ -1148,7 +1152,7 @@ seriesType('packedbubble', 'bubble',
                 Math.sqrt(allDataPoints.length);
 
             zExtremes = useSimulation ?
-                this.calculateZExtremes() :
+                series.calculateZExtremes() :
                 [minSize, maxSize];
 
             (allDataPoints || []).forEach(function (point, i) {
@@ -1170,7 +1174,8 @@ seriesType('packedbubble', 'bubble',
                 allDataPoints[i][2] = radius;
                 radii.push(radius);
             });
-            this.radii = radii;
+
+            series.radii = radii;
         },
         // Draggable mode:
         /**
@@ -1178,80 +1183,21 @@ seriesType('packedbubble', 'bubble',
          *
          * @param {Highcharts.Point} point The point that should show halo.
          */
-        redrawHalo: function (point) {
-            if (point && this.halo) {
-                this.halo.attr({
-                    d: point.haloPath(
-                        this.options.states.hover.halo.size
-                    )
-                });
-            }
-        },
+        redrawHalo: dragNodesMixin.redrawHalo,
         /**
          * Mouse down action, initializing drag&drop mode.
          *
          * @param {global.Event} event Browser event, before normalization.
          * @param {Highcharts.Point} point The point that event occured.
          */
-        onMouseDown: function (point, event) {
-            var normalizedEvent = this.chart.pointer.normalize(event);
-
-            point.fixedPosition = {
-                chartX: normalizedEvent.chartX,
-                chartY: normalizedEvent.chartY,
-                plotX: point.plotX,
-                plotY: point.plotY
-            };
-
-            point.inDragMode = true;
-        },
+        onMouseDown: dragNodesMixin.onMouseDown,
         /**
          * Mouse move action during drag&drop.
          *
          * @param {global.Event} event Browser event, before normalization.
          * @param {Highcharts.Point} point The point that event occured.
          */
-        onMouseMove: function (point, event) {
-            if (point.fixedPosition && point.inDragMode) {
-                var series = this,
-                    chart = series.chart,
-                    normalizedEvent = chart.pointer.normalize(event),
-                    diffX = point.fixedPosition.chartX - normalizedEvent.chartX,
-                    diffY = point.fixedPosition.chartY - normalizedEvent.chartY,
-                    newPlotX,
-                    newPlotY;
-
-                // At least 5px to apply change (avoids simple click):
-                if (Math.abs(diffX) > 5 || Math.abs(diffY) > 5) {
-                    newPlotX = point.fixedPosition.plotX - diffX;
-                    newPlotY = point.fixedPosition.plotY - diffY;
-
-                    if (chart.isInsidePlot(newPlotX, newPlotY)) {
-                        point.plotX = newPlotX;
-                        point.plotY = newPlotY;
-
-                        series.redrawHalo();
-
-                        if (!series.layout.simulation) {
-                            // Start new simulation:
-                            if (!series.layout.enableSimulation) {
-                                // Run only one iteration to speed things up:
-                                series.layout.setMaxIterations(1);
-                            }
-                            // When dragging nodes, we don't need to calculate
-                            // initial positions and rendering nodes:
-                            series.layout.setInitialRendering(false);
-                            series.layout.run();
-                            // Restore defaults:
-                            series.layout.setInitialRendering(true);
-                        } else {
-                            // Extend current simulation:
-                            series.layout.resetSimulation();
-                        }
-                    }
-                }
-            }
-        },
+        onMouseMove: dragNodesMixin.onMouseMove,
         /**
          * Mouse up action, finalizing drag&drop.
          *
@@ -1287,11 +1233,7 @@ seriesType('packedbubble', 'bubble',
                         }
                     });
                 }
-                layout.run();
-                point.inDragMode = false;
-                if (!this.options.fixedDraggable) {
-                    delete point.fixedPosition;
-                }
+                dragNodesMixin.onMouseUp.apply(this, arguments);
             }
         },
         destroy: function () {
