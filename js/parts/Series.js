@@ -103,8 +103,8 @@
  */
 
 /**
- * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
- * of a line graph.
+ * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of a line
+ * graph.
  *
  * @typedef {"butt"|"round"|"square"|string} Highcharts.SeriesLinecapValue
  */
@@ -1842,9 +1842,9 @@ H.Series = H.seriesType(
          *         Data labels enabled
          * @sample highcharts/plotoptions/series-datalabels-multiple
          *         Multiple data labels on a bar series
-             *
+         *
          * @type {Highcharts.DataLabelsOptionsObject}
-             */
+         */
         dataLabels: {
             /** @ignore-option */
             align: 'center',

@@ -2,12 +2,38 @@
  * Copyright (C) Highsoft AS
  */
 
-/* eslint no-console:0 */
+const Gulp = require('gulp');
+
+/* *
+ *
+ *  Tasks
+ *
+ * */
+
+/**
+ * @return {Promise<void>}
+ *         Promise to keep
+ */
+function task() {
+
+    const ProcessLib = require('./lib/process');
+
+    return new Promise((resolve, reject) => {
+
+        ProcessLib
+            .exec('npx tsc --project ts')
+            .then(() => resolve())
+            .catch(reject);
+    });
+}
+
+Gulp.task('scripts-ts', task);
+
 
 // const FS = require('fs');
 // const Glob = require('glob');
 // const Path = require('path');
-const ProcessLib = require('./lib/process');
+// const ProcessLib = require('./lib/process');
 // const StringLib = require('./lib/string');
 
 /**
@@ -54,10 +80,9 @@ function convert(file) {
  *
  * @return {Promise}
  *         Promise to keep.
- */
+ *
 module.exports = function () {
     return ProcessLib.commandLine('npx tsc --project ts');
-/*
     For final switch to TypeScript
     return Promise
         .all(
@@ -76,5 +101,5 @@ module.exports = function () {
                     .map(convert)
             );
         });
-*/
 };
+*/

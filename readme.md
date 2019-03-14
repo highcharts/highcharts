@@ -161,5 +161,5 @@ gulp
 
 ## Generate API docs
 Run in this `highcharts` repository the doc generator with
-`npx gulp jsdoc --watch`, which also starts a new server with the generated
-API documentation.
+`npx gulp jsdoc-watch`, which also starts a new server with the generated API
+documentation.

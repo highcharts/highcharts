@@ -253,9 +253,7 @@ seriesType('timeline', 'line',
                             dataLabel.targetPosition = {};
                         }
 
-                        return !point.connector ?
-                            point.drawConnector() :
-                            point.alignConnector();
+                        return point.drawConnector();
                     }
                 });
             });
