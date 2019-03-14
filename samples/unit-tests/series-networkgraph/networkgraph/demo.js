@@ -93,4 +93,14 @@ QUnit.test('Network Graph', function (assert) {
         2,
         'Correct number of nodes (#10163)'
     );
+
+    chart.series[1].update({
+        dataLabels: {
+            enabled: true
+        }
+    });
+
+    chart.series[1].update({});
+
+    assert.ok('No errors after series update when dataLabels were enabled');
 });

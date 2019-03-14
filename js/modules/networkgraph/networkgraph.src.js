@@ -828,13 +828,7 @@ seriesType('networkgraph', 'line', {
         if (this.isNode) {
             this.linksFrom.forEach(
                 function (linkFrom) {
-                    if (linkFrom.graphic) {
-                        linkFrom.graphic = linkFrom.graphic.destroy();
-                    }
-
-                    if (linkFrom.dataLabel) {
-                        linkFrom.dataLabel = linkFrom.dataLabel.destroy();
-                    }
+                    linkFrom.destroyElements();
                 }
             );
             this.series.layout.removeNode(this);
