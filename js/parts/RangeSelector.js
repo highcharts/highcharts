@@ -7,7 +7,7 @@
 /**
  * Define the time span for the button
  *
- * @typedef {"all"|"day"|"millisecond"|"minute"|"month"|"second"|"week"|"ytd"} Highcharts.RangeSelectorButtonTypeValue
+ * @typedef {"all"|"day"|"hour"|"millisecond"|"minute"|"month"|"second"|"week"|"year"|"ytd"} Highcharts.RangeSelectorButtonTypeValue
  */
 
 /**
