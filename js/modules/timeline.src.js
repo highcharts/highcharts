@@ -253,9 +253,7 @@ seriesType('timeline', 'line',
                             dataLabel.targetPosition = {};
                         }
 
-                        return !point.connector ?
-                            point.drawConnector() :
-                            point.alignConnector();
+                        return point.drawConnector();
                     }
                 });
             });
@@ -575,55 +573,45 @@ seriesType('timeline', 'line',
         },
         drawConnector: function () {
             var point = this,
-                series = point.series;
-
-            point.connector = series.chart.renderer
-                .path(point.getConnectorPath())
-                .add(series.connectorsGroup);
-        },
-        alignConnector: function () {
-            var point = this,
                 series = point.series,
                 connector = point.connector,
-                bBox = connector.getBBox(),
-                isVisible = bBox.y > 0,
+                dl = point.dataLabel,
+                isVisible = point.series.chart.isInsidePlot(
+                    dl.translateX, dl.translateY
+                ),
+                attr = {
+                    d: point.getConnectorPath()
+                },
                 dlOptions = point.dataLabel.options = merge(
                     series.options.dataLabels,
                     point.options.dataLabels
                 );
 
-            point.connector = series.chart.renderer
-                .path(point.getConnectorPath())
-                .add(point.dataLabel);
+            if (!connector) {
+                point.connector = connector = series.chart.renderer
+                    .path()
+                    .attr({
+                        zIndex: -1
+                    })
+                    .addClass(
+                        'highcharts-data-label-connector ' +
+                        'highcharts-color-' + point.colorIndex +
+                        (
+                            point.className ?
+                                ' ' + point.className :
+                                ''
+                        )
+                    )
+                    .add(point.dataLabel);
+            }
 
             if (!series.chart.styledMode) {
-                point.connector.attr({
-                    stroke: dlOptions.connectorColor || point.color,
-                    'stroke-width': dlOptions.connectorWidth,
-                    opacity: point.dataLabel.opacity,
-                    zIndex: -1
-                }).addClass(
-                    'highcharts-data-label-connector ' +
-                    'highcharts-color-' + point.colorIndex +
-                    (
-                        point.className ?
-                            ' ' + point.className :
-                            ''
-                    )
-                );
+                attr.stroke = dlOptions.connectorColor || point.color;
+                attr['stroke-width'] = dlOptions.connectorWidth;
+                attr.opacity = point.dataLabel.opacity;
             }
-        },
-        alignConnector: function () {
-            var point = this,
-                connector = point.connector,
-                dl = point.dataLabel,
-                isVisible = point.series.chart.isInsidePlot(
-                    dl.translateX, dl.translateY
-                );
 
-            connector[isVisible ? 'animate' : 'attr']({
-                d: point.getConnectorPath()
-            });
+            connector[isVisible ? 'animate' : 'attr'](attr);
         }
     });
 
