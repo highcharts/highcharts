@@ -97,6 +97,9 @@
     "xml2js": "^0.4.19",
     "yargs": "^3.32.0"
   },
+  "engines": {
+    "node": ">=10.6.0"
+  },
   "lint-staged": {
     "*.js": [
       "eslint",

@@ -79,7 +79,7 @@ QUnit.module('Styled mode for series types', function () {
                     }]
                 };
 
-                // Secial cases
+                // Special cases
                 if (type === 'line') {
                     cfg.annotations = [{
                         labels: [{
@@ -95,15 +95,6 @@ QUnit.module('Styled mode for series types', function () {
                 if (type === 'networkgraph') {
                     cfg.series[0].keys = ['from', 'to'];
                     cfg.series[1].keys = ['from', 'to'];
-                }
-
-                if (type === 'packedbubble') {
-                    cfg.series[0].layoutAlgorithm = {
-                        enableSimulation: false
-                    };
-                    cfg.series[1].layoutAlgorithm = {
-                        enableSimulation: false
-                    };
                 }
 
                 var chart = Highcharts.chart('container', cfg);

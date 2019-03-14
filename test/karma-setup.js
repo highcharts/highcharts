@@ -37,7 +37,20 @@ Highcharts.setOptions({
             dataLabels: {
                 defer: false
             }
+        },
+        // We cannot use it in plotOptions.series because treemap
+        // has the same layout option: layoutAlgorithm.
+        networkgraph: {
+            layoutAlgorithm: {
+                enableSimulation: false
+            }
+        },
+        packedbubble: {
+            layoutAlgorithm: {
+                enableSimulation: false
+            }
         }
+
     },
     // Stock's Toolbar decreases width of the chart. At the same time, some
     // tests have hardcoded x/y positions for events which cuases them to fail.
@@ -73,15 +86,15 @@ QUnit.assert.close = function (number, expected, error, message) {
     var result = number === expected || (number <= expected + error && number >= expected - error) || false;
 
     this.pushResult({
-        result: result,
+        result,
         actual: number,
-        expected: expected,
-        message: message
+        expected,
+        message
     });
 };
 
 QUnit.module('Highcharts', {
-    beforeEach: function () {
+    beforeEach() {
 
         // Reset container size that some tests may have modified
         var containerStyle = document.getElementById('container').style;
@@ -96,7 +109,7 @@ QUnit.module('Highcharts', {
         Math.randomCursor = 0;
     },
 
-    afterEach: function () {
+    afterEach() {
 
         var containerStyle = document.getElementById('container').style;
         containerStyle.width = '';
@@ -218,7 +231,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 img.onerror = function () {
                     // console.log(svg)
                     reject(
-                        'Error loading SVG on canvas'
+                        new Error('Error loading SVG on canvas')
                     );
                 };
                 img.src = url;
@@ -256,7 +269,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 doComparison();
             });
         } else {
-            reject('No candidate SVG found');
+            reject(new Error('No candidate SVG found'));
         }
 
         // Handle reference, load SVG from file
