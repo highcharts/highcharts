@@ -98,7 +98,10 @@ H.extend(
 
                 if (options.enableSimulation) {
                     series.forEach(function (s) {
-                        s.render();
+                        // Chart could be destroyed during the simulation
+                        if (s.chart) {
+                            s.render();
+                        }
                     });
                     if (
                         layout.maxIterations-- &&

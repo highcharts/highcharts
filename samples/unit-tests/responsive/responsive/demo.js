@@ -568,3 +568,58 @@ QUnit.test('Responsive rules and chart.update', function (assert) {
 
 
 });
+
+QUnit.test('Falsy default', assert => {
+    const chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'pie',
+            width: 300,
+            borderWidth: 1
+        },
+
+        series: [{
+            name: 'Christmas Eve',
+            data: [1, 4, 3]
+        }],
+
+        plotOptions: {
+            pie: {
+                showInLegend: false
+            }
+        },
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 400
+                },
+                chartOptions: {
+                    plotOptions: {
+                        pie: {
+                            showInLegend: true,
+                            dataLabels: {
+                                format: "{point.percentage}",
+                                distance: -20
+                            }
+                        }
+                    }
+                }
+            }]
+        }
+    });
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-legend-item').length,
+        3,
+        'There should be legend items for all points'
+    );
+
+    chart.setSize(500);
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-legend-item').length,
+        0,
+        'Legend items should be removed as per default showInLegend'
+    );
+});

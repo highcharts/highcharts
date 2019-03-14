@@ -1088,12 +1088,22 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     addClass: function (className, replace) {
         var currentClassName = this.attr('class') || '';
 
-        if (currentClassName.indexOf(className) === -1) {
-            if (!replace) {
-                className =
-                    (currentClassName + (currentClassName ? ' ' : '') +
-                    className).replace('  ', ' ');
-            }
+        if (!replace) {
+
+            // Filter out existing
+            className = (className || '')
+                .split(/ /g)
+                .reduce(function (newClassName, name) {
+                    if (currentClassName.indexOf(name) === -1) {
+                        newClassName.push(name);
+                    }
+                    return newClassName;
+                }, currentClassName ? [currentClassName] : [])
+                .join(' ');
+
+        }
+
+        if (className !== currentClassName) {
             this.attr('class', className);
         }
 
@@ -2056,16 +2066,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             [].forEach.call(
                 ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
                 function (el) {
-                    var clipPathAttr = el.getAttribute('clip-path'),
-                        clipPathId = clipPath.element.id;
+                    var clipPathAttr = el.getAttribute('clip-path');
 
-                    // Include the closing paranthesis in the test to rule out
-                    // id's from 10 and above (#6550). Edge puts quotes inside
-                    // the url, others not.
-                    if (
-                        clipPathAttr.indexOf('(#' + clipPathId + ')') > -1 ||
-                        clipPathAttr.indexOf('("#' + clipPathId + '")') > -1
-                    ) {
+                    if (clipPathAttr.indexOf(clipPath.element.id) > -1) {
                         el.removeAttribute('clip-path');
                     }
                 }
@@ -4770,7 +4773,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     clipRect: function (x, y, width, height) {
         var wrapper,
-            id = H.uniqueKey(),
+            // Add a hyphen at the end to avoid confusion in testing indexes
+            // -1 and -10, -11 etc (#6550)
+            id = H.uniqueKey() + '-',
 
             clipPath = this.createElement('clipPath').attr({
                 id: id

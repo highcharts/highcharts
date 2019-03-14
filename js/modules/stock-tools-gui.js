@@ -1161,6 +1161,8 @@ H.Toolbar.prototype = {
             chart = stockToolbar.chart,
             guiOptions = stockToolbar.options,
             container = chart.container,
+            navigation = chart.options.navigation,
+            bindingsClassName = navigation && navigation.bindingsClassName,
             listWrapper,
             toolbar,
             wrapper;
@@ -1168,7 +1170,7 @@ H.Toolbar.prototype = {
         // create main container
         stockToolbar.wrapper = wrapper = createElement(DIV, {
             className: PREFIX + 'stocktools-wrapper ' +
-                    guiOptions.className
+                guiOptions.className + ' ' + bindingsClassName
         });
         container.parentNode.insertBefore(wrapper, container);
 

@@ -1707,6 +1707,8 @@ if (seriesTypes.pie) {
                     dataLabel.attr({ y: -9999 });
                 }
             }
+            // Clear for update
+            delete point.distributeBox;
         }, this);
     };
 

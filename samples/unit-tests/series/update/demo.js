@@ -450,11 +450,12 @@ QUnit.test('Series.update color index, class name should change', function (asse
 
 QUnit.test('Series.update showInLegend dynamically', function (assert) {
 
-    var s = Highcharts.chart('container', {
-        series: [{
-            showInLegend: false
-        }]
-    }).series[0];
+    var chart = Highcharts.chart('container', {
+            series: [{
+                showInLegend: false
+            }]
+        }),
+        s = chart.series[0];
 
     s.update({
         pointStart: 100
@@ -471,6 +472,29 @@ QUnit.test('Series.update showInLegend dynamically', function (assert) {
         }),
         [100, 101, 102, 103],
         'Points should start from 100 (#7933)'
+    );
+
+    chart.addSeries({
+        type: 'pie',
+        data: [1, 2, 3],
+        showInLegend: true
+    });
+    s = chart.series[1];
+
+    assert.deepEqual(
+        s.points.map(p => typeof p.legendItem),
+        ['object', 'object', 'object'],
+        'Pie points should show in legend'
+    );
+
+    s.update({
+        showInLegend: false
+    });
+
+    assert.strictEqual(
+        chart.legend.allItems.length,
+        0,
+        'Pie points should no longer show in legend'
     );
 
 });

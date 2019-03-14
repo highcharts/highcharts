@@ -1,5 +1,5 @@
 /* eslint-env node, es6 */
-/* eslint no-console: 0, camelcase: 0 */
+/* eslint-disable */
 const fs = require('fs');
 const yaml = require('js-yaml');
 

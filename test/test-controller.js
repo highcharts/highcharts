@@ -1,4 +1,4 @@
-/* eslint valid-jsdoc: 0 */
+/* eslint valid-jsdoc: 0, object-shorthand: 0 */
 /* global Highcharts, document, window */
 /**
  * The test controller makes it easy to emulate mouse and touch stuff on the
@@ -196,8 +196,8 @@ window.TestController = function (chart) {
 
             var self = this,
                 fromPosition = self.getPosition(),
-                from = [ fromPosition.x, fromPosition.y ],
-                to = [ chartX, chartY ],
+                from = [fromPosition.x, fromPosition.y],
+                to = [chartX, chartY],
                 interval = 1,
                 relatedTarget = fromPosition.relatedTarget,
                 points = getPointsBetween(from, to, interval);
@@ -533,7 +533,13 @@ window.TestController = function (chart) {
             if (Pointer) {
                 this.triggerEvent('pointermove', chartX, chartY, extra, debug);
             } else if (MSPointer) {
-                this.triggerEvent('MSPointerMove', chartX, chartY, extra, debug);
+                this.triggerEvent(
+                    'MSPointerMove',
+                    chartX,
+                    chartY,
+                    extra,
+                    debug
+                );
             }
             this.triggerEvent('touchmove', chartX, chartY, extra, debug);
         },
@@ -583,13 +589,19 @@ window.TestController = function (chart) {
             if (Pointer) {
                 this.triggerEvent('pointerdown', chartX, chartY, extra, debug);
             } else if (MSPointer) {
-                this.triggerEvent('MSPointerDown', chartX, chartY, extra, debug);
+                this.triggerEvent(
+                    'MSPointerDown',
+                    chartX,
+                    chartY,
+                    extra,
+                    debug
+                );
             }
         },
         /**
          * Trigger an event. The target element will be found based on the chart
-         * coordinates. This function is called behind the shorthand functions like
-         * .click() and .mousemove().
+         * coordinates. This function is called behind the shorthand functions
+         * like .click() and .mousemove().
          *
          * @param  {string} type
          *         Event type.
@@ -606,9 +618,10 @@ window.TestController = function (chart) {
          *         pressed in a mouse event.
          *
          * @param  {boolean|undefined} [debug]
-         *         Add marks where the event was triggered. Should not be enabled in
-         *         production, as it slows down the test and also leaves an element
-         *         that might catch events and mess up the test result.
+         *         Add marks where the event was triggered. Should not be
+         *         enabled in production, as it slows down the test and also
+         *         leaves an element that might catch events and mess up the
+         *         test result.
          *
          * @return {void}
          */
@@ -644,8 +657,8 @@ window.TestController = function (chart) {
                         mousemove: 2
                     }[type] || 3
                 ).attr({
-                    'fill': 'white',
-                    'stroke': {
+                    fill: 'white',
+                    stroke: {
                         mousedown: 'green',
                         mousemove: 'blue'
                     }[type] || 'red',
@@ -653,7 +666,7 @@ window.TestController = function (chart) {
                         mousedown: 2,
                         mousemove: 1
                     }[type] || 2,
-                    'zIndex': 100
+                    zIndex: 100
                 }).css({
                     'pointer-events': 'none'
                 }).add();

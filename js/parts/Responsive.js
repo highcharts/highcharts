@@ -285,7 +285,7 @@ Chart.prototype.currentOptions = function (options) {
                 ret[key] = isArray(val) ? [] : {};
                 getCurrent(val, curr[key] || {}, ret[key], depth + 1);
             } else {
-                ret[key] = curr[key] || null;
+                ret[key] = pick(curr[key], null);
             }
         });
     }

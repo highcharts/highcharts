@@ -246,6 +246,104 @@ QUnit.test(
         );
     }
 );
+
+// Highcharts v4.0.3, Issue #3202
+// tickInterval for categorized axis
+QUnit.test('Tickinterval categories (#3202)', function (assert) {
+
+    TestTemplate.test('highcharts/line', {
+        xAxis: {
+            categories: Highcharts.getOptions().lang.months,
+            tickInterval: 2
+        }
+    }, function (template) {
+
+        var chart = template.chart,
+            series = chart.series[0],
+            xAxis = chart.xAxis[0],
+            points = series.points,
+            point1 = Highcharts.offset(points[0].graphic.element),
+            point1Box = points[0].graphic.getBBox(),
+            point2 = Highcharts.offset(points[2].graphic.element),
+            point2Box = points[0].graphic.getBBox(),
+            ticks = xAxis.ticks,
+            tick1 = Highcharts.offset(ticks[0].mark.element),
+            tick1Box = ticks[0].mark.getBBox(),
+            tick2 = Highcharts.offset(ticks[2].mark.element),
+            tick2Box = ticks[2].mark.getBBox();
+
+        assert.close(
+            (tick1.left + (tick1Box.width / 2)),
+            (point1.left + (point1Box.width / 2)),
+            {
+                Chrome: 0.51,
+                Edge: 0,
+                Firefox: 2.5,
+                MSIE: 0,
+                Safari: 1.51
+            }[TestUtilities.browser],
+            'Tick marks should be on tick when tickInterval != 1'
+        );
+
+        assert.close(
+            (tick2.left + (tick2Box.width / 2)),
+            (point2.left + (point2Box.width / 2)),
+            {
+                Chrome: 0.51,
+                Edge: 0,
+                Firefox: 2.5,
+                MSIE: 0,
+                Safari: 0.51
+            }[TestUtilities.browser],
+            'Tick marks should be on tick when tickInterval != 1'
+        );
+    });
+});
+
+// Highcharts v4.0.3, Issue #3363
+// Don't show decimals on yearly X axis
+QUnit.test('Yearly values (#3363)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            data: [
+                [1998, 1],
+                [1999, 2],
+                [2000, 3],
+                [2001, 4],
+                [2002, 5],
+                [2003, 6],
+                [2004, 7],
+                [2005, 8],
+                [2006, 9],
+                [2007, 10],
+                [2008, 11],
+                [2009, 12],
+                [2010, 13]
+            ]
+        }]
+    });
+
+    function checkIfArrayContainDecimalNumbers(tickLabels) {
+        for (var i = 0; i < tickLabels.length; i++) {
+            if (tickLabels[i] % 1 !== 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    var xAxesTickLabels = chart.xAxis[0].tickPositions;
+    assert.ok(
+        checkIfArrayContainDecimalNumbers(xAxesTickLabels),
+        "The yearly X axis should contain a number with a decimal"
+    );
+    xAxesTickLabels.push(2011.5);
+    assert.notOk(
+        checkIfArrayContainDecimalNumbers(xAxesTickLabels),
+        "The yearly X axis should contain a number with a decimal"
+    );
+});
+
 // Highcharts v4.0.1, Issue #3195
 // No ticks on a short axis with startOnTick and endOnTick = false
 QUnit.test('No ticks on short axis (#3195)', function (assert) {
