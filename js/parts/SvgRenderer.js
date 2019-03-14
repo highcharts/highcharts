@@ -4440,6 +4440,24 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
                     this[key] = value;
                     if (defined(imgSize)) {
+
+                        // Scale and center the image within its container.
+                        // The name `backgroundSize` is taken from the CSS spec,
+                        // but the value `within` is made up. Other possible
+                        // values in the spec, `cover` and `contain`, can be
+                        // implemented if needed.
+                        if (
+                            options &&
+                            options.backgroundSize === 'within' &&
+                            this.width &&
+                            this.height
+                        ) {
+                            imgSize = Math.round(imgSize * Math.min(
+                                this.width / this.imgwidth,
+                                this.height / this.imgheight
+                            ));
+                        }
+
                         if (this.element) {
                             this.element.setAttribute(key, imgSize);
                         }
