@@ -343,6 +343,27 @@
  * @validvalue ["a","c","h","l","m","q","s","t","v","z","A","C","H","L","M","Q","S","T","V","Z"]
  */
 
+/**
+ * Proceed function to call original (wrapped) function.
+ *
+ * @callback Highcharts.WrapProceedFunction
+ *
+ * @param {*} [arg1]
+ *        Optional argument. Without any arguments defaults to first argument of
+ *        the wrapping function.
+ *
+ * @param {*} [arg2]
+ *        Optional argument. Without any arguments defaults to second argument
+ *        of the wrapping function.
+ *
+ * @param {*} [arg3]
+ *        Optional argument. Without any arguments defaults to third argument of
+ *        the wrapping function.
+ *
+ * @return {*}
+ *         Return value of the original function.
+ */
+
 'use strict';
 
 import H from './Globals.js';
@@ -1356,7 +1377,7 @@ H.relativeLength = function (value, base, offset) {
  * @param {string} method
  *        The name of the method to extend.
  *
- * @param {Function} func
+ * @param {Highcharts.WrapProceedFunction} func
  *        A wrapper function callback. This function is called with the same
  *        arguments as the original function, except that the original function
  *        is unshifted and passed as the first argument.
