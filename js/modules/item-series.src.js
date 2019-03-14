@@ -327,15 +327,26 @@ H.seriesType(
                             x: x,
                             y: y,
                             width: width,
-                            height: height,
-                            r: r
+                            height: height
                         };
+                        if (r !== undefined) {
+                            attr.r = r;
+                        }
 
 
                         if (graphics[val]) {
                             graphics[val].animate(attr);
                         } else {
-                            graphics[val] = renderer.symbol(symbol)
+                            graphics[val] = renderer
+                                .symbol(
+                                    symbol,
+                                    null,
+                                    null,
+                                    null,
+                                    null, {
+                                        backgroundSize: 'within'
+                                    }
+                                )
                                 .attr(extend(attr, pointAttr))
                                 .add(point.graphic);
                         }
