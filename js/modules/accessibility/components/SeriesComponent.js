@@ -269,10 +269,11 @@ H.Series.prototype.highlightFirstValidPoint = function () {
         start = (curPoint && curPoint.series) === this ?
             getPointIndex(curPoint) :
             0,
-        points = this.points;
+        points = this.points,
+        len = points.length;
 
-    if (points) {
-        for (var i = start, len = points.length; i < len; ++i) {
+    if (points && len) {
+        for (var i = start; i < len; ++i) {
             if (!isSkipPoint(points[i])) {
                 return points[i].highlight();
             }
