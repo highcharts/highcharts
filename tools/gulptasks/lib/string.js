@@ -3,6 +3,18 @@
  */
 
 /**
+ * Removes script comments (`//...`, `/*...`) from a source string.
+ * @param {string} str
+ *        Source string
+ *
+ * @return {string}
+ *         Source string without comments
+ */
+function removeComments(str) {
+    return str.replace(/\/\*[\s\S]*?\*\/|(^|[^:])\/\/.*$/gm, '$1');
+}
+
+/**
  * Replaces all pattern in a string.
  *
  * @param {string} str
@@ -54,6 +66,7 @@ function replaceLast(str, pattern, replacement) {
  * */
 
 module.exports = {
+    removeComments,
     replaceAll,
     replaceLast
 };

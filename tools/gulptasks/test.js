@@ -11,11 +11,19 @@ const Path = require('path');
  *
  * */
 
-const KARMA_CONFIG_FILE = Path.join(
-    __dirname, '..', '..', 'test', 'karma-conf.js'
+const BASE = Path.join(__dirname, '..', '..');
+
+const CODE_DIRECTORY = Path.join(BASE, 'code');
+
+const CONFIGURATION_FILE = Path.join(
+    BASE, 'node_modules', '_gulptasks_test.json'
 );
 
-const LAST_RUN_FILE = Path.join(__dirname, '..', '..', 'test', 'last-run.json');
+const JS_DIRECTORY = Path.join(BASE, 'js');
+
+const KARMA_CONFIG_FILE = Path.join(BASE, 'test', 'karma-conf.js');
+
+const TESTS_DIRECTORY = Path.join(BASE, 'samples', 'unit-tests');
 
 /* *
  *
@@ -140,27 +148,31 @@ function checkSamplesConsistency() {
 }
 
 /**
- * @param {string} pattern
- *        Glob pattern
- *
- * @return {number}
- *         Latest modified timestamp
+ * @return {void}
  */
-function getModifiedTime(pattern) {
+function saveRun() {
 
     const FS = require('fs');
-    const Glob = require('glob');
+    const FSLib = require('./lib/fs');
+    const StringLib = require('./lib/string');
 
-    let mtimeMs = 0;
+    const latestCodeHash = FSLib.getDirectoryHash(
+        CODE_DIRECTORY, true, StringLib.removeComments
+    );
+    const latestJsHash = FSLib.getDirectoryHash(
+        JS_DIRECTORY, true, StringLib.removeComments
+    );
+    const latestTestsHash = FSLib.getDirectoryHash(
+        TESTS_DIRECTORY, true, StringLib.removeComments
+    );
 
-    Glob.sync(pattern).forEach(file => {
-        mtimeMs = Math.max(
-            mtimeMs,
-            FS.statSync(file).mtimeMs
-        );
-    });
+    const configuration = {
+        latestCodeHash,
+        latestJsHash,
+        latestTestsHash
+    };
 
-    return mtimeMs;
+    FS.writeFileSync(CONFIGURATION_FILE, JSON.stringify(configuration));
 }
 
 /**
@@ -170,50 +182,57 @@ function getModifiedTime(pattern) {
 function shouldRun() {
 
     const FS = require('fs');
+    const FSLib = require('./lib/fs');
     const LogLib = require('./lib/log');
+    const StringLib = require('./lib/string');
 
-    // console.log(getCodeHash(__dirname + '/js/**/*.js'));
+    let configuration = {
+        latestCodeHash: '',
+        latestJsHash: '',
+        latestTestsHash: ''
+    };
 
-    const argv = process.argv;
-    const lastBuildMTime = getModifiedTime('code/**/*.js');
-    const sourceMTime = getModifiedTime('js/**/*.js');
-    const unitTestsMTime = getModifiedTime('samples/unit-tests/**/*.*');
-
-    let lastSuccessfulRun = 0;
-
-    if (FS.existsSync(LAST_RUN_FILE)) {
-        lastSuccessfulRun = JSON
-            .parse(FS.readFileSync(LAST_RUN_FILE))
-            .lastSuccessfulRun;
-    }
-
-    /*
-    console.log(
-        'lastBuildMTime', new Date(lastBuildMTime),
-        'sourceMTime', new Date(sourceMTime),
-        'unitTestsMTime', new Date(unitTestsMTime),
-        'lastSuccessfulRun', new Date(lastSuccessfulRun)
-    );
-    */
-
-    // Arguments passed, always run. No arguments gives [ '_', '$0' ]
-    if (Object.keys(argv).length > 2) {
-        return true;
-    }
-
-    if (lastBuildMTime < sourceMTime) {
-        throw new Error(
-            '\n✖'.red + ' The files have not been built since ' +
-            'the last source code changes. Run ' + 'gulp'.italic +
-            ' and try again.'
+    if (FS.existsSync(CONFIGURATION_FILE)) {
+        configuration = JSON.parse(
+            FS.readFileSync(CONFIGURATION_FILE).toString()
         );
-    } else if (
-        sourceMTime < lastSuccessfulRun &&
-        unitTestsMTime < lastSuccessfulRun
+    }
+
+    const latestCodeHash = FSLib.getDirectoryHash(
+        CODE_DIRECTORY, true, StringLib.removeComments
+    );
+    const latestJsHash = FSLib.getDirectoryHash(
+        JS_DIRECTORY, true, StringLib.removeComments
+    );
+    const latestTestsHash = FSLib.getDirectoryHash(
+        TESTS_DIRECTORY, true, StringLib.removeComments
+    );
+
+    if (latestCodeHash === configuration.latestCodeHash &&
+        latestJsHash !== configuration.latestJsHash
     ) {
-        LogLib.success('✓ Source code and unit tests not modified since the last successful test run.');
+
+        LogLib.failure(
+            '✖ The files have not been built' +
+            ' since the last source code changes.' +
+            ' Run `npx gulp` and try again.'
+        );
+
+        throw new Error('Code out of sync');
+    }
+
+    if (latestCodeHash === configuration.latestCodeHash &&
+        latestTestsHash === configuration.latestTestsHash
+    ) {
+
+        LogLib.success(
+            '✓ Source code and unit tests have been not modified' +
+            ' since the last successful test run.'
+        );
+
         return false;
     }
+
     return true;
 }
 
@@ -230,38 +249,14 @@ function shouldRun() {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function test() {
 
-    const FS = require('fs');
     const LogLib = require('./lib/log');
-
-    // Get the checksum of all code excluding comments. An idea for smarter
-    // checks. If the check sum hasn't changed since last test run, there's no
-    // need to run tests again.
-    /*
-    const getCodeHash = (pattern) => {
-        const crypto = require('crypto');
-        let hashes = [];
-        glob.sync(pattern).forEach(file => {
-            let s = fs.readFileSync(file, 'utf8');
-            if (typeof s === 'string') {
-                s = s.replace(/\/\*[\s\S]*?\*\/|([^:]|^)\/\/.*$/gm, '');
-                s = crypto.createHash('md5').update(s).digest('hex');
-                hashes.push(s);
-            }
-
-        });
-        let hash = crypto
-            .createHash('md5')
-            .update(hashes.toString())
-            .digest('hex');
-        return hash;
-    };
-    */
+    const Yargs = require('yargs');
 
     return new Promise((resolve, reject) => {
 
-        const argv = process.argv;
+        const argv = Yargs.argv;
 
         if (argv.help) {
             LogLib.message(`
@@ -297,38 +292,44 @@ Available arguments for 'gulp test':
         checkSamplesConsistency();
         checkJSWrap();
 
-        if (shouldRun()) {
+        const forceRun = (Object.keys(argv).length > 2);
+
+        if (forceRun || shouldRun()) {
 
             LogLib.message('Run `gulp test --help` for available options');
 
-            const Server = require('karma').Server;
+            const KarmaServer = require('karma').Server;
             const PluginError = require('plugin-error');
 
-            new Server({
-                configFile: KARMA_CONFIG_FILE,
-                singleRun: true
-            }, err => {
-                if (err === 0) {
-                    resolve();
+            new KarmaServer(
+                {
+                    configFile: KARMA_CONFIG_FILE,
+                    singleRun: true
+                },
+                err => {
 
-                    // Register last successful run (only when running without
-                    // arguments)
-                    if (Object.keys(argv).length <= 2) {
-                        FS.writeFileSync(
-                            LAST_RUN_FILE,
-                            JSON.stringify({ lastSuccessfulRun: Date.now() })
-                        );
+                    if (err !== 0) {
+                        reject(new PluginError('karma', {
+                            message: 'Tests failed'
+                        }));
                     }
-                } else {
-                    reject(new PluginError('karma', {
-                        message: 'Tests failed'
-                    }));
+
+                    if (!forceRun) {
+                        try {
+                            saveRun();
+                        } catch (cathedError) {
+                            LogLib.warn(cathedError);
+                        }
+                    }
+
+                    resolve();
                 }
-            }).start();
+            ).start();
         } else {
+
             resolve();
         }
     });
 }
 
-Gulp.task('test', Gulp.series('styles', 'scripts', task));
+Gulp.task('test', Gulp.series('styles', 'scripts', test));
