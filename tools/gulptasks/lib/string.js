@@ -3,6 +3,25 @@
  */
 
 /**
+ * Replaces all pattern in a string.
+ *
+ * @param {string} str
+ *        String to modify.
+ *
+ * @param {string} pattern
+ *        Pattern to search.
+ *
+ * @param {string} replacement
+ *        Replacement for pattern.
+ *
+ * @return {string}
+ *         Modified string.
+ */
+function replaceAll(str, pattern, replacement) {
+    return str.split(pattern).join(replacement);
+}
+
+/**
  * Replaces last pattern in a string.
  *
  * @param {string} str
@@ -35,5 +54,6 @@ function replaceLast(str, pattern, replacement) {
  * */
 
 module.exports = {
+    replaceAll,
     replaceLast
 };

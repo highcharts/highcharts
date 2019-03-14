@@ -1,4 +1,4 @@
-/**
+/* *
  * Networkgraph series
  *
  * (c) 2010-2019 Paweł Fus
@@ -6,7 +6,116 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * Formatter callback function.
+ *
+ * @callback Highcharts.PlotNetworkDataLabelsFormatterCallbackFunction
+ *
+ * @param {Highcharts.PlotNetworkDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ *        Data label context to format
+ *
+ * @return {string}
+ *         Formatted data label text
+ */
+
+/**
+ * Context for the formatter function.
+ *
+ * @interface Highcharts.PlotNetworkDataLabelsFormatterContextObject
+ * @extends Highcharts.DataLabelsFormatterContextObject
+ * @since 7.0.0
+ *//**
+ * The color of the node.
+ * @name Highcharts.PlotNetworkDataLabelsFormatterContextObject#color
+ * @type {Highcharts.ColorString}
+ * @since 7.0.0
+ *//**
+ * The point (node) object. The node name, if defined, is available through
+ * `this.point.name`. Arrays: `this.point.linksFrom` and `this.point.linksTo`
+ * contains all nodes connected to this point.
+ * @name Highcharts.PlotNetworkDataLabelsFormatterContextObject#point
+ * @type {Highcharts.Point}
+ * @since 7.0.0
+ *//**
+ * The ID of the node.
+ * @name Highcharts.PlotNetworkDataLabelsFormatterContextObject#key
+ * @type {string}
+ * @since 7.0.0
+ */
+
+/**
+ * Data labels options
+ *
+ * @interface Highcharts.PlotNetworkDataLabelsOptionsObject
+ * @extends Highcharts.DataLabelsOptionsObject
+ * @since 7.0.0
+ *//**
+ * The
+ * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+ * specifying what to show for _node_ in the networkgraph. In v7.0 defaults to
+ * `{key}`, since v7.1 defaults to `undefined` and `formatter` is used instead.
+ * @name Highcharts.PlotNetworkDataLabelsOptionsObject#format
+ * @type {string}
+ * @since 7.0.0
+ *//**
+ * Callback JavaScript function to format the data label for a node. Note that
+ * if a `format` is defined, the format takes precedence and the formatter is
+ * ignored.
+ * @name Highcharts.PlotNetworkDataLabelsOptionsObject#formatter
+ * @type {Highcharts.PlotNetworkDataLabelsFormatterCallbackFunction|undefined}
+ * @since 7.0.0
+ *//**
+ * The
+ * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+ * specifying what to show for _links_ in the networkgraph. (Default:
+ * `undefined`)
+ * @name Highcharts.PlotNetworkDataLabelsOptionsObject#linkFormat
+ * @type {string}
+ * @since 7.1.0
+ *//**
+ * Callback to format data labels for _links_ in the sankey diagram. The
+ * `linkFormat` option takes precedence over the `linkFormatter`.
+ * @name Highcharts.PlotNetworkDataLabelsOptionsObject#linkFormatter
+ * @type {Highcharts.PlotNetworkDataLabelsFormatterCallbackFunction|undefined}
+ * @since 7.1.0
+ *//**
+ * Options for a _link_ label text which should follow link connection.
+ * **Note:** Only SVG-based renderer supports this option.
+ * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#textPath}
+ * @name Highcharts.PlotNetworkDataLabelsOptionsObject#linkTextPath
+ * @type {Highcharts.PlotNetworkDataLabelsTextPath}
+ * @since 7.1.0
+ *//**
+ * Options for a _node_ label text which should follow marker's shape.
+ * **Note:** Only SVG-based renderer supports this option.
+ * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#linkTextPath}
+ * @name Highcharts.PlotNetworkDataLabelsOptionsObject#textPath
+ * @type {Highcharts.PlotNetworkDataLabelsTextPath}
+ * @since 7.1.0
+ */
+
+/**
+ * **Note:** Only SVG-based renderer supports this option.
+ *
+ * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#linkTextPath}
+ * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#textPath}
+ *
+ * @interface Highcharts.PlotNetworkDataLabelsTextPath
+ * @since 7.1.0
+ *//**
+ * Presentation attributes for the text path.
+ * @name Highcharts.PlotNetworkDataLabelsTextPath#attributes
+ * @type {Highcharts.SVGAttributes}
+ * @since 7.1.0
+ *//**
+ * Enable or disable `textPath` option for link's or marker's data labels.
+ * @name Highcharts.PlotNetworkDataLabelsTextPath#enabled
+ * @type {boolean|undefined}
+ * @since 7.1.0
+ */
+
 'use strict';
+
 import H from '../../parts/Globals.js';
 import '../../parts/Utilities.js';
 import '../../parts/Options.js';
@@ -42,121 +151,37 @@ seriesType('networkgraph', 'line', {
     marker: {
         enabled: true
     },
+    /**
+     * @sample highcharts/series-networkgraph/link-datalabels
+     *         Networkgraph with labels on links
+     * @sample highcharts/series-networkgraph/textpath-datalabels
+     *         Networkgraph with labels around nodes
+     * @sample highcharts/series-networkgraph/link-datalabels
+     *         Data labels moved into the nodes
+     * @sample highcharts/series-networkgraph/link-datalabels
+     *         Data labels moved under the links
+     *
+     * @type {Highcharts.PlotNetworkDataLabelsOptionsObject}
+     */
     dataLabels: {
-        /**
-         * The
-         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * specifying what to show for _links_ in the networkgraph.
-         *
-         * @type {string}
-         * @since 7.1.0
-         * @apioption plotOptions.networkgraph.dataLabels.linkFormat
-         * @default undefined
-         */
-
-        /**
-         * The
-         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * specifying what to show for _node_ in the networkgraph.
-         *
-         * In v7.0 defaults to `{key}`, since v7.1 defaults to `undefined` and
-         * `formatter` is used instead.
-         *
-         * @type {string}
-         * @apioption plotOptions.networkgraph.dataLabels.format
-         */
-
-        /**
-         * Callback to format data labels for _links_ in the sankey diagram.
-         * The `linkFormat` option takes precedence over the `linkFormatter`.
-         *
-         * @type  {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
-         * @since 7.1.0
-         * @default function () { return this.point.fromNode.name + ' \u2192 ' + this.point.toNode.name; }
-         */
+        /** @ignore-option */
+        formatter: function () {
+            return this.key;
+        },
+        /** @ignore-option */
         linkFormatter: function () {
             return this.point.fromNode.name + '<br>' +
                 this.point.toNode.name;
         },
-        /**
-         * Options for a _node_ label text which should follow marker's shape.
-         *
-         * **Note:**
-         * Only SVG-based renderer supports this option.
-         *
-         * @sample highcharts/series-networkgraph/textpath-datalabels
-         *          Networkgraph with labels around nodes
-         * @since   7.1.0
-         */
-        textPath: {
-            /**
-             * Presentation attributes for the text path.
-             *
-             * @default     {"textAnchor": "middle", "startOffset": "50%", "dy": -5}
-             * @sample      highcharts/series-networkgraph/link-datalabels
-             *              Data labels moved into the nodes
-             *
-             * @type        {Highcharts.SVGAttributes}
-             * @apioption plotOptions.networkgraph.dataLabels.textPath.attributes
-             */
-
-            /**
-             * Enable or disable `textPath` option for marker's data labels.
-             *
-             * @see [linkTextPath](#plotOptions.networkgraph.dataLabels.linkTextPath) option
-             */
-            enabled: false
-        },
-
-        /**
-         * Options for a _link_ label text which should follow link connection.
-         *
-         * @sample highcharts/series-networkgraph/link-datalabels
-         *         Networkgraph with dataLabels on links
-         * @since   7.1.0
-         */
+        /** @ignore-option */
         linkTextPath: {
-            /**
-             * Presentation attributes for the text path.
-             *
-             * @default     {"textAnchor": "middle", "startOffset": "50%", "dy": -5}
-             * @sample      highcharts/series-networkgraph/link-datalabels
-             *              Data labels moved under the links
-             *
-             * @type        {Highcharts.SVGAttributes}
-             * @apioption plotOptions.networkgraph.dataLabels.linkTextPath.attributes
-             */
-
-            /**
-             * Enable or disable `textPath` option for link's data labels.
-             *
-             * @see [textPath](#plotOptions.networkgraph.dataLabels.textPath) option
-             */
+            /** @ignore-option */
             enabled: true
         },
-
-        /**
-         * Callback JavaScript function to format the data label for a node.
-         * Note that if a `format` is defined, the format takes precedence and
-         * the formatter is ignored. Available data are:
-         *
-         * - `this.point`: The point (node) object. The node name, if defined,
-         *   is available through `this.point.name`. Arrays:
-         *   `this.point.linksFrom` and `this.point.linksTo` contains all nodes
-         *   connected to this point.
-         *
-         * - `this.series`: The series object. The series name is available
-         *   through`this.series.name`.
-         *
-         * - `this.key`: The ID of the node.
-         *
-         * - `this.color`: The color of the node.
-         *
-         * @type    {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
-         * @default function () { return this.key; }
-         */
-        formatter: function () {
-            return this.key;
+        /** @ignore-option */
+        textPath: {
+            /** @ignore-option */
+            enabled: false
         }
     },
     /**
@@ -371,6 +396,7 @@ seriesType('networkgraph', 'line', {
     /**
      * Extend init with base event, which should stop simulation during update.
      * After data is updated, `chart.render` resumes the simulation.
+     * @private
      */
     init: function () {
 
@@ -388,6 +414,7 @@ seriesType('networkgraph', 'line', {
     /**
      * Extend generatePoints by adding the nodes, which are Point objects
      * but pushed to the this.nodes array.
+     * @private
      */
     generatePoints: function () {
         H.NodesMixin.generatePoints.apply(this, arguments);
@@ -417,6 +444,7 @@ seriesType('networkgraph', 'line', {
      * Extend the default marker attribs by using a non-rounded X position,
      * otherwise the nodes will jump from pixel to pixel which looks a bit jaggy
      * when approaching equilibrium.
+     * @private
      */
     markerAttribs: function (point, state) {
         var attribs = Series.prototype.markerAttribs.call(this, point, state);
@@ -427,6 +455,7 @@ seriesType('networkgraph', 'line', {
 
     /**
      * Run pre-translation and register nodes&links to the deffered layout.
+     * @private
      */
     translate: function () {
         if (!this.processedXData) {
@@ -457,6 +486,7 @@ seriesType('networkgraph', 'line', {
      * Note:
      * Animation is done through `requestAnimationFrame` directly, without
      * `Highcharts.animate()` use.
+     * @private
      */
     deferLayout: function () {
         var layoutOptions = this.options.layoutAlgorithm,
@@ -494,6 +524,7 @@ seriesType('networkgraph', 'line', {
     /**
      * Extend the render function to also render this.nodes together with
      * the points.
+     * @private
      */
     render: function () {
         var points = this.points,
@@ -548,7 +579,7 @@ seriesType('networkgraph', 'line', {
     // Draggable mode:
     /**
      * Redraw halo on mousemove during the drag&drop action.
-     *
+     * @private
      * @param {Highcharts.Point} point The point that should show halo.
      */
     redrawHalo: function (point) {
@@ -562,7 +593,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Mouse down action, initializing drag&drop mode.
-     *
+     * @private
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
      */
@@ -580,7 +611,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Mouse move action during drag&drop.
-     *
+     * @private
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
      */
@@ -627,7 +658,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Mouse up action, finalizing drag&drop.
-     *
+     * @private
      * @param {Highcharts.Point} point The point that event occured.
      */
     onMouseUp: function (point) {
@@ -643,6 +674,7 @@ seriesType('networkgraph', 'line', {
     /**
      * Basic `point.init()` and additional styles applied when
      * `series.draggable` is enabled.
+     * @private
      */
     init: function () {
         Point.prototype.init.apply(this, arguments);
@@ -671,7 +703,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Return degree of a node. If node has no connections, it still has deg=1.
-     *
+     * @private
      * @return {number}
      */
     getDegree: function () {
@@ -682,7 +714,7 @@ seriesType('networkgraph', 'line', {
     // Links:
     /**
      * Get presentational attributes of link connecting two nodes.
-     *
+     * @private
      * @return {Highcharts.SVGAttributes}
      */
     getLinkAttribues: function () {
@@ -697,6 +729,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Render link and add it to the DOM.
+     * @private
      */
     renderLink: function () {
         if (!this.graphic) {
@@ -710,6 +743,7 @@ seriesType('networkgraph', 'line', {
     },
     /**
      * Redraw link's path.
+     * @private
      */
     redrawLink: function () {
         var path = this.getLinkPath();
@@ -728,7 +762,7 @@ seriesType('networkgraph', 'line', {
      * Get mass fraction applied on two nodes connected to each other. By
      * default, when mass is equal to `1`, mass fraction for both nodes equal to
      * 0.5.
-     *
+     * @private
      * @return {object} For example `{ fromNode: 0.5, toNode: 0.5 }`
      */
     getMass: function () {
@@ -744,7 +778,7 @@ seriesType('networkgraph', 'line', {
 
     /**
      * Get link path connecting two nodes.
-     *
+     * @private
      * @return {Array<Highcharts.SVGPathArray>} Path: `['M', x, y, 'L', x, y]`
      */
     getLinkPath: function () {
@@ -787,8 +821,8 @@ seriesType('networkgraph', 'line', {
     /**
      * Destroy point. If it's a node, remove all links coming out of this node.
      * Then remove point from the layout.
-     *
-     * @return {undefined}
+     * @private
+     * @return {void}
      */
     destroy: function () {
         if (this.isNode) {
@@ -966,56 +1000,56 @@ addEvent(
  */
 
 /**
-  * A collection of options for the individual nodes. The nodes in a
-  * networkgraph diagram are auto-generated instances of `Highcharts.Point`,
-  * but options can be applied here and linked by the `id`.
-  *
-  * @sample highcharts/series-networkgraph/data-options/
-  *         Networkgraph diagram with node options
-  *
-  * @type      {Array<*>}
-  * @product   highcharts
-  * @apioption series.networkgraph.nodes
-  */
+ * A collection of options for the individual nodes. The nodes in a
+ * networkgraph diagram are auto-generated instances of `Highcharts.Point`,
+ * but options can be applied here and linked by the `id`.
+ *
+ * @sample highcharts/series-networkgraph/data-options/
+ *         Networkgraph diagram with node options
+ *
+ * @type      {Array<*>}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes
+ */
 
 /**
-  * The id of the auto-generated node, refering to the `from` or `to` setting of
-  * the link.
-  *
-  * @type      {string}
-  * @product   highcharts
-  * @apioption series.networkgraph.nodes.id
-  */
+ * The id of the auto-generated node, refering to the `from` or `to` setting of
+ * the link.
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.id
+ */
 
 /**
-  * The color of the auto generated node.
-  *
-  * @type      {Highcharts.ColorString}
-  * @product   highcharts
-  * @apioption series.networkgraph.nodes.color
-  */
+ * The color of the auto generated node.
+ *
+ * @type      {Highcharts.ColorString}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.color
+ */
 
 /**
-  * The color index of the auto generated node, especially for use in styled
-  * mode.
-  *
-  * @type      {number}
-  * @product   highcharts
-  * @apioption series.networkgraph.nodes.colorIndex
-  */
+ * The color index of the auto generated node, especially for use in styled
+ * mode.
+ *
+ * @type      {number}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.colorIndex
+ */
 
 /**
-  * The name to display for the node in data labels and tooltips. Use this when
-  * the name is different from the `id`. Where the id must be unique for each
-  * node, this is not necessary for the name.
-  *
-  * @sample highcharts/series-networkgraph/data-options/
-  *         Networkgraph diagram with node options
-  *
-  * @type      {string}
-  * @product   highcharts
-  * @apioption series.networkgraph.nodes.name
-  */
+ * The name to display for the node in data labels and tooltips. Use this when
+ * the name is different from the `id`. Where the id must be unique for each
+ * node, this is not necessary for the name.
+ *
+ * @sample highcharts/series-networkgraph/data-options/
+ *         Networkgraph diagram with node options
+ *
+ * @type      {string}
+ * @product   highcharts
+ * @apioption series.networkgraph.nodes.name
+ */
 
 /**
  * Mass of the node. By default, each node has mass equal to it's marker radius
