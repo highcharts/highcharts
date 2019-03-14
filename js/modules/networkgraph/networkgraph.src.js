@@ -70,7 +70,7 @@ seriesType('networkgraph', 'line', {
          * Callback to format data labels for _links_ in the sankey diagram.
          * The `linkFormat` option takes precedence over the `linkFormatter`.
          *
-         * @type  {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
+         * @type  {Highcharts.FormatterCallbackFunction<Highcharts.DataLabelsFormatterContextObject>}
          * @since 7.1.0
          * @default function () { return this.point.fromNode.name + ' \u2192 ' + this.point.toNode.name; }
          */
@@ -152,7 +152,7 @@ seriesType('networkgraph', 'line', {
          *
          * - `this.color`: The color of the node.
          *
-         * @type    {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
+         * @type    {Highcharts.FormatterCallbackFunction<Highcharts.DataLabelsFormatterContextObject>}
          * @default function () { return this.key; }
          */
         formatter: function () {
