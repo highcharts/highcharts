@@ -253,7 +253,9 @@ seriesType('timeline', 'line',
                             dataLabel.targetPosition = {};
                         }
 
-                        return point.drawConnector();
+                        return !point.connector ?
+                            point.drawConnector() :
+                            point.alignConnector();
                     }
                 });
             });
@@ -267,7 +269,7 @@ seriesType('timeline', 'line',
                 visiblePointsCount = series.visiblePointsCount,
                 pointIndex = visiblePoints.indexOf(point),
                 isFirstOrLast = !pointIndex ||
-                pointIndex === visiblePointsCount - 1,
+                    pointIndex === visiblePointsCount - 1,
                 dataLabelsOptions = series.options.dataLabels,
                 userDLOptions = point.userDLOptions || {},
                 // Define multiplier which is used to calculate data label
@@ -345,8 +347,10 @@ seriesType('timeline', 'line',
                 });
 
                 // Adjust axis extremes to currently visible points.
-                xAxis.min = visiblePoints[0].x;
-                xAxis.max = visiblePoints[visiblePoints.length - 1].x;
+                if (!series.chart.resetZoomButton) {
+                    xAxis.min = visiblePoints[0].x;
+                    xAxis.max = visiblePoints[visiblePoints.length - 1].x;
+                }
             } else {
                 // Generate xData map.
                 for (i = 0; i < visiblePoints; i++) {
@@ -567,7 +571,7 @@ seriesType('timeline', 'line',
                 'L',
                 coords.x2,
                 coords.y2
-            ], dl.options.connectorWidth || 1);
+            ], dl.options.connectorWidth);
 
             return path;
         },
@@ -586,13 +590,29 @@ seriesType('timeline', 'line',
                 series = point.series,
                 connector = point.connector,
                 dl = point.dataLabel,
-                isVisible = point.series.chart.isInsidePlot(
-                    dl.translateX, dl.translateY
-                ),
                 dlOptions = point.dataLabel.options = merge(
                     series.options.dataLabels,
                     point.options.dataLabels
-                );
+                ),
+                chart = point.series.chart,
+                bBox = connector.getBBox(),
+                plotPos = {
+                    x: bBox.x + dl.translateX,
+                    y: bBox.y + dl.translateY
+                },
+                isVisible;
+
+            // Include a half of connector width in order to run animation,
+            // when connectors are aligned to the plot area edge.
+            if (chart.inverted) {
+                plotPos.y -= dl.options.connectorWidth / 2;
+            } else {
+                plotPos.x += dl.options.connectorWidth / 2;
+            }
+
+            isVisible = chart.isInsidePlot(
+                plotPos.x, plotPos.y,
+            );
 
             connector[isVisible ? 'animate' : 'attr']({
                 d: point.getConnectorPath()
