@@ -12,6 +12,7 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         packedbubble: {
+            useSimulation: false,
             minSize: '20%',
             maxSize: '80%',
             dataLabels: {

@@ -271,7 +271,8 @@ H.extend(
                     return node.linksTo.length === 0;
                 }),
                 sortedNodes = [],
-                visitedNodes = {};
+                visitedNodes = {},
+                radius = this.options.initialPositionRadius;
 
             function addToNodes(node) {
                 node.linksFrom.forEach(function (link) {
@@ -309,11 +310,11 @@ H.extend(
             sortedNodes.forEach(function (node, index) {
                 node.plotX = node.prevX = pick(
                     node.plotX,
-                    box.width / 2 + Math.cos(index * angle)
+                    box.width / 2 + radius * Math.cos(index * angle)
                 );
                 node.plotY = node.prevY = pick(
                     node.plotY,
-                    box.height / 2 + Math.sin(index * angle)
+                    box.height / 2 + radius * Math.sin(index * angle)
                 );
 
                 node.dispX = 0;

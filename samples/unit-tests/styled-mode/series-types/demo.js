@@ -97,6 +97,15 @@ QUnit.module('Styled mode for series types', function () {
                     cfg.series[1].keys = ['from', 'to'];
                 }
 
+                if (type === 'packedbubble') {
+                    cfg.series[0].layoutAlgorithm = {
+                        enableSimulation: false
+                    };
+                    cfg.series[1].layoutAlgorithm = {
+                        enableSimulation: false
+                    };
+                }
+
                 var chart = Highcharts.chart('container', cfg);
 
                 assert.strictEqual(
