@@ -581,6 +581,9 @@ seriesType('timeline', 'line',
 
             point.connector = series.chart.renderer
                 .path(point.getConnectorPath())
+                .attr({
+                    zIndex: -1
+                })
                 .add(point.dataLabel);
 
             point.alignConnector();
@@ -622,8 +625,7 @@ seriesType('timeline', 'line',
                 connector.attr({
                     stroke: dlOptions.connectorColor || point.color,
                     'stroke-width': dlOptions.connectorWidth,
-                    opacity: point.dataLabel.opacity,
-                    zIndex: -1
+                    opacity: point.dataLabel.opacity
                 });
             }
         }
