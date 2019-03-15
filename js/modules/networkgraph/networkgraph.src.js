@@ -43,15 +43,12 @@ seriesType('networkgraph', 'line', {
         enabled: true,
         states: {
             inactive: {
-                enabled: false,
                 opacity: 0.1
             }
         }
     },
     states: {
         inactive: {
-            enabled: false,
-            // TO DO:
             linkOpacity: 0.1
         }
     },
@@ -572,7 +569,7 @@ seriesType('networkgraph', 'line', {
         if (!point.isNode) {
             attribs = point.getLinkAttributes();
             // For link, get prefixed names:
-            if (stateOptions && stateOptions.enabled !== false) {
+            if (stateOptions) {
                 attribs = {
                     // TO DO: API?
                     stroke: stateOptions.linkColor || attribs.stroke,

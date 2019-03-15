@@ -18,19 +18,9 @@ function createChart(container, integration, linkLength) {
                     linkLength: linkLength
                 },
                 keys: ['from', 'to'],
-                states: {
-                    inactive: {
-                        enabled: true
-                    }
-                },
                 marker: {
                     radius: 5,
-                    lineWidth: 1,
-                    states: {
-                        inactive: {
-                            enabled: true
-                        }
-                    }
+                    lineWidth: 1
                 }
             }
         },

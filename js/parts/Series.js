@@ -1698,8 +1698,19 @@ H.Series = H.seriesType(
 
                 /**
                  * The opposite state of a hover for a single point marker.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
+                 *         Enabled inactive state
+                 *
+                 * @extends   plotOptions.series.marker.states.hover
                  */
                 inactive: {
+                    /**
+                     * Opacity of inactive markers.
+                     *
+                     * @apioption plotOptions.series.marker.states.inactive.opacity
+                     * @type {number}
+                     */
 
                     /**
                      * Animation when not hovering over the marker.
@@ -1708,20 +1719,7 @@ H.Series = H.seriesType(
                      */
                     animation: {
                         duration: 50
-                    },
-
-                    /**
-                     * Enable or disable the point marker.
-                     *
-                     * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
-                     *         Enabled inactive state
-                     */
-                    enabled: false,
-
-                    /**
-                     * Opacity of inactive markers.
-                     */
-                    opacity: 0.1
+                    }
                 }
             }
         },
@@ -2119,12 +2117,23 @@ H.Series = H.seriesType(
 
             /**
              * The opposite state of a hover for series.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
+             *         Enabled inactive state
+             *
+             * @extends   plotOptions.series.states.hover
              */
             inactive: {
-                enabled: false,
                 animation: {
                     duration: 50
-                }
+                },
+                /**
+                 * Opacity of inactive markers.
+                 *
+                 * @apioption plotOptions.series.marker.states.inactive.opacity
+                 * @type {number}
+                 */
+                opacity: 0.1
             }
         },
 

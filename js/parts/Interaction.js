@@ -701,7 +701,12 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                             series.options.data[
                                 series.data.indexOf(loopPoint)
                             ] = loopPoint.options;
-                            loopPoint.setState('');
+                            // Programatically selecting a point should restore
+                            // normal state, but when click happened on other
+                            // point, set inactive state to match other points
+                            loopPoint.setState(
+                                chart.hoverPoints ? 'inactive' : ''
+                            );
                             loopPoint.firePointEvent('unselect');
                         }
                     });

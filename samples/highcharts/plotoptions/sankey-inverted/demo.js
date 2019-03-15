@@ -8,16 +8,6 @@ Highcharts.chart('container', {
         text: 'Highcharts Inverted Sankey Diagram'
     },
 
-    plotOptions: {
-        sankey: {
-            states: {
-                inactive: {
-                    enabled: true
-                }
-            }
-        }
-    },
-
     series: [{
         keys: ['from', 'to', 'weight'],
         data: [
