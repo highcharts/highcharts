@@ -16,7 +16,7 @@ Highcharts.chart('container', {
     plotOptions: {
         packedbubble: {
             minSize: '15%',
-            maxSize: '70%',
+            maxSize: '50%',
             layoutAlgorithm: {
                 initialPositionRadius: 100,
                 splitSeries: true,
@@ -25,18 +25,13 @@ Highcharts.chart('container', {
             },
             dataLabels: {
                 enabled: true,
-                format: '{point.shortName}',
-                style: {
-                    color: 'black',
-                    textOutline: 'none',
-                    fontWeight: 'normal'
-                }
+                format: '{point.shortName}'
             }
         }
     },
     series: [{
         name: 'Backlog',
-        color: '#003300',
+        color: 'rgba(0, 40, 130, 0.8)',
         data: [{
             name: 'Test web page performance',
             shortName: 'Test page',
@@ -58,7 +53,7 @@ Highcharts.chart('container', {
         }]
     }, {
         name: 'To Do',
-        color: '#220000',
+        color: 'rgba(200, 100, 100, 0.8)',
         data: [{
             name: 'Create newsletter template',
             shortName: 'Newsletter',
@@ -74,7 +69,7 @@ Highcharts.chart('container', {
         }]
     }, {
         name: 'In Progress',
-        color: '#000022',
+        color: 'rgba(0,100,100, 0.8)',
         data: [{
             name: 'Develop an android App',
             shortName: 'Development',
@@ -86,7 +81,7 @@ Highcharts.chart('container', {
         }]
     }, {
         name: 'To Verify',
-        color: '#bada55',
+        color: 'rgba(200, 100, 200, 0.8)',
         data: [{
             name: 'Develop an IOS App',
             shortName: 'Development',
@@ -98,7 +93,7 @@ Highcharts.chart('container', {
         }]
     }, {
         name: 'Done',
-        color: '#566550',
+        color: 'rgba(70,220,50,0.8)',
         data: [{
             name: 'Strategy meeting with Management',
             shortName: 'Meeting',
