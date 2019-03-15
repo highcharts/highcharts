@@ -322,6 +322,16 @@ seriesType('packedbubble', 'bubble',
              * @validvalue  ["circle", "random"]
              */
             initialPositions: 'circle',
+            /**
+             *
+             * @since   7.1.0
+             * @extends
+             * plotOptions.networkgraph.layoutAlgorithm.initialPositionRadius
+             * @sample
+             * {highcharts} highcharts/series-packedbubble/initial-radius/
+             *          Initial radius set to 200
+             * @excluding states
+             */
             initialPositionRadius: 20,
             /**
              * The distance between two bubbles, when the algorithm starts to
@@ -358,6 +368,8 @@ seriesType('packedbubble', 'bubble',
              *
              * @since       7.1.0
              * @type {boolean}
+             * @sample      highcharts/series-packedbubble/packed-dashboard/
+             *              Example of drag'n drop bubbles for bubble kanban
              * @default false
              */
             dragBetweenSeries: false,
@@ -381,7 +393,7 @@ seriesType('packedbubble', 'bubble',
                  *
                  * @since   7.1.0
                  * @extends plotOptions.line.marker
-                 * @sample  {highcharts} ighcharts/series-packedbubble/parentnode-style/
+                 * @sample  {highcharts} highcharts/series-packedbubble/parentnode-style/
                  *          Bubble size
                  * @excluding states
                  */
@@ -1103,19 +1115,33 @@ seriesType('packedbubble', 'bubble',
          * Calculate min and max bubble value for radius calculation.
          */
         calculateZExtremes: function () {
-            var series = this,
-                chart = series.chart,
+            var chart = this.chart,
                 zMin = this.options.zMin,
                 zMax = this.options.zMax,
-                valMin = series.yData[0],
-                valMax = series.yData[0];
+                valMin = Infinity,
+                valMax = -Infinity;
+
+            if (zMin && zMax) {
+                return [zMin, zMax];
+            }
+            // it is needed to deal with null
+            // and undefined values
             chart.series.forEach(function (s) {
-                valMax = Math.max(valMax, Math.max.apply(this, s.yData));
-                valMin = Math.min(valMin, Math.min.apply(this, s.yData));
+                s.yData.forEach(function (p) {
+                    if (H.defined(p)) {
+                        if (p > valMax) {
+                            valMax = p;
+                        }
+                        if (p < valMin) {
+                            valMin = p;
+                        }
+                    }
+                });
             });
 
-            zMin = zMin || valMin;
-            zMax = zMax || valMax;
+            zMin = pick(zMin, valMin);
+            zMax = pick(zMax, valMax);
+
             return [zMin, zMax];
         },
         /**
