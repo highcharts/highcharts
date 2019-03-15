@@ -811,7 +811,6 @@ RangeSelector.prototype = {
         rangeSelector.options = options;
         rangeSelector.buttons = [];
 
-        chart.extraTopMargin = options.height;
         rangeSelector.buttonOptions = buttonOptions;
 
         this.unMouseDown = addEvent(chart.container, 'mousedown', blurInputs);
@@ -1684,6 +1683,10 @@ RangeSelector.prototype = {
             rangeSelectorHeight = 0,
             minPosition;
 
+        if (options.height) {
+            return options.height;
+        }
+
         rangeSelectorHeight = rangeSelectorGroup ?
             // 13px to keep back compatibility
             (rangeSelectorGroup.getBBox(true).height) + 13 + yPosition :
@@ -1726,10 +1729,11 @@ RangeSelector.prototype = {
      */
     update: function (options) {
         var chart = this.chart;
-
         merge(true, chart.options.rangeSelector, options);
+
         this.destroy();
         this.init(chart);
+
         chart.rangeSelector.render();
     },
 
@@ -1923,7 +1927,7 @@ addEvent(Chart, 'beforeRender', function () {
 
 });
 
-addEvent(Chart, 'afterUpdate', function (e) {
+addEvent(Chart, 'update', function (e) {
 
     var chart = this,
         options = e.options,
@@ -1941,7 +1945,6 @@ addEvent(Chart, 'afterUpdate', function (e) {
         this.options.rangeSelector.enabled = true;
         this.rangeSelector = new RangeSelector(this);
     }
-
 
     this.extraBottomMargin = false;
     this.extraTopMargin = false;
