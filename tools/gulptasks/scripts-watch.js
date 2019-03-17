@@ -34,14 +34,18 @@ function task() {
 
         require('./scripts-js.js');
 
-        const watchProcess = Gulp.watch(WATCH_GLOBS, Gulp.task('scripts-js'));
+        Gulp
+            .watch(WATCH_GLOBS)
+            .on(
+                'change',
+                filePath => {
+                    LogLib.warn('Modified', filePath);
+                    return Gulp.task('scripts-js')(() => {});
+                }
+            )
+            .on('error', LogLib.failure);
 
-        watchProcess.on(
-            'change',
-            filePath => LogLib.warn('Modified', filePath)
-        );
-
-        LogLib.warn('Watching', WATCH_GLOBS[0], '...');
+        LogLib.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
 
         resolve();
     });
