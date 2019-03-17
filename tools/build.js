@@ -189,8 +189,20 @@ const watchSourceFiles = (event, types) => {
     });
 };
 
-const watchESModules = (event, options, type, dependencies, pathESMasters) => {
+const watchESModules = (event, options, pathSource, pathESMasters) => {
+    const {
+        debug,
+        fileOptions,
+        files,
+        type,
+        version
+    } = options;
     const pathFile = resolve(event.path);
+    const dependencies = getListOfDependencies(
+        files,
+        fileOptions,
+        pathSource
+    );
     const filesModified = (
         Object
             .keys(dependencies)
@@ -212,11 +224,6 @@ const watchESModules = (event, options, type, dependencies, pathESMasters) => {
             ))
             .join('\n')
     ].join('\n'));
-    const {
-        debug,
-        fileOptions,
-        version
-    } = options;
     return buildDistFromModules({
         base: pathESMasters,
         debug,
@@ -267,9 +274,7 @@ const getBuildScripts = params => {
     checkDependency('highcharts-assembler', 'warn', 'devDependencies');
     const options = getBuildOptions(params);
     const {
-        files,
         type: types,
-        fileOptions,
         mapTypeToSource
     } = options;
     const result = {
@@ -282,20 +287,12 @@ const getBuildScripts = params => {
         const pathSource = mapTypeToSource[type];
         const pathESMasters = join(pathSource, 'masters');
         const key = join(pathSource, '**/*.js').split(sep).join('/');
-        const fn = event => {
-            const dependencies = getListOfDependencies(
-                files,
-                fileOptions,
-                pathSource
-            );
-            return watchESModules(
-                event,
-                options,
-                type,
-                dependencies,
-                pathESMasters
-            );
-        };
+        const fn = event => watchESModules(
+            event,
+            options,
+            pathSource,
+            pathESMasters
+        );
         result.mapOfWatchFn[key] = fn;
     });
     return result;

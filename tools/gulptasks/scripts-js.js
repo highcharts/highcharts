@@ -46,10 +46,9 @@ function task() {
 
         BuildScripts
             .fnFirstBuild()
-            .then(() => resolve())
+            .then(() => LogLib.success('Created code'))
+            .then(resolve)
             .catch(reject);
-
-        LogLib.success('Created code');
     });
 }
 
