@@ -30,12 +30,16 @@
      *         The DOM element of the container
      */
     function createContainer() {
+
         var container = global.document.createElement('div'),
             containerStyle = container.style;
+
         containerStyle.left = '0';
         containerStyle.position = 'absolute';
         containerStyle.top = '0';
+
         global.document.body.appendChild(container);
+
         return container;
     }
 
@@ -55,9 +59,11 @@
      *         The copy of the source.
      */
     function treeCopy(source, propertiesTree) {
+
         if (!source) {
             return source;
         }
+
         switch (typeof source) {
             default:
                 return source;
@@ -237,8 +243,8 @@
             testInitializer = this.testInitializer;
 
         this.testCases.push({
-            chartOptions,
-            testCallback
+            chartOptions: chartOptions,
+            testCallback: testCallback
         });
 
         if (!this.ready) {
@@ -327,10 +333,10 @@
         }
 
         templates[name] = {
-            name,
-            chartConstructor,
-            chartOptions,
-            testInitializer
+            name: name,
+            chartConstructor: chartConstructor,
+            chartOptions: chartOptions,
+            testInitializer: testInitializer
         };
 
     };

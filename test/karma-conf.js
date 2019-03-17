@@ -171,6 +171,8 @@ const browserStackBrowsers = {
 module.exports = function (config) {
 
     const argv = require('yargs').argv;
+    const Babel = require("@babel/core");
+    const browserDetect = require('browser-detect');
 
     // The tests to run by default
     const defaultTests = [
@@ -331,6 +333,32 @@ module.exports = function (config) {
                         '$1/$2'
                     );
 
+                    // es6 transpiling
+                    const babelTarget = {};
+                    const browser = 'ie'; // browserDetect(req.headers['user-agent']);
+                    console.log(browser.name, browser.versionNumber);
+                    switch (browser.name) {
+                        case 'ie':
+                            babelTarget.ie = '8';
+                            break;
+                        case 'safari':
+                            if (browser.versionNumber < 10) {
+                                babelTarget.safari = '5';
+                            }
+                            break;
+                    }
+                    if (Object.keys(babelTarget).length) {
+                        let result = Babel.transformSync(js, {
+                            ast: false,
+                            presets: [[
+                                '@babel/preset-env',
+                                { targets: babelTarget }
+                            ]]
+                        });
+                        js = result.code;
+                    }
+
+                    // unit tests
                     if (path.indexOf('unit-tests') !== -1) {
                         if (argv.debug) {
                             if (js.indexOf('Highcharts.setOptions') !== -1) {
@@ -478,7 +506,9 @@ module.exports = function (config) {
                         ${reset}
                     });
                     `;
+
                     file.path = file.originalPath + '.preprocessed';
+
                     done(js);
                 }
             }]
