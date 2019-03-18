@@ -331,4 +331,4 @@ Available arguments for 'gulp test':
     });
 }
 
-Gulp.task('test', Gulp.series('scripts-css', 'scripts-js', test));
+Gulp.task('test', Gulp.series('scripts', test));
