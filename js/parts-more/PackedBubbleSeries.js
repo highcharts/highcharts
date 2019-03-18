@@ -583,7 +583,7 @@ seriesType('packedbubble', 'bubble',
                         ) :
                         Math.sqrt(
                             2 * series.parentNodeMass / Math.PI
-                        ) + parentPadding,
+                        ) + parentPadding
                 );
 
             if (series.parentNode) {
