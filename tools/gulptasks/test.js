@@ -230,7 +230,7 @@ function shouldRun() {
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+function test() {
 
     const FS = require('fs');
     const LogLib = require('./lib/log');
@@ -331,4 +331,4 @@ Available arguments for 'gulp test':
     });
 }
 
-Gulp.task('test', Gulp.series('styles', 'scripts', task));
+Gulp.task('test', Gulp.series('scripts-css', 'scripts-js', test));
