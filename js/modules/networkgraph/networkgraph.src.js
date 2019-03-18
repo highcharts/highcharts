@@ -305,7 +305,7 @@ seriesType('networkgraph', 'line', {
          * @sample       highcharts/demo/network-graph/
          *               Live simulation enabled
          */
-        enableSimulation: false,
+        enableSimulation: true,
         /**
          * Barnes-Hut approximation only.
          * Deteremines when distance between cell and node is small enough to
@@ -370,7 +370,7 @@ seriesType('networkgraph', 'line', {
          *              Comparison of Verlet and Euler integrations
          * @validvalue  ["euler", "verlet"]
          */
-        integration: 'verlet',
+        integration: 'euler',
         /**
          * Max number of iterations before algorithm will stop. In general,
          * algorithm should find positions sooner, but when rendering huge
