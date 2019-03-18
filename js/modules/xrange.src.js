@@ -449,18 +449,28 @@ seriesType('xrange', 'column'
                 partShapeArgs = point.partShapeArgs,
                 clipRectArgs = point.clipRectArgs,
                 pfOptions = point.partialFill,
+                cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
+                pointState = point.state,
+                stateOpts = seriesOpts.states[pointState || 'normal'] || {},
+                attrOrAnim = pointState === undefined ? 'attr' : 'animate',
+                pointAttr = series.pointAttribs(point, pointState),
+                animation = pick(
+                    series.chart.options.chart.animation,
+                    stateOpts.animation
+                ),
                 fill,
-                state = point.selected && 'select',
-                cutOff = seriesOpts.stacking && !seriesOpts.borderRadius;
+                shortShapeArgs;
 
             if (!point.isNull) {
 
                 // Original graphic
                 if (graphic) { // update
-                    point.graphicOriginal[verb](
-                        merge(shapeArgs)
-                    );
+                    shortShapeArgs = merge(shapeArgs);
 
+                    delete shortShapeArgs.r;
+                    delete shortShapeArgs.fill;
+
+                    point.graphicOriginal[verb](shortShapeArgs);
                 } else {
                     point.graphic = graphic = renderer.g('point')
                         .addClass(point.getClassName())
@@ -475,9 +485,6 @@ seriesType('xrange', 'column'
                 // Partial fill graphic
                 if (partShapeArgs) {
                     if (point.graphicOverlay) {
-                        point.graphicOverlay[verb](
-                            merge(partShapeArgs)
-                        );
                         point.clipRect.animate(
                             merge(clipRectArgs)
                         );
@@ -502,8 +509,9 @@ seriesType('xrange', 'column'
                 // Presentational
                 if (!series.chart.styledMode) {
                     point.graphicOriginal
-                        .attr(series.pointAttribs(point, state))
+                        .animate(pointAttr, animation)
                         .shadow(seriesOpts.shadow, null, cutOff);
+
                     if (partShapeArgs) {
                     // Ensure pfOptions is an object
                         if (!isObject(pfOptions)) {
@@ -517,14 +525,12 @@ seriesType('xrange', 'column'
 
                         fill = (
                             pfOptions.fill ||
+                            color(pointAttr.fill).brighten(-0.3).get() ||
                         color(point.color || series.color).brighten(-0.3).get()
                         );
 
-                        point.graphicOverlay
-                            .attr(series.pointAttribs(point, state))
-                            .attr({
-                                'fill': fill
-                            })
+                        pointAttr.fill = fill;
+                        point.graphicOverlay[attrOrAnim](pointAttr, animation)
                             .shadow(seriesOpts.shadow, null, cutOff);
                     }
                 }
