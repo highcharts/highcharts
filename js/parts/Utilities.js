@@ -194,18 +194,13 @@
  * Formats data as a string. Usually the data is accessible throught the `this`
  * keyword.
  *
- * In case of single or shared tooltips, a string should be returned. In case of
- * splitted tooltips, it should return an array where the first item is the
- * header, and subsequent items are mapped to the points. Return `false` to
- * disable the tooltip for a specific point on series.
- *
  * @callback Highcharts.FormatterCallbackFunction<T>
  *
  * @param {T} this
  *        Context to format
  *
- * @return {false|string|Array<string>}
- *         Formatted text or false
+ * @return {string}
+ *         Formatted text
  */
 
 /**
