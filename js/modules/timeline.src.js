@@ -614,7 +614,7 @@ seriesType('timeline', 'line',
             }
 
             isVisible = chart.isInsidePlot(
-                plotPos.x, plotPos.y,
+                plotPos.x, plotPos.y
             );
 
             connector[isVisible ? 'animate' : 'attr']({
