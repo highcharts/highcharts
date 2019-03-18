@@ -44,7 +44,7 @@ Highcharts.chart('container', {
         height: '100%'
     },
     title: {
-        text: 'The Indo-European Laungauge Tree'
+        text: 'The Indo-European Language Tree'
     },
     subtitle: {
         text: 'A Force-Directed Network Graph in Highcharts'
@@ -190,4 +190,3 @@ Highcharts.chart('container', {
         ]
     }]
 });
-

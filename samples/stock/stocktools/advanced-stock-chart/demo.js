@@ -939,29 +939,29 @@ function whichAxis(e, chart) {
             shapes: [
                 {
                     type: 'path',
-                    points: [ leftBottom, rightBottom, rightMiddle, leftMiddle ],
+                    points: [leftBottom, rightBottom, rightMiddle, leftMiddle],
                     strokeWidth: 0,
                     fill: 'rgba(169, 255, 101, 0.4)'
                 },
                 {
                     type: 'path',
-                    points: [ leftMiddle, rightMiddle, rightTop, leftTop ],
+                    points: [leftMiddle, rightMiddle, rightTop, leftTop],
                     strokeWidth: 0,
                     fill: 'rgba(208, 122, 50, 0.2)'
                 },
                 {
                     type: 'path',
-                    points: [ leftBottom, rightBottom ],
+                    points: [leftBottom, rightBottom],
                     stroke: 'grey'
                 },
                 {
                     type: 'path',
-                    points: [ leftMiddle, rightMiddle ],
+                    points: [leftMiddle, rightMiddle],
                     stroke: 'grey'
                 },
                 {
                     type: 'path',
-                    points: [ leftTop, rightTop ],
+                    points: [leftTop, rightTop],
                     stroke: 'grey'
                 }
             ]
@@ -1268,7 +1268,7 @@ function whichAxis(e, chart) {
             clip: yAxisIndex,
             shapes: [{
                 type: 'path',
-                points: [ start, stop ]
+                points: [start, stop]
             }],
             id: ++idCounter
         };
@@ -1377,7 +1377,7 @@ function whichAxis(e, chart) {
         }
 
         chart.addAnnotation({
-            shapes: [ options ]
+            shapes: [options]
         });
     }
 
@@ -1528,8 +1528,6 @@ function whichAxis(e, chart) {
             });
         }
     });
-
-
 
     function star(x, y, chart) {
         chart.addAnnotation({
@@ -1717,7 +1715,7 @@ function whichAxis(e, chart) {
         var lines = retracements.map(function (retracement) {
             return {
                 type: 'path',
-                points: [ point(p1.x, retracement, p1), point(p2.x, retracement, p2) ]
+                points: [point(p1.x, retracement, p1), point(p2.x, retracement, p2)]
             };
         });
 
@@ -1731,7 +1729,7 @@ function whichAxis(e, chart) {
         var backgrounds = colors(alpha).map(function (color, i) {
             return {
                 type: 'path',
-                points: [ shapePoints[i][0], shapePoints[i][1], shapePoints[i + 1][1], shapePoints[i + 1][0] ],
+                points: [shapePoints[i][0], shapePoints[i][1], shapePoints[i + 1][1], shapePoints[i + 1][0]],
                 strokeWidth: 0,
                 fill: color
             };
@@ -1836,8 +1834,7 @@ function whichAxis(e, chart) {
     H.seriesTypes.flags.prototype.drawBB = function (point) {
         var graphic = point.graphic;
         var bbox = graphic.element.getBBox();
-        var offsetX =
-			point.series.options.shape !== 'flag' ? bbox.width / 2 : 0;
+        var offsetX = point.series.options.shape !== 'flag' ? bbox.width / 2 : 0;
 
         H.Annotation.drawBB(
             point.series.chart.renderer,
@@ -1970,7 +1967,7 @@ function whichAxis(e, chart) {
             var color;
 
             if (flagToRemove) {
-				// the clicked point is from the flag series so id must be taken from the onSeries
+                // the clicked point is from the flag series so id must be taken from the onSeries
                 id = clickedPoint.series.options.onSeries;
                 color = clickedPoint.series.color;
                 chart.get(flagToRemove).remove();
@@ -2408,19 +2405,19 @@ window.onload = function () {
                                 previousYAxis === chart.yAxis[chart.yAxis.length - 2] &&
                                 chart.navigator.yAxis === chart.yAxis[chart.yAxis.length - 1]
                             ) ? // navigator jump
-                            {
-                                resize: {
-                                    enabled: false
-                                }
-                            } :
-                            // Otherwise set new reference for the next axis:
-                            {
-                                resize: {
-                                    controlledAxis: {
-                                        next: [nextAxis.options.id]
+                                {
+                                    resize: {
+                                        enabled: false
+                                    }
+                                } :
+                                // Otherwise set new reference for the next axis:
+                                {
+                                    resize: {
+                                        controlledAxis: {
+                                            next: [nextAxis.options.id]
+                                        }
                                     }
                                 }
-                            }
                         )
                     );
                 } else {

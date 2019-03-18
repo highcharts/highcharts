@@ -7,7 +7,7 @@
 /**
  * Define the time span for the button
  *
- * @typedef {"all"|"day"|"millisecond"|"minute"|"month"|"second"|"week"|"ytd"} Highcharts.RangeSelectorButtonTypeValue
+ * @typedef {"all"|"day"|"hour"|"millisecond"|"minute"|"month"|"second"|"week"|"year"|"ytd"} Highcharts.RangeSelectorButtonTypeValue
  */
 
 /**
@@ -216,7 +216,8 @@ extend(defaultOptions, {
 
         /**
          * Defined the time span for the button. Can be one of `millisecond`,
-         * `second`, `minute`, `hour`, `day`, `week`, `month`, `ytd`, `all`.
+         * `second`, `minute`, `hour`, `day`, `week`, `month`, `year`, `ytd`,
+         * and `all`.
          *
          * @type       {Highcharts.RangeSelectorButtonTypeValue}
          * @apioption  rangeSelector.buttons.type
@@ -273,7 +274,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/styling/
          *         Styling the buttons and inputs
          *
-         * @type {Highcharts.RangeSelectorButtonThemeOptionsObject}
+         * @type {Highcharts.SVGAttributes}
          */
         buttonTheme: {
             /** @ignore */
@@ -1406,7 +1407,7 @@ RangeSelector.prototype = {
                     rangeOptions.text,
                     0,
                     0,
-                    function () {
+                    function (e) {
 
                         // extract events from button object and call
                         var buttonEvents = (
@@ -1417,7 +1418,7 @@ RangeSelector.prototype = {
 
                         if (buttonEvents) {
                             callDefaultEvent =
-                                    buttonEvents.call(rangeOptions);
+                                    buttonEvents.call(rangeOptions, e);
                         }
 
                         if (callDefaultEvent !== false) {

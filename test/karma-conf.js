@@ -1,5 +1,5 @@
 /* eslint-env node, es6 */
-/* eslint no-console: 0, camelcase: 0 */
+/* eslint-disable */
 const fs = require('fs');
 const yaml = require('js-yaml');
 
@@ -120,42 +120,42 @@ const browserStackBrowsers = {
     'Mac.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '68.0',
+        browser_version: '72.0',
         os: 'OS X',
-        os_version: 'High Sierra'
+        os_version: 'Mojave'
     },
     'Mac.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '61.0',
+        browser_version: '65.0',
         os: 'OS X',
-        os_version: 'High Sierra'
+        os_version: 'Mojave'
     },
     'Mac.Safari': {
         base: 'BrowserStack',
         browser: 'safari',
-        browser_version: '11.1',
+        browser_version: '12.0',
         os: 'OS X',
-        os_version: 'High Sierra'
+        os_version: 'Mojave'
     },
     'Win.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '68.0',
+        browser_version: '72.0',
         os: 'Windows',
         os_version: '10'
     },
     'Win.Edge': {
         base: 'BrowserStack',
         browser: 'edge',
-        browser_version: '42.0',
+        browser_version: '43.0',
         os: 'Windows',
         os_version: '10'
     },
     'Win.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '61.0',
+        browser_version: '65.0',
         os: 'Windows',
         os_version: '10'
     },

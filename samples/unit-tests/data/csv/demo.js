@@ -29,8 +29,7 @@ QUnit.test('csv-datetime-axis', function (assert) {
             lineWidth: 1
         }]
     });
-    var options = chart.options
-    ;
+    var options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -74,8 +73,7 @@ if (!isNaN(Date.parse('Jan 16'))) { // Only Chrome parses "Jan 16" as of 2017
                     lineWidth: 1
                 }]
             }),
-            options = chart.options
-            ;
+            options = chart.options;
 
         assert.strictEqual(
             (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -137,8 +135,7 @@ QUnit.test('csv-deduce-delimiter', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -198,8 +195,7 @@ QUnit.test('csv-deduce-delimiter-ambigious', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -258,8 +254,7 @@ QUnit.test('csv-deduce-format-ddmmyyyy', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -311,8 +306,7 @@ QUnit.test('csv-deduce-format-iso', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -363,8 +357,7 @@ QUnit.test('csv-deduce-format-mmddyyyy', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -416,8 +409,7 @@ QUnit.test('csv-deduce-format-us', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
@@ -539,8 +531,7 @@ QUnit.test('csv-datetime-short-year-2000', function (assert) {
                 lineWidth: 1
             }]
         }),
-        options = chart.options
-        ;
+        options = chart.options;
 
     assert.strictEqual(
         (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,

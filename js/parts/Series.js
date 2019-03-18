@@ -103,8 +103,8 @@
  */
 
 /**
- * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
- * of a line graph.
+ * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of a line
+ * graph.
  *
  * @typedef {"butt"|"round"|"square"|string} Highcharts.SeriesLinecapValue
  */
@@ -620,7 +620,11 @@ H.Series = H.seriesType(
          * Allow this series' points to be selected by clicking on the graphic
          * (columns, point markers, pie slices, map areas etc).
          *
-         * @see {@link Highcharts.Chart#getSelectedPoints}.
+         * The selected points can be handled by point select and unselect
+         * events, or collectively by the [getSelectedPoints](
+         * Highcharts.Chart#getSelectedPoints) function.
+         *
+         * And alternative way of selecting points is through dragging.
          *
          * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-line/
          *         Line
@@ -628,6 +632,8 @@ H.Series = H.seriesType(
          *         Column
          * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-pie/
          *         Pie
+         * @sample {highcharts} highcharts/chart/events-selection-points/
+         *         Select a range of points through a drag selection
          * @sample {highmaps} maps/plotoptions/series-allowpointselect/
          *         Map area
          * @sample {highmaps} maps/plotoptions/mapbubble-allowpointselect/
@@ -1863,9 +1869,9 @@ H.Series = H.seriesType(
          *         Data labels enabled
          * @sample highcharts/plotoptions/series-datalabels-multiple
          *         Multiple data labels on a bar series
-             *
+         *
          * @type {Highcharts.DataLabelsOptionsObject}
-             */
+         */
         dataLabels: {
             /** @ignore-option */
             align: 'center',
@@ -2861,6 +2867,60 @@ H.Series = H.seriesType(
         },
 
         /**
+         * Finds the index of an existing point that matches the given point
+         * options.
+         *
+         * @private
+         * @function Highcharts.Series#findPointIndex
+         * @param    {object} optionsObject
+         *           The options of the point.
+         * @param    {number} fromIndex
+         *           The index to start searching from, used for optimizing
+         *           series with required sorting.
+         * @returns  {number|undefined}
+         *           Returns the index of a matching point, or undefined if no
+         *           match is found.
+         */
+        findPointIndex: function (optionsObject, fromIndex) {
+            var id = optionsObject.id,
+                x = optionsObject.x,
+                oldData = this.points,
+                matchingPoint,
+                matchedById,
+                pointIndex;
+
+            if (id) {
+                matchingPoint = this.chart.get(id);
+                pointIndex = matchingPoint && matchingPoint.index;
+                if (pointIndex !== undefined) {
+                    matchedById = true;
+                }
+            }
+
+            // Search for the same X in the existing data set
+            if (pointIndex === undefined && isNumber(x)) {
+                pointIndex = this.xData.indexOf(x, fromIndex);
+            }
+
+            // Reduce pointIndex if data is cropped
+            if (pointIndex !== -1 &&
+                pointIndex !== undefined &&
+                this.cropped
+            ) {
+                pointIndex = (pointIndex >= this.cropStart) ?
+                    pointIndex - this.cropStart : pointIndex;
+            }
+
+            if (
+                !matchedById &&
+                oldData[pointIndex] && oldData[pointIndex].touched
+            ) {
+                pointIndex = undefined;
+            }
+            return pointIndex;
+        },
+
+        /**
          * @private
          * @borrows LegendSymbolMixin.drawLineMarker as Highcharts.Series#drawLegendSymbol
          */
@@ -2890,7 +2950,6 @@ H.Series = H.seriesType(
                 lastIndex,
                 requireSorting = this.requireSorting,
                 equalLength = data.length === oldData.length,
-                matchedById,
                 succeeded = true;
 
             this.xIncrement = null;
@@ -2898,7 +2957,6 @@ H.Series = H.seriesType(
             // Iterate the new data
             data.forEach(function (pointOptions, i) {
                 var id,
-                    matchingPoint,
                     x,
                     pointIndex,
                     optionsObject = (
@@ -2914,41 +2972,17 @@ H.Series = H.seriesType(
                 id = optionsObject.id;
 
                 if (id || isNumber(x)) {
-                    if (id) {
-                        matchingPoint = oldData.find(function (point) {
-                            return point.id === id;
-                        });
-                        pointIndex = matchingPoint && matchingPoint.index;
-                        if (pointIndex !== undefined) {
-                            matchedById = true;
-                        }
-                    }
-
-                    // Search for the same X in the existing data set
-                    if (pointIndex === undefined && isNumber(x)) {
-                        pointIndex = this.xData.indexOf(x, lastIndex);
-                    }
-
-                    // Reduce pointIndex if data is cropped
-                    if (pointIndex !== -1 &&
-                        pointIndex !== undefined &&
-                        this.cropped
-                    ) {
-                        pointIndex = (pointIndex >= this.cropStart) ?
-                            pointIndex - this.cropStart : pointIndex;
-                    }
+                    pointIndex = this.findPointIndex(
+                        optionsObject,
+                        lastIndex
+                    );
 
                     // Matching X not found
                     // or used already due to ununique x values (#8995),
                     // add point (but later)
                     if (
                         pointIndex === -1 ||
-                        pointIndex === undefined ||
-                        (
-                            !matchedById &&
-                            oldData[pointIndex] &&
-                            oldData[pointIndex].touched
-                        )
+                        pointIndex === undefined
                     ) {
                         pointsToAdd.push(pointOptions);
 
@@ -4273,6 +4307,7 @@ H.Series = H.seriesType(
                 pointColor ||
                 color
             );
+
             fill = (
                 pointMarkerOptions.fillColor ||
                 seriesMarkerOptions.fillColor ||
@@ -4564,7 +4599,11 @@ H.Series = H.seriesType(
             // Presentational properties
             if (!styledMode) {
                 props[0].push(
-                    options.lineColor || this.color,
+                    (
+                        options.lineColor ||
+                        this.color ||
+                        '${palette.neutralColor20}' // when colorByPoint = true
+                    ),
                     options.dashStyle
                 );
             }

@@ -148,6 +148,25 @@ QUnit.test('Soft threshold', function (assert) {
         chart.yAxis[0].max,
         'Flat data, auto extremes and minRange'
     );
+
+    chart.yAxis[0].update({
+        min: -10
+    });
+    assert.deepEqual(
+        [chart.yAxis[0].min, chart.yAxis[0].max],
+        [-10, 0],
+        'Hard min and flat data and minRange'
+    );
+
+    chart.yAxis[0].update({
+        min: null,
+        max: 10
+    });
+    assert.deepEqual(
+        [chart.yAxis[0].min, chart.yAxis[0].max],
+        [0, 10],
+        'Hard max and flat data and minRange'
+    );
 });
 
 QUnit.test('Soft threshold = false', function (assert) {

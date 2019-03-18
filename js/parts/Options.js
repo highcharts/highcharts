@@ -182,40 +182,6 @@
  * @type {number}
  */
 
-/**
- * @interface Highcharts.TooltipFormatterContextObject
- *//**
- * @name Highcharts.TooltipFormatterContextObject#color
- * @type {Highcharts.ColorString}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#colorIndex
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#key
- * @type {number}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#percentage
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#point
- * @type {Highcharts.Point}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#points
- * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#series
- * @type {Highcharts.Series}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#total
- * @type {number|undefined}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#x
- * @type {number}
- *//**
- * @name Highcharts.TooltipFormatterContextObject#y
- * @type {number}
- */
-
 'use strict';
 
 import H from './Globals.js';
@@ -3021,9 +2987,23 @@ H.defaultOptions = {
          * @sample {highmaps} maps/tooltip/formatter/
          *         String formatting
          *
-         * @type      {Highcharts.FormatterCallbackFunction<Highcharts.TooltipFormatterContextObject>}
+         * @type      {Highcharts.TooltipFormatterCallbackFunction}
          * @apioption tooltip.formatter
          */
+
+
+        /**
+         * Callback function to format the text of the tooltip for
+         * visible null points.
+         * Works analogously to [formatter](#tooltip.formatter).
+         *
+         * @sample highcharts/plotoptions/series-nullformat
+         *         Format data label and tooltip for null point.
+         *
+         * @type      {Highcharts.TooltipFormatterCallbackFunction}
+         * @apioption tooltip.nullFormatter
+         */
+
 
         /**
          * The number of milliseconds to wait until the tooltip is hidden when
@@ -3383,6 +3363,16 @@ H.defaultOptions = {
          * @apioption  tooltip.headerFormat
          */
         headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+
+        /**
+         * The HTML of the null point's line in the tooltip. Works analogously
+         * to [pointFormat](#tooltip.pointFormat).
+         *
+         * @type {string}
+         * @sample {highcharts} highcharts/plotoptions/series-nullformat
+         *         Format data label and tooltip for null point.
+         * @apioption tooltip.nullFormat
+         */
 
         /**
          * The HTML of the point's line in the tooltip. Variables are enclosed

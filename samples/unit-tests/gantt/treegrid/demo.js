@@ -214,3 +214,81 @@ QUnit.test('Chart.addSeries', assert => {
         'should have axis min equal to 0.'
     );
 });
+
+QUnit.test('Series.setVisible', assert => {
+    const {
+        series: [series1, series2, series3],
+        yAxis: [axis]
+    } = Highcharts.chart('container', {
+        series: [0, 1, 2].map(x => ({
+            data: [{ x, name: `Point ${x + 1}` }]
+        })),
+        legend: { enabled: true },
+        yAxis: [{ type: 'treegrid' }]
+    });
+
+    assert.strictEqual(
+        series1.points[0].y,
+        0,
+        'should have "Point 1" y-value equal 0.'
+    );
+    assert.strictEqual(
+        series2.points[0].y,
+        1,
+        'should have "Point 2" y-value equal 1.'
+    );
+    assert.strictEqual(
+        series3.points[0].y,
+        2,
+        'should have "Point 3" y-value equal 3.'
+    );
+    assert.deepEqual(
+        [axis.min, axis.max],
+        [0, 2],
+        'should have axis [min, max] equal [0, 2].'
+    );
+
+    series2.hide();
+    assert.strictEqual(
+        series1.points[0].y,
+        0,
+        'should have "Point 1" y-value equal 0 when "Series 2" is hidden.'
+    );
+    assert.strictEqual(
+        series3.points[0].y,
+        1,
+        'should have "Point 3" y-value equal 1  when "Series 2" is hidden.'
+    );
+    assert.strictEqual(
+        series2.visible,
+        false,
+        'should have "Series 2" visible equal false.'
+    );
+    assert.deepEqual(
+        [axis.min, axis.max],
+        [0, 1],
+        'should have axis [min, max] equal [0, 1]  when "Series 2" is hidden.'
+    );
+
+    series2.show();
+    assert.strictEqual(
+        series1.points[0].y,
+        0,
+        'should have "Point 1" y-value equal 0 when "Series 2" is visible again.'
+    );
+    assert.strictEqual(
+        series2.points[0].y,
+        1,
+        'should have "Point 2" y-value equal 1 when "Series 2" is visible again.'
+    );
+    assert.strictEqual(
+        series3.points[0].y,
+        2,
+        'should have "Point 3" y-value equal 3 when "Series 2" is visible again.'
+    );
+    assert.deepEqual(
+        [axis.min, axis.max],
+        [0, 2],
+        'should have axis [min, max] equal [0, 2] when "Series 2" is visible again.'
+    );
+});

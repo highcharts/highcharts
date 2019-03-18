@@ -1,4 +1,3 @@
-
 QUnit.test("Shared tooltip should compare point.distX, not point.dist to find absolute closest point.", function (assert) {
     var chart = $('#container').highcharts({
             chart: {
@@ -51,5 +50,6 @@ QUnit.test("Shared tooltip should compare point.distX, not point.dist to find ab
     assert.strictEqual(
         chart.hoverPoints.indexOf(point) >= 0,
         true,
-        "Proper hovered point.");
+        "Proper hovered point."
+    );
 });

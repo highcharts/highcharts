@@ -387,6 +387,13 @@ extend(defaultOptions, {
             className: 'highcharts-navigator-series',
 
             /**
+             * Sets the fill color of the navigator series.
+             *
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @apioption navigator.series.color
+             */
+
+            /**
              * Line color for the navigator series. Allows setting the color
              * while disallowing the default candlestick setting.
              *

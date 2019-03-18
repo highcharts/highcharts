@@ -15,13 +15,22 @@
             type: i === 0 ? 'text' : 'numeric'
         }));
 
-        chart.table = new Handsontable(document.getElementById('table'), {
-            data: data,
+        const settings = {
+            data,
             colHeaders: rows[0],
-            columns: columns,
+            columns,
             columnSorting: true,
             rowHeaders: true
-        });
+        };
+
+        if (chart.table) {
+            chart.table.updateSettings(settings);
+        } else {
+            chart.table = new Handsontable(
+                document.getElementById('table'),
+                settings
+            );
+        }
     });
 
 }(Highcharts));
