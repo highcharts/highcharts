@@ -38,27 +38,15 @@ function getProperties() {
 /**
  * Get the contents of demo.html and strip out JavaScript tags.
  * @param  {String} path The sample path
- * @param {boolean} [needsTranspiling]
- *        Set to true to include babel polyfill
  * @return {String}      The stripped HTML
  */
-function getHTML(path, needsTranspiling) {
+function getHTML(path) {
     let html = fs.readFileSync(`samples/${path}/demo.html`, 'utf8');
 
     html = html.replace(
         /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
         ''
     );
-
-    if (needsTranspiling) {
-        html = html.replace(
-            '<head>',
-            `<head>
-                <script src="${BABEL_POLYFILL_PATH}" type="text/javascript"></script>
-                <script type="text/javascript">console.log(123);</script>`
-        );
-        console.log(html);
-    }
 
     return html + '\n';
 }
@@ -358,21 +346,26 @@ module.exports = function (config) {
                     // es6 transpiling
                     // browserDetect(req.headers['user-agent']); not working
                     if (needsTranspiling) {
-                        console.log('transpiling', path);
-                        js = Babel
-                            .transformSync(js, {
-                                ast: false,
-                                presets: [[
-                                    '@babel/preset-env',
-                                    {
-                                        targets: {
-                                            ie: '8'
-                                        },
-                                        useBuiltIns: 'entry'
-                                    }
-                                ]]
-                            })
-                            .code;
+                        try {
+                            js = Babel
+                                .transformSync(js, {
+                                    ast: false,
+                                    code: true,
+                                    presets: [[
+                                        '@babel/preset-env',
+                                        {
+                                            loose: true,
+                                            targets: {
+                                                ie: '8'
+                                            },
+                                            useBuiltIns: 'entry'
+                                        }
+                                    ]]
+                                })
+                                .code;
+                        } catch (error) {
+                            console.log(error);
+                        }
                     }
 
                     // unit tests
@@ -403,7 +396,7 @@ module.exports = function (config) {
                         return;
                     }
 
-                    const html = getHTML(path, needsTranspiling);
+                    const html = getHTML(path);
 
                     js = resolveJSON(js);
 

@@ -1,4 +1,6 @@
 [
+	"node_modules/@babel/polyfill/dist/polyfill.js",
+	"test/polyfills.js",
 	"vendor/jquery-3.1.1.js",
 	"vendor/moment-2.18.1.js",
 	"vendor/moment-timezone-0.5.13-with-data-2012-2022.js",
