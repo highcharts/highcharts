@@ -276,17 +276,12 @@ H.seriesType(
                     height;
 
                 point.graphics = graphics = point.graphics || {};
-                pointAttr = point.pointAttr ?
-                    (
-                        point.pointAttr[point.selected ? 'selected' : ''] ||
-                        series.pointAttr['']
-                    ) :
-                    series.pointAttribs(point, point.selected && 'select');
-                delete pointAttr.r;
 
-                if (series.chart.styledMode) {
-                    delete pointAttr.stroke;
-                    delete pointAttr['stroke-width'];
+                if (!series.chart.styledMode) {
+                    pointAttr = series.pointAttribs(
+                        point,
+                        point.selected && 'select'
+                    );
                 }
 
                 if (!point.isNull && point.visible) {
