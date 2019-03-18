@@ -3,6 +3,8 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 
+const BABEL_POLYFILL_PATH = 'node_modules/@babel/polyfill/dist/polyfill.js';
+
 // Internal reference
 const hasJSONSources = {};
 
@@ -36,15 +38,27 @@ function getProperties() {
 /**
  * Get the contents of demo.html and strip out JavaScript tags.
  * @param  {String} path The sample path
+ * @param {boolean} [needsTranspiling]
+ *        Set to true to include babel polyfill
  * @return {String}      The stripped HTML
  */
-function getHTML(path) {
+function getHTML(path, needsTranspiling) {
     let html = fs.readFileSync(`samples/${path}/demo.html`, 'utf8');
 
     html = html.replace(
         /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
         ''
     );
+
+    if (needsTranspiling) {
+        html = html.replace(
+            '<head>',
+            `<head>
+                <script src="${BABEL_POLYFILL_PATH}" type="text/javascript"></script>
+                <script type="text/javascript">console.log(123);</script>`
+        );
+        console.log(html);
+    }
 
     return html + '\n';
 }
@@ -172,7 +186,6 @@ module.exports = function (config) {
 
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
-    const browserDetect = require('browser-detect');
 
     // The tests to run by default
     const defaultTests = [
@@ -187,11 +200,20 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
+    const needsTranspiling = browsers.some(browser => (
+        browser.toUpperCase().lastIndexOf('IE') ===
+        browser.length - 2
+    ));
+
     const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
         .map(path => `samples/${path}/demo.js`);
 
     // let files = getFiles();
     let files = require('./karma-files.json');
+
+    if (needsTranspiling) {
+        files.push(BABEL_POLYFILL_PATH);
+    }
 
     let options = {
         basePath: '../', // Root relative to this file
@@ -334,28 +356,23 @@ module.exports = function (config) {
                     );
 
                     // es6 transpiling
-                    const babelTarget = {};
-                    const browser = 'ie'; // browserDetect(req.headers['user-agent']);
-                    console.log(browser.name, browser.versionNumber);
-                    switch (browser.name) {
-                        case 'ie':
-                            babelTarget.ie = '8';
-                            break;
-                        case 'safari':
-                            if (browser.versionNumber < 10) {
-                                babelTarget.safari = '5';
-                            }
-                            break;
-                    }
-                    if (Object.keys(babelTarget).length) {
-                        let result = Babel.transformSync(js, {
-                            ast: false,
-                            presets: [[
-                                '@babel/preset-env',
-                                { targets: babelTarget }
-                            ]]
-                        });
-                        js = result.code;
+                    // browserDetect(req.headers['user-agent']); not working
+                    if (needsTranspiling) {
+                        console.log('transpiling', path);
+                        js = Babel
+                            .transformSync(js, {
+                                ast: false,
+                                presets: [[
+                                    '@babel/preset-env',
+                                    {
+                                        targets: {
+                                            ie: '8'
+                                        },
+                                        useBuiltIns: 'entry'
+                                    }
+                                ]]
+                            })
+                            .code;
                     }
 
                     // unit tests
@@ -386,7 +403,7 @@ module.exports = function (config) {
                         return;
                     }
 
-                    const html = getHTML(path);
+                    const html = getHTML(path, needsTranspiling);
 
                     js = resolveJSON(js);
 
