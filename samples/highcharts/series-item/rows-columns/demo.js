@@ -18,7 +18,6 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'Representatives',
-        keys: ['name', 'y'],
         data: [
             ['Conservative', 318],
             ['Labour', 262],

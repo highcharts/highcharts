@@ -211,10 +211,10 @@ seriesType('pie', 'line',
      * @extends      plotOptions.line
      * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
      *               cropThreshold, dashStyle, findNearestPointBy,
-     *               getExtremesFromAll, lineWidth, marker, negativeColor,
-     *               pointInterval, pointIntervalUnit, pointPlacement,
-     *               pointStart, softThreshold, stacking, step, threshold,
-     *               turboThreshold, zoneAxis, zones
+     *               getExtremesFromAll, label, lineWidth, marker,
+     *               negativeColor, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointStart, softThreshold, stacking, step,
+     *               threshold, turboThreshold, zoneAxis, zones
      * @product      highcharts
      * @optionparent plotOptions.pie
      */
