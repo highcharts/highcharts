@@ -1711,6 +1711,7 @@ H.Series = H.seriesType(
                      * @apioption plotOptions.series.marker.states.inactive.opacity
                      * @type {number}
                      */
+                    opacity: 0.1,
 
                     /**
                      * Animation when not hovering over the marker.

@@ -531,6 +531,7 @@ Highcharts.Pointer.prototype = {
                 shared,
                 e
             ),
+            activeSeries = [],
             useSharedTooltip,
             followPointer,
             anchor,
@@ -565,14 +566,17 @@ Highcharts.Pointer.prototype = {
                 hoverSeries.onMouseOver();
             }
 
-            // Set inactive state for all points
-            tooltip.chart.series.forEach(function (inactiveSeries) {
-                inactiveSeries.setState('inactive', true);
-            });
-
             // Do mouseover on all points (#3919, #3985, #4410, #5622)
             (points || []).forEach(function (p) {
                 p.setState('hover');
+                activeSeries.push(p.series);
+            });
+
+            // Set inactive state for all points
+            tooltip.chart.series.forEach(function (inactiveSeries) {
+                if (activeSeries.indexOf(inactiveSeries) === -1) {
+                    inactiveSeries.setState('inactive', true);
+                }
             });
 
             // If tracking is on series in stead of on each point,

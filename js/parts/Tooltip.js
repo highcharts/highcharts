@@ -758,7 +758,8 @@ H.Tooltip.prototype = {
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             currentSeries,
-            styledMode = chart.styledMode;
+            styledMode = chart.styledMode,
+            activeSeries = [];
 
         if (!options.enabled) {
             return;
@@ -775,17 +776,19 @@ H.Tooltip.prototype = {
 
         // shared tooltip, array is sent over
         if (shared && !(point.series && point.series.noSharedTooltip)) {
-            // Set inactive state for all points
-            chart.series.forEach(function (inactiveSeries) {
-                inactiveSeries.setState('inactive', true);
-            });
-
             // Now set hover state for the choosen ones:
             point.forEach(function (item) {
-                item.series.setState('hover');
                 item.setState('hover');
 
                 pointConfig.push(item.getLabelConfig());
+                activeSeries.push(item.series);
+            });
+
+            // Set inactive state for all points
+            chart.series.forEach(function (inactiveSeries) {
+                if (activeSeries.indexOf(inactiveSeries) === -1) {
+                    inactiveSeries.setState('inactive', true);
+                }
             });
 
             textConfig = {

@@ -277,13 +277,21 @@ extend(Legend.prototype, {
     setItemEvents: function (item, legendItem, useHTML) {
         var legend = this,
             boxWrapper = legend.chart.renderer.boxWrapper,
+            isPoint = item instanceof Point,
             activeClass = 'highcharts-legend-' +
-                (item instanceof Point ? 'point' : 'series') + '-active',
+                (isPoint ? 'point' : 'series') + '-active',
             styledMode = legend.chart.styledMode;
 
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
         (useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
+
+            legend.allItems.forEach(function (inactiveItem) {
+                if (item !== inactiveItem) {
+                    inactiveItem.setState('inactive', !isPoint);
+                }
+            });
+
             item.setState('hover');
 
             // A CSS class to dim or hide other than the hovered series.
@@ -306,6 +314,12 @@ extend(Legend.prototype, {
                         )
                     );
                 }
+
+                legend.allItems.forEach(function (inactiveItem) {
+                    if (item !== inactiveItem) {
+                        inactiveItem.setState('', !isPoint);
+                    }
+                });
 
                 // A CSS class to dim or hide other than the hovered series
                 boxWrapper.removeClass(activeClass);
@@ -1106,6 +1120,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             graph = series.graph,
             stateOptions = options.states,
             lineWidth = options.lineWidth,
+            opacity = 1,
             attribs,
             i = 0;
 
@@ -1147,11 +1162,13 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         stateOptions[state].lineWidth ||
                         lineWidth + (stateOptions[state].lineWidthPlus || 0)
                     ); // #4035
+                    opacity = stateOptions[state].opacity;
                 }
 
                 if (graph && !graph.dashstyle) {
                     attribs = {
-                        'stroke-width': lineWidth
+                        'stroke-width': lineWidth,
+                        opacity: opacity
                     };
 
                     // Animate the graph stroke-width. By default a quick
