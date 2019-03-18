@@ -1,5 +1,5 @@
 [
-	"node_modules/@babel/polyfill/dist/polyfill.js",
+	"vendor/babel-polyfill-7.2.5.js",
 	"test/polyfills.js",
 	"vendor/jquery-3.1.1.js",
 	"vendor/moment-2.18.1.js",

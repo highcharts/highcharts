@@ -4,6 +4,21 @@
     if (!Element.prototype.dispatchEvent) {
         Element.prototype.dispatchEvent = Element.prototype.fireEvent;
     }
+    if (typeof Event !== 'function') {
+        var originalEvent = Event;
+        Event = function () {
+            var evt = document.createEvent('Event');
+            evt.initEvent(
+                arguments[0],
+                (arguments[1] || false),
+                (arguments[2] || false)
+            );
+            return evt;
+        };
+        for (var key in originalEvent) {
+            Event[key] = originalEvent[key];
+        }
+    }
 }());
 // Element.remove
 (function () {

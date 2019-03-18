@@ -3,8 +3,6 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-const BABEL_POLYFILL_PATH = 'node_modules/@babel/polyfill/dist/polyfill.js';
-
 // Internal reference
 const hasJSONSources = {};
 
@@ -198,10 +196,6 @@ module.exports = function (config) {
 
     // let files = getFiles();
     let files = require('./karma-files.json');
-
-    if (needsTranspiling) {
-        files.push(BABEL_POLYFILL_PATH);
-    }
 
     let options = {
         basePath: '../', // Root relative to this file
