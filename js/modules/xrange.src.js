@@ -458,25 +458,19 @@ seriesType('xrange', 'column'
                     series.chart.options.chart.animation,
                     stateOpts.animation
                 ),
-                fill,
-                shortShapeArgs;
+                fill;
 
             if (!point.isNull) {
 
                 // Original graphic
                 if (graphic) { // update
-                    shortShapeArgs = merge(shapeArgs);
-
-                    delete shortShapeArgs.r;
-                    delete shortShapeArgs.fill;
-
-                    point.graphicOriginal[verb](shortShapeArgs);
+                    point.graphicOriginal[verb](shapeArgs);
                 } else {
                     point.graphic = graphic = renderer.g('point')
                         .addClass(point.getClassName())
                         .add(point.group || series.group);
 
-                    point.graphicOriginal = renderer[type](shapeArgs)
+                    point.graphicOriginal = renderer[type](merge(shapeArgs))
                         .addClass(point.getClassName())
                         .addClass('highcharts-partfill-original')
                         .add(graphic);
@@ -513,7 +507,7 @@ seriesType('xrange', 'column'
                         .shadow(seriesOpts.shadow, null, cutOff);
 
                     if (partShapeArgs) {
-                    // Ensure pfOptions is an object
+                        // Ensure pfOptions is an object
                         if (!isObject(pfOptions)) {
                             pfOptions = {};
                         }
@@ -526,7 +520,8 @@ seriesType('xrange', 'column'
                         fill = (
                             pfOptions.fill ||
                             color(pointAttr.fill).brighten(-0.3).get() ||
-                        color(point.color || series.color).brighten(-0.3).get()
+                            color(point.color || series.color)
+                                .brighten(-0.3).get()
                         );
 
                         pointAttr.fill = fill;
