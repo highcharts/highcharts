@@ -61,9 +61,7 @@ Highcharts.chart('container', {
     series: [{
         dataLabels: {
             enabled: true,
-            linkFormatter: function () {
-                return '';
-            }
+            linkFormat: ''
         },
         data: [
             ['Proto Indo-European', 'Balto-Slavic'],
