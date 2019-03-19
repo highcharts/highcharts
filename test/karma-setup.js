@@ -87,15 +87,15 @@ QUnit.assert.close = function (number, expected, error, message) {
     var result = number === expected || (number <= expected + error && number >= expected - error) || false;
 
     this.pushResult({
-        result,
+        result: result,
         actual: number,
-        expected,
-        message
+        expected: expected,
+        message: message
     });
 };
 
 QUnit.module('Highcharts', {
-    beforeEach() {
+    beforeEach: function () {
 
         // Reset container size that some tests may have modified
         var containerStyle = document.getElementById('container').style;
@@ -110,7 +110,7 @@ QUnit.module('Highcharts', {
         Math.randomCursor = 0;
     },
 
-    afterEach() {
+    afterEach: function () {
 
         var containerStyle = document.getElementById('container').style;
         containerStyle.width = '';
