@@ -780,11 +780,14 @@ addEvent(H.Chart, 'afterGetContainer', function () {
 });
 
 addEvent(H.Chart, 'getMargins', function () {
-    var offsetWidth = (
-        this.stockTools &&
-        this.stockTools.listWrapper &&
-        this.stockTools.listWrapper.offsetWidth
-    );
+    var listWrapper = this.stockTools && this.stockTools.listWrapper,
+        offsetWidth = listWrapper && (
+            (
+                listWrapper.startWidth +
+                H.getStyle(listWrapper, 'padding-left') +
+                H.getStyle(listWrapper, 'padding-right')
+            ) || listWrapper.offsetWidth
+        );
 
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
