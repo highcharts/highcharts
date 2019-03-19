@@ -827,19 +827,24 @@ H.Tooltip.prototype = {
 
         // shared tooltip, array is sent over
         if (shared && !(point.series && point.series.noSharedTooltip)) {
+            // Set inactive state for all points
+            activeSeries = point.map(function (item) {
+                return item.series;
+            });
+            chart.series.forEach(function (inactiveSeries) {
+                if (
+                    inactiveSeries.options.inactiveOtherPoints ||
+                    activeSeries.indexOf(inactiveSeries) === -1
+                ) {
+                    inactiveSeries.setState('inactive', true);
+                }
+            });
+
             // Now set hover state for the choosen ones:
             point.forEach(function (item) {
                 item.setState('hover');
 
                 pointConfig.push(item.getLabelConfig());
-                activeSeries.push(item.series);
-            });
-
-            // Set inactive state for all points
-            chart.series.forEach(function (inactiveSeries) {
-                if (activeSeries.indexOf(inactiveSeries) === -1) {
-                    inactiveSeries.setState('inactive', true);
-                }
             });
 
             textConfig = {

@@ -765,11 +765,6 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
         point.firePointEvent('mouseOut');
 
-        // Reset all inactive states
-        chart.series.forEach(function (series) {
-            series.setState('', true);
-        });
-
         chart.hoverPoints = chart.hoverPoint = null;
     },
 
@@ -1098,8 +1093,11 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             tooltip.hide();
         }
 
-        // set normal state
-        series.setState();
+        // Reset all inactive states
+        chart.series.forEach(function (s) {
+            s.setState('', true);
+        });
+
     },
 
     /**

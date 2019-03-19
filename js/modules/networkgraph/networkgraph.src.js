@@ -150,6 +150,7 @@ var addEvent = H.addEvent,
  * @optionparent plotOptions.networkgraph
  */
 seriesType('networkgraph', 'line', {
+    inactiveOtherPoints: true,
     marker: {
         enabled: true,
         states: {
@@ -670,6 +671,11 @@ seriesType('networkgraph', 'line', {
             this.points = this.data;
         } else {
             Series.prototype.setState.apply(this, arguments);
+        }
+
+        // If simulation is done, re-render points with new states:
+        if (!this.layout.simulation && !state) {
+            this.render();
         }
     }
 }, {

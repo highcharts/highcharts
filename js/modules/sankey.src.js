@@ -188,6 +188,7 @@ seriesType('sankey', 'column'
             /** @ignore-option */
             inside: true
         },
+        inactiveOtherPoints: true,
         /**
          * Opacity for the links between nodes in the sankey diagram or
          * dependency wheel.
