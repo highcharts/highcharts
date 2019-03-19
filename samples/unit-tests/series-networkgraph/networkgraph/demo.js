@@ -61,7 +61,9 @@ QUnit.test('Network Graph', function (assert) {
     assert.ok(true, 'No errors in cyclical graphs (#9803)');
 
     assert.strictEqual(
-        chart.series[0].nodes[3].graphic.element.getAttribute('fill'),
+        chart.series[0].nodes[3].graphic.element
+            .getAttribute('fill')
+            .toUpperCase(),
         '#FF0000',
         'Custom series.nodes.color is correct'
     );
@@ -69,7 +71,7 @@ QUnit.test('Network Graph', function (assert) {
     point = chart.series[1].points[1];
 
     assert.strictEqual(
-        point.graphic.element.getAttribute('stroke'),
+        point.graphic.element.getAttribute('stroke').toUpperCase(),
         '#FF0000',
         'Custom series.data.color is correct (#9798)'
     );
