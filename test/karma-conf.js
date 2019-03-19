@@ -358,7 +358,7 @@ module.exports = function (config) {
                                 })
                                 .code;
                         } catch (error) {
-                            console.log(error);
+                            console.error('Babel transform error:', error);
                         }
                     }
 
