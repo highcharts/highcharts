@@ -41,7 +41,9 @@ function task() {
         };
 
         if (FS.existsSync(CONFIGURATION_FILE)) {
-            configuration = JSON.parse(FS.readFileSync(CONFIGURATION_FILE));
+            configuration = JSON.parse(
+                FS.readFileSync(CONFIGURATION_FILE).toString()
+            );
         }
 
         let minimumTime = now;

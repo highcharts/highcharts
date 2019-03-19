@@ -19,6 +19,7 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'Representatives',
+        layout: 'horizontal',
         data: [{
             name: 'Male',
             y: 43,

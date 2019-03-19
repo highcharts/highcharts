@@ -12,37 +12,12 @@ import 'integrations.js';
 import 'QuadTree.js';
 
 var pick = H.pick,
-    defined = H.defined;
+    defined = H.defined,
+    addEvent = H.addEvent,
+    Chart = H.Chart;
 
 H.layouts = {
-    'reingold-fruchterman': function (options) {
-        this.options = options;
-        this.nodes = [];
-        this.links = [];
-        this.series = [];
-
-        this.box = {
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0
-        };
-
-        this.setInitialRendering(true);
-
-        this.integration = H.networkgraphIntegrations[options.integration];
-
-        this.attractiveForce = pick(
-            options.attractiveForce,
-            this.integration.attractiveForceFunction
-        );
-
-        this.repulsiveForce = pick(
-            options.repulsiveForce,
-            this.integration.repulsiveForceFunction
-        );
-
-        this.approximation = options.approximation;
+    'reingold-fruchterman': function () {
     }
 };
 
@@ -53,6 +28,35 @@ H.extend(
     */
     H.layouts['reingold-fruchterman'].prototype,
     {
+        init: function (options) {
+            this.options = options;
+            this.nodes = [];
+            this.links = [];
+            this.series = [];
+
+            this.box = {
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0
+            };
+
+            this.setInitialRendering(true);
+
+            this.integration = H.networkgraphIntegrations[options.integration];
+
+            this.attractiveForce = pick(
+                options.attractiveForce,
+                this.integration.attractiveForceFunction
+            );
+
+            this.repulsiveForce = pick(
+                options.repulsiveForce,
+                this.integration.repulsiveForceFunction
+            );
+
+            this.approximation = options.approximation;
+        },
         run: function () {
             var layout = this,
                 series = this.series,
@@ -95,7 +99,6 @@ H.extend(
 
                 layout.prevSystemTemperature = layout.systemTemperature;
                 layout.systemTemperature = layout.getSystemTemperature();
-
                 if (options.enableSimulation) {
                     series.forEach(function (s) {
                         // Chart could be destroyed during the simulation
@@ -271,7 +274,8 @@ H.extend(
                     return node.linksTo.length === 0;
                 }),
                 sortedNodes = [],
-                visitedNodes = {};
+                visitedNodes = {},
+                radius = this.options.initialPositionRadius;
 
             function addToNodes(node) {
                 node.linksFrom.forEach(function (link) {
@@ -309,11 +313,11 @@ H.extend(
             sortedNodes.forEach(function (node, index) {
                 node.plotX = node.prevX = pick(
                     node.plotX,
-                    box.width / 2 + Math.cos(index * angle)
+                    box.width / 2 + radius * Math.cos(index * angle)
                 );
                 node.plotY = node.prevY = pick(
                     node.plotY,
-                    box.height / 2 + Math.sin(index * angle)
+                    box.height / 2 + radius * Math.sin(index * angle)
                 );
 
                 node.dispX = 0;
@@ -526,6 +530,7 @@ H.extend(
          * @private
          */
         applyLimitBox: function (node, box) {
+            var radius = node.marker && node.marker.radius || 0;
             /*
             TO DO: Consider elastic collision instead of stopping.
             o' means end position when hitting plotting area edge:
@@ -562,18 +567,18 @@ H.extend(
             node.plotX = Math.max(
                 Math.min(
                     node.plotX,
-                    box.width
+                    box.width - radius
                 ),
-                box.left
+                box.left + radius
             );
 
             // Limit Y-coordinates:
             node.plotY = Math.max(
                 Math.min(
                     node.plotY,
-                    box.height
+                    box.height - radius
                 ),
-                box.top
+                box.top + radius
             );
         },
         /**
@@ -631,3 +636,27 @@ H.extend(
         }
     }
 );
+
+/*
+ * Multiple series support:
+ */
+// Clear previous layouts
+addEvent(Chart, 'predraw', function () {
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(
+            function (layout) {
+                layout.stop();
+            }
+        );
+    }
+});
+addEvent(Chart, 'render', function () {
+    if (this.graphLayoutsLookup) {
+        H.setAnimation(false, this);
+        this.graphLayoutsLookup.forEach(
+            function (layout) {
+                layout.run();
+            }
+        );
+    }
+});

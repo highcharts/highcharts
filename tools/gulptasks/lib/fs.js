@@ -4,6 +4,7 @@
 
 /* eslint no-use-before-define: 0 */
 
+const Crypto = require('crypto');
 const FS = require('fs');
 const Path = require('path');
 
@@ -155,6 +156,68 @@ function deleteFile(filePath) {
 }
 
 /**
+ * Calculates the SHA256 hash of a directories content.
+ *
+ * @param {string} directoryPath
+ *        Directory path
+ *
+ * @param {boolean} [useFileContent]
+ *        Set to true to check the file content instead of meta data
+ *
+ * @param {Function} [contentFilter]
+ *        Filter file content like source comments
+ *
+ * @return {string}
+ *         Hexadecimal hash value
+ */
+function getDirectoryHash(directoryPath, useFileContent, contentFilter) {
+
+    const directoryHash = Crypto.createHash('sha256');
+
+    if (useFileContent) {
+
+        getFilePaths(directoryPath, true)
+            .sort()
+            .forEach(path => {
+
+                directoryHash.update(Path.basename(path));
+                directoryHash.update(
+                    contentFilter ?
+                        (
+                            contentFilter(FS.readFileSync(path).toString()) ||
+                            ''
+                        ) :
+                        FS.readFileSync(path).toString()
+                );
+            });
+    } else {
+
+        let meta;
+
+        [directoryPath]
+            .concat(...getDirectoryPaths(directoryPath, true))
+            .concat(...getFilePaths(directoryPath, true))
+            .sort()
+            .forEach(path => {
+
+                meta = FS.lstatSync(path);
+
+                directoryHash.update(Path.basename(path));
+                directoryHash.update([
+                    meta.dev,
+                    meta.gid,
+                    meta.mode,
+                    meta.mtimeMs,
+                    meta.size,
+                    meta.uid
+                ].join(':'));
+            });
+    }
+
+    return directoryHash.digest('hex');
+}
+
+/**
  * Get sub-directory paths from a directory.
  *
  * @param {string} directoryPath
@@ -193,6 +256,30 @@ function getDirectoryPaths(directoryPath, includeSubDirectories) {
     }
 
     return directoryPaths;
+}
+
+/**
+ * Calculates the SHA256 hash of a files content.
+ *
+ * @param {string} filePath
+ *        File path
+ *
+ * @param {Function} [contentFilter]
+ *        Filter file content like source comments
+ *
+ * @return {string}
+ *         Hexadecimal hash value
+ */
+function getFileHash(filePath, contentFilter) {
+
+    return Crypto
+        .createHash('sha256')
+        .update(
+            contentFilter ?
+                (contentFilter(FS.readFileSync(filePath).toString()) || '') :
+                FS.readFileSync(filePath).toString()
+        )
+        .digest('hex');
 }
 
 /**
@@ -274,7 +361,9 @@ module.exports = {
     copyFile,
     deleteDirectory,
     deleteFile,
+    getDirectoryHash,
     getDirectoryPaths,
+    getFileHash,
     getFilePaths,
     gzipFile
 };

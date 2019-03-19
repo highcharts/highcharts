@@ -79,7 +79,7 @@ QUnit.module('Styled mode for series types', function () {
                     }]
                 };
 
-                // Secial cases
+                // Special cases
                 if (type === 'line') {
                     cfg.annotations = [{
                         labels: [{
