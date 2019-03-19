@@ -536,17 +536,18 @@ seriesType('sankey', 'column'
                 node.shapeArgs = {
                     x: nodeLeft,
                     y: fromNodeTop,
-                    width: nodeWidth,
-                    height: height
+                    width: node.options.width || options.width || nodeWidth,
+                    height: node.options.height || options.height || height
                 };
             } else {
                 node.shapeArgs = {
                     x: nodeLeft - nodeWidth,
                     y: chart.plotSizeY - fromNodeTop - height,
-                    width: nodeWidth,
-                    height: height
+                    width: node.options.height || options.height || nodeWidth,
+                    height: node.options.width || options.width || height
                 };
             }
+
             node.shapeArgs.display = node.hasShape() ? '' : 'none';
 
             // Calculate data label options for the point

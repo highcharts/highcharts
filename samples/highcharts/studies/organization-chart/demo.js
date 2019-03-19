@@ -30,13 +30,15 @@ Highcharts.chart('container', {
             color: 'silver',
             dataLabels: {
                 color: 'black'
-            }
+            },
+            height: 25
         }, {
             level: 1,
             color: 'silver',
             dataLabels: {
                 color: 'black'
-            }
+            },
+            height: 25
         }, {
             level: 2,
             color: '#980104'
