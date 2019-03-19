@@ -3908,10 +3908,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         }
 
         wrapper.rSetter = function (value, key, element) {
+            wrapper.r = value;
             attr(element, {
                 rx: value,
                 ry: value
             });
+        };
+        wrapper.rGetter = function () {
+            return wrapper.r;
         };
 
         return wrapper.attr(attribs);
