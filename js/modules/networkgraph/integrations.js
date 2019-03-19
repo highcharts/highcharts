@@ -149,8 +149,10 @@ H.networkgraphIntegrations = {
                 diffY = (node.plotY + node.dispY - prevY) * friction;
 
             // Apply max speed:
-            diffX = Math.sign(diffX) * Math.min(maxSpeed, Math.abs(diffX));
-            diffY = Math.sign(diffY) * Math.min(maxSpeed, Math.abs(diffY));
+            diffX = (Math.abs(diffX) / diffX) *
+                Math.min(maxSpeed, Math.abs(diffX));
+            diffY = (Math.abs(diffY) / diffY) *
+                Math.min(maxSpeed, Math.abs(diffY));
 
             // Store for the next iteration:
             node.prevX = node.plotX + node.dispX;
