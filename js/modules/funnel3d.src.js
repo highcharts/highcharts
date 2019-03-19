@@ -17,6 +17,7 @@ var charts = H.charts,
     error = H.error,
     extend = H.extend,
     merge = H.merge,
+    pick = H.pick,
     seriesType = H.seriesType,
     relativeLength = H.relativeLength,
 
@@ -106,7 +107,16 @@ seriesType('funnel3d', 'column',
          */
         reversed: false,
 
+        /**
+         * By deafult sides fill is set to a gradient through this option being
+         * set to `true`. Set to `false` to get solid color for the sides.
+         *
+         * @product highcharts
+         */
+        gradientForSides: true,
+
         animation: false,
+        edgeWidth: 0,
         colorByPoint: true,
         showInLegend: false,
         tooltip: {
@@ -166,7 +176,7 @@ seriesType('funnel3d', 'column',
                 y5,
 
                 h,
-                shapeArgs = {};
+                shapeArgs;
 
             // Return the width at a specific y coordinate
             series.getWidthAt = getWidthAt = function (y) {
@@ -222,6 +232,12 @@ seriesType('funnel3d', 'column',
                 tempWidth = getWidthAt(y1);
                 h = y3 - y1;
                 shapeArgs = {
+                    // for fill setter
+                    gradientForSides: pick(
+                        point.options.gradientForSides,
+                        options.gradientForSides
+                    ),
+
                     x: centerX,
                     y: y1,
                     height: h,
@@ -304,7 +320,7 @@ seriesType('funnel3d', 'column',
  * @extends   series,plotOptions.funnel3d
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
  * @product   highcharts
- * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
+ * @sample    {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
  * @apioption series.funnel3d
  */
 
@@ -354,6 +370,16 @@ seriesType('funnel3d', 'column',
  * @extends   series.funnel3d.data
  * @product   highcharts
  * @apioption series.funnel3d.data
+ */
+
+
+/**
+ * By deafult sides fill is set to a gradient through this option being
+ * set to `true`. Set to `false` to get solid color for the sides.
+ *
+ * @type      {boolean|undefined}
+ * @product   highcharts
+ * @apioption series.funnel3d.data.gradientForSides
  */
 
 funnel3dMethods = H.merge(RendererProto.elements3d.cuboid, {
@@ -433,7 +459,7 @@ funnel3dMethods = H.merge(RendererProto.elements3d.cuboid, {
             partsWithColor = {
                 // standard color for top and bottom
                 top: color(fill).brighten(0.1).get(),
-                bottom: color(fill).brighten(-0.1).get()
+                bottom: color(fill).brighten(-0.2).get()
             };
 
         if (alpha < 1) {
@@ -447,6 +473,22 @@ funnel3dMethods = H.merge(RendererProto.elements3d.cuboid, {
         } else {
             // use default for full opacity
             fillColor = fill;
+        }
+
+        // add gradient for sides
+        if (
+            !fillColor.linearGradient &&
+            !fillColor.radialGradient &&
+            funnel3d.gradientForSides
+        ) {
+            fillColor = {
+                linearGradient: { x1: 0, x2: 1, y1: 1, y2: 1 },
+                stops: [
+                    [0, color(fill).brighten(-0.2).get()],
+                    [0.5, fill],
+                    [1, color(fill).brighten(-0.2).get()]
+                ]
+            };
         }
 
         // gradient support
@@ -615,6 +657,8 @@ RendererProto.funnel3d = function (shapeArgs) {
         lowerElem.attr(strokeAttrs);
         lowerElem.add(funnel3d.lowerGroup);
     });
+
+    funnel3d.gradientForSides = shapeArgs.gradientForSides;
 
     return funnel3d;
 };
