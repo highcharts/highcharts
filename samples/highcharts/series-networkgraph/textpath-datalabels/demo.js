@@ -65,9 +65,7 @@ Highcharts.chart('container', {
             textPath: {
                 enabled: true
             },
-            linkFormatter: function () {
-                return '';
-            },
+            linkFormat: '',
             allowOverlap: true
         },
         data: [
