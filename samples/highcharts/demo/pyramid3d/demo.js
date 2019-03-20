@@ -18,10 +18,7 @@ Highcharts.chart('container', {
                 enabled: true,
                 format: '<b>{point.name}</b> ({point.y:,.0f})',
                 color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
-                allowOverlap: true,
-                align: 'left',
-                y: 20,
-                x: 80
+                allowOverlap: true
             },
             width: '60%',
             height: '80%',

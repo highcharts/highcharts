@@ -19,9 +19,7 @@ Highcharts.chart('container', {
                 format: '<b>{point.name}</b> ({point.y:,.0f})',
                 color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
                 allowOverlap: true,
-                align: 'left',
-                y: 20,
-                x: 80
+                y: 10
             },
             neckWidth: '30%',
             neckHeight: '25%',
