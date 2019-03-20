@@ -20,8 +20,8 @@ Highcharts.chart('container', {
             ['CEO', 'CSO'],
             ['CEO', 'CMO'],
             ['CEO', 'HR'],
-            ['CTO', 'Tech'],
-            ['CTO', 'BL'],
+            ['CTO', 'Product'],
+            ['CTO', 'Web'],
             ['CSO', 'Sales'],
             ['CMO', 'Market']
         ],
@@ -88,13 +88,12 @@ Highcharts.chart('container', {
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/13105551/Vidar.jpg',
             layout: 'hanging'
         }, {
-            id: 'Tech',
-            name: 'Tech team',
-            description: 'Product and web developers, sys admin'
+            id: 'Product',
+            name: 'Product developers'
         }, {
-            id: 'BL',
-            name: 'Black Label',
-            description: 'Tech support, development'
+            id: 'Web',
+            name: 'General tech',
+            description: 'Web developers, sys admin'
         }, {
             id: 'Sales',
             name: 'Sales team'
