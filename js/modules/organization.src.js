@@ -22,34 +22,77 @@ H.seriesType(
         borderWidth: 1,
         dataLabels: {
             nodeFormatter: function () {
-                var html = '<div style="width: 100%; height: 100%; ' +
-                    'display: flex; flex-direction: row; align-items: center;' +
-                    'justify-content: center">';
 
-                var width = 100;
+                var outerStyle = {
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        'flex-direction': 'row',
+                        'align-items': 'center',
+                        'justify-content': 'center'
+                    },
+                    imageStyle = {
+                        'max-height': '100%',
+                        'border-radius': '50%'
+                    },
+                    innerStyle = {
+                        width: '100%',
+                        padding: 0,
+                        'text-align': 'center',
+                        'white-space': 'normal'
+                    },
+                    nameStyle = {
+                        margin: 0
+                    },
+                    titleStyle = {
+                        margin: 0
+                    },
+                    descriptionStyle = {
+                        opacity: 0.75,
+                        margin: '5px'
+                    };
 
-                if (this.point.image) {
-                    html += '<img src="' + this.point.image + '" style="' +
-                        'max-width: 30%; max-height: 100%;' +
-                        'border-radius: 50%">';
-                    width -= 30;
+                function styleAttr(style) {
+                    return Object.keys(style).reduce(function (str, key) {
+                        return str + key + ':' + style[key] + ';';
+                    }, 'style="') + '"';
                 }
 
-                html += '<div style="width: ' + width + '%; padding: 0;' +
-                    'text-align: center; white-space: normal">';
+                if (this.point.image) {
+                    imageStyle['max-width'] = '30%';
+                    innerStyle.width = '70%';
+                }
+
+                // PhantomJS doesn't support flex, roll back to absolute
+                // positioning
+                if (this.series.chart.renderer.forExport) {
+                    outerStyle.display = 'block';
+                    innerStyle.position = 'absolute';
+                    innerStyle.left = this.point.image ? '30%' : 0;
+                    innerStyle.top = 0;
+                }
+
+                var html = '<div ' + styleAttr(outerStyle) + '>';
+
+                if (this.point.image) {
+                    html += '<img src="' + this.point.image + '" ' +
+                        styleAttr(imageStyle) + '>';
+                }
+
+                html += '<div ' + styleAttr(innerStyle) + '>';
 
                 if (this.point.name) {
-                    html += '<h4 style="margin: 0">' + this.point.name +
-                        '</h4>';
+                    html += '<h4 ' + styleAttr(nameStyle) + '>' +
+                        this.point.name + '</h4>';
                 }
 
                 if (this.point.title) {
-                    html += '<p style="margin: 0">' + (this.point.title || '') +
-                        '</p>';
+                    html += '<p ' + styleAttr(titleStyle) + '>' +
+                        (this.point.title || '') + '</p>';
                 }
 
                 if (this.point.description) {
-                    html += '<p style="opacity: 0.75; margin: 5px">' +
+                    html += '<p ' + styleAttr(descriptionStyle) + '>' +
                         this.point.description + '</p>';
                 }
 

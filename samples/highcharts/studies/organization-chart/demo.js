@@ -111,7 +111,9 @@ Highcharts.chart('container', {
         nodeWidth: 65
     }],
     exporting: {
-        allowHTML: true
+        allowHTML: true,
+        sourceWidth: 800,
+        sourceHeight: 600
     }
 
 });
