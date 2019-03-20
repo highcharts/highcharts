@@ -293,9 +293,52 @@ seriesType('packedbubble', 'bubble',
          * @default true
          */
         useSimulation: true,
+        /**
+         * @extends plotOptions.networkgraph.dataLabels
+         * @excluding linkFormatter, linkTextPath, linkFormat
+         */
         dataLabels: {
             formatter: function () {
                 return this.point.value;
+            },
+            /**
+             * Callback to format data labels for _parentNodes_.
+             * The `parentNodeFormat` option takes precedence over
+             * the `parentNodeFormatter`.
+             *
+             * @type  {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
+             * @since 7.1.0
+             * @default function () { return this.name; }
+             */
+            parentNodeFormatter: function () {
+                return this.name;
+            },
+            /**
+             * Options for a _parentNode_ label text.
+             *
+             * @sample highcharts/series-packedbubble/packed-dashboard
+             *         Dashboard with dataLabels on parentNodes
+             * @since   7.1.0
+             */
+            parentNodeTextPath: {
+                /**
+                 * Presentation attributes for the text path.
+                 *
+                 * @default     {"textAnchor": "middle", "startOffset": "50%", "dy": -5}
+                 * @sample      highcharts/series-networkgraph/link-datalabels
+                 *              Data labels moved under the links
+                 *
+                 * @type        {Highcharts.SVGAttributes}
+                 * @apioption plotOptions.packedbubble.dataLabels.parentNodeTextPath.attributes
+                 */
+
+                /**
+                 * Enable or disable `textPath` option for parent node's
+                 * data labels.
+                 *
+                 * @see [textPath](#plotOptions.packedbubble.dataLabels.textPath) option
+                 */
+                enabled: true
             },
             padding: 0
         },
@@ -464,6 +507,7 @@ seriesType('packedbubble', 'bubble',
         pointValKey: 'value',
         isCartesian: false,
         axisTypes: [],
+        noSharedTooltip: true,
         /**
          * Create a single array of all points from all series
          *
@@ -519,16 +563,17 @@ seriesType('packedbubble', 'bubble',
             return this;
         },
         render: function () {
-            var dataLabels = [];
+            var series = this,
+                dataLabels = [];
             Series.prototype.render.apply(this, arguments);
-            this.data.forEach(function (point) {
+            series.data.forEach(function (point) {
                 if (H.isArray(point.dataLabels)) {
                     point.dataLabels.forEach(function (dataLabel) {
                         dataLabels.push(dataLabel);
                     });
                 }
             });
-            this.chart.hideOverlappingLabels(dataLabels);
+            series.chart.hideOverlappingLabels(dataLabels);
         },
         // Needed because of z-indexing issue if point is added in series.group
         setVisible: function () {
@@ -537,9 +582,15 @@ seriesType('packedbubble', 'bubble',
             if (series.parentNodeLayout && series.graph) {
                 if (series.visible) {
                     series.graph.show();
+                    if (series.parentNode.dataLabel) {
+                        series.parentNode.dataLabel.show();
+                    }
                 } else {
                     series.graph.hide();
                     series.parentNodeLayout.removeNode(series.parentNode);
+                    if (series.parentNode.dataLabel) {
+                        series.parentNode.dataLabel.hide();
+                    }
                 }
             } else if (series.layout) {
                 if (series.visible) {
@@ -549,6 +600,28 @@ seriesType('packedbubble', 'bubble',
                         series.layout.removeNode(node);
                     });
                 }
+            }
+        },
+        // Packedbubble has two separate collecions of nodes if split, render
+        // dataLabels for both sets:
+        drawDataLabels: function () {
+            var textPath = this.options.dataLabels.textPath,
+                points = this.points;
+
+            // Render node labels:
+            Series.prototype.drawDataLabels.apply(this, arguments);
+
+            // Render parentNode labels:
+            if (this.parentNode) {
+                this.parentNode.formatPrefix = 'parentNode';
+                this.points = [this.parentNode];
+                this.options.dataLabels.textPath =
+                    this.options.dataLabels.parentNodeTextPath;
+                Series.prototype.drawDataLabels.apply(this, arguments);
+
+                // Restore nodes
+                this.points = points;
+                this.options.dataLabels.textPath = textPath;
             }
         },
         /*
@@ -608,22 +681,36 @@ seriesType('packedbubble', 'bubble',
                     opacity: nodeMarker.fillOpacity,
                     stroke: nodeMarker.lineColor || series.color,
                     'stroke-width': nodeMarker.lineWidth
-                };
+                },
+                visibility = series.visible ? 'inherit' : 'hidden';
+
+            // create the group for parent Nodes if doesn't exist
+            if (!this.parentNodesGroup) {
+                series.parentNodesGroup = series.plotGroup(
+                    'parentNodesGroup',
+                    'parentNode',
+                    visibility,
+                    0.1, chart.seriesGroup
+                );
+                series.group.attr({
+                    zIndex: 2
+                });
+            }
 
             this.calculateParentRadius();
             parentAttribs = H.merge({
                 x: series.parentNode.plotX -
-                        series.parentNodeRadius + chart.plotLeft,
+                        series.parentNodeRadius,
                 y: series.parentNode.plotY -
-                        series.parentNodeRadius + chart.plotTop,
+                        series.parentNodeRadius,
                 width: series.parentNodeRadius * 2,
                 height: series.parentNodeRadius * 2
             }, parentOptions);
-
             if (!series.graph) {
-                series.graph = chart.renderer.symbol(parentOptions.symbol)
-                    .attr(parentAttribs)
-                    .add();
+                series.graph = series.parentNode.graphic =
+                    chart.renderer.symbol(parentOptions.symbol)
+                        .attr(parentAttribs)
+                        .add(series.parentNodesGroup);
             } else {
                 series.graph.attr(parentAttribs);
             }
@@ -636,7 +723,8 @@ seriesType('packedbubble', 'bubble',
             var series = this,
                 chart = series.chart,
                 parentNodeLayout = series.parentNodeLayout,
-                nodeAdded;
+                nodeAdded,
+                parentNode = series.parentNode;
 
             series.parentNodeMass = 0;
 
@@ -644,29 +732,34 @@ seriesType('packedbubble', 'bubble',
                 series.parentNodeMass += Math.PI * Math.pow(p.marker.radius, 2);
             });
 
-            this.calculateParentRadius();
+            series.calculateParentRadius();
             parentNodeLayout.nodes.forEach(function (node) {
                 if (node.seriesIndex === series.index) {
                     nodeAdded = true;
                 }
             });
             parentNodeLayout.setArea(0, 0, chart.plotWidth, chart.plotHeight);
-
             if (!nodeAdded) {
-                var parentNode = (
-                    new NetworkPoint()
-                ).init(
-                    this,
-                    {
-                        mass: series.parentNodeRadius / 2,
-                        marker: {
-                            radius: series.parentNodeRadius
-                        },
-                        degree: series.parentNodeRadius,
-                        isParentNode: true,
-                        seriesIndex: series.index
-                    }
-                );
+                if (!parentNode) {
+                    parentNode = (
+                        new NetworkPoint()
+                    ).init(
+                        this,
+                        {
+                            mass: series.parentNodeRadius / 2,
+                            marker: {
+                                radius: series.parentNodeRadius
+                            },
+                            dataLabels: {
+                                inside: false
+                            },
+                            dataLabelOnNull: true,
+                            degree: series.parentNodeRadius,
+                            isParentNode: true,
+                            seriesIndex: series.index
+                        }
+                    );
+                }
                 if (series.parentNode) {
                     parentNode.plotX = series.parentNode.plotX;
                     parentNode.plotY = series.parentNode.plotY;
@@ -1265,6 +1358,10 @@ seriesType('packedbubble', 'bubble',
         destroy: function () {
             if (this.parentNode) {
                 this.parentNodeLayout.removeNode(this.parentNode);
+                if (this.parentNode.dataLabel) {
+                    this.parentNode.dataLabel =
+                        this.parentNode.dataLabel.destroy();
+                }
             }
             H.Series.prototype.destroy.apply(this, arguments);
         },
