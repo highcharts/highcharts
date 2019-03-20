@@ -48,6 +48,7 @@ const SOURCE_FILES = [
     ['js', 'modules', 'offline-exporting.src.js'],
     ['js', 'modules', 'pattern-fill.src.js'],
     ['js', 'modules', 'sankey.src.js'],
+    ['js', 'modules', 'screen-reader.src.js'],
     ['js', 'modules', 'networkgraph', '*.js'],
     ['js', 'modules', 'sonification', '*.js'],
     ['js', 'annotations', 'annotations.src.js']

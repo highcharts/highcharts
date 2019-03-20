@@ -7,6 +7,27 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * @callback Highcharts.ScreenReaderClickCallbackFunction
+ *
+ * @param {global.MouseEvent} evt
+ *        Mouse click event
+ *
+ * @return {void}
+ */
+
+/**
+ * Creates a formatted string for the screen reader module.
+ *
+ * @callback Highcharts.ScreenReaderFormatterCallbackFunction<T>
+ *
+ * @param {T} context
+ *        Context to format
+ *
+ * @return {string}
+ *         Formatted string for the screen reader module.
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -95,6 +116,7 @@ H.setOptions({
      *
      * @since        5.0.0
      * @optionparent accessibility
+     * @private
      */
     accessibility: {
 
@@ -115,7 +137,7 @@ H.setOptions({
          * By default Highcharts will insert and set focus to a data table
          * representation of the chart.
          *
-         * @type      {Function}
+         * @type      {Highcharts.ScreenReaderClickCallbackFunction}
          * @since     5.0.0
          * @apioption accessibility.onTableAnchorClick
          */
@@ -145,7 +167,7 @@ H.setOptions({
          *
          * @see [pointDateFormat](#accessibility.pointDateFormat)
          *
-         * @type      {Function}
+         * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
          * @since     5.0.0
          * @apioption accessibility.pointDateFormatter
          */
@@ -153,13 +175,14 @@ H.setOptions({
         /**
          * Formatter function to use instead of the default for point
          * descriptions.
+         *
          * Receives one argument, `point`, referring to the point to describe.
-         * Should return a String with the description of the point for a screen
+         * Should return a string with the description of the point for a screen
          * reader user.
          *
          * @see [point.description](#series.line.data.description)
          *
-         * @type      {Function}
+         * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
          * @since     5.0.0
          * @apioption accessibility.pointDescriptionFormatter
          */
@@ -167,12 +190,12 @@ H.setOptions({
         /**
          * Formatter function to use instead of the default for series
          * descriptions. Receives one argument, `series`, referring to the
-         * series to describe. Should return a String with the description of
+         * series to describe. Should return a string with the description of
          * the series for a screen reader user.
          *
          * @see [series.description](#plotOptions.series.description)
          *
-         * @type      {Function}
+         * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Series>}
          * @since     5.0.0
          * @apioption accessibility.seriesDescriptionFormatter
          */
@@ -198,13 +221,13 @@ H.setOptions({
         /**
          * A formatter function to create the HTML contents of the hidden screen
          * reader information region. Receives one argument, `chart`, referring
-         * to the chart object. Should return a String with the HTML content
-         * of the region.
+         * to the chart object. Should return a string with the HTML content of
+         * the region.
          *
          * The link to view the chart as a data table will be added
          * automatically after the custom HTML content.
          *
-         * @type    {Function}
+         * @type    {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
          * @default undefined
          * @since   5.0.0
          */
