@@ -12,11 +12,33 @@ import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 import '../parts/Options.js';
 import '../mixins/nodes.js';
+import mixinTreeSeries from '../mixins/tree-series.js';
+// Note: replace this with destructuring assignment in the future
+var getLevelOptions = mixinTreeSeries.getLevelOptions;
 
 var defined = H.defined,
+    isObject = H.isObject,
+    merge = H.merge,
     seriesType = H.seriesType,
     pick = H.pick,
     Point = H.Point;
+
+var getDLOptions = function getDLOptions(params) {
+    var optionsPoint = (
+            isObject(params.optionsPoint) ?
+                params.optionsPoint.dataLabels :
+                {}
+        ),
+        optionsLevel = (
+            isObject(params.level) ?
+                params.level.dataLabels :
+                {}
+        ),
+        options = merge({
+            style: {}
+        }, optionsLevel, optionsPoint);
+    return options;
+};
 
 /**
  * @private
@@ -284,32 +306,37 @@ seriesType('sankey', 'column'
 
         // Return the presentational attributes.
         pointAttribs: function (point, state) {
-
-            var opacity = this.options.linkOpacity,
-                color = point.color,
-                stroke = this.options.borderColor,
-                strokeWidth = this.options.borderWidth;
-
-            if (state) {
-                opacity = this.options.states[state].linkOpacity || opacity;
-                color = this.options.states[state].color || point.color;
-                stroke = this.options.states[state].borderColor || stroke;
-                strokeWidth = this.options.states[state].borderWidth ||
-                    strokeWidth;
-            }
+            var series = this,
+                level = point.isNode ? point.level : point.fromNode.level,
+                levelOptions = series.mapOptionsToLevel[level],
+                options = point.options,
+                stateOptions = levelOptions.states[state] || {},
+                values = [
+                    'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
+                ].reduce(function (obj, key) {
+                    obj[key] = pick(
+                        stateOptions[key], options[key], levelOptions[key]
+                    );
+                    return obj;
+                }, {}),
+                color = pick(
+                    stateOptions.color,
+                    options.color,
+                    values.colorByPoint ? point.color : levelOptions.color
+                );
 
             // Node attributes
             if (point.isNode) {
                 return {
                     fill: color,
-                    stroke: stroke,
-                    'stroke-width': strokeWidth
+                    stroke: values.borderColor,
+                    'stroke-width': values.borderWidth
                 };
             }
 
             // Link attributes
             return {
-                fill: H.color(color).setOpacity(opacity).get()
+                fill: H.color(color).setOpacity(values.linkOpacity).get()
             };
 
         },
@@ -452,6 +479,12 @@ seriesType('sankey', 'column'
                 };
             }
             node.shapeArgs.display = node.hasShape() ? '' : 'none';
+
+            // Calculate data label options for the point
+            node.dlOptions = getDLOptions({
+                level: this.mapOptionsToLevel[node.level],
+                optionsPoint: node.options
+            });
 
             // Pass test in drawPoints
             node.plotY = 1;
@@ -628,6 +661,29 @@ seriesType('sankey', 'column'
             this.colDistance =
                 (chart.plotSizeX - nodeWidth - options.borderWidth) /
                 (nodeColumns.length - 1);
+
+            // Calculate level options used in sankey and organization
+            series.mapOptionsToLevel = getLevelOptions({
+                // NOTE: if support for allowTraversingTree is added, then from
+                // should be the level of the root node.
+                from: 1,
+                levels: options.levels,
+                to: nodeColumns.length - 1, // Height of the tree
+                defaults: {
+                    borderColor: options.borderColor,
+                    borderRadius: options.borderRadius, // organization series
+                    borderWidth: options.borderWidth,
+                    color: series.color,
+                    colorByPoint: options.colorByPoint,
+                    // NOTE: if support for allowTraversingTree is added, then
+                    // levelIsConstant should be optional.
+                    levelIsConstant: true,
+                    linkColor: options.linkColor, // organization series
+                    linkLineWidth: options.linkLineWidth, // organization series
+                    linkOpacity: options.linkOpacity,
+                    states: options.states
+                }
+            });
 
             // First translate all nodes so we can use them when drawing links
             nodeColumns.forEach(function (column) {

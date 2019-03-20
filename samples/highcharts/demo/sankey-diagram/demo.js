@@ -3,7 +3,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts Sankey Diagram'
     },
-
     series: [{
         keys: ['from', 'to', 'weight'],
         data: [

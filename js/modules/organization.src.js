@@ -9,6 +9,7 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+var pick = H.pick;
 
 var base = H.seriesTypes.sankey.prototype;
 H.seriesType(
@@ -70,15 +71,27 @@ H.seriesType(
     {
         inverted: true,
         pointAttribs: function (point, state) {
-            var attribs = base.pointAttribs.call(this, point, state);
+            var series = this,
+                attribs = base.pointAttribs.call(series, point, state),
+                level = point.isNode ? point.level : point.fromNode.level,
+                levelOptions = series.mapOptionsToLevel[level],
+                options = point.options,
+                stateOptions = levelOptions.states[state] || {},
+                values = ['borderRadius', 'linkColor', 'linkLineWidth']
+                    .reduce(function (obj, key) {
+                        obj[key] = pick(
+                            stateOptions[key], options[key], levelOptions[key]
+                        );
+                        return obj;
+                    }, {});
 
             if (!point.isNode) {
-                attribs.stroke = this.options.linkColor;
-                attribs['stroke-width'] = this.options.linkLineWidth;
+                attribs.stroke = values.linkColor;
+                attribs['stroke-width'] = values.linkLineWidth;
                 delete attribs.fill;
             } else {
-                if (this.options.borderRadius) {
-                    attribs.r = this.options.borderRadius;
+                if (values.borderRadius) {
+                    attribs.r = values.borderRadius;
                 }
             }
             return attribs;

@@ -19,31 +19,41 @@ Highcharts.chart('container', {
             ['CEO', 'CPO'],
             ['CEO', 'CSO'],
             ['CEO', 'CMO'],
-            ['HR', 'CEO'],
+            ['CEO', 'HR'],
             ['CTO', 'Tech'],
             ['CTO', 'BL'],
             ['CSO', 'Sales'],
             ['CMO', 'Market']
         ],
-        nodes: [{
-            id: 'Shareholders',
+        levels: [{
+            level: 0,
             color: 'silver',
             dataLabels: {
                 color: 'black'
             }
         }, {
-            id: 'Board',
+            level: 1,
             color: 'silver',
             dataLabels: {
                 color: 'black'
             }
+        }, {
+            level: 2,
+            color: '#980104'
+        }, {
+            level: 4,
+            color: '#359154'
+        }],
+        nodes: [{
+            id: 'Shareholders'
+        }, {
+            id: 'Board'
         }, {
             id: 'CEO',
             title: 'CEO',
             name: 'Grethe Hjetland',
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132317/Grethe.jpg',
-            offset: '-50%',
-            color: '#980104'
+            offset: '-50%'
         }, {
             id: 'HR',
             title: 'HR/CFO',
@@ -77,21 +87,17 @@ Highcharts.chart('container', {
         }, {
             id: 'Tech',
             name: 'Tech team',
-            description: 'Product and web developers, sys admin',
-            color: '#359154'
+            description: 'Product and web developers, sys admin'
         }, {
             id: 'BL',
             name: 'Black Label',
-            description: 'Tech support, development',
-            color: '#359154'
+            description: 'Tech support, development'
         }, {
             id: 'Sales',
-            name: 'Sales team',
-            color: '#359154'
+            name: 'Sales team'
         }, {
             id: 'Market',
-            name: 'Marketing team',
-            color: '#359154'
+            name: 'Marketing team'
         }],
         colorByPoint: false,
         color: '#007ad0',
