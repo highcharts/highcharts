@@ -55,14 +55,15 @@ Highcharts.chart('container', {
             title: 'CEO',
             name: 'Grethe Hjetland',
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132317/Grethe.jpg',
-            offset: '-50%'
+            offset: '50%'
         }, {
             id: 'HR',
             title: 'HR/CFO',
             name: 'Anne Jorunn Fjærestad',
+            color: '#007ad0',
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132314/AnneJorunn.jpg',
-            column: 2,
-            offset: '-50%'
+            level: 2,
+            offset: '50%'
         }, {
             id: 'CTO',
             title: 'CTO',

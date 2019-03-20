@@ -791,6 +791,15 @@ seriesType('sankey', 'column'
             H.Series.prototype.destroy.call(this);
         }
     }, {
+        applyOptions: function (options, x) {
+            Point.prototype.applyOptions.call(this, options, x);
+
+            // Treat point.level as a synonym of point.column
+            if (defined(this.options.level)) {
+                this.options.column = this.column = this.options.level;
+            }
+            return this;
+        },
         getClassName: function () {
             return (this.isNode ? 'highcharts-node ' : 'highcharts-link ') +
             Point.prototype.getClassName.call(this);
