@@ -19,6 +19,7 @@ var charts = H.charts,
     merge = H.merge,
     pick = H.pick,
     seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes,
     relativeLength = H.relativeLength,
 
     // Use H.Renderer instead of H.SVGRenderer for VML support.
@@ -83,7 +84,6 @@ seriesType('funnel3d', 'column',
          *
          * @type    {Number|String}
          * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
-         * @since   3.0
          * @product highcharts
          */
         height: '100%',
@@ -121,6 +121,12 @@ seriesType('funnel3d', 'column',
         showInLegend: false,
         tooltip: {
             followPointer: true
+        },
+        dataLabels: {
+            overflow: 'allow',
+            crop: false,
+            inside: false,
+            align: 'right'
         }
     }, {
         // Override default axis options with series required options for axes
@@ -168,7 +174,6 @@ seriesType('funnel3d', 'column',
                 neckY = (centerY - height / 2) + height - neckHeight,
                 data = series.data,
                 fraction,
-                half = options.dataLabels.position === 'left' ? 1 : 0,
                 tooltipPos,
 
                 y1,
@@ -187,11 +192,6 @@ seriesType('funnel3d', 'column',
                     neckWidth + (width - neckWidth) *
                         (1 - (y - top) / (height - neckHeight));
             };
-            series.getX = function (y, half, point) {
-                return centerX + (half ? -1 : 1) *
-                    ((getWidthAt(reversed ? 2 * centerY - y : y) / 2) +
-                    point.labelDistance);
-            };
 
             // Expose
             series.center = [centerX, centerY, height];
@@ -200,20 +200,20 @@ seriesType('funnel3d', 'column',
             /*
              * Individual point coordinate naming:
              *
-             * x1,y1 _________________ x2,y1
+             *  _________centerX,y1________
              *  \                         /
              *   \                       /
              *    \                     /
              *     \                   /
              *      \                 /
-             *     x3,y3 _________ x4,y3
+             *        ___centerX,y3___
              *
              * Additional for the base of the neck:
              *
              *       |               |
              *       |               |
              *       |               |
-             *     x3,y5 _________ x4,y5
+             *        ___centerX,y5___
              */
 
             // get the total sum
@@ -274,9 +274,8 @@ seriesType('funnel3d', 'column',
                         (cumulative + fraction) * height;
 
                     if (shapeArgs.middle) {
-                        shapeArgs.middle.fraction = h ?
-                            1 - shapeArgs.middle.fraction :
-                            1;
+                        shapeArgs.middle.fraction = 1 -
+                            (h ? shapeArgs.middle.fraction : 0);
                     }
                     tempWidth = shapeArgs.width;
                     shapeArgs.width = shapeArgs.bottom.width;
@@ -284,7 +283,7 @@ seriesType('funnel3d', 'column',
                 }
                 point.shapeArgs = extend(point.shapeArgs, shapeArgs);
 
-                // for tooltips and data labels
+                // for tooltips and data labels context
                 point.percentage = fraction * 100;
                 point.plotX = centerX;
                 point.plotY = (y1 + (y5 || y3)) / 2;
@@ -293,20 +292,76 @@ seriesType('funnel3d', 'column',
                 tooltipPos = H.perspective([{
                     x: centerX,
                     y: point.plotY,
-                    z: 1
+                    z: -(getWidthAt(point.plotY)) / 2
                 }], chart, true)[0];
                 point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 
-                // Slice is a noop on funnel points
-                point.slice = H.noop;
+                // base to be used when alignment options are known
+                point.dlBoxRaw = {
+                    x: centerX,
+                    width: getWidthAt(point.plotY),
 
-                // Mimicking pie data label placement logic
-                point.half = half;
+                    y: y1,
+                    bottom: shapeArgs.height
+                };
 
                 if (!ignoreHiddenPoint || point.visible !== false) {
                     cumulative += fraction;
                 }
             });
+        },
+
+        alignDataLabel: function (point, dataLabel, options) {
+            var series = this,
+                dlBoxRaw = point.dlBoxRaw,
+                inverted = series.chart.inverted,
+                below = point.plotY > pick(
+                    series.translatedThreshold,
+                    series.yAxis.len
+                ),
+                inside = pick(options.inside, !!series.options.stacking),
+                dlBox = {
+                    x: dlBoxRaw.x,
+                    y: dlBoxRaw.y,
+                    height: 0
+                };
+
+            options.align = pick(
+                options.align,
+                !inverted || inside ? 'center' : below ? 'right' : 'left'
+            );
+            options.verticalAlign = pick(
+                options.verticalAlign,
+                inverted || inside ? 'middle' : below ? 'top' : 'bottom'
+            );
+
+            if (options.verticalAlign !== 'top') {
+                dlBox.y += dlBoxRaw.bottom /
+                    (options.verticalAlign === 'bottom' ? 1 : 2);
+            }
+
+            dlBox.width = series.getWidthAt(dlBox.y);
+
+            if (inside) {
+                dlBox.x -= dlBox.width / 2;
+            } else {
+                // swap for inside
+                if (options.align === 'left') {
+                    options.align = 'right';
+                    dlBox.x -= dlBox.width * 1.5;
+                } else if (options.align === 'right') {
+                    options.align = 'left';
+                    dlBox.x += dlBox.width / 2;
+                } else {
+                    dlBox.x -= dlBox.width / 2;
+                }
+            }
+
+            point.dlBox = dlBox;
+            seriesTypes.column.prototype.alignDataLabel.apply(
+                series,
+                arguments
+            );
         }
     }, /** @lends seriesTypes.funnel3d.prototype.pointClass.prototype */ {
         shapeType: 'funnel3d'
@@ -316,7 +371,7 @@ seriesType('funnel3d', 'column',
  * A `funnel3d` series. If the [type](#series.funnel3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @since     7.0.0
+ * @since     7.1.0
  * @extends   series,plotOptions.funnel3d
  * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
  * @product   highcharts
