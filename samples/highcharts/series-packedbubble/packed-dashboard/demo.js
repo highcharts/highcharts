@@ -21,11 +21,15 @@ Highcharts.chart('container', {
                 initialPositionRadius: 100,
                 splitSeries: true,
                 parentNodeLimit: true,
-                dragBetweenSeries: true
+                dragBetweenSeries: true,
+                parentNodeOptions: {
+                    bubblePadding: 20
+                }
             },
             dataLabels: {
                 enabled: true,
-                format: '{point.shortName}'
+                format: '{point.shortName}',
+                parentNodeFormat: '{point.series.name}'
             }
         }
     },
