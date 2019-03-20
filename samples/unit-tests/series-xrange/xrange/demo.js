@@ -89,6 +89,33 @@ QUnit.test('X-Range', function (assert) {
         'Partial fill set'
     );
 
+    series.update({
+        states: {
+            hover: {
+                color: '#ff0000',
+                borderWidth: 4,
+                borderColor: '#00ff00',
+                animation: {
+                    duration: 0
+                }
+            }
+        }
+    });
+
+    series.points[5].setState('hover');
+
+    assert.strictEqual(
+        series.points[5].graphicOriginal.attr('fill'),
+        '#ff0000',
+        'Hover color of graphicOriginal is correct (#9880).'
+    );
+
+    assert.strictEqual(
+        series.points[5].graphicOverlay.attr('fill'),
+        'rgb(179,0,0)',
+        'Hover color of graphicOverlay is correct (#9880).'
+    );
+
     series.points[0].remove();
     assert.strictEqual(
         series.points.length,

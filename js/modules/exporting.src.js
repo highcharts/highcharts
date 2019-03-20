@@ -502,9 +502,13 @@ defaultOptions.exporting = {
      */
 
     /**
-     * Additional chart options to be merged into an exported chart. For
-     * example, a common use case is to add data labels to improve readability
-     * of the exported chart, or to add a printer-friendly color scheme.
+     * Additional chart options to be merged into the chart before exporting to
+     * an image format. This does not apply to printing the chart via the export
+     * menu.
+     *
+     * For example, a common use case is to add data labels to improve
+     * readability of the exported chart, or to add a printer-friendly color
+     * scheme to exported PDFs.
      *
      * @sample {highcharts} highcharts/exporting/chartoptions-data-labels/
      *         Added data labels

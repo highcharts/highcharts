@@ -79,6 +79,35 @@ QUnit.test('addOverlapToRelations', function (assert) {
     );
 });
 
+QUnit.test('getAreaOfCircle', assert => {
+    const { prototype: vennPrototype } = Highcharts.seriesTypes.venn;
+    const { getAreaOfCircle } = vennPrototype.utils.geometryCircles;
+
+    assert.strictEqual(
+        getAreaOfCircle(1),
+        3.141592653589793,
+        'should have area equal 3.141592653589793 when r = 1.'
+    );
+
+    assert.strictEqual(
+        getAreaOfCircle(3),
+        Math.PI * 3 * 3,
+        'should have area equal 28.274333882308138 when r = 3.'
+    );
+
+    assert.throws(
+        () => getAreaOfCircle(0),
+        new Error('radius of circle must be a positive number.'),
+        'should throw an error when r is zero.'
+    );
+
+    assert.throws(
+        () => getAreaOfCircle(-1),
+        new Error('radius of circle must be a positive number.'),
+        'should throw an error when r is negative.'
+    );
+});
+
 QUnit.test('getAreaOfIntersectionBetweenCircles', function (assert) {
     var vennPrototype = Highcharts.seriesTypes.venn.prototype,
         getAreaOfIntersectionBetweenCircles =
@@ -187,6 +216,12 @@ QUnit.test('getDistanceBetweenCirclesByOverlap', assert => {
         getDistanceBetweenCirclesByOverlap(600, 300, 250000),
         387.2988213671704,
         'should return a distance of 387.2988213671704 when r1=600, r2=300 and overlap=250000.'
+    );
+
+    assert.strictEqual(
+        getDistanceBetweenCirclesByOverlap(3, 4, 30),
+        0,
+        'should return a distance of 0 when r1=3, r2=4, and overlap=30. Complete overlap.'
     );
 });
 

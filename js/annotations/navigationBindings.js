@@ -8,6 +8,7 @@ import H from '../parts/Globals.js';
 import chartNavigationMixin from '../mixins/navigation.js';
 
 var doc = H.doc,
+    win = H.win,
     addEvent = H.addEvent,
     pick = H.pick,
     merge = H.merge,
@@ -18,6 +19,30 @@ var doc = H.doc,
     isObject = H.isObject,
     objectEach = H.objectEach,
     PREFIX = 'highcharts-';
+
+// IE 9-11 polyfill for Element.closest():
+function closestPolyfill(el, s) {
+    var ElementProto = win.Element.prototype,
+        elementMatches =
+            ElementProto.matches ||
+            ElementProto.msMatchesSelector ||
+            ElementProto.webkitMatchesSelector,
+        ret = null;
+
+    if (ElementProto.closest) {
+        ret = ElementProto.closest.call(el, s);
+    } else {
+        do {
+            if (elementMatches.call(el, s)) {
+                return el;
+            }
+            el = el.parentElement || el.parentNode;
+
+        } while (el !== null && el.nodeType === 1);
+    }
+    return ret;
+}
+
 
 /**
  * @private
@@ -312,13 +337,14 @@ extend(H.NavigationBindings.prototype, {
             selectedButton = navigation.selectedButton,
             svgContainer = chart.renderer.boxWrapper;
 
+        // Click outside popups, should close them and deselect the annotation
         if (
             navigation.activeAnnotation &&
             !clickEvent.activeAnnotation &&
             // Element could be removed in the child action, e.g. button
             clickEvent.target.parentNode &&
             // TO DO: Polyfill for IE11?
-            !clickEvent.target.closest('.' + PREFIX + 'popup')
+            !closestPolyfill(clickEvent.target, '.' + PREFIX + 'popup')
         ) {
             fireEvent(navigation, 'closePopup');
             navigation.deselectAnnotation();
