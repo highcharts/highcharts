@@ -36,14 +36,14 @@ QUnit.test('Return false from tooltip.formatter (#5915)', function (assert) {
 
     tooltip.refresh(p1);
     assert.strictEqual(
-        document.querySelector('.highcharts-tooltip'),
+        chart.container.querySelector('.highcharts-tooltip'),
         null,
         'No tooltip yet'
     );
 
     tooltip.refresh(p2);
     assert.strictEqual(
-        document.querySelector('.highcharts-tooltip').nodeName,
+        chart.container.querySelector('.highcharts-tooltip').nodeName,
         'g',
         'Tooltip added'
     );

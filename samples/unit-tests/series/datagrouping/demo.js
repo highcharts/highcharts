@@ -1,4 +1,3 @@
-
 QUnit.test('General dataGrouping options', function (assert) {
     var chart = Highcharts.stockChart('container', {
         chart: {
@@ -34,8 +33,16 @@ QUnit.test('General dataGrouping options', function (assert) {
             data: [
                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
             ]
+        }, {
+            type: 'scatter',
+            data: [[1, 1]]
         }]
     });
+
+    assert.ok(
+        chart.series[0].points[0].y > 1,
+        'Scatter doesn\'t prevent dataGrouping when `plotOptions.series.dataGrouping` is set (#9693)'
+    );
 
     assert.strictEqual(
         chart.series[0].points[0].y,
@@ -57,11 +64,11 @@ QUnit.test('dataGrouping and keys', function (assert) {
         },
         series: [{
             type: 'arearange',
-            keys: ['nothing', 'x', 'something', 'low', 'y', 'high'],
+            keys: ['colorIndex', 'x', 'something', 'low', 'y', 'high'],
             data: (function () {
                 var arr = [];
                 for (var i = 0; i < 999; i++) {
-                    arr.push([42, i, -42, 100 - i, i % 420, 100 + i]);
+                    arr.push([i % 8, i, 'Something' + i, 100 - i, i % 420, 100 + i]);
                 }
                 return arr;
             }()),
@@ -78,6 +85,18 @@ QUnit.test('dataGrouping and keys', function (assert) {
             chart.series[0].points[0].high === 109,
         true,
         'data grouped correctly when using keys on data (#6590)'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].colorIndex,
+        2,
+        'Non-data properties should be preserved (#8999)'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].something,
+        'Something10',
+        'Custom properties should be preserved (#8999)'
     );
 
     chart.xAxis[0].setExtremes(0, 900);
@@ -158,33 +177,60 @@ QUnit.test('dataGrouping approximations', function (assert) {
 
 });
 
-QUnit.test('Hidden series shouldn\'t have `undefined`-points in a series.points array (#6709).', function (assert) {
-    var chart = Highcharts.stockChart('container', {
-        chart: {
-            width: 400
-        },
-        plotOptions: {
-            series: {
-                dataGrouping: {
-                    forced: true,
-                    units: [
-                        ['millisecond', [10]]
-                    ]
+QUnit.test('dataGrouping and multiple series', function (assert) {
+    var realError,
+        hadError = false,
+        chart = Highcharts.stockChart('container', {
+            chart: {
+                width: 400,
+                type: 'column',
+                events: {
+                    beforeRender: function () {
+                        realError = Highcharts.error;
+                        Highcharts.error = function () {
+                            hadError = true;
+                        };
+                    }
                 }
-            }
-        },
-        series: [{
-            data: [0, 5, 40]
-        }, {
-            type: 'column',
-            data: [2, 2, 2]
-        }]
-    });
+            },
+            plotOptions: {
+                column: {
+                    dataGrouping: {
+                        forced: true,
+                        units: [
+                            ['millisecond', [10]]
+                        ]
+                    }
+                }
+            },
+            series: [{
+                data: [0, 5, 40]
+            }, {
+                data: [2, 2, 2]
+            }, {
+                type: 'scatter',
+                data: [
+                    [2, 7],
+                    [0, 7]
+                ]
+            }]
+        }, function () {
+            // clean up
+            Highcharts.error = realError;
+        });
+
+    assert.ok(
+        !hadError,
+        'No Highcharts error (#6989)'
+    );
+
     chart.series[1].hide();
     assert.ok(
         chart.series[1].points === null,
-        'Points array is nullified for a hidden series.'
+        'Points array is nullified for a hidden series. Hidden series shouldn\'t have `undefined`-points in a series.points array (#6709).'
     );
+
+
 });
 
 
@@ -295,4 +341,131 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
         Math.round((new Date()).getTimezoneOffset() / -60) + ')'
     );
 
+});
+
+QUnit.test('Data groupind and extremes change', function (assert) {
+    var min = 0,
+        chart = Highcharts.stockChart('container', {
+            xAxis: {
+                min: min,
+                ordinal: false
+            },
+            series: [{
+                pointStart: 12 * 3600 * 1000 + 15,
+                dataGrouping: {
+                    forced: true
+                },
+                pointInterval: 12 * 3600 * 1000,
+                data: [73, 0, 0, 1, 2, 0, 0, 0, 12]
+            }]
+        });
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().min,
+        min,
+        'User defined minimum is applied on a chart (#8335).'
+    );
+});
+
+QUnit.test('Data groupind, keys and turboThreshold', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            keys: ['x', 'a', 'y'],
+            turboThreshold: 1,
+            dataGrouping: {
+                forced: true
+            },
+            data: (function () {
+                var d = [];
+
+                for (var i = 0; i < 10; i++) {
+                    d.push([
+                        i, 10, 1000
+                    ]);
+                }
+
+                return d;
+            }())
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].yData[0],
+        1000,
+        'Correct yData (#8544).'
+    );
+});
+
+QUnit.test('Data grouping and adding points with data labels', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            dataGrouping: {
+                forced: true
+            },
+            data: [1, 2]
+        }]
+    });
+
+    chart.series[0].addPoint({ y: 4, dataLabels: { enabled: true } });
+    chart.series[0].addPoint({ y: 5, dataLabels: { enabled: true } });
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        4,
+        'Correct number of points and no errors (#9770).'
+    );
+});
+
+QUnit.test('Data grouping, custom name in tooltip', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        chart: {
+            zoomType: 'x'
+        },
+        xAxis: {
+            min: 120,
+            max: 125
+        },
+        series: [{
+            name: 'AAPL',
+            data: (function () {
+                var data = [];
+
+                for (var i = 0; i < 255; i++) {
+                    data.push({
+                        x: i,
+                        y: i,
+                        name: 'a' + i
+                    });
+                }
+                return data;
+            }()),
+            tooltip: {
+                pointFormat: 'name: {point.name} <br>' +
+                'myName: {point.myName} <br>' +
+                'x: {point.x}'
+            },
+            dataGrouping: {
+                forced: true,
+                units: [
+                    [
+                        'millisecond', [1]
+                    ]
+                ]
+            }
+        }]
+    });
+
+    chart.tooltip.refresh([chart.series[0].points[2]]);
+
+    assert.strictEqual(
+        chart.tooltip.tt.text.textStr.indexOf('a121') > -1,
+        true,
+        'Custom name in label is correct (#9928).'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataGroup.start,
+        chart.series[0].points[0].x,
+        'dataGroup should consider crop start'
+    );
 });

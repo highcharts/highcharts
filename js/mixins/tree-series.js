@@ -1,6 +1,6 @@
 import H from '../parts/Globals.js';
-var each = H.each,
-    extend = H.extend,
+
+var extend = H.extend,
     isArray = H.isArray,
     isBoolean = function (x) {
         return typeof x === 'boolean';
@@ -11,8 +11,8 @@ var each = H.each,
     isObject = H.isObject,
     isNumber = H.isNumber,
     merge = H.merge,
-    pick = H.pick,
-    reduce = H.reduce;
+    pick = H.pick;
+
 // TODO Combine buildTree and buildNode with setTreeValues
 // TODO Remove logic from Treemap and make it utilize this mixin.
 var setTreeValues = function setTreeValues(tree, options) {
@@ -22,8 +22,8 @@ var setTreeValues = function setTreeValues(tree, options) {
         nodeRoot = mapIdToNode[idRoot],
         levelIsConstant = (
             isBoolean(options.levelIsConstant) ?
-            options.levelIsConstant :
-            true
+                options.levelIsConstant :
+                true
         ),
         points = options.points,
         point = points[tree.i],
@@ -31,6 +31,7 @@ var setTreeValues = function setTreeValues(tree, options) {
         childrenTotal = 0,
         children = [],
         value;
+
     extend(tree, {
         levelDynamic: tree.level - (levelIsConstant ? 0 : nodeRoot.level),
         name: pick(point && point.name, ''),
@@ -43,8 +44,9 @@ var setTreeValues = function setTreeValues(tree, options) {
         tree = before(tree, options);
     }
     // First give the children some values
-    each(tree.children, function (child, i) {
+    tree.children.forEach(function (child, i) {
         var newOptions = extend({}, options);
+
         extend(newOptions, {
             index: i,
             siblings: tree.children.length,
@@ -78,14 +80,17 @@ var getColor = function getColor(node, options) {
         siblings = options.siblings,
         points = series.points,
         getColorByPoint,
+        chartOptionsChart = series.chart.options.chart,
         point,
         level,
         colorByPoint,
         colorIndexByPoint,
         color,
         colorIndex;
+
     function variation(color) {
         var colorVariation = level && level.colorVariation;
+
         if (colorVariation) {
             if (colorVariation.key === 'brightness') {
                 return H.color(color).brighten(
@@ -105,21 +110,22 @@ var getColor = function getColor(node, options) {
         if (getColorByPoint) {
             colorIndexByPoint = point.index % (colors ?
                 colors.length :
-                series.chart.options.chart.colorCount
+                chartOptionsChart.colorCount
             );
             colorByPoint = colors && colors[colorIndexByPoint];
         }
 
-        /*= if (build.classic) { =*/
         // Select either point color, level color or inherited color.
-        color = pick(
-            point && point.options.color,
-            level && level.color,
-            colorByPoint,
-            parentColor && variation(parentColor),
-            series.color
-        );
-        /*= } =*/
+        if (!series.chart.styledMode) {
+            color = pick(
+                point && point.options.color,
+                level && level.color,
+                colorByPoint,
+                parentColor && variation(parentColor),
+                series.color
+            );
+        }
+
         colorIndex = pick(
             point && point.options.colorIndex,
             level && level.colorIndex,
@@ -135,16 +141,22 @@ var getColor = function getColor(node, options) {
 };
 
 /**
- * getLevelOptions - Creates a map from level number to its given options.
- * @param {Object} params Object containing parameters.
- * @param {Object} params.defaults Object containing default options. The
- * default options are merged with the userOptions to get the final options for
- * a specific level.
- * @param {Number} params.from The lowest level number.
- * @param {Array} params.levels User options from series.levels.
- * @param {Number} params.to The highest level number.
- * @return {null|Object} Returns a map from level number to its given options.
- * Returns null if invalid input parameters.
+ * Creates a map from level number to its given options.
+ *
+ * @private
+ * @function getLevelOptions
+ *
+ * @param {object} params
+ *        Object containing parameters.
+ *        - `defaults` Object containing default options. The default options
+ *           are merged with the userOptions to get the final options for a
+ *           specific level.
+ *        - `from` The lowest level number.
+ *        - `levels` User options from series.levels.
+ *        - `to` The highest level number.
+ *
+ * @return {Highcharts.Dictionary<object>}
+ *         Returns a map from level number to its given options.
  */
 var getLevelOptions = function getLevelOptions(params) {
     var result = null,
@@ -154,6 +166,7 @@ var getLevelOptions = function getLevelOptions(params) {
         from,
         to,
         levels;
+
     if (isObject(params)) {
         result = {};
         from = isNumber(params.from) ? params.from : 1;
@@ -161,16 +174,17 @@ var getLevelOptions = function getLevelOptions(params) {
         converted = {};
         defaults = isObject(params.defaults) ? params.defaults : {};
         if (isArray(levels)) {
-            converted = reduce(levels, function (obj, item) {
+            converted = levels.reduce(function (obj, item) {
                 var level,
                     levelIsConstant,
                     options;
+
                 if (isObject(item) && isNumber(item.level)) {
                     options = merge({}, item);
                     levelIsConstant = (
                         isBoolean(options.levelIsConstant) ?
-                        options.levelIsConstant :
-                        defaults.levelIsConstant
+                            options.levelIsConstant :
+                            defaults.levelIsConstant
                     );
                     // Delete redundant properties.
                     delete options.levelIsConstant;
@@ -201,12 +215,20 @@ var getLevelOptions = function getLevelOptions(params) {
 /**
  * Update the rootId property on the series. Also makes sure that it is
  * accessible to exporting.
- * @param {object} series The series to operate on.
- * @returns Returns the resulting rootId after update.
+ *
+ * @private
+ * @function updateRootId
+ *
+ * @param {object} series
+ *        The series to operate on.
+ *
+ * @return {string}
+ *         Returns the resulting rootId after update.
  */
 var updateRootId = function (series) {
     var rootId,
         options;
+
     if (isObject(series)) {
         // Get the series options.
         options = isObject(series.options) ? series.options : {};
@@ -230,4 +252,5 @@ var result = {
     setTreeValues: setTreeValues,
     updateRootId: updateRootId
 };
+
 export default result;

@@ -1,18 +1,19 @@
 /**
- * (c) 2010-2017 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
 'use strict';
+
 import H from './Globals.js';
 import './Utilities.js';
 import './SvgRenderer.js';
+
 var attr = H.attr,
     createElement = H.createElement,
     css = H.css,
     defined = H.defined,
-    each = H.each,
     extend = H.extend,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
@@ -21,25 +22,44 @@ var attr = H.attr,
     pInt = H.pInt,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
-    win = H.win,
-    wrap = H.wrap;
+    win = H.win;
 
-// Extend SvgElement for useHTML option
+// Extend SvgElement for useHTML option.
 extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
+
     /**
      * Apply CSS to HTML elements. This is used in text within SVG rendering and
      * by the VML renderer
+     *
+     * @private
+     * @function Highcharts.SVGElement#htmlCss
+     *
+     * @param {Highcharts.CSSObject} styles
+     *
+     * @return {Highcharts.SVGElement}
      */
     htmlCss: function (styles) {
         var wrapper = this,
             element = wrapper.element,
-            textWidth = styles && element.tagName === 'SPAN' && styles.width;
+            // When setting or unsetting the width style, we need to update
+            // transform (#8809)
+            isSettingWidth = (
+                element.tagName === 'SPAN' &&
+                styles &&
+                'width' in styles
+            ),
+            textWidth = pick(
+                isSettingWidth && styles.width,
+                undefined
+            ),
+            doTransform;
 
-        if (textWidth) {
+        if (isSettingWidth) {
             delete styles.width;
             wrapper.textWidth = textWidth;
-            wrapper.htmlUpdateTransform();
+            doTransform = true;
         }
+
         if (styles && styles.textOverflow === 'ellipsis') {
             styles.whiteSpace = 'nowrap';
             styles.overflow = 'hidden';
@@ -47,17 +67,27 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
         wrapper.styles = extend(wrapper.styles, styles);
         css(wrapper.element, styles);
 
+        // Now that all styles are applied, to the transform
+        if (doTransform) {
+            wrapper.htmlUpdateTransform();
+        }
+
         return wrapper;
     },
 
     /**
-     * VML and useHTML method for calculating the bounding box based on offsets
-     * @param {Boolean} refresh Whether to force a fresh value from the DOM or
-     * to use the cached value.
+     * VML and useHTML method for calculating the bounding box based on offsets.
      *
-     * @return {Object} A hash containing values for x, y, width and height
+     * @private
+     * @function Highcharts.SVGElement#htmlGetBBox
+     *
+     * @param {boolean} refresh
+     *        Whether to force a fresh value from the DOM or to use the cached
+     *        value.
+     *
+     * @return {Highcharts.BBoxObject}
+     *         A hash containing values for x, y, width and height.
      */
-
     htmlGetBBox: function () {
         var wrapper = this,
             element = wrapper.element;
@@ -72,7 +102,10 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
     /**
      * VML override private method to update elements based on internal
-     * properties based on SVG transform
+     * properties based on SVG transform.
+     *
+     * @private
+     * @function Highcharts.SVGElement#htmlUpdateTransform
      */
     htmlUpdateTransform: function () {
         // aligning non added elements is expensive
@@ -109,20 +142,18 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
             marginTop: translateY
         });
 
-        /*= if (build.classic) { =*/
-        if (wrapper.shadows) { // used in labels/tooltip
-            each(wrapper.shadows, function (shadow) {
+        if (!renderer.styledMode && wrapper.shadows) { // used in labels/tooltip
+            wrapper.shadows.forEach(function (shadow) {
                 css(shadow, {
                     marginLeft: translateX + 1,
                     marginTop: translateY + 1
                 });
             });
         }
-        /*= } =*/
 
         // apply inversion
         if (wrapper.inverted) { // wrapper is a group
-            each(elem.childNodes, function (child) {
+            [].forEach.call(elem.childNodes, function (child) {
                 renderer.invertChild(child, elem);
             });
         }
@@ -149,8 +180,12 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
                 (
                     (textWidth > wrapper.oldTextWidth) ||
                     (wrapper.textPxLength || getTextPxLength()) > textWidth
-                ) &&
-                /[ \-]/.test(elem.textContent || elem.innerText)
+                ) && (
+                    // Only set the width if the text is able to word-wrap, or
+                    // text-overflow is ellipsis (#9537)
+                    /[ \-]/.test(elem.textContent || elem.innerText) ||
+                    elem.style.textOverflow === 'ellipsis'
+                )
             ) { // #983, #1254
                 css(elem, {
                     width: textWidth + 'px',
@@ -165,7 +200,7 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
             // Do the calculations and DOM access only if properties changed
             if (currentTextTransform !== wrapper.cTT) {
-                baseline = renderer.fontMetrics(elem.style.fontSize).b;
+                baseline = renderer.fontMetrics(elem.style.fontSize, elem).b;
 
                 // Renderer specific handling of span rotation, but only if we
                 // have something to update.
@@ -211,7 +246,16 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
     },
 
     /**
-     * Set the rotation of an individual HTML span
+     * Set the rotation of an individual HTML span.
+     *
+     * @private
+     * @function Highcharts.SVGElement#setSpanRotation
+     *
+     * @param {number} rotation
+     *
+     * @param {number} alignCorrection
+     *
+     * @param {number} baseline
      */
     setSpanRotation: function (rotation, alignCorrection, baseline) {
         var rotationStyle = {},
@@ -227,6 +271,15 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 
     /**
      * Get the correction in X and Y positioning as the element is rotated.
+     *
+     * @private
+     * @function Highcharts.SVGElement#getSpanCorrection
+     *
+     * @param {number} width
+     *
+     * @param {number} baseline
+     *
+     * @param {number} alignCorrection
      */
     getSpanCorrection: function (width, baseline, alignCorrection) {
         this.xCorr = -width * alignCorrection;
@@ -237,6 +290,12 @@ extend(SVGElement.prototype, /** @lends SVGElement.prototype */ {
 // Extend SvgRenderer for useHTML option.
 extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
+    /**
+     * @private
+     * @function Highcharts.SVGRenderer#getTransformKey
+     *
+     * @return {string}
+     */
     getTransformKey: function () {
         return isMS && !/Edge/.test(win.navigator.userAgent) ?
             '-ms-transform' :
@@ -253,9 +312,19 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
      * Create HTML text node. This is used by the VML renderer as well as the
      * SVG renderer through the useHTML option.
      *
-     * @param {String} str
-     * @param {Number} x
-     * @param {Number} y
+     * @private
+     * @function Highcharts.SVGRenderer#html
+     *
+     * @param {string} str
+     *        The text of (subset) HTML to draw.
+     *
+     * @param {number} x
+     *        The x position of the text's lower left corner.
+     *
+     * @param {number} y
+     *        The y position of the text's lower left corner.
+     *
+     * @return {Highcharts.HTMLDOMElement}
      */
     html: function (str, x, y) {
         var wrapper = this.createElement('span'),
@@ -265,24 +334,27 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
             addSetters = function (element, style) {
                 // These properties are set as attributes on the SVG group, and
                 // as identical CSS properties on the div. (#3542)
-                each(['opacity', 'visibility'], function (prop) {
-                    wrap(element, prop + 'Setter', function (
-                        proceed,
+                ['opacity', 'visibility'].forEach(function (prop) {
+                    element[prop + 'Setter'] = function (
                         value,
                         key,
                         elem
                     ) {
-                        proceed.call(this, value, key, elem);
+                        SVGElement.prototype[prop + 'Setter']
+                            .call(this, value, key, elem);
                         style[key] = value;
-                    });
+                    };
                 });
                 element.addedSetters = true;
-            };
+            },
+            chart = H.charts[renderer.chartIndex],
+            styledMode = chart && chart.styledMode;
 
         // Text setter
         wrapper.textSetter = function (value) {
             if (value !== element.innerHTML) {
                 delete this.bBox;
+                delete this.oldTextWidth;
             }
             this.textStr = value;
             element.innerHTML = pick(value, '');
@@ -326,12 +398,15 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 y: Math.round(y)
             })
             .css({
-                /*= if (build.classic) { =*/
-                fontFamily: this.style.fontFamily,
-                fontSize: this.style.fontSize,
-                /*= } =*/
                 position: 'absolute'
             });
+
+        if (!styledMode) {
+            wrapper.css({
+                fontFamily: this.style.fontFamily,
+                fontSize: this.style.fontSize
+            });
+        }
 
         // Keep the whiteSpace style outside the wrapper.styles collection
         element.style.whiteSpace = 'nowrap';
@@ -368,7 +443,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
                         // Ensure dynamically updating position when any parent
                         // is translated
-                        each(parents.reverse(), function (parentGroup) {
+                        parents.reverse().forEach(function (parentGroup) {
                             var htmlGroupStyle,
                                 cls = attr(parentGroup.element, 'class');
 

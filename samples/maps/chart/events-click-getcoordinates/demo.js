@@ -76,8 +76,10 @@ function showMap(mapKey) {
             type: 'mappoint',
             id: 'points',
             name: 'Points',
-            draggableX: true,
-            draggableY: true,
+            dragDrop: {
+                draggableX: true,
+                draggableY: true
+            },
             cursor: 'move',
             point: {
                 events: {

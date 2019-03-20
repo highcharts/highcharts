@@ -32,7 +32,7 @@ Highcharts.chart('container', {
         plotBackgroundImage: null,
         plotBorderWidth: 0,
         plotShadow: false,
-        height: 200
+        height: '80%'
     },
 
     credits: {

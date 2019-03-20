@@ -1,6 +1,9 @@
 
 
 Highcharts.chart('container', {
+    chart: {
+        styledMode: true
+    },
     title: {
         text: 'Height vs Weight'
     },

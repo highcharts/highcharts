@@ -115,7 +115,11 @@
             }, {
                 id: 'three',
                 color: 'blue'
-            }]
+            }],
+            yAxis: {
+                // Adding a Y axis here broke stock charts when reusing
+                // configs, #8196
+            }
         }, true, true);
 
 

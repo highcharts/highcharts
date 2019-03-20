@@ -11,8 +11,7 @@
 import H from '../parts/Globals.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
-var each = H.each,
-    objectEach = H.objectEach,
+var objectEach = H.objectEach,
     seriesType = H.seriesType,
     correctFloat = H.correctFloat,
     isNumber = H.isNumber,
@@ -32,7 +31,7 @@ var each = H.each,
  **/
 var binsNumberFormulas = {
     'square-root': function (baseSeries) {
-        return Math.round(Math.sqrt(baseSeries.options.data.length));
+        return Math.ceil(Math.sqrt(baseSeries.options.data.length));
     },
 
     'sturges': function (baseSeries) {
@@ -50,21 +49,15 @@ var binsNumberFormulas = {
  * @param {number} binWidth - width of the bin
  * @returns {function}
  **/
-function fitToBinLeftClosed(binWidth) {
+function fitToBinLeftClosed(bins) {
     return function (y) {
-        return Math.floor(y / binWidth) * binWidth;
-    };
-}
+        var i = 1;
 
-/**
- * Identity function - takes a param and returns that param
- * It is used to grouping data with the same values
- *
- * @param {number} y - value
- * @returns {number}
- **/
-function identity(y) {
-    return y;
+        while (bins[i] <= y) {
+            i++;
+        }
+        return bins[--i];
+    };
 }
 
 /**
@@ -114,7 +107,7 @@ seriesType('histogram', 'column', {
     pointPlacement: 'between',
     tooltip: {
         headerFormat: '',
-        pointFormat: '<span style="font-size:10px">{point.x} - {point.x2}' +
+        pointFormat: '<span style="font-size: 10px">{point.x} - {point.x2}' +
             '</span><br/>' +
             '<span style="color:{point.color}">\u25CF</span>' +
             ' {series.name} <b>{point.y}</b><br/>'
@@ -132,35 +125,61 @@ seriesType('histogram', 'column', {
     },
 
     derivedData: function (baseData, binsNumber, binWidth) {
-        var max = arrayMax(baseData),
-            min = arrayMin(baseData),
-            frequencies = {},
+        var series = this,
+            max = arrayMax(baseData),
+            // Float correction needed, because first frequency value is not
+            // corrected when generating frequencies (within for loop).
+            min = correctFloat(arrayMin(baseData)),
+            frequencies = [],
+            bins = {},
             data = [],
             x,
             fitToBin;
 
-        binWidth = this.binWidth = isNumber(binWidth) ?
-            binWidth :
-            (max - min) / binsNumber;
-
-        fitToBin = binWidth ? fitToBinLeftClosed(binWidth) : identity;
+        binWidth = series.binWidth = series.options.pointRange = correctFloat(
+            isNumber(binWidth) ?
+                (binWidth || 1) :
+                (max - min) / binsNumber
+        );
 
         // If binWidth is 0 then max and min are equaled,
         // increment the x with some positive value to quit the loop
         for (
-            x = fitToBin(min);
-            x <= max;
-            x = correctFloat(x + (binWidth || 1))
+            x = min;
+            // This condition is needed because of the margin of error while
+            // operating on decimal numbers. Without that, additional bin was
+            // sometimes noticeable on the graph, because of too small precision
+            // of float correction.
+            x < max &&
+                (
+                    series.userOptions.binWidth ||
+                    correctFloat(max - x) >= binWidth ||
+                    correctFloat(min + (frequencies.length * binWidth) - x) <= 0
+                );
+            x = correctFloat(x + binWidth)
         ) {
-            frequencies[correctFloat(fitToBin((x)))] = 0;
+            frequencies.push(x);
+            bins[x] = 0;
         }
 
-        each(baseData, function (y) {
+        if (bins[min] !== 0) {
+            frequencies.push(correctFloat(min));
+            bins[correctFloat(min)] = 0;
+        }
+
+        fitToBin = fitToBinLeftClosed(
+            frequencies.map(function (elem) {
+                return parseFloat(elem);
+            })
+        );
+
+        baseData.forEach(function (y) {
             var x = correctFloat(fitToBin(y));
-            frequencies[x]++;
+
+            bins[x]++;
         });
 
-        objectEach(frequencies, function (frequency, x) {
+        objectEach(bins, function (frequency, x) {
             data.push({
                 x: Number(x),
                 y: frequency,

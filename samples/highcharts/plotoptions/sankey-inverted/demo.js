@@ -5,55 +5,61 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Inverted Sankey diagram - Highcharts'
+        text: 'Highcharts Inverted Sankey Diagram'
     },
 
     series: [{
         keys: ['from', 'to', 'weight'],
         data: [
-            ['Oil', 'Transportation', 94],
-            ['Natural Gas', 'Transportation', 3],
-            ['Coal', 'Transportation', 0],
-            ['Renewable', 'Transportation', 0],
-            ['Nuclear', 'Transportation', 3],
-
-            ['Oil', 'Industrial', 41],
-            ['Natural Gas', 'Industrial', 40],
-            ['Coal', 'Industrial', 7],
-            ['Renewable', 'Industrial', 11],
-            ['Nuclear', 'Industrial', 0],
-
-            ['Oil', 'Residential & Commercial', 17],
-            ['Natural Gas', 'Residential & Commercial', 76],
-            ['Coal', 'Residential & Commercial', 1],
-            ['Renewable', 'Residential & Commercial', 7],
-            ['Nuclear', 'Residential & Commercial', 0],
-
-            ['Oil', 'Electric Power', 1],
-            ['Natural Gas', 'Electric Power', 18],
-            ['Coal', 'Electric Power', 48],
-            ['Renewable', 'Electric Power', 11],
-            ['Nuclear', 'Electric Power', 22]
-
+            ['Brazil', 'Portugal', 5],
+            ['Brazil', 'France', 1],
+            ['Brazil', 'Spain', 1],
+            ['Brazil', 'England', 1],
+            ['Canada', 'Portugal', 1],
+            ['Canada', 'France', 5],
+            ['Canada', 'England', 1],
+            ['Mexico', 'Portugal', 1],
+            ['Mexico', 'France', 1],
+            ['Mexico', 'Spain', 5],
+            ['Mexico', 'England', 1],
+            ['USA', 'Portugal', 1],
+            ['USA', 'France', 1],
+            ['USA', 'Spain', 1],
+            ['USA', 'England', 5],
+            ['Portugal', 'Angola', 2],
+            ['Portugal', 'Senegal', 1],
+            ['Portugal', 'Morocco', 1],
+            ['Portugal', 'South Africa', 3],
+            ['France', 'Angola', 1],
+            ['France', 'Senegal', 3],
+            ['France', 'Mali', 3],
+            ['France', 'Morocco', 3],
+            ['France', 'South Africa', 1],
+            ['Spain', 'Senegal', 1],
+            ['Spain', 'Morocco', 3],
+            ['Spain', 'South Africa', 1],
+            ['England', 'Angola', 1],
+            ['England', 'Senegal', 1],
+            ['England', 'Morocco', 2],
+            ['England', 'South Africa', 7],
+            ['South Africa', 'China', 5],
+            ['South Africa', 'India', 1],
+            ['South Africa', 'Japan', 3],
+            ['Angola', 'China', 5],
+            ['Angola', 'India', 1],
+            ['Angola', 'Japan', 3],
+            ['Senegal', 'China', 5],
+            ['Senegal', 'India', 1],
+            ['Senegal', 'Japan', 3],
+            ['Mali', 'China', 5],
+            ['Mali', 'India', 1],
+            ['Mali', 'Japan', 3],
+            ['Morocco', 'China', 5],
+            ['Morocco', 'India', 1],
+            ['Morocco', 'Japan', 3]
         ],
-        nodes: [{
-            id: 'Oil',
-            color: '#666666'
-        }, {
-            id: 'Natural Gas',
-            color: '#7cb5ec'
-        }, {
-            id: 'Coal',
-            color: '#000000'
-        }, {
-            id: 'Renewable',
-            color: '#90ed7d'
-        }, {
-            id: 'Nuclear',
-            color: '#f7a35c'
-        }],
         type: 'sankey',
-        name: 'Energy in the United States'
+        name: 'Sankey demo series'
     }]
 
 });

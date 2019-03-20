@@ -11,7 +11,7 @@ QUnit.test('hasData', function (assert) {
     var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
         hasData = wordcloudPrototype.hasData;
     assert.strictEqual(
-      hasData.call(undefined),
+      hasData.call(),
       false,
       'should return false if series is not an object'
     );
@@ -46,6 +46,51 @@ QUnit.test('hasData', function (assert) {
       }),
       true,
       'should return true if series.visible is true, and series.points has length > 0'
+    );
+});
+
+QUnit.test('extendPlayingField', function (assert) {
+    var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
+        extendPlayingField = wordcloudPrototype.utils.extendPlayingField,
+        field = {
+            width: 20,
+            height: 40,
+            ratioX: 1,
+            ratioY: 2
+        },
+        rectangle = {
+            left: -5,
+            right: 5,
+            top: -10,
+            bottom: 10
+        };
+
+    assert.deepEqual(
+        extendPlayingField(undefined, rectangle),
+        undefined,
+        'should return the existing field if parameter field is invalid.'
+    );
+
+    assert.deepEqual(
+        extendPlayingField(field, undefined),
+        {
+            width: 20,
+            height: 40,
+            ratioX: 1,
+            ratioY: 2
+        },
+        'should return the existing field if parameter rectangle is invalid.'
+    );
+
+    assert.deepEqual(
+        extendPlayingField(field, rectangle),
+        {
+            width: 60,
+            height: 120,
+            ratioX: 1,
+            ratioY: 2
+        },
+        'should return the existing field if parameter rectangle is invalid.'
     );
 });
 
@@ -169,7 +214,7 @@ QUnit.test('deriveFontSize', function (assert) {
  * we can't test something that is not accesible on the Highcharts object.
  */
 QUnit.test('isPolygonsColliding', function (assert) {
-    console.clear();
+    console.clear(); // eslint-disable-line
     var wordcloudPrototype = Highcharts.seriesTypes.wordcloud.prototype,
         isPolygonsColliding = wordcloudPrototype.utils.isPolygonsColliding,
         polygonA = [[10, 10], [20, 30], [30, 10]],

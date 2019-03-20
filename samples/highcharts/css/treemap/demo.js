@@ -930,6 +930,9 @@ for (region in data) {
     }
 }
 Highcharts.chart('container', {
+    chart: {
+        styledMode: true
+    },
     series: [{
         type: 'treemap',
         layoutAlgorithm: 'squarified',

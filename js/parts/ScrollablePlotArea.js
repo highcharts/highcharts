@@ -1,17 +1,18 @@
 /**
- * (c) 2010-2018 Torstein Honsi
+ * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  *
  * Highcharts feature to make the Y axis stay fixed when scrolling the chart
  * horizontally on mobile devices. Supports left and right side axes.
  */
+
 'use strict';
+
 import H from './Globals.js';
 
 var addEvent = H.addEvent,
-    Chart = H.Chart,
-    each = H.each;
+    Chart = H.Chart;
 
 /**
  * Options for a scrollable plot area. This feature provides a minimum width for
@@ -20,11 +21,11 @@ var addEvent = H.addEvent,
  * This scrollbar provides smooth scrolling for the contents of the plot area,
  * whereas the title, legend and axes are fixed.
  *
- * @type    {Object}
- * @sample  {highcharts} highcharts/chart/scrollable-plotarea
- *          Scrollable plot area
- * @since   6.1.0
- * @product highcharts
+ * @sample {highcharts} highcharts/chart/scrollable-plotarea
+ *         Scrollable plot area
+ *
+ * @since     6.1.0
+ * @product   highcharts gantt
  * @apioption chart.scrollablePlotArea
  */
 
@@ -32,7 +33,7 @@ var addEvent = H.addEvent,
  * The minimum width for the plot area. If it gets smaller than this, the plot
  * area will become scrollable.
  *
- * @type    {Number}
+ * @type      {number}
  * @apioption chart.scrollablePlotArea.minWidth
  */
 
@@ -41,7 +42,7 @@ var addEvent = H.addEvent,
  * 1, where 0 aligns the plot area to the left and 1 aligns it to the right.
  * Typically we would use 1 if the chart has right aligned Y axes.
  *
- * @type    {Number}
+ * @type      {number}
  * @apioption chart.scrollablePlotArea.scrollPositionX
  */
 
@@ -66,13 +67,14 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
             this.clipBox.width += scrollablePixels;
 
             if (!e.skipAxes) {
-                each(this.axes, function (axis) {
+                this.axes.forEach(function (axis) {
                     if (axis.side === 1) {
                         // Get the plot lines right in getPlotLinePath,
                         // temporarily set it to the adjusted plot width.
                         axis.getPlotLinePath = function () {
                             var right = this.right,
                                 path;
+
                             this.right = right - axis.chart.scrollablePixels;
                             path = H.Axis.prototype.getPlotLinePath.apply(
                                 this,
@@ -105,6 +107,10 @@ addEvent(Chart, 'render', function () {
     }
 });
 
+/**
+ * @private
+ * @function Highcharts.Chart#setUpScrolling
+ */
 Chart.prototype.setUpScrolling = function () {
 
     // Add the necessary divs to provide scrolling
@@ -126,6 +132,10 @@ Chart.prototype.setUpScrolling = function () {
     this.setUpScrolling = null;
 };
 
+/**
+ * @private
+ * @function Highcharts.Chart#applyFixed
+ */
 Chart.prototype.applyFixed = function () {
     var container = this.container,
         fixedRenderer,
@@ -153,6 +163,7 @@ Chart.prototype.applyFixed = function () {
             this.fixedDiv,
             this.renderTo.firstChild
         );
+        this.renderTo.style.overflow = 'visible';
 
         this.fixedRenderer = fixedRenderer = new H.Renderer(
             this.fixedDiv,
@@ -171,7 +182,9 @@ Chart.prototype.applyFixed = function () {
             .addClass('highcharts-scrollable-mask')
             .add();
 
-        H.each([
+        // These elements are moved over to the fixed renderer and stay fixed
+        // when the user scrolls the chart.
+        ([
             this.inverted ?
                 '.highcharts-xaxis' :
                 '.highcharts-yaxis',
@@ -182,31 +195,44 @@ Chart.prototype.applyFixed = function () {
             '.highcharts-credits',
             '.highcharts-legend',
             '.highcharts-subtitle',
-            '.highcharts-title'
-        ], function (className) {
-            H.each(container.querySelectorAll(className), function (elem) {
-                fixedRenderer.box.appendChild(elem);
-                elem.style.pointerEvents = 'auto';
-            });
+            '.highcharts-title',
+            '.highcharts-legend-checkbox'
+        ]).forEach(function (className) {
+            [].forEach.call(
+                container.querySelectorAll(className),
+                function (elem) {
+                    (
+                        elem.namespaceURI === fixedRenderer.SVG_NS ?
+                            fixedRenderer.box :
+                            fixedRenderer.box.parentNode
+                    ).appendChild(elem);
+                    elem.style.pointerEvents = 'auto';
+                }
+            );
         });
     }
 
+    // Set the size of the fixed renderer to the visible width
     this.fixedRenderer.setSize(
         this.chartWidth,
         this.chartHeight
     );
 
+    // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + this.scrollablePixels;
+    H.stop(this.container);
     this.container.style.width = scrollableWidth + 'px';
     this.renderer.boxWrapper.attr({
         width: scrollableWidth,
         height: this.chartHeight,
         viewBox: [0, 0, scrollableWidth, this.chartHeight].join(' ')
     });
+    this.chartBackground.attr({ width: scrollableWidth });
 
     // Set scroll position
     if (firstTime) {
         var options = this.options.chart.scrollablePlotArea;
+
         if (options.scrollPositionX) {
             this.scrollingContainer.scrollLeft =
                 this.scrollablePixels * options.scrollPositionX;

@@ -15,9 +15,9 @@ QUnit.test('X-Range', function (assert) {
         }
     });
 
-    assert.strictEqual(
-        chart.yAxis[0].max,
-        undefined,
+    assert.notEqual(
+        typeof chart.yAxis[0].max,
+        'number',
         'Axis empty'
     );
 
@@ -89,6 +89,33 @@ QUnit.test('X-Range', function (assert) {
         'Partial fill set'
     );
 
+    series.update({
+        states: {
+            hover: {
+                color: '#ff0000',
+                borderWidth: 4,
+                borderColor: '#00ff00',
+                animation: {
+                    duration: 0
+                }
+            }
+        }
+    });
+
+    series.points[5].setState('hover');
+
+    assert.strictEqual(
+        series.points[5].graphicOriginal.attr('fill'),
+        '#ff0000',
+        'Hover color of graphicOriginal is correct (#9880).'
+    );
+
+    assert.strictEqual(
+        series.points[5].graphicOverlay.attr('fill'),
+        'rgb(179,0,0)',
+        'Hover color of graphicOverlay is correct (#9880).'
+    );
+
     series.points[0].remove();
     assert.strictEqual(
         series.points.length,
@@ -133,49 +160,103 @@ QUnit.test('X-Range', function (assert) {
         point.series.options.states.select.color,
         'Correct fill for a point upon point selection (#8104).'
     );
+
+    chart.xAxis[0].update({
+        min: 0,
+        max: 1000,
+        reversed: true
+    }, false);
+    chart.series[0].update({
+        minPointLength: 10,
+        borderWidth: 0,
+        data: [{
+            x: 45,
+            x2: 45.1,
+            y: 1
+        }, {
+            x: 5,
+            x2: 45,
+            y: 0
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.getBBox().width,
+        10,
+        'Correct width for minPointLength on a reversed xAxis (#8933).'
+    );
+
+    assert.ok(
+        chart.series[0].points[1].graphic.getBBox().width > 10,
+        'Longer points unaffected by minPointWidth on a reversed xAxis (#8933).'
+    );
+
+    chart.series[0].update({
+        pointPlacement: 0.5
+    });
+
+    point = chart.series[0].points[1];
+    assert.close(
+        point.graphicOriginal.attr('y') + point.graphicOriginal.getBBox().height / 2,
+        chart.plotHeight,
+        1,
+        'The point should now be on the center of the plot area'
+    );
 });
 
 QUnit.test('X-range data labels', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            "zoomType": "x",
+            zoomType: 'x',
             width: 600
         },
         xAxis: [{
             minRange: 1
         }],
         series: [{
-            "type": "xrange",
-            "dataLabels": {
-                "enabled": true,
-                "format": "{point.label}"
+            type: 'xrange',
+            dataLabels: {
+                enabled: true
             },
-            "data": [{
-                "y": 0,
-                "x": 0,
-                "x2": 2,
-                "color": "#8CCAF4",
-                "label": "first"
+            data: [{
+                y: 0,
+                x: 0,
+                x2: 2,
+                color: "#8CCAF4",
+                label: "first",
+                partialFill: 0.28
             }, {
-                "y": 0,
-                "x": 2,
-                "x2": 4,
-                "color": "#F4C986",
-                "label": "second"
+                y: 0,
+                x: 2,
+                x2: 4,
+                color: "#F4C986",
+                label: "second"
             }, {
-                "y": 0,
-                "x": 4,
-                "x2": 5,
-                "color": "#AA45FC",
-                "label": "third"
+                y: 0,
+                x: 4,
+                x2: 5,
+                color: "#AA45FC",
+                label: "third"
             }, {
-                "y": 0,
-                "x": 5,
-                "x2": 7,
-                "color": "#FCC9FF",
-                "label": "fourth"
+                y: 0,
+                x: 5,
+                x2: 7,
+                color: "#FCC9FF",
+                label: "fourth"
             }]
         }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.text.textStr,
+        '28%',
+        'Correctly rounded value using default formatter (#9291)'
+    );
+
+    chart.series[0].update({
+        dataLabels: {
+            format: '{point.label}'
+        }
     });
 
     var y = chart.series[0].points[0].dataLabel.attr('y');
@@ -216,6 +297,23 @@ QUnit.test('X-range data labels', function (assert) {
             return p.dataLabel.attr('y');
         }).join(','),
         [y, -9999, -9999, -9999].join(','),
+        'Shown and hidden labels'
+    );
+
+    chart.xAxis[0].setExtremes();
+    chart.series[0].addPoint({
+        y: 1,
+        x: 0.1,
+        x2: 0.2,
+        label: 'fifth'
+    });
+    chart.yAxis[0].setExtremes(0.5);
+
+    assert.deepEqual(
+        chart.series[0].points.map(function (p) {
+            return p.dataLabel.attr('y') === -9999 ? 'hidden' : 'visible';
+        }),
+        ['hidden', 'hidden', 'hidden', 'hidden', 'visible'],
         'Shown and hidden labels'
     );
 

@@ -32,7 +32,9 @@ rules:
     no-undefined: 0
     no-shadow: 0                # 10 violations as of 2015-10-31
     object-curly-spacing: [2, "always"]
+    object-shorthand: 0
     quotes: 0                   # We use single quotes in Highcharts, but need to allow JSON data in the demos.
+    prefer-rest-params: 0
     require-jsdoc: 0
     spaced-comment: 0
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style

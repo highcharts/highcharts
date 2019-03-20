@@ -17,9 +17,7 @@ QUnit.test('Ticks for a single point.', function (assert) {
     );
 
     chart.yAxis[0].update({
-        tickPositioner: function () {
-            return;
-        }
+        tickPositioner: function () {}
     });
 
     assert.strictEqual(
@@ -75,6 +73,22 @@ QUnit.test('Ticks for a single point.', function (assert) {
         chart.xAxis[0].tickPositions.length,
         1,
         'no doulbed tick for a small plot height (#7339)'
+    );
+});
+
+QUnit.test('The tickAmount option', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 2]
+        }],
+        xAxis: {
+            tickAmount: 5
+        }
+    });
+
+    assert.ok(
+        chart.xAxis[0].max > 1,
+        'The axis extreme should be greater than the max value (#9841)'
     );
 });
 
@@ -310,4 +324,145 @@ QUnit.test('Monthly ticks (#3500)', function (assert) {
     );
     // Reset
     Highcharts.setOptions(resetTo);
+});
+// Highcharts v4.0.3, Issue #3202
+// tickInterval for categorized axis
+QUnit.test('Tickinterval categories (#3202)', function (assert) {
+
+    TestTemplate.test('highcharts/line', {
+        xAxis: {
+            categories: Highcharts.getOptions().lang.months,
+            tickInterval: 2
+        }
+    }, function (template) {
+
+        var chart = template.chart,
+            series = chart.series[0],
+            xAxis = chart.xAxis[0],
+            points = series.points,
+            point1 = Highcharts.offset(points[0].graphic.element),
+            point1Box = points[0].graphic.getBBox(),
+            point2 = Highcharts.offset(points[2].graphic.element),
+            point2Box = points[0].graphic.getBBox(),
+            ticks = xAxis.ticks,
+            tick1 = Highcharts.offset(ticks[0].mark.element),
+            tick1Box = ticks[0].mark.getBBox(),
+            tick2 = Highcharts.offset(ticks[2].mark.element),
+            tick2Box = ticks[2].mark.getBBox();
+
+        assert.close(
+            (tick1.left + (tick1Box.width / 2)),
+            (point1.left + (point1Box.width / 2)),
+            {
+                'Chrome': 0.51,
+                'Edge': 0,
+                'Firefox': 2.5,
+                'MSIE': 0,
+                'Safari': 1.51
+            }[TestUtilities.browser],
+            'Tick marks should be on tick when tickInterval != 1'
+        );
+
+        assert.close(
+            (tick2.left + (tick2Box.width / 2)),
+            (point2.left + (point2Box.width / 2)),
+            {
+                'Chrome': 0.51,
+                'Edge': 0,
+                'Firefox': 2.5,
+                'MSIE': 0,
+                'Safari': 0.51
+            }[TestUtilities.browser],
+            'Tick marks should be on tick when tickInterval != 1'
+        );
+    });
+});
+
+// Highcharts v4.0.3, Issue #3363
+// Don't show decimals on yearly X axis
+QUnit.test('Yearly values (#3363)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        "series": [{
+            "data": [
+                [1998, 1],
+                [1999, 2],
+                [2000, 3],
+                [2001, 4],
+                [2002, 5],
+                [2003, 6],
+                [2004, 7],
+                [2005, 8],
+                [2006, 9],
+                [2007, 10],
+                [2008, 11],
+                [2009, 12],
+                [2010, 13]
+            ]
+        }]
+    });
+
+    function checkIfArrayContainDecimalNumbers(tickLabels) {
+        for (var i = 0; i < tickLabels.length; i++) {
+            if (tickLabels[i] % 1 !== 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    var xAxesTickLabels = chart.xAxis[0].tickPositions;
+    assert.ok(
+        checkIfArrayContainDecimalNumbers(xAxesTickLabels),
+        "The yearly X axis should contain a number with a decimal"
+    );
+    xAxesTickLabels.push(2011.5);
+    assert.notOk(
+        checkIfArrayContainDecimalNumbers(xAxesTickLabels),
+        "The yearly X axis should contain a number with a decimal"
+    );
+});
+
+// Highcharts v4.0.1, Issue #3195
+// No ticks on a short axis with startOnTick and endOnTick = false
+QUnit.test('No ticks on short axis (#3195)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            height: 180
+        },
+        yAxis: {
+            minorTickInterval: 'auto',
+            endOnTick: false,
+            startOnTick: false,
+            title: {
+                text: ''
+            }
+        },
+        series: [{
+            data: [380884, 380894, 380894.19, 381027.93, 386350.57, 381027.93, 343328.53, 343560.03, 343364.04, 343364.04, 343364.04, 343364.04]
+        }, {
+            data: [370207, 367742, 367309, 370140, 374598, 369605, 332312, 330942.6462461687, 331200, 333260, 332632, 329863]
+        }, {
+            data: [217020, 217020, 217020, 217020, 217020, 217020, 217020, 217020.83795782478, 217020, 217020, 217020, 217020]
+        }]
+    });
+
+    var yAxis = chart.yAxis[0],
+        yAxisTick = yAxis.ticks,
+        tickText = yAxis.labelGroup.element.childNodes[0].textContent,
+        listOfGridNodes = yAxis.gridGroup.element.childNodes;
+
+    assert.notStrictEqual(
+        yAxisTick,
+        undefined,
+        "No tick is showing"
+    );
+    assert.strictEqual(
+        tickText,
+        "300k",
+        "The content of the tick should be 300k"
+    );
+    assert.ok(
+        listOfGridNodes.length > 0,
+        "Grid lines is not visible"
+    );
 });

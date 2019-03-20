@@ -10,6 +10,10 @@ Highcharts.chart('container', {
         text: 'Highcharts Polar Chart'
     },
 
+    subtitle: {
+        text: 'Also known as Radar Chart'
+    },
+
     pane: {
         startAngle: 0,
         endAngle: 360
@@ -20,9 +24,7 @@ Highcharts.chart('container', {
         min: 0,
         max: 360,
         labels: {
-            formatter: function () {
-                return this.value + '°';
-            }
+            format: '{value}°'
         }
     },
 

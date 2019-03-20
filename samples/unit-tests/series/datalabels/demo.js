@@ -157,6 +157,7 @@ QUnit.test(
             plotOptions: {
                 series: {
                     dataLabels: {
+                        allowOverlap: true,
                         enabled: true,
                         padding: 0,
                         defer: false
@@ -252,5 +253,73 @@ QUnit.test(
         );
 
 
+    }
+);
+
+QUnit.test(
+    'Data labels with missing values on arearange (#9247)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'arearange',
+                width: 600,
+                height: 400
+            },
+            series: [{
+                data: [
+                    [0, 1],
+                    [2, 3],
+                    [4, 5],
+                    [0, 5]
+                ],
+                dataLabels: {
+                    enabled: true,
+                    formatter: function () {
+                        if (this.y > 0.5 && this.y < 4.5) {
+                            return this.y;
+                        }
+                        return null;
+                    }
+                }
+            }]
+
+        });
+
+        assert.deepEqual(
+            chart.series[0].points.map(function (p) {
+                return p.dataLabels && p.dataLabels.length;
+            }),
+            [1, 2, 1, 0],
+            'Data labels should only exist inside given range'
+        );
+
+        var dlPositions = [
+            chart.series[0].points[1].dataLabel.translateX,
+            chart.series[0].points[1].dataLabelUpper.translateX
+        ];
+        chart.setSize(500);
+        assert.strictEqual(
+            typeof dlPositions[0],
+            'number',
+            'Comparing real numbers...'
+        );
+        assert.strictEqual(
+            typeof dlPositions[1],
+            'number',
+            'Comparing real numbers...'
+        );
+        assert.notEqual(
+            chart.series[0].points[1].dataLabel.translateX,
+            dlPositions[0],
+            'Data label has moved (#9247)'
+        );
+        assert.notEqual(
+            chart.series[0].points[1].dataLabelUpper.translateX,
+            dlPositions[1],
+            'Data label has moved (#9247)'
+        );
+
+        // We should be able to destroy without errors
+        chart.destroy();
     }
 );

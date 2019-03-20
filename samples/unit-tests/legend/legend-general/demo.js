@@ -96,3 +96,28 @@ QUnit.test('Legend resize', function (assert) {
         done();
     }, 50);
 });
+
+
+
+QUnit.test('Legend redraws', function (assert) {
+    var visible = true,
+        chart = Highcharts.chart('container', {
+            legend: {
+                labelFormatter: function () {
+                    visible = this.visible;
+                    return this.visible;
+                }
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+    chart.series[0].hide(true);
+
+    assert.strictEqual(
+        visible,
+        false,
+        'Legend item text has changed (#2165)'
+    );
+});

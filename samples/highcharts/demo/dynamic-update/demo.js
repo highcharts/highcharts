@@ -1,10 +1,4 @@
 
-Highcharts.setOptions({
-    global: {
-        useUTC: false
-    }
-});
-
 Highcharts.chart('container', {
     chart: {
         type: 'spline',
@@ -23,6 +17,11 @@ Highcharts.chart('container', {
             }
         }
     },
+
+    time: {
+        useUTC: false
+    },
+
     title: {
         text: 'Live random data'
     },
@@ -41,11 +40,8 @@ Highcharts.chart('container', {
         }]
     },
     tooltip: {
-        formatter: function () {
-            return '<b>' + this.series.name + '</b><br/>' +
-                Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                Highcharts.numberFormat(this.y, 2);
-        }
+        headerFormat: '<b>{series.name}</b><br/>',
+        pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
     },
     legend: {
         enabled: false

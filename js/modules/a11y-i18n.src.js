@@ -1,23 +1,30 @@
 /**
  * Accessibility module - internationalization support
  *
- * (c) 2010-2018 Highsoft AS
+ * (c) 2010-2019 Highsoft AS
  * Author: Øystein Moseng
  *
  * License: www.highcharts.com/license
  */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
-var each = H.each,
-    pick = H.pick;
+var pick = H.pick;
 
 /**
  * String trim that works for IE6-8 as well.
- * @param  {string} str The input string
- * @return {string} The trimmed string
+ *
+ * @private
+ * @function stringTrim
+ *
+ * @param {string} str
+ *        The input string
+ *
+ * @return {string}
+ *         The trimmed string
  */
 function stringTrim(str) {
     return str.trim && str.trim() || str.replace(/^\s+|\s+$/g, '');
@@ -27,6 +34,16 @@ function stringTrim(str) {
  * i18n utility function. Format a single array or plural statement in a format
  * string. If the statement is not an array or plural statement, returns the
  * statement within brackets. Invalid array statements return an empty string.
+ *
+ * @private
+ * @function formatExtendedStatement
+ *
+ * @param {string} statement
+ *
+ * @param {Highcharts.Dictionary<*>} ctx
+ *        Context to apply to the format string.
+ *
+ * @return {string}
  */
 function formatExtendedStatement(statement, ctx) {
     var eachStart = statement.indexOf('#each('),
@@ -45,6 +62,7 @@ function formatExtendedStatement(statement, ctx) {
             eachArguments = eachStatement.split(','),
             lenArg = Number(eachArguments[1]),
             len;
+
         result = '';
         arr = ctx[eachArguments[0]];
         if (arr) {
@@ -66,18 +84,19 @@ function formatExtendedStatement(statement, ctx) {
             pluralStatement = statement.substring(pluralStart + 8, pluralEnd),
             pluralArguments = pluralStatement.split(','),
             num = Number(ctx[pluralArguments[0]]);
+
         switch (num) {
-            case 0:
-                result = pick(pluralArguments[4], pluralArguments[1]);
-                break;
-            case 1:
-                result = pick(pluralArguments[2], pluralArguments[1]);
-                break;
-            case 2:
-                result = pick(pluralArguments[3], pluralArguments[1]);
-                break;
-            default:
-                result = pluralArguments[1];
+        case 0:
+            result = pick(pluralArguments[4], pluralArguments[1]);
+            break;
+        case 1:
+            result = pick(pluralArguments[2], pluralArguments[1]);
+            break;
+        case 2:
+            result = pick(pluralArguments[3], pluralArguments[1]);
+            break;
+        default:
+            result = pluralArguments[1];
         }
         return result ? stringTrim(result) : '';
     }
@@ -87,6 +106,7 @@ function formatExtendedStatement(statement, ctx) {
         var arrayName = statement.substring(0, indexStart),
             ix = Number(statement.substring(indexStart + 1, indexEnd)),
             val;
+
         arr = ctx[arrayName];
         if (!isNaN(ix) && arr) {
             if (ix < 0) {
@@ -112,57 +132,83 @@ function formatExtendedStatement(statement, ctx) {
 
 
 /**
- * i18n formatting function. Extends H.format() functionality by also handling
- * arrays and plural conditionals. Arrays can be indexed as follows:
+ * i18n formatting function. Extends Highcharts.format() functionality by also
+ * handling arrays and plural conditionals. Arrays can be indexed as follows:
  *
- *  Format: 'This is the first index: {myArray[0]}. The last: {myArray[-1]}.'
- *  Context: { myArray: [0, 1, 2, 3, 4, 5] }
- *  Result: 'This is the first index: 0. The last: 5.'
+ * - Format: 'This is the first index: {myArray[0]}. The last: {myArray[-1]}.'
+ *
+ * - Context: { myArray: [0, 1, 2, 3, 4, 5] }
+ *
+ * - Result: 'This is the first index: 0. The last: 5.'
+ *
  *
  * They can also be iterated using the #each() function. This will repeat the
  * contents of the bracket expression for each element. Example:
  *
- *  Format: 'List contains: {#each(myArray)cm }'
- *  Context: { myArray: [0, 1, 2] }
- *  Result: 'List contains: 0cm 1cm 2cm '
+ * - Format: 'List contains: {#each(myArray)cm }'
+ *
+ * - Context: { myArray: [0, 1, 2] }
+ *
+ * - Result: 'List contains: 0cm 1cm 2cm '
+ *
  *
  * The #each() function optionally takes a length parameter. If positive, this
  * parameter specifies the max number of elements to iterate through. If
  * negative, the function will subtract the number from the length of the array.
  * Use this to stop iterating before the array ends. Example:
  *
- *  Format: 'List contains: {#each(myArray, -1), }and {myArray[-1]}.'
- *  Context: { myArray: [0, 1, 2, 3] }
- *  Result: 'List contains: 0, 1, 2, and 3.'
+ * - Format: 'List contains: {#each(myArray, -1), }and {myArray[-1]}.'
+ *
+ * - Context: { myArray: [0, 1, 2, 3] }
+ *
+ * - Result: 'List contains: 0, 1, 2, and 3.'
+ *
  *
  * Use the #plural() function to pick a string depending on whether or not a
  * context object is 1. Arguments are #plural(obj, plural, singular). Example:
  *
- *  Format: 'Has {numPoints} {#plural(numPoints, points, point}.'
- *  Context: { numPoints: 5 }
- *  Result: 'Has 5 points.'
+ * - Format: 'Has {numPoints} {#plural(numPoints, points, point}.'
  *
- * Optionally there are additional parameters for dual and none:
- *  #plural(obj,plural,singular,dual,none)
- * Example:
+ * - Context: { numPoints: 5 }
  *
- *  Format: 'Has {#plural(numPoints, many points, one point, two points, none}.'
- *  Context: { numPoints: 2 }
- *  Result: 'Has two points.'
+ * - Result: 'Has 5 points.'
+ *
+ *
+ * Optionally there are additional parameters for dual and none: #plural(obj,
+ * plural, singular, dual, none). Example:
+ *
+ * - Format: 'Has {#plural(numPoints, many points, one point, two points,
+ *   none}.'
+ *
+ * - Context: { numPoints: 2 }
+ *
+ * - Result: 'Has two points.'
+ *
  *
  * The dual or none parameters will take precedence if they are supplied.
  *
- * @param   {string} formatString The string to format.
- * @param   {object} context Context to apply to the format string.
- * @param   {Time} time A `Time` instance for date formatting, passed on to
- *                 H.format().
- * @return  {string} The formatted string.
+ *
+ * @function Highcharts.i18nFormat
+ * @requires a11y-i18n
+ *
+ * @param {string} formatString
+ *        The string to format.
+ *
+ * @param {Highcharts.Dictionary<*>} context
+ *        Context to apply to the format string.
+ *
+ * @param {Highcharts.Time} time
+ *        A `Time` instance for date formatting, passed on to H.format().
+ *
+ * @return {string}
+ *         The formatted string.
  */
 H.i18nFormat = function (formatString, context, time) {
     var getFirstBracketStatement = function (sourceStr, offset) {
             var str = sourceStr.slice(offset || 0),
                 startBracket = str.indexOf('{'),
                 endBracket = str.indexOf('}');
+
             if (startBracket > -1 && endBracket > startBracket) {
                 return {
                     statement: str.substring(startBracket + 1, endBracket),
@@ -206,7 +252,7 @@ H.i18nFormat = function (formatString, context, time) {
     // Perform the formatting. The formatArrayStatement function returns the
     // statement in brackets if it is not an array statement, which means it
     // gets picked up by H.format below.
-    each(tokens, function (token) {
+    tokens.forEach(function (token) {
         if (token.type === 'statement') {
             token.value = formatExtendedStatement(token.value, context);
         }
@@ -214,7 +260,7 @@ H.i18nFormat = function (formatString, context, time) {
 
     // Join string back together and pass to H.format to pick up non-array
     // statements.
-    return H.format(H.reduce(tokens, function (acc, cur) {
+    return H.format(tokens.reduce(function (acc, cur) {
         return acc + cur.value;
     }, ''), context, time);
 };
@@ -222,14 +268,24 @@ H.i18nFormat = function (formatString, context, time) {
 
 /**
  * Apply context to a format string from lang options of the chart.
- * @param  {string} langKey Key (using dot notation) into lang option structure
- * @param  {object} context Context to apply to the format string
- * @return {string} The formatted string
+ *
+ * @function Highcharts.Chart#langFormat
+ * @requires a11y-i18n
+ *
+ * @param {string} langKey
+ *        Key (using dot notation) into lang option structure.
+ *
+ * @param {Highcharts.Dictionary<*>} context
+ *        Context to apply to the format string.
+ *
+ * @return {string}
+ *         The formatted string.
  */
 H.Chart.prototype.langFormat = function (langKey, context, time) {
     var keys = langKey.split('.'),
         formatString = this.options.lang,
         i = 0;
+
     for (; i < keys.length; ++i) {
         formatString = formatString && formatString[keys[i]];
     }
@@ -240,28 +296,26 @@ H.Chart.prototype.langFormat = function (langKey, context, time) {
 
 H.setOptions({
     lang: {
+
         /**
          * Configure the accessibility strings in the chart. Requires the
-         * [accessibility module](//code.highcharts.com/modules/accessibility.
-         * js) to be loaded. For a description of the module and information
-         * on its features, see [Highcharts Accessibility](http://www.highcharts.
-         * com/docs/chart-concepts/accessibility).
+         * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
+         * to be loaded. For a description of the module and information on its
+         * features, see
+         * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
          *
          * For more dynamic control over the accessibility functionality, see
-         * [accessibility.pointDescriptionFormatter](
-         * accessibility.pointDescriptionFormatter),
-         * [accessibility.seriesDescriptionFormatter](
-         * accessibility.seriesDescriptionFormatter), and
-         * [accessibility.screenReaderSectionFormatter](
-         * accessibility.screenReaderSectionFormatter).
+         * [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter),
+         * [accessibility.seriesDescriptionFormatter](#accessibility.seriesDescriptionFormatter),
+         * and
+         * [accessibility.screenReaderSectionFormatter](#accessibility.screenReaderSectionFormatter).
          *
-         * @since 6.0.6
-         * @type {Object}
+         * @since        6.0.6
          * @optionparent lang.accessibility
          */
         accessibility: {
-            /* eslint-disable max-len */
 
+            /* eslint-disable max-len */
             screenReaderRegionLabel: 'Chart screen reader information.',
             navigationHint: 'Use regions/landmarks to skip ahead to chart {#plural(numSeries, and navigate between data series,)}',
             defaultChartTitle: 'Chart',
@@ -277,7 +331,8 @@ H.setOptions({
             mapZoomIn: 'Zoom chart',
             mapZoomOut: 'Zoom out chart',
             rangeSelectorButton: 'Select range {buttonText}',
-            legendItem: 'Toggle visibility of series {itemName}',
+            legendLabel: 'Toggle series visibility',
+            /* eslint-enable max-len */
 
             /**
              * Title element text for the chart SVG element. Leave this
@@ -295,31 +350,29 @@ H.setOptions({
              * when these series types are used.
              *
              * @since 6.0.6
-             * @type {Object}
-             * @optionparent lang.accessibility.seriesTypeDescriptions
              */
             seriesTypeDescriptions: {
                 boxplot: 'Box plot charts are typically used to display ' +
-                    'groups of statistical data. Each data point in the ' +
-                    'chart can have up to 5 values: minimum, lower quartile, ' +
-                    'median, upper quartile, and maximum.',
+                'groups of statistical data. Each data point in the ' +
+                'chart can have up to 5 values: minimum, lower quartile, ' +
+                'median, upper quartile, and maximum.',
                 arearange: 'Arearange charts are line charts displaying a ' +
-                    'range between a lower and higher value for each point.',
+                'range between a lower and higher value for each point.',
                 areasplinerange: 'These charts are line charts displaying a ' +
-                    'range between a lower and higher value for each point.',
+                'range between a lower and higher value for each point.',
                 bubble: 'Bubble charts are scatter charts where each data ' +
-                    'point also has a size value.',
+                'point also has a size value.',
                 columnrange: 'Columnrange charts are column charts ' +
-                    'displaying a range between a lower and higher value for ' +
-                    'each point.',
+                'displaying a range between a lower and higher value for ' +
+                'each point.',
                 errorbar: 'Errorbar series are used to display the ' +
-                    'variability of the data.',
+                'variability of the data.',
                 funnel: 'Funnel charts are used to display reduction of data ' +
-                    'in stages.',
+                'in stages.',
                 pyramid: 'Pyramid charts consist of a single pyramid with ' +
-                    'item heights corresponding to each point value.',
+                'item heights corresponding to each point value.',
                 waterfall: 'A waterfall chart is a column chart where each ' +
-                    'column contributes towards a total end value.'
+                'column contributes towards a total end value.'
             },
 
             /**
@@ -333,10 +386,9 @@ H.setOptions({
              * type.
              *
              * @since 6.0.6
-             * @type {Object}
-             * @optionparent lang.accessibility.chartTypes
              */
             chartTypes: {
+                /* eslint-disable max-len */
                 emptyChart: 'Empty chart',
                 mapTypeDescription: 'Map of {mapTitle} with {numSeries} data series.',
                 unknownMap: 'Map of unspecified region with {numSeries} data series.',
@@ -359,28 +411,25 @@ H.setOptions({
                 boxplotMultiple: 'Boxplot with {numSeries} data series.',
                 bubbleSingle: 'Bubble chart with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
                 bubbleMultiple: 'Bubble chart with {numSeries} data series.'
-            },
+            }, /* eslint-enable max-len */
 
             /**
              * Axis description format strings.
              *
              * @since 6.0.6
-             * @type {Object}
-             * @optionparent lang.accessibility.axis
              */
             axis: {
+                /* eslint-disable max-len */
                 xAxisDescriptionSingular: 'The chart has 1 X axis displaying {names[0]}.',
-                xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each(names, -1), }and {names[-1]}',
+                xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#names.forEach(-1), }and {names[-1]}',
                 yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}.',
-                yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each(names, -1), }and {names[-1]}'
-            },
+                yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#names.forEach(-1), }and {names[-1]}'
+            }, /* eslint-enable max-len */
 
             /**
              * Exporting menu format strings for accessibility module.
              *
              * @since 6.0.6
-             * @type {Object}
-             * @optionparent lang.accessibility.exporting
              */
             exporting: {
                 chartMenuLabel: 'Chart export',
@@ -391,30 +440,28 @@ H.setOptions({
             /**
              * Lang configuration for different series types. For more dynamic
              * control over the series element descriptions, see
-             * [accessibility.seriesDescriptionFormatter](
-             * accessibility.seriesDescriptionFormatter).
+             * [accessibility.seriesDescriptionFormatter](#accessibility.seriesDescriptionFormatter).
              *
              * @since 6.0.6
-             * @type {Object}
-             * @optionparent lang.accessibility.series
              */
             series: {
                 /**
                  * Lang configuration for the series main summary. Each series
                  * type has two modes:
-                 *     1. This series type is the only series type used in the
-                 *        chart
-                 *    2. This is a combination chart with multiple series types
+                 *
+                 * 1. This series type is the only series type used in the
+                 *    chart
+                 *
+                 * 2. This is a combination chart with multiple series types
                  *
                  * If a definition does not exist for the specific series type
                  * and mode, the 'default' lang definitions are used.
                  *
                  * @since 6.0.6
-                 * @type {Object}
-                 * @optionparent lang.accessibility.series.summary
                  */
                 summary: {
-                    default: '{name}, series {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
+                    /* eslint-disable max-len */
+                    'default': '{name}, series {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
                     defaultCombination: '{name}, series {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
                     line: '{name}, line {ix} of {numSeries} with {numPoints} data {#plural(numPoints, points, point)}.',
                     lineCombination: '{name}, series {ix} of {numSeries}. Line with {numPoints} data {#plural(numPoints, points, point)}.',
@@ -438,14 +485,12 @@ H.setOptions({
                     maplineCombination: '{name}, series {ix} of {numSeries}. Line with {numPoints} data {#plural(numPoints, points, point)}.',
                     mapbubble: '{name}, bubble series {ix} of {numSeries} with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
                     mapbubbleCombination: '{name}, series {ix} of {numSeries}. Bubble series with {numPoints} {#plural(numPoints, bubbles, bubble)}.'
-                },
-                /* eslint-enable max-len */
+                }, /* eslint-enable max-len */
 
                 /**
                  * User supplied description text. This is added after the main
                  * summary if present.
                  *
-                 * @type {String}
                  * @since 6.0.6
                  */
                 description: '{description}',
@@ -454,7 +499,6 @@ H.setOptions({
                  * xAxis description for series if there are multiple xAxes in
                  * the chart.
                  *
-                 * @type {String}
                  * @since 6.0.6
                  */
                 xAxisDescription: 'X axis, {name}',
@@ -463,11 +507,13 @@ H.setOptions({
                  * yAxis description for series if there are multiple yAxes in
                  * the chart.
                  *
-                 * @type {String}
                  * @since 6.0.6
                  */
                 yAxisDescription: 'Y axis, {name}'
+
             }
+
         }
+
     }
 });

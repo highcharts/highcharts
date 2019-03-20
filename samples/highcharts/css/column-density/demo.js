@@ -12,6 +12,10 @@ function getData(n) {
 
 var chart = Highcharts.chart('container', {
 
+    chart: {
+        styledMode: true
+    },
+
     title: {
         text: 'Dense column borders'
     },

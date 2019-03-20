@@ -1,10 +1,13 @@
-/**
- * (c) 2010-2017 Kacper Madej
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2019 Kacper Madej
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -14,25 +17,31 @@ var seriesType = H.seriesType,
 /**
  * The Zig Zag series type.
  *
- * @constructor seriesTypes.zigzag
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.zigzag
+ *
+ * @augments Highcharts.Series
  */
-seriesType('zigzag', 'sma',
+seriesType(
+    'zigzag',
+    'sma',
     /**
      * Zig Zag indicator.
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/zigzag
-     *                     Zig Zag indicator
-     * @since 6.0.0
+     * @sample stock/indicators/zigzag
+     *         Zig Zag indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.zigzag
      */
     {
         /**
-         * @excluding index,period
+         * @excluding index, period
          */
         params: {
             /**
@@ -41,10 +50,6 @@ seriesType('zigzag', 'sma',
              *
              * For example using OHLC data, index=2 means the indicator will be
              * calculated using Low values.
-             *
-             * @type {Number}
-             * @since 6.0.0
-             * @product highstock
              */
             lowIndex: 2,
             /**
@@ -53,10 +58,6 @@ seriesType('zigzag', 'sma',
              *
              * For example using OHLC data, index=1 means the indicator will be
              * calculated using High values.
-             *
-             * @type {Number}
-             * @since 6.0.0
-             * @product highstock
              */
             highIndex: 1,
             /**
@@ -64,14 +65,14 @@ seriesType('zigzag', 'sma',
              *
              * For example deviation=1 means the indicator will ignore all price
              * movements less than 1%.
-             *
-             * @type {Number}
-             * @since 6.0.0
-             * @product highstock
              */
             deviation: 1
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         nameComponents: ['deviation'],
         nameSuffixes: ['%'],
         nameBase: 'Zig Zag',
@@ -205,22 +206,16 @@ seriesType('zigzag', 'sma',
                 yData: yData
             };
         }
-    });
+    }
+);
 
 /**
  * A `Zig Zag` series. If the [type](#series.zigzag.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.zigzag
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.zigzag
+ * @since     6.0.0
+ * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.zigzag
- */
-
-/**
- * @extends series.sma.data
- * @product highstock
- * @apioption series.zigzag.data
  */

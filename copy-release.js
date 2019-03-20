@@ -1,5 +1,7 @@
+#!/usr/bin/env node
+
 /* eslint-env node, es6 */
-/* eslint valid-jsdoc: 0, no-console: 0 */
+/* eslint-disable */
 /* eslint func-style: ["error", "declaration", { "allowArrowFunctions": true }] */
 
 /**
@@ -14,10 +16,17 @@
     const {
         getFilesInFolder
     } = require('highcharts-assembler/src/build.js');
+    const {
+        removeFile
+    } = require('highcharts-assembler/src/utilities.js');
+    const {
+        join
+    } = require('path');
 
     // Set this to true after changes have been reviewed
     const push = process.argv[2] === '--push';
     const releaseRepo = 'highcharts-dist';
+    const pathTo = '../' + releaseRepo + '/';
 
     /**
      * Commit, tag and push
@@ -74,6 +83,11 @@
                     throw err;
                 }
                 json = JSON.parse(json);
+                json.types = (
+                    json.main ?
+                    json.main.replace(/\.js$/, '.d.ts') :
+                    'highcharts.d.ts'
+                );
                 json.version = version;
                 json = JSON.stringify(json, null, '  ');
                 fs.writeFile('../' + releaseRepo + '/' + file + '.json', json, proceed);
@@ -81,28 +95,55 @@
         });
     }
 
+
+    const removeFilesInFolder = (folder, exceptions) => {
+        const files = getFilesInFolder(folder, true, '');
+        const promises = files
+            // Filter out files that should be kept
+            .filter(file => !exceptions.some((pattern) => file.match(pattern)))
+            .map(file => removeFile(join(folder, file)));
+        return Promise.all(promises)
+            .then(() => console.log('Successfully removed content of ' + folder));
+    };
+
     /**
      * Copy the JavaScript files over
      */
     function copyFiles() {
-        const fnFilter = (src) => (
-            (src.indexOf('.') !== 0) &&
-            (src.indexOf('readme') === -1)
-        );
-        const existing = [];
         const mapFromTo = {};
-        const pathTo = '../' + releaseRepo + '/';
-        ['highcharts', 'highstock', 'highmaps']
-        .map((prod) => 'build/dist/' + prod + '/code/')
-        .forEach((pathDir) => {
-            const files = getFilesInFolder(pathDir, true);
-            files.forEach((filename) => {
-                if (fnFilter(filename) && !existing.includes(filename)) {
-                    existing.push(filename);
-                    mapFromTo[pathDir + filename] = pathTo + filename;
-                }
-            });
+        const folders = [{
+            from: 'code',
+            to: pathTo
+        }, {
+            from: 'css',
+            to: join(pathTo, 'css')
+        }];
+
+        const files = {
+            'vendor/canvg.js': join(pathTo, 'lib/canvg.js'),
+            'vendor/canvg.src.js': join(pathTo, 'lib/canvg.src.js'),
+            'vendor/jspdf.js': join(pathTo, 'lib/jspdf.js'),
+            'vendor/jspdf.src.js': join(pathTo, 'lib/jspdf.src.js'),
+            'vendor/rgbcolor.js': join(pathTo, 'lib/rgbcolor.js'),
+            'vendor/rgbcolor.src.js': join(pathTo, 'lib/rgbcolor.src.js'),
+            'vendor/svg2pdf.js': join(pathTo, 'lib/svg2pdf.js'),
+            'vendor/svg2pdf.src.js': join(pathTo, 'lib/svg2pdf.src.js')
+        };
+
+        // Copy all the files in the code folder
+        folders.forEach((folder) => {
+            const {
+                from,
+                to
+            } = folder;
+            getFilesInFolder(from, true)
+                .forEach((filename) => {
+                    mapFromTo[join(from, filename)] = join(to, filename);
+                });
         });
+
+        // Add additional files to list.
+        Object.assign(mapFromTo, files);
 
         // Copy all the files to release repository
         Object.keys(mapFromTo).forEach((from) => {
@@ -131,15 +172,19 @@
         const name = 'Highcharts';
         const version = products[name].nr;
         const product = name.toLowerCase();
-        copyFiles(product, name);
-        updateJSONFiles(product, version, name, () => {
-            if (push) {
-                runGit(product, version);
+        const keepFiles = ['.git', 'bower.json', 'package.json', 'README.md'];
+        return removeFilesInFolder(pathTo, keepFiles)
+        .then(() => {
+            copyFiles();
+            updateJSONFiles(product, version, name, () => {
+                if (push) {
+                    runGit(product, version);
+                }
+            });
+            if (!push) {
+                console.log('Please verify the changes in the release repos. Then run again ' +
+                    'with --push as an argument.');
             }
         });
-        if (!push) {
-            console.log('Please verify the changes in the release repos. Then run again ' +
-                'with --push as an argument.');
-        }
     });
 }());

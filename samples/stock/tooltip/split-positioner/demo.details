@@ -1,0 +1,7 @@
+---
+ name: Highcharts Stock Demo
+ authors:
+   - Paweł Fus
+ compareTooltips: true
+ js_wrap: b
+...

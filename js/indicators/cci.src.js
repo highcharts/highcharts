@@ -1,4 +1,11 @@
+/* *
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
 'use strict';
+
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
@@ -7,7 +14,7 @@ var isArray = H.isArray,
 
 // Utils:
 function sumArray(array) {
-    return H.reduce(array, function (prev, cur) {
+    return array.reduce(function (prev, cur) {
         return prev + cur;
     }, 0);
 }
@@ -27,25 +34,36 @@ function meanDeviation(arr, sma) {
 /**
  * The CCI series type.
  *
- * @constructor seriesTypes.cci
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.cci
+ *
+ * @augments Highcharts.Series
  */
-seriesType('cci', 'sma',
+seriesType(
+    'cci',
+    'sma',
     /**
      * Commodity Channel Index (CCI). This series requires `linkedTo` option to
      * be set.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/cci CCI indicator
-     * @since 6.0.0
+     * @sample stock/indicators/cci
+     *         CCI indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.cci
      */
     {
         params: {
             period: 14
         }
-    }, {
+    },
+    /**
+     * @lends Highcharts.Series#
+     */
+    {
         getValues: function (series, params) {
             var period = params.period,
                 xVal = series.xData,
@@ -98,24 +116,16 @@ seriesType('cci', 'sma',
                 yData: yData
             };
         }
-    });
+    }
+);
 
 /**
  * A `CCI` series. If the [type](#series.cci.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.cci
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.cci
+ * @since     6.0.0
+ * @excluding dataParser, dataURL
+ * @product   highstock
  * @apioption series.cci
- */
-
-/**
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.sma.data
- * @product highstock
- * @apioption series.cci.data
  */

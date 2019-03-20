@@ -1,0 +1,375 @@
+{
+    "compilerOptions": {
+        "esModuleInterop": false,
+        "noEmit": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "baseUrl": "../../",
+        "module": "umd",
+        "moduleResolution": "node",
+        "rootDir": "../../",
+        "lib": ["es6", "dom"],
+        "paths": {
+            "highcharts": ["code/highcharts"],
+            "highcharts/*": ["code/*"],
+            "highcharts/indicators/*": ["code/indicators/*"],
+            "highcharts/modules/*": ["code/modules/*"]
+        },
+        "types": []
+    },
+    "include": [
+        "../../test/typescript/classes/**/*.ts",
+        "../../test/typescript/issues/**/*.ts"
+    ],
+    "files": [
+        "../../code/highcharts.d.ts",
+        "../../code/highcharts.src.d.ts",
+        "../../test/typescript/globals.ts",
+        "../../test/typescript/highcharts.ts",
+
+        "../../code/highcharts-3d.d.ts",
+        "../../code/highcharts-3d.src.d.ts",
+        "../../test/typescript/highcharts-3d.ts",
+
+        "../../code/highcharts-more.d.ts",
+        "../../code/highcharts-more.src.d.ts",
+        "../../test/typescript/highcharts-more.ts",
+
+        "../../code/modules/accessibility.d.ts",
+        "../../code/modules/accessibility.src.d.ts",
+        "../../test/typescript/modules/accessibility.ts",
+
+        "../../code/modules/arrow-symbols.d.ts",
+        "../../code/modules/arrow-symbols.src.d.ts",
+        "../../test/typescript/modules/arrow-symbols.ts",
+
+        "../../code/modules/boost.d.ts",
+        "../../code/modules/boost.src.d.ts",
+        "../../test/typescript/modules/boost.ts",
+
+        "../../code/modules/boost-canvas.d.ts",
+        "../../code/modules/boost-canvas.src.d.ts",
+        "../../test/typescript/modules/boost-canvas.ts",
+
+        "../../code/modules/broken-axis.d.ts",
+        "../../code/modules/broken-axis.src.d.ts",
+        "../../test/typescript/modules/broken-axis.ts",
+
+        "../../code/modules/bullet.d.ts",
+        "../../code/modules/bullet.src.d.ts",
+        "../../test/typescript/modules/bullet.ts",
+
+        "../../code/modules/current-date-indicator.d.ts",
+        "../../code/modules/current-date-indicator.src.d.ts",
+        "../../test/typescript/modules/current-date-indicator.ts",
+
+        "../../code/modules/data.d.ts",
+        "../../code/modules/data.src.d.ts",
+        "../../test/typescript/modules/data.ts",
+
+        "../../code/modules/drag-panes.d.ts",
+        "../../code/modules/drag-panes.src.d.ts",
+        "../../test/typescript/modules/drag-panes.ts",
+
+        "../../code/modules/draggable-points.d.ts",
+        "../../code/modules/draggable-points.src.d.ts",
+        "../../test/typescript/modules/draggable-points.ts",
+
+        "../../code/modules/drilldown.d.ts",
+        "../../code/modules/drilldown.src.d.ts",
+        "../../test/typescript/modules/drilldown.ts",
+
+        "../../code/modules/export-data.d.ts",
+        "../../code/modules/export-data.src.d.ts",
+        "../../test/typescript/modules/export-data.ts",
+
+        "../../code/modules/exporting.d.ts",
+        "../../code/modules/exporting.src.d.ts",
+        "../../test/typescript/modules/exporting.ts",
+
+        "../../code/modules/funnel.d.ts",
+        "../../code/modules/funnel.src.d.ts",
+        "../../test/typescript/modules/funnel.ts",
+
+        "../../code/modules/gantt.d.ts",
+        "../../code/modules/gantt.src.d.ts",
+        "../../test/typescript/modules/gantt.ts",
+        "../../test/typescript/highcharts-gantt.ts",
+
+        "../../code/modules/grid-axis.d.ts",
+        "../../code/modules/grid-axis.src.d.ts",
+        "../../test/typescript/modules/grid-axis.ts",
+
+        "../../code/modules/heatmap.d.ts",
+        "../../code/modules/heatmap.src.d.ts",
+        "../../test/typescript/modules/heatmap.ts",
+
+        "../../code/modules/histogram-bellcurve.d.ts",
+        "../../code/modules/histogram-bellcurve.src.d.ts",
+        "../../test/typescript/modules/histogram-bellcurve.ts",
+
+        "../../code/modules/item-series.d.ts",
+        "../../code/modules/item-series.src.d.ts",
+        "../../test/typescript/modules/item-series.ts",
+
+        "../../code/modules/map.d.ts",
+        "../../code/modules/map.src.d.ts",
+        "../../test/typescript/modules/map.ts",
+        "../../test/typescript/highmaps.ts",
+
+        "../../code/modules/map-parser.d.ts",
+        "../../code/modules/map-parser.src.d.ts",
+        "../../test/typescript/modules/map-parser.ts",
+
+        "../../code/modules/no-data-to-display.d.ts",
+        "../../code/modules/no-data-to-display.src.d.ts",
+        "../../test/typescript/modules/no-data-to-display.ts",
+
+        "../../code/modules/offline-exporting.d.ts",
+        "../../code/modules/offline-exporting.src.d.ts",
+        "../../test/typescript/modules/offline-exporting.ts",
+
+        "../../code/modules/oldie.d.ts",
+        "../../code/modules/oldie.src.d.ts",
+        "../../test/typescript/modules/oldie.ts",
+
+        "../../code/modules/overlapping-datalabels.d.ts",
+        "../../code/modules/overlapping-datalabels.src.d.ts",
+        "../../test/typescript/modules/overlapping-datalabels.ts",
+
+        "../../code/modules/parallel-coordinates.d.ts",
+        "../../code/modules/parallel-coordinates.src.d.ts",
+        "../../test/typescript/modules/parallel-coordinates.ts",
+
+        "../../code/modules/pareto.d.ts",
+        "../../code/modules/pareto.src.d.ts",
+        "../../test/typescript/modules/pareto.ts",
+
+        "../../code/modules/pathfinder.d.ts",
+        "../../code/modules/pathfinder.src.d.ts",
+        "../../test/typescript/modules/pathfinder.ts",
+
+        "../../code/modules/pattern-fill.d.ts",
+        "../../code/modules/pattern-fill.src.d.ts",
+        "../../test/typescript/modules/pattern-fill.ts",
+
+        "../../code/modules/sankey.d.ts",
+        "../../code/modules/sankey.src.d.ts",
+        "../../test/typescript/modules/sankey.ts",
+
+        "../../code/modules/series-label.d.ts",
+        "../../code/modules/series-label.src.d.ts",
+        "../../test/typescript/modules/series-label.ts",
+
+        "../../code/modules/solid-gauge.d.ts",
+        "../../code/modules/solid-gauge.src.d.ts",
+        "../../test/typescript/modules/solid-gauge.ts",
+
+        "../../code/modules/static-scale.d.ts",
+        "../../code/modules/static-scale.src.d.ts",
+        "../../test/typescript/modules/static-scale.ts",
+
+        "../../code/modules/stock.d.ts",
+        "../../code/modules/stock.src.d.ts",
+        "../../test/typescript/modules/stock.ts",
+        "../../test/typescript/highstock.ts",
+
+        "../../code/modules/stock-tools.d.ts",
+        "../../code/modules/stock-tools.src.d.ts",
+        "../../test/typescript/modules/stock-tools.ts",
+
+        "../../code/modules/streamgraph.d.ts",
+        "../../code/modules/streamgraph.src.d.ts",
+        "../../test/typescript/modules/streamgraph.ts",
+
+        "../../code/modules/sunburst.d.ts",
+        "../../code/modules/sunburst.src.d.ts",
+        "../../test/typescript/modules/sunburst.ts",
+
+        "../../code/modules/tilemap.d.ts",
+        "../../code/modules/tilemap.src.d.ts",
+        "../../test/typescript/modules/tilemap.ts",
+
+        "../../code/modules/treegrid.d.ts",
+        "../../code/modules/treegrid.src.d.ts",
+        "../../test/typescript/modules/treegrid.ts",
+
+        "../../code/modules/treemap.d.ts",
+        "../../code/modules/treemap.src.d.ts",
+        "../../test/typescript/modules/treemap.ts",
+
+        "../../code/modules/variable-pie.d.ts",
+        "../../code/modules/variable-pie.src.d.ts",
+        "../../test/typescript/modules/variable-pie.ts",
+
+        "../../code/modules/variwide.d.ts",
+        "../../code/modules/variwide.src.d.ts",
+        "../../test/typescript/modules/variwide.ts",
+
+        "../../code/modules/vector.d.ts",
+        "../../code/modules/vector.src.d.ts",
+        "../../test/typescript/modules/vector.ts",
+
+        "../../code/modules/windbarb.d.ts",
+        "../../code/modules/windbarb.src.d.ts",
+        "../../test/typescript/modules/windbarb.ts",
+
+        "../../code/modules/wordcloud.d.ts",
+        "../../code/modules/wordcloud.src.d.ts",
+        "../../test/typescript/modules/wordcloud.ts",
+
+        "../../code/indicators/indicators.d.ts",
+        "../../code/indicators/indicators.src.d.ts",
+        "../../test/typescript/indicators/indicators.ts",
+
+        "../../code/indicators/acceleration-bands.d.ts",
+        "../../code/indicators/acceleration-bands.src.d.ts",
+
+        "../../code/indicators/accumulation-distribution.d.ts",
+        "../../code/indicators/accumulation-distribution.src.d.ts",
+
+        "../../code/indicators/ao.d.ts",
+        "../../code/indicators/ao.src.d.ts",
+
+        "../../code/indicators/apo.d.ts",
+        "../../code/indicators/apo.src.d.ts",
+
+        "../../code/indicators/aroon-oscillator.d.ts",
+        "../../code/indicators/aroon-oscillator.src.d.ts",
+
+        "../../code/indicators/aroon.d.ts",
+        "../../code/indicators/aroon.src.d.ts",
+
+        "../../code/indicators/atr.d.ts",
+        "../../code/indicators/atr.src.d.ts",
+
+        "../../code/indicators/bollinger-bands.d.ts",
+        "../../code/indicators/bollinger-bands.src.d.ts",
+
+        "../../code/indicators/cci.d.ts",
+        "../../code/indicators/cci.src.d.ts",
+
+        "../../code/indicators/chaikin.d.ts",
+        "../../code/indicators/chaikin.src.d.ts",
+
+        "../../code/indicators/cmf.d.ts",
+        "../../code/indicators/cmf.src.d.ts",
+
+        "../../code/indicators/dema.d.ts",
+        "../../code/indicators/dema.src.d.ts",
+
+        "../../code/indicators/dpo.d.ts",
+        "../../code/indicators/dpo.src.d.ts",
+
+        "../../code/indicators/ema.d.ts",
+        "../../code/indicators/ema.src.d.ts",
+
+        "../../code/indicators/ichimoku-kinko-hyo.d.ts",
+        "../../code/indicators/ichimoku-kinko-hyo.src.d.ts",
+
+        "../../code/indicators/keltner-channels.d.ts",
+        "../../code/indicators/keltner-channels.src.d.ts",
+
+        "../../code/indicators/macd.d.ts",
+        "../../code/indicators/macd.src.d.ts",
+
+        "../../code/indicators/mfi.d.ts",
+        "../../code/indicators/mfi.src.d.ts",
+
+        "../../code/indicators/momentum.d.ts",
+        "../../code/indicators/momentum.src.d.ts",
+
+        "../../code/indicators/natr.d.ts",
+        "../../code/indicators/natr.src.d.ts",
+
+        "../../code/indicators/pivot-points.d.ts",
+        "../../code/indicators/pivot-points.src.d.ts",
+
+        "../../code/indicators/ppo.d.ts",
+        "../../code/indicators/ppo.src.d.ts",
+
+        "../../code/indicators/price-channel.d.ts",
+        "../../code/indicators/price-channel.src.d.ts",
+
+        "../../code/indicators/price-envelopes.d.ts",
+        "../../code/indicators/price-envelopes.src.d.ts",
+
+        "../../code/indicators/psar.d.ts",
+        "../../code/indicators/psar.src.d.ts",
+
+        "../../code/indicators/roc.d.ts",
+        "../../code/indicators/roc.src.d.ts",
+
+        "../../code/indicators/rsi.d.ts",
+        "../../code/indicators/rsi.src.d.ts",
+
+        "../../code/indicators/stochastic.d.ts",
+        "../../code/indicators/stochastic.src.d.ts",
+
+        "../../code/indicators/supertrend.d.ts",
+        "../../code/indicators/supertrend.src.d.ts",
+
+        "../../code/indicators/tema.d.ts",
+        "../../code/indicators/tema.src.d.ts",
+
+        "../../code/indicators/trix.d.ts",
+        "../../code/indicators/trix.src.d.ts",
+
+        "../../code/indicators/volume-by-price.d.ts",
+        "../../code/indicators/volume-by-price.src.d.ts",
+
+        "../../code/indicators/vwap.d.ts",
+        "../../code/indicators/vwap.src.d.ts",
+
+        "../../code/indicators/williams-r.d.ts",
+        "../../code/indicators/williams-r.src.d.ts",
+
+        "../../code/indicators/wma.d.ts",
+        "../../code/indicators/wma.src.d.ts",
+
+        "../../code/indicators/zigzag.d.ts",
+        "../../code/indicators/zigzag.src.d.ts",
+
+        "../../code/themes/avocado.d.ts",
+        "../../code/themes/avocado.src.d.ts",
+        "../../test/typescript/themes/avocado.ts",
+
+        "../../code/themes/dark-blue.d.ts",
+        "../../code/themes/dark-blue.src.d.ts",
+        "../../test/typescript/themes/dark-blue.ts",
+
+        "../../code/themes/dark-green.d.ts",
+        "../../code/themes/dark-green.src.d.ts",
+        "../../test/typescript/themes/dark-green.ts",
+
+        "../../code/themes/dark-unica.d.ts",
+        "../../code/themes/dark-unica.src.d.ts",
+        "../../test/typescript/themes/dark-unica.ts",
+
+        "../../code/themes/gray.d.ts",
+        "../../code/themes/gray.src.d.ts",
+        "../../test/typescript/themes/gray.ts",
+
+        "../../code/themes/grid-light.d.ts",
+        "../../code/themes/grid-light.src.d.ts",
+        "../../test/typescript/themes/grid-light.ts",
+
+        "../../code/themes/grid.d.ts",
+        "../../code/themes/grid.src.d.ts",
+        "../../test/typescript/themes/grid.ts",
+
+        "../../code/themes/sand-signika.d.ts",
+        "../../code/themes/sand-signika.src.d.ts",
+        "../../test/typescript/themes/sand-signika.ts",
+
+        "../../code/themes/skies.d.ts",
+        "../../code/themes/skies.src.d.ts",
+        "../../test/typescript/themes/skies.ts",
+
+        "../../code/themes/sunset.d.ts",
+        "../../code/themes/sunset.src.d.ts",
+        "../../test/typescript/themes/sunset.ts"
+    ]
+}

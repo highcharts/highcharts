@@ -91,3 +91,25 @@ QUnit.test('Flags in panes', function (assert) {
         'The flag series group should have the same vertical translation as its onSeries group'
     );
 });
+
+QUnit.test('Flags visibility', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3],
+            id: 's1'
+        }, {
+            onSeries: 's1',
+            type: 'flags',
+            data: [{
+                x: 0,
+                title: 'This label should be visible'
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[1].points[0].graphic.anchorX,
+        0,
+        'Flag with box position value equal to 0 is visible.'
+    );
+});

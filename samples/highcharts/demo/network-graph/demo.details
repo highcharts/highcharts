@@ -1,0 +1,6 @@
+---
+ name: Network / Force Directed Graph - Highcharts
+ authors:
+   - Paweł Fus
+ js_wrap: b
+...

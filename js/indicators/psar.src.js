@@ -1,12 +1,12 @@
-/**
- * @license  @product.name@ JS v@product.version@ (@product.date@)
+/* *
  *
- * Parabolic SAR indicator for Highstock
+ *  Parabolic SAR indicator for Highstock
  *
- * (c) 2010-2017 Grzegorz Blachliński
+ *  (c) 2010-2019 Grzegorz Blachliński
  *
- * License: www.highcharts.com/license
- */
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 'use strict';
 
@@ -29,7 +29,7 @@ function calculateDirection(previousDirection, low, high, PSAR) {
     return -1;
 }
 
-/*
+/* *
  * Method for calculating acceleration factor
  * dir - direction
  * pDir - previous Direction
@@ -43,7 +43,8 @@ function getAccelerationFactor(dir, pDir, eP, pEP, pAcc, inc, maxAcc, initAcc) {
     if (dir === pDir) {
         if (dir === 1 && (eP > pEP)) {
             return (pAcc === maxAcc) ? maxAcc : toFixed(pAcc + inc, 2);
-        } else if (dir === -1 && (eP < pEP)) {
+        }
+        if (dir === -1 && (eP < pEP)) {
             return (pAcc === maxAcc) ? maxAcc : toFixed(pAcc + inc, 2);
         }
         return pAcc;
@@ -66,7 +67,7 @@ function getAccelerationFactorMultiply(accelerationFactor, EPMinusSAR) {
     return accelerationFactor * EPMinusSAR;
 }
 
-/*
+/* *
  * Method for calculating PSAR
  * pdir - previous direction
  * sDir - second previous Direction
@@ -93,28 +94,31 @@ function getPSAR(pdir, sDir, PSAR, pACCMulti, sLow, pLow, pHigh, sHigh, pEP) {
 }
 
 
-
 /**
  * The Parabolic SAR series type.
  *
- * @constructor seriesTypes.psar
- * @augments seriesTypes.sma
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.psar
+ *
+ * @augments Highcharts.Series
  */
-H.seriesType('psar', 'sma',
-
+H.seriesType(
+    'psar',
+    'sma',
     /**
      * Parabolic SAR. This series requires `linkedTo`
      * option to be set and should be loaded
      * after `stock/indicators/indicators.js` file.
      *
-     * @extends plotOptions.sma
-     * @product highstock
-     * @sample {highstock} stock/indicators/psar
-     *                     Parabolic SAR Indicator
-     * @since 6.0.0
+     * @sample stock/indicators/psar
+     *         Parabolic SAR Indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
      * @optionparent plotOptions.psar
      */
-
     {
         lineWidth: 0,
         marker: {
@@ -136,46 +140,31 @@ H.seriesType('psar', 'sma',
              * the extreme point makes a new high.
              * AF can reach a maximum of maxAccelerationFactor,
              * no matter how long the uptrend extends.
-             *
-             * @type {Number}
-             * @since 6.0.0
-             * @excluding period
-             * @product highstock
              */
             initialAccelerationFactor: 0.02,
             /**
              * The Maximum value for acceleration factor.
              * AF can reach a maximum of maxAccelerationFactor,
              * no matter how long the uptrend extends.
-             *
-             * @type {Number}
-             * @since 6.0.0
-             * @product highstock
              */
             maxAccelerationFactor: 0.2,
             /**
              * Acceleration factor increases by increment each time
              * the extreme point makes a new high.
              *
-             * @type {Number}
              * @since 6.0.0
-             * @product highstock
              */
             increment: 0.02,
             /**
              * Index from which PSAR is starting calculation
              *
-             * @type {Number}
              * @since 6.0.0
-             * @product highstock
              */
             index: 2,
             /**
              * Number of maximum decimals that are used in PSAR calculations.
              *
-             * @type {Number}
              * @since 6.0.0
-             * @product highstock
              */
             decimals: 4
         }
@@ -307,24 +296,12 @@ H.seriesType('psar', 'sma',
 );
 
 /**
- * A `PSAR` series. If the [type](#series.psar.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
+ * A `PSAR` series. If the [type](#series.psar.type) option is not specified, it
+ * is inherited from [chart.type](#chart.type).
  *
- * @type {Object}
- * @since 6.0.0
- * @extends series,plotOptions.psar
- * @excluding data,dataParser,dataURL
- * @product highstock
+ * @extends   series,plotOptions.psar
+ * @since     6.0.0
+ * @product   highstock
+ * @excluding dataParser, dataURL
  * @apioption series.psar
- */
-
-/**
- * An array of data points for the series. For the `psar` series type,
- * points are calculated dynamically.
- *
- * @type {Array<Object|Array>}
- * @since 6.0.0
- * @extends series.line.data
- * @product highstock
- * @apioption series.psar.data
  */

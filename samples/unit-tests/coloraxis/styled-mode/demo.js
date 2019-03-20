@@ -1,7 +1,8 @@
 QUnit.test('Color axis in styled mode (#6049)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            type: 'heatmap'
+            type: 'heatmap',
+            styledMode: true
         },
         colorAxis: {
             minColor: '#0000ff',
@@ -31,6 +32,9 @@ QUnit.test('Color axis in styled mode (#6049)', function (assert) {
 
     // Map chart
     chart = Highcharts.mapChart('container', {
+        chart: {
+            styledMode: true
+        },
         colorAxis: {
             minColor: '#0000ff',
             maxColor: '#9999ff'

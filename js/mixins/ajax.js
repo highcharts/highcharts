@@ -1,27 +1,59 @@
-/**
+/* *
  * (c) 2010-2017 Christer Vasseng, Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+
 'use strict';
+
 import H from '../parts/Globals.js';
+
 /**
- * @typedef {Object} AjaxSettings
- * @property {String} url - The URL to call
- * @property {('get'|'post'|'update'|'delete')} type - The verb to use
- * @property {('json'|'xml'|'text'|'octet')} dataType - The data type expected
- * @property {Function} success - Function to call on success
- * @property {Function} error - Function to call on error
- * @property {Object} data - The payload to send
- * @property {Object} headers - The headers; keyed on header name
+ * @interface Highcharts.AjaxSettings
+ *//**
+ * The URL to call.
+ *
+ * @name Highcharts.AjaxSettings#url
+ * @type {string}
+ *//**
+ * The verb to use.
+ *
+ * @name Highcharts.AjaxSettings#type
+ * @type {"get"|"post"|"update"|"delete"}
+ *//**
+ * The data type expected.
+ *
+ * @name Highcharts.AjaxSettings#dataType
+ * @type {"json"|"xml"|"text"|"octet"}
+ *//**
+ * Function to call on success.
+ *
+ * @name Highcharts.AjaxSettings#success
+ * @type {Function}
+ *//**
+ * Function to call on error.
+ *
+ * @name Highcharts.AjaxSettings#error
+ * @type {Function}
+ *//**
+ * The payload to send.
+ *
+ * @name Highcharts.AjaxSettings#data
+ * @type {object}
+ *//**
+ * The headers; keyed on header name.
+ *
+ * @name Highcharts.AjaxSettings#headers
+ * @type {object}
  */
 
 /**
  * Perform an Ajax call.
  *
- * @memberof Highcharts
- * @param {AjaxSettings} - The Ajax settings to use
+ * @function Highcharts.ajax
  *
+ * @param {Highcharts.AjaxSettings} attr
+ *        The Ajax settings to use.
  */
 H.ajax = function (attr) {
     var options = H.merge(true, {

@@ -81,7 +81,7 @@ QUnit.test(
         );
         assert.ok(
             minorGridLines[minorGridLines.length - 1].getBBox().x >
-                gridLines[gridLines.length - 1].getBBox().x,
+            gridLines[gridLines.length - 1].getBBox().x,
             'Minor grid lines outside major grid lines'
         );
     }
@@ -113,5 +113,98 @@ QUnit.test('Linear-log axis with natural min at 0 (#6502)', function (assert) {
         chart.yAxis[1].min,
         -Infinity,
         'Axis min is ok'
+    );
+});
+
+// Highcharts 4.0.1, Issue #3053
+// Logarythmic xAxis for line series
+QUnit.test('Cropping log axis (#3053)', function (assert) {
+
+    var data = [];
+
+    for (var i = 1; i < 901; i++) {
+        data.push([i, i]);
+    }
+
+    TestTemplate.test('highcharts/scatter', {
+
+        xAxis: {
+            type: 'logarithmic'
+        },
+
+        plotOptions: {
+            series: {
+                lineWidth: 1
+            }
+        },
+
+        series: [{
+            data: data
+        }]
+
+    }, function (template) {
+
+        var chart = template.chart;
+
+        assert.strictEqual(
+            chart.series[0].length,
+            chart.options.series[0].length,
+            'All points should be rendered.'
+        );
+
+        chart.update({
+            plotOptions: {
+                series: {
+                    lineWidth: 2
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart.series[0].length,
+            chart.options.series[0].length,
+            'Still all points should be rendered.'
+        );
+
+    });
+
+});
+
+// Highcharts v4.0.3, Issue #3353
+// switching yAxis from between linear and logarithmic creates
+// inconsistencies with 1 values
+QUnit.test('Y axis minimum got stuck (#3353)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        yAxis: {
+            type: 'logarithmic'
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: 'Year 1800',
+            data: [1, 3, 2]
+        }]
+    });
+
+    var preUpdatesTick = chart.yAxis[0].tickPositions[0];
+
+    chart.yAxis[0].update({ type: 'linear' });
+    var linearUpdateTick = chart.yAxis[0].tickPositions[0];
+    assert.notEqual(
+        preUpdatesTick,
+        linearUpdateTick,
+        'Y minimum value should not be logarithmic.'
+    );
+
+    chart.yAxis[0].update({ type: 'logarithmic' });
+    var postUpdatesTick = chart.yAxis[0].tickPositions[0];
+    assert.strictEqual(
+        preUpdatesTick,
+        postUpdatesTick,
+        "Y minimum value should not be changed when updating yAxis type"
     );
 });
