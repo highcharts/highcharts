@@ -212,7 +212,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Handle regular options
         var options,
-            type,
             // skip merging data points to increase performance
             seriesOptions = userOptions.series,
             userPlotOptions = userOptions.plotOptions || {};
@@ -225,12 +224,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
-            for (type in options.plotOptions) {
-                options.plotOptions[type].tooltip = (
-                    userPlotOptions[type] &&
-                    merge(userPlotOptions[type].tooltip) // override by copy
-                ) || undefined; // or clear
-            }
+            objectEach(options.plotOptions, function (typeOptions, type) {
+                if (isObject(typeOptions)) { // #8766
+                    typeOptions.tooltip = (
+                        userPlotOptions[type] &&
+                        merge(userPlotOptions[type].tooltip) // override by copy
+                    ) || undefined; // or clear
+                }
+            });
+
             // User options have higher priority than default options
             // (#6218). In case of exporting: path is changed
             options.tooltip.userOptions = (
