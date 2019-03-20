@@ -1,5 +1,8 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/gantt
+ * @requires highcharts
+ *
  * Gantt series
  *
  * (c) 2016-2019 Lars A. V. Cabrera
