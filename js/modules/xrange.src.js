@@ -253,7 +253,7 @@ seriesType('xrange', 'column'
             }
 
             if (pointIndex === undefined) {
-                point = points.find(function (point) {
+                point = H.find(points, function (point) {
                     return (
                         point.x === options.x &&
                         point.x2 === options.x2 &&
