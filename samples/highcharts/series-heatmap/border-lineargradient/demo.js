@@ -5,7 +5,7 @@ $(function () {
             type: 'heatmap'
         },
         title: {
-            text: 'Single point heatmap - border and gradient'
+            text: 'Single point heatmap - border and gradient (#3390)'
         },
         series: [{
             borderWidth: 1,
