@@ -53,6 +53,14 @@ H.extend(
 );
 
 /**
+ * List of events for `anntation.options.events` that should not be
+ * added to `annotation.graphic` but to the `annotation`.
+ *
+ * @type {Array<string>}
+ */
+ControlPoint.prototype.nonDOMEvents = ['drag'];
+
+/**
  * Set the visibility.
  *
  * @param {boolean} [visible]
