@@ -20,17 +20,13 @@ QUnit.test('Legend item hover - series dimming behavior.', function (assert) {
         firstSeries = document.querySelector('.highcharts-series.highcharts-series-0'),
         legend = chart.legend,
         legendBBox = legend.group.element.getBBox(),
-        boxWrapperClasses = legend.chart.renderer.boxWrapper.element.classList,
-        classes = [];
+        classes = legend.chart.renderer.boxWrapper.element.getAttribute('class').split(/\s/g);
 
     // Simulate mouse over the middle legend's element.
     controller.mouseOver(
         legend.group.translateX + legendBBox.width / 2,
         legend.group.translateY + legendBBox.height / 2
     );
-
-    // Convert object to an array.
-    boxWrapperClasses.forEach(cssClass => classes.push(cssClass));
 
     assert.deepEqual(
         Number(window.getComputedStyle(firstSeries).opacity),

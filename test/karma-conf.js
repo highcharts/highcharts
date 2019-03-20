@@ -171,6 +171,7 @@ const browserStackBrowsers = {
 module.exports = function (config) {
 
     const argv = require('yargs').argv;
+    const Babel = require("@babel/core");
 
     // The tests to run by default
     const defaultTests = [
@@ -184,6 +185,11 @@ module.exports = function (config) {
     if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
+
+    const needsTranspiling = browsers.some(browser => (
+        browser.toUpperCase().lastIndexOf('IE') ===
+        browser.length - 2
+    ));
 
     const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
         .map(path => `samples/${path}/demo.js`);
@@ -331,6 +337,32 @@ module.exports = function (config) {
                         '$1/$2'
                     );
 
+                    // es6 transpiling
+                    // browserDetect(req.headers['user-agent']); not working
+                    if (needsTranspiling) {
+                        try {
+                            js = Babel
+                                .transformSync(js, {
+                                    ast: false,
+                                    code: true,
+                                    presets: [[
+                                        '@babel/preset-env',
+                                        {
+                                            loose: true,
+                                            targets: {
+                                                ie: '8'
+                                            },
+                                            useBuiltIns: 'entry'
+                                        }
+                                    ]]
+                                })
+                                .code;
+                        } catch (error) {
+                            console.error('Babel transform error:', error);
+                        }
+                    }
+
+                    // unit tests
                     if (path.indexOf('unit-tests') !== -1) {
                         if (argv.debug) {
                             if (js.indexOf('Highcharts.setOptions') !== -1) {
@@ -478,7 +510,9 @@ module.exports = function (config) {
                         ${reset}
                     });
                     `;
+
                     file.path = file.originalPath + '.preprocessed';
+
                     done(js);
                 }
             }]

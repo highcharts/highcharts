@@ -18,7 +18,7 @@ QUnit.test('Zero height', function (assert) {
 
     } finally {
         chart.destroy();
-        container.remove();
+        container.parentNode.removeChild(container);
     }
 });
 
@@ -42,7 +42,7 @@ QUnit.test('1px height (#6261)', function (assert) {
 
     } finally {
         chart.destroy();
-        container.remove();
+        container.parentNode.removeChild(container);
     }
 });
 
@@ -66,7 +66,7 @@ QUnit.test('10px height (#6217)', function (assert) {
 
     } finally {
         chart.destroy();
-        container.remove();
+        container.parentNode.removeChild(container);
     }
 });
 
@@ -90,6 +90,6 @@ QUnit.test('Transform (#9871)', assert => {
         );
     } finally {
         chart.destroy();
-        container.remove();
+        container.parentNode.removeChild(container);
     }
 });

@@ -436,7 +436,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {number} plotY
      *        Pixel y relative to the plot area.
      *
-     * @param {boolean} inverted
+     * @param {boolean} [inverted]
      *        Whether the chart is inverted.
      *
      * @return {boolean}
