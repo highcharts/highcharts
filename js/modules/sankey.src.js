@@ -135,6 +135,75 @@ seriesType('sankey', 'column'
             inside: true
         },
         /**
+         * Set options on specific levels. Takes precedence over series options,
+         * but not point options.
+         *
+         * @sample highcharts/demo/sunburst
+         *         Sunburst chart
+         *
+         * @type      {Array<*>}
+         * @since     7.1.0
+         * @apioption plotOptions.sankey.levels
+         */
+
+        /**
+         * Can set `borderColor` on all points which lies on the same level.
+         *
+         * @type      {Highcharts.ColorString}
+         * @apioption plotOptions.sankey.levels.borderColor
+         */
+
+        /**
+         * Can set `borderWidth` on all points which lies on the same level.
+         *
+         * @type      {number}
+         * @apioption plotOptions.sankey.levels.borderWidth
+         */
+
+        /**
+         * Can set `color` on all points which lies on the same level.
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.sankey.levels.color
+         */
+
+        /**
+         * Can set `colorByPoint` on all points which lies on the same level.
+         *
+         * @type      {boolean}
+         * @apioption plotOptions.sankey.levels.colorByPoint
+         */
+
+        /**
+         * Can set `dataLabels` on all points which lies on the same level.
+         *
+         * @type      {object}
+         * @apioption plotOptions.sankey.levels.dataLabels
+         */
+
+        /**
+         * Decides which level takes effect from the options set in the levels
+         * object.
+         *
+         * @type      {number}
+         * @apioption plotOptions.sankey.levels.level
+         */
+
+        /**
+         * Can set `linkOpacity` on all points which lies on the same level.
+         *
+         * @type      {number}
+         * @apioption plotOptions.sankey.levels.linkOpacity
+         */
+
+        /**
+         * Can set `states` on all points which lies on the same level.
+         *
+         * @type      {object}
+         * @apioption plotOptions.sankey.levels.states
+         */
+
+        /**
      * Opacity for the links between nodes in the sankey diagram.
      */
         linkOpacity: 0.5,
