@@ -4,6 +4,7 @@
 
 /* eslint no-console: 0, no-use-before-define: 0 */
 
+const ChildProcess = require('child_process');
 const Colors = require('colors');
 const Time = require('./time');
 
@@ -80,6 +81,35 @@ function message(...text) {
 }
 
 /**
+ * Calls a speech synthesizer to say a given text. There is no guarantee that
+ * the computer speaks or the developer hears the spoken text.
+ *
+ * @param {string} text
+ *        Text to speak;
+ *
+ * @return {void}
+ */
+function say(text) {
+
+    try {
+        switch (process.platform) {
+            default:
+                break;
+            case 'darwin':
+                ChildProcess.execSync('say "' + text.replace(/"/g, '') + '"');
+                break;
+            case 'win32':
+                ChildProcess.execSync(
+                    'tools\\speak.vbs "' + text.replace(/"/g, '') + '"'
+                );
+                break;
+        }
+    } catch (catchedError) {
+        failure(catchedError);
+    }
+}
+
+/**
  * Writes a starting message in gulp style into the console.
  *
  * @param {string} text
@@ -126,6 +156,7 @@ module.exports = {
     finished,
     format,
     message,
+    say,
     starting,
     success,
     warn
