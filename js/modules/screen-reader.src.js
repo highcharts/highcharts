@@ -1,11 +1,13 @@
-/**
- * Accessibility module - Screen Reader support
+/* *
  *
- * (c) 2010-2017 Highsoft AS
- * Author: Oystein Moseng
+ *  Accessibility module - Screen Reader support
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2010-2017 Highsoft AS
+ *  Author: Oystein Moseng
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 
 /**
  * @callback Highcharts.ScreenReaderClickCallbackFunction
