@@ -1089,10 +1089,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#getSVG
      *
-     * @param {Highcharts.Options} chartOptions
+     * @param {Highcharts.Options} [chartOptions]
      *        Additional chart options for the generated SVG representation. For
      *        collections like `xAxis`, `yAxis` or `series`, the additional
-     *        options is either merged in to the orininal item of the same
+     *        options is either merged in to the original item of the same
      *        `id`, or to the first item if a common id is not found.
      *
      * @return {string}
@@ -1112,7 +1112,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             cssHeight,
             // Copy the options and add extra options
             options = merge(chart.options, chartOptions);
-
 
         // create a sandbox where a new chart will be generated
         sandbox = createElement('div', null, {
