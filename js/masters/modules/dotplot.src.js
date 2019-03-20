@@ -1,5 +1,7 @@
 /**
  * @license  @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/dotplot
+ * @requires highcharts
  *
  * Dot plot series type for Highcharts
  *

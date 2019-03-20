@@ -1,5 +1,7 @@
 /**
  * @license  @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/item-series
+ * @requires highcharts
  *
  * Item series type for Highcharts
  *
