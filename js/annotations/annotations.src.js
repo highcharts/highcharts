@@ -19,6 +19,7 @@ import ControlPoint from './ControlPoint.js';
 
 var merge = H.merge,
     addEvent = H.addEvent,
+    fireEvent = H.fireEvent,
     defined = H.defined,
     erase = H.erase,
     find = H.find,
@@ -166,6 +167,13 @@ merge(
     Annotation.prototype,
     controllableMixin,
     eventEmitterMixin, /** @lends Annotation# */ {
+        /**
+         * List of events for `annotation.options.events` that should not be
+         * added to `annotation.graphic` but to the `annotation`.
+         *
+         * @type {Array<string>}
+         */
+        nonDOMEvents: ['add', 'afterUpdate', 'remove'],
         /**
          * A basic type of an annotation. It allows to add custom labels
          * or shapes. The items  can be tied to points, axis coordinates
@@ -658,7 +666,28 @@ merge(
 
 
             /**
+             * Events available in annotations.
+             *
              * @type {Object}
+             */
+            /**
+             * Event callback when annotation is added to the chart.
+             *
+             * @since 7.1.0
+             * @apioption annotations.crookedLine.events.add
+             */
+            /**
+             * Event callback when annotation is updated (e.g. drag and
+             * droppped or resized by control points).
+             *
+             * @since 7.1.0
+             * @apioption annotations.crookedLine.events.afterUpdate
+             */
+            /**
+             * Event callback when annotation is removed from the chart.
+             *
+             * @since 7.1.0
+             * @apioption annotations.crookedLine.events.remove
              */
             events: {},
 
@@ -950,7 +979,10 @@ merge(
             // Update options in chart options, used in exporting (#9767):
             chart.options.annotations[userOptionsIndex] = options;
 
+            this.isUpdating = true;
             this.redraw();
+            this.isUpdating = false;
+            fireEvent(this, 'afterUpdate');
         },
 
         /* *************************************************************
@@ -1186,6 +1218,7 @@ H.extend(H.Chart.prototype, /** @lends Highcharts.Chart# */ {
             ) : idOrAnnotation;
 
         if (annotation) {
+            fireEvent(annotation, 'remove');
             erase(this.options.annotations, annotation.options);
             erase(annotations, annotation);
             annotation.destroy();
