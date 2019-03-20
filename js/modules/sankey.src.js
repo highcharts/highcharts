@@ -868,7 +868,7 @@ seriesType('sankey', 'column'
 
 /**
  * An optional column index of where to place the node. The default behaviour is
- * to place it next to the preceding node.
+ * to place it next to the preceding node. Alias of `nodes.level`.
  *
  * @sample highcharts/plotoptions/sankey-node-column/
  *         Specified node column
@@ -877,6 +877,17 @@ seriesType('sankey', 'column'
  * @since     6.0.5
  * @product   highcharts
  * @apioption series.sankey.nodes.column
+ */
+
+/**
+ * An optional level index of where to place the node. The default behaviour is
+ * to place it next to the preceding node. Alias of `nodes.column`, but in
+ * inverted sankeys and org charts, the levels are laid out as rows.
+ *
+ * @type      {number}
+ * @since     7.1.0
+ * @product   highcharts
+ * @apioption series.sankey.nodes.level
  */
 
 /**
