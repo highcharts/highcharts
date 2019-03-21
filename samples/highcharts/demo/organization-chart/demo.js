@@ -11,7 +11,7 @@ Highcharts.chart('container', {
 
     series: [{
         type: 'organization',
-        name: 'Highcharts Org Chart',
+        name: 'Highsoft',
         keys: ['from', 'to'],
         data: [
             ['Shareholders', 'Board'],
@@ -113,6 +113,9 @@ Highcharts.chart('container', {
         borderColor: 'white',
         nodeWidth: 65
     }],
+    tooltip: {
+        outside: true
+    },
     exporting: {
         allowHTML: true,
         sourceWidth: 800,

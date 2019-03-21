@@ -109,7 +109,10 @@ H.seriesType(
         hangingIndent: 20,
         linkColor: '${palette.neutralColor60}',
         linkLineWidth: 1,
-        nodeWidth: 50
+        nodeWidth: 50,
+        tooltip: {
+            nodeFormat: '{point.name}<br>{point.title}<br>{point.description}'
+        }
     },
     {
         pointAttribs: function (point, state) {

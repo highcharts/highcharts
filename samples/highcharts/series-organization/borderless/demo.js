@@ -89,6 +89,9 @@ Highcharts.chart('container', {
         nodeWidth: 65,
         hangingIndent: 50
     }],
+    tooltip: {
+        outside: true
+    },
     exporting: {
         allowHTML: true,
         sourceWidth: 800,
