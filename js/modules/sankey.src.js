@@ -523,7 +523,7 @@ seriesType('sankey', 'column'
                 nodeLeft = chart.inverted ?
                     chart.plotSizeX - left :
                     left,
-                nodeWidth = Math.round(options.nodeWidth);
+                nodeWidth = Math.round(this.nodeWidth);
 
             node.sum = sum;
 
@@ -586,7 +586,7 @@ seriesType('sankey', 'column'
                         translationFactor
                     ).relativeTop
                 ),
-                nodeW = options.nodeWidth,
+                nodeW = this.nodeWidth,
                 right = toNode.column * this.colDistance,
                 outgoing = point.outgoing,
                 straight = right > nodeLeft;
@@ -709,11 +709,15 @@ seriesType('sankey', 'column'
             this.generatePoints();
 
             this.nodeColumns = this.createNodeColumns();
+            this.nodeWidth = H.relativeLength(
+                this.options.nodeWidth,
+                this.chart.plotSizeX
+            );
 
             var series = this,
                 chart = this.chart,
                 options = this.options,
-                nodeWidth = options.nodeWidth,
+                nodeWidth = this.nodeWidth,
                 nodeColumns = this.nodeColumns,
                 nodePadding = this.getNodePadding();
 

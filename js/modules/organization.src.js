@@ -112,7 +112,6 @@ H.seriesType(
         nodeWidth: 50
     },
     {
-        inverted: true,
         pointAttribs: function (point, state) {
             var series = this,
                 attribs = base.pointAttribs.call(series, point, state),
@@ -274,7 +273,7 @@ H.seriesType(
             xMiddle = Math.floor(
                 x2 +
                 (inverted ? 1 : -1) *
-                (this.colDistance - this.options.nodeWidth) / 2
+                (this.colDistance - this.nodeWidth) / 2
             ) + crisp;
 
             // Put the link on the side of the node when an offset is given. HR

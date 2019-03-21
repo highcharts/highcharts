@@ -1,16 +1,17 @@
 Highcharts.chart('container', {
 
     chart: {
-        height: 600
+        height: 600,
+        inverted: true
     },
 
     title: {
-        text: 'Highcharts Org Chart POC'
+        text: 'Highcharts Org Chart'
     },
 
     series: [{
         type: 'organization',
-        name: 'Highcharts Org Chart POC',
+        name: 'Highcharts Org Chart',
         keys: ['from', 'to'],
         data: [
             ['Shareholders', 'Board'],
