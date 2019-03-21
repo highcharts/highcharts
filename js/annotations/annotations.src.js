@@ -59,7 +59,7 @@ var merge = H.merge,
  * @mixes Annotation.eventEmitterMixin
  *
  * @param {Highcharts.Chart} chart a chart instance
- * @param {AnnotationOptions} options the options object
+ * @param {Highcharts.AnnotationsOptions} options the options object
  */
 var Annotation = H.Annotation = function (chart, options) {
     var labelsAndShapes;
@@ -97,14 +97,14 @@ var Annotation = H.Annotation = function (chart, options) {
     /**
      * The array of shapes which belong to the annotation.
      *
-     * @type {Array<Annotation.Shape>}
+     * @type {Array<Highcharts.Annotation.Shape>}
      */
     this.shapes = [];
 
     /**
      * The options for the annotations.
      *
-     * @type {AnnotationOptions}
+     * @type {Highcharts.AnnotationsOptions}
      */
     // this.options = merge(this.defaultOptions, userOptions);
     this.options = options;
@@ -112,7 +112,7 @@ var Annotation = H.Annotation = function (chart, options) {
     /**
      * The user options for the annotations.
      *
-     * @type {AnnotationOptions}
+     * @type {Highcharts.AnnotationsOptions}
      */
     this.userOptions = merge(true, {}, options);
 
@@ -704,7 +704,7 @@ merge(
          * Initialize the annotation.
          *
          * @param {Highcharts.Chart} - the chart
-         * @param {AnnotationOptions} - the user options for the annotation
+         * @param {Highcharts.AnnotationsOptions} - the user options for the annotation
          */
         init: function () {
             this.linkPoints();
@@ -817,7 +817,7 @@ merge(
         /**
          * Set an annotation options.
          *
-         * @param {AnnotationOptions} - user options for an annotation
+         * @param {Highcharts.AnnotationsOptions} - user options for an annotation
          */
         setOptions: function (userOptions) {
             this.options = merge(this.defaultOptions, userOptions);
@@ -1184,7 +1184,7 @@ H.extend(H.Chart.prototype, /** @lends Highcharts.Chart# */ {
     /**
      * Add an annotation to the chart after render time.
      *
-     * @param  {AnnotationOptions} options
+     * @param  {Highcharts.AnnotationsOptions} options
      *         The annotation options for the new, detailed annotation.
      * @param {boolean} [redraw]
      *

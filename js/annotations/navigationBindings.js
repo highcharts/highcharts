@@ -1324,12 +1324,13 @@ H.setOptions({
         /**
          * Additional options to be merged into all annotations.
          *
-         * @type      {Highcharts.AnnotationOptions}
-         * @sample    stock/stocktools/navigation-annotationOptions
-         *            Set red color of all line annotations
-         * @extends    annotations
-         * @exclude crookedLine, elliottWave, fibonacci, infinityLine, measure,
-         * pitchfork, tunnel, verticalLine
+         * @sample stock/stocktools/navigation-annotationOptions
+         *         Set red color of all line annotations
+         *
+         * @type      {Highcharts.AnnotationsOptions}
+         * @extends   annotations
+         * @exclude   crookedLine, elliottWave, fibonacci, infinityLine,
+         *            measure, pitchfork, tunnel, verticalLine
          * @apioption navigation.annotationsOptions
          */
         annotationsOptions: {}
