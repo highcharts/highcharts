@@ -279,6 +279,9 @@ Available arguments for 'gulp test':
 --debug
     Print some debugging info.
 
+--speak
+    Says if tests failed or succeeded.
+
 --tests
     Comma separated list of tests to run. Defaults to '*.*' that runs all tests
     in the 'samples/' directory.
@@ -309,9 +312,16 @@ Available arguments for 'gulp test':
                 err => {
 
                     if (err !== 0) {
+
+                        if (argv.speak) {
+                            LogLib.say('Tests failed!');
+                        }
+
                         reject(new PluginError('karma', {
                             message: 'Tests failed'
                         }));
+
+                        return;
                     }
 
                     if (!forceRun) {
@@ -320,6 +330,10 @@ Available arguments for 'gulp test':
                         } catch (cathedError) {
                             LogLib.warn(cathedError);
                         }
+                    }
+
+                    if (argv.speak) {
+                        LogLib.say('Tests succeeded!');
                     }
 
                     resolve();
