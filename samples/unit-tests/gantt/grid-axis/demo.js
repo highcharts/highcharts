@@ -958,6 +958,7 @@ QUnit.module('labels alignment', function () {
         map = Highcharts.map,
         categories = ['Category 1', 'Category 2', 'Category 3'],
         optionsAxis = {
+            showEmpty: true,
             type: 'category',
             grid: {
                 enabled: true

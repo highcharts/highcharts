@@ -504,6 +504,12 @@ seriesType('gauge', 'line', {
         }
     },
 
+    // Define hasData function for non-cartesian seris.
+    // Returns true if the series has points at all.
+    hasData: function () {
+        return !!this.points.length; // != 0
+    },
+
     // If the tracking module is loaded, add the point tracker
     drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
 
