@@ -348,11 +348,9 @@ module.exports = function (config) {
                                     presets: [[
                                         '@babel/preset-env',
                                         {
-                                            loose: true,
                                             targets: {
                                                 ie: '8'
-                                            },
-                                            useBuiltIns: 'entry'
+                                            }
                                         }
                                     ]]
                                 })
