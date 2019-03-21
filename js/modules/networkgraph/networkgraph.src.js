@@ -11,7 +11,7 @@
  *
  * @callback Highcharts.PlotNetworkDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.PlotNetworkDataLabelsFormatterContextObject} this
+ * @param {Highcharts.PlotNetworkDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
  * @return {string}
