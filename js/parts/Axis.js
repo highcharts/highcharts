@@ -5591,15 +5591,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *         settings.
      */
     hasData: function () {
-        return (
-            this.hasVisibleSeries ||
-            (
-                defined(this.min) &&
-                defined(this.max) &&
-                this.tickPositions &&
-                this.tickPositions.length > 0
-            )
-        );
+        return this.series.some(s => s.hasData()) ||
+        (this.options.showEmpty && defined(this.min) && defined(this.max));
     },
 
     /**
@@ -5858,7 +5851,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             axisOffset[side],
             axis.axisTitleMargin + titleOffset + directionFactor * axis.offset,
             labelOffsetPadded, // #3027
-            hasData && tickPositions.length && tickSize ?
+            tickPositions && tickPositions.length && tickSize ?
                 tickSize[0] + directionFactor * axis.offset :
                 0 // #4866
         );

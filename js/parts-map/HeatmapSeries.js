@@ -285,6 +285,12 @@ seriesType(
             }, this);
         },
 
+        // Define hasData function for non-cartesian seris.
+        // Returns true if the series has points at all.
+        hasData: function () {
+            return !!this.processedXData.length; // != 0
+        },
+
         // Override to also allow null points, used when building the k-d-tree
         // for tooltips in boost mode.
         getValidPoints: function (points, insideOnly) {

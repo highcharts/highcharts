@@ -2498,6 +2498,25 @@ H.Series = H.seriesType(
 
             series.parallelArrays.forEach(fn);
         },
+        /**
+         * Define hasData functions for series. These return true if there
+         * are data points on this series within the plot area.
+         *
+         * @private
+         * @function Highcharts.Series#hasData
+         *
+         * @return {boolean}
+         */
+        hasData: function () {
+            return (
+                (
+                    this.visible &&
+                    this.dataMax !== undefined &&
+                    this.dataMin !== undefined
+                ) || // #3703
+                (this.visible && this.yData && this.yData.length > 0) // #9758
+            );
+        },
 
         /**
          * Return an auto incremented x value based on the pointStart and

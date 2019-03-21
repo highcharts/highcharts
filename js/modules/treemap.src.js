@@ -651,6 +651,11 @@ seriesType(
             series.nodeMap = [];
             return series.buildNode('', -1, 0, parentList, null);
         },
+        // Define hasData function for non-cartesian seris.
+        // Returns true if the series has points at all.
+        hasData: function () {
+            return !!this.processedXData.length; // != 0
+        },
         init: function (chart, options) {
             var series = this,
                 colorSeriesMixin = H.colorSeriesMixin;
