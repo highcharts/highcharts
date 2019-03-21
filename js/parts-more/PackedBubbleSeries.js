@@ -306,7 +306,7 @@ seriesType('packedbubble', 'bubble',
              * The `parentNodeFormat` option takes precedence over
              * the `parentNodeFormatter`.
              *
-             * @type  {Highcharts.FormatterCallbackFunction<Highcharts.SeriesDataLabelsFormatterContextObject>}
+             * @type  {Highcharts.FormatterCallbackFunction<Highcharts.DataLabelsFormatterContextObject>}
              * @since 7.1.0
              * @default function () { return this.name; }
              */
