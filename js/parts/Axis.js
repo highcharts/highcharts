@@ -4627,9 +4627,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 options.allowDecimals !== false
             );
 
-        // Find the tick positions. Work on a copy (#1565)
-        this.tickPositions = tickPositions =
-            tickPositionsOption && tickPositionsOption.slice();
+        /**
+         * Contains all ticks that are laid out on the axis.
+         *
+         * @name Highcharts.Axis#tickPositions
+         * @type {Array<number>|undefined}
+         * @readonly
+         */
+        this.tickPositions =
+            // Find the tick positions. Work on a copy (#1565)
+            tickPositions = tickPositionsOption && tickPositionsOption.slice();
         if (!tickPositions) {
 
             // Too many ticks (#6405). Create a friendly warning and provide two
