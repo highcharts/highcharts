@@ -96,7 +96,7 @@ function say(text) {
             default:
                 break;
             case 'darwin':
-                ChildProcess.execSync('say "' + text.replace(/"/g, '') + '"');
+                ChildProcess.execSync('say -v Alex "' + text.replace(/"/g, '') + '"');
                 break;
             case 'win32':
                 ChildProcess.execSync(
