@@ -1,4 +1,4 @@
-/**
+/* *
  * Networkgraph series
  *
  * (c) 2010-2019 Paweł Fus
