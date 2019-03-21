@@ -282,9 +282,13 @@ H.seriesType(
                 percentOffset &&
                 (percentOffset >= 50 || percentOffset <= -50)
             ) {
-                xMiddle = Math.floor(
+                xMiddle = x2 = Math.floor(
                     x2 + (inverted ? -0.5 : 0.5) * toNode.shapeArgs.width
                 ) + crisp;
+                y2 = toNode.shapeArgs.y;
+                if (percentOffset > 0) {
+                    y2 += toNode.shapeArgs.height;
+                }
             }
 
             if (toNode.hangsFrom === fromNode) {
@@ -294,6 +298,7 @@ H.seriesType(
                         fromNode.shapeArgs.height -
                         hangingIndent / 2
                     ) + crisp;
+                    y2 = toNode.shapeArgs.y + toNode.shapeArgs.height;
                 } else {
                     y1 = Math.floor(
                         fromNode.shapeArgs.y +
