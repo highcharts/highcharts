@@ -49,7 +49,10 @@ seriesType('pyramid3d', 'funnel3d',
         reversed: true,
 
         neckHeight: 0,
-        neckWidth: 0
+        neckWidth: 0,
+        dataLabels: {
+            verticalAlign: 'top'
+        }
     });
 
 /**

@@ -119,9 +119,6 @@ seriesType('funnel3d', 'column',
         edgeWidth: 0,
         colorByPoint: true,
         showInLegend: false,
-        tooltip: {
-            followPointer: true
-        },
         dataLabels: {
             overflow: 'allow',
             crop: false,
@@ -286,13 +283,21 @@ seriesType('funnel3d', 'column',
                 // for tooltips and data labels context
                 point.percentage = fraction * 100;
                 point.plotX = centerX;
-                point.plotY = (y1 + (y5 || y3)) / 2;
+
+                if (reversed) {
+                    point.plotY = centerY + height / 2 -
+                        (cumulative + fraction / 2) * height;
+                } else {
+                    point.plotY = (y1 + (y5 || y3)) / 2;
+                }
 
                 // Placement of tooltips and data labels in 3D
                 tooltipPos = H.perspective([{
                     x: centerX,
                     y: point.plotY,
-                    z: -(getWidthAt(point.plotY)) / 2
+                    z: reversed ?
+                        -(width - getWidthAt(point.plotY)) / 2 :
+                        -(getWidthAt(point.plotY)) / 2
                 }], chart, true)[0];
                 point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 
@@ -302,7 +307,9 @@ seriesType('funnel3d', 'column',
                     width: getWidthAt(point.plotY),
 
                     y: y1,
-                    bottom: shapeArgs.height
+                    bottom: shapeArgs.height,
+
+                    fullWidth: width
                 };
 
                 if (!ignoreHiddenPoint || point.visible !== false) {
@@ -341,6 +348,10 @@ seriesType('funnel3d', 'column',
             }
 
             dlBox.width = series.getWidthAt(dlBox.y);
+
+            if (series.options.reversed) {
+                dlBox.width = dlBoxRaw.fullWidth - dlBox.width;
+            }
 
             if (inside) {
                 dlBox.x -= dlBox.width / 2;
