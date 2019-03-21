@@ -2949,7 +2949,8 @@ H.Series = H.seriesType(
             } else if (equalLength) {
                 data.forEach(function (point, i) {
                     // .update doesn't exist on a linked, hidden series (#3709)
-                    if (oldData[i].update && point !== options.data[i]) {
+                    // (#10187)
+                    if (oldData[i].update && point !== oldData[i].y) {
                         oldData[i].update(point, false, null, false);
                     }
                 });
