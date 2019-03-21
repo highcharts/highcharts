@@ -54,37 +54,40 @@ Highcharts.chart('container', {
             id: 'CEO',
             title: 'CEO',
             name: 'Grethe Hjetland',
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132317/Grethe.jpg',
-            offset: '50%'
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132317/Grethe.jpg'
         }, {
             id: 'HR',
             title: 'HR/CFO',
             name: 'Anne Jorunn Fjærestad',
             color: '#007ad0',
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132314/AnneJorunn.jpg',
-            level: 2,
-            offset: '50%'
+            column: 3,
+            offset: '75%'
         }, {
             id: 'CTO',
             title: 'CTO',
             name: 'Christer Vasseng',
+            column: 4,
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12140620/Christer.jpg',
             layout: 'hanging'
         }, {
             id: 'CPO',
             title: 'CPO',
             name: 'Torstein Hønsi',
+            column: 4,
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12131849/Torstein1.jpg'
         }, {
             id: 'CSO',
             title: 'CSO',
             name: 'Anita Nesse',
+            column: 4,
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132313/Anita.jpg',
             layout: 'hanging'
         }, {
             id: 'CMO',
             title: 'CMO',
             name: 'Vidar Brekke',
+            column: 4,
             image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/13105551/Vidar.jpg',
             layout: 'hanging'
         }, {

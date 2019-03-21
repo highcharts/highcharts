@@ -261,12 +261,31 @@ H.seriesType(
                 y2 = Math.floor(
                     toNode.shapeArgs.y + toNode.shapeArgs.height / 2
                 ) + crisp,
-                xMiddle = Math.floor((x1 + x2) / 2) + crisp,
-                hangingIndent = this.options.hangingIndent;
+                xMiddle,
+                hangingIndent = this.options.hangingIndent,
+                toOffset = toNode.options.offset,
+                percentOffset = /%$/.test(toOffset) && parseInt(toOffset, 10),
+                inverted = this.chart.inverted;
 
-            if (this.chart.inverted) {
+            if (inverted) {
                 x1 -= fromNode.shapeArgs.width;
                 x2 += toNode.shapeArgs.width;
+            }
+            xMiddle = Math.floor(
+                x2 +
+                (inverted ? 1 : -1) *
+                (this.colDistance - this.options.nodeWidth) / 2
+            ) + crisp;
+
+            // Put the link on the side of the node when an offset is given. HR
+            // node in the main demo.
+            if (
+                percentOffset &&
+                (percentOffset >= 50 || percentOffset <= -50)
+            ) {
+                xMiddle = Math.floor(
+                    x2 + (inverted ? -0.5 : 0.5) * toNode.shapeArgs.width
+                ) + crisp;
             }
 
             if (toNode.hangsFrom === fromNode) {
