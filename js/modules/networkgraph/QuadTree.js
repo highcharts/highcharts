@@ -13,6 +13,7 @@ import H from '../../parts/Globals.js';
  * The QuadTree node class. Used in Networkgraph chart as a base for Barnes-Hut
  * approximation.
  *
+ * @private
  * @class
  * @name Highcharts.QuadTreeNode
  *
@@ -235,6 +236,7 @@ H.extend(
  * The QuadTree class. Used in Networkgraph chart as a base for Barnes-Hut
  * approximation.
  *
+ * @private
  * @class
  * @name Highcharts.QuadTree
  *
