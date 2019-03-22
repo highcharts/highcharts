@@ -24,11 +24,13 @@ function getProperties() {
         });
 
         if (!properties['browserstack.username']) {
-            throw 'No username';
+            throw new Error();
         }
     } catch (e) {
-        throw 'BrowserStack credentials not given. Add username and ' +
-            'accesskey to the git-ignore-me.properties file';
+        throw new Error(
+            'BrowserStack credentials not given. Add username and ' +
+            'accesskey to the git-ignore-me.properties file'
+        );
     }
     return properties;
 }
