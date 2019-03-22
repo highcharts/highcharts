@@ -45,11 +45,13 @@ seriesType('funnel3d', 'column',
      * It requires that the `highcharts-3d.js`, `cylinder.js` and
      * `funnel3d.js` module are loaded.
      *
-     * @extends      {plotOptions.column}
+     * @sample highcharts/demo/funnel3d/
+     *         Funnel3d
+     *
+     * @extends      plotOptions.column
+     * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
      * @product      highcharts
-     * @sample       {highcharts} highcharts/demo/funnel3d/ Funnel3d
      * @since        7.1.0
-     * @excluding    allAreas,boostThreshold,colorAxis,compare,compareBase
      * @optionparent plotOptions.funnel3d
      */
     {
