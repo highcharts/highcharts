@@ -4627,9 +4627,23 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 options.allowDecimals !== false
             );
 
-        // Find the tick positions. Work on a copy (#1565)
-        this.tickPositions = tickPositions =
-            tickPositionsOption && tickPositionsOption.slice();
+        /**
+         * Contains the current positions that are laid out on the axis. The
+         * positions are numbers in terms of axis values. In a category axis
+         * they are integers, in a datetime axis they are also integers, but
+         * designating milliseconds.
+         *
+         * This property is read only - for modifying the tick positions, use
+         * the `tickPositioner` callback or [axis.tickPositions(
+         * https://api.highcharts.com/highcharts/xAxis.tickPositions) option
+         * instead.
+         *
+         * @name Highcharts.Axis#tickPositions
+         * @type {Array<number>|undefined}
+         */
+        this.tickPositions =
+            // Find the tick positions. Work on a copy (#1565)
+            tickPositions = tickPositionsOption && tickPositionsOption.slice();
         if (!tickPositions) {
 
             // Too many ticks (#6405). Create a friendly warning and provide two

@@ -277,13 +277,21 @@ extend(Legend.prototype, {
     setItemEvents: function (item, legendItem, useHTML) {
         var legend = this,
             boxWrapper = legend.chart.renderer.boxWrapper,
+            isPoint = item instanceof Point,
             activeClass = 'highcharts-legend-' +
-                (item instanceof Point ? 'point' : 'series') + '-active',
+                (isPoint ? 'point' : 'series') + '-active',
             styledMode = legend.chart.styledMode;
 
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
         (useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
+
+            legend.allItems.forEach(function (inactiveItem) {
+                if (item !== inactiveItem) {
+                    inactiveItem.setState('inactive', !isPoint);
+                }
+            });
+
             item.setState('hover');
 
             // A CSS class to dim or hide other than the hovered series.
@@ -306,6 +314,12 @@ extend(Legend.prototype, {
                         )
                     );
                 }
+
+                legend.allItems.forEach(function (inactiveItem) {
+                    if (item !== inactiveItem) {
+                        inactiveItem.setState('', !isPoint);
+                    }
+                });
 
                 // A CSS class to dim or hide other than the hovered series
                 boxWrapper.removeClass(activeClass);
@@ -701,7 +715,12 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                             series.options.data[
                                 series.data.indexOf(loopPoint)
                             ] = loopPoint.options;
-                            loopPoint.setState('');
+                            // Programatically selecting a point should restore
+                            // normal state, but when click happened on other
+                            // point, set inactive state to match other points
+                            loopPoint.setState(
+                                chart.hoverPoints ? 'inactive' : ''
+                            );
                             loopPoint.firePointEvent('unselect');
                         }
                     });
@@ -745,9 +764,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             chart = point.series.chart;
 
         point.firePointEvent('mouseOut');
-        (chart.hoverPoints || []).forEach(function (p) {
-            p.setState();
-        });
+
         chart.hoverPoints = chart.hoverPoint = null;
     },
 
@@ -780,9 +797,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @function Highcharts.Point#setState
      *
      * @param {string} [state]
-     *        The new state, can be one of `''` (an empty string), `hover` or
-     *        `select`.
-     *
+     *        The new state, can be one of `''` (an empty string), `hover`,
+     *        `select` or `inactive`.
      * @param {boolean} [move]
      *        State for animation.
      *
@@ -1077,8 +1093,11 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             tooltip.hide();
         }
 
-        // set normal state
-        series.setState();
+        // Reset all inactive states
+        chart.series.forEach(function (s) {
+            s.setState('', true);
+        });
+
     },
 
     /**
@@ -1090,13 +1109,16 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @param {string} [state]
      *        Can be either `hover` or undefined to set to normal state.
+     * @param {boolean} [inherit]
+     *        Determines if state should be inherited by points too.
      */
-    setState: function (state) {
+    setState: function (state, inherit) {
         var series = this,
             options = series.options,
             graph = series.graph,
             stateOptions = options.states,
             lineWidth = options.lineWidth,
+            opacity = 1,
             attribs,
             i = 0;
 
@@ -1138,11 +1160,13 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         stateOptions[state].lineWidth ||
                         lineWidth + (stateOptions[state].lineWidthPlus || 0)
                     ); // #4035
+                    opacity = stateOptions[state].opacity;
                 }
 
                 if (graph && !graph.dashstyle) {
                     attribs = {
-                        'stroke-width': lineWidth
+                        'stroke-width': lineWidth,
+                        opacity: opacity
                     };
 
                     // Animate the graph stroke-width. By default a quick
@@ -1163,6 +1187,14 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                     }
                 }
             }
+        }
+
+        if (inherit && series.points) {
+            series.points.forEach(function (point) {
+                if (point.setState) {
+                    point.setState(state);
+                }
+            });
         }
     },
 

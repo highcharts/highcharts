@@ -138,7 +138,7 @@ var addEvent = H.addEvent,
  * @class
  * @name Highcharts.seriesTypes.networkgraph
  *
- * @extends Highcharts.Series
+ * @extends
  */
 seriesType(
     'networkgraph',
@@ -161,8 +161,19 @@ seriesType(
      * @optionparent plotOptions.networkgraph
      */
     {
+        inactiveOtherPoints: true,
         marker: {
-            enabled: true
+            enabled: true,
+            states: {
+                inactive: {
+                    opacity: 0.1
+                }
+            }
+        },
+        states: {
+            inactive: {
+                linkOpacity: 0.1
+            }
         },
         /**
          * @sample highcharts/series-networkgraph/link-datalabels
@@ -204,8 +215,9 @@ seriesType(
             /**
              * A name for the dash style to use for links.
              *
-             * @type      {string}
+             * @type      {String}
              * @apioption plotOptions.networkgraph.link.dashStyle
+             * @defaults  undefined
              */
 
             /**
@@ -230,16 +242,14 @@ seriesType(
              * In `verlet` integration, defaults to:
              * `function (d, k) { return (k - d) / d * (k > d ? 1 : 0) }`
              *
-             * @see [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
-             *
-             * @sample highcharts/series-networkgraph/forces/
-             *         Custom forces with Euler integration
-             * @sample highcharts/series-networkgraph/cuboids/
-             *         Custom forces with Verlet integration
-             *
-             * @type      {Function}
-             * @default   function (d, k) { return k * k / d; }
-             * @apioption plotOptions.networkgraph.layoutAlgorithm.repulsiveForce
+             * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
+             * @apioption   plotOptions.networkgraph.layoutAlgorithm.repulsiveForce
+             * @sample      highcharts/series-networkgraph/forces/
+             *              Custom forces with Euler integration
+             * @sample      highcharts/series-networkgraph/cuboids/
+             *              Custom forces with Verlet integration
+             * @type        {Function}
+             * @default function (d, k) { return k * k / d; }
              */
 
             /**
@@ -251,16 +261,14 @@ seriesType(
              * In `verlet` integration, defaults to:
              * `function (d, k) { return (k - d) / d; }`
              *
-             * @see [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
-             *
-             * @sample highcharts/series-networkgraph/forces/
-             *         Custom forces with Euler integration
-             * @sample highcharts/series-networkgraph/cuboids/
-             *         Custom forces with Verlet integration
-             *
-             * @type      {Function}
-             * @default   function (d, k) { return k * k / d; }
-             * @apioption plotOptions.networkgraph.layoutAlgorithm.attractiveForce
+             * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
+             * @apioption   plotOptions.networkgraph.layoutAlgorithm.attractiveForce
+             * @sample      highcharts/series-networkgraph/forces/
+             *              Custom forces with Euler integration
+             * @sample      highcharts/series-networkgraph/cuboids/
+             *              Custom forces with Verlet integration
+             * @type        {Function}
+             * @default function (d, k) { return k * k / d; }
              */
 
             /**
@@ -271,11 +279,11 @@ seriesType(
              * Note: Because of the algorithm specification, length of each link
              * might be not exactly as specified.
              *
-             * @sample highcharts/series-networkgraph/styled-links/
-             *         Numerical values
-             *
              * @type      {number}
              * @apioption series.networkgraph.layoutAlgorithm.linkLength
+             * @sample    highcharts/series-networkgraph/styled-links/
+             *            Numerical values
+             * @defaults  undefined
              */
 
             /**
@@ -284,10 +292,10 @@ seriesType(
              * positions should be set on each node (`this.nodes`) as
              * `node.plotX` and `node.plotY`
              *
-             * @sample highcharts/series-networkgraph/initial-positions/
-             *         Initial positions with callback
-             *
-             * @type {"circle"|"random"|Function}
+             * @sample      highcharts/series-networkgraph/initial-positions/
+             *              Initial positions with callback
+             * @type        {String|Function}
+             * @validvalue  ["circle", "random"]
              */
             initialPositions: 'circle',
             /**
@@ -295,7 +303,7 @@ seriesType(
              * `initialPositionRadius` is a distance from the center of circle,
              * in which nodes are created.
              *
-             * @type    {Number}
+             * @type    {number}
              * @default 1
              * @since   7.1.0
              */
@@ -352,22 +360,23 @@ seriesType(
              * @sample highcharts/series-networkgraph/barnes-hut-approximation/
              *         A graph with Barnes-Hut approximation
              *
-             * @validvalue  ["barnes-hut", "none"]
-             * @since       7.1.0
+             * @validvalue ["barnes-hut", "none"]
+             * @since      7.1.0
              */
             approximation: 'none',
             /**
              * Type of the algorithm used when positioning nodes.
              *
-             * @validvalue ["reingold-fruchterman"]
+             * @validvalue  ["reingold-fruchterman"]
              */
             type: 'reingold-fruchterman',
             /**
              * Integration type. Available options are `'euler'` and `'verlet'`.
              * Integration determines how forces are applied on particles. In
              * Euler integration, force is applied direct as
-             * `newPosition += velocity;`. In Verlet integration, new position
-             * is based on a previous posittion without velocity:
+             * `newPosition += velocity;`.
+             * In Verlet integration, new position is based on a previous
+             * posittion without velocity:
              * `newPosition += previousPosition - newPosition`.
              *
              * Note that different integrations give different results as forces
@@ -375,11 +384,10 @@ seriesType(
              *
              * In Highcharts v7.0.x only `'euler'` integration was supported.
              *
-             * @sample highcharts/series-networkgraph/integration-comparison/
-             *         Comparison of Verlet and Euler integrations
-             *
-             * @since      7.1.0
-             * @validvalue ["euler", "verlet"]
+             * @since       7.1.0
+             * @sample      highcharts/series-networkgraph/integration-comparison/
+             *              Comparison of Verlet and Euler integrations
+             * @validvalue  ["euler", "verlet"]
              */
             integration: 'verlet',
             /**
@@ -393,8 +401,8 @@ seriesType(
              * Gravitational const used in the barycenter force of the
              * algorithm.
              *
-             * @sample highcharts/series-networkgraph/forces/
-             *         Custom forces with Euler integration
+             * @sample      highcharts/series-networkgraph/forces/
+             *              Custom forces with Euler integration
              */
             gravitationalConstant: 0.0625,
             /**
@@ -404,12 +412,10 @@ seriesType(
             friction: -0.981
         },
         showInLegend: false
-    },
-    {
+    }, {
         /**
          * Array of internal forces. Each force should be later defined in
          * integrations.js.
-         * @private
          */
         forces: ['barycenter', 'repulsive', 'attractive'],
         hasDraggableNodes: true,
@@ -425,7 +431,6 @@ seriesType(
         /**
          * Create a single node that holds information on incoming and outgoing
          * links.
-         * @private
          */
         createNode: H.NodesMixin.createNode,
         setData: H.NodesMixin.setData,
@@ -457,7 +462,8 @@ seriesType(
         generatePoints: function () {
             H.NodesMixin.generatePoints.apply(this, arguments);
 
-            // In networkgraph, its fine to define stanalone nodes, create them:
+            // In networkgraph, it's fine to define stanalone nodes, create
+            // them:
             if (this.options.nodes) {
                 this.options.nodes.forEach(
                     function (nodeOptions) {
@@ -485,9 +491,8 @@ seriesType(
          * @private
          */
         markerAttribs: function (point, state) {
-            var attribs = Series.prototype.markerAttribs.call(
-                this, point, state
-            );
+            var attribs = Series.prototype.markerAttribs
+                .call(this, point, state);
 
             attribs.x = point.plotX - (attribs.width / 2 || 0);
             return attribs;
@@ -548,11 +553,10 @@ seriesType(
             layout = graphLayoutsStorage[layoutOptions.type];
 
             if (!layout) {
-                layoutOptions.enableSimulation = (
+                layoutOptions.enableSimulation =
                     !defined(chartOptions.forExport) ?
                         layoutOptions.enableSimulation :
-                        !chartOptions.forExport
-                );
+                        !chartOptions.forExport;
 
                 graphLayoutsStorage[layoutOptions.type] = layout =
                     new H.layouts[layoutOptions.type]();
@@ -627,6 +631,39 @@ seriesType(
             this.options.dataLabels.textPath = textPath;
         },
 
+        // Return the presentational attributes.
+        pointAttribs: function (point, state) {
+            // By default, only `selected` state is passed on
+            var pointState = state || point.state || 'normal',
+                attribs = Series.prototype.pointAttribs.call(
+                    this,
+                    point,
+                    pointState
+                ),
+                stateOptions = this.options.states[pointState];
+
+            if (!point.isNode) {
+                attribs = point.getLinkAttributes();
+                // For link, get prefixed names:
+                if (stateOptions) {
+                    attribs = {
+                        // TO DO: API?
+                        stroke: stateOptions.linkColor || attribs.stroke,
+                        dashstyle: (
+                            stateOptions.linkDashStyle || attribs.dashstyle
+                        ),
+                        opacity: pick(
+                            stateOptions.linkOpacity, attribs.opacity
+                        ),
+                        'stroke-width': stateOptions.linkColor ||
+                            attribs['stroke-width']
+                    };
+                }
+            }
+
+            return attribs;
+        },
+
         // Draggable mode:
         /**
          * Redraw halo on mousemove during the drag&drop action.
@@ -653,9 +690,27 @@ seriesType(
          * @private
          * @param {Highcharts.Point} point The point that event occured.
          */
-        onMouseUp: dragNodesMixin.onMouseUp
-    },
-    {
+        onMouseUp: dragNodesMixin.onMouseUp,
+        /**
+         * When state should be passed down to all points, concat nodes and
+         * links and apply this state to all of them.
+         */
+        setState: function (state, inherit) {
+            if (inherit) {
+                this.points = this.nodes.concat(this.data);
+                Series.prototype.setState.apply(this, arguments);
+                this.points = this.data;
+            } else {
+                Series.prototype.setState.apply(this, arguments);
+            }
+
+            // If simulation is done, re-render points with new states:
+            if (!this.layout.simulation && !state) {
+                this.render();
+            }
+        }
+    }, {
+        setState: H.NodesMixin.setNodeState,
         /**
          * Basic `point.init()` and additional styles applied when
          * `series.draggable` is enabled.
@@ -695,11 +750,9 @@ seriesType(
          * @return {number}
          */
         getDegree: function () {
-            var deg = (
-                this.isNode ?
-                    this.linksFrom.length + this.linksTo.length :
-                    0
-            );
+            var deg = this.isNode ?
+                this.linksFrom.length + this.linksTo.length :
+                0;
 
             return deg === 0 ? 1 : deg;
         },
@@ -709,14 +762,15 @@ seriesType(
          * @private
          * @return {Highcharts.SVGAttributes}
          */
-        getLinkAttribues: function () {
+        getLinkAttributes: function () {
             var linkOptions = this.series.options.link,
                 pointOptions = this.options;
 
-            return this.series.chart.styledMode ? {} : {
+            return {
                 'stroke-width': pick(pointOptions.width, linkOptions.width),
                 stroke: pointOptions.color || linkOptions.color,
-                dashstyle: pointOptions.dashStyle || linkOptions.dashStyle
+                dashstyle: pointOptions.dashStyle || linkOptions.dashStyle,
+                opacity: pick(pointOptions.opacity, linkOptions.opacity, 1)
             };
         },
         /**
@@ -729,8 +783,11 @@ seriesType(
                     .path(
                         this.getLinkPath()
                     )
-                    .attr(this.getLinkAttribues())
                     .add(this.series.group);
+
+                if (!this.series.chart.styledMode) {
+                    this.graphic.attr(this.series.pointAttribs(this));
+                }
             }
         },
         /**
@@ -743,6 +800,10 @@ seriesType(
                 this.shapeArgs = {
                     d: path
                 };
+
+                if (!this.series.chart.styledMode) {
+                    this.graphic.attr(this.series.pointAttribs(this));
+                }
                 this.graphic.animate(this.shapeArgs);
 
                 // Required for dataLabels:
@@ -833,6 +894,7 @@ seriesType(
         }
     }
 );
+
 
 /**
  * A `networkgraph` series. If the [type](#series.networkgraph.type) option is

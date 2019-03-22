@@ -335,6 +335,7 @@ seriesType('pie', 'line',
          */
         ignoreHiddenPoint: true,
 
+        inactiveOtherPoints: true,
         /**
          * The size of the inner diameter for the pie. A size greater than 0
          * renders a donut chart. Can be a percentage or pixel value.

@@ -1,4 +1,4 @@
-/* eslint func-style: 0, no-console: 0 */
+/* eslint func-style: 0, no-console: 0, max-len: 0 */
 const gulp = require('gulp');
 const uploadAPIDocs = () => {
     const {
