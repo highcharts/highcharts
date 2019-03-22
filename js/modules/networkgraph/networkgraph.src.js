@@ -186,6 +186,7 @@ seriesType(
          *         Data labels moved under the links
          *
          * @type {Highcharts.PlotNetworkDataLabelsOptionsObject}
+         * @private
          */
         dataLabels: {
             /** @ignore-option */
@@ -210,6 +211,7 @@ seriesType(
         },
         /**
          * Link style options
+         * @private
          */
         link: {
             /**
@@ -217,7 +219,6 @@ seriesType(
              *
              * @type      {string}
              * @apioption plotOptions.networkgraph.link.dashStyle
-             * @defaults  undefined
              */
 
             /**
@@ -231,6 +232,7 @@ seriesType(
         },
         /**
          * Flag to determine if nodes are draggable or not.
+         * @private
          */
         draggable: true,
         layoutAlgorithm: {
@@ -242,14 +244,16 @@ seriesType(
              * In `verlet` integration, defaults to:
              * `function (d, k) { return (k - d) / d * (k > d ? 1 : 0) }`
              *
-             * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
-             * @apioption   plotOptions.networkgraph.layoutAlgorithm.repulsiveForce
-             * @sample      highcharts/series-networkgraph/forces/
-             *              Custom forces with Euler integration
-             * @sample      highcharts/series-networkgraph/cuboids/
-             *              Custom forces with Verlet integration
-             * @type        {Function}
-             * @default function (d, k) { return k * k / d; }
+             * @see [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
+             *
+             * @sample highcharts/series-networkgraph/forces/
+             *         Custom forces with Euler integration
+             * @sample highcharts/series-networkgraph/cuboids/
+             *         Custom forces with Verlet integration
+             *
+             * @type      {Function}
+             * @default   function (d, k) { return k * k / d; }
+             * @apioption plotOptions.networkgraph.layoutAlgorithm.repulsiveForce
              */
 
             /**
@@ -261,14 +265,16 @@ seriesType(
              * In `verlet` integration, defaults to:
              * `function (d, k) { return (k - d) / d; }`
              *
-             * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
-             * @apioption   plotOptions.networkgraph.layoutAlgorithm.attractiveForce
-             * @sample      highcharts/series-networkgraph/forces/
-             *              Custom forces with Euler integration
-             * @sample      highcharts/series-networkgraph/cuboids/
-             *              Custom forces with Verlet integration
-             * @type        {Function}
-             * @default function (d, k) { return k * k / d; }
+             * @see [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
+             *
+             * @sample highcharts/series-networkgraph/forces/
+             *         Custom forces with Euler integration
+             * @sample highcharts/series-networkgraph/cuboids/
+             *         Custom forces with Verlet integration
+             *
+             * @type      {Function}
+             * @default   function (d, k) { return k * k / d; }
+             * @apioption plotOptions.networkgraph.layoutAlgorithm.attractiveForce
              */
 
             /**
@@ -279,11 +285,11 @@ seriesType(
              * Note: Because of the algorithm specification, length of each link
              * might be not exactly as specified.
              *
+             * @sample highcharts/series-networkgraph/styled-links/
+             *         Numerical values
+             *
              * @type      {number}
              * @apioption series.networkgraph.layoutAlgorithm.linkLength
-             * @sample    highcharts/series-networkgraph/styled-links/
-             *            Numerical values
-             * @defaults  undefined
              */
 
             /**
@@ -292,10 +298,10 @@ seriesType(
              * positions should be set on each node (`this.nodes`) as
              * `node.plotX` and `node.plotY`
              *
-             * @sample      highcharts/series-networkgraph/initial-positions/
-             *              Initial positions with callback
-             * @type        {String|Function}
-             * @validvalue  ["circle", "random"]
+             * @sample highcharts/series-networkgraph/initial-positions/
+             *         Initial positions with callback
+             *
+             * @type {"circle"|"random"|Function}
              */
             initialPositions: 'circle',
             /**
@@ -360,6 +366,7 @@ seriesType(
              * @sample highcharts/series-networkgraph/barnes-hut-approximation/
              *         A graph with Barnes-Hut approximation
              *
+             * @type       {string}
              * @validvalue ["barnes-hut", "none"]
              * @since      7.1.0
              */
@@ -367,7 +374,8 @@ seriesType(
             /**
              * Type of the algorithm used when positioning nodes.
              *
-             * @validvalue  ["reingold-fruchterman"]
+             * @type       {string}
+             * @validvalue ["reingold-fruchterman"]
              */
             type: 'reingold-fruchterman',
             /**
@@ -384,10 +392,12 @@ seriesType(
              *
              * In Highcharts v7.0.x only `'euler'` integration was supported.
              *
-             * @since       7.1.0
-             * @sample      highcharts/series-networkgraph/integration-comparison/
-             *              Comparison of Verlet and Euler integrations
-             * @validvalue  ["euler", "verlet"]
+             * @sample highcharts/series-networkgraph/integration-comparison/
+             *         Comparison of Verlet and Euler integrations
+             *
+             * @type       {string}
+             * @validvalue ["euler", "verlet"]
+             * @since      7.1.0
              */
             integration: 'verlet',
             /**
@@ -401,8 +411,8 @@ seriesType(
              * Gravitational const used in the barycenter force of the
              * algorithm.
              *
-             * @sample      highcharts/series-networkgraph/forces/
-             *              Custom forces with Euler integration
+             * @sample highcharts/series-networkgraph/forces/
+             *         Custom forces with Euler integration
              */
             gravitationalConstant: 0.0625,
             /**
@@ -416,6 +426,7 @@ seriesType(
         /**
          * Array of internal forces. Each force should be later defined in
          * integrations.js.
+         * @private
          */
         forces: ['barycenter', 'repulsive', 'attractive'],
         hasDraggableNodes: true,
@@ -431,6 +442,7 @@ seriesType(
         /**
          * Create a single node that holds information on incoming and outgoing
          * links.
+         * @private
          */
         createNode: H.NodesMixin.createNode,
         setData: H.NodesMixin.setData,
@@ -694,6 +706,7 @@ seriesType(
         /**
          * When state should be passed down to all points, concat nodes and
          * links and apply this state to all of them.
+         * @private
          */
         setState: function (state, inherit) {
             if (inherit) {
