@@ -1,5 +1,7 @@
 /**
  * @license  @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/variable-pie
+ * @requires highcharts
  *
  * Variable Pie module for Highcharts
  *

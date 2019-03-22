@@ -1,5 +1,8 @@
 /**
  * @license  @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/indicators/williams-r
+ * @requires highcharts
+ * @requires highcharts/modules/stock
  *
  * Indicator series type for Highstock
  *
