@@ -166,7 +166,7 @@ H.PlotLineOrBand.prototype = {
 
 
         // common for lines and bands
-        if (isNew && path && path.length) {
+        if ((isNew || !svgElem.d) && path && path.length) {
             svgElem.attr({ d: path });
 
             // events
@@ -181,7 +181,7 @@ H.PlotLineOrBand.prototype = {
             if (path) {
                 svgElem.show(true);
                 svgElem.animate({ d: path });
-            } else {
+            } else if (svgElem.d) {
                 svgElem.hide();
                 if (label) {
                     plotLine.label = label = label.destroy();

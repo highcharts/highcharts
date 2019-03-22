@@ -3767,6 +3767,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @return {Highcharts.SVGElement}
      *         The button element.
+     *
+     * @param {boolean} [useHTML=false]
+     *        Wether to use HTML to render the label.
+     *
      */
     button: function (
         text,
@@ -3777,7 +3781,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         hoverState,
         pressedState,
         disabledState,
-        shape
+        shape,
+        useHTML
     ) {
         var label = this.label(
                 text,
@@ -3786,7 +3791,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 shape,
                 null,
                 null,
-                null,
+                useHTML,
                 null,
                 'button'
             ),
