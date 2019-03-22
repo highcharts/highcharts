@@ -3612,6 +3612,24 @@ H.Series = H.seriesType(
         },
 
         /**
+         * Get current X extremes for the visible data.
+         *
+         * @private
+         * @function Highcharts.Series#getExtremes
+         *
+         * @param {Array<number>} [xData]
+         *        The data to inspect. Defaults to the current data within the
+         *        visible range.
+         * @return {object}
+         */
+        getXExtremes: function (xData) {
+            return {
+                min: arrayMin(xData),
+                max: arrayMax(xData)
+            };
+        },
+
+        /**
          * Calculate Y extremes for the visible data. The result is set as
          * `dataMin` and `dataMax` on the Series item.
          *
