@@ -219,7 +219,7 @@ H.Popup.prototype = {
             fields: { }
         };
 
-        inputList.forEach(function (input) {
+        H.objectEach(inputList,function (input) {
             param = input.getAttribute(PREFIX + 'data-name');
             seriesId = input.getAttribute(PREFIX + 'data-series-id');
 
