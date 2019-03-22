@@ -560,7 +560,7 @@ seriesType('pie', 'line',
             }
         },
 
-        // Define hasData function for non-cartesian seris.
+        // Define hasData function for non-cartesian series.
         // Returns true if the series has points at all.
         hasData: function () {
             return !!this.processedXData.length; // != 0
