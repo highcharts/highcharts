@@ -138,7 +138,7 @@ var addEvent = H.addEvent,
  * @class
  * @name Highcharts.seriesTypes.networkgraph
  *
- * @extends
+ * @extends Highcharts.Series
  */
 seriesType(
     'networkgraph',
@@ -215,7 +215,7 @@ seriesType(
             /**
              * A name for the dash style to use for links.
              *
-             * @type      {String}
+             * @type      {string}
              * @apioption plotOptions.networkgraph.link.dashStyle
              * @defaults  undefined
              */
@@ -900,7 +900,6 @@ seriesType(
  * A `networkgraph` series. If the [type](#series.networkgraph.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @type      {Object}
  * @extends   series,plotOptions.networkgraph
  * @excluding boostThreshold, animation, animationLimit, connectEnds,
  *            connectNulls, dragDrop, getExtremesFromAll, label, linecap,
@@ -951,7 +950,7 @@ seriesType(
 /**
  * The node that the link runs from.
  *
- * @type      {String}
+ * @type      {string}
  * @product   highcharts
  * @apioption series.networkgraph.data.from
  */
@@ -959,7 +958,7 @@ seriesType(
 /**
  * The node that the link runs to.
  *
- * @type      {String}
+ * @type      {string}
  * @product   highcharts
  * @apioption series.networkgraph.data.to
  */
@@ -967,7 +966,7 @@ seriesType(
 /**
  * The weight of the link.
  *
- * @type      {Number}
+ * @type      {number}
  * @product   highcharts
  * @apioption series.networkgraph.data.weight
  */
@@ -1037,7 +1036,7 @@ seriesType(
  * @sample highcharts/series-networkgraph/ragdoll/
  *         Mass determined by marker.radius
  *
- * @type      {Number}
+ * @type      {number}
  * @product   highcharts
  * @apioption series.networkgraph.nodes.mass
  */
