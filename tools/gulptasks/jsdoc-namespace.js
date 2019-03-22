@@ -102,4 +102,4 @@ function jsDocNamespace() {
     });
 }
 
-Gulp.task('jsdoc-namespace', Gulp.series('scripts', jsDocNamespace));
+Gulp.task('jsdoc-namespace', Gulp.series('scripts-js', jsDocNamespace));
