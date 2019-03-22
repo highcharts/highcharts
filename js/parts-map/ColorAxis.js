@@ -558,7 +558,7 @@ extend(ColorAxis.prototype, {
         });
     },
 
-    // Define hasData function for non-cartesian seris.
+    // Define hasData function for ColorAxis.
     // Returns true if the series has points at all.
     hasData: function () {
         return !!(this.tickPositions && this.tickPositions.length);
