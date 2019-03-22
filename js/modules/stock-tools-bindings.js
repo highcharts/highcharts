@@ -1519,6 +1519,8 @@ var stockToolsBindings = {
                 type = 'verticalLine',
                 navigation = this.chart.options.navigation,
                 bindings = navigation && navigation.bindings,
+                verticalCounter = !defined(this.verticalCounter) ? 0 :
+                    this.verticalCounter,
                 options = merge({
                     langKey: 'verticalCounter',
                     type: type,
@@ -1531,7 +1533,7 @@ var stockToolsBindings = {
                         },
                         label: {
                             offset: closestPoint.below ? 40 : -40,
-                            text: this.verticalCounter.toString()
+                            text: verticalCounter.toString()
                         }
                     },
                     labelOptions: {
@@ -1549,13 +1551,9 @@ var stockToolsBindings = {
                 bindings[type] && bindings[type].annotationsOptions),
                 annotation;
 
-            if (!defined(this.verticalCounter)) {
-                this.verticalCounter = 0;
-            }
-
             annotation = this.chart.addAnnotation(options);
 
-            this.verticalCounter++;
+            verticalCounter++;
 
             annotation.options.events.click.call(annotation, {});
         }
