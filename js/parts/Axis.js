@@ -1,3 +1,4 @@
+/* eslint-disable space-before-blocks */
 /* *
  * (c) 2010-2019 Torstein Honsi
  *
@@ -5591,7 +5592,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *         settings.
      */
     hasData: function () {
-        return this.series.some(s => s.hasData()) ||
+        return this.series.some(function (s){
+            return s.hasData();
+        }) ||
         (this.options.showEmpty && defined(this.min) && defined(this.max));
     },
 
