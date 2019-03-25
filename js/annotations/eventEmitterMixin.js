@@ -89,6 +89,10 @@ var eventEmitterMixin = {
             prevChartX,
             prevChartY;
 
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+
         // On right click, do nothing:
         if (e.button === 2) {
             return;

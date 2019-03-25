@@ -109,6 +109,7 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
             width: 600
         },
         xAxis: {
+            showEmpty: true,
             min: Date.UTC(2016, 0, 13),
             max: Date.UTC(2016, 0, 27),
             type: 'datetime',

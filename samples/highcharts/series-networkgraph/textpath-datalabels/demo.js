@@ -37,7 +37,8 @@ Highcharts.addEvent(
 
 Highcharts.chart('container', {
     chart: {
-        type: 'networkgraph'
+        type: 'networkgraph',
+        marginTop: 80
     },
     title: {
         text: 'The Indo-European Laungauge Tree'
@@ -50,6 +51,7 @@ Highcharts.chart('container', {
             keys: ['from', 'to'],
             layoutAlgorithm: {
                 enableSimulation: true,
+                integration: 'verlet',
                 linkLength: 100
             }
         }
@@ -63,9 +65,7 @@ Highcharts.chart('container', {
             textPath: {
                 enabled: true
             },
-            linkFormatter: function () {
-                return '';
-            },
+            linkFormat: '',
             allowOverlap: true
         },
         data: [

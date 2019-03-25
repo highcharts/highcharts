@@ -32,11 +32,13 @@ seriesType('pyramid3d', 'funnel3d',
      * It requires that the `highcharts-3d.js`, `cylinder.js`,
      * `funnel3d.js` and `pyramid3d` modules are loaded.
      *
-     * @extends      {plotOptions.funnel3d}
+     * @sample highcharts/demo/pyramid3d/
+     *         Pyramid3d
+     *
+     * @extends      plotOptions.funnel3d
+     * @excluding    neckHeight, neckWidth
      * @product      highcharts
-     * @sample       {highcharts} highcharts/demo/pyramid3d/ Pyramid3d
      * @since        7.1.0
-     * @excluding    neckHeight,neckWidth
      * @optionparent plotOptions.pyramid3d
      */
     {

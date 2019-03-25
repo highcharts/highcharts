@@ -1,4 +1,4 @@
-/**
+/* *
  * Networkgraph series
  *
  * (c) 2010-2019 Paweł Fus
@@ -23,9 +23,10 @@ H.layouts = {
 
 H.extend(
     /**
-    * Reingold-Fruchterman algorithm from
-    * "Graph Drawing by Force-directed Placement" paper.
-    */
+     * Reingold-Fruchterman algorithm from
+     * "Graph Drawing by Force-directed Placement" paper.
+     * @private
+     */
     H.layouts['reingold-fruchterman'].prototype,
     {
         init: function (options) {

@@ -46,7 +46,7 @@ QUnit.test('NaN in label position (#7175)', function (assert) {
 
 });
 
-QUnit.test('Events should be bound to all plotBands (#6166).', function (assert) {
+QUnit.test('Events should be bound to all plotBands (#6166) and plotLines (#10302).', function (assert) {
     var clicked,
         chart = Highcharts.stockChart('container', {
             xAxis: {
@@ -59,7 +59,7 @@ QUnit.test('Events should be bound to all plotBands (#6166).', function (assert)
                     id: 'plotband-1',
                     events: {
                         click: function () {
-                            clicked = 'clicked';
+                            clicked = 'plotBand';
                         }
                     }
                 }]
@@ -81,7 +81,34 @@ QUnit.test('Events should be bound to all plotBands (#6166).', function (assert)
 
     assert.deepEqual(
         clicked,
-        'clicked',
-        'Click event fired'
+        'plotBand',
+        'Click event fired on plot band'
+    );
+
+    // #10302
+    chart.xAxis[0].setExtremes(20, 50);
+    chart.update({
+        xAxis: {
+            plotLines: [{
+                value: 5,
+                width: 20,
+                color: "black",
+                zIndex: 1,
+                events: {
+                    click: function () {
+                        clicked = 'plotLine';
+                    }
+                }
+            }]
+        }
+    });
+
+    chart.xAxis[0].setExtremes(0, 40);
+    controller.click(85, 100);
+
+    assert.deepEqual(
+        clicked,
+        'plotLine',
+        'Click event fired on plot line'
     );
 });

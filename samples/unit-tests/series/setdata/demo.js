@@ -332,6 +332,20 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         'Old points have markers when redraw is set to false (#8060)'
     );
 
+    chart = Highcharts.chart('container', {
+        series: [{
+            data: [4, 5, 5]
+        }]
+    });
+
+    chart.series[0].setData([null, null, 1]);
+    chart.series[0].setData([4, 5, 5]);
+
+    assert.deepEqual(
+        chart.series[0].yData,
+        [4, 5, 5],
+        'Data is set correctly when oldData has null values and the same length (#10187)'
+    );
 });
 
 QUnit.test('Boosted series with updatePoints', function (assert) {
