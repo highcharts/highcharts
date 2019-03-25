@@ -228,7 +228,7 @@ seriesType('sankey', 'column'
         },
         tooltip: {
         /**
-         * A callback for defining the format for _nodes_ in the sankey chart's
+         * A callback for defining the format for _nodes_ in the chart's
          * tooltip, as opposed to links.
          *
          * @type      {Highcharts.FormatterCallbackFunction<object>}
@@ -248,7 +248,7 @@ seriesType('sankey', 'column'
             /**
          * The
          * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-         * specifying what to show for _nodes_ in tooltip of a sankey diagram
+         * specifying what to show for _nodes_ in tooltip of a diagram
          * series, as opposed to links.
          */
             nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
@@ -819,10 +819,11 @@ seriesType('sankey', 'column'
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.sankey
- * @excluding animationLimit, boostThreshold, borderColor, borderRadius,
- *            borderWidth, crisp, cropThreshold, dataParser, dataURL, depth,
- *            edgeColor, edgeWidth, findNearestPointBy, grouping, groupPadding,
- *            groupZPadding, maxPointWidth, negativeColor, pointInterval,
+ * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
+ *            borderRadius, borderWidth, crisp, cropThreshold, dataParser,
+ *            dataURL, depth, dragDrop, edgeColor, edgeWidth,
+ *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
+ *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPadding, pointPlacement, pointRange,
  *            pointStart, pointWidth, shadow, softThreshold, stacking,
  *            threshold, zoneAxis, zones
@@ -872,7 +873,9 @@ seriesType('sankey', 'column'
 
 /**
  * An optional column index of where to place the node. The default behaviour is
- * to place it next to the preceding node. Alias of `nodes.level`.
+ * to place it next to the preceding node. Note that this option name is
+ * counter intuitive in inverted charts, like for example an organization chart
+ * rendered top down. In this case the "columns" are horizontal.
  *
  * @sample highcharts/plotoptions/sankey-node-column/
  *         Specified node column

@@ -12,15 +12,70 @@ import H from '../parts/Globals.js';
 var pick = H.pick;
 
 var base = H.seriesTypes.sankey.prototype;
+
+/**
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.organization
+ *
+ * @augments Highcharts.seriesTypes.sankey
+ */
 H.seriesType(
     'organization',
     'sankey',
+    /**
+     * An organization chart is a diagram that shows the structure of an
+     * organization and the relationships and relative ranks of its parts and
+     * positions.
+     *
+     * @sample       highcharts/demo/organization-chart/
+     *               Organization chart
+     * @sample       highcharts/series-organization/horizontal/
+     *               Horizontal organization chart
+     * @sample       highcharts/series-organization/borderless
+     *               Borderless design
+     * @sample       highcharts/series-organization/center-layout
+     *               Centered layout
+     *
+     * @extends      plotOptions.sankey
+     * @excluding    allowPointSelect, curveFactor
+     * @since        7.1.0
+     * @product      highcharts
+     * @optionparent plotOptions.organization
+     */
     {
+        /**
+         * The border color of the node cards.
+         * @type {Highcharts.ColorString}
+         */
         borderColor: '${palette.neutralColor60}',
+        /**
+         * The border radius of the node cards.
+         */
         borderRadius: 3,
+        /**
+         * Radius for the rounded corners of the links between nodes.
+         *
+         * @sample   highcharts/series-organization/link-options
+         *           Square links
+         */
         linkRadius: 10,
         borderWidth: 1,
         dataLabels: {
+            /**
+             * A callback for defining the format for _nodes_ in the
+             * organization chart. The `nodeFormat` option takes precedence over
+             * `nodeFormatter`.
+             *
+             * In an organization chart, the `nodeFormatter` is a quite complex
+             * function of the available options, striving for a good default
+             * layout of cards with or without images. In organization chart,
+             * the data labels come with `useHTML` set to true, meaning they
+             * will be rendered as true HTML above the SVG.
+             *
+             * @sample highcharts/series-organization/datalabels-nodeformatter
+             *         Modify the default label format output
+             */
             nodeFormatter: function () {
 
                 var outerStyle = {
@@ -106,9 +161,28 @@ H.seriesType(
             },
             useHTML: true
         },
+        /**
+         * The indentation in pixels of hanging nodes, nodes which parent has
+         * [layout](#series.organization.nodes.layout) set to `hanging`.
+         */
         hangingIndent: 20,
+        /**
+         * The color of the links between nodes.
+         * @type {Highcharts.ColorString}
+         */
         linkColor: '${palette.neutralColor60}',
+        /**
+         * The line width of the links connecting nodes, in pixels.
+         *
+         * @sample   highcharts/series-organization/link-options
+         *           Square links
+         */
         linkLineWidth: 1,
+        /**
+         * In a horizontal chart, the width of the nodes in pixels. Node that
+         * most organization charts are vertical, so the name of this option
+         * is counterintuitive.
+         */
         nodeWidth: 50,
         tooltip: {
             nodeFormat: '{point.name}<br>{point.title}<br>{point.description}'
@@ -375,3 +449,90 @@ H.seriesType(
     }
 
 );
+
+/**
+ * An `organization` series. If the [type](#series.organization.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.organization
+ * @apioption series.organization
+ */
+
+/**
+ * A collection of options for the individual nodes. The nodes in an org chart
+ * are auto-generated instances of `Highcharts.Point`, but options can be
+ * applied here and linked by the `id`.
+ *
+ * @extends   series.sankey.nodes
+ * @type      {Array<*>}
+ * @apioption series.organization.nodes
+ */
+
+/**
+ * The job description for the node card, will be inserted by the default
+ * `dataLabel.nodeFormatter`.
+ *
+ * @type      {string}
+ * @sample    highcharts/demo/organization-chart
+ *            Org chart with job descriptions
+ * @apioption series.organization.nodes.description
+ */
+
+/**
+ * An image for the node card, will be inserted by the default
+ * `dataLabel.nodeFormatter`.
+ *
+ * @type      {string}
+ * @sample    highcharts/demo/organization-chart
+ *            Org chart with images
+ * @apioption series.organization.nodes.image
+ */
+
+/**
+ * Layout for the node's children. If `hanging`, this node's children will hang
+ * below their parent, allowing a tighter packing of nodes in the diagram.
+ *
+ * @validvalue ["normal", "hanging"]
+ * @default   normal
+ * @type      {string}
+ * @sample    highcharts/demo/organization-chart
+ *            Hanging layout
+ * @apioption series.organization.nodes.layout
+ */
+
+/**
+ * The job title for the node card, will be inserted by the default
+ * `dataLabel.nodeFormatter`.
+ *
+ * @type      {string}
+ * @sample    highcharts/demo/organization-chart
+ *            Org chart with job titles
+ * @apioption series.organization.nodes.title
+ */
+
+/**
+ * An array of data points for the series. For the `organization` series
+ * type, points can be given in the following way:
+ *
+ * An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.area.turboThreshold),
+ * this option is not available.
+ *
+ *  ```js
+ *     data: [{
+ *         from: 'Category1',
+ *         to: 'Category2',
+ *         weight: 2
+ *     }, {
+ *         from: 'Category1',
+ *         to: 'Category3',
+ *         weight: 5
+ *     }]
+ *  ```
+ *
+ * @type      {Array<*>}
+ * @extends   series.sankey.data
+ * @product   highcharts
+ * @apioption series.organization.data
+ */

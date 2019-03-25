@@ -35,6 +35,7 @@
         "no-undefined": 0,
         "no-underscore-dangle": 0,                  /*@todo: Check this*/
         "node/no-unsupported-features": 0,
+        "node/no-unsupported-features/es-syntax": 0,
         "object-curly-spacing": [2, "always"],
         "object-shorthand": ["error", "never"],     /* Closure Compiler chokes on it */
         "prefer-rest-params": 0,
