@@ -3471,7 +3471,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      */
     getSeriesExtremes: function () {
         var axis = this,
-            chart = axis.chart;
+            chart = axis.chart,
+            xExtremes;
 
         fireEvent(this, 'getSeriesExtremes', null, function () {
 
@@ -3507,31 +3508,33 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     if (axis.isXAxis) {
                         xData = series.xData;
                         if (xData.length) {
+                            xExtremes = series.getXExtremes(xData);
                             // If xData contains values which is not numbers,
                             // then filter them out. To prevent performance hit,
                             // we only do this after we have already found
                             // seriesDataMin because in most cases all data is
                             // valid. #5234.
-                            seriesDataMin = arrayMin(xData);
-                            seriesDataMax = arrayMax(xData);
+                            seriesDataMin = xExtremes.min;
+                            seriesDataMax = xExtremes.max;
 
                             if (
                                 !isNumber(seriesDataMin) &&
                                 !(seriesDataMin instanceof Date) // #5010
                             ) {
                                 xData = xData.filter(isNumber);
+                                xExtremes = series.getXExtremes(xData);
                                 // Do it again with valid data
-                                seriesDataMin = arrayMin(xData);
-                                seriesDataMax = arrayMax(xData);
+                                seriesDataMin = xExtremes.min;
+                                seriesDataMax = xExtremes.max;
                             }
 
                             if (xData.length) {
                                 axis.dataMin = Math.min(
-                                    pick(axis.dataMin, xData[0], seriesDataMin),
+                                    pick(axis.dataMin, seriesDataMin),
                                     seriesDataMin
                                 );
                                 axis.dataMax = Math.max(
-                                    pick(axis.dataMax, xData[0], seriesDataMax),
+                                    pick(axis.dataMax, seriesDataMax),
                                     seriesDataMax
                                 );
                             }

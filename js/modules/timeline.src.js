@@ -321,8 +321,6 @@ seriesType('timeline', 'line',
         },
         processData: function () {
             var series = this,
-                xAxis = series.xAxis,
-                xMap = [],
                 visiblePoints = 0,
                 i;
 
@@ -337,39 +335,23 @@ seriesType('timeline', 'line',
 
             series.visiblePointsCount = visiblePoints;
 
-            if (xAxis.isDatetimeAxis) {
-                for (i = 0; i < series.xData.length; i++) {
-                    series.yData[i] = 1;
-                }
-
-                visiblePoints = series.visibilityMap.filter(function (p) {
-                    return p;
-                });
-
-                // Adjust axis extremes to currently visible points.
-                if (!series.chart.resetZoomButton) {
-                    xAxis.min = visiblePoints[0].x;
-                    xAxis.max = visiblePoints[visiblePoints.length - 1].x;
-                }
-            } else {
-                // Generate xData map.
-                for (i = 0; i < visiblePoints; i++) {
-                    xMap.push(i);
-                }
-
-                series.visibilityMap.forEach(function (vis, i) {
-                    if (!vis) {
-                        xMap.splice(i, 0, series.yData[i] === null ? null : 0);
-                    }
-                });
-
-                series.xData = xMap;
-                series.yData = xMap.map(function (data) {
-                    return defined(data) ? 1 : null;
-                });
+            for (i = 0; i < series.xData.length; i++) {
+                series.yData[i] = 1;
             }
 
             Series.prototype.processData.call(this, arguments);
+        },
+        getXExtremes: function (xData) {
+            var series = this,
+                filteredData = xData.filter(function (x, i) {
+                    return series.points[i].isValid() &&
+                        series.points[i].visible;
+                });
+
+            return {
+                min: H.arrayMin(filteredData),
+                max: H.arrayMax(filteredData)
+            };
         },
         generatePoints: function () {
             var series = this;
@@ -500,6 +482,9 @@ seriesType('timeline', 'line',
             point.y = 1;
 
             return point;
+        },
+        isValid: function () {
+            return this.options.y !== null;
         },
         setVisible: function (vis, redraw) {
             var point = this,

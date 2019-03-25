@@ -793,8 +793,9 @@ Series.prototype.drawDataLabels = function () {
                     // Create individual options structure that can be extended
                     // without affecting others
                     labelConfig = point.getLabelConfig();
-                    formatString = (
-                        labelOptions[point.formatPrefix + 'Format'] ||
+
+                    formatString = pick(
+                        labelOptions[point.formatPrefix + 'Format'],
                         labelOptions.format
                     );
 
