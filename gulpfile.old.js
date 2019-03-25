@@ -11,7 +11,7 @@
  * ************************************************************************** */
 
 /* eslint-env node, es6 */
-/* eslint no-console:0, no-path-concat:0, valid-jsdoc:0 */
+/* eslint no-console:0, no-path-concat:0, valid-jsdoc:0, max-len: 0 */
 /* eslint-disable func-style */
 
 'use strict';

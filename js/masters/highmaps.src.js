@@ -1,5 +1,6 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/highmaps
  *
  * (c) 2011-2018 Torstein Honsi
  *

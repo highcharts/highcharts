@@ -3471,7 +3471,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      */
     getSeriesExtremes: function () {
         var axis = this,
-            chart = axis.chart;
+            chart = axis.chart,
+            xExtremes;
 
         fireEvent(this, 'getSeriesExtremes', null, function () {
 
@@ -3507,31 +3508,33 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     if (axis.isXAxis) {
                         xData = series.xData;
                         if (xData.length) {
+                            xExtremes = series.getXExtremes(xData);
                             // If xData contains values which is not numbers,
                             // then filter them out. To prevent performance hit,
                             // we only do this after we have already found
                             // seriesDataMin because in most cases all data is
                             // valid. #5234.
-                            seriesDataMin = arrayMin(xData);
-                            seriesDataMax = arrayMax(xData);
+                            seriesDataMin = xExtremes.min;
+                            seriesDataMax = xExtremes.max;
 
                             if (
                                 !isNumber(seriesDataMin) &&
                                 !(seriesDataMin instanceof Date) // #5010
                             ) {
                                 xData = xData.filter(isNumber);
+                                xExtremes = series.getXExtremes(xData);
                                 // Do it again with valid data
-                                seriesDataMin = arrayMin(xData);
-                                seriesDataMax = arrayMax(xData);
+                                seriesDataMin = xExtremes.min;
+                                seriesDataMax = xExtremes.max;
                             }
 
                             if (xData.length) {
                                 axis.dataMin = Math.min(
-                                    pick(axis.dataMin, xData[0], seriesDataMin),
+                                    pick(axis.dataMin, seriesDataMin),
                                     seriesDataMin
                                 );
                                 axis.dataMax = Math.max(
-                                    pick(axis.dataMax, xData[0], seriesDataMax),
+                                    pick(axis.dataMax, seriesDataMax),
                                     seriesDataMax
                                 );
                             }
@@ -4627,9 +4630,23 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 options.allowDecimals !== false
             );
 
-        // Find the tick positions. Work on a copy (#1565)
-        this.tickPositions = tickPositions =
-            tickPositionsOption && tickPositionsOption.slice();
+        /**
+         * Contains the current positions that are laid out on the axis. The
+         * positions are numbers in terms of axis values. In a category axis
+         * they are integers, in a datetime axis they are also integers, but
+         * designating milliseconds.
+         *
+         * This property is read only - for modifying the tick positions, use
+         * the `tickPositioner` callback or [axis.tickPositions(
+         * https://api.highcharts.com/highcharts/xAxis.tickPositions) option
+         * instead.
+         *
+         * @name Highcharts.Axis#tickPositions
+         * @type {Array<number>|undefined}
+         */
+        this.tickPositions =
+            // Find the tick positions. Work on a copy (#1565)
+            tickPositions = tickPositionsOption && tickPositionsOption.slice();
         if (!tickPositions) {
 
             // Too many ticks (#6405). Create a friendly warning and provide two

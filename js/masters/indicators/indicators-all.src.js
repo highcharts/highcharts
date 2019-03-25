@@ -1,5 +1,8 @@
 /**
  * @license  @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/indicators/indicators-all
+ * @requires highcharts
+ * @requires highcharts/modules/stock
  *
  * All technical indicators for Highstock
  *

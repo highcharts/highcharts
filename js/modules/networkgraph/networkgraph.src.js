@@ -150,8 +150,19 @@ var addEvent = H.addEvent,
  * @optionparent plotOptions.networkgraph
  */
 seriesType('networkgraph', 'line', {
+    inactiveOtherPoints: true,
     marker: {
-        enabled: true
+        enabled: true,
+        states: {
+            inactive: {
+                opacity: 0.1
+            }
+        }
+    },
+    states: {
+        inactive: {
+            linkOpacity: 0.1
+        }
     },
     /**
      * @sample highcharts/series-networkgraph/link-datalabels
@@ -593,6 +604,35 @@ seriesType('networkgraph', 'line', {
         this.options.dataLabels.textPath = textPath;
     },
 
+    // Return the presentational attributes.
+    pointAttribs: function (point, state) {
+        // By default, only `selected` state is passed on
+        var pointState = state || point.state || 'normal',
+            attribs = Series.prototype.pointAttribs.call(
+                this,
+                point,
+                pointState
+            ),
+            stateOptions = this.options.states[pointState];
+
+        if (!point.isNode) {
+            attribs = point.getLinkAttributes();
+            // For link, get prefixed names:
+            if (stateOptions) {
+                attribs = {
+                    // TO DO: API?
+                    stroke: stateOptions.linkColor || attribs.stroke,
+                    dashstyle: stateOptions.linkDashStyle || attribs.dashstyle,
+                    opacity: pick(stateOptions.linkOpacity, attribs.opacity),
+                    'stroke-width': stateOptions.linkColor ||
+                        attribs['stroke-width']
+                };
+            }
+        }
+
+        return attribs;
+    },
+
     // Draggable mode:
     /**
      * Redraw halo on mousemove during the drag&drop action.
@@ -619,8 +659,27 @@ seriesType('networkgraph', 'line', {
      * @private
      * @param {Highcharts.Point} point The point that event occured.
      */
-    onMouseUp: dragNodesMixin.onMouseUp
+    onMouseUp: dragNodesMixin.onMouseUp,
+    /**
+     * When state should be passed down to all points, concat nodes and links
+     * and apply this state to all of them.
+     */
+    setState: function (state, inherit) {
+        if (inherit) {
+            this.points = this.nodes.concat(this.data);
+            Series.prototype.setState.apply(this, arguments);
+            this.points = this.data;
+        } else {
+            Series.prototype.setState.apply(this, arguments);
+        }
+
+        // If simulation is done, re-render points with new states:
+        if (!this.layout.simulation && !state) {
+            this.render();
+        }
+    }
 }, {
+    setState: H.NodesMixin.setNodeState,
     /**
      * Basic `point.init()` and additional styles applied when
      * `series.draggable` is enabled.
@@ -667,14 +726,15 @@ seriesType('networkgraph', 'line', {
      * @private
      * @return {Highcharts.SVGAttributes}
      */
-    getLinkAttribues: function () {
+    getLinkAttributes: function () {
         var linkOptions = this.series.options.link,
             pointOptions = this.options;
 
-        return this.series.chart.styledMode ? {} : {
+        return {
             'stroke-width': pick(pointOptions.width, linkOptions.width),
             stroke: pointOptions.color || linkOptions.color,
-            dashstyle: pointOptions.dashStyle || linkOptions.dashStyle
+            dashstyle: pointOptions.dashStyle || linkOptions.dashStyle,
+            opacity: pick(pointOptions.opacity, linkOptions.opacity, 1)
         };
     },
     /**
@@ -687,8 +747,11 @@ seriesType('networkgraph', 'line', {
                 .path(
                     this.getLinkPath()
                 )
-                .attr(this.getLinkAttribues())
                 .add(this.series.group);
+
+            if (!this.series.chart.styledMode) {
+                this.graphic.attr(this.series.pointAttribs(this));
+            }
         }
     },
     /**
@@ -701,6 +764,10 @@ seriesType('networkgraph', 'line', {
             this.shapeArgs = {
                 d: path
             };
+
+            if (!this.series.chart.styledMode) {
+                this.graphic.attr(this.series.pointAttribs(this));
+            }
             this.graphic.animate(this.shapeArgs);
 
             // Required for dataLabels:

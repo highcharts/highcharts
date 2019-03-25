@@ -1700,6 +1700,33 @@ H.Series = H.seriesType(
                      *         3px line width for selected points
                      */
                     lineWidth: 2
+                },
+
+                /**
+                 * The opposite state of a hover for a single point marker.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
+                 *         Enabled inactive state
+                 *
+                 * @extends   plotOptions.series.marker.states.hover
+                 */
+                inactive: {
+                    /**
+                     * Opacity of inactive markers.
+                     *
+                     * @apioption plotOptions.series.marker.states.inactive.opacity
+                     * @type {number}
+                     */
+                    opacity: 0.1,
+
+                    /**
+                     * Animation when not hovering over the marker.
+                     *
+                     * @type {boolean|Highcharts.AnimationOptionsObject}
+                     */
+                    animation: {
+                        duration: 50
+                    }
                 }
             }
         },
@@ -2093,6 +2120,27 @@ H.Series = H.seriesType(
                 animation: {
                     duration: 0
                 }
+            },
+
+            /**
+             * The opposite state of a hover for series.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
+             *         Enabled inactive state
+             *
+             * @extends   plotOptions.series.states.hover
+             */
+            inactive: {
+                animation: {
+                    duration: 50
+                },
+                /**
+                 * Opacity of inactive markers.
+                 *
+                 * @apioption plotOptions.series.marker.states.inactive.opacity
+                 * @type {number}
+                 */
+                opacity: 0.1
             }
         },
 
@@ -3564,6 +3612,24 @@ H.Series = H.seriesType(
         },
 
         /**
+         * Get current X extremes for the visible data.
+         *
+         * @private
+         * @function Highcharts.Series#getExtremes
+         *
+         * @param {Array<number>} [xData]
+         *        The data to inspect. Defaults to the current data within the
+         *        visible range.
+         * @return {object}
+         */
+        getXExtremes: function (xData) {
+            return {
+                min: arrayMin(xData),
+                max: arrayMax(xData)
+            };
+        },
+
+        /**
          * Calculate Y extremes for the visible data. The result is set as
          * `dataMin` and `dataMax` on the Series item.
          *
@@ -4250,7 +4316,8 @@ H.Series = H.seriesType(
                 ),
                 zoneColor = point && point.zone && point.zone.color,
                 fill,
-                stroke;
+                stroke,
+                opacity = 1;
 
             color = (
                 pointColorOption ||
@@ -4296,12 +4363,19 @@ H.Series = H.seriesType(
                     seriesStateOptions.lineColor ||
                     stroke
                 );
+
+                opacity = pick(
+                    pointStateOptions.opacity,
+                    seriesStateOptions.opacity,
+                    opacity
+                );
             }
 
             return {
                 'stroke': stroke,
                 'stroke-width': strokeWidth,
-                'fill': fill
+                'fill': fill,
+                'opacity': opacity
             };
         },
 

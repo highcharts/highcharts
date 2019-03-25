@@ -1,12 +1,12 @@
-/**
+/* *
  *
- * Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2019 Highsoft AS
  *
- * Boost module: stripped-down renderer for higher performance
+ *  Boost module: stripped-down renderer for higher performance
  *
- * License: highcharts.com/license
+ *  License: highcharts.com/license
  *
- */
+ * */
 
 'use strict';
 
@@ -127,16 +127,14 @@ Series.prototype.getPoint = function (boostPoint) {
     return point;
 };
 
-/**
- * Return a point instance from the k-d-tree
- */
+// Return a point instance from the k-d-tree
 wrap(Series.prototype, 'searchPoint', function (proceed) {
     return this.getPoint(
         proceed.apply(this, [].slice.call(arguments, 1))
     );
 });
 
-/**
+/*
  * Extend series.destroy to also remove the fake k-d-tree points (#5137).
  * Normally this is handled by Series.destroy that calls Point.destroy,
  * but the fake search points are not registered like that.
@@ -160,7 +158,7 @@ addEvent(Series, 'destroy', function () {
     }
 });
 
-/**
+/*
  * Do not compute extremes when min and max are set.
  * If we use this in the core, we can add the hook
  * to hasExtremes to the methods directly.
@@ -171,7 +169,7 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
     }
 });
 
-/**
+/*
  * Override a bunch of methods the same way. If the number of points is
  * below the threshold, run the original method. If not, check for a
  * canvas version or do nothing.
@@ -228,10 +226,8 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
     }
 });
 
-/** If the series is a heatmap or treemap, or if the series is not boosting
- *  do the default behaviour. Otherwise, process if the series has no
- *  extremes.
- */
+// If the series is a heatmap or treemap, or if the series is not boosting
+// do the default behaviour. Otherwise, process if the series has no extremes.
 wrap(Series.prototype, 'processData', function (proceed) {
 
     var series = this,
