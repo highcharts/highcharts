@@ -1291,7 +1291,7 @@ if (seriesTypes.pie) {
             chart = series.chart,
             options = series.options.dataLabels,
             connectorPadding = options.connectorPadding,
-            connectorWidth = pick(options.connectorWidth, 1),
+            connectorWidth,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
             plotLeft = chart.plotLeft,
@@ -1315,7 +1315,8 @@ if (seriesTypes.pie) {
             visibility,
             j,
             overflow = [0, 0, 0, 0], // top, right, bottom, left
-            dataLabelPositioners = series.dataLabelPositioners;
+            dataLabelPositioners = series.dataLabelPositioners,
+            pointDataLabelsOptions;
 
         // get out if not enabled
         if (!series.visible || (!options.enabled && !series._hasPointLabels)) {
@@ -1573,9 +1574,15 @@ if (seriesTypes.pie) {
             // Place the labels in the final position
             this.placeDataLabels();
 
-            // Draw the connectors
-            if (connectorWidth) {
+
                 this.points.forEach(function (point) {
+                // #8864: every connector can have individual options
+                pointDataLabelsOptions =
+                  merge(options, point.options.dataLabels);
+                connectorWidth = pick(pointDataLabelsOptions.connectorWidth, 1);
+
+                // Draw the connector
+                if (connectorWidth) {
                     var isNew;
 
                     connector = point.connector;
@@ -1604,11 +1611,12 @@ if (seriesTypes.pie) {
                                 )
                                 .add(series.dataLabelsGroup);
 
+
                             if (!chart.styledMode) {
                                 connector.attr({
                                     'stroke-width': connectorWidth,
                                     'stroke': (
-                                        options.connectorColor ||
+                                        pointDataLabelsOptions.connectorColor ||
                                         point.color ||
                                         '${palette.neutralColor60}'
                                     )
@@ -1623,8 +1631,8 @@ if (seriesTypes.pie) {
                     } else if (connector) {
                         point.connector = connector.destroy();
                     }
-                });
             }
+            });
         }
     };
 
