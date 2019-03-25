@@ -1,6 +1,9 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
  * Organization chart series type
+ * @module highcharts/modules/organization
+ * @requires highcharts
+ * @requires highcharts/modules/sankey
  *
  * (c) 2019-2019 Torstein Honsi
  *
