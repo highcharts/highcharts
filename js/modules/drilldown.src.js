@@ -616,7 +616,7 @@ Chart.prototype.applyDrilldown = function () {
     this.pointer.reset();
     this.redraw();
     this.showDrillUpButton();
-    fireEvent(this, 'afterApplyDrilldown');
+    fireEvent(this, 'afterDrilldown');
 };
 
 Chart.prototype.getDrilldownBackText = function () {

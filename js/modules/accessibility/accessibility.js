@@ -484,7 +484,7 @@ addEvent(H.Point, 'update', function () {
 
 // Direct updates (events happen after render)
 [
-    'afterApplyDrilldown', 'drillupall'
+    'afterDrilldown', 'drillupall'
 ].forEach(function (event) {
     addEvent(H.Chart, event, function () {
         if (this.accessibility) {

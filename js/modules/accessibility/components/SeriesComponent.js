@@ -678,7 +678,7 @@ H.extend(SeriesComponent.prototype, {
 
         // After drilldown, make sure we reset time counter, and also that we
         // highlight the first series.
-        this.addEvent(this.chart, 'afterApplyDrilldown', function () {
+        this.addEvent(this.chart, 'afterDrilldown', function () {
             chart.highlightedPoint = null;
             if (chart.options.accessibility.announceNewData.enabled) {
                 if (this.series && this.series.length) {

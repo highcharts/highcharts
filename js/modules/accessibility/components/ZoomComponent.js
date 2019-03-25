@@ -67,7 +67,7 @@ H.extend(ZoomComponent.prototype, {
         var component = this,
             chart = this.chart;
         [
-            'afterShowResetZoom', 'afterApplyDrilldown', 'drillupall'
+            'afterShowResetZoom', 'afterDrilldown', 'drillupall'
         ].forEach(function (eventType) {
             component.addEvent(chart, eventType, function () {
                 component.updateProxyOverlays();
