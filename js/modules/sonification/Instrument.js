@@ -144,9 +144,7 @@ function Instrument(options) {
 }
 Instrument.prototype.init = function (options) {
     if (!this.initAudioContext()) {
-        if (!H.isMS) {
-            H.error(29);
-        }
+        H.error(29);
         return;
     }
     this.options = H.merge(defaultOptions, options);
