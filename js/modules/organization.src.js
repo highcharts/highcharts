@@ -236,7 +236,7 @@ H.seriesType(
                             x,
                             y,
                             x + directionX * Math.min(Math.abs(x - x2), r),
-                            y + directionY * Math.min(Math.abs(y - y2), r),
+                            y + directionY * Math.min(Math.abs(y - y2), r)
                         );
                     }
 
