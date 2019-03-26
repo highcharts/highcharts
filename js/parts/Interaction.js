@@ -826,6 +826,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             halo = series.halo,
             haloOptions,
             markerAttribs,
+            pointAttribs,
+            pointAttribsAnimation,
             hasMarkers = markerOptions && series.markerAttribs,
             newSymbol;
 
@@ -874,12 +876,30 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             }
 
             if (!chart.styledMode) {
+                pointAttribs = series.pointAttribs(point, state);
+                pointAttribsAnimation = pick(
+                    chart.options.chart.animation,
+                    stateOptions.animation
+                );
+
+                // Some inactive points (e.g. slices in pie) should apply
+                // oppacity also for it's labels
+                if (point.series.options.inactiveOtherPoints) {
+                    (point.dataLabels || []).forEach(function (label) {
+                        if (label) {
+                            label.animate(
+                                {
+                                    opacity: pointAttribs.opacity
+                                },
+                                pointAttribsAnimation
+                            );
+                        }
+                    });
+                }
+
                 point.graphic.animate(
-                    series.pointAttribs(point, state),
-                    pick(
-                        chart.options.chart.animation,
-                        stateOptions.animation
-                    )
+                    pointAttribs,
+                    pointAttribsAnimation
                 );
             }
 
@@ -1119,7 +1139,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             graph = series.graph,
             stateOptions = options.states,
             lineWidth = options.lineWidth,
-            opacity = 1,
+            opacity = options.opacity,
             attribs,
             i = 0;
 
@@ -1166,8 +1186,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
                 if (graph && !graph.dashstyle) {
                     attribs = {
-                        'stroke-width': lineWidth,
-                        opacity: opacity
+                        'stroke-width': lineWidth
                     };
 
                     // Animate the graph stroke-width. By default a quick
@@ -1186,6 +1205,23 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         series['zone-graph-' + i].attr(attribs);
                         i = i + 1;
                     }
+                }
+
+                // For some types (pie, networkgraph, sankey) opacity is
+                // resolved on a point level
+                if (!series.options.inactiveOtherPoints) {
+                    [
+                        series.group,
+                        series.dataLabelsGroup
+                    ].forEach(
+                        function (group) {
+                            if (group) {
+                                group.attr({
+                                    opacity: opacity
+                                });
+                            }
+                        }
+                    );
                 }
             }
         }

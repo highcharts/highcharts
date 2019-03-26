@@ -1918,6 +1918,13 @@ H.Series = H.seriesType(
          */
         cropThreshold: 300,
 
+        /**
+         * Opacity of a series parts: line, fill (e.g. area) and dataLabels.
+         *
+         * @since   7.1.0
+         * @see     [states.inactive.opacity](#plotOptions.series.states.inactive.opacity)
+         */
+        opacity: 1,
 
         /**
          * The width of each point on the x axis. For example in a column chart
@@ -2135,9 +2142,9 @@ H.Series = H.seriesType(
                     duration: 50
                 },
                 /**
-                 * Opacity of inactive markers.
+                 * Opacity of series elements (dataLabels, line, area).
                  *
-                 * @apioption plotOptions.series.marker.states.inactive.opacity
+                 * @apioption plotOptions.series.states.inactive.opacity
                  * @type {number}
                  */
                 opacity: 0.1

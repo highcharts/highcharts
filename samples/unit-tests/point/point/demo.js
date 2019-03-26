@@ -55,7 +55,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.attr(
-                chart.series[1].graph.element,
+                chart.series[1].group.element,
                 'opacity'
             ),
             '0.1',
@@ -166,7 +166,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.attr(
-                chart.series[0].graph.element,
+                chart.series[0].group.element,
                 'opacity'
             ),
             '0.1',
