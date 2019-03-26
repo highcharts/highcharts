@@ -177,7 +177,7 @@ QUnit.test('Zooming', function (assert) {
                 enabled: true
             }
         }),
-        controller = TestController(chart);
+        controller = new TestController(chart);
 
     chart.xAxis[0].setExtremes(2.3, 2.7);
 

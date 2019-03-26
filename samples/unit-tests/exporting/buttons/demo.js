@@ -1,4 +1,3 @@
-
 QUnit.test('Export buttons', function (assert) {
 
     var chartClickEventRan = false,
@@ -63,7 +62,7 @@ QUnit.test('Export buttons', function (assert) {
     );
 
     // Click it
-    var controller = TestController(chart),
+    var controller = new TestController(chart),
         alignAttr = chart.exportSVGElements[0].alignAttr;
     controller.click(alignAttr.translateX + 5, alignAttr.translateY + 5);
 
@@ -132,5 +131,4 @@ QUnit.test('Export buttons', function (assert) {
         Highcharts.post = originalPost;
 
     }
-
 });

@@ -534,7 +534,7 @@ QUnit.test('Moving navigator with no series should not break axis (#7411)', func
                 ]
             }]
         }),
-        controller = TestController(chart),
+        controller = new TestController(chart),
         rightHandle = chart.navigator.handles[1],
         isNum = Highcharts.isNumber;
 

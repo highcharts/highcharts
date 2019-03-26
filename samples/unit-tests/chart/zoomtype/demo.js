@@ -22,7 +22,7 @@ QUnit.test('Zoom type', function (assert) {
         }]
     });
 
-    var controller = TestController(chart);
+    var controller = new TestController(chart);
 
 
     // Right-click
@@ -396,7 +396,7 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
         }]
     });
 
-    var controller = TestController(chart);
+    var controller = new TestController(chart);
 
     // Zoom on the first pane
     controller.pan([100, 80], [200, 120]);
@@ -475,7 +475,7 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
         }]
     });
 
-    controller = TestController(chart);
+    controller = new TestController(chart);
     controller.pan([180, 200], [250, 300]);
 
     assert.deepEqual(

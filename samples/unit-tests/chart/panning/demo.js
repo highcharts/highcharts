@@ -26,9 +26,8 @@ QUnit.test('Zoom and pan key', function (assert) {
                 data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
             }]
         }),
-        controller = TestController(chart),
+        controller = new TestController(chart),
         firstZoom = {};
-
 
     chart.setSize(600, 300);
 
@@ -93,11 +92,7 @@ QUnit.test('Zoom and pan key', function (assert) {
         0.00001, // Roundoff error in Firefox
         'Has preserved range'
     );
-
-
 });
-
-
 
 QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
     var chart = Highcharts.stockChart('container', {
@@ -143,7 +138,7 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
         }]
     });
 
-    var controller = TestController(chart);
+    var controller = new TestController(chart);
 
     var initialMin = chart.xAxis[0].min,
         initialRange = chart.xAxis[0].max - chart.xAxis[0].min;
@@ -172,7 +167,6 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
         initialRange,
         'Has preserved range'
     );
-
 });
 
 QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
@@ -229,7 +223,6 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
         '1940,1945,1950,1955,1960,1965,1970,1975,1980,1985,1990',
         'Right ticks'
     );
-
 
     // Pan
     controller.pan([300, 200], [200, 200]);
