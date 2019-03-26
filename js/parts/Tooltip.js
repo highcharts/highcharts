@@ -828,9 +828,8 @@ H.Tooltip.prototype = {
         // shared tooltip, array is sent over
         if (shared && !(point.series && point.series.noSharedTooltip)) {
             // Set inactive state for all points
-            activeSeries = point.map(function (item) {
-                return item.series;
-            });
+            activeSeries = chart.pointer.getActiveSeries(point);
+
             chart.series.forEach(function (inactiveSeries) {
                 if (
                     inactiveSeries.options.inactiveOtherPoints ||
