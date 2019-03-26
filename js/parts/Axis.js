@@ -3290,11 +3290,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
         axis.min = null;
 
-        var tooltipCrosshairs = (
-            chart.options &&
-            chart.options.tooltip &&
-            chart.options.tooltip.crosshairs
-        );
         /**
          * The processed crosshair options.
          *
@@ -3303,7 +3298,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
         axis.crosshair = pick(
             options.crosshair,
-            splat(tooltipCrosshairs)[isXAxis ? 0 : 1],
+            splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1],
             false
         );
 
