@@ -210,6 +210,9 @@ QUnit.test(
                 },
                 series: [{
                     type: 'networkgraph',
+                    layoutAlgorithm: {
+                        integration: 'verlet'
+                    },
                     keys: ['from', 'to'],
                     data: [['A', 'B'], ['B', 'C']]
                 }, {
