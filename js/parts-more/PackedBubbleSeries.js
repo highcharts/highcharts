@@ -208,8 +208,13 @@ H.layouts.packedbubble = H.extendClass(
             return Math.abs(
                 this.systemTemperature -
                 this.prevSystemTemperature
-            ) < 0.00001 || this.temperature <= 0 ||
-                this.systemTemperature / this.nodes.length < 0.01;
+            ) < 0.00001 ||
+            this.temperature <= 0 ||
+            (
+                // In first iteration system does not move:
+                this.systemTemperature > 0 &&
+                this.systemTemperature / this.nodes.length < 0.01
+            );
         }
     }
 );
@@ -777,7 +782,11 @@ seriesType('packedbubble', 'bubble',
                 layoutOptions = series.options.layoutAlgorithm,
                 graphLayoutsStorage = series.chart.graphLayoutsStorage,
                 graphLayoutsLookup = series.chart.graphLayoutsLookup,
-                parentNodeOptions = layoutOptions.parentNodeOptions,
+                chartOptions = series.chart.options.chart,
+                parentNodeOptions = H.merge(
+                    layoutOptions,
+                    layoutOptions.parentNodeOptions
+                ),
                 parentNodeLayout;
 
             parentNodeLayout = graphLayoutsStorage[
@@ -785,13 +794,16 @@ seriesType('packedbubble', 'bubble',
             ];
 
             if (!parentNodeLayout) {
+                parentNodeOptions.enableSimulation =
+                    !defined(chartOptions.forExport) ?
+                        parentNodeOptions.enableSimulation :
+                        !chartOptions.forExport;
+
                 graphLayoutsStorage[layoutOptions.type + '-series'] =
                 parentNodeLayout =
                     new H.layouts[layoutOptions.type]();
 
-                parentNodeLayout.init(
-                    H.merge(layoutOptions, parentNodeOptions)
-                );
+                parentNodeLayout.init(parentNodeOptions);
 
                 graphLayoutsLookup.splice(
                     parentNodeLayout.index, 0, parentNodeLayout
