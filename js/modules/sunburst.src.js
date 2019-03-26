@@ -578,6 +578,12 @@ var sunburstOptions = {
     center: ['50%', '50%'],
     colorByPoint: false,
     /**
+     * Disable inherited opacity from Treemap series.
+     *
+     * @ignore-option
+     */
+    opacity: 1,
+    /**
      * @type {Highcharts.SeriesSunburstDataLabelsOptionsObject|Highcharts.DataLabelsOptionsObject}
      */
     dataLabels: {
