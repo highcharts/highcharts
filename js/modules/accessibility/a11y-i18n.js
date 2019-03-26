@@ -1,4 +1,4 @@
-/**
+/* *
  * Accessibility module - internationalization support
  *
  * (c) 2010-2019 Highsoft AS

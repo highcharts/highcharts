@@ -22,6 +22,8 @@ var merge = H.merge,
  * The KeyboardNavigation class, containing the overall keyboard navigation
  * logic for the chart.
  *
+ * @requires module:modules/accessibility
+ *
  * @private
  * @class
  * @param {Highcharts.Chart} chart
@@ -82,7 +84,7 @@ KeyboardNavigation.prototype = {
 
     /**
      * Update the modules for the keyboard navigation
-     * @param {Array<String>} order
+     * @param {Array<string>} order
      *        Array specifying the tab order of the components.
      */
     update: function (order) {
@@ -121,7 +123,6 @@ KeyboardNavigation.prototype = {
      * Reset chart navigation state if we click outside the chart and it's
      * not already reset.
      * @private
-     * @returns {undefined}
      */
     onMouseUp: function () {
         if (
@@ -180,7 +181,6 @@ KeyboardNavigation.prototype = {
     /**
      * Go to previous module.
      * @private
-     * @returns {undefined}
      */
     prev: function () {
         return this.move(-1);
@@ -190,7 +190,6 @@ KeyboardNavigation.prototype = {
     /**
      * Go to next module.
      * @private
-     * @returns {undefined}
      */
     next: function () {
         return this.move(1);
@@ -201,7 +200,7 @@ KeyboardNavigation.prototype = {
      * Move to prev/next module.
      * @private
      * @param {number} direction Direction to move. +1 for next, -1 for prev.
-     * @returns {boolean} True if there was a valid module in direction.
+     * @return {boolean} True if there was a valid module in direction.
      */
     move: function (direction) {
         var curModule = this.modules && this.modules[this.currentModuleIx];
@@ -246,13 +245,11 @@ KeyboardNavigation.prototype = {
      * whenever we want, by setting focus to this div and not preventing the
      * default tab action. We also use this when users come back into the chart
      * by tabbing back, in order to navigate from the end of the chart.
-     *
      * @private
-     * @returns {undefined}
      */
     addExitAnchor: function () {
         var chart = this.chart,
-            exitAnchor = this.exitAnchor = doc.createElement('div'),
+            exitAnchor = this.exitAnchor = doc.createElement('h6'),
             keyboardNavigation = this,
             exitAnchorLabel = chart.langFormat(
                 'accessibility.svgContainerEnd', { chart: chart }
@@ -329,7 +326,7 @@ KeyboardNavigation.prototype = {
 
     /**
      * Remove all traces of keyboard navigation.
-     * @returns {undefined}
+     * @private
      */
     destroy: function () {
         // Remove exit anchor

@@ -21,6 +21,7 @@ var doc = H.win.document;
  *
  * @private
  * @class
+ * @name ContainerComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */

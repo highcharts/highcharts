@@ -87,6 +87,7 @@ H.Chart.prototype.getTypeDescription = function (types) {
  *
  * @private
  * @class
+ * @name InfoRegionComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -232,7 +233,7 @@ H.extend(InfoRegionComponent.prototype, {
     /**
      * Return object with text description of each of the chart's axes.
      * @private
-     * @return {*}
+     * @return {object}
      */
     getAxesDescription: function () {
         var chart = this.chart,

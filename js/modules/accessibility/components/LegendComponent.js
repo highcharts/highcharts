@@ -69,6 +69,7 @@ H.addEvent(H.Legend, 'afterColorizeItem', function (e) {
  *
  * @private
  * @class
+ * @name LegendComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -149,6 +150,7 @@ H.extend(LegendComponent.prototype, {
 
     /**
      * Get keyboard navigation module for this component.
+     * @return {Highcharts.KeyboardNavigationModule}
      */
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,

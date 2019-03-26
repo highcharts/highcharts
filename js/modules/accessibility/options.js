@@ -19,6 +19,8 @@ var options = {
      * on its features, see
      * [Highcharts Accessibility](http://www.highcharts.com/docs/chart-concepts/accessibility).
      *
+     * @requires module:modules/accessibility
+     *
      * @since        5.0.0
      * @optionparent accessibility
      */
@@ -36,10 +38,10 @@ var options = {
          *
          * Set to `false` to disable.
          *
-         * @type  {false|number}
+         * @type  {boolean|number}
          * @since 5.0.0
          */
-        pointDescriptionThreshold: false, // set to false to disable
+        pointDescriptionThreshold: 500, // set to false to disable
 
         /**
          * Whether or not to add a shortcut button in the screen reader
@@ -60,9 +62,10 @@ var options = {
         axisRangeDateFormat: '%Y-%m-%d %H:%M:%S',
 
         /**
-         * Amount of landmarks/regions to create for screen reader users. This
-         * can make navigation easier, but if there are lots of charts on the
-         * page, it can create clutter. Three modes are available:
+         * Amount of landmarks/regions to create for screen reader users. More
+         * landmarks can make navigation with screen readers easier, but can
+         * be distracting if there are lots of charts on the page. Three modes
+         * are available:
          *  all: Adds regions for all series, legend, menu, information
          *      region.
          *  one: Adds a single landmark per chart.
@@ -75,14 +78,14 @@ var options = {
 
         /**
          * A hook for adding custom components to the accessibility module.
-         * Should be an object mapping component names to instances of the
-         * Highcharts.AccessibilityComponent class. Remember to add the
-         * component to the
+         * Should be an object mapping component names to instances of classes
+         * inheriting from the Highcharts.AccessibilityComponent base class.
+         * Remember to add the component to the
          * [keyboardNavigation.order](#accessibility.keyboardNavigation.order)
          * for the keyboard navigation to be usable.
          *
          * @since next
-         * @type {*}
+         * @type {object}
          * @sample highcharts/accessibility/custom-component
          *         Custom accessibility component
          * @apioption accessibility.customComponents
@@ -92,8 +95,12 @@ var options = {
          * A text description of the chart.
          *
          * If the Accessibility module is loaded, this is included by default
-         * as a long description of the chart and its contents in the hidden
-         * screen reader information region.
+         * as a long description of the chart in the hidden screen reader
+         * information region.
+         *
+         * Note: It is considered a best practice to make the description of the
+         * chart visible to all users, so consider if this can be placed in text
+         * around the chart instead.
          *
          * @see [typeDescription](#accesibility.typeDescription)
          *
@@ -107,7 +114,6 @@ var options = {
          *
          * If the Accessibility module is loaded, this will be included in the
          * description of the chart in the screen reader information region.
-         *
          *
          * Highcharts will by default attempt to guess the chart type, but for
          * more complex charts it is recommended to specify this property for
@@ -201,7 +207,7 @@ var options = {
          * Formatter function to use instead of the default for point
          * descriptions.
          * Receives one argument, `point`, referring to the point to describe.
-         * Should return a String with the description of the point for a screen
+         * Should return a string with the description of the point for a screen
          * reader user. If `false` is returned, the default formatter will be
          * used for that point.
          *
@@ -215,7 +221,7 @@ var options = {
         /**
          * Formatter function to use instead of the default for series
          * descriptions. Receives one argument, `series`, referring to the
-         * series to describe. Should return a String with the description of
+         * series to describe. Should return a string with the description of
          * the series for a screen reader user. If `false` is returned, the
          * default formatter will be used for that series.
          *
@@ -229,7 +235,7 @@ var options = {
         /**
          * A formatter function to create the HTML contents of the hidden screen
          * reader information region. Receives one argument, `chart`, referring
-         * to the chart object. Should return a String with the HTML content
+         * to the chart object. Should return a string with the HTML content
          * of the region. By default this returns an automatic description of
          * the chart.
          *
@@ -265,7 +271,7 @@ var options = {
              *
              * In "serialize" mode, points are instead navigated as a single
              * list. Left/right behaves as in "normal" mode. Up/down arrow keys
-             * will behave like left/right. This is useful for unifying
+             * will behave like left/right. This can be useful for unifying
              * navigation behavior with/without screen readers enabled.
              *
              * @type       {string}
@@ -342,14 +348,15 @@ var options = {
             /**
              * Order of tab navigation in the chart. Determines which elements
              * are tabbed to first. Available elements are: `series`, `zoom`,
-             * `rangeSelector`, `chartMenu`, `legend`
+             * `rangeSelector`, `chartMenu`, `legend`. In addition, any custom
+             * components can be added here.
              *
              * @since next
              */
             order: ['series', 'zoom', 'rangeSelector', 'chartMenu', 'legend'],
 
             /**
-             * Whether or not to wrap around when reaching the end of arrow
+             * Whether or not to wrap around when reaching the end of arrow-key
              * navigation for an element in the chart.
              * @since next
              */
@@ -424,6 +431,8 @@ var options = {
     /**
      * Accessibility options for a series. Requires the accessibility module.
      *
+     * @requires module:modules/accessibility
+     *
      * @type       {object}
      * @since      next
      * @apioption  plotOptions.series.accessibility
@@ -434,6 +443,7 @@ var options = {
      *
      * @type       {boolean}
      * @since      next
+     * @default    undefined
      * @apioption  plotOptions.series.accessibility.enabled
      */
 
@@ -446,6 +456,7 @@ var options = {
      *
      * @type      {Function}
      * @since     next
+     * @default   undefined
      * @apioption plotOptions.series.accessibility.pointDescriptionFormatter
      */
 
@@ -454,6 +465,7 @@ var options = {
      *
      * @type       {boolean}
      * @since      next
+     * @default    undefined
      * @apioption  plotOptions.series.accessibility.exposeAsGroupOnly
      */
 
@@ -469,6 +481,7 @@ var options = {
      * Enable/disable keyboard navigation support for a specific series.
      *
      * @type       {boolean}
+     * @default    undefined
      * @since      next
      * @apioption  plotOptions.series.accessibility.keyboardNavigation.enabled
      */
@@ -476,7 +489,9 @@ var options = {
     /**
      * Accessibility options for an axis. Requires the accessibility module.
      *
+     * @requires module:modules/accessibility
      * @since      next
+     * @type       {object}
      * @apioption  xAxis.accessibility
      */
 
@@ -487,6 +502,8 @@ var options = {
      * by default.
      *
      * @since      next
+     * @type       {boolean}
+     * @default    undefined
      * @apioption  xAxis.accessibility.enabled
      */
 
@@ -494,6 +511,8 @@ var options = {
      * Description for an axis to expose to screen reader users.
      *
      * @since      next
+     * @type       {string}
+     * @default    undefined
      * @apioption  xAxis.accessibility.description
      */
 
@@ -502,6 +521,8 @@ var options = {
      * Set to empty to disable range description for this axis.
      *
      * @since      next
+     * @type       {string}
+     * @default    undefined
      * @apioption  xAxis.accessibility.rangeDescription
      */
 
@@ -511,6 +532,7 @@ var options = {
          * Accessibility options for the legend. Requires the Accessibility
          * module.
          *
+         * @requires module:modules/accessibility
          * @since next
          * @apioption legend.accessibility
          */
@@ -546,6 +568,7 @@ var options = {
          * Accessibility options for the exporting menu. Requires the
          * Accessibility module.
          *
+         * @requires module:modules/accessibility
          * @since next
          * @apioption exporting.accessibility
          */

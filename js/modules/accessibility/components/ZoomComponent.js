@@ -23,7 +23,6 @@ import KeyboardNavigationModule from '../KeyboardNavigationModule.js';
  * @function Highcharts.Axis#panStep
  *
  * @param {number} direction
- *
  * @param {number} [granularity]
  */
 H.Axis.prototype.panStep = function (direction, granularity) {
@@ -50,6 +49,7 @@ H.Axis.prototype.panStep = function (direction, granularity) {
  *
  * @private
  * @class
+ * @name ZoomComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -161,7 +161,7 @@ H.extend(ZoomComponent.prototype, {
     /**
      * Get keyboard navigation module for map zoom.
      * @private
-     * @returns {KeyboardNavigationModule} The module object
+     * @return {Highcharts.KeyboardNavigationModule} The module object
      */
     getMapZoomNavigation: function () {
         var keys = this.keyCodes,
@@ -258,7 +258,7 @@ H.extend(ZoomComponent.prototype, {
      *
      * @private
      * @param {string} buttonProp The property on chart referencing the button.
-     * @returns {KeyboardNavigationModule} The module object
+     * @return {Highcharts.KeyboardNavigationModule} The module object
      */
     simpleButtonNavigation: function (buttonProp, proxyProp, onClick) {
         var keys = this.keyCodes,
@@ -305,7 +305,8 @@ H.extend(ZoomComponent.prototype, {
 
     /**
      * Get keyboard navigation modules for this component.
-     * @returns {Array<KeyboardNavigationModule>} List of module objects
+     * @return {Array<Highcharts.KeyboardNavigationModule>}
+     *      List of module objects
      */
     getKeyboardNavigation: function () {
         return [

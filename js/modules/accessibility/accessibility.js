@@ -179,6 +179,8 @@ H.Axis.prototype.getDescription = function () {
  * The Accessibility class
  *
  * @private
+ * @requires module:modules/accessibility
+ *
  * @class
  * @name Highcharts.Accessibility
  *

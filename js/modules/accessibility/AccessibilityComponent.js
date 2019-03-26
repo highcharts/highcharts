@@ -19,7 +19,8 @@ var win = Highcharts.win,
 
 /**
  * The AccessibilityComponent base class, representing a part of the chart that
- * has accessibility logic connected to it.
+ * has accessibility logic connected to it. This class can be inherited from to
+ * create a custom accessibility component for a chart.
  *
  * A component:
  *  - Must call initBase after inheriting.
@@ -28,6 +29,10 @@ var win = Highcharts.win,
  *  - Should take care to destroy added elements and unregister event handlers
  *      on destroy.
  *
+ * @sample highcharts/accessibility/custom-component
+ *         Custom accessibility component
+ *
+ * @requires module:modules/accessibility
  * @class
  * @name Highcharts.AccessibilityComponent
  */
@@ -95,8 +100,8 @@ AccessibilityComponent.prototype = {
     /**
      * Utility function to clone a mouse event for re-dispatching.
      * @private
-     * @param {EventObject} event The event to clone.
-     * @returns {EventObject} The cloned event
+     * @param {global.Event} event The event to clone.
+     * @return {global.Event} The cloned event
      */
     cloneMouseEvent: function (event) {
         if (typeof win.MouseEvent === 'function') {
@@ -155,14 +160,15 @@ AccessibilityComponent.prototype = {
      * element
      * @private
      * @param {Highcharts.SVGElement} svgElement The wrapped svg el to proxy.
-     * @param {HTMLElement} parentGroup The proxy group element in the proxy
-     *          container to add this button to.
+     * @param {Highcharts.HTMLElement} parentGroup The proxy group element in
+     *          the proxy container to add this button to.
      * @param {object} [attributes] Additional attributes to set.
      * @param {Highcharts.SVGElement} [posElement] Element to use for
      *          positioning instead of svgElement.
-     * @param {function} [preClickEvent] Function to call before click event
+     * @param {Function} [preClickEvent] Function to call before click event
      *          fires.
-     * @returns {HTMLElement} The proxy button.
+     *
+     * @return {Highcharts.HTMLElement} The proxy button.
      */
     createProxyButton: function (
         svgElement, parentGroup, attributes, posElement, preClickEvent
@@ -246,7 +252,8 @@ AccessibilityComponent.prototype = {
      * @private
      * @param {Highcharts.SVGElement} element The element to calculate position
      *          for.
-     * @returns {object} Object with x and y props for the position.
+     *
+     * @return {object} Object with x and y props for the position.
      */
     getElementPosition: function (element) {
         var el = element.element,
@@ -269,7 +276,8 @@ AccessibilityComponent.prototype = {
      * if it does not exist.
      * @private
      * @param {object} attrs The attributes to set on the new group div.
-     * @returns {HTMLDOMElement} The new proxy group element.
+     *
+     * @return {Highcharts.HTMLDOMElement} The new proxy group element.
      */
     addProxyGroup: function (attrs) {
         var chart = this.chart,
@@ -303,7 +311,7 @@ AccessibilityComponent.prototype = {
     /**
      * Utility function for removing an element from the DOM.
      * @private
-     * @param {HTMLDOMElement} element The element to remove.
+     * @param {Highcharts.HTMLDOMElement} element The element to remove.
      */
     removeElement: function (element) {
         if (element && element.parentNode) {
@@ -316,7 +324,8 @@ AccessibilityComponent.prototype = {
      * Unhide an element from screen readers. Also unhides parents, and hides
      * siblings that are not explicitly unhidden.
      * @private
-     * @param {HTMLDOMElement|SVGDOMElement} element The element to unhide
+     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
+     *      The element to unhide
      */
     unhideElementFromScreenReaders: function (element) {
         element.setAttribute('aria-hidden', false);
@@ -398,6 +407,7 @@ AccessibilityComponent.prototype = {
 
     /**
      * Get keyboard navigation module for this component.
+     * @return {Highcharts.KeyboardNavigationModule}
      */
     getKeyboardNavigation: function () {},
 

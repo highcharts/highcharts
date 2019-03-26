@@ -51,6 +51,7 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
  *
  * @private
  * @class
+ * @name RangeSelectorComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -116,7 +117,7 @@ H.extend(RangeSelectorComponent.prototype, {
     /**
      * Get navigation for the range selector buttons.
      * @private
-     * @returns {KeyboardNavigationModule} The module object.
+     * @return {Highcharts.KeyboardNavigationModule} The module object.
      */
     getRangeSelectorButtonNavigation: function () {
         var chart = this.chart,
@@ -183,7 +184,7 @@ H.extend(RangeSelectorComponent.prototype, {
     /**
      * Get navigation for the range selector input boxes.
      * @private
-     * @returns {KeyboardNavigationModule} The module object.
+     * @return {Highcharts.KeyboardNavigationModule} The module object.
      */
     getRangeSelectorInputNavigation: function () {
         var chart = this.chart,
@@ -253,7 +254,8 @@ H.extend(RangeSelectorComponent.prototype, {
 
     /**
      * Get keyboard navigation modules for this component.
-     * @returns {Array<KeyboardNavigationModule>} List of module objects.
+     * @return {Array<Highcharts.KeyboardNavigationModule>}
+     *      List of module objects.
      */
     getKeyboardNavigation: function () {
         return [

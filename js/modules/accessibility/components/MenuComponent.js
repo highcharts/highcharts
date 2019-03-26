@@ -126,6 +126,7 @@ H.Chart.prototype.highlightLastExportItem = function () {
  *
  * @private
  * @class
+ * @name MenuComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -250,6 +251,7 @@ H.extend(MenuComponent.prototype, {
 
     /**
      * Get keyboard navigation module for this component.
+     * @return {Highcharts.KeyboardNavigationModule}
      */
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,

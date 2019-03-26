@@ -113,11 +113,8 @@ function isSkipPoint(point) {
  * @function getClosestPoint
  *
  * @param {Highcharts.Point} point
- *
  * @param {Highcharts.Series} series
- *
  * @param {number} [xWeight]
- *
  * @param {number} [yWeight]
  *
  * @return {Highcharts.Point|undefined}
@@ -191,7 +188,7 @@ H.Point.prototype.highlight = function () {
  * @param {boolean} next
  *        Flag for the direction.
  *
- * @return {Highcharts.Point|false}
+ * @return {Highcharts.Point|boolean}
  *         Returns highlighted point on success, false on failure (no adjacent
  *         point to highlight in chosen direction).
  */
@@ -262,7 +259,7 @@ H.Chart.prototype.highlightAdjacentPoint = function (next) {
  * @private
  * @function Highcharts.Series#highlightFirstValidPoint
  *
- * @return {Highcharts.Point|false}
+ * @return {Highcharts.Point|boolean}
  */
 H.Series.prototype.highlightFirstValidPoint = function () {
     var curPoint = this.chart.highlightedPoint,
@@ -297,7 +294,7 @@ H.Series.prototype.highlightFirstValidPoint = function () {
  *
  * @param {boolean} down
  *
- * @return {Highcharts.Point|false}
+ * @return {Highcharts.Point|boolean}
  */
 H.Chart.prototype.highlightAdjacentSeries = function (down) {
     var chart = this,
@@ -359,7 +356,7 @@ H.Chart.prototype.highlightAdjacentSeries = function (down) {
  *
  * @param {boolean} down
  *
- * @return {Highcharts.Point|false}
+ * @return {Highcharts.Point|boolean}
  */
 H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
     var curPoint = this.highlightedPoint,
@@ -446,6 +443,7 @@ H.Point.prototype.getA11yTimeDescription = function () {
  *
  * @private
  * @class
+ * @name SeriesComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -520,6 +518,7 @@ H.extend(SeriesComponent.prototype, {
 
     /**
      * Get keyboard navigation module for this component.
+     * @return {Highcharts.KeyboardNavigationModule}
      */
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,
@@ -633,7 +632,7 @@ H.extend(SeriesComponent.prototype, {
      * Returns true if a point should be clickable.
      * @private
      * @param {Highcharts.Point} point The point to test.
-     * @returns {boolean} True if the point can be clicked.
+     * @return {boolean} True if the point can be clicked.
      */
     isPointClickable: function (point) {
         var seriesOpts = point.series.options || {},
@@ -853,7 +852,8 @@ H.extend(SeriesComponent.prototype, {
      *          If a single new series was added, a reference to this series.
      * @param {Highcharts.Point} [newPoint]
      *          If a single point was added, a reference to this point.
-     * @return {String} The announcement message to give to user.
+     *
+     * @return {string} The announcement message to give to user.
      */
     buildAnnouncementMessage: function (dirtySeries, newSeries, newPoint) {
         var chart = this.chart,
@@ -908,7 +908,7 @@ H.extend(SeriesComponent.prototype, {
      * Get the DOM element for the first point in the series.
      * @private
      * @param {Highcharts.Series} series The series to get element for.
-     * @return {SVGDOMElement} The DOM element for the point.
+     * @return {Highcharts.SVGDOMElement} The DOM element for the point.
      */
     getSeriesFirstPointElement: function (series) {
         return (
@@ -924,7 +924,7 @@ H.extend(SeriesComponent.prototype, {
      * Get the DOM element for the series that we put accessibility info on.
      * @private
      * @param {Highcharts.Series} series The series to get element for.
-     * @return {SVGDOMElement} The DOM element for the series
+     * @return {Highcharts.SVGDOMElement} The DOM element for the series
      */
     getSeriesElement: function (series) {
         var firstPointEl = this.getSeriesFirstPointElement(series);

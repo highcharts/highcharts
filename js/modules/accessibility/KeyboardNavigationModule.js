@@ -15,27 +15,34 @@ var find = H.find;
 
 
 /**
- * Abstraction layer for keyboard navigation. Keep a map of keyCodes to handler
+ * Define a keyboard navigation module for use with a
+ * Highcharts.AccessibilityComponent instance. This functions as an abstraction
+ * layer for keyboard navigation, and defines a map of keyCodes to handler
  * functions.
+ *
+ * @requires module:modules/accessibility
+ *
+ * @sample highcharts/accessibility/custom-component
+ *         Custom accessibility component
  *
  * @class
  * @name Highcharts.KeyboardNavigationModule
  *
  * @param {Highcharts.Chart} chart The chart this module should act on.
  * @param {object} options
- * @param {Array<Array<Number>, function>} options.keyCodeMap
+ * @param {Array<Array<Number>, Function>} options.keyCodeMap
  *      An array containing pairs of an array of keycodes, mapped to a handler
  *      function. When the keycode is received, the handler is called with the
  *      keycode as parameter.
- * @param {function} [options.init]
+ * @param {Function} [options.init]
  *      Function to run on initialization of module
- * @param {function} [options.validate]
+ * @param {Function} [options.validate]
  *      Function to run to validate module. Should return false if module should
  *      not run, true otherwise. Receives chart as parameter.
- * @param {function} [options.terminate]
+ * @param {Function} [options.terminate]
  *      Function to run before moving to next/prev module. Receives moving
- *      direction as parameter - +1 for next, -1 for previous.
- * @param {function} [options.init]
+ *      direction as parameter: +1 for next, -1 for previous.
+ * @param {Function} [options.init]
  *      Function to run on initialization of module
  */
 function KeyboardNavigationModule(chart, options) {
@@ -60,7 +67,7 @@ KeyboardNavigationModule.prototype = {
      *
      * @function KeyboardNavigationModule#run
      * @param {global.Event} e
-     * @returns {number} Returns a response code indicating whether the run was
+     * @return {number} Returns a response code indicating whether the run was
      *      a success/fail/unhandled, or if we should move to next/prev module.
      */
     run: function (e) {
