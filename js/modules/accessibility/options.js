@@ -84,6 +84,14 @@ var options = {
         axisRangeDateFormat: '%Y-%m-%d %H:%M:%S',
 
         /**
+         * Whether or not to add series descriptions to charts with a single
+         * series.
+         *
+         * @since     5.0.0
+         */
+        describeSingleSeries: false,
+
+        /**
          * Amount of landmarks/regions to create for screen reader users. More
          * landmarks can make navigation with screen readers easier, but can
          * be distracting if there are lots of charts on the page. Three modes
@@ -144,16 +152,6 @@ var options = {
          * @type      {string}
          * @since     5.0.0
          * @apioption accessibility.typeDescription
-         */
-
-        /**
-         * Whether or not to add series descriptions to charts with a single
-         * series.
-         *
-         * @type      {boolean}
-         * @default   false
-         * @since     5.0.0
-         * @apioption accessibility.describeSingleSeries
          */
 
         /**
@@ -449,6 +447,14 @@ var options = {
         }
     },
 
+    /**
+     * Provide a description of the data point, announced to screen readers.
+     *
+     * @type       {string}
+     * @since      next
+     * @default    undefined
+     * @apioption  series.line.data.accessibility.description
+     */
 
     /**
      * Accessibility options for a series. Requires the accessibility module.
@@ -467,6 +473,15 @@ var options = {
      * @since      next
      * @default    undefined
      * @apioption  plotOptions.series.accessibility.enabled
+     */
+
+    /**
+     * Provide a description of the series, announced to screen readers.
+     *
+     * @type       {string}
+     * @since      next
+     * @default    undefined
+     * @apioption  plotOptions.series.accessibility.description
      */
 
     /**
