@@ -144,11 +144,11 @@ H.extend(InfoRegionComponent.prototype, {
             hiddenSection = this.screenReaderRegion =
                 this.screenReaderRegion || this.createElement('div'),
             tableShortcut = this.tableHeading =
-                this.tableHeading || this.createElement('h4'),
+                this.tableHeading || this.createElement('h6'),
             tableShortcutAnchor = this.tableAnchor =
                 this.tableAnchor || this.createElement('a'),
             chartHeading = this.chartHeading =
-                this.chartHeading || this.createElement('h4');
+                this.chartHeading || this.createElement('h6');
 
         hiddenSection.setAttribute('id', hiddenSectionId);
         if (a11yOptions.landmarkVerbosity === 'all') {
@@ -185,7 +185,7 @@ H.extend(InfoRegionComponent.prototype, {
         }
 
         // Note: JAWS seems to refuse to read aria-label on the container, so
-        // add an h4 element as title for the chart.
+        // add an h6 element as title for the chart.
         chartHeading.innerHTML = chart.langFormat(
             'accessibility.chartHeading', { chart: chart }
         );
@@ -210,18 +210,17 @@ H.extend(InfoRegionComponent.prototype, {
             chartTypes = chart.types,
             axesDesc = this.getAxesDescription();
 
-        return (
+        return '<h5>' +
+        (
+            options.accessibility.typeDescription ||
+            chart.getTypeDescription(chartTypes)
+        ) + '</h5>' + (
             options.subtitle && options.subtitle.text ?
                 '<div>' + this.htmlencode(options.subtitle.text) + '</div>' : ''
         ) + (
             options.accessibility.description ?
                 '<div>' + options.accessibility.description + '</div>' : ''
-        ) + '<h4>' +
-        (
-            options.accessibility.typeDescription ||
-            chart.getTypeDescription(chartTypes)
-        ) + '</h4>' +
-        (axesDesc.xAxis ? (
+        ) + (axesDesc.xAxis ? (
             '<div>' + axesDesc.xAxis + '</div>'
         ) : '') +
         (axesDesc.yAxis ? (

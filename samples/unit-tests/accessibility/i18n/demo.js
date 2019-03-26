@@ -246,6 +246,6 @@ QUnit.test('Chart lang can be configured', function (assert) {
 
     assert.ok(
         chart.accessibility.components.infoRegion.screenReaderRegion
-            .innerHTML.indexOf('<h4>testing3</h4>') > -1
+            .innerHTML.indexOf('<h5>testing3</h5>') > -1
     );
 });
