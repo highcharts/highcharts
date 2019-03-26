@@ -1,4 +1,3 @@
-/* eslint-disable space-before-blocks */
 /* *
  * (c) 2010-2019 Torstein Honsi
  *
@@ -4209,26 +4208,24 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             if (linkedParent) {
                 minPointOffset = linkedParent.minPointOffset;
                 pointRangePadding = linkedParent.pointRangePadding;
-            } else if (hasCategories) {
-                pointRange = Math.max(pointRange, 1);
-                pointRangePadding = 1;
-                minPointOffset = 0.5;
             } else {
                 axis.series.forEach(function (series) {
-                    var seriesPointRange = (
-                            isXAxis ?
-                                pick(
-                                    series.options.pointRange,
-                                    closestPointRange,
-                                    0
-                                ) :
-                                (axis.axisPointRange || 0)
-                        ), // #2806
+                    var seriesPointRange = hasCategories ?
+                            1 :
+                            (
+                                isXAxis ?
+                                    pick(
+                                        series.options.pointRange,
+                                        closestPointRange,
+                                        0
+                                    ) :
+                                    (axis.axisPointRange || 0)
+                            ), // #2806
                         pointPlacement = series.options.pointPlacement;
 
                     pointRange = Math.max(pointRange, seriesPointRange);
 
-                    if (!axis.single) {
+                    if (!axis.single || hasCategories) {
                         // minPointOffset is the value padding to the left of
                         // the axis in order to make room for points with a
                         // pointRange, typically columns. When the
@@ -4236,7 +4233,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // padding does not apply.
                         minPointOffset = Math.max(
                             minPointOffset,
-                            isXAxis && isString(pointPlacement) ?
+                            isString(pointPlacement) ?
                                 0 : seriesPointRange / 2
                         );
 
@@ -4245,7 +4242,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // series' pointPlacement is 'on', no padding is added.
                         pointRangePadding = Math.max(
                             pointRangePadding,
-                            isXAxis && pointPlacement === 'on' ?
+                            pointPlacement === 'on' ?
                                 0 : seriesPointRange
                         );
                     }
@@ -5618,7 +5615,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *         settings.
      */
     hasData: function () {
-        return this.series.some(function (s){
+        return this.series.some(function (s) {
             return s.hasData();
         }) ||
         (this.options.showEmpty && defined(this.min) && defined(this.max));

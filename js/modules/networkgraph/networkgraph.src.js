@@ -399,7 +399,7 @@ seriesType(
              * @validvalue ["euler", "verlet"]
              * @since      7.1.0
              */
-            integration: 'verlet',
+            integration: 'euler',
             /**
              * Max number of iterations before algorithm will stop. In general,
              * algorithm should find positions sooner, but when rendering huge
