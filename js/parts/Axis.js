@@ -3300,6 +3300,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
         axis.min = null;
 
+        var tooltipCrosshairs = (
+            chart.options &&
+            chart.options.tooltip &&
+            chart.options.tooltip.crosshairs
+        );
         /**
          * The processed crosshair options.
          *
@@ -3308,7 +3313,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
         axis.crosshair = pick(
             options.crosshair,
-            splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1],
+            splat(tooltipCrosshairs)[isXAxis ? 0 : 1],
             false
         );
 
@@ -4220,7 +4225,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                     pointRange = Math.max(pointRange, seriesPointRange);
 
-                    if (!axis.single) {
+                    if (!axis.single || hasCategories) {
                         // minPointOffset is the value padding to the left of
                         // the axis in order to make room for points with a
                         // pointRange, typically columns. When the
@@ -4228,7 +4233,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // padding does not apply.
                         minPointOffset = Math.max(
                             minPointOffset,
-                            isXAxis && isString(pointPlacement) ?
+                            isString(pointPlacement) ?
                                 0 : seriesPointRange / 2
                         );
 
@@ -4237,7 +4242,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // series' pointPlacement is 'on', no padding is added.
                         pointRangePadding = Math.max(
                             pointRangePadding,
-                            isXAxis && pointPlacement === 'on' ?
+                            pointPlacement === 'on' ?
                                 0 : seriesPointRange
                         );
                     }
@@ -4713,7 +4718,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // Substract half a unit (#2619, #2846, #2515, #3390),
             // but not in case of multiple ticks (#6897)
-            if (this.single && tickPositions.length < 2) {
+            if (this.single && tickPositions.length < 2 && !this.categories) {
                 this.min -= 0.5;
                 this.max += 0.5;
             }
