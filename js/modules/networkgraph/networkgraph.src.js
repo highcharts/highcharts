@@ -791,6 +791,8 @@ seriesType(
          * @private
          */
         renderLink: function () {
+            var attribs;
+
             if (!this.graphic) {
                 this.graphic = this.series.chart.renderer
                     .path(
@@ -799,7 +801,16 @@ seriesType(
                     .add(this.series.group);
 
                 if (!this.series.chart.styledMode) {
-                    this.graphic.attr(this.series.pointAttribs(this));
+                    attribs = this.series.pointAttribs(this);
+                    this.graphic.attr(attribs);
+
+                    (this.dataLabels || []).forEach(function (label) {
+                        if (label) {
+                            label.attr({
+                                opacity: attribs.opacity
+                            });
+                        }
+                    });
                 }
             }
         },
@@ -808,14 +819,25 @@ seriesType(
          * @private
          */
         redrawLink: function () {
-            var path = this.getLinkPath();
+            var path = this.getLinkPath(),
+                attribs;
+
             if (this.graphic) {
                 this.shapeArgs = {
                     d: path
                 };
 
                 if (!this.series.chart.styledMode) {
-                    this.graphic.attr(this.series.pointAttribs(this));
+                    attribs = this.series.pointAttribs(this);
+                    this.graphic.attr(attribs);
+
+                    (this.dataLabels || []).forEach(function (label) {
+                        if (label) {
+                            label.attr({
+                                opacity: attribs.opacity
+                            });
+                        }
+                    });
                 }
                 this.graphic.animate(this.shapeArgs);
 
