@@ -66,10 +66,10 @@ var options = {
          * landmarks can make navigation with screen readers easier, but can
          * be distracting if there are lots of charts on the page. Three modes
          * are available:
-         *  all: Adds regions for all series, legend, menu, information
+         *  - `all`: Adds regions for all series, legend, menu, information
          *      region.
-         *  one: Adds a single landmark per chart.
-         *  disabled: No landmarks are added.
+         *  - `one`: Adds a single landmark per chart.
+         *  - `disabled`: No landmarks are added.
          *
          * @since next
          * @validvalue ["all", "one", "disabled"]
@@ -102,11 +102,11 @@ var options = {
          * chart visible to all users, so consider if this can be placed in text
          * around the chart instead.
          *
-         * @see [typeDescription](#accesibility.typeDescription)
+         * @see [typeDescription](#accessibility.typeDescription)
          *
          * @type      {string}
          * @since     5.0.0
-         * @apioption accesibility.description
+         * @apioption accessibility.description
          */
 
         /**
@@ -121,7 +121,7 @@ var options = {
          *
          * @type      {string}
          * @since     5.0.0
-         * @apioption accesibility.typeDescription
+         * @apioption accessibility.typeDescription
          */
 
         /**
@@ -534,6 +534,7 @@ var options = {
          *
          * @requires module:modules/accessibility
          * @since next
+         * @type {object}
          * @apioption legend.accessibility
          */
         accessibility: {
@@ -542,6 +543,7 @@ var options = {
              * Enable accessibility support for the legend.
              *
              * @since next
+             * @apioption legend.accessibility.enabled
              */
             enabled: true,
 
@@ -549,6 +551,7 @@ var options = {
              * Options for keyboard navigation for the legend.
              *
              * @since next
+             * @apioption legend.accessibility.keyboardNavigation
              */
             keyboardNavigation: {
                 /**
@@ -557,6 +560,7 @@ var options = {
                  * @since next
                  * @see [accessibility.keyboardNavigation](
                  *      #accessibility.keyboardNavigation.enabled)
+                 * @apioption legend.accessibility.keyboardNavigation.enabled
                  */
                 enabled: true
             }
@@ -570,6 +574,7 @@ var options = {
          *
          * @requires module:modules/accessibility
          * @since next
+         * @type {object}
          * @apioption exporting.accessibility
          */
         accessibility: {
@@ -577,6 +582,7 @@ var options = {
              * Enable accessibility support for the export menu.
              *
              * @since next
+             * @apioption exporting.accessibility.enabled
              */
             enabled: true
         }
