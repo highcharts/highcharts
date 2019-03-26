@@ -1,10 +1,10 @@
-QUnit.test('performance/test-template', function (assert) {
+QUnit.test('performance/test-template', assert => {
 
     var rounds = 100,
         totalCount = 0,
         totalTime = 0;
 
-    function test(template) {
+    function test(template: TestTemplate) {
 
         assert.strictEqual(
             template.chart.series[0].data.length,
@@ -30,11 +30,8 @@ QUnit.test('performance/test-template', function (assert) {
     for (var i = 0, ie = rounds; i < ie; ++i) {
         TestTemplate.test('highcharts/line', {
 
-            chart: {
-                type: 'column'
-            },
-
             series: [{
+                type: "column",
                 data: [5, 6, 7]
             }]
 
