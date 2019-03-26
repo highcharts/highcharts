@@ -54,7 +54,9 @@ The following example shows dynamic import with lazy-loading:
 ```
 
 ## Load Highcharts from the CDN as an AMD module
-Highcharts is compatible with AMD module loaders (such as RequireJS). Module files require an initialization step in order to reference Highcharts. To accomplish this, pass Highcharts to the function returned by loading the module. The following example demonstrates loading Highcharts along with two modules from our CDN using RequireJS.
+Highcharts is compatible with AMD module loaders (such as RequireJS). The
+following example demonstrates loading Highcharts along with two modules from
+our CDN using RequireJS.
 ```html
 <html>
     <head>
@@ -79,12 +81,9 @@ Highcharts is compatible with AMD module loaders (such as RequireJS). Module fil
                 'highcharts',
                 'highcharts/modules/exporting',
                 'highcharts/modules/accessibility'
+            ], function (Highcharts) {
                 // This function runs when the above files have been loaded.
-            ], function (Highcharts, ExportingModule, AccessibilityModule) {
-                // We need to initialize module files and pass in Highcharts.
-                ExportingModule(Highcharts);
-                // Load exporting before accessibility.
-                AccessibilityModule(Highcharts);
+
                 // Create a test chart.
                 Highcharts.chart('container', {
                     series: [{
@@ -126,7 +125,7 @@ import Highcharts from 'highcharts';
 
 // Load the exporting module.
 import Exporting from 'highcharts/modules/exporting';
-// Initialize exporting module.
+// Initialize exporting module. (CommonJS only)
 Exporting(Highcharts);
 
 // Generate the chart
@@ -142,7 +141,7 @@ import * as Highcharts from 'highcharts';
 
 // Load the exporting module.
 import Exporting from 'highcharts/modules/exporting';
-// Initialize exporting module.
+// Initialize exporting module. (CommonJS only)
 Exporting(Highcharts);
 
 // Generate the chart
@@ -161,5 +160,5 @@ gulp
 
 ## Generate API docs
 Run in this `highcharts` repository the doc generator with
-`npx gulp jsdoc --watch`, which also starts a new server with the generated
-API documentation.
+`npx gulp jsdoc-watch`, which also starts a new server with the generated API
+documentation.

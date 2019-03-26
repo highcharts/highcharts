@@ -1,12 +1,12 @@
-/**
+/* *
  *
- * Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2019 Highsoft AS
  *
- * Boost module: stripped-down renderer for higher performance
+ *  Boost module: stripped-down renderer for higher performance
  *
- * License: highcharts.com/license
+ *  License: highcharts.com/license
  *
- */
+ * */
 
 'use strict';
 
@@ -215,7 +215,7 @@ function GLRenderer(postRenderCallback) {
             zData = series.zData || options.zData || series.processedZData,
             yAxis = series.yAxis,
             xAxis = series.xAxis,
-            plotHeight = series.chart.plotHeight,
+            // plotHeight = series.chart.plotHeight,
             plotWidth = series.chart.plotWidth,
             useRaw = !xData || xData.length === 0,
             // threshold = options.threshold,
@@ -271,7 +271,7 @@ function GLRenderer(postRenderCallback) {
         }
 
         if (chart.inverted) {
-            plotHeight = series.chart.plotWidth;
+            // plotHeight = series.chart.plotWidth;
             plotWidth = series.chart.plotHeight;
         }
 
@@ -609,10 +609,13 @@ function GLRenderer(postRenderCallback) {
                 y = yAxis.toPixels(y, true);
 
                 // Make sure we're not drawing outside of the chart area.
-                // See #6594.
-                if (y > plotHeight) {
-                    y = plotHeight;
-                }
+                // See #6594. Update: this is no longer required as far as I
+                // can tell. Leaving in for git blame in case there are edge
+                // cases I've not found. Having this in breaks #10246.
+
+                // if (y > plotHeight) {
+                // y = plotHeight;
+                // }
 
                 if (x > plotWidth) {
                     // If this is  rendered as a point, just skip drawing it

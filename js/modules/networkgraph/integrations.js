@@ -1,4 +1,4 @@
-/**
+/* *
  * Networkgraph series
  *
  * (c) 2010-2019 Paweł Fus
@@ -15,6 +15,8 @@ H.networkgraphIntegrations = {
          * Attractive force funtion. Can be replaced by API's
          * `layoutAlgorithm.attractiveForce`
          *
+         * @private
+         *
          * @param {number} d current distance between two nodes
          * @param {number} k expected distance between two nodes
          *
@@ -27,6 +29,8 @@ H.networkgraphIntegrations = {
         /**
          * Repulsive force funtion. Can be replaced by API's
          * `layoutAlgorithm.repulsiveForce`
+         *
+         * @private
          *
          * @param {number} d current distance between two nodes
          * @param {number} k expected distance between two nodes
@@ -43,6 +47,10 @@ H.networkgraphIntegrations = {
          *
          * In Verlet integration, force is applied on a node immidatelly to it's
          * `plotX` and `plotY` position.
+         *
+         * @private
+         *
+         * @return {void}
          */
         barycenter: function () {
             var gravitationalConstant = this.options.gravitationalConstant,
@@ -68,10 +76,14 @@ H.networkgraphIntegrations = {
          * In Verlet integration, force is applied on a node immidatelly to it's
          * `plotX` and `plotY` position.
          *
+         * @private
+         *
          * @param {Highcharts.Point} node node that should be translated by
          *                          force.
          * @param {number} force force calcualated in `repulsiveForceFunction`
          * @param {object} distance Distance between two nodes e.g. `{x, y}`
+         *
+         * @return {void}
          */
         repulsive: function (node, force, distanceXY) {
             var factor = force * this.diffTemperature / node.mass / node.degree;
@@ -87,9 +99,13 @@ H.networkgraphIntegrations = {
          * In Verlet integration, force is applied on a node immidatelly to it's
          * `plotX` and `plotY` position.
          *
+         * @private
+         *
          * @param {Highcharts.Point} link link that connects two nodes
          * @param {number} force force calcualated in `repulsiveForceFunction`
          * @param {object} distance Distance between two nodes e.g. `{x, y}`
+         *
+         * @return {void}
          */
         attractive: function (link, force, distanceXY) {
             var massFactor = link.getMass(),
@@ -136,8 +152,12 @@ H.networkgraphIntegrations = {
          * forces. Or even Time-Corrected Verlet by Jonathan
          * "lonesock" Dummer
          *
+         * @private
+         *
          * @param {object} layout layout object
          * @param {Highcharts.Point} node node that should be translated
+         *
+         * @return {void}
          */
         integrate: function (layout, node) {
             var friction = -layout.options.friction,
@@ -146,11 +166,14 @@ H.networkgraphIntegrations = {
                 prevY = node.prevY,
                 // Apply friciton:
                 diffX = (node.plotX + node.dispX - prevX) * friction,
-                diffY = (node.plotY + node.dispY - prevY) * friction;
+                diffY = (node.plotY + node.dispY - prevY) * friction,
+                abs = Math.abs,
+                signX = abs(diffX) / (diffX || 1), // need to deal with 0
+                signY = abs(diffY) / (diffY || 1);
 
             // Apply max speed:
-            diffX = Math.sign(diffX) * Math.min(maxSpeed, Math.abs(diffX));
-            diffY = Math.sign(diffY) * Math.min(maxSpeed, Math.abs(diffY));
+            diffX = signX * Math.min(maxSpeed, Math.abs(diffX));
+            diffY = signY * Math.min(maxSpeed, Math.abs(diffY));
 
             // Store for the next iteration:
             node.prevX = node.plotX + node.dispX;
@@ -169,7 +192,10 @@ H.networkgraphIntegrations = {
          * Estiamte the best possible distance between two nodes, making graph
          * readable.
          *
+         * @private
+         *
          * @param {object} layout layout object
+         *
          * @return {number}
          */
         getK: function (layout) {
@@ -188,6 +214,8 @@ H.networkgraphIntegrations = {
          *
          * basic, not recommended:
          *    `function (d, k) { return d / k }`
+         *
+         * @private
          *
          * @param {number} d current distance between two nodes
          * @param {number} k expected distance between two nodes
@@ -212,6 +240,8 @@ H.networkgraphIntegrations = {
          * grid-variant:
          *    `function (d, k) { return k * k / d * (2 * k - d > 0 ? 1 : 0) }`
          *
+         * @private
+         *
          * @param {number} d current distance between two nodes
          * @param {number} k expected distance between two nodes
          *
@@ -226,6 +256,10 @@ H.networkgraphIntegrations = {
          *
          * In Euler integration, force is stored in a node, not changing it's
          * position. Later, in `integrate()` forces are applied on nodes.
+         *
+         * @private
+         *
+         * @return {void}
          */
         barycenter: function () {
             var gravitationalConstant = this.options.gravitationalConstant,
@@ -247,10 +281,16 @@ H.networkgraphIntegrations = {
         /**
          * Repulsive force.
          *
-         * @param {Highcharts.Point} node node that should be translated by
-         *                          force.
-         * @param {number} force force calcualated in `repulsiveForceFunction`
-         * @param {object} distance Distance between two nodes e.g. `{x, y}`
+         * @private
+         *
+         * @param {Highcharts.Point} node
+         *        Node that should be translated by force.
+         * @param {number} force
+         *        Force calcualated in `repulsiveForceFunction`
+         * @param {object} distance
+         *        Distance between two nodes e.g. `{x, y}`
+         *
+         * @return {void}
          */
         repulsive: function (node, force, distanceXY, distanceR) {
             node.dispX += (distanceXY.x / distanceR) * force / node.degree;
@@ -262,9 +302,13 @@ H.networkgraphIntegrations = {
          * In Euler integration, force is stored in a node, not changing it's
          * position. Later, in `integrate()` forces are applied on nodes.
          *
+         * @private
+         *
          * @param {Highcharts.Point} link link that connects two nodes
          * @param {number} force force calcualated in `repulsiveForceFunction`
          * @param {object} distance Distance between two nodes e.g. `{x, y}`
+         *
+         * @return {void}
          */
         attractive: function (link, force, distanceXY, distanceR) {
             var massFactor = link.getMass(),
@@ -318,8 +362,12 @@ H.networkgraphIntegrations = {
          * Note:
          * Actually `min(v(n), temperature(n))` replaces simulated annealing.
          *
+         * @private
+         *
          * @param {object} layout layout object
          * @param {Highcharts.Point} node node that should be translated
+         *
+         * @return {void}
          */
         integrate: function (layout, node) {
             var distanceR;
@@ -343,7 +391,10 @@ H.networkgraphIntegrations = {
          * Estiamte the best possible distance between two nodes, making graph
          * readable.
          *
+         * @private
+         *
          * @param {object} layout layout object
+         *
          * @return {number}
          */
         getK: function (layout) {

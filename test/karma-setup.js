@@ -1,4 +1,5 @@
 /* eslint-env browser */
+/* eslint-disable */
 /* global __karma__, Highcharts, Promise, QUnit */
 
 /**
@@ -37,7 +38,20 @@ Highcharts.setOptions({
             dataLabels: {
                 defer: false
             }
+        },
+        // We cannot use it in plotOptions.series because treemap
+        // has the same layout option: layoutAlgorithm.
+        networkgraph: {
+            layoutAlgorithm: {
+                enableSimulation: false
+            }
+        },
+        packedbubble: {
+            layoutAlgorithm: {
+                enableSimulation: false
+            }
         }
+
     },
     // Stock's Toolbar decreases width of the chart. At the same time, some
     // tests have hardcoded x/y positions for events which cuases them to fail.
@@ -218,7 +232,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 img.onerror = function () {
                     // console.log(svg)
                     reject(
-                        'Error loading SVG on canvas'
+                        new Error('Error loading SVG on canvas')
                     );
                 };
                 img.src = url;
@@ -256,7 +270,7 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 doComparison();
             });
         } else {
-            reject('No candidate SVG found');
+            reject(new Error('No candidate SVG found'));
         }
 
         // Handle reference, load SVG from file

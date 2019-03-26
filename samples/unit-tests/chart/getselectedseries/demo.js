@@ -1,4 +1,3 @@
-
 QUnit.test('Get selected series', function (assert) {
 
     var chart = Highcharts
@@ -26,7 +25,7 @@ QUnit.test('Get selected series', function (assert) {
 
     // Set the checked state and click it through the adapter
     chart.container.querySelectorAll('input')[0].setAttribute('checked', 'true');
-    chart.container.querySelectorAll('input')[0].dispatchEvent(new Event('click'));
+    Highcharts.fireEvent(chart.container.querySelectorAll('input')[0], 'click');
 
     assert.strictEqual(
         chart.getSelectedSeries().length,
@@ -36,7 +35,7 @@ QUnit.test('Get selected series', function (assert) {
 
     // Set the checked state and click it through the adapter
     chart.container.querySelectorAll('input')[1].setAttribute('checked', 'true');
-    chart.container.querySelectorAll('input')[1].dispatchEvent(new Event('click'));
+    Highcharts.fireEvent(chart.container.querySelectorAll('input')[1], 'click');
 
     assert.strictEqual(
         chart.getSelectedSeries().length,
@@ -46,7 +45,7 @@ QUnit.test('Get selected series', function (assert) {
 
     // Set the checked state and click it through the adapter
     chart.container.querySelectorAll('input')[0].setAttribute('checked', 'false');
-    chart.container.querySelectorAll('input')[0].dispatchEvent(new Event('click'));
+    Highcharts.fireEvent(chart.container.querySelectorAll('input')[0], 'click');
 
     assert.strictEqual(
         chart.getSelectedSeries().length,

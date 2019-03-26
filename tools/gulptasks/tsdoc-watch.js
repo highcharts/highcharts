@@ -4,26 +4,46 @@
 
 const Gulp = require('gulp');
 
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const SOURCE_GLOBS = [
+    'ts/**/*'
+];
+
+/* *
+ *
+ *  Tasks
+ *
+ * */
+
 /**
  * Continuesly watching sources to restart the `tsdoc` task.
  *
  * @return {void}
  */
-function tsdocWatch() {
+function task() {
 
-    const Log = require('./lib/log');
-    const Path = require('path');
-    const TSDoc = require('./tsdoc');
+    const LogLib = require('./lib/log');
 
-    Log.warn('Watching', TSDoc.SOURCE_DIRECTORY, '...');
+    return new Promise(resolve => {
 
-    Gulp.watch(
-        [
-            Path.join(TSDoc.SOURCE_PATH, '**', '*'),
-            Path.join(TSDoc.TEMPLATE_PATH, '**', '*')
-        ],
-        Gulp.task('tsdoc')
-    );
+        require('./tsdoc.js');
+
+        const watchProcess = Gulp.watch(SOURCE_GLOBS, Gulp.task('tsdoc'));
+
+        watchProcess.on(
+            'change',
+            filePath => LogLib.warn('Modified', filePath)
+        );
+
+        LogLib.warn('Watching', SOURCE_GLOBS[0] + '...');
+
+        resolve();
+    });
 }
 
-Gulp.task('tsdoc-watch', Gulp.series('tsdoc', tsdocWatch));
+Gulp.task('tsdoc-watch', Gulp.series('tsdoc', task));

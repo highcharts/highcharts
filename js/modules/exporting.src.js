@@ -502,9 +502,13 @@ defaultOptions.exporting = {
      */
 
     /**
-     * Additional chart options to be merged into an exported chart. For
-     * example, a common use case is to add data labels to improve readability
-     * of the exported chart, or to add a printer-friendly color scheme.
+     * Additional chart options to be merged into the chart before exporting to
+     * an image format. This does not apply to printing the chart via the export
+     * menu.
+     *
+     * For example, a common use case is to add data labels to improve
+     * readability of the exported chart, or to add a printer-friendly color
+     * scheme to exported PDFs.
      *
      * @sample {highcharts} highcharts/exporting/chartoptions-data-labels/
      *         Added data labels
@@ -1085,10 +1089,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#getSVG
      *
-     * @param {Highcharts.Options} chartOptions
+     * @param {Highcharts.Options} [chartOptions]
      *        Additional chart options for the generated SVG representation. For
      *        collections like `xAxis`, `yAxis` or `series`, the additional
-     *        options is either merged in to the orininal item of the same
+     *        options is either merged in to the original item of the same
      *        `id`, or to the first item if a common id is not found.
      *
      * @return {string}
@@ -1108,7 +1112,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             cssHeight,
             // Copy the options and add extra options
             options = merge(chart.options, chartOptions);
-
 
         // create a sandbox where a new chart will be generated
         sandbox = createElement('div', null, {

@@ -30,12 +30,16 @@
      *         The DOM element of the container
      */
     function createContainer() {
+
         var container = global.document.createElement('div'),
             containerStyle = container.style;
+
         containerStyle.left = '0';
         containerStyle.position = 'absolute';
         containerStyle.top = '0';
+
         global.document.body.appendChild(container);
+
         return container;
     }
 
@@ -55,9 +59,11 @@
      *         The copy of the source.
      */
     function treeCopy(source, propertiesTree) {
+
         if (!source) {
             return source;
         }
+
         switch (typeof source) {
             default:
                 return source;
@@ -71,7 +77,7 @@
                     ) {
                         copy[key] = treeCopy(source[key], propertiesTree[key]);
                     } else {
-                        copy[key] = undefined; // eslint-disable-line no-undefined
+                        copy[key] = undefined;
                     }
                 }
                 return copy;
@@ -98,8 +104,7 @@
         removeEvent = Highcharts.addEvent(chart, 'update',
             function (args) {
                 undoStack.push(treeCopy(chart.options, args.options));
-            }
-        );
+            });
 
         return function () {
 

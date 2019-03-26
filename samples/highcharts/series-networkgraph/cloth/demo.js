@@ -46,7 +46,16 @@ Highcharts.chart('container', {
     plotOptions: {
         networkgraph: {
             layoutAlgorithm: {
-                enableSimulation: true
+                enableSimulation: true,
+                linkLength: 0.25,
+                integration: 'verlet',
+                // Elastic like forces:
+                attractiveForce: function (d, k) {
+                    return Math.max(-(d * d) / (k * 300), -100);
+                },
+                repulsiveForce: function (d, k) {
+                    return Math.min((k * k) / (d), 100);
+                }
             },
             keys: ['from', 'to']
         }

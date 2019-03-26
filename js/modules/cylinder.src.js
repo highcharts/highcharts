@@ -1,5 +1,8 @@
 /* *
- * (c) 2010-2019 Kacper Madej
+ * Highcharts cylinder - a 3D series
+ *
+ * (c) 2010-2019 Highsoft AS
+ * Author: Kacper Madej
  *
  * License: www.highcharts.com/license
  */
@@ -15,6 +18,7 @@ var charts = H.charts,
     color = H.color,
     deg2rad = H.deg2rad,
     perspective = H.perspective,
+    pick = H.pick,
     seriesType = H.seriesType,
 
     // Work on H.Renderer instead of H.SVGRenderer for VML support.
@@ -219,7 +223,7 @@ RendererProto.getCylinderFront = function (topPath, bottomPath) {
 RendererProto.getCylinderBack = function (topPath, bottomPath) {
     var path = ['M'];
 
-    if (bottomPath.simplified) {
+    if (topPath.simplified) {
         path = path.concat(topPath.slice(7, 12));
 
         // end at start
@@ -257,11 +261,16 @@ RendererProto.getCylinderBack = function (topPath, bottomPath) {
 
 // Retruns cylinder path for top or bottom
 RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
-    // A half of the smaller one out of width or depth
-    var radius = Math.min(shapeArgs.width, shapeArgs.depth) / 2,
+    // A half of the smaller one out of width or depth (optional, because
+    // there's no depth for a funnel that reuses the code)
+    var depth = pick(shapeArgs.depth, shapeArgs.width),
+        radius = Math.min(shapeArgs.width, depth) / 2,
 
         // Approximated longest diameter
-        angleOffset = deg2rad * (chart.options.chart.options3d.beta - 90),
+        angleOffset = deg2rad * (
+            chart.options.chart.options3d.beta - 90 +
+            (shapeArgs.alphaCorrection || 0)
+        ),
 
         // Could be top or bottom of the cylinder
         y = shapeArgs.y + (isBottom ? shapeArgs.height : 0),
@@ -270,7 +279,7 @@ RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
         // More math. at spencermortensen.com/articles/bezier-circle/
         c = 0.5519 * radius,
         centerX = shapeArgs.width / 2 + shapeArgs.x,
-        centerZ = shapeArgs.depth / 2 + shapeArgs.z,
+        centerZ = depth / 2 + shapeArgs.z,
 
         // points could be generated in a loop, but readability will plummet
         points = [{ // M - starting point
@@ -349,7 +358,10 @@ RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
     perspectivePoints = perspective(points, chart, true);
 
     // check for sub-pixel curve issue, compare front and back edges
-    if (Math.abs(perspectivePoints[3].y - perspectivePoints[9].y) < 2.5) {
+    if (
+        Math.abs(perspectivePoints[3].y - perspectivePoints[9].y) < 2.5 &&
+        Math.abs(perspectivePoints[0].y - perspectivePoints[6].y) < 2.5
+    ) {
         // use simplied shape
         path = this.toLinePath([
             perspectivePoints[0],

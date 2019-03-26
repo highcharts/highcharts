@@ -2,13 +2,31 @@
  * Copyright (C) Highsoft AS
  */
 
-/* eslint no-console:0 */
-
 const ChildProcess = require('child_process');
+const LibLog = require('./log');
 const Path = require('path');
 
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/**
+ * Own package directory
+ */
 const CPD = Path.join(__dirname, '..', '..', '..');
+
+/**
+ * Current working directory
+ */
 const CWD = process.cwd();
+
+/* *
+ *
+ *  Functions
+ *
+ * */
 
 /**
  * Executes a single terminal command and returns when finished.
@@ -17,26 +35,35 @@ const CWD = process.cwd();
  * @param {string} command
  *                 Command to execute in terminal
  *
- * @return {Promise}
- *         Returns all output to the terminal in form of a string.
+ * @return {Promise<string>}
+ *         Promise to keep with all terminal output
  */
-function commandLine(command) {
+function exec(command) {
+
     return new Promise((resolve, reject) => {
+
         const cli = ChildProcess.exec(command, (error, stdout) => {
             if (error) {
-                console.error(error);
+                LibLog.failure(error);
                 reject(error);
             } else {
-                console.info('Command finished: ' + command);
+                LibLog.success('Command finished: ' + command);
                 resolve(stdout);
             }
         });
-        cli.stdout.on('data', data => console.log(data.toString()));
+
+        cli.stdout.on('data', data => process.stdout.write(data));
     });
 }
+
+/* *
+ *
+ *  Exports
+ *
+ * */
 
 module.exports = {
     CPD,
     CWD,
-    commandLine
+    exec
 };

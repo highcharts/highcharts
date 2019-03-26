@@ -103,8 +103,8 @@
  */
 
 /**
- * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
- * of a line graph.
+ * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of a line
+ * graph.
  *
  * @typedef {"butt"|"round"|"square"|string} Highcharts.SeriesLinecapValue
  */
@@ -620,7 +620,11 @@ H.Series = H.seriesType(
          * Allow this series' points to be selected by clicking on the graphic
          * (columns, point markers, pie slices, map areas etc).
          *
-         * @see {@link Highcharts.Chart#getSelectedPoints}.
+         * The selected points can be handled by point select and unselect
+         * events, or collectively by the [getSelectedPoints](
+         * Highcharts.Chart#getSelectedPoints) function.
+         *
+         * And alternative way of selecting points is through dragging.
          *
          * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-line/
          *         Line
@@ -628,6 +632,8 @@ H.Series = H.seriesType(
          *         Column
          * @sample {highcharts} highcharts/plotoptions/series-allowpointselect-pie/
          *         Pie
+         * @sample {highcharts} highcharts/chart/events-selection-points/
+         *         Select a range of points through a drag selection
          * @sample {highmaps} maps/plotoptions/series-allowpointselect/
          *         Map area
          * @sample {highmaps} maps/plotoptions/mapbubble-allowpointselect/
@@ -1694,6 +1700,33 @@ H.Series = H.seriesType(
                      *         3px line width for selected points
                      */
                     lineWidth: 2
+                },
+
+                /**
+                 * The opposite state of a hover for a single point marker.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
+                 *         Enabled inactive state
+                 *
+                 * @extends   plotOptions.series.marker.states.hover
+                 */
+                inactive: {
+                    /**
+                     * Opacity of inactive markers.
+                     *
+                     * @apioption plotOptions.series.marker.states.inactive.opacity
+                     * @type {number}
+                     */
+                    opacity: 0.1,
+
+                    /**
+                     * Animation when not hovering over the marker.
+                     *
+                     * @type {boolean|Highcharts.AnimationOptionsObject}
+                     */
+                    animation: {
+                        duration: 50
+                    }
                 }
             }
         },
@@ -1836,9 +1869,9 @@ H.Series = H.seriesType(
          *         Data labels enabled
          * @sample highcharts/plotoptions/series-datalabels-multiple
          *         Multiple data labels on a bar series
-             *
+         *
          * @type {Highcharts.DataLabelsOptionsObject}
-             */
+         */
         dataLabels: {
             /** @ignore-option */
             align: 'center',
@@ -2087,6 +2120,27 @@ H.Series = H.seriesType(
                 animation: {
                     duration: 0
                 }
+            },
+
+            /**
+             * The opposite state of a hover for series.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
+             *         Enabled inactive state
+             *
+             * @extends   plotOptions.series.states.hover
+             */
+            inactive: {
+                animation: {
+                    duration: 50
+                },
+                /**
+                 * Opacity of inactive markers.
+                 *
+                 * @apioption plotOptions.series.marker.states.inactive.opacity
+                 * @type {number}
+                 */
+                opacity: 0.1
             }
         },
 
@@ -2533,6 +2587,25 @@ H.Series = H.seriesType(
 
             series.parallelArrays.forEach(fn);
         },
+        /**
+         * Define hasData functions for series. These return true if there
+         * are data points on this series within the plot area.
+         *
+         * @private
+         * @function Highcharts.Series#hasData
+         *
+         * @return {boolean}
+         */
+        hasData: function () {
+            return (
+                (
+                    this.visible &&
+                    this.dataMax !== undefined &&
+                    this.dataMin !== undefined
+                ) || // #3703
+                (this.visible && this.yData && this.yData.length > 0) // #9758
+            );
+        },
 
         /**
          * Return an auto incremented x value based on the pointStart and
@@ -2813,6 +2886,60 @@ H.Series = H.seriesType(
         },
 
         /**
+         * Finds the index of an existing point that matches the given point
+         * options.
+         *
+         * @private
+         * @function Highcharts.Series#findPointIndex
+         * @param    {object} optionsObject
+         *           The options of the point.
+         * @param    {number} fromIndex
+         *           The index to start searching from, used for optimizing
+         *           series with required sorting.
+         * @returns  {number|undefined}
+         *           Returns the index of a matching point, or undefined if no
+         *           match is found.
+         */
+        findPointIndex: function (optionsObject, fromIndex) {
+            var id = optionsObject.id,
+                x = optionsObject.x,
+                oldData = this.points,
+                matchingPoint,
+                matchedById,
+                pointIndex;
+
+            if (id) {
+                matchingPoint = this.chart.get(id);
+                pointIndex = matchingPoint && matchingPoint.index;
+                if (pointIndex !== undefined) {
+                    matchedById = true;
+                }
+            }
+
+            // Search for the same X in the existing data set
+            if (pointIndex === undefined && isNumber(x)) {
+                pointIndex = this.xData.indexOf(x, fromIndex);
+            }
+
+            // Reduce pointIndex if data is cropped
+            if (pointIndex !== -1 &&
+                pointIndex !== undefined &&
+                this.cropped
+            ) {
+                pointIndex = (pointIndex >= this.cropStart) ?
+                    pointIndex - this.cropStart : pointIndex;
+            }
+
+            if (
+                !matchedById &&
+                oldData[pointIndex] && oldData[pointIndex].touched
+            ) {
+                pointIndex = undefined;
+            }
+            return pointIndex;
+        },
+
+        /**
          * @private
          * @borrows LegendSymbolMixin.drawLineMarker as Highcharts.Series#drawLegendSymbol
          */
@@ -2842,7 +2969,6 @@ H.Series = H.seriesType(
                 lastIndex,
                 requireSorting = this.requireSorting,
                 equalLength = data.length === oldData.length,
-                matchedById,
                 succeeded = true;
 
             this.xIncrement = null;
@@ -2850,7 +2976,6 @@ H.Series = H.seriesType(
             // Iterate the new data
             data.forEach(function (pointOptions, i) {
                 var id,
-                    matchingPoint,
                     x,
                     pointIndex,
                     optionsObject = (
@@ -2866,41 +2991,17 @@ H.Series = H.seriesType(
                 id = optionsObject.id;
 
                 if (id || isNumber(x)) {
-                    if (id) {
-                        matchingPoint = oldData.find(function (point) {
-                            return point.id === id;
-                        });
-                        pointIndex = matchingPoint && matchingPoint.index;
-                        if (pointIndex !== undefined) {
-                            matchedById = true;
-                        }
-                    }
-
-                    // Search for the same X in the existing data set
-                    if (pointIndex === undefined && isNumber(x)) {
-                        pointIndex = this.xData.indexOf(x, lastIndex);
-                    }
-
-                    // Reduce pointIndex if data is cropped
-                    if (pointIndex !== -1 &&
-                        pointIndex !== undefined &&
-                        this.cropped
-                    ) {
-                        pointIndex = (pointIndex >= this.cropStart) ?
-                            pointIndex - this.cropStart : pointIndex;
-                    }
+                    pointIndex = this.findPointIndex(
+                        optionsObject,
+                        lastIndex
+                    );
 
                     // Matching X not found
                     // or used already due to ununique x values (#8995),
                     // add point (but later)
                     if (
                         pointIndex === -1 ||
-                        pointIndex === undefined ||
-                        (
-                            !matchedById &&
-                            oldData[pointIndex] &&
-                            oldData[pointIndex].touched
-                        )
+                        pointIndex === undefined
                     ) {
                         pointsToAdd.push(pointOptions);
 
@@ -2958,7 +3059,8 @@ H.Series = H.seriesType(
             } else if (equalLength) {
                 data.forEach(function (point, i) {
                     // .update doesn't exist on a linked, hidden series (#3709)
-                    if (oldData[i].update && point !== options.data[i]) {
+                    // (#10187)
+                    if (oldData[i].update && point !== oldData[i].y) {
                         oldData[i].update(point, false, null, false);
                     }
                 });
@@ -3530,6 +3632,24 @@ H.Series = H.seriesType(
         },
 
         /**
+         * Get current X extremes for the visible data.
+         *
+         * @private
+         * @function Highcharts.Series#getExtremes
+         *
+         * @param {Array<number>} [xData]
+         *        The data to inspect. Defaults to the current data within the
+         *        visible range.
+         * @return {object}
+         */
+        getXExtremes: function (xData) {
+            return {
+                min: arrayMin(xData),
+                max: arrayMax(xData)
+            };
+        },
+
+        /**
          * Calculate Y extremes for the visible data. The result is set as
          * `dataMin` and `dataMax` on the Series item.
          *
@@ -3964,7 +4084,7 @@ H.Series = H.seriesType(
                 if (chart[sharedClipKey + 'm']) {
                     chart[sharedClipKey + 'm'].animate({
                         width: chart.plotSizeX + 99,
-                        x: 0
+                        x: chart.inverted ? 0 : -99
                     }, animation);
                 }
 
@@ -4216,7 +4336,8 @@ H.Series = H.seriesType(
                 ),
                 zoneColor = point && point.zone && point.zone.color,
                 fill,
-                stroke;
+                stroke,
+                opacity = 1;
 
             color = (
                 pointColorOption ||
@@ -4224,6 +4345,7 @@ H.Series = H.seriesType(
                 pointColor ||
                 color
             );
+
             fill = (
                 pointMarkerOptions.fillColor ||
                 seriesMarkerOptions.fillColor ||
@@ -4261,12 +4383,19 @@ H.Series = H.seriesType(
                     seriesStateOptions.lineColor ||
                     stroke
                 );
+
+                opacity = pick(
+                    pointStateOptions.opacity,
+                    seriesStateOptions.opacity,
+                    opacity
+                );
             }
 
             return {
                 'stroke': stroke,
                 'stroke-width': strokeWidth,
-                'fill': fill
+                'fill': fill,
+                'opacity': opacity
             };
         },
 
@@ -4508,7 +4637,11 @@ H.Series = H.seriesType(
             // Presentational properties
             if (!styledMode) {
                 props[0].push(
-                    options.lineColor || this.color,
+                    (
+                        options.lineColor ||
+                        this.color ||
+                        '${palette.neutralColor20}' // when colorByPoint = true
+                    ),
                     options.dashStyle
                 );
             }
@@ -4942,7 +5075,8 @@ H.Series = H.seriesType(
 
             // SVGRenderer needs to know this before drawing elements (#1089,
             // #1795)
-            group.inverted = series.isCartesian ? inverted : false;
+            group.inverted = series.isCartesian || series.invertable ?
+                inverted : false;
 
             // Draw the graph if any
             if (series.drawGraph) {

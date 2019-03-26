@@ -54,4 +54,3 @@ fs.readFile(args[2], 'utf8', (err, commitMessage) => {
     // All is a-ok
     return process.exit(0);
 });
-

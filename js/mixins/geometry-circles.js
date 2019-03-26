@@ -10,6 +10,19 @@ var round = function round(x, decimals) {
 };
 
 /**
+ * Calculates the area of a circle based on its radius.
+ *
+ * @param {number} r The radius of the circle.
+ * @returns {number} Returns the area of the circle.
+ */
+var getAreaOfCircle = function (r) {
+    if (r <= 0) {
+        throw new Error('radius of circle must be a positive number.');
+    }
+    return Math.PI * r * r;
+};
+
+/**
  * Calculates the area of a circular segment based on the radius of the circle
  * and the height of the segment.
  * See http://mathworld.wolfram.com/CircularSegment.html
@@ -39,16 +52,13 @@ function getOverlapBetweenCircles(r1, r2, d) {
     // If the distance is larger than the sum of the radiuses then the circles
     // does not overlap.
     if (d < r1 + r2) {
-        var r1Square = r1 * r1,
-            r2Square = r2 * r2;
-
         if (d <= Math.abs(r2 - r1)) {
             // If the circles are completely overlapping, then the overlap
             // equals the area of the smallest circle.
-            overlap = Math.PI * Math.min(r1Square, r2Square);
+            overlap = getAreaOfCircle(r1 < r2 ? r1 : r2);
         } else {
             // Height of first triangle segment.
-            var d1 = (r1Square - r2Square + d * d) / (2 * d),
+            var d1 = (r1 * r1 - r2 * r2 + d * d) / (2 * d),
                 // Height of second triangle segment.
                 d2 = d - d1;
 
@@ -286,6 +296,7 @@ function getAreaOfIntersectionBetweenCircles(circles) {
 };
 
 var geometryCircles = {
+    getAreaOfCircle: getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles: getAreaOfIntersectionBetweenCircles,
     getCircleCircleIntersection: getCircleCircleIntersection,
     getCirclesIntersectionPoints: getCirclesIntersectionPoints,

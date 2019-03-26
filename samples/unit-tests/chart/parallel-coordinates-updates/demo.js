@@ -107,5 +107,28 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
         'On series toggle yAxis extremes have been changed. (#9248)'
     );
 
+    chart = Highcharts.chart('container', {
+        chart: {
+            parallelCoordinates: true
+        },
+        series: [{
+            data: [1012518000000, 5, 2311020, 0, 462180, 1, 0]
+        }, {
+            data: [1012690800000, 5, 2464980, 0, 493020.00000000006, 1, 0]
+        }]
+    });
 
+    chart.update({
+        series: [{
+            data: [1012518000000, 5, 2311020, 0]
+        }, {
+            data: [1012690800000, 5, 2464980, 0]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.parallelInfo.counter,
+        3,
+        'After chart update parallelInfo.counter has correct value (#10081).'
+    );
 });

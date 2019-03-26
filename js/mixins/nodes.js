@@ -1,7 +1,8 @@
 import H from '../parts/Globals.js';
 
 var pick = H.pick,
-    defined = H.defined;
+    defined = H.defined,
+    Point = H.Point;
 
 H.NodesMixin = {
     // Create a single node that holds information on incoming and outgoing
@@ -157,8 +158,31 @@ H.NodesMixin = {
     // Destroy alll nodes and links
     destroy: function () {
         // Nodes must also be destroyed (#8682, #9300)
-        this.data = [].concat(this.points, this.nodes);
+        this.data = [].concat(this.points || [], this.nodes);
 
         return H.Series.prototype.destroy.apply(this, arguments);
+    },
+
+    // When hovering node, highlight all connected links. When hovering a link,
+    // highlight all connected nodes.
+    setNodeState: function () {
+        var args = arguments,
+            others = this.isNode ? this.linksTo.concat(this.linksFrom) :
+                [this.fromNode, this.toNode];
+
+        others.forEach(function (linkOrNode) {
+            Point.prototype.setState.apply(linkOrNode, args);
+
+            if (!linkOrNode.isNode) {
+                if (linkOrNode.fromNode.graphic) {
+                    Point.prototype.setState.apply(linkOrNode.fromNode, args);
+                }
+                if (linkOrNode.toNode.graphic) {
+                    Point.prototype.setState.apply(linkOrNode.toNode, args);
+                }
+            }
+        });
+
+        Point.prototype.setState.apply(this, args);
     }
 };

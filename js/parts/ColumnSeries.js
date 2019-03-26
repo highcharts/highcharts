@@ -812,7 +812,8 @@ seriesType('column', 'line'
                 ),
                 strokeWidth = (point && point[strokeWidthOption]) ||
                 options[strokeWidthOption] || this[strokeWidthOption] || 0,
-                dashstyle = options.dashStyle,
+                dashstyle = (point && point.dashStyle) || options.dashStyle,
+                opacity = pick(options.opacity, 1),
                 zone,
                 brightness;
 
@@ -849,12 +850,14 @@ seriesType('column', 'line'
                 stroke = stateOptions[strokeOption] || stroke;
                 strokeWidth = stateOptions[strokeWidthOption] || strokeWidth;
                 dashstyle = stateOptions.dashStyle || dashstyle;
+                opacity = pick(stateOptions.opacity, opacity);
             }
 
             ret = {
                 'fill': fill,
                 'stroke': stroke,
-                'stroke-width': strokeWidth
+                'stroke-width': strokeWidth,
+                'opacity': opacity
             };
 
             if (dashstyle) {
@@ -924,7 +927,7 @@ seriesType('column', 'line'
                             point.selected && 'select'
                         ))
                             .shadow(
-                                options.shadow,
+                                point.allowShadow !== false && options.shadow,
                                 null,
                                 options.stacking && !options.borderRadius
                             );
@@ -1032,8 +1035,8 @@ seriesType('column', 'line'
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.column
- * @excluding connectNulls, dashStyle, dataParser, dataURL, gapSize, gapUnit,
- *            linecap, lineWidth, marker, connectEnds, step
+ * @excluding connectNulls, dataParser, dataURL, gapSize, gapUnit, linecap,
+ *            lineWidth, marker, connectEnds, step
  * @product   highcharts highstock
  * @apioption series.column
  */

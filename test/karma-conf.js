@@ -1,5 +1,5 @@
 /* eslint-env node, es6 */
-/* eslint no-console: 0, camelcase: 0 */
+/* eslint-disable */
 const fs = require('fs');
 const yaml = require('js-yaml');
 
@@ -24,11 +24,13 @@ function getProperties() {
         });
 
         if (!properties['browserstack.username']) {
-            throw 'No username';
+            throw new Error();
         }
     } catch (e) {
-        throw 'BrowserStack credentials not given. Add username and ' +
-            'accesskey to the git-ignore-me.properties file';
+        throw new Error(
+            'BrowserStack credentials not given. Add username and ' +
+            'accesskey to the git-ignore-me.properties file'
+        );
     }
     return properties;
 }
@@ -120,42 +122,42 @@ const browserStackBrowsers = {
     'Mac.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '68.0',
+        browser_version: '72.0',
         os: 'OS X',
-        os_version: 'High Sierra'
+        os_version: 'Mojave'
     },
     'Mac.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '61.0',
+        browser_version: '65.0',
         os: 'OS X',
-        os_version: 'High Sierra'
+        os_version: 'Mojave'
     },
     'Mac.Safari': {
         base: 'BrowserStack',
         browser: 'safari',
-        browser_version: '11.1',
+        browser_version: '12.0',
         os: 'OS X',
-        os_version: 'High Sierra'
+        os_version: 'Mojave'
     },
     'Win.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '68.0',
+        browser_version: '72.0',
         os: 'Windows',
         os_version: '10'
     },
     'Win.Edge': {
         base: 'BrowserStack',
         browser: 'edge',
-        browser_version: '42.0',
+        browser_version: '43.0',
         os: 'Windows',
         os_version: '10'
     },
     'Win.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '61.0',
+        browser_version: '65.0',
         os: 'Windows',
         os_version: '10'
     },
@@ -171,6 +173,7 @@ const browserStackBrowsers = {
 module.exports = function (config) {
 
     const argv = require('yargs').argv;
+    const Babel = require("@babel/core");
 
     // The tests to run by default
     const defaultTests = [
@@ -184,6 +187,11 @@ module.exports = function (config) {
     if (argv.browsers === 'all') {
         browsers = Object.keys(browserStackBrowsers);
     }
+
+    const needsTranspiling = browsers.some(browser => (
+        browser.toUpperCase().lastIndexOf('IE') ===
+        browser.length - 2
+    ));
 
     const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
         .map(path => `samples/${path}/demo.js`);
@@ -331,6 +339,30 @@ module.exports = function (config) {
                         '$1/$2'
                     );
 
+                    // es6 transpiling
+                    // browserDetect(req.headers['user-agent']); not working
+                    if (needsTranspiling) {
+                        try {
+                            js = Babel
+                                .transformSync(js, {
+                                    ast: false,
+                                    code: true,
+                                    presets: [[
+                                        '@babel/preset-env',
+                                        {
+                                            targets: {
+                                                ie: '8'
+                                            }
+                                        }
+                                    ]]
+                                })
+                                .code;
+                        } catch (error) {
+                            console.error('Babel transform error:', error);
+                        }
+                    }
+
+                    // unit tests
                     if (path.indexOf('unit-tests') !== -1) {
                         if (argv.debug) {
                             if (js.indexOf('Highcharts.setOptions') !== -1) {
@@ -478,7 +510,9 @@ module.exports = function (config) {
                         ${reset}
                     });
                     `;
+
                     file.path = file.originalPath + '.preprocessed';
+
                     done(js);
                 }
             }]

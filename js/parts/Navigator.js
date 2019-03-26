@@ -387,6 +387,13 @@ extend(defaultOptions, {
             className: 'highcharts-navigator-series',
 
             /**
+             * Sets the fill color of the navigator series.
+             *
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @apioption navigator.series.color
+             */
+
+            /**
              * Line color for the navigator series. Allows setting the color
              * while disallowing the default candlestick setting.
              *
@@ -2077,7 +2084,8 @@ Navigator.prototype = {
     getBaseSeriesMin: function (currentSeriesMin) {
         return this.baseSeries.reduce(
             function (min, series) {
-                return Math.min(min, series.xData[0]);
+                // (#10193)
+                return Math.min(min, series.xData ? series.xData[0] : min);
             },
             currentSeriesMin
         );

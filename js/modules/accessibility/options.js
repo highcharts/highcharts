@@ -10,6 +10,28 @@
 
 'use strict';
 
+/**
+ * @callback Highcharts.ScreenReaderClickCallbackFunction
+ *
+ * @param {global.MouseEvent} evt
+ *        Mouse click event
+ *
+ * @return {void}
+ */
+
+/**
+ * Creates a formatted string for the screen reader module.
+ *
+ * @callback Highcharts.ScreenReaderFormatterCallbackFunction<T>
+ *
+ * @param {T} context
+ *        Context to format
+ *
+ * @return {string}
+ *         Formatted string for the screen reader module.
+ */
+
+
 var options = {
 
     /**
@@ -141,7 +163,7 @@ var options = {
          * By default Highcharts will insert and set focus to a data table
          * representation of the chart.
          *
-         * @type      {Function}
+         * @type      {Highcharts.ScreenReaderClickCallbackFunction}
          * @since     5.0.0
          * @apioption accessibility.onTableAnchorClick
          */
@@ -171,7 +193,7 @@ var options = {
          *
          * @see [pointDateFormat](#accessibility.pointDateFormat)
          *
-         * @type      {Function}
+         * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
          * @since     5.0.0
          * @apioption accessibility.pointDateFormatter
          */
@@ -213,7 +235,7 @@ var options = {
          *
          * @see [point.description](#series.line.data.description)
          *
-         * @type      {Function}
+         * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
          * @since     5.0.0
          * @apioption accessibility.pointDescriptionFormatter
          */
@@ -227,7 +249,7 @@ var options = {
          *
          * @see [series.description](#plotOptions.series.description)
          *
-         * @type      {Function}
+         * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Series>}
          * @since     5.0.0
          * @apioption accessibility.seriesDescriptionFormatter
          */
@@ -242,7 +264,7 @@ var options = {
          * The button to view the chart as a data table will be added
          * automatically after the custom HTML content if enabled.
          *
-         * @type    {Function}
+         * @type    {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
          * @default undefined
          * @since   5.0.0
          * @apioption accessibility.screenReaderSectionFormatter

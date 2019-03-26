@@ -12,6 +12,14 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         packedbubble: {
+            minSize: '30%',
+            maxSize: '120%',
+            zMin: 0,
+            zMax: 1000,
+            layoutAlgorithm: {
+                splitSeries: false,
+                gravitationalConstant: 0.02
+            },
             dataLabels: {
                 enabled: true,
                 format: '{point.name}',
@@ -25,8 +33,7 @@ Highcharts.chart('container', {
                     textOutline: 'none',
                     fontWeight: 'normal'
                 }
-            },
-            minPointSize: 5
+            }
         }
     },
     series: [{
@@ -501,19 +508,5 @@ Highcharts.chart('container', {
             name: "Korea",
             value: 610.1
         }]
-    }],
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                legend: {
-                    align: 'right',
-                    verticalAlign: 'middle',
-                    layout: 'vertical'
-                }
-            }
-        }]
-    }
+    }]
 });

@@ -531,6 +531,7 @@ Highcharts.Pointer.prototype = {
                 shared,
                 e
             ),
+            activeSeries = [],
             useSharedTooltip,
             followPointer,
             anchor,
@@ -559,14 +560,29 @@ Highcharts.Pointer.prototype = {
                     p.setState();
                 }
             });
+
+            // Set normal state to previous series
+            if (chart.hoverSeries !== hoverSeries) {
+                hoverSeries.onMouseOver();
+            }
+
+            // Set inactive state for all points
+            activeSeries = (points || []).map(function (item) {
+                return item.series;
+            });
+            chart.series.forEach(function (inactiveSeries) {
+                if (
+                    inactiveSeries.options.inactiveOtherPoints ||
+                    activeSeries.indexOf(inactiveSeries) === -1
+                ) {
+                    inactiveSeries.setState('inactive', true);
+                }
+            });
+
             // Do mouseover on all points (#3919, #3985, #4410, #5622)
             (points || []).forEach(function (p) {
                 p.setState('hover');
             });
-            // set normal state to previous series
-            if (chart.hoverSeries !== hoverSeries) {
-                hoverSeries.onMouseOver();
-            }
 
             // If tracking is on series in stead of on each point,
             // fire mouseOver on hover point. // #4448

@@ -780,11 +780,14 @@ addEvent(H.Chart, 'afterGetContainer', function () {
 });
 
 addEvent(H.Chart, 'getMargins', function () {
-    var offsetWidth = (
-        this.stockTools &&
-        this.stockTools.listWrapper &&
-        this.stockTools.listWrapper.offsetWidth
-    );
+    var listWrapper = this.stockTools && this.stockTools.listWrapper,
+        offsetWidth = listWrapper && (
+            (
+                listWrapper.startWidth +
+                H.getStyle(listWrapper, 'padding-left') +
+                H.getStyle(listWrapper, 'padding-right')
+            ) || listWrapper.offsetWidth
+        );
 
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
@@ -1161,6 +1164,8 @@ H.Toolbar.prototype = {
             chart = stockToolbar.chart,
             guiOptions = stockToolbar.options,
             container = chart.container,
+            navigation = chart.options.navigation,
+            bindingsClassName = navigation && navigation.bindingsClassName,
             listWrapper,
             toolbar,
             wrapper;
@@ -1168,7 +1173,7 @@ H.Toolbar.prototype = {
         // create main container
         stockToolbar.wrapper = wrapper = createElement(DIV, {
             className: PREFIX + 'stocktools-wrapper ' +
-                    guiOptions.className
+                guiOptions.className + ' ' + bindingsClassName
         });
         container.parentNode.insertBefore(wrapper, container);
 

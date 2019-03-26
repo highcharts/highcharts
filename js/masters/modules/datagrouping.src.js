@@ -1,5 +1,7 @@
 /**
  * @license  @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/datagrouping
+ * @requires highcharts
  *
  * Data grouping module
  *

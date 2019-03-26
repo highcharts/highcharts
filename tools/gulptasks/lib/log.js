@@ -2,12 +2,25 @@
  * Copyright (C) Highsoft AS
  */
 
-/* eslint no-console:0 */
+/* eslint no-console: 0, no-use-before-define: 0 */
 
+const ChildProcess = require('child_process');
 const Colors = require('colors');
 const Time = require('./time');
 
 const startTimeDictionary = {};
+
+/**
+ * Writes a red failure message in gulp style into the console.
+ *
+ * @param {Array<string>} text
+ *        Message text to write
+ *
+ * @return {void}
+ */
+function failure(...text) {
+    console.error(format(text.join(' '), 'red'));
+}
 
 /**
  * Formats a text in gulp style for console output.
@@ -68,6 +81,35 @@ function message(...text) {
 }
 
 /**
+ * Calls a speech synthesizer to say a given text. There is no guarantee that
+ * the computer speaks or the developer hears the spoken text.
+ *
+ * @param {string} text
+ *        Text to speak;
+ *
+ * @return {void}
+ */
+function say(text) {
+
+    try {
+        switch (process.platform) {
+            default:
+                break;
+            case 'darwin':
+                ChildProcess.execSync('say -v Alex "' + text.replace(/"/g, '') + '"');
+                break;
+            case 'win32':
+                ChildProcess.execSync(
+                    'tools\\speak.vbs "' + text.replace(/"/g, '') + '"'
+                );
+                break;
+        }
+    } catch (catchedError) {
+        failure(catchedError);
+    }
+}
+
+/**
  * Writes a starting message in gulp style into the console.
  *
  * @param {string} text
@@ -93,8 +135,8 @@ function starting(text) {
  *
  * @return {void}
  */
-function success(text) {
-    console.info(format(text, 'green'));
+function success(...text) {
+    console.info(format(text.join(' '), 'green'));
 }
 
 /**
@@ -110,9 +152,11 @@ function warn(...text) {
 }
 
 module.exports = {
+    failure,
     finished,
     format,
     message,
+    say,
     starting,
     success,
     warn

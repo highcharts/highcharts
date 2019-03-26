@@ -264,3 +264,33 @@ QUnit.test('Pie with long dataLabels with useHTML: true wrongly rendered', funct
         'Data label width cannot be negative'
     );
 });
+
+
+QUnit.test('Connector color of individual point (#8864).', function (assert) {
+    var chart = Highcharts.chart('container', {
+        plotOptions: {
+            pie: {
+                dataLabels: {
+                    connectorColor: '#000',
+                    enabled: true
+                }
+            }
+        },
+        series: [{
+            type: 'pie',
+            data: [{
+                y: 61.41,
+                dataLabels: {
+                    connectorColor: '#bada55'
+                }
+            }, {
+                y: 11.84
+            }]
+        }]
+    });
+
+    assert.ok(
+        chart.series[0].points[0].connector.stroke === '#bada55',
+        'Color applied to indiviudal connector.'
+    );
+});

@@ -1,5 +1,7 @@
 /**
  * @license  @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/bullet
+ * @requires highcharts
  *
  * Bullet graph series type for Highcharts
  *

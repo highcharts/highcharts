@@ -1,6 +1,8 @@
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
 
+var fireEvent = H.fireEvent;
+
 /**
  * It provides methods for:
  * - adding and handling DOM events and a drag event,
@@ -37,10 +39,10 @@ var eventEmitterMixin = {
                 }
             };
 
-            if (type !== 'drag') {
+            if (H.inArray(type, emitter.nonDOMEvents || []) === -1) {
                 emitter.graphic.on(type, eventHandler);
             } else {
-                H.addEvent(emitter, 'drag', eventHandler);
+                H.addEvent(emitter, type, eventHandler);
             }
         });
 
@@ -56,6 +58,10 @@ var eventEmitterMixin = {
                     }[emitter.options.draggable]
                 });
             }
+        }
+
+        if (!emitter.isUpdating) {
+            fireEvent(emitter, 'add');
         }
     },
 
@@ -83,6 +89,10 @@ var eventEmitterMixin = {
             prevChartX,
             prevChartY;
 
+        if (e.preventDefault) {
+            e.preventDefault();
+        }
+
         // On right click, do nothing:
         if (e.button === 2) {
             return;
@@ -106,7 +116,7 @@ var eventEmitterMixin = {
                 e.prevChartX = prevChartX;
                 e.prevChartY = prevChartY;
 
-                H.fireEvent(emitter, 'drag', e);
+                fireEvent(emitter, 'drag', e);
 
                 prevChartX = e.chartX;
                 prevChartY = e.chartY;
@@ -119,7 +129,8 @@ var eventEmitterMixin = {
             function (e) {
                 emitter.cancelClick = emitter.hasDragged;
                 emitter.hasDragged = false;
-
+                // ControlPoints vs Annotation:
+                fireEvent(H.pick(emitter.target, emitter), 'afterUpdate');
                 emitter.onMouseUp(e);
             }
         );

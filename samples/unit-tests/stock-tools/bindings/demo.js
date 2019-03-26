@@ -355,7 +355,7 @@ QUnit.test('Bindings general tests', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[seriesLength].points.length,
+        chart.series[seriesLength - 1].points.length,
         1,
         'Flag: no duplicated flags.'
     );

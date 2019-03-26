@@ -17,8 +17,7 @@ import '../parts/Utilities.js';
 import '../parts/Series.js';
 import '../parts/Options.js';
 
-var seriesTypes = H.seriesTypes,
-    chartPrototype = H.Chart.prototype,
+var chartPrototype = H.Chart.prototype,
     defaultOptions = H.getOptions(),
     extend = H.extend;
 
@@ -130,45 +129,6 @@ defaultOptions.noData = {
         color: '${palette.neutralColor60}'
     }
 
-};
-
-// Define hasData function for non-cartesian seris. Returns true if the series
-// has points at all.
-[
-    'bubble',
-    'gauge',
-    'heatmap',
-    'networkgraph',
-    'pie',
-    'sankey',
-    'treemap',
-    'waterfall'
-].forEach(function (type) {
-    if (seriesTypes[type]) {
-        seriesTypes[type].prototype.hasData = function () {
-            return !!this.points.length; // != 0
-        };
-    }
-});
-
-/**
- * Define hasData functions for series. These return true if there are data
- * points on this series within the plot area.
- *
- * @private
- * @function Highcharts.Series#hasData
- *
- * @return {boolean}
- */
-H.Series.prototype.hasData = function () {
-    return (
-        (
-            this.visible &&
-            this.dataMax !== undefined &&
-            this.dataMin !== undefined
-        ) || // #3703
-        (this.visible && this.yData && this.yData.length > 0) // #9758
-    );
 };
 
 /**

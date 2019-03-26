@@ -1,4 +1,3 @@
-
 QUnit.test('#7534: Annotations positioning with series cropThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{
@@ -54,7 +53,7 @@ QUnit.test('#7534: Annotations positioning with series cropThreshold', function 
 
     assert.strictEqual(
         annotationLabel.attr('y'),
-        -9e9,
+        -9999,
         'Label is placed outside of the chart'
     );
 
@@ -67,7 +66,7 @@ QUnit.test('#7534: Annotations positioning with series cropThreshold', function 
 
     assert.strictEqual(
         annotationLabel.attr('y'),
-        -9e9,
+        -9999,
         'For series without marker - Label is placed outside the chart'
     );
 

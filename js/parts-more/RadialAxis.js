@@ -314,6 +314,8 @@ radialAxisMixin = {
             percentRegex = /%$/,
             start,
             end,
+            angle,
+            xOnPerimeter,
             open,
             isCircular = this.isCircular, // X axis in a polar chart
             ret;
@@ -372,6 +374,32 @@ radialAxisMixin = {
                     open: open
                 }
             );
+
+            // Provide positioning boxes for the label (#6406)
+            if (isCircular) {
+                angle = (end + start) / 2;
+                xOnPerimeter = (
+                    this.left +
+                    center[0] +
+                    (center[2] / 2) * Math.cos(angle)
+                );
+
+                ret.xBounds = angle > -Math.PI / 2 && angle < Math.PI / 2 ?
+                    // Right hemisphere
+                    [xOnPerimeter, this.chart.plotWidth] :
+                    // Left hemisphere
+                    [0, xOnPerimeter];
+
+
+                ret.yBounds = [
+                    this.top + center[1] + (center[2] / 2) * Math.sin(angle)
+                ];
+                // Shift up or down to get the label clear of the perimeter
+                ret.yBounds[0] += (
+                    (angle > -Math.PI && angle < 0) ||
+                    (angle > Math.PI)
+                ) ? -10 : 10;
+            }
         }
 
         return ret;

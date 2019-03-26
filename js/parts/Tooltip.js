@@ -5,6 +5,57 @@
  */
 
 /**
+ * Callback function to format the text of the tooltip from scratch.
+ *
+ * In case of single or shared tooltips, a string should be be returned. In case
+ * of splitted tooltips, it should return an array where the first item is the
+ * header, and subsequent items are mapped to the points. Return `false` to
+ * disable tooltip for a specific point on series.
+ *
+ * @callback Highcharts.TooltipFormatterCallbackFunction
+ *
+ * @param {Highcharts.TooltipFormatterContextObject} this
+ *        Context to format
+ *
+ * @return {false|string|Array<string>}
+ *         Formatted text or false
+ */
+
+/**
+ * @interface Highcharts.TooltipFormatterContextObject
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#color
+ * @type {Highcharts.ColorString}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#colorIndex
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#key
+ * @type {number}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#percentage
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#points
+ * @type {Array<Highcharts.TooltipFormatterContextObject>|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#series
+ * @type {Highcharts.Series}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#total
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#x
+ * @type {number}
+ *//**
+ * @name Highcharts.TooltipFormatterContextObject#y
+ * @type {number}
+ */
+
+/**
  * A callback function to place the tooltip in a specific position.
  *
  * @callback Highcharts.TooltipPositionerCallbackFunction
@@ -745,6 +796,7 @@ H.Tooltip.prototype = {
      */
     refresh: function (pointOrPoints, mouseEvent) {
         var tooltip = this,
+            chart = this.chart,
             label,
             options = tooltip.options,
             x,
@@ -757,7 +809,8 @@ H.Tooltip.prototype = {
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
             currentSeries,
-            styledMode = this.chart.styledMode;
+            styledMode = chart.styledMode,
+            activeSeries = [];
 
         if (!options.enabled) {
             return;
@@ -774,6 +827,20 @@ H.Tooltip.prototype = {
 
         // shared tooltip, array is sent over
         if (shared && !(point.series && point.series.noSharedTooltip)) {
+            // Set inactive state for all points
+            activeSeries = point.map(function (item) {
+                return item.series;
+            });
+            chart.series.forEach(function (inactiveSeries) {
+                if (
+                    inactiveSeries.options.inactiveOtherPoints ||
+                    activeSeries.indexOf(inactiveSeries) === -1
+                ) {
+                    inactiveSeries.setState('inactive', true);
+                }
+            });
+
+            // Now set hover state for the choosen ones:
             point.forEach(function (item) {
                 item.setState('hover');
 

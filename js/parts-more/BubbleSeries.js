@@ -402,6 +402,12 @@ seriesType('bubble', 'scatter', {
         }
     },
 
+    // Define hasData function for non-cartesian series.
+    // Returns true if the series has points at all.
+    hasData: function () {
+        return !!this.processedXData.length; // != 0
+    },
+
     // Extend the base translate method to handle bubble size
     translate: function () {
 

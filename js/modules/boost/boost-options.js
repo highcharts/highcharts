@@ -1,12 +1,12 @@
-/**
+/* *
  *
- * Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2019 Highsoft AS
  *
- * Boost module: stripped-down renderer for higher performance
+ *  Boost module: stripped-down renderer for higher performance
  *
- * License: highcharts.com/license
+ *  License: highcharts.com/license
  *
- */
+ * */
 
 /**
  * Set the series threshold for when the boost should kick in globally.

@@ -294,6 +294,31 @@
  * @type {boolean|undefined}
  * @since 3.0
  *//**
+ * Format for points with the value of null. Works analogously to
+ * [format](#plotOptions.series.dataLabels.format).
+ * `nullFormat` can be applied only to series which support
+ * displaying null points.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format/|Highmaps-Demo:}
+ *      Format data label and tooltip for null point.
+ *
+ * @name Highcharts.DataLabelsOptionsObject#nullFormat
+ * @type {string|boolean|undefined}
+ * @since 7.1.0
+ *//**
+ * Callback JavaScript function that defines formatting for points
+ * with the value of null. Works analogously to
+ * [formatter](#plotOptions.series.dataLabels.formatter).
+ * `nullPointFormatter` can be applied only to series which support
+ * displaying null points.
+ *
+ * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format/|Highmaps-Demo:}
+ *      Format data label and tooltip for null point.
+ *
+ * @name Highcharts.DataLabelsOptionsObject#nullFormatter
+ * @type {Highcharts.DataLabelsFormatterCallbackFunction|undefined}
+ * @since 7.1.0
+ *//**
  * How to handle data labels that flow outside the plot area. The default is
  * `"justify"`, which aligns them inside the plot area. For columns and bars,
  * this means it will be moved inside the bar. To display data labels outside
@@ -768,8 +793,9 @@ Series.prototype.drawDataLabels = function () {
                     // Create individual options structure that can be extended
                     // without affecting others
                     labelConfig = point.getLabelConfig();
-                    formatString = (
-                        labelOptions[point.formatPrefix + 'Format'] ||
+
+                    formatString = pick(
+                        labelOptions[point.formatPrefix + 'Format'],
                         labelOptions.format
                     );
 
@@ -1265,7 +1291,7 @@ if (seriesTypes.pie) {
             chart = series.chart,
             options = series.options.dataLabels,
             connectorPadding = options.connectorPadding,
-            connectorWidth = pick(options.connectorWidth, 1),
+            connectorWidth,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
             plotLeft = chart.plotLeft,
@@ -1289,7 +1315,8 @@ if (seriesTypes.pie) {
             visibility,
             j,
             overflow = [0, 0, 0, 0], // top, right, bottom, left
-            dataLabelPositioners = series.dataLabelPositioners;
+            dataLabelPositioners = series.dataLabelPositioners,
+            pointDataLabelsOptions;
 
         // get out if not enabled
         if (!series.visible || (!options.enabled && !series._hasPointLabels)) {
@@ -1547,9 +1574,15 @@ if (seriesTypes.pie) {
             // Place the labels in the final position
             this.placeDataLabels();
 
-            // Draw the connectors
-            if (connectorWidth) {
-                this.points.forEach(function (point) {
+
+            this.points.forEach(function (point) {
+                // #8864: every connector can have individual options
+                pointDataLabelsOptions =
+                  merge(options, point.options.dataLabels);
+                connectorWidth = pick(pointDataLabelsOptions.connectorWidth, 1);
+
+                // Draw the connector
+                if (connectorWidth) {
                     var isNew;
 
                     connector = point.connector;
@@ -1578,11 +1611,12 @@ if (seriesTypes.pie) {
                                 )
                                 .add(series.dataLabelsGroup);
 
+
                             if (!chart.styledMode) {
                                 connector.attr({
                                     'stroke-width': connectorWidth,
                                     'stroke': (
-                                        options.connectorColor ||
+                                        pointDataLabelsOptions.connectorColor ||
                                         point.color ||
                                         '${palette.neutralColor60}'
                                     )
@@ -1597,8 +1631,8 @@ if (seriesTypes.pie) {
                     } else if (connector) {
                         point.connector = connector.destroy();
                     }
-                });
-            }
+                }
+            });
         }
     };
 
@@ -1682,6 +1716,8 @@ if (seriesTypes.pie) {
                     dataLabel.attr({ y: -9999 });
                 }
             }
+            // Clear for update
+            delete point.distributeBox;
         }, this);
     };
 

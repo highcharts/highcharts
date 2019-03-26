@@ -481,10 +481,17 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
         el,
         i,
         l,
+        href,
         // After grabbing the SVG of the chart's copy container we need to do
         // sanitation on the SVG
         sanitize = function (svg) {
             return chart.sanitizeSVG(svg, chartCopyOptions);
+        },
+        // When done with last image we have our SVG
+        checkDone = function () {
+            if (imagesEmbedded === images.length) {
+                successCallback(sanitize(chartCopyContainer.innerHTML));
+            }
         },
         // Success handler, we converted image to base64!
         embeddedSuccess = function (imageURL, imageType, callbackArgs) {
@@ -497,10 +504,7 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
                 imageURL
             );
 
-            // When done with last image we have our SVG
-            if (imagesEmbedded === images.length) {
-                successCallback(sanitize(chartCopyContainer.innerHTML));
-            }
+            checkDone();
         };
 
     // Hook into getSVG to get a copy of the chart copy's container (#8273)
@@ -524,21 +528,31 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
         // Go through the images we want to embed
         for (i = 0, l = images.length; i < l; ++i) {
             el = images[i];
-            Highcharts.imageToDataUrl(
-                el.getAttributeNS(
-                    'http://www.w3.org/1999/xlink',
-                    'href'
-                ),
-                'image/png',
-                { imageElement: el }, options.scale,
-                embeddedSuccess,
-                // Tainted canvas
-                failCallback,
-                // No canvas support
-                failCallback,
-                // Failed to load source
-                failCallback
+            href = el.getAttributeNS(
+                'http://www.w3.org/1999/xlink',
+                'href'
             );
+            if (href) {
+                Highcharts.imageToDataUrl(
+                    href,
+                    'image/png',
+                    { imageElement: el },
+                    options.scale,
+                    embeddedSuccess,
+                    // Tainted canvas
+                    failCallback,
+                    // No canvas support
+                    failCallback,
+                    // Failed to load source
+                    failCallback
+                );
+
+            // Hidden, boosted series have blank href (#10243)
+            } else {
+                ++imagesEmbedded;
+                el.parentNode.removeChild(el);
+                checkDone();
+            }
         }
     } catch (e) {
         failCallback(e);

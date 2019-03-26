@@ -1,4 +1,3 @@
-
 QUnit.test('Test algorithm on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
@@ -27,7 +26,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         chart.series[1].yData.map(function (y) {
             return y.toFixed(4);
         }),
-        [ "22.2133", "22.4077", "22.2807", "22.2870", "22.1659", "22.3499"],
+        ["22.2133", "22.4077", "22.2807", "22.2870", "22.1659", "22.3499"],
         'Correct values'
     );
 

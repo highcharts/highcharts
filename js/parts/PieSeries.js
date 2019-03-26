@@ -179,9 +179,9 @@ import './Series.js';
 var addEvent = H.addEvent,
     CenteredSeriesMixin = H.CenteredSeriesMixin,
     defined = H.defined,
-    extend = H.extend,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
     LegendSymbolMixin = H.LegendSymbolMixin,
+    merge = H.merge,
     noop = H.noop,
     pick = H.pick,
     Point = H.Point,
@@ -211,10 +211,10 @@ seriesType('pie', 'line',
      * @extends      plotOptions.line
      * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
      *               cropThreshold, dashStyle, findNearestPointBy,
-     *               getExtremesFromAll, lineWidth, marker, negativeColor,
-     *               pointInterval, pointIntervalUnit, pointPlacement,
-     *               pointStart, softThreshold, stacking, step, threshold,
-     *               turboThreshold, zoneAxis, zones
+     *               getExtremesFromAll, label, lineWidth, marker,
+     *               negativeColor, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointStart, softThreshold, stacking, step,
+     *               threshold, turboThreshold, zoneAxis, zones
      * @product      highcharts
      * @optionparent plotOptions.pie
      */
@@ -335,6 +335,7 @@ seriesType('pie', 'line',
          */
         ignoreHiddenPoint: true,
 
+        inactiveOtherPoints: true,
         /**
          * The size of the inner diameter for the pie. A size greater than 0
          * renders a donut chart. Can be a percentage or pixel value.
@@ -560,12 +561,19 @@ seriesType('pie', 'line',
             }
         },
 
+        // Define hasData function for non-cartesian series.
+        // Returns true if the series has points at all.
+        hasData: function () {
+            return !!this.processedXData.length; // != 0
+        },
+
         /**
          * Recompute total chart sum and update percentages of points.
          *
          * @private
          * @function Highcharts.seriesTypes.pie#updateTotals
          */
+
         updateTotals: function () {
             var i,
                 total = 0,
@@ -826,6 +834,7 @@ seriesType('pie', 'line',
 
             // draw the slices
             series.points.forEach(function (point) {
+                var animateTo = {};
                 graphic = point.graphic;
                 if (!point.isNull) {
                     shapeArgs = point.shapeArgs;
@@ -860,9 +869,10 @@ seriesType('pie', 'line',
                             .setRadialReference(series.center);
 
                         if (!chart.styledMode) {
-                            graphic.attr(pointAttr);
+                            merge(true, animateTo, pointAttr);
                         }
-                        graphic.animate(extend(shapeArgs, groupTranslation));
+                        merge(true, animateTo, shapeArgs, groupTranslation);
+                        graphic.animate(animateTo);
                     } else {
 
                         graphic
@@ -1320,7 +1330,7 @@ seriesType('pie', 'line',
  * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/
  *         Confirm toggle visibility
  *
- * @type      {Function}
+ * @type      {Highcharts.PointLegendItemClickCallbackFunction}
  * @since     1.2.0
  * @product   highcharts
  * @apioption plotOptions.pie.point.events.legendItemClick

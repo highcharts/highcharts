@@ -263,6 +263,71 @@
  * @default 3
  */
 
+
+/**
+ * An object of key-value pairs for SVG attributes. Attributes in Highcharts
+ * elements for the most parts correspond to SVG, but some are specific to
+ * Highcharts, like `zIndex`, `rotation`, `rotationOriginX`,
+ * `rotationOriginY`, `translateX`, `translateY`, `scaleX` and `scaleY`. SVG
+ * attributes containing a hyphen are _not_ camel-cased, they should be
+ * quoted to preserve the hyphen.
+ *
+ * @example
+ * {
+ *     'stroke': '#ff0000', // basic
+ *     'stroke-width': 2, // hyphenated
+ *     'rotation': 45 // custom
+ *     'd': ['M', 10, 10, 'L', 30, 30, 'z'] // path definition, note format
+ * }
+ *
+ * @interface Highcharts.SVGAttributes
+ *//**
+ * @name Highcharts.SVGAttributes#[key:string]
+ * @type {*}
+ *//**
+ * @name Highcharts.SVGAttributes#d
+ * @type {string|Highcharts.SVGPathArray|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#fill
+ * @type {Highcharts.ColorString|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#inverted
+ * @type {boolean|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#matrix
+ * @type {Array<number>|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#rotation
+ * @type {string|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#rotationOriginX
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#rotationOriginY
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#scaleX
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#scaleY
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#stroke
+ * @type {Highcharts.ColorString|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#style
+ * @type {string|Highcharts.CSSObject|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#translateX
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#translateY
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#zIndex
+ * @type {number|undefined}
+ */
+
 /**
  * Serialized form of an SVG definition, including children. Some key
  * property names are reserved: tagName, textContent, and children.
@@ -280,6 +345,29 @@
  *//**
  * @name Highcharts.SVGDefinitionObject#textContent
  * @type {string|undefined}
+ */
+
+/**
+ * An SVG DOM element. The type is a reference to the regular SVGElement in the
+ * global scope.
+ *
+ * @typedef {globals.GlobalSVGElement} Highcharts.SVGDOMElement
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
+ */
+
+/**
+ * Array of path commands, that will go into the `d` attribute of an SVG
+ * element.
+ *
+ * @typedef {Array<number|Highcharts.SVGPathCommand>} Highcharts.SVGPathArray
+ */
+
+/**
+ * Possible path commands in a SVG path array.
+ *
+ * @typedef {string} Highcharts.SVGPathCommand
+ * @validvalue ["a","c","h","l","m","q","s","t","v","z","A","C","H","L","M","Q","S","T","V","Z"]
  */
 
 /**
@@ -1000,12 +1088,22 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     addClass: function (className, replace) {
         var currentClassName = this.attr('class') || '';
 
-        if (currentClassName.indexOf(className) === -1) {
-            if (!replace) {
-                className =
-                    (currentClassName + (currentClassName ? ' ' : '') +
-                    className).replace('  ', ' ');
-            }
+        if (!replace) {
+
+            // Filter out existing
+            className = (className || '')
+                .split(/ /g)
+                .reduce(function (newClassName, name) {
+                    if (currentClassName.indexOf(name) === -1) {
+                        newClassName.push(name);
+                    }
+                    return newClassName;
+                }, currentClassName ? [currentClassName] : [])
+                .join(' ');
+
+        }
+
+        if (className !== currentClassName) {
             this.attr('class', className);
         }
 
@@ -1968,16 +2066,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             [].forEach.call(
                 ownerSVGElement.querySelectorAll('[clip-path],[CLIP-PATH]'),
                 function (el) {
-                    var clipPathAttr = el.getAttribute('clip-path'),
-                        clipPathId = clipPath.element.id;
+                    var clipPathAttr = el.getAttribute('clip-path');
 
-                    // Include the closing paranthesis in the test to rule out
-                    // id's from 10 and above (#6550). Edge puts quotes inside
-                    // the url, others not.
-                    if (
-                        clipPathAttr.indexOf('(#' + clipPathId + ')') > -1 ||
-                        clipPathAttr.indexOf('("#' + clipPathId + '")') > -1
-                    ) {
+                    if (clipPathAttr.indexOf(clipPath.element.id) > -1) {
                         el.removeAttribute('clip-path');
                     }
                 }
@@ -3676,6 +3767,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @return {Highcharts.SVGElement}
      *         The button element.
+     *
+     * @param {boolean} [useHTML=false]
+     *        Wether to use HTML to render the label.
+     *
      */
     button: function (
         text,
@@ -3686,7 +3781,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         hoverState,
         pressedState,
         disabledState,
-        shape
+        shape,
+        useHTML
     ) {
         var label = this.label(
                 text,
@@ -3695,7 +3791,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 shape,
                 null,
                 null,
-                null,
+                useHTML,
                 null,
                 'button'
             ),
@@ -4071,10 +4167,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         }
 
         wrapper.rSetter = function (value, key, element) {
+            wrapper.r = value;
             attr(element, {
                 rx: value,
                 ry: value
             });
+        };
+        wrapper.rGetter = function () {
+            return wrapper.r;
         };
 
         return wrapper.attr(attribs);
@@ -4349,6 +4449,24 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
                     this[key] = value;
                     if (defined(imgSize)) {
+
+                        // Scale and center the image within its container.
+                        // The name `backgroundSize` is taken from the CSS spec,
+                        // but the value `within` is made up. Other possible
+                        // values in the spec, `cover` and `contain`, can be
+                        // implemented if needed.
+                        if (
+                            options &&
+                            options.backgroundSize === 'within' &&
+                            this.width &&
+                            this.height
+                        ) {
+                            imgSize = Math.round(imgSize * Math.min(
+                                this.width / this.imgwidth,
+                                this.height / this.imgheight
+                            ));
+                        }
+
                         if (this.element) {
                             this.element.setAttribute(key, imgSize);
                         }
@@ -4682,7 +4800,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     clipRect: function (x, y, width, height) {
         var wrapper,
-            id = H.uniqueKey(),
+            // Add a hyphen at the end to avoid confusion in testing indexes
+            // -1 and -10, -11 etc (#6550)
+            id = H.uniqueKey() + '-',
 
             clipPath = this.createElement('clipPath').attr({
                 id: id
