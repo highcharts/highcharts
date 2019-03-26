@@ -9,6 +9,7 @@ TestTemplate.register('highcharts/columnrange', Highcharts.chart, {
     },
 
     series: [{
+        type: 'columnrange',
         data: [[0, 1], [2, 3], [1, 2]]
     }]
 
