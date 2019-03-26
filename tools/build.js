@@ -18,8 +18,13 @@ const {
 } = require('highcharts-assembler/src/build.js');
 const {
     getOrderedDependencies,
+    getRequires,
     regexGetCapture
 } = require('highcharts-assembler/src/dependencies.js');
+const {
+    exists,
+    getFile
+} = require('highcharts-assembler/src/utilities.js');
 const {
     checkDependency
 } = require('./filesystem.js');
@@ -27,7 +32,6 @@ const build = require('highcharts-assembler');
 
 // TODO move to a utils file
 const isArray = x => Array.isArray(x);
-const isUndefined = x => typeof x === 'undefined';
 
 /**
  * Get the product version from build.properties.
@@ -73,25 +77,27 @@ const scripts = params => {
     return build(options);
 };
 
+// Copy from assembler. TODO: Load from assembler when it has been updated.
+const getExcludedFilenames = (requires, base) => requires
+    .reduce((arr, name) => {
+        const filePath = join(base, `${name.replace('highcharts/', '')}.src.js`)
+        const dependencies = exists(filePath) ?
+            getOrderedDependencies(filePath).map(str => resolve(str)) :
+            [];
+        return arr.concat(dependencies);
+    },
+    []);
 
-const getListOfDependencies = (files, fileOptions, pathSource) => {
+const getListOfDependencies = (files, pathSource) => {
     const dependencyList = {};
     files.forEach(filename => {
-        const options = fileOptions[filename];
-        const exclude = (
-            !isUndefined(options) && !isUndefined(options.exclude) ?
-                options.exclude :
-                false
-        );
-        const pathFile = join(pathSource, 'masters', filename);
+        const base = join(pathSource, 'masters');
+        const pathFile = join(base, filename);
+        const contentEntry = getFile(pathFile);
+        const requires = getRequires(contentEntry);
+        const excludes = getExcludedFilenames(requires, base);
         const list = getOrderedDependencies(pathFile)
-            .filter(pathModule => {
-                let result = true;
-                if (exclude) {
-                    result = !exclude.test(pathModule);
-                }
-                return result;
-            })
+            .filter(pathModule => !excludes.includes(resolve(pathModule)))
             .map(str => resolve(str));
         dependencyList[pathFile] = list;
     });
@@ -204,7 +210,6 @@ const getBuildScripts = params => {
     const {
         files,
         type: types,
-        fileOptions,
         mapTypeToSource
     } = options;
     const result = {
@@ -220,7 +225,6 @@ const getBuildScripts = params => {
         const fn = event => {
             const dependencies = getListOfDependencies(
                 files,
-                fileOptions,
                 pathSource
             );
             return watchESModules(
