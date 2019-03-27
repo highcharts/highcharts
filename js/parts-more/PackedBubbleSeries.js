@@ -82,6 +82,16 @@ H.networkgraphIntegrations.packedbubble = {
 H.layouts.packedbubble = H.extendClass(
     Reingold,
     {
+        beforeStep: function () {
+            if (this.options.marker) {
+                this.series.forEach(function (series) {
+                    if (series) {
+                        series.translate();
+                        series.drawPoints();
+                    }
+                });
+            }
+        },
         setCircularPositions: function () {
             var layout = this,
                 box = layout.box,
@@ -425,11 +435,11 @@ seriesType('packedbubble', 'bubble',
              * Layout algorithm options for parent nodes.
              *
              * @since       7.1.0
-             * @extends plotOptions.networkgraph.layoutAlgorithm
-             * @excluding approximation, attractiveForce, repulsiveForce, theta
+             * @extends     plotOptions.networkgraph.layoutAlgorithm
+             * @excluding   approximation, attractiveForce, repulsiveForce,
+             *              theta, enableSimulation
              */
             parentNodeOptions: {
-                enableSimulation: true,
                 maxIterations: 400,
                 gravitationalConstant: 0.03,
                 maxSpeed: 50,
@@ -782,10 +792,12 @@ seriesType('packedbubble', 'bubble',
                 layoutOptions = series.options.layoutAlgorithm,
                 graphLayoutsStorage = series.chart.graphLayoutsStorage,
                 graphLayoutsLookup = series.chart.graphLayoutsLookup,
-                chartOptions = series.chart.options.chart,
                 parentNodeOptions = H.merge(
                     layoutOptions,
-                    layoutOptions.parentNodeOptions
+                    layoutOptions.parentNodeOptions,
+                    {
+                        enableSimulation: series.layout.options.enableSimulation
+                    }
                 ),
                 parentNodeLayout;
 
@@ -794,10 +806,6 @@ seriesType('packedbubble', 'bubble',
             ];
 
             if (!parentNodeLayout) {
-                parentNodeOptions.enableSimulation =
-                    !defined(chartOptions.forExport) ?
-                        parentNodeOptions.enableSimulation :
-                        !chartOptions.forExport;
 
                 graphLayoutsStorage[layoutOptions.type + '-series'] =
                 parentNodeLayout =
