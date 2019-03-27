@@ -1163,9 +1163,9 @@ Series.prototype.justifyDataLabel = function (
     if (off < 0) {
         if (align === 'right') {
             options.align = 'left';
-            off += bBox.width;
+        } else {
+            options.x = -off;
         }
-        options.x -= off;
         justified = true;
     }
 
@@ -1174,9 +1174,9 @@ Series.prototype.justifyDataLabel = function (
     if (off > chart.plotWidth) {
         if (align === 'left') {
             options.align = 'right';
-            off -= bBox.width;
+        } else {
+            options.x = chart.plotWidth - off;
         }
-        options.x += chart.plotWidth - off;
         justified = true;
     }
 
@@ -1185,9 +1185,9 @@ Series.prototype.justifyDataLabel = function (
     if (off < 0) {
         if (verticalAlign === 'bottom') {
             options.verticalAlign = 'top';
-            off = alignAttr.y + bBox.height;
+        } else {
+            options.y = -off;
         }
-        options.y -= off;
         justified = true;
     }
 
@@ -1196,9 +1196,9 @@ Series.prototype.justifyDataLabel = function (
     if (off > chart.plotHeight) {
         if (verticalAlign === 'top') {
             options.verticalAlign = 'bottom';
-            off -= bBox.height;
+        } else {
+            options.y = chart.plotHeight - off;
         }
-        options.y += chart.plotHeight - off;
         justified = true;
     }
 
