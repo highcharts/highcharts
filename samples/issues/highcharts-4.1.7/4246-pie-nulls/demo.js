@@ -47,9 +47,8 @@ $(function () {
             }]
         }).highcharts();
 
-        assert.strictEqual(
-            chart.series[0].points[0].graphic,
-            undefined,
+        assert.notOk(
+            Highcharts.defined(chart.series[0].points[0].graphic),
             'No graphic'
         );
         assert.strictEqual(

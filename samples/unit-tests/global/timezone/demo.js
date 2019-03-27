@@ -319,7 +319,8 @@ QUnit.test('Crossing DST with a wide pointRange (#7432)', function (assert) {
 
 // Highcharts v4.0.3, Issue #3359
 // Default datetime axis formatter glitch when timezoneOffset is negative
-QUnit.test('Midnight ticks should show date (#3359)', function (assert) {
+// Skipped, doesn't work in browser
+QUnit.skip('Midnight ticks should show date (#3359)', function (assert) {
     function initChart(timezoneOffset) {
         Highcharts.setOptions({
             global: {
@@ -327,6 +328,9 @@ QUnit.test('Midnight ticks should show date (#3359)', function (assert) {
             }
         });
         var chart = Highcharts.chart('container', {
+            chart: {
+                width: 600
+            },
             xAxis: {
                 type: 'datetime'
             },
