@@ -1,6 +1,8 @@
 var chart = Highcharts.chart('container', {
     chart: {
-        polar: true,
+        polar: true
+    },
+    accessibility: {
         description: 'Test chart displaying a polar chart concept.'
     },
     title: {

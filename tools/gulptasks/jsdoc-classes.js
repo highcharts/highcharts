@@ -41,6 +41,7 @@ const SOURCE_GLOBS = [
     'js/parts-map/MapNavigation.js',
     'js/parts-map/MapSeries.js',
     'js/parts-more/AreaRangeSeries.js',
+    'js/modules/accessibility/*.js',
     'js/modules/drilldown.src.js',
     'js/modules/exporting.src.js',
     'js/modules/export-data.src.js',

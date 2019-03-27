@@ -1497,6 +1497,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
                 chart.openMenu = false;
                 H.clearTimeout(menu.hideTimer);
+                fireEvent(chart, 'exportMenuHidden');
             };
 
             // Hide the menu some time after mouse leave (#1357)

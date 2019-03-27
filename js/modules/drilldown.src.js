@@ -616,6 +616,7 @@ Chart.prototype.applyDrilldown = function () {
     this.pointer.reset();
     this.redraw();
     this.showDrillUpButton();
+    fireEvent(this, 'afterDrilldown');
 };
 
 Chart.prototype.getDrilldownBackText = function () {
@@ -778,9 +779,6 @@ Chart.prototype.drillUp = function () {
         }
     }
 
-    // Fire a once-off event after all series have been drilled up (#5158)
-    fireEvent(chart, 'drillupall');
-
     this.redraw();
 
     if (this.drilldownLevels.length === 0) {
@@ -793,6 +791,9 @@ Chart.prototype.drillUp = function () {
     }
 
     this.ddDupes.length = []; // #3315
+
+    // Fire a once-off event after all series have been drilled up (#5158)
+    fireEvent(chart, 'drillupall');
 };
 
 // Add update function to be called internally from Chart.update (#7600)

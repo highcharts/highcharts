@@ -1575,7 +1575,7 @@ if (seriesTypes.pie) {
             this.placeDataLabels();
 
 
-                this.points.forEach(function (point) {
+            this.points.forEach(function (point) {
                 // #8864: every connector can have individual options
                 pointDataLabelsOptions =
                   merge(options, point.options.dataLabels);
@@ -1631,7 +1631,7 @@ if (seriesTypes.pie) {
                     } else if (connector) {
                         point.connector = connector.destroy();
                     }
-            }
+                }
             });
         }
     };

@@ -118,18 +118,18 @@ Highcharts.setOptions({
 
 Highcharts.chart('container', {
     chart: {
-        type: 'column',
+        type: 'column'
+    },
+
+    accessibility: {
         description: 'Chart displaying art grants in 2016, grouped by grant category. ' +
         'Cultural Center grants have significantly higher individual grant amounts than the other categories. ' +
         'The largest grant amount went to SOMArts Cultural Centers, and was $630,191.36. ' +
         'The chart leaves out all grants below $50,000. ' +
         'The chart displays one column series for each of the 4 grant categories, ' +
-        'as well as a line series for each of the grant category totals.'
-    },
-
-    accessibility: {
+        'as well as a line series for each of the grant category totals.',
         seriesDescriptionFormatter: function (series) {
-            return series.type !== 'line' ? series.buildSeriesInfoString() :
+            return series.type === 'line' &&
                 series.name + ', ' + dollarFormat(series.points[0].y);
         },
         keyboardNavigation: {
@@ -162,7 +162,10 @@ Highcharts.chart('container', {
 
     xAxis: {
         visible: false,
-        description: 'Grant applicants'
+        accessibility: {
+            description: 'Grant applicants',
+            rangeDescription: ''
+        }
     },
 
     yAxis: [{
@@ -178,7 +181,9 @@ Highcharts.chart('container', {
         },
         gridLineWidth: 1
     }, {
-        description: 'Grant category totals',
+        accessibility: {
+            description: 'Grant category totals'
+        },
         opposite: true,
         min: 0,
         max: 2400000,
@@ -213,22 +218,26 @@ Highcharts.chart('container', {
                 headerFormat: '<span style="font-size: 10px"><span style="color:{point.color}">\u25CF</span> {series.name}</span><br/>',
                 pointFormat: '{point.name}: <b>${point.y}</b><br/>'
             },
-            pointDescriptionFormatter: function (point) {
-                return (point.index + 1) + '. ' + point.name + ' ' +
-                    dollarFormat(point.y) + '.' +
-                    (point.description ? ' ' + point.description : '');
+            accessibility: {
+                pointDescriptionFormatter: function (point) {
+                    return (point.index + 1) + '. ' + point.name + ' ' +
+                        dollarFormat(point.y) + '.' +
+                        (point.description ? ' ' + point.description : '');
+                }
             }
         },
         line: {
             yAxis: 1,
             lineWidth: 5,
+            accessibility: {
+                skipKeyboardNavigation: true,
+                exposeAsGroupOnly: true
+            },
             marker: {
                 enabled: false
             },
             enableMouseTracking: false,
-            skipKeyboardNavigation: true,
             includeInDataExport: false,
-            exposeElementToA11y: true,
             linkedTo: ':previous',
             dataLabels: {
                 enabled: true,

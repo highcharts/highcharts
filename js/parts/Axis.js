@@ -713,16 +713,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         },
 
         /**
-         * _Requires Accessibility module_
-         *
-         * Description of the axis to screen reader users.
-         *
-         * @type      {string}
-         * @since     5.0.0
-         * @apioption xAxis.description
-         */
-
-        /**
          * Whether to force the axis to end on a tick. Use this option with
          * the `maxPadding` option to control the axis end.
          *

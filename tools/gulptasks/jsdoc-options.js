@@ -18,6 +18,7 @@ const SOURCE_FILES = [
     ['annotations', 'types'],
     ['indicators'],
     ['modules'],
+    ['modules', 'accessibility'],
     ['modules', 'networkgraph'],
     ['modules', 'sonification'],
     ['parts'],

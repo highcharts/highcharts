@@ -1,4 +1,4 @@
-/**
+/* *
  * Accessibility module - internationalization support
  *
  * (c) 2010-2019 Highsoft AS
@@ -9,10 +9,11 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import H from '../../parts/Globals.js';
+import '../../parts/Utilities.js';
 
 var pick = H.pick;
+
 
 /**
  * String trim that works for IE6-8 as well.
@@ -317,22 +318,34 @@ H.setOptions({
 
             /* eslint-disable max-len */
             screenReaderRegionLabel: 'Chart screen reader information.',
-            navigationHint: 'Use regions/landmarks to skip ahead to chart {#plural(numSeries, and navigate between data series,)}',
             defaultChartTitle: 'Chart',
-            longDescriptionHeading: 'Long description.',
-            noDescription: 'No description available.',
-            structureHeading: 'Structure.',
             viewAsDataTable: 'View as data table.',
             chartHeading: 'Chart graphic.',
-            chartContainerLabel: 'Interactive chart. {title}. Use up and down arrows to navigate with most screen readers.',
+            chartContainerLabel: '{title}. Interactive chart.',
+            svgContainerLabel: 'Interactive chart',
             rangeSelectorMinInput: 'Select start date.',
             rangeSelectorMaxInput: 'Select end date.',
             tableSummary: 'Table representation of chart.',
             mapZoomIn: 'Zoom chart',
             mapZoomOut: 'Zoom out chart',
+            resetZoomButton: 'Reset zoom',
+            drillUpButton: '{buttonText}',
             rangeSelectorButton: 'Select range {buttonText}',
             legendLabel: 'Toggle series visibility',
+            legendItem: 'Toggle visibility of {itemName}',
             /* eslint-enable max-len */
+
+            /**
+             * Thousands separator to use when formatting numbers for screen
+             * readers. Note that many screen readers will not handle space as a
+             * thousands separator, and will consider "11 700" as two numbers.
+             *
+             * Set to `null` to use the separator defined in
+             * [lang.thousandsSep](lang.thousandsSep).
+             *
+             * @since next
+             */
+            thousandsSep: ',',
 
             /**
              * Title element text for the chart SVG element. Leave this
@@ -342,7 +355,35 @@ H.setOptions({
              *
              * @since 6.0.8
              */
-            svgContainerTitle: '{chartTitle}',
+            svgContainerTitle: '',
+
+            /**
+             * Label for the end of the chart. Announced by screen readers.
+             *
+             * @since next
+             */
+            svgContainerEnd: 'End of interactive chart',
+
+            /**
+             * Default announcement for new data in charts. If addPoint or
+             * addSeries is used, and only one series/point is added, the
+             * `newPointAnnounce` and `newSeriesAnnounce` strings are used.
+             * The `...Single` versions will be used if there is only one chart
+             * on the page, and the `...Multiple` versions will be used if there
+             * are multiple charts on the page. For all other new data events,
+             * the `newDataAnnounce` string will be used.
+             *
+             * @since next
+             */
+            announceNewData: {
+                newDataAnnounce: 'Updated data for chart {chartTitle}',
+                newSeriesAnnounceSingle: 'New data series: {seriesDesc}',
+                newPointAnnounceSingle: 'New data point: {pointDesc}',
+                newSeriesAnnounceMultiple:
+                    'New data series in chart {chartTitle}: {seriesDesc}',
+                newPointAnnounceMultiple:
+                    'New data point in chart {chartTitle}: {pointDesc}'
+            },
 
             /**
              * Descriptions of lesser known series types. The relevant
@@ -419,11 +460,17 @@ H.setOptions({
              * @since 6.0.6
              */
             axis: {
-                /* eslint-disable max-len */
-                xAxisDescriptionSingular: 'The chart has 1 X axis displaying {names[0]}.',
-                xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#names.forEach(-1), }and {names[-1]}',
-                yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}.',
-                yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#names.forEach(-1), }and {names[-1]}'
+            /* eslint-disable max-len */
+                xAxisDescriptionSingular: 'The chart has 1 X axis displaying {names[0]}. {ranges[0]}',
+                xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each(names, -1), }and {names[-1]}.',
+                yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}. {ranges[0]}',
+                yAxisDescriptionPlural: 'The chart has {numAxes} Y axes displaying {#each(names, -1), }and {names[-1]}.',
+                timeRangeDays: 'Range: {range} days.',
+                timeRangeHours: 'Range: {range} hours.',
+                timeRangeMinutes: 'Range: {range} minutes.',
+                timeRangeSeconds: 'Range: {range} seconds.',
+                rangeFromTo: 'Range: {rangeFrom} to {rangeTo}.',
+                rangeCategories: 'Range: {numCategories} categories.'
             }, /* eslint-enable max-len */
 
             /**

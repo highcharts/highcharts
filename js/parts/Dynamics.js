@@ -106,7 +106,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 chart.isDirtyLegend = true;
                 chart.linkSeries();
 
-                fireEvent(chart, 'afterAddSeries');
+                fireEvent(chart, 'afterAddSeries', { series: series });
 
                 if (redraw) {
                     chart.redraw(animation);
@@ -821,8 +821,13 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
      *        Whether to apply animation, and optionally animation
      *        configuration.
+     *
+     * @param {boolean} [withEvent=true]
+     *        Used internally, whether to fire the series `addPoint` event.
+     *
+     * @fires Highcharts.Series#event:addPoint
      */
-    addPoint: function (options, redraw, shift, animation) {
+    addPoint: function (options, redraw, shift, animation, withEvent) {
         var series = this,
             seriesOptions = series.options,
             data = series.data,
@@ -885,6 +890,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
 
                 dataOptions.shift();
             }
+        }
+
+        // Fire event
+        if (withEvent !== false) {
+            fireEvent(series, 'addPoint', { point: point });
         }
 
         // redraw
@@ -1039,11 +1049,14 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      *        more operations on the chart, it is a good idea to set redraw to
      *        false and call {@link Chart#redraw} after.
      *
+     * @fires Highcharts.Series#event:update
      * @fires Highcharts.Series#event:afterUpdate
      */
     update: function (options, redraw) {
 
         options = H.cleanRecursively(options, this.userOptions);
+
+        fireEvent(this, 'update', { options: options });
 
         var series = this,
             chart = series.chart,
