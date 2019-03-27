@@ -168,6 +168,7 @@ H.extend(MenuComponent.prototype, {
         if (
             chart.options.exporting &&
             chart.options.exporting.enabled !== false &&
+            chart.options.exporting.accessibility &&
             chart.options.exporting.accessibility.enabled &&
             chart.exportSVGElements &&
             chart.exportSVGElements[0] &&
