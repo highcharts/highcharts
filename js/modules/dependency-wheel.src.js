@@ -297,6 +297,10 @@ H.seriesType(
             });
 
             return this.dataLabelPath;
+        },
+        isValid: function () {
+            // No null points here
+            return true;
         }
     }
 );
