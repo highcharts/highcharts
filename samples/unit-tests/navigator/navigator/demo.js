@@ -2,23 +2,22 @@ QUnit.test(
     'General Navigator tests',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
-                legend: {
-                    enabled: true
-                },
-                yAxis: {
-                    labels: {
-                        align: 'left'
-                    }
-                },
-                navigator: {
-                    height: 100
-                },
-                series: [{
-                    data: [1, 2, 3],
-                    id: '1'
-                }]
-            }),
-            seriesIndexes = [];
+            legend: {
+                enabled: true
+            },
+            yAxis: {
+                labels: {
+                    align: 'left'
+                }
+            },
+            navigator: {
+                height: 100
+            },
+            series: [{
+                data: [1, 2, 3],
+                id: '1'
+            }]
+        });
 
         chart.series[0].hide();
 
@@ -41,57 +40,6 @@ QUnit.test(
             chart.series.length,
             0,
             'All series, including navSeries, removed without errors (#5581)'
-        );
-
-        chart = Highcharts.stockChart('container', {
-            xAxis: {
-                min: 1318607700000
-            },
-            series: [{
-                data: [
-                    [1318607640000, 420.32],
-                    [1318607700000, 420.58],
-                    [1318607760000, 421.07],
-                    [1318607820000, 421.46],
-                    [1318607880000, 421.69],
-                    [1318607940000, 421.94]
-                ]
-            }]
-        });
-
-        chart.series[0].addPoint([1318608000000, 422.03], false, true);
-        chart.series[0].addPoint([1318608060000, 421.23], false, true);
-        chart.series[0].addPoint([1318608120000, 421.97], true, true);
-
-        assert.strictEqual(
-            chart.navigator.xAxis.min,
-            1318607820000,
-            'xAxis.min should be omitted in navigator when ordinal is enabled (#9994)'
-        );
-
-        chart = Highcharts.stockChart('container', {
-            series: [{
-                data: [1, 2, 3]
-            }]
-        });
-
-        chart.addSeries({
-            data: [3, 2, 1],
-            showInNavigator: true
-        });
-
-        chart.navigator.baseSeries.forEach(function (base) {
-            seriesIndexes.push(base.index);
-        });
-
-        chart.navigator.series.forEach(function (series) {
-            seriesIndexes.push(series.index);
-        });
-
-        assert.deepEqual(
-            seriesIndexes,
-            [0, 1, 2, 3],
-            'After addSeries() navigator series have appropriate indexes (#10193)'
         );
     }
 );

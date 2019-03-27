@@ -29,8 +29,6 @@ QUnit.test('Fixed range for initial range (#5930)', function (assert) {
 
     chart.setSize(800);
 
-
-
     assert.strictEqual(
         chart.rangeSelector.selected,
         1,
@@ -227,5 +225,24 @@ QUnit.test('1Y button should be selected. (#7467)', function (assert) {
             .indexOf('highcharts-button-pressed') > -1,
         true,
         '1Y initiallly selected'
+    );
+});
+
+QUnit.test('Highstock with empty data', assert => {
+
+    var chart = Highcharts.stockChart('container', {
+        xAxis: {
+            min: 1378449361033,
+            max: 1378452780067
+        },
+        series: [{
+            data: []
+        }]
+    });
+
+    assert.deepEqual(
+        chart.rangeSelector.buttons.map(btn => btn.state),
+        [3, 3, 3, 0, 3, 2],
+        'Fixed-range buttons should be disabled with empty data'
     );
 });
