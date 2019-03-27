@@ -1,67 +1,73 @@
 QUnit.test('Testing showEmpty feature and hasData function - #10106', function (assert) {
     // eslint-disable-next-line prefer-const
-    let chart = Highcharts.chart('container', {
-
-        yAxis: [{
-            showEmpty: false
-        }],
+    const { yAxis: [axis] } = Highcharts.chart('container', {
+        yAxis: [{}],
         series: [{
             data: []
         }]
     });
 
     assert.strictEqual(
-        chart.yAxis[0].showAxis,
+        axis.options.showEmpty,
+        true,
+        'should have options.showEmpty default to true'
+    );
+
+    axis.update({
+        showEmpty: false
+    });
+    assert.strictEqual(
+        axis.showAxis,
         false,
         'The yAxis should be invisible'
     );
     assert.strictEqual(
-        chart.yAxis[0].hasData(),
+        axis.hasData(),
         false,
         'Series has no data, so hasData function should return false'
     );
 
-    chart.yAxis[0].update({
+    axis.update({
         showEmpty: true
     });
     assert.strictEqual(
-        chart.yAxis[0].showAxis,
+        axis.showAxis,
         true,
         'The yAxis should be visible'
     );
     assert.strictEqual(
-        chart.yAxis[0].hasData(),
+        axis.hasData(),
         false,
         'Data is empty and there is no min and max values, so hasData function should return false'
     );
 
-    chart.yAxis[0].update({
+    axis.update({
         showEmpty: true,
         min: 0,
         max: 10
     });
     assert.strictEqual(
-        chart.yAxis[0].showAxis,
+        axis.showAxis,
         true,
         'The yAxis should be visible'
     );
     assert.strictEqual(
-        chart.yAxis[0].hasData(),
+        axis.hasData(),
         true,
         'HasData function should return true'
     );
 
-    chart.yAxis[0].update({
+    axis.update({
         showEmpty: false
     });
 
     assert.strictEqual(
-        chart.yAxis[0].showAxis,
+        axis.showAxis,
         false,
         'The yAxis should be invisible'
     );
     assert.strictEqual(
-        chart.yAxis[0].hasData(),
+        axis.hasData(),
         false,
         'ShowEmpty feature is set to false, so hasData function should return false'
     );

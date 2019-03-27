@@ -1620,11 +1620,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         When clicking the legend to hide series, one axis preserves
          *         line and title, the other doesn't
          *
-         * @type      {boolean}
-         * @default   true
          * @since     1.1
-         * @apioption xAxis.showEmpty
          */
+        showEmpty: true,
 
         /**
          * Whether to show the first tick label.
