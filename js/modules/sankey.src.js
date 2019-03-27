@@ -306,12 +306,31 @@ seriesType('sankey', 'column'
                  */
                 linkOpacity: 1
             },
+            /**
+             * The opposite state of a hover for a single point node/link.
+             */
             inactive: {
                 /**
                  * Opacity for the links between nodes in the sankey diagram in
                  * inactive mode.
                  */
-                linkOpacity: 0.1
+                linkOpacity: 0.1,
+                /**
+                 * Opacity of inactive markers.
+                 *
+                 * @apioption plotOptions.series.marker.states.inactive.opacity
+                 * @type {number}
+                 */
+                opacity: 0.1,
+
+                /**
+                 * Animation when not hovering over the marker.
+                 *
+                 * @type {boolean|Highcharts.AnimationOptionsObject}
+                 */
+                animation: {
+                    duration: 50
+                }
             }
         },
         tooltip: {

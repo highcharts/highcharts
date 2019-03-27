@@ -883,7 +883,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
                 // Some inactive points (e.g. slices in pie) should apply
                 // oppacity also for it's labels
-                if (point.series.options.inactiveOtherPoints) {
+                if (series.options.inactiveOtherPoints) {
                     (point.dataLabels || []).forEach(function (label) {
                         if (label) {
                             label.animate(
@@ -894,6 +894,15 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                             );
                         }
                     });
+
+                    if (point.connector) {
+                        point.connector.animate(
+                            {
+                                opacity: pointAttribs.opacity
+                            },
+                            pointAttribsAnimation
+                        );
+                    }
                 }
 
                 point.graphic.animate(
@@ -1136,9 +1145,19 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         var series = this,
             options = series.options,
             graph = series.graph,
+            inactiveOtherPoints = options.inactiveOtherPoints,
             stateOptions = options.states,
             lineWidth = options.lineWidth,
             opacity = options.opacity,
+            // By default a quick animation to hover/inactive,
+            // slower to un-hover
+            stateAnimation = pick(
+                (
+                    stateOptions[state || 'normal'] &&
+                    stateOptions[state || 'normal'].animation
+                ),
+                series.chart.options.chart.animation
+            ),
             attribs,
             i = 0;
 
@@ -1180,7 +1199,10 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         stateOptions[state].lineWidth ||
                         lineWidth + (stateOptions[state].lineWidthPlus || 0)
                     ); // #4035
-                    opacity = stateOptions[state].opacity;
+                    opacity = pick(
+                        stateOptions[state].opacity,
+                        opacity
+                    );
                 }
 
                 if (graph && !graph.dashstyle) {
@@ -1188,17 +1210,10 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         'stroke-width': lineWidth
                     };
 
-                    // Animate the graph stroke-width. By default a quick
-                    // animation to hover, slower to un-hover.
+                    // Animate the graph stroke-width.
                     graph.animate(
                         attribs,
-                        pick(
-                            (
-                                stateOptions[state || 'normal'] &&
-                                stateOptions[state || 'normal'].animation
-                            ),
-                            series.chart.options.chart.animation
-                        )
+                        stateAnimation
                     );
                     while (series['zone-graph-' + i]) {
                         series['zone-graph-' + i].attr(attribs);
@@ -1208,16 +1223,20 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
                 // For some types (pie, networkgraph, sankey) opacity is
                 // resolved on a point level
-                if (!series.options.inactiveOtherPoints) {
+                if (!inactiveOtherPoints) {
                     [
                         series.group,
+                        series.markerGroup,
                         series.dataLabelsGroup
                     ].forEach(
                         function (group) {
                             if (group) {
-                                group.attr({
-                                    opacity: opacity
-                                });
+                                group.animate(
+                                    {
+                                        opacity: opacity
+                                    },
+                                    stateAnimation
+                                );
                             }
                         }
                     );
@@ -1225,7 +1244,9 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             }
         }
 
-        if (inherit && series.points) {
+        // Don't loop over points on a series that doesn't apply inactive state
+        // to siblings markers (e.g. line, column)
+        if (inherit && inactiveOtherPoints && series.points) {
             series.points.forEach(function (point) {
                 if (point.setState) {
                     point.setState(state);

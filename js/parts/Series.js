@@ -1700,33 +1700,6 @@ H.Series = H.seriesType(
                      *         3px line width for selected points
                      */
                     lineWidth: 2
-                },
-
-                /**
-                 * The opposite state of a hover for a single point marker.
-                 *
-                 * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
-                 *         Enabled inactive state
-                 *
-                 * @extends   plotOptions.series.marker.states.hover
-                 */
-                inactive: {
-                    /**
-                     * Opacity of inactive markers.
-                     *
-                     * @apioption plotOptions.series.marker.states.inactive.opacity
-                     * @type {number}
-                     */
-                    opacity: 0.1,
-
-                    /**
-                     * Animation when not hovering over the marker.
-                     *
-                     * @type {boolean|Highcharts.AnimationOptionsObject}
-                     */
-                    animation: {
-                        duration: 50
-                    }
                 }
             }
         },
@@ -2134,8 +2107,6 @@ H.Series = H.seriesType(
              *
              * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
              *         Enabled inactive state
-             *
-             * @extends   plotOptions.series.states.hover
              */
             inactive: {
                 animation: {
