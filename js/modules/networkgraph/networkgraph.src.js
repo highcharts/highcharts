@@ -165,14 +165,49 @@ seriesType(
         marker: {
             enabled: true,
             states: {
+                /**
+                 * The opposite state of a hover for a single point node.
+                 * Applied to all not connected nodes to the hovered one.
+                 */
                 inactive: {
-                    opacity: 0.1
+                    /**
+                     * Opacity of inactive markers.
+                     *
+                     * @apioption plotOptions.series.marker.states.inactive.opacity
+                     * @type {number}
+                     */
+                    opacity: 0.3,
+
+                    /**
+                     * Animation when not hovering over the node.
+                     *
+                     * @type {boolean|Highcharts.AnimationOptionsObject}
+                     */
+                    animation: {
+                        duration: 50
+                    }
                 }
             }
         },
         states: {
+            /**
+             * The opposite state of a hover for a single point link. Applied
+             * to all links that are not comming from the hovered node.
+             */
             inactive: {
-                linkOpacity: 0.1
+                /**
+                 * Opacity of inactive links.
+                 */
+                linkOpacity: 0.3,
+
+                /**
+                 * Animation when not hovering over the node.
+                 *
+                 * @type {boolean|Highcharts.AnimationOptionsObject}
+                 */
+                animation: {
+                    duration: 50
+                }
             }
         },
         /**

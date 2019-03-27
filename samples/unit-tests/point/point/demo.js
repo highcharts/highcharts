@@ -37,24 +37,6 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.attr(
-                chart.series[1].points[0].graphic.element,
-                'opacity'
-            ),
-            '0.1',
-            'Correct opacity for inactive points in other series.'
-        );
-
-        assert.strictEqual(
-            Highcharts.attr(
-                chart.series[0].points[1].graphic.element,
-                'opacity'
-            ),
-            '1',
-            'Not changed opacity for points in the same series.'
-        );
-
-        assert.strictEqual(
-            Highcharts.attr(
                 chart.series[1].group.element,
                 'opacity'
             ),
@@ -101,26 +83,24 @@ QUnit.test(
             controller = new TestController(chart);
 
         controller.mouseMove(
-            chart.series[1].points[2].plotX + chart.plotLeft + 5,
-            chart.series[1].points[2].plotY + chart.plotTop - 15
+            chart.series[0].points[2].plotX + chart.plotLeft,
+            chart.series[0].points[2].plotY + chart.plotTop
         );
 
-        assert.strictEqual(
+        assert.ok(
             Highcharts.attr(
-                chart.series[0].points[0].graphic.element,
+                chart.series[0].group.element,
                 'opacity'
-            ),
-            '1',
+            ) !== '0.1',
             'Shared tooltip: no change in opacity when Series 1' +
                 ' has hovered points'
         );
 
-        assert.strictEqual(
+        assert.ok(
             Highcharts.attr(
-                chart.series[1].points[0].graphic.element,
+                chart.series[1].group.element,
                 'opacity'
-            ),
-            '1',
+            ) !== '0.1',
             'Shared tooltip: no change in opacity when Series 2' +
                 ' has hovered points'
         );
@@ -132,7 +112,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.attr(
-                chart.series[0].points[0].graphic.element,
+                chart.series[0].group.element,
                 'opacity'
             ),
             '0.1',
@@ -140,12 +120,11 @@ QUnit.test(
                 ' opacity changed'
         );
 
-        assert.strictEqual(
+        assert.ok(
             Highcharts.attr(
-                chart.series[1].points[0].graphic.element,
+                chart.series[1].group.element,
                 'opacity'
-            ),
-            '1',
+            ) !== '0.1',
             'Shared tooltip: no change in opacity when Series 1' +
                 ' has hovered points'
         );
@@ -157,29 +136,19 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.attr(
-                chart.series[0].points[0].graphic.element,
-                'opacity'
-            ),
-            '0.1',
-            'Legend hover: correct inactive series - point opacity'
-        );
-
-        assert.strictEqual(
-            Highcharts.attr(
                 chart.series[0].group.element,
                 'opacity'
             ),
             '0.1',
-            'Legend hover: correct inactive series - series opacity'
+            'Legend hover: correct inactive series opacity'
         );
 
-        assert.strictEqual(
+        assert.ok(
             Highcharts.attr(
-                chart.series[1].points[0].graphic.element,
+                chart.series[1].group.element,
                 'opacity'
-            ),
-            '1',
-            'Legend hover: correct hovered series - point opacity'
+            ) !== '0.1',
+            'Legend hover: correct hovered series opacity'
         );
     }
 );
@@ -289,7 +258,7 @@ QUnit.test(
                 chart.series[0].points[0].graphic.element,
                 'opacity'
             ),
-            '0.1',
+            '0.3',
             'Legend hover: correct inactive series point opacity'
         );
 
