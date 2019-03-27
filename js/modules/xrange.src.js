@@ -602,7 +602,10 @@ seriesType('xrange', 'column'
                 if (!this.options.colorIndex) {
                     this.colorIndex = colorByPoint.colorIndex;
                 }
+            } else if (!this.color) {
+                this.color = series.color;
             }
+
         },
         /**
      * Extend init to have y default to 0.
