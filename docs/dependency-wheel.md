@@ -8,4 +8,4 @@ For more detailed samples and documentation, check the [API](https://api.highcha
 
 [iframe /samples/embed/highcharts/demo/dependency-wheel]
 
-The data strucure, as well as the concept of nodes and links, is identical to those of the [Sankey diagram](https://www.highcharts.com/docs/chart-and-series-types/sankey-diagram).
+The data structure, as well as the concept of nodes and links, is identical to those of the [Sankey diagram](https://www.highcharts.com/docs/chart-and-series-types/sankey-diagram).
