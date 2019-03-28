@@ -1876,7 +1876,12 @@ Navigator.prototype = {
                 yAxis: 'navigator-y-axis',
                 showInLegend: false,
                 stacking: false, // #4823
-                isInternal: true
+                isInternal: true,
+                states: {
+                    inactive: {
+                        opacity: 1
+                    }
+                }
             },
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series =
