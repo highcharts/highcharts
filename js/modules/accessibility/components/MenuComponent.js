@@ -12,7 +12,7 @@
 
 import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import KeyboardNavigationModule from '../KeyboardNavigationModule.js';
+import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 
 /**
@@ -126,7 +126,7 @@ H.Chart.prototype.highlightLastExportItem = function () {
  *
  * @private
  * @class
- * @name MenuComponent
+ * @name Highcharts.MenuComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -135,7 +135,7 @@ var MenuComponent = function (chart) {
     this.init();
 };
 MenuComponent.prototype = new AccessibilityComponent();
-H.extend(MenuComponent.prototype, {
+H.extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
 
     /**
      * Init the component
@@ -251,8 +251,8 @@ H.extend(MenuComponent.prototype, {
 
 
     /**
-     * Get keyboard navigation module for this component.
-     * @return {Highcharts.KeyboardNavigationModule}
+     * Get keyboard navigation handler for this component.
+     * @return {Highcharts.KeyboardNavigationHandler}
      */
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,
@@ -260,7 +260,7 @@ H.extend(MenuComponent.prototype, {
             a11yOptions = chart.options.accessibility,
             component = this;
 
-        return new KeyboardNavigationModule(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 // Arrow prev handler
                 [[

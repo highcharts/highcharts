@@ -21,7 +21,7 @@ var doc = H.win.document;
  *
  * @private
  * @class
- * @name ContainerComponent
+ * @name Highcharts.ContainerComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -29,7 +29,7 @@ var ContainerComponent = function (chart) {
     this.initBase(chart);
 };
 ContainerComponent.prototype = new AccessibilityComponent();
-H.extend(ContainerComponent.prototype, {
+H.extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ { // eslint-disable-line
 
     /**
      * Called on first render/updates to the chart, including options changes.

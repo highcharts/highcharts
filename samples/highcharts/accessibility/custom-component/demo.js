@@ -54,7 +54,7 @@ Highcharts.extend(CustomComponent.prototype, {
             namespace = chart.myNamespace || {},
             component = this;
 
-        return new Highcharts.KeyboardNavigationModule(chart, {
+        return new Highcharts.KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 // On arrow/tab we just move to the next chart element.
                 // If we had multiple buttons we wanted to group together,

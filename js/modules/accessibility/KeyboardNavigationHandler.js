@@ -2,7 +2,7 @@
  *
  *  (c) 2009-2019 Øystein Moseng
  *
- *  Keyboard navigation module base class definition
+ *  Keyboard navigation handler base class definition
  *
  *  License: www.highcharts.com/license
  *
@@ -15,7 +15,7 @@ var find = H.find;
 
 
 /**
- * Define a keyboard navigation module for use with a
+ * Define a keyboard navigation handler for use with a
  * Highcharts.AccessibilityComponent instance. This functions as an abstraction
  * layer for keyboard navigation, and defines a map of keyCodes to handler
  * functions.
@@ -26,7 +26,7 @@ var find = H.find;
  *         Custom accessibility component
  *
  * @class
- * @name Highcharts.KeyboardNavigationModule
+ * @name Highcharts.KeyboardNavigationHandler
  *
  * @param {Highcharts.Chart} chart The chart this module should act on.
  * @param {object} options
@@ -45,7 +45,7 @@ var find = H.find;
  * @param {Function} [options.init]
  *      Function to run on initialization of module
  */
-function KeyboardNavigationModule(chart, options) {
+function KeyboardNavigationHandler(chart, options) {
     this.chart = chart;
     this.keyCodeMap = options.keyCodeMap || [];
     this.validate = options.validate;
@@ -60,12 +60,12 @@ function KeyboardNavigationModule(chart, options) {
         fail: 5 // Handler failed
     };
 }
-KeyboardNavigationModule.prototype = {
+KeyboardNavigationHandler.prototype = {
 
     /**
      * Find handler function(s) for key code in the keyCodeMap and run it.
      *
-     * @function KeyboardNavigationModule#run
+     * @function KeyboardNavigationHandler#run
      * @param {global.Event} e
      * @return {number} Returns a response code indicating whether the run was
      *      a success/fail/unhandled, or if we should move to next/prev module.
@@ -95,4 +95,4 @@ KeyboardNavigationModule.prototype = {
 
 };
 
-export default KeyboardNavigationModule;
+export default KeyboardNavigationHandler;
