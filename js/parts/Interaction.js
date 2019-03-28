@@ -1228,7 +1228,8 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                     [
                         series.group,
                         series.markerGroup,
-                        series.dataLabelsGroup
+                        series.dataLabelsGroup,
+                        series.labelBySeries
                     ].forEach(
                         function (group) {
                             if (group) {
