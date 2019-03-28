@@ -1232,8 +1232,10 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                 // resolved on a point level
                 if (!inactiveOtherPoints) {
                     [
-                        series.group,
-                        series.markerGroup,
+                        // For 3D columns, all series are in one main group,
+                        // don't change it's opacity
+                        series.preventGroupOpacity ? null : series.group,
+                        series.preventGroupOpacity ? null : series.markerGroup,
                         series.dataLabelsGroup,
                         series.labelBySeries
                     ].forEach(
@@ -1254,7 +1256,12 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
 
         // Don't loop over points on a series that doesn't apply inactive state
         // to siblings markers (e.g. line, column)
-        if (inherit && inactiveOtherPoints && series.points) {
+        if (
+            inherit && series.points && (
+                series.preventGroupOpacity ||
+                inactiveOtherPoints
+            )
+        ) {
             series.points.forEach(function (point) {
                 if (point.setState) {
                     point.setState(state);

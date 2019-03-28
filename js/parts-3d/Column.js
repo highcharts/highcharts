@@ -312,6 +312,8 @@ addEvent(Series, 'afterInit', function () {
 
         seriesOptions.zIndex = z;
     }
+
+    this.preventGroupOpacity = this.chart.is3d();
 });
 
 function pointAttribs(proceed) {
