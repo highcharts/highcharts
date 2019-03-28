@@ -161,6 +161,7 @@ seriesType(
      * @optionparent plotOptions.networkgraph
      */
     {
+        stickyTracking: false,
         inactiveOtherPoints: true,
         marker: {
             enabled: true,
