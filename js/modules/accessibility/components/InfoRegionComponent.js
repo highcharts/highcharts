@@ -87,7 +87,7 @@ H.Chart.prototype.getTypeDescription = function (types) {
  *
  * @private
  * @class
- * @name InfoRegionComponent
+ * @name Highcharts.InfoRegionComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -96,7 +96,7 @@ var InfoRegionComponent = function (chart) {
     this.init();
 };
 InfoRegionComponent.prototype = new AccessibilityComponent();
-H.extend(InfoRegionComponent.prototype, {
+H.extend(InfoRegionComponent.prototype, /** @lends Highcharts.InfoRegionComponent */ { // eslint-disable-line
 
     /**
      * Init the component

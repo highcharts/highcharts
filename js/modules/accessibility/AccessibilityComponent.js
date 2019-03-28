@@ -37,6 +37,9 @@ var win = Highcharts.win,
  * @name Highcharts.AccessibilityComponent
  */
 function AccessibilityComponent() {}
+/**
+ * @lends Highcharts.AccessibilityComponent
+ */
 AccessibilityComponent.prototype = {
 
     /**
@@ -406,8 +409,8 @@ AccessibilityComponent.prototype = {
     init: function () {},
 
     /**
-     * Get keyboard navigation module for this component.
-     * @return {Highcharts.KeyboardNavigationModule}
+     * Get keyboard navigation handler for this component.
+     * @return {Highcharts.KeyboardNavigationHandler}
      */
     getKeyboardNavigation: function () {},
 

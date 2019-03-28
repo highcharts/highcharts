@@ -12,7 +12,7 @@
 
 import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import KeyboardNavigationModule from '../KeyboardNavigationModule.js';
+import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 var merge = H.merge,
     pick = H.pick;
@@ -443,7 +443,7 @@ H.Point.prototype.getA11yTimeDescription = function () {
  *
  * @private
  * @class
- * @name SeriesComponent
+ * @name Highcharts.SeriesComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -452,7 +452,7 @@ var SeriesComponent = function (chart) {
     this.init();
 };
 SeriesComponent.prototype = new AccessibilityComponent();
-H.extend(SeriesComponent.prototype, {
+H.extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
 
     /**
      * Init the component.
@@ -517,8 +517,8 @@ H.extend(SeriesComponent.prototype, {
 
 
     /**
-     * Get keyboard navigation module for this component.
-     * @return {Highcharts.KeyboardNavigationModule}
+     * Get keyboard navigation handler for this component.
+     * @return {Highcharts.KeyboardNavigationHandler}
      */
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,
@@ -538,7 +538,7 @@ H.extend(SeriesComponent.prototype, {
                 return this.response.success;
             };
 
-        return new KeyboardNavigationModule(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 // Arrow sideways
                 [[

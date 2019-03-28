@@ -11,7 +11,7 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-import KeyboardNavigationModule from './KeyboardNavigationModule.js';
+import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 import AccessibilityComponent from './AccessibilityComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './components/LegendComponent.js';
@@ -35,7 +35,7 @@ var addEvent = H.addEvent,
 merge(true, H.defaultOptions, defaultOptions);
 
 // Expose classes on Highcharts namespace
-H.KeyboardNavigationModule = KeyboardNavigationModule;
+H.KeyboardNavigationHandler = KeyboardNavigationHandler;
 H.AccessibilityComponent = AccessibilityComponent;
 
 

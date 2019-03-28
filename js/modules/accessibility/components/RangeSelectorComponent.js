@@ -12,7 +12,7 @@
 
 import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import KeyboardNavigationModule from '../KeyboardNavigationModule.js';
+import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 
 /**
@@ -51,7 +51,7 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
  *
  * @private
  * @class
- * @name RangeSelectorComponent
+ * @name Highcharts.RangeSelectorComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -59,7 +59,7 @@ var RangeSelectorComponent = function (chart) {
     this.initBase(chart);
 };
 RangeSelectorComponent.prototype = new AccessibilityComponent();
-H.extend(RangeSelectorComponent.prototype, {
+H.extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ { // eslint-disable-line
 
     /**
      * Called on first render/updates to the chart, including options changes.
@@ -117,7 +117,7 @@ H.extend(RangeSelectorComponent.prototype, {
     /**
      * Get navigation for the range selector buttons.
      * @private
-     * @return {Highcharts.KeyboardNavigationModule} The module object.
+     * @return {Highcharts.KeyboardNavigationHandler} The module object.
      */
     getRangeSelectorButtonNavigation: function () {
         var chart = this.chart,
@@ -125,7 +125,7 @@ H.extend(RangeSelectorComponent.prototype, {
             a11yOptions = chart.options.accessibility,
             component = this;
 
-        return new KeyboardNavigationModule(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 // Left/Right/Up/Down
                 [[
@@ -184,13 +184,13 @@ H.extend(RangeSelectorComponent.prototype, {
     /**
      * Get navigation for the range selector input boxes.
      * @private
-     * @return {Highcharts.KeyboardNavigationModule} The module object.
+     * @return {Highcharts.KeyboardNavigationHandler} The module object.
      */
     getRangeSelectorInputNavigation: function () {
         var chart = this.chart,
             keys = this.keyCodes;
 
-        return new KeyboardNavigationModule(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 // Tab/Up/Down
                 [[
@@ -253,8 +253,8 @@ H.extend(RangeSelectorComponent.prototype, {
 
 
     /**
-     * Get keyboard navigation modules for this component.
-     * @return {Array<Highcharts.KeyboardNavigationModule>}
+     * Get keyboard navigation handlers for this component.
+     * @return {Array<Highcharts.KeyboardNavigationHandler>}
      *      List of module objects.
      */
     getKeyboardNavigation: function () {

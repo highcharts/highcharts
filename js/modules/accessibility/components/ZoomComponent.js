@@ -12,7 +12,7 @@
 
 import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import KeyboardNavigationModule from '../KeyboardNavigationModule.js';
+import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 
 /**
@@ -49,7 +49,7 @@ H.Axis.prototype.panStep = function (direction, granularity) {
  *
  * @private
  * @class
- * @name ZoomComponent
+ * @name Highcharts.ZoomComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -58,7 +58,7 @@ var ZoomComponent = function (chart) {
     this.init();
 };
 ZoomComponent.prototype = new AccessibilityComponent();
-H.extend(ZoomComponent.prototype, {
+H.extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
 
     /**
      * Initialize the component
@@ -159,16 +159,16 @@ H.extend(ZoomComponent.prototype, {
 
 
     /**
-     * Get keyboard navigation module for map zoom.
+     * Get keyboard navigation handler for map zoom.
      * @private
-     * @return {Highcharts.KeyboardNavigationModule} The module object
+     * @return {Highcharts.KeyboardNavigationHandler} The module object
      */
     getMapZoomNavigation: function () {
         var keys = this.keyCodes,
             chart = this.chart,
             component = this;
 
-        return new KeyboardNavigationModule(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 // Arrow keys
                 [[
@@ -253,19 +253,19 @@ H.extend(ZoomComponent.prototype, {
 
 
     /**
-     * Get keyboard navigation module for a simple chart button. Provide the
+     * Get keyboard navigation handler for a simple chart button. Provide the
      * button reference for the chart, and a function to call on click.
      *
      * @private
      * @param {string} buttonProp The property on chart referencing the button.
-     * @return {Highcharts.KeyboardNavigationModule} The module object
+     * @return {Highcharts.KeyboardNavigationHandler} The module object
      */
     simpleButtonNavigation: function (buttonProp, proxyProp, onClick) {
         var keys = this.keyCodes,
             component = this,
             chart = this.chart;
 
-        return new KeyboardNavigationModule(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 // Arrow/tab just move
                 [[
@@ -304,8 +304,8 @@ H.extend(ZoomComponent.prototype, {
 
 
     /**
-     * Get keyboard navigation modules for this component.
-     * @return {Array<Highcharts.KeyboardNavigationModule>}
+     * Get keyboard navigation handlers for this component.
+     * @return {Array<Highcharts.KeyboardNavigationHandler>}
      *      List of module objects
      */
     getKeyboardNavigation: function () {

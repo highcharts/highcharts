@@ -12,7 +12,7 @@
 
 import H from '../../../parts/Globals.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';
-import KeyboardNavigationModule from '../KeyboardNavigationModule.js';
+import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 
 /**
@@ -69,7 +69,7 @@ H.addEvent(H.Legend, 'afterColorizeItem', function (e) {
  *
  * @private
  * @class
- * @name LegendComponent
+ * @name Highcharts.LegendComponent
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
@@ -77,7 +77,7 @@ var LegendComponent = function (chart) {
     this.initBase(chart);
 };
 LegendComponent.prototype = new AccessibilityComponent();
-H.extend(LegendComponent.prototype, {
+H.extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
     /**
      * The legend needs updates on every render, in order to update positioning
@@ -149,15 +149,15 @@ H.extend(LegendComponent.prototype, {
 
 
     /**
-     * Get keyboard navigation module for this component.
-     * @return {Highcharts.KeyboardNavigationModule}
+     * Get keyboard navigation handler for this component.
+     * @return {Highcharts.KeyboardNavigationHandler}
      */
     getKeyboardNavigation: function () {
         var keys = this.keyCodes,
             component = this,
             chart = this.chart,
             a11yOptions = chart.options.accessibility;
-        return new KeyboardNavigationModule(chart, {
+        return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
                 // Arrow key handling
                 [[

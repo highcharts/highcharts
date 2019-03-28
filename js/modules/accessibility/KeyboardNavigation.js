@@ -10,7 +10,7 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
-import KeyboardNavigationModule from './KeyboardNavigationModule.js';
+import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 
 var merge = H.merge,
     addEvent = H.addEvent,
@@ -109,7 +109,7 @@ KeyboardNavigation.prototype = {
             }, [
                 // Add an empty module at the start of list, to allow users to
                 // tab into the chart.
-                new KeyboardNavigationModule(this.chart, {})
+                new KeyboardNavigationHandler(this.chart, {})
             ]);
         } else {
             // Clear module list and reset
