@@ -829,6 +829,7 @@ seriesType('pie', 'line',
 
             if (shadow && !series.shadowGroup && !chart.styledMode) {
                 series.shadowGroup = renderer.g('shadow')
+                    .attr({ zIndex: 0 })
                     .add(series.group);
             }
 
@@ -915,6 +916,7 @@ seriesType('pie', 'line',
             this.points.forEach(function (point) {
                 if (!point.graphic) {
                     point.graphic = renderer[point.shapeType](point.shapeArgs)
+                        .attr({ zIndex: 1 })
                         .add(point.series.group);
                     point.delayedRendering = true;
                 }
