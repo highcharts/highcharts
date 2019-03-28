@@ -2105,8 +2105,8 @@ H.Series = H.seriesType(
             /**
              * The opposite state of a hover for series.
              *
-             * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
-             *         Enabled inactive state
+             * @sample {highcharts} highcharts/demo/windbarb-series/
+             *         Disabled inactive state
              */
             inactive: {
                 animation: {
