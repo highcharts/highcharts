@@ -74,7 +74,7 @@ H.dragNodesMixin = {
                         // When dragging nodes, we don't need to calculate
                         // initial positions and rendering nodes:
                         series.layout.setInitialRendering(false);
-                        series.layout.run();
+                        series.layout.start();
                         // Restore defaults:
                         series.layout.setInitialRendering(true);
                     } else {
@@ -96,7 +96,7 @@ H.dragNodesMixin = {
      */
     onMouseUp: function (point) {
         if (point.fixedPosition) {
-            this.layout.run();
+            this.layout.start();
             point.inDragMode = false;
             if (!this.options.fixedDraggable) {
                 delete point.fixedPosition;
