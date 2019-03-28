@@ -475,6 +475,7 @@ seriesType(
         drawTracker: H.TrackerMixin.drawTrackerPoint,
         // Animation is run in `series.simulation`.
         animate: null,
+        buildKDTree: H.noop,
         /**
          * Create a single node that holds information on incoming and outgoing
          * links.
