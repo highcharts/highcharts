@@ -1021,6 +1021,9 @@ var wordCloudPoint = {
 
         return !point.isNull;
     },
+    isValid: function isValid() {
+        return true;
+    },
     weight: 1
 };
 
