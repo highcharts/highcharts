@@ -28,7 +28,8 @@ var addEvent = H.addEvent,
     doc = H.win.document,
     pick = H.pick,
     merge = H.merge,
-    extend = H.extend;
+    extend = H.extend,
+    error = H.error;
 
 
 // Add default options
@@ -316,9 +317,9 @@ Accessibility.prototype = {
         var chart = this.chart,
             // Warn user that a deprecated option was used
             warn = function (oldOption, newOption) {
-                console.warn( // eslint-disable-line
+                error(
                     'Highcharts: Deprecated option ' + oldOption +
-                    ' used. Use ' + newOption + ' instead.'
+                    ' used. Use ' + newOption + ' instead.', false, chart
                 );
             },
             // Set a new option on a root prop, where the option is defined as

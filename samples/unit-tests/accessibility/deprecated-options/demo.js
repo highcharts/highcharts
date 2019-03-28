@@ -1,4 +1,12 @@
 QUnit.test('Check that deprecated options are moved over', function (assert) {
+
+    // Mute errors
+    var unmute = Highcharts.addEvent(Highcharts.Chart, 'displayError', function (e) {
+        if (e.message && e.message.indexOf('Deprecated option') > 0) {
+            e.preventDefault();
+        }
+    });
+
     var chart = Highcharts.chart('container', {
             chart: {
                 description: 'chartDesc',
@@ -37,4 +45,6 @@ QUnit.test('Check that deprecated options are moved over', function (assert) {
     assert.strictEqual(pointOptions.test, 'testStr');
     assert.strictEqual(pointOptions.y, 5);
     assert.strictEqual(pointOptions.accessibility.description, 'yo');
+
+    unmute();
 });
