@@ -994,9 +994,10 @@ var sunburstSeries = {
 var sunburstPoint = {
     draw: drawPoint,
     shouldDraw: function shouldDraw() {
-        var point = this;
-
-        return !point.isNull;
+        return !this.isNull;
+    },
+    isValid: function isValid() {
+        return true;
     }
 };
 
