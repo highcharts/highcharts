@@ -397,9 +397,6 @@ cuboidMethods = H.merge(element3dMethods, {
         this.color = this.fill = fill;
 
         return this;
-    },
-    opacitySetter: function (opacity) {
-        return this.singleSetterForParts('opacity', opacity);
     }
 });
 
