@@ -1,6 +1,3 @@
-
-
-// Construct the chart
 Highcharts.chart('container', {
 
     title: {
@@ -97,6 +94,11 @@ Highcharts.chart('container', {
         name: 'Wind speed',
         tooltip: {
             valueSuffix: ' m/s'
+        },
+        states: {
+            inactive: {
+                opacity: 1
+            }
         }
     }]
 
