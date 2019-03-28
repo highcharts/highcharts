@@ -766,6 +766,12 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
         point.firePointEvent('mouseOut');
 
+        if (!point.series.options.inactiveOtherPoints) {
+            (chart.hoverPoints || []).forEach(function (p) {
+                p.setState();
+            });
+        }
+
         chart.hoverPoints = chart.hoverPoint = null;
     },
 
