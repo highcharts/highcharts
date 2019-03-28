@@ -213,6 +213,7 @@ var addEvent = H.addEvent,
     objectEach = H.objectEach,
     pick = H.pick,
     removeEvent = H.removeEvent,
+    seriesTypes = H.seriesTypes,
     splat = H.splat,
     syncTimeout = H.syncTimeout,
     Tick = H.Tick;
@@ -4209,6 +4210,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     pointRange = Math.max(pointRange, seriesPointRange);
 
                     if (!axis.single || hasCategories) {
+                        // TODO: series should internally set x- and y-
+                        // pointPlacement to simplify this logic.
+                        var isPointPlacementAxis = (
+                            seriesTypes.xrange &&
+                            series instanceof seriesTypes.xrange
+                        ) ? !isXAxis : isXAxis;
+
                         // minPointOffset is the value padding to the left of
                         // the axis in order to make room for points with a
                         // pointRange, typically columns. When the
@@ -4216,8 +4224,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // padding does not apply.
                         minPointOffset = Math.max(
                             minPointOffset,
-                            isString(pointPlacement) ?
-                                0 : seriesPointRange / 2
+                            isPointPlacementAxis && isString(pointPlacement) ?
+                                0 :
+                                seriesPointRange / 2
                         );
 
                         // Determine the total padding needed to the length of
@@ -4225,8 +4234,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // series' pointPlacement is 'on', no padding is added.
                         pointRangePadding = Math.max(
                             pointRangePadding,
-                            pointPlacement === 'on' ?
-                                0 : seriesPointRange
+                            isPointPlacementAxis && pointPlacement === 'on' ?
+                                0 :
+                                seriesPointRange
                         );
                     }
                 });
