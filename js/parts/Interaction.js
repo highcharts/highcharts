@@ -816,6 +816,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             plotX = Math.floor(point.plotX), // #4586
             plotY = point.plotY,
             series = point.series,
+            previousState = point.state,
             stateOptions = series.options.states[state || 'normal'] || {},
             markerOptions = defaultPlotOptions[series.type].marker &&
                 series.options.marker,
@@ -867,6 +868,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             return;
         }
 
+        point.state = state;
+
         if (hasMarkers) {
             markerAttribs = series.markerAttribs(point, state);
         }
@@ -874,8 +877,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         // Apply hover styles to the existing point
         if (point.graphic) {
 
-            if (point.state) {
-                point.graphic.removeClass('highcharts-point-' + point.state);
+            if (previousState) {
+                point.graphic.removeClass('highcharts-point-' + previousState);
             }
             if (state) {
                 point.graphic.addClass('highcharts-point-' + state);
@@ -1022,8 +1025,6 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 halo.hide
             );
         }
-
-        point.state = state;
 
         fireEvent(point, 'afterSetState');
     },
