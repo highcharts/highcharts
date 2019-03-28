@@ -1706,6 +1706,19 @@ seriesType(
             H.extend(this.yAxis.options, treeAxis);
             H.extend(this.xAxis.options, treeAxis);
         },
+
+        /**
+        * Workaround for `inactive` state. Since `series.opacity` option is
+        * already reserved, don't use that state at all by disabling
+        * `inactiveOtherPoints` and not inheriting states by points.
+        *
+        * @private
+        */
+        setState: function (state) {
+            this.options.inactiveOtherPoints = true;
+            Series.prototype.setState.call(this, state, false);
+            this.options.inactiveOtherPoints = false;
+        },
         utils: {
             recursive: recursive
         }

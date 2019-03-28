@@ -162,7 +162,10 @@ seriesType(
      */
     {
         stickyTracking: false,
+
+        /** @ignore-option */
         inactiveOtherPoints: true,
+
         marker: {
             enabled: true,
             states: {

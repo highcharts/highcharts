@@ -213,7 +213,10 @@ seriesType('sankey', 'column'
             /** @ignore-option */
             inside: true
         },
+
+        /** @ignore-option */
         inactiveOtherPoints: true,
+
         /**
          * Set options on specific levels. Takes precedence over series options,
          * but not point options.
