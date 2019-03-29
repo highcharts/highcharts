@@ -602,6 +602,8 @@ H.Series = H.seriesType(
          *         On one single series
          *
          * @product highcharts highstock
+         *
+         * @private
          */
         lineWidth: 2,
 
@@ -640,6 +642,8 @@ H.Series = H.seriesType(
          *         Map bubble
          *
          * @since 1.2.0
+         *
+         * @private
          */
         allowPointSelect: false,
 
@@ -656,6 +660,8 @@ H.Series = H.seriesType(
          *         Show select box
          *
          * @since 1.2.0
+         *
+         * @private
          */
         showCheckbox: false,
 
@@ -695,6 +701,8 @@ H.Series = H.seriesType(
          * @default {highcharts} true
          * @default {highstock} true
          * @default {highmaps} false
+         *
+         * @private
          */
         animation: {
 
@@ -1269,6 +1277,8 @@ H.Series = H.seriesType(
          * General event handlers for the series items. These event hooks can
          * also be attached to the series at run time using the
          * `Highcharts.addEvent` function.
+         *
+         * @private
          */
         events: {},
 
@@ -1401,6 +1411,8 @@ H.Series = H.seriesType(
          * In styled mode, the markers can be styled with the
          * `.highcharts-point`, `.highcharts-point-hover` and
          * `.highcharts-point-select` class names.
+         *
+         * @private
          */
         marker: {
 
@@ -1706,6 +1718,8 @@ H.Series = H.seriesType(
 
         /**
          * Properties for each single point.
+         *
+         * @private
          */
         point: {
 
@@ -1844,6 +1858,8 @@ H.Series = H.seriesType(
          *         Multiple data labels on a bar series
          *
          * @type {Highcharts.DataLabelsOptionsObject}
+         *
+         * @private
          */
         dataLabels: {
             /** @ignore-option */
@@ -1888,14 +1904,19 @@ H.Series = H.seriesType(
          *
          * @since   2.2
          * @product highcharts highstock
+         *
+         * @private
          */
         cropThreshold: 300,
 
         /**
          * Opacity of a series parts: line, fill (e.g. area) and dataLabels.
          *
-         * @since   7.1.0
-         * @see     [states.inactive.opacity](#plotOptions.series.states.inactive.opacity)
+         * @see [states.inactive.opacity](#plotOptions.series.states.inactive.opacity)
+         *
+         * @since 7.1.0
+         *
+         * @private
          */
         opacity: 1,
 
@@ -1906,6 +1927,8 @@ H.Series = H.seriesType(
          * this option can be used to override the automatic value.
          *
          * @product highstock
+         *
+         * @private
          */
         pointRange: 0,
 
@@ -1921,6 +1944,8 @@ H.Series = H.seriesType(
          *
          * @since   4.1.9
          * @product highcharts highstock
+         *
+         * @private
          */
         softThreshold: true,
 
@@ -2141,6 +2166,8 @@ H.Series = H.seriesType(
          * @default {highstock} true
          * @default {highmaps} false
          * @since   2.0
+         *
+         * @private
          */
         stickyTracking: true,
 
@@ -2166,6 +2193,8 @@ H.Series = H.seriesType(
          *
          * @since   2.2
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         turboThreshold: 1000,
 
@@ -2269,6 +2298,8 @@ H.Series = H.seriesType(
          *
          * @since      5.0.10
          * @validvalue ["x", "xy"]
+         *
+         * @private
          */
         findNearestPointBy: 'x'
 

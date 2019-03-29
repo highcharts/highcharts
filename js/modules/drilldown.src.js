@@ -165,6 +165,8 @@ extend(
          *
          * @since   3.0.8
          * @product highcharts highmaps
+         *
+         * @private
          */
         drillUpText: '◁ Back to {series.name}'
     }

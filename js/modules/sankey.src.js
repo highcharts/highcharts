@@ -176,6 +176,8 @@ seriesType('sankey', 'column'
          * Higher numbers makes the links in a sankey diagram or dependency
          * wheelrender more curved. A `curveFactor` of 0 makes the lines
          * straight.
+         *
+         * @private
          */
         curveFactor: 0.33,
         /**
@@ -186,6 +188,8 @@ seriesType('sankey', 'column'
          * string by default.
          *
          * @type {Highcharts.DataLabelsOptionsObject|Highcharts.PlotSankeyDataLabelsOptionsObject}
+         *
+         * @private
          */
         dataLabels: {
             /** @ignore-option */
@@ -288,16 +292,22 @@ seriesType('sankey', 'column'
 
         /**
          * Opacity for the links between nodes in the sankey diagram.
+         *
+         * @private
          */
         linkOpacity: 0.5,
         /**
          * The pixel width of each node in a sankey diagram or dependency wheel,
          * or the height in case the chart is inverted.
+         *
+         * @private
          */
         nodeWidth: 20,
         /**
          * The padding between nodes in a sankey diagram or dependency wheel, in
          * pixels.
+         *
+         * @private
          */
         nodePadding: 10,
         showInLegend: false,
