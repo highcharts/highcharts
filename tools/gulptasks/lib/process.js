@@ -2,8 +2,9 @@
  * Copyright (C) Highsoft AS
  */
 
-const ChildProcess = require('child_process');
-const LibLog = require('./log');
+/* eslint no-use-before-define: 0 */
+
+const LogLib = require('./log');
 const Path = require('path');
 
 /* *
@@ -21,6 +22,13 @@ const CPD = Path.join(__dirname, '..', '..', '..');
  * Current working directory
  */
 const CWD = process.cwd();
+
+/**
+ * Configuration file containing running information
+ */
+const CONFIG_FILE = Path.join(
+    CPD, 'node_modules', '_gulptasks_lib_process.json'
+);
 
 /* *
  *
@@ -40,20 +48,109 @@ const CWD = process.cwd();
  */
 function exec(command) {
 
+    const ChildProcess = require('child_process');
+
     return new Promise((resolve, reject) => {
 
         const cli = ChildProcess.exec(command, (error, stdout) => {
             if (error) {
-                LibLog.failure(error);
+                LogLib.failure(error);
                 reject(error);
             } else {
-                LibLog.success('Command finished: ' + command);
+                LogLib.success('Command finished: ' + command);
                 resolve(stdout);
             }
         });
 
         cli.stdout.on('data', data => process.stdout.write(data));
     });
+}
+
+/**
+ * Sharing run state between gulp processes.
+ *
+ * @param {string} name
+ *        Individual name
+ *
+ * @param {boolean} [runningFlag]
+ *        If not set get current flag
+ *
+ * @param {boolean} [keepOnExit]
+ *        Not clear running flag on process exit
+ *
+ * @return {boolean}
+ *         Running flag
+ */
+function isRunning(name, runningFlag, keepOnExit) {
+
+    const config = readConfig();
+    const key = name.replace(/[^-\w]+/g, '_');
+
+    if (typeof runningFlag === 'undefined') {
+        return (config.isRunning[key] === true);
+    }
+
+    if (!runningFlag) {
+        delete config.isRunning[key];
+        writeConfig(config);
+    } else {
+        config.isRunning[key] = true;
+        writeConfig(config);
+        if (!keepOnExit) {
+            [
+                'exit', 'uncaughtException',
+                'SIGINT', 'SIGUSR1', 'SIGUSR2', 'SIGTERM'
+            ].forEach(
+                evt => process.on(evt, code => {
+                    isRunning(key, false, false);
+                    process.exit(code); // eslint-disable-line
+                })
+            );
+        }
+        writeConfig(config);
+    }
+
+    return (config.isRunning[key] === true);
+}
+
+/**
+ * Reads library-specific configuration file
+ *
+ * @return {object}
+ *         Configuration
+ */
+function readConfig() {
+
+    const FS = require('fs');
+
+    let config = {
+        isRunning: {}
+    };
+
+    if (FS.existsSync(CONFIG_FILE)) {
+        try {
+            config = JSON.parse(FS.readFileSync(CONFIG_FILE).toString());
+        } catch (error) {
+            LogLib.warn(error);
+        }
+    }
+
+    return config;
+}
+
+/**
+ * Writes library-specific configuration file.
+ *
+ * @param {object} config
+ *        Configuration
+ *
+ * @return {void}
+ */
+function writeConfig(config) {
+
+    const FS = require('fs');
+
+    FS.writeFileSync(CONFIG_FILE, JSON.stringify(config));
 }
 
 /* *
@@ -65,5 +162,6 @@ function exec(command) {
 module.exports = {
     CPD,
     CWD,
-    exec
+    exec,
+    isRunning
 };
