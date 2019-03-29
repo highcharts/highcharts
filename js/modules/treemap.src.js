@@ -204,14 +204,14 @@ seriesType(
         showInLegend: false,
 
         /**
-         * @ignore
+         * @ignore-option
          */
         marker: false,
 
         colorByPoint: false,
 
         /**
-         * @since   4.1.0
+         * @since 4.1.0
          */
         dataLabels: {
             /** @ignore-option */

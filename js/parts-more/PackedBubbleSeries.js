@@ -1,7 +1,109 @@
-/**
- * (c) 2010-2018 Grzegorz Blachlinski, Sebastian Bochan
+/* *
  *
- * License: www.highcharts.com/license
+ *  (c) 2010-2018 Grzegorz Blachlinski, Sebastian Bochan
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
+
+/**
+ * Formatter callback function.
+ *
+ * @callback Highcharts.PlotPackedBubbleDataLabelsFormatterCallbackFunction
+ *
+ * @param {Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ *        Data label context to format
+ *
+ * @return {string}
+ *         Formatted data label text
+ */
+
+/**
+ * Context for the formatter function.
+ *
+ * @interface Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject
+ * @extends Highcharts.DataLabelsFormatterContextObject
+ * @since 7.0.0
+ *//**
+ * The color of the node.
+ * @name Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject#color
+ * @type {Highcharts.ColorString}
+ * @since 7.0.0
+ *//**
+ * The point (node) object. The node name, if defined, is available through
+ * `this.point.name`. Arrays: `this.point.linksFrom` and `this.point.linksTo`
+ * contains all nodes connected to this point.
+ * @name Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject#point
+ * @type {Highcharts.Point}
+ * @since 7.0.0
+ *//**
+ * The ID of the node.
+ * @name Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject#key
+ * @type {string}
+ * @since 7.0.0
+ */
+
+/**
+ * Data labels options
+ *
+ * @interface Highcharts.PlotPackedBubbleDataLabelsOptionsObject
+ * @extends Highcharts.DataLabelsOptionsObject
+ * @since 7.0.0
+ *//**
+ * The
+ * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+ * specifying what to show for _node_ in the networkgraph. In v7.0 defaults to
+ * `{key}`, since v7.1 defaults to `undefined` and `formatter` is used instead.
+ * @name Highcharts.PlotPackedBubbleDataLabelsOptionsObject#format
+ * @type {string}
+ * @since 7.0.0
+ *//**
+ * Callback JavaScript function to format the data label for a node. Note that
+ * if a `format` is defined, the format takes precedence and the formatter is
+ * ignored.
+ * @name Highcharts.PlotPackedBubbleDataLabelsOptionsObject#formatter
+ * @type {Highcharts.PlotPackedBubbleDataLabelsFormatterCallbackFunction|undefined}
+ * @since 7.0.0
+ *//**
+ * Callback to format data labels for _parentNodes_. The `parentNodeFormat`
+ * option takes precedence over the `parentNodeFormatter`.
+ * @name Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject#parentNodeFormatter
+ * @type {Highcharts.FormatterCallbackFunction<Highcharts.DataLabelsFormatterContextObject>}
+ * @since 7.1.0
+ *//**
+ * Options for a _parentNode_ label text.
+ * @sample highcharts/series-packedbubble/packed-dashboard
+ *         Dashboard with dataLabels on parentNodes
+ * @name Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject#parentNodeTextPath
+ * @type {Highcharts.PlotPackedBubbleDataLabelsTextPath}
+ * @since 7.1.0
+*//**
+ * Options for a _node_ label text which should follow marker's shape.
+ * **Note:** Only SVG-based renderer supports this option.
+ * @see {@link Highcharts.PlotPackedBubbleDataLabelsTextPath#linkTextPath}
+ * @name Highcharts.PlotPackedBubbleDataLabelsOptionsObject#textPath
+ * @type {Highcharts.PlotPackedBubbleDataLabelsTextPath}
+ * @since 7.1.0
+ */
+
+/**
+ * **Note:** Only SVG-based renderer supports this option.
+ *
+ * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#linkTextPath}
+ * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#textPath}
+ *
+ * @interface Highcharts.PlotPackedBubbleDataLabelsTextPath
+ * @since 7.1.0
+ *//**
+ * Presentation attributes for the text path.
+ * @name Highcharts.PlotPackedBubbleDataLabelsTextPath#attributes
+ * @type {Highcharts.SVGAttributes}
+ * @since 7.1.0
+ *//**
+ * Enable or disable `textPath` option for link's or marker's data labels.
+ * @name Highcharts.PlotPackedBubbleDataLabelsTextPath#enabled
+ * @type {boolean|undefined}
+ * @since 7.1.0
  */
 
 'use strict';
@@ -229,30 +331,39 @@ H.layouts.packedbubble = H.extendClass(
     }
 );
 
-
 /**
- * A packed bubble series is a two dimensional series type, where each point
- * renders a value in X, Y position. Each point is drawn as a bubble
- * where the bubbles don't overlap with each other and the radius
- * of the bubble relates to the value.
- * Requires `highcharts-more.js`.
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.packedbubble
  *
- * @extends plotOptions.bubble
- * @excluding minSize,maxSize,connectNulls,keys,sizeByAbsoluteValue,
- * step,zMin,zMax,sizeBy,connectEnds
- * @product highcharts
- * @sample {highcharts} highcharts/demo/packed-bubble/
- *         Packed bubble chart
- * @sample {highcharts} highcharts/demo/packed-bubble-split/
- *         Split packed bubble chart
- * @since 7.0.0
- * @excluding dragDrop, jitter, label, lineCap, pointInterval,
- * pointIntervalUnit, pointPlacement, pointStart, softThreshold, stacking, step,
- * threshold, xAxis, yAxis, zoneAxis, zones
- * @optionparent plotOptions.packedbubble
+ * @extends Highcharts.Series
  */
+seriesType(
+    'packedbubble',
+    'bubble',
+    /**
+     * A packed bubble series is a two dimensional series type, where each point
+     * renders a value in X, Y position. Each point is drawn as a bubble
+     * where the bubbles don't overlap with each other and the radius
+     * of the bubble relates to the value.
+     * Requires `highcharts-more.js`.
+     *
+     * @sample highcharts/demo/packed-bubble/
+     *         Packed bubble chart
+     * @sample highcharts/demo/packed-bubble-split/
+     *         Split packed bubble chart
 
-seriesType('packedbubble', 'bubble',
+     * @extends      plotOptions.bubble
+     * @excluding    connectEnds, connectNulls, dragDrop, jitter, keys, label,
+     *               lineCap, maxSize, minSize, pointInterval,
+     *               pointIntervalUnit, pointPlacement, pointStart, sizeBy,
+     *               sizeByAbsoluteValue, softThreshold, stacking, step,
+     *               threshold, xAxis, yAxis, zMax, zMin, zoneAxis, zones
+     * @product      highcharts
+     * @since        7.0.0
+     * @optionparent plotOptions.packedbubble
+     * @private
+     */
     {
         /**
          * Minimum bubble size. Bubbles will automatically size between the
@@ -261,10 +372,12 @@ seriesType('packedbubble', 'bubble',
          * the smallest one of the plot width and height, divided by the square
          * root of total number of points.
          *
-         * @type    {Number|String}
-         * @sample  {highcharts} highcharts/plotoptions/bubble-size/ Bubble size
-         * @since   3.0
-         * @product highcharts highstock
+         * @sample highcharts/plotoptions/bubble-size/
+         *         Bubble size
+         *
+         * @type {number|string}
+         *
+         * @private
          */
         minSize: '10%',
         /**
@@ -274,11 +387,12 @@ seriesType('packedbubble', 'bubble',
          * the smallest one of the plot width and height, divided by the square
          * root of total number of points.
          *
-         * @type    {Number|String}
-         * @sample  {highcharts} highcharts/plotoptions/bubble-size/
-         *          Bubble size
-         * @since   3.0
-         * @product highcharts highstock
+         * @sample highcharts/plotoptions/bubble-size/
+         *         Bubble size
+         *
+         * @type {number|string}
+         *
+         * @private
          */
         maxSize: '50%',
         sizeBy: 'area',
@@ -287,10 +401,13 @@ seriesType('packedbubble', 'bubble',
             pointFormat: 'Value: {point.value}'
         },
         /**
-        * Flag to determine if nodes are draggable or not. Available for
-        * graph with useSimulation set to true only.
-        * @since 7.1.0
-        */
+         * Flag to determine if nodes are draggable or not. Available for
+         * graph with useSimulation set to true only.
+         *
+         * @since 7.1.0
+         *
+         * @private
+         */
         draggable: true,
         /**
          * An option is giving a possibility to choose between using simulation
@@ -300,61 +417,33 @@ seriesType('packedbubble', 'bubble',
          * any performance issues, it is possible to disable animation and pack
          * bubble in a simple circular way.
          *
-         * @type    {Boolean}
-         * @since   7.1.0
-         * @sample  highcharts/series-packedbubble/spiral/
-         *              useSimulation set to false
-         * @product highcharts highstock
-         * @default true
+         * @sample highcharts/series-packedbubble/spiral/
+         *         useSimulation set to false
+         *
+         * @since 7.1.0
+         *
+         * @private
          */
         useSimulation: true,
         /**
-         * @extends plotOptions.networkgraph.dataLabels
-         * @excluding linkFormatter, linkTextPath, linkFormat
+         * @type {Highcharts.PlotPackedBubbleDataLabelsOptionsObject}
+         *
+         * @private
          */
         dataLabels: {
+            /** @ignore-option */
             formatter: function () {
                 return this.point.value;
             },
-            /**
-             * Callback to format data labels for _parentNodes_.
-             * The `parentNodeFormat` option takes precedence over
-             * the `parentNodeFormatter`.
-             *
-             * @type  {Highcharts.FormatterCallbackFunction<Highcharts.DataLabelsFormatterContextObject>}
-             * @since 7.1.0
-             * @default function () { return this.name; }
-             */
+            /** @ignore-option */
             parentNodeFormatter: function () {
                 return this.name;
             },
-            /**
-             * Options for a _parentNode_ label text.
-             *
-             * @sample highcharts/series-packedbubble/packed-dashboard
-             *         Dashboard with dataLabels on parentNodes
-             * @since   7.1.0
-             */
+            /** @ignore-option */
             parentNodeTextPath: {
-                /**
-                 * Presentation attributes for the text path.
-                 *
-                 * @default     {"textAnchor": "middle", "startOffset": "50%", "dy": -5}
-                 * @sample      highcharts/series-networkgraph/link-datalabels
-                 *              Data labels moved under the links
-                 *
-                 * @type        {Highcharts.SVGAttributes}
-                 * @apioption plotOptions.packedbubble.dataLabels.parentNodeTextPath.attributes
-                 */
-
-                /**
-                 * Enable or disable `textPath` option for parent node's
-                 * data labels.
-                 *
-                 * @see [textPath](#plotOptions.packedbubble.dataLabels.textPath) option
-                 */
                 enabled: true
             },
+            /** @ignore-option */
             padding: 0
         },
         /**
@@ -362,9 +451,11 @@ seriesType('packedbubble', 'bubble',
          * are options to change the speed, padding, initial bubbles positions
          * and more.
          *
-         * @extends plotOptions.networkgraph.layoutAlgorithm
+         * @extends   plotOptions.networkgraph.layoutAlgorithm
          * @excluding approximation, attractiveForce, repulsiveForce, theta
-         * @since 7.1.0
+         * @since     7.1.0
+         *
+         * @private
          */
         layoutAlgorithm: {
             /**
@@ -373,21 +464,17 @@ seriesType('packedbubble', 'bubble',
              * positions should be set on each node (`this.nodes`) as
              * `node.plotX` and `node.plotY`.
              *
-             * @sample      highcharts/series-networkgraph/initial-positions/
-             *              Initial positions with callback
-             * @since       7.1.0
-             * @type        {String|Function}
-             * @validvalue  ["circle", "random"]
+             * @sample highcharts/series-networkgraph/initial-positions/
+             *         Initial positions with callback
+             *
+             * @type {"circle"|"random"|Function}
              */
             initialPositions: 'circle',
             /**
+             * @sample highcharts/series-packedbubble/initial-radius/
+             *         Initial radius set to 200
              *
-             * @since   7.1.0
-             * @extends
-             * plotOptions.networkgraph.layoutAlgorithm.initialPositionRadius
-             * @sample
-             * {highcharts} highcharts/series-packedbubble/initial-radius/
-             *          Initial radius set to 200
+             * @extends   plotOptions.networkgraph.layoutAlgorithm.initialPositionRadius
              * @excluding states
              */
             initialPositionRadius: 20,
@@ -395,49 +482,33 @@ seriesType('packedbubble', 'bubble',
              * The distance between two bubbles, when the algorithm starts to
              * treat two bubbles as overlapping. The `bubblePadding` is also the
              * expected distance between all the bubbles on simulation end.
-             *
-             * @since       7.1.0
-             * @type {Number}
-             * @default 5
              */
             bubblePadding: 5,
             /**
              * Whether bubbles should interact with their parentNode to keep
              * them inside.
-             *
-             * @since       7.1.0
-             * @type {boolean}
-             * @default false
              */
             parentNodeLimit: false,
             /**
              * Whether series should interact with each other or not. When
              * `parentNodeLimit` is set to true, thi option should be set to
              * false to avoid sticking points in wrong series parentNode.
-             *
-             * @since       7.1.0
-             * @type {boolean}
-             * @default true
              */
             seriesInteraction: true,
             /**
              * In case of split series, this option allows user to drag and
              * drop points between series, for changing point related series.
              *
-             * @since       7.1.0
-             * @type {boolean}
-             * @sample      highcharts/series-packedbubble/packed-dashboard/
-             *              Example of drag'n drop bubbles for bubble kanban
-             * @default false
+             * @sample highcharts/series-packedbubble/packed-dashboard/
+             *         Example of drag'n drop bubbles for bubble kanban
              */
             dragBetweenSeries: false,
             /**
              * Layout algorithm options for parent nodes.
              *
-             * @since       7.1.0
-             * @extends     plotOptions.networkgraph.layoutAlgorithm
-             * @excluding   approximation, attractiveForce, repulsiveForce,
-             *              theta, enableSimulation
+             * @extends   plotOptions.networkgraph.layoutAlgorithm
+             * @excluding approximation, attractiveForce, enableSimulation,
+             *            repulsiveForce, theta
              */
             parentNodeOptions: {
                 maxIterations: 400,
@@ -449,10 +520,10 @@ seriesType('packedbubble', 'bubble',
                  * Styling options for parentNodes markers. Similar to
                  * line.marker options.
                  *
-                 * @since   7.1.0
-                 * @extends plotOptions.line.marker
-                 * @sample  {highcharts} highcharts/series-packedbubble/parentnode-style/
-                 *          Bubble size
+                 * @sample highcharts/series-packedbubble/parentnode-style/
+                 *         Bubble size
+                 *
+                 * @extends   plotOptions.line.marker
                  * @excluding states
                  */
                 marker: {
@@ -466,9 +537,7 @@ seriesType('packedbubble', 'bubble',
             enableSimulation: true,
             /**
              * Type of the algorithm used when positioning bubbles.
-             *
-             * @validvalue  ["packedbubble"]
-             * @ignore
+             * @ignore-option
              */
             type: 'packedbubble',
             /**
@@ -478,10 +547,9 @@ seriesType('packedbubble', 'bubble',
              * is based on a previous position without velocity:
              * `newPosition += previousPosition - newPosition`.
              *
-             * @since       7.1.0
-             * @sample      highcharts/series-networkgraph/forces/
-             * @validvalue  ["packedbubble"]
-             * @ignore
+             * @sample highcharts/series-networkgraph/forces/
+             *
+             * @ignore-option
              */
             integration: 'packedbubble',
             maxIterations: 1000,
@@ -489,7 +557,7 @@ seriesType('packedbubble', 'bubble',
              * Whether to split series into individual groups or to mix all
              * series together.
              *
-             * @since       7.1.0
+             * @since   7.1.0
              * @default false
              */
             splitSeries: false,
@@ -500,9 +568,9 @@ seriesType('packedbubble', 'bubble',
              * applied on all nodes, max speed is applied only for nodes that
              * move very fast, for example small or disconnected ones.
              *
-             * @see         [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
-             * @see         [layoutAlgorithm.friction](#series.networkgraph.layoutAlgorithm.friction)
-             * @since       7.1.0
+             * @see [layoutAlgorithm.integration](#series.networkgraph.layoutAlgorithm.integration)
+             *
+             * @see [layoutAlgorithm.friction](#series.networkgraph.layoutAlgorithm.friction)
              */
             maxSpeed: 5,
             gravitationalConstant: 0.01,
@@ -511,11 +579,13 @@ seriesType('packedbubble', 'bubble',
     }, {
         /**
          * An internal option used for allowing nodes dragging.
+         * @private
          */
         hasDraggableNodes: true,
         /**
          * Array of internal forces. Each force should be later defined in
          * integrations.js.
+         * @private
          */
         forces: ['barycenter', 'repulsive'],
         pointArrayMap: ['value'],
@@ -525,10 +595,9 @@ seriesType('packedbubble', 'bubble',
         noSharedTooltip: true,
         /**
          * Create a single array of all points from all series
-         *
+         * @private
          * @param {Array} Array of all series objects
          * @return {Array} Returns the array of all points.
-         *
          */
         accumulateAllPoints: function (series) {
 
@@ -639,9 +708,10 @@ seriesType('packedbubble', 'bubble',
                 this.options.dataLabels.textPath = textPath;
             }
         },
-        /*
+        /**
          * The function responsible for calculating the parent node radius
          * based on the total surface of iniside-bubbles and the group BBox
+         * @private
          */
         calculateParentRadius: function () {
             var series = this,
@@ -730,9 +800,10 @@ seriesType('packedbubble', 'bubble',
                 series.graph.attr(parentAttribs);
             }
         },
-        /*
+        /**
          * Creating parent nodes for split series, in which all the bubbles
          * are rendered.
+         * @private
          */
         createParentNodes: function () {
             var series = this,
@@ -784,8 +855,9 @@ seriesType('packedbubble', 'bubble',
                 parentNodeLayout.addNodes([parentNode]);
             }
         },
-        /*
+        /**
          * Function responsible for adding series layout, used for parent nodes.
+         * @private
          */
         addSeriesLayout: function () {
             var series = this,
@@ -820,8 +892,9 @@ seriesType('packedbubble', 'bubble',
             series.parentNodeLayout = parentNodeLayout;
             this.createParentNodes();
         },
-        /*
+        /**
          * Adding the basic layout to series points.
+         * @private
          */
         addLayout: function () {
             var series = this,
@@ -866,8 +939,9 @@ seriesType('packedbubble', 'bubble',
             layout.addSeries(series);
             layout.addNodes(series.points);
         },
-        /*
+        /**
          * Function responsible for adding all the layouts to the chart.
+         * @private
          */
         deferLayout: function () {
             // TODO split layouts to independent methods
@@ -885,7 +959,8 @@ seriesType('packedbubble', 'bubble',
         },
         /**
          * Extend the base translate method to handle bubble size,
-         * and correct positioning them
+         * and correct positioning them.
+         * @private
          */
         translate: function () {
 
@@ -948,11 +1023,10 @@ seriesType('packedbubble', 'bubble',
         },
         /**
          * Check if two bubbles overlaps.
+         * @private
          * @param {Array} first bubble
          * @param {Array} second bubble
-         *
          * @return {Boolean} overlap or not
-         *
          */
         checkOverlap: function (bubble1, bubble2) {
             var diffX = bubble1[0] - bubble2[0], // diff of X center values
@@ -964,18 +1038,16 @@ seriesType('packedbubble', 'bubble',
                 Math.abs(sumRad)
             ) < -0.001;
         },
-        /* Function that is adding one bubble based on positions and sizes
-         * of two other bubbles, lastBubble is the last added bubble,
-         * newOrigin is the bubble for positioning new bubbles.
-         * nextBubble is the curently added bubble for which we are
-         * calculating positions
-         *
-         * @param {Array} The closest last bubble
-         * @param {Array} New bubble
-         * @param {Array} The closest next bubble
-         *
+        /**
+         * Function that is adding one bubble based on positions and sizes of
+         * two other bubbles, lastBubble is the last added bubble, newOrigin is
+         * the bubble for positioning new bubbles. nextBubble is the curently
+         * added bubble for which we are calculating positions
+         * @private
+         * @param {Array} lastBubble The closest last bubble
+         * @param {Array} newOrigin New bubble
+         * @param {Array} nextBubble The closest next bubble
          * @return {Array} Bubble with correct positions
-         *
          */
         positionBubble: function (lastBubble, newOrigin, nextBubble) {
             var sqrt = Math.sqrt,
@@ -1031,11 +1103,9 @@ seriesType('packedbubble', 'bubble',
          * allDataPoints - bubble array, in format [pixel x value,
          * pixel y value, radius,
          * related series index, related point index]
-         *
-         * @param {Array} All points from all series
-         *
+         * @private
+         * @param {Array} allDataPoints All points from all series
          * @return {Array} Positions of all bubbles
-         *
          */
         placeBubbles: function (allDataPoints) {
 
@@ -1167,6 +1237,7 @@ seriesType('packedbubble', 'bubble',
          * The comparison of bBox and the size of plotArea
          * (later it may be also the size set by customer) is giving the
          * value how to recalculate the radius so it will match the size
+         * @private
          */
         resizeRadius: function () {
 
@@ -1226,6 +1297,7 @@ seriesType('packedbubble', 'bubble',
         },
         /**
          * Calculate min and max bubble value for radius calculation.
+         * @private
          */
         calculateZExtremes: function () {
             var chart = this.chart,
@@ -1259,6 +1331,7 @@ seriesType('packedbubble', 'bubble',
         },
         /**
          * Calculate radius of bubbles in series.
+         * @private
          */
         getPointRadius: function () { // bubbles array
 
@@ -1319,27 +1392,27 @@ seriesType('packedbubble', 'bubble',
         // Draggable mode:
         /**
          * Redraw halo on mousemove during the drag&drop action.
-         *
+         * @private
          * @param {Highcharts.Point} point The point that should show halo.
          */
         redrawHalo: dragNodesMixin.redrawHalo,
         /**
          * Mouse down action, initializing drag&drop mode.
-         *
+         * @private
          * @param {global.Event} event Browser event, before normalization.
          * @param {Highcharts.Point} point The point that event occured.
          */
         onMouseDown: dragNodesMixin.onMouseDown,
         /**
          * Mouse move action during drag&drop.
-         *
+         * @private
          * @param {global.Event} event Browser event, before normalization.
          * @param {Highcharts.Point} point The point that event occured.
          */
         onMouseMove: dragNodesMixin.onMouseMove,
         /**
          * Mouse up action, finalizing drag&drop.
-         *
+         * @private
          * @param {Highcharts.Point} point The point that event occured.
          */
         onMouseUp: function (point) {
@@ -1390,7 +1463,7 @@ seriesType('packedbubble', 'bubble',
         /**
          * Destroy point.
          * Then remove point from the layout.
-         *
+         * @private
          * @return {undefined}
          */
         destroy: function () {
@@ -1399,7 +1472,8 @@ seriesType('packedbubble', 'bubble',
             }
             return Point.prototype.destroy.apply(this, arguments);
         }
-    });
+    }
+);
 
 // Remove accumulated data points to redistribute all of them again
 // (i.e after hiding series by legend)
