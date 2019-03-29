@@ -139,6 +139,10 @@
         "../../code/modules/oldie.src.d.ts",
         "../../test/typescript/modules/oldie.ts",
 
+        "../../code/modules/organization.d.ts",
+        "../../code/modules/organization.src.d.ts",
+        "../../test/typescript/modules/organization.ts",
+
         "../../code/modules/overlapping-datalabels.d.ts",
         "../../code/modules/overlapping-datalabels.src.d.ts",
         "../../test/typescript/modules/overlapping-datalabels.ts",
