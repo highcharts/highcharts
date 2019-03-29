@@ -361,45 +361,65 @@ QUnit.test('Zooming scatter charts', function (assert) {
 
 QUnit.test('Zooming chart with multiple panes', function (assert) {
     var chart = Highcharts.stockChart('container', {
-        chart: {
-            zoomType: 'xy'
+            chart: {
+                zoomType: 'xy',
+                width: 600,
+                height: 400
+            },
+            yAxis: [{
+                height: '60%'
+            }, {
+                top: '65%',
+                height: '35%'
+            }],
+            series: [{
+                type: 'candlestick',
+                name: 'AAPL',
+                data: [
+                    [1543242600000, 174.24, 174.95, 170.26, 174.62],
+                    [1543329000000, 171.51, 174.77, 170.88, 174.24],
+                    [1543415400000, 176.73, 181.29, 174.93, 180.94],
+                    [1543501800000, 182.66, 182.81, 177.78, 179.55],
+                    [1543588200000, 180.29, 180.33, 177.03, 178.58],
+                    [1543847400000, 184.46, 184.94, 181.21, 184.82]
+                ]
+            }, {
+                type: 'column',
+                name: 'Volume',
+                data: [
+                    [1543242600000, 44998500],
+                    [1543329000000, 41387400],
+                    [1543415400000, 46062500],
+                    [1543501800000, 41770000],
+                    [1543588200000, 39531500],
+                    [1543847400000, 40802500]
+                ],
+                yAxis: 1
+            }]
+        }),
+        pointer = {
+            mouseDownX: 269,
+            mouseDownY: 72,
+            zoomX: false,
+            zoomY: true
         },
-        yAxis: [{
-            height: '60%'
-        }, {
-            top: '65%',
-            height: '35%'
-        }],
-        series: [{
-            type: 'candlestick',
-            name: 'AAPL',
-            data: [
-                [1543242600000, 174.24, 174.95, 170.26, 174.62],
-                [1543329000000, 171.51, 174.77, 170.88, 174.24],
-                [1543415400000, 176.73, 181.29, 174.93, 180.94],
-                [1543501800000, 182.66, 182.81, 177.78, 179.55],
-                [1543588200000, 180.29, 180.33, 177.03, 178.58],
-                [1543847400000, 184.46, 184.94, 181.21, 184.82]
-            ]
-        }, {
-            type: 'column',
-            name: 'Volume',
-            data: [
-                [1543242600000, 44998500],
-                [1543329000000, 41387400],
-                [1543415400000, 46062500],
-                [1543501800000, 41770000],
-                [1543588200000, 39531500],
-                [1543847400000, 40802500]
-            ],
-            yAxis: 1
-        }]
-    });
+        event = {
+            type: "selection",
+            xAxis: [],
+            yAxis: [{
+                axis: chart.yAxis[0],
+                max: 184.33566433566435,
+                min: 170.48951048951048
+            }, {
+                axis: chart.yAxis[1],
+                max: 126190476.1904762,
+                min: 86904761.90476191
+            }]
+        },
+        extend = Highcharts.extend;
 
-    var controller = TestController(chart);
-
-    // Zoom on the first pane
-    controller.pan([100, 80], [200, 120]);
+    extend(chart.pointer, pointer);
+    chart.zoom(event);
 
     assert.deepEqual(
         [
@@ -420,7 +440,26 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
     chart.zoomOut();
 
     // Zoom on the second pane
-    controller.pan([50, 210], [550, 270]);
+    extend(chart.pointer, {
+        mouseDownX: 254,
+        mouseDownY: 216
+    });
+
+    event = {
+        type: "selection",
+        xAxis: [],
+        yAxis: [{
+            axis: chart.yAxis[0],
+            max: 154.12587412587413,
+            min: 145.52447552447552
+        }, {
+            axis: chart.yAxis[1],
+            max: 40476190.47619048,
+            min: 16071428.57142857
+        }]
+    };
+
+    chart.zoom(event);
 
     assert.deepEqual(
         [
@@ -432,16 +471,19 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
         [
             160,
             190,
-            35000000,
-            45000000
+            39000000,
+            41000000
         ],
         'y-zoom on the second pane did not affect y-zoom on the first pane (#1289)'
     );
 
+    // Inverted chart
     chart = Highcharts.stockChart('container', {
         chart: {
-            zoomType: 'y',
-            inverted: true
+            zoomType: 'xy',
+            inverted: true,
+            width: 600,
+            height: 400
         },
         yAxis: [{
             width: '60%'
@@ -475,8 +517,26 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
         }]
     });
 
-    controller = TestController(chart);
-    controller.pan([180, 200], [250, 300]);
+    extend(chart.pointer, pointer, {
+        mouseDownX: 225,
+        mouseDownY: 184
+    });
+
+    event = {
+        type: "selection",
+        xAxis: [],
+        yAxis: [{
+            axis: chart.yAxis[0],
+            max: 179.28666666666666,
+            min: 171.76666666666668
+        }, {
+            axis: chart.yAxis[1],
+            max: -42237442.92237443,
+            min: -74429223.74429223
+        }]
+    };
+
+    chart.zoom(event);
 
     assert.deepEqual(
         [
@@ -487,16 +547,36 @@ QUnit.test('Zooming chart with multiple panes', function (assert) {
         ],
         [
             170,
-            175,
+            180,
             0,
             60000000
         ],
         'y-zoom on the first pane did not affect y-zoom on the second pane when chart inverted (#1289)'
     );
 
+    // Zoom on the second pane
     chart.zoomOut();
 
-    controller.pan([500, 200], [530, 300]);
+    extend(chart.pointer, {
+        mouseDownX: 470,
+        mouseDownY: 191
+    });
+
+    event = {
+        type: "selection",
+        xAxis: [],
+        yAxis: [{
+            axis: chart.yAxis[0],
+            max: 201.23595505617976,
+            min: 195.4307116104869
+        }, {
+            axis: chart.yAxis[1],
+            max: 37692307.69230769,
+            min: 13846153.846153846
+        }]
+    };
+
+    chart.zoom(event);
 
     assert.deepEqual(
         [
