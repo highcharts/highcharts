@@ -102,7 +102,7 @@ function isRunning(name, runningFlag, keepOnExit) {
                 'SIGINT', 'SIGUSR1', 'SIGUSR2', 'SIGTERM'
             ].forEach(
                 evt => process.on(evt, code => {
-                    isRunning(key, false, false);
+                    isRunning(key, false, true);
                     process.exit(code); // eslint-disable-line
                 })
             );
