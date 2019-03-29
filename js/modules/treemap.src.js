@@ -1402,9 +1402,7 @@ seriesType(
             var series = this,
                 chart = series.chart,
                 renderer = chart.renderer,
-                points = series.points.filter(function (n) {
-                    return n.node.visible;
-                }),
+                points = series.points,
                 styledMode = chart.styledMode,
                 options = series.options,
                 shadow = styledMode ? {} : options.shadow,
@@ -1423,38 +1421,43 @@ seriesType(
                     shouldAnimate = withinAnimationLimit && hasGraphic,
                     shapeArgs = point.shapeArgs;
 
-                if (borderRadius) {
-                    attr.r = borderRadius;
-                }
+                // Don't bother with calculate styling if the point is not drawn
+                if (point.shouldDraw()) {
+                    if (borderRadius) {
+                        attr.r = borderRadius;
+                    }
 
-                merge(
-                    true, // Extend object
-                    // Which object to extend
-                    shouldAnimate ? animate : attr,
-                    // Add shapeArgs to animate/attr if graphic exists
-                    hasGraphic ? shapeArgs : {},
-                    // Add style attribs if !styleMode
-                    styledMode ?
-                        {} :
-                        series.pointAttribs(point, point.selected && 'select')
-                );
+                    merge(
+                        true, // Extend object
+                        // Which object to extend
+                        shouldAnimate ? animate : attr,
+                        // Add shapeArgs to animate/attr if graphic exists
+                        hasGraphic ? shapeArgs : {},
+                        // Add style attribs if !styleMode
+                        styledMode ?
+                            {} :
+                            series.pointAttribs(
+                                point, point.selected && 'select'
+                            )
+                    );
 
-                // In styled mode apply point.color. Use CSS, otherwise the fill
-                // used in the style sheet will take precedence over the fill
-                // attribute.
-                if (series.colorAttribs && styledMode) {
-                    // Heatmap is loaded
-                    extend(css, series.colorAttribs(point));
-                }
+                    // In styled mode apply point.color. Use CSS, otherwise the
+                    // fill used in the style sheet will take precedence over
+                    // the fill attribute.
+                    if (series.colorAttribs && styledMode) {
+                        // Heatmap is loaded
+                        extend(css, series.colorAttribs(point));
+                    }
 
-                if (!series[groupKey]) {
-                    series[groupKey] = renderer.g(groupKey)
-                        .attr({
-                            // @todo Set the zIndex based upon the number of
-                            // levels, instead of using 1000
-                            zIndex: 1000 - levelDynamic
-                        })
-                        .add(series.group);
+                    if (!series[groupKey]) {
+                        series[groupKey] = renderer.g(groupKey)
+                            .attr({
+                                // @todo Set the zIndex based upon the number of
+                                // levels, instead of using 1000
+                                zIndex: 1000 - levelDynamic
+                            })
+                            .add(series.group);
+                    }
                 }
 
                 // Draw the point
