@@ -354,11 +354,8 @@ seriesType(
      *         Split packed bubble chart
 
      * @extends      plotOptions.bubble
-     * @excluding    connectEnds, connectNulls, dragDrop, jitter, keys, label,
-     *               lineCap, maxSize, minSize, pointInterval,
-     *               pointIntervalUnit, pointPlacement, pointStart, sizeBy,
-     *               sizeByAbsoluteValue, softThreshold, stacking, step,
-     *               threshold, xAxis, yAxis, zMax, zMin, zoneAxis, zones
+     * @excluding    connectEnds, connectNulls, jitter, keys, pointPlacement,
+     *               sizeByAbsoluteValue, step, xAxis, yAxis, zMax, zMin
      * @product      highcharts
      * @since        7.0.0
      * @optionparent plotOptions.packedbubble
