@@ -3039,7 +3039,7 @@ H.defaultOptions = {
          * in the tooltip. Like the `pointFormat` string, but with more
          * flexibility.
          *
-         * @type      {Function}
+         * @type      {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
          * @since     4.1.0
          * @context   Highcharts.Point
          * @apioption tooltip.pointFormatter
