@@ -362,7 +362,6 @@ seriesType(
      * @product      highcharts
      * @since        7.0.0
      * @optionparent plotOptions.packedbubble
-     * @private
      */
     {
         /**
