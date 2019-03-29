@@ -2118,7 +2118,7 @@ H.Series = H.seriesType(
                  * @apioption plotOptions.series.states.inactive.opacity
                  * @type {number}
                  */
-                opacity: 0.1
+                opacity: 0.2
             }
         },
 
