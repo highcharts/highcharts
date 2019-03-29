@@ -1867,7 +1867,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
-         * The pixel width of the major tick marks.
+         * The pixel width of the major tick marks. Defaults to 0 on category
+         * axes, otherwise 1.
          *
          * In styled mode, the stroke width is given in the `.highcharts-tick`
          * class.
@@ -1881,8 +1882,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} highcharts/css/axis-grid/
          *         Styled mode
          *
-         * @type      {number}
-         * @default   {highcharts} 1
+         * @type      {undefined|number}
          * @default   {highstock} 1
          * @default   {highmaps} 0
          * @apioption xAxis.tickWidth
@@ -5256,7 +5256,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             tickLength = options[prefix + 'Length'],
             tickWidth = pick(
                 options[prefix + 'Width'],
-                prefix === 'tick' && this.isXAxis ? 1 : 0 // X axis default 1
+                // Default to 1 on linear and datetime X axes
+                prefix === 'tick' && this.isXAxis && !this.categories ? 1 : 0
             ),
             e,
             tickSize;

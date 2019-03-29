@@ -332,7 +332,8 @@ QUnit.test('Tickinterval categories (#3202)', function (assert) {
     TestTemplate.test('highcharts/line', {
         xAxis: {
             categories: Highcharts.getOptions().lang.months,
-            tickInterval: 2
+            tickInterval: 2,
+            tickWidth: 1
         }
     }, function (template) {
 
