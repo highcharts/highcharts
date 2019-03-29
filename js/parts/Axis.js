@@ -1229,7 +1229,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highmaps} maps/axis/min-max/
          *         Pre-zoomed to a specific area
          *
-         * @type      {number}
+         * @type      {number|null}
          * @apioption xAxis.max
          */
 
@@ -1284,7 +1284,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highmaps} maps/axis/min-max/
          *         Pre-zoomed to a specific area
          *
-         * @type      {number}
+         * @type      {number|null}
          * @apioption xAxis.min
          */
 
@@ -2091,28 +2091,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         type: 'linear',
 
         /**
-         * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
-         * `category` or `treegrid`. Defaults to `treegrid` for Gantt charts,
-         * `linear` for other chart types.
+         * If there are multiple axes on the same side of the chart, the pixel
+         * margin between the axes. Defaults to 0 on vertical axes, 15 on
+         * horizontal axes.
          *
-         * In a datetime axis, the numbers are given in milliseconds, and tick
-         * marks are placed on appropriate values, like full hours or days. In a
-         * category or treegrid axis, the [point names](#series.line.data.name)
-         * of the chart's series are used for categories, if a
-         * [categories](#xAxis.categories) array is not defined.
-         *
-         * @sample {highcharts} highcharts/yaxis/type-log-minorgrid/
-         *         Logarithmic with minor grid lines
-         * @sample {highcharts} highcharts/yaxis/type-log-negative/
-         *         Logarithmic with extension to emulate negative values
-         * @sample {gantt} gantt/treegrid-axis/demo
-         *         Treegrid axis
-         *
-         * @type      {Highcharts.AxisTypeValue}
-         * @default   {highcharts} linear
-         * @default   {gantt} treegrid
-         * @product   highcharts gantt
-         * @apioption yAxis.type
+         * @since     7.0.3
+         * @apioption xAxis.margin
          */
 
         /**
@@ -2362,6 +2346,31 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @since     4.2.7
          * @product   highcharts
          * @apioption yAxis.angle
+         */
+
+        /**
+         * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
+         * `category` or `treegrid`. Defaults to `treegrid` for Gantt charts,
+         * `linear` for other chart types.
+         *
+         * In a datetime axis, the numbers are given in milliseconds, and tick
+         * marks are placed on appropriate values, like full hours or days. In a
+         * category or treegrid axis, the [point names](#series.line.data.name)
+         * of the chart's series are used for categories, if a
+         * [categories](#xAxis.categories) array is not defined.
+         *
+         * @sample {highcharts} highcharts/yaxis/type-log-minorgrid/
+         *         Logarithmic with minor grid lines
+         * @sample {highcharts} highcharts/yaxis/type-log-negative/
+         *         Logarithmic with extension to emulate negative values
+         * @sample {gantt} gantt/treegrid-axis/demo
+         *         Treegrid axis
+         *
+         * @type      {Highcharts.AxisTypeValue}
+         * @default   {highcharts} linear
+         * @default   {gantt} treegrid
+         * @product   highcharts gantt
+         * @apioption yAxis.type
          */
 
         /**
@@ -2624,16 +2633,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
-         * If there are multiple axes on the same side of the chart, the pixel
-         * margin between the axes. Defaults to 0 on vertical axes, 15 on
-         * horizontal axes.
-         *
-         * @type      number
-         * @since     7.0.3
-         * @apioption xAxis.margin
-         */
-
-        /**
          * @sample {highcharts} highcharts/yaxis/max-200/
          *         Y axis max of 200
          * @sample {highcharts} highcharts/yaxis/max-logarithmic/
@@ -2643,7 +2642,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highmaps} maps/axis/min-max/
          *         Pre-zoomed to a specific area
          *
-         * @type      {number}
          * @apioption yAxis.max
          */
 
@@ -2657,7 +2655,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highmaps} maps/axis/min-max/
          *         Pre-zoomed to a specific area
          *
-         * @type      {number}
          * @apioption yAxis.min
          */
 
