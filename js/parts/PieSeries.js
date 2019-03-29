@@ -839,7 +839,7 @@ seriesType('pie', 'line',
             series.points.forEach(function (point) {
                 var animateTo = {};
                 graphic = point.graphic;
-                if (!point.isNull) {
+                if (!point.isNull && graphic) {
                     shapeArgs = point.shapeArgs;
 
 
