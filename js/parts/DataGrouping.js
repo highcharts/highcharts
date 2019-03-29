@@ -249,7 +249,9 @@ var addEvent = H.addEvent,
  * @apioption plotOptions.column.dataGrouping.groupPixelWidth
  */
 
-
+/**
+ * @private
+ */
 var approximations = H.approximations = {
     sum: function (arr) {
         var len = arr.length,

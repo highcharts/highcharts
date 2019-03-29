@@ -59,6 +59,8 @@ Highcharts.setOptions({
 
     /**
      * @optionparent exporting
+     *
+     * @private
      */
     exporting: {
 
@@ -199,6 +201,8 @@ Highcharts.setOptions({
 
     /**
      * @optionparent lang
+     *
+     * @private
      */
     lang: {
 

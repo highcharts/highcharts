@@ -93,7 +93,11 @@ seriesType(
             verticalAlign: 'middle'
         },
 
-        /** @ignore-option */
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
         marker: null,
 
         /**
@@ -106,6 +110,8 @@ seriesType(
          *         Null color
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         *
+         * @private
          */
         nullColor: '${palette.neutralColor3}',
 
@@ -116,6 +122,8 @@ seriesType(
          * @type      {boolean}
          * @since     4.2.7
          * @apioption plotOptions.map.nullInteraction
+         *
+         * @private
          */
 
         stickyTracking: false,
@@ -125,7 +133,11 @@ seriesType(
             pointFormat: '{point.name}: {point.value}<br/>'
         },
 
-        /** @ignore-option */
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
         turboThreshold: 0,
 
         /**
@@ -140,6 +152,8 @@ seriesType(
          * @default   true
          * @product   highmaps
          * @apioption plotOptions.series.allAreas
+         *
+         * @private
          */
         allAreas: true,
 
@@ -156,6 +170,8 @@ seriesType(
          * @default   '#cccccc'
          * @product   highmaps
          * @apioption plotOptions.series.borderColor
+         *
+         * @private
          */
         borderColor: '${palette.neutralColor20}',
 
@@ -172,6 +188,8 @@ seriesType(
          * @default   1
          * @product   highmaps
          * @apioption plotOptions.series.borderWidth
+         *
+         * @private
          */
         borderWidth: 1,
 
@@ -212,6 +230,8 @@ seriesType(
          * @default   hc-key
          * @product   highmaps
          * @apioption plotOptions.series.joinBy
+         *
+         * @private
          */
         joinBy: 'hc-key',
 
@@ -225,6 +245,8 @@ seriesType(
 
         /**
          * @apioption plotOptions.series.states
+         *
+         * @private
          */
         states: {
 
