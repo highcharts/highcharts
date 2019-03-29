@@ -2475,6 +2475,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
 
                 // Now move all <tspan>'s to the <textPath> node
                 while (tspans.length) {
+                    // Remove "y" from tspans, as Firefox translates them
+                    tspans[0].setAttribute('y', 0);
                     textPathElement.appendChild(tspans[0]);
                 }
             }
@@ -2488,7 +2490,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             }
 
             // Set basic options:
-            textPathElement.setAttribute(
+            // Use `setAttributeNS` because Safari needs this..
+            textPathElement.setAttributeNS(
+                'http://www.w3.org/1999/xlink',
                 'href',
                 this.renderer.url + '#' + textPathId
             );

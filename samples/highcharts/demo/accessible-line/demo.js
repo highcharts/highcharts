@@ -99,5 +99,18 @@ Highcharts.chart('container', {
             dashStyle: 'LongDash',
             color: Highcharts.getOptions().colors[7]
         }
-    ]
+    ],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    itemWidth: 150
+                }
+            }
+        }]
+    }
 });

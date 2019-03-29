@@ -1324,7 +1324,7 @@ H.setOptions({
         /**
          * Additional options to be merged into all annotations.
          *
-         * @sample stock/stocktools/navigation-annotationOptions
+         * @sample stock/stocktools/navigation-annotation-options
          *         Set red color of all line annotations
          *
          * @type      {Highcharts.AnnotationsOptions}

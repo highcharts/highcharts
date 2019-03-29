@@ -356,7 +356,7 @@ QUnit.test('Tickinterval categories (#3202)', function (assert) {
             {
                 Chrome: 0.51,
                 Edge: 0,
-                Firefox: 2.5,
+                Firefox: 3,
                 MSIE: 0.01,
                 Safari: 1.51
             }[TestUtilities.browser],
@@ -369,7 +369,7 @@ QUnit.test('Tickinterval categories (#3202)', function (assert) {
             {
                 Chrome: 0.51,
                 Edge: 0,
-                Firefox: 2.5,
+                Firefox: 3,
                 MSIE: 0.01,
                 Safari: 0.51
             }[TestUtilities.browser],
