@@ -348,10 +348,10 @@ merge(
                  * outside the plot area. The justify option aligns the label
                  * inside the plot area.
                  *
-                 * @validvalue ["none", "justify"]
+                 * @validvalue ["allow", "justify"]
                  * @sample highcharts/annotations/label-crop-overflow/
                  *         Crop or justify labels
-                 **/
+                 */
                 overflow: 'justify',
 
                 /**
