@@ -251,7 +251,7 @@ seriesType(
         states: {
 
             /**
-             * @apioption plotOptions.series.hover
+             * @apioption plotOptions.series.states.hover
              */
             hover: {
 
