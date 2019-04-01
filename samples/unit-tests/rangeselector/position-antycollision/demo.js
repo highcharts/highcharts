@@ -333,9 +333,10 @@ QUnit.test('Rangeselector update', function (assert) {
         }
     });
 
-    assert.strictEqual(
+    assert.close(
         chart.yAxis[0].axisGroup.getBBox().height,
         240,
-        'rangeSelector has enough space'
+        2,
+        'Range selector should have enough space'
     );
 });

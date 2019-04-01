@@ -1,4 +1,3 @@
-
 QUnit.test('Basic stock chart', function (assert) {
     var chart = Highcharts.stockChart('container', {
         series: [{
@@ -11,7 +10,11 @@ QUnit.test('Basic stock chart', function (assert) {
         'There be ARIA on series'
     );
 
-    assert.ok(chart.screenReaderRegion && chart.screenReaderRegion.getAttribute('aria-label'), 'There be screen reader region');
+    assert.ok(
+        chart.accessibility.components.infoRegion.screenReaderRegion
+            .getAttribute('aria-label'),
+        'There be screen reader region'
+    );
 });
 
 QUnit.test('Stock chart with markers', function (assert) {

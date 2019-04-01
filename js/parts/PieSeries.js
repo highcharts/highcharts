@@ -256,15 +256,23 @@ seriesType('pie', 'line',
          * @type    {Array<number|string|null>}
          * @default [null, null]
          * @product highcharts
+         *
+         * @private
          */
         center: [null, null],
 
         /**
          * @product highcharts
+         *
+         * @private
          */
         clip: false,
 
-        /** @ignore */
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
         colorByPoint: true, // always true for pies
 
         /**
@@ -282,6 +290,8 @@ seriesType('pie', 'line',
 
         /**
          * @type {Highcharts.DataLabelsOptionsObject|Highcharts.PlotPieDataLabelsOptionsObject}
+         *
+         * @private
          */
         dataLabels: {
             /** @ignore-option */
@@ -332,10 +342,14 @@ seriesType('pie', 'line',
          *
          * @since   2.3.0
          * @product highcharts
+         *
+         * @private
          */
         ignoreHiddenPoint: true,
 
+        /** @ignore-option */
         inactiveOtherPoints: true,
+
         /**
          * The size of the inner diameter for the pie. A size greater than 0
          * renders a donut chart. Can be a percentage or pixel value.
@@ -360,10 +374,18 @@ seriesType('pie', 'line',
          * @apioption plotOptions.pie.innerSize
          */
 
-        /** @ignore-option */
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
         legendType: 'point',
 
-        /** @ignore-option */
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
         marker: null, // point options are specified in the base options
 
         /**
@@ -393,6 +415,8 @@ seriesType('pie', 'line',
          *
          * @type    {number|string|null}
          * @product highcharts
+         *
+         * @private
          */
         size: null,
 
@@ -404,6 +428,8 @@ seriesType('pie', 'line',
          *         One series in the legend, one hidden
          *
          * @product highcharts
+         *
+         * @private
          */
         showInLegend: false,
 
@@ -415,6 +441,8 @@ seriesType('pie', 'line',
          *         20px offset
          *
          * @product highcharts
+         *
+         * @private
          */
         slicedOffset: 10,
 
@@ -442,6 +470,8 @@ seriesType('pie', 'line',
          * will be hidden when moving the mouse between series.
          *
          * @product highcharts
+         *
+         * @private
          */
         stickyTracking: false,
 
@@ -464,6 +494,8 @@ seriesType('pie', 'line',
          * @type    {Highcharts.ColorString}
          * @default #ffffff
          * @product highcharts
+         *
+         * @private
          */
         borderColor: '${palette.backgroundColor}',
 
@@ -482,6 +514,8 @@ seriesType('pie', 'line',
          *         3px border
          *
          * @product highcharts
+         *
+         * @private
          */
         borderWidth: 1,
 
@@ -829,6 +863,7 @@ seriesType('pie', 'line',
 
             if (shadow && !series.shadowGroup && !chart.styledMode) {
                 series.shadowGroup = renderer.g('shadow')
+                    .attr({ zIndex: -1 })
                     .add(series.group);
             }
 
@@ -836,7 +871,7 @@ seriesType('pie', 'line',
             series.points.forEach(function (point) {
                 var animateTo = {};
                 graphic = point.graphic;
-                if (!point.isNull) {
+                if (!point.isNull && graphic) {
                     shapeArgs = point.shapeArgs;
 
 

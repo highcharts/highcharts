@@ -213,6 +213,7 @@ var addEvent = H.addEvent,
     objectEach = H.objectEach,
     pick = H.pick,
     removeEvent = H.removeEvent,
+    seriesTypes = H.seriesTypes,
     splat = H.splat,
     syncTimeout = H.syncTimeout,
     Tick = H.Tick;
@@ -711,16 +712,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 main: '%Y'
             }
         },
-
-        /**
-         * _Requires Accessibility module_
-         *
-         * Description of the axis to screen reader users.
-         *
-         * @type      {string}
-         * @since     5.0.0
-         * @apioption xAxis.description
-         */
 
         /**
          * Whether to force the axis to end on a tick. Use this option with
@@ -1238,7 +1229,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highmaps} maps/axis/min-max/
          *         Pre-zoomed to a specific area
          *
-         * @type      {number}
+         * @type      {number|null}
          * @apioption xAxis.max
          */
 
@@ -1293,7 +1284,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highmaps} maps/axis/min-max/
          *         Pre-zoomed to a specific area
          *
-         * @type      {number}
+         * @type      {number|null}
          * @apioption xAxis.min
          */
 
@@ -1630,11 +1621,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         When clicking the legend to hide series, one axis preserves
          *         line and title, the other doesn't
          *
-         * @type      {boolean}
-         * @default   true
          * @since     1.1
-         * @apioption xAxis.showEmpty
          */
+        showEmpty: true,
 
         /**
          * Whether to show the first tick label.
@@ -1878,7 +1867,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
-         * The pixel width of the major tick marks.
+         * The pixel width of the major tick marks. Defaults to 0 on category
+         * axes, otherwise 1.
          *
          * In styled mode, the stroke width is given in the `.highcharts-tick`
          * class.
@@ -1892,8 +1882,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highstock} highcharts/css/axis-grid/
          *         Styled mode
          *
-         * @type      {number}
-         * @default   {highcharts} 1
+         * @type      {undefined|number}
          * @default   {highstock} 1
          * @default   {highmaps} 0
          * @apioption xAxis.tickWidth
@@ -2102,28 +2091,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         type: 'linear',
 
         /**
-         * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
-         * `category` or `treegrid`. Defaults to `treegrid` for Gantt charts,
-         * `linear` for other chart types.
+         * If there are multiple axes on the same side of the chart, the pixel
+         * margin between the axes. Defaults to 0 on vertical axes, 15 on
+         * horizontal axes.
          *
-         * In a datetime axis, the numbers are given in milliseconds, and tick
-         * marks are placed on appropriate values, like full hours or days. In a
-         * category or treegrid axis, the [point names](#series.line.data.name)
-         * of the chart's series are used for categories, if a
-         * [categories](#xAxis.categories) array is not defined.
-         *
-         * @sample {highcharts} highcharts/yaxis/type-log-minorgrid/
-         *         Logarithmic with minor grid lines
-         * @sample {highcharts} highcharts/yaxis/type-log-negative/
-         *         Logarithmic with extension to emulate negative values
-         * @sample {gantt} gantt/treegrid-axis/demo
-         *         Treegrid axis
-         *
-         * @type      {Highcharts.AxisTypeValue}
-         * @default   {highcharts} linear
-         * @default   {gantt} treegrid
-         * @product   highcharts gantt
-         * @apioption yAxis.type
+         * @since     7.0.3
+         * @apioption xAxis.margin
          */
 
         /**
@@ -2373,6 +2346,31 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @since     4.2.7
          * @product   highcharts
          * @apioption yAxis.angle
+         */
+
+        /**
+         * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
+         * `category` or `treegrid`. Defaults to `treegrid` for Gantt charts,
+         * `linear` for other chart types.
+         *
+         * In a datetime axis, the numbers are given in milliseconds, and tick
+         * marks are placed on appropriate values, like full hours or days. In a
+         * category or treegrid axis, the [point names](#series.line.data.name)
+         * of the chart's series are used for categories, if a
+         * [categories](#xAxis.categories) array is not defined.
+         *
+         * @sample {highcharts} highcharts/yaxis/type-log-minorgrid/
+         *         Logarithmic with minor grid lines
+         * @sample {highcharts} highcharts/yaxis/type-log-negative/
+         *         Logarithmic with extension to emulate negative values
+         * @sample {gantt} gantt/treegrid-axis/demo
+         *         Treegrid axis
+         *
+         * @type      {Highcharts.AxisTypeValue}
+         * @default   {highcharts} linear
+         * @default   {gantt} treegrid
+         * @product   highcharts gantt
+         * @apioption yAxis.type
          */
 
         /**
@@ -2635,16 +2633,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
-         * If there are multiple axes on the same side of the chart, the pixel
-         * margin between the axes. Defaults to 0 on vertical axes, 15 on
-         * horizontal axes.
-         *
-         * @type      number
-         * @since     7.0.3
-         * @apioption xAxis.margin
-         */
-
-        /**
          * @sample {highcharts} highcharts/yaxis/max-200/
          *         Y axis max of 200
          * @sample {highcharts} highcharts/yaxis/max-logarithmic/
@@ -2654,7 +2642,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highmaps} maps/axis/min-max/
          *         Pre-zoomed to a specific area
          *
-         * @type      {number}
          * @apioption yAxis.max
          */
 
@@ -2668,7 +2655,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * @sample {highmaps} maps/axis/min-max/
          *         Pre-zoomed to a specific area
          *
-         * @type      {number}
          * @apioption yAxis.min
          */
 
@@ -3300,11 +3286,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
         axis.min = null;
 
-        var tooltipCrosshairs = (
-            chart.options &&
-            chart.options.tooltip &&
-            chart.options.tooltip.crosshairs
-        );
         /**
          * The processed crosshair options.
          *
@@ -3313,7 +3294,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
         axis.crosshair = pick(
             options.crosshair,
-            splat(tooltipCrosshairs)[isXAxis ? 0 : 1],
+            splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1],
             false
         );
 
@@ -4226,6 +4207,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     pointRange = Math.max(pointRange, seriesPointRange);
 
                     if (!axis.single || hasCategories) {
+                        // TODO: series should internally set x- and y-
+                        // pointPlacement to simplify this logic.
+                        var isPointPlacementAxis = (
+                            seriesTypes.xrange &&
+                            series instanceof seriesTypes.xrange
+                        ) ? !isXAxis : isXAxis;
+
                         // minPointOffset is the value padding to the left of
                         // the axis in order to make room for points with a
                         // pointRange, typically columns. When the
@@ -4233,8 +4221,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // padding does not apply.
                         minPointOffset = Math.max(
                             minPointOffset,
-                            isString(pointPlacement) ?
-                                0 : seriesPointRange / 2
+                            isPointPlacementAxis && isString(pointPlacement) ?
+                                0 :
+                                seriesPointRange / 2
                         );
 
                         // Determine the total padding needed to the length of
@@ -4242,8 +4231,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         // series' pointPlacement is 'on', no padding is added.
                         pointRangePadding = Math.max(
                             pointRangePadding,
-                            pointPlacement === 'on' ?
-                                0 : seriesPointRange
+                            isPointPlacementAxis && pointPlacement === 'on' ?
+                                0 :
+                                seriesPointRange
                         );
                     }
                 });
@@ -5263,7 +5253,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             tickLength = options[prefix + 'Length'],
             tickWidth = pick(
                 options[prefix + 'Width'],
-                prefix === 'tick' && this.isXAxis ? 1 : 0 // X axis default 1
+                // Default to 1 on linear and datetime X axes
+                prefix === 'tick' && this.isXAxis && !this.categories ? 1 : 0
             ),
             e,
             tickSize;

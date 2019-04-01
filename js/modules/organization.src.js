@@ -6,6 +6,14 @@
  * License: www.highcharts.com/license
  */
 
+/**
+ * Layout value for the child nodes in an organization chart. If `hanging`, this
+ * node's children will hang below their parent, allowing a tighter packing of
+ * nodes in the diagram.
+ *
+ * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValues
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -492,11 +500,11 @@ H.seriesType(
  * Layout for the node's children. If `hanging`, this node's children will hang
  * below their parent, allowing a tighter packing of nodes in the diagram.
  *
- * @validvalue ["normal", "hanging"]
+ * @sample highcharts/demo/organization-chart
+ *         Hanging layout
+ *
+ * @type      {Highcharts.SeriesOrganizationNodesLayoutValues}
  * @default   normal
- * @type      {string}
- * @sample    highcharts/demo/organization-chart
- *            Hanging layout
  * @apioption series.organization.nodes.layout
  */
 

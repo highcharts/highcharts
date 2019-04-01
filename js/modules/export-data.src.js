@@ -23,7 +23,9 @@ var defined = Highcharts.defined,
     win = Highcharts.win,
     doc = win.document,
     seriesTypes = Highcharts.seriesTypes,
-    downloadURL = Highcharts.downloadURL;
+    downloadURL = Highcharts.downloadURL,
+    fireEvent = Highcharts.fireEvent;
+
 
 // Can we add this to utils? Also used in screen-reader.js
 /**
@@ -57,6 +59,8 @@ Highcharts.setOptions({
 
     /**
      * @optionparent exporting
+     *
+     * @private
      */
     exporting: {
 
@@ -197,6 +201,8 @@ Highcharts.setOptions({
 
     /**
      * @optionparent lang
+     *
+     * @private
      */
     lang: {
 
@@ -522,7 +528,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
     }
     dataRows = dataRows.concat(rowArr);
 
-    Highcharts.fireEvent(this, 'exportData', { dataRows: dataRows });
+    fireEvent(this, 'exportData', { dataRows: dataRows });
 
     return dataRows;
 };
@@ -776,7 +782,7 @@ Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
 
     var e = { html: html };
 
-    Highcharts.fireEvent(this, 'afterGetTable', e);
+    fireEvent(this, 'afterGetTable', e);
 
     return e.html;
 };
@@ -871,6 +877,7 @@ Highcharts.Chart.prototype.viewData = function () {
     }
 
     this.dataTableDiv.innerHTML = this.getTable();
+    fireEvent(this, 'afterViewData', this.dataTableDiv);
 };
 
 /**

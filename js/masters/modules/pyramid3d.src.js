@@ -1,6 +1,12 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
- * Highcharts funnel module
+ * @module highcharts/modules/pyramid3d
+ * @requires highcharts
+ * @requires highcharts/highcharts-3d
+ * @requires highcharts/modules/cylinder
+ * @requires highcharts/modules/funnel3d
+ *
+ * Highcharts 3D funnel module
  *
  * (c) 2010-2019 Kacper Madej
  *

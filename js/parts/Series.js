@@ -602,6 +602,8 @@ H.Series = H.seriesType(
          *         On one single series
          *
          * @product highcharts highstock
+         *
+         * @private
          */
         lineWidth: 2,
 
@@ -640,6 +642,8 @@ H.Series = H.seriesType(
          *         Map bubble
          *
          * @since 1.2.0
+         *
+         * @private
          */
         allowPointSelect: false,
 
@@ -656,6 +660,8 @@ H.Series = H.seriesType(
          *         Show select box
          *
          * @since 1.2.0
+         *
+         * @private
          */
         showCheckbox: false,
 
@@ -695,6 +701,8 @@ H.Series = H.seriesType(
          * @default {highcharts} true
          * @default {highstock} true
          * @default {highmaps} false
+         *
+         * @private
          */
         animation: {
 
@@ -1269,6 +1277,8 @@ H.Series = H.seriesType(
          * General event handlers for the series items. These event hooks can
          * also be attached to the series at run time using the
          * `Highcharts.addEvent` function.
+         *
+         * @private
          */
         events: {},
 
@@ -1401,6 +1411,8 @@ H.Series = H.seriesType(
          * In styled mode, the markers can be styled with the
          * `.highcharts-point`, `.highcharts-point-hover` and
          * `.highcharts-point-select` class names.
+         *
+         * @private
          */
         marker: {
 
@@ -1700,39 +1712,14 @@ H.Series = H.seriesType(
                      *         3px line width for selected points
                      */
                     lineWidth: 2
-                },
-
-                /**
-                 * The opposite state of a hover for a single point marker.
-                 *
-                 * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
-                 *         Enabled inactive state
-                 *
-                 * @extends   plotOptions.series.marker.states.hover
-                 */
-                inactive: {
-                    /**
-                     * Opacity of inactive markers.
-                     *
-                     * @apioption plotOptions.series.marker.states.inactive.opacity
-                     * @type {number}
-                     */
-                    opacity: 0.1,
-
-                    /**
-                     * Animation when not hovering over the marker.
-                     *
-                     * @type {boolean|Highcharts.AnimationOptionsObject}
-                     */
-                    animation: {
-                        duration: 50
-                    }
                 }
             }
         },
 
         /**
          * Properties for each single point.
+         *
+         * @private
          */
         point: {
 
@@ -1871,6 +1858,8 @@ H.Series = H.seriesType(
          *         Multiple data labels on a bar series
          *
          * @type {Highcharts.DataLabelsOptionsObject}
+         *
+         * @private
          */
         dataLabels: {
             /** @ignore-option */
@@ -1915,9 +1904,21 @@ H.Series = H.seriesType(
          *
          * @since   2.2
          * @product highcharts highstock
+         *
+         * @private
          */
         cropThreshold: 300,
 
+        /**
+         * Opacity of a series parts: line, fill (e.g. area) and dataLabels.
+         *
+         * @see [states.inactive.opacity](#plotOptions.series.states.inactive.opacity)
+         *
+         * @since 7.1.0
+         *
+         * @private
+         */
+        opacity: 1,
 
         /**
          * The width of each point on the x axis. For example in a column chart
@@ -1926,6 +1927,8 @@ H.Series = H.seriesType(
          * this option can be used to override the automatic value.
          *
          * @product highstock
+         *
+         * @private
          */
         pointRange: 0,
 
@@ -1941,6 +1944,8 @@ H.Series = H.seriesType(
          *
          * @since   4.1.9
          * @product highcharts highstock
+         *
+         * @private
          */
         softThreshold: true,
 
@@ -2125,22 +2130,20 @@ H.Series = H.seriesType(
             /**
              * The opposite state of a hover for series.
              *
-             * @sample {highcharts} highcharts/plotoptions/series-marker-states-inactive-enabled/
-             *         Enabled inactive state
-             *
-             * @extends   plotOptions.series.states.hover
+             * @sample {highcharts} highcharts/demo/windbarb-series/
+             *         Disabled inactive state
              */
             inactive: {
                 animation: {
                     duration: 50
                 },
                 /**
-                 * Opacity of inactive markers.
+                 * Opacity of series elements (dataLabels, line, area).
                  *
-                 * @apioption plotOptions.series.marker.states.inactive.opacity
+                 * @apioption plotOptions.series.states.inactive.opacity
                  * @type {number}
                  */
-                opacity: 0.1
+                opacity: 0.2
             }
         },
 
@@ -2163,6 +2166,8 @@ H.Series = H.seriesType(
          * @default {highstock} true
          * @default {highmaps} false
          * @since   2.0
+         *
+         * @private
          */
         stickyTracking: true,
 
@@ -2188,6 +2193,8 @@ H.Series = H.seriesType(
          *
          * @since   2.2
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         turboThreshold: 1000,
 
@@ -2291,6 +2298,8 @@ H.Series = H.seriesType(
          *
          * @since      5.0.10
          * @validvalue ["x", "xy"]
+         *
+         * @private
          */
         findNearestPointBy: 'x'
 
@@ -3082,7 +3091,7 @@ H.Series = H.seriesType(
 
             // Add new points
             pointsToAdd.forEach(function (point) {
-                this.addPoint(point, false);
+                this.addPoint(point, false, null, null, false);
             }, this);
 
             return true;

@@ -112,8 +112,9 @@ seriesType('arearange', 'area', {
     /**
      * Pixel width of the arearange graph line.
      *
-     * @since   2.3.0
-     * @product highcharts highstock
+     * @since 2.3.0
+     *
+     * @private
      */
     lineWidth: 1,
 
@@ -128,13 +129,16 @@ seriesType('arearange', 'area', {
      * Whether the whole area or just the line should respond to mouseover
      * tooltips and other mouse or touch events.
      *
-     * @since   2.3.0
-     * @product highcharts highstock
+     * @since 2.3.0
+     *
+     * @private
      */
     trackByArea: true,
 
     /**
      * @type {Highcharts.DataLabelsOptionsObject|Highcharts.PlotAreaRangeDataLabelsOptionsObject}
+     *
+     * @private
      */
     dataLabels: {
         /** @ignore-option */

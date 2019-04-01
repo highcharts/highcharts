@@ -8,10 +8,29 @@
 
 import * as Highcharts from "highcharts";
 
+test_seriesAreaRange();
 test_seriesBar();
 test_seriesColumn();
 test_seriesLine();
 test_seriesPie();
+
+/**
+ * Tests special use case of Highcharts.seriesTypes.arearange.
+ */
+function test_seriesAreaRange() {
+    Highcharts.chart('container', {
+        tooltip: {
+            formatter: function() {
+                const high = this.point['high'] as number;
+                return high.toString();
+            }
+        },
+        series: [{
+            type: 'arearange',
+            data: []
+        }]
+    });
+}
 
 /**
  * Tests Highcharts.seriesTypes.bar in a common use case.

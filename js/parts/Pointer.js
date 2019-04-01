@@ -567,9 +567,8 @@ Highcharts.Pointer.prototype = {
             }
 
             // Set inactive state for all points
-            activeSeries = (points || []).map(function (item) {
-                return item.series;
-            });
+            activeSeries = pointer.getActiveSeries(points);
+
             chart.series.forEach(function (inactiveSeries) {
                 if (
                     inactiveSeries.options.inactiveOtherPoints ||
@@ -656,6 +655,52 @@ Highcharts.Pointer.prototype = {
                 axis.hideCrosshair();
             }
         });
+    },
+
+    /**
+     * Get currently active series, in opposite to `inactive` series.
+     * Active series includes also it's parents/childs (via linkedTo) option
+     * and navigator series
+     *
+     * @function Highcharts.Pointer#getActiveSeries
+     *
+     * @private
+     *
+     * @param {Array<Highcharts.Point>} points
+     *        Currently hovered points
+     *
+     * @return {Array<Highcharts.Series>}
+     *         Array of series
+     */
+    getActiveSeries: function (points) {
+        var activeSeries = [],
+            series;
+
+        (points || []).forEach(function (item) {
+            series = item.series;
+
+            // Include itself
+            activeSeries.push(series);
+
+            // Include parent series
+            if (series.linkedParent) {
+                activeSeries.push(series.linkedParent);
+            }
+
+            // Include all child series
+            if (series.linkedSeries) {
+                activeSeries = activeSeries.concat(
+                    series.linkedSeries
+                );
+            }
+
+            // Include navigator series
+            if (series.navigatorSeries) {
+                activeSeries.push(series.navigatorSeries);
+            }
+        });
+
+        return activeSeries;
     },
 
     /**

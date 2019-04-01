@@ -161,18 +161,57 @@ seriesType(
      * @optionparent plotOptions.networkgraph
      */
     {
+        stickyTracking: false,
+
+        /** @ignore-option */
         inactiveOtherPoints: true,
+
         marker: {
             enabled: true,
             states: {
+                /**
+                 * The opposite state of a hover for a single point node.
+                 * Applied to all not connected nodes to the hovered one.
+                 */
                 inactive: {
-                    opacity: 0.1
+                    /**
+                     * Opacity of inactive markers.
+                     *
+                     * @apioption plotOptions.series.marker.states.inactive.opacity
+                     * @type {number}
+                     */
+                    opacity: 0.3,
+
+                    /**
+                     * Animation when not hovering over the node.
+                     *
+                     * @type {boolean|Highcharts.AnimationOptionsObject}
+                     */
+                    animation: {
+                        duration: 50
+                    }
                 }
             }
         },
         states: {
+            /**
+             * The opposite state of a hover for a single point link. Applied
+             * to all links that are not comming from the hovered node.
+             */
             inactive: {
-                linkOpacity: 0.1
+                /**
+                 * Opacity of inactive links.
+                 */
+                linkOpacity: 0.3,
+
+                /**
+                 * Animation when not hovering over the node.
+                 *
+                 * @type {boolean|Highcharts.AnimationOptionsObject}
+                 */
+                animation: {
+                    duration: 50
+                }
             }
         },
         /**
@@ -439,6 +478,7 @@ seriesType(
         drawTracker: H.TrackerMixin.drawTrackerPoint,
         // Animation is run in `series.simulation`.
         animate: null,
+        buildKDTree: H.noop,
         /**
          * Create a single node that holds information on incoming and outgoing
          * links.
@@ -791,6 +831,8 @@ seriesType(
          * @private
          */
         renderLink: function () {
+            var attribs;
+
             if (!this.graphic) {
                 this.graphic = this.series.chart.renderer
                     .path(
@@ -799,7 +841,16 @@ seriesType(
                     .add(this.series.group);
 
                 if (!this.series.chart.styledMode) {
-                    this.graphic.attr(this.series.pointAttribs(this));
+                    attribs = this.series.pointAttribs(this);
+                    this.graphic.attr(attribs);
+
+                    (this.dataLabels || []).forEach(function (label) {
+                        if (label) {
+                            label.attr({
+                                opacity: attribs.opacity
+                            });
+                        }
+                    });
                 }
             }
         },
@@ -808,14 +859,25 @@ seriesType(
          * @private
          */
         redrawLink: function () {
-            var path = this.getLinkPath();
+            var path = this.getLinkPath(),
+                attribs;
+
             if (this.graphic) {
                 this.shapeArgs = {
                     d: path
                 };
 
                 if (!this.series.chart.styledMode) {
-                    this.graphic.attr(this.series.pointAttribs(this));
+                    attribs = this.series.pointAttribs(this);
+                    this.graphic.attr(attribs);
+
+                    (this.dataLabels || []).forEach(function (label) {
+                        if (label) {
+                            label.attr({
+                                opacity: attribs.opacity
+                            });
+                        }
+                    });
                 }
                 this.graphic.animate(this.shapeArgs);
 

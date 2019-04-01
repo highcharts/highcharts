@@ -13,20 +13,14 @@ const Path = require('path');
 
 const SOURCE_DIRECTORY = 'js';
 
-const SOURCE_FILES = [
-    ['annotations'],
-    ['annotations', 'types'],
-    ['indicators'],
-    ['modules'],
-    ['modules', 'networkgraph'],
-    ['modules', 'sonification'],
-    ['parts'],
-    ['parts-3d'],
-    ['parts-more'],
-    ['parts-map'],
-    ['parts-gantt']
+const SOURCE_GLOBS = [
+    'annotations/**/*',
+    'indicators/**/*',
+    'modules/**/*',
+    'parts/**/*',
+    'parts-*/**/*'
 ].map(
-    filePath => Path.join(SOURCE_DIRECTORY, ...filePath)
+    glob => SOURCE_DIRECTORY + '/' + glob
 );
 
 const TARGET_DIRECTORY = Path.join('build', 'api');
@@ -95,7 +89,7 @@ function createTreeJson() {
         LogLib.success('Generating', TREE_FILE + '...');
 
         Gulp
-            .src(SOURCE_FILES, { read: false })
+            .src(SOURCE_GLOBS, { read: false })
             .pipe(gulpJSDoc(
                 jsDocConfig,
                 error => {

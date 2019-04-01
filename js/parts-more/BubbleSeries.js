@@ -102,7 +102,7 @@ seriesType('bubble', 'scatter', {
          * In bubble charts, the radius is overridden and determined based on
          * the point's data value.
          *
-         * @ignore
+         * @ignore-option
          */
         radius: null,
 

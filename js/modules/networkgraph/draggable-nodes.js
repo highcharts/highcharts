@@ -66,15 +66,18 @@ H.dragNodesMixin = {
                     this.redrawHalo(point);
 
                     if (!series.layout.simulation) {
+                        // When dragging nodes, we don't need to calculate
+                        // initial positions and rendering nodes:
+                        series.layout.setInitialRendering(false);
+
                         // Start new simulation:
                         if (!series.layout.enableSimulation) {
                             // Run only one iteration to speed things up:
                             series.layout.setMaxIterations(1);
+                        } else {
+                            series.layout.start();
                         }
-                        // When dragging nodes, we don't need to calculate
-                        // initial positions and rendering nodes:
-                        series.layout.setInitialRendering(false);
-                        series.layout.run();
+                        series.chart.redraw();
                         // Restore defaults:
                         series.layout.setInitialRendering(true);
                     } else {
@@ -96,7 +99,11 @@ H.dragNodesMixin = {
      */
     onMouseUp: function (point) {
         if (point.fixedPosition) {
-            this.layout.run();
+            if (this.layout.enableSimulation) {
+                this.layout.start();
+            } else {
+                this.chart.redraw();
+            }
             point.inDragMode = false;
             if (!this.options.fixedDraggable) {
                 delete point.fixedPosition;

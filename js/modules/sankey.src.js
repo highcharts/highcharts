@@ -176,6 +176,8 @@ seriesType('sankey', 'column'
          * Higher numbers makes the links in a sankey diagram or dependency
          * wheelrender more curved. A `curveFactor` of 0 makes the lines
          * straight.
+         *
+         * @private
          */
         curveFactor: 0.33,
         /**
@@ -186,6 +188,8 @@ seriesType('sankey', 'column'
          * string by default.
          *
          * @type {Highcharts.DataLabelsOptionsObject|Highcharts.PlotSankeyDataLabelsOptionsObject}
+         *
+         * @private
          */
         dataLabels: {
             /** @ignore-option */
@@ -213,7 +217,10 @@ seriesType('sankey', 'column'
             /** @ignore-option */
             inside: true
         },
+
+        /** @ignore-option */
         inactiveOtherPoints: true,
+
         /**
          * Set options on specific levels. Takes precedence over series options,
          * but not point options.
@@ -285,16 +292,22 @@ seriesType('sankey', 'column'
 
         /**
          * Opacity for the links between nodes in the sankey diagram.
+         *
+         * @private
          */
         linkOpacity: 0.5,
         /**
          * The pixel width of each node in a sankey diagram or dependency wheel,
          * or the height in case the chart is inverted.
+         *
+         * @private
          */
         nodeWidth: 20,
         /**
          * The padding between nodes in a sankey diagram or dependency wheel, in
          * pixels.
+         *
+         * @private
          */
         nodePadding: 10,
         showInLegend: false,
@@ -306,12 +319,31 @@ seriesType('sankey', 'column'
                  */
                 linkOpacity: 1
             },
+            /**
+             * The opposite state of a hover for a single point node/link.
+             */
             inactive: {
                 /**
                  * Opacity for the links between nodes in the sankey diagram in
                  * inactive mode.
                  */
-                linkOpacity: 0.1
+                linkOpacity: 0.1,
+                /**
+                 * Opacity of inactive markers.
+                 *
+                 * @apioption plotOptions.series.marker.states.inactive.opacity
+                 * @type {number}
+                 */
+                opacity: 0.1,
+
+                /**
+                 * Animation when not hovering over the marker.
+                 *
+                 * @type {boolean|Highcharts.AnimationOptionsObject}
+                 */
+                animation: {
+                    duration: 50
+                }
             }
         },
         tooltip: {
@@ -472,7 +504,7 @@ seriesType('sankey', 'column'
         pointAttribs: function (point, state) {
             var series = this,
                 level = point.isNode ? point.level : point.fromNode.level,
-                levelOptions = series.mapOptionsToLevel[level],
+                levelOptions = series.mapOptionsToLevel[level || 0],
                 options = point.options,
                 stateOptions = levelOptions.states[state] || {},
                 values = [
