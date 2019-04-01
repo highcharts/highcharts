@@ -83,7 +83,8 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
 
     thirdAnnotation.update({
         labelOptions: {
-            format: 'custom format'
+            format: 'custom format',
+            backgroundColor: 'red'
         }
     });
 
@@ -91,6 +92,18 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
         thirdAnnotation.labels[0].options.format,
         'custom format',
         'Correct annotations text after update (annotations.labels)'
+    );
+
+    thirdAnnotation.update({
+        labelOptions: {
+            backgroundColor: 'green'
+        }
+    });
+
+    assert.strictEqual(
+        thirdAnnotation.labels[0].graphic.attr('fill'),
+        'green',
+        'Correct annotations label fill after update (annotations.labels)'
     );
 
     var annotation = chart.addAnnotation({

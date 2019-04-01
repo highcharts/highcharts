@@ -732,19 +732,17 @@ merge(
         },
 
         addShapes: function () {
-            (this.options.shapes || []).forEach(function (shapeOptions, i) {
-                var shape = this.initShape(shapeOptions, i);
-
-                this.options.shapes[i] = shape.options;
-            }, this);
+            (this.options.shapes || []).forEach(
+                this.initShape,
+                this
+            );
         },
 
         addLabels: function () {
-            (this.options.labels || []).forEach(function (labelOptions, i) {
-                var label = this.initLabel(labelOptions, i);
-
-                this.options.labels[i] = label.options;
-            }, this);
+            (this.options.labels || []).forEach(
+                this.initLabel,
+                this
+            );
         },
 
         addClipPaths: function () {
