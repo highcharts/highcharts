@@ -1,4 +1,4 @@
-/**
+/* *
  * Exporting module
  *
  * (c) 2010-2019 Torstein Honsi

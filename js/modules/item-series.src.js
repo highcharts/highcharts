@@ -19,16 +19,16 @@ var extend = H.extend,
     piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 
 /**
-  * The item series type.
-  *
-  * @requires module:modules/item-series
-  *
-  * @private
-  * @class
-  * @name Highcharts.seriesTypes.item
-  *
-  * @augments Highcharts.seriesTypes.pie
-  */
+ * The item series type.
+ *
+ * @requires module:modules/item-series
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.item
+ *
+ * @augments Highcharts.seriesTypes.pie
+ */
 H.seriesType(
     'item',
     // Inherits pie as the most tested non-cartesian series with individual

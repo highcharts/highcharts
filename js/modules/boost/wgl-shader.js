@@ -233,8 +233,9 @@ function GLShader(gl) {
         // Texture uniform
         uSamplerUniform;
 
-    /*
+    /**
      * Handle errors accumulated in errors stack
+     * @private
      */
     function handleErrors() {
         if (errors.length) {
@@ -242,7 +243,9 @@ function GLShader(gl) {
         }
     }
 
-    /* String to shader program
+    /**
+     * String to shader program
+     * @private
      * @param {string} str - the program source
      * @param {string} type - the program type: either `vertex` or `fragment`
      * @returns {bool|shader}
@@ -267,9 +270,10 @@ function GLShader(gl) {
         return shader;
     }
 
-    /*
+    /**
      * Create the shader.
      * Loads the shader program statically defined above
+     * @private
      */
     function createShader() {
         var v = stringToProgram(vertShade, 'vertex'),
@@ -318,8 +322,9 @@ function GLShader(gl) {
         return true;
     }
 
-    /*
+    /**
      * Destroy the shader
+     * @private
      */
     function destroy() {
         if (gl && shaderProgram) {
@@ -328,10 +333,11 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Bind the shader.
      * This makes the shader the active one until another one is bound,
      * or until 0 is bound.
+     * @private
      */
     function bind() {
         if (gl && shaderProgram) {
@@ -339,9 +345,10 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set a uniform value.
      * This uses a hash map to cache uniform locations.
+     * @private
      * @param name {string} - the name of the uniform to set
      * @param val {float} - the value to set
      */
@@ -357,8 +364,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set the active texture
+     * @private
      * @param texture - the texture
      */
     function setTexture(texture) {
@@ -367,8 +375,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set if inversion state
+     * @private
      * @flag is the state
      */
     function setInverted(flag) {
@@ -377,8 +386,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Enable/disable circle drawing
+     * @private
      */
     function setDrawAsCircle(flag) {
         if (gl && shaderProgram) {
@@ -392,8 +402,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Flush
+     * @private
      */
     function reset() {
         if (gl && shaderProgram) {
@@ -402,8 +413,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set bubble uniforms
+     * @private
      * @param series {Highcharts.Series} - the series to use
      */
     function setBubbleUniforms(series, zCalcMin, zCalcMax) {
@@ -442,8 +454,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set the Color uniform.
+     * @private
      * @param color {Array<float>} - an array with RGBA values
      */
     function setColor(color) {
@@ -458,8 +471,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set skip translation
+     * @private
      */
     function setSkipTranslation(flag) {
         if (gl && shaderProgram) {
@@ -467,8 +481,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set the perspective matrix
+     * @private
      * @param m {Matrix4x4} - the matrix
      */
     function setPMatrix(m) {
@@ -477,8 +492,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set the point size.
+     * @private
      * @param p {float} - point size
      */
     function setPointSize(p) {
@@ -487,8 +503,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Get the shader program handle
+     * @private
      * @returns {GLInt} - the handle for the program
      */
     function getProgram() {

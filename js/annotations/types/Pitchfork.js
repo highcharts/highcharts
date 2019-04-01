@@ -167,10 +167,11 @@ H.extendAnnotation(Pitchfork, InfinityLine,
     /**
      * A pitchfork annotation.
      *
-     * @extends annotations.infinityLine
      * @sample highcharts/annotations-advanced/pitchfork/
      *         Pitchfork
-     * @product highstock
+     *
+     * @extends      annotations.infinityLine
+     * @product      highstock
      * @optionparent annotations.pitchfork
      */
     {
@@ -178,7 +179,7 @@ H.extendAnnotation(Pitchfork, InfinityLine,
             /**
              * Inner background options.
              *
-             * @extends annotations.crookedLine.shapeOptions
+             * @extends   annotations.crookedLine.shapeOptions
              * @excluding height, r, type, width
              */
             innerBackground: {
@@ -188,7 +189,7 @@ H.extendAnnotation(Pitchfork, InfinityLine,
             /**
              * Outer background options.
              *
-             * @extends annotations.crookedLine.shapeOptions
+             * @extends   annotations.crookedLine.shapeOptions
              * @excluding height, r, type, width
              */
             outerBackground: {

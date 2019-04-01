@@ -49,8 +49,9 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
         data = [];
     }
 
-    /*
+    /**
      * Build the buffer
+     * @private
      * @param dataIn {Array<float>} - a 0 padded array of indices
      * @param attrib {String} - the name of the Attribute to bind the buffer to
      * @param dataComponents {Integer} - the number of components per. indice
@@ -94,8 +95,9 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
         return true;
     }
 
-    /*
+    /**
      * Bind the buffer
+     * @private
      */
     function bind() {
         if (!buffer) {
@@ -111,8 +113,9 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
         // gl.enableVertexAttribArray(vertAttribute);
     }
 
-    /*
+    /**
      * Render the buffer
+     * @private
      * @param from {Integer} - the start indice
      * @param to {Integer} - the end indice
      * @param drawMode {String} - the draw mode
@@ -156,9 +159,10 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
         }
     }
 
-    /*
+    /**
      * Note about pre-allocated buffers:
      *     - This is slower for charts with many series
+     * @private
      */
     function allocate(size) {
         size *= 4;

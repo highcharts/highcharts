@@ -184,7 +184,8 @@ H.extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorCo
     /**
      * Get navigation for the range selector input boxes.
      * @private
-     * @return {Highcharts.KeyboardNavigationHandler} The module object.
+     * @return {Highcharts.KeyboardNavigationHandler}
+     *         The module object.
      */
     getRangeSelectorInputNavigation: function () {
         var chart = this.chart,
@@ -255,7 +256,7 @@ H.extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorCo
     /**
      * Get keyboard navigation handlers for this component.
      * @return {Array<Highcharts.KeyboardNavigationHandler>}
-     *      List of module objects.
+     *         List of module objects.
      */
     getKeyboardNavigation: function () {
         return [

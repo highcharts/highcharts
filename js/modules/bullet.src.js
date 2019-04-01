@@ -27,78 +27,78 @@ var pick = H.pick,
 seriesType('bullet', 'column'
 
     /**
- * A bullet graph is a variation of a bar graph. The bullet graph features a
- * single measure, compares it to a target, and displays it in the context of
- * qualitative ranges of performance that could be set using
- * [plotBands](#yAxis.plotBands) on [yAxis](#yAxis).
- *
- * @sample {highcharts} highcharts/demo/bullet-graph/
- *         Bullet graph
- *
- * @extends      plotOptions.column
- * @since        6.0.0
- * @product      highcharts
- * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
- * @optionparent plotOptions.bullet
- */
-    , {
-    /**
-     * All options related with look and positiong of targets.
+     * A bullet graph is a variation of a bar graph. The bullet graph features
+     * a single measure, compares it to a target, and displays it in the context
+     * of qualitative ranges of performance that could be set using
+     * [plotBands](#yAxis.plotBands) on [yAxis](#yAxis).
      *
-     * @since 6.0.0
+     * @sample {highcharts} highcharts/demo/bullet-graph/
+     *         Bullet graph
+     *
+     * @extends      plotOptions.column
+     * @since        6.0.0
+     * @product      highcharts
+     * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
+     * @optionparent plotOptions.bullet
      */
-        targetOptions: {
+    , {
         /**
-         * The width of the rectangle representing the target. Could be set
-         * as a pixel value or as a percentage of a column width.
+         * All options related with look and positiong of targets.
          *
-         * @type  {number|string}
          * @since 6.0.0
          */
+        targetOptions: {
+            /**
+             * The width of the rectangle representing the target. Could be set
+             * as a pixel value or as a percentage of a column width.
+             *
+             * @type  {number|string}
+             * @since 6.0.0
+             */
             width: '140%',
 
             /**
-         * The height of the rectangle representing the target.
-         *
-         * @since 6.0.0
-         */
+             * The height of the rectangle representing the target.
+             *
+             * @since 6.0.0
+             */
             height: 3,
 
             /**
-         * The border color of the rectangle representing the target. When
-         * not set, the  point's border color is used.
-         *
-         * In styled mode, use class `highcharts-bullet-target` instead.
-         *
-         * @type      {Highcharts.ColorString}
-         * @since     6.0.0
-         * @product   highcharts
-         * @apioption plotOptions.bullet.targetOptions.borderColor
-         */
+             * The border color of the rectangle representing the target. When
+             * not set, the  point's border color is used.
+             *
+             * In styled mode, use class `highcharts-bullet-target` instead.
+             *
+             * @type      {Highcharts.ColorString}
+             * @since     6.0.0
+             * @product   highcharts
+             * @apioption plotOptions.bullet.targetOptions.borderColor
+             */
 
             /**
-         * The color of the rectangle representing the target. When not set,
-         * point's color (if set in point's options -
-         * [`color`](#series.bullet.data.color)) or zone of the target value
-         * (if [`zones`](#plotOptions.bullet.zones) or
-         * [`negativeColor`](#plotOptions.bullet.negativeColor) are set)
-         * or the same color as the point has is used.
-         *
-         * In styled mode, use class `highcharts-bullet-target` instead.
-         *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @since     6.0.0
-         * @product   highcharts
-         * @apioption plotOptions.bullet.targetOptions.color
-         */
+             * The color of the rectangle representing the target. When not set,
+             * point's color (if set in point's options -
+             * [`color`](#series.bullet.data.color)) or zone of the target value
+             * (if [`zones`](#plotOptions.bullet.zones) or
+             * [`negativeColor`](#plotOptions.bullet.negativeColor) are set)
+             * or the same color as the point has is used.
+             *
+             * In styled mode, use class `highcharts-bullet-target` instead.
+             *
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since     6.0.0
+             * @product   highcharts
+             * @apioption plotOptions.bullet.targetOptions.color
+             */
 
             /**
-         * The border width of the rectangle representing the target.
-         *
-         * In styled mode, use class `highcharts-bullet-target` instead.
-         *
-         * @since   6.0.0
-         */
+             * The border width of the rectangle representing the target.
+             *
+             * In styled mode, use class `highcharts-bullet-target` instead.
+             *
+             * @since   6.0.0
+             */
             borderWidth: 0
         },
 
@@ -112,13 +112,13 @@ seriesType('bullet', 'column'
         parallelArrays: ['x', 'y', 'target'],
 
         /**
-     * Draws the targets. For inverted chart, the `series.group` is rotated, so
-     * the same coordinates apply. This method is based on column series
-     * drawPoints function.
-     *
-     * @ignore
-     * @function Highcharts.Series#drawPoints
-     */
+         * Draws the targets. For inverted chart, the `series.group` is rotated,
+         * so the same coordinates apply. This method is based on column series
+         * drawPoints function.
+         *
+         * @ignore
+         * @function Highcharts.Series#drawPoints
+         */
         drawPoints: function () {
             var series = this,
                 chart = series.chart,
@@ -232,11 +232,11 @@ seriesType('bullet', 'column'
         },
 
         /**
-     * Includes target values to extend extremes from y values.
-     *
-     * @ignore
-     * @function Highcharts.Series#getExtremes
-     */
+         * Includes target values to extend extremes from y values.
+         *
+         * @ignore
+         * @function Highcharts.Series#getExtremes
+         */
         getExtremes: function (yData) {
             var series = this,
                 targetData = series.targetData,
