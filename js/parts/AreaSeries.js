@@ -28,7 +28,9 @@ var color = H.color,
  *
  * @augments Highcharts.Series
  */
-seriesType('area', 'line',
+seriesType(
+    'area',
+    'line',
 
     /**
      * The area series type.
@@ -99,73 +101,78 @@ seriesType('area', 'line',
          */
 
         /**
-     * A separate color for the negative part of the area.
-     *
-     * In styled mode, a negative color is set with the `.highcharts-negative`
-     * class name.
-     *
-     * @see [negativeColor](#plotOptions.area.negativeColor)
-     *
-     * @sample {highcharts} highcharts/css/series-negative-color/
-     *         Negative color in styled mode
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since     3.0
-     * @product   highcharts
-     * @apioption plotOptions.area.negativeFillColor
-     */
+         * A separate color for the negative part of the area.
+         *
+         * In styled mode, a negative color is set with the
+         * `.highcharts-negative` class name.
+         *
+         * @see [negativeColor](#plotOptions.area.negativeColor)
+         *
+         * @sample {highcharts} highcharts/css/series-negative-color/
+         *         Negative color in styled mode
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @since     3.0
+         * @product   highcharts
+         * @apioption plotOptions.area.negativeFillColor
+         */
 
         /**
-     * Whether the whole area or just the line should respond to mouseover
-     * tooltips and other mouse or touch events.
-     *
-     * @sample {highcharts|highstock} highcharts/plotoptions/area-trackbyarea/
-     *         Display the tooltip when the area is hovered
-     *
-     * @type      {boolean}
-     * @default   false
-     * @since     1.1.6
-     * @product   highcharts highstock
-     * @apioption plotOptions.area.trackByArea
-     */
+         * Whether the whole area or just the line should respond to mouseover
+         * tooltips and other mouse or touch events.
+         *
+         * @sample {highcharts|highstock} highcharts/plotoptions/area-trackbyarea/
+         *         Display the tooltip when the area is hovered
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since     1.1.6
+         * @product   highcharts highstock
+         * @apioption plotOptions.area.trackByArea
+         */
 
         /**
-     * When this is true, the series will not cause the Y axis to cross
-     * the zero plane (or [threshold](#plotOptions.series.threshold) option)
-     * unless the data actually crosses the plane.
-     *
-     * For example, if `softThreshold` is `false`, a series of 0, 1, 2,
-     * 3 will make the Y axis show negative values according to the `minPadding`
-     * option. If `softThreshold` is `true`, the Y axis starts at 0.
-     *
-     * @since   4.1.9
-     * @product highcharts highstock
-     */
+         * When this is true, the series will not cause the Y axis to cross
+         * the zero plane (or [threshold](#plotOptions.series.threshold) option)
+         * unless the data actually crosses the plane.
+         *
+         * For example, if `softThreshold` is `false`, a series of 0, 1, 2,
+         * 3 will make the Y axis show negative values according to the
+         * `minPadding` option. If `softThreshold` is `true`, the Y axis starts
+         * at 0.
+         *
+         * @since   4.1.9
+         * @product highcharts highstock
+         */
         softThreshold: false,
 
         /**
-     * The Y axis value to serve as the base for the area, for distinguishing
-     * between values above and below a threshold. The area between the graph
-     * and the threshold is filled.
-     *
-     * * If a number is given, the Y axis will scale to the threshold.
-     * * If `null`, the scaling behaves like a line series with fill between the
-     *   graph and the Y axis minimum.
-     * * If `Infinity` or `-Infinity`, the area between the graph and the
-     *   corresponing Y axis extreme is filled (since v6.1.0).
-     *
-     * @sample {highcharts} highcharts/plotoptions/area-threshold/
-     *         A threshold of 100
-     * @sample {highcharts} highcharts/plotoptions/area-threshold-infinity/
-     *         A threshold of Infinity
-     *
-     * @since   2.0
-     * @product highcharts highstock
-     */
+         * The Y axis value to serve as the base for the area, for
+         * distinguishing between values above and below a threshold. The area
+         * between the graph and the threshold is filled.
+         *
+         * * If a number is given, the Y axis will scale to the threshold.
+         * * If `null`, the scaling behaves like a line series with fill between
+         *   the graph and the Y axis minimum.
+         * * If `Infinity` or `-Infinity`, the area between the graph and the
+         *   corresponing Y axis extreme is filled (since v6.1.0).
+         *
+         * @sample {highcharts} highcharts/plotoptions/area-threshold/
+         *         A threshold of 100
+         * @sample {highcharts} highcharts/plotoptions/area-threshold-infinity/
+         *         A threshold of Infinity
+         *
+         * @since   2.0
+         * @product highcharts highstock
+         */
         threshold: 0
 
 
-    }, /** @lends seriesTypes.area.prototype */ {
+    },
+    /**
+     * @lends seriesTypes.area.prototype
+     */
+    {
 
         singleStacks: false,
 
@@ -505,7 +512,8 @@ seriesType('area', 'line',
         },
 
         drawLegendSymbol: LegendSymbolMixin.drawRectangle
-    });
+    }
+);
 
 /**
  * A `area` series. If the [type](#series.area.type) option is not

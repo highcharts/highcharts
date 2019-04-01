@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -229,10 +229,8 @@ TrackerMixin = H.TrackerMixin = {
 /* End TrackerMixin */
 
 
-/*
- * Add tracking event listener to the series group, so the point graphics
- * themselves act as trackers
- */
+// Add tracking event listener to the series group, so the point graphics
+// themselves act as trackers
 
 if (seriesTypes.column) {
     /**
@@ -395,10 +393,7 @@ extend(Legend.prototype, {
     }
 });
 
-/*
- * Extend the Chart object with interaction
- */
-
+// Extend the Chart object with interaction
 extend(Chart.prototype, /** @lends Chart.prototype */ {
 
     /**

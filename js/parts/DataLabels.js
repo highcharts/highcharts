@@ -656,8 +656,9 @@ Series.prototype.drawDataLabels = function () {
         defer = pick(seriesDlOptions.defer, !!seriesOptions.animation),
         renderer = chart.renderer;
 
-    /*
+    /**
      * Handle the dataLabels.filter option.
+     * @private
      */
     function applyFilter(point, options) {
         var filter = options.filter,
@@ -684,10 +685,11 @@ Series.prototype.drawDataLabels = function () {
         return true;
     }
 
-    /*
+    /**
      * Merge two objects that can be arrays. If one of them is an array, the
      * other is merged into each element. If both are arrays, each element is
      * merged by index. If neither are arrays, we use normal merge.
+     * @private
      */
     function mergeArrays(one, two) {
         var res = [],
