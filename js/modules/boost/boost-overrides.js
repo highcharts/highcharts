@@ -115,7 +115,10 @@ Series.prototype.getPoint = function (boostPoint) {
             xData ? xData[boostPoint.i] : undefined
         );
 
-        point.category = point.x;
+        point.category = pick(
+            this.xAxis.categories ? this.xAxis.categories[point.x] : point.x,
+            point.x
+        );
 
         point.dist = boostPoint.dist;
         point.distX = boostPoint.distX;
