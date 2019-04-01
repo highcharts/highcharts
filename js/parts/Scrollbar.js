@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -963,8 +963,8 @@ Scrollbar.prototype = {
 
 if (!H.Scrollbar) {
     /* *
-    * Wrap axis initialization and create scrollbar if enabled:
-    */
+     * Wrap axis initialization and create scrollbar if enabled:
+     */
     addEvent(Axis, 'afterInit', function () {
         var axis = this;
 

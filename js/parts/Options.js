@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -194,9 +194,10 @@ var color = H.color,
     merge = H.merge,
     svg = H.svg;
 
-/* ****************************************************************************
+/* ************************************************************************** *
  * Handle the options                                                         *
- *****************************************************************************/
+ * ************************************************************************** */
+
 /**
  * Global default settings.
  *
@@ -2162,8 +2163,8 @@ H.defaultOptions = {
 
         /**
          * Callback function to format each of the series' labels. The `this`
-         * keyword refers to the series object, or the point object in case
-         * of pie charts. By default the series or point name is printed.
+         * keyword refers to the series object, or the point object in case of
+         * pie charts. By default the series or point name is printed.
          *
          * @productdesc {highmaps}
          * In Highmaps the context can also be a data class in case of a
@@ -2199,9 +2200,9 @@ H.defaultOptions = {
          */
 
         /**
-         * If the plot area sized is calculated automatically and the legend
-         * is not floating, the legend margin is the space between the legend
-         * and the axis labels or plot area.
+         * If the plot area sized is calculated automatically and the legend is
+         * not floating, the legend margin is the space between the legend and
+         * the axis labels or plot area.
          *
          * @sample {highcharts} highcharts/legend/margin-default/
          *         12 pixels by default
@@ -2253,8 +2254,8 @@ H.defaultOptions = {
         borderRadius: 0,
 
         /**
-         * Options for the paging or navigation appearing when the legend
-         * is overflown. Navigation works well on screen, but not in static
+         * Options for the paging or navigation appearing when the legend is
+         * overflown. Navigation works well on screen, but not in static
          * exported images. One way of working around that is to
          * [increase the chart height in
          * export](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/legend/navigation-enabled-false/).

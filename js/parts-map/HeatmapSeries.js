@@ -148,8 +148,8 @@ seriesType(
         marker: null,
 
         /**
-     * @ignore
-     */
+         * @ignore
+         */
         pointRange: null, // dynamically set to colsize by default
 
         tooltip: {
@@ -160,16 +160,17 @@ seriesType(
 
             hover: {
 
-                /** @ignore */
+                /** @ignore-option */
                 halo: false, // #3406, halo is disabled on heatmaps by default
 
                 /**
-             * How much to brighten the point on interaction. Requires the main
-             * color to be defined in hex or rgb(a) format.
-             *
-             * In styled mode, the hover brightening is by default replaced with
-             * a fill-opacity set in the `.highcharts-point:hover` rule.
-             */
+                 * How much to brighten the point on interaction. Requires the
+                 * main color to be defined in hex or rgb(a) format.
+                 *
+                 * In styled mode, the hover brightening is by default replaced
+                 * with a fill-opacity set in the `.highcharts-point:hover`
+                 * rule.
+                 */
                 brightness: 0.2
             }
 
@@ -183,11 +184,11 @@ seriesType(
         directTouch: true,
 
         /**
-     * Override the init method to add point ranges on both axes.
-     *
-     * @private
-     * @function Highcharts.seriesTypes.heatmap#init
-     */
+         * Override the init method to add point ranges on both axes.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.heatmap#init
+         */
         init: function () {
             var options;
 
@@ -201,9 +202,9 @@ seriesType(
         },
 
         /**
-     * @private
-     * @function Highcharts.seriesTypes.heatmap#translate
-     */
+         * @private
+         * @function Highcharts.seriesTypes.heatmap#translate
+         */
         translate: function () {
             var series = this,
                 options = series.options,

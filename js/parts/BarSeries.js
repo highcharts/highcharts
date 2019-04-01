@@ -21,7 +21,9 @@ var seriesType = H.seriesType;
  *
  * @augments Highcharts.Series
  */
-seriesType('bar', 'column',
+seriesType(
+    'bar',
+    'column',
 
     /**
      * A bar series is a special type of column series where the columns are
@@ -38,11 +40,11 @@ seriesType('bar', 'column',
     /**
      * @ignore
      */
-    null
-
-    , {
+    null,
+    {
         inverted: true
-    });
+    }
+);
 
 
 /**

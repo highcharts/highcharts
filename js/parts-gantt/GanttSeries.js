@@ -162,22 +162,22 @@ seriesType('gantt', 'xrange'
         },
 
         /**
-     * Draws a single point in the series.
-     *
-     * This override draws the point as a diamond if point.options.milestone is
-     * true, and uses the original drawPoint() if it is false or not set.
-     *
-     * @requires module:highcharts-gantt
-     *
-     * @private
-     * @function Highcharts.seriesTypes.gantt#drawPoint
-     *
-     * @param {Highcharts.Point} point
-     *        An instance of Point in the series
-     *
-     * @param {"animate"|"attr"} verb
-     *        'animate' (animates changes) or 'attr' (sets options)
-     */
+         * Draws a single point in the series.
+         *
+         * This override draws the point as a diamond if point.options.milestone
+         * is true, and uses the original drawPoint() if it is false or not set.
+         *
+         * @requires module:highcharts-gantt
+         *
+         * @private
+         * @function Highcharts.seriesTypes.gantt#drawPoint
+         *
+         * @param {Highcharts.Point} point
+         *        An instance of Point in the series
+         *
+         * @param {"animate"|"attr"} verb
+         *        'animate' (animates changes) or 'attr' (sets options)
+         */
         drawPoint: function (point, verb) {
             var series = this,
                 seriesOpts = series.options,
