@@ -5,6 +5,11 @@
     border: 1px solid silver;
 }
 
-#csv {
-	display: none;
+#container h4 {
+    text-transform: none;
+    font-size: 14px;
+    font-weight: normal;
+}
+#container p {
+    font-size: 13px;
 }
