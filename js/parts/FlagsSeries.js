@@ -658,7 +658,7 @@ function createPinSymbol(shape) {
             labelTopOrBottomY = (y > anchorY) ? y : y + h;
             path.push(
                 'M',
-                shape === 'circle' ? path[1] - path[4] : path[1] + path[4] / 2,
+                shape === 'circle' ? x + w / 2 : path[1] + path[4] / 2,
                 labelTopOrBottomY,
                 'L',
                 anchorX,

@@ -66,6 +66,8 @@ seriesType(
          * @type    {number}
          * @default 1
          * @product highstock
+         *
+         * @private
          */
         lineWidth: 1,
 

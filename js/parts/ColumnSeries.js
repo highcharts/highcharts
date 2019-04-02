@@ -813,6 +813,7 @@ seriesType('column', 'line'
                 strokeWidth = (point && point[strokeWidthOption]) ||
                 options[strokeWidthOption] || this[strokeWidthOption] || 0,
                 dashstyle = (point && point.dashStyle) || options.dashStyle,
+                opacity = pick(options.opacity, 1),
                 zone,
                 brightness;
 
@@ -849,12 +850,14 @@ seriesType('column', 'line'
                 stroke = stateOptions[strokeOption] || stroke;
                 strokeWidth = stateOptions[strokeWidthOption] || strokeWidth;
                 dashstyle = stateOptions.dashStyle || dashstyle;
+                opacity = pick(stateOptions.opacity, opacity);
             }
 
             ret = {
                 'fill': fill,
                 'stroke': stroke,
-                'stroke-width': strokeWidth
+                'stroke-width': strokeWidth,
+                'opacity': opacity
             };
 
             if (dashstyle) {
@@ -924,7 +927,7 @@ seriesType('column', 'line'
                             point.selected && 'select'
                         ))
                             .shadow(
-                                options.shadow,
+                                point.allowShadow !== false && options.shadow,
                                 null,
                                 options.stacking && !options.borderRadius
                             );

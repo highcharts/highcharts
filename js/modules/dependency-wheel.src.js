@@ -269,6 +269,7 @@ H.seriesType(
 
     // Point class
     {
+        setState: H.NodesMixin.setNodeState,
         // Return a text path that the data label uses
         getDataLabelPath: function (label) {
             var renderer = this.series.chart.renderer,
@@ -296,6 +297,10 @@ H.seriesType(
             });
 
             return this.dataLabelPath;
+        },
+        isValid: function () {
+            // No null points here
+            return true;
         }
     }
 );

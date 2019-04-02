@@ -27,7 +27,8 @@ Highcharts.chart('container', {
         networkgraph: {
             keys: ['from', 'to'],
             layoutAlgorithm: {
-                enableSimulation: true
+                enableSimulation: true,
+                integration: 'verlet'
             }
         }
     },

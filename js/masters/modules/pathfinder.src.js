@@ -1,5 +1,8 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/pathfinder
+ * @requires highcharts
+ *
  * Pathfinder
  *
  * (c) 2016-2019 Øystein Moseng

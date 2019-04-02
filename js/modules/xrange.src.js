@@ -588,24 +588,24 @@ seriesType('xrange', 'column'
      *
      * @return {Highcharts.Series}
      */
-        applyOptions: function () {
-            var point = Point.prototype.applyOptions.apply(this, arguments),
-                series = point.series,
+        resolveColor: function () {
+            var series = this.series,
                 colorByPoint;
 
-            if (series.options.colorByPoint && !point.options.color) {
-                colorByPoint = getColorByCategory(series, point);
+            if (series.options.colorByPoint && !this.options.color) {
+                colorByPoint = getColorByCategory(series, this);
 
                 if (!series.chart.styledMode) {
-                    point.color = colorByPoint.color;
+                    this.color = colorByPoint.color;
                 }
 
-                if (!point.options.colorIndex) {
-                    point.colorIndex = colorByPoint.colorIndex;
+                if (!this.options.colorIndex) {
+                    this.colorIndex = colorByPoint.colorIndex;
                 }
+            } else if (!this.color) {
+                this.color = series.color;
             }
 
-            return point;
         },
         /**
      * Extend init to have y default to 0.

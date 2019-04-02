@@ -961,6 +961,8 @@ Chart.prototype.drawSeriesLabels = function () {
             destroyLabel();
         }
     });
+
+    H.fireEvent(chart, 'afterDrawSeriesLabels');
     // console.timeEnd('drawSeriesLabels');
 };
 

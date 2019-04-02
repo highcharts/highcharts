@@ -1,12 +1,12 @@
-/**
+/* *
  *
- * Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2019 Highsoft AS
  *
- * Boost module: stripped-down renderer for higher performance
+ *  Boost module: stripped-down renderer for higher performance
  *
- * License: highcharts.com/license
+ *  License: highcharts.com/license
  *
- */
+ * */
 
 'use strict';
 
@@ -51,9 +51,9 @@ function GLVertexBuffer(gl, shader, dataComponents /* , type */) {
 
     /*
      * Build the buffer
-      * @param dataIn {Array<float>} - a 0 padded array of indices
-      * @param attrib {String} - the name of the Attribute to bind the buffer to
-      * @param dataComponents {Integer} - the number of components per. indice
+     * @param dataIn {Array<float>} - a 0 padded array of indices
+     * @param attrib {String} - the name of the Attribute to bind the buffer to
+     * @param dataComponents {Integer} - the number of components per. indice
      */
     function build(dataIn, attrib, dataComponents) {
         var farray;

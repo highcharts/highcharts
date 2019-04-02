@@ -381,8 +381,6 @@ cuboidMethods = H.merge(element3dMethods, {
             this.attr({
                 zIndex: paths.zIndexes.group
             });
-        } else if (args.opacity) {
-            this.processParts(args, null, 'animate', duration, complete);
         } else {
             SVGElement.prototype.animate.call(this, args, duration, complete);
         }
@@ -399,9 +397,6 @@ cuboidMethods = H.merge(element3dMethods, {
         this.color = this.fill = fill;
 
         return this;
-    },
-    opacitySetter: function (opacity) {
-        return this.singleSetterForParts('opacity', opacity);
     }
 });
 

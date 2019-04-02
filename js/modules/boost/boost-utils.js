@@ -1,14 +1,14 @@
-/**
+/* *
  *
- * Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2019 Highsoft AS
  *
- * Boost module: stripped-down renderer for higher performance
+ *  Boost module: stripped-down renderer for higher performance
  *
- * License: highcharts.com/license
+ *  License: highcharts.com/license
  *
- * This files contains generic utility functions used by the boost module.
+ *  This files contains generic utility functions used by the boost module.
  *
- */
+ * */
 
 'use strict';
 

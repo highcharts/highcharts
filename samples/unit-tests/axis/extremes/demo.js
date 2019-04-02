@@ -5,7 +5,8 @@ QUnit.test('getSeriesExtremes', function (assert) {
             isXAxis: true,
             series: [{
                 visible: true,
-                options: {}
+                options: {},
+                getXExtremes: Highcharts.Series.prototype.getXExtremes
             }]
         };
 

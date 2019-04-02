@@ -1,0 +1,27 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<div id="container">
+    <div id="balanceChart"></div>
+    <div id="payBillForm">
+        <h2>Pay bill</h2>
+        <label>From account:
+            <select id="account-select">
+                <option value="checking" selected>Checking account</option>
+                <option value="savings">Savings account</option>
+            </select>
+        </label>
+        <label>Account balance: $<span id="account-balance">2900</span></label>
+        <label>To account:
+            <select>
+                <option selected>Gas bill</option>
+                <option>Water bill</option>
+                <option>Mortgage</option>
+            </select>
+        </label>
+        <label>Pay amount: $<input type="number" id="pay-amount"></input></label>
+        <button id="pay">Pay</button>
+        <button id="distribution">Show distribution</button>
+    </div>
+</div>

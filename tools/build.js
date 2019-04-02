@@ -18,17 +18,20 @@ const {
 } = require('highcharts-assembler/src/build.js');
 const {
     getOrderedDependencies,
+    getRequires,
     regexGetCapture
 } = require('highcharts-assembler/src/dependencies.js');
+const {
+    exists,
+    getFile
+} = require('highcharts-assembler/src/utilities.js');
 const {
     checkDependency
 } = require('./filesystem.js');
 const build = require('highcharts-assembler');
 
 // TODO move to a utils file
-const replaceAll = (str, search, replace) => str.split(search).join(replace);
 const isArray = x => Array.isArray(x);
-const isUndefined = x => typeof x === 'undefined';
 
 /**
  * Get the product version from build.properties.
@@ -38,68 +41,6 @@ const isUndefined = x => typeof x === 'undefined';
 const getProductVersion = () => {
     const properties = readFileSync('./build.properties', 'utf8');
     return regexGetCapture(/product\.version=(.+)/, properties);
-};
-
-/**
- * Returns fileOptions for the build script
- * @todo Move this functionality to the build script,
- *   and reuse it on github.highcharts.com
- * @return {Object} Object containing all fileOptions
- */
-const getFileOptions = files => {
-    const highchartsFiles = replaceAll(
-        getOrderedDependencies('js/masters/highcharts.src.js')
-            .map(path => relative('js', path))
-            .join('|'),
-        sep,
-        `\\${sep}`
-    );
-    // Modules should not be standalone, and they should exclude all parts files.
-    const fileOptions = files
-        .reduce((obj, file) => {
-            if (file.indexOf('modules') > -1 ||
-                file.indexOf('themes') > -1 ||
-                file.indexOf('indicators') > -1
-            ) {
-                obj[file] = {
-                    exclude: new RegExp(highchartsFiles),
-                    umd: false
-                };
-            }
-            return obj;
-        }, {});
-
-    /**
-     * Special cases
-     * solid-gauge should also exclude gauge-series
-     * highcharts-more and highcharts-3d is also not standalone.
-     */
-    if (fileOptions['modules/solid-gauge.src.js']) {
-        fileOptions['modules/solid-gauge.src.js'].exclude = new RegExp([highchartsFiles, 'GaugeSeries\.js$'].join('|'));
-    }
-    if (fileOptions['modules/map.src.js']) {
-        fileOptions['modules/map.src.js'].product = 'Highmaps';
-    }
-    if (fileOptions['modules/map-parser.src.js']) {
-        fileOptions['modules/map-parser.src.js'].product = 'Highmaps';
-    }
-    Object.assign(fileOptions, {
-        'highcharts-more.src.js': {
-            exclude: new RegExp(highchartsFiles),
-            umd: false
-        },
-        'highcharts-3d.src.js': {
-            exclude: new RegExp(highchartsFiles),
-            umd: false
-        },
-        'highmaps.src.js': {
-            product: 'Highmaps'
-        },
-        'highstock.src.js': {
-            product: 'Highstock'
-        }
-    });
-    return fileOptions;
 };
 
 const getBuildOptions = input => {
@@ -115,7 +56,6 @@ const getBuildOptions = input => {
             getFilesInFolder(base, true)
     );
     const type = ['classic'];
-    const fileOptions = getFileOptions(files);
     const mapTypeToSource = {
         classic: './code/es-modules',
         css: './code/js/es-modules'
@@ -123,7 +63,6 @@ const getBuildOptions = input => {
     return {
         base,
         debug,
-        fileOptions,
         files,
         output,
         type,
@@ -138,25 +77,27 @@ const scripts = params => {
     return build(options);
 };
 
+// Copy from assembler. TODO: Load from assembler when it has been updated.
+const getExcludedFilenames = (requires, base) => requires
+    .reduce((arr, name) => {
+        const filePath = join(base, `${name.replace('highcharts/', '')}.src.js`)
+        const dependencies = exists(filePath) ?
+            getOrderedDependencies(filePath).map(str => resolve(str)) :
+            [];
+        return arr.concat(dependencies);
+    },
+    []);
 
-const getListOfDependencies = (files, fileOptions, pathSource) => {
+const getListOfDependencies = (files, pathSource) => {
     const dependencyList = {};
     files.forEach(filename => {
-        const options = fileOptions[filename];
-        const exclude = (
-            !isUndefined(options) && !isUndefined(options.exclude) ?
-                options.exclude :
-                false
-        );
-        const pathFile = join(pathSource, 'masters', filename);
+        const base = join(pathSource, 'masters');
+        const pathFile = join(base, filename);
+        const contentEntry = getFile(pathFile);
+        const requires = getRequires(contentEntry);
+        const excludes = getExcludedFilenames(requires, base);
         const list = getOrderedDependencies(pathFile)
-            .filter(pathModule => {
-                let result = true;
-                if (exclude) {
-                    result = !exclude.test(pathModule);
-                }
-                return result;
-            })
+            .filter(pathModule => !excludes.includes(resolve(pathModule)))
             .map(str => resolve(str));
         dependencyList[pathFile] = list;
     });
@@ -269,7 +210,6 @@ const getBuildScripts = params => {
     const {
         files,
         type: types,
-        fileOptions,
         mapTypeToSource
     } = options;
     const result = {
@@ -285,7 +225,6 @@ const getBuildScripts = params => {
         const fn = event => {
             const dependencies = getListOfDependencies(
                 files,
-                fileOptions,
                 pathSource
             );
             return watchESModules(
@@ -303,7 +242,6 @@ const getBuildScripts = params => {
 
 module.exports = {
     getBuildScripts,
-    getFileOptions,
     getProductVersion,
     scripts
 };

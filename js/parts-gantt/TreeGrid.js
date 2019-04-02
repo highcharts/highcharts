@@ -466,7 +466,7 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
 
 /**
  * Builds the tree of categories and calculates its positions.
- *
+ * @private
  * @param {object} e Event object
  * @param {object} e.target The chart instance which the event was fired on.
  * @param {object[]} e.target.axes The axes of the chart.
@@ -587,6 +587,8 @@ override(GridAxis.prototype, {
                     * @type      {Array<*>}
                     * @product   gantt
                     * @apioption yAxis.labels.levels
+                    *
+                    * @private
                     */
                     levels: [{
                         /**
@@ -598,6 +600,8 @@ override(GridAxis.prototype, {
                         * @type      {number}
                         * @product   gantt
                         * @apioption yAxis.labels.levels.level
+                        *
+                        * @private
                         */
                         level: undefined
                     }, {
@@ -606,6 +610,8 @@ override(GridAxis.prototype, {
                          * @type      {Highcharts.CSSObject}
                          * @product   gantt
                          * @apioption yAxis.labels.levels.style
+                         *
+                         * @private
                          */
                         style: {
                             /** @ignore-option */
@@ -619,6 +625,8 @@ override(GridAxis.prototype, {
                      *
                      * @product      gantt
                      * @optionparent yAxis.labels.symbol
+                     *
+                     * @private
                      */
                     symbol: {
                         /**
@@ -626,6 +634,8 @@ override(GridAxis.prototype, {
                          * the `Highcharts.Renderer.symbols` collection.
                          *
                          * @type {Highcharts.SymbolKeyValue}
+                         *
+                         * @private
                          */
                         type: 'triangle',
                         x: -5,
@@ -915,7 +925,7 @@ override(GridAxisTick.prototype, {
     }
 });
 
-extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */{
+extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */ {
 
     /**
      * Collapse the grid cell. Used when axis is of type treegrid.

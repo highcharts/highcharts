@@ -564,6 +564,12 @@ extend(ColorAxis.prototype, {
         });
     },
 
+    // Define hasData function for ColorAxis.
+    // Returns true if the series has points at all.
+    hasData: function () {
+        return !!(this.tickPositions && this.tickPositions.length);
+    },
+
     /**
      * Override so that ticks are not added in data class axes (#6914)
      *

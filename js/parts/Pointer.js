@@ -531,6 +531,7 @@ Highcharts.Pointer.prototype = {
                 shared,
                 e
             ),
+            activeSeries = [],
             useSharedTooltip,
             followPointer,
             anchor,
@@ -559,14 +560,28 @@ Highcharts.Pointer.prototype = {
                     p.setState();
                 }
             });
+
+            // Set normal state to previous series
+            if (chart.hoverSeries !== hoverSeries) {
+                hoverSeries.onMouseOver();
+            }
+
+            // Set inactive state for all points
+            activeSeries = pointer.getActiveSeries(points);
+
+            chart.series.forEach(function (inactiveSeries) {
+                if (
+                    inactiveSeries.options.inactiveOtherPoints ||
+                    activeSeries.indexOf(inactiveSeries) === -1
+                ) {
+                    inactiveSeries.setState('inactive', true);
+                }
+            });
+
             // Do mouseover on all points (#3919, #3985, #4410, #5622)
             (points || []).forEach(function (p) {
                 p.setState('hover');
             });
-            // set normal state to previous series
-            if (chart.hoverSeries !== hoverSeries) {
-                hoverSeries.onMouseOver();
-            }
 
             // If tracking is on series in stead of on each point,
             // fire mouseOver on hover point. // #4448
@@ -640,6 +655,52 @@ Highcharts.Pointer.prototype = {
                 axis.hideCrosshair();
             }
         });
+    },
+
+    /**
+     * Get currently active series, in opposite to `inactive` series.
+     * Active series includes also it's parents/childs (via linkedTo) option
+     * and navigator series
+     *
+     * @function Highcharts.Pointer#getActiveSeries
+     *
+     * @private
+     *
+     * @param {Array<Highcharts.Point>} points
+     *        Currently hovered points
+     *
+     * @return {Array<Highcharts.Series>}
+     *         Array of series
+     */
+    getActiveSeries: function (points) {
+        var activeSeries = [],
+            series;
+
+        (points || []).forEach(function (item) {
+            series = item.series;
+
+            // Include itself
+            activeSeries.push(series);
+
+            // Include parent series
+            if (series.linkedParent) {
+                activeSeries.push(series.linkedParent);
+            }
+
+            // Include all child series
+            if (series.linkedSeries) {
+                activeSeries = activeSeries.concat(
+                    series.linkedSeries
+                );
+            }
+
+            // Include navigator series
+            if (series.navigatorSeries) {
+                activeSeries.push(series.navigatorSeries);
+            }
+        });
+
+        return activeSeries;
     },
 
     /**

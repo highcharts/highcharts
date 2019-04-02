@@ -1,4 +1,3 @@
-
 QUnit.test('Exporting region has ARIA markup', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [{
@@ -12,41 +11,14 @@ QUnit.test('Exporting region has ARIA markup', function (assert) {
                 }]
             }
         }),
-        exportGroup = chart.exportingGroup;
+        exportGroup = chart.accessibility.components.chartMenu.exportProxyGroup;
 
     assert.ok(
-        exportGroup.element.getAttribute('aria-label'),
+        exportGroup.getAttribute('aria-label'),
         'There is aria label on the exporting group'
     );
     assert.ok(
-        exportGroup.element.firstChild.getAttribute('aria-label'),
+        exportGroup.firstChild.getAttribute('aria-label'),
         'There is aria label on the exporting group child'
-    );
-    assert.ok(
-        parseFloat(exportGroup.element.getAttribute('data-z-index')) >
-        parseFloat(
-            chart.yAxis[0].plotLinesAndBands[0].svgElem
-                .parentGroup.element.getAttribute('data-z-index')
-        ),
-        'Z index of export group is above plot bands'
-    );
-
-    chart.update({
-        yAxis: {
-            plotBands: [{
-                from: 1,
-                to: 2,
-                color: 'red'
-            }]
-        }
-    });
-
-    assert.ok(
-        parseFloat(exportGroup.element.getAttribute('data-z-index')) >
-        parseFloat(
-            chart.yAxis[0].plotLinesAndBands[0].svgElem
-                .parentGroup.element.getAttribute('data-z-index')
-        ),
-        'Z index of export group is above plot bands after update'
     );
 });

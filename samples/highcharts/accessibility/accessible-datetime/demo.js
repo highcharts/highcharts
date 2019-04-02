@@ -1,7 +1,9 @@
 Highcharts.chart('container', {
-    chart: {
-        zoomType: 'x',
+    accessibility: {
         description: 'Random data on a date axis.'
+    },
+    chart: {
+        zoomType: 'x'
     },
     xAxis: {
         type: 'datetime',

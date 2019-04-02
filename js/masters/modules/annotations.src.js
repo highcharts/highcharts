@@ -1,5 +1,8 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/annotations
+ * @requires highcharts
+ *
  * Annotations module
  *
  * (c) 2009-2019 Torstein Honsi
