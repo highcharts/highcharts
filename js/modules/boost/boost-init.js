@@ -136,6 +136,12 @@ function init() {
             // If we're rendering per. series we should create the marker groups
             // as usual.
             if (!chart.isChartSeriesBoosting()) {
+                // If all series were boosting, but are not anymore
+                // restore private markerGroup
+                if (this.markerGroup === chart.markerGroup) {
+                    this.markerGroup = undefined;
+                }
+
                 this.markerGroup = series.plotGroup(
                     'markerGroup',
                     'markers',
@@ -144,6 +150,14 @@ function init() {
                     chart.seriesGroup
                 );
             } else {
+                // If series has a private markeGroup, remove that
+                // and use common markerGroup
+                if (
+                    this.markerGroup &&
+                    this.markerGroup !== chart.markerGroup
+                ) {
+                    this.markerGroup.destroy();
+                }
                 // Use a single group for the markers
                 this.markerGroup = chart.markerGroup;
 

@@ -42,3 +42,26 @@ QUnit.test('Boosted series show/hide', function (assert) {
     );
 
 });
+
+QUnit.test('Boosted and not boosted series - visibility', function (assert) {
+    var chart = Highcharts.chart('container', {
+            series: [{
+                boostThreshold: 1000,
+                data: [10, 3]
+            }, {
+                boostThreshold: 1,
+                data: [5, 10]
+            }]
+        }),
+        series = chart.series[0];
+
+    series.hide();
+    series.show();
+    series.hide();
+
+    assert.strictEqual(
+        series.markerGroup.attr('visibility'),
+        'hidden',
+        'Markers are hidden altogether with series even in the not boosted series (#10013).'
+    );
+});
