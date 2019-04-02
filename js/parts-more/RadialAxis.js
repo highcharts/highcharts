@@ -177,10 +177,10 @@ radialAxisMixin = {
     },
 
     /* *
-        * Override setAxisTranslation by setting the translation to the
-        * difference in rotation. This allows the translate method to return
-        * angle for any given value.
-        */
+     * Override setAxisTranslation by setting the translation to the
+     * difference in rotation. This allows the translate method to return
+     * angle for any given value.
+     */
     setAxisTranslation: function () {
 
         // Call uber method
@@ -212,10 +212,10 @@ radialAxisMixin = {
     },
 
     /* *
-        * In case of auto connect, add one closestPointRange to the max value
-        * right before tickPositions are computed, so that ticks will extend
-        * passed the real max.
-        */
+     * In case of auto connect, add one closestPointRange to the max value
+     * right before tickPositions are computed, so that ticks will extend
+     * passed the real max.
+     */
     beforeSetTickPositions: function () {
         // If autoConnect is true, polygonal grid lines are connected, and
         // one closestPointRange is added to the X axis to prevent the last
@@ -238,10 +238,10 @@ radialAxisMixin = {
     },
 
     /* *
-        * Override the setAxisSize method to use the arc's circumference as
-        * length. This allows tickPixelInterval to apply to pixel lengths along
-        * the perimeter
-        */
+     * Override the setAxisSize method to use the arc's circumference as
+     * length. This allows tickPixelInterval to apply to pixel lengths along
+     * the perimeter
+     */
     setAxisSize: function () {
 
         axisProto.setAxisSize.call(this);
@@ -265,9 +265,9 @@ radialAxisMixin = {
     },
 
     /* *
-        * Returns the x, y coordinate of a point given by a value and a pixel
-        * distance from center
-        */
+     * Returns the x, y coordinate of a point given by a value and a pixel
+     * distance from center
+     */
     getPosition: function (value, length) {
         return this.postTranslate(
             this.isCircular ?
@@ -281,9 +281,9 @@ radialAxisMixin = {
     },
 
     /* *
-        * Translate from intermediate plotX (angle), plotY (axis.len - radius)
-        * to final chart coordinates.
-        */
+     * Translate from intermediate plotX (angle), plotY (axis.len - radius)
+     * to final chart coordinates.
+     */
     postTranslate: function (angle, radius) {
 
         var chart = this.chart,
@@ -299,8 +299,8 @@ radialAxisMixin = {
     },
 
     /* *
-        * Find the path for plot bands along the radial axis
-        */
+     * Find the path for plot bands along the radial axis
+     */
     getPlotBandPath: function (from, to, options) {
         var center = this.center,
             startAngleRad = this.startAngleRad,
@@ -406,8 +406,8 @@ radialAxisMixin = {
     },
 
     /* *
-        * Find the path for plot lines perpendicular to the radial axis.
-        */
+     * Find the path for plot lines perpendicular to the radial axis.
+     */
     getPlotLinePath: function (value, reverse) {
         var axis = this,
             center = axis.center,
@@ -466,8 +466,8 @@ radialAxisMixin = {
     },
 
     /* *
-        * Find the position for the axis title, by default inside the gauge
-        */
+     * Find the position for the axis title, by default inside the gauge
+     */
     getTitlePosition: function () {
         var center = this.center,
             chart = this.chart,

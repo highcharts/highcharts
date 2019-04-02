@@ -455,8 +455,8 @@ if (seriesTypes.column) {
     };
 
     /**
-    * Define the animate method for columnseries
-    */
+     * Define the animate method for columnseries
+     */
     wrap(colProto, 'animate', polarAnimate);
 
 
