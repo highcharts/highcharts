@@ -924,6 +924,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         if (redraw) {
             chart.redraw(animation); // Animation is set anyway on redraw, #5665
         }
+        return point;
     },
 
     /**
