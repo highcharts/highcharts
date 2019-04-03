@@ -64,7 +64,7 @@ var derivedSeriesMixin = {
         var chart = this.chart,
             baseSeriesOptions = this.options.baseSeries,
             baseSeries =
-        baseSeriesOptions &&
+        H.defined(baseSeriesOptions) &&
         (chart.series[baseSeriesOptions] || chart.get(baseSeriesOptions));
 
         this.baseSeries = baseSeries || null;
