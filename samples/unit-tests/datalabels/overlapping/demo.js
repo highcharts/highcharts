@@ -99,7 +99,7 @@ QUnit.test(
         var chart = Highcharts.chart('container', {
             chart: {
                 type: 'bar',
-                width: 570
+                width: 530
             },
             yAxis: {
                 min: -10,
