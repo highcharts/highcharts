@@ -19,7 +19,7 @@ $(function () {
             series: [{
             }]
         });
-        
+
         assert.strictEqual(
             chart.xAxis[0].plotLinesAndBands[1].svgElem.d.split(' ')[1] !== chart.xAxis[0].plotLinesAndBands[1].svgElem.d.split(' ')[6],
             true,
