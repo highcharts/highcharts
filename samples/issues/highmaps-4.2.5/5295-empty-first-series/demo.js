@@ -6,7 +6,7 @@ $(function () {
                 minColor: "#EFEFFF",
                 maxColor: "#102D4C"
             },
-            series : [{}, {
+            series: [{}, {
                 data: [{
                     "hc-key": "au-nt",
                     "value": 0
