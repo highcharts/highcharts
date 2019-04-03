@@ -12,15 +12,15 @@ QUnit.test(
                 },
                 series: [{
                     data: [
-                    [0, 1],
-                    [1, 1],
-                    [2, 0]
+                        [0, 1],
+                        [1, 1],
+                        [2, 0]
                     ]
                 }, {
                     data: [
-                    [0, 1],
-                    [1, 2],
-                    [2, 0.5]
+                        [0, 1],
+                        [1, 2],
+                        [2, 0.5]
                     ]
                 }]
             }),
@@ -86,8 +86,8 @@ QUnit.test(
         chart.xAxis[0].setExtremes(0.5);
 
         assert.strictEqual(
-            chart.series[0].points[3].dataLabel.visibility === 'hidden',
-            true,
+            chart.series[0].points[3].dataLabel.visibility,
+            'hidden',
             'The dataLabel after zoom is hidden (#7815).'
         );
     }
@@ -128,8 +128,8 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.series[0].points[0].dataLabel.visibility === 'hidden',
-            true,
+            chart.series[0].points[0].dataLabel.visibility,
+            'hidden',
             'Overlapping dataLabel is hidden (#9119).'
         );
     }
