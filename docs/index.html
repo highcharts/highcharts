@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DocExtractor - Extract and convert joomla docs</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="Extract and convert joomla docs">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+
+  <style>
+    .hcc-side-header {
+      height: 80px;
+      width: 100%;
+      position: fixed;
+      left: 0px;
+      top: 0px;
+      text-align:right;
+      line-height: 80px;
+      padding-right:20px;
+      font-size:24px;
+      color: #FFF;
+      background-color:#333;
+      background-image:url('https://www.highcharts.com/media/templates/highsoft_2015/images/logo.svg');
+      background-repeat: no-repeat;
+      background-size: auto 100%;
+      background-position: left center;
+      padding-right: 130px;
+    }
+    .hcc-side-header-placeholder {
+      height: 100px;
+      width: 100%;
+    }
+    .hcc-box-size {
+      box-sizing: border-box !important;
+      -moz-box-sizing: border-box !important;
+      -webkit-box-sizing: border-box !important;
+    }
+  </style>
+
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+
+    function pageFooter(hook) {
+      var footer = [
+        '<hr/>',
+        '<footer>',
+        '<span>Copyright &copy; 2018, Highsoft AS</span>',
+        '</footer>'
+      ].join('');
+      hook.afterEach(function(html) {
+        return html + footer;
+      });
+    }
+
+    function addTopMargin(hook) {
+      hook.mounted(function(html) {
+        var aside = Docsify.dom.find('aside');
+        aside.style.marginTop = '80px';
+      });
+    }
+
+    window.$docsify = {
+      loadSidebar: true,
+      name: 'Highcharts Documentation',
+      repo: 'https://github.com/highcharts/highcharts/',
+      plugins: [
+        addTopMargin,
+        pageFooter
+      ]
+    }
+  </script>
+  <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+    <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+
+  <div class="hcc-side-header">Documentation</div>
+</body>
+</html>
