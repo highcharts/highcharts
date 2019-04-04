@@ -1,4 +1,3 @@
-
 QUnit.test(
     'Update colorAxis through chart.update (#3936)',
     function (assert) {
@@ -85,9 +84,9 @@ QUnit.test('Update with data classes (#6632)', function (assert) {
     var c = Highcharts.mapChart('container', {
         colorAxis: {
             dataClasses: [{
-                "to": 3
+                to: 3
             }, {
-                "from": 3
+                from: 3
             }]
         },
         series: [{
@@ -110,14 +109,14 @@ QUnit.test('Update with data classes (#6632)', function (assert) {
     c.update({
         legend: {
             title: {
-                "text": "Individuals per km²"
+                text: "Individuals per km²"
             }
         },
         colorAxis: {
             dataClasses: [{
-                "to": 1
+                to: 1
             }, {
-                "from": 1
+                from: 1
             }]
         }
     });

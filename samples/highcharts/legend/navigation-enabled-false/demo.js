@@ -1,5 +1,3 @@
-
-
 Highcharts.setOptions({ // Apply the exporting height to print as well
     chart: {
         events: {

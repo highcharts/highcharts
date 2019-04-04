@@ -1,4 +1,3 @@
-
 QUnit.test('Test algorithm on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
@@ -48,11 +47,11 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 
     chart.series[0].setData([
-                [62.1, 60.00, 57.97, 58.48],
-                [62.1, 59.00, 58.02, 58.24],
-                [62.1, 59.07, 57.48, 58.69],
-                [62.1, 59.22, 58.30, 58.65],
-                [62.1, 58.75, 57.83, 58.47]
+        [62.1, 60.00, 57.97, 58.48],
+        [62.1, 59.00, 58.02, 58.24],
+        [62.1, 59.07, 57.48, 58.69],
+        [62.1, 59.22, 58.30, 58.65],
+        [62.1, 58.75, 57.83, 58.47]
     ], false);
 
     chart.series[1].setData([17705, 7259, 10475, 5204, 3423], false);

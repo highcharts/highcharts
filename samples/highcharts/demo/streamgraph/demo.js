@@ -133,223 +133,223 @@ Highcharts.chart('container', {
 
     // Data parsed with olympic-medals.node.js
     series: [{
-        "name": "Finland",
-        "data": [
+        name: "Finland",
+        data: [
             0, 11, 4, 3, 6, 0, 0, 6, 9, 7, 8, 10, 5, 5, 7, 9, 13, 7, 7, 6, 12, 7, 9, 5, 5
         ]
     }, {
-        "name": "Austria",
-        "data": [
+        name: "Austria",
+        data: [
             0, 3, 4, 2, 4, 0, 0, 8, 8, 11, 6, 12, 11, 5, 6, 7, 1, 10, 21, 9, 17, 17, 23, 16, 17
         ]
     }, {
-        "name": "Sweden",
-        "data": [
+        name: "Sweden",
+        data: [
             0, 2, 5, 3, 7, 0, 0, 10, 4, 10, 7, 7, 8, 4, 2, 4, 8, 6, 4, 3, 3, 7, 14, 11, 15
         ]
     }, {
-        "name": "Norway",
-        "data": [
+        name: "Norway",
+        data: [
             0, 17, 15, 10, 15, 0, 0, 10, 16, 4, 6, 15, 14, 12, 7, 10, 9, 5, 20, 26, 25, 25, 19, 23, 26
         ]
     }, {
-        "name": "U.S.",
-        "data": [
+        name: "U.S.",
+        data: [
             0, 4, 6, 12, 4, 0, 0, 9, 11, 7, 10, 7, 7, 8, 10, 12, 8, 6, 11, 13, 13, 34, 25, 37, 28
         ]
     }, {
-        "name": "East Germany",
-        "data": [
+        name: "East Germany",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 14, 19, 23, 24, 25, 0, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "West Germany",
-        "data": [
+        name: "West Germany",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 5, 10, 5, 4, 8, 0, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "Germany",
-        "data": [
+        name: "Germany",
+        data: [
             0, 0, 1, 2, 6, 0, 0, 0, 7, 2, 8, 9, 0, 0, 0, 0, 0, 0, 26, 24, 29, 36, 29, 30, 19
         ]
     }, {
-        "name": "Netherlands",
-        "data": [
+        name: "Netherlands",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 2, 2, 9, 9, 6, 4, 0, 7, 4, 4, 11, 8, 9, 8, 24
         ]
     }, {
-        "name": "Italy",
-        "data": [
+        name: "Italy",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 1, 4, 4, 5, 4, 2, 2, 5, 14, 20, 10, 13, 11, 5, 8
         ]
     }, {
-        "name": "Canada",
-        "data": [
+        name: "Canada",
+        data: [
             0, 1, 1, 7, 1, 0, 0, 3, 2, 3, 4, 3, 3, 1, 3, 2, 4, 5, 7, 13, 15, 17, 24, 26, 25
         ]
     }, {
-        "name": "Switzerland",
-        "data": [
+        name: "Switzerland",
+        data: [
             0, 3, 1, 1, 3, 0, 0, 10, 2, 6, 2, 0, 6, 10, 5, 5, 5, 15, 3, 9, 7, 11, 14, 9, 11
         ]
     }, {
-        "name": "Great Britain",
-        "data": [
+        name: "Great Britain",
+        data: [
             0, 4, 1, 0, 3, 0, 0, 2, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 2, 1, 2, 1, 1, 4
         ]
     }, {
-        "name": "France",
-        "data": [
+        name: "France",
+        data: [
             0, 3, 1, 1, 1, 0, 0, 5, 1, 0, 3, 7, 9, 3, 1, 1, 3, 2, 9, 5, 8, 11, 9, 11, 15
         ]
     }, {
-        "name": "Hungary",
-        "data": [
+        name: "Hungary",
+        data: [
             0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "Unified Team",
-        "data": [
+        name: "Unified Team",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "Soviet Union",
-        "data": [
+        name: "Soviet Union",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 21, 25, 13, 16, 27, 22, 25, 29, 0, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "Russia",
-        "data": [
+        name: "Russia",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 18, 13, 22, 15, 33
         ]
     }, {
-        "name": "Japan",
-        "data": [
+        name: "Japan",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 1, 1, 1, 7, 5, 10, 2, 1, 5, 8
         ]
     }, {
-        "name": "Czechoslovakia",
-        "data": [
+        name: "Czechoslovakia",
+        data: [
             0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 4, 3, 1, 1, 6, 3, 3, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "Poland",
-        "data": [
+        name: "Poland",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 2, 6, 6
         ]
     }, {
-        "name": "Spain",
-        "data": [
+        name: "Spain",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "China",
-        "data": [
+        name: "China",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 8, 8, 11, 11, 9
         ]
     }, {
-        "name": "South Korea",
-        "data": [
+        name: "South Korea",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 6, 6, 4, 11, 14, 8
         ]
     }, {
-        "name": "Czech Republic",
-        "data": [
+        name: "Czech Republic",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 4, 6, 8
         ]
     }, {
-        "name": "Belarus",
-        "data": [
+        name: "Belarus",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 1, 1, 3, 6
         ]
     }, {
-        "name": "Kazakhstan",
-        "data": [
+        name: "Kazakhstan",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 0, 0, 1, 1
         ]
     }, {
-        "name": "Bulgaria",
-        "data": [
+        name: "Bulgaria",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 3, 1, 0, 0
         ]
     }, {
-        "name": "Denmark",
-        "data": [
+        name: "Denmark",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0
         ]
     }, {
-        "name": "Ukraine",
-        "data": [
+        name: "Ukraine",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 2, 0, 2
         ]
     }, {
-        "name": "Australia",
-        "data": [
+        name: "Australia",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3
         ]
     }, {
-        "name": "Belgium",
-        "data": [
+        name: "Belgium",
+        data: [
             0, 1, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0
         ]
     }, {
-        "name": "Romania",
-        "data": [
+        name: "Romania",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "Liechtenstein",
-        "data": [
+        name: "Liechtenstein",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "Yugoslavia",
-        "data": [
+        name: "Yugoslavia",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "Luxembourg",
-        "data": [
+        name: "Luxembourg",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "New Zealand",
-        "data": [
+        name: "New Zealand",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "North Korea",
-        "data": [
+        name: "North Korea",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0
         ]
     }, {
-        "name": "Slovakia",
-        "data": [
+        name: "Slovakia",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 1
         ]
     }, {
-        "name": "Croatia",
-        "data": [
+        name: "Croatia",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 3, 3, 1
         ]
     }, {
-        "name": "Slovenia",
-        "data": [
+        name: "Slovenia",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 0, 3, 8
         ]
     }, {
-        "name": "Latvia",
-        "data": [
+        name: "Latvia",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 4
         ]
     }, {
-        "name": "Estonia",
-        "data": [
+        name: "Estonia",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 1, 0
         ]
     }, {
-        "name": "Uzbekistan",
-        "data": [
+        name: "Uzbekistan",
+        data: [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
         ]
     }],

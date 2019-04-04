@@ -14,14 +14,14 @@ $(function () {
         }
 
         $('#container').highcharts({
-            "legend": {
-                "enabled": false
+            legend: {
+                enabled: false
             },
-            "xAxis": {
-                "title": {
-                    "enabled": false
+            xAxis: {
+                title: {
+                    enabled: false
                 },
-                "categories": [
+                categories: [
                     "Not enough to choose from",
                     "Can't edit colors",
                     "I like it so far",
@@ -41,19 +41,19 @@ $(function () {
                     "I think it is great - so easy to use",
                     "I can't find these. Where are they?"]
             },
-            "yAxis": [{
-                "type": "linear",
-                "title": {
-                    "enabled": false
+            yAxis: [{
+                type: "linear",
+                title: {
+                    enabled: false
                 }
             }],
-            "series": [{
-                "animation": false,
-                "type": "bar",
-                "dataLabels": {
+            series: [{
+                animation: false,
+                type: "bar",
+                dataLabels: {
                     enabled: labelsOn
                 },
-                "data": [
+                data: [
                     [
                         "Not enough to choose from",
                         21],

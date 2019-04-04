@@ -1,4 +1,3 @@
-
 QUnit.test('Test Williams %R calculations on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {

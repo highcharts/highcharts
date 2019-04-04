@@ -1,4 +1,3 @@
-
 QUnit.test('Data labels, useHTML and defer', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{

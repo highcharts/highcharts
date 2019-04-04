@@ -1,4 +1,3 @@
-
 /**
  * Add custom date formats
  */

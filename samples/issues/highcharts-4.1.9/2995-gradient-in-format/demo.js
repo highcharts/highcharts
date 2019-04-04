@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("Preserve gradients in format strings", function (assert) {
         var chart = $('#container').highcharts({

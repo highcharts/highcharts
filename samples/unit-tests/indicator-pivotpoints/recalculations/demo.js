@@ -1,4 +1,3 @@
-
 QUnit.test('Test Pivot points calculations on data updates.', function (assert) {
 
     var period = 3,

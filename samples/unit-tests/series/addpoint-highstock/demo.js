@@ -1,4 +1,3 @@
-
 QUnit.test('Add point without shift', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
@@ -79,17 +78,17 @@ QUnit.test('Add point without shift', function (assert) {
 
 QUnit.test('Add point with shift', function (assert) {
     var chart = Highcharts
-        .stockChart('container', {
-            chart: {
-                width: 800
-            },
-            rangeSelector: {
-                selected: 1
-            },
-            series: [{
-                data: usdeur.splice(0, 500)
-            }]
-        }),
+            .stockChart('container', {
+                chart: {
+                    width: 800
+                },
+                rangeSelector: {
+                    selected: 1
+                },
+                series: [{
+                    data: usdeur.splice(0, 500)
+                }]
+            }),
         maxX;
 
     function add100() {

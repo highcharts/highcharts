@@ -1,4 +1,3 @@
-
 var statusLines = 0,
     setStatus = function (status) {
         var statusField = document.getElementById('status');

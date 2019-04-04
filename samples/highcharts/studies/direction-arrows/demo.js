@@ -1,46 +1,44 @@
-
-
 // Prepare demo data
 var data = [
     {
         "hc-key": "au-nt",
-        "value": 0
+        value: 0
     },
     {
         "hc-key": "au-wa",
-        "value": 1
+        value: 1
     },
     {
         "hc-key": "au-ct",
-        "value": 2
+        value: 2
     },
     {
         "hc-key": "au-sa",
-        "value": 3
+        value: 3
     },
     {
         "hc-key": "au-ql",
-        "value": 4
+        value: 4
     },
     {
         "hc-key": "au-2557",
-        "value": 5
+        value: 5
     },
     {
         "hc-key": "au-ts",
-        "value": 6
+        value: 6
     },
     {
         "hc-key": "au-jb",
-        "value": 7
+        value: 7
     },
     {
         "hc-key": "au-ns",
-        "value": 8
+        value: 8
     },
     {
         "hc-key": "au-vi",
-        "value": 9
+        value: 9
     }
 ];
 

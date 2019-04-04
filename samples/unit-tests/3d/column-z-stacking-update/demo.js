@@ -1,4 +1,3 @@
-
 QUnit.test('Updating 3D columns with z stacking #4743', function (assert) {
     var point0,
         point1,
@@ -52,7 +51,6 @@ QUnit.test('Updating 3D columns with z stacking #4743', function (assert) {
         }, false);
     });
     chart.redraw();
-
 
 
     Highcharts.each(chart.series, function (s) {

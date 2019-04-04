@@ -13,19 +13,18 @@ $(function () {
         series: [{
             name: 'Series 1',
             data: [
-                [Date.UTC(1970, 0, 1), 10   ]
+                [Date.UTC(1970, 0, 1), 10]
             ]
         }, {
             name: 'Series 2',
             data: [
-                [Date.UTC(1970, 0, 1), 20   ]
+                [Date.UTC(1970, 0, 1), 20]
             ]
         }, {
             name: 'Series 3',
             data: [
-                [Date.UTC(1970, 0, 1), 30   ]
+                [Date.UTC(1970, 0, 1), 30]
             ]
         }]
     });
 });
-

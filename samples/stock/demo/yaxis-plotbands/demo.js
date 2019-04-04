@@ -1,4 +1,3 @@
-
 $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
 
     var startDate = new Date(data[data.length - 1][0]),

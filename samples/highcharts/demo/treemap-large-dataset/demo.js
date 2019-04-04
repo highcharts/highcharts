@@ -14,7 +14,7 @@ $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data
         causeName = {
             'Communicable & other Group I': 'Communicable diseases',
             'Noncommunicable diseases': 'Non-communicable diseases',
-            'Injuries': 'Injuries'
+            Injuries: 'Injuries'
         };
 
     for (region in data) {

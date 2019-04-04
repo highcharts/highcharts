@@ -6,7 +6,6 @@ mouse/touch event handler to bind the charts together.
 */
 
 
-
 /**
  * In order to synchronize tooltips and crosshairs, override the
  * built-in events with handlers defined on the parent element.

@@ -68,7 +68,7 @@ var options = {
         /**
          * Whether or not to add a shortcut button in the screen reader
          * information region to show the data table.
-         * @since next
+         * @since 7.1.0
          */
         addTableShortcut: true,
 
@@ -79,7 +79,7 @@ var options = {
          * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
          * @see [pointDateFormat](#accessibility.pointDateFormat)
-         * @since next
+         * @since 7.1.0
          */
         axisRangeDateFormat: '%Y-%m-%d %H:%M:%S',
 
@@ -101,7 +101,7 @@ var options = {
          *  - `one`: Adds a single landmark per chart.
          *  - `disabled`: No landmarks are added.
          *
-         * @since next
+         * @since 7.1.0
          * @validvalue ["all", "one", "disabled"]
          */
         landmarkVerbosity: 'all',
@@ -114,7 +114,7 @@ var options = {
          * [keyboardNavigation.order](#accessibility.keyboardNavigation.order)
          * for the keyboard navigation to be usable.
          *
-         * @since next
+         * @since 7.1.0
          * @type {object}
          * @sample highcharts/accessibility/custom-component
          *         Custom accessibility component
@@ -201,7 +201,7 @@ var options = {
          * [tooltip.valuePrefix](#tooltip.valuePrefix) if not defined.
          *
          * @type      {string}
-         * @since     next
+         * @since 7.1.0
          * @apioption accessibility.pointValuePrefix
          */
 
@@ -210,7 +210,7 @@ var options = {
          * [tooltip.valueSuffix](#tooltip.valueSuffix) if not defined.
          *
          * @type      {string}
-         * @since     next
+         * @since 7.1.0
          * @apioption accessibility.pointValueSuffix
          */
 
@@ -219,7 +219,7 @@ var options = {
          * [tooltip.valueDecimals](#tooltip.valueDecimals) if not defined.
          *
          * @type      {string}
-         * @since     next
+         * @since 7.1.0
          * @apioption accessibility.pointValueDecimals
          */
 
@@ -371,14 +371,14 @@ var options = {
              * `rangeSelector`, `chartMenu`, `legend`. In addition, any custom
              * components can be added here.
              *
-             * @since next
+             * @since 7.1.0
              */
             order: ['series', 'zoom', 'rangeSelector', 'chartMenu', 'legend'],
 
             /**
              * Whether or not to wrap around when reaching the end of arrow-key
              * navigation for an element in the chart.
-             * @since next
+             * @since 7.1.0
              */
             wrapAround: true
         },
@@ -392,7 +392,7 @@ var options = {
          * applications, consider making snapshots of the data accessible, and
          * do the announcements in batches.
          *
-         * @since next
+         * @since 7.1.0
          */
         announceNewData: {
             /**
@@ -451,7 +451,7 @@ var options = {
      * Provide a description of the data point, announced to screen readers.
      *
      * @type       {string}
-     * @since      next
+     * @since 7.1.0
      * @default    undefined
      * @apioption  series.line.data.accessibility.description
      */
@@ -462,7 +462,7 @@ var options = {
      * @requires module:modules/accessibility
      *
      * @type       {object}
-     * @since      next
+     * @since 7.1.0
      * @apioption  plotOptions.series.accessibility
      */
 
@@ -470,7 +470,7 @@ var options = {
      * Enable/disable accessibility functionality for a specific series.
      *
      * @type       {boolean}
-     * @since      next
+     * @since 7.1.0
      * @default    undefined
      * @apioption  plotOptions.series.accessibility.enabled
      */
@@ -479,7 +479,7 @@ var options = {
      * Provide a description of the series, announced to screen readers.
      *
      * @type       {string}
-     * @since      next
+     * @since 7.1.0
      * @default    undefined
      * @apioption  plotOptions.series.accessibility.description
      */
@@ -492,7 +492,7 @@ var options = {
      * @see [accessibility.pointDescriptionFormatter](#accessibility.pointDescriptionFormatter)
      *
      * @type      {Function}
-     * @since     next
+     * @since 7.1.0
      * @default   undefined
      * @apioption plotOptions.series.accessibility.pointDescriptionFormatter
      */
@@ -501,7 +501,7 @@ var options = {
      * Expose only the series element to screen readers, not its points.
      *
      * @type       {boolean}
-     * @since      next
+     * @since 7.1.0
      * @default    undefined
      * @apioption  plotOptions.series.accessibility.exposeAsGroupOnly
      */
@@ -510,7 +510,7 @@ var options = {
      * Keyboard navigation for a series
      *
      * @type       {object}
-     * @since      next
+     * @since 7.1.0
      * @apioption  plotOptions.series.accessibility.keyboardNavigation
      */
 
@@ -519,7 +519,7 @@ var options = {
      *
      * @type       {boolean}
      * @default    undefined
-     * @since      next
+     * @since 7.1.0
      * @apioption  plotOptions.series.accessibility.keyboardNavigation.enabled
      */
 
@@ -527,7 +527,7 @@ var options = {
      * Accessibility options for an axis. Requires the accessibility module.
      *
      * @requires module:modules/accessibility
-     * @since      next
+     * @since 7.1.0
      * @type       {object}
      * @apioption  xAxis.accessibility
      */
@@ -538,7 +538,7 @@ var options = {
      * x values are not exposed to screen readers for the individual data points
      * by default.
      *
-     * @since      next
+     * @since 7.1.0
      * @type       {boolean}
      * @default    undefined
      * @apioption  xAxis.accessibility.enabled
@@ -547,7 +547,7 @@ var options = {
     /**
      * Description for an axis to expose to screen reader users.
      *
-     * @since      next
+     * @since 7.1.0
      * @type       {string}
      * @default    undefined
      * @apioption  xAxis.accessibility.description
@@ -557,7 +557,7 @@ var options = {
      * Range description for an axis. Overrides the default range description.
      * Set to empty to disable range description for this axis.
      *
-     * @since      next
+     * @since 7.1.0
      * @type       {string}
      * @default    undefined
      * @apioption  xAxis.accessibility.rangeDescription
@@ -570,7 +570,7 @@ var options = {
          * module.
          *
          * @requires module:modules/accessibility
-         * @since next
+         * @since 7.1.0
          * @type {object}
          * @apioption legend.accessibility
          */
@@ -579,7 +579,7 @@ var options = {
             /**
              * Enable accessibility support for the legend.
              *
-             * @since next
+             * @since 7.1.0
              * @apioption legend.accessibility.enabled
              */
             enabled: true,
@@ -587,14 +587,14 @@ var options = {
             /**
              * Options for keyboard navigation for the legend.
              *
-             * @since next
+             * @since 7.1.0
              * @apioption legend.accessibility.keyboardNavigation
              */
             keyboardNavigation: {
                 /**
                  * Enable keyboard navigation for the legend.
                  *
-                 * @since next
+                 * @since 7.1.0
                  * @see [accessibility.keyboardNavigation](
                  *      #accessibility.keyboardNavigation.enabled)
                  * @apioption legend.accessibility.keyboardNavigation.enabled
@@ -610,7 +610,7 @@ var options = {
          * Accessibility module.
          *
          * @requires module:modules/accessibility
-         * @since next
+         * @since 7.1.0
          * @type {object}
          * @apioption exporting.accessibility
          */
@@ -618,7 +618,7 @@ var options = {
             /**
              * Enable accessibility support for the export menu.
              *
-             * @since next
+             * @since 7.1.0
              * @apioption exporting.accessibility.enabled
              */
             enabled: true

@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("Update crosshair's stroke-width after resize.", function (assert) {
         var chart = $("#container").highcharts({

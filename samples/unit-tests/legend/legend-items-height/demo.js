@@ -1,5 +1,3 @@
-
-
 QUnit.test(
     'Legend item should have positive height (#6519)',
     function (assert) {

@@ -1,5 +1,3 @@
-
-
 Highcharts.setOptions({
     lang: {
         numericSymbols: [' thousands', ' millions']

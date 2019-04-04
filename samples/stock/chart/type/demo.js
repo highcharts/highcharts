@@ -1,4 +1,3 @@
-
 Highcharts.stockChart('container', {
     title: {
         text: 'chart.type is set to \'areaspline\''

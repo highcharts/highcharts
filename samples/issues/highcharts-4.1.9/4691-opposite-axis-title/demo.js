@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Default alignment of opposite axis titles', function (assert) {
         var chart = $('#container').highcharts({

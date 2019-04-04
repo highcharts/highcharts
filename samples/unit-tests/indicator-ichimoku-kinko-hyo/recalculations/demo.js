@@ -1,4 +1,3 @@
-
 QUnit.test('Test algorithm on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
@@ -351,7 +350,6 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
             }
         }
     });
-
 
 
     assert.strictEqual(

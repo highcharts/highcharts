@@ -55,7 +55,6 @@ $(function () {
         }],
 
 
-
         plotOptions: {
             gauge: {
 

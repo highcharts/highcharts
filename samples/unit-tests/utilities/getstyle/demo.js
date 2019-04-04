@@ -1,6 +1,3 @@
-
-
-
 QUnit.test('Container with box-sizing', function (assert) {
 
     var div = document.createElement('div');

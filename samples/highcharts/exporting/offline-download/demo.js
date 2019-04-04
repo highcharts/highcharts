@@ -1,5 +1,3 @@
-
-
 /* Automate testing of module somewhat */
 
 var nav = Highcharts.win.navigator,
@@ -130,4 +128,3 @@ Highcharts.chart('container', {
     }]
 
 });
-

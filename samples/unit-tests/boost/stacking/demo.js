@@ -1,22 +1,22 @@
 QUnit.test('Stacked boost series with extremes', function (assert) {
 
     var chart = Highcharts.chart("container", {
-        "xAxis": {
-            "min": 0,
-            "max": 3
+        xAxis: {
+            min: 0,
+            max: 3
         },
-        "yAxis": [{
-            "min": 0,
-            "max": 10
+        yAxis: [{
+            min: 0,
+            max: 10
         }],
-        "plotOptions": {
-            "series": {
-                "boostThreshold": 1,
-                "stacking": 'normal'
+        plotOptions: {
+            series: {
+                boostThreshold: 1,
+                stacking: 'normal'
             }
         },
-        "series": [{
-            "data": [1, 4, 2, 5]
+        series: [{
+            data: [1, 4, 2, 5]
         }]
     });
 

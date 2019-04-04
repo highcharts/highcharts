@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Pie borderColor null', function (assert) {
         var chart = $("#container").highcharts({

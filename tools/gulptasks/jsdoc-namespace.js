@@ -11,9 +11,11 @@ const Path = require('path');
  *
  * */
 
+const LINT_DIRECTORY = Path.join('test', 'typescript-lint');
+
 const TREE_FILE = 'tree-namespace.json';
 
-const TSCONFIG_FILE = Path.join('test', 'typescript', 'tsconfig.json');
+const TSCONFIG_FILE = Path.join(LINT_DIRECTORY, 'tsconfig.json');
 
 const TARGET_DIRECTORIES = [
     'gantt',
@@ -41,21 +43,24 @@ const TARGET_DIRECTORIES = [
 function jsDocNamespace() {
 
     const FileSystem = require('../filesystem');
-    const Fs = require('fs');
+    const FS = require('fs');
     const jsdoc3 = require('gulp-jsdoc3');
     const LogLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
         const codeFiles = JSON
-            .parse(Fs.readFileSync(TSCONFIG_FILE)).files
-            .map(file => Path.join(Path.dirname(TSCONFIG_FILE), file))
+            .parse(FS.readFileSync(TSCONFIG_FILE)).files
+            .map(file => Path.normalize(
+                Path.join(Path.dirname(TSCONFIG_FILE), file)
+            ))
             .filter(file => (
-                file.indexOf('test') !== 0 &&
                 file.indexOf('global.d.ts') === -1 &&
                 file.indexOf('.src.d.ts') === -1
             ))
-            .map(file => file.replace(/.d.ts$/, '.src.js'));
+            .map(file => file.replace(
+                /.d.ts$/, '.src.js'
+            ));
 
         const gulpOptions = [codeFiles, { read: false }],
             jsdoc3Options = {

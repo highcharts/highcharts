@@ -563,7 +563,6 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
     });
 
 
-
     function test(type) {
         var axes,
             axis,

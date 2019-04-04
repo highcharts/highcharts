@@ -25,12 +25,12 @@
                         }
 
                         relations[key].attr({
-                            'd': [
+                            d: [
                                 'M', point.plotX, point.plotY,
                                 'L', connPoint.plotX, connPoint.plotY
                             ],
                             zIndex: 10,
-                            'stroke': series.color,
+                            stroke: series.color,
                             'stroke-width': H.pick(series.options.lineWidth, 2),
                             'marker-end': "url(#arrow-end)"
                             //'marker-start': "url(#arrow-start)"

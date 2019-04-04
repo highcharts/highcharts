@@ -1,4 +1,3 @@
-
 QUnit.test('NaN in graphs', function (assert) {
 
     var chart = Highcharts.chart('container', {

@@ -1,4 +1,3 @@
-
 /*
     Simple demo showing some interactivity options of Highcharts Gantt. More
     custom behavior can be added using event handlers and API calls. See

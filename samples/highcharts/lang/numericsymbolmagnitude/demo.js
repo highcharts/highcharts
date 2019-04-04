@@ -1,5 +1,3 @@
-
-
 Highcharts.setOptions({
     lang: {
         numericSymbols: ['万', '億'],

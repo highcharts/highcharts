@@ -1,5 +1,3 @@
-
-
 var gaugeOptions = {
 
     chart: {
@@ -140,5 +138,3 @@ setInterval(function () {
         point.update(newVal);
     }
 }, 2000);
-
-

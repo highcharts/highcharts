@@ -12,7 +12,7 @@ jQuery(function () {
                         enabled: true,
                         style: {
                             color: "blue",
-                            "fontSize": "13px"
+                            fontSize: "13px"
                         }
                     }
                 }
@@ -36,7 +36,7 @@ jQuery(function () {
                     dataLabels: {
                         backgroundColor: '#bebebe',
                         style: {
-                            "fontSize": "30px",
+                            fontSize: "30px",
                             color: "red"
                         }
                     }

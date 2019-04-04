@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Center the halo on the point', function (assert) {
         var chart,

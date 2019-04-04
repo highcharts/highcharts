@@ -1,5 +1,3 @@
-
-
 QUnit.test('Allow point select with 3D chart (#6094)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

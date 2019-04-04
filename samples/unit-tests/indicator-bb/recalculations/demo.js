@@ -1,4 +1,3 @@
-
 QUnit.test('Test BB-algorithm on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {

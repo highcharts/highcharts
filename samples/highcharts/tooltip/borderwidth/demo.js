@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'No borderWidth for tooltip, by setting this to zero'

@@ -38,7 +38,7 @@ QUnit.test('yAxis', function (assert) {
         assert.close(
             bbox.height,
             bboxReversed.height,
-            1,
+            2,
             'Reversed yAxis: Point ' + point.name +
                 ' has correct height when (#3777).'
         );

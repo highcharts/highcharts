@@ -141,4 +141,3 @@ QUnit.test("Treemap: data label exceeds point's boundaries (#8160)", function (a
 
 
 });
-

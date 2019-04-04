@@ -356,7 +356,7 @@ QUnit.test('Tickinterval categories (#3202)', function (assert) {
             (point1.left + (point1Box.width / 2)),
             {
                 Chrome: 0.51,
-                Edge: 0,
+                Edge: 0.01,
                 Firefox: 3,
                 MSIE: 0.01,
                 Safari: 1.51
@@ -369,7 +369,7 @@ QUnit.test('Tickinterval categories (#3202)', function (assert) {
             (point2.left + (point2Box.width / 2)),
             {
                 Chrome: 0.51,
-                Edge: 0,
+                Edge: 0.01,
                 Firefox: 3,
                 MSIE: 0.01,
                 Safari: 0.51

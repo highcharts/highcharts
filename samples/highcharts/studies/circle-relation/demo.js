@@ -1,5 +1,3 @@
-
-
 (function (H) {
     var defaultOptions = H.getOptions(),
         extendClass = H.extendClass,

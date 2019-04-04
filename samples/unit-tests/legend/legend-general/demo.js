@@ -1,5 +1,3 @@
-
-
 QUnit.test('Legend object set to false (#5215)', function (assert) {
 
     // We only expect it to render without a JS error, that's all
@@ -96,7 +94,6 @@ QUnit.test('Legend resize', function (assert) {
         done();
     }, 50);
 });
-
 
 
 QUnit.test('Legend redraws', function (assert) {

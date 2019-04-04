@@ -653,5 +653,3 @@ Highcharts.chart('container', {
         showInLegend: true
     }]
 });
-
-

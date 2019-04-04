@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'Browser market shares at a specific website, 2014'

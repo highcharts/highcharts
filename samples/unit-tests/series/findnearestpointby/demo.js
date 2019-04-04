@@ -1,4 +1,3 @@
-
 QUnit.test('findNearestPointBy test', function (assert) {
     var chart = Highcharts.chart('container', {
 
@@ -99,4 +98,3 @@ QUnit.test('findNearestPointBy test', function (assert) {
         'Hover allows duplicate X'
     );
 });
-

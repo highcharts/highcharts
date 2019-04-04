@@ -1,4 +1,3 @@
-
 var setDragStatus = function (status) {
     document.getElementById('dragstatus').innerHTML = status;
 };
@@ -41,10 +40,10 @@ Highcharts.chart('container', {
                     dragStart: function (e) {
                         setDragStatus('Drag started at page coordinates ' +
                                 e.chartX + '/' + e.chartY + (
-                                    e.updateProp ?
-                                        '. Updating ' + e.updateProp :
-                                        ''
-                                ) + '. ');
+                            e.updateProp ?
+                                '. Updating ' + e.updateProp :
+                                ''
+                        ) + '. ');
                     },
                     drag: function (e) {
                         // Returning false stops the drag and drops. Example:
@@ -183,4 +182,3 @@ Highcharts.chart('container', {
         }]
     }]
 });
-

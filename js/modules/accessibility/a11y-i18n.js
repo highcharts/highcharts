@@ -343,7 +343,7 @@ H.setOptions({
              * Set to `null` to use the separator defined in
              * [lang.thousandsSep](lang.thousandsSep).
              *
-             * @since next
+             * @since 7.1.0
              */
             thousandsSep: ',',
 
@@ -360,7 +360,7 @@ H.setOptions({
             /**
              * Label for the end of the chart. Announced by screen readers.
              *
-             * @since next
+             * @since .1.0
              */
             svgContainerEnd: 'End of interactive chart',
 
@@ -373,7 +373,7 @@ H.setOptions({
              * are multiple charts on the page. For all other new data events,
              * the `newDataAnnounce` string will be used.
              *
-             * @since next
+             * @since 7.1.0
              */
             announceNewData: {
                 newDataAnnounce: 'Updated data for chart {chartTitle}',

@@ -1,4 +1,3 @@
-
 QUnit.test('3D line series', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

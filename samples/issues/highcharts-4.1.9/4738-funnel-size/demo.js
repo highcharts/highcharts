@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("Funnel size relative to center", function (assert) {
         var chart = $("#container").highcharts({

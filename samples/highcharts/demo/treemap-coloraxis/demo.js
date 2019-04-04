@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     colorAxis: {
         minColor: '#FFFFFF',

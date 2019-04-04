@@ -1,4 +1,3 @@
-
 var seriesOptions = [],
     seriesCounter = 0,
     names = ['MSFT', 'AAPL', 'GOOG'],
@@ -20,7 +19,7 @@ function createChart() {
                 formatter: function () {
                     var compare = this.axis.series[0].userOptions.compare || 'none';
                     return (compare !== 'none' && this.value > 0 ? ' + ' : '') + this.value +
-                        { 'none': ' USD', 'value': ' USD', 'percent': ' %' }[compare];
+                        { none: ' USD', value: ' USD', percent: ' %' }[compare];
                 }
             }
         },
@@ -67,4 +66,3 @@ $('button.compare').click(function () {
     chart.yAxis[0].setCompare(compare);
 
 });
-

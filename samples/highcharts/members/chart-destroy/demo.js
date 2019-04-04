@@ -1,4 +1,3 @@
-
 var chart = Highcharts.chart('container', {
     chart: {
         height: 300

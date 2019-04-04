@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     xAxis: {
         endOnTick: true,

@@ -1,4 +1,3 @@
-
 // Instantiate the map
 Highcharts.mapChart('container', {
     chart: {
@@ -48,8 +47,8 @@ Highcharts.mapChart('container', {
         name: 'UTC + 1',
         data: ['NO', 'SE', 'DK', 'DE', 'NL', 'BE', 'LU', 'ES', 'FR', 'PL', 'CZ', 'AT', 'CH', 'LI', 'SK', 'HU',
             'SI', 'IT', 'SM', 'HR', 'BA', 'YF', 'ME', 'AL', 'MK'].map(function (code) {
-                return { code: code };
-            })
+            return { code: code };
+        })
     }, {
         name: 'UTC + 2',
         data: ['FI', 'EE', 'LV', 'LT', 'BY', 'UA', 'MD', 'RO', 'BG', 'GR', 'TR', 'CY'].map(function (code) {

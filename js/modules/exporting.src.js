@@ -117,7 +117,7 @@ extend(defaultOptions.lang
         /**
          * Exporting module only. View the chart in full screen.
          *
-         * @since next
+         * @since 7.1.0
          *
          * @private
          */

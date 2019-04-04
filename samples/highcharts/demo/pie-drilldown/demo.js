@@ -1,4 +1,3 @@
-
 // Create the chart
 Highcharts.chart('container', {
     chart: {
@@ -24,55 +23,55 @@ Highcharts.chart('container', {
         pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
     },
 
-    "series": [
+    series: [
         {
-            "name": "Browsers",
-            "colorByPoint": true,
-            "data": [
+            name: "Browsers",
+            colorByPoint: true,
+            data: [
                 {
-                    "name": "Chrome",
-                    "y": 62.74,
-                    "drilldown": "Chrome"
+                    name: "Chrome",
+                    y: 62.74,
+                    drilldown: "Chrome"
                 },
                 {
-                    "name": "Firefox",
-                    "y": 10.57,
-                    "drilldown": "Firefox"
+                    name: "Firefox",
+                    y: 10.57,
+                    drilldown: "Firefox"
                 },
                 {
-                    "name": "Internet Explorer",
-                    "y": 7.23,
-                    "drilldown": "Internet Explorer"
+                    name: "Internet Explorer",
+                    y: 7.23,
+                    drilldown: "Internet Explorer"
                 },
                 {
-                    "name": "Safari",
-                    "y": 5.58,
-                    "drilldown": "Safari"
+                    name: "Safari",
+                    y: 5.58,
+                    drilldown: "Safari"
                 },
                 {
-                    "name": "Edge",
-                    "y": 4.02,
-                    "drilldown": "Edge"
+                    name: "Edge",
+                    y: 4.02,
+                    drilldown: "Edge"
                 },
                 {
-                    "name": "Opera",
-                    "y": 1.92,
-                    "drilldown": "Opera"
+                    name: "Opera",
+                    y: 1.92,
+                    drilldown: "Opera"
                 },
                 {
-                    "name": "Other",
-                    "y": 7.62,
-                    "drilldown": null
+                    name: "Other",
+                    y: 7.62,
+                    drilldown: null
                 }
             ]
         }
     ],
-    "drilldown": {
-        "series": [
+    drilldown: {
+        series: [
             {
-                "name": "Chrome",
-                "id": "Chrome",
-                "data": [
+                name: "Chrome",
+                id: "Chrome",
+                data: [
                     [
                         "v65.0",
                         0.1
@@ -148,9 +147,9 @@ Highcharts.chart('container', {
                 ]
             },
             {
-                "name": "Firefox",
-                "id": "Firefox",
-                "data": [
+                name: "Firefox",
+                id: "Firefox",
+                data: [
                     [
                         "v58.0",
                         1.02
@@ -194,9 +193,9 @@ Highcharts.chart('container', {
                 ]
             },
             {
-                "name": "Internet Explorer",
-                "id": "Internet Explorer",
-                "data": [
+                name: "Internet Explorer",
+                id: "Internet Explorer",
+                data: [
                     [
                         "v11.0",
                         6.2
@@ -216,9 +215,9 @@ Highcharts.chart('container', {
                 ]
             },
             {
-                "name": "Safari",
-                "id": "Safari",
-                "data": [
+                name: "Safari",
+                id: "Safari",
+                data: [
                     [
                         "v11.0",
                         3.39
@@ -246,9 +245,9 @@ Highcharts.chart('container', {
                 ]
             },
             {
-                "name": "Edge",
-                "id": "Edge",
-                "data": [
+                name: "Edge",
+                id: "Edge",
+                data: [
                     [
                         "v16",
                         2.6
@@ -268,9 +267,9 @@ Highcharts.chart('container', {
                 ]
             },
             {
-                "name": "Opera",
-                "id": "Opera",
-                "data": [
+                name: "Opera",
+                id: "Opera",
+                data: [
                     [
                         "v50.0",
                         0.96

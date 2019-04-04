@@ -1,5 +1,3 @@
-
-
 $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
     // Add lower case codes to the data set for inclusion in the tooltip.pointFormat

@@ -6,7 +6,7 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
         Highcharts.css(table.querySelector('table'), {
             'border-collapse': 'collapse',
             'border-spacing': 0,
-            'background': 'white',
+            background: 'white',
             'min-width': '100%',
             'font-family': 'sans-serif',
             'font-size': '14px'
