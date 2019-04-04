@@ -1,4 +1,3 @@
-
 Highcharts.stockChart('container', {
     title: {
         text: 'yAxis: {showFirstLabel: false}'

@@ -1,4 +1,3 @@
-
 QUnit.test(
     'Update colorAxis through chart.update (#3936)',
     function (assert) {

@@ -1,4 +1,3 @@
-
 // Tilemap generator plugin
 (function (H) {
     /*
@@ -1220,4 +1219,3 @@ if (location.hash) {
     $($('#mapDropdown option')[0]).attr('selected', 'selected');
 }
 $('#mapDropdown').change();
-

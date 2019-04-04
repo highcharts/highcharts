@@ -1,5 +1,3 @@
-
-
 QUnit.test('Highcharts', function (assert) {
 
     var chart,

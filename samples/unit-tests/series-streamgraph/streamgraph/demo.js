@@ -51,4 +51,3 @@ QUnit.test('Streamgraph extremes', function (assert) {
     );
 
 });
-

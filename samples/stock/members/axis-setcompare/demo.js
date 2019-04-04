@@ -1,4 +1,3 @@
-
 var seriesOptions = [],
     seriesCounter = 0,
     names = ['MSFT', 'AAPL', 'GOOG'],
@@ -67,4 +66,3 @@ $('button.compare').click(function () {
     chart.yAxis[0].setCompare(compare);
 
 });
-

@@ -1,4 +1,3 @@
-
 QUnit.test('Destroy map', function (assert) {
 
     // Test data

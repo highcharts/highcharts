@@ -1,4 +1,3 @@
-
 var seriesOptions = [],
     names = ['Serie 1', 'Serie 2'];
 

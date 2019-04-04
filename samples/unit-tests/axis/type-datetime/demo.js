@@ -31,7 +31,6 @@ QUnit.test('Single point padding (#2846)', function (assert) {
         series3 = chart.series[2];
 
 
-
     assert.notEqual(
         Math.round(series1.pointXOffset),
         Math.round(series2.pointXOffset),

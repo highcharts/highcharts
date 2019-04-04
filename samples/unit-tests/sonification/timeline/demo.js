@@ -1,4 +1,3 @@
-
 QUnit.test('Instrument.play/onEnd is being called correctly', function (assert) {
     var done = assert.async(),
         chart = Highcharts.chart('container', {
@@ -122,4 +121,3 @@ QUnit.test('Instrument.play/onEnd is being called correctly', function (assert) 
         }, 100);
     }, 100);
 });
-

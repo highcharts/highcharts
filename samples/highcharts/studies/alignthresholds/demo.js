@@ -1,5 +1,3 @@
-
-
 /**
  * Experimental Highcharts plugin to implement chart.alignThreshold option. This primary axis
  * will be computed first, then all following axes will be aligned to the threshold.

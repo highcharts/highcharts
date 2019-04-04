@@ -1,5 +1,3 @@
-
-
 /**
  * Get the current time
  */

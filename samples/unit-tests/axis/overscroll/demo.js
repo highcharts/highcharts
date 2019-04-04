@@ -143,4 +143,3 @@ Highcharts.each([true, false], function (ordinal) {
         );
     });
 });
-

@@ -1,5 +1,3 @@
-
-
 // Make monochrome colors
 var pieColors = (function () {
     var colors = [],

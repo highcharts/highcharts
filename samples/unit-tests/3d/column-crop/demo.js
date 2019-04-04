@@ -1,4 +1,3 @@
-
 QUnit.test('3D columns crop outside plotArea', function (assert) {
     var chart = new Highcharts.Chart({
         chart: {

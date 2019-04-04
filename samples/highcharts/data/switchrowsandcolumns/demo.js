@@ -1,5 +1,3 @@
-
-
 var options = {
     data: {
         table: document.getElementById('datatable'),

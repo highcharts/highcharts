@@ -1,4 +1,3 @@
-
 QUnit.test('Column zIndex calculation #5297', function (assert) {
     var chart = new Highcharts.Chart({
         chart: {

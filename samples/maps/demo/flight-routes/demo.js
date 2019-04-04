@@ -1,5 +1,3 @@
-
-
 // Initialize the chart
 var chart = Highcharts.mapChart('container', {
 

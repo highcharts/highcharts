@@ -17,7 +17,6 @@ var easeOutBounce = function (pos) {
 Math.easeOutBounce = easeOutBounce;
 
 
-
 Highcharts.chart('container', {
     chart: {
         type: 'column'

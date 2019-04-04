@@ -1,4 +1,3 @@
-
 QUnit.test('Positioning labels according to real points', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [{

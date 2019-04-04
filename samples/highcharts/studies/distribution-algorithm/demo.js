@@ -40,7 +40,6 @@ function getBoxes() {
 }
 
 
-
 renderer = new Highcharts.Renderer(
     document.getElementById('container'),
     len,
@@ -107,4 +106,3 @@ each(boxes, function (box) {
 });
 Highcharts.distribute(boxes, len);
 visualize(boxes, len, 210);
-

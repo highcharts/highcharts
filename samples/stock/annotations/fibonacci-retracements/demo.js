@@ -1,4 +1,3 @@
-
 // It builds the options for the fibonacc retracements annotation
 // which starts from (x1, y1) and stops on (x2, y2)
 function fibonacciRetracements(x1, y1, x2, y2) {

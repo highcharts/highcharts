@@ -1,4 +1,3 @@
-
 QUnit.test('Nested properties in series.keys', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [{
@@ -174,5 +173,3 @@ QUnit.test('Nested properties in maps', function (assert) {
         'Point 2 has correct options'
     );
 });
-
-

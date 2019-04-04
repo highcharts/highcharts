@@ -1,4 +1,3 @@
-
 var series = [{
     type: 'map',
     name: 'Areas',

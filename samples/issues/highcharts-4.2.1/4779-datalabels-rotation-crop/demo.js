@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Cropping of rotated data labels', function (assert) {
         var chart = Highcharts.chart('container', {

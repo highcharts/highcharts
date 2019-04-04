@@ -1,4 +1,3 @@
-
 QUnit.test('3D columns stackLabels render', function (assert) {
     var chart = new Highcharts.Chart({
         chart: {

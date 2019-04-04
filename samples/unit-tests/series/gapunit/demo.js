@@ -1,5 +1,3 @@
-
-
 QUnit.test('Gap unit', function (assert) {
     var chart = Highcharts.stockChart('container', {
         series: [{

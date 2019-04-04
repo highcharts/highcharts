@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Pie data labels were not hidden on scaling down', function (assert) {
         var chart = Highcharts.chart('container', {
@@ -132,7 +131,6 @@ $(function () {
             getVisibleLabelCount() > initialLabelCount,
             'More labels visible'
         );
-
 
 
         chart.setSize(520, 300);

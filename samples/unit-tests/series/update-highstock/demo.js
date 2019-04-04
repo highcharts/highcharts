@@ -1,4 +1,3 @@
-
 QUnit.test(
     'Navigator series\' should keep its position in series array, ' +
     'even after series.update()',

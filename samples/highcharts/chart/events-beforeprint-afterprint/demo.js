@@ -1,4 +1,3 @@
-
 Highcharts.setOptions({ // Apply to all charts
     chart: {
         events: {

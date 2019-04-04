@@ -1,4 +1,3 @@
-
 QUnit.test('Soft series update by data module update', function (assert) {
 
     var csv1 = 'Name,Initial name\nApples,1\nPears,2\nBananas,3';

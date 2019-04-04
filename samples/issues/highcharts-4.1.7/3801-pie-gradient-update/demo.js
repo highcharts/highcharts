@@ -43,10 +43,6 @@ QUnit.test('Pie radial gradient', function (assert) {
     gradient = document.getElementById(gradient);
 
 
-
-
-
-
     assert.strictEqual(
         parseFloat(gradient.getAttribute('cx')),
         series.center[0],

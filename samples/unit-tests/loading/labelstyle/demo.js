@@ -1,4 +1,3 @@
-
 QUnit.test('Label style', function (assert) {
 
     var chart = Highcharts

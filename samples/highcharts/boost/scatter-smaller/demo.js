@@ -170,4 +170,3 @@ Highcharts.chart('container', {
             [180.3, 83.2], [180.3, 83.2]]
     }]
 });
-

@@ -1,4 +1,3 @@
-
 // Sonification options
 var sdInstruments = [{
         instrument: 'sineMajor',

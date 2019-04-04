@@ -1,5 +1,3 @@
-
-
 QUnit.test('Async addSeriesAsDrilldown', function (assert) {
 
     var clock = TestUtilities.lolexInstall();

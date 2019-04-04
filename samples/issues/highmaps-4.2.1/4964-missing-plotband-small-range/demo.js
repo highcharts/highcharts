@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Missing plotband when range is small', function (assert) {
         var chart = Highcharts.chart('container1', {

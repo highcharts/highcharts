@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("Change of label alignment after add", function (assert) {
         var chart,
@@ -46,7 +45,6 @@ $(function () {
 
             return allVis;
         }
-
 
 
         chart = $('#container').highcharts(options).highcharts();

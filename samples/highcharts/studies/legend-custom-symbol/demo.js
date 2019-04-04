@@ -1,5 +1,3 @@
-
-
 // Override the legend symbol creator function
 Highcharts.wrap(Highcharts.Series.prototype, 'drawLegendSymbol', function (proceed, legend) {
     proceed.call(this, legend);

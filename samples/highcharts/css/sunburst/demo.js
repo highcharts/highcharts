@@ -1376,7 +1376,6 @@ var data = [{
 }];
 
 
-
 Highcharts.chart('container', {
 
     chart: {

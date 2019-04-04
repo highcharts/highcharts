@@ -1,4 +1,3 @@
-
 var setDragStatus = function (status) {
     document.getElementById('dragstatus').innerHTML = status;
 };
@@ -183,4 +182,3 @@ Highcharts.chart('container', {
         }]
     }]
 });
-

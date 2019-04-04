@@ -1,4 +1,3 @@
-
 /**
 *Function to draw the path
 */
@@ -152,4 +151,3 @@ Highcharts.chart('container', {
             }, 3000);
         }
     });
-

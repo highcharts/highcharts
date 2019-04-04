@@ -1,4 +1,3 @@
-
 // Instantiate the map
 Highcharts.mapChart('container', {
     chart: {

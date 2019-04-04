@@ -1,5 +1,3 @@
-
-
 /**
  * Highcharts Linear-Gauge series plugin
  */

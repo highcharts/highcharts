@@ -85,4 +85,3 @@ QUnit.test('Update map navigation (#6369)', function (assert) {
     );
 
 });
-

@@ -1,5 +1,3 @@
-
-
 // Configure the chart
 var chart = Highcharts.chart('container', {
 

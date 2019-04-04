@@ -1,5 +1,3 @@
-
-
 // The speed gauge
 Highcharts.chart('container', {
 
@@ -71,4 +69,3 @@ Highcharts.chart('container', {
         }
     }]
 });
-

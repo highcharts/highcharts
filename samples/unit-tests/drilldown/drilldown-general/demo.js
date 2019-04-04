@@ -111,7 +111,6 @@ QUnit.test('Drilldown methods', function (assert) {
     );
 
 
-
     chart.drillUp(); // Just checking #7602
 
     // Now update

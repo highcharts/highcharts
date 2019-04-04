@@ -52237,7 +52237,6 @@ data.vessels.forEach(function (vessel, i) {
 });
 
 
-
 // 11,000 points. Mid to small dataset.
 
 Highcharts.ganttChart('container', {

@@ -1,5 +1,3 @@
-
-
 var gaugeOptions = {
 
     chart: {
@@ -105,4 +103,3 @@ $('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
     }]
 
 }));
-

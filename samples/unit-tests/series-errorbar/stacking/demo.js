@@ -1,4 +1,3 @@
-
 // Highcharts 4.1.3, Issue #3890:
 // cannot use errorbar combined graph on stacked column graph
 QUnit.test('Stacked error bar (#3890)', function (assert) {

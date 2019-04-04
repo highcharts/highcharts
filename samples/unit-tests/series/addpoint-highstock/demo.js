@@ -1,4 +1,3 @@
-
 QUnit.test('Add point without shift', function (assert) {
 
     var chart = Highcharts.stockChart('container', {

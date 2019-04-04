@@ -1,4 +1,3 @@
-
 Highcharts.stockChart('container', {
     title: {
         text: 'yAxis: {tickInterval: 0.01},'

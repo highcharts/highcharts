@@ -1,5 +1,3 @@
-
-
 QUnit.test('Marker size and position', function (assert) {
     var series = Highcharts.chart('container', {
         chart: {

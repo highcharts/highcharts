@@ -34,7 +34,6 @@ $(function () {
             });
 
 
-
             for (var i = 0; i < chart.yAxis.length; ++i) {
                 chart.yAxis[i].setExtremes(
                     0,

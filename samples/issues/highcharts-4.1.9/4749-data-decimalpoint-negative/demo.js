@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("Data module with decimapPoint and negative numbers", function (assert) {
         var chart = $("#container").highcharts({

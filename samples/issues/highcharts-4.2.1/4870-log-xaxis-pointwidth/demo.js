@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Automatic column width on log X axis', function (assert) {
         var chart = Highcharts.chart('container', {

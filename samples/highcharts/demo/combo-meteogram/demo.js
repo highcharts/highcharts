@@ -538,7 +538,6 @@ Meteogram.prototype.parseYrData = function () {
 // End of the Meteogram protype
 
 
-
  // On DOM ready...
 
 // Set the hash to the yr.no URL we want to parse

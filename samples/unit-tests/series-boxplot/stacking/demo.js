@@ -1,4 +1,3 @@
-
 QUnit.test('Stacked box plot', function (assert) {
 
     $('#container').highcharts({

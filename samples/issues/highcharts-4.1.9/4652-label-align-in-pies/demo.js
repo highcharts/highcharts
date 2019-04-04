@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("Change of label alignment after add", function (assert) {
         var ren = new Highcharts.Renderer(

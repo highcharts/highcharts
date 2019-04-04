@@ -505,7 +505,6 @@ QUnit.test('Extremes unaltered after redraw (#5928)', function (assert) {
     chart.setSize(390);
 
 
-
     assert.strictEqual(
         chart.xAxis[0].min,
         0,

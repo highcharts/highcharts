@@ -1,5 +1,3 @@
-
-
 // #6138
 QUnit.test('Reset colors and marker symbols after all series removed',
 function (assert) {

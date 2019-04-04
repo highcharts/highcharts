@@ -1,4 +1,3 @@
-
 QUnit.test('Pareto', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

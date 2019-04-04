@@ -1,4 +1,3 @@
-
 QUnit.test('Percentage inner size', function (assert) {
 
     var chart = Highcharts.chart('container', {

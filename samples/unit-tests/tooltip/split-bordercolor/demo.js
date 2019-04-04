@@ -26,4 +26,3 @@ QUnit.test('tooltip.borderColor #6831', function (assert) {
         'borderColor is applied on all tooltips'
     );
 });
-

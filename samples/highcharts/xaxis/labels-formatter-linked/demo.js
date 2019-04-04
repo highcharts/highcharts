@@ -1,4 +1,3 @@
-
 var categoryLinks = {
     'Foo': 'http://www.bing.com/search?q=foo',
     'Bar': 'http://www.bing.com/search?q=foo+bar',

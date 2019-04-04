@@ -1,4 +1,3 @@
-
 QUnit.test('Setting graphic attributes for a label', function (assert) {
     var expected = {
             text: 'Max',

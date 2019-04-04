@@ -1,7 +1,6 @@
 /* global CodeMirror*/
 
 
-
 var chart = Highcharts.chart('container', {
 
     chart: {
@@ -74,4 +73,3 @@ CodeMirror.fromTextArea(document.getElementById('pre'), {
     readOnly: true,
     viewportMargin: Infinity
 });
-

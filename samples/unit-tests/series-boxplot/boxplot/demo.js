@@ -1,5 +1,3 @@
-
-
 QUnit.test('Individual fill color (#5770)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

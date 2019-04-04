@@ -1,4 +1,3 @@
-
 QUnit.test('Symbol tests', function (assert) {
     var w = 400,
         h = 400,

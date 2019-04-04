@@ -1,4 +1,3 @@
-
 QUnit.test('Annotation\'s dynamic methods', function (assert) {
     var labelCollector;
     var chart = Highcharts.chart('container', {

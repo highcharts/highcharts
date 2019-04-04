@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('False detection of overlapping labels in different panes', function (assert) {
         var chart = Highcharts.chart('container', {

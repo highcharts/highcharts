@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Clip tickPositions when axis extremes are set', function (assert) {
         var chart = Highcharts.chart('container', {

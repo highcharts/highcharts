@@ -1,4 +1,3 @@
-
 var data = {
         'South-East Asia': {
             'Sri Lanka': {

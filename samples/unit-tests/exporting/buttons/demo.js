@@ -1,4 +1,3 @@
-
 QUnit.test('Export buttons', function (assert) {
 
     var chartClickEventRan = false,

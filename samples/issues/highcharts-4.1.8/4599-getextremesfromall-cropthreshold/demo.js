@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("CropThreshold should not interfere with getExtremesFromAll.", function (assert) {
         var chart = $('#container').highcharts({

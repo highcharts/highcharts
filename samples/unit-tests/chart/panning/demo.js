@@ -98,7 +98,6 @@ QUnit.test('Zoom and pan key', function (assert) {
 });
 
 
-
 QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
     var chart = Highcharts.stockChart('container', {
         chart: {

@@ -1,4 +1,3 @@
-
 Highcharts.stockChart('container', {
 
     tooltip: {
