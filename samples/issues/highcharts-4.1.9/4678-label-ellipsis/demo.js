@@ -68,10 +68,10 @@ $(function () {
         var chart = Highcharts.chart('container', {
 
             chart: {
-                "type": "bar"
+                type: "bar"
             },
             xAxis: {
-                "categories": ["Cat1", "Cat2 bla bla bla bla bla bla bla bla bla bla", "Cat3 bla bla bla bla bla bla bla"]
+                categories: ["Cat1", "Cat2 bla bla bla bla bla bla bla bla bla bla", "Cat3 bla bla bla bla bla bla bla"]
             },
             series: [{
                 data: [1, 2, 3]

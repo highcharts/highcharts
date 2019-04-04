@@ -2,32 +2,32 @@ $(function () {
     QUnit.test('Automatic column width on log X axis', function (assert) {
         var chart = Highcharts.chart('container', {
 
-            "xAxis": {
+            xAxis: {
                 type: 'logarithmic'
             },
-            "series": [{
+            series: [{
 
-                "type": "column",
+                type: "column",
                 //"pointWidth": 10,
-                "data": [{
-                    "x": 1,
-                    "y": 1
+                data: [{
+                    x: 1,
+                    y: 1
                 }, {
 
-                    "x": 2,
-                    "y": 2
+                    x: 2,
+                    y: 2
                 }, {
 
-                    "x": 3,
-                    "y": 3
+                    x: 3,
+                    y: 3
                 }, {
 
-                    "x": 4,
-                    "y": 4
+                    x: 4,
+                    y: 4
                 }, {
 
-                    "x": 5,
-                    "y": 5
+                    x: 5,
+                    y: 5
                 }]
             }]
         });

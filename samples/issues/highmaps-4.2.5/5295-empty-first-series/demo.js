@@ -9,7 +9,7 @@ $(function () {
             series: [{}, {
                 data: [{
                     "hc-key": "au-nt",
-                    "value": 0
+                    value: 0
                 }],
                 mapData: Highcharts.maps['countries/au/au-all'],
                 joinBy: 'hc-key'

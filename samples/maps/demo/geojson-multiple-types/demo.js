@@ -5,17 +5,17 @@ $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data
         rivers = Highcharts.geojson(geojson, 'mapline'),
         cities = Highcharts.geojson(geojson, 'mappoint'),
         specialCityLabels = {
-            'Melbourne': {
+            Melbourne: {
                 align: 'right'
             },
-            'Canberra': {
+            Canberra: {
                 align: 'right',
                 y: -5
             },
-            'Wollongong': {
+            Wollongong: {
                 y: 5
             },
-            'Brisbane': {
+            Brisbane: {
                 y: -5
             }
         };

@@ -3,21 +3,21 @@ $(function () {
 
 
         $('#container').highcharts({
-            "chart": {
-                "type": "bar"
+            chart: {
+                type: "bar"
             },
             title: {
                 text: 'Only first and last axis label should be kept'
             },
-            "yAxis": [{
-                "labels": {
-                    "staggerLines": 1
+            yAxis: [{
+                labels: {
+                    staggerLines: 1
                 },
-                "tickInterval": 1
+                tickInterval: 1
             }],
-            "series": [{
-                "data": [100000],
-                "type": "column"
+            series: [{
+                data: [100000],
+                type: "column"
             }]
         });
 

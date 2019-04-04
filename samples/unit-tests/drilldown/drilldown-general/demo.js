@@ -380,219 +380,219 @@ QUnit.test('Drill up exception (#2786)', function (assert) {
 
 QUnit.test('Named categories (#6704)', function (assert) {
     var chart = Highcharts.chart('container', {
-        "title": null,
-        "chart": {
-            "type": "column"
+        title: null,
+        chart: {
+            type: "column"
         },
-        "credits": false,
-        "legend": {
-            "enabled": true,
-            "layout": "vertical",
-            "align": "right",
-            "verticalAlign": "middle",
-            "borderWidth": 0
+        credits: false,
+        legend: {
+            enabled: true,
+            layout: "vertical",
+            align: "right",
+            verticalAlign: "middle",
+            borderWidth: 0
         },
-        "xAxis": {
-            "labels": {
-                "rotation": -90
+        xAxis: {
+            labels: {
+                rotation: -90
             },
-            "type": "category"
+            type: "category"
         },
-        "yAxis": {
-            "min": 0,
-            "title": {
-                "text": ""
+        yAxis: {
+            min: 0,
+            title: {
+                text: ""
             }
         },
-        "plotOptions": {
-            "series": {
-                "animation": false,
-                "showInLegend": true,
-                "dataLabels": {
-                    "enabled": false,
-                    "color": "grey",
-                    "style": {
+        plotOptions: {
+            series: {
+                animation: false,
+                showInLegend: true,
+                dataLabels: {
+                    enabled: false,
+                    color: "grey",
+                    style: {
                         "text-shadow": "0 0 2px black"
                     }
                 },
-                "stacking": null
+                stacking: null
             }
         },
-        "series": [{
-            "name": "Products 2015",
-            "cropThreshold": 500,
-            "type": "column",
-            "data": [{
-                "name": "Product A",
-                "y": 5056748,
-                "drilldown": "0|Product A"
+        series: [{
+            name: "Products 2015",
+            cropThreshold: 500,
+            type: "column",
+            data: [{
+                name: "Product A",
+                y: 5056748,
+                drilldown: "0|Product A"
             }, {
-                "name": "Product B",
-                "y": 1976470,
-                "drilldown": "0|Product B"
+                name: "Product B",
+                y: 1976470,
+                drilldown: "0|Product B"
             }, {
-                "name": "Product C",
-                "y": 1247587,
-                "drilldown": "0|Product C"
+                name: "Product C",
+                y: 1247587,
+                drilldown: "0|Product C"
             }, {
-                "name": "Product D",
-                "y": 1169350,
-                "drilldown": "0|Product D"
+                name: "Product D",
+                y: 1169350,
+                drilldown: "0|Product D"
             }, {
-                "name": "Product E",
-                "y": 1125607,
-                "drilldown": "0|Product E"
+                name: "Product E",
+                y: 1125607,
+                drilldown: "0|Product E"
             }, {
-                "name": "Product G",
-                "y": 1012095,
-                "drilldown": "0|Product G"
+                name: "Product G",
+                y: 1012095,
+                drilldown: "0|Product G"
             }, {
-                "name": "Product N",
-                "y": 661557,
-                "drilldown": "0|Product N"
+                name: "Product N",
+                y: 661557,
+                drilldown: "0|Product N"
             }, {
-                "name": "Product O",
-                "y": 532734,
-                "drilldown": "0|Product O"
+                name: "Product O",
+                y: 532734,
+                drilldown: "0|Product O"
             }, {
-                "name": "Product Q",
-                "y": 487075,
-                "drilldown": "0|Product Q"
+                name: "Product Q",
+                y: 487075,
+                drilldown: "0|Product Q"
             }, {
-                "name": "Product F",
-                "y": 433019,
-                "drilldown": "0|Product F"
+                name: "Product F",
+                y: 433019,
+                drilldown: "0|Product F"
             }, {
-                "name": "Product R",
-                "y": 287757,
-                "drilldown": "0|Product R"
+                name: "Product R",
+                y: 287757,
+                drilldown: "0|Product R"
             }, {
-                "name": "Product H",
-                "y": 282369,
-                "drilldown": "0|Product H"
+                name: "Product H",
+                y: 282369,
+                drilldown: "0|Product H"
             }, {
-                "name": "Product I",
-                "y": 250762,
-                "drilldown": "0|Product I"
+                name: "Product I",
+                y: 250762,
+                drilldown: "0|Product I"
             }, {
-                "name": "Product T",
-                "y": 193982,
-                "drilldown": "0|Product T"
+                name: "Product T",
+                y: 193982,
+                drilldown: "0|Product T"
             }, {
-                "name": "Product J",
-                "y": 148530,
-                "drilldown": "0|Product J"
+                name: "Product J",
+                y: 148530,
+                drilldown: "0|Product J"
             }, {
-                "name": "Product K",
-                "y": 75153,
-                "drilldown": "0|Product K"
+                name: "Product K",
+                y: 75153,
+                drilldown: "0|Product K"
             }, {
-                "name": "Product L",
-                "y": 67039,
-                "drilldown": "0|Product L"
+                name: "Product L",
+                y: 67039,
+                drilldown: "0|Product L"
             }, {
-                "name": "Product M",
-                "y": 5798,
-                "drilldown": "0|Product M"
+                name: "Product M",
+                y: 5798,
+                drilldown: "0|Product M"
             }, {
-                "name": "Product S",
-                "y": 3,
-                "drilldown": "0|Product S"
+                name: "Product S",
+                y: 3,
+                drilldown: "0|Product S"
             }]
         }, {
-            "name": "Products 2016",
-            "cropThreshold": 500,
-            "type": "column",
-            "data": [{
-                "name": "Product A",
-                "y": 4557089,
-                "drilldown": "1|Product A"
+            name: "Products 2016",
+            cropThreshold: 500,
+            type: "column",
+            data: [{
+                name: "Product A",
+                y: 4557089,
+                drilldown: "1|Product A"
             }, {
-                "name": "Product F",
-                "y": 2767747,
-                "drilldown": "1|Product F"
+                name: "Product F",
+                y: 2767747,
+                drilldown: "1|Product F"
             }, {
-                "name": "Product E",
-                "y": 2219421,
-                "drilldown": "1|Product E"
+                name: "Product E",
+                y: 2219421,
+                drilldown: "1|Product E"
             }, {
-                "name": "Product B",
-                "y": 1740546,
-                "drilldown": "1|Product B"
+                name: "Product B",
+                y: 1740546,
+                drilldown: "1|Product B"
             }, {
-                "name": "Product C",
-                "y": 1340365,
-                "drilldown": "1|Product C"
+                name: "Product C",
+                y: 1340365,
+                drilldown: "1|Product C"
             }, {
-                "name": "Product D",
-                "y": 1047968,
-                "drilldown": "1|Product D"
+                name: "Product D",
+                y: 1047968,
+                drilldown: "1|Product D"
             }, {
-                "name": "Product G",
-                "y": 938414,
-                "drilldown": "1|Product G"
+                name: "Product G",
+                y: 938414,
+                drilldown: "1|Product G"
             }, {
-                "name": "Product H",
-                "y": 650382,
-                "drilldown": "1|Product H"
+                name: "Product H",
+                y: 650382,
+                drilldown: "1|Product H"
             }, {
-                "name": "Product M",
-                "y": 547843,
-                "drilldown": "1|Product M"
+                name: "Product M",
+                y: 547843,
+                drilldown: "1|Product M"
             }, {
-                "name": "Product N",
-                "y": 507996,
-                "drilldown": "1|Product N"
+                name: "Product N",
+                y: 507996,
+                drilldown: "1|Product N"
             }, {
-                "name": "Product O",
-                "y": 461770,
-                "drilldown": "1|Product O"
+                name: "Product O",
+                y: 461770,
+                drilldown: "1|Product O"
             }, {
-                "name": "Product P",
-                "y": 391027,
-                "drilldown": "1|Product P"
+                name: "Product P",
+                y: 391027,
+                drilldown: "1|Product P"
             }, {
-                "name": "Product Q",
-                "y": 344812,
-                "drilldown": "1|Product Q"
+                name: "Product Q",
+                y: 344812,
+                drilldown: "1|Product Q"
             }, {
-                "name": "Product T",
-                "y": 289371,
-                "drilldown": "1|Product T"
+                name: "Product T",
+                y: 289371,
+                drilldown: "1|Product T"
             }, {
-                "name": "Product S",
-                "y": 253645,
-                "drilldown": "1|Product S"
+                name: "Product S",
+                y: 253645,
+                drilldown: "1|Product S"
             }, {
-                "name": "Product R",
-                "y": 210877,
-                "drilldown": "1|Product R"
+                name: "Product R",
+                y: 210877,
+                drilldown: "1|Product R"
             }, {
-                "name": "Product I",
-                "y": 148915,
-                "drilldown": "1|Product I"
+                name: "Product I",
+                y: 148915,
+                drilldown: "1|Product I"
             }, {
-                "name": "Product J",
-                "y": 114315,
-                "drilldown": "1|Product J"
+                name: "Product J",
+                y: 114315,
+                drilldown: "1|Product J"
             }, {
-                "name": "Product K",
-                "y": 112030,
-                "drilldown": "1|Product K"
+                name: "Product K",
+                y: 112030,
+                drilldown: "1|Product K"
             }, {
-                "name": "Product L",
-                "y": 72621,
-                "drilldown": "1|Product L"
+                name: "Product L",
+                y: 72621,
+                drilldown: "1|Product L"
             }]
         }],
-        "drilldown": {
-            "series": [{
-                "id": "0|Product A",
-                "name": [
+        drilldown: {
+            series: [{
+                id: "0|Product A",
+                name: [
                     "Products 2015 Product A"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "CN",
                         1358043
@@ -766,12 +766,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product B",
-                "name": [
+                id: "0|Product B",
+                name: [
                     "Products 2015 Product B"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "US",
                         484980
@@ -986,12 +986,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product C",
-                "name": [
+                id: "0|Product C",
+                name: [
                     "Products 2015 Product C"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "ZDSO",
                         281307
@@ -1190,12 +1190,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product D",
-                "name": [
+                id: "0|Product D",
+                name: [
                     "Products 2015 Product D"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "US",
                         427683
@@ -1406,12 +1406,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product E",
-                "name": [
+                id: "0|Product E",
+                name: [
                     "Products 2015 Product E"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "NL",
                         236861
@@ -1580,12 +1580,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product G",
-                "name": [
+                id: "0|Product G",
+                name: [
                     "Products 2015 Product G"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         434528
@@ -1792,12 +1792,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product N",
-                "name": [
+                id: "0|Product N",
+                name: [
                     "Products 2015 Product N"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         198722
@@ -1972,12 +1972,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product O",
-                "name": [
+                id: "0|Product O",
+                name: [
                     "Products 2015 Product O"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         151324
@@ -2180,12 +2180,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product Q",
-                "name": [
+                id: "0|Product Q",
+                name: [
                     "Products 2015 Product Q"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         126483
@@ -2392,12 +2392,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product F",
-                "name": [
+                id: "0|Product F",
+                name: [
                     "Products 2015 Product F"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "JP",
                         133410
@@ -2600,12 +2600,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product R",
-                "name": [
+                id: "0|Product R",
+                name: [
                     "Products 2015 Product R"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "US",
                         95379
@@ -2700,12 +2700,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product H",
-                "name": [
+                id: "0|Product H",
+                name: [
                     "Products 2015 Product H"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         137066
@@ -2888,12 +2888,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product I",
-                "name": [
+                id: "0|Product I",
+                name: [
                     "Products 2015 Product I"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         244299
@@ -2912,12 +2912,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product T",
-                "name": [
+                id: "0|Product T",
+                name: [
                     "Products 2015 Product T"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         65359
@@ -3088,12 +3088,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product J",
-                "name": [
+                id: "0|Product J",
+                name: [
                     "Products 2015 Product J"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         41798
@@ -3248,12 +3248,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product K",
-                "name": [
+                id: "0|Product K",
+                name: [
                     "Products 2015 Product K"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "IT",
                         22826
@@ -3408,12 +3408,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product L",
-                "name": [
+                id: "0|Product L",
+                name: [
                     "Products 2015 Product L"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         21502
@@ -3539,12 +3539,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product M",
-                "name": [
+                id: "0|Product M",
+                name: [
                     "Products 2015 Product M"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         2012
@@ -3647,24 +3647,24 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "0|Product S",
-                "name": [
+                id: "0|Product S",
+                name: [
                     "Products 2015 Product S"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "ZDSO",
                         3
                     ]
                 ]
             }, {
-                "id": "1|Product A",
-                "name": [
+                id: "1|Product A",
+                name: [
                     "Products 2016 Product A"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "NL",
                         660890
@@ -3867,12 +3867,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product F",
-                "name": [
+                id: "1|Product F",
+                name: [
                     "Products 2016 Product F"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "US",
                         903444
@@ -4083,12 +4083,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product E",
-                "name": [
+                id: "1|Product E",
+                name: [
                     "Products 2016 Product E"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "NL",
                         558362
@@ -4251,12 +4251,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product B",
-                "name": [
+                id: "1|Product B",
+                name: [
                     "Products 2016 Product B"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "CN",
                         290223
@@ -4459,12 +4459,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product C",
-                "name": [
+                id: "1|Product C",
+                name: [
                     "Products 2016 Product C"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "US",
                         474284
@@ -4663,12 +4663,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product D",
-                "name": [
+                id: "1|Product D",
+                name: [
                     "Products 2016 Product D"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "US",
                         329683
@@ -4879,12 +4879,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product G",
-                "name": [
+                id: "1|Product G",
+                name: [
                     "Products 2016 Product G"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         437216
@@ -5098,12 +5098,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product H",
-                "name": [
+                id: "1|Product H",
+                name: [
                     "Products 2016 Product H"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         201370
@@ -5274,12 +5274,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product M",
-                "name": [
+                id: "1|Product M",
+                name: [
                     "Products 2016 Product M"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         130104
@@ -5470,12 +5470,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product N",
-                "name": [
+                id: "1|Product N",
+                name: [
                     "Products 2016 Product N"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         152700
@@ -5654,12 +5654,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product O",
-                "name": [
+                id: "1|Product O",
+                name: [
                     "Products 2016 Product O"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         107070
@@ -5870,12 +5870,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product P",
-                "name": [
+                id: "1|Product P",
+                name: [
                     "Products 2016 Product P"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         254570
@@ -5962,12 +5962,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product Q",
-                "name": [
+                id: "1|Product Q",
+                name: [
                     "Products 2016 Product Q"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         79184
@@ -6177,12 +6177,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product T",
-                "name": [
+                id: "1|Product T",
+                name: [
                     "Products 2016 Product T"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "US",
                         123700
@@ -6337,12 +6337,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product S",
-                "name": [
+                id: "1|Product S",
+                name: [
                     "Products 2016 Product S"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "US",
                         251742
@@ -6357,12 +6357,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product R",
-                "name": [
+                id: "1|Product R",
+                name: [
                     "Products 2016 Product R"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "CN",
                         66666
@@ -6457,12 +6457,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product I",
-                "name": [
+                id: "1|Product I",
+                name: [
                     "Products 2016 Product I"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         146949
@@ -6477,12 +6477,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product J",
-                "name": [
+                id: "1|Product J",
+                name: [
                     "Products 2016 Product J"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         31921
@@ -6637,12 +6637,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product K",
-                "name": [
+                id: "1|Product K",
+                name: [
                     "Products 2016 Product K"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         23248
@@ -6829,12 +6829,12 @@ QUnit.test('Named categories (#6704)', function (assert) {
                     ]
                 ]
             }, {
-                "id": "1|Product L",
-                "name": [
+                id: "1|Product L",
+                name: [
                     "Products 2016 Product L"
                 ],
-                "type": "column",
-                "data": [
+                type: "column",
+                data: [
                     [
                         "DE",
                         16827

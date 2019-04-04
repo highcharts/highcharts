@@ -76,7 +76,7 @@ QUnit.test('Path animation', function (assert) {
         var path = ren.path(['M', 10, 30, 'L', 10, 100])
             .attr({
                 'stroke-width': 2,
-                'stroke': 'blue'
+                stroke: 'blue'
             })
             .add();
 
@@ -749,7 +749,7 @@ QUnit.test('Animation and text alignment', function (assert) {
 
         ren.rect(box)
             .attr({
-                'stroke': 'silver',
+                stroke: 'silver',
                 'stroke-width': 1
             })
             .add();

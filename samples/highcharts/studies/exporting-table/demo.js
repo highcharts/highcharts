@@ -130,7 +130,7 @@ Highcharts.drawTable = function () {
 Highcharts.tableLine = function (renderer, x1, y1, x2, y2) {
     renderer.path(['M', x1, y1, 'L', x2, y2])
         .attr({
-            'stroke': 'silver',
+            stroke: 'silver',
             'stroke-width': 1
         })
         .add();

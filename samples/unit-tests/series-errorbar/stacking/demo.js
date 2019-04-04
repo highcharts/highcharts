@@ -3,21 +3,21 @@
 QUnit.test('Stacked error bar (#3890)', function (assert) {
 
     $('#container').highcharts({
-        "chart": {
-            "type": "column"
+        chart: {
+            type: "column"
         },
-        "plotOptions": {
-            "series": {
-                "stacking": "normal"
+        plotOptions: {
+            series: {
+                stacking: "normal"
             }
         },
-        "series": [{
-            "name": "Column",
-            "data": [2]
+        series: [{
+            name: "Column",
+            data: [2]
         }, {
-            "name": "Error bar",
-            "type": "errorbar",
-            "data": [
+            name: "Error bar",
+            type: "errorbar",
+            data: [
                 [1, 3]
             ]
         }]

@@ -26,7 +26,7 @@ QUnit.test('Symbol tests', function (assert) {
     for (var x = 99.5; x < w - 1; x += 100) {
         ren.path(['M', x, 0, 'L', x, 400])
             .attr({
-                'stroke': 'silver',
+                stroke: 'silver',
                 'stroke-width': 1
             })
             .add();
@@ -35,7 +35,7 @@ QUnit.test('Symbol tests', function (assert) {
     for (var y = 99.5; y < h - 1; y += 100) {
         ren.path(['M', 0, y, 'L', 400, y])
             .attr({
-                'stroke': 'silver',
+                stroke: 'silver',
                 'stroke-width': 1
             })
             .add();

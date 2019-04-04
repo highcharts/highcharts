@@ -42,8 +42,8 @@ QUnit.test('Gap unit', function (assert) {
 
 QUnit.test('Gap size for multiple series (#4747)', function (assert) {
     var chart = Highcharts.stockChart('container', {
-        "xAxis": {
-            "min": 0
+        xAxis: {
+            min: 0
         },
         plotOptions: {
             series: {
@@ -51,7 +51,7 @@ QUnit.test('Gap size for multiple series (#4747)', function (assert) {
                 lineWidth: 10
             }
         },
-        "series": [{
+        series: [{
             name: 'Spacing = 1',
             data: [
                 [0, 1],

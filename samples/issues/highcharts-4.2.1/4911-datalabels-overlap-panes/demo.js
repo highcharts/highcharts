@@ -5,11 +5,11 @@ $(function () {
                 type: 'column'
             },
             yAxis: [{
-                "height": "50%",
-                "top": "50%"
+                height: "50%",
+                top: "50%"
             }, {
-                "height": "50%",
-                "top": "0%"
+                height: "50%",
+                top: "0%"
             }],
             series: [{
                 data: [1, 2, 3]

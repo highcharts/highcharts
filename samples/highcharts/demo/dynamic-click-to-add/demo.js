@@ -51,7 +51,7 @@ Highcharts.chart('container', {
             lineWidth: 1,
             point: {
                 events: {
-                    'click': function () {
+                    click: function () {
                         if (this.series.data.length > 1) {
                             this.remove();
                         }

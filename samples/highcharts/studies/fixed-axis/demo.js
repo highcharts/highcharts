@@ -13,14 +13,14 @@
 
         // Add the necessary divs to provide scrolling
         this.scrollingContainer = H.createElement('div', {
-            'className': 'highcharts-scrolling'
+            className: 'highcharts-scrolling'
         }, {
             overflowX: 'auto',
             WebkitOverflowScrolling: 'touch'
         }, this.renderTo);
 
         this.innerContainer = H.createElement('div', {
-            'className': 'highcharts-inner-container'
+            className: 'highcharts-inner-container'
         }, null, this.scrollingContainer);
 
         // Now move the container inside

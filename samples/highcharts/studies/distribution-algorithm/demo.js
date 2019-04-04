@@ -59,9 +59,9 @@ function visualize(boxes, len, y) {
         if (box.pos !== undefined) {
             renderer.rect(box.pos + 0.5, y + 0.5, box.size - 1, 20)
                 .attr({
-                    'fill': 'rgba(0, 0, 0, 0.1)',
+                    fill: 'rgba(0, 0, 0, 0.1)',
                     'stroke-width': 1,
-                    'stroke': Highcharts.getOptions().colors[i % 10]
+                    stroke: Highcharts.getOptions().colors[i % 10]
                 })
                 .add();
 
@@ -73,7 +73,7 @@ function visualize(boxes, len, y) {
             ])
                 .attr({
                     'stroke-width': 1,
-                    'stroke': Highcharts.getOptions().colors[i % 10]
+                    stroke: Highcharts.getOptions().colors[i % 10]
                 })
                 .add();
         }

@@ -696,14 +696,14 @@
     QUnit.test('objectEach', function (assert) {
         var objectEach = Highcharts.objectEach,
             obj1 = {
-                '1': 1,
-                '2': '2',
+                1: 1,
+                2: '2',
                 3: '3'
             },
             obj1Expected = {
-                '1': 1,
-                '2': '2',
-                '3': '3'
+                1: 1,
+                2: '2',
+                3: '3'
             },
             obj1Actual = {},
             testFunction = function () {
@@ -715,22 +715,22 @@
             },
             obj2,
             obj2Expected = {
-                'one': 1,
-                'two': testFunction
+                one: 1,
+                two: testFunction
             },
             obj2Actual = {},
             arr1 = ['1', '2', '3'],
             arr1Expected = {
-                '0': '1',
-                '1': '2',
-                '2': '3'
+                0: '1',
+                1: '2',
+                2: '3'
             },
             arr1Actual = {},
             obj3 = {
-                'one': 'one'
+                one: 'one'
             },
             obj3This = {
-                'ctx': 'ctx'
+                ctx: 'ctx'
             };
 
         TestObj.prototype.three = 3;

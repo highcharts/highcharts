@@ -119,7 +119,7 @@ Meteogram.prototype.drawBlocksForWindArrows = function (chart) {
         chart.renderer.path(['M', x, chart.plotTop + chart.plotHeight + (isLong ? 0 : 28),
             'L', x, chart.plotTop + chart.plotHeight + 32, 'Z'])
             .attr({
-                'stroke': chart.options.chart.plotBorderColor,
+                stroke: chart.options.chart.plotBorderColor,
                 'stroke-width': 1
             })
             .add();
@@ -162,8 +162,8 @@ Meteogram.prototype.getChartOptions = function () {
 
         defs: {
             patterns: [{
-                'id': 'precipitation-error',
-                'path': {
+                id: 'precipitation-error',
+                path: {
                     d: [
                         'M', 3.3, 0, 'L', -6.7, 10,
                         'M', 6.7, 0, 'L', -3.3, 10,
