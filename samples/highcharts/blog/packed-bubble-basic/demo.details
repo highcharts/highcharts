@@ -1,0 +1,6 @@
+---
+ name: Basic Packed Bubble
+ authors:
+   - Gert Vaartjes
+ js_wrap: b
+...
