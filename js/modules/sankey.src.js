@@ -211,9 +211,7 @@ seriesType('sankey', 'column'
             format: undefined,
             /**
             /** @ignore-option */
-            formatter: function () {
-                return '';
-            },
+            formatter: function () {},
             /** @ignore-option */
             inside: true
         },
