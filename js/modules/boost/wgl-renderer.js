@@ -866,6 +866,7 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('xAxisLen', axis.len);
         shader.setUniform('xAxisPos', axis.pos);
         shader.setUniform('xAxisCVSCoord', !axis.horiz);
+        shader.setUniform('xAxisReversed', !!axis.reversed);
     }
 
     /*
@@ -884,6 +885,7 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('yAxisLen', axis.len);
         shader.setUniform('yAxisPos', axis.pos);
         shader.setUniform('yAxisCVSCoord', !axis.horiz);
+        shader.setUniform('yAxisReversed', !!axis.reversed);
     }
 
     /*
@@ -928,7 +930,6 @@ function GLRenderer(postRenderCallback) {
 
         gl.viewport(0, 0, width, height);
         shader.setPMatrix(orthoMatrix(width, height));
-        shader.setPlotHeight(chart.plotHeight);
 
         if (settings.lineWidth > 1 && !H.isMS) {
             gl.lineWidth(settings.lineWidth);
