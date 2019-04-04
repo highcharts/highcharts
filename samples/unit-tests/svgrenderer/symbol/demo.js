@@ -56,7 +56,7 @@ QUnit.test('Symbol tests', function (assert) {
         assert.strictEqual(
             symbol1.element.getAttribute('transform') &&
                 symbol1.element.getAttribute('transform')
-                .replace(' ', ','), // MSIE
+                    .replace(' ', ','), // MSIE
             'translate(-15,-15)',
             'Translate ok'
         );
@@ -82,7 +82,7 @@ QUnit.test('Symbol tests', function (assert) {
         assert.strictEqual(
             symbol2.element.getAttribute('transform') &&
                 symbol2.element.getAttribute('transform')
-                .replace(' ', ','), // MSIE
+                    .replace(' ', ','), // MSIE
             'translate(-10,-10)',
             'Translate ok'
         );

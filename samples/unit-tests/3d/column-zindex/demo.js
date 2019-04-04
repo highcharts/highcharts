@@ -68,8 +68,8 @@ QUnit.test(
 
 
         assert.ok(
-        chart.series[0].points[4].graphic.attr('zIndex') < chart.series[0].points[5].graphic.attr('zIndex'),
-        'Proper zIndex'
+            chart.series[0].points[4].graphic.attr('zIndex') < chart.series[0].points[5].graphic.attr('zIndex'),
+            'Proper zIndex'
         );
 
     }

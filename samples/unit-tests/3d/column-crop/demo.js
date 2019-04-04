@@ -190,12 +190,12 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
         );
     } else {
         assert.strictEqual(
-        (
-            oldTitleX === newTitleX &&
+            (
+                oldTitleX === newTitleX &&
             oldTitleY === newTitleY
-        ),
-        true,
-        'yAxis title is on the same position after toggling series visibility'
+            ),
+            true,
+            'yAxis title is on the same position after toggling series visibility'
         );
     }
 

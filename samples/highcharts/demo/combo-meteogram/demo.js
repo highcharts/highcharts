@@ -125,7 +125,7 @@ Meteogram.prototype.drawBlocksForWindArrows = function (chart) {
             .add();
     }
 
-      // Center items in block
+    // Center items in block
     chart.get('windbarbs').markerGroup.attr({
         translateX: chart.get('windbarbs').markerGroup.translateX + 8
     });
@@ -538,7 +538,7 @@ Meteogram.prototype.parseYrData = function () {
 // End of the Meteogram protype
 
 
- // On DOM ready...
+// On DOM ready...
 
 // Set the hash to the yr.no URL we want to parse
 var place,

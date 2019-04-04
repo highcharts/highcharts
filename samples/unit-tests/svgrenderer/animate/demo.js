@@ -606,10 +606,10 @@ QUnit.test('3D arc animation (#7097)', function (assert) {
             alpha: 45,
             beta: 10
         })
-        .attr({
-            fill: '#f00ff0'
-        })
-        .add();
+            .attr({
+                fill: '#f00ff0'
+            })
+            .add();
 
         arc.animate({
             end: 5
@@ -735,10 +735,10 @@ QUnit.test('Animation and text alignment', function (assert) {
 
         var btn,
             ren = new Highcharts.Renderer(
-            document.getElementById('container'),
-            400,
-            400
-        );
+                document.getElementById('container'),
+                400,
+                400
+            );
 
         var box = {
             x: 10,

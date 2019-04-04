@@ -115,21 +115,21 @@ Highcharts.chart('container', {
     }]
 
 },
-    // Add some life
-    function (chart) {
-        if (!chart.renderer.forExport) {
-            setInterval(function () {
-                var point = chart.series[0].points[0],
-                    newVal,
-                    inc = Math.round((Math.random() - 0.5) * 100);
+// Add some life
+function (chart) {
+    if (!chart.renderer.forExport) {
+        setInterval(function () {
+            var point = chart.series[0].points[0],
+                newVal,
+                inc = Math.round((Math.random() - 0.5) * 100);
 
-                newVal = point.y + inc;
-                if (newVal < -100 || newVal > 100) {
-                    newVal = point.y - inc;
-                }
+            newVal = point.y + inc;
+            if (newVal < -100 || newVal > 100) {
+                newVal = point.y - inc;
+            }
 
-                point.update(newVal);
+            point.update(newVal);
 
-            }, 3000);
-        }
-    });
+        }, 3000);
+    }
+});

@@ -35,9 +35,9 @@ $(function () {
         chart.series.forEach(function (series) {
             series.points.forEach(function (point) {
                 assert.strictEqual(
-                   point.dataLabel.attr('y') === -9999,
-                   expected.shift(),
-                   'Hidden as expected'
+                    point.dataLabel.attr('y') === -9999,
+                    expected.shift(),
+                    'Hidden as expected'
                 );
             });
         });

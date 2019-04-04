@@ -48,7 +48,7 @@ function renderIcons() {
         this.series[1].icon = this.renderer.path(
             ['M', -8, 0, 'L', 8, 0, 'M', 0, -8, 'L', 8, 0, 0, 8,
                 'M', 8, -8, 'L', 16, 0, 8, 8]
-            )
+        )
             .attr({
                 'stroke': '#ffffff',
                 'stroke-linecap': 'round',

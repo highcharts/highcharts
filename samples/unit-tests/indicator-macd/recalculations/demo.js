@@ -160,7 +160,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         [1492041600000, 0.04398, 0.03794, 0.0381, 0.04253],
         [1492128000000, 0.04266, 0.03898, 0.04253, 0.04012]
     ]);
-/*
+    /*
     assert.deepEqual(
         chart.series[1].yData,
         [

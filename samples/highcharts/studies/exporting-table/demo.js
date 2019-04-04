@@ -25,10 +25,10 @@ Highcharts.drawTable = function () {
             cellLeft + cellPadding,
             tableTop + (i + 2) * rowHeight - cellPadding
         )
-        .css({
-            fontWeight: 'bold'
-        })
-        .add();
+            .css({
+                fontWeight: 'bold'
+            })
+            .add();
     });
 
     series.forEach(function (serie, i) {
@@ -36,10 +36,10 @@ Highcharts.drawTable = function () {
 
         // Apply the cell text
         renderer.text(
-                serie.name,
-                cellLeft - cellPadding + colWidth,
-                tableTop + rowHeight - cellPadding
-            )
+            serie.name,
+            cellLeft - cellPadding + colWidth,
+            tableTop + rowHeight - cellPadding
+        )
             .attr({
                 align: 'right'
             })
@@ -52,10 +52,10 @@ Highcharts.drawTable = function () {
 
             // Apply the cell text
             renderer.text(
-                    Highcharts.numberFormat(point.y, valueDecimals) + valueSuffix,
-                    cellLeft + colWidth - cellPadding,
-                    tableTop + (row + 2) * rowHeight - cellPadding
-                )
+                Highcharts.numberFormat(point.y, valueDecimals) + valueSuffix,
+                cellLeft + colWidth - cellPadding,
+                tableTop + (row + 2) * rowHeight - cellPadding
+            )
                 .attr({
                     align: 'right'
                 })

@@ -342,13 +342,13 @@
             'rightBottom', 'centerBottom', 'leftBottom'], function (dir) {
             // Filter out positions we don't want to use for this overflow
             return !startsWith(dir,
-                    baseTile.center.x > overflow.area.center.x ?
+                baseTile.center.x > overflow.area.center.x ?
                     'right' : // Base tile should be to the right or center
                     'left') && // Base tile should be to the left or center
                    !endsWith(dir,
-                    baseTile.center.y > overflow.area.center.y ?
-                    'Top' : // Base tile should be on top or center
-                    'Bottom'); // Base tile should be below or center
+                       baseTile.center.y > overflow.area.center.y ?
+                           'Top' : // Base tile should be on top or center
+                           'Bottom'); // Base tile should be below or center
         }),
         function (dir) {
             // Get insertion grids for each position
@@ -1091,8 +1091,8 @@ $("#mapDropdown").change(function () {
                     enabled: showDataLabels,
                     formatter: function () {
                         return mapKey === 'custom/world' || mapKey === 'countries/us/us-all' ?
-                                (this.point.properties && this.point.properties['hc-a2']) :
-                                this.point.name;
+                            (this.point.properties && this.point.properties['hc-a2']) :
+                            this.point.name;
                     }
                 }
             }, {

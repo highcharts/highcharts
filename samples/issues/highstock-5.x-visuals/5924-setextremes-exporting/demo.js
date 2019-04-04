@@ -6,7 +6,7 @@ $(function () {
     }, function (chart) {
 
         if (!chart.renderer.forExport) {
-          // Bypass test for identical innerHTML
+            // Bypass test for identical innerHTML
             chart.renderer.g('highcharts-' + window.which).add();
 
             var data = [71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4,

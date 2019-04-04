@@ -4,18 +4,18 @@ QUnit.test(
     function (assert) {
 
         var chart = Highcharts
-            .stockChart('container', {
-                series: [{
-                    data: [1, 2, 3],
-                    id: '1'
-                }, {
-                    data: [1, 2, 3],
-                    id: '2'
-                }, {
-                    data: [1, 2, 3],
-                    id: '3'
-                }]
-            }),
+                .stockChart('container', {
+                    series: [{
+                        data: [1, 2, 3],
+                        id: '1'
+                    }, {
+                        data: [1, 2, 3],
+                        id: '2'
+                    }, {
+                        data: [1, 2, 3],
+                        id: '3'
+                    }]
+                }),
             initialIndexes = chart.series.map(function (s) {
                 return s.options.id;
             }),
