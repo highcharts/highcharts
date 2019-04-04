@@ -36,7 +36,7 @@ function fibonacciRetracements(x1, y1, x2, y2) {
       // defining horizontal lines
         lines.push({
             type: 'path',
-            points: [ p1, p2 ],
+            points: [p1, p2],
             stroke: 'grey'
         });
 
@@ -50,7 +50,7 @@ function fibonacciRetracements(x1, y1, x2, y2) {
           // defining colored backgrounds
             backgrounds.push({
                 type: 'path',
-                points: [ lines[i - 1].points[0], lines[i - 1].points[1], lines[i].points[1], lines[i].points[0] ],
+                points: [lines[i - 1].points[0], lines[i - 1].points[1], lines[i].points[1], lines[i].points[0]],
                 strokeWidth: 0,
                 fill: colors[i - 1]
             });
@@ -61,7 +61,7 @@ function fibonacciRetracements(x1, y1, x2, y2) {
     var trendLine = [{
         type: 'path',
         dashStyle: 'Dash',
-        points: [ point(x1, y1), point(x2, y2) ],
+        points: [point(x1, y1), point(x2, y2)],
         stroke: 'black'
     }];
 

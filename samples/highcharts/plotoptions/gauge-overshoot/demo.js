@@ -18,7 +18,7 @@ Highcharts.chart('container', {
         startAngle: -110,
         endAngle: 110,
         borderWidth: 1,
-        background: [ {
+        background: [{
             backgroundColor: '#fff',
             borderWidth: 0,
             outerRadius: '100%',
