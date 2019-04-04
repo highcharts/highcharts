@@ -10,7 +10,7 @@ $(function () {
                     alpha: 10,
                     beta: 50,
                     depth: 500,
-                    viewDistance: 5,
+                    viewDistance: 5
                 }
             },
             xAxis: {
@@ -39,7 +39,7 @@ $(function () {
                     x: 7.9,
                     y: 7.1,
                     z: 2,
-                    color: 'yellow',
+                    color: 'yellow'
                 }]
             }]
         });
