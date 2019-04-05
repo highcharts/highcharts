@@ -29,6 +29,7 @@ function GLShader(gl) {
     var vertShade = [
             /* eslint-disable */
             '#version 100',
+            '#define LN10 2.302585092994046',
             'precision highp float;',
 
             'attribute vec4 aVertexPosition;',
@@ -57,6 +58,7 @@ function GLShader(gl) {
             'uniform float xAxisOrdinalOffset;',
             'uniform float xAxisPos;',
             'uniform bool  xAxisCVSCoord;',
+            'uniform bool  xAxisIsLog;',
 
             'uniform float yAxisTrans;',
             'uniform float yAxisMin;',
@@ -68,6 +70,7 @@ function GLShader(gl) {
             'uniform float yAxisOrdinalOffset;',
             'uniform float yAxisPos;',
             'uniform bool  yAxisCVSCoord;',
+            'uniform bool  yAxisIsLog;',
 
             'uniform bool  isBubble;',
             'uniform bool  bubbleSizeByArea;',
@@ -113,7 +116,8 @@ function GLShader(gl) {
                             'float minPixelPadding,',
                             'float pointRange,',
                             'float len,',
-                            'bool  cvsCoord',
+                            'bool  cvsCoord,',
+                            'bool  isLog',
                             '){',
 
                 'float sign = 1.0;',
@@ -122,6 +126,10 @@ function GLShader(gl) {
                 'if (cvsCoord) {',
                     'sign *= -1.0;',
                     'cvsOffset = len;',
+                '}',
+
+                'if (isLog) {',
+                    'val = log(val) / LN10;',
                 '}',
 
                 'return sign * (val - localMin) * localA + cvsOffset + ',
@@ -133,7 +141,7 @@ function GLShader(gl) {
                     'return value;// + xAxisPos;',
                 '}',
 
-                'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord);// + xAxisPos;',
+                'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord, xAxisIsLog);// + xAxisPos;',
             '}',
 
             'float yToPixels(float value, float checkTreshold){',
@@ -141,7 +149,7 @@ function GLShader(gl) {
                 'if (skipTranslation){',
                     'v = value;// + yAxisPos;',
                 '} else {',
-                    'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord);// + yAxisPos;',
+                    'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord, yAxisIsLog);// + yAxisPos;',
                     'if (v > plotHeight) {',
                         'v = plotHeight;',
                     '}',
