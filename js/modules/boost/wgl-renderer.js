@@ -647,7 +647,10 @@ function GLRenderer(postRenderCallback) {
                 }
 
                 if (!isRange && !isStacked) {
-                    minVal = Math.max(threshold, yMin); // #8731
+                    minVal = Math.max(
+                        threshold === null ? yMin : threshold, // #5268
+                        yMin
+                    ); // #8731
                 }
                 if (!settings.useGPUTranslations) {
                     minVal = yAxis.toPixels(minVal, true);
