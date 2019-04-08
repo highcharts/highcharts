@@ -42,6 +42,10 @@ jobs:
       # run tests!
       - run: npm test
 
+      # run browserstack tests
+      - run:
+          name: Browsertests
+          command: gulp test --browsers all
 
 workflows:
   version: 2
