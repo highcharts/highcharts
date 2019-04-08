@@ -26,6 +26,7 @@ var boostEnabled = butils.boostEnabled,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
     Chart = H.Chart,
     Series = H.Series,
+    Point = H.Point,
     seriesTypes = H.seriesTypes,
     addEvent = H.addEvent,
     isNumber = H.isNumber,
@@ -115,7 +116,10 @@ Series.prototype.getPoint = function (boostPoint) {
             xData ? xData[boostPoint.i] : undefined
         );
 
-        point.category = point.x;
+        point.category = pick(
+            this.xAxis.categories ? this.xAxis.categories[point.x] : point.x,
+            point.x
+        );
 
         point.dist = boostPoint.dist;
         point.distX = boostPoint.distX;
@@ -132,6 +136,54 @@ wrap(Series.prototype, 'searchPoint', function (proceed) {
     return this.getPoint(
         proceed.apply(this, [].slice.call(arguments, 1))
     );
+});
+
+// For inverted series, we need to swap X-Y values before running base methods
+wrap(Point.prototype, 'haloPath', function (proceed) {
+    var halo,
+        point = this,
+        series = point.series,
+        chart = series.chart,
+        plotX = point.plotX,
+        plotY = point.plotY,
+        inverted = chart.inverted;
+
+    if (series.isSeriesBoosting && inverted) {
+        point.plotX = series.yAxis.len - plotY;
+        point.plotY = series.xAxis.len - plotX;
+    }
+
+    halo = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+    if (series.isSeriesBoosting && inverted) {
+        point.plotX = plotX;
+        point.plotY = plotY;
+    }
+
+    return halo;
+});
+
+wrap(Series.prototype, 'markerAttribs', function (proceed, point) {
+    var attribs,
+        series = this,
+        chart = series.chart,
+        plotX = point.plotX,
+        plotY = point.plotY,
+        inverted = chart.inverted;
+
+    if (series.isSeriesBoosting && inverted) {
+        point.plotX = series.yAxis.len - plotY;
+        point.plotY = series.xAxis.len - plotX;
+    }
+
+    attribs = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+    if (series.isSeriesBoosting && inverted) {
+        point.plotX = plotX;
+        point.plotY = plotY;
+    }
+
+    return attribs;
 });
 
 /*

@@ -463,8 +463,7 @@ import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
 
-var addEvent = H.addEvent,
-    arrayMax = H.arrayMax,
+var arrayMax = H.arrayMax,
     defined = H.defined,
     extend = H.extend,
     format = H.format,
@@ -653,11 +652,17 @@ Series.prototype.drawDataLabels = function () {
         pointOptions,
         hasRendered = series.hasRendered || 0,
         dataLabelsGroup,
-        defer = pick(seriesDlOptions.defer, !!seriesOptions.animation),
+        seriesAnimDuration = H.animObject(seriesOptions.animation).duration,
+        fadeInDuration = Math.min(seriesAnimDuration, 200),
+        defer = pick(
+            seriesDlOptions.defer,
+            fadeInDuration > 0
+        ),
         renderer = chart.renderer;
 
-    /*
+    /**
      * Handle the dataLabels.filter option.
+     * @private
      */
     function applyFilter(point, options) {
         var filter = options.filter,
@@ -684,10 +689,11 @@ Series.prototype.drawDataLabels = function () {
         return true;
     }
 
-    /*
+    /**
      * Merge two objects that can be arrays. If one of them is an array, the
      * other is merged into each element. If both are arrays, each element is
      * merged by index. If neither are arrays, we use normal merge.
+     * @private
      */
     function mergeArrays(one, two) {
         var res = [],
@@ -745,14 +751,17 @@ Series.prototype.drawDataLabels = function () {
         if (defer) {
             dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
             if (!hasRendered) {
-                addEvent(series, 'afterAnimate', function () {
-                    if (series.visible) { // #2597, #3023, #3024
-                        dataLabelsGroup.show(true);
+                setTimeout(function () {
+                    var group = series.dataLabelsGroup;
+                    if (group) {
+                        if (series.visible) { // #2597, #3023, #3024
+                            dataLabelsGroup.show(true);
+                        }
+                        group[
+                            seriesOptions.animation ? 'animate' : 'attr'
+                        ]({ opacity: 1 }, { duration: fadeInDuration });
                     }
-                    dataLabelsGroup[
-                        seriesOptions.animation ? 'animate' : 'attr'
-                    ]({ opacity: 1 }, { duration: 200 });
-                });
+                }, seriesAnimDuration - fadeInDuration);
             }
         }
 

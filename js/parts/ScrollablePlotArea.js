@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -44,6 +44,19 @@ var addEvent = H.addEvent,
  *
  * @type      {number}
  * @apioption chart.scrollablePlotArea.scrollPositionX
+ */
+
+/**
+ * The opacity of mask applied on one of the sides of the plot
+ * area.
+ *
+ * @sample {highcharts} highcharts/chart/scrollable-plotarea-opacity
+ *         Disabled opacity for the mask
+ *
+ * @type        {number}
+ * @default     0.85
+ * @since       7.1.1
+ * @apioption   chart.scrollablePlotArea.opacity
  */
 
 addEvent(Chart, 'afterSetChartSize', function (e) {
@@ -140,7 +153,8 @@ Chart.prototype.applyFixed = function () {
     var container = this.container,
         fixedRenderer,
         scrollableWidth,
-        firstTime = !this.fixedDiv;
+        firstTime = !this.fixedDiv,
+        scrollableOptions = this.options.chart.scrollablePlotArea;
 
     // First render
     if (firstTime) {
@@ -176,7 +190,9 @@ Chart.prototype.applyFixed = function () {
             .attr({
                 fill: H.color(
                     this.options.chart.backgroundColor || '#fff'
-                ).setOpacity(0.85).get(),
+                ).setOpacity(
+                    H.pick(scrollableOptions.opacity, 0.85)
+                ).get(),
                 zIndex: -1
             })
             .addClass('highcharts-scrollable-mask')
@@ -231,11 +247,10 @@ Chart.prototype.applyFixed = function () {
 
     // Set scroll position
     if (firstTime) {
-        var options = this.options.chart.scrollablePlotArea;
 
-        if (options.scrollPositionX) {
+        if (scrollableOptions.scrollPositionX) {
             this.scrollingContainer.scrollLeft =
-                this.scrollablePixels * options.scrollPositionX;
+                this.scrollablePixels * scrollableOptions.scrollPositionX;
         }
     }
 

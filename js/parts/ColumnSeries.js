@@ -54,7 +54,9 @@ var animObject = H.animObject,
  *
  * @augments Highcharts.Series
  */
-seriesType('column', 'line'
+seriesType(
+    'column',
+    'line',
 
     /**
      * Column series display one column per value along an X axis.
@@ -70,7 +72,7 @@ seriesType('column', 'line'
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
-    , {
+    {
 
         /**
          * The corner radius of the border surrounding each column or bar.
@@ -441,7 +443,11 @@ seriesType('column', 'line'
          */
         borderColor: '${palette.backgroundColor}'
 
-    }, /** @lends seriesTypes.column.prototype */ {
+    },
+    /**
+     * @lends seriesTypes.column.prototype
+     */
+    {
         cropShoulder: 0,
         // When tooltip is not shared, this series (and derivatives) requires
         // direct touch/hover. KD-tree does not apply.
@@ -1027,7 +1033,8 @@ seriesType('column', 'line'
 
             Series.prototype.remove.apply(series, arguments);
         }
-    });
+    }
+);
 
 
 /**

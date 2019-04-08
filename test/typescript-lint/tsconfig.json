@@ -54,6 +54,9 @@
         "../../code/modules/data.d.ts",
         "../../code/modules/data.src.d.ts",
 
+        "../../code/modules/dotplot.d.ts",
+        "../../code/modules/dotplot.src.d.ts",
+
         "../../code/modules/drag-panes.d.ts",
         "../../code/modules/drag-panes.src.d.ts",
 

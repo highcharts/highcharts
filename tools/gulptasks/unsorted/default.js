@@ -30,6 +30,13 @@ const compileSingleStyle = fileName => {
  *         Promise to keep
  */
 function defaultWatch() {
+    const argv = require('yargs').argv;
+    const LogLib = require('../lib/log');
+    const ProcessLib = require('../lib/process');
+    if (ProcessLib.isRunning('scripts-watch') && !argv.force) {
+        LogLib.warn('Running watch process detected. Skipping task...');
+        return Promise.resolve();
+    }
     const {
         getBuildScripts
     } = require('../../build.js');
@@ -73,6 +80,7 @@ function defaultWatch() {
 
         return promise;
     };
+    ProcessLib.isRunning('scripts-watch', true);
     return styles().then(() => {
         if (shouldBuild()) {
             fnFirstBuild();
