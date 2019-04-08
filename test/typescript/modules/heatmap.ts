@@ -3,17 +3,19 @@ import HeatmapModule from 'highcharts/modules/heatmap';
 
 HeatmapModule(Highcharts);
 
+test();
+
 function test() {
     const colors = Highcharts.getOptions().colors;
+    const maxSafeInteger = 9007199254740991;
     const tooltipFormatter = function(
         this: Highcharts.TooltipFormatterContextObject
     ) {
-        const point = this.point as any; // @todo make Point.value public
         const series = this.series as any; // @todo make Axis.categories public
         return (
             `<b>${series.xAxis.categories[this.point.x]}</b> sold <br>
-            <b>${point.value}</b> items on <br>
-            <b>${series.yAxis.categories[this.point.y || Number.MAX_SAFE_INTEGER]}</b>`
+            <b>${this.point.value}</b> items on <br>
+            <b>${series.yAxis.categories[this.point.y || maxSafeInteger]}</b>`
         );
     };
     Highcharts.chart('container', {
