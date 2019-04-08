@@ -710,17 +710,22 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 // unselect all other points unless Ctrl or Cmd + click
                 if (!accumulate) {
                     chart.getSelectedPoints().forEach(function (loopPoint) {
+                        var loopSeries = loopPoint.series;
+
                         if (loopPoint.selected && loopPoint !== point) {
                             loopPoint.selected = loopPoint.options.selected =
                                 false;
-                            series.options.data[
-                                series.data.indexOf(loopPoint)
+                            loopSeries.options.data[
+                                loopSeries.data.indexOf(loopPoint)
                             ] = loopPoint.options;
+
                             // Programatically selecting a point should restore
                             // normal state, but when click happened on other
                             // point, set inactive state to match other points
                             loopPoint.setState(
-                                chart.hoverPoints ? 'inactive' : ''
+                                chart.hoverPoints &&
+                                    loopSeries.options.inactiveOtherPoints ?
+                                    'inactive' : ''
                             );
                             loopPoint.firePointEvent('unselect');
                         }
