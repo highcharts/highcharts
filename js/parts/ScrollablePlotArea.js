@@ -146,12 +146,49 @@ Chart.prototype.setUpScrolling = function () {
 };
 
 /**
+ * These elements are moved over to the fixed renderer and stay fixed when the
+ * user scrolls the chart
+ * @private
+ */
+Chart.prototype.moveFixedElements = function () {
+    var container = this.container,
+        fixedRenderer = this.fixedRenderer;
+
+    ([
+        this.inverted ?
+            '.highcharts-xaxis' :
+            '.highcharts-yaxis',
+        this.inverted ?
+            '.highcharts-xaxis-labels' :
+            '.highcharts-yaxis-labels',
+        '.highcharts-contextbutton',
+        '.highcharts-credits',
+        '.highcharts-legend',
+        '.highcharts-reset-zoom',
+        '.highcharts-subtitle',
+        '.highcharts-title',
+        '.highcharts-legend-checkbox'
+    ]).forEach(function (className) {
+        [].forEach.call(
+            container.querySelectorAll(className),
+            function (elem) {
+                (
+                    elem.namespaceURI === fixedRenderer.SVG_NS ?
+                        fixedRenderer.box :
+                        fixedRenderer.box.parentNode
+                ).appendChild(elem);
+                elem.style.pointerEvents = 'auto';
+            }
+        );
+    });
+};
+
+/**
  * @private
  * @function Highcharts.Chart#applyFixed
  */
 Chart.prototype.applyFixed = function () {
-    var container = this.container,
-        fixedRenderer,
+    var fixedRenderer,
         scrollableWidth,
         firstTime = !this.fixedDiv,
         scrollableOptions = this.options.chart.scrollablePlotArea;
@@ -198,34 +235,9 @@ Chart.prototype.applyFixed = function () {
             .addClass('highcharts-scrollable-mask')
             .add();
 
-        // These elements are moved over to the fixed renderer and stay fixed
-        // when the user scrolls the chart.
-        ([
-            this.inverted ?
-                '.highcharts-xaxis' :
-                '.highcharts-yaxis',
-            this.inverted ?
-                '.highcharts-xaxis-labels' :
-                '.highcharts-yaxis-labels',
-            '.highcharts-contextbutton',
-            '.highcharts-credits',
-            '.highcharts-legend',
-            '.highcharts-subtitle',
-            '.highcharts-title',
-            '.highcharts-legend-checkbox'
-        ]).forEach(function (className) {
-            [].forEach.call(
-                container.querySelectorAll(className),
-                function (elem) {
-                    (
-                        elem.namespaceURI === fixedRenderer.SVG_NS ?
-                            fixedRenderer.box :
-                            fixedRenderer.box.parentNode
-                    ).appendChild(elem);
-                    elem.style.pointerEvents = 'auto';
-                }
-            );
-        });
+        this.moveFixedElements();
+
+        addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
     }
 
     // Set the size of the fixed renderer to the visible width
