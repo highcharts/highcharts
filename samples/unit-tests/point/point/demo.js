@@ -76,7 +76,8 @@ QUnit.test(
                     data: [5, 10, 15]
                 }, {
                     type: 'column',
-                    data: [15, 15, 13, 16]
+                    data: [15, 15, 13, 16],
+                    allowPointSelect: true
                 }]
             }),
             legend = chart.legend,
@@ -150,6 +151,28 @@ QUnit.test(
             ) !== '0.1',
             'Legend hover: correct hovered series opacity'
         );
+
+        controller.click(
+            chart.plotLeft + chart.series[1].points[3].plotX,
+            chart.plotTop + chart.series[1].points[3].plotY + 5
+        );
+
+        controller.mouseOver(
+            chart.plotLeft + chart.series[1].points[0].plotX,
+            chart.plotTop + chart.series[1].points[0].plotY + 5
+        );
+
+        controller.click(
+            chart.plotLeft + chart.series[1].points[0].plotX,
+            chart.plotTop + chart.series[1].points[0].plotY + 5
+        );
+
+        assert.strictEqual(
+            chart.series[1].points[3].state,
+            '',
+            'Correct state for column after deselection (#10504)'
+        );
+
     }
 );
 
@@ -575,5 +598,34 @@ QUnit.test('Point className on other elements', function (assert) {
             .getAttribute('class').indexOf('my-class'),
         -1,
         'The halo for other points should not have the point className'
+    );
+});
+
+QUnit.test('Deselecting points', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        plotOptions: {
+            series: {
+                allowPointSelect: true
+            }
+        },
+        series: [{
+            data: [1, 2, 3]
+        }, {
+            data: [1, 2, 3]
+        }]
+    });
+
+    chart.series[0].points[1].select(true, true);
+    chart.series[0].points[2].select(true, true);
+
+    chart.series[1].points[1].select(true, false);
+
+    assert.strictEqual(
+        chart.series[0].options.data['-1'],
+        undefined,
+        'No fake points in series.options.data after deselecting other points.'
     );
 });
