@@ -343,3 +343,8 @@ window.JSONSources = {};
 $.getJSON = function (url, callback) { // eslint-disable-line no-undef
     callback(window.JSONSources[url]);
 };
+
+window.onbeforeunload = function () {
+    console.log('Tried to uload page');
+    return false;
+};
