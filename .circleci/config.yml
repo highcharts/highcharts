@@ -32,7 +32,7 @@ jobs:
             - v1-dependencies-{{ checksum "package.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-      - run: npm install gulp-cli
+      #- run: npm install gulp-cli
       - run: npm install
 
       - save_cache:
@@ -44,9 +44,9 @@ jobs:
       - run: npm test
 
       # run browserstack tests
-      - run:
-          name: Browsertests
-          command: gulp test --browsers all
+      #- run:
+      #    name: Browsertests
+      #    command: gulp test --browsers all
 
 workflows:
   version: 2
