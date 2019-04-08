@@ -58,13 +58,6 @@ var addEvent = H.addEvent,
  * @since       7.1.1
  * @apioption   chart.scrollablePlotArea.opacity
  */
-H.setOptions({
-    chart: {
-        scrollablePlotArea: {
-            opacity: 0.85
-        }
-    }
-});
 
 addEvent(Chart, 'afterSetChartSize', function (e) {
 
@@ -197,7 +190,9 @@ Chart.prototype.applyFixed = function () {
             .attr({
                 fill: H.color(
                     this.options.chart.backgroundColor || '#fff'
-                ).setOpacity(scrollableOptions.opacity).get(),
+                ).setOpacity(
+                    H.pick(scrollableOptions.opacity, 0.85)
+                ).get(),
                 zIndex: -1
             })
             .addClass('highcharts-scrollable-mask')
