@@ -114,10 +114,10 @@ Highcharts.chart('container', {
 });
 ```
 
-## Load Highcharts as an ES6 module
-Since Highcharts supports CommonJS, it can be loaded as an ES6 module with the use of transpilers. Two common transpilers are [Babel](https://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/). These have different interpretations of a CommonJS module, which affects your syntax.
+## Load Highcharts as a ES6/UMD module
+Since Highcharts supports UMD (AMD, CommonJS) and ES6 (ESM - ECMAScript modules), it can be also loaded as a module with the use of transpilers. Two common transpilers are [Babel](https://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/).
 *The following examples presumes you are using npm to install Highcharts, see [Download and install Highcharts](#download-and-install-highcharts) for more details.*
-### Babel
+### Babel + UMD (AMD, CommonJS)
 ```js
 import Highcharts from 'highcharts';
 // Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
@@ -133,11 +133,11 @@ Highcharts.chart('container', {
   // options - see https://api.highcharts.com/highcharts
 });
 ```
-### TypeScript
+### TypeScript + UMD (AMD, CommonJS)
 ```js
-import * as Highcharts from 'highcharts';
+import Highcharts from 'highcharts';
 // Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
-// import Highcharts from 'highcharts/highstock';
+// import * as Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
 import Exporting from 'highcharts/modules/exporting';
@@ -148,6 +148,41 @@ Exporting(Highcharts);
 Highcharts.chart('container', {
   // options - see https://api.highcharts.com/highcharts
 });
+```
+```json
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+  }
+}
+```
+### TypeScript + ES6
+```js
+// Load modules the ES6 way
+import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.js';
+import 'https://code.highcharts.com/es-modules/masters/modules/exporting.js';
+
+// Generate the chart
+Highcharts.chart('container', {
+  // options - see https://api.highcharts.com/highcharts
+});
+```
+```json
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es6",
+    "paths": {
+      "https://code.highcharts.com/es-modules/masters/*.src.js": [
+        "node_modules/highcharts/*.src"
+      ]
+    }
+  }
+}
 ```
 
 ## Build and debug
