@@ -117,7 +117,7 @@ Highcharts.chart('container', {
 ## Load Highcharts as a transpiled ES6/UMD module
 Since Highcharts supports ES6 (ESM - ECMAScript modules) and UMD (AMD, CommonJS), it can be also loaded as a module with the use of transpilers. Two common transpilers are [Babel](https://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/).
 *The following examples presumes you are using npm to install Highcharts, see [Download and install Highcharts](#download-and-install-highcharts) for more details.*
-### Babel + UMD (AMD, CommonJS)
+### Babel
 ```js
 import Highcharts from 'highcharts';
 // Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
@@ -133,7 +133,7 @@ Highcharts.chart('container', {
   // options - see https://api.highcharts.com/highcharts
 });
 ```
-### TypeScript + UMD (AMD, CommonJS)
+### TypeScript
 ```js
 import Highcharts from 'highcharts';
 // Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
@@ -156,7 +156,7 @@ Highcharts.chart('container', {
   }
 }
 ```
-### TypeScript + ES6
+### TypeScript + ECMAScript modules from CDN
 ```js
 // Load modules the ES6 way
 import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.js';
