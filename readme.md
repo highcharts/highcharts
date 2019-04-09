@@ -133,7 +133,7 @@ Highcharts.chart('container', {
   // options - see https://api.highcharts.com/highcharts
 });
 ```
-### TypeScript
+### TypeScript + UMD
 ```js
 import Highcharts from 'highcharts';
 // Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
@@ -156,11 +156,11 @@ Highcharts.chart('container', {
   }
 }
 ```
-### TypeScript + ECMAScript modules from CDN
+### TypeScript + ESM from CDN
 ```js
 // Load modules the ES6 way
-import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.js';
-import 'https://code.highcharts.com/es-modules/masters/modules/exporting.js';
+import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
+import 'https://code.highcharts.com/es-modules/masters/modules/exporting.src.js';
 
 // Generate the chart
 Highcharts.chart('container', {
