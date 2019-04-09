@@ -262,6 +262,7 @@ QUnit.test('3D columns crop outside plotArea', function (assert) {
 
     controller.pan([clickX, clickY], [clickX + 40, clickY]);
 
+    // No lolex should be needed for this timeout
     var done = assert.async();
     setTimeout(function () {
         assert.ok(true, 'Console should be clear.');

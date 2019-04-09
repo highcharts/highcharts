@@ -170,6 +170,7 @@
         buildChart();
 
         // The second time, they are obtained from Highcharts cache
+        // No lolex should be used here.
         setTimeout(function () {
             buildChart();
         }, 200);
