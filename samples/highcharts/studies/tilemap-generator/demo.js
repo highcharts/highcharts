@@ -1,4 +1,3 @@
-
 // Tilemap generator plugin
 (function (H) {
     /*
@@ -6,11 +5,11 @@
         1. Sort all areas by X value (center)
         2. Go through and "lift" the areas to their correct y-tiles based on
             where they belong relative to the lowest area, using the average
-			area size as tilesize.
+            area size as tilesize.
         3. Now shrink into tiles in the X dimension, by splitting by tilesize.
-			Go through and find the next element that has an area that is more
-			than a tilesize away. Compress all elements between into a single
-			tile.
+            Go through and find the next element that has an area that is more
+            than a tilesize away. Compress all elements between into a single
+            tile.
         4. If multiple areas are on the same tile, we deal with that as follows:
             - Place the largest of the areas on the ideal tile.
             - Subsequent areas are placed around the ideal tile by calculating
@@ -50,12 +49,12 @@
 
     // Explode one dimensional array of areas into a 2D grid, where a threshold
     // value determines how far from the lowest area's center an area's center
-	// has to be in the set dimension to shift it up a row. This stacks, so if
-	// an area center value is 2x deltaThreshold away, it will be shifted 2
-	// rows. In other words, the lowest centers will stay at the first row, and
-	// areas are shifted up the grid the farther away they are in the chosen
-	// dimension. Areas retain their original column index. The grid is
-	// normalized to avoid negative indicies.
+    // has to be in the set dimension to shift it up a row. This stacks, so if
+    // an area center value is 2x deltaThreshold away, it will be shifted 2
+    // rows. In other words, the lowest centers will stay at the first row, and
+    // areas are shifted up the grid the farther away they are in the chosen
+    // dimension. Areas retain their original column index. The grid is
+    // normalized to avoid negative indicies.
     //
     // Dimension can be 'x' or 'y'. If unassigned, 'y' is assumed.
     /*
@@ -88,8 +87,8 @@
         i = areas.length;
         while (i--) {
             rowIx = Math.floor(
-				(areas[i].center[direction] - min) / deltaThreshold
-			);
+                (areas[i].center[direction] - min) / deltaThreshold
+            );
             if (!grid[rowIx]) {
                 grid[rowIx] = [];
             }
@@ -343,13 +342,13 @@
             'rightBottom', 'centerBottom', 'leftBottom'], function (dir) {
             // Filter out positions we don't want to use for this overflow
             return !startsWith(dir,
-                    baseTile.center.x > overflow.area.center.x ?
+                baseTile.center.x > overflow.area.center.x ?
                     'right' : // Base tile should be to the right or center
                     'left') && // Base tile should be to the left or center
                    !endsWith(dir,
-                    baseTile.center.y > overflow.area.center.y ?
-                    'Top' : // Base tile should be on top or center
-                    'Bottom'); // Base tile should be below or center
+                       baseTile.center.y > overflow.area.center.y ?
+                           'Top' : // Base tile should be on top or center
+                           'Bottom'); // Base tile should be below or center
         }),
         function (dir) {
             // Get insertion grids for each position
@@ -744,7 +743,7 @@
         );
 
         // We have to flatten the grid into a one dimensional array with x/y
-		// axis coordinates for Highcharts
+        // axis coordinates for Highcharts
         return filter(reduce(grid, function (accumulator, row, y) {
             // Reduce the grid into a flat array with x/y
             return accumulator.concat(
@@ -1092,8 +1091,8 @@ $("#mapDropdown").change(function () {
                     enabled: showDataLabels,
                     formatter: function () {
                         return mapKey === 'custom/world' || mapKey === 'countries/us/us-all' ?
-                                (this.point.properties && this.point.properties['hc-a2']) :
-                                this.point.name;
+                            (this.point.properties && this.point.properties['hc-a2']) :
+                            this.point.name;
                     }
                 }
             }, {
@@ -1220,4 +1219,3 @@ if (location.hash) {
     $($('#mapDropdown option')[0]).attr('selected', 'selected');
 }
 $('#mapDropdown').change();
-

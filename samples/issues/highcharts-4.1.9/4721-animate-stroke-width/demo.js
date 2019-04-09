@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Animation of stroke-width', function (assert) {
         var renderer =

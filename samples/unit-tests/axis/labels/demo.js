@@ -414,7 +414,7 @@ QUnit.test('Label ellipsis and expanding', function (assert) {
 
     var chart = new Highcharts.chart('container', {
         chart: {
-            width: 320
+            width: 300
         },
         xAxis: {
             labels: {

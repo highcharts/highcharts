@@ -1,5 +1,3 @@
-
-
 QUnit.test('Set min/max size', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

@@ -14,7 +14,7 @@ $(function () {
                     color: 'green'
                 }]
             }, {
-                    // set on series level: state.hover
+                // set on series level: state.hover
                 marker: {
                     states: {
                         hover: {
@@ -24,7 +24,7 @@ $(function () {
                 },
                 data: [-10, -5, 0, {
                     y: 5,
-                        // set on point level: state.hover
+                    // set on point level: state.hover
                     marker: {
                         states: {
                             hover: {
@@ -33,7 +33,7 @@ $(function () {
                         }
                     }
                 },
-                    10, 15, 10, 10, 5, 0, -5],
+                10, 15, 10, 10, 5, 0, -5],
                 zones: [{
                     value: -5,
                     color: 'orange'

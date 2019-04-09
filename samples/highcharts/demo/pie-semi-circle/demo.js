@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     chart: {
         plotBackgroundColor: null,
@@ -50,4 +49,3 @@ Highcharts.chart('container', {
         ]
     }]
 });
-

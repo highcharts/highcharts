@@ -9,22 +9,23 @@ $(function () {
     colors = [{
         linearGradient: perShapeGradient,
         stops: [
-                [0, 'rgb(247, 111, 111)'],
-                [1, 'rgb(220, 54, 54)']
+            [0, 'rgb(247, 111, 111)'],
+            [1, 'rgb(220, 54, 54)']
         ]
     }, {
         linearGradient: perShapeGradient,
         stops: [
-                [0, 'rgb(120, 202, 248)'],
-                [1, 'rgb(46, 150, 208)']
+            [0, 'rgb(120, 202, 248)'],
+            [1, 'rgb(46, 150, 208)']
         ]
     }, {
         linearGradient: perShapeGradient,
         stops: [
-                [0, 'rgb(136, 219, 5)'],
-                [1, 'rgb(112, 180, 5)']
-        ] }
-        ];
+            [0, 'rgb(136, 219, 5)'],
+            [1, 'rgb(112, 180, 5)']
+        ]
+    }
+    ];
 
     $('#container').highcharts({
         chart: {

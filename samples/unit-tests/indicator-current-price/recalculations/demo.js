@@ -1,4 +1,3 @@
-
 QUnit.test('Test current and last price indicator.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {

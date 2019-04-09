@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'The <em>series.keys</em> option'
@@ -33,4 +32,3 @@ Highcharts.chart('container', {
         keys: ['name', 'y', 'sliced', 'selected']
     }]
 });
-

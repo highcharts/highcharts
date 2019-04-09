@@ -1,4 +1,3 @@
-
 Highcharts.setOptions({
     time: {
         timezoneOffset: 5 * 60

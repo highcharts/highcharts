@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -1322,7 +1322,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /**
      * Reflows the chart to its container. By default, the chart reflows
      * automatically to its container following a `window.resize` event, as per
-     * the [chart.reflow](https://api.highcharts/highcharts/chart.reflow)
+     * the [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
      * option. However, there are no reliable events for div resize, so if the
      * container is resized without a window resize event, this must be called
      * explicitly.

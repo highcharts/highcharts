@@ -14,6 +14,7 @@ import H from '../../parts/Globals.js';
 import butils from './boost-utils.js';
 import init from './boost-init.js';
 import './boost-overrides.js';
+import './named-colors.js';
 
 // These need to be fixed when we support named imports
 var hasWebGLSupport = butils.hasWebGLSupport;

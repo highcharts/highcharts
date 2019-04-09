@@ -40,7 +40,6 @@ function getBoxes() {
 }
 
 
-
 renderer = new Highcharts.Renderer(
     document.getElementById('container'),
     len,
@@ -50,21 +49,21 @@ renderer = new Highcharts.Renderer(
 function visualize(boxes, len, y) {
 
     renderer.path(['M', 0, y + 45, 'L', len, y + 45])
-    .attr({
-        stroke: 'silver',
-        'stroke-width': 2
-    })
-    .add();
+        .attr({
+            stroke: 'silver',
+            'stroke-width': 2
+        })
+        .add();
 
     each(boxes, function (box, i) {
         if (box.pos !== undefined) {
             renderer.rect(box.pos + 0.5, y + 0.5, box.size - 1, 20)
-            .attr({
-                'fill': 'rgba(0, 0, 0, 0.1)',
-                'stroke-width': 1,
-                'stroke': Highcharts.getOptions().colors[i % 10]
-            })
-            .add();
+                .attr({
+                    fill: 'rgba(0, 0, 0, 0.1)',
+                    'stroke-width': 1,
+                    stroke: Highcharts.getOptions().colors[i % 10]
+                })
+                .add();
 
             renderer.path([
                 'M',
@@ -72,18 +71,18 @@ function visualize(boxes, len, y) {
                 y + 20,
                 'L', box.target, y + 45, 'z'
             ])
-            .attr({
-                'stroke-width': 1,
-                'stroke': Highcharts.getOptions().colors[i % 10]
-            })
-            .add();
+                .attr({
+                    'stroke-width': 1,
+                    stroke: Highcharts.getOptions().colors[i % 10]
+                })
+                .add();
         }
 
         renderer.circle(box.target, y + 45, 2)
-        .attr({
-            fill: 'blue'
-        })
-        .add();
+            .attr({
+                fill: 'blue'
+            })
+            .add();
     });
 }
 
@@ -107,4 +106,3 @@ each(boxes, function (box) {
 });
 Highcharts.distribute(boxes, len);
 visualize(boxes, len, 210);
-

@@ -1,4 +1,3 @@
-
 QUnit.test('Crosshairs in OHLC', function (assert) {
     var chart = Highcharts.stockChart('container', {
         series: [{

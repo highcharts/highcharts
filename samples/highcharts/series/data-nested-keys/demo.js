@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'The <em>series.keys</em> option'

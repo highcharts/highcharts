@@ -1,4 +1,3 @@
-
 var sine = Highcharts.sonification.instruments.sine,
     square = Highcharts.sonification.instruments.square,
     triangle = Highcharts.sonification.instruments.triangle,

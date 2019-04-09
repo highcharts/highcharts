@@ -1,4 +1,3 @@
-
 window.chart = new Highcharts.StockChart({
     chart: {
         renderTo: document.getElementById('container')

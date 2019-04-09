@@ -1,4 +1,3 @@
-
 // THE CHART
 Highcharts.chart('container', {
     chart: {

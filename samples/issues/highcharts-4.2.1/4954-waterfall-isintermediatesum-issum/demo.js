@@ -1,29 +1,29 @@
 jQuery(function () {
     QUnit.test('Correct float for isSum and isIntermediateSum', function (assert) {
         var chart = Highcharts.chart('container', {
-            'chart': {
-                'type': 'waterfall'
+            chart: {
+                type: 'waterfall'
             },
-            'plotOptions': {
-                'series': {
-                    'dataLabels': {
-                        'enabled': true
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        enabled: true
                     }
                 }
             },
-            'series': [{
-                'data': [
-                    { 'y': 18.4 },
-                    { 'y': 0.1 },
-                    { 'isIntermediateSum': true },
-                    { 'y': 0.3 },
-                    { 'y': -0.4 },
-                    { 'isIntermediateSum': true },
-                    { 'isSum': true }
+            series: [{
+                data: [
+                    { y: 18.4 },
+                    { y: 0.1 },
+                    { isIntermediateSum: true },
+                    { y: 0.3 },
+                    { y: -0.4 },
+                    { isIntermediateSum: true },
+                    { isSum: true }
                 ]
             }],
-            'yAxis': {
-                'min': 17.5
+            yAxis: {
+                min: 17.5
             }
         });
 

@@ -1,4 +1,3 @@
-
 QUnit.test(
     'Redraw parameter on stock chart (#7256)',
     function (assert) {

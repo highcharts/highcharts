@@ -1,4 +1,3 @@
-
 var renderer = new Highcharts.Renderer(
         $('#container')[0],
         400,

@@ -1,5 +1,3 @@
-
-
 QUnit.test('Floor and ceiling', function (assert) {
     var chart = Highcharts.chart('container', {
 

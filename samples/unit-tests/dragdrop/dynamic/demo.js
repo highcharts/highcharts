@@ -1,4 +1,3 @@
-
 QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
 
     var chart = Highcharts.chart('container', {

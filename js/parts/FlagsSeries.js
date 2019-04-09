@@ -272,7 +272,11 @@ seriesType(
             fontWeight: 'bold'
         }
 
-    }, /** @lends seriesTypes.flags.prototype */ {
+    },
+    /**
+     * @lends seriesTypes.flags.prototype
+     */
+    {
         sorted: false,
         noSharedTooltip: true,
         allowDG: false,
@@ -603,7 +607,11 @@ seriesType(
          */
         invertGroups: noop
 
-    }, /** @lends seriesTypes.column.prototype.pointClass.prototype */ {
+    },
+    /**
+     * @lends seriesTypes.column.prototype.pointClass.prototype
+     */
+    {
         isValid: function () {
             // #9233 - Prevent from treating flags as null points (even if
             // they have no y values defined).

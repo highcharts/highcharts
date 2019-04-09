@@ -1,4 +1,3 @@
-
 QUnit.test('Show loading', function (assert) {
 
     var chart = Highcharts

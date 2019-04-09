@@ -1,4 +1,3 @@
-
 // Sonification options
 var sdInstruments = [{
         instrument: 'sineMajor',
@@ -96,7 +95,7 @@ var chart = Highcharts.chart('container', {
                         chart.series.forEach(function (series) {
                             // Map instruments to the options for this series
                             var instruments = series.options.id === 'sd' ?
-                                    sdInstruments : nyInstruments;
+                                sdInstruments : nyInstruments;
                             // See if we have a point with the targetX
                             series.points.some(function (point) {
                                 if (point.x === targetX) {

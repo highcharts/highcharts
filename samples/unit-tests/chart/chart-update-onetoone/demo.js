@@ -123,7 +123,6 @@
         }, true, true);
 
 
-
         assert.strictEqual(
             getNames(),
             'One,Three',

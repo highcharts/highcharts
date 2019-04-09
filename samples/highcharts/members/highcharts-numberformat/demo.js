@@ -1,5 +1,3 @@
-
-
 var converters = {
     // Latin to Farsi
     fa: function (number) {

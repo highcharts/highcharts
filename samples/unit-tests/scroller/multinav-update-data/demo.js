@@ -1,4 +1,3 @@
-
 QUnit.test('Update navigator data', function (assert) {
     var chart = Highcharts.stockChart('container', {
         plotOptions: {

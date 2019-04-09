@@ -4,7 +4,6 @@ var data = [
 ];
 
 
-
 Highcharts.stockChart('container', {
     chart: {
         type: "area",

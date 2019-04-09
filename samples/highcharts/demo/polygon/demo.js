@@ -1,5 +1,3 @@
-
-
 Highcharts.chart('container', {
     title: {
         text: 'Height vs Weight'
@@ -98,4 +96,3 @@ Highcharts.chart('container', {
         pointFormat: '{point.x} cm, {point.y} kg'
     }
 });
-

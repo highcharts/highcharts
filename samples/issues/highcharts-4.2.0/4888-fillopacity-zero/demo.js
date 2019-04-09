@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Fill opacity zero', function (assert) {
         var chart = Highcharts.chart('container', {

@@ -479,6 +479,9 @@ seriesType('xrange', 'column'
                 // Partial fill graphic
                 if (partShapeArgs) {
                     if (point.graphicOverlay) {
+                        point.graphicOverlay[verb](
+                            merge(partShapeArgs)
+                        );
                         point.clipRect.animate(
                             merge(clipRectArgs)
                         );

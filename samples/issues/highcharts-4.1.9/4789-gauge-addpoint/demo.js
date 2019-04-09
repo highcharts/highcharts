@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Gauge pivot stays on top', function (assert) {
         var chart = $("#container").highcharts({

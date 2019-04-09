@@ -37,7 +37,7 @@ $(function () {
                             ["Plastic PET Bottles - 36,420 lbs", 24.73],
                             ["Glass - 40,950 lbs", 27.8],
                             ["Cardboard - 30,000 lbs", 20.37],
-                            ["Solo Cups - 4,556 lbs", 3.09] ]
+                            ["Solo Cups - 4,556 lbs", 3.09]]
                     }]
                 }
             },

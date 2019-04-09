@@ -1,4 +1,3 @@
-
 QUnit.test('Point is on appropriate position', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

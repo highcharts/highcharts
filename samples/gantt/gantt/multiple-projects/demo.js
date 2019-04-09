@@ -1,5 +1,3 @@
-
-
 Highcharts.ganttChart('container', {
     title: {
         text: 'Gantt Chart with Multiple Projects'

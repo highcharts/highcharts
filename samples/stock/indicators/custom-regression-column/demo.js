@@ -145,5 +145,3 @@ Highcharts.chart('container', {
         linkedTo: 'temp'
     }]
 });
-
-

@@ -1,5 +1,3 @@
-
-
 QUnit.test('Series index and updating', function (assert) {
 
     var chart;

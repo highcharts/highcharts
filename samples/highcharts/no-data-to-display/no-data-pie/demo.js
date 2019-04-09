@@ -1,5 +1,3 @@
-
-
 var chart,
     btnRemove = $('#remove'),
     btnAdd = $('#add');

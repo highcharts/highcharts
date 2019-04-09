@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("Change of label alignment after add", function (assert) {
         var ren = new Highcharts.Renderer(
@@ -10,7 +9,7 @@ $(function () {
         var lbl = ren.label('Hello World', 100, 100)
             .attr({
                 //align: 'right',
-                'fill': 'silver'
+                fill: 'silver'
             })
             .add();
 

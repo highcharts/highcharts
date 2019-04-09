@@ -24,4 +24,3 @@ QUnit.test('Floating enabled.', function (assert) {
         'floating'
     );
 });
-

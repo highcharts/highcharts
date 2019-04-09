@@ -401,54 +401,54 @@
             };
 
         assert.strictEqual(
-          isDOMElement("a"),
-          false,
-          'String is not a HTML Element'
+            isDOMElement("a"),
+            false,
+            'String is not a HTML Element'
         );
         assert.strictEqual(
-          isDOMElement(1),
-          false,
-          'Number is not a HTML Element'
+            isDOMElement(1),
+            false,
+            'Number is not a HTML Element'
         );
         assert.strictEqual(
-          isDOMElement(true),
-          false,
-          'Boolean is not a HTML Element'
+            isDOMElement(true),
+            false,
+            'Boolean is not a HTML Element'
         );
         assert.strictEqual(
-          isDOMElement(null),
-          false,
-          'null is not a HTML Element'
+            isDOMElement(null),
+            false,
+            'null is not a HTML Element'
         );
         assert.strictEqual(
-          isDOMElement(undefined),
-          false,
-          'undefined is not a HTML Element'
+            isDOMElement(undefined),
+            false,
+            'undefined is not a HTML Element'
         );
         assert.strictEqual(
-          isDOMElement([1]),
-          false,
-          'Array is not a HTML Element'
+            isDOMElement([1]),
+            false,
+            'Array is not a HTML Element'
         );
         assert.strictEqual(
-          isDOMElement({ a: 1 }),
-          false,
-          'Object is not a HTML Element'
+            isDOMElement({ a: 1 }),
+            false,
+            'Object is not a HTML Element'
         );
         assert.strictEqual(
-          isDOMElement(classes),
-          false,
-          'Object classes is not a HTML Element'
+            isDOMElement(classes),
+            false,
+            'Object classes is not a HTML Element'
         );
         assert.strictEqual(
-          isDOMElement(document.createElement('div')),
-          true,
-          'HTMLElement is a HTML Element'
+            isDOMElement(document.createElement('div')),
+            true,
+            'HTMLElement is a HTML Element'
         );
         assert.strictEqual(
-          isDOMElement(function Test() {}),
-          false,
-          'Function is not a HTML Element'
+            isDOMElement(function Test() {}),
+            false,
+            'Function is not a HTML Element'
         );
     });
 
@@ -460,64 +460,64 @@
             };
 
         assert.strictEqual(
-          isClass("a"),
-          false,
-          'String is not a class'
+            isClass("a"),
+            false,
+            'String is not a class'
         );
         assert.strictEqual(
-          isClass(1),
-          false,
-          'Number is not a class'
+            isClass(1),
+            false,
+            'Number is not a class'
         );
         assert.strictEqual(
-          isClass(true),
-          false,
-          'Boolean is not a class'
+            isClass(true),
+            false,
+            'Boolean is not a class'
         );
         assert.strictEqual(
-          isClass(null),
-          false,
-          'null is not a class'
+            isClass(null),
+            false,
+            'null is not a class'
         );
         assert.strictEqual(
-          isClass(undefined),
-          false,
-          'undefined is not a class'
+            isClass(undefined),
+            false,
+            'undefined is not a class'
         );
         assert.strictEqual(
-          isClass([1]),
-          false,
-          'Array is not a class'
+            isClass([1]),
+            false,
+            'Array is not a class'
         );
         assert.strictEqual(
-          isClass({ a: 1 }),
-          false,
-          'Object is not a class'
+            isClass({ a: 1 }),
+            false,
+            'Object is not a class'
         );
 
         if ((function myFunc() {}).name === 'myFunc') { // IE11 doesn't support function name
             assert.strictEqual(
-              isClass(classes),
-              true,
-              'Object classes is a class'
+                isClass(classes),
+                true,
+                'Object classes is a class'
             );
         }
         // Some legacy browsers do not have named functions
         classes.constructor = function () {};
         assert.strictEqual(
-          isClass(classes),
-          false,
-          'Object with unnamed constructor is not a class'
+            isClass(classes),
+            false,
+            'Object with unnamed constructor is not a class'
         );
         assert.strictEqual(
-          isClass(document.createElement('div')),
-          false,
-          'HTMLElement is not a class'
+            isClass(document.createElement('div')),
+            false,
+            'HTMLElement is not a class'
         );
         assert.strictEqual(
-          isClass(function Test() {}),
-          false,
-          'Function is not a class'
+            isClass(function Test() {}),
+            false,
+            'Function is not a class'
         );
     });
 
@@ -696,14 +696,14 @@
     QUnit.test('objectEach', function (assert) {
         var objectEach = Highcharts.objectEach,
             obj1 = {
-                '1': 1,
-                '2': '2',
+                1: 1,
+                2: '2',
                 3: '3'
             },
             obj1Expected = {
-                '1': 1,
-                '2': '2',
-                '3': '3'
+                1: 1,
+                2: '2',
+                3: '3'
             },
             obj1Actual = {},
             testFunction = function () {
@@ -715,22 +715,22 @@
             },
             obj2,
             obj2Expected = {
-                'one': 1,
-                'two': testFunction
+                one: 1,
+                two: testFunction
             },
             obj2Actual = {},
             arr1 = ['1', '2', '3'],
             arr1Expected = {
-                '0': '1',
-                '1': '2',
-                '2': '3'
+                0: '1',
+                1: '2',
+                2: '3'
             },
             arr1Actual = {},
             obj3 = {
-                'one': 'one'
+                one: 'one'
             },
             obj3This = {
-                'ctx': 'ctx'
+                ctx: 'ctx'
             };
 
         TestObj.prototype.three = 3;

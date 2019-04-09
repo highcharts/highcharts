@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -1809,14 +1809,15 @@ Axis.prototype.minFromRange = function () {
         max = this.max,
         dataMin,
         range,
+        time = this.chart.time,
         // Get the true range from a start date
         getTrueRange = function (base, count) {
-            var date = new Date(base),
-                basePeriod = date['get' + timeName]();
+            var date = new time.Date(base),
+                basePeriod = time.get(timeName, date);
 
-            date['set' + timeName](basePeriod + count);
+            time.set(timeName, date, basePeriod + count);
 
-            if (basePeriod === date['get' + timeName]()) {
+            if (basePeriod === time.get(timeName, date)) {
                 date.setDate(0); // #6537
             }
 

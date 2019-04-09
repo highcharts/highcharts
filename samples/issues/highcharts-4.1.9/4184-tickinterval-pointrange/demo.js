@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("tickInterval option should take precedence over data range", function (assert) {
         var chart = $("#container").highcharts({

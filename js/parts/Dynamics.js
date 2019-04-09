@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -290,6 +290,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         'backgroundColor',
         'borderColor',
         'borderWidth',
+        'borderRadius',
+        'plotBackgroundColor',
+        'plotBackgroundImage',
+        'plotBorderColor',
+        'plotBorderWidth',
+        'plotShadow',
+        'shadow'
+    ],
+
+    /**
+     * These properties require a full reflow of chart elements, best
+     * implemented through running `Chart.setSize` internally (#8190).
+     * @type {Array}
+     */
+    propsRequireReflow: [
         'margin',
         'marginTop',
         'marginRight',
@@ -299,14 +314,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         'spacingTop',
         'spacingRight',
         'spacingBottom',
-        'spacingLeft',
-        'borderRadius',
-        'plotBackgroundColor',
-        'plotBackgroundImage',
-        'plotBorderColor',
-        'plotBorderWidth',
-        'plotShadow',
-        'shadow'
+        'spacingLeft'
     ],
 
     /**
@@ -404,6 +412,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             updateAllSeries,
             newWidth,
             newHeight,
+            runSetSize,
             itemsForRemoval = [];
 
         fireEvent(chart, 'update', { options: options });
@@ -459,6 +468,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 // Only dirty box
                 if (chart.propsRequireDirtyBox.indexOf(key) !== -1) {
                     chart.isDirtyBox = true;
+                }
+                // Chart setSize
+                if (chart.propsRequireReflow.indexOf(key) !== -1) {
+                    runSetSize = true;
                 }
             });
 
@@ -603,7 +616,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 newWidth || chart.chartWidth
             );
         }
+
         if (
+            // In this case, run chart.setSize with newWidth and newHeight which
+            // are undefined, only for reflowing chart elements because margin
+            // or spacing has been set (#8190)
+            runSetSize ||
+
+            // In this case, the size is actually set
             (isNumber(newWidth) && newWidth !== chart.chartWidth) ||
             (isNumber(newHeight) && newHeight !== chart.chartHeight)
         ) {

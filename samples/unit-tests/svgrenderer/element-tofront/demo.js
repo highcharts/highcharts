@@ -1,4 +1,3 @@
-
 QUnit.test('Element to front', function (assert) {
 
     var renderer,

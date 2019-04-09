@@ -1,4 +1,3 @@
-
 $(function () {
     function test(key, options) {
         QUnit.test('In a crossing point, tooltip should show top series, ' + key, function (assert) {

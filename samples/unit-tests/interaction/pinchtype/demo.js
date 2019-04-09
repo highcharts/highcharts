@@ -203,7 +203,6 @@
         );
 
 
-
         var lastMin = xAxis.min,
             lastMax = xAxis.max;
         dualTouchPan(chart);
@@ -215,7 +214,6 @@
         );
 
     });
-
 
 
     QUnit.test('pinchType on, followTouchMove is false', function (assert) {
@@ -258,7 +256,6 @@
             'Extremes have changed'
         );
     });
-
 
 
     QUnit.test('pinchType is on, zoomType is off (#5840)', function (assert) {
@@ -308,8 +305,6 @@
     });
 
 
-
-
     QUnit.test('pinchType is off, zoomType is on', function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
@@ -355,7 +350,6 @@
             'Altered max'
         );
     });
-
 
 
     QUnit.test('zoomType is on, pinchType inherited', function (assert) {

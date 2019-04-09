@@ -1,4 +1,3 @@
-
 Highcharts.setOptions({
     colors: ['green', 'blue']
 });

@@ -1,4 +1,3 @@
-
 var chart = Highcharts.chart('container', {
     title: {
         text: 'Exports a pdf with name: my-pdf'

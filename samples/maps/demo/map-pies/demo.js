@@ -1,4 +1,3 @@
-
 // New map-pie series type that also allows lat/lon as center option.
 // Also adds a sizeFormatter option to the series, to allow dynamic sizing
 // of the pies.

@@ -37,8 +37,6 @@ $(function () {
         );
 
 
-
-
         chart = new Highcharts.Chart({
 
             chart: {
@@ -75,10 +73,6 @@ $(function () {
             true,
             'Element height is acceptable'
         );
-
-
-
-
 
 
         chart = new Highcharts.Chart({

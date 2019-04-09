@@ -1,4 +1,3 @@
-
 QUnit.test('Drilldown across types', function (assert) {
 
     var chart = Highcharts

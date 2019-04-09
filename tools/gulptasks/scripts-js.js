@@ -26,12 +26,18 @@ const Gulp = require('gulp');
  */
 function task() {
 
+    const argv = require('yargs').argv;
     const Build = require('../build.js');
     const LogLib = require('./lib/log');
+    const ProcessLib = require('./lib/process');
+
+    if (ProcessLib.isRunning('scripts-watch') && !argv.force) {
+        LogLib.warn('Running watch process detected. Skipping task...');
+        return Promise.resolve();
+    }
 
     return new Promise((resolve, reject) => {
 
-        const argv = process.argv;
         const BuildScripts = Build.getBuildScripts({
             debug: (argv.d || argv.debug || false),
             files: (

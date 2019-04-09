@@ -1,4 +1,3 @@
-
 $(function () {
     /* Shadows not applied on marker elements
     QUnit.test('Shadow follows bubble', function (assert) {

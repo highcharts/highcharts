@@ -1,4 +1,7 @@
-QUnit.test('performance/highcharts-chart', function (assert) {
+// Skipped, this test pollutes the output and is probably not needed for
+// day-to-day testing. Overall Highcharts performance can be monitored through
+// the total test time.
+QUnit.skip('performance/highcharts-chart', function (assert) {
 
     var rounds = 100,
         totalCount = 0,

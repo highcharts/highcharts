@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'selected point turns to red'

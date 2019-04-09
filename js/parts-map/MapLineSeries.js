@@ -60,17 +60,17 @@ seriesType('mapline', 'map'
         },
 
         /**
-     * Get presentational attributes
-     *
-     * @private
-     * @function Highcharts.seriesTypes.mapline#pointAttribs
-     *
-     * @param {Highcharts.Point} point
-     *
-     * @param {string} state
-     *
-     * @return {Highcharts.Dictionary<*>}
-     */
+         * Get presentational attributes
+         *
+         * @private
+         * @function Highcharts.seriesTypes.mapline#pointAttribs
+         *
+         * @param {Highcharts.Point} point
+         *
+         * @param {string} state
+         *
+         * @return {Highcharts.Dictionary<*>}
+         */
         pointAttribs: function (point, state) {
             var attr = seriesTypes.map.prototype.pointAttribs.call(
                 this,
