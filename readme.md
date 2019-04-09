@@ -137,7 +137,7 @@ Highcharts.chart('container', {
 ```js
 import Highcharts from 'highcharts';
 // Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
-// import * as Highcharts from 'highcharts/highstock';
+// import Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
 import Exporting from 'highcharts/modules/exporting';
