@@ -63,36 +63,37 @@ QUnit.test('Hidden legend bogus SVG (#6769', function (assert) {
 });
 
 QUnit.test('Legend resize', function (assert) {
-    var chart = Highcharts.chart('container', {
-        chart: {
-            width: 600,
-            animation: {
-                duration: 1
-            }
-        },
-        legend: {
-            borderWidth: 2
-        },
-        series: [{
-            data: [1, 3, 2, 4]
-        }]
-    });
-    var done = assert.async();
+    var clock = TestUtilities.lolexInstall();
+    try {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    width: 600,
+                    animation: {
+                        duration: 1
+                    }
+                },
+                legend: {
+                    borderWidth: 2
+                },
+                series: [{
+                    data: [1, 3, 2, 4]
+                }]
+            }),
+            legendWidth = chart.legend.box.getBBox().width;
 
-    var legendWidth = chart.legend.box.getBBox().width;
+        chart.addSeries({
+            data: [2, 4, 3, 5]
+        });
 
-    chart.addSeries({
-        data: [2, 4, 3, 5]
-    });
-
-    setTimeout(function () {
+        TestUtilities.lolexRunAndUninstall(clock);
         assert.notEqual(
             chart.legend.box.getBBox().width,
             legendWidth,
             'Legend width has changed (#7260)'
         );
-        done();
-    }, 50);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
 });
 
 

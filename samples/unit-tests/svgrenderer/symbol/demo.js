@@ -1,3 +1,4 @@
+// Purposefully not using lolex for this, as we are loading images.
 QUnit.test('Symbol tests', function (assert) {
     var w = 400,
         h = 400,
