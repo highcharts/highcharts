@@ -1,58 +1,124 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 version: 2.1
-jobs:
-  build:
+
+######### Anchors ####################
+defaults: &defaults
+  executor: node_lts_browsers
+  working_directory: /home/circleci/repo/highcharts
+
+restore_repo_cache: &restore_repo_cache
+  - restore_cache:
+      key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+
+restore_dependency_cache: &restore_dependency_cache
+  - restore_cache:
+      keys:
+        - v1-dependencies-{{ .Branch }}-{{ .Revision }}-{{ checksum "package.json" }}
+        # fallback to using the latest cache if no exact match is found
+        - v1-dependencies-{{ .Branch }}-
+
+#######################################
+
+
+executors:
+  node_lts_browsers:
     docker:
       - image: circleci/node:lts-browsers
 
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-
-    working_directory: ~/repo/highcharts
-
+commands:
+  early_return_for_forked_pull_requests:
+    description: >-
+      If this build is from a fork, stop executing the current job and return success.
+      This is useful to avoid steps that will fail due to missing credentials.
     steps:
-      #- checkout # this is extremely slow as it does as full fetch of the github repo.
-      - add_ssh_keys:
-          fingerprints:
-            - "2f:bf:e9:fd:50:78:2b:2c:71:fd:9e:a8:b5:bc:bf:62"
       - run:
-          name: Avoid hosts unknown for github
-          command: echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
-      - run:
-          name: Clone GitHub repository
-          command: git clone -b ${CIRCLE_BRANCH} --single-branch git@github.com:highcharts/highcharts.git --depth=1 ~/repo/highcharts
+          name: Early return if this build is from a forked PR
+          command: |
+            if [ -n "$CIRCLE_PR_NUMBER" ]; then
+              echo "Nothing to do for forked PRs, so marking this step successful"
+              circleci step halt
+            fi
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      #- run: npm install gulp-cli
+jobs:
+  checkout_code:
+    <<: *defaults
+    steps:
+      # rather than using the checkout keyword we checkout via commandline
+      # to avoid a huge and slow checkout depth
+     - add_ssh_keys:
+         fingerprints:
+           - "57:bb:46:ef:f4:22:f7:f3:67:5e:1f:2a:ad:7f:98:f6"
+     - run:
+         name: Avoid hosts unknown for github
+         command: echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+     - run:
+         name: Clone GitHub repository
+         command: git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
+     - save_cache:
+         paths:
+           - /home/circleci/repo/highcharts
+         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+
+  build_dependencies:
+    <<: *defaults
+    steps:
+      # Restore checked out code and built dependencies.
+      - << : *restore_repo_cache
+      - << : *restore_dependency_cache
       - run: npm install
+      - run: npm install --prefix /home/circleci/repo/highcharts gulp-cli
 
       - save_cache:
           paths:
-            - ~/repo/highcharts/node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - /home/circleci/repo/highcharts/node_modules
+          key: v1-dependencies-{{ .Branch }}-{{ .Revision }}-{{ checksum "package.json" }}
 
-      # run tests!
+  test:
+    <<: *defaults
+    steps:
+      - << : *restore_repo_cache
+      - << : *restore_dependency_cache
+      - run: mkdir ../test-results
       - run: npm test
+      - store_test_results:
+          path: ../test-results
+      - store_artifacts:
+          path: ../test-results
 
-      # run browserstack tests
-      #- run:
-      #    name: Browsertests
-      #    command: gulp test --browsers all
+  test_browsers:
+    <<: *defaults
+    steps:
+      - early_return_for_forked_pull_requests
+      - << : *restore_repo_cache
+      - << : *restore_dependency_cache
+      - run: npm run ci-test
+
 
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - build:
+      - checkout_code:
+          filters:
+            branches:
+              only:
+                - feature/circleci-integration
+      - build_dependencies:
+          requires:
+            - checkout_code
+          filters:
+            branches:
+              only:
+                - feature/circleci-integration
+      - test:
+          requires:
+            - build_dependencies
+          filters:
+            branches:
+              only:
+                - feature/circleci-integration
+      - test_browsers:
+          requires:
+            - test
           filters:
             branches:
               only:
