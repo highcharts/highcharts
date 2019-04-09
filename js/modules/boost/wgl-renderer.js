@@ -909,6 +909,7 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('xAxisLen', axis.len);
         shader.setUniform('xAxisPos', axis.pos);
         shader.setUniform('xAxisCVSCoord', !axis.horiz);
+        shader.setUniform('xAxisIsLog', axis.isLog);
         shader.setUniform('xAxisReversed', !!axis.reversed);
     }
 
@@ -928,6 +929,7 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('yAxisLen', axis.len);
         shader.setUniform('yAxisPos', axis.pos);
         shader.setUniform('yAxisCVSCoord', !axis.horiz);
+        shader.setUniform('yAxisIsLog', axis.isLog);
         shader.setUniform('yAxisReversed', !!axis.reversed);
     }
 

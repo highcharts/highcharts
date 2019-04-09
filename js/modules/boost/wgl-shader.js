@@ -29,6 +29,7 @@ function GLShader(gl) {
     var vertShade = [
             /* eslint-disable */
             '#version 100',
+            '#define LN10 2.302585092994046',
             'precision highp float;',
 
             'attribute vec4 aVertexPosition;',
@@ -55,6 +56,7 @@ function GLShader(gl) {
             'uniform float xAxisOrdinalOffset;',
             'uniform float xAxisPos;',
             'uniform bool  xAxisCVSCoord;',
+            'uniform bool  xAxisIsLog;',
             'uniform bool  xAxisReversed;',
 
             'uniform float yAxisTrans;',
@@ -67,6 +69,7 @@ function GLShader(gl) {
             'uniform float yAxisOrdinalOffset;',
             'uniform float yAxisPos;',
             'uniform bool  yAxisCVSCoord;',
+            'uniform bool  yAxisIsLog;',
             'uniform bool  yAxisReversed;',
 
             'uniform bool  isBubble;',
@@ -114,6 +117,7 @@ function GLShader(gl) {
                             'float pointRange,',
                             'float len,',
                             'bool  cvsCoord,',
+                            'bool  isLog,',
                             'bool  reversed',
                             '){',
 
@@ -123,6 +127,10 @@ function GLShader(gl) {
                 'if (cvsCoord) {',
                     'sign *= -1.0;',
                     'cvsOffset = len;',
+                '}',
+
+                'if (isLog) {',
+                    'val = log(val) / LN10;',
                 '}',
 
                 'if (reversed) {',
@@ -139,7 +147,7 @@ function GLShader(gl) {
                     'return value;// + xAxisPos;',
                 '}',
 
-                'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord, xAxisReversed);// + xAxisPos;',
+                'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord, xAxisIsLog, xAxisReversed);// + xAxisPos;',
             '}',
 
             'float yToPixels(float value, float checkTreshold) {',
@@ -147,7 +155,8 @@ function GLShader(gl) {
                 'if (skipTranslation){',
                     'v = value;// + yAxisPos;',
                 '} else {',
-                    'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord, yAxisReversed);// + yAxisPos;',
+                    'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord, yAxisIsLog, yAxisReversed);// + yAxisPos;',
+
                     'if (v > yAxisLen) {',
                         'v = yAxisLen;',
                     '}',
