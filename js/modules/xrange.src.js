@@ -164,6 +164,7 @@ seriesType('xrange', 'column'
         cropShoulder: 1,
         getExtremesFromAll: true,
         autoIncrement: H.noop,
+        buildKDTree: H.noop,
         /**
      * Borrow the column series metrics, but with swapped axes. This gives free
      * access to features like groupPadding, grouping, pointWidth etc.

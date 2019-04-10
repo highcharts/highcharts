@@ -24,6 +24,7 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     isObject = H.isObject,
+    isArray = H.isArray,
     Legend = H.Legend,
     merge = H.merge,
     pick = H.pick,
@@ -61,20 +62,27 @@ TrackerMixin = H.TrackerMixin = {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
                 }
-            };
+            },
+            dataLabels;
 
         // Add reference to the point
         series.points.forEach(function (point) {
+            dataLabels = (
+                isArray(point.dataLabels) ?
+                    point.dataLabels :
+                    (point.dataLabel ? [point.dataLabel] : [])
+            );
+
             if (point.graphic) {
                 point.graphic.element.point = point;
             }
-            if (point.dataLabel) {
-                if (point.dataLabel.div) {
-                    point.dataLabel.div.point = point;
+            dataLabels.forEach(function (dataLabel) {
+                if (dataLabel.div) {
+                    dataLabel.div.point = point;
                 } else {
-                    point.dataLabel.element.point = point;
+                    dataLabel.element.point = point;
                 }
-            }
+            });
         });
 
         // Add the event listeners, we need to do this only once
