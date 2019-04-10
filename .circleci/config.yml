@@ -12,7 +12,7 @@ restore_repo_cache: &restore_repo_cache
 restore_dependency_cache: &restore_dependency_cache
   - restore_cache:
       keys:
-        - v1-dependencies-{{ .Branch }}-{{ .Revision }}-{{ checksum "package.json" }}
+        - v1-dependencies-{{ .Branch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}-{{ checksum "package.json" }}
         # fallback to using the latest cache if no exact match is found
         - v1-dependencies-{{ .Branch }}-
 
@@ -70,7 +70,7 @@ jobs:
       - save_cache:
           paths:
             - /home/circleci/repo/highcharts/node_modules
-          key: v1-dependencies-{{ .Branch }}-{{ .Revision }}-{{ checksum "package.json" }}
+          key: v1-dependencies-{{ .Branch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}-{{ checksum "package.json" }}
 
   test:
     <<: *defaults
