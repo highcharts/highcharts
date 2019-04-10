@@ -20,11 +20,22 @@ type TestControllerPoint = [number, number];
  *
  * */
 
-interface TestControllerPosition {
+interface TestControllerPosition extends Highcharts.PositionObject {
     relatedTarget: (HighchartsElement | null);
-    x: number;
-    y: number;
 }
+
+interface TestControllerTouchPosition {
+    pageX: number;
+    pageY: number;
+}
+
+interface TestControllerTouchPositions
+    extends Array<TestControllerTouchPosition>
+{
+    [index: number]: TestControllerTouchPosition;
+    item?: (index: number) => TestControllerTouchPosition;
+}
+
 /* *
  *
  *  Classes
@@ -56,8 +67,11 @@ class TestController {
      * @param arr
      *        The list of touches.
      */
-    private static createTouchList<T> (array: Array<T>) {
-        (array as any).item = function (this: Array<T>, i: number) {
+    private static createTouchList (
+        array: TestControllerTouchPositions
+    ): TestControllerTouchPositions {
+        array.item = function (this: TestControllerTouchPositions, i: number) {
+            console.log(typeof this, Object.keys(this));
             return this[i];
         };
         return array;

@@ -14,6 +14,59 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highcharts-v7.1.1"></a>
+              <a href="#highcharts-v7.1.1">Highcharts Basic v7.1.1 (2019-04-09)</a>
+            </p>
+            <ul>
+              <li>Added new option, <code>chart.scrollablePlotArea.opacity</code>, to control opacity of the scrollable mask. See
+                <a href="https://github.com/highcharts/highcharts/issues/10416">#10416</a>.</li>
+            </ul>
+            <h2 id="release-notes">Release notes</h2>
+            <ul>
+              <li>Changed default <code>states.inactive.opacity</code> for map and mapline series to prevent dimming map shapes.</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="heading-7-1-1-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#7-1-1-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="7-1-1-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/10432">#10432</a>, missing category name in tooltip when using boost module.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/10466">#10466</a>, reset zoom button moved offscreen when using scrollablePlotArea.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/10471">#10471</a>, pareto series wasn&#39;t rendering when <code>baseSeries</code> was set to first series by 0 number.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/10496">#10496</a>, data labels animated when series animation was turned off.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/10504">#10504</a>, after deselecting a column, inactive state was used instead of normal state.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/10506">#10506</a>, named colors did not work in boost mode.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/4608">#4608</a>, boost module highlighted wrong point on hover when chart was inverted. Added support for reversed axes in boost.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/5268">#5268</a>, <code>series.threshold = null</code> was ignored in boost mode.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/6963">#6963</a>, boost with enabled <code>useGPUTranslations</code> rendered incrorrectly when yAxis was logarithmic type.</li>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/9795">#9795</a>, updating
+                        <a href="https://api.highcharts.com/highcharts/chart.spacing">chart.spacing</a> didn&#39;t reflow all elements.</li>
+                      <li>Fixed issue with range selector and time zones, test results were different depending on time zone.</li>
+                      <li>Fixed performance issue with sankey chart.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
               <a id="highcharts-v7.1.0"></a>
               <a href="#highcharts-v7.1.0">Highcharts Basic v7.1.0 (2019-04-01)</a>
             </p>
@@ -6842,6 +6895,33 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highstock-v7.1.1"></a>
+              <a href="#highstock-v7.1.1">Highstock v7.1.1 (2019-04-09)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.1.1 above also apply to Highstock 7.1.1.</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="hs-heading-7-1-1-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#hs-7-1-1-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hs-7-1-1-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed
+                        <a href="https://github.com/highcharts/highcharts/issues/10460">#10460</a>, updated options in annotations prevented updates from stock tools popup.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
               <a id="highstock-v7.1.0"></a>
               <a href="#highstock-v7.1.0">Highstock v7.1.0 (2019-04-01)</a>
             </p>
@@ -9889,6 +9969,13 @@
             <h2 id="highmaps">Highmaps</h2>
           </div>
           <div class="changelog-container">
+            <p class="release-header">
+              <a id="highmaps-v7.1.1"></a>
+              <a href="#highmaps-v7.1.1">Highmaps v7.1.1 (2019-04-09)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 7.1.1 above also apply to Highmaps 7.1.1.</li>
+            </ul>
             <p class="release-header">
               <a id="highmaps-v7.1.0"></a>
               <a href="#highmaps-v7.1.0">Highmaps v7.1.0 (2019-04-01)</a>

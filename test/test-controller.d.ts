@@ -3,10 +3,16 @@ declare type HighchartsElement = (Highcharts.HTMLDOMElement | Highcharts.SVGDOME
  * Contains x and y position relative to the chart.
  */
 declare type TestControllerPoint = [number, number];
-interface TestControllerPosition {
+interface TestControllerPosition extends Highcharts.PositionObject {
     relatedTarget: (HighchartsElement | null);
-    x: number;
-    y: number;
+}
+interface TestControllerTouchPosition {
+    pageX: number;
+    pageY: number;
+}
+interface TestControllerTouchPositions extends Array<TestControllerTouchPosition> {
+    [index: number]: TestControllerTouchPosition;
+    item?: (index: number) => TestControllerTouchPosition;
 }
 /**
  * The test controller makes it easy to emulate mouse and touch stuff on the

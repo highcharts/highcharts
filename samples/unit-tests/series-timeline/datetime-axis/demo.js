@@ -124,4 +124,49 @@ QUnit.test('Timeline: General tests.', function (assert) {
         3,
         "New data is set correctly on timeline."
     );
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 400
+        },
+        xAxis: {
+            type: 'datetime',
+            min: Date.UTC(1951, 5, 23),
+            minPadding: 0,
+            maxPadding: 0,
+            minRange: 1
+        },
+        series: [{
+            type: 'timeline',
+            data: [{
+                x: Date.UTC(1951, 5, 22),
+                name: 'Event 1',
+                label: 'Event 1',
+                description: "Some description"
+            }, {
+                x: Date.UTC(1957, 9, 4),
+                name: 'Event 2',
+                label: 'Event 2',
+                description: "Some description"
+            }, {
+                x: Date.UTC(1959, 0, 4),
+                name: 'Event 3',
+                label: 'Event 3',
+                description: "Some description"
+            }]
+        }]
+    });
+
+    timeline = chart.series[0];
+
+    var point = timeline.points[0],
+        dataLabel = point.dataLabel,
+        connector = point.connector;
+
+    assert.strictEqual(
+        !chart.isInsidePlot(dataLabel.x, dataLabel.y),
+        connector['stroke-width'] === undefined,
+        "Connector is hidden when the data label is not visible on init."
+    );
 });
