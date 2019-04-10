@@ -408,11 +408,21 @@ Series.prototype.hasExtremes = function (checkX) {
     var options = this.options,
         data = options.data,
         xAxis = this.xAxis && this.xAxis.options,
-        yAxis = this.yAxis && this.yAxis.options;
+        yAxis = this.yAxis && this.yAxis.options,
+        colorAxis = this.colorAxis && this.colorAxis.options;
 
     return data.length > (options.boostThreshold || Number.MAX_VALUE) &&
-            isNumber(yAxis.min) && isNumber(yAxis.max) &&
-            (!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
+            // Defined yAxis extremes
+            isNumber(yAxis.min) &&
+            isNumber(yAxis.max) &&
+            // Defined (and required) xAxis extremes
+            (!checkX ||
+                (isNumber(xAxis.min) && isNumber(xAxis.max))
+            ) &&
+            // Defined (e.g. heatmap) colorAxis extremes
+            (!colorAxis ||
+                (isNumber(colorAxis.min) && isNumber(colorAxis.max))
+            );
 };
 
 /**
