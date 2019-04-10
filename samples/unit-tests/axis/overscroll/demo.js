@@ -98,6 +98,7 @@ Highcharts.each([true, false], function (ordinal) {
         chart.scrollbar.buttonToMinClick(event);
         chart.scrollbar.buttonToMinClick(event);
 
+        // No lolex should be needed here
         setTimeout(function () {
             // Scrollbar button calls setExtremes with timeout(0):
             assert.strictEqual(

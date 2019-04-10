@@ -21,24 +21,23 @@ QUnit.test('Allow point select with 3D chart (#6094)', function (assert) {
         }]
     });
 
-    var done = assert.async(),
-        point = chart.series[0].points[0];
-
+    var point = chart.series[0].points[0];
     function getPos() {
         return point.graphic.element.firstChild.getAttribute('transform');
     }
 
-    var startPos = getPos();
+    var startPos = getPos(),
+        clock = TestUtilities.lolexInstall();
 
-    chart.series[0].points[0].slice();
-
-    setTimeout(function () {
+    try {
+        chart.series[0].points[0].slice();
+        TestUtilities.lolexRunAndUninstall(clock);
         assert.notEqual(
             getPos(),
             startPos,
             'Point has moved'
         );
-        done();
-    }, 100);
-
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
 });

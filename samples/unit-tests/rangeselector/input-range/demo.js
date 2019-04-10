@@ -188,7 +188,10 @@ QUnit.test('Focusable inputs after setting chart\'s zIndex (#8899)', function (a
         20
     );
 
-    if (navigator.userAgent.indexOf('Linux') === -1) {
+    if (
+        navigator.userAgent.indexOf('Linux') === -1 &&
+        navigator.userAgent.indexOf('Chrome') !== -1
+    ) {
         assert.strictEqual(
             document.activeElement.nodeName.toUpperCase(),
             'INPUT',
@@ -196,7 +199,7 @@ QUnit.test('Focusable inputs after setting chart\'s zIndex (#8899)', function (a
         );
 
     } else {
-        assert.ok(true, 'Focused correct elements test is ignored on Linux.');
+        assert.ok(true, 'Focused correct elements only runs on select browsers');
     }
 });
 
