@@ -1818,7 +1818,7 @@ Axis.prototype.minFromRange = function () {
             time.set(timeName, date, basePeriod + count);
 
             if (basePeriod === time.get(timeName, date)) {
-                date.setDate(0); // #6537
+                time.set('Date', date, 0); // #6537
             }
 
             return date.getTime() - base;
