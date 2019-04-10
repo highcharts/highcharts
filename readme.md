@@ -153,6 +153,8 @@ Highcharts.chart('container', {
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
+    "module": "umd",
+    "moduleResolution": "node"
   }
 }
 ```
