@@ -761,10 +761,8 @@ seriesType('pie', 'line',
 
                 // Compute point.labelDistance if it's defined as percentage
                 // of slice radius (#8854)
-                if (H.isString(point.labelDistance)) {
-                    point.labelDistance = point.shapeArgs.r *
-                      H.relativeLength(point.labelDistance, 1);
-                }
+                point.labelDistance =
+                  H.relativeLength(point.labelDistance, point.shapeArgs.r);
 
                 // Saved for later dataLabels distance calculation.
                 series.maxLabelDistance = Math.max(
