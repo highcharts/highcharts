@@ -1,5 +1,3 @@
-
-
 QUnit.test('Border width in selected state (#6003)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

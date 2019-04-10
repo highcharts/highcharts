@@ -1,4 +1,3 @@
-
 /* Automate testing of module somewhat */
 
 var nav = Highcharts.win.navigator,
@@ -108,7 +107,6 @@ Highcharts.Chart.prototype.callbacks.push(function (chart) {
 /* End of automation code */
 
 
-
 Highcharts.chart('container', {
 
     exporting: {
@@ -160,4 +158,3 @@ Highcharts.chart('container', {
     }]
 
 });
-

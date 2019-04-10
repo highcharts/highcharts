@@ -1,7 +1,3 @@
-
-
-
-
 (function () {
 
     // create shortcuts
@@ -261,62 +257,62 @@
 
 // --- create the chart
 window.chart = new Highcharts.StockChart({
-    "chart": {
-        "ignoreHiddenSeries": false,
-        "width": null,
-        "renderTo": "container",
-        "plotBorderWidth": 2,
-        "plotBorderColor": "#E4E4E4",
-        "spacingTop": 20,
-        "style": {
-            "overflow": "visible"
+    chart: {
+        ignoreHiddenSeries: false,
+        width: null,
+        renderTo: "container",
+        plotBorderWidth: 2,
+        plotBorderColor: "#E4E4E4",
+        spacingTop: 20,
+        style: {
+            overflow: "visible"
         }
     },
-    "yAxis": [{
-        "tickLength": 5,
-        "gridLineColor": "#EFEFEF",
-        "title": {
-            "align": "high",
-            "rotation": 0,
-            "text": "m",
-            "offset": 30,
-            "y": 30,
-            "x": 22,
-            "style": {
-                "color": "#000000",
-                "fontWeight": "bold"
+    yAxis: [{
+        tickLength: 5,
+        gridLineColor: "#EFEFEF",
+        title: {
+            align: "high",
+            rotation: 0,
+            text: "m",
+            offset: 30,
+            y: 30,
+            x: 22,
+            style: {
+                color: "#000000",
+                fontWeight: "bold"
             },
-            "enabled": true
+            enabled: true
         },
-        "endOnTick": true,
-        "showEmpty": false,
-        "floor": 0,
-        "ceiling": null,
-        "max": 6.7,
-        "min": 0,
-        "labels": {
-            "y": 0,
-            "x": -8,
-            "enabled": true,
-            "style": {
-                "fontSize": "12px",
-                "fontFamily": "Arial, Verdana, Helvetica, sans-serif",
-                "color": "#000000"
+        endOnTick: true,
+        showEmpty: false,
+        floor: 0,
+        ceiling: null,
+        max: 6.7,
+        min: 0,
+        labels: {
+            y: 0,
+            x: -8,
+            enabled: true,
+            style: {
+                fontSize: "12px",
+                fontFamily: "Arial, Verdana, Helvetica, sans-serif",
+                color: "#000000"
             },
-            "overflow": "justify"
+            overflow: "justify"
         },
-        "opposite": false,
-        "index": 0
+        opposite: false,
+        index: 0
     }],
-    "tooltip": {
+    tooltip: {
         formatter: function () {
             return "test";
         }
     },
-    "series": [{
-        "id": "ge_swh_0pct",
-        "name": "ge_swh_0pct",
-        "data": [
+    series: [{
+        id: "ge_swh_0pct",
+        name: "ge_swh_0pct",
+        data: [
             [1432663200000, 1.6, 1.6, 1.6, 1.6, 1.6, 1.6],
             [1432684800000, 1.4, 1.5, 1.5, 1.5, 1.6, 1.6],
             [1432706400000, 1.4, 1.5, 1.5, 1.6, 1.6, 1.7],
@@ -359,28 +355,28 @@ window.chart = new Highcharts.StockChart({
             [1433505600000, 1, 1.3, 1.6, 2.5, 3.1, 4.1],
             [1433527200000, 1, 1.3, 1.5, 2.3, 2.9, 3.6]
         ],
-        "color": "#2F7ED8",
-        "fillColor": null,
-        "marker": {
-            "enabled": false
+        color: "#2F7ED8",
+        fillColor: null,
+        marker: {
+            enabled: false
         },
-        "type": "genericcandlestick",
-        "dashStyle": "Solid",
-        "zIndex": 0,
-        "yAxis": 0,
-        "visible": true,
-        "lineWidth": 2,
-        "fillOpacity": 1,
-        "enableMouseTracking": true,
-        "showToolTip": true,
-        "linkedTo": null,
-        "dataLabels": {
-            "enabled": false
+        type: "genericcandlestick",
+        dashStyle: "Solid",
+        zIndex: 0,
+        yAxis: 0,
+        visible: true,
+        lineWidth: 2,
+        fillOpacity: 1,
+        enableMouseTracking: true,
+        showToolTip: true,
+        linkedTo: null,
+        dataLabels: {
+            enabled: false
         }
     }, {
-        "id": "ge_swh_50pct",
-        "name": "ge_swh_50pct",
-        "data": [
+        id: "ge_swh_50pct",
+        name: "ge_swh_50pct",
+        data: [
             [1432663200000, 1.6],
             [1432684800000, 1.5],
             [1432706400000, 1.5],
@@ -423,279 +419,279 @@ window.chart = new Highcharts.StockChart({
             [1433505600000, 1.9],
             [1433527200000, 1.9]
         ],
-        "color": "#000000",
-        "fillColor": null,
-        "marker": {
-            "enabled": false
+        color: "#000000",
+        fillColor: null,
+        marker: {
+            enabled: false
         },
-        "type": "spline",
-        "dashStyle": "Solid",
-        "zIndex": 5,
-        "yAxis": 0,
-        "visible": true,
-        "lineWidth": 2,
-        "fillOpacity": 1,
-        "enableMouseTracking": true,
-        "showToolTip": true,
-        "linkedTo": null,
-        "dataLabels": {
-            "enabled": false
+        type: "spline",
+        dashStyle: "Solid",
+        zIndex: 5,
+        yAxis: 0,
+        visible: true,
+        lineWidth: 2,
+        fillOpacity: 1,
+        enableMouseTracking: true,
+        showToolTip: true,
+        linkedTo: null,
+        dataLabels: {
+            enabled: false
         },
-        "_symbolIndex": 0
+        _symbolIndex: 0
     }, {
-        "id": "waveheigth",
-        "name": "waveheigth",
-        "data": [{
-            "x": 1432663200000,
-            "y": 1.7,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+        id: "waveheigth",
+        name: "waveheigth",
+        data: [{
+            x: 1432663200000,
+            y: 1.7,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432684800000,
-            "y": 1.6,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432684800000,
+            y: 1.6,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432706400000,
-            "y": 1.5,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432706400000,
+            y: 1.5,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432728000000,
-            "y": 1.7,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432728000000,
+            y: 1.7,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432749600000,
-            "y": 2,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432749600000,
+            y: 2,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432771200000,
-            "y": 2.11,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432771200000,
+            y: 2.11,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432792800000,
-            "y": 2.15,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432792800000,
+            y: 2.15,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432814400000,
-            "y": 1.88,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432814400000,
+            y: 1.88,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432836000000,
-            "y": 1.62,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432836000000,
+            y: 1.62,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432857600000,
-            "y": 1.74,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432857600000,
+            y: 1.74,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432879200000,
-            "y": 1.69,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432879200000,
+            y: 1.69,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432900800000,
-            "y": 1.66,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432900800000,
+            y: 1.66,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432922400000,
-            "y": 1.69,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432922400000,
+            y: 1.69,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432944000000,
-            "y": 1.64,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432944000000,
+            y: 1.64,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432965600000,
-            "y": 1.54,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432965600000,
+            y: 1.54,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1432987200000,
-            "y": 1.32,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1432987200000,
+            y: 1.32,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433008800000,
-            "y": 1.18,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433008800000,
+            y: 1.18,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433030400000,
-            "y": 1.12,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433030400000,
+            y: 1.12,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433052000000,
-            "y": 1.05,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433052000000,
+            y: 1.05,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433073600000,
-            "y": 1,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433073600000,
+            y: 1,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433095200000,
-            "y": 0.9,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433095200000,
+            y: 0.9,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433116800000,
-            "y": 1.02,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433116800000,
+            y: 1.02,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433138400000,
-            "y": 1.45,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433138400000,
+            y: 1.45,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433160000000,
-            "y": 1.75,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433160000000,
+            y: 1.75,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433181600000,
-            "y": 2.05,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433181600000,
+            y: 2.05,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433203200000,
-            "y": 2.2,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433203200000,
+            y: 2.2,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433224800000,
-            "y": 2.53,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433224800000,
+            y: 2.53,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433246400000,
-            "y": 2.17,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433246400000,
+            y: 2.17,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }, {
-            "x": 1433268000000,
-            "y": 1.85,
-            "marker": {
-                "fillColor": null,
-                "lineWidth": null,
-                "lineColor": null
+            x: 1433268000000,
+            y: 1.85,
+            marker: {
+                fillColor: null,
+                lineWidth: null,
+                lineColor: null
             }
         }],
-        "color": "#00c2e8",
-        "fillColor": null,
-        "marker": {
-            "enabled": false
+        color: "#00c2e8",
+        fillColor: null,
+        marker: {
+            enabled: false
         },
-        "type": "spline",
-        "dashStyle": "Solid",
-        "zIndex": 5,
-        "yAxis": 0,
-        "visible": true,
-        "lineWidth": 2,
-        "fillOpacity": 1,
-        "enableMouseTracking": true,
-        "showToolTip": true,
-        "linkedTo": null,
-        "dataLabels": {
-            "enabled": false
+        type: "spline",
+        dashStyle: "Solid",
+        zIndex: 5,
+        yAxis: 0,
+        visible: true,
+        lineWidth: 2,
+        fillOpacity: 1,
+        enableMouseTracking: true,
+        showToolTip: true,
+        linkedTo: null,
+        dataLabels: {
+            enabled: false
         },
-        "_symbolIndex": 1
+        _symbolIndex: 1
     }]
 });

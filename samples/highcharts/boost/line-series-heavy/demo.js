@@ -1,4 +1,3 @@
-
 function getData(n) {
     var arr = [],
         i,

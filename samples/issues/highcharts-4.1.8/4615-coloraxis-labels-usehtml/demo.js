@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test("Use HTML in color axis data labels caused misposition.", function (assert) {
         var chart = $('#container').highcharts({

@@ -1,4 +1,3 @@
-
 QUnit.test('getSVG', function (assert) {
 
     var chart = Highcharts.chart('container', {

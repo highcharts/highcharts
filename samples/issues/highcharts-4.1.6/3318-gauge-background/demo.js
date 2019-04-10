@@ -4,7 +4,7 @@ $(function () {
             chart: {
                 type: "gauge"
             },
-            "series": [{
+            series: [{
                 data: [10]
             }]
         });

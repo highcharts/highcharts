@@ -1,5 +1,3 @@
-
-
 QUnit.test('Soft threshold', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{

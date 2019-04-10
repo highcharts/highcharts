@@ -1,5 +1,3 @@
-
-
 QUnit.test('Single touch drag should not zoom (#5790)', function (assert) {
 
     var chart = Highcharts.chart('container', {
@@ -131,7 +129,6 @@ QUnit.test('TouchPointer events', function (assert) {
 });
 
 QUnit.test('followPointer and followTouchMove', function (assert) {
-
 
 
     var chart;

@@ -1,4 +1,3 @@
-
 QUnit.test('Show and hide duration', function (assert) {
 
     var chart = Highcharts.chart('container', {

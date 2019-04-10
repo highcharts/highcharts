@@ -1,4 +1,3 @@
-
 // Prepare random data
 var data = [
     ['DE.SH', 728],

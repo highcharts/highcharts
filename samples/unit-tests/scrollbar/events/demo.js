@@ -37,6 +37,7 @@ QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator', functi
 
     controller.pan([x, y], [x + 90, y]);
 
+    // No lolex should be needed for this
     setTimeout(function () {
         assert.strictEqual(
             counter,
@@ -75,6 +76,7 @@ QUnit.test('#1716 - very small range in navigator and scrollbar events', functio
         group.translateY + 5
     );
 
+    // No lolex should be needed for this
     setTimeout(function () {
         extremes = chart.xAxis[0].getExtremes();
         assert.strictEqual(

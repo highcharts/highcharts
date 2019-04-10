@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Legend checkbox position with title', function (assert) {
         var chart = $("#container").highcharts({

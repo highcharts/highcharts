@@ -10,7 +10,6 @@ jQuery(function () {
             },
 
 
-
             yAxis: {
                 startOnTick: false,
                 endOnTick: false,

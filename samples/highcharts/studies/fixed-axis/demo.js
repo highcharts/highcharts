@@ -1,4 +1,3 @@
-
 /**
  * Highcharts plugin to make the Y axis stay fixed when scrolling the chart
  * horizontally on mobile devices. Supports left and right side axes.
@@ -14,14 +13,14 @@
 
         // Add the necessary divs to provide scrolling
         this.scrollingContainer = H.createElement('div', {
-            'className': 'highcharts-scrolling'
+            className: 'highcharts-scrolling'
         }, {
             overflowX: 'auto',
             WebkitOverflowScrolling: 'touch'
         }, this.renderTo);
 
         this.innerContainer = H.createElement('div', {
-            'className': 'highcharts-inner-container'
+            className: 'highcharts-inner-container'
         }, null, this.scrollingContainer);
 
         // Now move the container inside

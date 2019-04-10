@@ -28,7 +28,14 @@ const WATCH_GLOBS = [
  */
 function task() {
 
+    const argv = require('yargs').argv;
     const LogLib = require('./lib/log');
+    const ProcessLib = require('./lib/process');
+
+    if (ProcessLib.isRunning('scripts-watch') && !argv.force) {
+        LogLib.warn('Running watch process detected. Skipping task...');
+        return Promise.resolve();
+    }
 
     return new Promise(resolve => {
 
@@ -46,6 +53,8 @@ function task() {
             .on('error', LogLib.failure);
 
         LogLib.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
+
+        ProcessLib.isRunning('scripts-watch', true);
 
         resolve();
     });

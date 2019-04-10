@@ -1,4 +1,3 @@
-
 QUnit.test('Test Absolute Price Oscillator calculations on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {

@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Panning inverted chart', function (assert) {
 

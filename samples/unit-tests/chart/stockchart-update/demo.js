@@ -1,4 +1,3 @@
-
 (function () {
 
     function getStockConfig() {
@@ -20,7 +19,6 @@
             }]
         };
     }
-
 
 
     /*QUnit.test('Navigator update', function (assert) {

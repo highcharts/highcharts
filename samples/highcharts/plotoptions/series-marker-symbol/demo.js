@@ -1,5 +1,3 @@
-
-
 // Define a custom symbol path
 Highcharts.SVGRenderer.prototype.symbols.cross = function (x, y, w, h) {
     return ['M', x, y, 'L', x + w, y + h, 'M', x + w, y, 'L', x, y + h, 'z'];

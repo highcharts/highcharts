@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -14,9 +14,9 @@ var Axis = H.Axis,
     normalizeTickInterval = H.normalizeTickInterval,
     pick = H.pick;
 
-/*
+/* ************************************************************************** *
  * Methods defined on the Axis prototype
- */
+ * ************************************************************************** */
 
 /**
  * Set the tick positions of a logarithmic axis.

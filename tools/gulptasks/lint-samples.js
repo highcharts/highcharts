@@ -3,6 +3,7 @@
  */
 
 const Gulp = require('gulp');
+const argv = require('yargs').argv;
 
 /* *
  *
@@ -17,7 +18,8 @@ const DEFAULT_GLOBS = [
 ];
 
 const IGNORE_GLOBS = [
-    'samples/highcharts/common-js/*/demo.js'
+    'samples/highcharts/common-js/*/demo.js',
+    'samples/cloud/*/*/demo.js'
 ];
 
 /* *
@@ -45,7 +47,6 @@ function task() {
 
     return new Promise(resolve => {
 
-        const argv = process.argv;
         const cli = new ESLint.CLIEngine({
             fix: argv.fix,
             ignorePattern: IGNORE_GLOBS
@@ -61,7 +62,7 @@ function task() {
         const report = cli.executeOnFiles(globs);
 
         if (argv.fix) {
-            cli.outputFixes(report);
+            ESLint.CLIEngine.outputFixes(report);
         }
 
         LogLib.message(

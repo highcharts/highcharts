@@ -41,4 +41,3 @@ function getOptions() {
 }
 
 Highcharts.chart('container1', getOptions());
-

@@ -1,4 +1,3 @@
-
 QUnit.test('#6773 - cannot update xAxis range dynamically', function (assert) {
     var chart = Highcharts.stockChart('container', {
         xAxis: {

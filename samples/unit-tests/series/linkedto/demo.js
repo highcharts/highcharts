@@ -1,5 +1,3 @@
-
-
 QUnit.test('Mutually linked (#3341)', function (assert) {
 
     // #3341 caused exceeded stack size

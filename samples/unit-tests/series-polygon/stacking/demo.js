@@ -1,5 +1,3 @@
-
-
 QUnit.test('Stacking should not take effect', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{

@@ -3,4 +3,5 @@
  authors:
    - Kacper Madej
  js_wrap: b
+ isNew: true
 ...

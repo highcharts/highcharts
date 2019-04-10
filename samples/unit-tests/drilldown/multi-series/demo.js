@@ -1,4 +1,3 @@
-
 QUnit.test('Drill down on points and categories', function (assert) {
 
     var chart = Highcharts

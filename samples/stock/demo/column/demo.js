@@ -1,4 +1,3 @@
-
 $.getJSON('https://www.highcharts.com/samples/data/aapl-v.json', function (data) {
 
     // create the chart

@@ -6,6 +6,8 @@
  * This file runs in the browser as setup for the karma tests.
  */
 
+var VERBOSE = false;
+
 var div;
 if (!document.getElementById('container')) {
     div = document.createElement('div');
@@ -95,7 +97,10 @@ QUnit.assert.close = function (number, expected, error, message) {
 };
 
 QUnit.module('Highcharts', {
-    beforeEach: function () {
+    beforeEach: function (test) {
+        if (VERBOSE) {
+            console.log('Start ' + test.test.testName)
+        }
 
         // Reset container size that some tests may have modified
         var containerStyle = document.getElementById('container').style;
@@ -110,7 +115,10 @@ QUnit.module('Highcharts', {
         Math.randomCursor = 0;
     },
 
-    afterEach: function () {
+    afterEach: function (test) {
+        if (VERBOSE) {
+            console.log('  - end ' + test.test.testName)
+        }
 
         var containerStyle = document.getElementById('container').style;
         containerStyle.width = '';
@@ -342,4 +350,9 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
 window.JSONSources = {};
 $.getJSON = function (url, callback) { // eslint-disable-line no-undef
     callback(window.JSONSources[url]);
+};
+
+window.onbeforeunload = function () {
+    console.log('Tried to uload page');
+    return false;
 };

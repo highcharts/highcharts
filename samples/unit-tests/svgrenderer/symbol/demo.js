@@ -1,4 +1,4 @@
-
+// Purposefully not using lolex for this, as we are loading images.
 QUnit.test('Symbol tests', function (assert) {
     var w = 400,
         h = 400,
@@ -27,7 +27,7 @@ QUnit.test('Symbol tests', function (assert) {
     for (var x = 99.5; x < w - 1; x += 100) {
         ren.path(['M', x, 0, 'L', x, 400])
             .attr({
-                'stroke': 'silver',
+                stroke: 'silver',
                 'stroke-width': 1
             })
             .add();
@@ -36,7 +36,7 @@ QUnit.test('Symbol tests', function (assert) {
     for (var y = 99.5; y < h - 1; y += 100) {
         ren.path(['M', 0, y, 'L', 400, y])
             .attr({
-                'stroke': 'silver',
+                stroke: 'silver',
                 'stroke-width': 1
             })
             .add();
@@ -57,7 +57,7 @@ QUnit.test('Symbol tests', function (assert) {
         assert.strictEqual(
             symbol1.element.getAttribute('transform') &&
                 symbol1.element.getAttribute('transform')
-                .replace(' ', ','), // MSIE
+                    .replace(' ', ','), // MSIE
             'translate(-15,-15)',
             'Translate ok'
         );
@@ -83,7 +83,7 @@ QUnit.test('Symbol tests', function (assert) {
         assert.strictEqual(
             symbol2.element.getAttribute('transform') &&
                 symbol2.element.getAttribute('transform')
-                .replace(' ', ','), // MSIE
+                    .replace(' ', ','), // MSIE
             'translate(-10,-10)',
             'Translate ok'
         );

@@ -1,4 +1,3 @@
-
 $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/usdeur.json', function (data) {
 
     var lastDate = data[data.length - 1][0],  // Get year of last data point

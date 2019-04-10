@@ -1,5 +1,3 @@
-
-
 QUnit.test(
     'Legend symbol marker should not exceed symbolHeight (#6202)',
     function (assert) {

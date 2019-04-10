@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'Monthly Average Temperature'

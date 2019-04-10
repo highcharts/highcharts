@@ -189,8 +189,8 @@ var chart = Highcharts.chart('container', {
                     drag: function (e, target) {
                         var translation = this.mouseMoveToTranslation(e),
                             radiusTranslation = target.chart.inverted ?
-                            translation.x :
-                            translation.y;
+                                translation.x :
+                                translation.y;
 
                         target.setRadius(
                             Math.max(target.options.r - radiusTranslation, 5)

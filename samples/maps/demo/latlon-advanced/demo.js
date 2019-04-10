@@ -1,4 +1,3 @@
-
 var H = Highcharts,
     map = H.maps['countries/us/us-all'],
     chart;

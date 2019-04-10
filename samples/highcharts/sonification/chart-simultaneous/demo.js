@@ -1,4 +1,3 @@
-
 // Set up a simple chart
 var chart = Highcharts.chart('container', {
     title: {

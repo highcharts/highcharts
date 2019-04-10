@@ -1,5 +1,3 @@
-
-
 $.getJSON(
     'https://www.highcharts.com/samples/data/aapl-c.json',
     function (data) {
@@ -49,4 +47,3 @@ $.getJSON(
         });
     }
 );
-

@@ -1,12 +1,12 @@
-/* *
+/**
  *
- *  Copyright (c) 2019-2019 Highsoft AS
+ * Copyright (c) 2019-2019 Highsoft AS
  *
- *  Boost module: stripped-down renderer for higher performance
+ * Boost module: stripped-down renderer for higher performance
  *
- *  License: highcharts.com/license
+ * License: highcharts.com/license
  *
- * */
+ */
 
 'use strict';
 
@@ -21,6 +21,7 @@ var win = H.win,
     merge = H.merge,
     objEach = H.objEach,
     isNumber = H.isNumber,
+    some = H.some,
     Color = H.Color,
     pick = H.pick;
 
@@ -264,10 +265,27 @@ function GLRenderer(postRenderCallback) {
             isXInside = false,
             isYInside = true,
             firstPoint = true,
+            zones = options.zones || false,
+            zoneDefColor = false,
             threshold = options.threshold;
 
         if (options.boostData && options.boostData.length > 0) {
             return;
+        }
+
+        if (zones) {
+            some(zones, function (zone) {
+                if (typeof zone.value === 'undefined') {
+                    zoneDefColor = H.Color(zone.color); // eslint-disable-line new-cap
+                    return true;
+                }
+            });
+
+            if (!zoneDefColor) {
+                zoneDefColor = (series.pointAttribs &&
+                                series.pointAttribs().fill) || series.color;
+                zoneDefColor = H.Color(zoneDefColor); // eslint-disable-line new-cap
+            }
         }
 
         if (chart.inverted) {
@@ -602,6 +620,28 @@ function GLRenderer(postRenderCallback) {
                 continue;
             }
 
+            // Note: Boost requires that zones are sorted!
+            if (zones) {
+                pcolor = zoneDefColor.rgba;
+                some(zones, function (zone, i) { // eslint-disable-line no-loop-func
+                    var last = zones[i - 1];
+
+                    if (typeof zone.value !== 'undefined' && y <= zone.value) {
+                        if (!last || y >= last.value) {
+                            pcolor = H.color(zone.color).rgba;
+
+                        }
+
+                        return true;
+                    }
+                });
+
+                pcolor[0] /= 255.0;
+                pcolor[1] /= 255.0;
+                pcolor[2] /= 255.0;
+
+            }
+
             // Skip translations - temporary floating point fix
             if (!settings.useGPUTranslations) {
                 inst.skipTranslation = true;
@@ -647,7 +687,10 @@ function GLRenderer(postRenderCallback) {
                 }
 
                 if (!isRange && !isStacked) {
-                    minVal = Math.max(threshold, yMin); // #8731
+                    minVal = Math.max(
+                        threshold === null ? yMin : threshold, // #5268
+                        yMin
+                    ); // #8731
                 }
                 if (!settings.useGPUTranslations) {
                     minVal = yAxis.toPixels(minVal, true);
@@ -866,6 +909,8 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('xAxisLen', axis.len);
         shader.setUniform('xAxisPos', axis.pos);
         shader.setUniform('xAxisCVSCoord', !axis.horiz);
+        shader.setUniform('xAxisIsLog', axis.isLog);
+        shader.setUniform('xAxisReversed', !!axis.reversed);
     }
 
     /*
@@ -884,6 +929,8 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('yAxisLen', axis.len);
         shader.setUniform('yAxisPos', axis.pos);
         shader.setUniform('yAxisCVSCoord', !axis.horiz);
+        shader.setUniform('yAxisIsLog', axis.isLog);
+        shader.setUniform('yAxisReversed', !!axis.reversed);
     }
 
     /*
@@ -928,7 +975,6 @@ function GLRenderer(postRenderCallback) {
 
         gl.viewport(0, 0, width, height);
         shader.setPMatrix(orthoMatrix(width, height));
-        shader.setPlotHeight(chart.plotHeight);
 
         if (settings.lineWidth > 1 && !H.isMS) {
             gl.lineWidth(settings.lineWidth);

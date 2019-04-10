@@ -1,4 +1,3 @@
-
 QUnit.test('Test Aroon Oscillator calculations on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {

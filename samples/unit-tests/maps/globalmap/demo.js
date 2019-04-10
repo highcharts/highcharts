@@ -1,5 +1,3 @@
-
-
 QUnit.test('Set basemap on chart object', function (assert) {
     var chart = new Highcharts.Map('container', {
         chart: {

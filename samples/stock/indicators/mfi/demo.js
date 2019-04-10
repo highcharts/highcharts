@@ -89,4 +89,3 @@ $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (d
         }]
     });
 });
-

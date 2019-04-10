@@ -1,4 +1,3 @@
-
 QUnit.test('Adding and removing series, reflect in navigator', function (assert) {
     var chart = Highcharts.stockChart('container', {
         plotOptions: {
@@ -260,4 +259,3 @@ QUnit.test(
 
     }
 );
-

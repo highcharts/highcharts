@@ -24,30 +24,33 @@ var colProto = seriesTypes.column.prototype;
  *
  * @augments Highcharts.Series
  */
-seriesType('columnpyramid', 'column'
+seriesType(
+    'columnpyramid',
+    'column',
 
     /**
- * Column pyramid series display one pyramid per value along an X axis.
- * Requires `highcharts-more.js`. To display horizontal pyramids,
- * set [chart.inverted](#chart.inverted) to `true`.
- *
- * @sample {highcharts|highstock} highcharts/demo/column-pyramid/
- *         Column pyramid
- * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-stacked/
- *         Column pyramid stacked
- * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-inverted/
- *         Column pyramid inverted
- *
- * @extends      plotOptions.column
- * @since        7.0.0
- * @product      highcharts highstock
- * @excluding    boostThreshold, borderRadius, crisp, depth, edgeColor,
- *               edgeWidth, groupZPadding, negativeColor, softThreshold,
- *               threshold, zoneAxis, zones
- * @optionparent plotOptions.columnpyramid
- */
-    , {}, {
-    // Overrides the column translate method
+     * Column pyramid series display one pyramid per value along an X axis.
+     * Requires `highcharts-more.js`. To display horizontal pyramids,
+     * set [chart.inverted](#chart.inverted) to `true`.
+     *
+     * @sample {highcharts|highstock} highcharts/demo/column-pyramid/
+     *         Column pyramid
+     * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-stacked/
+     *         Column pyramid stacked
+     * @sample {highcharts|highstock} highcharts/plotoptions/columnpyramid-inverted/
+     *         Column pyramid inverted
+     *
+     * @extends      plotOptions.column
+     * @since        7.0.0
+     * @product      highcharts highstock
+     * @excluding    boostThreshold, borderRadius, crisp, depth, edgeColor,
+     *               edgeWidth, groupZPadding, negativeColor, softThreshold,
+     *               threshold, zoneAxis, zones
+     * @optionparent plotOptions.columnpyramid
+     */
+    {},
+    {
+        // Overrides the column translate method
         translate: function () {
             var series = this,
                 chart = series.chart,
@@ -201,8 +204,8 @@ seriesType('columnpyramid', 'column'
                 };
             });
         }
-    });
-
+    }
+);
 
 /**
  * A `columnpyramid` series. If the [type](#series.columnpyramid.type) option is

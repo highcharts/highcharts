@@ -1,4 +1,3 @@
-
 QUnit.test('All faces should have class name', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

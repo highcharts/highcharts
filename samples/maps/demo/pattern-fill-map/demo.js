@@ -1,4 +1,3 @@
-
 // We use a darker border for some states
 var darkBorderColor = '#ccc';
 

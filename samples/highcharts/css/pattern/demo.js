@@ -1,5 +1,3 @@
-
-
 // Define the patterns
 Highcharts.setOptions({
     defs: {

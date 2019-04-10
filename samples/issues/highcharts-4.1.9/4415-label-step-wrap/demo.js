@@ -1,4 +1,3 @@
-
 $(function () {
     QUnit.test('Labels should be wrapped', function (assert) {
         var chart = $("#container").highcharts({

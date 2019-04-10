@@ -42,8 +42,8 @@ QUnit.test('Column width calculated correctly when using a linked xAxis (#5923).
     }).highcharts();
 
     assert.strictEqual(
-		chart.series[1].columnMetrics.width < 5,
-		true,
-		'column width is correctly calculated'
-	);
+        chart.series[1].columnMetrics.width < 5,
+        true,
+        'column width is correctly calculated'
+    );
 });

@@ -1,5 +1,3 @@
-
-
 Highcharts.setOptions({
     lang: {
         drillUpText: '<< Terug naar {series.name}'
@@ -89,4 +87,3 @@ Highcharts.chart('container', {
         }]
     }
 });
-
