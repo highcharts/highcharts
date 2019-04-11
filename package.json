@@ -25,9 +25,9 @@
     "lib"
   ],
   "scripts": {
-    "test": "gulp test --speak --all",
-    "testall": "gulp test --speak --all --browsers all",
-    "ci-test": "gulp test --speak --all --browsers Mac.Firefox",
+    "test": "gulp test --speak",
+    "testall": "gulp test --speak --browsers all",
+    "ci-test": "gulp test --browsers Mac.Firefox",
     "jsdoc": "gulp jsdoc --watch",
     "dts": "gulp dts",
     "dtslint": "gulp dtslint"
