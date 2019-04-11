@@ -85,216 +85,11 @@ declare class TestController {
      * @param chartY
      *        Y relative to the chart.
      */
-    elementFromPoint(chartX: number, chartY: number): (HighchartsElement | null);
+    elementFromPoint(chartX?: number, chartY?: number): (HighchartsElement | null);
     /**
      * Get the current position of the cursor.
      */
     getPosition(): TestControllerPosition;
-    /**
-     * Move the cursor from current position to a new one. Fire a series of
-     * mousemoves, also mouseout and mouseover if new targets are found.
-     *
-     * @param chartX
-     *        New x position on the chart.
-     *
-     * @param chartY
-     *        New y position on the chart.
-     *
-     * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    moveTo(chartX: number, chartY: number, extra?: any, debug?: boolean): void;
-    /**
-     * Simulates a mouse pan action between two points.
-     *
-     * @param startPoint
-     *        Starting point with x and y values relative to the chart.
-     *
-     * @param endPoint
-     *        Ending point with x any y values relative to the chart.
-     *
-     * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    pan(startPoint?: TestControllerPoint, endPoint?: TestControllerPoint, extra?: any, debug?: boolean): void;
-    /**
-     * Simulates a pinch gesture.
-     *
-     * @param chartX
-     *        X position on the chart.
-     *
-     * @param chartY
-     *        Y position on the chart.
-     *
-     * @param distance
-     *        Distance between the two fingers. Negative values indicate,
-     *        that the fingers move to each other.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    pinch(chartX: number, chartY: number, distance: number, debug?: boolean): void;
-    /**
-     * Move the cursor position to a new position, without firing events.
-     *
-     * @param chartX
-     *        New x position on the chart.
-     *
-     * @param chartY
-     *        New y position on the chart.
-     */
-    setPosition(chartX?: number, chartY?: number): void;
-    /**
-     * Simulates a slide gesture between two points.
-     *
-     * @param startPoint
-     *        Starting point on the chart with x and y value.
-     *
-     * @param endPoint
-     *        Ending point on the chart with x any y value.
-     *
-     * @param twoFingers
-     *        Whether to use one or two fingers for the gesture.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     *
-     * @return {void}
-     */
-    slide(startPoint: TestControllerPoint, endPoint: TestControllerPoint, twoFingers?: boolean, debug?: boolean): void;
-    /**
-     * Simulates a tap action with a finger.
-     *
-     * @param chartX
-     *        X position to tab on.
-     *
-     * @param chartY
-     *        Y position to tab on.
-     *
-     * @param twoFingers
-     *        Whether to use one or two fingers for the gesture.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    tap(chartX: number, chartY: number, twoFingers?: boolean, debug?: boolean): void;
-    /**
-     * Triggers touch ends events.
-     *
-     * @param chartX
-     *        X position on the chart.
-     *
-     * @param chartY
-     *        Y position on the chart.
-     *
-     * @param twoFingers
-     *        Whether to use one or two fingers for the gesture.
-     *
-     * @param extra
-     *        Extra properties for the event arguments.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    touchEnd(chartX: number, chartY: number, twoFingers?: boolean, extra?: any, debug?: boolean): void;
-    /**
-     * Triggers touch move events.
-     *
-     * @param chartX
-     *        X position on the chart.
-     *
-     * @param chartY
-     *        Y position on the chart.
-     *
-     * @param twoFingers
-     *        Whether to use one or two fingers for the gesture.
-     *
-     * @param extra
-     *        Extra properties for the event arguments.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    touchMove(chartX: number, chartY: number, twoFingers?: boolean, extra?: any, debug?: boolean): void;
-    /**
-     * Triggers touch starts events.
-     *
-     * @param chartX
-     *        X position on the chart.
-     *
-     * @param chartY
-     *        Y position on the chart.
-     *
-     * @param twoFingers
-     *        Whether to use one or two fingers for the gesture.
-     *
-     * @param extra
-     *        Extra properties for the event arguments.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    touchStart(chartX: number, chartY: number, twoFingers?: boolean, extra?: any, debug?: boolean): void;
-    /**
-     * Trigger an event. The target element will be found based on the chart
-     * coordinates. This function is called behind the shorthand functions
-     * like .click() and .mousemove().
-     *
-     * @param type
-     *        Event type.
-     *
-     * @param chartX
-     *        X relative to the chart.
-     *
-     * @param chartY
-     *        Y relative to the chart.
-     *
-     * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    triggerEvent(type: string, chartX: number, chartY: number, extra?: any, debug?: boolean): void;
     /**
      * Triggers an event.
      *
@@ -400,4 +195,209 @@ declare class TestController {
      *        test result.
      */
     mouseUp(chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
+    /**
+     * Move the cursor from current position to a new one. Fire a series of
+     * mousemoves, also mouseout and mouseover if new targets are found.
+     *
+     * @param chartX
+     *        New x position on the chart.
+     *
+     * @param chartY
+     *        New y position on the chart.
+     *
+     * @param extra
+     *        Extra properties for the event arguments, for example
+     *        `{ shiftKey: true }` to emulate that the shift key has been
+     *        pressed in a mouse event.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    moveTo(chartX: number, chartY: number, extra?: any, debug?: boolean): void;
+    /**
+     * Simulates a mouse pan action between two points.
+     *
+     * @param startPoint
+     *        Starting point with x and y values relative to the chart.
+     *
+     * @param endPoint
+     *        Ending point with x any y values relative to the chart.
+     *
+     * @param extra
+     *        Extra properties for the event arguments, for example
+     *        `{ shiftKey: true }` to emulate that the shift key has been
+     *        pressed in a mouse event.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    pan(startPoint?: TestControllerPoint, endPoint?: TestControllerPoint, extra?: any, debug?: boolean): void;
+    /**
+     * Simulates a pinch gesture.
+     *
+     * @param chartX
+     *        X position on the chart.
+     *
+     * @param chartY
+     *        Y position on the chart.
+     *
+     * @param distance
+     *        Distance between the two fingers. Negative values indicate,
+     *        that the fingers move to each other.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    pinch(chartX?: number, chartY?: number, distance?: number, debug?: boolean): void;
+    /**
+     * Move the cursor position to a new position, without firing events.
+     *
+     * @param chartX
+     *        New x position on the chart.
+     *
+     * @param chartY
+     *        New y position on the chart.
+     */
+    setPosition(chartX?: number, chartY?: number): void;
+    /**
+     * Simulates a slide gesture between two points.
+     *
+     * @param startPoint
+     *        Starting point on the chart with x and y value.
+     *
+     * @param endPoint
+     *        Ending point on the chart with x any y value.
+     *
+     * @param twoFingers
+     *        Whether to use one or two fingers for the gesture.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     *
+     * @return {void}
+     */
+    slide(startPoint?: TestControllerPoint, endPoint?: TestControllerPoint, twoFingers?: boolean, debug?: boolean): void;
+    /**
+     * Simulates a tap action with a finger.
+     *
+     * @param chartX
+     *        X position to tab on.
+     *
+     * @param chartY
+     *        Y position to tab on.
+     *
+     * @param twoFingers
+     *        Whether to use one or two fingers for the gesture.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    tap(chartX?: number, chartY?: number, twoFingers?: boolean, debug?: boolean): void;
+    /**
+     * Triggers touch ends events.
+     *
+     * @param chartX
+     *        X position on the chart.
+     *
+     * @param chartY
+     *        Y position on the chart.
+     *
+     * @param twoFingers
+     *        Whether to use one or two fingers for the gesture.
+     *
+     * @param extra
+     *        Extra properties for the event arguments.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    touchEnd(chartX?: number, chartY?: number, twoFingers?: boolean, extra?: any, debug?: boolean): void;
+    /**
+     * Triggers touch move events.
+     *
+     * @param chartX
+     *        X position on the chart.
+     *
+     * @param chartY
+     *        Y position on the chart.
+     *
+     * @param twoFingers
+     *        Whether to use one or two fingers for the gesture.
+     *
+     * @param extra
+     *        Extra properties for the event arguments.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    touchMove(chartX?: number, chartY?: number, twoFingers?: boolean, extra?: any, debug?: boolean): void;
+    /**
+     * Triggers touch starts events.
+     *
+     * @param chartX
+     *        X position on the chart.
+     *
+     * @param chartY
+     *        Y position on the chart.
+     *
+     * @param twoFingers
+     *        Whether to use one or two fingers for the gesture.
+     *
+     * @param extra
+     *        Extra properties for the event arguments.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    touchStart(chartX?: number, chartY?: number, twoFingers?: boolean, extra?: any, debug?: boolean): void;
+    /**
+     * Trigger an event. The target element will be found based on the chart
+     * coordinates. This function is called behind the shorthand functions
+     * like .click() and .mousemove().
+     *
+     * @param type
+     *        Event type.
+     *
+     * @param chartX
+     *        X relative to the chart.
+     *
+     * @param chartY
+     *        Y relative to the chart.
+     *
+     * @param extra
+     *        Extra properties for the event arguments, for example
+     *        `{ shiftKey: true }` to emulate that the shift key has been
+     *        pressed in a mouse event.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    triggerEvent(type: string, chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
 }

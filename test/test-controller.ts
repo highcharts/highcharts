@@ -1,5 +1,11 @@
 /* *
  *
+ *  Copyright (c) Highsoft AS. All rights reserved.
+ *
+ * */
+
+/* *
+ *
  *  Types
  *
  * */
@@ -68,13 +74,13 @@ class TestController {
      *        The list of touches.
      */
     private static createTouchList (
-        array: TestControllerTouchPositions
+        positions: TestControllerTouchPositions
     ): TestControllerTouchPositions {
-        array.item = function (this: TestControllerTouchPositions, i: number) {
+        positions.item = function (this: TestControllerTouchPositions, i: number) {
             console.log(typeof this, Object.keys(this));
             return this[i];
         };
-        return array;
+        return positions;
     }
 
     /**
@@ -90,7 +96,7 @@ class TestController {
      *        The distance between points.
      */
     private static getPointsBetween(
-        a: TestControllerPoint, b: TestControllerPoint, interval: number
+        a: TestControllerPoint, b: TestControllerPoint, interval: number = 1
     ): Array<TestControllerPoint> {
 
         const points = [] as Array<TestControllerPoint>;
@@ -145,7 +151,6 @@ class TestController {
      *        Chart to control
      */
     constructor (chart: Highcharts.Chart) {
-
         this.chart = chart;
         this.positionX = 0;
         this.positionY = 0;
@@ -191,12 +196,11 @@ class TestController {
      *        Draw a position circle for debugging purposes.
      */
     public click (
-        chartX?: number, chartY?: number, extra?: any, debug?: boolean
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        extra: any = undefined,
+        debug: boolean = false
     ) {
-
-        chartX = (chartX || this.positionX);
-        chartY = (chartY || this.positionY);
-
         this.mouseDown(chartX, chartY, extra, debug);
         this.mouseUp(chartX, chartY, extra, debug);
         this.triggerEvent('click', chartX, chartY, extra, debug);
@@ -212,14 +216,15 @@ class TestController {
      *        Y relative to the chart.
      */
     public elementFromPoint (
-        chartX: number, chartY: number
+        chartX: number = this.positionX,
+        chartY: number = this.positionY
     ): (HighchartsElement | null) {
 
-        let chartOffset = Highcharts.offset(this.chart.container),
-            clipPaths = {
-                elements: [] as Array<HighchartsElement>,
-                values: [] as Array<string>
-            };
+        const chartOffset = Highcharts.offset(this.chart.container);
+        const clipPaths = {
+            elements: [] as Array<HighchartsElement>,
+            values: [] as Array<string>
+        };
 
         // Edge and IE are unable to get elementFromPoint when the group has a
         // clip path. It reports the first underlying element with no clip path.
@@ -237,7 +242,7 @@ class TestController {
                 );
         }
 
-        let element = document.elementFromPoint(
+        const element = document.elementFromPoint(
             (chartOffset.left + chartX),
             (chartOffset.top + chartY)
         ) as HighchartsElement;
@@ -262,6 +267,151 @@ class TestController {
     }
 
     /**
+     * Triggers an event.
+     *
+     * @param chartX
+     *        X relative to the chart.
+     *
+     * @param chartY
+     *        Y relative to the chart.
+     *
+     * @param extra
+     *        Extra properties for the event arguments, for example
+     *        `{ shiftKey: true }` to emulate that the shift key has been
+     *        pressed in a mouse event.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    public mouseDown (
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        extra: any = undefined,
+        debug: boolean = false
+    ) {
+        this.triggerEvent('mousedown', chartX, chartY, extra, debug);
+    }
+
+    /**
+     * Triggers an event.
+     *
+     * @param chartX
+     *        X relative to the chart.
+     *
+     * @param chartY
+     *        Y relative to the chart.
+     *
+     * @param extra
+     *        Extra properties for the event arguments, for example
+     *        `{ shiftKey: true }` to emulate that the shift key has been
+     *        pressed in a mouse event.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    public mouseMove (
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        extra: any = undefined,
+        debug: boolean = false
+    ) {
+        this.triggerEvent('mousemove', chartX, chartY, extra, debug);
+    }
+
+    /**
+     * Triggers an event.
+     *
+     * @param chartX
+     *        X relative to the chart.
+     *
+     * @param chartY
+     *        Y relative to the chart.
+     *
+     * @param extra
+     *        Extra properties for the event arguments, for example
+     *        `{ shiftKey: true }` to emulate that the shift key has been
+     *        pressed in a mouse event.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    public mouseOut (
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        extra: any = undefined,
+        debug: boolean = false
+    ) {
+        this.triggerEvent('mouseout', chartX, chartY, extra, debug);
+    }
+
+    /**
+     * Triggers an event.
+     *
+     * @param chartX
+     *        X relative to the chart.
+     *
+     * @param chartY
+     *        Y relative to the chart.
+     *
+     * @param extra
+     *        Extra properties for the event arguments, for example
+     *        `{ shiftKey: true }` to emulate that the shift key has been
+     *        pressed in a mouse event.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    public mouseOver (
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        extra: any = undefined,
+        debug: boolean = false
+    ) {
+        this.triggerEvent('mouseover', chartX, chartY, extra, debug);
+    }
+
+    /**
+     * Triggers an event.
+     *
+     * @param chartX
+     *        X relative to the chart.
+     *
+     * @param chartY
+     *        Y relative to the chart.
+     *
+     * @param extra
+     *        Extra properties for the event arguments, for example
+     *        `{ shiftKey: true }` to emulate that the shift key has been
+     *        pressed in a mouse event.
+     *
+     * @param debug
+     *        Add marks where the event was triggered. Should not be
+     *        enabled in production, as it slows down the test and also
+     *        leaves an element that might catch events and mess up the
+     *        test result.
+     */
+    public mouseUp (
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        extra: any = undefined,
+        debug: boolean = false
+    ) {
+        this.triggerEvent('mouseup', chartX, chartY, extra, debug);
+    }
+
+    /**
      * Move the cursor from current position to a new one. Fire a series of
      * mousemoves, also mouseout and mouseover if new targets are found.
      *
@@ -283,30 +433,34 @@ class TestController {
      *        test result.
      */
     public moveTo (
-        chartX: number, chartY: number, extra?: any, debug?: boolean
+        chartX: number,
+        chartY: number,
+        extra: any = undefined,
+        debug: boolean = false
     ) {
 
-        var self = this,
-            fromPosition = self.getPosition(),
-            from = [fromPosition.x, fromPosition.y] as TestControllerPoint,
-            to = [chartX, chartY] as TestControllerPoint,
-            interval = 1,
+        const fromPosition = this.getPosition();
+        const from = [fromPosition.x, fromPosition.y] as TestControllerPoint;
+        const to = [chartX, chartY] as TestControllerPoint;
+        const points = TestController.getPointsBetween(from, to);
+
+        let point: TestControllerPoint,
             relatedTarget = fromPosition.relatedTarget,
-            points = TestController.getPointsBetween(from, to, interval);
+            target,
+            x1,
+            y1;
 
-        Highcharts.each(points, function (p?: TestControllerPoint) {
+        for (let i = 0, ie = points.length; i < ie; ++i) {
 
-            if (!p) {
-                return;
-            }
+            point = points[i];
 
-            let x1 = p[0],
-                y1 = p[1],
-                target = self.elementFromPoint(x1, y1);
+            x1 = point[0];
+            y1 = point[1];
+            target = this.elementFromPoint(x1, y1);
 
             if (target !== relatedTarget) {
                 // First trigger a mouseout on the old target.
-                self.triggerEvent(
+                this.triggerEvent(
                     'mouseout',
                     x1, y1,
                     Highcharts.merge({
@@ -317,12 +471,12 @@ class TestController {
                 );
             }
 
-            self.triggerEvent('mousemove', x1, y1, extra, debug);
+            this.triggerEvent('mousemove', x1, y1, extra, debug);
 
             if (target !== relatedTarget) {
                 // Then trigger a mouseover on the new target.
                 if (target) {
-                    self.triggerEvent(
+                    this.triggerEvent(
                         'mouseover',
                         x1, y1,
                         Highcharts.merge({
@@ -333,10 +487,10 @@ class TestController {
                 }
                 relatedTarget = target;
             }
-        });
+        }
 
         // Update controller positions and relatedTarget.
-        self.setPosition(chartX, chartY);
+        this.setPosition(chartX, chartY);
     }
 
     /**
@@ -360,15 +514,11 @@ class TestController {
      *        test result.
      */
     public pan (
-        startPoint?: TestControllerPoint,
-        endPoint?: TestControllerPoint,
-        extra?: any,
-        debug?: boolean
+        startPoint: TestControllerPoint = [this.positionX, this.positionY],
+        endPoint: TestControllerPoint = [this.positionX, this.positionY],
+        extra: any = undefined,
+        debug: boolean = false
     ) {
-
-        startPoint = (startPoint || [this.positionX, this.positionY]);
-        endPoint = (endPoint || [this.positionX, this.positionY]);
-
         this.setPosition(startPoint[0], startPoint[1]);
         this.mouseDown(startPoint[0], startPoint[1], extra, debug);
         this.moveTo(endPoint[0], endPoint[1], extra, debug);
@@ -395,7 +545,10 @@ class TestController {
      *        test result.
      */
     public pinch (
-        chartX: number, chartY: number, distance: number, debug?: boolean
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        distance: number = 10,
+        debug: boolean = false
     ) {
 
         var startPoint1: [number, number],
@@ -420,18 +573,19 @@ class TestController {
             endPoint2 = [(chartX + distance), (chartY + distance)];
         }
 
-        var extra,
-            movePoint1,
-            movePoints1 = TestController.getPointsBetween(
-                startPoint1, endPoint1, 1
-            ),
-            movePoint2,
-            movePoints2 = TestController.getPointsBetween(
-                startPoint2, endPoint2, 1
-            ),
-            target = this.elementFromPoint(chartX, chartY);
+        const movePoints1 = TestController.getPointsBetween(
+            startPoint1, endPoint1, 1
+        );
+        const movePoints2 = TestController.getPointsBetween(
+            startPoint2, endPoint2, 1
+        );
+        const target = this.elementFromPoint(chartX, chartY);
 
-        for (var i = 0, ie = (movePoints1.length - 1); i <= ie; ++i) {
+        let extra,
+            movePoint1,
+            movePoint2;
+
+        for (let i = 0, ie = (movePoints1.length - 1); i <= ie; ++i) {
 
             movePoint1 = movePoints1[i];
             movePoint2 = movePoints2[i];
@@ -446,9 +600,7 @@ class TestController {
             if (i === 0) {
                 this.touchStart(chartX, chartY, undefined, extra, debug);
             }
-
             this.touchMove(chartX, chartY, undefined, extra, debug);
-
             if (i === ie) {
                 this.touchEnd(chartX, chartY, undefined, extra, debug);
             }
@@ -464,14 +616,14 @@ class TestController {
      * @param chartY
      *        New y position on the chart.
      */
-    public setPosition (chartX?: number, chartY?: number) {
-        this.positionX = (chartX || this.positionY);
-        this.positionY = (chartY || this.positionY);
-        this.relatedTarget = this.elementFromPoint(
-            this.positionX, this.positionY
-        );
+    public setPosition (
+        chartX: number = this.positionX,
+        chartY: number = this.positionY
+    ) {
+        this.positionX = chartX;
+        this.positionY = chartY;
+        this.relatedTarget = this.elementFromPoint(chartX, chartY);
     }
-
 
     /**
      * Simulates a slide gesture between two points.
@@ -494,21 +646,20 @@ class TestController {
      * @return {void}
      */
     public slide (
-        startPoint: TestControllerPoint,
-        endPoint: TestControllerPoint,
-        twoFingers?: boolean,
-        debug?: boolean
+        startPoint: TestControllerPoint = [this.positionX, this.positionY],
+        endPoint: TestControllerPoint = [this.positionX, this.positionY],
+        twoFingers: boolean = false,
+        debug: boolean = false
     ) {
 
-        var interval = 1,
-            movePoint,
-            movePoints = TestController.getPointsBetween(
-                startPoint, endPoint, interval
-            );
+        const movePoints = TestController
+            .getPointsBetween(startPoint, endPoint);
 
         this.touchStart(
             startPoint[0], startPoint[1], twoFingers, undefined, debug
         );
+
+        let movePoint;
 
         for (var i = 0, ie = movePoints.length; i < ie; ++i) {
             movePoint = movePoints[i];
@@ -541,10 +692,10 @@ class TestController {
      *        test result.
      */
     public tap (
-        chartX: number,
-        chartY: number,
-        twoFingers?: boolean,
-        debug?: boolean
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        twoFingers: boolean = false,
+        debug: boolean = false
     ) {
         this.touchStart(chartX, chartY, twoFingers, undefined, debug);
         this.touchEnd(chartX, chartY, twoFingers, undefined, debug);
@@ -572,11 +723,11 @@ class TestController {
      *        test result.
      */
     public touchEnd (
-        chartX: number,
-        chartY: number,
-        twoFingers?: boolean,
-        extra?: any,
-        debug?: boolean
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        twoFingers: boolean = false,
+        extra: any = undefined,
+        debug: boolean = false
     ) {
 
         const target = (this.elementFromPoint(chartX, chartY) || undefined);
@@ -632,11 +783,11 @@ class TestController {
      *        test result.
      */
     public touchMove (
-        chartX: number,
-        chartY: number,
-        twoFingers?: boolean,
-        extra?: any,
-        debug?: boolean
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        twoFingers: boolean = false,
+        extra: any = undefined,
+        debug: boolean = false
     ) {
 
         const target = this.elementFromPoint(chartX, chartY);
@@ -694,11 +845,11 @@ class TestController {
      *        test result.
      */
     public touchStart (
-        chartX: number,
-        chartY: number,
-        twoFingers?: boolean,
-        extra?: any,
-        debug?: boolean
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        twoFingers: boolean = false,
+        extra: any = undefined,
+        debug: boolean = false
     ) {
 
         const target = this.elementFromPoint(chartX, chartY);
@@ -761,22 +912,18 @@ class TestController {
      */
     public triggerEvent (
         type: string,
-        chartX: number,
-        chartY: number,
-        extra?: any,
-        debug?: boolean
+        chartX: number = this.positionX,
+        chartY: number = this.positionY,
+        extra: any = undefined,
+        debug: boolean = false
     ) {
 
-        chartX = (chartX || 0);
-        chartY = (chartY || 0);
-
-        let chartOffset = Highcharts.offset(this.chart.container),
-            element,
-            evt = (
-                document.createEvent ?
-                    document.createEvent('Events') :
-                    new Event(type, { bubbles: true, cancelable: true })
-            );
+        const chartOffset = Highcharts.offset(this.chart.container);
+        const evt = (
+            document.createEvent ?
+                document.createEvent('Events') :
+                new Event(type, { bubbles: true, cancelable: true })
+        );
 
         if (document.createEvent) {
             evt.initEvent(type, true, true);
@@ -820,187 +967,13 @@ class TestController {
         }
 
         // Find an element related to the coordinates and fire event.
-        element = (
+        let element = (
             (extra && extra.currentTarget) ||
             this.elementFromPoint(chartX, chartY)
         );
+
         if (element) {
             element.dispatchEvent(evt);
         }
-    }
-
-    /**
-     * Triggers an event.
-     *
-     * @param chartX
-     *        X relative to the chart.
-     *
-     * @param chartY
-     *        Y relative to the chart.
-     *
-     * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    public mouseDown (
-        chartX?: number,
-        chartY?: number,
-        extra?: any,
-        debug?: boolean
-    ) {
-        this.triggerEvent(
-            'mousedown',
-            (chartX || this.positionX),
-            (chartY || this.positionY),
-            extra,
-            debug
-        );
-    }
-
-    /**
-     * Triggers an event.
-     *
-     * @param chartX
-     *        X relative to the chart.
-     *
-     * @param chartY
-     *        Y relative to the chart.
-     *
-     * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    public mouseMove (
-        chartX?: number,
-        chartY?: number,
-        extra?: any,
-        debug?: boolean
-    ) {
-        this.triggerEvent(
-            'mousemove',
-            (chartX || this.positionX),
-            (chartY || this.positionY),
-            extra,
-            debug
-        );
-    }
-
-    /**
-     * Triggers an event.
-     *
-     * @param chartX
-     *        X relative to the chart.
-     *
-     * @param chartY
-     *        Y relative to the chart.
-     *
-     * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    public mouseOut (
-        chartX?: number,
-        chartY?: number,
-        extra?: any,
-        debug?: boolean
-    ) {
-        this.triggerEvent(
-            'mouseout',
-            (chartX || this.positionX),
-            (chartY || this.positionY),
-            extra,
-            debug
-        );
-    }
-
-    /**
-     * Triggers an event.
-     *
-     * @param chartX
-     *        X relative to the chart.
-     *
-     * @param chartY
-     *        Y relative to the chart.
-     *
-     * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    public mouseOver (
-        chartX?: number,
-        chartY?: number,
-        extra?: any,
-        debug?: boolean
-    ) {
-        this.triggerEvent(
-            'mouseover',
-            (chartX || this.positionX),
-            (chartY || this.positionY),
-            extra,
-            debug
-        );
-    }
-
-    /**
-     * Triggers an event.
-     *
-     * @param chartX
-     *        X relative to the chart.
-     *
-     * @param chartY
-     *        Y relative to the chart.
-     *
-     * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
-     *
-     * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     */
-    public mouseUp (
-        chartX?: number,
-        chartY?: number,
-        extra?: any,
-        debug?: boolean
-    ) {
-        this.triggerEvent(
-            'mouseup',
-            (chartX || this.positionX),
-            (chartY || this.positionY),
-            extra,
-            debug
-        );
     }
 }
