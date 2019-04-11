@@ -1711,12 +1711,12 @@ seriesType(
         },
 
         /**
-        * Workaround for `inactive` state. Since `series.opacity` option is
-        * already reserved, don't use that state at all by disabling
-        * `inactiveOtherPoints` and not inheriting states by points.
-        *
-        * @private
-        */
+         * Workaround for `inactive` state. Since `series.opacity` option is
+         * already reserved, don't use that state at all by disabling
+         * `inactiveOtherPoints` and not inheriting states by points.
+         *
+         * @private
+         */
         setState: function (state) {
             this.options.inactiveOtherPoints = true;
             Series.prototype.setState.call(this, state, false);

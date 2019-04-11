@@ -1,4 +1,4 @@
-/**
+/* *
  * @license  @product.name@ JS v@product.version@ (@product.date@)
  *
  * (c) 2010-2017 Highsoft AS

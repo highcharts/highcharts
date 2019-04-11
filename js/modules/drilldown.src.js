@@ -181,7 +181,7 @@ extend(
  * [code.highcharts.com/modules/drilldown.js
  * ](code.highcharts.com/modules/drilldown.js).
  *
- * @product      highcharts highstock highmaps
+ * @product      highcharts highmaps
  * @optionparent drilldown
  */
 defaultOptions.drilldown = {

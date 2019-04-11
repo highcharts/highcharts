@@ -1,10 +1,12 @@
-/**
- * Popup generator for Stock tools
+/* *
  *
- * (c) 2009-2017 Sebastian Bochan
+ *  Popup generator for Stock tools
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2009-2017 Sebastian Bochan
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 'use strict';
 import H from '../parts/Globals.js';
 
@@ -49,13 +51,11 @@ H.Popup = function (parentDiv) {
 };
 
 H.Popup.prototype = {
-    /*
+    /**
      * Initialize the popup. Create base div and add close button.
-     *
+     * @private
      * @param {HTMLDOMElement} - container where popup should be placed
-     *
      * @return {HTMLDOMElement} - return created popup's div
-     *
      */
     init: function (parentDiv) {
 
@@ -69,9 +69,9 @@ H.Popup.prototype = {
         // add close button
         this.addCloseBtn();
     },
-    /*
+    /**
      * Create HTML element and attach click event (close popup).
-     *
+     * @private
      */
     addCloseBtn: function () {
         var _self = this,
@@ -88,13 +88,11 @@ H.Popup.prototype = {
             });
         });
     },
-    /*
+    /**
      * Create two columns (divs) in HTML.
-     *
+     * @private
      * @param {HTMLDOMElement} - container of columns
-     *
      * @return {Object} - reference to two HTML columns
-     *
      */
     addColsContainer: function (container) {
         var rhsCol,
@@ -120,15 +118,14 @@ H.Popup.prototype = {
             rhsCol: rhsCol
         };
     },
-    /*
+    /**
      * Create input with label.
-     *
+     * @private
      * @param {String} - chain of fields i.e params.styles.fontSize
      * @param {String} - indicator type
      * @param {HTMLDOMElement} - container where elements should be added
      * @param {String} - dafault value of input i.e period value is 14,
      * extracted from defaultOptions (ADD mode) or series options (EDIT mode)
-     *
      */
     addInput: function (option, type, parentDiv, value) {
         var optionParamList = option.split('.'),
@@ -161,15 +158,14 @@ H.Popup.prototype = {
             parentDiv
         ).setAttribute(PREFIX + 'data-name', option);
     },
-    /*
+    /**
      * Create button.
-     *
+     * @private
      * @param {HTMLDOMElement} - container where elements should be added
      * @param {String} - text placed as button label
      * @param {String} - add | edit | remove
      * @param {Function} - on click callback
      * @param {HTMLDOMElement} - container where inputs are generated
-     *
      * @return {HTMLDOMElement} - html button
      */
     addButton: function (parentDiv, label, type, callback, fieldsDiv) {
@@ -194,12 +190,11 @@ H.Popup.prototype = {
 
         return button;
     },
-    /*
+    /**
      * Get values from all inputs and create JSON.
-     *
+     * @private
      * @param {HTMLDOMElement} - container where inputs are created
      * @param {String} - add | edit | remove
-     *
      * @return {Object} - fields
      */
     getFields: function (parentDiv, type) {
@@ -241,12 +236,11 @@ H.Popup.prototype = {
 
         return fieldsOutput;
     },
-    /*
+    /**
      * Reset content of the current popup and show.
-     *
+     * @private
      * @param {Chart} - chart
      * @param {Function} - on click callback
-     *
      * @return {Object} - fields
      */
     showPopup: function () {
@@ -271,21 +265,20 @@ H.Popup.prototype = {
         popupDiv.appendChild(popupCloseBtn);
         popupDiv.style.display = 'block';
     },
-    /*
+    /**
      * Hide popup.
-     *
+     * @private
      */
     closePopup: function () {
         this.popup.container.style.display = 'none';
     },
-    /*
+    /**
      * Create content and show popup.
-     *
+     * @private
      * @param {String} - type of popup i.e indicators
      * @param {Chart} - chart
      * @param {Object} - options
      * @param {Function} - on click callback
-     *
      */
     showForm: function (type, chart, options, callback) {
 
@@ -314,23 +307,22 @@ H.Popup.prototype = {
             this.annotations.addForm.call(this, chart, options, callback, true);
         }
     },
-    /*
+    /**
      * Return lang definitions for popup.
-     *
+     * @private
      * @return {Object} - elements translations.
      */
     getLangpack: function () {
         return H.getOptions().lang.navigation.popup;
     },
     annotations: {
-        /*
+        /**
          * Create annotation simple form. It contains two buttons
          * (edit / remove) and text label.
-         *
+         * @private
          * @param {Chart} - chart
          * @param {Object} - options
          * @param {Function} - on click callback
-         *
          */
         addToolbar: function (chart, options, callback) {
             var _self = this,
@@ -387,15 +379,14 @@ H.Popup.prototype = {
 
             button.className += ' ' + PREFIX + 'annotation-edit-button';
         },
-        /*
+        /**
          * Create annotation simple form.
          * It contains fields with param names.
-         *
+         * @private
          * @param {Chart} - chart
          * @param {Object} - options
          * @param {Function} - on click callback
          * @param {Boolean} - if it is a form declared for init annotation
-         *
          */
         addForm: function (chart, options, callback, isInit) {
             var popupDiv = this.popup.container,
@@ -438,16 +429,15 @@ H.Popup.prototype = {
                 popupDiv
             );
         },
-        /*
+        /**
          * Create annotation's form fields.
-         *
+         * @private
          * @param {HTMLDOMElement} - div where inputs are placed
          * @param {Chart} - chart
          * @param {String} - name of parent to create chain of names
          * @param {Object} - options
          * @param {Array} - storage - array where all items are stored
          * @param {Boolean} - isRoot - recursive flag for root
-         *
          */
         addFormFields: function (
             parentDiv,
@@ -527,14 +517,13 @@ H.Popup.prototype = {
         }
     },
     indicators: {
-        /*
+        /**
          * Create indicator's form. It contains two tabs (ADD and EDIT) with
          * content.
-         *
+         * @private
          * @param {Chart} - chart
          * @param {Object} - options
          * @param {Function} - on click callback
-         *
          */
         addForm: function (chart, options, callback) {
 
@@ -597,14 +586,13 @@ H.Popup.prototype = {
                 buttonParentDiv
             );
         },
-        /*
+        /**
          * Create HTML list of all indicators (ADD mode) or added indicators
          * (EDIT mode).
-         *
+         * @private
          * @param {Chart} - chart
          * @param {HTMLDOMElement} - container where list is added
          * @param {String} - 'edit' or 'add' mode
-         *
          */
         addIndicatorList: function (chart, parentDiv, listType) {
             var _self = this,
@@ -678,15 +666,13 @@ H.Popup.prototype = {
                 indicatorList.childNodes[0].click();
             }
         },
-        /*
+        /**
          * Extract full name and type of requested indicator.
-         *
+         * @private
          * @param {Series} - series which name is needed.
          * (EDIT mode - defaultOptions.series, ADD mode - indicator series).
          * @param {String} - indicator type like: sma, ema, etc.
-         *
          * @return {Object} - series name and type like: sma, ema, etc.
-         *
          */
         getNameType: function (series, type) {
             var options = series.options,
@@ -707,15 +693,14 @@ H.Popup.prototype = {
                 type: seriesType
             };
         },
-        /*
+        /**
          * List all series with unique ID. Its mandatory for indicators to set
          * correct linking.
-         *
+         * @private
          * @param {String} - indicator type like: sma, ema, etc.
          * @param {String} - type of select i.e series or volume.
          * @param {Chart} - chart
          * @param {HTMLDOMElement} - element where created HTML list is added
-         *
          */
         listAllSeries: function (type, optionName, chart, parentDiv) {
             var selectName = PREFIX + optionName + '-type-' + type,
@@ -767,18 +752,17 @@ H.Popup.prototype = {
                 }
             });
         },
-        /*
+        /**
          * Create typical inputs for chosen indicator. Fields are extracted from
          * defaultOptions (ADD mode) or current indicator (ADD mode). Two extra
          * fields are added:
          * - hidden input - contains indicator type (required for callback)
          * - select - list of series which can be linked with indicator
-         *
+         * @private
          * @param {Chart} - chart
          * @param {Series} - indicator
          * @param {String} - indicator type like: sma, ema, etc.
          * @param {HTMLDOMElement} - element where created HTML list is added
-         *
          */
         addFormFields: function (chart, series, seriesType, rhsColWrapper) {
             var fields = series.params || series.options.params,
@@ -839,17 +823,16 @@ H.Popup.prototype = {
                 rhsColWrapper
             );
         },
-        /*
+        /**
          * Recurent function which lists all fields, from params object and
          * create them as inputs. Each input has unique `data-name` attribute,
          * which keeps chain of fields i.e params.styles.fontSize.
-         *
+         * @private
          * @param {Chart} - chart
          * @param {String} - name of parent to create chain of names
          * @param {Series} - fields - params which are based for input create
          * @param {String} - indicator type like: sma, ema, etc.
          * @param {HTMLDOMElement} - element where created HTML list is added
-         *
          */
         addParamInputs: function (chart, parentNode, fields, type, parentDiv) {
             var _self = this,
@@ -884,9 +867,9 @@ H.Popup.prototype = {
                 }
             });
         },
-        /*
+        /**
          * Get amount of indicators added to chart.
-         *
+         * @private
          * @return {Number} - Amount of indicators
          */
         getAmount: function () {
@@ -908,11 +891,10 @@ H.Popup.prototype = {
         }
     },
     tabs: {
-        /*
+        /**
          * Init tabs. Create tab menu items, tabs containers
-         *
+         * @private
          * @param {Chart} - reference to current chart
-         *
          */
         init: function (chart) {
             var tabs = this.tabs,
@@ -932,12 +914,11 @@ H.Popup.prototype = {
             // activate first tab
             tabs.selectTab.call(this, firstTab, 0);
         },
-        /*
+        /**
          * Create tab menu item
-         *
+         * @private
          * @param {String} - `add` or `edit`
          * @param {Number} - Disable tab when 0
-         *
          * @return {HTMLDOMElement} - created HTML tab-menu element
          */
         addMenuItem: function (tabName, disableTab) {
@@ -965,11 +946,10 @@ H.Popup.prototype = {
 
             return menuItem;
         },
-        /*
+        /**
          * Create tab content
-         *
+         * @private
          * @return {HTMLDOMElement} - created HTML tab-content element
-         *
          */
         addContentItem: function () {
             var popupDiv = this.popup.container;
@@ -983,11 +963,10 @@ H.Popup.prototype = {
                 popupDiv
             );
         },
-        /*
+        /**
          * Add click event to each tab
-         *
+         * @private
          * @param {Number} - Disable tab when 0
-         *
          */
         switchTabs: function (disableTab) {
             var _self = this,
@@ -1013,12 +992,11 @@ H.Popup.prototype = {
                 });
             });
         },
-        /*
+        /**
          * Set tab as visible
-         *
+         * @private
          * @param {HTMLDOMElement} - current tab
          * @param {Number} - Index of tab in menu
-         *
          */
         selectTab: function (tab, index) {
             var allTabs = this.popup.container
@@ -1027,9 +1005,9 @@ H.Popup.prototype = {
             tab.className += ' ' + PREFIX + 'tab-item-active';
             allTabs[index].className += ' ' + PREFIX + 'tab-item-show';
         },
-        /*
+        /**
          * Set all tabs as invisible.
-         *
+         * @private
          */
         deselectAll: function () {
             var popupDiv = this.popup.container,

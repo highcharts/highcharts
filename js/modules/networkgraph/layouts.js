@@ -628,9 +628,9 @@ H.extend(
     }
 );
 
-/*
+/* ************************************************************************** *
  * Multiple series support:
- */
+ * ************************************************************************** */
 // Clear previous layouts
 addEvent(Chart, 'predraw', function () {
     if (this.graphLayoutsLookup) {
