@@ -131,7 +131,8 @@ const browserStackBrowsers = {
         browser: 'firefox',
         browser_version: '65.0',
         os: 'OS X',
-        os_version: 'Mojave'
+        os_version: 'Mojave',
+        'browserstack.timezone': 'UTC'
     },
     'Mac.Safari': {
         base: 'BrowserStack',
