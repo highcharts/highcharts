@@ -73,7 +73,7 @@ function distProductsJS() {
                     Highcharts: { date, nr },
                     Highstock: { date, nr },
                     Highmaps: { date, nr },
-                    Gantt: { date, nr }
+                    'Highcharts Gantt': { date, nr }
                 }, undefined, '    ') + '\n'
             )
         );
