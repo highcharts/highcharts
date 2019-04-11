@@ -150,11 +150,17 @@ class TestController {
      * @param chart
      *        Chart to control
      */
-    constructor (chart: Highcharts.Chart) {
+    public constructor (chart: Highcharts.Chart) {
+
+        if (!(this instanceof TestController)) {
+            return new TestController(chart);
+        }
+
         this.chart = chart;
         this.positionX = 0;
         this.positionY = 0;
         this.relatedTarget = null;
+
         this.setPosition();
     }
 
@@ -754,9 +760,9 @@ class TestController {
         }
 
         this.triggerEvent('touchend', chartX, chartY, extra, debug);
-        if ((window as any).Pointer) {
+        if (Highcharts.Pointer) {
             this.triggerEvent('pointerup', chartX, chartY, extra, debug);
-        } else if ((window as any).MSPointer) {
+        } else if ((Highcharts as any).MSPointer) {
             this.triggerEvent('MSPointerUp', chartX, chartY, extra, debug);
         }
     }
@@ -813,9 +819,9 @@ class TestController {
             );
         }
 
-        if ((window as any).Pointer) {
+        if (Highcharts.Pointer) {
             this.triggerEvent('pointermove', chartX, chartY, extra, debug);
-        } else if ((window as any).MSPointer) {
+        } else if ((Highcharts as any).MSPointer) {
             this.triggerEvent(
                 'MSPointerMove', chartX, chartY, extra, debug
             );
@@ -876,9 +882,9 @@ class TestController {
         }
 
         this.triggerEvent('touchstart', chartX, chartY, extra, debug);
-        if ((window as any).Pointer) {
+        if (Highcharts.Pointer) {
             this.triggerEvent('pointerdown', chartX, chartY, extra, debug);
-        } else if ((window as any).MSPointer) {
+        } else if ((Highcharts as any).MSPointer) {
             this.triggerEvent(
                 'MSPointerDown', chartX, chartY, extra, debug
             );
