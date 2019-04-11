@@ -136,4 +136,12 @@ QUnit.test('dataGrouping with gapSize (#7686)', function (assert) {
         33,
         'Graph should be continuous when dataGrouping is months (#10000)'
     );
+
+    // Because of https://github.com/highcharts/highcharts/issues/10536, global
+    // time is altered by instance time
+    Highcharts.setOptions({
+        time: {
+            useUTC: true
+        }
+    });
 });
