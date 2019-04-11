@@ -333,50 +333,6 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
         'Monthly columns'
     );
 
-    assert.deepEqual(
-        chart.series[0].points.map(p => p.shapeArgs.x),
-        [
-            13,
-            61,
-            109,
-            158,
-            206,
-            254,
-            303,
-            351,
-            399,
-            448,
-            496,
-            544
-        ],
-        'Monthly columns X positions'
-    );
-
-    assert.deepEqual(
-        chart.series[0].points.map(p => p.shapeArgs.width),
-        [
-            24,
-            24,
-            24,
-            24,
-            24,
-            24,
-            24,
-            24,
-            24,
-            24,
-            24,
-            24
-        ],
-        'Monthly columns widths'
-    );
-
-    assert.deepEqual(
-        [chart.plotLeft, chart.plotWidth],
-        [10, 580],
-        'Plot box'
-    );
-
     chart.rangeSelector.clickButton(0);
     assert.strictEqual(
         chart.container.querySelectorAll('.highcharts-series-0 rect').length,
