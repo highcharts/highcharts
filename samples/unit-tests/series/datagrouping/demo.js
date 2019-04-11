@@ -279,9 +279,6 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
             width: 600,
             height: 250
         },
-        time: {
-            useUTC: true
-        },
         rangeSelector: {
             allButtonsEnabled: true,
             buttons: [{
