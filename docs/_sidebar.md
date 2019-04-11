@@ -4,22 +4,21 @@
   * [Installation](getting-started/installation.md)
   * [Your First Chart](getting-started/your-first-chart.md)
   * [How to set options](getting-started/how-to-set-options.md)
+  * [Frequently asked questions](getting-started/frequently-asked-questions.md)
   * [Install from npm](getting-started/install-from-npm.md)
   * [Install from Bower](getting-started/install-from-bower.md)
   * [How to create custom Highcharts files](getting-started/how-to-create-custom-highcharts-files.md)
   * [Optional Dependencies](getting-started/optional-dependencies.md)
-  * [Getting started with Gantt](getting-started/getting-started-gantt.md)
+
+* Frequently asked questions 
 
 * Chart concepts 
   * [Understanding Highcharts](chart-concepts/understanding-highcharts.md)
-  * [Understanding Highstock](chart-concepts/understanding-highstock.md)
   * [Title and subtitle](chart-concepts/title-and-subtitle.md)
   * [Axes](chart-concepts/axes.md)
   * [Series](chart-concepts/series.md)
   * [Tooltip](chart-concepts/tooltip.md)
   * [Legend](chart-concepts/legend.md)
-  * [Range selector](chart-concepts/range-selector.md)
-  * [Navigator](chart-concepts/navigator.md)
   * [Scrollbar](chart-concepts/scrollbar.md)
   * [Plot bands and plot lines](chart-concepts/plot-bands-and-plot-lines.md)
   * [Zooming](chart-concepts/zooming.md)
@@ -28,22 +27,18 @@
   * [3D Charts](chart-concepts/3d-charts.md)
   * [Accessibility](chart-concepts/accessibility.md)
   * [Responsive charts](chart-concepts/responsive.md)
+  * [Bubble legend](chart-concepts/bubble-legend.md)
 
 * Advanced chart features 
   * [Stacking charts](advanced-chart-features/stacking-charts.md)
-  * [Data grouping](advanced-chart-features/data-grouping.md)
   * [Freeform drawing](advanced-chart-features/freeform-drawing.md)
   * [Internationalization](advanced-chart-features/internationalization.md)
   * [Annotations module](advanced-chart-features/annotations-module.md)
   * [Boost module](advanced-chart-features/boost-module.md)
   * [Annotations and Fibonacci Retracements ](advanced-chart-features/annotations-and-fibonacci-retracements.md)
-  * [Custom technical indicators](advanced-chart-features/custom-technical-indicators.md)
-
-* Documentation 
-  * [Highcharts, Highstock and Highmaps documentation](documentation/highcharts-highstock-and-highmaps-documentation.md)
-
-* Extending Highcharts 
-  * [Extending Highcharts](extending-highcharts/extending-highcharts.md)
+  * [Pie datalabels alignment](advanced-chart-features/pie-datalabels-alignment.md)
+  * [Highcharts TypeScript (beta)](advanced-chart-features/highcharts-typescript-beta.md)
+  * [Debugger mode](advanced-chart-features/debugger-mode.md)
 
 * Export module 
   * [Export module overview](export-module/export-module-overview.md)
@@ -62,6 +57,7 @@
   * [Data from a database](working-with-data/data-from-a-database.md)
   * [Getting data across domains (JSONP)](working-with-data/getting-data-across-domains-jsonp.md)
   * [Using the data module](working-with-data/data-module.md)
+  * [Server-side data grouping](working-with-data/server-side-data-grouping.md)
 
 * Chart design and style 
   * [Design and style](chart-design-and-style/design-and-style.md)
@@ -70,9 +66,6 @@
   * [Styled mode - styling by CSS](chart-design-and-style/style-by-css.md)
   * [Gradients, shadows and patterns in styled mode](chart-design-and-style/gradients-shadows-and-patterns-in-styled-mode.md)
   * [Custom themes in styled mode](chart-design-and-style/custom-themes-in-styled-mode.md)
-
-* Frequently asked questions 
-  * [Frequently asked questions](frequently-asked-questions/frequently-asked-questions.md)
 
 * Chart and series types 
   * [Chart types](chart-and-series-types/chart-types.md)
@@ -85,12 +78,9 @@
   * [Column chart](chart-and-series-types/column-chart.md)
   * [Bar chart](chart-and-series-types/bar-chart.md)
   * [Pie chart](chart-and-series-types/pie-chart.md)
-  * [Candlestick chart](chart-and-series-types/candlestick-chart.md)
-  * [OHLC chart](chart-and-series-types/ohlc-chart.md)
   * [Polar (radar) chart](chart-and-series-types/polar-chart.md)
   * [Angular gauges](chart-and-series-types/angular-gauges.md)
   * [Range series](chart-and-series-types/range-series.md)
-  * [Flag series](chart-and-series-types/flag-series.md)
   * [Box plot series](chart-and-series-types/box-plot-series.md)
   * [Error bar series](chart-and-series-types/error-bar-series.md)
   * [Funnel series](chart-and-series-types/funnel-series.md)
@@ -100,7 +90,6 @@
   * [Variable Radius Pie chart](chart-and-series-types/variable-radius-pie-chart.md)
   * [Parallel Coordinates Chart](chart-and-series-types/parallel-coordinates-chart.md)
   * [Pareto Chart](chart-and-series-types/pareto-chart.md)
-  * [Technical Indicator Series](chart-and-series-types/technical-indicator-series.md)
   * [Sankey diagram](chart-and-series-types/sankey-diagram.md)
   * [Stream graph](chart-and-series-types/stream-graph.md)
   * [Tilemap Series](chart-and-series-types/tilemap-series.md)
@@ -114,9 +103,24 @@
   * [Word Cloud series](chart-and-series-types/word-cloud-series.md)
   * [Bullet chart](chart-and-series-types/bullet-chart.md)
   * [Histogram Series](chart-and-series-types/histogram-series.md)
-  * [Depth chart](chart-and-series-types/depth-chart.md)
+  * [Packed bubble](chart-and-series-types/packed-bubble.md)
   * [Timeline series](chart-and-series-types/timeline-series.md)
+  * [Network graph](chart-and-series-types/network-graph.md)
+  * [Column pyramid](chart-and-series-types/column-pyramid.md)
+  * [3D Cylinder](chart-and-series-types/3d-cylinder.md)
   * [Venn Diagram](chart-and-series-types/venn-diagram.md)
+  * [Venn series](chart-and-series-types/venn-series.md)
+  * [Dependency wheel](chart-and-series-types/dependency-wheel.md)
+  * [Item chart](chart-and-series-types/item-chart.md)
+  * [3D Pyramid](chart-and-series-types/pyramid-3d.md)
+  * [Funnel 3D](chart-and-series-types/funnel-3d.md)
+  * [Organization chart](chart-and-series-types/organization-chart.md)
+
+* Extending Highcharts 
+  * [Extending Highcharts](extending-highcharts/extending-highcharts.md)
+
+* Documentation 
+  * [Highcharts, Highstock and Highmaps documentation](documentation/highcharts-highstock-and-highmaps-documentation.md)
 
 * Maps 
   * [Getting started with Highmaps](maps/getting-started.md)
@@ -128,26 +132,16 @@
   * [Custom GeoJSON maps](maps/custom-geojson-maps.md)
   * [Latitude/longitude](maps/latlon.md)
 
+* Docs 
+
 * Highcharts 5 competition 
   * [Food and Agriculture data extraction tutorial ](highcharts-5-competition/food-and-agriculture-data-extraction-tutorial.md)
 
 * Highcharts 5 Competition 
   * [Food and Agriculture data extraction tutorial](highcharts5-competition/food-and-agriculture-data-extraction-tutorial.md)
 
-* Docs 
-  * [Grouping tasks](/gantt-grouping-tasks.md)
-  * [Task Dependencies](/gantt-task-dependencies.md)
-  * [Axis.grid option](/gantt-axis-grid.md)
-  * [Task Configuration](/gantt-task-config.md)
-  * [Stock Tools](/stock-tools.md)
-  * [Dependency wheel](/dependency-wheel.md)
-  * [Item chart](/item-chart.md)
-  * [3D Pyramid](/pyramid-3d.md)
-  * [Server-side data grouping](/server-side-data-grouping.md)
-  * [Funnel 3D](/funnel-3d.md)
-  * [Organization chart](/organization-chart.md)
-
 * Accessibility 
+  * [Sonification](accessibility/sonification.md)
   * [Accessibility module](accessibility/accessibility-module.md)
   * [Compliance](accessibility/compliance.md)
   * [Configure the Accessibility module](accessibility/configure-the-accessibility-module.md)
@@ -155,4 +149,24 @@
   * [Accessibility module feature overview](accessibility/accessibility-module-feature-overview.md)
   * [Patterns and contrast](accessibility/patterns-and-contrast.md)
   * [Tables](accessibility/tables.md)
+
+* Gantt 
+  * [Getting started with Gantt](gantt/getting-started-gantt.md)
+  * [Grouping tasks](gantt/gantt-grouping-tasks.md)
+  * [Task Dependencies](gantt/gantt-task-dependencies.md)
+  * [Axis.grid option](gantt/gantt-axis-grid.md)
+  * [Task Configuration](gantt/gantt-task-config.md)
+
+* Stock 
+  * [Understanding Highstock](stock/understanding-highstock.md)
+  * [Range selector](stock/range-selector.md)
+  * [Navigator](stock/navigator.md)
+  * [Candlestick chart](stock/candlestick-chart.md)
+  * [OHLC chart](stock/ohlc-chart.md)
+  * [Flag series](stock/flag-series.md)
+  * [Data grouping](stock/data-grouping.md)
+  * [Technical Indicator Series](stock/technical-indicator-series.md)
+  * [Custom technical indicators](stock/custom-technical-indicators.md)
+  * [Depth chart](stock/depth-chart.md)
+  * [Stock Tools](stock/stock-tools.md)
 
