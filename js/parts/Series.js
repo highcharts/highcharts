@@ -3979,7 +3979,19 @@ H.Series = H.seriesType(
                 renderer = chart.renderer,
                 inverted = chart.inverted,
                 seriesClipBox = this.clipBox,
-                clipBox = seriesClipBox || chart.clipBox,
+                clipBox = options.clip === false && animation && this.xAxis ?
+                    // support for animating of not clipped series
+                    {
+                        x: -this.xAxis.pos,
+                        y: !inverted ?
+                            -this.yAxis.pos :
+                            -chart.chartWidth + this.yAxis.len + this.yAxis.pos,
+                        width: chart.chartWidth,
+                        height: chart.inverted ?
+                            chart.chartWidth :
+                            chart.chartHeight
+                    } :
+                    seriesClipBox || chart.clipBox,
                 sharedClipKey =
                     this.sharedClipKey ||
                     [
@@ -4001,7 +4013,8 @@ H.Series = H.seriesType(
                 if (animation) {
                     clipBox.width = 0;
                     if (inverted) {
-                        clipBox.x = chart.plotSizeX;
+                        clipBox.x = chart.plotSizeX +
+                            (options.clip !== false ? 0 : chart.plotTop);
                     }
 
                     chart[sharedClipKey + 'm'] = markerClipRect = renderer
@@ -4025,7 +4038,7 @@ H.Series = H.seriesType(
                 }
             }
 
-            if (options.clip !== false) {
+            if (options.clip !== false || animation) {
                 this.group.clip(
                     animation || seriesClipBox ? clipRect : chart.clipRect
                 );
@@ -4071,6 +4084,7 @@ H.Series = H.seriesType(
         animate: function (init) {
             var series = this,
                 chart = series.chart,
+                inverted = chart.inverted,
                 clipRect,
                 animation = animObject(series.options.animation),
                 sharedClipKey;
@@ -4085,15 +4099,27 @@ H.Series = H.seriesType(
                 sharedClipKey = this.sharedClipKey;
                 clipRect = chart[sharedClipKey];
                 if (clipRect) {
-                    clipRect.animate({
-                        width: chart.plotSizeX,
-                        x: 0
-                    }, animation);
+                    if (series.options.clip !== false) {
+                        clipRect.animate({
+                            width: chart.plotSizeX,
+                            x: 0
+                        }, animation);
+                    } else {
+                        clipRect.animate({
+                            width: inverted ?
+                                chart.chartHeight :
+                                chart.chartWidth,
+                            x: inverted ?
+                                -chart.chartHeight + series.xAxis.pos +
+                                    series.xAxis.len :
+                                -series.xAxis.pos
+                        }, animation);
+                    }
                 }
                 if (chart[sharedClipKey + 'm']) {
                     chart[sharedClipKey + 'm'].animate({
                         width: chart.plotSizeX + 99,
-                        x: chart.inverted ? 0 : -99
+                        x: inverted ? 0 : -99
                     }, animation);
                 }
 
