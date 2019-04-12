@@ -1,4 +1,3 @@
-
 // the button handler
 var isLoading = false,
     $button = $('#button'),

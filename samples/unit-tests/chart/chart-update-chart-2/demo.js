@@ -195,6 +195,30 @@ QUnit.test('Option chart.spacing update', function (assert) {
         'Plot area height ok'
     );
 
+    var titleX = chart.container.querySelector('.highcharts-title')
+            .getAttribute('x'),
+        legendTransform = chart.container.querySelector('.highcharts-legend')
+            .getAttribute('transform');
+
+    chart.update({
+        chart: {
+            spacingLeft: 200
+        }
+    });
+    assert.notEqual(
+        chart.container.querySelector('.highcharts-title')
+            .getAttribute('x'),
+        titleX,
+        'The title should move after update (#8190)'
+    );
+
+    assert.notEqual(
+        chart.container.querySelector('.highcharts-legend')
+            .getAttribute('transform'),
+        legendTransform,
+        'The legend should move after update (#8190)'
+    );
+
     // Reset
     chart.update({
         chart: {

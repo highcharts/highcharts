@@ -1,12 +1,12 @@
-/**
+/* *
  *
- * Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2019 Highsoft AS
  *
- * Boost module: stripped-down renderer for higher performance
+ *  Boost module: stripped-down renderer for higher performance
  *
- * License: highcharts.com/license
+ *  License: highcharts.com/license
  *
- */
+ * */
 
 'use strict';
 
@@ -278,7 +278,7 @@ function init() {
         }
     });
 
-    /* *
+    /*
      * We need to handle heatmaps separatly, since we can't perform the
      * size/color calculations in the shader easily.
      *

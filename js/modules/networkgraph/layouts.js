@@ -1,4 +1,4 @@
-/**
+/* *
  * Networkgraph series
  *
  * (c) 2010-2019 Paweł Fus
@@ -23,9 +23,10 @@ H.layouts = {
 
 H.extend(
     /**
-    * Reingold-Fruchterman algorithm from
-    * "Graph Drawing by Force-directed Placement" paper.
-    */
+     * Reingold-Fruchterman algorithm from
+     * "Graph Drawing by Force-directed Placement" paper.
+     * @private
+     */
     H.layouts['reingold-fruchterman'].prototype,
     {
         init: function (options) {
@@ -57,12 +58,13 @@ H.extend(
 
             this.approximation = options.approximation;
         },
-        run: function () {
+        start: function () {
             var layout = this,
                 series = this.series,
-                options = this.options,
-                step = 0;
+                options = this.options;
 
+
+            layout.currentStep = 0;
             layout.forces = series[0] && series[0].forces || [];
 
             if (layout.initialRendering) {
@@ -74,77 +76,66 @@ H.extend(
                 });
             }
 
-            // Algorithm:
-            function localLayout() {
-                step++;
-
-                if (layout.approximation === 'barnes-hut') {
-                    layout.createQuadTree();
-                    layout.quadTree.calculateMassAndCenter();
-                }
-
-                layout.forces.forEach(function (forceName) {
-                    layout[forceName + 'Forces'](layout.temperature);
-                });
-
-                // Limit to the plotting area and cool down:
-                layout.applyLimits(layout.temperature);
-
-                // Cool down the system:
-                layout.temperature = layout.coolDown(
-                    layout.startTemperature,
-                    layout.diffTemperature,
-                    step
-                );
-
-                layout.prevSystemTemperature = layout.systemTemperature;
-                layout.systemTemperature = layout.getSystemTemperature();
-                if (options.enableSimulation) {
-                    series.forEach(function (s) {
-                        // Chart could be destroyed during the simulation
-                        if (s.chart) {
-                            s.render();
-                        }
-                    });
-                    if (
-                        layout.maxIterations-- &&
-                        isFinite(layout.temperature) &&
-                        !layout.isStable()
-                    ) {
-                        if (layout.simulation) {
-                            H.win.cancelAnimationFrame(layout.simulation);
-                        }
-
-                        layout.simulation = H.win.requestAnimationFrame(
-                            localLayout
-                        );
-                    } else {
-                        layout.simulation = false;
-                    }
-                }
-            }
-
             layout.setK();
             layout.resetSimulation(options);
 
             if (options.enableSimulation) {
-                // Animate it:
-                if (layout.simulation) {
-                    H.win.cancelAnimationFrame(layout.simulation);
-                }
-                layout.simulation = H.win.requestAnimationFrame(localLayout);
-            } else {
-                // Synchronous rendering:
-                while (
+                layout.step();
+            }
+        },
+        step: function () {
+            var layout = this,
+                series = this.series,
+                options = this.options;
+
+            // Algorithm:
+            layout.currentStep++;
+
+            if (layout.approximation === 'barnes-hut') {
+                layout.createQuadTree();
+                layout.quadTree.calculateMassAndCenter();
+            }
+
+            layout.forces.forEach(function (forceName) {
+                layout[forceName + 'Forces'](layout.temperature);
+            });
+
+            // Limit to the plotting area and cool down:
+            layout.applyLimits(layout.temperature);
+
+            // Cool down the system:
+            layout.temperature = layout.coolDown(
+                layout.startTemperature,
+                layout.diffTemperature,
+                layout.currentStep
+            );
+
+            layout.prevSystemTemperature = layout.systemTemperature;
+            layout.systemTemperature = layout.getSystemTemperature();
+            if (options.enableSimulation) {
+                series.forEach(function (s) {
+                    // Chart could be destroyed during the simulation
+                    if (s.chart) {
+                        s.render();
+                    }
+                });
+                if (
                     layout.maxIterations-- &&
                     isFinite(layout.temperature) &&
                     !layout.isStable()
                 ) {
-                    localLayout();
+                    if (layout.simulation) {
+                        H.win.cancelAnimationFrame(layout.simulation);
+                    }
+
+                    layout.simulation = H.win.requestAnimationFrame(
+                        function () {
+                            layout.step();
+                        }
+                    );
+                } else {
+                    layout.simulation = false;
                 }
-                series.forEach(function (s) {
-                    s.render();
-                });
             }
         },
         stop: function () {
@@ -586,12 +577,12 @@ H.extend(
          * Nourani and Andresen work.
          * @private
          */
-        coolDown: function (temperature, temperatureStep, step) {
+        coolDown: function (temperature, temperatureStep, currentStep) {
             // Logarithmic:
             /*
             return Math.sqrt(this.nodes.length) -
                 Math.log(
-                    step * layout.diffTemperature
+                    currentStep * layout.diffTemperature
                 );
             */
 
@@ -602,7 +593,7 @@ H.extend(
                 Math.pow(alpha, layout.diffTemperature);
             */
             // Linear:
-            return temperature - temperatureStep * step;
+            return temperature - temperatureStep * currentStep;
         },
         isStable: function () {
             return Math.abs(
@@ -637,9 +628,9 @@ H.extend(
     }
 );
 
-/*
+/* ************************************************************************** *
  * Multiple series support:
- */
+ * ************************************************************************** */
 // Clear previous layouts
 addEvent(Chart, 'predraw', function () {
     if (this.graphLayoutsLookup) {
@@ -651,12 +642,53 @@ addEvent(Chart, 'predraw', function () {
     }
 });
 addEvent(Chart, 'render', function () {
+    var systemsStable,
+        afterRender = false;
+
+    function layoutStep(layout) {
+        if (
+            layout.maxIterations-- &&
+            isFinite(layout.temperature) &&
+            !layout.isStable() &&
+            !layout.options.enableSimulation
+        ) {
+            // Hook similar to build-in addEvent, but instead of
+            // creating whole events logic, use just a function.
+            // It's faster which is important for rAF code.
+            // Used e.g. in packed-bubble series for bubble radius
+            // calculations
+            if (layout.beforeStep) {
+                layout.beforeStep();
+            }
+
+            layout.step();
+            systemsStable = false;
+            afterRender = true;
+        }
+    }
+
     if (this.graphLayoutsLookup) {
         H.setAnimation(false, this);
+        // Start simulation
         this.graphLayoutsLookup.forEach(
             function (layout) {
-                layout.run();
+                layout.start();
             }
         );
+
+        // Just one sync step, to run different layouts similar to
+        // async mode.
+        while (!systemsStable) {
+            systemsStable = true;
+            this.graphLayoutsLookup.forEach(layoutStep);
+        }
+
+        if (afterRender) {
+            this.series.forEach(function (s) {
+                if (s && s.layout) {
+                    s.render();
+                }
+            });
+        }
     }
 });

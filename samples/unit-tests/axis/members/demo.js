@@ -1,3 +1,4 @@
+// Skipped as #10161 was rolled back (broke with pointPlacement = on)
 QUnit.test('setAxisTranslation', assert => {
     const { yAxis: [axis] } = Highcharts.chart('container', {
         yAxis: {

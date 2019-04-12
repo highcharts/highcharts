@@ -60,14 +60,19 @@
         var chart = Highcharts.chart('container', defaultConfig),
             axis = chart.xAxis[0],
             cdi = axis.plotLinesAndBands[0],
-            done = assert.async(),
             wait = 1, // Comparing milliseconds, so 1 millisecond is enough
             oldValue,
-            newValue;
+            newValue,
+            clock = TestUtilities.lolexInstall();
 
-        oldValue = cdi.options.value.getTime();
+        try {
+            oldValue = cdi.options.value.getTime();
 
-        setTimeout(function () {
+            // Run lolex ticker
+            setTimeout(function () { }, wait);
+
+            TestUtilities.lolexRunAndUninstall(clock);
+
             axis.redraw();
 
             newValue = cdi.options.value.getTime();
@@ -76,8 +81,10 @@
                 newValue > oldValue,
                 'Value is greater after Axis.redraw()'
             );
-            done();
-        }, wait);
+
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+        }
     });
 
     /**
@@ -94,14 +101,17 @@
         var chart = Highcharts.chart('container', config),
             axis = chart.xAxis[0],
             cdi = axis.plotLinesAndBands[0],
-            done = assert.async(),
-            wait = 1, // Comparing minutes, so 1 minute is required
+            wait = 1,
             oldLabelText,
-            newLabelText;
+            newLabelText,
+            clock = TestUtilities.lolexInstall();
 
-        oldLabelText = cdi.label.textStr;
+        try {
+            oldLabelText = cdi.label.textStr;
 
-        setTimeout(function () {
+            // Run lolex ticker
+            setTimeout(function () {}, wait);
+            TestUtilities.lolexRunAndUninstall(clock);
 
             axis.redraw();
 
@@ -112,8 +122,9 @@
                 oldLabelText,
                 'label text gets updated on Axis.redraw()'
             );
-            done();
-        }, wait);
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+        }
     });
 
     /**

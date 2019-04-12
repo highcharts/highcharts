@@ -1,0 +1,9 @@
+{
+    "extends": "dtslint/dtslint.json",
+    "rules": {
+        "array-type": false,
+        "file-name-casing": false,
+        "object-literal-shorthand": false,
+        "unified-signatures": false
+    }
+}

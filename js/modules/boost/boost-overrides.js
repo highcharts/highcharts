@@ -1,12 +1,12 @@
-/**
+/* *
  *
- * Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2019 Highsoft AS
  *
- * Boost module: stripped-down renderer for higher performance
+ *  Boost module: stripped-down renderer for higher performance
  *
- * License: highcharts.com/license
+ *  License: highcharts.com/license
  *
- */
+ * */
 
 'use strict';
 
@@ -26,6 +26,7 @@ var boostEnabled = butils.boostEnabled,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
     Chart = H.Chart,
     Series = H.Series,
+    Point = H.Point,
     seriesTypes = H.seriesTypes,
     addEvent = H.addEvent,
     isNumber = H.isNumber,
@@ -115,7 +116,10 @@ Series.prototype.getPoint = function (boostPoint) {
             xData ? xData[boostPoint.i] : undefined
         );
 
-        point.category = point.x;
+        point.category = pick(
+            this.xAxis.categories ? this.xAxis.categories[point.x] : point.x,
+            point.x
+        );
 
         point.dist = boostPoint.dist;
         point.distX = boostPoint.distX;
@@ -127,16 +131,62 @@ Series.prototype.getPoint = function (boostPoint) {
     return point;
 };
 
-/**
- * Return a point instance from the k-d-tree
- */
+// Return a point instance from the k-d-tree
 wrap(Series.prototype, 'searchPoint', function (proceed) {
     return this.getPoint(
         proceed.apply(this, [].slice.call(arguments, 1))
     );
 });
 
-/**
+// For inverted series, we need to swap X-Y values before running base methods
+wrap(Point.prototype, 'haloPath', function (proceed) {
+    var halo,
+        point = this,
+        series = point.series,
+        chart = series.chart,
+        plotX = point.plotX,
+        plotY = point.plotY,
+        inverted = chart.inverted;
+
+    if (series.isSeriesBoosting && inverted) {
+        point.plotX = series.yAxis.len - plotY;
+        point.plotY = series.xAxis.len - plotX;
+    }
+
+    halo = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+    if (series.isSeriesBoosting && inverted) {
+        point.plotX = plotX;
+        point.plotY = plotY;
+    }
+
+    return halo;
+});
+
+wrap(Series.prototype, 'markerAttribs', function (proceed, point) {
+    var attribs,
+        series = this,
+        chart = series.chart,
+        plotX = point.plotX,
+        plotY = point.plotY,
+        inverted = chart.inverted;
+
+    if (series.isSeriesBoosting && inverted) {
+        point.plotX = series.yAxis.len - plotY;
+        point.plotY = series.xAxis.len - plotX;
+    }
+
+    attribs = proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+
+    if (series.isSeriesBoosting && inverted) {
+        point.plotX = plotX;
+        point.plotY = plotY;
+    }
+
+    return attribs;
+});
+
+/*
  * Extend series.destroy to also remove the fake k-d-tree points (#5137).
  * Normally this is handled by Series.destroy that calls Point.destroy,
  * but the fake search points are not registered like that.
@@ -160,7 +210,7 @@ addEvent(Series, 'destroy', function () {
     }
 });
 
-/**
+/*
  * Do not compute extremes when min and max are set.
  * If we use this in the core, we can add the hook
  * to hasExtremes to the methods directly.
@@ -171,7 +221,7 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
     }
 });
 
-/**
+/*
  * Override a bunch of methods the same way. If the number of points is
  * below the threshold, run the original method. If not, check for a
  * canvas version or do nothing.
@@ -228,10 +278,8 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
     }
 });
 
-/** If the series is a heatmap or treemap, or if the series is not boosting
- *  do the default behaviour. Otherwise, process if the series has no
- *  extremes.
- */
+// If the series is a heatmap or treemap, or if the series is not boosting
+// do the default behaviour. Otherwise, process if the series has no extremes.
 wrap(Series.prototype, 'processData', function (proceed) {
 
     var series = this,
@@ -360,11 +408,21 @@ Series.prototype.hasExtremes = function (checkX) {
     var options = this.options,
         data = options.data,
         xAxis = this.xAxis && this.xAxis.options,
-        yAxis = this.yAxis && this.yAxis.options;
+        yAxis = this.yAxis && this.yAxis.options,
+        colorAxis = this.colorAxis && this.colorAxis.options;
 
     return data.length > (options.boostThreshold || Number.MAX_VALUE) &&
-            isNumber(yAxis.min) && isNumber(yAxis.max) &&
-            (!checkX || (isNumber(xAxis.min) && isNumber(xAxis.max)));
+            // Defined yAxis extremes
+            isNumber(yAxis.min) &&
+            isNumber(yAxis.max) &&
+            // Defined (and required) xAxis extremes
+            (!checkX ||
+                (isNumber(xAxis.min) && isNumber(xAxis.max))
+            ) &&
+            // Defined (e.g. heatmap) colorAxis extremes
+            (!colorAxis ||
+                (isNumber(colorAxis.min) && isNumber(colorAxis.max))
+            );
 };
 
 /**

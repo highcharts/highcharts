@@ -21,9 +21,8 @@ QUnit.test('tooltip.borderColor #6831', function (assert) {
     tooltip.refresh([p1, p2]);
 
     assert.strictEqual(
-         tooltip.tt.box.stroke,
+        tooltip.tt.box.stroke,
         'red',
         'borderColor is applied on all tooltips'
     );
 });
-

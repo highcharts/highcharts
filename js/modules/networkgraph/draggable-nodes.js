@@ -1,3 +1,11 @@
+/* *
+ * Networkgraph series
+ *
+ * (c) 2010-2019 Paweł Fus
+ *
+ * License: www.highcharts.com/license
+ */
+
 import H from '../../parts/Globals.js';
 
 var Chart = H.Chart,
@@ -7,8 +15,12 @@ H.dragNodesMixin = {
     /**
      * Mouse down action, initializing drag&drop mode.
      *
+     * @private
+     *
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
+     *
+     * @return {void}
      */
     onMouseDown: function (point, event) {
         var normalizedEvent = this.chart.pointer.normalize(event);
@@ -25,8 +37,12 @@ H.dragNodesMixin = {
     /**
      * Mouse move action during drag&drop.
      *
+     * @private
+     *
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
+     *
+     * @return {void}
      */
     onMouseMove: function (point, event) {
         if (point.fixedPosition && point.inDragMode) {
@@ -50,15 +66,18 @@ H.dragNodesMixin = {
                     this.redrawHalo(point);
 
                     if (!series.layout.simulation) {
+                        // When dragging nodes, we don't need to calculate
+                        // initial positions and rendering nodes:
+                        series.layout.setInitialRendering(false);
+
                         // Start new simulation:
                         if (!series.layout.enableSimulation) {
                             // Run only one iteration to speed things up:
                             series.layout.setMaxIterations(1);
+                        } else {
+                            series.layout.start();
                         }
-                        // When dragging nodes, we don't need to calculate
-                        // initial positions and rendering nodes:
-                        series.layout.setInitialRendering(false);
-                        series.layout.run();
+                        series.chart.redraw();
                         // Restore defaults:
                         series.layout.setInitialRendering(true);
                     } else {
@@ -72,11 +91,19 @@ H.dragNodesMixin = {
     /**
      * Mouse up action, finalizing drag&drop.
      *
+     * @private
+     *
      * @param {Highcharts.Point} point The point that event occured.
+     *
+     * @return {void}
      */
     onMouseUp: function (point) {
         if (point.fixedPosition) {
-            this.layout.run();
+            if (this.layout.enableSimulation) {
+                this.layout.start();
+            } else {
+                this.chart.redraw();
+            }
             point.inDragMode = false;
             if (!this.options.fixedDraggable) {
                 delete point.fixedPosition;
@@ -87,7 +114,11 @@ H.dragNodesMixin = {
     /**
      * Redraw halo on mousemove during the drag&drop action.
      *
+     * @private
+     *
      * @param {Highcharts.Point} point The point that should show halo.
+     *
+     * @return {void}
      */
     redrawHalo: function (point) {
         if (point && this.halo) {

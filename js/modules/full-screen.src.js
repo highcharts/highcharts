@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2009-2019 Sebastian Bochann
  *
  * Full screen for Highcharts

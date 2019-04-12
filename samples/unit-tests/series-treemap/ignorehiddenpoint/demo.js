@@ -27,7 +27,7 @@ QUnit.test('ignoreHiddenPoint: undefined. Defaults to true.', function (assert) 
     assert.strictEqual(
         !!point.graphic.element,
         true,
-		'Point visible. Point graphic should be drawn.'
+        'Point visible. Point graphic should be drawn.'
     );
 });
 
@@ -49,19 +49,19 @@ QUnit.test('ignoreHiddenPoint: false.', function (assert) {
     assert.strictEqual(
         !!point.graphic.element,
         true,
-		'Point visible. Point graphic should be drawn.'
+        'Point visible. Point graphic should be drawn.'
     );
     point.setVisible(false);
     assert.strictEqual(
         !!point.graphic.element,
         true,
-		'Point hidden. Point graphic should still be drawn.'
+        'Point hidden. Point graphic should still be drawn.'
     );
     point.setVisible(true);
     assert.strictEqual(
         !!point.graphic.element,
         true,
-		'Point visible. Point graphic should be drawn.'
+        'Point visible. Point graphic should be drawn.'
     );
 });
 
@@ -83,18 +83,18 @@ QUnit.test('ignoreHiddenPoint: true.', function (assert) {
     assert.strictEqual(
         !!point.graphic.element,
         true,
-		'Point visible. Point graphic should be drawn.'
+        'Point visible. Point graphic should be drawn.'
     );
     point.setVisible(false);
     assert.strictEqual(
         !!point.graphic,
         false,
-		'Point hidden. Point graphic should be destroyed.'
+        'Point hidden. Point graphic should be destroyed.'
     );
     point.setVisible(true);
     assert.strictEqual(
         !!point.graphic.element,
         true,
-		'Point visible. Point graphic should be drawn.'
+        'Point visible. Point graphic should be drawn.'
     );
 });

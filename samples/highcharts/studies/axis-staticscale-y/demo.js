@@ -1,4 +1,3 @@
-
 function getPoint(i) {
     return {
         name: new Date(Date.now() + i * 1000),

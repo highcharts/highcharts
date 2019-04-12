@@ -1,4 +1,3 @@
-
 function getData(n) {
     var arr = [],
         i;
@@ -56,12 +55,12 @@ chart =  Highcharts.stockChart('container', {
     navigator: {
         xAxis: {
             ordinal: false//,
-           // min: n / 2
+            // min: n / 2
             //max: 10
         },
         yAxis: {
-           // min: 0,
-           // max: 10
+            // min: 0,
+            // max: 10
         },
         series: {
             color: null
@@ -73,8 +72,8 @@ chart =  Highcharts.stockChart('container', {
     },
 
     xAxis: {
-       // min: n / 2,
-       // max: 120,
+        // min: n / 2,
+        // max: 120,
         ordinal: false
     },
 

@@ -32,7 +32,6 @@
     }
 
 
-
     QUnit.test('Curve and line (#5892)', function (assert) {
 
         var fromD = [

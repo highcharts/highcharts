@@ -1,5 +1,3 @@
-
-
 Highcharts.setOptions({
     chart: {
         backgroundColor: '#272822'

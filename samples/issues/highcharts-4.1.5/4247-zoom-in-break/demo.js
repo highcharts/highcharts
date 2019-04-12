@@ -3,28 +3,28 @@ $(function () {
         var chart;
 
         $('#container').highcharts({
-            "title": {
-                "text": "Y axis translation failed"
+            title: {
+                text: "Y axis translation failed"
             },
-            "legend": {
-                "enabled": false
+            legend: {
+                enabled: false
             },
-            "xAxis": {
-                "min": 5
+            xAxis: {
+                min: 5
             },
-            "yAxis": {
-                "breaks": [{
-                    "from": 3,
-                    "to": 8,
-                    "breakSize": 1
+            yAxis: {
+                breaks: [{
+                    from: 3,
+                    to: 8,
+                    breakSize: 1
                 }]
             },
-            "chart": {
-                "type": "column",
-                "zoomType": "x"
+            chart: {
+                type: "column",
+                zoomType: "x"
             },
-            "series": [{
-                "data": [9, 8, 7, 6, 5, 4, 3, 2, 1]
+            series: [{
+                data: [9, 8, 7, 6, 5, 4, 3, 2, 1]
             }]
         });
 

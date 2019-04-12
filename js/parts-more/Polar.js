@@ -269,7 +269,11 @@ H.addEvent(Series, 'afterTranslate', function () {
                 this.toXY(points[i]);
 
                 // Treat points below Y axis min as null (#10082)
-                if (!this.yAxis.reversed && points[i].y < this.yAxis.min) {
+                if (
+                    !chart.hasParallelCoordinates &&
+                    !this.yAxis.reversed &&
+                    points[i].y < this.yAxis.min
+                ) {
                     points[i].isNull = true;
                 }
             }
@@ -451,8 +455,8 @@ if (seriesTypes.column) {
     };
 
     /**
-    * Define the animate method for columnseries
-    */
+     * Define the animate method for columnseries
+     */
     wrap(colProto, 'animate', polarAnimate);
 
 

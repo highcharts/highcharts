@@ -1,12 +1,12 @@
-/**
+/* *
  *
- * Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2019 Highsoft AS
  *
- * Boost module: stripped-down renderer for higher performance
+ *  Boost module: stripped-down renderer for higher performance
  *
- * License: highcharts.com/license
+ *  License: highcharts.com/license
  *
- */
+ * */
 
 'use strict';
 
@@ -29,6 +29,7 @@ function GLShader(gl) {
     var vertShade = [
             /* eslint-disable */
             '#version 100',
+            '#define LN10 2.302585092994046',
             'precision highp float;',
 
             'attribute vec4 aVertexPosition;',
@@ -45,8 +46,6 @@ function GLShader(gl) {
 
             'uniform bool skipTranslation;',
 
-            'uniform float plotHeight;',
-
             'uniform float xAxisTrans;',
             'uniform float xAxisMin;',
             'uniform float xAxisMinPad;',
@@ -57,6 +56,8 @@ function GLShader(gl) {
             'uniform float xAxisOrdinalOffset;',
             'uniform float xAxisPos;',
             'uniform bool  xAxisCVSCoord;',
+            'uniform bool  xAxisIsLog;',
+            'uniform bool  xAxisReversed;',
 
             'uniform float yAxisTrans;',
             'uniform float yAxisMin;',
@@ -68,6 +69,8 @@ function GLShader(gl) {
             'uniform float yAxisOrdinalOffset;',
             'uniform float yAxisPos;',
             'uniform bool  yAxisCVSCoord;',
+            'uniform bool  yAxisIsLog;',
+            'uniform bool  yAxisReversed;',
 
             'uniform bool  isBubble;',
             'uniform bool  bubbleSizeByArea;',
@@ -113,7 +116,9 @@ function GLShader(gl) {
                             'float minPixelPadding,',
                             'float pointRange,',
                             'float len,',
-                            'bool  cvsCoord',
+                            'bool  cvsCoord,',
+                            'bool  isLog,',
+                            'bool  reversed',
                             '){',
 
                 'float sign = 1.0;',
@@ -124,26 +129,36 @@ function GLShader(gl) {
                     'cvsOffset = len;',
                 '}',
 
+                'if (isLog) {',
+                    'val = log(val) / LN10;',
+                '}',
+
+                'if (reversed) {',
+                    'sign *= -1.0;',
+                    'cvsOffset -= sign * len;',
+                '}',
+
                 'return sign * (val - localMin) * localA + cvsOffset + ',
                     '(sign * minPixelPadding);',//' + localA * pointPlacement * pointRange;',
             '}',
 
-            'float xToPixels(float value){',
+            'float xToPixels(float value) {',
                 'if (skipTranslation){',
                     'return value;// + xAxisPos;',
                 '}',
 
-                'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord);// + xAxisPos;',
+                'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord, xAxisIsLog, xAxisReversed);// + xAxisPos;',
             '}',
 
-            'float yToPixels(float value, float checkTreshold){',
+            'float yToPixels(float value, float checkTreshold) {',
                 'float v;',
                 'if (skipTranslation){',
                     'v = value;// + yAxisPos;',
                 '} else {',
-                    'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord);// + yAxisPos;',
-                    'if (v > plotHeight) {',
-                        'v = plotHeight;',
+                    'v = translate(value, 0.0, yAxisTrans, yAxisMin, yAxisMinPad, yAxisPointRange, yAxisLen, yAxisCVSCoord, yAxisIsLog, yAxisReversed);// + yAxisPos;',
+
+                    'if (v > yAxisLen) {',
+                        'v = yAxisLen;',
                     '}',
                 '}',
                 'if (checkTreshold > 0.0 && hasThreshold) {',
@@ -161,8 +176,13 @@ function GLShader(gl) {
                 //'gl_PointSize = 10.0;',
                 'vColor = aColor;',
 
-                'if (isInverted) {',
-                    'gl_Position = uPMatrix * vec4(xToPixels(aVertexPosition.y) + yAxisPos, yToPixels(aVertexPosition.x, aVertexPosition.z) + xAxisPos, 0.0, 1.0);',
+                'if (skipTranslation && isInverted) {',
+                    // If we get translated values from JS, just swap them (x, y)
+                    'gl_Position = uPMatrix * vec4(aVertexPosition.y + yAxisPos, aVertexPosition.x + xAxisPos, 0.0, 1.0);',
+                '} else if (isInverted) {',
+                    // But when calculating pixel positions directly,
+                    // swap axes and values (x, y)
+                    'gl_Position = uPMatrix * vec4(yToPixels(aVertexPosition.y, aVertexPosition.z) + yAxisPos, xToPixels(aVertexPosition.x) + xAxisPos, 0.0, 1.0);',
                 '} else {',
                     'gl_Position = uPMatrix * vec4(xToPixels(aVertexPosition.x) + xAxisPos, yToPixels(aVertexPosition.y, aVertexPosition.z) + yAxisPos, 0.0, 1.0);',
                 '}',
@@ -227,14 +247,14 @@ function GLShader(gl) {
         isCircleUniform,
         // Uniform for invertion
         isInverted,
-        plotHeightUniform,
         // Error stack
         errors = [],
         // Texture uniform
         uSamplerUniform;
 
-    /*
+    /**
      * Handle errors accumulated in errors stack
+     * @private
      */
     function handleErrors() {
         if (errors.length) {
@@ -242,7 +262,9 @@ function GLShader(gl) {
         }
     }
 
-    /* String to shader program
+    /**
+     * String to shader program
+     * @private
      * @param {string} str - the program source
      * @param {string} type - the program type: either `vertex` or `fragment`
      * @returns {bool|shader}
@@ -267,9 +289,10 @@ function GLShader(gl) {
         return shader;
     }
 
-    /*
+    /**
      * Create the shader.
      * Loads the shader program statically defined above
+     * @private
      */
     function createShader() {
         var v = stringToProgram(vertShade, 'vertex'),
@@ -313,13 +336,13 @@ function GLShader(gl) {
         skipTranslationUniform = uloc('skipTranslation');
         isCircleUniform = uloc('isCircle');
         isInverted = uloc('isInverted');
-        plotHeightUniform = uloc('plotHeight');
 
         return true;
     }
 
-    /*
+    /**
      * Destroy the shader
+     * @private
      */
     function destroy() {
         if (gl && shaderProgram) {
@@ -328,10 +351,11 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Bind the shader.
      * This makes the shader the active one until another one is bound,
      * or until 0 is bound.
+     * @private
      */
     function bind() {
         if (gl && shaderProgram) {
@@ -339,9 +363,10 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set a uniform value.
      * This uses a hash map to cache uniform locations.
+     * @private
      * @param name {string} - the name of the uniform to set
      * @param val {float} - the value to set
      */
@@ -357,8 +382,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set the active texture
+     * @private
      * @param texture - the texture
      */
     function setTexture(texture) {
@@ -367,8 +393,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set if inversion state
+     * @private
      * @flag is the state
      */
     function setInverted(flag) {
@@ -377,8 +404,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Enable/disable circle drawing
+     * @private
      */
     function setDrawAsCircle(flag) {
         if (gl && shaderProgram) {
@@ -386,14 +414,9 @@ function GLShader(gl) {
         }
     }
 
-    function setPlotHeight(n) {
-        if (gl && shaderProgram) {
-            gl.uniform1f(plotHeightUniform, n);
-        }
-    }
-
-    /*
+    /**
      * Flush
+     * @private
      */
     function reset() {
         if (gl && shaderProgram) {
@@ -402,8 +425,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set bubble uniforms
+     * @private
      * @param series {Highcharts.Series} - the series to use
      */
     function setBubbleUniforms(series, zCalcMin, zCalcMax) {
@@ -442,8 +466,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set the Color uniform.
+     * @private
      * @param color {Array<float>} - an array with RGBA values
      */
     function setColor(color) {
@@ -458,8 +483,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set skip translation
+     * @private
      */
     function setSkipTranslation(flag) {
         if (gl && shaderProgram) {
@@ -467,8 +493,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set the perspective matrix
+     * @private
      * @param m {Matrix4x4} - the matrix
      */
     function setPMatrix(m) {
@@ -477,8 +504,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Set the point size.
+     * @private
      * @param p {float} - point size
      */
     function setPointSize(p) {
@@ -487,8 +515,9 @@ function GLShader(gl) {
         }
     }
 
-    /*
+    /**
      * Get the shader program handle
+     * @private
      * @returns {GLInt} - the handle for the program
      */
     function getProgram() {
@@ -511,7 +540,6 @@ function GLShader(gl) {
         fillColorUniform: function () {
             return fillColorUniform;
         },
-        setPlotHeight: setPlotHeight,
         setBubbleUniforms: setBubbleUniforms,
         bind: bind,
         program: getProgram,

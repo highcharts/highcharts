@@ -1,5 +1,3 @@
-
-
 QUnit.test('Bottom -90', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

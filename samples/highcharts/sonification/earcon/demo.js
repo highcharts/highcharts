@@ -1,4 +1,3 @@
-
 var earconA = new Highcharts.sonification.Earcon({
         instruments: [{
             instrument: 'sine',

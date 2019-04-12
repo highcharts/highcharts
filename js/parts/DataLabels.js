@@ -463,8 +463,7 @@ import H from './Globals.js';
 import './Utilities.js';
 import './Series.js';
 
-var addEvent = H.addEvent,
-    arrayMax = H.arrayMax,
+var arrayMax = H.arrayMax,
     defined = H.defined,
     extend = H.extend,
     format = H.format,
@@ -653,11 +652,17 @@ Series.prototype.drawDataLabels = function () {
         pointOptions,
         hasRendered = series.hasRendered || 0,
         dataLabelsGroup,
-        defer = pick(seriesDlOptions.defer, !!seriesOptions.animation),
+        seriesAnimDuration = H.animObject(seriesOptions.animation).duration,
+        fadeInDuration = Math.min(seriesAnimDuration, 200),
+        defer = pick(
+            seriesDlOptions.defer,
+            fadeInDuration > 0
+        ),
         renderer = chart.renderer;
 
-    /*
+    /**
      * Handle the dataLabels.filter option.
+     * @private
      */
     function applyFilter(point, options) {
         var filter = options.filter,
@@ -684,10 +689,11 @@ Series.prototype.drawDataLabels = function () {
         return true;
     }
 
-    /*
+    /**
      * Merge two objects that can be arrays. If one of them is an array, the
      * other is merged into each element. If both are arrays, each element is
      * merged by index. If neither are arrays, we use normal merge.
+     * @private
      */
     function mergeArrays(one, two) {
         var res = [],
@@ -745,14 +751,17 @@ Series.prototype.drawDataLabels = function () {
         if (defer) {
             dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
             if (!hasRendered) {
-                addEvent(series, 'afterAnimate', function () {
-                    if (series.visible) { // #2597, #3023, #3024
-                        dataLabelsGroup.show(true);
+                setTimeout(function () {
+                    var group = series.dataLabelsGroup;
+                    if (group) {
+                        if (series.visible) { // #2597, #3023, #3024
+                            dataLabelsGroup.show(true);
+                        }
+                        group[
+                            seriesOptions.animation ? 'animate' : 'attr'
+                        ]({ opacity: 1 }, { duration: fadeInDuration });
                     }
-                    dataLabelsGroup[
-                        seriesOptions.animation ? 'animate' : 'attr'
-                    ]({ opacity: 1 }, { duration: 200 });
-                });
+                }, seriesAnimDuration - fadeInDuration);
             }
         }
 
@@ -793,8 +802,9 @@ Series.prototype.drawDataLabels = function () {
                     // Create individual options structure that can be extended
                     // without affecting others
                     labelConfig = point.getLabelConfig();
-                    formatString = (
-                        labelOptions[point.formatPrefix + 'Format'] ||
+
+                    formatString = pick(
+                        labelOptions[point.formatPrefix + 'Format'],
                         labelOptions.format
                     );
 
@@ -1162,9 +1172,9 @@ Series.prototype.justifyDataLabel = function (
     if (off < 0) {
         if (align === 'right') {
             options.align = 'left';
-            off += bBox.width;
+        } else {
+            options.x = -off;
         }
-        options.x -= off;
         justified = true;
     }
 
@@ -1173,9 +1183,9 @@ Series.prototype.justifyDataLabel = function (
     if (off > chart.plotWidth) {
         if (align === 'left') {
             options.align = 'right';
-            off -= bBox.width;
+        } else {
+            options.x = chart.plotWidth - off;
         }
-        options.x += chart.plotWidth - off;
         justified = true;
     }
 
@@ -1184,9 +1194,9 @@ Series.prototype.justifyDataLabel = function (
     if (off < 0) {
         if (verticalAlign === 'bottom') {
             options.verticalAlign = 'top';
-            off = alignAttr.y + bBox.height;
+        } else {
+            options.y = -off;
         }
-        options.y -= off;
         justified = true;
     }
 
@@ -1195,9 +1205,9 @@ Series.prototype.justifyDataLabel = function (
     if (off > chart.plotHeight) {
         if (verticalAlign === 'top') {
             options.verticalAlign = 'bottom';
-            off -= bBox.height;
+        } else {
+            options.y = chart.plotHeight - off;
         }
-        options.y += chart.plotHeight - off;
         justified = true;
     }
 
@@ -1290,7 +1300,7 @@ if (seriesTypes.pie) {
             chart = series.chart,
             options = series.options.dataLabels,
             connectorPadding = options.connectorPadding,
-            connectorWidth = pick(options.connectorWidth, 1),
+            connectorWidth,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
             plotLeft = chart.plotLeft,
@@ -1314,7 +1324,8 @@ if (seriesTypes.pie) {
             visibility,
             j,
             overflow = [0, 0, 0, 0], // top, right, bottom, left
-            dataLabelPositioners = series.dataLabelPositioners;
+            dataLabelPositioners = series.dataLabelPositioners,
+            pointDataLabelsOptions;
 
         // get out if not enabled
         if (!series.visible || (!options.enabled && !series._hasPointLabels)) {
@@ -1572,9 +1583,15 @@ if (seriesTypes.pie) {
             // Place the labels in the final position
             this.placeDataLabels();
 
-            // Draw the connectors
-            if (connectorWidth) {
-                this.points.forEach(function (point) {
+
+            this.points.forEach(function (point) {
+                // #8864: every connector can have individual options
+                pointDataLabelsOptions =
+                  merge(options, point.options.dataLabels);
+                connectorWidth = pick(pointDataLabelsOptions.connectorWidth, 1);
+
+                // Draw the connector
+                if (connectorWidth) {
                     var isNew;
 
                     connector = point.connector;
@@ -1603,11 +1620,12 @@ if (seriesTypes.pie) {
                                 )
                                 .add(series.dataLabelsGroup);
 
+
                             if (!chart.styledMode) {
                                 connector.attr({
                                     'stroke-width': connectorWidth,
                                     'stroke': (
-                                        options.connectorColor ||
+                                        pointDataLabelsOptions.connectorColor ||
                                         point.color ||
                                         '${palette.neutralColor60}'
                                     )
@@ -1622,8 +1640,8 @@ if (seriesTypes.pie) {
                     } else if (connector) {
                         point.connector = connector.destroy();
                     }
-                });
-            }
+                }
+            });
         }
     };
 

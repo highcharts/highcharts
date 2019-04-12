@@ -602,6 +602,8 @@ H.Series = H.seriesType(
          *         On one single series
          *
          * @product highcharts highstock
+         *
+         * @private
          */
         lineWidth: 2,
 
@@ -640,6 +642,8 @@ H.Series = H.seriesType(
          *         Map bubble
          *
          * @since 1.2.0
+         *
+         * @private
          */
         allowPointSelect: false,
 
@@ -656,6 +660,8 @@ H.Series = H.seriesType(
          *         Show select box
          *
          * @since 1.2.0
+         *
+         * @private
          */
         showCheckbox: false,
 
@@ -695,6 +701,8 @@ H.Series = H.seriesType(
          * @default {highcharts} true
          * @default {highstock} true
          * @default {highmaps} false
+         *
+         * @private
          */
         animation: {
 
@@ -1269,6 +1277,8 @@ H.Series = H.seriesType(
          * General event handlers for the series items. These event hooks can
          * also be attached to the series at run time using the
          * `Highcharts.addEvent` function.
+         *
+         * @private
          */
         events: {},
 
@@ -1401,6 +1411,8 @@ H.Series = H.seriesType(
          * In styled mode, the markers can be styled with the
          * `.highcharts-point`, `.highcharts-point-hover` and
          * `.highcharts-point-select` class names.
+         *
+         * @private
          */
         marker: {
 
@@ -1706,6 +1718,8 @@ H.Series = H.seriesType(
 
         /**
          * Properties for each single point.
+         *
+         * @private
          */
         point: {
 
@@ -1844,6 +1858,8 @@ H.Series = H.seriesType(
          *         Multiple data labels on a bar series
          *
          * @type {Highcharts.DataLabelsOptionsObject}
+         *
+         * @private
          */
         dataLabels: {
             /** @ignore-option */
@@ -1888,9 +1904,21 @@ H.Series = H.seriesType(
          *
          * @since   2.2
          * @product highcharts highstock
+         *
+         * @private
          */
         cropThreshold: 300,
 
+        /**
+         * Opacity of a series parts: line, fill (e.g. area) and dataLabels.
+         *
+         * @see [states.inactive.opacity](#plotOptions.series.states.inactive.opacity)
+         *
+         * @since 7.1.0
+         *
+         * @private
+         */
+        opacity: 1,
 
         /**
          * The width of each point on the x axis. For example in a column chart
@@ -1899,6 +1927,8 @@ H.Series = H.seriesType(
          * this option can be used to override the automatic value.
          *
          * @product highstock
+         *
+         * @private
          */
         pointRange: 0,
 
@@ -1914,6 +1944,8 @@ H.Series = H.seriesType(
          *
          * @since   4.1.9
          * @product highcharts highstock
+         *
+         * @private
          */
         softThreshold: true,
 
@@ -2093,6 +2125,25 @@ H.Series = H.seriesType(
                 animation: {
                     duration: 0
                 }
+            },
+
+            /**
+             * The opposite state of a hover for series.
+             *
+             * @sample {highcharts} highcharts/demo/windbarb-series/
+             *         Disabled inactive state
+             */
+            inactive: {
+                animation: {
+                    duration: 50
+                },
+                /**
+                 * Opacity of series elements (dataLabels, line, area).
+                 *
+                 * @apioption plotOptions.series.states.inactive.opacity
+                 * @type {number}
+                 */
+                opacity: 0.2
             }
         },
 
@@ -2115,6 +2166,8 @@ H.Series = H.seriesType(
          * @default {highstock} true
          * @default {highmaps} false
          * @since   2.0
+         *
+         * @private
          */
         stickyTracking: true,
 
@@ -2140,6 +2193,8 @@ H.Series = H.seriesType(
          *
          * @since   2.2
          * @product highcharts highstock gantt
+         *
+         * @private
          */
         turboThreshold: 1000,
 
@@ -2243,6 +2298,8 @@ H.Series = H.seriesType(
          *
          * @since      5.0.10
          * @validvalue ["x", "xy"]
+         *
+         * @private
          */
         findNearestPointBy: 'x'
 
@@ -2538,6 +2595,25 @@ H.Series = H.seriesType(
                     };
 
             series.parallelArrays.forEach(fn);
+        },
+        /**
+         * Define hasData functions for series. These return true if there
+         * are data points on this series within the plot area.
+         *
+         * @private
+         * @function Highcharts.Series#hasData
+         *
+         * @return {boolean}
+         */
+        hasData: function () {
+            return (
+                (
+                    this.visible &&
+                    this.dataMax !== undefined &&
+                    this.dataMin !== undefined
+                ) || // #3703
+                (this.visible && this.yData && this.yData.length > 0) // #9758
+            );
         },
 
         /**
@@ -2992,7 +3068,8 @@ H.Series = H.seriesType(
             } else if (equalLength) {
                 data.forEach(function (point, i) {
                     // .update doesn't exist on a linked, hidden series (#3709)
-                    if (oldData[i].update && point !== options.data[i]) {
+                    // (#10187)
+                    if (oldData[i].update && point !== oldData[i].y) {
                         oldData[i].update(point, false, null, false);
                     }
                 });
@@ -3014,7 +3091,7 @@ H.Series = H.seriesType(
 
             // Add new points
             pointsToAdd.forEach(function (point) {
-                this.addPoint(point, false);
+                this.addPoint(point, false, null, null, false);
             }, this);
 
             return true;
@@ -3561,6 +3638,24 @@ H.Series = H.seriesType(
             series.points = points;
 
             fireEvent(this, 'afterGeneratePoints');
+        },
+
+        /**
+         * Get current X extremes for the visible data.
+         *
+         * @private
+         * @function Highcharts.Series#getExtremes
+         *
+         * @param {Array<number>} [xData]
+         *        The data to inspect. Defaults to the current data within the
+         *        visible range.
+         * @return {object}
+         */
+        getXExtremes: function (xData) {
+            return {
+                min: arrayMin(xData),
+                max: arrayMax(xData)
+            };
         },
 
         /**
@@ -4250,7 +4345,8 @@ H.Series = H.seriesType(
                 ),
                 zoneColor = point && point.zone && point.zone.color,
                 fill,
-                stroke;
+                stroke,
+                opacity = 1;
 
             color = (
                 pointColorOption ||
@@ -4296,12 +4392,19 @@ H.Series = H.seriesType(
                     seriesStateOptions.lineColor ||
                     stroke
                 );
+
+                opacity = pick(
+                    pointStateOptions.opacity,
+                    seriesStateOptions.opacity,
+                    opacity
+                );
             }
 
             return {
                 'stroke': stroke,
                 'stroke-width': strokeWidth,
-                'fill': fill
+                'fill': fill,
+                'opacity': opacity
             };
         },
 
@@ -4981,7 +5084,8 @@ H.Series = H.seriesType(
 
             // SVGRenderer needs to know this before drawing elements (#1089,
             // #1795)
-            group.inverted = series.isCartesian ? inverted : false;
+            group.inverted = series.isCartesian || series.invertable ?
+                inverted : false;
 
             // Draw the graph if any
             if (series.drawGraph) {

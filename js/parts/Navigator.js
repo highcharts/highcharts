@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -1765,10 +1765,6 @@ Navigator.prototype = {
             navAxis = this.xAxis,
             navAxisOptions = navAxis.options,
             baseAxisOptions = baseAxis.options,
-            min = (navAxisOptions && navAxisOptions.ordinal) ?
-                null : baseAxisOptions.min,
-            max = (navAxisOptions && navAxisOptions.ordinal) ?
-                null : baseAxisOptions.max,
             ret;
 
         if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
@@ -1777,7 +1773,7 @@ Navigator.prototype = {
                     navAxisOptions && navAxisOptions.min,
                     numExt(
                         'min',
-                        min, // #9994
+                        baseAxisOptions.min,
                         baseAxis.dataMin,
                         navAxis.dataMin,
                         navAxis.min
@@ -1787,7 +1783,7 @@ Navigator.prototype = {
                     navAxisOptions && navAxisOptions.max,
                     numExt(
                         'max',
-                        max, // #9994
+                        baseAxisOptions.max,
                         baseAxis.dataMax,
                         navAxis.dataMax,
                         navAxis.max
@@ -1880,7 +1876,12 @@ Navigator.prototype = {
                 yAxis: 'navigator-y-axis',
                 showInLegend: false,
                 stacking: false, // #4823
-                isInternal: true
+                isInternal: true,
+                states: {
+                    inactive: {
+                        opacity: 1
+                    }
+                }
             },
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series =
@@ -2330,11 +2331,9 @@ Navigator.prototype = {
 if (!H.Navigator) {
     H.Navigator = Navigator;
 
-    /*
-    * For Stock charts, override selection zooming with some special features
-    * because X axis zooming is already allowed by the Navigator and Range
-    * selector.
-    */
+    // For Stock charts, override selection zooming with some special features
+    // because X axis zooming is already allowed by the Navigator and Range
+    // selector.
     addEvent(Axis, 'zoom', function (e) {
         var chart = this.chart,
             chartOptions = chart.options,
@@ -2379,11 +2378,9 @@ if (!H.Navigator) {
         }
     });
 
-    /**
-     * For Stock charts. For x only zooming, do not to create the zoom button
-     * because X axis zooming is already allowed by the Navigator and Range
-     * selector. (#9285)
-     */
+    // For Stock charts. For x only zooming, do not to create the zoom button
+    // because X axis zooming is already allowed by the Navigator and Range
+    // selector. (#9285)
     addEvent(Chart, 'beforeShowResetZoom', function () {
         var chartOptions = this.options,
             navigator = chartOptions.navigator,
@@ -2411,12 +2408,10 @@ if (!H.Navigator) {
         }
     });
 
-    /*
-    * For stock charts, extend the Chart.setChartSize method so that we can set
-    * the final top position of the navigator once the height of the chart,
-    * including the legend, is determined. #367. We can't use Chart.getMargins,
-    * because labels offsets are not calculated yet.
-    */
+    // For stock charts, extend the Chart.setChartSize method so that we can set
+    // the final top position of the navigator once the height of the chart,
+    // including the legend, is determined. #367. We can't use Chart.getMargins,
+    // because labels offsets are not calculated yet.
     addEvent(Chart, 'afterSetChartSize', function () {
 
         var legend = this.legend,

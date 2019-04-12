@@ -23,6 +23,11 @@ Highcharts.chart('container', {
             stickyTracking: false,
             dragDrop: {
                 draggableY: true
+            },
+            states: {
+                inactive: {
+                    opacity: 1
+                }
             }
         },
         bar: {

@@ -66,6 +66,8 @@ seriesType(
          * @type    {number}
          * @default 1
          * @product highstock
+         *
+         * @private
          */
         lineWidth: 1,
 
@@ -124,7 +126,11 @@ seriesType(
 
         stickyTracking: true
 
-    }, /** @lends Highcharts.seriesTypes.ohlc */ {
+    },
+    /**
+     * @lends Highcharts.seriesTypes.ohlc
+     */
+    {
         directTouch: false,
         pointArrayMap: ['open', 'high', 'low', 'close'],
         toYData: function (point) {
@@ -313,7 +319,9 @@ seriesType(
         animate: null // Disable animation
 
     },
-    /** @lends Highcharts.seriesTypes.ohlc.prototype.pointClass.prototype */
+    /**
+     * @lends Highcharts.seriesTypes.ohlc.prototype.pointClass.prototype
+     */
     {
 
         /**

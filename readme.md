@@ -54,7 +54,9 @@ The following example shows dynamic import with lazy-loading:
 ```
 
 ## Load Highcharts from the CDN as an AMD module
-Highcharts is compatible with AMD module loaders (such as RequireJS). Module files require an initialization step in order to reference Highcharts. To accomplish this, pass Highcharts to the function returned by loading the module. The following example demonstrates loading Highcharts along with two modules from our CDN using RequireJS.
+Highcharts is compatible with AMD module loaders (such as RequireJS). The
+following example demonstrates loading Highcharts along with two modules from
+our CDN using RequireJS.
 ```html
 <html>
     <head>
@@ -79,12 +81,9 @@ Highcharts is compatible with AMD module loaders (such as RequireJS). Module fil
                 'highcharts',
                 'highcharts/modules/exporting',
                 'highcharts/modules/accessibility'
+            ], function (Highcharts) {
                 // This function runs when the above files have been loaded.
-            ], function (Highcharts, ExportingModule, AccessibilityModule) {
-                // We need to initialize module files and pass in Highcharts.
-                ExportingModule(Highcharts);
-                // Load exporting before accessibility.
-                AccessibilityModule(Highcharts);
+
                 // Create a test chart.
                 Highcharts.chart('container', {
                     series: [{
@@ -115,8 +114,8 @@ Highcharts.chart('container', {
 });
 ```
 
-## Load Highcharts as an ES6 module
-Since Highcharts supports CommonJS, it can be loaded as an ES6 module with the use of transpilers. Two common transpilers are [Babel](https://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/). These have different interpretations of a CommonJS module, which affects your syntax.
+## Load Highcharts as a transpiled ES6/UMD module
+Since Highcharts supports ES6 (ESM - ECMAScript modules) and UMD (AMD, CommonJS), it can be also loaded as a module with the use of transpilers. Two common transpilers are [Babel](https://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/).
 *The following examples presumes you are using npm to install Highcharts, see [Download and install Highcharts](#download-and-install-highcharts) for more details.*
 ### Babel
 ```js
@@ -126,7 +125,7 @@ import Highcharts from 'highcharts';
 
 // Load the exporting module.
 import Exporting from 'highcharts/modules/exporting';
-// Initialize exporting module.
+// Initialize exporting module. (CommonJS only)
 Exporting(Highcharts);
 
 // Generate the chart
@@ -134,21 +133,58 @@ Highcharts.chart('container', {
   // options - see https://api.highcharts.com/highcharts
 });
 ```
-### TypeScript
+### TypeScript + UMD
 ```js
-import * as Highcharts from 'highcharts';
+import Highcharts from 'highcharts';
 // Alternatively, this is how to load Highstock. Highmaps and Highcharts Gantt are similar.
 // import Highcharts from 'highcharts/highstock';
 
 // Load the exporting module.
 import Exporting from 'highcharts/modules/exporting';
-// Initialize exporting module.
+// Initialize exporting module. (CommonJS only)
 Exporting(Highcharts);
 
 // Generate the chart
 Highcharts.chart('container', {
   // options - see https://api.highcharts.com/highcharts
 });
+```
+```json
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "module": "umd",
+    "moduleResolution": "node"
+  }
+}
+```
+### TypeScript + ESM from CDN
+```js
+// Load modules the ES6 way
+import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
+import 'https://code.highcharts.com/es-modules/masters/modules/exporting.src.js';
+
+// Generate the chart
+Highcharts.chart('container', {
+  // options - see https://api.highcharts.com/highcharts
+});
+```
+```json
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es6",
+    "paths": {
+      "https://code.highcharts.com/es-modules/masters/*.src.js": [
+        "node_modules/highcharts/*.src"
+      ]
+    }
+  }
+}
 ```
 
 ## Build and debug

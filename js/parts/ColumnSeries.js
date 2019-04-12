@@ -54,7 +54,9 @@ var animObject = H.animObject,
  *
  * @augments Highcharts.Series
  */
-seriesType('column', 'line'
+seriesType(
+    'column',
+    'line',
 
     /**
      * Column series display one column per value along an X axis.
@@ -70,7 +72,7 @@ seriesType('column', 'line'
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
-    , {
+    {
 
         /**
          * The corner radius of the border surrounding each column or bar.
@@ -441,7 +443,11 @@ seriesType('column', 'line'
          */
         borderColor: '${palette.backgroundColor}'
 
-    }, /** @lends seriesTypes.column.prototype */ {
+    },
+    /**
+     * @lends seriesTypes.column.prototype
+     */
+    {
         cropShoulder: 0,
         // When tooltip is not shared, this series (and derivatives) requires
         // direct touch/hover. KD-tree does not apply.
@@ -813,6 +819,7 @@ seriesType('column', 'line'
                 strokeWidth = (point && point[strokeWidthOption]) ||
                 options[strokeWidthOption] || this[strokeWidthOption] || 0,
                 dashstyle = (point && point.dashStyle) || options.dashStyle,
+                opacity = pick(options.opacity, 1),
                 zone,
                 brightness;
 
@@ -849,12 +856,14 @@ seriesType('column', 'line'
                 stroke = stateOptions[strokeOption] || stroke;
                 strokeWidth = stateOptions[strokeWidthOption] || strokeWidth;
                 dashstyle = stateOptions.dashStyle || dashstyle;
+                opacity = pick(stateOptions.opacity, opacity);
             }
 
             ret = {
                 'fill': fill,
                 'stroke': stroke,
-                'stroke-width': strokeWidth
+                'stroke-width': strokeWidth,
+                'opacity': opacity
             };
 
             if (dashstyle) {
@@ -924,7 +933,7 @@ seriesType('column', 'line'
                             point.selected && 'select'
                         ))
                             .shadow(
-                                options.shadow,
+                                point.allowShadow !== false && options.shadow,
                                 null,
                                 options.stacking && !options.borderRadius
                             );
@@ -1024,7 +1033,8 @@ seriesType('column', 'line'
 
             Series.prototype.remove.apply(series, arguments);
         }
-    });
+    }
+);
 
 
 /**

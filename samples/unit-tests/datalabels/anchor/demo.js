@@ -82,4 +82,3 @@ QUnit.test('#6781: Inverted chart dataLabels placement with Axis.height', functi
         }
     });
 });
-

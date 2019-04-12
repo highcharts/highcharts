@@ -60,4 +60,3 @@ Highcharts.chart('container', {
         ]
     }]
 });
-

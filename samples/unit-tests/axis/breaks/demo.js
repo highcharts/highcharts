@@ -107,15 +107,15 @@ QUnit.test('Axis breaks with scatter series', function (assert) {
         chart: {
             width: 600
         },
-        "xAxis": {
-            "breaks": [{
-                "to": 1272240000000,
-                "from": 1272067200000
+        xAxis: {
+            breaks: [{
+                to: 1272240000000,
+                from: 1272067200000
             }]
         },
-        "series": [{
-            "type": "scatter",
-            "data": [
+        series: [{
+            type: "scatter",
+            data: [
                 [
                     1271980800000,
                     0

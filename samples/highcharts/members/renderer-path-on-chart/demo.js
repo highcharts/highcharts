@@ -1,4 +1,3 @@
-
 /**
 *Function to draw the path
 */
@@ -140,16 +139,15 @@ Highcharts.chart('container', {
     }]
 
 },
-    function (chart) {
-        if (!chart.renderer.forExport) {
-            setInterval(function () {
-                var point = chart.series[0].points[0],
-                    newVal,
-                    inc = 5 - Math.floor(Math.random() * 10);
-                newVal = point.y + inc;
-                point.update(newVal);
+function (chart) {
+    if (!chart.renderer.forExport) {
+        setInterval(function () {
+            var point = chart.series[0].points[0],
+                newVal,
+                inc = 5 - Math.floor(Math.random() * 10);
+            newVal = point.y + inc;
+            point.update(newVal);
 
-            }, 3000);
-        }
-    });
-
+        }, 3000);
+    }
+});

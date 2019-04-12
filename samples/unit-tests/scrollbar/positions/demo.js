@@ -149,9 +149,9 @@ QUnit.test(
             scrollbar = chart.yAxis[0].scrollbar;
 
         assert.strictEqual(
-        minWidth + scrollbar.scrollbarGroup.translateY <= scrollbar.scrollbarButtons[1].translateY,
-        true,
-        'Correct scrollbar bar position.'
+            minWidth + scrollbar.scrollbarGroup.translateY <= scrollbar.scrollbarButtons[1].translateY,
+            true,
+            'Correct scrollbar bar position.'
         );
     }
 );

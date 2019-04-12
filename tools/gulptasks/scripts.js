@@ -123,24 +123,28 @@ function shouldRun() {
  */
 function task() {
 
+    const argv = require('yargs').argv;
     const LogLib = require('./lib/log');
-    const Yargs = require('yargs');
+    const ProcessLib = require('./lib/process');
+
+    if (ProcessLib.isRunning('scripts-watch') && !argv.force) {
+        LogLib.warn('Running watch process detected. Skipping task...');
+        return Promise.resolve();
+    }
 
     return new Promise(resolve => {
 
-        const argv = Yargs.argv;
-
         if (shouldRun() ||
             argv.force ||
-            process.env.HIGHCHARTS_GULPTASKS_SCRIPTS
+            ProcessLib.isRunning('scripts_incomplete')
         ) {
 
-            process.env.HIGHCHARTS_GULPTASKS_SCRIPTS = true;
+            ProcessLib.isRunning('scripts_incomplete', true, true);
 
             Gulp.series('scripts-css', 'scripts-js')(
                 () => {
 
-                    delete process.env.HIGHCHARTS_GULPTASKS_SCRIPTS;
+                    ProcessLib.isRunning('scripts_incomplete', false, true);
 
                     saveRun();
 

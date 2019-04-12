@@ -1,4 +1,4 @@
-/**
+/* *
  * Exporting module
  *
  * (c) 2010-2019 Torstein Honsi
@@ -117,7 +117,9 @@ extend(defaultOptions.lang
         /**
          * Exporting module only. View the chart in full screen.
          *
-         * @since next
+         * @since 7.1.0
+         *
+         * @private
          */
         viewFullscreen: 'View in full screen',
 
@@ -126,6 +128,8 @@ extend(defaultOptions.lang
          * Exporting module only. The text for the menu item to print the chart.
          *
          * @since 3.0.1
+         *
+         * @private
          */
         printChart: 'Print chart',
 
@@ -133,6 +137,8 @@ extend(defaultOptions.lang
          * Exporting module only. The text for the PNG download menu item.
          *
          * @since 2.0
+         *
+         * @private
          */
         downloadPNG: 'Download PNG image',
 
@@ -140,6 +146,8 @@ extend(defaultOptions.lang
          * Exporting module only. The text for the JPEG download menu item.
          *
          * @since 2.0
+         *
+         * @private
          */
         downloadJPEG: 'Download JPEG image',
 
@@ -147,6 +155,8 @@ extend(defaultOptions.lang
          * Exporting module only. The text for the PDF download menu item.
          *
          * @since 2.0
+         *
+         * @private
          */
         downloadPDF: 'Download PDF document',
 
@@ -154,6 +164,8 @@ extend(defaultOptions.lang
          * Exporting module only. The text for the SVG download menu item.
          *
          * @since 2.0
+         *
+         * @private
          */
         downloadSVG: 'Download SVG vector image',
 
@@ -162,6 +174,8 @@ extend(defaultOptions.lang
          * print and export menu items.
          *
          * @since 3.0
+         *
+         * @private
          */
         contextButtonTitle: 'Chart context menu'
 
@@ -331,6 +345,8 @@ merge(true, defaultOptions.navigation
          * @type    {Highcharts.CSSObject}
          * @default {"border": "1px solid #999999", "background": "#ffffff", "padding": "5px 0"}
          * @since   2.0
+         *
+         * @private
          */
         menuStyle: {
             /** @ignore-option */
@@ -356,6 +372,8 @@ merge(true, defaultOptions.navigation
          * @type    {Highcharts.CSSObject}
          * @default {"padding": "0.5em 1em", "color": "#333333", "background": "none", "fontSize": "11px/14px", "transition": "background 250ms, color 250ms"}
          * @since   2.0
+         *
+         * @private
          */
         menuItemStyle: {
             /** @ignore-option */
@@ -384,6 +402,8 @@ merge(true, defaultOptions.navigation
          * @type    {Highcharts.CSSObject}
          * @default {"background": "#335cad", "color": "#ffffff"}
          * @since   2.0
+         *
+         * @private
          */
         menuItemHoverStyle: {
             /** @ignore-option */
@@ -398,6 +418,8 @@ merge(true, defaultOptions.navigation
          *
          * In styled mode, the buttons are styled with the
          * `.highcharts-contextbutton` and `.highcharts-button-symbol` classes.
+         *
+         * @private
          */
         buttonOptions: {
 
@@ -1497,6 +1519,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
                 chart.openMenu = false;
                 H.clearTimeout(menu.hideTimer);
+                fireEvent(chart, 'exportMenuHidden');
             };
 
             // Hide the menu some time after mouse leave (#1357)

@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
 
     title: {
@@ -31,16 +30,16 @@ Highcharts.chart('container', {
                         100,
                         100
                     )
-                    .attr({
-                        fill: '#a4edba',
-                        r: 5,
-                        padding: 10,
-                        zIndex: 10
-                    })
-                    .css({
-                        fontSize: '1.5em'
-                    })
-                    .add();
+                        .attr({
+                            fill: '#a4edba',
+                            r: 5,
+                            padding: 10,
+                            zIndex: 10
+                        })
+                        .css({
+                            fontSize: '1.5em'
+                        })
+                        .add();
                 },
                 text: 'Show label'
             }

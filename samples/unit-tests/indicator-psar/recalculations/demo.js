@@ -1,4 +1,3 @@
-
 QUnit.test('Test PSAR calculations on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {

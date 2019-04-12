@@ -1,4 +1,3 @@
-
 var chart = Highcharts.chart('container', {
 
     credits: {
@@ -18,8 +17,8 @@ var chart = Highcharts.chart('container', {
 // the button handler
 $('#button').click(function () {
     var svg = chart.getSVG()
-            .replace(/</g, '\n&lt;') // make it slightly more readable
-            .replace(/>/g, '&gt;');
+        .replace(/</g, '\n&lt;') // make it slightly more readable
+        .replace(/>/g, '&gt;');
 
     document.body.innerHTML = '<pre>' + svg + '</pre>';
 });

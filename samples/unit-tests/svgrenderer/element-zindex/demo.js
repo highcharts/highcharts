@@ -1,4 +1,3 @@
-
 QUnit.test('Element Z index', function (assert) {
 
     var renderer,

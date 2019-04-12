@@ -326,9 +326,27 @@ function pointAttribs(proceed) {
     return attr;
 }
 
+// In 3D mode, all column-series are rendered in one main group.
+// Because of that we need to apply inactive state on all points.
+function setState(proceed, state, inherit) {
+    var is3d = this.chart.is3d && this.chart.is3d();
+
+    if (is3d) {
+        this.options.inactiveOtherPoints = true;
+    }
+
+    proceed.call(this, state, inherit);
+
+    if (is3d) {
+        this.options.inactiveOtherPoints = false;
+    }
+}
+
 wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
+wrap(seriesTypes.column.prototype, 'setState', setState);
 if (seriesTypes.columnrange) {
     wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
+    wrap(seriesTypes.columnrange.prototype, 'setState', setState);
     seriesTypes.columnrange.prototype.plotGroup =
         seriesTypes.column.prototype.plotGroup;
     seriesTypes.columnrange.prototype.setVisible =

@@ -1,5 +1,8 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/map
+ * @requires highcharts
+ *
  * Highmaps as a plugin for Highcharts or Highstock.
  *
  * (c) 2011-2019 Torstein Honsi

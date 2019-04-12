@@ -102,7 +102,7 @@ seriesType('bubble', 'scatter', {
          * In bubble charts, the radius is overridden and determined based on
          * the point's data value.
          *
-         * @ignore
+         * @ignore-option
          */
         radius: null,
 
@@ -400,6 +400,12 @@ seriesType('bubble', 'scatter', {
             // delete this function to allow it only once
             this.animate = null;
         }
+    },
+
+    // Define hasData function for non-cartesian series.
+    // Returns true if the series has points at all.
+    hasData: function () {
+        return !!this.processedXData.length; // != 0
     },
 
     // Extend the base translate method to handle bubble size

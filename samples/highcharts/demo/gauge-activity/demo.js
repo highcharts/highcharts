@@ -29,11 +29,11 @@ function renderIcons() {
     if (!this.series[0].icon) {
         this.series[0].icon = this.renderer.path(['M', -8, 0, 'L', 8, 0, 'M', 0, -8, 'L', 8, 0, 0, 8])
             .attr({
-                'stroke': '#303030',
+                stroke: '#303030',
                 'stroke-linecap': 'round',
                 'stroke-linejoin': 'round',
                 'stroke-width': 2,
-                'zIndex': 10
+                zIndex: 10
             })
             .add(this.series[2].group);
     }
@@ -48,13 +48,13 @@ function renderIcons() {
         this.series[1].icon = this.renderer.path(
             ['M', -8, 0, 'L', 8, 0, 'M', 0, -8, 'L', 8, 0, 0, 8,
                 'M', 8, -8, 'L', 16, 0, 8, 8]
-            )
+        )
             .attr({
-                'stroke': '#ffffff',
+                stroke: '#ffffff',
                 'stroke-linecap': 'round',
                 'stroke-linejoin': 'round',
                 'stroke-width': 2,
-                'zIndex': 10
+                zIndex: 10
             })
             .add(this.series[2].group);
     }
@@ -68,11 +68,11 @@ function renderIcons() {
     if (!this.series[2].icon) {
         this.series[2].icon = this.renderer.path(['M', 0, 8, 'L', 0, -8, 'M', -8, 0, 'L', 0, -8, 8, 0])
             .attr({
-                'stroke': '#303030',
+                stroke: '#303030',
                 'stroke-linecap': 'round',
                 'stroke-linejoin': 'round',
                 'stroke-width': 2,
-                'zIndex': 10
+                zIndex: 10
             })
             .add(this.series[2].group);
     }
@@ -188,5 +188,3 @@ Highcharts.chart('container', {
         }]
     }]
 });
-
-

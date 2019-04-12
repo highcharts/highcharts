@@ -1,5 +1,3 @@
-
-
 Highcharts.stockChart('container', {
 
     rangeSelector: {

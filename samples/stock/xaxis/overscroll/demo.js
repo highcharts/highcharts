@@ -1,5 +1,3 @@
-
-
 Highcharts.setOptions({
     global: {
         useUTC: false
@@ -75,5 +73,3 @@ Highcharts.stockChart('container', {
         }())
     }]
 });
-
-

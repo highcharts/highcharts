@@ -1,5 +1,3 @@
-
-
 var chart = Highcharts.chart('container', {
 
     chart: {
@@ -109,4 +107,3 @@ setInterval(function () {
         point.update(newVal);
     }
 }, 2000);
-

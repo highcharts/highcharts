@@ -1,4 +1,3 @@
-
 $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', function (data) {
 
     Highcharts.stockChart('container', {

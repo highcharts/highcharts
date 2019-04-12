@@ -1,5 +1,8 @@
 /**
  * @license  @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/modules/networkgraph
+ * @requires highcharts
+ *
  * Force directed graph module
  *
  * (c) 2010-2019 Torstein Honsi

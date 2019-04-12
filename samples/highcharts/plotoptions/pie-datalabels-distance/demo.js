@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     chart: {
         type: 'pie'
@@ -11,7 +10,7 @@ Highcharts.chart('container', {
     plotOptions: {
         pie: {
             dataLabels: {
-                distance: -30
+                distance: '-30%'
             }
         }
     },
@@ -25,7 +24,7 @@ Highcharts.chart('container', {
                 name: 'Chrome',
                 y: 3.1,
                 dataLabels: {
-                    distance: 30 // Individual distance
+                    distance: 30 // Individual distance (in px)
                 }
             },
             ['Other',    5.4]

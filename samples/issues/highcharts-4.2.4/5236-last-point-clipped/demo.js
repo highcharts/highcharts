@@ -7,17 +7,17 @@ jQuery(function () {
                 width: 1000
             },
 
-            "series": [{
-                "type": "areaspline",
-                "data": [
+            series: [{
+                type: "areaspline",
+                data: [
                     [1458428400000, 1452922],
                     [1458514800000, 1568109],
                     [1458601200000, 2486978],
                     [1458687600000, 1683891]
                 ],
-                "marker": {
-                    "enabled": true,
-                    "radius": 5
+                marker: {
+                    enabled: true,
+                    radius: 5
                 }
             }],
             yAxis: {
@@ -28,10 +28,10 @@ jQuery(function () {
                     text: null
                 }
             },
-            "xAxis": {
+            xAxis: {
                 type: 'datetime',
-                "min": 1458514800000,
-                "max": 1458687600000
+                min: 1458514800000,
+                max: 1458687600000
             }
         });
         assert.strictEqual(

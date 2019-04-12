@@ -1,13 +1,14 @@
-
 Highcharts.chart('container', {
     chart: {
         zoomType: 'xy'
     },
     title: {
-        text: 'Average Monthly Weather Data for Tokyo'
+        text: 'Average Monthly Weather Data for Tokyo',
+        align: 'left'
     },
     subtitle: {
-        text: 'Source: WorldClimate.com'
+        text: 'Source: WorldClimate.com',
+        align: 'left'
     },
     xAxis: [{
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -101,6 +102,22 @@ Highcharts.chart('container', {
         tooltip: {
             valueSuffix: ' °C'
         }
-    }]
+    }],
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    floating: false,
+                    layout: 'horizontal',
+                    align: 'center',
+                    verticalAlign: 'bottom',
+                    x: 0,
+                    y: 0
+                }
+            }
+        }]
+    }
 });
-

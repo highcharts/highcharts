@@ -138,8 +138,8 @@
  * @product highcharts
  *//**
  * The distance of the data label from the pie's edge. Negative numbers put the
- * data label on top of the pie slices. Connectors are only shown for data
- * labels outside the pie.
+ * data label on top of the pie slices. Can also be defined as a percentage of
+ * pie's radius. Connectors are only shown for data labels outside the pie.
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-distance/|Highcharts-Demo:}
  *      Data labels on top of the pie
@@ -199,7 +199,9 @@ var addEvent = H.addEvent,
  *
  * @augments Highcharts.Series
  */
-seriesType('pie', 'line',
+seriesType(
+    'pie',
+    'line',
 
     /**
      * A pie chart is a circular graphic which is divided into slices to
@@ -256,15 +258,23 @@ seriesType('pie', 'line',
          * @type    {Array<number|string|null>}
          * @default [null, null]
          * @product highcharts
+         *
+         * @private
          */
         center: [null, null],
 
         /**
          * @product highcharts
+         *
+         * @private
          */
         clip: false,
 
-        /** @ignore */
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
         colorByPoint: true, // always true for pies
 
         /**
@@ -282,6 +292,8 @@ seriesType('pie', 'line',
 
         /**
          * @type {Highcharts.DataLabelsOptionsObject|Highcharts.PlotPieDataLabelsOptionsObject}
+         *
+         * @private
          */
         dataLabels: {
             /** @ignore-option */
@@ -332,8 +344,13 @@ seriesType('pie', 'line',
          *
          * @since   2.3.0
          * @product highcharts
+         *
+         * @private
          */
         ignoreHiddenPoint: true,
+
+        /** @ignore-option */
+        inactiveOtherPoints: true,
 
         /**
          * The size of the inner diameter for the pie. A size greater than 0
@@ -359,10 +376,18 @@ seriesType('pie', 'line',
          * @apioption plotOptions.pie.innerSize
          */
 
-        /** @ignore-option */
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
         legendType: 'point',
 
-        /** @ignore-option */
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
         marker: null, // point options are specified in the base options
 
         /**
@@ -392,6 +417,8 @@ seriesType('pie', 'line',
          *
          * @type    {number|string|null}
          * @product highcharts
+         *
+         * @private
          */
         size: null,
 
@@ -403,6 +430,8 @@ seriesType('pie', 'line',
          *         One series in the legend, one hidden
          *
          * @product highcharts
+         *
+         * @private
          */
         showInLegend: false,
 
@@ -414,6 +443,8 @@ seriesType('pie', 'line',
          *         20px offset
          *
          * @product highcharts
+         *
+         * @private
          */
         slicedOffset: 10,
 
@@ -441,6 +472,8 @@ seriesType('pie', 'line',
          * will be hidden when moving the mouse between series.
          *
          * @product highcharts
+         *
+         * @private
          */
         stickyTracking: false,
 
@@ -463,6 +496,8 @@ seriesType('pie', 'line',
          * @type    {Highcharts.ColorString}
          * @default #ffffff
          * @product highcharts
+         *
+         * @private
          */
         borderColor: '${palette.backgroundColor}',
 
@@ -481,6 +516,8 @@ seriesType('pie', 'line',
          *         3px border
          *
          * @product highcharts
+         *
+         * @private
          */
         borderWidth: 1,
 
@@ -494,22 +531,27 @@ seriesType('pie', 'line',
             hover: {
 
                 /**
-             * How much to brighten the point on interaction. Requires the main
-             * color to be defined in hex or rgb(a) format.
-             *
-             * In styled mode, the hover brightness is by default replaced
-             * by a fill-opacity given in the `.highcharts-point-hover` class.
-             *
-             * @sample {highcharts} highcharts/plotoptions/pie-states-hover-brightness/
-             *         Brightened by 0.5
-             *
-             * @product highcharts
-             */
+                 * How much to brighten the point on interaction. Requires the
+                 * main color to be defined in hex or rgb(a) format.
+                 *
+                 * In styled mode, the hover brightness is by default replaced
+                 * by a fill-opacity given in the `.highcharts-point-hover`
+                 * class.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/pie-states-hover-brightness/
+                 *         Brightened by 0.5
+                 *
+                 * @product highcharts
+                 */
                 brightness: 0.1
             }
         }
 
-    }, /** @lends seriesTypes.pie.prototype */ {
+    },
+    /**
+     * @lends seriesTypes.pie.prototype
+     */
+    {
 
         isCartesian: false,
         requireSorting: false,
@@ -560,12 +602,19 @@ seriesType('pie', 'line',
             }
         },
 
+        // Define hasData function for non-cartesian series.
+        // Returns true if the series has points at all.
+        hasData: function () {
+            return !!this.processedXData.length; // != 0
+        },
+
         /**
          * Recompute total chart sum and update percentages of points.
          *
          * @private
          * @function Highcharts.seriesTypes.pie#updateTotals
          */
+
         updateTotals: function () {
             var i,
                 total = 0,
@@ -641,13 +690,13 @@ seriesType('pie', 'line',
         },
 
         /**
-     * Do translation for pie slices
-     *
-     * @private
-     * @function Highcharts.seriesTypes.pie#translate
-     *
-     * @param {Array<number>} positions
-     */
+         * Do translation for pie slices
+         *
+         * @private
+         * @function Highcharts.seriesTypes.pie#translate
+         *
+         * @param {Array<number>} positions
+         */
         translate: function (positions) {
             this.generatePoints();
 
@@ -690,21 +739,6 @@ seriesType('pie', 'line',
 
                 point = points[i];
 
-                // Used for distance calculation for specific point.
-                point.labelDistance = pick(
-                    (
-                        point.options.dataLabels &&
-                        point.options.dataLabels.distance
-                    ),
-                    labelDistance
-                );
-
-                // Saved for later dataLabels distance calculation.
-                series.maxLabelDistance = Math.max(
-                    series.maxLabelDistance || 0,
-                    point.labelDistance
-                );
-
                 // set start and end angle
                 start = startAngleRad + (cumulative * circ);
                 if (!ignoreHiddenPoint || point.visible) {
@@ -722,6 +756,26 @@ seriesType('pie', 'line',
                     start: Math.round(start * precision) / precision,
                     end: Math.round(end * precision) / precision
                 };
+
+                // Used for distance calculation for specific point.
+                point.labelDistance = pick(
+                    (
+                        point.options.dataLabels &&
+                        point.options.dataLabels.distance
+                    ),
+                    labelDistance
+                );
+
+                // Compute point.labelDistance if it's defined as percentage
+                // of slice radius (#8854)
+                point.labelDistance =
+                  H.relativeLength(point.labelDistance, point.shapeArgs.r);
+
+                // Saved for later dataLabels distance calculation.
+                series.maxLabelDistance = Math.max(
+                    series.maxLabelDistance || 0,
+                    point.labelDistance
+                );
 
                 // The angle must stay within -90 and 270 (#2645)
                 angle = (end + start) / 2;
@@ -796,19 +850,19 @@ seriesType('pie', 'line',
         },
 
         /**
-     * @private
-     * @deprecated
-     * @name Highcharts.seriesTypes.pie#drawGraph
-     * @type {null}
-     */
+         * @private
+         * @deprecated
+         * @name Highcharts.seriesTypes.pie#drawGraph
+         * @type {null}
+         */
         drawGraph: null,
 
         /**
-     * Draw the data points
-     *
-     * @private
-     * @function Highcharts.seriesTypes.pie#drawPoints
-     */
+         * Draw the data points
+         *
+         * @private
+         * @function Highcharts.seriesTypes.pie#drawPoints
+         */
         redrawPoints: function () {
             var series = this,
                 chart = series.chart,
@@ -821,6 +875,7 @@ seriesType('pie', 'line',
 
             if (shadow && !series.shadowGroup && !chart.styledMode) {
                 series.shadowGroup = renderer.g('shadow')
+                    .attr({ zIndex: -1 })
                     .add(series.group);
             }
 
@@ -828,7 +883,7 @@ seriesType('pie', 'line',
             series.points.forEach(function (point) {
                 var animateTo = {};
                 graphic = point.graphic;
-                if (!point.isNull) {
+                if (!point.isNull && graphic) {
                     shapeArgs = point.shapeArgs;
 
 
@@ -913,22 +968,22 @@ seriesType('pie', 'line',
             });
         },
         /**
-     * @private
-     * @deprecated
-     * @function Highcharts.seriesTypes.pie#searchPoint
-     */
+         * @private
+         * @deprecated
+         * @function Highcharts.seriesTypes.pie#searchPoint
+         */
         searchPoint: noop,
 
         /**
-     * Utility for sorting data labels
-     *
-     * @private
-     * @function Highcharts.seriesTypes.pie#sortByAngle
-     *
-     * @param {Array<Highcharts.Point>} points
-     *
-     * @param {number} sign
-     */
+         * Utility for sorting data labels
+         *
+         * @private
+         * @function Highcharts.seriesTypes.pie#sortByAngle
+         *
+         * @param {Array<Highcharts.Point>} points
+         *
+         * @param {number} sign
+         */
         sortByAngle: function (points, sign) {
             points.sort(function (a, b) {
                 return a.angle !== undefined && (b.angle - a.angle) * sign;
@@ -936,41 +991,45 @@ seriesType('pie', 'line',
         },
 
         /**
-     * Use a simple symbol from LegendSymbolMixin.
-     *
-     * @private
-     * @borrows Highcharts.LegendSymbolMixin.drawRectangle as Highcharts.seriesTypes.pie#drawLegendSymbol
-     */
+         * Use a simple symbol from LegendSymbolMixin.
+         *
+         * @private
+         * @borrows Highcharts.LegendSymbolMixin.drawRectangle as Highcharts.seriesTypes.pie#drawLegendSymbol
+         */
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
         /**
-     * Use the getCenter method from drawLegendSymbol.
-     *
-     * @private
-     * @borrows Highcharts.CenteredSeriesMixin.getCenter as Highcharts.seriesTypes.pie#getCenter
-     */
+         * Use the getCenter method from drawLegendSymbol.
+         *
+         * @private
+         * @borrows Highcharts.CenteredSeriesMixin.getCenter as Highcharts.seriesTypes.pie#getCenter
+         */
         getCenter: CenteredSeriesMixin.getCenter,
 
         /**
-     * Pies don't have point marker symbols.
-     *
-     * @deprecated
-     * @private
-     * @function Highcharts.seriesTypes.pie#getSymbol
-     */
+         * Pies don't have point marker symbols.
+         *
+         * @deprecated
+         * @private
+         * @function Highcharts.seriesTypes.pie#getSymbol
+         */
         getSymbol: noop
 
 
-    }, /** @lends seriesTypes.pie.prototype.pointClass.prototype */ {
+    },
+    /**
+     * @lends seriesTypes.pie.prototype.pointClass.prototype
+     */
+    {
 
         /**
-     * Initialize the pie slice
-     *
-     * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#init
-     *
-     * @return {Highcharts.Point}
-     */
+         * Initialize the pie slice
+         *
+         * @private
+         * @function Highcharts.seriesTypes.pie#pointClass#init
+         *
+         * @return {Highcharts.Point}
+         */
         init: function () {
 
             Point.prototype.init.apply(this, arguments);
@@ -991,29 +1050,29 @@ seriesType('pie', 'line',
         },
 
         /**
-     * Negative points are not valid (#1530, #3623, #5322)
-     *
-     * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#isValid
-     *
-     * @return {boolean}
-     */
+         * Negative points are not valid (#1530, #3623, #5322)
+         *
+         * @private
+         * @function Highcharts.seriesTypes.pie#pointClass#isValid
+         *
+         * @return {boolean}
+         */
         isValid: function () {
             return H.isNumber(this.y, true) && this.y >= 0;
         },
 
         /**
-     * Toggle the visibility of the pie slice
-     *
-     * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#setVisible
-     *
-     * @param {boolean} vis
-     *        Whether to show the slice or not. If undefined, the visibility is
-     *        toggled.
-     *
-     * @param {boolean} [redraw=false]
-     */
+         * Toggle the visibility of the pie slice
+         *
+         * @private
+         * @function Highcharts.seriesTypes.pie#pointClass#setVisible
+         *
+         * @param {boolean} vis
+         *        Whether to show the slice or not. If undefined, the visibility
+         *        is toggled.
+         *
+         * @param {boolean} [redraw=false]
+         */
         setVisible: function (vis, redraw) {
             var point = this,
                 series = point.series,
@@ -1062,17 +1121,17 @@ seriesType('pie', 'line',
         },
 
         /**
-     * Set or toggle whether the slice is cut out from the pie
-     *
-     * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#slice
-     *
-     * @param {boolean} sliced
-     *        When undefined, the slice state is toggled.
-     *
-     * @param {boolean} redraw
-     *        Whether to redraw the chart. True by default.
-     */
+         * Set or toggle whether the slice is cut out from the pie
+         *
+         * @private
+         * @function Highcharts.seriesTypes.pie#pointClass#slice
+         *
+         * @param {boolean} sliced
+         *        When undefined, the slice state is toggled.
+         *
+         * @param {boolean} redraw
+         *        Whether to redraw the chart. True by default.
+         */
         slice: function (sliced, redraw, animation) {
             var point = this,
                 series = point.series,
@@ -1097,11 +1156,11 @@ seriesType('pie', 'line',
         },
 
         /**
-     * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#getTranslate
-     *
-     * @return {*}
-     */
+         * @private
+         * @function Highcharts.seriesTypes.pie#pointClass#getTranslate
+         *
+         * @return {*}
+         */
         getTranslate: function () {
             return this.sliced ? this.slicedTranslation : {
                 translateX: 0,
@@ -1110,13 +1169,13 @@ seriesType('pie', 'line',
         },
 
         /**
-     * @private
-     * @function Highcharts.seriesTypes.pie#pointClass#haloPath
-     *
-     * @param {number} size
-     *
-     * @return {Highcharts.SVGPathArray}
-     */
+         * @private
+         * @function Highcharts.seriesTypes.pie#pointClass#haloPath
+         *
+         * @param {number} size
+         *
+         * @return {Highcharts.SVGPathArray}
+         */
         haloPath: function (size) {
             var shapeArgs = this.shapeArgs;
 
@@ -1226,9 +1285,9 @@ seriesType('pie', 'line',
         },
 
         /**
-     * Extendable method for getting the path of the connector between the data
-     * label and the pie slice.
-     */
+         * Extendable method for getting the path of the connector between the
+         * data label and the pie slice.
+         */
         getConnectorPath: function () {
             var labelPosition = this.labelPosition,
                 options = this.series.options.dataLabels,
@@ -1247,7 +1306,8 @@ seriesType('pie', 'line',
                 alignment: labelPosition.alignment
             }, labelPosition.connectorPosition, options);
         }
-    });
+    }
+);
 
 /**
  * A `pie` series. If the [type](#series.pie.type) option is not specified,

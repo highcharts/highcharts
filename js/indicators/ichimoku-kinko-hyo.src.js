@@ -523,7 +523,7 @@ seriesType(
             // element and indicator property
             if (indicator.graphCollection) {
                 indicator.graphCollection.forEach(function (graphName) {
-                    indicator[graphName].element.remove();
+                    indicator[graphName].destroy();
                     delete indicator[graphName];
                 });
             }

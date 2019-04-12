@@ -1,6 +1,3 @@
-
-
-
 (function (Highcharts) {
     /// FUNCTION SERIES DEFINITION
     // create shortcuts

@@ -47,14 +47,14 @@ jQuery(function () {
                 }
             },
             series: [{
-                "color": "#F94DA7",
-                "connectNulls": "true",
-                "borderColor": "#F94DA7",
-                "marker": {
-                    "symbol": "circle"
+                color: "#F94DA7",
+                connectNulls: "true",
+                borderColor: "#F94DA7",
+                marker: {
+                    symbol: "circle"
                 },
-                "name": "Actual",
-                "data": [
+                name: "Actual",
+                data: [
                     [
                         "T-45",
                         null
@@ -292,7 +292,7 @@ jQuery(function () {
                         null
                     ]
                 ],
-                "pointPadding": -0.1
+                pointPadding: -0.1
             }]
         });
         assert.strictEqual(

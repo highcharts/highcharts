@@ -3,17 +3,17 @@ $(function () {
         var chart = $('#container').highcharts('StockChart', {
             series: [{
                 data: [
-                     [Date.UTC(2014, 6, 1), 10],
-                     [Date.UTC(2014, 7, 1), 10],
-                     [Date.UTC(2014, 8, 1), 10],
-                     [Date.UTC(2014, 9, 1), 10],
-                     [Date.UTC(2014, 10, 1), 10],
-                     [Date.UTC(2014, 11, 1), 10],
-                     [Date.UTC(2015, 1, 1), 10],
-                     [Date.UTC(2015, 3, 1), 13],
-                     [Date.UTC(2015, 4, 1), 14],
-                     [Date.UTC(2015, 5, 1), 11],
-                     [Date.UTC(2015, 6, 1), 5]
+                    [Date.UTC(2014, 6, 1), 10],
+                    [Date.UTC(2014, 7, 1), 10],
+                    [Date.UTC(2014, 8, 1), 10],
+                    [Date.UTC(2014, 9, 1), 10],
+                    [Date.UTC(2014, 10, 1), 10],
+                    [Date.UTC(2014, 11, 1), 10],
+                    [Date.UTC(2015, 1, 1), 10],
+                    [Date.UTC(2015, 3, 1), 13],
+                    [Date.UTC(2015, 4, 1), 14],
+                    [Date.UTC(2015, 5, 1), 11],
+                    [Date.UTC(2015, 6, 1), 5]
                 ],
                 id: 'dataseries'
             }, {

@@ -31,38 +31,38 @@ $(function () {
             },
 
             series: [{
-                "data": [{
-                    "y": 100,
-                    "name": "03+09",
-                    "color": "#555555"
+                data: [{
+                    y: 100,
+                    name: "03+09",
+                    color: "#555555"
                 }, {
-                    "y": 20,
-                    "name": "Thing 1"
+                    y: 20,
+                    name: "Thing 1"
                 }, {
-                    "y": 4.5,
-                    "name": "Thing 2"
+                    y: 4.5,
+                    name: "Thing 2"
                 }, {
-                    "y": -9,
-                    "name": "Random bad thing"
+                    y: -9,
+                    name: "Random bad thing"
                 }, {
-                    "y": -7,
-                    "name": "Another thing"
+                    y: -7,
+                    name: "Another thing"
                 }, {
-                    "y": -3.5,
-                    "name": "Misc"
+                    y: -3.5,
+                    name: "Misc"
                 }, {
-                    "isIntermediateSum": true,
-                    "name": "IntSum",
-                    "color": "#555555"
+                    isIntermediateSum: true,
+                    name: "IntSum",
+                    color: "#555555"
                 }, {
-                    "isSum": true,
-                    "name": "Sum",
-                    "color": "#555555"
+                    isSum: true,
+                    name: "Sum",
+                    color: "#555555"
                 }],
-                "dataLabels": {
-                    "enabled": true
+                dataLabels: {
+                    enabled: true
                 },
-                "pointPadding": 0
+                pointPadding: 0
             }]
         });
 

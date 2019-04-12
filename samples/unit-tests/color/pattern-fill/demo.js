@@ -1,4 +1,3 @@
-
 /* Unit tests for pattern-fill module */
 
 QUnit.test('SVGRenderer used directly', function (assert) {

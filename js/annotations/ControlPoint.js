@@ -15,7 +15,7 @@ import eventEmitterMixin from './eventEmitterMixin.js';
  *        a control point
  * @param {Annotation.ControlPoint.Options} options an options object
  * @param {number} [index]
- **/
+ */
 function ControlPoint(chart, target, options, index) {
     this.chart = chart;
     this.target = target;

@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2009-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -961,6 +961,8 @@ Chart.prototype.drawSeriesLabels = function () {
             destroyLabel();
         }
     });
+
+    H.fireEvent(chart, 'afterDrawSeriesLabels');
     // console.timeEnd('drawSeriesLabels');
 };
 

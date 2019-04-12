@@ -1,8 +1,11 @@
 /**
- * @license  @product.name@ JS v@product.version@ (@product.date@)
- * Highcharts organization chart module
+ * @license @product.name@ JS v@product.version@ (@product.date@)
+ * Organization chart series type
+ * @module highcharts/modules/organization
+ * @requires highcharts
+ * @requires highcharts/modules/sankey
  *
- * (c) 2019 Torstein Honsi
+ * (c) 2019-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

@@ -161,9 +161,9 @@ QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
         'Default nodeFormatter'
     );
     assert.strictEqual(
-        series.points[0].dataLabel.text.textStr,
-        '',
-        'Default point formatter'
+        series.points[0].dataLabel,
+        undefined,
+        'Default point (link) formatter should not produce a label'
     );
     series.nodes[0].onMouseOver();
     assert.notEqual(

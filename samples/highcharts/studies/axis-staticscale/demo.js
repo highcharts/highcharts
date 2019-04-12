@@ -1,4 +1,3 @@
-
 function getPoint(i) {
     return {
         name: Date.UTC(2018, 0, 1) + i * 1000,

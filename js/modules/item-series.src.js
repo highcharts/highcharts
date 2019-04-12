@@ -19,16 +19,16 @@ var extend = H.extend,
     piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 
 /**
-  * The item series type.
-  *
-  * @requires module:modules/item-series
-  *
-  * @private
-  * @class
-  * @name Highcharts.seriesTypes.item
-  *
-  * @augments Highcharts.seriesTypes.pie
-  */
+ * The item series type.
+ *
+ * @requires module:modules/item-series
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.item
+ *
+ * @augments Highcharts.seriesTypes.pie
+ */
 H.seriesType(
     'item',
     // Inherits pie as the most tested non-cartesian series with individual
@@ -473,17 +473,6 @@ H.seriesType(
     },
     // Point class
     {
-        setState: function (state) {
-            // Make this data stand out by setting the opacity of the others
-            this.series.points.forEach(function (otherPoint) {
-                if (otherPoint !== this) {
-                    otherPoint.graphic.animate(
-                        { opacity: state === 'hover' ? 0.1 : 1 },
-                        this.series.options.states[state || 'normal'].animation
-                    );
-                }
-            }, this);
-        },
         connectorShapes: piePoint.connectorShapes,
         getConnectorPath: piePoint.getConnectorPath,
         setVisible: piePoint.setVisible,

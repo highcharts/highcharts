@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -331,21 +331,26 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
             element = wrapper.element,
             renderer = wrapper.renderer,
             isSVG = renderer.isSVG,
-            addSetters = function (element, style) {
+            addSetters = function (gWrapper, style) {
                 // These properties are set as attributes on the SVG group, and
                 // as identical CSS properties on the div. (#3542)
                 ['opacity', 'visibility'].forEach(function (prop) {
-                    element[prop + 'Setter'] = function (
+                    gWrapper[prop + 'Setter'] = function (
                         value,
                         key,
                         elem
                     ) {
+                        var styleObject = gWrapper.div ?
+                            gWrapper.div.style :
+                            style;
                         SVGElement.prototype[prop + 'Setter']
                             .call(this, value, key, elem);
-                        style[key] = value;
+                        if (styleObject) {
+                            styleObject[key] = value;
+                        }
                     };
                 });
-                element.addedSetters = true;
+                gWrapper.addedSetters = true;
             },
             chart = H.charts[renderer.chartIndex],
             styledMode = chart && chart.styledMode;
@@ -515,7 +520,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                 translateYSetter: translateSetter
                             });
                             if (!parentGroup.addedSetters) {
-                                addSetters(parentGroup, htmlGroupStyle);
+                                addSetters(parentGroup);
                             }
                         });
 

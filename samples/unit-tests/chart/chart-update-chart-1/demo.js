@@ -419,7 +419,6 @@ QUnit.test('Option chart shadows update', function (assert) {
     );
 
 
-
     chart.update({
         chart: {
             plotShadow: false,

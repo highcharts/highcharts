@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'X axis labels are disabled'

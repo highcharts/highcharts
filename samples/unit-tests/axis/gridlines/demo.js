@@ -13,7 +13,7 @@ QUnit.test('Guard too dense minor grid lines', function (assert) {
             minorTickInterval: "auto" // This is working
         },
         series: [{
-            "data": [
+            data: [
                 [1426723200000, 22.999999999999996],
                 [1457568000000, 23]
             ]

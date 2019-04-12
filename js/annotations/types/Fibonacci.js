@@ -169,11 +169,11 @@ H.extendAnnotation(Fibonacci, Tunnel,
     /**
      * A fibonacci annotation.
      *
-     * @extends annotations.crookedLine
      * @sample highcharts/annotations-advanced/fibonacci/
      *         Fibonacci
      *
-     * @product highstock
+     * @extends      annotations.crookedLine
+     * @product      highstock
      * @optionparent annotations.fibonacci
      */
     {
@@ -186,16 +186,16 @@ H.extendAnnotation(Fibonacci, Tunnel,
             /**
              * An array of background colors:
              * Default to:
-             * <pre>
-[
-  'rgba(130, 170, 255, 0.4)',
-  'rgba(139, 191, 216, 0.4)',
-  'rgba(150, 216, 192, 0.4)',
-  'rgba(156, 229, 161, 0.4)',
-  'rgba(162, 241, 130, 0.4)',
-  'rgba(169, 255, 101, 0.4)'
-]
-              </pre>
+             * ```
+             * [
+             * 'rgba(130, 170, 255, 0.4)',
+             * 'rgba(139, 191, 216, 0.4)',
+             * 'rgba(150, 216, 192, 0.4)',
+             * 'rgba(156, 229, 161, 0.4)',
+             * 'rgba(162, 241, 130, 0.4)',
+             * 'rgba(169, 255, 101, 0.4)'
+             * ]
+             * ```
              */
             backgroundColors: [
                 'rgba(130, 170, 255, 0.4)',
@@ -219,8 +219,8 @@ H.extendAnnotation(Fibonacci, Tunnel,
             /**
              * An array with options for the labels.
              *
-             * @type {Array<Object>}
-             * @extends annotations.crookedLine.labelOptions
+             * @type      {Array<object>}
+             * @extends   annotations.crookedLine.labelOptions
              * @apioption annotations.fibonacci.typeOptions.labels
              */
             labels: []

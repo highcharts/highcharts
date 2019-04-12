@@ -1,4 +1,3 @@
-
 // Load the data from a Google Spreadsheet
 // https://docs.google.com/spreadsheets/d/14632VxDAT-TAL06ICnoLsV_JyvjEBXdVY-J34br5iXY/pubhtml
 Highcharts.data({

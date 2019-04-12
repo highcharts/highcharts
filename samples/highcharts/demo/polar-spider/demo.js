@@ -1,5 +1,3 @@
-
-
 Highcharts.chart('container', {
 
     chart: {
@@ -36,9 +34,7 @@ Highcharts.chart('container', {
 
     legend: {
         align: 'right',
-        verticalAlign: 'top',
-        y: 70,
-        layout: 'vertical'
+        verticalAlign: 'middle'
     },
 
     series: [{
@@ -49,6 +45,23 @@ Highcharts.chart('container', {
         name: 'Actual Spending',
         data: [50000, 39000, 42000, 31000, 26000, 14000],
         pointPlacement: 'on'
-    }]
+    }],
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                legend: {
+                    align: 'center',
+                    verticalAlign: 'bottom'
+                },
+                pane: {
+                    size: '70%'
+                }
+            }
+        }]
+    }
 
 });

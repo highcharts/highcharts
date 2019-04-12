@@ -69,12 +69,12 @@ function distProductsJS() {
         Fs.writeFileSync(
             TARGET_FILE,
             (
-                'var product = ' + JSON.stringify({
+                'var products = ' + JSON.stringify({
                     Highcharts: { date, nr },
                     Highstock: { date, nr },
                     Highmaps: { date, nr },
-                    Gantt: { date, nr }
-                }, undefined, '    ') + ';\n'
+                    'Highcharts Gantt': { date, nr }
+                }, undefined, '    ') + '\n'
             )
         );
 

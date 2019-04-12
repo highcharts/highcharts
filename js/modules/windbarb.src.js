@@ -59,21 +59,21 @@ registerApproximation();
 seriesType('windbarb', 'column'
 
     /**
- * Wind barbs are a convenient way to represent wind speed and direction in one
- * graphical form. Wind direction is given by the stem direction, and wind speed
- * by the number and shape of barbs.
- *
- * @sample {highcharts|highstock} highcharts/demo/windbarb-series/
- *         Wind barb series
- *
- * @extends      plotOptions.column
- * @excluding    boostThreshold, marker, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, dragDrop, gapSize, gapUnit, linecap,
- *               shadow, stacking, step
- * @since        6.0.0
- * @product      highcharts highstock
- * @optionparent plotOptions.windbarb
- */
+     * Wind barbs are a convenient way to represent wind speed and direction in
+     * one graphical form. Wind direction is given by the stem direction, and
+     * wind speed by the number and shape of barbs.
+     *
+     * @sample {highcharts|highstock} highcharts/demo/windbarb-series/
+     *         Wind barb series
+     *
+     * @extends      plotOptions.column
+     * @excluding    boostThreshold, marker, connectEnds, connectNulls,
+     *               cropThreshold, dashStyle, dragDrop, gapSize, gapUnit,
+     *               linecap, shadow, stacking, step
+     * @since        6.0.0
+     * @product      highcharts highstock
+     * @optionparent plotOptions.windbarb
+     */
     , {
         /**
          * Data grouping options for the wind barbs. In Highcharts, this
@@ -115,15 +115,15 @@ seriesType('windbarb', 'column'
          */
         lineWidth: 2,
         /**
-     * The id of another series in the chart that the wind barbs are projected
-     * on. When `null`, the wind symbols are drawn on the X axis, but offset up
-     * or down by the `yOffset` setting.
-     *
-     * @sample {highcharts|highstock} highcharts/plotoptions/windbarb-onseries
-     *         Projected on area series
-     *
-     * @type {string|null}
-     */
+         * The id of another series in the chart that the wind barbs are
+         * projected on. When `null`, the wind symbols are drawn on the X axis,
+         * but offset up or down by the `yOffset` setting.
+         *
+         * @sample {highcharts|highstock} highcharts/plotoptions/windbarb-onseries
+         *         Projected on area series
+         *
+         * @type {string|null}
+         */
         onSeries: null,
         states: {
             hover: {
@@ -131,32 +131,32 @@ seriesType('windbarb', 'column'
             }
         },
         tooltip: {
-        /**
-         * The default point format for the wind barb tooltip. Note the
-         * `point.beaufort` property that refers to the Beaufort wind scale. The
-         * names can be internationalized by modifying
-         * `Highcharts.seriesTypes.windbarb.prototype.beaufortNames`.
-         */
+            /**
+             * The default point format for the wind barb tooltip. Note the
+             * `point.beaufort` property that refers to the Beaufort wind scale.
+             * The names can be internationalized by modifying
+             * `Highcharts.seriesTypes.windbarb.prototype.beaufortNames`.
+             */
             pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.value}</b> ({point.beaufort})<br/>'
         },
         /**
-     * Pixel length of the stems.
-     */
+         * Pixel length of the stems.
+         */
         vectorLength: 20,
         /**
-     * Vertical offset from the cartesian position, in pixels. The default value
-     * makes sure the symbols don't overlap the X axis when `onSeries` is
-     * `null`, and that they don't overlap the linked series when `onSeries` is
-     * given.
-     */
+         * Vertical offset from the cartesian position, in pixels. The default
+         * value makes sure the symbols don't overlap the X axis when `onSeries`
+         * is `null`, and that they don't overlap the linked series when
+         * `onSeries` is given.
+         */
         yOffset: -20,
         /**
-     * Horizontal offset from the cartesian position, in pixels. When the chart
-     * is inverted, this option allows translation like
-     * [yOffset](#plotOptions.windbarb.yOffset) in non inverted charts.
-     *
-     * @since 6.1.0
-     */
+         * Horizontal offset from the cartesian position, in pixels. When the
+         * chart is inverted, this option allows translation like
+         * [yOffset](#plotOptions.windbarb.yOffset) in non inverted charts.
+         *
+         * @since 6.1.0
+         */
         xOffset: 0
     }, {
         pointArrayMap: ['value', 'direction'],

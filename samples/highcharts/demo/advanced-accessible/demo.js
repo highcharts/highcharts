@@ -1,5 +1,3 @@
-
-
 // Define custom series type for displaying low/med/high values using boxplot as a base
 Highcharts.seriesType('lowmedhigh', 'boxplot', {
     keys: ['low', 'median', 'high']
@@ -47,6 +45,9 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
 
 // Create chart
 var chart = Highcharts.chart('container', {
+    chart: {
+        type: 'lowmedhigh'
+    },
     accessibility: {
         keyboardNavigation: {
             skipNullPoints: true
@@ -56,10 +57,7 @@ var chart = Highcharts.chart('container', {
         },
         seriesDescriptionFormatter: function (series) {
             return series.name + ', series ' + (series.index + 1) + ' of ' + series.chart.series.length + ' with ' + series.points.length + ' data points.';
-        }
-    },
-    chart: {
-        type: 'lowmedhigh',
+        },
         typeDescription: 'Low, median, high. Each data point has a low, median and high value, depicted vertically as small ticks.', // Describe the chart type to screen reader users, since this is not a traditional boxplot chart
         description: 'Chart depicting fictional fruit consumption data, with the minimum, maximum and median values for each month of 2015. Most plums were eaten in spring, and none at all in July or August. Bananas and apples were both consumed in smaller numbers and steadily throughout the year.'
     },
@@ -68,7 +66,9 @@ var chart = Highcharts.chart('container', {
     },
     xAxis: [{
         crosshair: true,
-        description: 'Months of the year',
+        accessibility: {
+            description: 'Months of the year'
+        },
         categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     }],
     yAxis: {

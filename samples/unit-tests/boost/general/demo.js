@@ -28,24 +28,24 @@ QUnit.test(
     'Boost enabled false and boostThreshold conflict (#9052)',
     function (assert) {
         Highcharts.chart('container', {
-            "plotOptions": {
-                "series": {
-                    "boostThreshold": 1
+            plotOptions: {
+                series: {
+                    boostThreshold: 1
                 }
             },
-            "series": [{
-                "data": [1, 3, 2, 4]
+            series: [{
+                data: [1, 3, 2, 4]
             }],
-            "xAxis": {
-                "max": 10,
-                "min": -10
+            xAxis: {
+                max: 10,
+                min: -10
             },
-            "yAxis": {
-                "max": 10,
-                "min": -10
+            yAxis: {
+                max: 10,
+                min: -10
             },
-            "boost": {
-                "enabled": false
+            boost: {
+                enabled: false
             }
         });
 

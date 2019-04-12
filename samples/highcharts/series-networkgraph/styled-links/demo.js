@@ -96,4 +96,3 @@ Highcharts.chart('container', {
         ]
     }]
 });
-

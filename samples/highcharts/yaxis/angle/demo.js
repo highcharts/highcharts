@@ -1,4 +1,3 @@
-
 Highcharts.setOptions({
     colors: ['#5c95cc', '#70cd5d']
 });

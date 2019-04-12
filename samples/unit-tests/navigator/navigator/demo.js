@@ -2,23 +2,22 @@ QUnit.test(
     'General Navigator tests',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
-                legend: {
-                    enabled: true
-                },
-                yAxis: {
-                    labels: {
-                        align: 'left'
-                    }
-                },
-                navigator: {
-                    height: 100
-                },
-                series: [{
-                    data: [1, 2, 3],
-                    id: '1'
-                }]
-            }),
-            seriesIndexes = [];
+            legend: {
+                enabled: true
+            },
+            yAxis: {
+                labels: {
+                    align: 'left'
+                }
+            },
+            navigator: {
+                height: 100
+            },
+            series: [{
+                data: [1, 2, 3],
+                id: '1'
+            }]
+        });
 
         chart.series[0].hide();
 
@@ -41,57 +40,6 @@ QUnit.test(
             chart.series.length,
             0,
             'All series, including navSeries, removed without errors (#5581)'
-        );
-
-        chart = Highcharts.stockChart('container', {
-            xAxis: {
-                min: 1318607700000
-            },
-            series: [{
-                data: [
-                    [1318607640000, 420.32],
-                    [1318607700000, 420.58],
-                    [1318607760000, 421.07],
-                    [1318607820000, 421.46],
-                    [1318607880000, 421.69],
-                    [1318607940000, 421.94]
-                ]
-            }]
-        });
-
-        chart.series[0].addPoint([1318608000000, 422.03], false, true);
-        chart.series[0].addPoint([1318608060000, 421.23], false, true);
-        chart.series[0].addPoint([1318608120000, 421.97], true, true);
-
-        assert.strictEqual(
-            chart.navigator.xAxis.min,
-            1318607820000,
-            'xAxis.min should be omitted in navigator when ordinal is enabled (#9994)'
-        );
-
-        chart = Highcharts.stockChart('container', {
-            series: [{
-                data: [1, 2, 3]
-            }]
-        });
-
-        chart.addSeries({
-            data: [3, 2, 1],
-            showInNavigator: true
-        });
-
-        chart.navigator.baseSeries.forEach(function (base) {
-            seriesIndexes.push(base.index);
-        });
-
-        chart.navigator.series.forEach(function (series) {
-            seriesIndexes.push(series.index);
-        });
-
-        assert.deepEqual(
-            seriesIndexes,
-            [0, 1, 2, 3],
-            'After addSeries() navigator series have appropriate indexes (#10193)'
         );
     }
 );
@@ -152,6 +100,7 @@ QUnit.test(
             DOMType: 'mousemove'
         });
 
+        // No lolex should be needed for this
         setTimeout(function () {
             navigator.hasDragged = true;
             navigator.mouseUpHandler({
@@ -172,9 +121,7 @@ QUnit.test(
 QUnit.test(
     'Scrollbar without navigator (#5709).',
     function (assert) {
-        var done = assert.async();
-
-        $('#container').highcharts('StockChart', {
+        var chart = Highcharts.stockChart('container', {
             chart: {
                 zoomType: 'xy'
             },
@@ -185,19 +132,15 @@ QUnit.test(
                 enabled: true,
                 showFull: true
             }
-        }, function (chart) {
-            setTimeout(function () {
-                chart.addSeries({
-                    data: [1, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 1]
-                });
-                assert.strictEqual(
-                    chart.scroller.scrollbar.group.translateY >= 0,
-                    true,
-                    'Correct position for a scrollbar'
-                );
-                done();
-            }, 1);
         });
+        chart.addSeries({
+            data: [1, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 1]
+        });
+        assert.strictEqual(
+            chart.scroller.scrollbar.group.translateY >= 0,
+            true,
+            'Correct position for a scrollbar'
+        );
     }
 );
 
@@ -230,6 +173,7 @@ QUnit.test('Missing points using navigator (#5699)', function (assert) {
         DOMType: 'mousemove'
     });
 
+    // No lolex should be needed for this
     setTimeout(function () {
         navigator.hasDragged = true;
         navigator.mouseUpHandler({
@@ -463,26 +407,25 @@ QUnit.test('Empty scroller with Axis min set (#5172)', function (assert) {
 QUnit.test('Update navigator series on series update (#4923)', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
-            series: [{
-                animation: false,
-                data: [
-                    { x: 0, y: 0 },
-                    { x: 1, y: 1 },
-                    { x: 2, y: 2 },
-                    { x: 3, y: 3 },
-                    { x: 4, y: 4 },
-                    { x: 5, y: 5 },
-                    { x: 6, y: 6 },
-                    { x: 7, y: 7 },
-                    { x: 8, y: 8 },
-                    { x: 9, y: 9 }
-                ],
-                dataGrouping: {
-                    enabled: false
-                }
-            }]
-        }),
-        done = assert.async();
+        series: [{
+            animation: false,
+            data: [
+                { x: 0, y: 0 },
+                { x: 1, y: 1 },
+                { x: 2, y: 2 },
+                { x: 3, y: 3 },
+                { x: 4, y: 4 },
+                { x: 5, y: 5 },
+                { x: 6, y: 6 },
+                { x: 7, y: 7 },
+                { x: 8, y: 8 },
+                { x: 9, y: 9 }
+            ],
+            dataGrouping: {
+                enabled: false
+            }
+        }]
+    });
 
     var pathWidth = chart.series[1].graph.getBBox().width;
 
@@ -496,16 +439,12 @@ QUnit.test('Update navigator series on series update (#4923)', function (assert)
         'Path is more than 500px wide'
     );
 
-    setTimeout(function () {
-        chart.series[0].addPoint([10, 10]);
-        assert.strictEqual(
-            chart.series[1].graph.getBBox().width,
-            pathWidth,
-            'Path width is updated'
-        );
-        done();
-    }, 1);
-
+    chart.series[0].addPoint([10, 10]);
+    assert.strictEqual(
+        chart.series[1].graph.getBBox().width,
+        pathWidth,
+        'Path width is updated'
+    );
 });
 
 

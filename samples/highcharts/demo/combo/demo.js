@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     title: {
         text: 'Combination chart'
@@ -61,4 +60,3 @@ Highcharts.chart('container', {
         }
     }]
 });
-

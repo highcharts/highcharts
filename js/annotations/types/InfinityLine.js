@@ -142,7 +142,8 @@ InfinityLine.startEdgePoint = edgePoint(1, 0);
 H.extendAnnotation(
     InfinityLine,
     CrookedLine,
-    /** @lends Annotation.InfinityLine# */{
+    /** @lends Annotation.InfinityLine# */
+    {
         addShapes: function () {
             var typeOptions = this.options.typeOptions,
                 points = [
@@ -171,12 +172,11 @@ H.extendAnnotation(
 /**
  * An infinity line annotation.
  *
- * @extends annotations.crookedLine
  * @sample highcharts/annotations-advanced/infinity-line/
  *         Infinity Line
  *
- * @product highstock
- *
+ * @extends   annotations.crookedLine
+ * @product   highstock
  * @apioption annotations.infinityLine
  */
 

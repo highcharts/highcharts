@@ -7,28 +7,30 @@ const yaml = require('js-yaml');
 const hasJSONSources = {};
 
 /**
- * Get browserstack credentials from the properties file.
+ * Get browserstack credentials from the environment variables.
+ * e.g for Mac/Linux run the below with correct credentials or
+ * add to a env.file which you add by running `source env.file`
+ * in your terminal:
+ *  export BROWSERSTACK_USER="username"
+ *  export BROWSERSTACK_KEY="key"
  * @return {Object} The properties
  */
 function getProperties() {
     let properties = {};
+
     try {
-        let lines = fs.readFileSync(
-            './git-ignore-me.properties', 'utf8'
-        );
-        lines.split('\n').forEach(function (line) {
-            line = line.split('=');
-            if (line[0]) {
-                properties[line[0]] = line[1];
-            }
-        });
+        // add BROWSERSTACK_USER and BROWSERSTACK_KEY as envfile containing the
+        properties['browserstack.username'] = process.env.BROWSERSTACK_USER;
+        properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY;
 
         if (!properties['browserstack.username']) {
-            throw 'No username';
+            throw new Error();
         }
     } catch (e) {
-        throw 'BrowserStack credentials not given. Add username and ' +
-            'accesskey to the git-ignore-me.properties file';
+        throw new Error(
+            'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
+            'BROWSERSTACK_KEY environment variables.'
+        );
     }
     return properties;
 }
@@ -348,11 +350,9 @@ module.exports = function (config) {
                                     presets: [[
                                         '@babel/preset-env',
                                         {
-                                            loose: true,
                                             targets: {
                                                 ie: '8'
-                                            },
-                                            useBuiltIns: 'entry'
+                                            }
                                         }
                                     ]]
                                 })

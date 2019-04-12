@@ -1,4 +1,3 @@
-
 var chart = Highcharts.chart('chart1', {
 
     title: {

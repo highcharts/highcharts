@@ -1,4 +1,3 @@
-
 /**
  * Load new data depending on the selected min and max
  */

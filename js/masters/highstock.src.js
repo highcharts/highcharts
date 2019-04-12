@@ -1,5 +1,6 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @module highcharts/highstock
  *
  * (c) 2009-2018 Torstein Honsi
  *

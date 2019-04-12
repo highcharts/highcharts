@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
@@ -24,6 +24,7 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     isObject = H.isObject,
+    isArray = H.isArray,
     Legend = H.Legend,
     merge = H.merge,
     pick = H.pick,
@@ -61,20 +62,27 @@ TrackerMixin = H.TrackerMixin = {
                     pointer.isDirectTouch = true;
                     point.onMouseOver(e);
                 }
-            };
+            },
+            dataLabels;
 
         // Add reference to the point
         series.points.forEach(function (point) {
+            dataLabels = (
+                isArray(point.dataLabels) ?
+                    point.dataLabels :
+                    (point.dataLabel ? [point.dataLabel] : [])
+            );
+
             if (point.graphic) {
                 point.graphic.element.point = point;
             }
-            if (point.dataLabel) {
-                if (point.dataLabel.div) {
-                    point.dataLabel.div.point = point;
+            dataLabels.forEach(function (dataLabel) {
+                if (dataLabel.div) {
+                    dataLabel.div.point = point;
                 } else {
-                    point.dataLabel.element.point = point;
+                    dataLabel.element.point = point;
                 }
-            }
+            });
         });
 
         // Add the event listeners, we need to do this only once
@@ -229,10 +237,8 @@ TrackerMixin = H.TrackerMixin = {
 /* End TrackerMixin */
 
 
-/*
- * Add tracking event listener to the series group, so the point graphics
- * themselves act as trackers
- */
+// Add tracking event listener to the series group, so the point graphics
+// themselves act as trackers
 
 if (seriesTypes.column) {
     /**
@@ -277,13 +283,21 @@ extend(Legend.prototype, {
     setItemEvents: function (item, legendItem, useHTML) {
         var legend = this,
             boxWrapper = legend.chart.renderer.boxWrapper,
+            isPoint = item instanceof Point,
             activeClass = 'highcharts-legend-' +
-                (item instanceof Point ? 'point' : 'series') + '-active',
+                (isPoint ? 'point' : 'series') + '-active',
             styledMode = legend.chart.styledMode;
 
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
         (useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
+
+            legend.allItems.forEach(function (inactiveItem) {
+                if (item !== inactiveItem) {
+                    inactiveItem.setState('inactive', !isPoint);
+                }
+            });
+
             item.setState('hover');
 
             // A CSS class to dim or hide other than the hovered series.
@@ -306,6 +320,12 @@ extend(Legend.prototype, {
                         )
                     );
                 }
+
+                legend.allItems.forEach(function (inactiveItem) {
+                    if (item !== inactiveItem) {
+                        inactiveItem.setState('', !isPoint);
+                    }
+                });
 
                 // A CSS class to dim or hide other than the hovered series
                 boxWrapper.removeClass(activeClass);
@@ -381,10 +401,7 @@ extend(Legend.prototype, {
     }
 });
 
-/*
- * Extend the Chart object with interaction
- */
-
+// Extend the Chart object with interaction
 extend(Chart.prototype, /** @lends Chart.prototype */ {
 
     /**
@@ -430,6 +447,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 .align(btnOptions.position, false, alignTo);
         });
 
+        fireEvent(this, 'afterShowResetZoom');
     },
 
     /**
@@ -695,13 +713,23 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 // unselect all other points unless Ctrl or Cmd + click
                 if (!accumulate) {
                     chart.getSelectedPoints().forEach(function (loopPoint) {
+                        var loopSeries = loopPoint.series;
+
                         if (loopPoint.selected && loopPoint !== point) {
                             loopPoint.selected = loopPoint.options.selected =
                                 false;
-                            series.options.data[
-                                series.data.indexOf(loopPoint)
+                            loopSeries.options.data[
+                                loopSeries.data.indexOf(loopPoint)
                             ] = loopPoint.options;
-                            loopPoint.setState('');
+
+                            // Programatically selecting a point should restore
+                            // normal state, but when click happened on other
+                            // point, set inactive state to match other points
+                            loopPoint.setState(
+                                chart.hoverPoints &&
+                                    loopSeries.options.inactiveOtherPoints ?
+                                    'inactive' : ''
+                            );
                             loopPoint.firePointEvent('unselect');
                         }
                     });
@@ -745,9 +773,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             chart = point.series.chart;
 
         point.firePointEvent('mouseOut');
-        (chart.hoverPoints || []).forEach(function (p) {
-            p.setState();
-        });
+
+        if (!point.series.options.inactiveOtherPoints) {
+            (chart.hoverPoints || []).forEach(function (p) {
+                p.setState();
+            });
+        }
+
         chart.hoverPoints = chart.hoverPoint = null;
     },
 
@@ -780,9 +812,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @function Highcharts.Point#setState
      *
      * @param {string} [state]
-     *        The new state, can be one of `''` (an empty string), `hover` or
-     *        `select`.
-     *
+     *        The new state, can be one of `''` (an empty string), `hover`,
+     *        `select` or `inactive`.
      * @param {boolean} [move]
      *        State for animation.
      *
@@ -793,6 +824,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             plotX = Math.floor(point.plotX), // #4586
             plotY = point.plotY,
             series = point.series,
+            previousState = point.state,
             stateOptions = series.options.states[state || 'normal'] || {},
             markerOptions = defaultPlotOptions[series.type].marker &&
                 series.options.marker,
@@ -809,6 +841,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             halo = series.halo,
             haloOptions,
             markerAttribs,
+            pointAttribs,
+            pointAttribsAnimation,
             hasMarkers = markerOptions && series.markerAttribs,
             newSymbol;
 
@@ -842,6 +876,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             return;
         }
 
+        point.state = state;
+
         if (hasMarkers) {
             markerAttribs = series.markerAttribs(point, state);
         }
@@ -849,20 +885,47 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         // Apply hover styles to the existing point
         if (point.graphic) {
 
-            if (point.state) {
-                point.graphic.removeClass('highcharts-point-' + point.state);
+            if (previousState) {
+                point.graphic.removeClass('highcharts-point-' + previousState);
             }
             if (state) {
                 point.graphic.addClass('highcharts-point-' + state);
             }
 
             if (!chart.styledMode) {
+                pointAttribs = series.pointAttribs(point, state);
+                pointAttribsAnimation = pick(
+                    chart.options.chart.animation,
+                    stateOptions.animation
+                );
+
+                // Some inactive points (e.g. slices in pie) should apply
+                // oppacity also for it's labels
+                if (series.options.inactiveOtherPoints) {
+                    (point.dataLabels || []).forEach(function (label) {
+                        if (label) {
+                            label.animate(
+                                {
+                                    opacity: pointAttribs.opacity
+                                },
+                                pointAttribsAnimation
+                            );
+                        }
+                    });
+
+                    if (point.connector) {
+                        point.connector.animate(
+                            {
+                                opacity: pointAttribs.opacity
+                            },
+                            pointAttribsAnimation
+                        );
+                    }
+                }
+
                 point.graphic.animate(
-                    series.pointAttribs(point, state),
-                    pick(
-                        chart.options.chart.animation,
-                        stateOptions.animation
-                    )
+                    pointAttribs,
+                    pointAttribsAnimation
                 );
             }
 
@@ -971,8 +1034,6 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             );
         }
 
-        point.state = state;
-
         fireEvent(point, 'afterSetState');
     },
 
@@ -1077,8 +1138,11 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
             tooltip.hide();
         }
 
-        // set normal state
-        series.setState();
+        // Reset all inactive states
+        chart.series.forEach(function (s) {
+            s.setState('', true);
+        });
+
     },
 
     /**
@@ -1090,13 +1154,26 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *
      * @param {string} [state]
      *        Can be either `hover` or undefined to set to normal state.
+     * @param {boolean} [inherit]
+     *        Determines if state should be inherited by points too.
      */
-    setState: function (state) {
+    setState: function (state, inherit) {
         var series = this,
             options = series.options,
             graph = series.graph,
+            inactiveOtherPoints = options.inactiveOtherPoints,
             stateOptions = options.states,
             lineWidth = options.lineWidth,
+            opacity = options.opacity,
+            // By default a quick animation to hover/inactive,
+            // slower to un-hover
+            stateAnimation = pick(
+                (
+                    stateOptions[state || 'normal'] &&
+                    stateOptions[state || 'normal'].animation
+                ),
+                series.chart.options.chart.animation
+            ),
             attribs,
             i = 0;
 
@@ -1138,6 +1215,10 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         stateOptions[state].lineWidth ||
                         lineWidth + (stateOptions[state].lineWidthPlus || 0)
                     ); // #4035
+                    opacity = pick(
+                        stateOptions[state].opacity,
+                        opacity
+                    );
                 }
 
                 if (graph && !graph.dashstyle) {
@@ -1145,24 +1226,49 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
                         'stroke-width': lineWidth
                     };
 
-                    // Animate the graph stroke-width. By default a quick
-                    // animation to hover, slower to un-hover.
+                    // Animate the graph stroke-width.
                     graph.animate(
                         attribs,
-                        pick(
-                            (
-                                stateOptions[state || 'normal'] &&
-                                stateOptions[state || 'normal'].animation
-                            ),
-                            series.chart.options.chart.animation
-                        )
+                        stateAnimation
                     );
                     while (series['zone-graph-' + i]) {
                         series['zone-graph-' + i].attr(attribs);
                         i = i + 1;
                     }
                 }
+
+                // For some types (pie, networkgraph, sankey) opacity is
+                // resolved on a point level
+                if (!inactiveOtherPoints) {
+                    [
+                        series.group,
+                        series.markerGroup,
+                        series.dataLabelsGroup,
+                        series.labelBySeries
+                    ].forEach(
+                        function (group) {
+                            if (group) {
+                                group.animate(
+                                    {
+                                        opacity: opacity
+                                    },
+                                    stateAnimation
+                                );
+                            }
+                        }
+                    );
+                }
             }
+        }
+
+        // Don't loop over points on a series that doesn't apply inactive state
+        // to siblings markers (e.g. line, column)
+        if (inherit && inactiveOtherPoints && series.points) {
+            series.points.forEach(function (point) {
+                if (point.setState) {
+                    point.setState(state);
+                }
+            });
         }
     },
 

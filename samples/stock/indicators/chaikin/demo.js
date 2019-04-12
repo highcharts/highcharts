@@ -1,6 +1,6 @@
 $.getJSON('https://www.highcharts.com/samples/data/aapl-ohlcv.json', function (data) {
 
-  // split the data set into ohlc and volume
+    // split the data set into ohlc and volume
     var ohlc = [],
         volume = [],
         dataLength = data.length,

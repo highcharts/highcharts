@@ -53,13 +53,15 @@ Highcharts.chart('container', {
         networkgraph: {
             keys: ['from', 'to'],
             layoutAlgorithm: {
-                enableSimulation: true
+                enableSimulation: true,
+                friction: -0.9
             }
         }
     },
     series: [{
         dataLabels: {
-            enabled: true
+            enabled: true,
+            linkFormat: ''
         },
         data: [
             ['Proto Indo-European', 'Balto-Slavic'],

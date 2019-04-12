@@ -1,5 +1,3 @@
-
-
 Highcharts.chart('container', {
     chart: {
         styledMode: true
@@ -99,4 +97,3 @@ Highcharts.chart('container', {
         pointFormat: '{point.x} cm, {point.y} kg'
     }
 });
-

@@ -216,6 +216,8 @@ H.StockChart = H.stockChart = function (a, b, c) {
                  * @default {highcharts} true
                  * @default {highstock} false
                  * @apioption yAxis.showLastLabel
+                 *
+                 * @private
                  */
                 showLastLabel: !!(
                     // #6104, show last label by default for category axes

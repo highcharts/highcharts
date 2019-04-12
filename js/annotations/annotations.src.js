@@ -1,8 +1,10 @@
-/**
- * (c) 2009-2017 Highsoft, Black Label
+/* *
  *
- * License: www.highcharts.com/license
- */
+ *  (c) 2009-2017 Highsoft, Black Label
+ *
+ *  License: www.highcharts.com/license
+ *
+ * */
 'use strict';
 import H from '../parts/Globals.js';
 import '../parts/Utilities.js';
@@ -59,7 +61,7 @@ var merge = H.merge,
  * @mixes Annotation.eventEmitterMixin
  *
  * @param {Highcharts.Chart} chart a chart instance
- * @param {AnnotationOptions} options the options object
+ * @param {Highcharts.AnnotationsOptions} options the options object
  */
 var Annotation = H.Annotation = function (chart, options) {
     var labelsAndShapes;
@@ -97,14 +99,14 @@ var Annotation = H.Annotation = function (chart, options) {
     /**
      * The array of shapes which belong to the annotation.
      *
-     * @type {Array<Annotation.Shape>}
+     * @type {Array<Highcharts.Annotation.Shape>}
      */
     this.shapes = [];
 
     /**
      * The options for the annotations.
      *
-     * @type {AnnotationOptions}
+     * @type {Highcharts.AnnotationsOptions}
      */
     // this.options = merge(this.defaultOptions, userOptions);
     this.options = options;
@@ -112,7 +114,7 @@ var Annotation = H.Annotation = function (chart, options) {
     /**
      * The user options for the annotations.
      *
-     * @type {AnnotationOptions}
+     * @type {Highcharts.AnnotationsOptions}
      */
     this.userOptions = merge(true, {}, options);
 
@@ -348,10 +350,10 @@ merge(
                  * outside the plot area. The justify option aligns the label
                  * inside the plot area.
                  *
-                 * @validvalue ["none", "justify"]
+                 * @validvalue ["allow", "justify"]
                  * @sample highcharts/annotations/label-crop-overflow/
                  *         Crop or justify labels
-                 **/
+                 */
                 overflow: 'justify',
 
                 /**
@@ -704,7 +706,7 @@ merge(
          * Initialize the annotation.
          *
          * @param {Highcharts.Chart} - the chart
-         * @param {AnnotationOptions} - the user options for the annotation
+         * @param {Highcharts.AnnotationsOptions} - the user options for the annotation
          */
         init: function () {
             this.linkPoints();
@@ -732,19 +734,17 @@ merge(
         },
 
         addShapes: function () {
-            (this.options.shapes || []).forEach(function (shapeOptions, i) {
-                var shape = this.initShape(shapeOptions, i);
-
-                this.options.shapes[i] = shape.options;
-            }, this);
+            (this.options.shapes || []).forEach(
+                this.initShape,
+                this
+            );
         },
 
         addLabels: function () {
-            (this.options.labels || []).forEach(function (labelOptions, i) {
-                var label = this.initLabel(labelOptions, i);
-
-                this.options.labels[i] = label.options;
-            }, this);
+            (this.options.labels || []).forEach(
+                this.initLabel,
+                this
+            );
         },
 
         addClipPaths: function () {
@@ -817,7 +817,7 @@ merge(
         /**
          * Set an annotation options.
          *
-         * @param {AnnotationOptions} - user options for an annotation
+         * @param {Highcharts.AnnotationsOptions} - user options for an annotation
          */
         setOptions: function (userOptions) {
             this.options = merge(this.defaultOptions, userOptions);
@@ -994,7 +994,7 @@ merge(
          * Initialisation of a single shape
          *
          * @param {Object} shapeOptions - a confg object for a single shape
-         **/
+         */
         initShape: function (shapeOptions, index) {
             var options = merge(
                     this.options.shapeOptions,
@@ -1106,7 +1106,7 @@ merge(
             item.destroy();
         },
 
-        /*
+        /**
          * @private
          */
         renderItem: function (item) {
@@ -1123,7 +1123,7 @@ merge(
  * An object uses for mapping between a shape type and a constructor.
  * To add a new shape type extend this object with type name as a key
  * and a constructor as its value.
- **/
+ */
 Annotation.shapesMap = {
     'rect': ControllableRect,
     'circle': ControllableCircle,
@@ -1184,7 +1184,7 @@ H.extend(H.Chart.prototype, /** @lends Highcharts.Chart# */ {
     /**
      * Add an annotation to the chart after render time.
      *
-     * @param  {AnnotationOptions} options
+     * @param  {Highcharts.AnnotationsOptions} options
      *         The annotation options for the new, detailed annotation.
      * @param {boolean} [redraw]
      *

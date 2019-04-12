@@ -1,4 +1,3 @@
-
 Highcharts.chart('container', {
     chart: {
         type: 'scatter'
@@ -27,7 +26,7 @@ Highcharts.chart('container', {
                             instrument: 'triangleMajor',
                             instrumentMapping: {
                                 volume: function (point) {
-                                    return point.color === 'red' ? 0.2 : 0.8;
+                                    return point.color === 'red' ? 0.8 : 0.2;
                                 },
                                 duration: 200,
                                 pan: 'x',

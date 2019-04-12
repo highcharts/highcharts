@@ -324,18 +324,24 @@ var charts = H.charts,
  */
 H.error = function (code, stop, chart) {
     var msg = H.isNumber(code) ?
-        'Highcharts error #' + code + ': www.highcharts.com/errors/' + code :
-        code;
+            'Highcharts error #' + code + ': www.highcharts.com/errors/' +
+            code : code,
+        defaultHandler = function () {
+            if (stop) {
+                throw new Error(msg);
+            }
+            // else ...
+            if (win.console) {
+                console.log(msg); // eslint-disable-line no-console
+            }
+        };
 
     if (chart) {
-        H.fireEvent(chart, 'displayError', { code: code });
-    }
-    if (stop) {
-        throw new Error(msg);
-    }
-    // else ...
-    if (win.console) {
-        console.log(msg); // eslint-disable-line no-console
+        H.fireEvent(
+            chart, 'displayError', { code: code, message: msg }, defaultHandler
+        );
+    } else {
+        defaultHandler();
     }
 };
 

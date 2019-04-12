@@ -272,7 +272,11 @@ seriesType(
             fontWeight: 'bold'
         }
 
-    }, /** @lends seriesTypes.flags.prototype */ {
+    },
+    /**
+     * @lends seriesTypes.flags.prototype
+     */
+    {
         sorted: false,
         noSharedTooltip: true,
         allowDG: false,
@@ -603,7 +607,11 @@ seriesType(
          */
         invertGroups: noop
 
-    }, /** @lends seriesTypes.column.prototype.pointClass.prototype */ {
+    },
+    /**
+     * @lends seriesTypes.column.prototype.pointClass.prototype
+     */
+    {
         isValid: function () {
             // #9233 - Prevent from treating flags as null points (even if
             // they have no y values defined).
@@ -658,7 +666,7 @@ function createPinSymbol(shape) {
             labelTopOrBottomY = (y > anchorY) ? y : y + h;
             path.push(
                 'M',
-                shape === 'circle' ? path[1] - path[4] : path[1] + path[4] / 2,
+                shape === 'circle' ? x + w / 2 : path[1] + path[4] / 2,
                 labelTopOrBottomY,
                 'L',
                 anchorX,
