@@ -27,7 +27,7 @@
   "scripts": {
     "test": "gulp test --speak",
     "testall": "gulp test --speak --browsers all",
-    "ci-test": "karma start test/karma-conf.js --single-run --browsers Mac.Firefox",
+    "ci-test": "karma start ./test/karma-conf.js --single-run --browsers Mac.Firefox",
     "jsdoc": "gulp jsdoc --watch",
     "dts": "gulp dts",
     "dtslint": "gulp dtslint"
