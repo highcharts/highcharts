@@ -65,6 +65,7 @@ jobs:
       - << : *restore_repo_cache
       - << : *restore_dependency_cache
       - run: npm install
+      - run: npm install --prefix /home/circleci/repo/highcharts gulp-cli
 
       - save_cache:
           paths:
