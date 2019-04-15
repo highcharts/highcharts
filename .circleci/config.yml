@@ -18,7 +18,6 @@ restore_dependency_cache: &restore_dependency_cache
 
 #######################################
 
-
 executors:
   node_lts_browsers:
     docker:
@@ -121,14 +120,20 @@ jobs:
           name: Clone Github highcharts-declarations-generator repository
           command: git clone -b master --single-branch git@github.com:highcharts/highcharts-declarations-generator.git --depth=1 /home/circleci/repo/highcharts-declarations-generator
       - run:
-          name: Generate packages and docs
-          command: gulp dist
+          name: Generate packages
+          command: npm run build
+      - run:
+          name: Generate changelog since last tag
+          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
+      - run: echo -e "Push changelog to highcharts repo not yet implemented.."
       - store_artifacts:
           path: /home/circleci/repo/highcharts/build
+      - store_artifacts:
+          path: /home/circleci/repo/highcharts/code
       - run:
           name: Install s3cmd
           command: sudo apt-get install -y -qq s3cmd
-      - run: echo -e "Upload via s3cmd not yet implemented."
+      - run: echo -e "Upload via s3cmd not yet implemented.."
 
 
 workflows:
