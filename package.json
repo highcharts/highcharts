@@ -28,6 +28,8 @@
     "test": "gulp test --speak",
     "testall": "gulp test --speak --browsers all",
     "ci-test": "gulp scripts && karma start test/karma-conf.js --single-run --browsers Mac.Firefox",
+    "prebuild": "rimraf build/ code/",
+    "build": "gulp dist",
     "jsdoc": "gulp jsdoc --watch",
     "dts": "gulp dts",
     "dtslint": "gulp dtslint"
@@ -92,6 +94,7 @@
     "replace-string": "1.1.0",
     "request": "^2.88.0",
     "requirejs": "^2.3.6",
+    "rimraf": "^2.6.3",
     "safe-regex": "^2.0.2",
     "semver": "^5.7.0",
     "semver-sort": "0.0.4",
