@@ -180,11 +180,11 @@ module.exports = function (config) {
     try {
         console.log('Compiling test tools...');
         ChildProcess.execSync(
-            'cd "' + process.cwd() + '" && npx tsc -b test'
+            'cd "' + process.cwd() + '" && npx tsc -p test'
         );
         console.log('Compiling samples...');
         ChildProcess.execSync(
-            'cd "' + process.cwd() + '" && npx tsc -b samples'
+            'cd "' + process.cwd() + '" && npx tsc -p samples'
         );
     } catch (catchedError) {
         console.error(catchedError);
