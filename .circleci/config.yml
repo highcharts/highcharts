@@ -44,10 +44,10 @@ commands:
       - run:
           name: Fail if not master branch
           command: |
-            if [ -n "${CIRCLE_BRANCH}" = "master" ]; then
+            if [ "${CIRCLE_BRANCH}" != "feature/circleci-integration" ]; then
               echo "Not master branch, aborting.."; exit 1;
             else
-              echo "Proceeding from master..."
+              echo "Proceeding from branch ${CIRCLE_BRANCH}..."
             fi
 
 jobs:
@@ -117,7 +117,7 @@ jobs:
           command: echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
       - run:
           name: Clone Github highcharts-declarations-generator repository
-          command: git clone -b master --single-branch master --depth=1 /home/circleci/repo/highcharts-declarations-generator
+          command: git clone -b master --single-branch git@github.com:highcharts/highcharts-declarations-generator.git --depth=1 /home/circleci/repo/highcharts-declarations-generator
       - run:
           name: Generate packages and docs
           command: gulp dist
@@ -125,7 +125,7 @@ jobs:
           path: /home/circleci/repo/highcharts/build
       - run:
           name: Install s3cmd
-          command: sudo apt-get install s3cmd
+          command: sudo apt-get install -y -qq s3cmd
       - run: echo -e "Upload via s3cmd not yet implemented."
 
 
