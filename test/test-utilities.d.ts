@@ -1,3 +1,11 @@
+/*!*
+ *
+ *  Copyright (c) Highsoft AS. All rights reserved.
+ *
+ *!*/
+/**
+ * Useful functions for test purposes.
+ */
 declare class TestUtilities {
     private static readonly timeString;
     /**
@@ -5,7 +13,7 @@ declare class TestUtilities {
      * `Chrome`, `Edge`, `Firefox`, `MSIE`, `Netscape`, `Opera`, `PhantomJS`,
      * `Safari`, and an empty string for unknown browsers.
      */
-    private static readonly browser;
+    static readonly browser: string;
     /**
      * Indiciates, if system time runs in CET timezone.
      */

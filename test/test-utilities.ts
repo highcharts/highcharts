@@ -1,3 +1,12 @@
+/*!*
+ *
+ *  Copyright (c) Highsoft AS. All rights reserved.
+ *
+ *!*/
+
+/**
+ * Useful functions for test purposes.
+ */
 class TestUtilities {
 
     /* *
@@ -13,7 +22,7 @@ class TestUtilities {
      * `Chrome`, `Edge`, `Firefox`, `MSIE`, `Netscape`, `Opera`, `PhantomJS`,
      * `Safari`, and an empty string for unknown browsers.
      */
-    private static readonly browser: string = (function () {
+    public static readonly browser: string = (function () {
         var userAgent = window.navigator.userAgent;
         if ((new RegExp('MSIE|Trident', 'i')).test(userAgent) &&
             !(new RegExp('Opera', 'i')).test(userAgent)

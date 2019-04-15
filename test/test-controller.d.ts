@@ -1,3 +1,8 @@
+/*!*
+ *
+ *  Copyright (c) Highsoft AS. All rights reserved.
+ *
+ *!*/
 declare type HighchartsElement = (Highcharts.HTMLDOMElement | Highcharts.SVGDOMElement);
 /**
  * Contains x and y position relative to the chart.

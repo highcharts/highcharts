@@ -1,8 +1,22 @@
+/*!*
+ *
+ *  Copyright (c) Highsoft AS. All rights reserved.
+ *
+ *!*/
+
 /* *
  *
  *  Types
  *
  * */
+
+/**
+ * Constructor for a test chart
+ */
+type TestChartConstructor = (
+    container: (string|Highcharts.HTMLDOMElement),
+    options: Highcharts.Options
+) => Highcharts.Chart;
 
 /**
  * Callback for one test
@@ -12,14 +26,20 @@ type TestTemplateCallback = (testTemplate: TestTemplate) => void;
 /**
  * Initializer for each test
  */
-type TestTemplateInitializer =
-    (this: Highcharts.Chart, chartOptions: Highcharts.Options) => void;
+type TestTemplateInitializer =(
+    this: Highcharts.Chart,
+    chartOptions: Highcharts.Options
+) => void;
 
 /* *
  *
  *  Interfaces
  *
  * */
+
+interface TestChart extends Highcharts.Chart {
+    template?: string;
+}
 
 interface TestTemplateCase {
     chartOptions: Highcharts.Options;
@@ -28,7 +48,7 @@ interface TestTemplateCase {
 
 interface TestTemplateRegistry {
     name: string;
-    chartConstructor: Function;
+    chartConstructor: TestChartConstructor;
     chartOptions: Highcharts.Options;
     testInitializer: TestTemplateInitializer;
 }
@@ -93,24 +113,13 @@ class TestTemplate {
      *
      * @param testInitializer
      *        The initializer function for a test case. (optional)
-     *
-     * @return {void}
      */
     public static register = function (
         name: string,
-        chartConstructor: Function,
+        chartConstructor: TestChartConstructor,
         chartOptions: Highcharts.Options,
-        testInitializer?: Function
+        testInitializer: TestTemplateInitializer = undefined
     ) {
-
-        if (typeof name !== 'string' ||
-            typeof chartConstructor !== 'function' ||
-            typeof chartOptions !== 'object' ||
-            (typeof testInitializer !== 'undefined' &&
-            typeof testInitializer !== 'function')
-        ) {
-            throw new Error('Arguments are invalid');
-        }
 
         if (TestTemplate.templates[name]) {
             throw new Error('Chart template already registered');
@@ -121,7 +130,7 @@ class TestTemplate {
             chartConstructor: chartConstructor,
             chartOptions: chartOptions,
             testInitializer: testInitializer
-        } as TestTemplateRegistry;
+        };
     }
 
     /**
@@ -136,29 +145,18 @@ class TestTemplate {
      * @param testCallback
      *        The callback with the prepared chart template as the first
      *        argument.
-     *
-     * @return {void}
      */
     public static test (
         name: string,
-        chartOptions: Highcharts.Options,
-        testCallback: TestTemplateCallback
+        chartOptions: Highcharts.Options = {},
+        testCallback: TestTemplateCallback = undefined
     ) {
-
-        if (typeof name !== 'string' ||
-            typeof chartOptions !== 'object' ||
-            typeof testCallback !== 'function'
-        ) {
-            throw new Error('Arguments are invalid');
-        }
 
         let template = TestTemplate.templates[name];
 
         if (!template) {
             throw new Error('Template "' + name + '" is not registered');
         }
-
-        chartOptions = (chartOptions || {});
 
         if (!(template instanceof TestTemplate)) {
             TestTemplate.templates[name] = template = new TestTemplate(
@@ -189,9 +187,7 @@ class TestTemplate {
             return source;
         }
 
-        if (source instanceof Array) {
-            return JSON.parse(JSON.stringify(source));
-        }
+        // @todo handle arrays (peek into karma-setup how it is handled there)
 
         var copy = {} as any;
 
@@ -236,11 +232,11 @@ class TestTemplate {
 
             removeEvent();
 
-            var undoOption;
-            while (typeof (undoOption = undoStack.pop()) !== 'undefined') {
+            let undoOption;
+
+            while (!!(undoOption = undoStack.pop())) {
                 chart.update(undoOption, false, true, false);
             }
-
         };
     }
 
@@ -268,33 +264,32 @@ class TestTemplate {
      */
     constructor (
         name: string,
-        chartConstructor: Function,
+        chartConstructor: TestChartConstructor,
         chartOptions: Highcharts.Options,
         testInitializer?: TestTemplateInitializer
     ) {
 
-        this.name = name;
-        this.ready = true;
-        this.testCases = [];
-        this.testInitializer = testInitializer;
+        if (!(this instanceof TestTemplate)) {
+            return new TestTemplate(
+                name, chartConstructor, chartOptions, testInitializer
+            );
+        }
 
         this.chart = chartConstructor(
             TestTemplate.createContainer(), chartOptions
         );
-        (this.chart as any).template = this.name;
+        this.chart.template = name;
+        this.name = name;
+        this.ready = true;
+        this.testCases = [];
+        this.testInitializer = testInitializer;
     }
-
 
     /* *
      *
      *  Properties
      *
      * */
-
-    /**
-     * The chart template registry
-     */
-    private templates = {};
 
     /**
      * The name of the chart template
@@ -304,7 +299,7 @@ class TestTemplate {
     /**
      * The chart instance of the chart template
      */
-    public chart: Highcharts.Chart;
+    public chart: TestChart;
 
     /**
      * The state of the chart template
@@ -338,13 +333,12 @@ class TestTemplate {
      *        The callback to test the chart
      */
     public test (
-        chartOptions: Highcharts.Options, testCallback: TestTemplateCallback
+        chartOptions: Highcharts.Options = {},
+        testCallback: TestTemplateCallback = undefined
     ) {
 
-        chartOptions = (chartOptions || {});
-
-        var chart = this.chart,
-            testInitializer = this.testInitializer;
+        const chart = this.chart;
+        const testInitializer = this.testInitializer;
 
         this.testCases.push({
             chartOptions: chartOptions,
@@ -375,22 +369,20 @@ class TestTemplate {
                     chart.update(testCase.chartOptions, true, true, false);
                     chart.container.style.zIndex = '9999';
                     testCase.testCallback(this);
-
-                } finally {
+                }
+                finally {
 
                     if (typeof undoUpdates === 'function') {
                         undoUpdates();
                     }
 
                     chart.container.style.zIndex = '';
-
                 }
             }
-
-        } finally {
+        }
+        finally {
 
             this.ready = true;
-
         }
     }
 }

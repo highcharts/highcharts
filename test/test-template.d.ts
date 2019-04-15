@@ -1,3 +1,12 @@
+/*!*
+ *
+ *  Copyright (c) Highsoft AS. All rights reserved.
+ *
+ *!*/
+/**
+ * Constructor for a test chart
+ */
+declare type TestChartConstructor = (container: (string | Highcharts.HTMLDOMElement), options: Highcharts.Options) => Highcharts.Chart;
 /**
  * Callback for one test
  */
@@ -6,13 +15,16 @@ declare type TestTemplateCallback = (testTemplate: TestTemplate) => void;
  * Initializer for each test
  */
 declare type TestTemplateInitializer = (this: Highcharts.Chart, chartOptions: Highcharts.Options) => void;
+interface TestChart extends Highcharts.Chart {
+    template?: string;
+}
 interface TestTemplateCase {
     chartOptions: Highcharts.Options;
     testCallback: TestTemplateCallback;
 }
 interface TestTemplateRegistry {
     name: string;
-    chartConstructor: Function;
+    chartConstructor: TestChartConstructor;
     chartOptions: Highcharts.Options;
     testInitializer: TestTemplateInitializer;
 }
@@ -43,10 +55,8 @@ declare class TestTemplate {
      *
      * @param testInitializer
      *        The initializer function for a test case. (optional)
-     *
-     * @return {void}
      */
-    static register: (name: string, chartConstructor: Function, chartOptions: Highcharts.Options, testInitializer?: Function) => void;
+    static register: (name: string, chartConstructor: TestChartConstructor, chartOptions: Highcharts.Options, testInitializer?: TestTemplateInitializer) => void;
     /**
      * Prepares a chart template for a test. This function works asynchronously.
      *
@@ -59,10 +69,8 @@ declare class TestTemplate {
      * @param testCallback
      *        The callback with the prepared chart template as the first
      *        argument.
-     *
-     * @return {void}
      */
-    static test(name: string, chartOptions: Highcharts.Options, testCallback: TestTemplateCallback): void;
+    static test(name: string, chartOptions?: Highcharts.Options, testCallback?: TestTemplateCallback): void;
     /**
      * Creates a deep copy of entries and properties.
      *
@@ -97,11 +105,7 @@ declare class TestTemplate {
      * @param testInitializer
      *        The initializer function for a test case. (optional)
      */
-    constructor(name: string, chartConstructor: Function, chartOptions: Highcharts.Options, testInitializer?: TestTemplateInitializer);
-    /**
-     * The chart template registry
-     */
-    private templates;
+    constructor(name: string, chartConstructor: TestChartConstructor, chartOptions: Highcharts.Options, testInitializer?: TestTemplateInitializer);
     /**
      * The name of the chart template
      */
@@ -109,7 +113,7 @@ declare class TestTemplate {
     /**
      * The chart instance of the chart template
      */
-    chart: Highcharts.Chart;
+    chart: TestChart;
     /**
      * The state of the chart template
      */
@@ -132,5 +136,5 @@ declare class TestTemplate {
      * @param testCallback
      *        The callback to test the chart
      */
-    test(chartOptions: Highcharts.Options, testCallback: TestTemplateCallback): void;
+    test(chartOptions?: Highcharts.Options, testCallback?: TestTemplateCallback): void;
 }
