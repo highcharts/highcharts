@@ -108,6 +108,8 @@ jobs:
     <<: *defaults
     steps:
       - is_master_branch
+      - <<: *restore_repo_cache
+      - <<: *restore_dependency_cache
       # Checkout highcharts-declarations-generator
       - add_ssh_keys:
           fingerprints:
