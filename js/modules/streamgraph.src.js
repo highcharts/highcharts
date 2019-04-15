@@ -23,17 +23,17 @@ var seriesType = H.seriesType;
 seriesType('streamgraph', 'areaspline'
 
     /**
- * A streamgraph is a type of stacked area graph which is displaced around a
- * central axis, resulting in a flowing, organic shape.
- *
- * @sample {highcharts|highstock} highcharts/demo/streamgraph/
- *         Streamgraph
- *
- * @extends      plotOptions.areaspline
- * @since        6.0.0
- * @product      highcharts highstock
- * @optionparent plotOptions.streamgraph
- */
+     * A streamgraph is a type of stacked area graph which is displaced around a
+     * central axis, resulting in a flowing, organic shape.
+     *
+     * @sample {highcharts|highstock} highcharts/demo/streamgraph/
+     *         Streamgraph
+     *
+     * @extends      plotOptions.areaspline
+     * @since        6.0.0
+     * @product      highcharts highstock
+     * @optionparent plotOptions.streamgraph
+     */
     , {
         fillOpacity: 1,
         lineWidth: 0,

@@ -1007,12 +1007,14 @@ var vennSeries = {
 
         // Iterate all points and calculate and draw their graphics.
         points.forEach(function (point) {
-            var attribs,
+            var attribs = {
+                    zIndex: isArray(point.sets) ? point.sets.length : 0
+                },
                 shapeArgs = point.shapeArgs;
 
             // Add point attribs
             if (!chart.styledMode) {
-                attribs = series.pointAttribs(point, point.state);
+                extend(attribs, series.pointAttribs(point, point.state));
             }
             // Draw the point graphic.
             point.draw({

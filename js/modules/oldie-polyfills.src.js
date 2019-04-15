@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2010-2019 Torstein Honsi
  *
  * Simple polyfills for array functions in old IE browsers (6, 7 and 8) in

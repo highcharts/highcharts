@@ -138,8 +138,8 @@
  * @product highcharts
  *//**
  * The distance of the data label from the pie's edge. Negative numbers put the
- * data label on top of the pie slices. Connectors are only shown for data
- * labels outside the pie.
+ * data label on top of the pie slices. Can also be defined as a percentage of
+ * pie's radius. Connectors are only shown for data labels outside the pie.
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-distance/|Highcharts-Demo:}
  *      Data labels on top of the pie
@@ -739,21 +739,6 @@ seriesType(
 
                 point = points[i];
 
-                // Used for distance calculation for specific point.
-                point.labelDistance = pick(
-                    (
-                        point.options.dataLabels &&
-                        point.options.dataLabels.distance
-                    ),
-                    labelDistance
-                );
-
-                // Saved for later dataLabels distance calculation.
-                series.maxLabelDistance = Math.max(
-                    series.maxLabelDistance || 0,
-                    point.labelDistance
-                );
-
                 // set start and end angle
                 start = startAngleRad + (cumulative * circ);
                 if (!ignoreHiddenPoint || point.visible) {
@@ -771,6 +756,26 @@ seriesType(
                     start: Math.round(start * precision) / precision,
                     end: Math.round(end * precision) / precision
                 };
+
+                // Used for distance calculation for specific point.
+                point.labelDistance = pick(
+                    (
+                        point.options.dataLabels &&
+                        point.options.dataLabels.distance
+                    ),
+                    labelDistance
+                );
+
+                // Compute point.labelDistance if it's defined as percentage
+                // of slice radius (#8854)
+                point.labelDistance =
+                  H.relativeLength(point.labelDistance, point.shapeArgs.r);
+
+                // Saved for later dataLabels distance calculation.
+                series.maxLabelDistance = Math.max(
+                    series.maxLabelDistance || 0,
+                    point.labelDistance
+                );
 
                 // The angle must stay within -90 and 270 (#2645)
                 angle = (end + start) / 2;

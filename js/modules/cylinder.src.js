@@ -55,7 +55,9 @@ seriesType(
      * @optionparent plotOptions.cylinder
      */
     {},
-    {}, /** @lends Highcharts.seriesTypes.cylinder#pointClass# */ {
+    {},
+    /** @lends Highcharts.seriesTypes.cylinder#pointClass# */
+    {
         shapeType: 'cylinder'
     }
 );

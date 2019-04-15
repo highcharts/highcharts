@@ -9,7 +9,7 @@ var Annotation = H.Annotation,
  * @class
  * @extends Annotation
  * @memberOf Highcharts
- **/
+ */
 function VerticalLine() {
     H.Annotation.apply(this, arguments);
 }
@@ -106,11 +106,12 @@ H.extendAnnotation(VerticalLine, null,
     /**
      * A vertical line annotation.
      *
-     * @extends annotations.crookedLine
-     * @excluding labels, shapes, controlPointOptions
      * @sample highcharts/annotations-advanced/vertical-line/
      *         Vertical line
-     * @product highstock
+     *
+     * @extends      annotations.crookedLine
+     * @excluding    labels, shapes, controlPointOptions
+     * @product      highstock
      * @optionparent annotations.verticalLine
      */
     {
@@ -142,7 +143,7 @@ H.extendAnnotation(VerticalLine, null,
             /**
              * Connector options.
              *
-             * @extends annotations.crookedLine.shapeOptions
+             * @extends   annotations.crookedLine.shapeOptions
              * @excluding height, r, type, width
              */
             connector: {

@@ -22,9 +22,7 @@ H.extendAnnotation(Measure, null,
     /** @lends Annotation.Measure# */
     {
         /**
-         *
          * Init annotation object.
-         *
          */
         init: function () {
             Annotation.prototype.init.apply(this, arguments);
@@ -123,8 +121,7 @@ H.extendAnnotation(Measure, null,
         /**
          * Add label with calculated values (min, max, average, bins).
          *
-         * @param {Boolean} resize - the flag for resize shape
-         *
+         * @param {boolean} resize - the flag for resize shape
          */
         addValues: function (resize) {
             var options = this.options.typeOptions,
@@ -175,8 +172,7 @@ H.extendAnnotation(Measure, null,
             }
         },
         /**
-         * add shapes - crosshair, background (rect)
-         *
+         * Crosshair, background (rect)
          */
         addShapes: function () {
             this.addCrosshairs();
@@ -375,9 +371,10 @@ H.extendAnnotation(Measure, null,
             this.options.typeOptions.point.y = this.startYMin;
         },
         calculations: {
-            /*
-            * Set starting points
-            */
+            /**
+             * Set starting points
+             * @private
+             */
             init: function () {
                 var options = this.options.typeOptions,
                     chart = this.chart,
@@ -425,12 +422,12 @@ H.extendAnnotation(Measure, null,
                 }
 
             },
-            /*
-            * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
-            * Calculations of measure values (min, max, average, bins).
-            *
-            * @param {Boolean} resize - flag if shape is resized
-            */
+            /**
+             * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
+             * Calculations of measure values (min, max, average, bins).
+             * @private
+             * @param {Boolean} resize - flag if shape is resized
+             */
             recalculate: function (resize) {
                 var calc = this.calculations,
                     options = this.options.typeOptions,
@@ -455,27 +452,27 @@ H.extendAnnotation(Measure, null,
                 }
 
             },
-            /*
-            * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
-            * Calculations of measure values (min, max, average, bins).
-            *
-            * @param {Object} axis - x or y axis reference
-            * @param {Number} value - point's value (x or y)
-            * @param {Number} offset - amount of pixels
-            */
+            /**
+             * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
+             * Calculations of measure values (min, max, average, bins).
+             * @private
+             * @param {Object} axis - x or y axis reference
+             * @param {Number} value - point's value (x or y)
+             * @param {Number} offset - amount of pixels
+             */
             getPointPos: function (axis, value, offset) {
                 return axis.toValue(
                     axis.toPixels(value) + offset
                 );
             },
-            /*
-            * Update position of start points
-            * (startXMin, startXMax, startYMin, startYMax)
-            *
-            * @param {Boolean} redraw - flag if shape is redraw
-            * @param {Boolean} resize - flag if shape is resized
-            * @param {Boolean} cpIndex - index of controlPoint
-            */
+            /**
+             * Update position of start points
+             * (startXMin, startXMax, startYMin, startYMax)
+             * @private
+             * @param {Boolean} redraw - flag if shape is redraw
+             * @param {Boolean} resize - flag if shape is resized
+             * @param {Boolean} cpIndex - index of controlPoint
+             */
             updateStartPoints: function (redraw, resize, cpIndex, dx, dy) {
                 var options = this.options.typeOptions,
                     selectType = options.selectType,
@@ -518,19 +515,21 @@ H.extendAnnotation(Measure, null,
                     this.offsetY = 0;
                 }
             },
-            /*
-            * Default formatter of label's content
-            */
+            /**
+             * Default formatter of label's content
+             * @private
+             */
             defaultFormatter: function () {
                 return 'Min: ' + this.min +
                     '<br>Max: ' + this.max +
                     '<br>Average: ' + this.average +
                     '<br>Bins: ' + this.bins;
             },
-            /*
-            * Set values for xAxisMin, xAxisMax, yAxisMin, yAxisMax, also
-            * when chart is inverted
-            */
+            /**
+             * Set values for xAxisMin, xAxisMax, yAxisMin, yAxisMax, also
+             * when chart is inverted
+             * @private
+             */
             getExtremes: function (xAxisMin, xAxisMax, yAxisMin, yAxisMax) {
                 return {
                     xAxisMin: Math.min(xAxisMax, xAxisMin),
@@ -539,9 +538,10 @@ H.extendAnnotation(Measure, null,
                     yAxisMax: Math.max(yAxisMax, yAxisMin)
                 };
             },
-            /*
-            * Definitions of calculations (min, max, average, bins)
-            */
+            /**
+             * Definitions of calculations (min, max, average, bins)
+             * @private
+             */
             min: function () {
                 var min = Infinity,
                     series = this.chart.series,

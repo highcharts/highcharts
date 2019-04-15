@@ -1,4 +1,4 @@
-/**
+/* *
  * GUI generator for Stock tools
  *
  * (c) 2009-2017 Sebastian Bochan

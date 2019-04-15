@@ -1,4 +1,4 @@
-/**
+/* *
  * (c) 2009-2019 Sebastian Bochann
  *
  * Price indicator for Highcharts

@@ -306,7 +306,7 @@ H.extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
     /**
      * Get keyboard navigation handlers for this component.
      * @return {Array<Highcharts.KeyboardNavigationHandler>}
-     *      List of module objects
+     *         List of module objects
      */
     getKeyboardNavigation: function () {
         return [

@@ -1,4 +1,4 @@
-/**
+/* *
  * Client side exporting module
  *
  * (c) 2015 Torstein Honsi / Oystein Moseng

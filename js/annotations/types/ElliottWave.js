@@ -36,17 +36,17 @@ H.extendAnnotation(ElliottWave, CrookedLine,
     /**
      * An elliott wave annotation.
      *
-     * @extends annotations.crookedLine
      * @sample highcharts/annotations-advanced/elliott-wave/
      *         Elliott wave
-     * @product highstock
+     *
+     * @extends      annotations.crookedLine
+     * @product      highstock
      * @optionparent annotations.elliottWave
      */
     {
         typeOptions: {
             /**
-             * @type {Object}
-             * @extends annotations.crookedLine.labelOptions
+             * @extends   annotations.crookedLine.labelOptions
              * @apioption annotations.crookedLine.typeOptions.points.label
              */
 
