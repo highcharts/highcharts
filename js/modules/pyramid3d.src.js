@@ -113,7 +113,7 @@ seriesType('pyramid3d', 'funnel3d',
  *         Config objects
  *
  * @type      {Array<number|Array<number>|*>}
- * @extends   series.pyramid3d.data
+ * @extends   series.funnel3d.data
  * @product   highcharts
  * @apioption series.pyramid3d.data
  */

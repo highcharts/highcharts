@@ -64,8 +64,6 @@ function normalDensity(x, mean, standardDeviation) {
  * @name Highcharts.seriesTypes.bellcurve
  *
  * @augments Highcharts.Series
- *
- * @mixes DerivedSeriesMixin
  */
 seriesType('bellcurve', 'areaspline'
 

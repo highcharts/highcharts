@@ -10,6 +10,7 @@ var fireEvent = H.fireEvent;
  *   The units of the distance are specific to a transformation,
  *   e.g. for rotation they are radians, for scaling they are scale factors.
  *
+ * @private
  * @mixin
  * @memberOf Annotation
  */

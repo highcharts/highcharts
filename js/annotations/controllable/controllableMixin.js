@@ -9,6 +9,7 @@ import MockPoint from './../MockPoint.js';
  * It provides methods for handling points, control points
  * and points transformations.
  *
+ * @private
  * @mixin
  * @memberOf Annotation
  */

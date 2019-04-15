@@ -435,7 +435,7 @@ seriesType('funnel3d', 'column',
  *         Config objects
  *
  * @type      {Array<number|Array<number>|*>}
- * @extends   series.funnel3d.data
+ * @extends   series.column.data
  * @product   highcharts
  * @apioption series.funnel3d.data
  */
