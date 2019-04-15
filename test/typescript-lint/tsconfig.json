@@ -33,6 +33,9 @@
         "../../code/modules/accessibility.d.ts",
         "../../code/modules/accessibility.src.d.ts",
 
+        "../../code/modules/annotations.d.ts",
+        "../../code/modules/annotations.src.d.ts",
+
         "../../code/modules/arrow-symbols.d.ts",
         "../../code/modules/arrow-symbols.src.d.ts",
 

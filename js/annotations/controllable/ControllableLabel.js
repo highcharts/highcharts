@@ -407,6 +407,7 @@ H.merge(
 
 /**
  * General symbol definition for labels with connector
+ * @private
  */
 H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
     var anchorX = options && options.anchorX,

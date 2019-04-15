@@ -519,7 +519,7 @@ seriesType(
                  * @sample highcharts/series-packedbubble/parentnode-style/
                  *         Bubble size
                  *
-                 * @extends   plotOptions.line.marker
+                 * @extends   plotOptions.series.marker
                  * @excluding states
                  */
                 marker: {

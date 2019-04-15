@@ -57,8 +57,7 @@ var merge = H.merge,
  * existing points or created mock points
  *
  * @class
- * @mixes Annotation.controllableMixin
- * @mixes Annotation.eventEmitterMixin
+ * @name Highcharts.Annotation
  *
  * @param {Highcharts.Chart} chart a chart instance
  * @param {Highcharts.AnnotationsOptions} options the options object
@@ -99,7 +98,7 @@ var Annotation = H.Annotation = function (chart, options) {
     /**
      * The array of shapes which belong to the annotation.
      *
-     * @type {Array<Highcharts.Annotation.Shape>}
+     * @type {Array<Annotation.Shape>}
      */
     this.shapes = [];
 

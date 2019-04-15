@@ -100,6 +100,7 @@ var createMarkerSetter = function (markerType) {
 };
 
 /**
+ * @private
  * @mixin
  */
 var markerMixin = {
