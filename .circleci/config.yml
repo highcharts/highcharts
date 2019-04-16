@@ -5,9 +5,14 @@ defaults: &defaults
   executor: node_lts_browsers
   working_directory: /home/circleci/repo/highcharts
 
-restore_repo_cache: &restore_repo_cache
-  - restore_cache:
-      key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+persist_workspace: &persist_workspace
+  - persist_to_workspace:
+      root: ~/repo
+      paths: .
+
+load_workspace: &load_workspace
+  - attach_workspace:
+      at: ~/repo
 
 restore_dependency_cache: &restore_dependency_cache
   - restore_cache:
@@ -64,16 +69,13 @@ jobs:
      - run:
          name: Clone GitHub repository
          command: git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
-     - save_cache:
-         paths:
-           - /home/circleci/repo/highcharts
-         key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+     - <<: *persist_workspace
 
   build_dependencies:
     <<: *defaults
     steps:
       # Restore checked out code and built dependencies.
-      - << : *restore_repo_cache
+      - << : *load_workspace
       - << : *restore_dependency_cache
       - run: npm install
       - run: npm install --prefix /home/circleci/repo/highcharts gulp-cli
@@ -82,11 +84,12 @@ jobs:
           paths:
             - /home/circleci/repo/highcharts/node_modules
           key: v1-dependencies-{{ .Branch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}-{{ checksum "package.json" }}
+      - <<: *persist_workspace
 
   test:
     <<: *defaults
     steps:
-      - << : *restore_repo_cache
+      - << : *load_workspace
       - << : *restore_dependency_cache
       - run: mkdir ../test-results
       - run: npm test
@@ -99,16 +102,14 @@ jobs:
     <<: *defaults
     steps:
       - early_return_for_forked_pull_requests # due to avoid secrets being passed on to forked PR builds we don't run browser tests initially
-      - << : *restore_repo_cache
-      - << : *restore_dependency_cache
+      - << : *load_workspace
       - run: npm run ci-test
 
   build_dist:
     <<: *defaults
     steps:
       - is_master_branch
-      - <<: *restore_repo_cache
-      - <<: *restore_dependency_cache
+      - <<: *load_workspace
       # Checkout highcharts-declarations-generator
       - add_ssh_keys:
           fingerprints:
@@ -181,4 +182,3 @@ workflows:
             branches:
               only:
                 - feature/circleci-integration
-
