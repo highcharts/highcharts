@@ -953,7 +953,7 @@ Series.prototype.drawDataLabels = function () {
                         dataLabel.add(dataLabelsGroup);
                     }
 
-                    if (labelOptions.textPath) {
+                    if (labelOptions.textPath && !labelOptions.useHTML) {
                         dataLabel.setTextPath(
                             (
                                 point.getDataLabelPath &&
