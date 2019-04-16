@@ -90,7 +90,6 @@ jobs:
     <<: *defaults
     steps:
       - << : *load_workspace
-      - << : *restore_dependency_cache
       - run: mkdir ../test-results
       - run: npm test
       - store_test_results:
@@ -111,12 +110,6 @@ jobs:
       - is_master_branch
       - <<: *load_workspace
       # Checkout highcharts-declarations-generator
-      - add_ssh_keys:
-          fingerprints:
-            - "57:bb:46:ef:f4:22:f7:f3:67:5e:1f:2a:ad:7f:98:f6"
-      - run:
-          name: Avoid hosts unknown for github
-          command: echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
       - run:
           name: Clone Github highcharts-declarations-generator repository
           command: git clone -b master --single-branch git@github.com:highcharts/highcharts-declarations-generator.git --depth=1 /home/circleci/repo/highcharts-declarations-generator
@@ -126,16 +119,22 @@ jobs:
       - run:
           name: Generate changelog since last tag
           command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
-      - run: echo -e "Push changelog to highcharts repo not yet implemented.."
+      - run: echo -e "Push changelog to highcharts repo not yet implemented.." #TODO
       - store_artifacts:
           path: /home/circleci/repo/highcharts/build
       - store_artifacts:
           path: /home/circleci/repo/highcharts/code
+      - <<: *persist_workspace
+
+  deploy:
+    <<: *defaults
+      - <<: *load_workspace
+    steps:
+      - is_master_branch
       - run:
           name: Install s3cmd
           command: sudo apt-get install -y -qq s3cmd
-      - run: echo -e "Upload via s3cmd not yet implemented.."
-
+      - run: echo -e "Upload via s3cmd not yet implemented.." #TODO
 
 workflows:
   version: 2
