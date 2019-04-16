@@ -79,15 +79,19 @@
  * @type {Highcharts.PlotNetworkDataLabelsFormatterCallbackFunction|undefined}
  * @since 7.1.0
  *//**
- * Options for a _link_ label text which should follow link connection.
- * **Note:** Only SVG-based renderer supports this option.
+ * Options for a _link_ label text which should follow link connection. Border
+ * and background are disabled for a label that follows a path.
+ * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
+ * true will disable this option.
  * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#textPath}
  * @name Highcharts.PlotNetworkDataLabelsOptionsObject#linkTextPath
  * @type {Highcharts.PlotNetworkDataLabelsTextPath}
  * @since 7.1.0
  *//**
- * Options for a _node_ label text which should follow marker's shape.
- * **Note:** Only SVG-based renderer supports this option.
+ * Options for a _node_ label text which should follow marker's shape. Border
+ * and background are disabled for a label that follows a path.
+ * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
+ * true will disable this option.
  * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#linkTextPath}
  * @name Highcharts.PlotNetworkDataLabelsOptionsObject#textPath
  * @type {Highcharts.PlotNetworkDataLabelsTextPath}
