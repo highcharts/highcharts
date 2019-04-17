@@ -104,5 +104,34 @@ QUnit.test('Network Graph', function (assert) {
 
     chart.series[1].update({});
 
-    assert.ok('No errors after series update when dataLabels were enabled');
+    assert.ok(
+        true,
+        'No errors after series update when dataLabels were enabled'
+    );
+
+    var rSeries = chart.addSeries({
+        keys: ['from', 'to'],
+        data: [
+            ['1.0', '2.0'],
+            ['2.0', '3.0'],
+            ['3.0', '4.0'],
+            ['4.0', '1.0']
+        ]
+    });
+    // debugger;
+    rSeries.nodes[0].remove();
+
+    assert.strictEqual(
+        rSeries.nodes.length,
+        3,
+        'Removed node = 1.0'
+    );
+
+    assert.strictEqual(
+        rSeries.points.filter(link => link.from !== '1.0' && link.to !== '1.0').length,
+        2,
+        'Removed all links for node = 1.0'
+    );
+
+
 });
