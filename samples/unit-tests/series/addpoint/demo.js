@@ -8,8 +8,8 @@ QUnit.test('Testing addPoint() function - return point #10413', function (assert
     var point = chart.series[0].addPoint(8);
 
     assert.strictEqual(
-        typeof (point),
-        'object',
-        'Point should be added to array as an object.'
+        point instanceof Highcharts.Point,
+        true,
+        'Added point has a Highcharts.Point properties.'
     );
 });
