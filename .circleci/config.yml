@@ -128,9 +128,9 @@ jobs:
 
   deploy:
     <<: *defaults
-      - <<: *load_workspace
     steps:
       - is_master_branch
+      - <<: *load_workspace
       - run:
           name: Install s3cmd
           command: sudo apt-get install -y -qq s3cmd
