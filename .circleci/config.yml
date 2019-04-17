@@ -155,7 +155,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - feature/circleci-integration
       - hold_for_approval:
           type: approval
           requires:
