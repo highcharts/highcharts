@@ -952,6 +952,106 @@ seriesType(
         },
 
         /**
+         * Common method for removing points and nodes in networkgraph. To
+         * remove `link`, use `series.data[index].remove()`. To remove `node`
+         * with all connections, use `series.nodes[index].remove()`.
+         *
+         * @param {boolean} [redraw=true]
+         *        Whether to redraw the chart or wait for an explicit call. When
+         *        doing more operations on the chart, for example running
+         *        `point.remove()` in a loop, it is best practice to set
+         *        `redraw` to false and call `chart.redraw()` after.
+         *
+         * @param {boolean|Highcharts.AnimationOptionsObject} [animation=false]
+         *        Whether to apply animation, and optionally animation
+         *        configuration.
+         * @return {void}
+         */
+        remove: function (redraw, animation) {
+            var point = this,
+                series = point.series,
+                nodesOptions = series.options.nodes || [],
+                index,
+                i = nodesOptions.length;
+
+            // For nodes, remove all connected links:
+            if (point.isNode) {
+                // Temporary disable series.points array, because
+                // Series.removePoint() modifies it
+                series.points = [];
+
+                // Remove link from all nodes collections:
+                [].concat(point.linksFrom)
+                    .concat(point.linksTo)
+                    .forEach(
+                        function (linkFromTo) {
+                            // Incoming links
+                            index = linkFromTo.fromNode.linksFrom.indexOf(
+                                linkFromTo
+                            );
+                            if (index > -1) {
+                                linkFromTo.fromNode.linksFrom.splice(
+                                    index,
+                                    1
+                                );
+                            }
+
+                            // Outcoming links
+                            index = linkFromTo.toNode.linksTo.indexOf(
+                                linkFromTo
+                            );
+                            if (index > -1) {
+                                linkFromTo.toNode.linksTo.splice(
+                                    index,
+                                    1
+                                );
+                            }
+
+                            // Remove link from data/points collections
+                            Series.prototype.removePoint.call(
+                                series,
+                                series.data.indexOf(linkFromTo),
+                                false,
+                                false
+                            );
+                        }
+                    );
+
+                // Restore points array, after links are removed
+                series.points = series.data.slice();
+
+                // Proceed with removing node. It's similar to
+                // Series.removePoint() method, but doesn't modify other arrays
+                series.nodes.splice(series.nodes.indexOf(point), 1);
+
+                // Remove node options from config
+                while (i--) {
+                    if (nodesOptions[i].id === point.options.id) {
+                        series.options.nodes.splice(i, 1);
+                        break;
+                    }
+                }
+
+                if (point) {
+                    point.destroy();
+                }
+
+                // Run redraw if requested
+                series.isDirty = true;
+                series.isDirtyData = true;
+                if (redraw) {
+                    series.chart.redraw(redraw);
+                }
+            } else {
+                series.removePoint(
+                    series.data.indexOf(point),
+                    redraw,
+                    animation
+                );
+            }
+        },
+
+        /**
          * Destroy point. If it's a node, remove all links coming out of this
          * node. Then remove point from the layout.
          * @private
