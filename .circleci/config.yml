@@ -21,6 +21,14 @@ restore_dependency_cache: &restore_dependency_cache
         # fallback to using the latest cache if no exact match is found
         - v1-dependencies-{{ .Branch }}-
 
+add_gh_keys: &add_gh_keys
+  - add_ssh_keys:
+      fingerprints:
+        - "57:bb:46:ef:f4:22:f7:f3:67:5e:1f:2a:ad:7f:98:f6"
+add_to_ssh_config: &add_to_ssh_config
+  - run:
+      name: Avoid hosts unknown for github
+      command: echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
 #######################################
 
 executors:
@@ -60,12 +68,8 @@ jobs:
     steps:
       # rather than using the checkout keyword we checkout via commandline
       # to avoid a huge and slow checkout depth
-     - add_ssh_keys:
-         fingerprints:
-           - "57:bb:46:ef:f4:22:f7:f3:67:5e:1f:2a:ad:7f:98:f6"
-     - run:
-         name: Avoid hosts unknown for github
-         command: echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+     - <<: *add_gh_keys
+     - <<: *add_to_ssh_config
      - run:
          name: Clone GitHub repository
          command: git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
@@ -109,6 +113,8 @@ jobs:
       - is_master_branch
       - <<: *load_workspace
       # Checkout highcharts-declarations-generator
+      - <<: *add_gh_keys
+      - <<: *add_to_ssh_config
       - run:
           name: Clone Github highcharts-declarations-generator repository
           command: git clone -b master --single-branch git@github.com:highcharts/highcharts-declarations-generator.git --depth=1 /home/circleci/repo/highcharts-declarations-generator
@@ -159,6 +165,7 @@ workflows:
       - hold_for_approval:
           type: approval
           requires:
+            - test
             - test_browsers
           filters:
             branches:
