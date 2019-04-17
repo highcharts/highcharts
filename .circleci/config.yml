@@ -77,8 +77,7 @@ jobs:
       # Restore checked out code and built dependencies.
       - << : *load_workspace
       - << : *restore_dependency_cache
-      - run: npm install
-      - run: npm install --prefix /home/circleci/repo/highcharts gulp-cli
+      - run: npm install --quiet && npm install --prefix /home/circleci/repo/highcharts gulp-cli
 
       - save_cache:
           paths:
@@ -100,7 +99,7 @@ jobs:
   test_browsers:
     <<: *defaults
     steps:
-      - early_return_for_forked_pull_requests # due to avoid secrets being passed on to forked PR builds we don't run browser tests initially
+      - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
       - << : *load_workspace
       - run: npm run ci-test
 
@@ -114,16 +113,19 @@ jobs:
           name: Clone Github highcharts-declarations-generator repository
           command: git clone -b master --single-branch git@github.com:highcharts/highcharts-declarations-generator.git --depth=1 /home/circleci/repo/highcharts-declarations-generator
       - run:
-          name: Generate packages
+          name: npm install for highcharts-declarations-generator repository
+          command: cd /home/circleci/repo/highcharts-declarations-generator && npm install --quiet
+      - run:
+          name: Generate highcharts packages
           command: npm run build
       - run:
           name: Generate changelog since last tag
           command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --since {}) && node changelog/generate-html
       - run: echo -e "Push changelog to highcharts repo not yet implemented.." #TODO
-      - store_artifacts:
-          path: /home/circleci/repo/highcharts/build
-      - store_artifacts:
-          path: /home/circleci/repo/highcharts/code
+      #- store_artifacts:
+      #    path: /home/circleci/repo/highcharts/build
+      #- store_artifacts:
+      #    path: /home/circleci/repo/highcharts/code
       - <<: *persist_workspace
 
   deploy:
