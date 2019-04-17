@@ -374,6 +374,9 @@ H.Tick.prototype = {
                 )
         };
 
+        // Chrome workaround for #10516
+        pos.y = Math.max(Math.min(pos.y, 1e5), -1e5);
+
         fireEvent(this, 'afterGetPosition', { pos: pos });
 
         return pos;
