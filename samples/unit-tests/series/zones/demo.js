@@ -134,3 +134,38 @@ QUnit.test('Zones and column presentational props (#6234)', assert => {
         'Zones dash array'
     );
 });
+
+QUnit.test('Adding and removing zones', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            data: [5, 10, 15],
+            zones: [{
+                value: 10,
+                color: '#bada55'
+            }]
+        }]
+    });
+
+    chart.series[0].update({
+        zones: []
+    });
+
+    assert.strictEqual(
+        chart.series[0].graph.attr('visibility'),
+        'visible',
+        'Series line is visible after removing zones (#10569).'
+    );
+
+    chart.series[0].update({
+        zones: [{
+            value: 10,
+            color: '#bada55'
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].graph.attr('visibility'),
+        'hidden',
+        'Series line is hidden after adding zones back (#10569).'
+    );
+});
