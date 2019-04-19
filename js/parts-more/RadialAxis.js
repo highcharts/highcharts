@@ -616,8 +616,15 @@ addEvent(Tick, 'afterGetLabelPosition', function (e) {
         ) % 360;
 
     if (axis.isRadial) { // Both X and Y axes in a polar chart
-        ret = axis.getPosition(this.pos, (axis.center[2] / 2) +
-            pick(labelOptions.distance, -25));
+        ret = axis.getPosition(
+            this.pos,
+            (axis.center[2] / 2) +
+                H.relativeLength(
+                    pick(labelOptions.distance, -25),
+                    axis.center[2] / 2,
+                    -axis.center[2] / 2
+                )
+        );
 
         // Automatically rotated
         if (labelOptions.rotation === 'auto') {
