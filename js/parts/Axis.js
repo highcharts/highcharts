@@ -2504,10 +2504,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
-         * Angular gauges and solid gauges only. The label's pixel distance
-         * from the perimeter of the plot area.
+         * Angular gauges and solid gauges only.
+         * The label's pixel distance from the perimeter of the plot area.
          *
-         * @type      {number}
+         * Since v7.1.2: If it's a percentage string, it is interpreted the
+         * same as [series.radius](#plotOptions.gauge.radius), so label can be
+         * aligned under the gauge's shape.
+         *
+         * @sample {highcharts} highcharts/yaxis/labels-distance/
+         *                      Labels centered under the arc
+         *
+         * @type      {number|string}
          * @default   -25
          * @product   highcharts
          * @apioption yAxis.labels.distance
