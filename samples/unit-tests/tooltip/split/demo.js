@@ -250,3 +250,33 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Split tooltip - points with different colors in one series (#10571)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            data: [{ y: 50, color: '#17541c' }, { y: 100, color: '#ea33d2' }]
+        }],
+        tooltip: {
+            split: true
+        }
+    });
+    const firstPointColor = chart.series[0].points[0].color,
+        secondPointColor = chart.series[0].points[1].color;
+
+    chart.series[0].points[0].onMouseOver();
+
+    assert.strictEqual(
+        chart.series[0].tt.box.stroke,
+        firstPointColor,
+        'Label stroke should be the same as the first point color.'
+    );
+
+    chart.series[0].points[1].onMouseOver();
+
+    assert.strictEqual(
+        chart.series[0].tt.box.stroke,
+        secondPointColor,
+        'Label stroke should be the same as the second point color.'
+    );
+
+});
