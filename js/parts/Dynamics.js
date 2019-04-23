@@ -489,6 +489,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             merge(true, this.options.plotOptions, options.plotOptions);
         }
 
+        // Maintaining legacy global time. If the chart is instanciated first
+        // with global time, then updated with time options, we need to create a
+        // new Time instance to avoid mutating the global time (#10536).
+        if (options.time && this.time === H.time) {
+            this.time = new H.Time(options.time);
+        }
+
         // Some option stuctures correspond one-to-one to chart objects that
         // have update methods, for example
         // options.credits => chart.credits
