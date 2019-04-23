@@ -133,10 +133,9 @@ seriesType('xrange', 'column'
                 if (isObject(amount)) {
                     amount = amount.amount;
                 }
-                if (!defined(amount)) {
-                    amount = 0;
+                if (isNumber(amount) && amount > 0) {
+                    return correctFloat(amount * 100) + '%';
                 }
-                return correctFloat(amount * 100) + '%';
             },
             /** @ignore-option */
             inside: true,
