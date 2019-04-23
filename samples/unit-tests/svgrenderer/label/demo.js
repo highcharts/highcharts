@@ -31,7 +31,7 @@ QUnit.test('New label with url symbol (#5635)', function (assert) {
         400
     );
 
-    var url = (location.host === 'localhost:9876') ?
+    var url = location.host.substr(0, 12) === 'localhost:98' ?
         'url(base/test/testimage.png)' : // karma
         'url(testimage.png)'; // utils
 
