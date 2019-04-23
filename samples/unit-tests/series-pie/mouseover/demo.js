@@ -25,7 +25,7 @@ QUnit.test('Halo invisible point (#3007)', function (assert) {
     }, function (template) {
 
         var chart = template.chart,
-            controller = TestController(chart),
+            controller = new TestController(chart),
             series = chart.series[0],
             points = series.points;
 
@@ -149,7 +149,7 @@ QUnit.test('Halo sliced point (#3016)', function (assert) {
     }, function (template) {
 
         var chart = template.chart,
-            controller = TestController(chart),
+            controller = new TestController(chart),
             series = chart.series[0],
             points = series.points;
 
@@ -267,7 +267,7 @@ QUnit.test('Update point when hovering slice (#9088)', function (assert) {
         }]
     }, function (template) {
         var chart = template.chart,
-            controller = TestController(chart),
+            controller = new TestController(chart),
             pointBox = chart.series[0].points[1].graphic.getBBox();
 
         controller.mouseOver(

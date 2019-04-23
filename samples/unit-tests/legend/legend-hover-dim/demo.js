@@ -16,7 +16,7 @@ QUnit.test('Legend item hover - series dimming behavior.', function (assert) {
             }]
 
         }),
-        controller = TestController(chart),
+        controller = new TestController(chart),
         firstSeries = document.querySelector('.highcharts-series.highcharts-series-0'),
         legend = chart.legend,
         legendBBox = legend.group.element.getBBox(),

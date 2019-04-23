@@ -26,7 +26,7 @@ QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator', functi
             }]
         },
         chart = Highcharts.stockChart('container', options),
-        controller = TestController(chart),
+        controller = new TestController(chart),
         scrollbar = chart.navigator.scrollbar,
         group = scrollbar.group,
         thumbGroup = scrollbar.scrollbarGroup,
@@ -66,7 +66,7 @@ QUnit.test('#1716 - very small range in navigator and scrollbar events', functio
             }]
         },
         chart = Highcharts.stockChart('container', options),
-        controller = TestController(chart),
+        controller = new TestController(chart),
         scrollbar = chart.navigator.scrollbar,
         group = scrollbar.group,
         extremes;
@@ -113,7 +113,7 @@ QUnit.test('Scrollbar.liverRedraw option', function (assert) {
                 data: [1, 2, 3, 4, 5]
             }]
         }),
-        controller = TestController(chart),
+        controller = new TestController(chart),
         scrollbar = chart.xAxis[0].scrollbar,
         group = scrollbar.group,
         scrollbarWidth = group.getBBox(true).width;

@@ -174,6 +174,22 @@ module.exports = function (config) {
 
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
+    const ChildProcess = require('child_process');
+
+    // Compile test tools and samples
+    try {
+        console.log('Compiling test tools...');
+        ChildProcess.execSync(
+            'cd "' + process.cwd() + '" && npx tsc -p test'
+        );
+        console.log('Compiling samples...');
+        ChildProcess.execSync(
+            'cd "' + process.cwd() + '" && npx tsc -p samples'
+        );
+    } catch (catchedError) {
+        console.error(catchedError);
+        return;
+    }
 
     // The tests to run by default
     const defaultTests = [
@@ -188,12 +204,10 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    const needsTranspiling = browsers.some(browser => (
-        browser.toUpperCase().lastIndexOf('IE') ===
-        browser.length - 2
-    ));
+    const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
 
     const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
+        .filter(path => !!path)
         .map(path => `samples/${path}/demo.js`);
 
     // let files = getFiles();

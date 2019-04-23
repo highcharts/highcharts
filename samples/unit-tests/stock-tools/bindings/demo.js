@@ -35,7 +35,7 @@ QUnit.test('Bindings general tests', function (assert) {
         plotLeft = chart.plotLeft,
         plotTop = chart.plotTop,
         points = chart.series[0].points,
-        controller = TestController(chart),
+        controller = new TestController(chart),
         annotationsCounter = 0,
         i = 0;
 

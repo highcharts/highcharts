@@ -19,6 +19,7 @@ TestTemplate.register('highcharts/scatter', Highcharts.chart, {
     },
 
     series: [{
+        type: 'scatter',
         data: [[2, 2], [2, 3], [3, 2], [3, 3]]
     }]
 
