@@ -162,6 +162,7 @@ workflows:
             branches:
               only:
                 - feature/circleci-integration
+                - master
       - hold_for_approval:
           type: approval
           requires:
@@ -171,6 +172,7 @@ workflows:
             branches:
               only:
                 - feature/circleci-integration
+                - master
       - build_dist:
           requires:
             - hold_for_approval
@@ -178,3 +180,4 @@ workflows:
             branches:
               only:
                 - feature/circleci-integration
+                - master
