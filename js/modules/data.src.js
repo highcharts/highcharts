@@ -108,7 +108,7 @@ var addEvent = Highcharts.addEvent,
  * It requires the `modules/data.js` file to be loaded.
  *
  * Please note that the default way of adding data in Highcharts, without
- * the need of a module, is through the [series.data](#series.data)
+ * the need of a module, is through the [series._type_.data](#series.line.data)
  * option.
  *
  * @sample {highcharts} highcharts/demo/column-parsed/
