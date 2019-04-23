@@ -19,7 +19,6 @@ import 'Pathfinder.js';
 import '../modules/xrange.src.js';
 
 var dateFormat = H.dateFormat,
-    isObject = H.isObject,
     isNumber = H.isNumber,
     merge = H.merge,
     pick = H.pick,
@@ -53,19 +52,7 @@ seriesType('gantt', 'xrange'
 
         dataLabels: {
             /** @ignore-option */
-            enabled: true,
-            /** @ignore-option */
-            formatter: function () {
-                var point = this,
-                    amount = point.point.partialFill;
-
-                if (isObject(amount)) {
-                    amount = amount.amount;
-                }
-                if (isNumber(amount) && amount > 0) {
-                    return (amount * 100) + '%';
-                }
-            }
+            enabled: true
         },
         tooltip: {
             headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
