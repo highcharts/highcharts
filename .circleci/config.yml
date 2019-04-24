@@ -2,7 +2,7 @@ version: 2.1
 
 ######### Anchors ####################
 defaults: &defaults
-  executor: node_lts_browsers
+  executor: node_image
   working_directory: /home/circleci/repo/highcharts
 
 persist_workspace: &persist_workspace
@@ -32,9 +32,9 @@ add_to_ssh_config: &add_to_ssh_config
 #######################################
 
 executors:
-  node_lts_browsers:
+  node_image:
     docker:
-      - image: circleci/node:lts-browsers
+      - image: circleci/node:latest-browsers
 
 commands:
   early_return_for_forked_pull_requests:
@@ -81,6 +81,7 @@ jobs:
       # Restore checked out code and built dependencies.
       - << : *load_workspace
       - << : *restore_dependency_cache
+      - run: node --version && npm --version
       - run: npm install --quiet && npm install --prefix /home/circleci/repo/highcharts gulp-cli
 
       - save_cache:
