@@ -333,6 +333,30 @@ var controllableMixin = {
     },
 
     /**
+     * Translate shape within controllable item.
+     * Replaces `controllable.translate` method.
+     *
+     * @param {number} dx translation for x coordinate
+     * @param {number} dy translation for y coordinate
+     */
+    translateShape: function (dx, dy) {
+        var chart = this.annotation.chart,
+            // Annotation.options
+            shapeOptions = this.annotation.userOptions,
+            // Chart.options.annotations
+            annotationIndex = chart.annotations.indexOf(this.annotation),
+            chartOptions = chart.options.annotations[annotationIndex];
+
+        this.translatePoint(dx, dy, 0);
+
+        // Options stored in:
+        // - chart (for exporting)
+        // - current config (for redraws)
+        chartOptions[this.collection][this.index].point = this.options.point;
+        shapeOptions[this.collection][this.index].point = this.options.point;
+    },
+
+    /**
      * Rotate a controllable.
      *
      * @param {number} cx origin x rotation

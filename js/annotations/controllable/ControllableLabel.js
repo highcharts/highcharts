@@ -195,16 +195,24 @@ H.merge(
          * @param {number} dy translation for y coordinate
          **/
         translate: function (dx, dy) {
-            var annotationOptions = this.annotation.userOptions,
-                labelOptions = annotationOptions[this.collection][this.index];
+            var chart = this.annotation.chart,
+                // Annotation.options
+                labelOptions = this.annotation.userOptions,
+                // Chart.options.annotations
+                annotationIndex = chart.annotations.indexOf(this.annotation),
+                chartAnnotations = chart.options.annotations,
+                chartOptions = chartAnnotations[annotationIndex];
 
             // Local options:
             this.options.x += dx;
             this.options.y += dy;
 
             // Options stored in chart:
-            labelOptions.x = this.options.x;
-            labelOptions.y = this.options.y;
+            chartOptions[this.collection][this.index].x = this.options.x;
+            chartOptions[this.collection][this.index].y = this.options.y;
+
+            labelOptions[this.collection][this.index].x = this.options.x;
+            labelOptions[this.collection][this.index].y = this.options.y;
         },
 
         render: function (parent) {

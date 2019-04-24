@@ -45,6 +45,8 @@ H.merge(
          */
         type: 'rect',
 
+        translate: controllableMixin.translateShape,
+
         render: function (parent) {
             var attrs = this.attrsFromOptions(this.options);
 
@@ -76,16 +78,6 @@ H.merge(
             this.graphic.placed = Boolean(position);
 
             controllableMixin.redraw.call(this, animation);
-        },
-
-        translate: function (dx, dy) {
-            var annotationOptions = this.annotation.userOptions,
-                shapeOptions = annotationOptions[this.collection][this.index];
-
-            this.translatePoint(dx, dy, 0);
-
-            // Options stored in chart:
-            shapeOptions.point = this.options.point;
         }
     }
 );
