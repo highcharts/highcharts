@@ -62,12 +62,10 @@ seriesType('gantt', 'xrange'
                     series = point.series,
                     tooltip = series.chart.tooltip,
                     xAxis = series.xAxis,
-                    options = xAxis.options,
-                    formats = options.dateTimeLabelFormats,
+                    formats = series.tooltipOptions.dateTimeLabelFormats,
                     startOfWeek = xAxis.options.startOfWeek,
                     ttOptions = series.tooltipOptions,
                     format = ttOptions.xDateFormat,
-                    range = point.end ? point.end - point.start : 0,
                     start,
                     end,
                     milestone = point.options.milestone,
@@ -80,7 +78,7 @@ seriesType('gantt', 'xrange'
                 if (!format) {
                     format = H.splat(
                         tooltip.getDateFormat(
-                            range,
+                            xAxis.closestPointRange,
                             point.start,
                             startOfWeek,
                             formats
@@ -97,7 +95,7 @@ seriesType('gantt', 'xrange'
                     retVal += 'Start: ' + start + '<br/>';
                     retVal += 'End: ' + end + '<br/>';
                 } else {
-                    retVal += 'Date ' + start + '<br/>';
+                    retVal += start + '<br/>';
                 }
 
                 return retVal;
