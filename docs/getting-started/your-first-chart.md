@@ -1,3 +1,6 @@
+Your first chart
+----------------
+
 With Highcharts included in your webpage you are ready to create your first chart.
 
 We will start off by creating a simple bar chart.

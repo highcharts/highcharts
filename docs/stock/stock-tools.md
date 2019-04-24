@@ -1,3 +1,6 @@
+Stock tools
+-----------
+
 Stock Tools is a Highstock module for building a GUI that enables user interaction with the chart, such as adding annotations, technical indicators or just for zooming in or out. The module is released with Highstock 7 and won't work with previous versions.
 
 Building the GUI is facilitated by the Stock Tools module, where your HTML elements for user interaction are automatically bound to predefined events in this module. Full list of the available bindings can be found in the API [navigation.bindings](https://api.highcharts.com/highstock/navigation.bindings).

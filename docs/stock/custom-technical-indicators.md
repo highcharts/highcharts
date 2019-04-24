@@ -1,3 +1,6 @@
+Custom technical indicators
+---------------------------
+
 This article shows how to create custom technical indicators, in this case, linear regression. To read more about technical indicators offered by Highcharts click [here](https://www.highcharts.com/docs/stock/technical-indicator-series).
 
 Be sure to have at least the [Highcharts version 6](https://www.highcharts.com/blog/news/announcing-highcharts-6/), as previous Highcharts versions don’t support technical indicators.

@@ -1,3 +1,6 @@
+Style by CSS
+-----------
+
 Highcharts optionally features _styled mode_, where the graphic design is clearly separated from the chart functionality.
 
 When the [chart.styledMode](https://api.highcharts.com/highcharts/chart.styledMode) option is `true`, no presentational attributes (like `fill`, `stroke`, font styles etc.) are applied to the chart SVG. Instead, the design is applied purely by CSS.

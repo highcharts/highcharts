@@ -1,4 +1,4 @@
-(Highstock only)
+Flag series (Highstock only)
 ================
 
 A flag series consists of flags marking events or points of interests. Used alone flag series will make no sense. Flags can be placed on either the serie of the chart or on the axis.

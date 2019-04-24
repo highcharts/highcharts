@@ -1,3 +1,6 @@
+Gantt axis grid
+---------------
+
 Both vertical and horizontal axis of a Gantt Chart are rendered with the [`Axis.grid`](https://api.highcharts.com/gantt/xAxis.grid) option enabled by default, which turns axis ticks into table cells.
 
 Horizontal axis

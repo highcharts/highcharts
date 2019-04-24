@@ -1,3 +1,6 @@
+Scrollbars
+----------
+
 There are two major approaches to scrollbars in Highcharts.
 
 1\. Native scrollbars for mobile

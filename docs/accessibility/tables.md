@@ -1,3 +1,6 @@
+Tables
+------
+
 Including the [export-data](https://code.highcharts.com/modules/export-data.js) module will enable viewing the chart as a data table. This module also requires the [exporting](https://code.highcharts.com/modules/exporting.js) module.
 
     

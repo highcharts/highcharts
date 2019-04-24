@@ -1,3 +1,6 @@
+Configuring the accessibility module
+------------------------------------
+
 The Accessibility module is highly configurable. While the goal of the module is to provide the most accessible charts possible out of the box, it can sometimes be advantageous to make changes to the configuration.
 
 The most important setting for the module is the [`accessibility.description`](https://api.highcharts.com/highcharts/accessibility.description) option. This option sets a description of the chart and makes it available to screen reader users. Providing a good description of the chart can save screen reader users a lot of time. It is however generally recommended to make this description available to all users if possible, e.g. in text around the chart. This can help make it clear to all users what the chart is meant to convey.

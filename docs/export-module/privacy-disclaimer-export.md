@@ -1,4 +1,4 @@
-Terms of Use 
+Export server Terms of Use 
 =============
 
 These terms are about the export server running at [http://export.highcharts.com](http://export.highcharts.com). This server is used to export charts to images or PDF files.

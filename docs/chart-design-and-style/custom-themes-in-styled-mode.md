@@ -1,3 +1,6 @@
+Custom themes in styled mode
+----------------------------
+
 Highcharts allows you to create your own custom charts’ theme using native CSS rules or SASS (Syntactically Awesome Style Sheets).
 
 The default CSS file for [styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css) is available as /css/highcharts.css on the root of code.highcharts.com as well as under version folders. This CSS is in turn based on a SCSS file, [highcharts.scss](https://github.com/highcharts/highcharts/blob/master/css/highcharts.scss).

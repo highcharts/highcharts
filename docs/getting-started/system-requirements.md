@@ -1,3 +1,6 @@
+System requirements
+-------------------
+
 Highcharts is solely based on native browser technologies and doesn't require client side plugins like Flash or Java. Furthermore you don't need to install anything on your server. No PHP or ASP.NET. Highcharts needs only the highcharts.js core to run.
 
 Highcharts and Highstock work in all modern browsers including mobile devices and Internet Explorer from version 6. Standard browsers use [SVG](http://www.w3.org/Graphics/SVG/) for the graphics rendering. In legacy Internet Explorer (IE8 and before) graphics are drawn using [VML](http://www.w3.org/TR/NOTE-VML).

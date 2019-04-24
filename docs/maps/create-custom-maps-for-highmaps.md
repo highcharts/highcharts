@@ -1,3 +1,6 @@
+Creating custom maps 
+--------------------
+
 Highmaps can be used for more than geographic data, and more than the featured maps provided in the demos. This article goes through the process of drawing your own map in Inkscape, and using our online map converter tool to construct an interactive map with data values. We use a map of Australia for demo purposes. (Do not use that in production, we have a better one in our mapdata collection).
 
 1\. The first step is to install [Inkscape](http://www.inkscape.org/en/) on your system. This is the only tool you need to install, and it's free. Open up Inkscape, it opens a new document by default.
