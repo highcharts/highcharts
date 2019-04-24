@@ -22,30 +22,30 @@ Several chart types can also be combined in one chart using the type attribute o
     }\]
     
 
-See [Combining chart types](docs/chart-and-series-types/combining-chart-types) for more information on how to combine chart types.
+See [Combining chart types](chart-and-series-types/combining-chart-types) for more information on how to combine chart types.
 
 For more information on each chart type, see:
 
-*   [Angular gauges](docs/chart-and-series-types/angular-gauges)
-*   [Area chart](docs/chart-and-series-types/area-chart)
-*   [Areaspline chart](docs/chart-and-series-types/areaspline-chart)
-*   [Bar chart](docs/chart-and-series-types/bar-chart)
-*   [Box plot series](docs/chart-and-series-types/box-plot-series)
-*   [Column chart](docs/chart-and-series-types/column-chart)
-*   [Error bar series](docs/chart-and-series-types/error-bar-series)
-*   [Funnel series](docs/chart-and-series-types/funnel-series)
-*   [Heat map series](docs/chart-and-series-types/heatmap)
-*   [Line chart](docs/chart-and-series-types/line-chart)
-*   [Pie chart](docs/chart-and-series-types/pie-chart)
-*   [Polar chart](docs/chart-and-series-types/polar-chart)
-*   [Range series](docs/chart-and-series-types/range-series)
-*   [Scatter chart](docs/chart-and-series-types/scatter-chart)
-*   [Spline chart](docs/chart-and-series-types/spline-chart)
-*   [Treemap](docs/chart-and-series-types/treemap)
-*   [Waterfall series](docs/chart-and-series-types/waterfall-series)
+*   [Angular gauges](chart-and-series-types/angular-gauges)
+*   [Area chart](chart-and-series-types/area-chart)
+*   [Areaspline chart](chart-and-series-types/areaspline-chart)
+*   [Bar chart](chart-and-series-types/bar-chart)
+*   [Box plot series](chart-and-series-types/box-plot-series)
+*   [Column chart](chart-and-series-types/column-chart)
+*   [Error bar series](chart-and-series-types/error-bar-series)
+*   [Funnel series](chart-and-series-types/funnel-series)
+*   [Heat map series](chart-and-series-types/heatmap)
+*   [Line chart](chart-and-series-types/line-chart)
+*   [Pie chart](chart-and-series-types/pie-chart)
+*   [Polar chart](chart-and-series-types/polar-chart)
+*   [Range series](chart-and-series-types/range-series)
+*   [Scatter chart](chart-and-series-types/scatter-chart)
+*   [Spline chart](chart-and-series-types/spline-chart)
+*   [Treemap](chart-and-series-types/treemap)
+*   [Waterfall series](chart-and-series-types/waterfall-series)
 
 Highstock specific charts are:
 
-*   [Candlestick chart](docs/chart-and-series-types/candlestick-chart)
-*   [OHLC chart](docs/chart-and-series-types/ohlc-chart)
-*   [Flag series](docs/chart-and-series-types/flag-series)
+*   [Candlestick chart](chart-and-series-types/candlestick-chart)
+*   [OHLC chart](chart-and-series-types/ohlc-chart)
+*   [Flag series](chart-and-series-types/flag-series)
