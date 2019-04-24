@@ -125,8 +125,6 @@
   * [Privacy disclaimer export server](export-module/privacy-disclaimer-export.md)
   * [Client side export](export-module/client-side-export.md)
   * [Setting up your own server](export-module/setting-up-the-server.md)
-  * [Setting up your own server (3)](export-module/setting-up-the-server-3.md)
-  * [Legacy Export Servers](export-module/legacy-export-servers.md)
 
 * Working with data 
   * [Working with data](working-with-data/data-intro.md)
