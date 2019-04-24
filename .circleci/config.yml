@@ -17,9 +17,7 @@ load_workspace: &load_workspace
 restore_dependency_cache: &restore_dependency_cache
   - restore_cache:
       keys:
-        - v1-dependencies-{{ .Branch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}-{{ checksum "package.json" }}
-        # fallback to using the latest cache if no exact match is found
-        - v1-dependencies-{{ .Branch }}-
+        - v2-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
 
 add_gh_keys: &add_gh_keys
   - add_ssh_keys:
@@ -87,7 +85,7 @@ jobs:
       - save_cache:
           paths:
             - /home/circleci/repo/highcharts/node_modules
-          key: v1-dependencies-{{ .Branch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}-{{ checksum "package.json" }}
+          key: v2-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
       - <<: *persist_workspace
 
   test:
