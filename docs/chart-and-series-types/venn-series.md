@@ -1,4 +1,4 @@
-Introduction
+Venn series
 ------------
 
 The venn series has the ability to visualize both venn and vuler diagrams. They are often used in the fields of mathematics, statistics, logistics and computer science to visualize logical relationships.

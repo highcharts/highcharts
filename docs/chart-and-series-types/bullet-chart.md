@@ -1,3 +1,6 @@
+Bullet chart
+------------
+
 A bullet graph is a variation of a bar graph. The bullet series features a single measure, compares it to a target, and displays it in the context of qualitative ranges of performance, that could be set using [plotBands](http://api.highcharts.com/highcharts/yAxis.plotBands) on yAxis.
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.bullet)_

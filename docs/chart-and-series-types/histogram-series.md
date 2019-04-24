@@ -1,3 +1,6 @@
+Histogram
+---------
+
 A histogram series is a graphical representation of the data distribution. Histogram creates intervals (bins) and counts how many values fall into each bin.
 
 _For more detailed samples and documentation check the [API](http://api.highcharts.com/highcharts/plotOptions.histogram)._

@@ -1,3 +1,6 @@
+X-range series
+-------------
+
 The X-range series displays ranges on the X axis, typically time intervals with a start and an end date. X-range is the basic series of a Gantt chart.
 
 An X-range is similar to a column range, but displays ranges in the X data where the column range displays lows and highs in the Y data. This allows X-ranges to be combined with other cartesian series types.

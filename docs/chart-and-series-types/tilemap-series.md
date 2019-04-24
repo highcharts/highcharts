@@ -1,3 +1,6 @@
+Tilemaps
+-------
+
 Tilemaps are maps where each area is represented by tiles of equal shape. Highmaps supports four different tilemap types: Circlemap, Diamondmap, Honeycomb, and Squaremap, each with a different tile shape.
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.tilemap)_

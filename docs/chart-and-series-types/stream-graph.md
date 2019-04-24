@@ -1,3 +1,6 @@
+Stream graph
+------------
+
 A stream graph is a type of stacked area graph which is displaced around a central axis, resulting in a flowing and organic shape.
 
 _For more detailed samples and documentation check the [API.](http://api.highcharts.com/highcharts/plotOptions.streamgraph)_

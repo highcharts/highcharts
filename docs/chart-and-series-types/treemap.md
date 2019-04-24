@@ -1,3 +1,6 @@
+Treemap
+-------
+
 <iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src=https://www.highcharts.com/samples/view.php?path=highcharts/demo/treemap-with-levels></iframe>
 
 ### Requirements

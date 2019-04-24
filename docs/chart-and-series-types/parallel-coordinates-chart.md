@@ -1,3 +1,6 @@
+Parallel coordinates
+-------------------
+
 In cartesian charting, it is easy to show the relations between two or three dimensions. For example, scatter charts visualize the relationship between X and Y, 3D scatter charts visualize the relationships between three variables, where bubble charts show the relationship between up to four variables X, Y, Z (radius) and C (color).
 
 Visualizing relationships with more than four dimensions become challenging with conventional charts, as they support only three dimensions. However, parallel coordinates chart can include many dimensions thanks to its capability to add many axes on one chart. Each axis is a separate series in the parallel coordinates chart, that means “line” or “spline” series can easily be added in any series. Highcharts will create all necessary yAxes, when creating chart according to the points in series.

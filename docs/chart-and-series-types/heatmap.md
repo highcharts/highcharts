@@ -1,3 +1,6 @@
+Heatmap
+-------
+
 A heat map is a graphical representation of data where the individual values contained in a matrix are represented as colors.
 
 <iframe width="320" height="240" style="width: 100%; border: none; height: 500px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/heatmap></iframe>
