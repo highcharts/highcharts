@@ -25,14 +25,16 @@
     "lib"
   ],
   "scripts": {
-    "test": "gulp test --speak",
-    "testall": "gulp test --speak --browsers all",
-    "ci-test": "gulp scripts && karma start test/karma-conf.js --single-run --browsers Mac.Firefox",
+    "test": "npm run ts-compile:test && npm run gulp test --speak",
+    "testall": "npm run gulp test --speak --browsers all",
+    "ci-test": "npm run gulp scripts && npm run ts-compile:test && karma start test/karma-conf.js --single-run --browsers Mac.Firefox",
     "prebuild": "rimraf build/ code/",
-    "build": "gulp dist",
-    "jsdoc": "gulp jsdoc --watch",
-    "dts": "gulp dts",
-    "dtslint": "gulp dtslint"
+    "build": "npm run gulp dist",
+    "jsdoc": "npm run gulp jsdoc --watch",
+    "dts": "npm run gulp dts",
+    "dtslint": "npm run gulp dtslint",
+    "ts-compile:test": "npx tsc -p test & npx tsc -p samples",
+    "gulp": "gulp"
   },
   "husky": {
     "hooks": {
