@@ -136,7 +136,12 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - checkout_code
+      - checkout_code:
+          filters:
+            branches:
+              only:
+                - feature/circleci-integration
+                - master
       - build_dependencies:
           requires:
             - checkout_code
