@@ -44,14 +44,18 @@ H.cleanRecursively = function (newer, older) {
     objectEach(newer, function (val, key) {
         var ob;
 
-        // Dive into objects
-        if (isObject(newer[key], true) && older[key]) {
+        // Dive into objects (except DOM nodes)
+        if (
+            isObject(newer[key], true) &&
+            !newer.nodeType && // #10044
+            older[key]
+        ) {
             ob = H.cleanRecursively(newer[key], older[key]);
             if (Object.keys(ob).length) {
                 result[key] = ob;
             }
 
-        // Arrays or primitives are copied directly
+        // Arrays, primitives and DOM nodes are copied directly
         } else if (isObject(newer[key]) || newer[key] !== older[key]) {
             result[key] = newer[key];
         }
