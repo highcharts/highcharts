@@ -18,15 +18,11 @@ const hasJSONSources = {};
 function getProperties() {
     let properties = {};
 
-    try {
-        // add BROWSERSTACK_USER and BROWSERSTACK_KEY as envfile containing the
-        properties['browserstack.username'] = process.env.BROWSERSTACK_USER;
-        properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY;
+    // add BROWSERSTACK_USER and BROWSERSTACK_KEY as envfile containing the
+    properties['browserstack.username'] = process.env.BROWSERSTACK_USER;
+    properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY;
 
-        if (!properties['browserstack.username']) {
-            throw new Error();
-        }
-    } catch (e) {
+    if (!properties['browserstack.username']) {
         throw new Error(
             'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
             'BROWSERSTACK_KEY environment variables.'
@@ -174,22 +170,6 @@ module.exports = function (config) {
 
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
-    const ChildProcess = require('child_process');
-
-    // Compile test tools and samples
-    try {
-        console.log('Compiling test tools...');
-        ChildProcess.execSync(
-            'cd "' + process.cwd() + '" && npx tsc -p test'
-        );
-        console.log('Compiling samples...');
-        ChildProcess.execSync(
-            'cd "' + process.cwd() + '" && npx tsc -p samples'
-        );
-    } catch (catchedError) {
-        console.error(catchedError);
-        return;
-    }
 
     // The tests to run by default
     const defaultTests = [

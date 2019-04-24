@@ -14,11 +14,6 @@ load_workspace: &load_workspace
   - attach_workspace:
       at: ~/repo
 
-restore_dependency_cache: &restore_dependency_cache
-  - restore_cache:
-      keys:
-        - v2-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
-
 add_gh_keys: &add_gh_keys
   - add_ssh_keys:
       fingerprints:
@@ -78,14 +73,8 @@ jobs:
     steps:
       # Restore checked out code and built dependencies.
       - << : *load_workspace
-      - << : *restore_dependency_cache
       - run: node --version && npm --version
-      - run: npm install --quiet && npm install --prefix /home/circleci/repo/highcharts gulp-cli
-
-      - save_cache:
-          paths:
-            - /home/circleci/repo/highcharts/node_modules
-          key: v2-dependencies-{{ .Branch }}-{{ checksum "package.json" }}
+      - run: npm install --quiet
       - <<: *persist_workspace
 
   test:
