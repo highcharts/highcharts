@@ -254,6 +254,12 @@ seriesType('gantt', 'xrange'
             retVal = parent.prototype.pointClass.prototype.applyOptions
                 .call(point, retVal, x);
             return retVal;
+        },
+        isValid: function () {
+            return (
+                typeof this.start === 'number' &&
+                (typeof this.end === 'number' || this.milestone)
+            );
         }
     }));
 
