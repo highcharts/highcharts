@@ -75,3 +75,37 @@ QUnit.test('Time zone update', function (assert) {
     );
 
 });
+
+QUnit.test('Updating from global to instance time', assert => {
+    var chart;
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 3, 2, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.time.useUTC,
+        true,
+        'Initial useUTC setting'
+    );
+
+    chart.update({
+        time: {
+            useUTC: false
+        }
+    });
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 3, 2, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.time.useUTC,
+        true,
+        'Second chart useUTC should not be affected by chart.update (#10536)'
+    );
+});

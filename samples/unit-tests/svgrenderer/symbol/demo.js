@@ -12,7 +12,7 @@ QUnit.test('Symbol tests', function (assert) {
         h
     );
 
-    var url = (location.host === 'localhost:9876') ?
+    var url = location.host.substr(0, 12) === 'localhost:98' ?
         'url(base/test/testimage.png)' : // karma
         'url(testimage.png)'; // utils
 

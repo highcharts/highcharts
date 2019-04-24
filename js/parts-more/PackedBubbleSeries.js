@@ -519,7 +519,7 @@ seriesType(
                  * @sample highcharts/series-packedbubble/parentnode-style/
                  *         Bubble size
                  *
-                 * @extends   plotOptions.line.marker
+                 * @extends   plotOptions.series.marker
                  * @excluding states
                  */
                 marker: {
@@ -1122,16 +1122,7 @@ seriesType(
                 return b[2] - a[2];
             });
 
-            if (sortedArr.length === 1) {
-                // if length is 1,return only one bubble
-                arr = [
-                    0, 0,
-                    sortedArr[0][0],
-                    sortedArr[0][1],
-                    sortedArr[0][2]
-                ];
-            } else if (sortedArr.length) {
-
+            if (sortedArr.length) {
                 // create first bubble in the middle of the chart
                 bubblePos.push([
                     [
@@ -1142,74 +1133,78 @@ seriesType(
                         sortedArr[0][4]
                     ] // point index
                 ]); // 0 level bubble
+                if (sortedArr.length > 1) {
 
-                bubblePos.push([
-                    [
-                        0,
-                        0 - sortedArr[1][2] - sortedArr[0][2],
-                        // move bubble above first one
-                        sortedArr[1][2],
-                        sortedArr[1][3],
-                        sortedArr[1][4]
-                    ]
-                ]); // 1 level 1st bubble
+                    bubblePos.push([
+                        [
+                            0,
+                            0 - sortedArr[1][2] - sortedArr[0][2],
+                            // move bubble above first one
+                            sortedArr[1][2],
+                            sortedArr[1][3],
+                            sortedArr[1][4]
+                        ]
+                    ]); // 1 level 1st bubble
 
-                // first two already positioned so starting from 2
-                for (i = 2; i < sortedArr.length; i++) {
-                    sortedArr[i][2] = sortedArr[i][2] || 1;
-                    // in case if radius is calculated as 0.
-                    calculatedBubble = positionBubble(
-                        bubblePos[stage][j],
-                        bubblePos[stage - 1][k],
-                        sortedArr[i]
-                    ); // calculate initial bubble position
+                    // first two already positioned so starting from 2
+                    for (i = 2; i < sortedArr.length; i++) {
+                        sortedArr[i][2] = sortedArr[i][2] || 1;
+                        // in case if radius is calculated as 0.
+                        calculatedBubble = positionBubble(
+                            bubblePos[stage][j],
+                            bubblePos[stage - 1][k],
+                            sortedArr[i]
+                        ); // calculate initial bubble position
 
-                    if (checkOverlap(calculatedBubble, bubblePos[stage][0])) {
-                        /* if new bubble is overlapping with first bubble
-                         * in current level (stage)
-                         */
+                        if (
+                            checkOverlap(calculatedBubble, bubblePos[stage][0])
+                        ) {
+                            /* if new bubble is overlapping with first bubble
+                             * in current level (stage)
+                             */
 
-                        bubblePos.push([]);
-                        k = 0;
-                        /* reset index of bubble, used for
-                         * positioning the bubbles
-                         * around it, we are starting from first bubble in next
-                         * stage because we are changing level to higher
-                         */
-                        bubblePos[stage + 1].push(
-                            positionBubble(
-                                bubblePos[stage][j],
-                                bubblePos[stage][0],
-                                sortedArr[i]
+                            bubblePos.push([]);
+                            k = 0;
+                            /* reset index of bubble, used for
+                             * positioning the bubbles around it,
+                             * we are starting from first bubble in next
+                             * stage because we are changing level to higher
+                             */
+                            bubblePos[stage + 1].push(
+                                positionBubble(
+                                    bubblePos[stage][j],
+                                    bubblePos[stage][0],
+                                    sortedArr[i]
+                                )
+                            );
+                            // (last bubble, 1. from curr stage, new bubble)
+                            stage++; // the new level is created, above current
+                            j = 0; // set the index of bubble in curr level to 0
+                        } else if (
+                            stage > 1 && bubblePos[stage - 1][k + 1] &&
+                            checkOverlap(
+                                calculatedBubble, bubblePos[stage - 1][k + 1]
                             )
-                        );
-                        // (last added bubble, 1. from curr stage, new bubble)
-                        stage++; // the new level is created, above current one
-                        j = 0; // set the index of bubble in current level to 0
-                    } else if (
-                        stage > 1 && bubblePos[stage - 1][k + 1] &&
-                        checkOverlap(
-                            calculatedBubble, bubblePos[stage - 1][k + 1]
-                        )
-                    ) {
-                        /* if new bubble is overlapping with one of the previous
-                         * stage bubbles, it means that - bubble, used for
-                         * positioning the bubbles around it has changed
-                         * so we need to recalculate it
-                         */
-                        k++;
-                        bubblePos[stage].push(
-                            positionBubble(
-                                bubblePos[stage][j],
-                                bubblePos[stage - 1][k],
-                                sortedArr[i]
-                            )
-                        );
-                        // (last added bubble, prev stage bubble, new bubble)
-                        j++;
-                    } else { // simply add calculated bubble
-                        j++;
-                        bubblePos[stage].push(calculatedBubble);
+                        ) {
+                            /* if new bubble is overlapping with one of the prev
+                             * stage bubbles, it means that - bubble, used for
+                             * positioning the bubbles around it has changed
+                             * so we need to recalculate it
+                             */
+                            k++;
+                            bubblePos[stage].push(
+                                positionBubble(
+                                    bubblePos[stage][j],
+                                    bubblePos[stage - 1][k],
+                                    sortedArr[i]
+                                )
+                            );
+                            // (last bubble, prev stage bubble, new bubble)
+                            j++;
+                        } else { // simply add calculated bubble
+                            j++;
+                            bubblePos[stage].push(calculatedBubble);
+                        }
                     }
                 }
                 series.chart.stages = bubblePos;
@@ -1221,7 +1216,6 @@ seriesType(
 
                 series.resizeRadius();
                 arr = series.chart.rawPositions;
-
             }
             return arr;
         },

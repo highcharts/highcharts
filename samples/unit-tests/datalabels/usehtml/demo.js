@@ -47,3 +47,28 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    '#10527: useHTML and textPath',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            series: [{
+                dataLabels: {
+                    enabled: true,
+                    useHTML: true,
+                    textPath: {
+                        enabled: true
+                    }
+                },
+                data: [1, 3, 2]
+            }]
+        });
+
+        chart.series[0].hide();
+        chart.series[0].show();
+
+        assert.ok(
+            'No errors when enabling useHTML and textPath options together.'
+        );
+    }
+);

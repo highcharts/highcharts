@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "noEmit": false,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strict": false,
+        "module": "none",
+        "moduleResolution": "node",
+        "target": "es5",
+        "lib": [
+            "dom",
+            "es5"
+        ],
+        "types": [
+        ]
+    },
+    "files": [
+        "tsglobal.d.ts",
+        "test-controller.ts",
+        "test-template.ts",
+        "test-utilities.ts"
+    ]
+}

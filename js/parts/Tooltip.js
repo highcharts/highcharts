@@ -990,12 +990,6 @@ H.Tooltip.prototype = {
 
                     if (!chart.styledMode) {
                         attribs.fill = options.backgroundColor;
-                        attribs.stroke = (
-                            options.borderColor ||
-                            point.color ||
-                            series.color ||
-                            '${palette.neutralColor80}'
-                        );
                         attribs['stroke-width'] = options.borderWidth;
                     }
 
@@ -1023,7 +1017,15 @@ H.Tooltip.prototype = {
                 });
                 if (!chart.styledMode) {
                     tt.css(options.style)
-                        .shadow(options.shadow);
+                        .shadow(options.shadow)
+                        .attr({
+                            stroke: (
+                                options.borderColor ||
+                                point.color ||
+                                series.color ||
+                                '${palette.neutralColor80}'
+                            )
+                        });
                 }
 
                 // Get X position now, so we can move all to the other side in

@@ -1,7 +1,4 @@
 import * as Highcharts from 'highcharts';
-/*
-// @todo annotations module failes because of type mismatches
-
 import AnnotationsModule from "highcharts/modules/annotations";
 
 AnnotationsModule(Highcharts);
@@ -216,4 +213,3 @@ function test_advanced() {
         }]
     });
 }
-*/

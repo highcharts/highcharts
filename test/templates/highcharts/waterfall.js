@@ -9,6 +9,7 @@ TestTemplate.register('highcharts/waterfall', Highcharts.chart, {
     },
 
     series: [{
+        type: 'waterfall',
         data: [{
             name: 'Value 1',
             y: 1

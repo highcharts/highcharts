@@ -2527,6 +2527,16 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 [].slice.call(elem.getElementsByTagName('tspan'))
             );
 
+            // Remove background and border for label(), see #10545
+            // Alternatively, we can disable setting background rects in
+            // series.drawDataLabels()
+            if (this.text && !this.renderer.styledMode) {
+                this.attr({
+                    fill: 'none',
+                    'stroke-width': 0
+                });
+            }
+
             // Disable some functions
             this.updateTransform = noop;
             this.applyTextOutline = noop;

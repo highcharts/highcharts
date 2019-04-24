@@ -934,7 +934,7 @@ seriesType(
                                 .shadow(shadow, shadowGroup);
                         }
 
-                        point.delayRendering = false;
+                        point.delayedRendering = false;
                     }
 
                     graphic.attr({

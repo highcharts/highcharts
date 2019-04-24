@@ -1,9 +1,11 @@
+var chart;
+
 function showMap(mapKey) {
 
     var supportsLatLon = !!Highcharts.maps[mapKey]['hc-transform'];
 
     // Initiate the chart
-    Highcharts.mapChart('container', {
+    chart = Highcharts.mapChart('container', {
 
         chart: {
             events: {
@@ -54,6 +56,7 @@ function showMap(mapKey) {
 
         plotOptions: {
             series: {
+                stickyTracking: false,
                 point: {
                     events: {
                         // Update lat/lon properties after dragging point
@@ -84,7 +87,7 @@ function showMap(mapKey) {
             point: {
                 events: {
                     click: function () {
-                        if ($('input#delete').attr('checked')) {
+                        if ($('input#delete')[0].checked) {
                             this.remove();
                         }
                     }
@@ -102,7 +105,7 @@ function showMap(mapKey) {
             point: {
                 events: {
                     click: function () {
-                        if ($('input#delete').attr('checked')) {
+                        if ($('input#delete')[0].checked) {
                             this.remove();
                         }
                     }
@@ -122,8 +125,7 @@ function showMap(mapKey) {
     showMap('custom/world');
 
     $('#getconfig').click(function () {
-        var chart = Highcharts.charts[0],
-            points,
+        var points,
             html = '';
 
         function getPointConfigString(point) {

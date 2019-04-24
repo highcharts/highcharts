@@ -4889,6 +4889,14 @@ H.Series = H.seriesType(
                     }
                 });
                 this.clips = clips;
+            } else if (series.visible) {
+                // If zones were removed, restore graph and area
+                if (graph) {
+                    graph.show();
+                }
+                if (area) {
+                    area.show();
+                }
             }
         },
 

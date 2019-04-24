@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "sourceMap": true,
+        "noEmit": false,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strict": false,
+        "baseUrl": "../",
+        "module": "none",
+        "moduleResolution": "node",
+        "target": "es5",
+        "lib": [
+            "dom",
+            "es5"
+        ],
+        "types": [
+        ]
+    },
+    "files": [
+        "tsglobal.d.ts",
+    ],
+    "include": [
+        "unit-tests/**/*.ts"
+    ]
+}

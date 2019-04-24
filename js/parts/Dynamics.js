@@ -489,6 +489,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             merge(true, this.options.plotOptions, options.plotOptions);
         }
 
+        // Maintaining legacy global time. If the chart is instanciated first
+        // with global time, then updated with time options, we need to create a
+        // new Time instance to avoid mutating the global time (#10536).
+        if (options.time && this.time === H.time) {
+            this.time = new H.Time(options.time);
+        }
+
         // Some option stuctures correspond one-to-one to chart objects that
         // have update methods, for example
         // options.credits => chart.credits
@@ -845,6 +852,9 @@ extend(Series.prototype, /** @lends Series.prototype */ {
      * @param {boolean} [withEvent=true]
      *        Used internally, whether to fire the series `addPoint` event.
      *
+     * @return {Highcharts.Point}
+     *         The newly generated point object.
+     *
      * @fires Highcharts.Series#event:addPoint
      */
     addPoint: function (options, redraw, shift, animation, withEvent) {
@@ -856,8 +866,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             names = xAxis && xAxis.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
             point,
-            isInTheMiddle,
             xData = series.xData,
+            PointClass = series.pointClass,
             i,
             x;
 
@@ -870,11 +880,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         point = { series: series };
         series.pointClass.prototype.applyOptions.apply(point, [options]);
         x = point.x;
+        point = (new PointClass()).init(series, options, x);
 
         // Get the insertion point
         i = xData.length;
         if (series.requireSorting && x < xData[i - 1]) {
-            isInTheMiddle = true;
             while (i && xData[i - 1] > x) {
                 i--;
             }
@@ -889,11 +899,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             names[x] = point.name;
         }
         dataOptions.splice(i, 0, options);
-
-        if (isInTheMiddle) {
-            series.data.splice(i, 0, null);
-            series.processData();
-        }
+        series.data.splice(i, 0, point);
 
         // Generate points to be added to the legend (#1329)
         if (seriesOptions.legendType === 'point') {
@@ -924,6 +930,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         if (redraw) {
             chart.redraw(animation); // Animation is set anyway on redraw, #5665
         }
+        return point;
     },
 
     /**
