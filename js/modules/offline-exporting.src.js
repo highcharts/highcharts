@@ -614,6 +614,19 @@ Highcharts.Chart.prototype.exportChartLocal = function (
                     fallbackToExportServer
                 );
             }
+        },
+
+        // Return true if the SVG contains images with external data. With the
+        // boost module there are `image` elements with encoded PNGs, these are
+        // supported by svg2pdf and should pass (#10243).
+        hasExternalImages = function () {
+            return [].some.call(
+                chart.container.getElementsByTagName('image'),
+                function (image) {
+                    var href = image.getAttribute('href');
+                    return href !== '' && href.indexOf('data:') !== 0;
+                }
+            );
         };
 
     // If we are on IE and in styled mode, add a whitelist to the renderer for
@@ -665,7 +678,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (
             )
         ) || (
             options.type === 'application/pdf' &&
-            chart.container.getElementsByTagName('image').length
+            hasExternalImages()
         )
     ) {
         fallbackToExportServer(
