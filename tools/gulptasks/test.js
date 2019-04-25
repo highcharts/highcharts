@@ -288,6 +288,9 @@ Available arguments for 'gulp test':
     Example: 'gulp test --tests unit-tests/chart/*' runs all tests in the chart
     directory.
 
+--ts
+    Compile TypeScript-based tests.
+
 `);
             return;
         }

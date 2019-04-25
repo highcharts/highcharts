@@ -174,21 +174,27 @@ module.exports = function (config) {
 
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
-    const ChildProcess = require('child_process');
 
-    // Compile test tools and samples
-    try {
-        console.log('Compiling test tools...');
-        ChildProcess.execSync(
-            'cd "' + process.cwd() + '" && npx tsc -p test'
-        );
-        console.log('Compiling samples...');
-        ChildProcess.execSync(
-            'cd "' + process.cwd() + '" && npx tsc -p samples'
-        );
-    } catch (catchedError) {
-        console.error(catchedError);
-        return;
+    if (argv.ts) {
+        const ChildProcess = require('child_process');
+        // Compile test tools and samples
+        try {
+            console.log('Compiling declarations...');
+            ChildProcess.execSync(
+                'npx gulp jsdoc-dts'
+            );
+            console.log('Compiling test tools...');
+            ChildProcess.execSync(
+                'cd "' + process.cwd() + '" && npx tsc -p test'
+            );
+            console.log('Compiling samples...');
+            ChildProcess.execSync(
+                'cd "' + process.cwd() + '" && npx tsc -p samples'
+            );
+        } catch (catchedError) {
+            console.error(catchedError);
+            return;
+        }
     }
 
     // The tests to run by default
@@ -431,8 +437,6 @@ module.exports = function (config) {
                             Highcharts.callbacksRaw.slice(0);
                         `;
                     }
-
-
 
                     let assertion;
 

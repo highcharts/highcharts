@@ -336,7 +336,10 @@ seriesType(
                 translatedThreshold = yAxis.getThreshold(options.threshold),
                 isNull,
                 yBottom,
-                connectNulls = options.connectNulls || stacking === 'percent',
+                connectNulls = H.pick( // #10574
+                    options.connectNulls,
+                    stacking === 'percent'
+                ),
 
                 // To display null points in underlying stacked series, this
                 // series graph must be broken, and the area also fall down to

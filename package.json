@@ -25,14 +25,18 @@
     "lib"
   ],
   "scripts": {
-    "test": "gulp test --speak",
-    "testall": "gulp test --speak --browsers all",
-    "ci-test": "gulp scripts && karma start test/karma-conf.js --single-run --browsers Mac.Firefox",
+    "test": "npm run gulp test --speak",
+    "testall": "npm run gulp test --speak --browsers all",
+    "ci-test": "npm run gulp scripts && karma start test/karma-conf.js --single-run --browsers Mac.Firefox",
     "prebuild": "rimraf build/ code/",
-    "build": "gulp dist",
-    "jsdoc": "gulp jsdoc --watch",
-    "dts": "gulp dts",
-    "dtslint": "gulp dtslint"
+    "build": "npm run gulp dist",
+    "jsdoc": "npm run gulp jsdoc --watch",
+    "dts": "npm run gulp dts",
+    "dtslint": "npm run gulp dtslint",
+    "ts-compile": "npx tsc -p ts",
+    "prets-compile:test": "npm run ts-compile",
+    "ts-compile:test": "npx tsc -p test & npx tsc -p samples",
+    "gulp": "gulp"
   },
   "husky": {
     "hooks": {
@@ -101,7 +105,7 @@
     "semver": "^5.7.0",
     "semver-sort": "0.0.4",
     "taffydb": "^2.7.3",
-    "typescript": "^3.4.3",
+    "typescript": "^3.4.5",
     "undertaker-forward-reference": "^1.0.2",
     "vinyl-ftp": "^0.6.1",
     "webpack": "^4.29.6",

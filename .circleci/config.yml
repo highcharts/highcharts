@@ -2,7 +2,7 @@ version: 2.1
 
 ######### Anchors ####################
 defaults: &defaults
-  executor: node_lts_browsers
+  executor: node_image
   working_directory: /home/circleci/repo/highcharts
 
 persist_workspace: &persist_workspace
@@ -13,13 +13,6 @@ persist_workspace: &persist_workspace
 load_workspace: &load_workspace
   - attach_workspace:
       at: ~/repo
-
-restore_dependency_cache: &restore_dependency_cache
-  - restore_cache:
-      keys:
-        - v1-dependencies-{{ .Branch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}-{{ checksum "package.json" }}
-        # fallback to using the latest cache if no exact match is found
-        - v1-dependencies-{{ .Branch }}-
 
 add_gh_keys: &add_gh_keys
   - add_ssh_keys:
@@ -32,9 +25,9 @@ add_to_ssh_config: &add_to_ssh_config
 #######################################
 
 executors:
-  node_lts_browsers:
+  node_image:
     docker:
-      - image: circleci/node:lts-browsers
+      - image: circleci/node:latest-browsers
 
 commands:
   early_return_for_forked_pull_requests:
@@ -80,13 +73,8 @@ jobs:
     steps:
       # Restore checked out code and built dependencies.
       - << : *load_workspace
-      - << : *restore_dependency_cache
-      - run: npm install --quiet && npm install --prefix /home/circleci/repo/highcharts gulp-cli
-
-      - save_cache:
-          paths:
-            - /home/circleci/repo/highcharts/node_modules
-          key: v1-dependencies-{{ .Branch }}-{{ .Environment.CIRCLE_WORKFLOW_ID }}-{{ checksum "package.json" }}
+      - run: node --version && npm --version
+      - run: npm install --quiet
       - <<: *persist_workspace
 
   test:
@@ -148,7 +136,12 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - checkout_code
+      - checkout_code:
+          filters:
+            branches:
+              only:
+                - feature/circleci-integration
+                - master
       - build_dependencies:
           requires:
             - checkout_code
