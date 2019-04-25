@@ -64,7 +64,7 @@ jobs:
      - <<: *add_gh_keys
      - <<: *add_to_ssh_config
      - run:
-         name: Clone GitHub repository
+         name: Clone GitHub highcharts repository
          command: git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
      - run:
          name: Clone Github highcharts-declarations-generator repository
