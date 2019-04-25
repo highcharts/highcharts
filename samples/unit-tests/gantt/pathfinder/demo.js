@@ -417,4 +417,34 @@
             'Start and End markers are appplied when enabled'
         );
     });
+
+    QUnit.module('pathfinderAlgorithms', () => {
+        const { algorithms } = Highcharts.Pathfinder.prototype;
+
+        QUnit.test('simpleConnect', assert => {
+            const { simpleConnect } = algorithms;
+            const options = {
+                chartObstacles: [
+                    { xMin: -33.5, xMax: 611.5, yMin: -20.5, yMax: 71.5 },
+                    { xMin: 613.5, xMax: 705.5, yMin: -20.5, yMax: 71.5 }
+                ],
+                startDirectionX: true
+            };
+            assert.deepEqual(
+                simpleConnect(
+                    { x: 647.5, y: 25.5 },
+                    { x: 577.5, y: 25.5 },
+                    options
+                ).path,
+                [
+                    'M', 647.5, 25.5,
+                    'L', 612.5, 25.5,
+                    'L', 612.5, 25.5,
+                    'L', 612.5, 25.5,
+                    'L', 577.5, 25.5
+                ],
+                'should not switch direction when waypoint equals start or end. #10329.'
+            );
+        });
+    });
 }());

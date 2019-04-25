@@ -277,8 +277,8 @@ var algorithms = {
             // If we are going back again, switch direction to get around start
             // obstacle.
             if (
-                waypoint[dir] > start[dir] === // Going towards max from start
-                waypoint[dir] > endPoint[dir] // Going towards min to end
+                waypoint[dir] >= start[dir] === // Going towards max from start
+                waypoint[dir] >= endPoint[dir] // Going towards min to end
             ) {
                 dir = dir === 'y' ? 'x' : 'y';
                 useMax = start[dir] < end[dir];
