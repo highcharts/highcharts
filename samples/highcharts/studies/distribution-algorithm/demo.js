@@ -42,7 +42,7 @@ function getBoxes() {
 
 renderer = new Highcharts.Renderer(
     document.getElementById('container'),
-    len,
+    800,
     300
 );
 
@@ -87,11 +87,13 @@ function visualize(boxes, len, y) {
 }
 
 // Centered
+renderer.text('Centered', 610, 25).add();
 boxes = getBoxes();
 Highcharts.distribute(boxes, len);
 visualize(boxes, len, 10);
 
 // Left
+renderer.text('Left', 610, 125).add();
 boxes = getBoxes();
 each(boxes, function (box) {
     box.align = 0;
@@ -100,6 +102,7 @@ Highcharts.distribute(boxes, len);
 visualize(boxes, len, 110);
 
 // Right
+renderer.text('Right', 610, 225).add();
 boxes = getBoxes();
 each(boxes, function (box) {
     box.align = 1;
