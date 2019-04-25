@@ -66,6 +66,9 @@ jobs:
      - run:
          name: Clone GitHub repository
          command: git clone -b ${CIRCLE_BRANCH} --single-branch ${CIRCLE_REPOSITORY_URL} --depth=1 /home/circleci/repo/highcharts
+     - run:
+         name: Clone Github highcharts-declarations-generator repository
+         command: git clone -b master --single-branch git@github.com:highcharts/highcharts-declarations-generator.git --depth=1 /home/circleci/repo/highcharts-declarations-generator
      - <<: *persist_workspace
 
   build_dependencies:
@@ -75,6 +78,12 @@ jobs:
       - << : *load_workspace
       - run: node --version && npm --version
       - run: npm install --quiet
+      - run:
+          name: Install highcharts-declarations-generator
+          command: cd /home/circleci/repo/highcharts-declarations-generator && npm install --quiet
+      - run:
+          name: Generate highcharts ts declarations
+          command: cd /home/circleci/repo/highcharts && npx gulp jsdoc-dts
       - <<: *persist_workspace
 
   test:
@@ -100,15 +109,6 @@ jobs:
     steps:
       - is_master_branch
       - <<: *load_workspace
-      # Checkout highcharts-declarations-generator
-      - <<: *add_gh_keys
-      - <<: *add_to_ssh_config
-      - run:
-          name: Clone Github highcharts-declarations-generator repository
-          command: git clone -b master --single-branch git@github.com:highcharts/highcharts-declarations-generator.git --depth=1 /home/circleci/repo/highcharts-declarations-generator
-      - run:
-          name: npm install for highcharts-declarations-generator repository
-          command: cd /home/circleci/repo/highcharts-declarations-generator && npm install --quiet
       - run:
           name: Generate highcharts packages
           command: npm run build
