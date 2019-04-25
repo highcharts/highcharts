@@ -414,16 +414,16 @@ seriesType('gauge', 'line', {
                     })
                     .addClass('highcharts-dial')
                     .add(series.group);
+            }
 
-                // Presentational attributes
-                if (!chart.styledMode) {
-                    point.graphic.attr({
-                        stroke: dialOptions.borderColor || 'none',
-                        'stroke-width': dialOptions.borderWidth || 0,
-                        fill: dialOptions.backgroundColor ||
-                            '${palette.neutralColor100}'
-                    });
-                }
+            // Presentational attributes
+            if (!chart.styledMode) {
+                point.graphic[graphic ? 'animate' : 'attr']({
+                    stroke: dialOptions.borderColor || 'none',
+                    'stroke-width': dialOptions.borderWidth || 0,
+                    fill: dialOptions.backgroundColor ||
+                        '${palette.neutralColor100}'
+                });
             }
         });
 
