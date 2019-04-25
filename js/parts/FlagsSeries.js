@@ -353,7 +353,8 @@ seriesType(
                 outsideRight,
                 yAxis = series.yAxis,
                 boxesMap = {},
-                boxes = [];
+                boxes = [],
+                centered;
 
             i = points.length;
             while (i--) {
@@ -375,6 +376,7 @@ seriesType(
                 // skip connectors for higher level stacked points
                 point.anchorX = stackIndex ? undefined : point.plotX;
                 anchorY = stackIndex ? undefined : point.plotY;
+                centered = shape !== 'flag';
 
                 graphic = point.graphic;
 
@@ -401,7 +403,7 @@ seriesType(
                         }
 
                         graphic.attr({
-                            align: shape === 'flag' ? 'left' : 'center',
+                            align: centered ? 'center' : 'left',
                             width: options.width,
                             height: options.height,
                             'text-align': options.textAlign
@@ -442,7 +444,7 @@ seriesType(
                     if (!options.allowOverlapX) {
                         if (!boxesMap[point.plotX]) {
                             boxesMap[point.plotX] = {
-                                align: 0,
+                                align: centered ? 0.5 : 0,
                                 size: graphic.width,
                                 target: plotX,
                                 anchorX: plotX
@@ -483,7 +485,7 @@ seriesType(
                         point.graphic[
                             point.graphic.isNew ? 'attr' : 'animate'
                         ]({
-                            x: box.pos,
+                            x: box.pos + box.align * box.size,
                             anchorX: point.anchorX
                         });
                         // Hide flag when its box position is not specified
