@@ -1475,7 +1475,7 @@ Highcharts.extend(Data.prototype, {
                     if (options.enablePolling) {
                         setTimeout(function () {
                             fetchSheet(fn);
-                        }, options.dataRefreshRate);
+                        }, (options.dataRefreshRate || 2) * 1000);
                     }
                 },
                 error: function (xhr, text) {
