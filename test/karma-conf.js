@@ -18,11 +18,15 @@ const hasJSONSources = {};
 function getProperties() {
     let properties = {};
 
-    // add BROWSERSTACK_USER and BROWSERSTACK_KEY as envfile containing the
-    properties['browserstack.username'] = process.env.BROWSERSTACK_USER;
-    properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY;
+    try {
+        // add BROWSERSTACK_USER and BROWSERSTACK_KEY as envfile containing the
+        properties['browserstack.username'] = process.env.BROWSERSTACK_USER;
+        properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY;
 
-    if (!properties['browserstack.username']) {
+        if (!properties['browserstack.username']) {
+            throw new Error();
+        }
+    } catch (e) {
         throw new Error(
             'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
             'BROWSERSTACK_KEY environment variables.'
@@ -170,21 +174,27 @@ module.exports = function (config) {
 
     const argv = require('yargs').argv;
     const Babel = require("@babel/core");
-    const ChildProcess = require('child_process');
 
-    // Compile test tools and samples
-    try {
-        console.log('Compiling test tools...');
-        ChildProcess.execSync(
-            'cd "' + process.cwd() + '" && npx tsc -p test'
-        );
-        console.log('Compiling samples...');
-        ChildProcess.execSync(
-            'cd "' + process.cwd() + '" && npx tsc -p samples'
-        );
-    } catch (catchedError) {
-        console.error(catchedError);
-        return;
+    if (argv.ts) {
+        const ChildProcess = require('child_process');
+        // Compile test tools and samples
+        try {
+            console.log('Compiling declarations...');
+            ChildProcess.execSync(
+                'npx gulp jsdoc-dts'
+            );
+            console.log('Compiling test tools...');
+            ChildProcess.execSync(
+                'cd "' + process.cwd() + '" && npx tsc -p test'
+            );
+            console.log('Compiling samples...');
+            ChildProcess.execSync(
+                'cd "' + process.cwd() + '" && npx tsc -p samples'
+            );
+        } catch (catchedError) {
+            console.error(catchedError);
+            return;
+        }
     }
 
     // The tests to run by default
@@ -427,8 +437,6 @@ module.exports = function (config) {
                             Highcharts.callbacksRaw.slice(0);
                         `;
                     }
-
-
 
                     let assertion;
 
