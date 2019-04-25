@@ -34,7 +34,6 @@
     "dts": "npm run gulp dts",
     "dtslint": "npm run gulp dtslint",
     "ts-compile": "npx tsc -p ts",
-    "prets-compile:test": "npm run ts-compile",
     "ts-compile:test": "npx tsc -p test & npx tsc -p samples",
     "gulp": "gulp"
   },
