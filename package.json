@@ -29,7 +29,7 @@
     "test": "npm run gulp test --speak",
     "testall": "npm run gulp test --speak --browsers all",
     "preci-test": "npm run ts-compile:test",
-    "ci-test": "npm run gulp scripts && karma start test/karma-conf.js --single-run --browsers Mac.Firefox",
+    "ci-test": "npm run gulp scripts && karma start test/karma-conf.js --single-run --browsers ChromeHeadless,Mac.Firefox",
     "prebuild": "rimraf build/ code/",
     "build": "npm run gulp dist",
     "jsdoc": "npm run gulp jsdoc --watch",
