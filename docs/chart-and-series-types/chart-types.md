@@ -13,13 +13,13 @@ To set a default chart type use:
 Several chart types can also be combined in one chart using the type attribute on series to set different chart types for each series:
 
     
-    series: \[{
+    series: [{
         type: 'line'
-        data: \[\]
+        data: []
     },{
         type: 'column'
-        data: \[\]
-    }\]
+        data: []
+    }]
     
 
 See [Combining chart types](chart-and-series-types/combining-chart-types) for more information on how to combine chart types.

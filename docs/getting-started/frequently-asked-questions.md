@@ -1,18 +1,18 @@
 Frequently asked questions
 --------------------------
 
-*   [Does Highcharts refer to files outside our domain?](#files-outside-domain)
-*   [My charts are not showing in Internet Explorer 7 or 8](#not-showing-in-explorer)
-*   [Can I use Highcharts with a ... server?](#can-i-use-highcharts-with)
-*   [Can I use features from Highstock in Highcharts?](#highstock-features-in-highcharts)
-*   [Can I add a data table to the exported chart?](#add-data-table)
-*   [How can I get the best performance out of Highcharts?](#optimize-performance)
-*   [Can I export multiple charts to the same image or PDF?](#export-multiple)
-*   [My non-English characters don't display right in my charts](#non-ascii)
-*   [Can I generate charts on the server without using a browser?](#server-side-charts)
-*   [How do I define irregular time data?](#irregular-time)
-*   [How do I add data from a MySQL database?](#data-from-sql)
-*   [Your map of my country does not include a disputed area](#disputed-maps)
+*   [Does Highcharts refer to files outside our domain?](#does-highcharts-refer-to-files-outside-our-domain)
+*   [My charts are not showing in Internet Explorer 7 or 8](#my-charts-are-not-showing-in-internet-explorer-7-or-8)
+*   [Can I use Highcharts with a ... server?](#can-i-use-highcharts-with-a-server)
+*   [Can I use features from Highstock in Highcharts?](#can-i-use-features-from-highstock-in-highcharts)
+*   [Can I add a data table to the exported chart?](#can-i-add-a-data-table-to-the-exported-chart)
+*   [How can I get the best performance out of Highcharts?](#how-can-i-get-the-best-performance-out-of-highcharts)
+*   [Can I export multiple charts to the same image or PDF?](#can-i-export-multiple-charts-to-the-same-image-or-pdf)
+*   [My non-English characters don't display right in my charts](#my-non-english-characters-don39t-display-right-in-my-charts)
+*   [Can I generate charts on the server without using a browser?](#can-i-generate-charts-on-the-server-without-using-a-browser)
+*   [How do I define irregular time data?](#how-do-i-define-irregular-time-data)
+*   [How do I add data from a MySQL database?](#how-do-i-add-data-from-a-mysql-database)
+*   [Your map of my country does not include a disputed area](#your-map-of-my-country-does-not-include-a-disputed-area)
 
 * * *
 
