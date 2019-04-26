@@ -27,7 +27,7 @@ add_to_ssh_config: &add_to_ssh_config
 executors:
   node_image:
     docker:
-      - image: circleci/node:latest-browsers
+      - image: circleci/node:lts-browsers
 
 commands:
   early_return_for_forked_pull_requests:
