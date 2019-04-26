@@ -85,6 +85,7 @@
     "karma-firefox-launcher": "^1.0.1",
     "karma-generic-preprocessor": "^1.1.1",
     "karma-ie-launcher": "^1.0.0",
+    "karma-junit-reporter": "^1.2.0",
     "karma-qunit": "^2.1.0",
     "karma-safari-launcher": "^1.0.0",
     "lint-staged": "^4.2.3",
