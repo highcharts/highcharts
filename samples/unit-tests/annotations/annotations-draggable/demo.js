@@ -1,4 +1,4 @@
-QUnit.test('Draggable annotation - exporting', function (assert) {
+QUnit.skip('Draggable annotation - exporting', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [{
                 data: [3, 6]
