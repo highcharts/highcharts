@@ -136,12 +136,7 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - checkout_code:
-          filters:
-            branches:
-              only:
-                - feature/circleci-integration
-                - master
+      - checkout_code
       - build_dependencies:
           requires:
             - checkout_code
@@ -151,11 +146,6 @@ workflows:
       - test_browsers:
           requires:
             - build_dependencies
-          filters:
-            branches:
-              only:
-                - feature/circleci-integration
-                - master
       - hold_for_approval:
           type: approval
           requires:
@@ -165,7 +155,6 @@ workflows:
             branches:
               only:
                 - feature/circleci-integration
-                - master
       - build_dist:
           requires:
             - hold_for_approval
@@ -173,4 +162,3 @@ workflows:
             branches:
               only:
                 - feature/circleci-integration
-                - master
