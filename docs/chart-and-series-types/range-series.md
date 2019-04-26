@@ -17,9 +17,9 @@ To create a range series set chart.type or series.type to "columnrange":
 Options related to Range series
 -------------------------------
 
-[dataLabels](http://api.highcharts.com/highcharts/plotOptions.arearange.dataLabels)
-
-Since both the low values and high values for a series need a separate data label, we added a new set of options, "xLow", "xHigh", "yLow" and "yHigh". With these options, the relative position can be altered.
+|Option|Description|
+|------|-----------|
+|[dataLabels](http://api.highcharts.com/highcharts/plotOptions.arearange.dataLabels)|Since both the low values and high values for a series need a separate data label, we added a new set of options, "xLow", "xHigh", "yLow" and "yHigh". With these options, the relative position can be altered.|
 
 Range series examples
 ---------------------

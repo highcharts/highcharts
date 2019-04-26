@@ -15,41 +15,17 @@ Browser versions
 
 We test our software on many browsers using the latest versions. Knowing that Internet Explorer users have a tendency not to upgrade we also systematically test older versions of that browser. Highcharts runs on the following browser versions:
 
-Brand
+|Brand|Versions supported|
+|--- |--- |
+|Firefox|2.0 +|
+|Chrome|1.0 +|
+|Safari|4.0 +|
+|Edge|11.0+|
+|Internet Explorer|6.0-8.0 partial. IE9+ full support.|
+|Opera|9.0 +|
+|iOS (Safari)|3.0 +|
+|Android Browser|2.0 + *)|
 
-Versions supported
-
-Firefox
-
-2.0 +
-
-Chrome
-
-1.0 +
-
-Safari
-
-4.0 +
-
-Edge
-
-11.0+
-
-Internet Explorer
-
-6.0-8.0 partial. IE9+ full support.
-
-Opera
-
-9.0 +
-
-iOS (Safari)
-
-3.0 +
-
-Android Browser
-
-2.0 + \*)
 
 \*) Android 2.x has limited support, see [below](#android2).
 
@@ -60,77 +36,19 @@ Rendering engines and Performance
 
 Different browsers support different rendering technologies, modern browsers have support for [SVG](http://www.w3.org/TR/SVG/Overview.html) but older versions of Internet Explorer do not, here we use [VML](http://www.w3.org/TR/NOTE-VML) to draw the graphs. This table describes the technologies we use in various browsers:
 
-Browser version
-
-Rendering technology
-
-Rendering performance
-
-Internet Explorer 9
-
-SVG
-
-Excellent
-
-Internet Explorer 8
-
-VML
-
-Ok
-
-Internet Explorer 7
-
-VML
-
-Slow
-
-Internet Explorer 6
-
-VML
-
-Slow
-
-Firefox
-
-SVG
-
-Excellent
-
-Chrome
-
-SVG
-
-Excellent
-
-Safari
-
-SVG
-
-Excellent
-
-Opera
-
-SVG
-
-Excellent
-
-iOS Safari
-
-SVG
-
-Ok
-
-Android 3+
-
-SVG
-
-Ok
-
-Android 2.x
-
-Canvas
-
-Slow
+|Browser version|Rendering technology|Rendering performance|
+|--- |--- |--- |
+|Internet Explorer 9|SVG|Excellent|
+|Internet Explorer 8|VML|Ok|
+|Internet Explorer 7|VML|Slow|
+|Internet Explorer 6|VML|Slow|
+|Firefox|SVG|Excellent|
+|Chrome|SVG|Excellent|
+|Safari|SVG|Excellent|
+|Opera|SVG|Excellent|
+|iOS Safari|SVG|Ok|
+|Android 3+|SVG|Ok|
+|Android 2.x|Canvas|Slow|
 
 Android 2.x
 -----------

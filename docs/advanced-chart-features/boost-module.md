@@ -19,58 +19,21 @@ Configuration Options
 
 The main boost configuration is set in the `boost property in the chart options.`
 
-`boost.enabled`
-
- If set to true, boost is enabled for the chart. Defaults to `true`.
-
-`boost.useGPUTranslations`
-
-Perform value to pixel translations in the shader, rather than on the GPU. This may have adverse effects on some datasets (especially those where floating point precision may be an issue, such as timestamps with small intervals).
-
-`boost.usePreallocated`
-
-If set to `true`, a native `Float32Array` buffer will be used directly for adding series points to the internal vertex buffers. This speeds up series processing significantly. It’s well-suited for bubble, scatter, column, and bar charts.
-
-`boost.allowForce`
-
-If set to `true`, the whole chart will be boosted if all of its series are supported by the boost module, and if at least one series crosses its boost threshold.
-
-`boost.useAlpha`
-
-Enable or disable alpha blending (opacity). Defaults to `true`.
-
-`boost.debug`
-
-An object containing options for enabling timing information, and debug output.
-
-`boost.debug.timeSetup`
-
-Enable output of how long the WebGL setup took.
-
-`boost.debug.timeSeriesProcessing`
-
-Enable output of how how long the series processing took.
-
-`boost.debug.timeBufferCopy`
-
-Enable output of how long the copy of the render target to the SVG-embeddable image took.
-
-`boost.debug.timeKDTree`
-
-Enable output of how long it took to build the K-d tree.
-
-`boost.debug.showSkipSummary`
-
-Enable output of how many points where culled away by the proximity culler. The proximity culler skips a point if the last point drawn was closer than 1 pixel along both X and Y to the current point.
-
-`boost.seriesThreshold`
-
-A number that specifies how many series the chart must contain before it enters boost mode. Defaults to `50`.
-
-`series|plotOptions.series.boostThreshold`
-
-The number of points that needs to be in the series for the boost to kick in. Defaults to `5000`.
-
+|Option|Description|
+|--- |--- |
+|boost.enabled|If set to true, boost is enabled for the chart. Defaults to true.|
+|boost.useGPUTranslations|Perform value to pixel translations in the shader, rather than on the GPU. This may have adverse effects on some datasets (especially those where floating point precision may be an issue, such as timestamps with small intervals).|
+|boost.usePreallocated|If set to true, a native Float32Array buffer will be used directly for adding series points to the internal vertex buffers. This speeds up series processing significantly. It’s well-suited for bubble, scatter, column, and bar charts.|
+|boost.allowForce|If set to true, the whole chart will be boosted if all of its series are supported by the boost module, and if at least one series crosses its boost threshold.|
+|boost.useAlpha|Enable or disable alpha blending (opacity). Defaults to true.|
+|boost.debug|An object containing options for enabling timing information, and debug output.|
+|boost.debug.timeSetup|Enable output of how long the WebGL setup took.|
+|boost.debug.timeSeriesProcessing|Enable output of how how long the series processing took.|
+|boost.debug.timeBufferCopy|Enable output of how long the copy of the render target to the SVG-embeddable image took.|
+|boost.debug.timeKDTree|Enable output of how long it took to build the K-d tree.|
+|boost.debug.showSkipSummary|Enable output of how many points where culled away by the proximity culler. The proximity culler skips a point if the last point drawn was closer than 1 pixel along both X and Y to the current point.|
+|boost.seriesThreshold|A number that specifies how many series the chart must contain before it enters boost mode. Defaults to 50.|
+|series|plotOptions.series.boostThreshold|The number of points that needs to be in the series for the boost to kick in. Defaults to 5000.|
     
     {
         boost: {

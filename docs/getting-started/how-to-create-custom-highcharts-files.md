@@ -118,86 +118,19 @@ Then run `node custom-builder.js` again to create all the files for your custom 
 Options
 -------
 
-Option
+|Option|Default|Description|
+|--- |--- |--- |
+|base|null|Path to where the build files are located|
+|date|null||
+|exclude|null||
+|fileOptions|{}||
+|files|null|Array of files to compile|
+|jsBase|null|Path to where the js folder is located. Used when masters file is not in same location as the source files.|
+|output|‘./’|Folder to output compiled files|
+|palette|null|Highcharts palette|
+|pretty|true||
+|product|‘Highcharts’|Which product we’re building.|
+|umd|true|Wether to use UMD pattern or a module pattern|
+|version|‘x.x.x’|Version number of Highcharts|
+|type|‘classic’|Type of Highcharts version. Classic or css.|
 
-Default
-
-Description
-
-base
-
-null
-
-Path to where the build files are located
-
-date
-
-null
-
- 
-
-exclude
-
-null
-
- 
-
-fileOptions
-
-{}
-
- 
-
-files
-
-null
-
-Array of files to compile
-
-jsBase
-
-null
-
-Path to where the js folder is located. Used when masters file is not in same location as the source files.
-
-output
-
-‘./’
-
-Folder to output compiled files
-
-palette
-
-null
-
-Highcharts palette
-
-pretty
-
-true
-
- 
-
-product
-
-‘Highcharts’
-
-Which product we’re building.
-
-umd
-
-true
-
-Wether to use UMD pattern or a module pattern
-
-version
-
-‘x.x.x’
-
-Version number of Highcharts
-
-type
-
-‘classic’
-
-Type of Highcharts version. Classic or css.
