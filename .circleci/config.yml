@@ -92,6 +92,11 @@ jobs:
       - << : *load_workspace
       - run: mkdir ../test-results
       - run: npm test
+      - run:
+          name: Save test results
+          command: |
+            find . -type f -regex ".*TESTS.*xml" -exec cp {} ../test-results/ \;
+          when: always
       - store_test_results:
           path: ../test-results
       - store_artifacts:
@@ -140,6 +145,13 @@ workflows:
       - build_dependencies:
           requires:
             - checkout_code
+      - test:
+          requires:
+            - build_dependencies
+          filters:
+            branches:
+              only:
+                - feature/circleci-integration
       - test_browsers:
           requires:
             - build_dependencies
