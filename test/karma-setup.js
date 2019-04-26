@@ -99,7 +99,7 @@ QUnit.assert.close = function (number, expected, error, message) {
 QUnit.module('Highcharts', {
     beforeEach: function (test) {
         if (VERBOSE) {
-            console.log('Start ' + test.test.testName)
+            console.log('Start "' + test.test.testName + '"');
         }
 
         // Reset container size that some tests may have modified
@@ -117,7 +117,7 @@ QUnit.module('Highcharts', {
 
     afterEach: function (test) {
         if (VERBOSE) {
-            console.log('  - end ' + test.test.testName)
+            console.log('- end "' + test.test.testName + '"');
         }
 
         var containerStyle = document.getElementById('container').style;

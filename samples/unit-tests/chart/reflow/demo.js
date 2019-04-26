@@ -43,7 +43,10 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
 
             // Change the container size and trigger window resize to make the chart resize
             container.style.width = '300px';
-            Highcharts.fireEvent(window, 'resize');
+
+            if (navigator.userAgent.indexOf('Edge') === -1) { // triggers page reload on BrowserStack
+                Highcharts.fireEvent(window, 'resize');
+            }
 
         }, 0);
 
