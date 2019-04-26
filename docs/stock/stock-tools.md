@@ -14,17 +14,17 @@ To get started quickly it's recommended to use the default toolbar of the Stock 
     
         
         <script src="http://code.highcharts.com/indicators/indicators-all.js"></script> 
+
+See the example below when you only need some specific indicators for your project. Load first the `indicator.js` base module and specific indicators successively. Technical indicators require the [indicators/indicators.js](https://code.highcharts.com/stock/indicators/indicators.js) base module. The base module includes SMA (Simple Moving Average). Find here a list of [available technical indicators](https://www.highcharts.com/docs/stock/technical-indicator-series)
     
-    See the example below when you only need some specific indicators for your project. Load first the `indicator.js` base module and specific indicators successively. Technical indicators require the [indicators/indicators.js](https://code.highcharts.com/stock/indicators/indicators.js) base module. The base module includes SMA (Simple Moving Average). Find here a list of [available technical indicators](https://www.highcharts.com/docs/stock/technical-indicator-series)
-    
-    _See example below for loading specific indicators._
+_See example below for loading specific indicators._
     
         
         <script src="http://code.highcharts.com/indicators/indicators.js"></script>
         <script src="http://code.highcharts.com/indicators/rsi.js"></script>
         <script src="http://code.highcharts.com/indicators/ema.js"></script> 
         <script src="http://code.highcharts.com/indicators/macd.js"></script> 
-        <script src=" .... other technical indicators ...  " 
+        <script src=" .... other technical indicators ...  "></script>
 2.  Load also the other modules needed by the default toolbar: _Resizable panes, Annotations, Full screen, and Current Price_.
     
         
@@ -51,7 +51,7 @@ To get started quickly it's recommended to use the default toolbar of the Stock 
               }]
             }); 
     
-    And Stock Tools toolbar will show up on the left side of the chart, see the demo below.
+And Stock Tools toolbar will show up on the left side of the chart, see the demo below.
     
 
 <iframe width="320" height="500" style="width: 100%; height: 600px;" src=https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui></iframe>
@@ -189,3 +189,5 @@ How to implement a custom dialogue window, is best explained with an example whe
            }, 
 
 _The above code is put together in the below demo_
+
+<iframe src="https://jsfiddle.net/kyd3vpwx/embedded/result,js,html,css/?username=gvaartjes" id="JSFEMB_18012" width="100%" height="482" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;"></iframe>
