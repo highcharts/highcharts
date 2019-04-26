@@ -1871,7 +1871,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * axes, otherwise 1.
          *
          * In styled mode, the stroke width is given in the `.highcharts-tick`
-         * class.
+         * class, but in order for the element to be generated on category axes,
+         * the option must be explicitly set to 1.
          *
          * @sample {highcharts} highcharts/xaxis/tickwidth/
          *         10 px width
