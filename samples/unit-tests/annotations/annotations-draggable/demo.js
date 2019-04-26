@@ -1,4 +1,4 @@
-QUnit.skip('Draggable annotation - exporting', function (assert) {
+QUnit.test('Draggable annotation - exporting', function (assert) {
     var chart = Highcharts.chart('container', {
             series: [{
                 data: [3, 6]
@@ -45,9 +45,10 @@ QUnit.skip('Draggable annotation - exporting', function (assert) {
     controller.mouseUp();
 
 
-    assert.strictEqual(
+    assert.close(
         annoattionOptions[0].labels[0].y,
         chart.yAxis[0].toPixels(3) - chart.yAxis[0].toPixels(5),
+        0.5,
         'Correctly updated options for annotation\'s label (#10605).'
     );
 
@@ -62,9 +63,10 @@ QUnit.skip('Draggable annotation - exporting', function (assert) {
     );
     controller.mouseUp();
 
-    assert.strictEqual(
+    assert.close(
         annoattionOptions[1].shapes[0].point.y,
         3,
+        0.5,
         'Correctly updated options for annotation\'s shape (#10605).'
     );
 });
