@@ -140,21 +140,17 @@ workflows:
       - build_dependencies:
           requires:
             - checkout_code
-      - test:
-          requires:
-            - build_dependencies
       - test_browsers:
           requires:
             - build_dependencies
       - hold_for_approval:
           type: approval
           requires:
-            - test
             - test_browsers
           filters:
             branches:
               only:
-                - feature/circleci-integration
+                - not-a-branch
       - build_dist:
           requires:
             - hold_for_approval
