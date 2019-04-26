@@ -1120,7 +1120,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             groups = [
                 'group',
                 'markerGroup',
-                'dataLabelsGroup'
+                'dataLabelsGroup',
+                'transformGroup'
             ],
             preserve = [
                 'navigatorSeries',
@@ -1141,7 +1142,16 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 'points',
                 'processedXData',
                 'processedYData',
-                'xIncrement'
+                'xIncrement',
+
+                // Map specific, consider moving it to series-specific preserve-
+                // properties (#10617)
+                'mapMap',
+                'mapData',
+                'minY',
+                'maxY',
+                'minX',
+                'maxX'
             );
             if (options.visible !== false) {
                 preserve.push('area', 'graph');
