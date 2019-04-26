@@ -119,7 +119,7 @@
 * Export module 
   * [Export module overview](export-module/export-module-overview.md)
   * [Client side export](export-module/client-side-export.md)
-  * [Setting up the server](export-module/setting-up-the-server-old.md)
+  * [Setting up the server](export-module/setting-up-the-server.md)
   * [Command line rendering](export-module/render-charts-serverside.md)
   * [Setting up your own server](export-module/setting-up-the-server.md)
   * [Privacy disclaimer export server](export-module/privacy-disclaimer-export.md)

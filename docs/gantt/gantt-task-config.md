@@ -12,6 +12,8 @@ Set the [`milestone`](https://api.highcharts.com/gantt/series.gantt.data.milesto
 
 _See milestone example below, one of the data points in the series has the milestone property set to true_
 
+<iframe src="https://jsfiddle.net/fu3q8e4c/embedded/result,js/" id="JSFEMB_18012" width="100%" height="400" frameborder="0" sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation" allow="camera *; encrypted-media *;"></iframe>
+
 Progress bar
 ------------
 

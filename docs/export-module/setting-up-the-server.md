@@ -14,7 +14,3 @@ Documentation on [GitHub](https://github.com/highcharts/node-export-server/blob/
 
 The export server running at [export.highcharts.com](http://export.highcharts.com) is a [Node.js](https://nodejs.org/en/)\-based service, which is easy to install and integrate on any system. It accepts either chart configurations or SVGs, together with additional resources, and uses [PhantomJS](http://phantomjs.org/) to render charts to images (PNG, JPG, PDF and SVG) to be sent back to the user.
 
-Deprecated export servers
--------------------------
-
-We have some legacy export servers, but these are deprecated, you can find them [here](docs/export-module/258).
