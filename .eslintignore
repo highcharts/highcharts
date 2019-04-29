@@ -4,3 +4,6 @@ samples/highcharts/common-js/**/*.js
 samples/cloud/**/**/*.js
 samples/static/*.js
 tools/eslint-plugin-highcharts/node_modules/**
+test/test-controller.js
+test/test-template.js
+test/test-utilities.js
