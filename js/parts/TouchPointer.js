@@ -247,10 +247,16 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
                     var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
                         minPixelPadding = axis.minPixelPadding,
                         min = axis.toPixels(
-                            pick(axis.options.min, axis.dataMin)
+                            Math.min(
+                                pick(axis.options.min, axis.dataMin),
+                                axis.dataMin
+                            )
                         ),
                         max = axis.toPixels(
-                            pick(axis.options.max, axis.dataMax)
+                            Math.max(
+                                pick(axis.options.max, axis.dataMax),
+                                axis.dataMax
+                            )
                         ),
                         absMin = Math.min(min, max),
                         absMax = Math.max(min, max);
