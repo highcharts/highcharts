@@ -90,8 +90,8 @@ jobs:
     <<: *defaults
     steps:
       - << : *load_workspace
-      - run: mkdir ../test-results
       - run: npm test
+      - run: mkdir ../test-results
       - run:
           name: Save test results
           command: |
