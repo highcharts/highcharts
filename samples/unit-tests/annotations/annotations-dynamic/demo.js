@@ -24,6 +24,15 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
                 }
             }]
         }]
+    }, function (chart) {
+        var annotation = chart.addAnnotation({});
+
+        assert.ok(
+            true,
+            'No errors after adding an annotation in callback (#10628).'
+        );
+
+        chart.removeAnnotation(annotation);
     });
 
     assert.strictEqual(
