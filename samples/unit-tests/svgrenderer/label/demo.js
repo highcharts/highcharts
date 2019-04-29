@@ -135,7 +135,7 @@ QUnit.test('SVG text wrap (#3132)', function (assert) {
         500,
         300
     );
-    renderer.label('Foo: bar', 100, 150)
+    renderer.label('Foo: barracuda', 100, 150)
         .attr({
             'stroke-width': 1,
             stroke: 'blue'
@@ -145,7 +145,7 @@ QUnit.test('SVG text wrap (#3132)', function (assert) {
         })
         .add();
 
-    renderer.label('Foo: <b>bar</b>', 100, 100)
+    renderer.label('Foo: <b>barracuda</b>', 100, 100)
         .attr({
             'stroke-width': 1,
             stroke: 'blue'
