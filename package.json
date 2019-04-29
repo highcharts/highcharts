@@ -36,7 +36,7 @@
     "dts": "npm run gulp dts",
     "dtslint": "npm run gulp dtslint",
     "ts-compile": "npx tsc -p ts",
-    "ts-compile:test": "npx tsc -p test & npx tsc -p samples",
+    "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "gulp"
   },
   "husky": {

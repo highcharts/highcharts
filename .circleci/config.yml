@@ -83,7 +83,7 @@ jobs:
           command: cd /home/circleci/repo/highcharts-declarations-generator && npm install --quiet
       - run:
           name: Generate highcharts ts declarations
-          command: cd /home/circleci/repo/highcharts && npx gulp jsdoc-dts
+          command: cd /home/circleci/repo/highcharts && npx gulp jsdoc-dts && npx gulp lint-dts
       - <<: *persist_workspace
 
   test:
