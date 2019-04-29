@@ -3965,6 +3965,43 @@ H.Series = H.seriesType(
         },
 
         /**
+         * Get the clipping for the series. Could be called twice for a series,
+         * first to initiate animating the clip and the second time
+         * without the animation to set the final clip.
+         *
+         * @private
+         * @function Highcharts.Series#getClip
+         *
+         * @param  {boolean} [animation]
+         *         Initialize the animation.
+         * @return {*}
+         */
+        getClipBox: function (animation) {
+            var series = this,
+                options = series.options,
+                chart = series.chart,
+                inverted = chart.inverted,
+                yAxis = series.yAxis,
+                clipBox;
+
+            if (animation && options.clip === false && yAxis) {
+                // support for not clipped series animation (#10450)
+                clipBox = inverted ? {
+                    y: -chart.chartWidth + yAxis.len + yAxis.pos,
+                    height: chart.chartWidth
+                } : {
+                    y: -yAxis.pos,
+                    height: chart.chartHeight
+                };
+                // x and width are set later in this case
+            } else {
+                clipBox = series.clipBox || chart.clipBox;
+            }
+
+            return clipBox;
+        },
+
+        /**
          * Set the clipping for the series. For animated series it is called
          * twice, first to initiate animating the clip then the second time
          * without the animation to set the final clip.
@@ -3980,19 +4017,7 @@ H.Series = H.seriesType(
                 renderer = chart.renderer,
                 inverted = chart.inverted,
                 seriesClipBox = this.clipBox,
-                clipBox = options.clip === false && animation && this.xAxis ?
-                    // support for animating of not clipped series
-                    {
-                        x: -this.xAxis.pos,
-                        y: !inverted ?
-                            -this.yAxis.pos :
-                            -chart.chartWidth + this.yAxis.len + this.yAxis.pos,
-                        width: chart.chartWidth,
-                        height: chart.inverted ?
-                            chart.chartWidth :
-                            chart.chartHeight
-                    } :
-                    seriesClipBox || chart.clipBox,
+                clipBox = this.getClipBox(animation),
                 sharedClipKey =
                     this.sharedClipKey ||
                     [
@@ -4086,9 +4111,11 @@ H.Series = H.seriesType(
             var series = this,
                 chart = series.chart,
                 inverted = chart.inverted,
-                clipRect,
+                xAxis = series.xAxis,
                 animation = animObject(series.options.animation),
-                sharedClipKey;
+                clipRect,
+                sharedClipKey,
+                finalBox;
 
             // Initialize the animation. Set up the clipping rectangle.
             if (init) {
@@ -4099,34 +4126,35 @@ H.Series = H.seriesType(
             } else {
                 sharedClipKey = this.sharedClipKey;
                 clipRect = chart[sharedClipKey];
+
+                if (series.options.clip === false && xAxis) {
+                    // support for not clipped series animation (#10450)
+                    finalBox = inverted ? {
+                        width: chart.chartHeight,
+                        x: -chart.chartHeight + xAxis.pos + xAxis.len
+                    } : {
+                        width: chart.chartWidth,
+                        x: -xAxis.pos
+                    };
+                } else {
+                    finalBox = {
+                        width: chart.plotSizeX,
+                        x: 0
+                    };
+                }
+
                 if (clipRect) {
-                    if (series.options.clip !== false) {
-                        clipRect.animate({
-                            width: chart.plotSizeX,
-                            x: 0
-                        }, animation);
-                    } else {
-                        clipRect.animate({
-                            width: inverted ?
-                                chart.chartHeight :
-                                chart.chartWidth,
-                            x: inverted ?
-                                -chart.chartHeight + series.xAxis.pos +
-                                    series.xAxis.len :
-                                -series.xAxis.pos
-                        }, animation);
-                    }
+                    clipRect.animate(finalBox, animation);
                 }
                 if (chart[sharedClipKey + 'm']) {
                     chart[sharedClipKey + 'm'].animate({
-                        width: chart.plotSizeX + 99,
-                        x: inverted ? 0 : -99
+                        width: finalBox.width + 99,
+                        x: finalBox.x - (inverted ? 0 : 99)
                     }, animation);
                 }
 
                 // Delete this function to allow it only once
                 series.animate = null;
-
             }
         },
 
