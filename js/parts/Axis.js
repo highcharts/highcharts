@@ -2096,6 +2096,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * margin between the axes. Defaults to 0 on vertical axes, 15 on
          * horizontal axes.
          *
+         * @type      {number}
          * @since     7.0.3
          * @apioption xAxis.margin
          */
