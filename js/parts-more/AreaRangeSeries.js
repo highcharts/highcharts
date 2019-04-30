@@ -11,7 +11,7 @@
  * `x` and `y` options. Instead, they have `xLow`, `xHigh`, `yLow` and `yHigh`
  * options to allow the higher and lower data label sets individually.
  *
- * @interface Highcharts.PlotAreaRangeDataLabelsOptionsObject
+ * @interface Highcharts.SeriesAreaRangeDataLabelsOptionsObject
  * @extends Highcharts.DataLabelsOptionsObject
  * @since 2.3.0
  * @product highcharts highstock
@@ -23,7 +23,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
  *      Data labels on range series
  *
- * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#xLow
+ * @name Highcharts.SeriesAreaRangeDataLabelsOptionsObject#xLow
  * @type {number|undefined}
  * @default 0
  * @since 2.3.0
@@ -34,7 +34,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
  *      Data labels on range series
  *
- * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#xHigh
+ * @name Highcharts.SeriesAreaRangeDataLabelsOptionsObject#xHigh
  * @type {number|undefined}
  * @default 0
  * @since 2.3.0
@@ -45,7 +45,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
  *      Data labels on range series
  *
- * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#yLow
+ * @name Highcharts.SeriesAreaRangeDataLabelsOptionsObject#yLow
  * @type {number|undefined}
  * @default 0
  * @since 2.3.0
@@ -56,7 +56,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/arearange-datalabels/|Highcharts-Demo:}
  *      Data labels on range series
  *
- * @name Highcharts.PlotAreaRangeDataLabelsOptionsObject#yHigh
+ * @name Highcharts.SeriesAreaRangeDataLabelsOptionsObject#yHigh
  * @type {number|undefined}
  * @default 0
  * @since 2.3.0
@@ -136,7 +136,7 @@ seriesType('arearange', 'area', {
     trackByArea: true,
 
     /**
-     * @type {Highcharts.DataLabelsOptionsObject|Highcharts.PlotAreaRangeDataLabelsOptionsObject}
+     * @type {Highcharts.DataLabelsOptionsObject|Highcharts.SeriesAreaRangeDataLabelsOptionsObject}
      *
      * @private
      */

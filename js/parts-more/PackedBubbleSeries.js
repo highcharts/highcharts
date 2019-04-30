@@ -9,9 +9,9 @@
 /**
  * Formatter callback function.
  *
- * @callback Highcharts.PlotPackedBubbleDataLabelsFormatterCallbackFunction
+ * @callback Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
  * @return {string}
@@ -21,24 +21,24 @@
 /**
  * Context for the formatter function.
  *
- * @interface Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject
+ * @interface Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject
  * @extends Highcharts.DataLabelsFormatterContextObject
  * @since 7.0.0
  *//**
  * The color of the node.
- * @name Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject#color
+ * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#color
  * @type {Highcharts.ColorString}
  * @since 7.0.0
  *//**
  * The point (node) object. The node name, if defined, is available through
  * `this.point.name`. Arrays: `this.point.linksFrom` and `this.point.linksTo`
  * contains all nodes connected to this point.
- * @name Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject#point
+ * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#point
  * @type {Highcharts.Point}
  * @since 7.0.0
  *//**
  * The ID of the node.
- * @name Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject#key
+ * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#key
  * @type {string}
  * @since 7.0.0
  */
@@ -46,7 +46,7 @@
 /**
  * Data labels options
  *
- * @interface Highcharts.PlotPackedBubbleDataLabelsOptionsObject
+ * @interface Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
  * @extends Highcharts.DataLabelsOptionsObject
  * @since 7.0.0
  *//**
@@ -54,54 +54,54 @@
  * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
  * specifying what to show for _node_ in the networkgraph. In v7.0 defaults to
  * `{key}`, since v7.1 defaults to `undefined` and `formatter` is used instead.
- * @name Highcharts.PlotPackedBubbleDataLabelsOptionsObject#format
+ * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#format
  * @type {string}
  * @since 7.0.0
  *//**
  * Callback JavaScript function to format the data label for a node. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
  * ignored.
- * @name Highcharts.PlotPackedBubbleDataLabelsOptionsObject#formatter
- * @type {Highcharts.PlotPackedBubbleDataLabelsFormatterCallbackFunction|undefined}
+ * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#formatter
+ * @type {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction|undefined}
  * @since 7.0.0
  *//**
  * Callback to format data labels for _parentNodes_. The `parentNodeFormat`
  * option takes precedence over the `parentNodeFormatter`.
- * @name Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject#parentNodeFormatter
+ * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#parentNodeFormatter
  * @type {Highcharts.FormatterCallbackFunction<Highcharts.DataLabelsFormatterContextObject>}
  * @since 7.1.0
  *//**
  * Options for a _parentNode_ label text.
  * @sample highcharts/series-packedbubble/packed-dashboard
  *         Dashboard with dataLabels on parentNodes
- * @name Highcharts.PlotPackedBubbleDataLabelsFormatterContextObject#parentNodeTextPath
- * @type {Highcharts.PlotPackedBubbleDataLabelsTextPath}
+ * @name Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject#parentNodeTextPath
+ * @type {Highcharts.SeriesPackedBubbleDataLabelsTextPath}
  * @since 7.1.0
 *//**
  * Options for a _node_ label text which should follow marker's shape.
  * **Note:** Only SVG-based renderer supports this option.
- * @see {@link Highcharts.PlotPackedBubbleDataLabelsTextPath#linkTextPath}
- * @name Highcharts.PlotPackedBubbleDataLabelsOptionsObject#textPath
- * @type {Highcharts.PlotPackedBubbleDataLabelsTextPath}
+ * @see {@link Highcharts.SeriesPackedBubbleDataLabelsTextPath#linkTextPath}
+ * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#textPath
+ * @type {Highcharts.SeriesPackedBubbleDataLabelsTextPath}
  * @since 7.1.0
  */
 
 /**
  * **Note:** Only SVG-based renderer supports this option.
  *
- * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#linkTextPath}
- * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#textPath}
+ * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
+ * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
  *
- * @interface Highcharts.PlotPackedBubbleDataLabelsTextPath
+ * @interface Highcharts.SeriesPackedBubbleDataLabelsTextPath
  * @since 7.1.0
  *//**
  * Presentation attributes for the text path.
- * @name Highcharts.PlotPackedBubbleDataLabelsTextPath#attributes
+ * @name Highcharts.SeriesPackedBubbleDataLabelsTextPath#attributes
  * @type {Highcharts.SVGAttributes}
  * @since 7.1.0
  *//**
  * Enable or disable `textPath` option for link's or marker's data labels.
- * @name Highcharts.PlotPackedBubbleDataLabelsTextPath#enabled
+ * @name Highcharts.SeriesPackedBubbleDataLabelsTextPath#enabled
  * @type {boolean|undefined}
  * @since 7.1.0
  */
@@ -422,7 +422,7 @@ seriesType(
          */
         useSimulation: true,
         /**
-         * @type {Highcharts.PlotPackedBubbleDataLabelsOptionsObject}
+         * @type {Highcharts.SeriesPackedBubbleDataLabelsOptionsObject}
          *
          * @private
          */
