@@ -25,7 +25,6 @@
     "lib"
   ],
   "scripts": {
-    "pretest": "npm run ts-compile:test",
     "test": "npm run gulp test --speak",
     "testall": "npm run gulp test --speak --browsers all",
     "preci-test": "npm run ts-compile:test",
