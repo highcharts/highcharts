@@ -87,11 +87,21 @@ H.extendAnnotation(
      * @sample highcharts/annotations-advanced/crooked-line/
      *         Crooked line
      *
-     * @excluding    labels, shapes
      * @product      highstock
      * @optionparent annotations.crookedLine
      */
     {
+
+        /**
+         * @extends   annotations.labelOptions
+         * @apioption annotations.crookedLine.labelOptions
+         */
+
+        /**
+         * @extends   annotations.shapeOptions
+         * @apioption annotations.crookedLine.shapeOptions
+         */
+
         /**
          * Additional options for an annotation with the type.
          */

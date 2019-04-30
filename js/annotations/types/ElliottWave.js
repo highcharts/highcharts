@@ -45,13 +45,14 @@ H.extendAnnotation(ElliottWave, CrookedLine,
      */
     {
         typeOptions: {
+
             /**
              * @extends   annotations.crookedLine.labelOptions
-             * @apioption annotations.crookedLine.typeOptions.points.label
+             * @apioption annotations.elliottWave.typeOptions.points.label
              */
 
             /**
-             * @ignore
+             * @ignore-options
              */
             labels: ['(0)', '(A)', '(B)', '(C)', '(D)', '(E)'],
             line: {
