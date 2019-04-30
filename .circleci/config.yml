@@ -22,6 +22,12 @@ add_to_ssh_config: &add_to_ssh_config
   - run:
       name: Avoid hosts unknown for github
       command: echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+  - run:
+      name: Github user config
+      command: |
+        git config --global user.name CircleCI
+        git config --global user.email technical+circleci_mu@highsoft.com
+
 #######################################
 
 executors:
@@ -108,6 +114,16 @@ jobs:
       - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
       - << : *load_workspace
       - run: npm run ci-test
+      - run: mkdir ../test-results
+      - run:
+          name: Save test results
+          command: |
+            find . -type f -regex ".*TESTS.*xml" -exec cp {} ../test-results/ \;
+          when: always
+      - store_test_results:
+          path: ../test-results
+      - store_artifacts:
+          path: ../test-results
 
   build_dist:
     <<: *defaults
