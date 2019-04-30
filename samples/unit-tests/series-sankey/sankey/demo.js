@@ -448,3 +448,41 @@ QUnit.test('Sankey and unordered data', assert => {
     );
 
 });
+
+
+QUnit.test(
+    'Sankey and inactive state',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+                series: [{
+                    keys: ['from', 'to', 'weight'],
+                    data: [
+                        ['Brazil', 'Portugal', 5],
+                        ['Portugal', 'England', 15]
+                    ],
+                    type: 'sankey'
+                }]
+            }),
+            controller = new TestController(chart);
+
+        controller.mouseOver(
+            chart.series[0].nodes[1].nodeX + chart.plotLeft + 50,
+            chart.series[0].points[1].plotY + chart.plotTop + 5
+        );
+
+        chart.series[0].update({
+            // Set `keys` to prevent using `setData()`
+            keys: ['from', 'to', 'weight'],
+            data: [
+                ['Brazil', 'Portugal', 5],
+                ['Portugal', 'England', 25]
+            ]
+        });
+
+        assert.ok(
+            true,
+            'No errors when updating series after hovering a link (#10624).'
+        );
+    }
+);
