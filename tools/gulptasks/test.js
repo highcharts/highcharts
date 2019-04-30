@@ -279,6 +279,9 @@ Available arguments for 'gulp test':
 --debug
     Print some debugging info.
 
+--force
+    Forces all tests without cached results.
+
 --speak
     Says if tests failed or succeeded.
 
@@ -298,7 +301,7 @@ Available arguments for 'gulp test':
         checkSamplesConsistency();
         checkJSWrap();
 
-        const forceRun = (Object.keys(argv).length > 2);
+        const forceRun = (argv.force || argv.length > 2);
 
         if (forceRun || shouldRun()) {
 
