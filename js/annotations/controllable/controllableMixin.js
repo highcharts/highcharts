@@ -143,10 +143,13 @@ var controllableMixin = {
     /**
      * Map point's options to a point-like object.
      *
-     * @param {Annotation.MockPoint.Options} pointOptions point's options
-     * @param {Annotation.PointLike} point a point like instance
-     * @return {Annotation.PointLike|null} if the point is
-     *         found/set returns this point, otherwise null
+     * @param {Highcharts.MockPointOptionsObject} pointOptions
+     *        point's options
+     * @param {Highcharts.PointLike} point
+     *        a point like instance
+     *
+     * @return {Highcharts.PointLike|null}
+     *         if the point is found/set returns this point, otherwise null
      */
     point: function (pointOptions, point) {
         if (pointOptions && pointOptions.series) {
