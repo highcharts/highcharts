@@ -14,6 +14,29 @@
  * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
  */
 
+/**
+ * @interface Highcharts.SeriesOrganizationDataLabelsOptionsObject
+ * @extends Highcharts.SeriesSankeyDataLabelsOptionsObject
+ *//**
+ * A callback for defining the format for _nodes_ in the
+ * organization chart. The `nodeFormat` option takes precedence over
+ * `nodeFormatter`.
+ *
+ * In an organization chart, the `nodeFormatter` is a quite complex
+ * function of the available options, striving for a good default
+ * layout of cards with or without images. In organization chart,
+ * the data labels come with `useHTML` set to true, meaning they
+ * will be rendered as true HTML above the SVG.
+ *
+ * @sample highcharts/series-organization/datalabels-nodeformatter
+ *         Modify the default label format output
+ *
+ * @name Highcharts.SeriesOrganizationDataLabelsOptionsObject#nodeFormatter
+ * @type {Highcharts.FormatterCallbackFunction<Highcharts.SankeyNodeObject>|undefined}
+ * @default function () { return this.point.name; }
+ * @since 6.0.2
+ */
+
 'use strict';
 
 import H from '../parts/Globals.js';
@@ -54,11 +77,15 @@ H.seriesType(
     {
         /**
          * The border color of the node cards.
+         *
          * @type {Highcharts.ColorString}
+         * @private
          */
         borderColor: '${palette.neutralColor60}',
         /**
          * The border radius of the node cards.
+         *
+         * @private
          */
         borderRadius: 3,
         /**
@@ -66,24 +93,17 @@ H.seriesType(
          *
          * @sample   highcharts/series-organization/link-options
          *           Square links
+         *
+         * @private
          */
         linkRadius: 10,
         borderWidth: 1,
+        /**
+         * @type {Highcharts.DataLabelsOptionsObject|Highcharts.SeriesOrganizationDataLabelsOptionsObject}
+         * @private
+         */
         dataLabels: {
-            /**
-             * A callback for defining the format for _nodes_ in the
-             * organization chart. The `nodeFormat` option takes precedence over
-             * `nodeFormatter`.
-             *
-             * In an organization chart, the `nodeFormatter` is a quite complex
-             * function of the available options, striving for a good default
-             * layout of cards with or without images. In organization chart,
-             * the data labels come with `useHTML` set to true, meaning they
-             * will be rendered as true HTML above the SVG.
-             *
-             * @sample highcharts/series-organization/datalabels-nodeformatter
-             *         Modify the default label format output
-             */
+            /** @ignore-option */
             nodeFormatter: function () {
 
                 var outerStyle = {
@@ -163,20 +183,26 @@ H.seriesType(
                     '</div>';
                 return html;
             },
+            /** @ignore-option */
             style: {
                 fontWeight: 'normal',
                 fontSize: '13px'
             },
+            /** @ignore-option */
             useHTML: true
         },
         /**
          * The indentation in pixels of hanging nodes, nodes which parent has
          * [layout](#series.organization.nodes.layout) set to `hanging`.
+         *
+         * @private
          */
         hangingIndent: 20,
         /**
          * The color of the links between nodes.
+         *
          * @type {Highcharts.ColorString}
+         * @private
          */
         linkColor: '${palette.neutralColor60}',
         /**
@@ -184,12 +210,16 @@ H.seriesType(
          *
          * @sample   highcharts/series-organization/link-options
          *           Square links
+         *
+         * @private
          */
         linkLineWidth: 1,
         /**
          * In a horizontal chart, the width of the nodes in pixels. Node that
          * most organization charts are vertical, so the name of this option
          * is counterintuitive.
+         *
+         * @private
          */
         nodeWidth: 50,
         tooltip: {
