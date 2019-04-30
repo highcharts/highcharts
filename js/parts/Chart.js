@@ -2305,8 +2305,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     onload: function () {
 
-        // Run callbacks
-        [this.callback].concat(this.callbacks).forEach(function (fn) {
+        // Run callbacks, first the ones registered by modules, then user's one
+        this.callbacks.concat([this.callback]).forEach(function (fn) {
             // Chart destroyed in its own callback (#3600)
             if (fn && this.index !== undefined) {
                 fn.apply(this, [this]);

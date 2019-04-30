@@ -133,8 +133,8 @@
         }, function () {
             assert.strictEqual(
                 this.container.querySelectorAll('image').length,
-                0,
-                'callback: Image not yet added'
+                1,
+                'callback: Image added after modules\'s callbacks'
             );
 
             done();
