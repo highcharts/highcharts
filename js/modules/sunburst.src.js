@@ -449,6 +449,7 @@ var cbSetTreeValuesBefore = function before(node, options) {
  *               navigatorOptions, pointRange
  * @product      highcharts
  * @optionparent plotOptions.sunburst
+ * @private
  */
 var sunburstOptions = {
 
