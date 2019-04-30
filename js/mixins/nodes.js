@@ -171,14 +171,22 @@ H.NodesMixin = {
                 [this.fromNode, this.toNode];
 
         others.forEach(function (linkOrNode) {
-            Point.prototype.setState.apply(linkOrNode, args);
+            if (linkOrNode.series) {
+                Point.prototype.setState.apply(linkOrNode, args);
 
-            if (!linkOrNode.isNode) {
-                if (linkOrNode.fromNode.graphic) {
-                    Point.prototype.setState.apply(linkOrNode.fromNode, args);
-                }
-                if (linkOrNode.toNode.graphic) {
-                    Point.prototype.setState.apply(linkOrNode.toNode, args);
+                if (!linkOrNode.isNode) {
+                    if (linkOrNode.fromNode.graphic) {
+                        Point.prototype.setState.apply(
+                            linkOrNode.fromNode,
+                            args
+                        );
+                    }
+                    if (linkOrNode.toNode.graphic) {
+                        Point.prototype.setState.apply(
+                            linkOrNode.toNode,
+                            args
+                        );
+                    }
                 }
             }
         });
