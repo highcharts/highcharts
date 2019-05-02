@@ -542,25 +542,33 @@ module.exports = function (config) {
 
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
-
-        console.log(
-            'BrowserStack initialized. Please wait while tests are ' +
-            'uploaded and VMs prepared...'
-        );
-
         let properties = getProperties();
 
         options.browserStack = {
             username: properties['browserstack.username'],
-            accessKey: properties['browserstack.accesskey']
+            accessKey: properties['browserstack.accesskey'],
+            project: 'highcharts',
+            build: `highcharts-build-${process.env.CIRCLE_BUILD_NUM || Math.random().toString(36).substring(7)} `,
+            name: `circle-ci-karma-highcharts`,
+            localIdentifier: Math.random().toString(36).substring(7), // to avoid instances interfering with each other.
+            video: false,
         };
         options.customLaunchers = browserStackBrowsers;
+        options.logLevel = config.LOG_INFO;
+
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
-        options.browserDisconnectTimeout = 10000; // default 2000
+        options.concurrency = 1;
+        options.browserDisconnectTimeout = 20000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
         options.captureTimeout = 4 * 60 * 1000; // default 60000
+
+        console.log(
+            'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared.' +
+            `Any other test runs must complete before this test run will start. Current Browserstack concurrency rate is ${options.concurrency}..`
+        );
+
     }
 
     config.set(options);
