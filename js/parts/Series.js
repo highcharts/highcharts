@@ -3965,40 +3965,56 @@ H.Series = H.seriesType(
         },
 
         /**
-         * Get the clipping for the series. Could be called twice for a series,
-         * first to initiate animating the clip and the second time
-         * without the animation to set the final clip.
+         * Get the clipping for the series. Could be called for a series to
+         * initiate animating the clip or to set the final clip (only width
+         * and x).
          *
          * @private
          * @function Highcharts.Series#getClip
          *
          * @param  {boolean} [animation]
          *         Initialize the animation.
+         * @param  {boolean} [finalBox]
+         *         Final size for the clip - end state for the animation.
          * @return {*}
          */
-        getClipBox: function (animation) {
+        getClipBox: function (animation, finalBox) {
             var series = this,
                 options = series.options,
                 chart = series.chart,
                 inverted = chart.inverted,
-                yAxis = series.yAxis,
+                xAxis = series.xAxis,
+                yAxis = xAxis && series.yAxis,
                 clipBox;
 
             if (animation && options.clip === false && yAxis) {
                 // support for not clipped series animation (#10450)
                 clipBox = inverted ? {
                     y: -chart.chartWidth + yAxis.len + yAxis.pos,
-                    height: chart.chartWidth
+                    height: chart.chartWidth,
+                    width: chart.chartHeight,
+                    x: -chart.chartHeight + xAxis.len + xAxis.pos
                 } : {
                     y: -yAxis.pos,
-                    height: chart.chartHeight
+                    height: chart.chartHeight,
+                    width: chart.chartWidth,
+                    x: -xAxis.pos
                 };
-                // x and width are set later in this case
+                // x and width will be changed later when setting for animation
+                // initial state in Series.setClip
             } else {
                 clipBox = series.clipBox || chart.clipBox;
+
+                if (finalBox) {
+                    clipBox.width = chart.plotSizeX;
+                    clipBox.x = 0;
+                }
             }
 
-            return clipBox;
+            return !finalBox ? clipBox : {
+                width: clipBox.width,
+                x: clipBox.x
+            };
         },
 
         /**
@@ -4110,8 +4126,6 @@ H.Series = H.seriesType(
         animate: function (init) {
             var series = this,
                 chart = series.chart,
-                inverted = chart.inverted,
-                xAxis = series.xAxis,
                 animation = animObject(series.options.animation),
                 clipRect,
                 sharedClipKey,
@@ -4127,21 +4141,7 @@ H.Series = H.seriesType(
                 sharedClipKey = this.sharedClipKey;
                 clipRect = chart[sharedClipKey];
 
-                if (series.options.clip === false && xAxis) {
-                    // support for not clipped series animation (#10450)
-                    finalBox = inverted ? {
-                        width: chart.chartHeight,
-                        x: -chart.chartHeight + xAxis.pos + xAxis.len
-                    } : {
-                        width: chart.chartWidth,
-                        x: -xAxis.pos
-                    };
-                } else {
-                    finalBox = {
-                        width: chart.plotSizeX,
-                        x: 0
-                    };
-                }
+                finalBox = series.getClipBox(animation, true);
 
                 if (clipRect) {
                     clipRect.animate(finalBox, animation);
@@ -4149,7 +4149,7 @@ H.Series = H.seriesType(
                 if (chart[sharedClipKey + 'm']) {
                     chart[sharedClipKey + 'm'].animate({
                         width: finalBox.width + 99,
-                        x: finalBox.x - (inverted ? 0 : 99)
+                        x: finalBox.x - (chart.inverted ? 0 : 99)
                     }, animation);
                 }
 
