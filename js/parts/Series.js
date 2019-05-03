@@ -1858,6 +1858,7 @@ H.Series = H.seriesType(
          *         Multiple data labels on a bar series
          *
          * @type {Highcharts.DataLabelsOptionsObject}
+         * @default {"align": "center", "formatter": function () { return H.numberFormat(this.y, -1); }, "padding": 5, "style": {"fontSize": "11px", "fontWeight": "bold", "color": "contrast", "textOutline": "1px contrast"}, "verticalAlign": "bottom", "x":0, "y": 0}
          *
          * @private
          */

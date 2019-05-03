@@ -46,7 +46,7 @@
 /**
  * Data labels options
  *
- * @interface Highcharts.PlotPackedBubbleDataLabelsOptionsObject
+ * @interface Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
  * @extends Highcharts.DataLabelsOptionsObject
  * @since 7.0.0
  *//**
@@ -54,14 +54,14 @@
  * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
  * specifying what to show for _node_ in the networkgraph. In v7.0 defaults to
  * `{key}`, since v7.1 defaults to `undefined` and `formatter` is used instead.
- * @name Highcharts.PlotPackedBubbleDataLabelsOptionsObject#format
+ * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#format
  * @type {string}
  * @since 7.0.0
  *//**
  * Callback JavaScript function to format the data label for a node. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
  * ignored.
- * @name Highcharts.PlotPackedBubbleDataLabelsOptionsObject#formatter
+ * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#formatter
  * @type {Highcharts.PlotPackedBubbleDataLabelsFormatterCallbackFunction|undefined}
  * @since 7.0.0
  *//**
@@ -81,7 +81,7 @@
  * Options for a _node_ label text which should follow marker's shape.
  * **Note:** Only SVG-based renderer supports this option.
  * @see {@link Highcharts.PlotPackedBubbleDataLabelsTextPath#linkTextPath}
- * @name Highcharts.PlotPackedBubbleDataLabelsOptionsObject#textPath
+ * @name Highcharts.SeriesPackedBubbleDataLabelsOptionsObject#textPath
  * @type {Highcharts.PlotPackedBubbleDataLabelsTextPath}
  * @since 7.1.0
  */
@@ -422,7 +422,8 @@ seriesType(
          */
         useSimulation: true,
         /**
-         * @type {Highcharts.PlotPackedBubbleDataLabelsOptionsObject}
+         * @type {Highcharts.SeriesPackedBubbleDataLabelsOptionsObject}
+         * @default {"formatter": function () { return this.point.value; }, "parentNodeFormatter": function () { return this.name; }, "parentNodeTextPath": {"enabled: true}, "padding": 0}
          *
          * @private
          */

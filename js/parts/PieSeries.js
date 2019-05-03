@@ -291,7 +291,8 @@ seriesType(
          */
 
         /**
-         * @type {Highcharts.DataLabelsOptionsObject|Highcharts.PlotPieDataLabelsOptionsObject}
+         * @type {Highcharts.PlotPieDataLabelsOptionsObject}
+         * @default {"allowOverlap": true, "connectorPadding": 5, "distance": 30, "enabled": true, "formatter": function () { return this.point.name; }, "softConnector": true, "x": 0, "connectorShape": "fixedOffset", "crookDistance": "70%"}
          *
          * @private
          */

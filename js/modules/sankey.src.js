@@ -79,7 +79,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels|Highcharts-Demo:}
  *      Style mode example
  *
- * @interface Highcharts.PlotSankeyDataLabelsOptionsObject
+ * @interface Highcharts.SeriesSankeyDataLabelsOptionsObject
  * @extends Highcharts.DataLabelsOptionsObject
  *//**
  * The
@@ -90,13 +90,13 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-link-datalabels|Highcharts-Demo:}
  *      Node and link data labels
  *
- * @name Highcharts.PlotSankeyDataLabelsOptionsObject#nodeFormat
+ * @name Highcharts.SeriesSankeyDataLabelsOptionsObject#nodeFormat
  * @type {string|undefined}
  *//**
  * Callback to format data labels for _nodes_ in the sankey diagram. The
  * `nodeFormat` option takes precedence over the `nodeFormatter`.
  *
- * @name Highcharts.PlotSankeyDataLabelsOptionsObject#nodeFormatter
+ * @name Highcharts.SeriesSankeyDataLabelsOptionsObject#nodeFormatter
  * @type {Highcharts.FormatterCallbackFunction<Highcharts.SankeyNodeObject>|undefined}
  * @default function () { return this.point.name; }
  * @since 6.0.2
@@ -187,7 +187,8 @@ seriesType('sankey', 'column'
          * `nodeFormat`, and the `format` that applies to links and is an empty
          * string by default.
          *
-         * @type {Highcharts.DataLabelsOptionsObject|Highcharts.PlotSankeyDataLabelsOptionsObject}
+         * @type    {Highcharts.DataLabelsOptionsObject|Highcharts.SeriesSankeyDataLabelsOptionsObject}
+         * @default {"enabled": true, "backgroundColor": "none", "crop": false, "nodeFormatter": function () { return this.point.name; }, "inside": true}
          *
          * @private
          */

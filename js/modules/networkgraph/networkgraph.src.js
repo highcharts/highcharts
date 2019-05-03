@@ -46,7 +46,7 @@
 /**
  * Data labels options
  *
- * @interface Highcharts.PlotNetworkDataLabelsOptionsObject
+ * @interface Highcharts.SeriesNetworkDataLabelsOptionsObject
  * @extends Highcharts.DataLabelsOptionsObject
  * @since 7.0.0
  *//**
@@ -54,14 +54,14 @@
  * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
  * specifying what to show for _node_ in the networkgraph. In v7.0 defaults to
  * `{key}`, since v7.1 defaults to `undefined` and `formatter` is used instead.
- * @name Highcharts.PlotNetworkDataLabelsOptionsObject#format
+ * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#format
  * @type {string}
  * @since 7.0.0
  *//**
  * Callback JavaScript function to format the data label for a node. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
  * ignored.
- * @name Highcharts.PlotNetworkDataLabelsOptionsObject#formatter
+ * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#formatter
  * @type {Highcharts.PlotNetworkDataLabelsFormatterCallbackFunction|undefined}
  * @since 7.0.0
  *//**
@@ -69,13 +69,13 @@
  * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
  * specifying what to show for _links_ in the networkgraph. (Default:
  * `undefined`)
- * @name Highcharts.PlotNetworkDataLabelsOptionsObject#linkFormat
+ * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#linkFormat
  * @type {string}
  * @since 7.1.0
  *//**
  * Callback to format data labels for _links_ in the sankey diagram. The
  * `linkFormat` option takes precedence over the `linkFormatter`.
- * @name Highcharts.PlotNetworkDataLabelsOptionsObject#linkFormatter
+ * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#linkFormatter
  * @type {Highcharts.PlotNetworkDataLabelsFormatterCallbackFunction|undefined}
  * @since 7.1.0
  *//**
@@ -84,7 +84,7 @@
  * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
  * true will disable this option.
  * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#textPath}
- * @name Highcharts.PlotNetworkDataLabelsOptionsObject#linkTextPath
+ * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#linkTextPath
  * @type {Highcharts.PlotNetworkDataLabelsTextPath}
  * @since 7.1.0
  *//**
@@ -93,7 +93,7 @@
  * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
  * true will disable this option.
  * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#linkTextPath}
- * @name Highcharts.PlotNetworkDataLabelsOptionsObject#textPath
+ * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#textPath
  * @type {Highcharts.PlotNetworkDataLabelsTextPath}
  * @since 7.1.0
  */
@@ -228,7 +228,9 @@ seriesType(
          * @sample highcharts/series-networkgraph/link-datalabels
          *         Data labels moved under the links
          *
-         * @type {Highcharts.PlotNetworkDataLabelsOptionsObject}
+         * @type    {Highcharts.SeriesNetworkDataLabelsOptionsObject}
+         * @default {"formatter": function () { return this.key; }, "linkFormatter": function () { return this.point.fromNode.name + "<br>" + this.point.toNode.name; }, "linkTextPath": {"enabled": true}, "textPath": {"enabled": false}}
+         *
          * @private
          */
         dataLabels: {
