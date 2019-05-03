@@ -263,6 +263,15 @@ module.exports = function (config) {
             // they are not mutated for later tests?
             'samples/unit-tests/themes/*/demo.js',
 
+            // Trying to get Edge to pass:
+            //'samples/unit-tests/interaction/*/demo.js',
+            //'samples/unit-tests/stock-tools/*/demo.js',
+            //'samples/unit-tests/drag-panes/pointer-interactions/demo.js',
+            //'samples/unit-tests/chart/zoomtype/demo.js',
+            //'samples/unit-tests/drilldown/drillup/demo.js',
+            //'samples/unit-tests/rangeselector/selected/demo.js',
+            //'samples/unit-tests/point/point/demo.js',
+            //'samples/unit-tests/pointer/members/demo.js',
 
             // --- VISUAL TESTS ---
 

@@ -28,6 +28,8 @@ canvas.setAttribute('width', 300);
 canvas.setAttribute('height', 200);
 var ctx = canvas.getContext('2d');
 
+var currentTests = [];
+
 // Disable animation over all.
 Highcharts.setOptions({
     chart: {
@@ -101,6 +103,7 @@ QUnit.module('Highcharts', {
         if (VERBOSE) {
             console.log('Start "' + test.test.testName + '"');
         }
+        currentTests.push(test.test.testName);
 
         // Reset container size that some tests may have modified
         var containerStyle = document.getElementById('container').style;
@@ -119,6 +122,10 @@ QUnit.module('Highcharts', {
         if (VERBOSE) {
             console.log('- end "' + test.test.testName + '"');
         }
+        currentTests.splice(
+            currentTests.indexOf(test.test.testName),
+            1
+        );
 
         var containerStyle = document.getElementById('container').style;
         containerStyle.width = '';
@@ -353,6 +360,8 @@ $.getJSON = function (url, callback) { // eslint-disable-line no-undef
 };
 
 window.onbeforeunload = function () {
-    console.log('Tried to uload page');
-    return false;
+    console.log('Tried to unload page. Current tests: ' + currentTests.join(', '));
+    if (currentTests.length) {
+        return false;
+    }
 };
