@@ -1,4 +1,4 @@
-QUnit.test('Exported chart scale', function (assert) {
+QUnit.skip('Exported chart scale', function (assert) {
 
     var chart = Highcharts
             .chart('container', {
