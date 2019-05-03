@@ -79,7 +79,7 @@
     "js-yaml": "^3.13.0",
     "jsdoc": "^3.5.5",
     "karma": "^4.0.1",
-    "karma-browserstack-launcher": "^1.5.0",
+    "karma-browserstack-launcher": "1.4.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-edge-launcher": "^0.4.2",
     "karma-firefox-launcher": "^1.0.1",

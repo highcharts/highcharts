@@ -48,7 +48,7 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
     assert.close(
         annoattionOptions[0].labels[0].y,
         chart.yAxis[0].toPixels(3) - chart.yAxis[0].toPixels(5),
-        0.5,
+        1,
         'Correctly updated options for annotation\'s label (#10605).'
     );
 
