@@ -69,11 +69,13 @@ QUnit.skip('Exported chart scale', function (assert) {
                     count++;
                     if (count === 2) {
                         Highcharts.post = originalPost;
-                        console.log('Export server XHR error - network down?');
+
+                        console.log(assert.test.testName, 'Export server XHR error or timeout');
                         assert.expect(0);
                         done();
                     }
-                }
+                },
+                timeout: 1000
             });
         };
 
