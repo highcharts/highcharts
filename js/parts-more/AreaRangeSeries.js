@@ -137,7 +137,7 @@ seriesType('arearange', 'area', {
 
     /**
      * @type {Highcharts.SeriesAreaRangeDataLabelsOptionsObject}
-     * @default {"align": null, "verticalAlign": null, "xLow": 0, "xHigh": 0, "yLow": 0, "yHigh": 0}
+     * @default {"xLow": 0, "xHigh": 0, "yLow": 0, "yHigh": 0}
      *
      * @private
      */

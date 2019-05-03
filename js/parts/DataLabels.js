@@ -124,7 +124,7 @@
  *      Data labels inside the bar
  *
  * @name Highcharts.DataLabelsOptionsObject#align
- * @type {Highcharts.AlignValue|null|undefined}
+ * @type {Highcharts.AlignValue|undefined}
  * @default center
  *//**
  * Whether to allow data labels to overlap. To make the labels less sensitive
@@ -421,7 +421,7 @@
  * chart, the label is above positive values and below negative values.
  *
  * @name Highcharts.DataLabelsOptionsObject#verticalAlign
- * @type {Highcharts.VerticalAlignValue|null|undefined}
+ * @type {Highcharts.VerticalAlignValue|undefined}
  * @since 2.3.3
  *//**
  * The x position offset of the label relative to the point in pixels.
