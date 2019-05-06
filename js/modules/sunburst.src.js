@@ -585,7 +585,7 @@ var sunburstOptions = {
      */
     opacity: 1,
     /**
-     * @type    {Highcharts.SeriesSunburstDataLabelsOptionsObject}
+     * @type    {Highcharts.SeriesSunburstDataLabelsOptionsObject|Array<Highcharts.SeriesSunburstDataLabelsOptionsObject>}
      * @default {"allowOverlap": true, "defer": true, "rotationMode": "auto", "style": {"textOverflow": "ellipsis"}}
      */
     dataLabels: {
@@ -1019,6 +1019,12 @@ var sunburstPoint = {
  * @excluding x, y
  * @product   highcharts
  * @apioption series.sunburst.data
+ */
+
+/**
+ * @type      {Highcharts.SeriesSunburstDataLabelsOptionsObject|Array<Highcharts.SeriesSunburstDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.sunburst.data.dataLabels
  */
 
 /**

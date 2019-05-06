@@ -136,7 +136,7 @@ seriesType('arearange', 'area', {
     trackByArea: true,
 
     /**
-     * @type    {Highcharts.SeriesAreaRangeDataLabelsOptionsObject}
+     * @type    {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
      * @default {"xLow": 0, "xHigh": 0, "yLow": 0, "yHigh": 0}
      *
      * @private
@@ -717,6 +717,12 @@ seriesType('arearange', 'area', {
  */
 
 /**
+ * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
+ * @product   highcharts highstock
+ * @apioption series.arearange.data.dataLabels
+ */
+
+/**
  * The high or maximum value for each data point.
  *
  * @type      {number}
@@ -730,10 +736,4 @@ seriesType('arearange', 'area', {
  * @type      {number}
  * @product   highcharts highstock
  * @apioption series.arearange.data.low
- */
-
-/**
- * @excluding x, y
- * @product   highcharts highstock
- * @apioption series.arearange.dataLabels
  */

@@ -422,7 +422,7 @@ seriesType(
          */
         useSimulation: true,
         /**
-         * @type    {Highcharts.SeriesPackedBubbleDataLabelsOptionsObject}
+         * @type    {Highcharts.SeriesPackedBubbleDataLabelsOptionsObject|Array<Highcharts.SeriesPackedBubbleDataLabelsOptionsObject>}
          * @default {"formatter": function () { return this.point.value; }, "parentNodeFormatter": function () { return this.name; }, "parentNodeTextPath": {"enabled: true}, "padding": 0}
          *
          * @private
@@ -1523,6 +1523,13 @@ addEvent(Chart, 'beforeRedraw', function () {
  */
 
 /**
+ * @type      {Highcharts.SeriesPackedBubbleDataLabelsOptionsObject|Array<Highcharts.SeriesPackedBubbleDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.packedbubble.data.dataLabels
+ */
+
+/**
  * @excluding enabled,enabledThreshold,height,radius,width
+ * @product   highcharts
  * @apioption series.packedbubble.marker
  */
