@@ -1,10 +1,12 @@
 /* *
- * (c) 2010-2019 Torstein Honsi
  *
- * License: www.highcharts.com/license
+ *  (c) 2010-2019 Torstein Honsi
  *
- * SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY!
- */
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY! !!!!!!!
+ *
+ * */
 
 /* eslint-disable */
 
@@ -17,6 +19,13 @@
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
  */
+
+declare global {
+    interface GlobalHighcharts {
+        [key: string]: any;
+    }
+    type GlobalSVGElement = SVGElement;
+}
 
 'use strict';
 
@@ -44,7 +53,7 @@ var glob = typeof win === 'undefined' ?
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
     );
 
-var Highcharts = {
+var Highcharts: GlobalHighcharts = {
     product: '@product.name@',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
@@ -92,9 +101,5 @@ var Highcharts = {
      */
     dateFormats: {}
 };
-
-declare global {
-    type GlobalSVGElement = SVGElement;
-}
 
 export default Highcharts;
