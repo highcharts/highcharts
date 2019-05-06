@@ -1143,6 +1143,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 'processedXData',
                 'processedYData',
                 'xIncrement',
+                '_hasPointMarkers',
+                '_hasPointLabels',
 
                 // Map specific, consider moving it to series-specific preserve-
                 // properties (#10617)
@@ -1218,13 +1220,15 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             } else {
                 if (
                     seriesOptions.marker &&
-                    seriesOptions.marker.enabled === false
+                    seriesOptions.marker.enabled === false &&
+                    !series._hasPointMarkers
                 ) {
                     kinds.graphic = 1;
                 }
                 if (
                     seriesOptions.dataLabels &&
-                    seriesOptions.dataLabels.enabled === false
+                    seriesOptions.dataLabels.enabled === false &&
+                    !series._hasPointLabels
                 ) {
                     kinds.dataLabel = 1;
                 }

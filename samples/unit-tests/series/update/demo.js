@@ -817,3 +817,113 @@ QUnit.test('series.update using altered original chart options', function (asser
         'Series level option survived after plotOptions.series update (#9762)'
     );
 });
+
+QUnit.test('Series.update with individual markers and data labels (#10649)', assert => {
+    const chart = Highcharts.chart('container', {
+        title: {
+            text: 'Individual marker and dataLabel'
+        },
+        xAxis: {
+            categories: [
+                'Enabled => enabled',
+                'Enabled => disabled',
+                'Disabled => enabled',
+                'Disabled => disabled'
+            ],
+            alternateGridColor: '#efefef'
+        },
+
+        series: [{
+            marker: {
+                enabled: false,
+                radius: 5
+            },
+            data: [{
+                y: 100,
+                marker: {
+                    enabled: true
+                },
+                dataLabels: {
+                    enabled: true
+                }
+            }, {
+                y: 200,
+                marker: {
+                    enabled: true
+                },
+                dataLabels: {
+                    enabled: true
+                }
+            }, {
+                y: 300
+            }, {
+                y: 400
+            }]
+        }]
+
+    });
+    const series = chart.series[0];
+
+    assert.deepEqual(
+        series.points.map(p => typeof p.graphic),
+        ['object', 'object', 'undefined', 'undefined'],
+        'Initial individual markers'
+    );
+
+    assert.deepEqual(
+        series.points.map(p => typeof p.dataLabel),
+        ['object', 'object', 'undefined', 'undefined'],
+        'Initial individual data labels'
+    );
+
+    // Flag the first marker and label
+    series.points[0].graphic.isFlagged = true;
+    series.points[0].dataLabel.isFlagged = true;
+
+    // Run update
+    series.update({
+        data: [{
+            y: 400
+        }, {
+            y: 300,
+            marker: {
+                enabled: false
+            },
+            dataLabels: {
+                enabled: false
+            }
+        }, {
+            y: 200,
+            marker: {
+                enabled: true
+            },
+            dataLabels: {
+                enabled: true
+            }
+        }, {
+            y: 100
+        }]
+    });
+
+    assert.deepEqual(
+        series.points.map(p => typeof p.graphic),
+        ['object', 'undefined', 'object', 'undefined'],
+        'Updated individual markers'
+    );
+
+    assert.deepEqual(
+        series.points.map(p => typeof p.dataLabel),
+        ['object', 'undefined', 'object', 'undefined'],
+        'Updated individual data labels'
+    );
+
+    assert.ok(
+        series.points[0].graphic.isFlagged,
+        'First point graphic should be preserved'
+    );
+
+    assert.ok(
+        series.points[0].dataLabel.isFlagged,
+        'First point data label should be preserved'
+    );
+});
