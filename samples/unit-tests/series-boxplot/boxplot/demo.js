@@ -94,7 +94,7 @@ QUnit.test('Individual options and Point.update', function (assert) {
     );
 
     assert.strictEqual(
-        point.stem.attr('stroke-dasharray').replace(' ', ''),
+        point.stem.attr('stroke-dasharray').replace(/[ px]/g, ''),
         '1,3',
         'stemDashStyle'
     );

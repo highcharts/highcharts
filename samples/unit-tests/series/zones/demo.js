@@ -129,7 +129,7 @@ QUnit.test('Zones and column presentational props (#6234)', assert => {
     );
 
     assert.strictEqual(
-        points[2].graphic.element.getAttribute('stroke-dasharray'),
+        points[2].graphic.element.getAttribute('stroke-dasharray').replace(/[ px]/g, ''),
         '40,30',
         'Zones dash array'
     );

@@ -83,9 +83,9 @@ QUnit.test('Network Graph', function (assert) {
     );
 
     assert.strictEqual(
-        point.graphic.element.getAttribute('stroke-dasharray'),
+        point.graphic.element.getAttribute('stroke-dasharray').replace(/[ px]/g, ''),
         '2,6',
-        'Custom series.data.dashStyle is correct (#9798)'
+        'Custom series.data.dashStyle (#9798)'
     );
 
     chart.series[1].setData([['XX', 'XY']]);

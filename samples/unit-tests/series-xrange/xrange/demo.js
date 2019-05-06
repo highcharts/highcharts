@@ -111,9 +111,9 @@ QUnit.test('X-Range', function (assert) {
     );
 
     assert.strictEqual(
-        series.points[5].graphicOverlay.attr('fill'),
+        series.points[5].graphicOverlay.attr('fill').replace(/ /g, ''),
         'rgb(179,0,0)',
-        'Hover color of graphicOverlay is correct (#9880).'
+        'Hover color of graphicOverlay (#9880).'
     );
 
     series.points[0].remove();
