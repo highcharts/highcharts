@@ -494,7 +494,6 @@ seriesType(
          * @private
          */
         createNode: H.NodesMixin.createNode,
-        setData: H.NodesMixin.setData,
         destroy: H.NodesMixin.destroy,
 
         /**
@@ -521,6 +520,9 @@ seriesType(
          * @private
          */
         generatePoints: function () {
+            var node,
+                i;
+
             H.NodesMixin.generatePoints.apply(this, arguments);
 
             // In networkgraph, it's fine to define stanalone nodes, create
@@ -537,9 +539,19 @@ seriesType(
                 );
             }
 
-            this.nodes.forEach(function (node) {
+            for (i = this.nodes.length - 1; i >= 0; i--) {
+                node = this.nodes[i];
+
                 node.degree = node.getDegree();
-            });
+
+                // If node exists, but it's not available in nodeLookup,
+                // then it's leftover from previous runs (e.g. setData)
+                if (!this.nodeLookup[node.id]) {
+                    node.remove();
+                }
+            }
+
+
             this.data.forEach(function (link) {
                 link.formatPrefix = 'link';
             });
