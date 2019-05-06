@@ -34,7 +34,6 @@
     "jsdoc": "npx gulp jsdoc --watch",
     "dts": "npx gulp dts",
     "dtslint": "npx gulp dtslint",
-    "ts-compile": "npx tsc -p ts",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp"
   },
