@@ -176,10 +176,12 @@ workflows:
               only:
                 - feature/circleci-integration
       - test_browsers:
+          name: "test-Mac.Safari"
           requires:
             - build_dependencies
           browsers: "Mac.Safari"
       - test_browsers:
+          name: "test-Mac.Firefox"
           requires:
             - build_dependencies
           browsers: "Mac.Firefox"
