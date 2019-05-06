@@ -249,11 +249,20 @@ KeyboardNavigation.prototype = {
      */
     addExitAnchor: function () {
         var chart = this.chart,
+            exitAnchorWrapper = this.exitAnchorWrapper =
+                doc.createElement('div'),
             exitAnchor = this.exitAnchor = doc.createElement('h6'),
             keyboardNavigation = this,
             exitAnchorLabel = chart.langFormat(
                 'accessibility.svgContainerEnd', { chart: chart }
             );
+
+        exitAnchorWrapper.setAttribute('aria-hidden', 'false');
+        exitAnchorWrapper.setAttribute(
+            'class', 'highcharts-exit-anchor-wrapper'
+        );
+        exitAnchorWrapper.style.position = 'relative';
+        exitAnchorWrapper.style.outline = 'none';
 
         exitAnchor.setAttribute('tabindex', '0');
         exitAnchor.setAttribute('aria-label', exitAnchorLabel);
@@ -264,16 +273,18 @@ KeyboardNavigation.prototype = {
             position: 'absolute',
             width: '1px',
             height: '1px',
+            bottom: '5px', // Avoid scrollbars (#10637)
             zIndex: 0,
             overflow: 'hidden',
             outline: 'none'
         });
 
-        chart.renderTo.appendChild(exitAnchor);
+        exitAnchorWrapper.appendChild(exitAnchor);
+        chart.renderTo.appendChild(exitAnchorWrapper);
 
         // Update position on render
         this.unbindExitAnchorUpdate = addEvent(chart, 'render', function () {
-            this.renderTo.appendChild(exitAnchor);
+            this.renderTo.appendChild(exitAnchorWrapper);
         });
 
         // Handle focus
@@ -338,9 +349,11 @@ KeyboardNavigation.prototype = {
             this.unbindExitAnchorUpdate();
             delete this.unbindExitAnchorUpdate;
         }
-        if (this.exitAnchor && this.exitAnchor.parentNode) {
-            this.exitAnchor.parentNode.removeChild(this.exitAnchor);
+        if (this.exitAnchorWrapper && this.exitAnchorWrapper.parentNode) {
+            this.exitAnchorWrapper.parentNode
+                .removeChild(this.exitAnchorWrapper);
             delete this.exitAnchor;
+            delete this.exitAnchorWrapper;
         }
 
         // Remove keydown handler
