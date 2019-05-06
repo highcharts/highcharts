@@ -20,7 +20,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels|Highcharts-Demo:}
  *      Style mode example
  *
- * @interface Highcharts.PlotPieDataLabelsOptionsObject
+ * @interface Highcharts.SeriesPieDataLabelsOptionsObject
  * @extends Highcharts.DataLabelsOptionsObject
  *//**
  * Alignment method for data labels. Possible values are:
@@ -37,7 +37,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-alignto-plotedges/|Highcharts-Demo:}
  *      alignTo: plotEdges
  *
- * @name Highcharts.PlotPieDataLabelsOptionsObject#alignTo
+ * @name Highcharts.SeriesPieDataLabelsOptionsObject#alignTo
  * @type {string|undefined}
  * @since 7.0.0
  * @product highcharts
@@ -53,7 +53,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/pie-point/|Highcharts-Demo:}
  *      Styled connectors
  *
- * @name Highcharts.PlotPieDataLabelsOptionsObject#connectorColor
+ * @name Highcharts.SeriesPieDataLabelsOptionsObject#connectorColor
  * @type {Highcharts.ColorString|undefined}
  * @since 2.1
  * @product highcharts
@@ -65,7 +65,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-connectorpadding/|Highcharts-Demo:}
  *      No padding
  *
- * @name Highcharts.PlotPieDataLabelsOptionsObject#connectorPadding
+ * @name Highcharts.SeriesPieDataLabelsOptionsObject#connectorPadding
  * @type {number|undefined}
  * @default 5
  * @since 2.1
@@ -100,7 +100,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-connectorshape-function/|Highcharts-Demo:}
  *      connectorShape is a function
  *
- * @name Highcharts.PlotPieDataLabelsOptionsObject#connectorShape
+ * @name Highcharts.SeriesPieDataLabelsOptionsObject#connectorShape
  * @type {string|Function|undefined}
  * @default fixedOffset
  * @since 7.0.0
@@ -118,7 +118,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/pie-point/|Highcharts-Demo:}
  *      Styled connectors
  *
- * @name Highcharts.PlotPieDataLabelsOptionsObject#connectorWidth
+ * @name Highcharts.SeriesPieDataLabelsOptionsObject#connectorWidth
  * @type {number|undefined}
  * @default 1
  * @since 2.1
@@ -131,7 +131,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-crookdistance/|Highcharts-Demo:}
  *      crookDistance set to 90%
  *
- * @name Highcharts.PlotPieDataLabelsOptionsObject#crookDistance
+ * @name Highcharts.SeriesPieDataLabelsOptionsObject#crookDistance
  * @type {string|undefined}
  * @default 70%
  * @since 7.0.0
@@ -144,7 +144,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-distance/|Highcharts-Demo:}
  *      Data labels on top of the pie
  *
- * @name Highcharts.PlotPieDataLabelsOptionsObject#distance
+ * @name Highcharts.SeriesPieDataLabelsOptionsObject#distance
  * @type {number|undefined}
  * @default 30
  * @since 2.1
@@ -158,7 +158,7 @@
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/pie-datalabels-softconnector-false/|Highcharts-Demo:}
  *      Non soft
  *
- * @name Highcharts.PlotPieDataLabelsOptionsObject#softConnector
+ * @name Highcharts.SeriesPieDataLabelsOptionsObject#softConnector
  * @type {number|undefined}
  * @default true
  * @since 2.1.7
@@ -291,7 +291,7 @@ seriesType(
          */
 
         /**
-         * @type {Highcharts.PlotPieDataLabelsOptionsObject}
+         * @type    {Highcharts.SeriesPieDataLabelsOptionsObject}
          * @default {"allowOverlap": true, "connectorPadding": 5, "distance": 30, "enabled": true, "formatter": function () { return this.point.name; }, "softConnector": true, "x": 0, "connectorShape": "fixedOffset", "crookDistance": "70%"}
          *
          * @private
@@ -350,7 +350,11 @@ seriesType(
          */
         ignoreHiddenPoint: true,
 
-        /** @ignore-option */
+        /**
+         * @ignore-option
+         *
+         * @private
+         */
         inactiveOtherPoints: true,
 
         /**

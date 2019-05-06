@@ -9,9 +9,9 @@
 /**
  * Formatter callback function.
  *
- * @callback Highcharts.PlotNetworkDataLabelsFormatterCallbackFunction
+ * @callback Highcharts.SeriesNetworkDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.PlotNetworkDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesNetworkDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
  *        Data label context to format
  *
  * @return {string}
@@ -21,24 +21,24 @@
 /**
  * Context for the formatter function.
  *
- * @interface Highcharts.PlotNetworkDataLabelsFormatterContextObject
+ * @interface Highcharts.SeriesNetworkDataLabelsFormatterContextObject
  * @extends Highcharts.DataLabelsFormatterContextObject
  * @since 7.0.0
  *//**
  * The color of the node.
- * @name Highcharts.PlotNetworkDataLabelsFormatterContextObject#color
+ * @name Highcharts.SeriesNetworkDataLabelsFormatterContextObject#color
  * @type {Highcharts.ColorString}
  * @since 7.0.0
  *//**
  * The point (node) object. The node name, if defined, is available through
  * `this.point.name`. Arrays: `this.point.linksFrom` and `this.point.linksTo`
  * contains all nodes connected to this point.
- * @name Highcharts.PlotNetworkDataLabelsFormatterContextObject#point
+ * @name Highcharts.SeriesNetworkDataLabelsFormatterContextObject#point
  * @type {Highcharts.Point}
  * @since 7.0.0
  *//**
  * The ID of the node.
- * @name Highcharts.PlotNetworkDataLabelsFormatterContextObject#key
+ * @name Highcharts.SeriesNetworkDataLabelsFormatterContextObject#key
  * @type {string}
  * @since 7.0.0
  */
@@ -62,7 +62,7 @@
  * if a `format` is defined, the format takes precedence and the formatter is
  * ignored.
  * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#formatter
- * @type {Highcharts.PlotNetworkDataLabelsFormatterCallbackFunction|undefined}
+ * @type {Highcharts.SeriesNetworkDataLabelsFormatterCallbackFunction|undefined}
  * @since 7.0.0
  *//**
  * The
@@ -76,44 +76,44 @@
  * Callback to format data labels for _links_ in the sankey diagram. The
  * `linkFormat` option takes precedence over the `linkFormatter`.
  * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#linkFormatter
- * @type {Highcharts.PlotNetworkDataLabelsFormatterCallbackFunction|undefined}
+ * @type {Highcharts.SeriesNetworkDataLabelsFormatterCallbackFunction|undefined}
  * @since 7.1.0
  *//**
  * Options for a _link_ label text which should follow link connection. Border
  * and background are disabled for a label that follows a path.
  * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
  * true will disable this option.
- * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#textPath}
+ * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
  * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#linkTextPath
- * @type {Highcharts.PlotNetworkDataLabelsTextPath}
+ * @type {Highcharts.SeriesNetworkDataLabelsTextPath}
  * @since 7.1.0
  *//**
  * Options for a _node_ label text which should follow marker's shape. Border
  * and background are disabled for a label that follows a path.
  * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
  * true will disable this option.
- * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#linkTextPath}
+ * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
  * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#textPath
- * @type {Highcharts.PlotNetworkDataLabelsTextPath}
+ * @type {Highcharts.SeriesNetworkDataLabelsTextPath}
  * @since 7.1.0
  */
 
 /**
  * **Note:** Only SVG-based renderer supports this option.
  *
- * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#linkTextPath}
- * @see {@link Highcharts.PlotNetworkDataLabelsTextPath#textPath}
+ * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
+ * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
  *
- * @interface Highcharts.PlotNetworkDataLabelsTextPath
+ * @interface Highcharts.SeriesNetworkDataLabelsTextPath
  * @since 7.1.0
  *//**
  * Presentation attributes for the text path.
- * @name Highcharts.PlotNetworkDataLabelsTextPath#attributes
+ * @name Highcharts.SeriesNetworkDataLabelsTextPath#attributes
  * @type {Highcharts.SVGAttributes}
  * @since 7.1.0
  *//**
  * Enable or disable `textPath` option for link's or marker's data labels.
- * @name Highcharts.PlotNetworkDataLabelsTextPath#enabled
+ * @name Highcharts.SeriesNetworkDataLabelsTextPath#enabled
  * @type {boolean|undefined}
  * @since 7.1.0
  */
@@ -167,7 +167,10 @@ seriesType(
     {
         stickyTracking: false,
 
-        /** @ignore-option */
+        /**
+         * @ignore-option
+         * @private
+         */
         inactiveOtherPoints: true,
 
         marker: {
@@ -957,13 +960,12 @@ seriesType(
          * Common method for removing points and nodes in networkgraph. To
          * remove `link`, use `series.data[index].remove()`. To remove `node`
          * with all connections, use `series.nodes[index].remove()`.
-         *
+         * @private
          * @param {boolean} [redraw=true]
          *        Whether to redraw the chart or wait for an explicit call. When
          *        doing more operations on the chart, for example running
          *        `point.remove()` in a loop, it is best practice to set
          *        `redraw` to false and call `chart.redraw()` after.
-         *
          * @param {boolean|Highcharts.AnimationOptionsObject} [animation=false]
          *        Whether to apply animation, and optionally animation
          *        configuration.

@@ -372,6 +372,7 @@ var options = {
              * components can be added here.
              *
              * @since 7.1.0
+             * @type {Array<string>}
              */
             order: ['series', 'zoom', 'rangeSelector', 'chartMenu', 'legend'],
 

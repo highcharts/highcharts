@@ -58,10 +58,11 @@ QUnit.skip('Exported chart width', function (assert) {
             },
             error: function () {
                 Highcharts.post = originalPost;
-                console.log('Export server XHR error - network down?');
+                console.log(assert.test.testName, 'Export server XHR error or timeout');
                 assert.expect(0);
                 done();
-            }
+            },
+            timeout: 1000
         });
     };
 

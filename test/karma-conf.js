@@ -263,6 +263,15 @@ module.exports = function (config) {
             // they are not mutated for later tests?
             'samples/unit-tests/themes/*/demo.js',
 
+            // Trying to get Edge to pass:
+            //'samples/unit-tests/interaction/*/demo.js',
+            //'samples/unit-tests/stock-tools/*/demo.js',
+            //'samples/unit-tests/drag-panes/pointer-interactions/demo.js',
+            //'samples/unit-tests/chart/zoomtype/demo.js',
+            //'samples/unit-tests/drilldown/drillup/demo.js',
+            //'samples/unit-tests/rangeselector/selected/demo.js',
+            //'samples/unit-tests/point/point/demo.js',
+            //'samples/unit-tests/pointer/members/demo.js',
 
             // --- VISUAL TESTS ---
 
@@ -543,14 +552,15 @@ module.exports = function (config) {
 
     if (browsers.some(browser => /^(Mac|Win)\./.test(browser))) {
         let properties = getProperties();
+        const randomString = Math.random().toString(36).substring(7);
 
         options.browserStack = {
             username: properties['browserstack.username'],
             accessKey: properties['browserstack.accesskey'],
             project: 'highcharts',
-            build: `highcharts-build-${process.env.CIRCLE_BUILD_NUM || Math.random().toString(36).substring(7)} `,
-            name: `circle-ci-karma-highcharts`,
-            localIdentifier: Math.random().toString(36).substring(7), // to avoid instances interfering with each other.
+            build: `highcharts-build-${process.env.CIRCLE_BUILD_NUM || randomString} `,
+            name: `circle-ci-karma-highcharts-${randomString}`,
+            localIdentifier: randomString, // to avoid instances interfering with each other.
             video: false,
         };
         options.customLaunchers = browserStackBrowsers;
@@ -565,7 +575,7 @@ module.exports = function (config) {
         options.captureTimeout = 4 * 60 * 1000; // default 60000
 
         console.log(
-            'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared.' +
+            'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +
             `Any other test runs must complete before this test run will start. Current Browserstack concurrency rate is ${options.concurrency}..`
         );
 

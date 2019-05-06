@@ -136,7 +136,7 @@ seriesType('arearange', 'area', {
     trackByArea: true,
 
     /**
-     * @type {Highcharts.SeriesAreaRangeDataLabelsOptionsObject}
+     * @type    {Highcharts.SeriesAreaRangeDataLabelsOptionsObject}
      * @default {"xLow": 0, "xHigh": 0, "yLow": 0, "yHigh": 0}
      *
      * @private

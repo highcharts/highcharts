@@ -3,19 +3,49 @@ import '../parts/Axis.js';
 import '../parts/Series.js';
 
 /**
- * A point-like object, a mock point or a point uses in series.
+ * A mock point label configuration.
  *
- * @typedef {Highcharts.Point | Annotation.MockPoint} Annotation.PointLike
+ * @interface Annotation.MockLabelOptionsObject
+ *//**
+ * X value translated to x axis scale
+ * @name Annotation.MockLabelOptionsObject#x
+ * @type {number|undefined}
+ *//**
+ * Y value translated to y axis scale
+ * @name Annotation.MockLabelOptionsObject#y
+ * @type {number|undefined}
+ *//**
+ * @name Annotation.MockLabelOptionsObject#point
+ * @type {Highcharts.Point}
  */
 
 /**
  * A mock point configuration.
  *
- * @typedef {Object} Annotation.MockPoint.Options
- * @property {number} x x value for the point in xAxis scale or pixels
- * @property {number} y y value for the point in yAxis scale or pixels
- * @property {string|number|Highcharts.Axis} [xAxis] xAxis instance, index or id
- * @property {string|number|Highcharts.Axis} [yAxis] yAxis instance, index or id
+ * @interface Highcharts.MockPointOptionsObject
+ *//**
+ * x value for the point in xAxis scale or pixels
+ * @name Highcharts.MockPointOptionsObject#x
+ * @type {number}
+ *//**
+ * y value for the point in yAxis scale or pixels
+ * @name Highcharts.MockPointOptionsObject#y
+ * @type {number}
+ *//**
+ * xAxis index or id
+ * @name Highcharts.MockPointOptionsObject#xAxis
+ * @type {Highcharts.Axis|number|string|undefined}
+ *//**
+ * yAxis index or id
+ * @name Highcharts.MockPointOptionsObject#yAxis
+ * @property {Highcharts.Axis|number|string|undefined}
+ */
+
+/**
+ * A point-like object, a mock point or a point uses in series.
+ *
+ * @private
+ * @typedef {Highcharts.Point|Highcharts.MockPoint} Highcharts.PointLike
  */
 
 /**
@@ -23,12 +53,15 @@ import '../parts/Series.js';
  * It is created when there is a need of pointing to some chart's position
  * using axis values or pixel values
  *
+ * @private
  * @class
- * @memberOf Annotation
+ * @name Highcharts.MockPoint
  *
- * @param {Chart} chart a chart instance
- * @param {Controllable} [target] a controllable instance
- * @param {Annotation.MockPoint.Options} options an options object
+ * @param {Highcharts.Chart} chart
+ *        The chart object
+ *
+ * @param {Highcharts.MockPointOptionsObject} options
+ *        The options object
  */
 function MockPoint(chart, target, options) {
     /**
@@ -53,7 +86,7 @@ function MockPoint(chart, target, options) {
     /**
      * Options for the mock point.
      *
-     * @type {Annotation.MockPoint.Options}
+     * @type {Highcharts.MockPointOptionsObject}
      */
     this.options = options;
 
