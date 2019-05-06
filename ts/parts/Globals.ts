@@ -1,186 +1,100 @@
 /* *
+ * (c) 2010-2019 Torstein Honsi
  *
- *  (c) 2010-2018 Torstein Honsi
+ * License: www.highcharts.com/license
  *
- *  License: www.highcharts.com/license
- *
- * */
-
-/* eslint-disable */
-
-/**
- * The Highcharts object is the placeholder for all other members, and various
- * utility functions. The most important member of the namespace would be the
- * chart constructor.
- *
- * @example
- * var chart = Highcharts.chart('container', { ... });
+ * SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY!
  */
 
-/* *
- *
- *  Types
- *
- * */
+/* eslint-disable */
 
 /**
  * Reference to the global SVGElement class as a workaround for a name conflict
  * in the Highcharts namespace.
  *
+ * @global
+ * @typedef {global.SVGElement} GlobalSVGElement
+ *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
  */
-export type GlobalSVGElement = SVGElement;
 
-/* *
- *
- *  Interfaces
- *
- * */
+'use strict';
 
-/**
- * Generic dictionary in TypeScript notation.
- */
-export interface Dictionary<T> {
-    [key: string]: any;
-}
+declare const win: Window;
 
-/* *
- *
- *  Properties
- *
- * */
+/* global win, window */
 
-/** @ignore */
-export const product = '@product.name@';
-/** @ignore */
-export const SVG_NS = 'http://www.w3.org/2000/svg';
-/** @ignore */
-export const version = '@product.version@';
+// glob is a temporary fix to allow our es-modules to work.
+var glob = typeof win === 'undefined' ?
+        (typeof window !== 'undefined' ? window : {} as Window) :
+        win,
+    doc = glob.document,
+    SVG_NS = 'http://www.w3.org/2000/svg',
+    userAgent = (glob.navigator && glob.navigator.userAgent) || '',
+    svg = (
+        doc &&
+        doc.createElementNS &&
+        !!(doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement).createSVGRect
+    ),
+    isMS = /(edge|msie|trident)/i.test(userAgent) && !(glob as any).opera,
+    isFirefox = userAgent.indexOf('Firefox') !== -1,
+    isChrome = userAgent.indexOf('Chrome') !== -1,
+    hasBidiBug = (
+        isFirefox &&
+        parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
+    );
 
-/** @ignore */
-export var win = (typeof win === 'undefined' ? window : win) as Window;
-/** @ignore */
-export const doc = win.document;
+var Highcharts = {
+    product: '@product.name@',
+    version: '@product.version@',
+    deg2rad: Math.PI * 2 / 360,
+    doc: doc,
+    hasBidiBug: hasBidiBug,
+    hasTouch: doc && doc.documentElement.ontouchstart !== undefined,
+    isMS: isMS,
+    isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
+    isFirefox: isFirefox,
+    isChrome: isChrome,
+    isSafari: !isChrome && userAgent.indexOf('Safari') !== -1,
+    isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
+    SVG_NS: SVG_NS,
+    chartCount: 0,
+    seriesTypes: {},
+    symbolSizes: {},
+    svg: svg,
+    win: glob,
+    marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
+    noop: function () {
+        return undefined;
+    },
+    /**
+     * An array containing the current chart objects in the page. A chart's
+     * position in the array is preserved throughout the page's lifetime. When
+     * a chart is destroyed, the array item becomes `undefined`.
+     *
+     * @name Highcharts.charts
+     * @type {Array<Highcharts.Chart>}
+     */
+    charts: [],
 
-/** @ignore */
-const deg2rad = (Math.PI * 2 / 360);
-/** @ignore */
-const svg = (
-    doc &&
-    doc.createElementNS &&
-    !!doc.createElementNS(SVG_NS, 'svg').createSVGRect
-);
-
-/** @ignore */
-export const userAgent = ((win.navigator && win.navigator.userAgent) || '');
-/** @ignore */
-export const isChrome = userAgent.indexOf('Chrome') !== -1;
-/** @ignore */
-export const isFirefox = userAgent.indexOf('Firefox') !== -1;
-/** @ignore */
-export const isMS = (
-    /(edge|msie|trident)/i.test(userAgent) && !(win as any).opera
-);
-/** @ignore */
-export const isSafari = !isChrome && userAgent.indexOf('Safari') !== -1;
-/** @ignore */
-export const isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent);
-/** @ignore */
-export const isWebKit = userAgent.indexOf('AppleWebKit') !== -1;
-/** @ignore */
-export const hasBidiBug = (
-    isFirefox &&
-    parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
-);
-/** @ignore */
-export const hasTouch = (
-    doc && doc.documentElement.ontouchstart !== undefined
-);
-
-/** @ignore */
-export let chartCount = 0;
-/**
- * An array containing the current chart objects in the page. A chart's
- * position in the array is preserved throughout the page's lifetime. When
- * a chart is destroyed, the array item becomes `undefined`.
- */
-export const charts = [] as Array<any>;
-/** @ignore */
-const marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'];
-/** @ignore */
-const seriesTypes = {} as Dictionary<any>;
-/** @ignore */
-const symbolSizes = {} as Dictionary<any>;
-
-/* *
- *
- *  Functions
- *
- * */
-
-/** @ignore */
-function noop () {
-    return undefined;
+    /**
+     * A hook for defining additional date format specifiers. New
+     * specifiers are defined as key-value pairs by using the
+     * specifier as key, and a function which takes the timestamp as
+     * value. This function returns the formatted portion of the
+     * date.
+     *
+     * @sample highcharts/global/dateformats/
+     *         Adding support for week number
+     *
+     * @name Highcharts.dateFormats
+     * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
+     */
+    dateFormats: {}
 };
-
-/**
- * The Highcharts object is the placeholder for all other members, and various
- * utility functions. The most important member of the namespace would be the
- * chart constructor.
- *
- * @example
- * var chart = Highcharts.chart('container', { ... });
- */
-let Highcharts = {
-    /** @ignore */
-    chartCount,
-    charts,
-    /** @ignore */
-    deg2rad,
-    /** @ignore */
-    doc,
-    /** @ignore */
-    hasBidiBug,
-    /** @ignore */
-    hasTouch,
-    /** @ignore */
-    isChrome,
-    /** @ignore */
-    isFirefox,
-    /** @ignore */
-    isMS,
-    /** @ignore */
-    isSafari,
-    /** @ignore */
-    isTouchDevice,
-    /** @ignore */
-    isWebKit,
-    /** @ignore */
-    marginNames,
-    /** @ignore */
-    noop,
-    /** @ignore */
-    product,
-    /** @ignore */
-    seriesTypes,
-    /** @ignore */
-    svg,
-    /** @ignore */
-    symbolSizes,
-    /** @ignore */
-    version,
-    /** @ignore */
-    win
-};
-
-/** @ignore */
-const GlobalHighcharts = ((win as any).Highcharts ?
-    (win as any).Highcharts.error(16, true) :
-    Highcharts
-);
 
 declare global {
-    let Highcharts: typeof GlobalHighcharts ;
+    type GlobalSVGElement = SVGElement;
 }
 
 export default Highcharts;
