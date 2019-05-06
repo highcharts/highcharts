@@ -265,10 +265,10 @@ AccessibilityComponent.prototype = {
             var rectEl = el.getBoundingClientRect(),
                 rectDiv = div.getBoundingClientRect();
             return {
-                x: rectEl.x - rectDiv.x,
-                y: rectEl.y - rectDiv.y,
-                width: rectEl.width,
-                height: rectEl.height
+                x: rectEl.left - rectDiv.left,
+                y: rectEl.top - rectDiv.top,
+                width: rectEl.right - rectEl.left,
+                height: rectEl.bottom - rectEl.top
             };
         }
     },
