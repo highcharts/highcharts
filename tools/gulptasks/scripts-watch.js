@@ -11,7 +11,9 @@ const Gulp = require('gulp');
  * */
 
 const WATCH_GLOBS = [
-    'js/!(adapters|builds)/**/*.js'
+    'js/!(adapters|builds)/**/*.js',
+    'ts/**/*.json',
+    'ts/!(adapters|builds)/**/*.ts'
 ];
 
 /* *
@@ -47,7 +49,7 @@ function task() {
                 'change',
                 filePath => {
                     LogLib.warn('Modified', filePath);
-                    return Gulp.task('scripts-js')(() => {});
+                    return Gulp.series('scripts-js', 'scripts-ts')(() => {});
                 }
             )
             .on('error', LogLib.failure);
@@ -62,4 +64,4 @@ function task() {
 
 require('./scripts-js.js');
 
-Gulp.task('scripts-watch', Gulp.series('scripts-js', task));
+Gulp.task('scripts-watch', Gulp.series('scripts-js', 'scripts-ts', task));

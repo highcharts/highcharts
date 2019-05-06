@@ -141,7 +141,7 @@ function task() {
 
             ProcessLib.isRunning('scripts_incomplete', true, true);
 
-            Gulp.series('scripts-css', 'scripts-js')(
+            Gulp.series('scripts-css', 'scripts-js', 'scripts-ts')(
                 () => {
 
                     ProcessLib.isRunning('scripts_incomplete', false, true);
