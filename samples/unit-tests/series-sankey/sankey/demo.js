@@ -486,3 +486,31 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Sankey and circular data',
+    function (assert) {
+
+        Highcharts.chart('container', {
+
+            title: {
+                text: 'Highcharts Sankey Diagram'
+            },
+            series: [{
+                keys: ['from', 'to', 'weight'],
+                data: [
+                    ['a', 'b', 1],
+                    ['a', 'c', 1],
+                    ['b', 'c', 1]
+                ],
+                type: 'sankey',
+                name: 'Sankey demo series'
+            }]
+        });
+
+        assert.ok(
+            true,
+            'No errors with circular data (#10658).'
+        );
+    }
+);

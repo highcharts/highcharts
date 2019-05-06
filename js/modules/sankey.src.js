@@ -506,9 +506,11 @@ seriesType('sankey', 'column',
         pointAttribs: function (point, state) {
             var series = this,
                 level = point.isNode ? point.level : point.fromNode.level,
-                levelOptions = series.mapOptionsToLevel[level || 0],
+                levelOptions = series.mapOptionsToLevel[level || 0] || {},
                 options = point.options,
-                stateOptions = levelOptions.states[state] || {},
+                stateOptions = (
+                    levelOptions.states && levelOptions.states[state]
+                ) || {},
                 values = [
                     'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
                 ].reduce(function (obj, key) {
