@@ -4947,10 +4947,10 @@ H.Series = H.seriesType(
             } else if (series.visible) {
                 // If zones were removed, restore graph and area
                 if (graph) {
-                    graph.attr({ visibility: 'inherit' });
+                    graph.show(true);
                 }
                 if (area) {
-                    area.attr({ visibility: 'inherit' });
+                    area.show(true);
                 }
             }
         },
