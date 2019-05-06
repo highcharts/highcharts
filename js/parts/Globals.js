@@ -2,8 +2,10 @@
  * (c) 2010-2019 Torstein Honsi
  *
  * License: www.highcharts.com/license
+ *
+ * SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY!
  */
-
+/* eslint-disable */
 /**
  * Reference to the global SVGElement class as a workaround for a name conflict
  * in the Highcharts namespace.
@@ -13,31 +15,16 @@
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
  */
-
 'use strict';
-
 /* global win, window */
-
 // glob is a temporary fix to allow our es-modules to work.
 var glob = typeof win === 'undefined' ?
-        (typeof window !== 'undefined' ? window : {}) :
-        win,
-    doc = glob.document,
-    SVG_NS = 'http://www.w3.org/2000/svg',
-    userAgent = (glob.navigator && glob.navigator.userAgent) || '',
-    svg = (
-        doc &&
-        doc.createElementNS &&
-        !!doc.createElementNS(SVG_NS, 'svg').createSVGRect
-    ),
-    isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera,
-    isFirefox = userAgent.indexOf('Firefox') !== -1,
-    isChrome = userAgent.indexOf('Chrome') !== -1,
-    hasBidiBug = (
-        isFirefox &&
-        parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
-    );
-
+    (typeof window !== 'undefined' ? window : {}) :
+    win, doc = glob.document, SVG_NS = 'http://www.w3.org/2000/svg', userAgent = (glob.navigator && glob.navigator.userAgent) || '', svg = (doc &&
+    doc.createElementNS &&
+    !!doc.createElementNS(SVG_NS, 'svg').createSVGRect), isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera, isFirefox = userAgent.indexOf('Firefox') !== -1, isChrome = userAgent.indexOf('Chrome') !== -1, hasBidiBug = (isFirefox &&
+    parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
+);
 var Highcharts = {
     product: '@product.name@',
     version: '@product.version@',
@@ -70,7 +57,6 @@ var Highcharts = {
      * @type {Array<Highcharts.Chart>}
      */
     charts: [],
-
     /**
      * A hook for defining additional date format specifiers. New
      * specifiers are defined as key-value pairs by using the
@@ -86,5 +72,4 @@ var Highcharts = {
      */
     dateFormats: {}
 };
-
 export default Highcharts;
