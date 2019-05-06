@@ -226,7 +226,7 @@ merge(
              *
              * @sample highcharts/annotations/draggable/
              *         Annotations draggable: 'xy'
-             * 
+             *
              * @type       {string}
              * @validvalue ["x", "xy", "y", ""]
              */
@@ -352,10 +352,10 @@ merge(
                  */
 
                 /**
-                 * Callback JavaScript function to format the annotation's label.
-                 * Note that if a `format` or `text` are defined, the format or text
-                 * take precedence and the formatter is ignored. `This` refers to a
-                 * point object.
+                 * Callback JavaScript function to format the annotation's
+                 * label. Note that if a `format` or `text` are defined, the
+                 * format or text take precedence and the formatter is ignored.
+                 * `This` refers to a point object.
                  *
                  * @sample highcharts/annotations/label-text/
                  *         Set labels text
@@ -368,8 +368,9 @@ merge(
                 },
 
                 /**
-                 * How to handle the annotation's label that flow outside the plot
-                 * area. The justify option aligns the label inside the plot area.
+                 * How to handle the annotation's label that flow outside the
+                 * plot area. The justify option aligns the label inside the
+                 * plot area.
                  *
                  * @sample highcharts/annotations/label-crop-overflow/
                  *         Crop or justify labels
@@ -388,8 +389,9 @@ merge(
                 padding: 5,
 
                 /**
-                 * The shadow of the box. The shadow can be an object configuration
-                 * containing `color`, `offsetX`, `offsetY`, `opacity` and `width`.
+                 * The shadow of the box. The shadow can be an object
+                 * configuration containing `color`, `offsetX`, `offsetY`,
+                 * `opacity` and `width`.
                  *
                  * @sample highcharts/annotations/label-presentation/
                  *         Set labels graphic options
@@ -474,10 +476,10 @@ merge(
              */
 
             /**
-             * This option defines the point to which the label will be connected.
-             * It can be either the point which exists in the series - it is
-             * referenced by the point's id - or a new point with defined x, y
-             * properies and optionally axes.
+             * This option defines the point to which the label will be
+             * connected. It can be either the point which exists in the
+             * series - it is referenced by the point's id - or a new point with
+             * defined x, y properties and optionally axes.
              *
              * @sample highcharts/annotations/mock-point/
              *         Attach annotation to a mock point
@@ -503,20 +505,20 @@ merge(
              */
 
             /**
-             * This number defines which xAxis the point is connected to. It refers
-             * to either the axis id or the index of the axis in the xAxis array.
-             * If the option is not configured or the axis is not found the point's
-             * x coordinate refers to the chart pixels.
+             * This number defines which xAxis the point is connected to. It
+             * refers to either the axis id or the index of the axis in the
+             * xAxis array. If the option is not configured or the axis is not
+             * found the point's x coordinate refers to the chart pixels.
              *
              * @type      {number|string}
              * @apioption annotations.labels.point.xAxis
              */
 
             /**
-             * This number defines which yAxis the point is connected to. It refers
-             * to either the axis id or the index of the axis in the yAxis array.
-             * If the option is not configured or the axis is not found the point's
-             * y coordinate refers to the chart pixels.
+             * This number defines which yAxis the point is connected to. It
+             * refers to either the axis id or the index of the axis in the
+             * yAxis array. If the option is not configured or the axis is not
+             * found the point's y coordinate refers to the chart pixels.
              *
              * @type      {number|string}
              * @apioption annotations.labels.point.yAxis
@@ -534,10 +536,10 @@ merge(
              */
 
             /**
-             * This option defines the point to which the shape will be connected.
-             * It can be either the point which exists in the series - it is
-             * referenced by the point's id - or a new point with defined x, y
-             * properties and optionally axes.
+             * This option defines the point to which the shape will be
+             * connected. It can be either the point which exists in the
+             * series - it is referenced by the point's id - or a new point with
+             * defined x, y properties and optionally axes.
              *
              * @type      {string|Highcharts.MockPointOptionsObject}
              * @extends   annotations.labels.point
@@ -545,9 +547,9 @@ merge(
              */
 
             /**
-             * An array of points for the shape. This option is available for shapes
-             * which can use multiple points such as path. A point can be either
-             * a point object or a point's id.
+             * An array of points for the shape. This option is available for
+             * shapes which can use multiple points such as path. A point can be
+             * either a point object or a point's id.
              *
              * @see [annotations.shapes.point](annotations.shapes.point.html)
              *
@@ -557,8 +559,8 @@ merge(
              */
 
             /**
-             * Id of the marker which will be drawn at the final vertex of the path.
-             * Custom markers can be defined in defs property.
+             * Id of the marker which will be drawn at the final vertex of the
+             * path. Custom markers can be defined in defs property.
              *
              * @see [defs.markers](defs.markers.html)
              *
@@ -570,8 +572,8 @@ merge(
              */
 
             /**
-             * Id of the marker which will be drawn at the first vertex of the path.
-             * Custom markers can be defined in defs property.
+             * Id of the marker which will be drawn at the first vertex of the
+             * path. Custom markers can be defined in defs property.
              *
              * @see [defs.markers](defs.markers.html)
              *
@@ -584,8 +586,8 @@ merge(
 
 
             /**
-             * Options for annotation's shapes. Each shape inherits options
-             * from the shapeOptions object. An option from the shapeOptions can be
+             * Options for annotation's shapes. Each shape inherits options from
+             * the shapeOptions object. An option from the shapeOptions can be
              * overwritten by config for a specific shape.
              */
             shapeOptions: {
@@ -732,8 +734,10 @@ merge(
         /**
          * Initialize the annotation.
          *
-         * @param {Highcharts.Chart} - the chart
-         * @param {Highcharts.AnnotationsOptions} - the user options for the annotation
+         * @param {Highcharts.Chart}
+         *        The chart
+         * @param {Highcharts.AnnotationsOptions}
+         *        The user options for the annotation
          */
         init: function () {
             this.linkPoints();

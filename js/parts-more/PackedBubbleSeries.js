@@ -422,7 +422,8 @@ seriesType(
          */
         useSimulation: true,
         /**
-         * @type {Highcharts.SeriesPackedBubbleDataLabelsOptionsObject}
+         * @type    {Highcharts.SeriesPackedBubbleDataLabelsOptionsObject}
+         * @default {"formatter": function () { return this.point.value; }, "parentNodeFormatter": function () { return this.name; }, "parentNodeTextPath": {"enabled: true}, "padding": 0}
          *
          * @private
          */

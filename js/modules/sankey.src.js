@@ -186,7 +186,8 @@ seriesType('sankey', 'column',
          * `nodeFormat`, and the `format` that applies to links and is an empty
          * string by default.
          *
-         * @type {Highcharts.DataLabelsOptionsObject|Highcharts.SeriesSankeyDataLabelsOptionsObject}
+         * @type    {Highcharts.SeriesSankeyDataLabelsOptionsObject}
+         * @default {"enabled": true, "backgroundColor": "none", "crop": false, "nodeFormatter": function () { return this.point.name; }, "inside": true}
          *
          * @private
          */

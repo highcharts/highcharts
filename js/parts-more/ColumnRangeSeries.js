@@ -40,9 +40,9 @@ var columnRangeOptions = {
      * `yLow` and `yHigh` options to allow the higher and lower data label
      * sets individually.
      *
-     * @extends   plotOptions.arearange.dataLabels
+     * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject}
+     * @default   {"xLow": 0, "xHigh": 0, "yLow": 0, "yHigh": 0}
      * @since     2.3.0
-     * @excluding x, y
      * @product   highcharts highstock
      * @apioption plotOptions.columnrange.dataLabels
      */

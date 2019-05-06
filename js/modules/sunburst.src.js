@@ -585,7 +585,8 @@ var sunburstOptions = {
      */
     opacity: 1,
     /**
-     * @type {Highcharts.SeriesSunburstDataLabelsOptionsObject|Highcharts.DataLabelsOptionsObject}
+     * @type    {Highcharts.SeriesSunburstDataLabelsOptionsObject}
+     * @default {"allowOverlap": true, "defer": true, "rotationMode": "auto", "style": {"textOverflow": "ellipsis"}}
      */
     dataLabels: {
         /** @ignore-option */
