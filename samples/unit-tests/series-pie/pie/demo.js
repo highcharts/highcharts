@@ -62,8 +62,8 @@ QUnit.test('Update to negative (#7113)', function (assert) {
     chart.series[0].setData([-10, -10, -10]);
     assert.strictEqual(
         chart.series[0].points[0].graphic,
-        null,
-        'Graphic is removed'
+        undefined,
+        'Graphic should be removed'
     );
     assert.strictEqual(
         chart.series[0].group.element.childNodes.length,

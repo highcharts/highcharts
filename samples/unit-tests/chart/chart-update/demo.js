@@ -28,8 +28,9 @@
             }
         });
 
-        assert.ok(
-            chart.credits === null,
+        assert.strictEqual(
+            chart.credits,
+            undefined,
             'Credits removed'
         );
 
@@ -39,8 +40,9 @@
             }
         });
 
-        assert.ok(
-            chart.credits === null,
+        assert.strictEqual(
+            chart.credits,
+            undefined,
             'Still removed'
         );
 

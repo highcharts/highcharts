@@ -53,7 +53,7 @@ QUnit.test('drawPoint', assert => {
     params.onComplete = function () {
         assert.strictEqual(
             point.graphic,
-            null,
+            undefined,
             'should destroy the point.graphic when point.shouldDraw returns false.'
         );
         done();

@@ -2112,8 +2112,6 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         objectEach(wrapper, function (val, key) {
             delete wrapper[key];
         });
-
-        return null;
     },
 
     /**
