@@ -245,6 +245,22 @@ seriesType(
          */
 
         /**
+         * Fires when the legend item belonging to the pie point (slice) is
+         * clicked. The `this` keyword refers to the point itself. One
+         * parameter, `event`, is passed to the function, containing common
+         * event information. The default action is to toggle the visibility of
+         * the point. This can be prevented by calling `event.preventDefault()`.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/
+         *         Confirm toggle visibility
+         *
+         * @type      {Highcharts.PointLegendItemClickCallbackFunction}
+         * @since     1.2.0
+         * @product   highcharts
+         * @apioption plotOptions.pie.point.events.legendItemClick
+         */
+
+        /**
          * The center of the pie chart relative to the plot area. Can be
          * percentages or pixel values. The default behaviour (as of 3.0) is to
          * center the pie so that all slices and data labels are within the plot
@@ -291,7 +307,7 @@ seriesType(
          */
 
         /**
-         * @type    {Highcharts.SeriesPieDataLabelsOptionsObject}
+         * @type    {Highcharts.SeriesPieDataLabelsOptionsObject|Array<Highcharts.SeriesPieDataLabelsOptionsObject>}
          * @default {"allowOverlap": true, "connectorPadding": 5, "distance": 30, "enabled": true, "formatter": function () { return this.point.name; }, "softConnector": true, "x": 0, "connectorShape": "fixedOffset", "crookDistance": "70%"}
          *
          * @private
@@ -1370,27 +1386,17 @@ seriesType(
  */
 
 /**
+ * @type      {Highcharts.SeriesPieDataLabelsOptionsObject|Array<Highcharts.SeriesPieDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.pie.data.dataLabels
+ */
+
+/**
  * The sequential index of the data point in the legend.
  *
  * @type      {number}
  * @product   highcharts
  * @apioption series.pie.data.legendIndex
- */
-
-/**
- * Fires when the legend item belonging to the pie point (slice) is
- * clicked. The `this` keyword refers to the point itself. One parameter,
- * `event`, is passed to the function, containing common event information. The
- * default action is to toggle the visibility of the point. This can be
- * prevented by calling `event.preventDefault()`.
- *
- * @sample {highcharts} highcharts/plotoptions/pie-point-events-legenditemclick/
- *         Confirm toggle visibility
- *
- * @type      {Highcharts.PointLegendItemClickCallbackFunction}
- * @since     1.2.0
- * @product   highcharts
- * @apioption plotOptions.pie.point.events.legendItemClick
  */
 
 /**
@@ -1406,5 +1412,6 @@ seriesType(
 
 /**
  * @excluding legendItemClick
+ * @product   highcharts
  * @apioption series.pie.events
  */

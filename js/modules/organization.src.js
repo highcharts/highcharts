@@ -99,7 +99,7 @@ H.seriesType(
         linkRadius: 10,
         borderWidth: 1,
         /**
-         * @type {Highcharts.DataLabelsOptionsObject|Highcharts.SeriesOrganizationDataLabelsOptionsObject}
+         * @type {Highcharts.SeriesOrganizationDataLabelsOptionsObject|Array<Highcharts.SeriesOrganizationDataLabelsOptionsObject>}
          * @private
          */
         dataLabels: {
@@ -493,7 +493,14 @@ H.seriesType(
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.organization
+ * @product   highcharts
  * @apioption series.organization
+ */
+
+/**
+ * @type      {Highcharts.SeriesOrganizationDataLabelsOptionsObject|Array<Highcharts.SeriesOrganizationDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.organization.data.dataLabels
  */
 
 /**
@@ -503,6 +510,7 @@ H.seriesType(
  *
  * @extends   series.sankey.nodes
  * @type      {Array<*>}
+ * @product   highcharts
  * @apioption series.organization.nodes
  */
 
@@ -510,9 +518,11 @@ H.seriesType(
  * The job description for the node card, will be inserted by the default
  * `dataLabel.nodeFormatter`.
  *
+ * @sample highcharts/demo/organization-chart
+ *         Org chart with job descriptions
+ *
  * @type      {string}
- * @sample    highcharts/demo/organization-chart
- *            Org chart with job descriptions
+ * @product   highcharts
  * @apioption series.organization.nodes.description
  */
 
@@ -520,9 +530,11 @@ H.seriesType(
  * An image for the node card, will be inserted by the default
  * `dataLabel.nodeFormatter`.
  *
+ * @sample highcharts/demo/organization-chart
+ *         Org chart with images
+ *
  * @type      {string}
- * @sample    highcharts/demo/organization-chart
- *            Org chart with images
+ * @product   highcharts
  * @apioption series.organization.nodes.image
  */
 
@@ -535,6 +547,7 @@ H.seriesType(
  *
  * @type      {Highcharts.SeriesOrganizationNodesLayoutValue}
  * @default   normal
+ * @product   highcharts
  * @apioption series.organization.nodes.layout
  */
 
@@ -542,9 +555,11 @@ H.seriesType(
  * The job title for the node card, will be inserted by the default
  * `dataLabel.nodeFormatter`.
  *
+ * @sample highcharts/demo/organization-chart
+ *         Org chart with job titles
+ *
  * @type      {string}
- * @sample    highcharts/demo/organization-chart
- *            Org chart with job titles
+ * @product   highcharts
  * @apioption series.organization.nodes.title
  */
 

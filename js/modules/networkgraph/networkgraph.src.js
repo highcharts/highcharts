@@ -231,7 +231,7 @@ seriesType(
          * @sample highcharts/series-networkgraph/link-datalabels
          *         Data labels moved under the links
          *
-         * @type    {Highcharts.SeriesNetworkDataLabelsOptionsObject}
+         * @type    {Highcharts.SeriesNetworkDataLabelsOptionsObject|Array<Highcharts.SeriesNetworkDataLabelsOptionsObject>}
          * @default {"formatter": function () { return this.key; }, "linkFormatter": function () { return this.point.fromNode.name + "<br>" + this.point.toNode.name; }, "linkTextPath": {"enabled": true}, "textPath": {"enabled": false}}
          *
          * @private
@@ -1129,6 +1129,11 @@ seriesType(
  * @apioption series.networkgraph.data
  */
 
+/**
+ * @type      {Highcharts.SeriesNetworkDataLabelsOptionsObject|Array<Highcharts.SeriesNetworkDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.networkgraph.data.dataLabels
+ */
 
 /**
  * The node that the link runs from.

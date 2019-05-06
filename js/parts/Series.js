@@ -1857,7 +1857,7 @@ H.Series = H.seriesType(
          * @sample highcharts/plotoptions/series-datalabels-multiple
          *         Multiple data labels on a bar series
          *
-         * @type {Highcharts.DataLabelsOptionsObject}
+         * @type    {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>}
          * @default {"align": "center", "formatter": function () { return H.numberFormat(this.y, -1); }, "padding": 5, "style": {"fontSize": "11px", "fontWeight": "bold", "color": "contrast", "textOutline": "1px contrast"}, "verticalAlign": "bottom", "x":0, "y": 0}
          *
          * @private
@@ -1883,8 +1883,8 @@ H.Series = H.seriesType(
                 textOutline: '1px contrast'
             },
             /**
-             * @ignore-option
              * above singular point
+             * @ignore-option
              */
             verticalAlign: 'bottom',
             /** @ignore-option */
@@ -5619,7 +5619,7 @@ H.Series = H.seriesType(
  * @sample highcharts/point/datalabels/
  *         Show a label for the last value
  *
- * @type      {Highcharts.DataLabelsOptionsObject}
+ * @type      {Highcharts.DataLabelsOptionsObject|Array<Highcharts.DataLabelsOptionsObject>}
  * @product   highcharts highstock gantt
  * @apioption series.line.data.dataLabels
  */
