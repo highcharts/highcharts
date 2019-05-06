@@ -118,7 +118,7 @@ QUnit.test('Network Graph', function (assert) {
             ['4.0', '1.0']
         ]
     });
-    // debugger;
+
     rSeries.nodes[0].remove();
 
     assert.strictEqual(
@@ -133,5 +133,17 @@ QUnit.test('Network Graph', function (assert) {
         'Removed all links for node = 1.0'
     );
 
+    // Remove all nodes but 2 and 4, set testing reference:
+    rSeries.nodes[0].survived = true;
+
+    rSeries.setData([
+        ['2.0', '4.0']
+    ]);
+
+    assert.strictEqual(
+        rSeries.nodes[0].survived,
+        true,
+        'Node survived `setData()` (#10625)'
+    );
 
 });
