@@ -312,7 +312,7 @@ module.exports = function (config) {
             'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
             'samples/highcharts/css/pattern/demo.js' // styled mode, setOptions
         ],
-        reporters: ['imagecapture', 'progress', 'junit'],
+        reporters: ['imagecapture', 'progress'],
         port: 9876,  // karma web server port
         colors: true,
         logLevel: config.LOG_WARN,
@@ -320,9 +320,6 @@ module.exports = function (config) {
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity,
-        junitReporter: {
-            outputDir: 'build/test-results'
-        },
         plugins: [
             'karma-*',
             require('./karma-imagecapture-reporter.js')
