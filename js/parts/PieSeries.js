@@ -318,6 +318,28 @@ seriesType(
             crookDistance: '70%'
         },
 
+
+        /**
+         * The chart is represented as an empty circle if total sum of all
+         * points values is 0. Use properties like `stroke`,
+         * `'stroke-width'` & `fill` to maniupulate its look.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
+         *         Empty pie styled
+         *
+         * @type      {Highcharts.SVGAttributes}
+         * @default {stroke: '#aaa', 'stroke-width': 1, fill: 'none'}
+         * @private
+         */
+        emptySeries: {
+            /** @ignore-option */
+            stroke: '#aaa',
+            /** @ignore-option */
+            'stroke-width': 1,
+            /** @ignore-option */
+            fill: 'none'
+        },
+
         /**
          * The end angle of the pie in degrees where 0 is top and 90 is right.
          * Defaults to `startAngle` plus 360.
@@ -546,6 +568,7 @@ seriesType(
                 brightness: 0.1
             }
         }
+
 
     },
     /**
@@ -1013,8 +1036,42 @@ seriesType(
          * @private
          * @function Highcharts.seriesTypes.pie#getSymbol
          */
-        getSymbol: noop
+        getSymbol: noop,
 
+
+        render: function () {
+            Series.prototype.render.call(this);
+
+            // draw a empty circle if needed
+            if (this.total === 0) {
+                this.renderEmptySeriesGraphic();
+            } else {
+                this.destroyEmptySeriesGraphic();
+            }
+        },
+
+        renderEmptySeriesGraphic: function () {
+            var centerX = this.center[0],
+                centerY = this.center[1],
+                graphicOptions = merge(this.options.emptySeries, {
+                    cx: centerX,
+                    cy: centerY,
+                    r: this.center[2] / 2
+                });
+
+            if (!this.emptySeriesGraphic) {
+                this.emptySeriesGraphic = this.chart.renderer.circle(centerX,
+                    centerY, 0).add(this.group);
+            }
+            this.emptySeriesGraphic.animate(graphicOptions);
+        },
+
+        destroyEmptySeriesGraphic: function () {
+            if (this.emptySeriesGraphic) {
+                this.emptySeriesGraphic.destroy();
+                delete this.emptySeriesGraphic;
+            }
+        }
 
     },
     /**
