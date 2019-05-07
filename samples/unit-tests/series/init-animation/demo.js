@@ -1,6 +1,6 @@
 /* eslint func-style:0 */
 
-QUnit.test('Initial animation - series.clip set to false', function (assert) {
+QUnit.skip('Initial animation - series.clip set to false', function (assert) {
 
     var clock = null;
 
