@@ -23,13 +23,26 @@ function getProperties() {
         properties['browserstack.username'] = process.env.BROWSERSTACK_USER;
         properties['browserstack.accesskey'] = process.env.BROWSERSTACK_KEY;
 
+        if (!process.env.BROWSERSTACK_USER) {
+            // fallback to good old property file
+            let lines = fs.readFileSync(
+                './git-ignore-me.properties', 'utf8'
+            );
+            lines.split('\n').forEach(function (line) {
+                line = line.split('=');
+                if (line[0]) {
+                    properties[line[0]] = line[1];
+                }
+            });
+        }
+
         if (!properties['browserstack.username']) {
             throw new Error();
         }
     } catch (e) {
         throw new Error(
             'BrowserStack credentials not given. Add BROWSERSTACK_USER and ' +
-            'BROWSERSTACK_KEY environment variables.'
+            'BROWSERSTACK_KEY environment variables or create a git-ignore-me.properties file.'
         );
     }
     return properties;
