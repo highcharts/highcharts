@@ -1,0 +1,12 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": "./tsconfig.json"
+    },
+    "plugins": ["@typescript-eslint"],
+    "rules": {
+        "no-unused-expressions": 0,
+        "node/no-unsupported-features": 0,
+        "object-shorthand": 0
+    }
+}

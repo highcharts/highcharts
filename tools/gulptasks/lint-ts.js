@@ -10,7 +10,7 @@ const Gulp = require('gulp');
  *
  * */
 
-const SOURCE_GLOB = 'ts/masters/tsconfig-*.json';
+const SOURCE_GLOB = '**/*.ts';
 
 /* *
  *
@@ -26,7 +26,6 @@ const SOURCE_GLOB = 'ts/masters/tsconfig-*.json';
  */
 function task() {
 
-    const Glob = require('glob');
     const LogLib = require('./lib/log');
     const ProcessLib = require('./lib/process');
 
@@ -34,15 +33,9 @@ function task() {
 
         LogLib.message('Linting [', SOURCE_GLOB, ']...');
 
-        Promise
-            .all(
-                Glob
-                    .sync(SOURCE_GLOB)
-                    .map(file => ProcessLib.exec(
-                        'npx tslint --project ' + file
-                    ))
-            )
-            .then(() => LogLib.success('Finished linting', SOURCE_GLOB))
+        ProcessLib
+            .exec('cd ts && npx eslint ' + SOURCE_GLOB)
+            .then(() => LogLib.success('Finished linting'))
             .then(resolve)
             .catch(reject);
     });

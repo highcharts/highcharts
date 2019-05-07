@@ -41,12 +41,15 @@ const CONFIG_FILE = Path.join(
  * Outputs stdout to the console.
  *
  * @param {string} command
- *                 Command to execute in terminal
+ *        Command to execute in terminal
+ *
+ * @param {boolean} silent
+ *        Silents the command output to stdout
  *
  * @return {Promise<string>}
  *         Promise to keep with all terminal output
  */
-function exec(command) {
+function exec(command, silent) {
 
     const ChildProcess = require('child_process');
 
@@ -57,12 +60,17 @@ function exec(command) {
                 LogLib.failure(error);
                 reject(error);
             } else {
-                LogLib.success('Command finished: ' + command);
+                LogLib.success(
+                    (silent ? 'Command finished (silent):' : 'Command finished:'),
+                    command
+                );
                 resolve(stdout);
             }
         });
 
-        cli.stdout.on('data', data => process.stdout.write(data));
+        if (!silent) {
+            cli.stdout.on('data', data => process.stdout.write(data));
+        }
     });
 }
 

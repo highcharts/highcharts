@@ -4,11 +4,22 @@
  *
  *  License: www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY! !!!!!!!
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
-/* eslint-disable */
+'use strict';
+
+declare global {
+    interface IGlobalHighcharts {
+        [key: string]: any;
+    }
+    type GlobalSVGElement = SVGElement;
+}
+
+declare const win: Window;
+
+/* globals window */
 
 /**
  * Reference to the global SVGElement class as a workaround for a name conflict
@@ -19,19 +30,6 @@
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
  */
-
-declare global {
-    interface GlobalHighcharts {
-        [key: string]: any;
-    }
-    type GlobalSVGElement = SVGElement;
-}
-
-'use strict';
-
-declare const win: Window;
-
-/* global win, window */
 
 // glob is a temporary fix to allow our es-modules to work.
 var glob = typeof win === 'undefined' ?
@@ -53,13 +51,13 @@ var glob = typeof win === 'undefined' ?
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
     );
 
-var Highcharts: GlobalHighcharts = {
+var Highcharts: IGlobalHighcharts = {
     product: '@product.name@',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
     hasBidiBug: hasBidiBug,
-    hasTouch: doc && doc.documentElement.ontouchstart !== undefined,
+    hasTouch: doc && typeof doc.documentElement.ontouchstart !== 'undefined',
     isMS: isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
     isFirefox: isFirefox,
@@ -73,9 +71,7 @@ var Highcharts: GlobalHighcharts = {
     svg: svg,
     win: glob,
     marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-    noop: function () {
-        return undefined;
-    },
+    noop: function () {},
     /**
      * An array containing the current chart objects in the page. A chart's
      * position in the array is preserved throughout the page's lifetime. When
