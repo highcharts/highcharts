@@ -197,10 +197,7 @@ module.exports = function (config) {
         }
     }
 
-    // The tests to run by default
-    const defaultTests = [
-        'unit-tests/*/*'
-    ];
+    let frameworks = ['qunit'];
 
     // Browsers
     let browsers = argv.browsers ?
@@ -210,7 +207,23 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
+    if (argv.sharding) {
+        // Sharding / splitting tests across multiple browser instances
+        const numberOfInstances = !isNaN(argv.sharding) ? argv.sharding : 2;
+        frameworks = [...frameworks, 'sharding'];
+        // create a duplicate of the added browsers ${numberOfInstances} times.
+        browsers = browsers.reduce((browserInstances, current) => {
+            for (let i = 0; i < numberOfInstances; i++) {
+                browserInstances.push(current);
+            }
+            return browserInstances;
+        }, []);
+    }
+
     const needsTranspiling = browsers.some(browser => browser === 'Win.IE');
+
+    // The tests to run by default
+    const defaultTests = ['unit-tests/*/*'];
 
     const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
         .filter(path => !!path)
@@ -221,7 +234,7 @@ module.exports = function (config) {
 
     let options = {
         basePath: '../', // Root relative to this file
-        frameworks: ['qunit'],
+        frameworks: frameworks,
         files: files.concat([
             {
                 pattern: 'test/*.png', // testimage.png
@@ -315,7 +328,7 @@ module.exports = function (config) {
         reporters: ['imagecapture', 'progress'],
         port: 9876,  // karma web server port
         colors: true,
-        logLevel: config.LOG_WARN,
+        logLevel: config.LOG_INFO,
         browsers: browsers,
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
@@ -324,6 +337,9 @@ module.exports = function (config) {
             'karma-*',
             require('./karma-imagecapture-reporter.js')
         ],
+        sharding: {
+          specMatcher: /(spec|test|demo)s?\.js/i
+        },
 
         formatError: function (s) {
             let ret = s.replace(
