@@ -175,3 +175,20 @@ QUnit.test('Solid gauge: legend', function (assert) {
         'Series legend item: color taken from series'
     );
 });
+
+QUnit.test('Solid gauge null point (#10630)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'solidgauge'
+        },
+        series: [{
+            data: [null]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic,
+        undefined,
+        'Series legend item: color taken from series'
+    );
+});
