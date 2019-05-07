@@ -21,6 +21,8 @@ const GFX_DIRECTORY = 'gfx';
 
 const JS_DIRECTORY = 'js';
 
+const TS_DIRECTORY = 'ts';
+
 /* *
  *
  *  Functions
@@ -46,12 +48,14 @@ function saveRun() {
     const latestJSHash = FSLib.getDirectoryHash(
         JS_DIRECTORY, true, StringLib.removeComments
     );
+    const latestTSHash = FSLib.getDirectoryHash(TS_DIRECTORY, true);
 
     const configuration = {
         latestCodeHash,
         latestCSSHash,
         latestGFXHash,
-        latestJSHash
+        latestJSHash,
+        latestTSHash
     };
 
     FS.writeFileSync(CONFIGURATION_FILE, JSON.stringify(configuration));
@@ -74,7 +78,8 @@ function shouldRun() {
         latestCodeHash: '',
         latestCSSHash: '',
         latestGFXHash: '',
-        latestJSHash: ''
+        latestJSHash: '',
+        latestTSHash: ''
     };
 
     if (FS.existsSync(CONFIGURATION_FILE)) {
@@ -93,11 +98,13 @@ function shouldRun() {
     const latestJSHash = FSLib.getDirectoryHash(
         JS_DIRECTORY, true, StringLib.removeComments
     );
+    const latestTSHash = FSLib.getDirectoryHash(TS_DIRECTORY, true);
 
     if (latestCodeHash === configuration.latestCodeHash &&
         latestCSSHash === configuration.latestCSSHash &&
         latestGFXHash === configuration.latestGFXHash &&
-        latestJSHash === configuration.latestJSHash
+        latestJSHash === configuration.latestJSHash &&
+        latestTSHash === configuration.latestTSHash
     ) {
 
         LogLib.success(

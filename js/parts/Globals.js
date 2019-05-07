@@ -1,11 +1,14 @@
 /* *
- * (c) 2010-2019 Torstein Honsi
  *
- * License: www.highcharts.com/license
+ *  (c) 2010-2019 Torstein Honsi
  *
- * SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY!
- */
-/* eslint-disable */
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+'use strict';
+/* globals window */
 /**
  * Reference to the global SVGElement class as a workaround for a name conflict
  * in the Highcharts namespace.
@@ -15,8 +18,6 @@
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
  */
-'use strict';
-/* global win, window */
 // glob is a temporary fix to allow our es-modules to work.
 var glob = typeof win === 'undefined' ?
     (typeof window !== 'undefined' ? window : {}) :
@@ -31,7 +32,7 @@ var Highcharts = {
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
     hasBidiBug: hasBidiBug,
-    hasTouch: doc && doc.documentElement.ontouchstart !== undefined,
+    hasTouch: doc && typeof doc.documentElement.ontouchstart !== 'undefined',
     isMS: isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
     isFirefox: isFirefox,
@@ -45,9 +46,7 @@ var Highcharts = {
     svg: svg,
     win: glob,
     marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-    noop: function () {
-        return undefined;
-    },
+    noop: function () { },
     /**
      * An array containing the current chart objects in the page. A chart's
      * position in the array is preserved throughout the page's lifetime. When
