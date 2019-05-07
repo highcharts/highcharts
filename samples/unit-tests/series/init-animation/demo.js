@@ -1,6 +1,6 @@
 /* eslint func-style:0 */
 
-QUnit.skip('Initial animation - series.clip set to false', function (assert) {
+QUnit.test('Initial animation - series.clip set to false', function (assert) {
 
     var clock = null;
 
@@ -12,7 +12,7 @@ QUnit.skip('Initial animation - series.clip set to false', function (assert) {
                 tooltip: {
                     formatter: function () {
                         ttCounter++;
-                        return 'Tooltip';
+                        return 'Tooltip ' + ttCounter;
                     }
                 },
                 series: [{
@@ -32,16 +32,13 @@ QUnit.skip('Initial animation - series.clip set to false', function (assert) {
             // animation started
 
             controller.mouseMove(150, 5);
-            width = chart[chart.series[0].sharedClipKey].getBBox().width;
+            width = chart[chart.series[0].sharedClipKey].element.width.baseVal
+                .value;
+
             assert.strictEqual(
                 width > 20 && width < 200,
                 true,
                 'Animating - plot clipped'
-            );
-            assert.strictEqual(
-                ttCounter,
-                0,
-                'Animating - no tooltip, clipped durring animation'
             );
 
             setTimeout(function () {
