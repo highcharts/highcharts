@@ -321,3 +321,39 @@ QUnit.test(
         chart.destroy();
     }
 );
+
+QUnit.test('defer:true and exporting (#10661)', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            forExport: true
+        },
+        tooltip: {},
+        xAxis: {
+            categories: ['Apples', 'Pears', 'Bananas']
+        },
+        series: [{
+            data: [1000, 4000, 3000],
+            type: 'column',
+            dataLabels: {
+                enabled: true,
+                defer: true
+            }
+        }]
+    });
+
+    assert.deepEqual(
+        chart.series[0].points.map(
+            p => p.dataLabel.element.getAttribute('visibility')
+        ),
+        [null, null, null],
+        'Data labels should be visible'
+    );
+
+    assert.deepEqual(
+        chart.series[0].points.map(
+            p => p.dataLabel.element.getAttribute('opacity')
+        ),
+        [null, null, null],
+        'Data labels should be visible'
+    );
+});

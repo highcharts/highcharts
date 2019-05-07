@@ -654,7 +654,7 @@ Series.prototype.drawDataLabels = function () {
         dataLabelsGroup,
         seriesAnimDuration = H.animObject(seriesOptions.animation).duration,
         fadeInDuration = Math.min(seriesAnimDuration, 200),
-        defer = pick(
+        defer = !chart.renderer.forExport && pick(
             seriesDlOptions.defer,
             fadeInDuration > 0
         ),
