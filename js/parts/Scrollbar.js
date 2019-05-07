@@ -1053,7 +1053,9 @@ if (!H.Scrollbar) {
                 pick(axis.dataMax, axis.max) // #6930
             ),
             scrollbar = axis.scrollbar,
-            titleOffset = axis.titleOffset || 0,
+            offset = axis.axisTitleMargin + (axis.titleOffset || 0),
+            scrollbarsOffsets = axis.chart.scrollbarsOffsets,
+            axisMargin = axis.options.margin || 0,
             offsetsIndex,
             from,
             to;
@@ -1061,39 +1063,51 @@ if (!H.Scrollbar) {
         if (scrollbar) {
 
             if (axis.horiz) {
+
+                // Reserve space for labels/title
+                if (!axis.opposite) {
+                    scrollbarsOffsets[1] += offset;
+                }
+
                 scrollbar.position(
                     axis.left,
-                    axis.top + axis.height + 2 +
-                        axis.chart.scrollbarsOffsets[1] +
-                        (axis.opposite ?
-                            0 :
-                            titleOffset + axis.axisTitleMargin + axis.offset
-                        ),
+                    axis.top + axis.height + 2 + scrollbarsOffsets[1] -
+                        (axis.opposite ? axisMargin : 0),
                     axis.width,
                     axis.height
                 );
+
+                // Next scrollbar should reserve space for margin (if set)
+                if (!axis.opposite) {
+                    scrollbarsOffsets[1] += axisMargin;
+                }
+
                 offsetsIndex = 1;
             } else {
+
+                // Reserve space for labels/title
+                if (axis.opposite) {
+                    scrollbarsOffsets[0] += offset;
+                }
+
                 scrollbar.position(
-                    axis.left + axis.width + 2 +
-                        axis.chart.scrollbarsOffsets[0] +
-                        (axis.opposite ?
-                            titleOffset + axis.axisTitleMargin + axis.offset :
-                            0
-                        ),
+                    axis.left + axis.width + 2 + scrollbarsOffsets[0] -
+                        (axis.opposite ? 0 : axisMargin),
                     axis.top,
                     axis.width,
                     axis.height
                 );
+
+                // Next scrollbar should reserve space for margin (if set)
+                if (axis.opposite) {
+                    scrollbarsOffsets[0] += axisMargin;
+                }
+
                 offsetsIndex = 0;
             }
 
-            if (
-                (!axis.opposite && !axis.horiz) || (axis.opposite && axis.horiz)
-            ) {
-                axis.chart.scrollbarsOffsets[offsetsIndex] +=
-                    axis.scrollbar.size + axis.scrollbar.options.margin;
-            }
+            scrollbarsOffsets[offsetsIndex] += scrollbar.size +
+                scrollbar.options.margin;
 
             if (
                 isNaN(scrollMin) ||
