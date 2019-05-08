@@ -7,14 +7,7 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
     try {
         clock = TestUtilities.lolexInstall();
 
-        var ttCounter = 0,
-            chart = Highcharts.chart('container', {
-                tooltip: {
-                    formatter: function () {
-                        ttCounter++;
-                        return 'Tooltip ' + ttCounter;
-                    }
-                },
+        var chart = Highcharts.chart('container', {
                 series: [{
                     data: [1, 2],
                     clip: false,
@@ -24,14 +17,11 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
                     lineWidth: 3000
                 }]
             }),
-            controller = TestController(chart),
             done = assert.async(),
             width;
 
         setTimeout(function () {
             // animation started
-
-            controller.mouseMove(150, 5);
             width = chart[chart.series[0].sharedClipKey].element.width.baseVal
                 .value;
 
@@ -43,23 +33,25 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
 
             setTimeout(function () {
                 // animation uncovers most of the plot
-
-                controller.mouseMove(150, 5);
+                width = chart[chart.series[0].sharedClipKey].element.width
+                    .baseVal.value;
                 assert.strictEqual(
-                    ttCounter,
-                    1,
-                    'Animating - tooltip, the clip-rect is now big enough'
+                    width > 300 && width < 600,
+                    true,
+                    'Animation uncovers most of the plot'
                 );
             }, 300);
 
             setTimeout(function () {
                 // animation finished
-
-                controller.mouseMove(550, 5);
                 assert.strictEqual(
-                    ttCounter,
-                    2,
-                    'Animation finished - tooltip shown, the plot not clipped'
+                    // Highcharts - tested in browser
+                    chart[chart.series[0].sharedClipKey] === undefined ||
+                    // Highstock - tested in headless
+                    chart[chart.series[0].sharedClipKey].element.width
+                        .baseVal.value === chart.chartWidth,
+                    true,
+                    'Animation finished - no clip box'
                 );
 
                 // all tests are done
