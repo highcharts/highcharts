@@ -664,7 +664,9 @@ seriesType(
                 // postprocessed for border width
                 seriesBarW = series.barW =
                 Math.max(seriesPointWidth, 1 + 2 * borderWidth),
-                seriesXOffset = series.pointXOffset = metrics.offset;
+                seriesXOffset = series.pointXOffset = metrics.offset,
+                dataMin = series.dataMin,
+                dataMax = series.dataMax;
 
             if (chart.inverted) {
                 translatedThreshold -= 0.5; // #3355
@@ -707,8 +709,12 @@ seriesType(
                     // in visible range (#7046)
                     if (
                         point.y === threshold &&
-                    series.dataMax <= threshold &&
-                    yAxis.min < threshold // and if there's room for it (#7311)
+                        series.dataMax <= threshold &&
+                        // and if there's room for it (#7311)
+                        yAxis.min < threshold &&
+                        // if all points are the same value (i.e zero) not draw
+                        // as negative points (#10646)
+                        dataMin !== dataMax
                     ) {
                         up = !up;
                     }
