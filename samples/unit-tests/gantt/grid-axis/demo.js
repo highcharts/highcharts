@@ -1127,7 +1127,7 @@ QUnit.module('labels alignment', function () {
  * Checks that the last tick label does not pop out of its cell if there was no
  * room.
  */
-QUnit.test('Last tick label does not pop out of its cell', function (assert) {
+QUnit.only('Last tick label does not pop out of its cell', function (assert) {
     var labelBox,
         axisBox,
         axisRight,
@@ -1185,6 +1185,39 @@ QUnit.test('Last tick label does not pop out of its cell', function (assert) {
     assert.ok(
         labelBox.x < axisRight,
         'Last tick label does not pop out'
+    );
+
+    /*
+     * Make sure the tickPositions are not adjusted when they are within min and
+     * max.
+     */
+    const start = 1483225200000; // 1st January 2017
+    const month = 2678400000;
+    const userTickPositions = [start + month, start + 2 * month];
+    const end = start + 3 * month;
+    // Reassign tickPositions
+    ({ xAxis: [{ tickPositions }] } = Highcharts.chart('container', {
+        xAxis: [{
+            type: 'datetime',
+            tickPositions: userTickPositions,
+            grid: {
+                enabled: true
+            }
+        }],
+        series: [{
+            data: [{
+                x: start,
+                y: 0
+            }, {
+                x: end,
+                y: 0
+            }]
+        }]
+    }));
+    assert.deepEqual(
+        tickPositions,
+        userTickPositions,
+        'should not adjust last or first tick when they are within axis min and max. #10470'
     );
 });
 
