@@ -1,12 +1,21 @@
 {
+    "extends": [
+        "plugin:@typescript-eslint/recommended"
+    ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "project": "./tsconfig.json"
     },
-    "plugins": ["@typescript-eslint"],
+    "plugins": [
+        "@typescript-eslint"
+    ],
     "rules": {
         "no-unused-expressions": 0,
-        "node/no-unsupported-features": 0,
-        "object-shorthand": 0
+        "object-shorthand": 0,
+        "@typescript-eslint/array-type": 0,
+        "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/no-namespace": 0,
+        "@typescript-eslint/no-object-literal-type-assertion": 0,
+        "node/no-unsupported-features": 0
     }
 }
