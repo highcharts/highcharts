@@ -695,8 +695,6 @@ addEvent(
             min = linkedMin || axis.min,
             max = linkedMax || axis.max,
             tickInterval = axis.tickInterval,
-            moreThanMin = firstPos > min,
-            lessThanMax = lastPos < max,
             endMoreThanMin = firstPos < min && firstPos + tickInterval > min,
             startLessThanMax = lastPos > max && lastPos - tickInterval < max;
 
@@ -705,11 +703,11 @@ addEvent(
             !categoryAxis &&
             (axis.horiz || axis.isLinked)
         ) {
-            if ((moreThanMin || endMoreThanMin) && !options.startOnTick) {
+            if (endMoreThanMin && !options.startOnTick) {
                 tickPositions[0] = min;
             }
 
-            if ((lessThanMax || startLessThanMax) && !options.endOnTick) {
+            if (startLessThanMax && !options.endOnTick) {
                 tickPositions[tickPositions.length - 1] = max;
             }
         }
