@@ -26,7 +26,7 @@ var glob = typeof win === 'undefined' ?
     !!doc.createElementNS(SVG_NS, 'svg').createSVGRect), isMS = /(edge|msie|trident)/i.test(userAgent) && !glob.opera, isFirefox = userAgent.indexOf('Firefox') !== -1, isChrome = userAgent.indexOf('Chrome') !== -1, hasBidiBug = (isFirefox &&
     parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
 );
-var Highcharts = {
+var H = {
     product: '@product.name@',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
@@ -71,4 +71,4 @@ var Highcharts = {
      */
     dateFormats: {}
 };
-export default Highcharts;
+export default H;
