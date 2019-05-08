@@ -31,6 +31,7 @@ const WATCH_GLOBS = [
 function task() {
 
     const argv = require('yargs').argv;
+    const FsLib = require('./lib/fs');
     const LogLib = require('./lib/log');
     const ProcessLib = require('./lib/process');
 
@@ -42,16 +43,39 @@ function task() {
     return new Promise(resolve => {
 
         require('./scripts-js.js');
+        require('./scripts-ts.js');
+
+        let jsHash,
+            tsHash;
 
         Gulp
-            .watch(WATCH_GLOBS)
-            .on(
-                'change',
-                filePath => {
-                    LogLib.warn('Modified', filePath);
-                    return Gulp.series('scripts-js', 'scripts-ts')(() => {});
+            .watch(WATCH_GLOBS, done => {
+
+                const buildTasks = [];
+                const newJsHash = FsLib.getDirectoryHash('js', true);
+                const newTsHash = FsLib.getDirectoryHash('ts', true);
+
+                if (newTsHash !== tsHash) {
+                    tsHash = newTsHash;
+                    buildTasks.push('scripts-ts');
                 }
-            )
+
+                if (newJsHash !== jsHash) {
+                    jsHash = newJsHash;
+                    buildTasks.push('scripts-js');
+                }
+
+                if (buildTasks.length === 0) {
+                    LogLib.success('No significant changes found.');
+                    done();
+                    return;
+                }
+
+                Gulp.series(...buildTasks)(done);
+            })
+            .on('add', filePath => LogLib.warn('Modified', filePath))
+            .on('change', filePath => LogLib.warn('Modified', filePath))
+            .on('unlink', filePath => LogLib.warn('Modified', filePath))
             .on('error', LogLib.failure);
 
         LogLib.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
@@ -63,5 +87,6 @@ function task() {
 }
 
 require('./scripts-js.js');
+require('./scripts-ts.js');
 
 Gulp.task('scripts-watch', Gulp.series('scripts-js', 'scripts-ts', task));
