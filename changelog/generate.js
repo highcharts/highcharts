@@ -6,10 +6,14 @@
  * generates a draft for a changelog.
  *
  * Parameters
- * --since String The tag to start from
+ * --since String The tag to start from. This is not used when --pr.
  * --after String The start date.
  * --before String Optional. The end date for the changelog, defaults to today.
+ * --pr Use Pull Request descriptions as source for the log.
  */
+
+const prLog = require('./pr-log');
+const params = require('yargs').argv;
 
 (function () {
     'use strict';
@@ -19,25 +23,10 @@
         path = require('path'),
         tree = require('../tree.json');
 
-    var params;
-
-    /**
-     * Get parameters listed by -- notation
-     */
-    function getParams() {
-        var p = {};
-        process.argv.forEach(function (arg, j) {
-            if (arg.substr(0, 2) === '--') {
-                p[arg.substr(2)] = process.argv[j + 1];
-            }
-        });
-        return p;
-    }
-
     /**
      * Get the log from Git
      */
-    function getLog(callback) {
+    async function getLog(callback) {
         var command;
 
         function puts(err, stdout) {
@@ -45,6 +34,14 @@
                 throw err;
             }
             callback(stdout);
+        }
+
+        if (params.pr) {
+            var log = await prLog().catch(e => console.error(e));
+
+            callback(log);
+            return;
+
         }
 
         command = 'git log --format="%s<br>" ';
@@ -123,6 +120,13 @@
         return washed;
     }
 
+    function washPRLog(name, log) {
+        const washed = log[name].features.concat(log[name].bugfixes);
+        washed.startFixes = log[name].features.length;
+
+        return washed;
+    }
+
     /**
      * Build the output
      */
@@ -140,7 +144,11 @@
                 'Highcharts Gantt': 'gantt'
             }[name];
 
-        log = washLog(name, log);
+        if (params.pr) {
+            log = washPRLog(name, log);
+        } else {
+            log = washLog(name, log);
+        }
 
         // Start the output string
         outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
@@ -220,15 +228,14 @@
         return keys;
     }
 
-    params = getParams();
-
-
     // Get the Git log
     getLog(function (log) {
 
         // Split the log into an array
-        log = log.split('<br>\n');
-        log.pop();
+        if (typeof log === 'string') {
+            log = log.split('<br>\n');
+            log.pop();
+        }
 
         const optionKeys = getOptionKeys(tree);
 
@@ -250,7 +257,14 @@
 
                 for (name in products) {
                     if (products.hasOwnProperty(name)) {
-                        buildMarkdown(name, products[name].nr, products[name].date, log, products, optionKeys);
+                        buildMarkdown(
+                            name,
+                            products[name].nr,
+                            products[name].date,
+                            log,
+                            products,
+                            optionKeys
+                        );
                     }
                 }
             }

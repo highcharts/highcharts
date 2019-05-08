@@ -1,8 +1,8 @@
 ## Workflow of generating a changelog
-1. Run the `generate-changelog.js` script which copies commit messages since the last release in to markdown files for each product.
+1. Run the `generate-changelog.js` script which copies PR descriptions since the last release in to markdown files for each product.
 
     ```
-    node changelog/generate --since vX.X.X
+    node changelog/generate --pr
     ```
 
 3. Manually edit these generated markdown files to your wish.

@@ -46,6 +46,7 @@
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
+    "@octokit/rest": "^16.25.3",
     "@types/jquery": "^3.3.29",
     "@types/qunit": "^2.5.4",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
