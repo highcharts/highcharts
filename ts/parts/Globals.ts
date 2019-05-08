@@ -10,14 +10,24 @@
 
 'use strict';
 
+/**
+ * Internal types.
+ * @private
+ */
 declare global {
-    interface IGlobalHighcharts {
-        [key: string]: any;
+    namespace Highcharts {
+        interface Dictionary<T> {
+            [key: string]: T;
+        }
+        const charts: Array<Chart>;
+        const dateFormats: Dictionary<TimeFormatCallbackFunction>;
     }
+    type Chart = any; // TODO
+    type GlobalHighcharts = typeof Highcharts;
     type GlobalSVGElement = SVGElement;
+    type TimeFormatCallbackFunction = Function; // TODO
+    const win: Window;
 }
-
-declare const win: Window;
 
 /* globals window */
 
@@ -51,7 +61,7 @@ var glob = typeof win === 'undefined' ?
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
     );
 
-var Highcharts: IGlobalHighcharts = {
+var H: Highcharts.Dictionary<any> & GlobalHighcharts = {
     product: '@product.name@',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
@@ -71,7 +81,7 @@ var Highcharts: IGlobalHighcharts = {
     svg: svg,
     win: glob,
     marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-    noop: function () {},
+    noop: function (): void {},
     /**
      * An array containing the current chart objects in the page. A chart's
      * position in the array is preserved throughout the page's lifetime. When
@@ -98,4 +108,4 @@ var Highcharts: IGlobalHighcharts = {
     dateFormats: {}
 };
 
-export default Highcharts;
+export default H;
