@@ -4379,8 +4379,8 @@ H.Series = H.seriesType(
          *        The point instance to inspect.
          *
          * @param {string} [state]
-         *        The point state, can be either `hover`, `select` or undefined
-         *        for normal state.
+         *        The point state, can be either `hover`, `select` or 'normal'.
+         *        If undefined, normal state is assumed.
          *
          * @return {Highcharts.SVGAttributes}
          *         The presentational attributes to be set on the point.
@@ -4424,6 +4424,7 @@ H.Series = H.seriesType(
             );
 
             // Handle hover and select states
+            state = state || 'normal';
             if (state) {
                 seriesStateOptions = seriesMarkerOptions.states[state];
                 pointStateOptions = (
