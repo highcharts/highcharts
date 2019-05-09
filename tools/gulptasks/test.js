@@ -332,8 +332,8 @@ Available arguments for 'gulp test':
 
                     try {
                         saveRun();
-                    } catch (cathedError) {
-                        LogLib.warn(cathedError);
+                    } catch (catchedError) {
+                        LogLib.warn(catchedError);
                     }
 
                     if (argv.speak) {
