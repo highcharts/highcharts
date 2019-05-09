@@ -35,9 +35,13 @@ function task() {
     const LogLib = require('./lib/log');
     const ProcessLib = require('./lib/process');
 
-    if (ProcessLib.isRunning('scripts-watch') && !argv.force) {
+    if (ProcessLib.isRunning('scripts-watch')) {
         LogLib.warn('Running watch process detected. Skipping task...');
-        return Promise.resolve();
+        if (argv.force) {
+            ProcessLib.isRunning('scripts-watch', false, true);
+        } else {
+            return Promise.resolve();
+        }
     }
 
     return new Promise(resolve => {
@@ -89,4 +93,7 @@ function task() {
 require('./scripts-js.js');
 require('./scripts-ts.js');
 
-Gulp.task('scripts-watch', Gulp.series('scripts-js', 'scripts-ts', task));
+Gulp.task(
+    'scripts-watch',
+    Gulp.series('scripts-ts', 'scripts-css', 'scripts-js', task)
+);
