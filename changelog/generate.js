@@ -1,15 +1,17 @@
 /* eslint-env node, es6 */
-/* eslint valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
+/* eslint func-style: 0, valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
 
 /**
  * This node script copies commit messages since the last release and
  * generates a draft for a changelog.
  *
  * Parameters
- * --since String The tag to start from. This is not used when --pr.
- * --after String The start date.
+ * --since String  The tag to start from. This is not used when --pr.
+ * --after String  The start date.
  * --before String Optional. The end date for the changelog, defaults to today.
- * --pr Use Pull Request descriptions as source for the log.
+ * --pr            Use Pull Request descriptions as source for the log.
+ * --review        Create a review page with edit links and a list of all PRs
+ *                 that are not used in the changelog.
  */
 
 const prLog = require('./pr-log');
@@ -240,6 +242,52 @@ const params = require('yargs').argv;
         ).join(padder || 0) + number;
     }
 
+    function buildReview(log, products) {
+
+        const filename = path.join(__dirname, 'review.html');
+
+        const formatItem = p => {
+
+            const labels = p.labels
+                .map(l => `<span style="background: #${l.color}; padding: 0 0.2em; border-radius: 0.2em">${l.name}</span>`)
+                .join(' ');
+            return `
+            <li>
+                ${p.description}
+                ${labels}
+                [<a href="https://github.com/highcharts/highcharts/pull/${p.number}">Edit</a>]
+            </li>`;
+        };
+
+        let html = '<style>body { font-family: sans-serif }</style>';
+
+        Object.keys(products).forEach(product => {
+            html += `<h2>${product}</h2>`;
+
+            log[product].features.forEach(p => {
+                html += formatItem(p);
+            });
+
+            html += '<h4>Bug Fixes</h4>';
+            log[product].bugfixes.forEach(p => {
+                html += formatItem(p);
+            });
+        });
+
+        html += '<h2>Excluded</h2>';
+        log.excluded.forEach(p => {
+            html += formatItem(p);
+        });
+
+        fs.writeFileSync(
+            filename,
+            html,
+            'utf8'
+        );
+
+        console.log(`Review: ${filename}`);
+    }
+
     // Get the Git log
     getLog(function (log) {
 
@@ -267,6 +315,10 @@ const params = require('yargs').argv;
                 if (products) {
                     products = products.replace('var products = ', '');
                     products = JSON.parse(products);
+                }
+
+                if (params.review && params.pr) {
+                    buildReview(log, products);
                 }
 
                 for (name in products) {

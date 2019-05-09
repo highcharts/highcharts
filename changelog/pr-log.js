@@ -20,6 +20,8 @@ const log = {
 
 module.exports = async () => {
 
+    const included = [];
+
     let page = 1;
     let pulls = [];
 
@@ -64,7 +66,8 @@ module.exports = async () => {
     // Simplify
     pulls = pulls.map(p => ({
         description: p.body.split('\n')[0].trim(),
-        labels: p.labels
+        labels: p.labels,
+        number: p.number
     }));
 
     pulls.forEach(p => {
@@ -76,10 +79,10 @@ module.exports = async () => {
             }
         });
 
-        if (p.labels.find(l => l.name === 'Type: Enhancement')) {
+        if (p.labels.find(l => l.name === 'Changelog: Feature')) {
             p.isFeature = true;
 
-        } else if (p.description.indexOf('Fixed') === 0) {
+        } else if (p.labels.find(l => l.name === 'Changelog: Bugfix')) {
             p.isFix = true;
         }
     });
@@ -95,6 +98,16 @@ module.exports = async () => {
             p => p.isFix && p.product === product
         );
     });
+
+    // From objects to text
+    ['bugfixes', 'features'].forEach(type => {
+        Object.keys(log).forEach(product => {
+            log[product][type].forEach(
+                p => included.push(p.number)
+            );
+        });
+    });
+    log.excluded = pulls.filter(p => included.indexOf(p.number) === -1);
 
     return log;
 
