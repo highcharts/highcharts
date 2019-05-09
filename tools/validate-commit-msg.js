@@ -12,7 +12,8 @@
 // Add validation functions here.
 const validators = [
     msg => msg.indexOf('Fixes') >= 0 ? 'Use past tense (Fixed, not Fixes)' : 0,
-    msg => msg[0].toUpperCase() !== msg[0] ? 'First letter should be caps' : 0
+    msg => msg[0].toUpperCase() !== msg[0] ? 'First letter should be caps' : 0,
+    msg => msg.split('\n')[0].length > 72 ? 'First line of the commit message should not exceed 72 characters' : 0
 ];
 
 const args = process.argv;
