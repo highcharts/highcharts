@@ -960,6 +960,18 @@ addEvent(Axis, 'foundExtremes', function () {
     }
 });
 
+// For ordinal axis, that loads data async, redraw axis after data is loaded.
+// If we don't do that, axis will have the same extremes as previously, but
+// ordinal positions won't be calculated. See #10290
+addEvent(Axis, 'afterSetScale', function () {
+    var axis = this;
+
+    if (axis.horiz && !axis.isDirty) {
+        axis.isDirty = axis.isOrdinal &&
+            axis.chart.navigator &&
+            !axis.chart.navigator.adaptToUpdatedData;
+    }
+});
 /* ************************************************************************** *
  * End ordinal axis logic                                                     *
  * ************************************************************************** */
