@@ -1127,7 +1127,7 @@ QUnit.module('labels alignment', function () {
  * Checks that the last tick label does not pop out of its cell if there was no
  * room.
  */
-QUnit.only('Last tick label does not pop out of its cell', function (assert) {
+QUnit.test('Last tick label does not pop out of its cell', function (assert) {
     var labelBox,
         axisBox,
         axisRight,
