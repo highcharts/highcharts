@@ -1518,6 +1518,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     button.setState(0);
                 }
                 chart.openMenu = false;
+                css(chart.renderTo, { overflow: 'hidden' }); // #10361
                 H.clearTimeout(menu.hideTimer);
                 fireEvent(chart, 'exportMenuHidden');
             };
@@ -1622,6 +1623,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         css(menu, menuStyle);
+        css(chart.renderTo, { overflow: '' }); // #10361
         chart.openMenu = true;
     },
 
