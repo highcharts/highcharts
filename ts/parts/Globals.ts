@@ -11,22 +11,28 @@
 'use strict';
 
 /**
- * Internal types.
+ * Internal types
  * @private
  */
 declare global {
+    type GlobalHTMLElement = HTMLElement;
+    type GlobalSVGElement = SVGElement;
     namespace Highcharts {
-        interface Dictionary<T> {
-            [key: string]: T;
-        }
+        type Chart = any; // TODO
+        type ColorString = string; // TODO
+        type Series = any; // TODO
+        type SVGAttributes = Dictionary<any> // TODO
+        type SVGElement = any; // TODO
+        type SVGDOMElement = GlobalSVGElement; // TODO
+        type SVGPathArray = Array<number|string>; // TODO
+        type Time = any; // TODO
+        type TimeFormatCallbackFunction = Function; // TODO
         const charts: Array<Chart>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;
     }
-    type Chart = any; // TODO
     type GlobalHighcharts = typeof Highcharts;
-    type GlobalSVGElement = SVGElement;
-    type TimeFormatCallbackFunction = Function; // TODO
     const win: Window;
+    function parseFloat (value: (number|string)): number;
 }
 
 /* globals window */
@@ -106,6 +112,6 @@ var H: Highcharts.Dictionary<any> & GlobalHighcharts = {
      * @type {Highcharts.Dictionary<Highcharts.TimeFormatCallbackFunction>}
      */
     dateFormats: {}
-};
+} as any;
 
 export default H;

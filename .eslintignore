@@ -1,10 +1,11 @@
-vendor/**/*
+js/parts/Globals.js
+js/parts/Utilities.js
 samples/data/**/*.js
 samples/highcharts/common-js/**/*.js
 samples/cloud/**/**/*.js
 samples/static/*.js
-tools/eslint-plugin-highcharts/node_modules/**
-js/parts/Globals.js
 test/test-controller.js
 test/test-template.js
 test/test-utilities.js
+tools/eslint-plugin-highcharts/node_modules/**
+vendor/**/*
