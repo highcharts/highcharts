@@ -330,12 +330,10 @@ Available arguments for 'gulp test':
                         return;
                     }
 
-                    if (!forceRun) {
-                        try {
-                            saveRun();
-                        } catch (cathedError) {
-                            LogLib.warn(cathedError);
-                        }
+                    try {
+                        saveRun();
+                    } catch (cathedError) {
+                        LogLib.warn(cathedError);
                     }
 
                     if (argv.speak) {
