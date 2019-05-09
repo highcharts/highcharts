@@ -84,8 +84,8 @@ declare global {
         interface FormatterCallbackFunction<T> {
             (this: T): string;
         }
-        interface ObjectEachCallbackFunction {
-            (value: any, key: string, obj: any): void;
+        interface ObjectEachCallbackFunction<T> {
+            (this: T, value: any, key: string, obj: any): void;
         }
         interface OffsetObject {
             left: number;
@@ -106,17 +106,10 @@ declare global {
                 options: AnimationOptionsObject,
                 prop: string
             );
+            [key: string]: any;
             public elem: (HTMLDOMElement|SVGElement);
-            private end: number;
-            private now: number;
             public options: AnimationOptionsObject;
             public paths: [SVGPathArray, SVGPathArray];
-            private pos: number;
-            public prop: string;
-            private start: number;
-            private startTime: number;
-            public toD: SVGPathArray;
-            private unit: string;
             private dSetter(): void;
             public fillSetter(): void;
             public initPath(
@@ -129,6 +122,8 @@ declare global {
             public strokeSetter(): void;
             private update(): void;
         }
+        let timers: Array<any>;
+        let timeUnits: Dictionary<number>;
         function addEvent<T>(
             el: T,
             type: string,
@@ -136,8 +131,8 @@ declare global {
             options: EventOptionsObject
         ): Function;
         function animate(
-            el: (HTMLDOMElement|SVGElement),
-            params: (HTMLAttributes|SVGAttributes),
+            el: (HTMLElement|SVGElement),
+            params: (CSSObject|SVGAttributes),
             opt?: AnimationOptionsObject
         ): void;
         function animObject(
@@ -184,8 +179,8 @@ declare global {
         function fireEvent(
             el: any,
             type: string,
-            eventArguments: Dictionary<any>,
-            defaultFunction: Function
+            eventArguments?: Dictionary<any>,
+            defaultFunction?: Function
         ): void;
         function format(str: string, ctx: any, time: Time): string;
         function formatSingle(format: string, val: any, time: Time): string;
@@ -194,7 +189,7 @@ declare global {
             el: HTMLDOMElement,
             prop: string,
             toInt?: boolean
-        ): number;
+        ): (number|string);
         /** @deprecated */
         function grep(arr: Array<any>, fn: Function): Array<any>;
         function inArray(
@@ -222,10 +217,16 @@ declare global {
             allowDecimals?: boolean,
             hasTickAmount?: number
         ): number;
-        function objectEach(
+        function numberFormat(
+            number: number,
+            decimals: number,
+            decimalPoint?: string,
+            thousandsSep?: string
+        ): string;
+        function objectEach<T>(
             obj: any,
-            fn: ObjectEachCallbackFunction,
-            ctx?: any
+            fn: ObjectEachCallbackFunction<T>,
+            ctx?: T
         ): void;
         function offset(el: HTMLDOMElement): OffsetObject;
         function pad(number: number, length: number, padder?: string): string;
@@ -238,6 +239,11 @@ declare global {
             base: number,
             offset?: number
         ): number;
+        function removeEvent<T> (
+            el: T,
+            type?: string,
+            fn?: EventCallbackFunction<T>
+        ): void
         function seriesType(
             type: string,
             parent: string,
@@ -642,8 +648,8 @@ H.Fx = function (
     this.options = options;
     this.elem = elem;
     this.prop = prop;
+    /* eslint-enable no-invalid-this, valid-jsdoc */
 } as any;
-/* eslint-enable no-invalid-this, valid-jsdoc */
 H.Fx.prototype = {
 
     /**
@@ -998,7 +1004,7 @@ H.Fx.prototype = {
         }
 
         if (bezier) {
-            sixify(start);
+            sixify(start as any);
             sixify(end);
         }
 
@@ -1032,15 +1038,15 @@ H.Fx.prototype = {
             );
 
             if (!reverse) {
-                prepend(end, start);
-                append(start, end);
+                prepend(end, start as any);
+                append(start as any, end);
             } else {
-                prepend(start, end);
-                append(end, start);
+                prepend(start as any, end);
+                append(end, start as any);
             }
         }
 
-        return [start, end];
+        return [start as any, end];
     },
 
     /**
@@ -1731,11 +1737,11 @@ H.formatSingle = function (
     var floatRegex = /f$/,
         decRegex = /\.([0-9])/,
         lang = H.defaultOptions.lang,
-        decimals;
+        decimals: number;
 
     if (floatRegex.test(format)) { // float
-        decimals = format.match(decRegex);
-        decimals = decimals ? decimals[1] : -1;
+        decimals = format.match(decRegex) as any;
+        decimals = decimals ? (decimals as any)[1] : -1;
         if (val !== null) {
             val = H.numberFormat(
                 val,
@@ -2077,7 +2083,7 @@ H.destroyObjectProperties = function (obj: any, except?: any): void {
  * @return {void}
  */
 H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
-    var garbageBin = H.garbageBin;
+    var garbageBin = (H as any).garbageBin;
 
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
@@ -2324,14 +2330,14 @@ Math.easeInOutSine = function (pos: number): number {
  * @param {boolean} [toInt=true]
  *        Parse to integer.
  *
- * @return {number}
+ * @return {number|string}
  *         The numeric value.
  */
 H.getStyle = function (
     el: Highcharts.HTMLDOMElement,
     prop: string,
     toInt?: boolean
-): number {
+): (number|string) {
 
     var style;
 
@@ -2352,8 +2358,8 @@ H.getStyle = function (
                         Math.floor(el.getBoundingClientRect().width) : // #6427
                         Infinity
                 ) -
-                H.getStyle(el, 'padding-left') -
-                H.getStyle(el, 'padding-right')
+                (H as any).getStyle(el, 'padding-left') -
+                (H as any).getStyle(el, 'padding-right')
             )
         );
     }
@@ -2362,8 +2368,8 @@ H.getStyle = function (
         return Math.max(
             0, // #8377
             Math.min(el.offsetHeight, el.scrollHeight) -
-                H.getStyle(el, 'padding-top') -
-                H.getStyle(el, 'padding-bottom')
+                (H as any).getStyle(el, 'padding-top') -
+                (H as any).getStyle(el, 'padding-bottom')
         );
     }
 
@@ -2511,30 +2517,32 @@ H.stop = function (el: Highcharts.SVGElement, prop: string): void {
     }
 };
 
+/* eslint-disable valid-jsdoc */
 /**
  * Iterate over object key pairs in an object.
  *
- * @function Highcharts.objectEach
+ * @function Highcharts.objectEach<T>
  *
  * @param {*} obj
  *        The object to iterate over.
  *
- * @param {Highcharts.ObjectEachCallbackFunction} fn
+ * @param {Highcharts.ObjectEachCallbackFunction<T>} fn
  *        The iterator callback. It passes three arguments:
  *        * value - The property value.
  *        * key - The property key.
  *        * obj - The object that objectEach is being applied to.
  *
- * @param {*} [ctx]
+ * @param {T} [ctx]
  *        The context.
  *
  * @return {void}
  */
-H.objectEach = function (
+H.objectEach = function<T> (
     obj: any,
-    fn: Highcharts.ObjectEachCallbackFunction,
-    ctx?: any
+    fn: Highcharts.ObjectEachCallbackFunction<T>,
+    ctx?: T
 ): void {
+    /* eslint-enable valid-jsdoc */
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
             fn.call(ctx || obj[key], obj[key], key, obj);
@@ -2643,7 +2651,7 @@ H.objectEach({
     reduce: 'reduce',
     some: 'some'
 }, function (val: any, key: string): void {
-    H[key] = function (arr: Array<any>): any {
+    (H as any)[key] = function (arr: Array<any>): any {
         return Array.prototype[val].apply(
             arr,
             [].slice.call(arguments, 1)
@@ -2861,8 +2869,8 @@ H.removeEvent = function<T> (
 H.fireEvent = function (
     el: any,
     type: string,
-    eventArguments: Highcharts.Dictionary<any>,
-    defaultFunction: Function
+    eventArguments?: Highcharts.Dictionary<any>,
+    defaultFunction?: Function
 ): void {
     var e,
         events,
@@ -2892,14 +2900,15 @@ H.fireEvent = function (
                 events = el[coll][type] || [];
                 len = events.length;
 
-                if (!eventArguments.target) { // We're running a custom event
+                if (!(eventArguments as any).target) {
+                    // We're running a custom event
 
-                    H.extend(eventArguments, {
+                    H.extend(eventArguments as any, {
                         // Attach a simple preventDefault function to skip
                         // default handler if called. The built-in
                         // defaultPrevented property is not overwritable (#5112)
                         preventDefault: function (): void {
-                            eventArguments.defaultPrevented = true;
+                            (eventArguments as any).defaultPrevented = true;
                         },
                         // Setting target to native events fails with clicking
                         // the zoom-out button in Chrome.
@@ -2918,7 +2927,7 @@ H.fireEvent = function (
                     // If the event handler return false, prevent the default
                     // handler from executing
                     if (fn && fn.call(el, eventArguments) === false) {
-                        eventArguments.preventDefault();
+                        (eventArguments as any).preventDefault();
                     }
                 }
             }
@@ -2939,7 +2948,7 @@ H.fireEvent = function (
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} el
  *        The element to animate.
  *
- * @param {Highcharts.HTMLAttributes|Highcharts.SVGAttributes} params
+ * @param {Highcharts.CSSObject|Highcharts.SVGAttributes} params
  *        An object containing key-value pairs of the properties to animate.
  *        Supports numeric as pixel-based CSS properties for HTML objects and
  *        attributes for SVGElements.
@@ -2951,7 +2960,7 @@ H.fireEvent = function (
  */
 H.animate = function (
     el: (Highcharts.HTMLDOMElement|Highcharts.SVGElement),
-    params: (Highcharts.HTMLAttributes|Highcharts.SVGAttributes),
+    params: (Highcharts.CSSObject|Highcharts.SVGAttributes),
     opt?: Highcharts.AnimationOptionsObject
 ): void {
     var start,
@@ -2978,24 +2987,24 @@ H.animate = function (
 
     H.objectEach(params, function (val: any, prop: string): void {
         // Stop current running animation of this property
-        H.stop(el, prop);
+        H.stop(el as any, prop);
 
         fx = new H.Fx(el, opt as any, prop);
         end = null;
 
         if (prop === 'd') {
             fx.paths = fx.initPath(
-                el,
-                el.d,
-                params.d
+                el as any,
+                (el as any).d,
+                params.d as any
             );
             fx.toD = params.d;
             start = 0;
             end = 1;
-        } else if (el.attr) {
-            start = el.attr(prop);
+        } else if ((el as any).attr) {
+            start = (el as any).attr(prop);
         } else {
-            start = parseFloat(H.getStyle(el, prop)) || 0;
+            start = parseFloat(H.getStyle(el as any, prop)) || 0;
             if (prop !== 'opacity') {
                 unit = 'px';
             }
@@ -3007,7 +3016,7 @@ H.animate = function (
         if (end && end.match && end.match('px')) {
             end = end.replace(/px/g, ''); // #4351
         }
-        fx.run(start, end, unit);
+        fx.run(start as any, end, unit);
     });
 };
 
@@ -3098,7 +3107,7 @@ H.isFunction = function (obj: any): boolean {
 };
 
 // Register Highcharts as a plugin in jQuery
-if (win.jQuery) {
+if ((win as any).jQuery) {
 
     /**
      * Highcharts-extended JQuery.
@@ -3135,14 +3144,14 @@ if (win.jQuery) {
      * @return {JQuery}
      *         The current JQuery selector.
      */
-    win.jQuery.fn.highcharts = function (): any {
+    (win as any).jQuery.fn.highcharts = function (): any {
         var args = [].slice.call(arguments) as any;
 
         if (this[0]) { // this[0] is the renderTo div
 
             // Create the chart
             if (args[0]) {
-                new H[ // eslint-disable-line no-new
+                new (H as any)[ // eslint-disable-line no-new
                     // Constructor defaults to Chart
                     H.isString(args[0]) ? args.shift() : 'Chart'
                 ](this[0], args[0], args[1]);

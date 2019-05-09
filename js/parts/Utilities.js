@@ -351,8 +351,8 @@ H.Fx = function (elem, options, prop) {
     this.options = options;
     this.elem = elem;
     this.prop = prop;
+    /* eslint-enable no-invalid-this, valid-jsdoc */
 };
-/* eslint-enable no-invalid-this, valid-jsdoc */
 H.Fx.prototype = {
     /**
      * Set the current step of a path definition on SVGElement.
@@ -1717,7 +1717,7 @@ Math.easeInOutSine = function (pos) {
  * @param {boolean} [toInt=true]
  *        Parse to integer.
  *
- * @return {number}
+ * @return {number|string}
  *         The numeric value.
  */
 H.getStyle = function (el, prop, toInt) {
@@ -1871,26 +1871,28 @@ H.stop = function (el, prop) {
         }
     }
 };
+/* eslint-disable valid-jsdoc */
 /**
  * Iterate over object key pairs in an object.
  *
- * @function Highcharts.objectEach
+ * @function Highcharts.objectEach<T>
  *
  * @param {*} obj
  *        The object to iterate over.
  *
- * @param {Highcharts.ObjectEachCallbackFunction} fn
+ * @param {Highcharts.ObjectEachCallbackFunction<T>} fn
  *        The iterator callback. It passes three arguments:
  *        * value - The property value.
  *        * key - The property key.
  *        * obj - The object that objectEach is being applied to.
  *
- * @param {*} [ctx]
+ * @param {T} [ctx]
  *        The context.
  *
  * @return {void}
  */
 H.objectEach = function (obj, fn, ctx) {
+    /* eslint-enable valid-jsdoc */
     for (var key in obj) {
         if (obj.hasOwnProperty(key)) {
             fn.call(ctx || obj[key], obj[key], key, obj);
@@ -2186,7 +2188,8 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
             if (el[coll]) {
                 events = el[coll][type] || [];
                 len = events.length;
-                if (!eventArguments.target) { // We're running a custom event
+                if (!eventArguments.target) {
+                    // We're running a custom event
                     H.extend(eventArguments, {
                         // Attach a simple preventDefault function to skip
                         // default handler if called. The built-in
@@ -2227,7 +2230,7 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} el
  *        The element to animate.
  *
- * @param {Highcharts.HTMLAttributes|Highcharts.SVGAttributes} params
+ * @param {Highcharts.CSSObject|Highcharts.SVGAttributes} params
  *        An object containing key-value pairs of the properties to animate.
  *        Supports numeric as pixel-based CSS properties for HTML objects and
  *        attributes for SVGElements.
