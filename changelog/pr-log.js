@@ -1,12 +1,6 @@
 /* eslint-env node, es6 */
 /* eslint camelcase: 0, func-style: 0, valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
 
-/*
-
- @todo
- - Pull version from package.json
- - Insert current date
- */
 const octokit = require('@octokit/rest')({
     auth: process.env.GITHUB_LIST_PRS_TOKEN
 });
@@ -17,7 +11,7 @@ const error = e => {
     console.error(e);
 };
 
-const products = {
+const log = {
     Highcharts: {},
     Highstock: {},
     Highmaps: {},
@@ -67,47 +61,41 @@ module.exports = async () => {
         page++;
     }
 
-    pulls.forEach(p => {
-        const labels = p.labels.map(l => l.name).join();
+    // Simplify
+    pulls = pulls.map(p => ({
+        description: p.body.split('\n')[0].trim(),
+        labels: p.labels
+    }));
 
+    pulls.forEach(p => {
         p.product = 'Highcharts';
 
-        Object.keys(products).forEach(product => {
-            if (labels.indexOf(`Product: ${product}`) !== -1) {
+        Object.keys(log).forEach(product => {
+            if (p.labels.find(l => l.name === `Product: ${product}`)) {
                 p.product = product;
             }
         });
 
-        if (labels.indexOf('Type: Enhancement') !== -1) {
+        if (p.labels.find(l => l.name === 'Type: Enhancement')) {
             p.isFeature = true;
 
-        } else if (p.body.indexOf('Fixed') === 0) {
+        } else if (p.description.indexOf('Fixed') === 0) {
             p.isFix = true;
         }
     });
 
-    Object.keys(products).forEach(product => {
-        products[product].features = pulls.filter(
+    Object.keys(log).forEach(product => {
+        log[product].features = pulls.filter(
             p => p.isFeature && p.product === product
         );
     });
 
-    Object.keys(products).forEach(product => {
-        products[product].bugfixes = pulls.filter(
+    Object.keys(log).forEach(product => {
+        log[product].bugfixes = pulls.filter(
             p => p.isFix && p.product === product
         );
     });
 
-    // From objects to text
-    ['bugfixes', 'features'].forEach(type => {
-        Object.keys(products).forEach(product => {
-            products[product][type] = products[product][type].map(
-                // Return body, split on horizontal rule
-                p => p.body.split(/(___|---|\*\*\*|\n)/)[0].trim()
-            );
-        });
-    });
-
-    return products;
+    return log;
 
 };

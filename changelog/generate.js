@@ -156,12 +156,14 @@ const params = require('yargs').argv;
         if (name !== 'Highcharts') {
             outputString += `- Most changes listed under Highcharts ${products.Highcharts.nr} above also apply to ${name} ${version}.\n`;
         }
-        log.forEach((li, i) => {
+        log.forEach((change, i) => {
+
+            let desc = change.description || change;
 
             optionKeys.forEach(key => {
                 const replacement = ` [${key}](https://api.highcharts.com/${apiFolder}/${key}) `;
 
-                li = li
+                desc = desc
                     .replace(
                         ` \`${key}\` `,
                         replacement
@@ -175,7 +177,7 @@ const params = require('yargs').argv;
                 if (key.indexOf('plotOptions.') === 0) {
                     const shortKey = key.replace('plotOptions.', '');
                     if (shortKey.indexOf('.') !== -1) {
-                        li = li
+                        desc = desc
                             .replace(
                                 ` \`${shortKey}\` `,
                                 replacement
@@ -193,7 +195,7 @@ const params = require('yargs').argv;
                 outputString += '\n## Bug fixes\n';
             }
             // All items
-            outputString += '- ' + addMissingDotToCommitMessage(li) + '\n';
+            outputString += '- ' + addMissingDotToCommitMessage(desc) + '\n';
 
         });
 
@@ -228,16 +230,28 @@ const params = require('yargs').argv;
         return keys;
     }
 
+    function pad(number, length, padder) {
+        return new Array(
+            (length || 2) +
+            1 -
+            String(number)
+                .replace('-', '')
+                .length
+        ).join(padder || 0) + number;
+    }
+
     // Get the Git log
     getLog(function (log) {
 
+        const optionKeys = getOptionKeys(tree);
+        const pack = require(path.join(__dirname, '/../package.json'));
+        const d = new Date();
+
         // Split the log into an array
-        if (typeof log === 'string') {
+        if (!params.pr) {
             log = log.split('<br>\n');
             log.pop();
         }
-
-        const optionKeys = getOptionKeys(tree);
 
         // Load the current products and versions, and create one log each
         fs.readFile(
@@ -256,7 +270,16 @@ const params = require('yargs').argv;
                 }
 
                 for (name in products) {
+
                     if (products.hasOwnProperty(name)) {
+                        if (params.pr) {
+                            products[name].nr = pack.version;
+                            products[name].date =
+                                d.getFullYear() + '-' +
+                                pad(d.getMonth() + 1, 2) + '-' +
+                                pad(d.getDate(), 2);
+                        }
+
                         buildMarkdown(
                             name,
                             products[name].nr,
