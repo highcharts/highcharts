@@ -540,18 +540,20 @@ var onBeforeRender = function (e) {
             });
 
             // Collapse all the nodes belonging to a point where collapsed
-            // equals true.
+            // equals true. Only do this on init.
             // Can be called from beforeRender, if getBreakFromNode removes
             // its dependency on axis.max.
-            removeFoundExtremesEvent =
-                H.addEvent(axis, 'foundExtremes', function () {
-                    treeGrid.collapsedNodes.forEach(function (node) {
-                        var breaks = collapse(axis, node);
+            if (e.type === 'beforeRender') {
+                removeFoundExtremesEvent =
+                    H.addEvent(axis, 'foundExtremes', function () {
+                        treeGrid.collapsedNodes.forEach(function (node) {
+                            var breaks = collapse(axis, node);
 
-                        axis.setBreaks(breaks, false);
+                            axis.setBreaks(breaks, false);
+                        });
+                        removeFoundExtremesEvent();
                     });
-                    removeFoundExtremesEvent();
-                });
+            }
         });
 };
 
