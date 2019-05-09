@@ -15,22 +15,37 @@
  * @private
  */
 declare global {
-    type GlobalHTMLElement = HTMLElement;
-    type GlobalSVGElement = SVGElement;
     namespace Highcharts {
         type Chart = any; // TODO
+        type Color = any; // TODO
         type ColorString = string; // TODO
+        type Point = any; // TODO
         type Series = any; // TODO
-        type SVGAttributes = Dictionary<any> // TODO
-        type SVGElement = any; // TODO
+        type SVGAttributes = Dictionary<any>; // TODO
         type SVGDOMElement = GlobalSVGElement; // TODO
+        type SVGElement = any; // TODO
         type SVGPathArray = Array<number|string>; // TODO
         type Time = any; // TODO
         type TimeFormatCallbackFunction = Function; // TODO
+        const Point: any; // TODO
+        const Series: any; // TODO
+        const addEventListenerPolyfill: any; // TODO
         const charts: Array<Chart>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;
+        const defaultOptions: any; // TODO
+        const doc: Document;
+        const isMS: boolean;
+        const removeEventListenerPolyfill: any; // TODO
+        const win: Window;
+        const seriesTypes: any; // TODO
+        const svg: boolean;
+        const time: Highcharts.Time; // TODO
+        function color(...args: Array<any>): any; // TODO
+        function getOptions(): any; // TODO
     }
     type GlobalHighcharts = typeof Highcharts;
+    type GlobalHTMLElement = HTMLElement;
+    type GlobalSVGElement = SVGElement;
     const win: Window;
     function parseFloat (value: (number|string)): number;
 }
@@ -67,7 +82,7 @@ var glob = typeof win === 'undefined' ?
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
     );
 
-var H: Highcharts.Dictionary<any> & GlobalHighcharts = {
+var H: GlobalHighcharts = {
     product: '@product.name@',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
