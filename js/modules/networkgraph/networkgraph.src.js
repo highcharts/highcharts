@@ -79,13 +79,13 @@
  * @type {Highcharts.SeriesNetworkDataLabelsFormatterCallbackFunction|undefined}
  * @since 7.1.0
  *//**
- * Options for a _node_ label text which should follow marker's shape. Border
+ * Options for a _link_ label text which should follow link connection. Border
  * and background are disabled for a label that follows a path.
  * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
  * true will disable this option.
- * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
- * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#textPath
- * @type {Highcharts.DataLabelsTextPath}
+ * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
+ * @name Highcharts.SeriesNetworkDataLabelsOptionsObject#linkTextPath
+ * @type {Highcharts.DataLabelsTextPath|undefined}
  * @since 7.1.0
  */
 
