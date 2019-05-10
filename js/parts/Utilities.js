@@ -22,7 +22,7 @@ import H from './Globals.js';
 */ /**
 * The animation duration in milliseconds.
 * @name Highcharts.AnimationOptionsObject#duration
-* @type {number}
+* @type {number|undefined}
 */ /**
 * The name of an easing function as defined on the `Math` object.
 * @name Highcharts.AnimationOptionsObject#easing
@@ -34,6 +34,16 @@ import H from './Globals.js';
 * @name Highcharts.AnimationOptionsObject#step
 * @type {Function|undefined}
 */
+/**
+ * Creates a frame for the animated SVG element.
+ *
+ * @callback Highcharts.AnimationStepCallbackFunction
+ *
+ * @param {Highcharts.SVGElement} this
+ *        The SVG element to animate.
+ *
+ * @return {void}
+ */
 /**
  * A style object with camel case property names to define visual appearance of
  * a SVG element or HTML element. The properties can be whatever styles are
@@ -201,7 +211,7 @@ import H from './Globals.js';
 /**
  * An object of key-value pairs for HTML attributes.
  *
- * @typedef {Highcharts.Dictionary<boolean|number|string>} Highcharts.HTMLAttributes
+ * @typedef {Highcharts.Dictionary<boolean|number|string|Function>} Highcharts.HTMLAttributes
  */
 /**
  * An HTML DOM element. The type is a reference to the regular HTMLElement in
@@ -672,47 +682,49 @@ H.Fx.prototype = {
         this.elem.attr(this.prop, H.color(this.start).tweenTo(H.color(this.end), this.pos), null, true);
     }
 }; // End of Fx prototype
+/* eslint-disable valid-jsdoc */
 /**
  * Utility function to deep merge two or more objects and return a third object.
- * The merge function can also be used with a single object argument to create a
- * deep copy of an object.
+ * If the first argument is true, the contents of the second object is copied
+ * into the first object. The merge function can also be used with a single
+ * object argument to create a deep copy of an object.
  *
- * @function Highcharts.merge
+ * @function Highcharts.merge<T>
  *
- * @param {*} a
+ * @param {boolean} extend
+ *        Whether to extend the left-side object (a) or return a whole new
+ *        object.
+ *
+ * @param {T} a
  *        The first object to extend. When only this is given, the function
  *        returns a deep copy.
  *
- * @param {*} [n]
+ * @param {Array<object>} [...n]
  *        An object to merge into the previous one.
  *
- * @return {*}
+ * @return {T}
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */ /**
 * Utility function to deep merge two or more objects and return a third object.
-* If the first argument is true, the contents of the second object is copied
-* into the first object. The merge function can also be used with a single
-* object argument to create a deep copy of an object.
+* The merge function can also be used with a single object argument to create a
+* deep copy of an object.
 *
-* @function Highcharts.merge
+* @function Highcharts.merge<T>
 *
-* @param {boolean} extend
-*        Whether to extend the left-side object (a) or return a whole new
-*        object.
-*
-* @param {*} a
+* @param {T} a
 *        The first object to extend. When only this is given, the function
 *        returns a deep copy.
 *
-* @param {*} [n]
+* @param {Array<object>} [...n]
 *        An object to merge into the previous one.
 *
-* @return {*}
+* @return {T}
 *         The merged object. If the first argument is true, the return is the
 *         same as the second argument.
 */
 H.merge = function () {
+    /* eslint-enable valid-jsdoc */
     var i, args = arguments, len, ret = {}, doCopy = function (copy, original) {
         // An object is replacing a primitive
         if (typeof copy !== 'object') {
@@ -904,7 +916,7 @@ H.defined = function (obj) {
  * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [prop]
  *        The property or an object of key-value pairs.
  *
- * @param {string} [value]
+ * @param {number|string} [value]
  *        The value if a single property is set.
  *
  * @return {*}
@@ -1040,7 +1052,7 @@ H.pick = function () {
  *
  * @function Highcharts.css
  *
- * @param {Highcharts.HTMLDOMElement} el
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} el
  *        An HTML DOM element.
  *
  * @param {Highcharts.CSSObject} styles
@@ -1051,7 +1063,8 @@ H.pick = function () {
 H.css = function (el, styles) {
     if (H.isMS && !H.svg) { // #2686
         if (styles && typeof styles.opacity !== 'undefined') {
-            styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
+            styles.filter =
+                'alpha(opacity=' + (styles.opacity * 100) + ')';
         }
     }
     H.extend(el.style, styles);

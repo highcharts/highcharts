@@ -34,42 +34,24 @@ declare global {
             'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|
             'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
         );
-        type HTMLAttributes = Dictionary<boolean|number|string>;
+        type HTMLAttributes = Dictionary<boolean|number|string|Function>;
         type HTMLDOMElement = GlobalHTMLElement;
         type RelativeSize = (number|string);
         interface AnimationOptionsObject {
             complete?: Function;
             curAnim?: Dictionary<boolean>;
-            duration: number;
+            duration?: number;
             easing?: (string|Function);
-            step?: Function;
+            step?: AnimationStepCallbackFunction;
+        }
+        interface AnimationStepCallbackFunction {
+            (this: SVGElement, ...args: Array<any>): void;
         }
         interface CSSObject {
             [key: string]: (boolean|number|string|undefined);
-            background?: string;
             backgroundColor?: ColorString;
-            border?: string;
-            borderRadius?: number;
             color?: ('contrast'|ColorString);
             cursor?: CursorValue;
-            fontFamily?: string;
-            fontSize?: string;
-            fontWeight?: string;
-            height?: number;
-            lineWidth?: number;
-            margin?: string;
-            opacity?: number;
-            padding?: string;
-            pointerEvents?: string;
-            position?: string;
-            textAlign?: string;
-            textDecoration?: string;
-            textOutline?: string;
-            textOverflow?: string;
-            top?: string;
-            transition?: string;
-            whiteSpace?: string;
-            width?: number;
         }
         interface Dictionary<T> {
             [key: string]: T;
@@ -128,7 +110,7 @@ declare global {
             el: T,
             type: string,
             fn: EventCallbackFunction<T>,
-            options: EventOptionsObject
+            options?: EventOptionsObject
         ): Function;
         function animate(
             el: (HTMLElement|SVGElement),
@@ -143,7 +125,7 @@ declare global {
         function attr(
             elem: (HTMLDOMElement|SVGDOMElement),
             prop?: (string|HTMLAttributes|SVGAttributes),
-            value?: string
+            value?: (number|string)
         ): any;
         function clearTimeout(id: number): void;
         function correctFloat(num: number, prec: number): number;
@@ -154,7 +136,10 @@ declare global {
             parent?: HTMLDOMElement,
             nopad?: boolean
         ): HTMLDOMElement;
-        function css(el: HTMLDOMElement, styles: CSSObject): void;
+        function css(
+            el: (HTMLDOMElement|SVGDOMElement),
+            styles: CSSObject
+        ): void;
         function datePropsToTimestamps(object: any): void;
         function defined(obj: any): boolean;
         function destroyObjectProperties(obj: any, except?: any): void;
@@ -208,8 +193,8 @@ declare global {
         function keys(obj: any): Array<string>;
         /** @deprecated */
         function map(arr: Array<any>, fn: Function): Array<any>;
-        function merge(a: object, n?: object): object;
-        function merge(extend: boolean, a: object, n?: object): object;
+        function merge<T>(extend: boolean, a: T, ...n: Array<object>): T;
+        function merge<T>(a: T, ...n: Array<object>): T;
         function normalizeTickInterval(
             interval: number,
             multiples?: Array<any>,
@@ -259,7 +244,7 @@ declare global {
         function some(arr: Array<any>, fn: Function, ctx?: any): boolean;
         function splat(obj: any): Array<any>;
         function stableSort(arr: Array<any>, sortFunction: Function): void;
-        function stop(el: SVGElement, prop: string): void;
+        function stop(el: SVGElement, prop?: string): void;
         function syncTimeout(
             fn: Function,
             delay: number,
@@ -287,7 +272,7 @@ declare global {
  *//**
  * The animation duration in milliseconds.
  * @name Highcharts.AnimationOptionsObject#duration
- * @type {number}
+ * @type {number|undefined}
  *//**
  * The name of an easing function as defined on the `Math` object.
  * @name Highcharts.AnimationOptionsObject#easing
@@ -298,6 +283,17 @@ declare global {
  * animation and progress.
  * @name Highcharts.AnimationOptionsObject#step
  * @type {Function|undefined}
+ */
+
+/**
+ * Creates a frame for the animated SVG element.
+ *
+ * @callback Highcharts.AnimationStepCallbackFunction
+ *
+ * @param {Highcharts.SVGElement} this
+ *        The SVG element to animate.
+ *
+ * @return {void}
  */
 
 /**
@@ -474,7 +470,7 @@ declare global {
 /**
  * An object of key-value pairs for HTML attributes.
  *
- * @typedef {Highcharts.Dictionary<boolean|number|string>} Highcharts.HTMLAttributes
+ * @typedef {Highcharts.Dictionary<boolean|number|string|Function>} Highcharts.HTMLAttributes
  */
 
 /**
@@ -1078,47 +1074,49 @@ H.Fx.prototype = {
 
 } as any; // End of Fx prototype
 
+/* eslint-disable valid-jsdoc */
 /**
- * Utility function to deep merge two or more objects and return a third object.
- * The merge function can also be used with a single object argument to create a
- * deep copy of an object.
- *
- * @function Highcharts.merge
- *
- * @param {*} a
- *        The first object to extend. When only this is given, the function
- *        returns a deep copy.
- *
- * @param {*} [n]
- *        An object to merge into the previous one.
- *
- * @return {*}
- *         The merged object. If the first argument is true, the return is the
- *         same as the second argument.
- *//**
  * Utility function to deep merge two or more objects and return a third object.
  * If the first argument is true, the contents of the second object is copied
  * into the first object. The merge function can also be used with a single
  * object argument to create a deep copy of an object.
  *
- * @function Highcharts.merge
+ * @function Highcharts.merge<T>
  *
  * @param {boolean} extend
  *        Whether to extend the left-side object (a) or return a whole new
  *        object.
  *
- * @param {*} a
+ * @param {T} a
  *        The first object to extend. When only this is given, the function
  *        returns a deep copy.
  *
- * @param {*} [n]
+ * @param {Array<object>} [...n]
  *        An object to merge into the previous one.
  *
- * @return {*}
+ * @return {T}
+ *         The merged object. If the first argument is true, the return is the
+ *         same as the second argument.
+ *//**
+ * Utility function to deep merge two or more objects and return a third object.
+ * The merge function can also be used with a single object argument to create a
+ * deep copy of an object.
+ *
+ * @function Highcharts.merge<T>
+ *
+ * @param {T} a
+ *        The first object to extend. When only this is given, the function
+ *        returns a deep copy.
+ *
+ * @param {Array<object>} [...n]
+ *        An object to merge into the previous one.
+ *
+ * @return {T}
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */
 H.merge = function (): any {
+    /* eslint-enable valid-jsdoc */
     var i,
         args = arguments,
         len,
@@ -1335,7 +1333,7 @@ H.defined = function (obj: any): boolean {
  * @param {string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes} [prop]
  *        The property or an object of key-value pairs.
  *
- * @param {string} [value]
+ * @param {number|string} [value]
  *        The value if a single property is set.
  *
  * @return {*}
@@ -1344,7 +1342,7 @@ H.defined = function (obj: any): boolean {
 H.attr = function (
     elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
     prop?: (string|Highcharts.HTMLAttributes|Highcharts.SVGAttributes),
-    value?: string
+    value?: (number|string)
 ): any {
     var ret;
 
@@ -1496,7 +1494,7 @@ H.pick = function (): any {
  *
  * @function Highcharts.css
  *
- * @param {Highcharts.HTMLDOMElement} el
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} el
  *        An HTML DOM element.
  *
  * @param {Highcharts.CSSObject} styles
@@ -1505,12 +1503,13 @@ H.pick = function (): any {
  * @return {void}
  */
 H.css = function (
-    el: Highcharts.HTMLDOMElement,
+    el: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
     styles: Highcharts.CSSObject
 ): void {
     if (H.isMS && !H.svg) { // #2686
         if (styles && typeof styles.opacity !== 'undefined') {
-            styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
+            styles.filter =
+                'alpha(opacity=' + (styles.opacity as any * 100) + ')';
         }
     }
     H.extend(el.style, styles);
@@ -2505,7 +2504,7 @@ H.offset = function (el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-H.stop = function (el: Highcharts.SVGElement, prop: string): void {
+H.stop = function (el: Highcharts.SVGElement, prop?: string): void {
 
     var i = H.timers.length;
 
@@ -2685,7 +2684,7 @@ H.addEvent = function<T> (
     el: T,
     type: string,
     fn: Highcharts.EventCallbackFunction<T>,
-    options: Highcharts.EventOptionsObject
+    options?: Highcharts.EventOptionsObject
 ): Function {
     /* eslint-enable valid-jsdoc */
     var events,

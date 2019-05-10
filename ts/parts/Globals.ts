@@ -15,42 +15,55 @@
  * @private
  */
 declare global {
-    namespace Highcharts {
-        type Chart = any; // TODO
-        type Color = any; // TODO
-        type ColorString = string; // TODO
-        type Point = any; // TODO
-        type Series = any; // TODO
-        type SVGAttributes = Dictionary<any>; // TODO
-        type SVGDOMElement = GlobalSVGElement; // TODO
-        type SVGElement = any; // TODO
-        type SVGPathArray = Array<number|string>; // TODO
-        type Time = any; // TODO
-        type TimeFormatCallbackFunction = Function; // TODO
-        const Point: any; // TODO
-        const Series: any; // TODO
-        const addEventListenerPolyfill: any; // TODO
-        const charts: Array<Chart>;
-        const dateFormats: Dictionary<TimeFormatCallbackFunction>;
-        const defaultOptions: any; // TODO
-        const doc: Document;
-        const isMS: boolean;
-        const removeEventListenerPolyfill: any; // TODO
-        const win: Window;
-        const seriesTypes: any; // TODO
-        const svg: boolean;
-        const time: Highcharts.Time; // TODO
-        function color(...args: Array<any>): any; // TODO
-        function getOptions(): any; // TODO
-    }
-    type GlobalHighcharts = typeof Highcharts;
     type GlobalHTMLElement = HTMLElement;
     type GlobalSVGElement = SVGElement;
-    const win: Window;
+    interface Document {
+        msHidden: boolean;
+        webkitHidden: boolean;
+    }
+    interface Window {
+        Image: typeof Image;
+    }
+    const win: Window; // @todo: UMD variable
     function parseFloat (value: (number|string)): number;
+    namespace Highcharts {
+        type Chart = any; // @todo
+        type Color = any; // @todo
+        type ColorString = string; // @todo
+        type Point = any; // @todo
+        type Series = any; // @todo
+        type Time = any; // @todo
+        type TimeFormatCallbackFunction = Function; // @todo
+        const Point: any; // @todo
+        const Series: any; // @todo
+        const SVG_NS: string;
+        const addEventListenerPolyfill: any; // @todo
+        const charts: Array<Chart>;
+        const dateFormats: Dictionary<TimeFormatCallbackFunction>;
+        const deg2rad: number;
+        const defaultOptions: any; // @todo
+        const doc: Document;
+        const hasBidiBug: boolean;
+        const hasTouch: boolean;
+        const isChrome: boolean;
+        const isFirefox: boolean;
+        const isMS: boolean;
+        const isSafari: boolean;
+        const isWebKit: boolean;
+        const noop: Function;
+        const removeEventListenerPolyfill: any; // @todo
+        const symbolSizes: Dictionary<SizeObject>;
+        const win: Window;
+        const seriesTypes: Dictionary<typeof Series>;
+        const svg: boolean;
+        const time: Highcharts.Time; // @todo
+        function color(...args: Array<any>): any; // @todo
+        function getOptions(): any; // @todo
+    }
+    type GlobalHighcharts = typeof Highcharts;
 }
 
-/* globals window */
+/* globals Image, window */
 
 /**
  * Reference to the global SVGElement class as a workaround for a name conflict

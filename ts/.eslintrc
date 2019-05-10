@@ -30,7 +30,9 @@
                 "ignorePattern": "(eslint-disable-line|pointFormat|headerFormat| highcharts\/|\\]\\(\\#|@apioption|@borrows|@default|@extends|@name|@param|@property|@return|@sample|@see|@type|@typedef|@validvalue)"
             }
         ],
+        "no-dupe-class-members": 0,
         "no-shadow": 0,
+        "no-undefined": 0,
         "no-unused-expressions": 0,
         "no-useless-constructor": 0,
         "object-curly-spacing": [2, "always"],
