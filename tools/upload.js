@@ -52,7 +52,8 @@ const uploadFiles = params => {
         svg: 'image/svg+xml',
         ttf: 'application/font-sfnt',
         woff: 'application/font-woff',
-        woff2: 'application/font-woff'
+        woff2: 'application/font-woff',
+        zip: 'application/zip'
     };
     const {
         batchSize,
@@ -72,15 +73,21 @@ const uploadFiles = params => {
             let filePromise;
             if (isString(from) && isString(to)) {
                 // empty encoding -> read as binary buffer
-                const content = fs.readFileSync(from, '');
+                let content;
+                try {
+                    content = fs.readFileSync(from, '');
+                } catch (err) {
+                    errors.push(err);
+                }
+
                 const fileType = from.split('.').pop();
                 const fileMime = mimeType[fileType];
                 if (content && content.length > 0) {
                     filePromise = storage.push(cdn, to, content, fileMime)
-                        .then(() => isFunction(callback) && callback())
+                        .then(() => isFunction(callback) && callback(from, to))
                         .catch(err => {
                             const error = {
-                                message: `S3: ${err.pri && err.pri.message}`,
+                                message: `S3: ${(err.pri && err.pri.message) || (err.internal && err.internal.message)}`,
                                 from,
                                 to
                             };
