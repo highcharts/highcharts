@@ -408,13 +408,12 @@
  * @default {"color": "contrast", "fontSize": "11px", "fontWeight": "bold", "textOutline": "1px contrast" }
  * @since 4.1.0
  *//**
- * Options for a _link_ label text which should follow link connection. Border
- * and background are disabled for a label that follows a path.
+ * Options for a label text which should follow marker's shape. Border and
+ * background are disabled for a label that follows a path.
  * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
  * true will disable this option.
- * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
- * @name Highcharts.DataLabelsOptionsObject#linkTextPath
- * @type {Highcharts.DataLabelsTextPath}
+ * @name Highcharts.DataLabelsOptionsObject#textPath
+ * @type {Highcharts.DataLabelsTextPath|undefined}
  * @since 7.1.0
  *//**
  * Whether to
@@ -467,6 +466,7 @@
  */
 
 /**
+ * Options for a label text which should follow marker's shape.
  * **Note:** Only SVG-based renderer supports this option.
  *
  * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
