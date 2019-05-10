@@ -408,6 +408,15 @@
  * @default {"color": "contrast", "fontSize": "11px", "fontWeight": "bold", "textOutline": "1px contrast" }
  * @since 4.1.0
  *//**
+ * Options for a _link_ label text which should follow link connection. Border
+ * and background are disabled for a label that follows a path.
+ * **Note:** Only SVG-based renderer supports this option. Setting `useHTML` to
+ * true will disable this option.
+ * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
+ * @name Highcharts.DataLabelsOptionsObject#linkTextPath
+ * @type {Highcharts.DataLabelsTextPath}
+ * @since 7.1.0
+ *//**
  * Whether to
  * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
  * to render the labels.
@@ -455,6 +464,26 @@
  * Values for handling data labels that flow outside the plot area.
  *
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
+ */
+
+/**
+ * **Note:** Only SVG-based renderer supports this option.
+ *
+ * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#linkTextPath}
+ * @see {@link Highcharts.SeriesNetworkDataLabelsTextPath#textPath}
+ *
+ * @interface Highcharts.DataLabelsTextPath
+ * @since 7.1.0
+ *//**
+ * Presentation attributes for the text path.
+ * @name Highcharts.DataLabelsTextPath#attributes
+ * @type {Highcharts.SVGAttributes}
+ * @since 7.1.0
+ *//**
+ * Enable or disable `textPath` option for link's or marker's data labels.
+ * @name Highcharts.DataLabelsTextPath#enabled
+ * @type {boolean|undefined}
+ * @since 7.1.0
  */
 
 'use strict';
