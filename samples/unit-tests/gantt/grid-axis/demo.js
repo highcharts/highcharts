@@ -1456,3 +1456,46 @@ QUnit.test('startOnTick and endOnTick', function (assert) {
         'Start on tick, the last tick should be midnight'
     );
 });
+
+QUnit.test('Chart.update', assert => {
+    const chart = Highcharts.chart('container', {
+        yAxis: {
+            grid: {
+                enabled: true,
+                columns: [{}, {}]
+            },
+            type: 'category'
+        },
+        series: [{
+            data: [{ x: 0, x2: 100000, y: 0 }]
+        }]
+    });
+    const { yAxis: [axis] } = chart;
+
+    assert.strictEqual(
+        chart.yAxis.length,
+        1,
+        'should have only one yAxis'
+    );
+
+    chart.update({
+        yAxis: {
+            grid: {
+                columns: [{ title: 'columns 1' }, { title: 'columns 2' }]
+            }
+        }
+    }, true, true, true);
+
+    assert.strictEqual(
+        chart.yAxis.length,
+        1,
+        'should still have one yAxis after update'
+    );
+
+    // TODO: it would be better to have an event for Axis.remove to listen for.
+    assert.strictEqual(
+        axis === chart.yAxis[0],
+        true,
+        'should not destroy the axis even if oneToOne is true. #9269'
+    );
+});
