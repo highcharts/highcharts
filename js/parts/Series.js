@@ -519,6 +519,8 @@ H.Series = H.seriesType(
      *
      * @sample {highcharts} highcharts/series/type/
      *         Line and column in the same chart
+     * @sample highcharts/series/type-dynamic/
+     *         Dynamic types with button selector
      * @sample {highmaps} maps/demo/mapline-mappoint/
      *         Multiple types in the same map
      *
