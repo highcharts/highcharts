@@ -224,7 +224,10 @@ import H from './Globals.js';
 /**
  * The iterator callback.
  *
- * @callback Highcharts.ObjectEachCallbackFunction
+ * @callback Highcharts.ObjectEachCallbackFunction<T>
+ *
+ * @param {T} this
+ *        The context.
  *
  * @param {*} value
  *        The property value.
