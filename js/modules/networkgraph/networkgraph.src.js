@@ -308,7 +308,7 @@ seriesType(
              *         Numerical values
              *
              * @type      {number}
-             * @apioption series.networkgraph.layoutAlgorithm.linkLength
+             * @apioption plotOptions.networkgraph.layoutAlgorithm.linkLength
              */
 
             /**
