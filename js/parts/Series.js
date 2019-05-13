@@ -2393,11 +2393,14 @@ H.Series = H.seriesType(
 
             objectEach(events, function (event, eventType) {
                 if (
-                    // In case we're doing Series.update(), first check if the
-                    // event already exists.
-                    !series.hcEvents ||
-                    !series.hcEvents[eventType] ||
-                    series.hcEvents[eventType].indexOf(event) === -1
+                    H.isFunction(event) &&
+                    (
+                        // In case we're doing Series.update(), first check if
+                        // the event already exists.
+                        !series.hcEvents ||
+                        !series.hcEvents[eventType] ||
+                        series.hcEvents[eventType].indexOf(event) === -1
+                    )
                 ) {
                     addEvent(series, eventType, event);
                 }

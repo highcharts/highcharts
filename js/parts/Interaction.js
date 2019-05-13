@@ -799,7 +799,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             point.events = events;
 
             H.objectEach(events, function (event, eventType) {
-                addEvent(point, eventType, event);
+                if (H.isFunction(event)) {
+                    addEvent(point, eventType, event);
+                }
             });
             this.hasImportedEvents = true;
 

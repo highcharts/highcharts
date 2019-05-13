@@ -3387,7 +3387,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         // register event listeners
         objectEach(events, function (event, eventType) {
-            addEvent(axis, eventType, event);
+            if (H.isFunction(event)) {
+                addEvent(axis, eventType, event);
+            }
         });
 
         // extend logarithmic axis

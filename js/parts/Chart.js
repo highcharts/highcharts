@@ -340,7 +340,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // Chart event handlers
             if (chartEvents) {
                 objectEach(chartEvents, function (event, eventType) {
-                    addEvent(chart, eventType, event);
+                    if (H.isFunction(event)) {
+                        addEvent(chart, eventType, event);
+                    }
                 });
             }
 
