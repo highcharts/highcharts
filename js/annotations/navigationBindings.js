@@ -220,13 +220,15 @@ extend(H.NavigationBindings.prototype, {
         });
 
         objectEach(options.events || {}, function (callback, eventName) {
-            navigation.eventsToUnbind.push(
-                addEvent(
-                    navigation,
-                    eventName,
-                    callback
-                )
-            );
+            if (H.isFunction(callback)) {
+                navigation.eventsToUnbind.push(
+                    addEvent(
+                        navigation,
+                        eventName,
+                        callback
+                    )
+                );
+            }
         });
 
         navigation.eventsToUnbind.push(
