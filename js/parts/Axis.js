@@ -21,6 +21,11 @@
  * sides if it falls outside. If `pass`, it will return a path outside.
  * @name Highcharts.AxisPlotLinePathOptionsObject#force
  * @type {string|boolean|undefined}
+ *//**
+ * Used in Highstock. When `true`, plot paths (crosshair, plotLines, gridLines)
+ * will be rendered on all axes when defined on the first axis.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#acrossPanes
+ * @type {boolean|undefined}
  */
 
 /**
