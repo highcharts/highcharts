@@ -2733,15 +2733,16 @@ H.addEvent = function<T> (
     events[type].push(fn);
 
     // Order the calls
-    if (options && H.isNumber(options.order)) {
-        fn.order = options.order;
-        events[type].sort(function (
-            a: Highcharts.EventCallbackFunction<T>,
-            b: Highcharts.EventCallbackFunction<T>
-        ): number {
-            return (a.order as any) - (b.order as any);
-        });
-    }
+    fn.order = options && H.isNumber(options.order) ?
+        options.order as number :
+        Number.MAX_VALUE;
+
+    events[type].sort(function (
+        a: Highcharts.EventCallbackFunction<T>,
+        b: Highcharts.EventCallbackFunction<T>
+    ): number {
+        return (a.order as number) - (b.order as number);
+    });
 
     // Return a function that can be called to remove this event.
     return function (): void {
