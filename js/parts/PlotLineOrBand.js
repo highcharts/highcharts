@@ -157,7 +157,10 @@ H.PlotLineOrBand.prototype = {
 
         // Set the path or return
         if (isLine) {
-            path = axis.getPlotLinePath(value, svgElem.strokeWidth());
+            path = axis.getPlotLinePath({
+                value: value,
+                lineWidth: svgElem.strokeWidth()
+            });
         } else if (isBand) { // plot band
             path = axis.getPlotBandPath(from, to, options);
         } else {
@@ -864,8 +867,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         The SVG path definition in array form.
      */
     getPlotBandPath: function (from, to) {
-        var toPath = this.getPlotLinePath(to, null, null, true),
-            path = this.getPlotLinePath(from, null, null, true),
+        var toPath = this.getPlotLinePath({
+                value: to,
+                force: true
+            }),
+            path = this.getPlotLinePath({
+                value: from,
+                force: true
+            }),
             result = [],
             i,
             // #4964 check if chart is inverted or plotband is on yAxis

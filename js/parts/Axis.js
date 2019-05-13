@@ -5,6 +5,25 @@
  */
 
 /**
+ * Options for the path on the Axis to be calculated.
+ * @interface Highcharts.AxisPlotLinePathOptionsObject
+ *//**
+ * Axis value.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#value
+ * @type {number|undefined}
+ *//**
+ * Line width used for calculation crisp line coordinates. Defaults to 1.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#lineWidth
+ * @type {number|undefined}
+ *//**
+ * If `false`, the function will return null when it falls outside the axis
+ * bounds. If `true`, the function will return a path aligned to the plot area
+ * sides if it falls outside. If `pass`, it will return a path outside.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#force
+ * @type {string|boolean|undefined}
+ */
+
+/**
  * Options for crosshairs on axes.
  *
  * @product highstock
@@ -3698,20 +3717,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      *
      * @function Highcharts.Axis#getPlotLinePath
      *
-     * @param {number} value
-     *        Axis value.
-     *
-     * @param {number} [lineWidth=1]
-     *        Used for calculation crisp line coordinates.
+     * @param {Highcharts.AxisPlotLinePathOptionsObject} options
+     *        Options for the path.
      *
      * @param {boolean} [old=false]
      *        Use old coordinates (for resizing and rescaling).
-     *
-     * @param {boolean|string} [force=false]
-     *        If `false`, the function will return null when it falls outside
-     *        the axis bounds. If `true`, the function will return a path
-     *        aligned to the plot area sides if it falls outside. If `pass`, it
-     *        will return a path outside.
      *
      * @param {number} [translatedValue]
      *        If given, return the plot line path of a pixel position on the
@@ -3720,11 +3730,14 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @return {Array<string|number>}
      *         The SVG path definition for the plot line.
      */
-    getPlotLinePath: function (value, lineWidth, old, force, translatedValue) {
+    getPlotLinePath: function (options, old, translatedValue) {
         var axis = this,
             chart = axis.chart,
             axisLeft = axis.left,
             axisTop = axis.top,
+            value = options.value,
+            lineWidth = options.lineWidth,
+            force = options.force,
             x1,
             y1,
             x2,
@@ -6420,13 +6433,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             if (defined(pos)) {
                 path = this.getPlotLinePath(
-                    // First argument, value, only used on radial
-                    point && (this.isXAxis ?
-                        point.x :
-                        pick(point.stackY, point.y)
-                    ),
-                    null,
-                    null,
+                    {
+                        // value, only used on radial
+                        value: point && (this.isXAxis ?
+                            point.x :
+                            pick(point.stackY, point.y)
+                        )
+                    },
                     null,
                     pos // Translated position
                 ) || null; // #3189
