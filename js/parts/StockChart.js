@@ -378,8 +378,13 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
         });
     }
 
-    // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
-    if (axis.coll === 'xAxis' || axis.coll === 'yAxis') {
+    if (
+        // For stock chart, by default render paths across the panes
+        // except the case when `acrossPanes` is disabled by user (#6644)
+        (chart.options.isStock && e.acrossPanes !== false) &&
+        // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
+        axis.coll === 'xAxis' || axis.coll === 'yAxis'
+    ) {
 
         e.preventDefault();
 
