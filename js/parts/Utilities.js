@@ -2049,12 +2049,12 @@ H.addEvent = function (el, type, fn, options) {
     }
     events[type].push(fn);
     // Order the calls
-    if (options && H.isNumber(options.order)) {
-        fn.order = options.order;
-        events[type].sort(function (a, b) {
-            return a.order - b.order;
-        });
-    }
+    fn.order = H.isObject(options) && H.isNumber(options.order) ?
+        options.order :
+        Number.MAX_VALUE;
+    events[type].sort(function (a, b) {
+        return a.order - b.order;
+    });
     // Return a function that can be called to remove this event.
     return function () {
         H.removeEvent(el, type, fn);
