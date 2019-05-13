@@ -2052,9 +2052,6 @@ H.addEvent = function (el, type, fn, options) {
     fn.order = H.isObject(options) && H.isNumber(options.order) ?
         options.order :
         Number.MAX_VALUE;
-    events[type].sort(function (a, b) {
-        return a.order - b.order;
-    });
     // Return a function that can be called to remove this event.
     return function () {
         H.removeEvent(el, type, fn);
@@ -2182,35 +2179,30 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
         }
     }
     else {
-        ['protoEvents', 'hcEvents'].forEach(function (coll) {
-            if (el[coll]) {
-                events = el[coll][type] || [];
-                len = events.length;
-                if (!eventArguments.target) { // We're running a custom event
-                    H.extend(eventArguments, {
-                        // Attach a simple preventDefault function to skip
-                        // default handler if called. The built-in
-                        // defaultPrevented property is not overwritable (#5112)
-                        preventDefault: function () {
-                            eventArguments.defaultPrevented = true;
-                        },
-                        // Setting target to native events fails with clicking
-                        // the zoom-out button in Chrome.
-                        target: el,
-                        // If the type is not set, we're running a custom event
-                        // (#2297). If it is set, we're running a browser event,
-                        // and setting it will cause en error in IE8 (#2465).
-                        type: type
-                    });
-                }
-                for (i = 0; i < len; i++) {
-                    fn = events[i];
-                    // If the event handler return false, prevent the default
-                    // handler from executing
-                    if (fn && fn.call(el, eventArguments) === false) {
-                        eventArguments.preventDefault();
-                    }
-                }
+        if (!eventArguments.target) { // We're running a custom event
+            H.extend(eventArguments, {
+                // Attach a simple preventDefault function to skip
+                // default handler if called. The built-in
+                // defaultPrevented property is not overwritable (#5112)
+                preventDefault: function () {
+                    eventArguments.defaultPrevented = true;
+                },
+                // Setting target to native events fails with clicking
+                // the zoom-out button in Chrome.
+                target: el,
+                // If the type is not set, we're running a custom event
+                // (#2297). If it is set, we're running a browser event,
+                // and setting it will cause en error in IE8 (#2465).
+                type: type
+            });
+        }
+        [].concat(el.protoEvents && el.protoEvents[type] || [], el.hcEvents && el.hcEvents[type] || []).sort(function (a, b) {
+            return a.order - b.order;
+        }).forEach(function (fn) {
+            // If the event handler return false, prevent the default
+            // handler from executing
+            if (fn.call(el, eventArguments) === false) {
+                eventArguments.preventDefault();
             }
         });
     }

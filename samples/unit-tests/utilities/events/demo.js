@@ -515,26 +515,43 @@
     });
 
     QUnit.test('Event order', assert => {
-        var obj = {},
-            calls = [];
-
-        [
+        const calls = [];
+        const events = [
             undefined,
             { order: 2 },
             undefined,
             { order: 1 }
-        ].forEach(options => {
-            addEvent(obj, 'hit', () => {
-                calls.push(options ? options.order : undefined);
-            }, options);
-        });
+        ];
+        const addEvents = (obj, events, type) => {
+            events.forEach(options => {
+                addEvent(obj, 'hit', () => {
+                    calls.push(`${type}: ${JSON.stringify(options)}`);
+                }, options);
+            });
+        };
 
-        fireEvent(obj, 'hit');
+        // Create constructor and add events to prototype.
+        const Test = function Test() {
+            // Add events to object
+            addEvents(this, events, 'hcEvents');
+        };
+        addEvents(Test, events, 'protoEvents');
+
+        fireEvent(new Test(), 'hit');
 
         assert.deepEqual(
             calls,
-            [1, 2, undefined, undefined],
-            'Events should be fired in ascending order'
+            [
+                'protoEvents: {"order":1}',
+                'hcEvents: {"order":1}',
+                'protoEvents: {"order":2}',
+                'hcEvents: {"order":2}',
+                'protoEvents: undefined',
+                'protoEvents: undefined',
+                'hcEvents: undefined',
+                'hcEvents: undefined'
+            ],
+            'Events should be fired in ascending order. protoEvents are ordered before hcEvents.'
         );
 
     });
