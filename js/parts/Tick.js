@@ -531,10 +531,12 @@ H.Tick.prototype = {
 
         if (gridLine) {
             gridLinePath = axis.getPlotLinePath(
-                pos + tickmarkOffset,
-                gridLine.strokeWidth() * reverseCrisp,
-                old,
-                'pass'
+                {
+                    value: pos + tickmarkOffset,
+                    lineWidth: gridLine.strokeWidth() * reverseCrisp,
+                    force: 'pass'
+                },
+                old
             );
 
             // If the parameter 'old' is set, the current call will be followed

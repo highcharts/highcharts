@@ -889,7 +889,7 @@ extend(ColorAxis.prototype, {
         }
     },
 
-    getPlotLinePath: function (a, b, c, d, pos) {
+    getPlotLinePath: function (options, old, pos) {
         // crosshairs only
         return isNumber(pos) ? // pos can be 0 (#3969)
             (
@@ -909,7 +909,7 @@ extend(ColorAxis.prototype, {
                     'Z'
                 ]
             ) :
-            Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
+            Axis.prototype.getPlotLinePath.apply(this, arguments);
     },
 
     update: function (newOptions, redraw) {
