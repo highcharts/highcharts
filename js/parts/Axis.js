@@ -3767,6 +3767,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             lineWidth: lineWidth,
             old: old,
             force: force,
+            acrossPanes: options.acrossPanes,
             translatedValue: translatedValue
         };
         fireEvent(this, 'getPlotLinePath', evt, function (e) {

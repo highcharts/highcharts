@@ -159,7 +159,8 @@ H.PlotLineOrBand.prototype = {
         if (isLine) {
             path = axis.getPlotLinePath({
                 value: value,
-                lineWidth: svgElem.strokeWidth()
+                lineWidth: svgElem.strokeWidth(),
+                acrossPanes: options.acrossPanes
             });
         } else if (isBand) { // plot band
             path = axis.getPlotBandPath(from, to, options);
@@ -326,6 +327,16 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @type      {Array<*>}
      * @product   highcharts highstock gantt
      * @apioption xAxis.plotBands
+     */
+
+    /**
+     * Flag to decide if plotBand should be rendered across all panes.
+     *
+     * @since     7.1.2
+     * @product   highstock
+     * @type      {boolean}
+     * @default   true
+     * @apioption xAxis.plotBands.acrossPanes
      */
 
     /**
@@ -567,6 +578,19 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @type      {Array<*>}
      * @product   highcharts highstock gantt
      * @apioption xAxis.plotLines
+     */
+
+    /**
+     * Flag to decide if plotLine should be rendered across all panes.
+     *
+     * @sample {highstock} highcharts/xaxis/plotlines-acrosspane/
+     *         Plot lines on different panes
+     *
+     * @since     7.1.2
+     * @product   highstock
+     * @type      {boolean}
+     * @default   true
+     * @apioption xAxis.plotLines.acrossPanes
      */
 
     /**
@@ -869,11 +893,13 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     getPlotBandPath: function (from, to) {
         var toPath = this.getPlotLinePath({
                 value: to,
-                force: true
+                force: true,
+                acrossPanes: this.options.acrossPanes
             }),
             path = this.getPlotLinePath({
                 value: from,
-                force: true
+                force: true,
+                acrossPanes: this.options.acrossPanes
             }),
             result = [],
             i,
