@@ -100,8 +100,32 @@ QUnit.test('Path animation', function (assert) {
                 'M 300 30 L 300 400',
                 'First animation aborted by shorter second animation'
             );
-            document.body.removeChild(div);
         }, 1500);
+
+
+        setTimeout(function () {
+            path.startX = [1800, 3600];
+            path.attr({
+                d: ['M', 400, 120, 'L', 700, 120]
+            });
+            path.endX = [2349, 3600];
+
+            path.animate({
+                d: ['M', 200, 120, 'L', 700, 120]
+            }, {
+                duration: 300
+            });
+        }, 1700);
+
+        setTimeout(function () {
+            console.log('M 200 120 L 700 120', path.attr('d'));
+            assert.notEqual(
+                path.attr('d'),
+                'M 200 120 L 700 120',
+                'Path is animating, not changing immediately (#10696).'
+            );
+            document.body.removeChild(div);
+        }, 1900);
 
         // Reset animation
         TestUtilities.lolexRunAndUninstall(clock);
