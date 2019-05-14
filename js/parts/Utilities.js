@@ -643,6 +643,12 @@ H.Fx.prototype = {
                     shift = i;
                     reverse = true;
                     break;
+                    // Fixed from the right side, "scaling" left
+                }
+                else if (startX[startX.length - 1] ===
+                    endX[endX.length - startX.length + i]) {
+                    shift = startX.length - i;
+                    break;
                 }
             }
             if (typeof shift === 'undefined') {
