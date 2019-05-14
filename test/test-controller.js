@@ -127,19 +127,7 @@ var TestController = /** @class */ (function () {
         this.mouseUp(chartX, chartY, extra, debug);
         this.triggerEvent('click', chartX, chartY, extra, debug);
     };
-    /**
-     * Get the element from a point on the chart.
-     *
-     * @param chartX
-     *        X relative to the chart.
-     *
-     * @param chartY
-     *        Y relative to the chart.
-     */
-    TestController.prototype.elementFromPoint = function (chartX, chartY) {
-        if (chartX === void 0) { chartX = this.positionX; }
-        if (chartY === void 0) { chartY = this.positionY; }
-        var chartOffset = Highcharts.offset(this.chart.container);
+    TestController.prototype.setUpMSWorkaround = function () {
         var clipPaths = {
             elements: [],
             values: []
@@ -155,11 +143,39 @@ var TestController = /** @class */ (function () {
                 elemCP.removeAttribute('clip-path');
             });
         }
+        return clipPaths;
+    };
+    TestController.prototype.tearDownMSWorkaround = function (clipPaths) {
+        // Reset clip paths for Edge and IE
+        if (clipPaths) {
+            clipPaths.elements.forEach(function (elemCP, i) {
+                elemCP.setAttribute('clip-path', clipPaths.values[i]);
+            });
+        }
+    };
+    /**
+     * Get the element from a point on the chart.
+     *
+     * @param chartX
+     *        X relative to the chart.
+     *
+     * @param chartY
+     *        Y relative to the chart.
+     */
+    TestController.prototype.elementFromPoint = function (chartX, chartY, useMSWorkaround) {
+        if (chartX === void 0) { chartX = this.positionX; }
+        if (chartY === void 0) { chartY = this.positionY; }
+        if (useMSWorkaround === void 0) { useMSWorkaround = true; }
+        var chartOffset = Highcharts.offset(this.chart.container);
+        var clipPaths;
+        if (useMSWorkaround) {
+            clipPaths = this.setUpMSWorkaround();
+        }
         var element = document.elementFromPoint((chartOffset.left + chartX), (chartOffset.top + chartY));
         // Reset clip paths for Edge and IE
-        clipPaths.elements.forEach(function (elemCP, i) {
-            elemCP.setAttribute('clip-path', clipPaths.values[i]);
-        });
+        if (clipPaths) {
+            this.tearDownMSWorkaround(clipPaths);
+        }
         return element;
     };
     /**
@@ -336,11 +352,12 @@ var TestController = /** @class */ (function () {
         var to = [chartX, chartY];
         var points = TestController.getPointsBetween(from, to);
         var point, relatedTarget = fromPosition.relatedTarget, target, x1, y1;
+        var clipPaths = this.setUpMSWorkaround();
         for (var i = 0, ie = points.length; i < ie; ++i) {
             point = points[i];
             x1 = point[0];
             y1 = point[1];
-            target = this.elementFromPoint(x1, y1);
+            target = this.elementFromPoint(x1, y1, false);
             if (target !== relatedTarget) {
                 // First trigger a mouseout on the old target.
                 this.triggerEvent('mouseout', x1, y1, Highcharts.merge({
@@ -359,6 +376,7 @@ var TestController = /** @class */ (function () {
                 relatedTarget = target;
             }
         }
+        this.tearDownMSWorkaround(clipPaths);
         // Update controller positions and relatedTarget.
         this.setPosition(chartX, chartY);
     };
