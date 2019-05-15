@@ -49,6 +49,10 @@ function jsDocNamespace() {
 
     return new Promise((resolve, reject) => {
 
+        if (!FS.existsSync('code/highcharts.src.js')) {
+            Gulp.series('scripts-ts', 'scripts-js')(() => {});
+        }
+
         const codeFiles = JSON
             .parse(FS.readFileSync(TSCONFIG_FILE)).files
             .map(file => Path.normalize(
@@ -107,7 +111,4 @@ function jsDocNamespace() {
     });
 }
 
-Gulp.task(
-    'jsdoc-namespace',
-    Gulp.series(jsDocNamespace)
-);
+Gulp.task('jsdoc-namespace', jsDocNamespace);
