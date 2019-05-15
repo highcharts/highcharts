@@ -120,7 +120,7 @@ jobs:
       - early_return_for_forked_pull_requests # to avoid secrets being passed on to forked PR builds we don't run browser tests for forked PRs
       - << : *load_workspace
       - run: npm run gulp scripts
-      - run: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 gulp test --single-run --browsers << parameters.browsers >> --force"
+      - run: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --browsers << parameters.browsers >>"
       - run: mkdir ../test-results
       - run:
           name: Save test results
@@ -189,7 +189,7 @@ workflows:
           name: "test-Win.Edge"
           requires:
             - build_dependencies
-          browsers: "Win.Edge --sharding 2"
+          browsers: "Win.Edge --split 2"
       - hold_for_approval:
           type: approval
           filters:
