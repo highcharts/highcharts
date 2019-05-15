@@ -21,7 +21,7 @@ QUnit.test('addOverlapToRelations', function (assert) {
 
     addOverlapToSets(data);
 
-    set = data.find(isSetWithId('A'));
+    set = Highcharts.find(data, isSetWithId('A'));
     assert.strictEqual(
         set.totalOverlap,
         3,
@@ -36,7 +36,7 @@ QUnit.test('addOverlapToRelations', function (assert) {
         'should set the property overlapping on set A to include a map from id of overlapping set to the amount of overlap.'
     );
 
-    set = data.find(isSetWithId('B'));
+    set = Highcharts.find(data, isSetWithId('B'));
     assert.strictEqual(
         set.totalOverlap,
         4,
@@ -51,7 +51,7 @@ QUnit.test('addOverlapToRelations', function (assert) {
         'should set the property overlapping on set B to include a map from id of overlapping set to the amount of overlap.'
     );
 
-    set = data.find(isSetWithId('C'));
+    set = Highcharts.find(data, isSetWithId('C'));
     assert.strictEqual(
         set.totalOverlap,
         5,
