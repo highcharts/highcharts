@@ -26,6 +26,30 @@ const TARGET_DIRECTORIES = [
     directoryName => Path.join('build', 'api', directoryName)
 );
 
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Checks necessary code files.
+ *
+ * @return {Promise<void>}
+ *         Promise to keep
+ */
+function checkCode() {
+
+    const FS = require('fs');
+
+    if (FS.existsSync('code/highcharts.src.js')) {
+        return Promise.resolve();
+    }
+
+    return new Promise(resolve => {
+        Gulp.series('scripts-ts', 'scripts-js')(resolve);
+    });
+}
 
 /* *
  *
@@ -48,10 +72,6 @@ function jsDocNamespace() {
     const LogLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
-
-        if (!FS.existsSync('code/highcharts.src.js')) {
-            Gulp.series('scripts-ts', 'scripts-js')(() => {});
-        }
 
         const codeFiles = JSON
             .parse(FS.readFileSync(TSCONFIG_FILE)).files
@@ -106,9 +126,9 @@ function jsDocNamespace() {
                     )
                     .then(() => LogLib.success('Created', TREE_FILE))
                     .then(resolve)
-                    .catch(reject);
+                    .catch(resolve);
             }));
     });
 }
 
-Gulp.task('jsdoc-namespace', jsDocNamespace);
+Gulp.task('jsdoc-namespace', Gulp.series(checkCode, jsDocNamespace));
