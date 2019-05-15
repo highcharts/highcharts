@@ -75,6 +75,9 @@
  * @name Highcharts.AxisLabelsFormatterContextObject#isLast
  * @type {boolean}
  *//**
+ * @name Highcharts.AxisLabelsFormatterContextObject#pos
+ * @type {number}
+ *//**
  * @name Highcharts.AxisLabelsFormatterContextObject#value
  * @type {number}
  */
