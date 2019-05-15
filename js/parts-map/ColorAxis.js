@@ -889,7 +889,9 @@ extend(ColorAxis.prototype, {
         }
     },
 
-    getPlotLinePath: function (options, old, pos) {
+    getPlotLinePath: function (options) {
+        var pos = options.translatedValue;
+
         // crosshairs only
         return isNumber(pos) ? // pos can be 0 (#3969)
             (

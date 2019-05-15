@@ -26,6 +26,20 @@
  * will be rendered on all axes when defined on the first axis.
  * @name Highcharts.AxisPlotLinePathOptionsObject#acrossPanes
  * @type {boolean|undefined}
+ *//**
+ * Use old coordinates (for resizing and rescaling).
+ * If not set, defaults to `false`.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#old
+ * @type {boolean|undefined}
+ *//**
+ * If given, return the plot line path of a pixel position on the axis.
+ * @name Highcharts.AxisPlotLinePathOptionsObject#translatedValue
+ * @type {number|undefined}
+ *//**
+ * Used in Polar axes. Reverse the positions for concatenation of polygonal
+ * plot bands
+ * @name Highcharts.AxisPlotLinePathOptionsObject#reverse
+ * @type {boolean|undefined}
  */
 
 /**
@@ -3725,22 +3739,17 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      * @param {Highcharts.AxisPlotLinePathOptionsObject} options
      *        Options for the path.
      *
-     * @param {boolean} [old=false]
-     *        Use old coordinates (for resizing and rescaling).
-     *
-     * @param {number} [translatedValue]
-     *        If given, return the plot line path of a pixel position on the
-     *        axis.
-     *
      * @return {Array<string|number>}
      *         The SVG path definition for the plot line.
      */
-    getPlotLinePath: function (options, old, translatedValue) {
+    getPlotLinePath: function (options) {
         var axis = this,
             chart = axis.chart,
             axisLeft = axis.left,
             axisTop = axis.top,
+            old = options.old,
             value = options.value,
+            translatedValue = options.translatedValue,
             lineWidth = options.lineWidth,
             force = options.force,
             x1,
@@ -6444,10 +6453,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         value: point && (this.isXAxis ?
                             point.x :
                             pick(point.stackY, point.y)
-                        )
-                    },
-                    null,
-                    pos // Translated position
+                        ),
+                        translatedValue: pos
+                    }
                 ) || null; // #3189
             }
 

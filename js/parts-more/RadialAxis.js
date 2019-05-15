@@ -323,7 +323,7 @@ radialAxisMixin = {
         // Polygonal plot bands
         if (this.options.gridLineInterpolation === 'polygon') {
             ret = this.getPlotLinePath({ value: from }).concat(
-                this.getPlotLinePath({ value: to }, true)
+                this.getPlotLinePath({ value: to, reverse: true })
             );
 
         // Circular grid bands
@@ -408,11 +408,12 @@ radialAxisMixin = {
     /* *
      * Find the path for plot lines perpendicular to the radial axis.
      */
-    getPlotLinePath: function (options, reverse) {
+    getPlotLinePath: function (options) {
         var axis = this,
             center = axis.center,
             chart = axis.chart,
             value = options.value,
+            reverse = options.reverse,
             end = axis.getPosition(value),
             xAxis,
             xy,
