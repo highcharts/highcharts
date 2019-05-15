@@ -250,7 +250,11 @@ var solidGaugeOptions = {
     /**
      * Whether to give each point an individual color.
      */
-    colorByPoint: true
+    colorByPoint: true,
+
+    dataLabels: {
+        y: 0
+    }
 
 };
 
