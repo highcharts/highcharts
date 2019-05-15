@@ -220,9 +220,9 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    if (argv.sharding) {
+    if (argv.split) {
         // Sharding / splitting tests across multiple browser instances
-        const numberOfInstances = !isNaN(argv.sharding) ? argv.sharding : 2;
+        const numberOfInstances = !isNaN(argv.split) ? argv.split : 2;
         frameworks = [...frameworks, 'sharding'];
         // create a duplicate of the added browsers ${numberOfInstances} times.
         browsers = browsers.reduce((browserInstances, current) => {
