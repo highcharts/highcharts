@@ -126,6 +126,9 @@ QUnit.test('Series.update', function (assert) {
 
     // create the chart
     Highcharts.stockChart('container', {
+        accessibility: {
+            enabled: false // A11y forces markers
+        },
         rangeSelector: {
             selected: 1
         },

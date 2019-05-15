@@ -76,7 +76,9 @@ QUnit.test(
     'Preserve point config initial array type in options.data',
     function (assert) {
         var chart = $('#container').highcharts({
-
+            accessibility: {
+                enabled: false // Forces markers
+            },
             series: [{
                 data: [[0, 1], [1, 2], [2, 3]],
                 turboThreshold: 2
@@ -132,6 +134,9 @@ QUnit.test(
     'Preserve data values when updating from array to object config (#4916)',
     function (assert) {
         var chart = Highcharts.chart('container', {
+            accessibility: {
+                enabled: false // Forces markers
+            },
             xAxis: {
                 type: 'datetime'
             },
@@ -174,6 +179,9 @@ QUnit.test(
     'marker.symbol=null should be accepted in point.update() (#6792)',
     function (assert) {
         var chart = Highcharts.chart('container', {
+                accessibility: {
+                    enabled: false // Forces markers
+                },
                 series: [{
                     data: [{
                         y: 10,

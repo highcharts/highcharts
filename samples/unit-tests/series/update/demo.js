@@ -1,6 +1,9 @@
 QUnit.test('Series.update', function (assert) {
 
     var chart = Highcharts.chart('container', {
+        accessibility: {
+            enabled: false // A11y forces markers
+        },
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             showEmpty: false
@@ -820,6 +823,9 @@ QUnit.test('series.update using altered original chart options', function (asser
 
 QUnit.test('Series.update with individual markers and data labels (#10649)', assert => {
     const chart = Highcharts.chart('container', {
+        accessibility: {
+            enabled: false // A11y forces markers
+        },
         title: {
             text: 'Individual marker and dataLabel'
         },

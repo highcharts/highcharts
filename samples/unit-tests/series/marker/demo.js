@@ -3,6 +3,9 @@ QUnit.test('Marker size and position', function (assert) {
         chart: {
             animation: false
         },
+        accessibility: {
+            enabled: false // A11y forces markers
+        },
         series: [{
             data: [1, 2, 3],
             animation: false,
