@@ -2051,8 +2051,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     textSetter: function (value) {
         if (value !== this.textStr) {
-            // Delete bBox memo when the text changes
+            // Delete size caches when the text changes
             delete this.bBox;
+            delete this.textPxLength;
             this.textStr = value;
             if (this.added) {
                 this.renderer.buildText(this);
