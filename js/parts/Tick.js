@@ -536,9 +536,9 @@ H.Tick.prototype = {
                 {
                     value: pos + tickmarkOffset,
                     lineWidth: gridLine.strokeWidth() * reverseCrisp,
-                    force: 'pass'
-                },
-                old
+                    force: 'pass',
+                    old: old
+                }
             );
 
             // If the parameter 'old' is set, the current call will be followed
