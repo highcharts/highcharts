@@ -30,8 +30,6 @@ declare global {
         type Chart = any; // @todo
         type Point = any; // @todo
         type Series = any; // @todo
-        type Time = any; // @todo
-        type TimeFormatCallbackFunction = Function; // @todo
         const Point: any; // @todo
         const Series: any; // @todo
         const SVG_NS: string;
@@ -54,7 +52,7 @@ declare global {
         const win: Window;
         const seriesTypes: Dictionary<typeof Series>;
         const svg: boolean;
-        const time: Highcharts.Time; // @todo
+        const time: typeof Highcharts.Time; // @todo
         function color(...args: Array<any>): any; // @todo
         function getOptions(): any; // @todo
     }

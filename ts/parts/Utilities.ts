@@ -214,7 +214,7 @@ declare global {
             ctx?: T
         ): void;
         function offset(el: HTMLDOMElement): OffsetObject;
-        function pad(number: number, length: number, padder?: string): string;
+        function pad(number: number, length?: number, padder?: string): string;
         function pick(...args: any): any;
         function pInt(s: any, mag?: number): number;
         /** @deprecated */
@@ -643,7 +643,7 @@ H.Fx = function (
     elem: (Highcharts.HTMLDOMElement|Highcharts.SVGElement),
     options: Highcharts.AnimationOptionsObject,
     prop: string
-): void {
+): any {
     this.options = options;
     this.elem = elem;
     this.prop = prop;
@@ -1607,7 +1607,7 @@ H.extendClass = function (
  * @param {number} number
  *        The input string or number.
  *
- * @param {number} length
+ * @param {number} [length]
  *        The desired string length.
  *
  * @param {string} [padder=0]
@@ -1616,7 +1616,7 @@ H.extendClass = function (
  * @return {string}
  *         The padded string.
  */
-H.pad = function (number: number, length: number, padder?: string): string {
+H.pad = function (number: number, length?: number, padder?: string): string {
     return new Array(
         (length || 2) +
         1 -

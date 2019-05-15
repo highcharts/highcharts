@@ -1,6 +1,7 @@
 js/parts/Color.js
 js/parts/Globals.js
 js/parts/SvgRenderer.js
+js/parts/Time.js
 js/parts/Utilities.js
 samples/data/**/*.js
 samples/highcharts/common-js/**/*.js

@@ -3478,7 +3478,7 @@ SVGElement.prototype.strokeSetter = function (
  */
 SVGRenderer = H.SVGRenderer = function (
     this: Highcharts.SVGRenderer
-): void {
+): any {
     this.init.apply(this, arguments as any);
 } as any;
 extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
