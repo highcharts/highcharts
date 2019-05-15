@@ -4928,15 +4928,19 @@ H.Series = H.seriesType(
                         clips[i].animate(clipAttr);
                     } else {
                         clips[i] = renderer.clipRect(clipAttr);
-
-                        if (graph) {
-                            series['zone-graph-' + i].clip(clips[i]);
-                        }
-
-                        if (area) {
-                            series['zone-area-' + i].clip(clips[i]);
-                        }
                     }
+
+                    // when no data, graph zone is not applied and after setData
+                    // clip was ignored. As a result, it should be applied each
+                    // time.
+                    if (graph) {
+                        series['zone-graph-' + i].clip(clips[i]);
+                    }
+
+                    if (area) {
+                        series['zone-area-' + i].clip(clips[i]);
+                    }
+
                     // if this zone extends out of the axis, ignore the others
                     ignoreZones = threshold.value > extremes.max;
 
