@@ -188,8 +188,7 @@ H.layouts.packedbubble = H.extendClass(
             if (this.options.marker) {
                 this.series.forEach(function (series) {
                     if (series) {
-                        series.translate();
-                        series.drawPoints();
+                        series.calculateParentRadius();
                     }
                 });
             }
@@ -325,7 +324,10 @@ H.layouts.packedbubble = H.extendClass(
             (
                 // In first iteration system does not move:
                 this.systemTemperature > 0 &&
-                this.systemTemperature / this.nodes.length < 0.01
+                (
+                    this.systemTemperature / this.nodes.length < 0.02 &&
+                    this.enableSimulation
+                ) // Use only when simulation is enabled
             );
         }
     }
@@ -706,6 +708,35 @@ seriesType(
             }
         },
         /**
+         * The function responsible for calculating series bubble' s bBox.
+         * Needed because of exporting failure when useSimulation
+         * is set to false
+         * @private
+         */
+        seriesBox: function () {
+            var series = this,
+                data = series.data,
+                max = Math.max,
+                min = Math.min,
+                radius,
+                // bBox = [xMin, xMax, yMin, yMax]
+                bBox = [Infinity, -Infinity, Infinity, -Infinity];
+
+            data.forEach(function (p) {
+                if (p.plotX && p.plotY && p.marker.radius) {
+                    radius = p.marker.radius;
+                    bBox[0] = min(bBox[0], p.plotX - radius);
+                    bBox[1] = max(bBox[1], p.plotX + radius);
+                    bBox[2] = min(bBox[2], p.plotY - radius);
+                    bBox[3] = max(bBox[3], p.plotY + radius);
+                }
+            });
+
+            bBox.width = bBox[1] - bBox[0];
+            bBox.height = bBox[3] - bBox[2];
+            return H.isNumber(bBox.width / bBox.height) ? bBox : null;
+        },
+        /**
          * The function responsible for calculating the parent node radius
          * based on the total surface of iniside-bubbles and the group BBox
          * @private
@@ -716,10 +747,7 @@ seriesType(
                 parentPadding = 20,
                 minParentRadius = 20;
 
-            if (series.group) {
-                bBox = series.group.element.getBBox();
-            }
-
+            bBox = series.seriesBox();
             series.parentNodeRadius =
                 Math.min(
                     Math.max(
