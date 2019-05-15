@@ -986,10 +986,10 @@ merge(
         },
 
         /**
-         * See {@link Highcharts.Annotation#destroy}.
+         * See {@link Highcharts.Chart#removeAnnotation}.
          */
         remove: function () {
-            return this.destroy();
+            return this.chart.removeAnnotation(this);
         },
 
         update: function (userOptions) {

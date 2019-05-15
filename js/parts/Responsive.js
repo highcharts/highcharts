@@ -190,7 +190,7 @@ Chart.prototype.setResponsive = function (redraw, reset) {
         // Undo previous rules. Before we apply a new set of rules, we need to
         // roll back completely to base options (#6291).
         if (currentResponsive) {
-            this.update(currentResponsive.undoOptions, redraw);
+            this.update(currentResponsive.undoOptions, redraw, true);
         }
 
         if (ruleIds) {
@@ -203,7 +203,7 @@ Chart.prototype.setResponsive = function (redraw, reset) {
                 undoOptions: undoOptions
             };
 
-            this.update(mergedOptions, redraw);
+            this.update(mergedOptions, redraw, true);
 
         } else {
             this.currentResponsive = undefined;
@@ -263,7 +263,10 @@ Chart.prototype.currentOptions = function (options) {
         var i;
 
         H.objectEach(options, function (val, key) {
-            if (!depth && ['series', 'xAxis', 'yAxis'].indexOf(key) > -1) {
+            if (
+                !depth &&
+                ['series', 'xAxis', 'yAxis', 'annotations'].indexOf(key) > -1
+            ) {
                 val = splat(val);
 
                 ret[key] = [];

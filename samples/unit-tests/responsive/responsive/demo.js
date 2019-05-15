@@ -241,6 +241,16 @@ QUnit.test(
                         }],
                         annotations: [{
                             visible: false
+                        }, {
+                            labels: [{
+                                point: {
+                                    xAxis: 0,
+                                    yAxis: 0,
+                                    x: 1,
+                                    y: 1
+                                },
+                                text: 'Label v2'
+                            }]
                         }]
                     }
                 }]
@@ -280,7 +290,19 @@ QUnit.test(
             'hidden',
             'Initial annotation hidden'
         );
+        assert.strictEqual(
+            chart.annotations.length,
+            2,
+            'New annotation added (#10713)'
+        );
 
+        chart.setSize(600);
+
+        assert.strictEqual(
+            chart.annotations.length,
+            1,
+            'Old annotation removed (#10713)'
+        );
     }
 );
 
