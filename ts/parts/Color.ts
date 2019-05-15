@@ -7,8 +7,43 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
 import H from './Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        type ColorNone = [];
+        type ColorRGBA = [number, number, number, number];
+        type ColorString = string;
+        interface ColorParser {
+            regex: RegExp;
+            parse: (
+                result: RegExpExecArray
+            ) => ColorRGBA;
+        }
+        class Color {
+            public constructor(input: (ColorString|GradientColorObject));
+            public input: (ColorString|GradientColorObject);
+            public names: Dictionary<ColorString>;
+            public parsers: Array<ColorParser>;
+            public rgba: (ColorNone|ColorRGBA);
+            public stops: Array<Color>;
+            public brighten(alpha: number): Color;
+            public get(format?: ('a'|'rgb'|'rgba')): Color['input'];
+            public init(input: (ColorString|GradientColorObject)): void;
+            public setOpacity(alpha: number): Color;
+            public tweenTo(to: Color, alpha: number): ColorString;
+        }
+        function color(input: ColorString): Color;
+    }
+}
+
 /**
  * A valid color to be parsed and handled by Highcharts. Highcharts internally
  * supports hex colors like `#ffffff`, rgb colors like `rgb(255,255,255)` and
@@ -18,9 +53,15 @@ import H from './Globals.js';
  *
  * @typedef {string} Highcharts.ColorString
  */
+
 import './Utilities.js';
-var isNumber = H.isNumber, merge = H.merge, pInt = H.pInt;
+
+var isNumber = H.isNumber,
+    merge = H.merge,
+    pInt = H.pInt;
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
+
 /**
  * Handle color operations. The object methods are chainable.
  *
@@ -31,41 +72,48 @@ var isNumber = H.isNumber, merge = H.merge, pInt = H.pInt;
  * @param {Highcharts.ColorString|Highcharts.GradientColorObject} input
  *        The input color in either rbga or hex format
  */
-H.Color = function (input) {
+H.Color = function (
+    this: Highcharts.Color,
+    input: (Highcharts.ColorString|Highcharts.GradientColorObject)
+) {
     // Backwards compatibility, allow instanciation without new
     if (!(this instanceof H.Color)) {
         return new H.Color(input);
     }
     // Initialize
     this.init(input);
-};
+} as any;
 H.Color.prototype = {
+
     // Collection of parsers. This can be extended from the outside by pushing
     // parsers to Highcharts.Color.prototype.parsers.
     parsers: [{
-            // RGBA color
-            regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
-            parse: function (result) {
-                return [
-                    pInt(result[1]),
-                    pInt(result[2]),
-                    pInt(result[3]),
-                    parseFloat(result[4], 10)
-                ];
-            }
-        }, {
-            // RGB color
-            regex: /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
-            parse: function (result) {
-                return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
-            }
-        }],
+        // RGBA color
+        regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/, // eslint-disable-line security/detect-unsafe-regex
+        parse: function (result: RegExpExecArray) {
+            return [
+                pInt(result[1]),
+                pInt(result[2]),
+                pInt(result[3]),
+                (parseFloat as any)(result[4], 10)
+            ];
+        }
+    }, {
+        // RGB color
+        regex:
+            /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
+        parse: function (result: RegExpExecArray) {
+            return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
+        }
+    }],
+
     // Collection of named colors. Can be extended from the outside by adding
     // colors to Highcharts.Color.prototype.names.
     names: {
         white: '#ffffff',
         black: '#000000'
     },
+
     /**
      * Parse the input color to rgba array
      *
@@ -77,54 +125,78 @@ H.Color.prototype = {
      *
      * @return {void}
      */
-    init: function (input) {
-        var result, rgba, i, parser, len;
-        this.input = input = this.names[input && input.toLowerCase ?
-            input.toLowerCase() :
-            ''] || input;
+    init: function (
+        this: Highcharts.Color,
+        input: (Highcharts.ColorString|Highcharts.GradientColorObject)
+    ): void {
+        var result: (RegExpExecArray|null),
+            rgba: any,
+            i: number,
+            parser: Highcharts.ColorParser,
+            len: number;
+
+        this.input = input = this.names[
+            input && (input as any).toLowerCase ?
+                (input as any).toLowerCase() :
+                ''
+        ] || input;
+
         // Gradients
-        if (input && input.stops) {
-            this.stops = input.stops.map(function (stop) {
+        if (input && (input as any).stops) {
+            this.stops = (input as any).stops.map(function (
+                stop: [number, Highcharts.ColorString]
+            ): Highcharts.Color {
                 return new H.Color(stop[1]);
             });
-            // Solid colors
-        }
-        else {
+
+        // Solid colors
+        } else {
+
             // Bitmasking as input[0] is not working for legacy IE.
             if (input &&
-                input.charAt &&
-                input.charAt() === '#') {
-                len = input.length;
-                input = parseInt(input.substr(1), 16);
+                (input as any).charAt &&
+                (input as any).charAt() === '#'
+            ) {
+
+                len = (input as any).length;
+                input = parseInt((input as any).substr(1), 16) as any;
+
                 // Handle long-form, e.g. #AABBCC
                 if (len === 7) {
+
                     rgba = [
-                        (input & 0xFF0000) >> 16,
-                        (input & 0xFF00) >> 8,
-                        (input & 0xFF),
+                        ((input as any) & 0xFF0000) >> 16,
+                        ((input as any) & 0xFF00) >> 8,
+                        ((input as any) & 0xFF),
                         1
                     ];
-                    // Handle short-form, e.g. #ABC
-                    // In short form, the value is assumed to be the same
-                    // for both nibbles for each component. e.g. #ABC = #AABBCC
-                }
-                else if (len === 4) {
+
+                // Handle short-form, e.g. #ABC
+                // In short form, the value is assumed to be the same
+                // for both nibbles for each component. e.g. #ABC = #AABBCC
+                } else if (len === 4) {
+
                     rgba = [
-                        (((input & 0xF00) >> 4) |
-                            (input & 0xF00) >> 8),
-                        (((input & 0xF0) >> 4) |
-                            (input & 0xF0)),
-                        ((input & 0xF) << 4) | (input & 0xF),
+                        (
+                            (((input as any) & 0xF00) >> 4) |
+                            ((input as any) & 0xF00) >> 8
+                        ),
+                        (
+                            (((input as any) & 0xF0) >> 4) |
+                            ((input as any) & 0xF0)
+                        ),
+                        (((input as any) & 0xF) << 4) | ((input as any) & 0xF),
                         1
                     ];
                 }
             }
+
             // Otherwise, check regex parsers
             if (!rgba) {
                 i = this.parsers.length;
                 while (i-- && !rgba) {
                     parser = this.parsers[i];
-                    result = parser.regex.exec(input);
+                    result = parser.regex.exec(input as Highcharts.ColorString);
                     if (result) {
                         rgba = parser.parse(result);
                     }
@@ -133,6 +205,7 @@ H.Color.prototype = {
         }
         this.rgba = rgba || [];
     },
+
     /**
      * Return the color or gradient stops in the specified format
      *
@@ -144,35 +217,39 @@ H.Color.prototype = {
      * @return {Highcharts.ColorString|Highcharts.GradientColorObject}
      *         This color as a string or gradient stops.
      */
-    get: function (format) {
-        var input = this.input, rgba = this.rgba, ret;
+    get: function (
+        this: Highcharts.Color,
+        format?: ('a'|'rgb'|'rgba')
+    ): Highcharts.Color['input'] {
+        var input = this.input,
+            rgba = this.rgba,
+            ret: (string|Highcharts.GradientColorObject);
+
         if (this.stops) {
             ret = merge(input);
-            ret.stops = [].concat(ret.stops);
+            (ret as any).stops = [].concat((ret as any).stops);
             this.stops.forEach(function (stop, i) {
-                ret.stops[i] = [
-                    ret.stops[i][0],
+                (ret as any).stops[i] = [
+                    (ret as any).stops[i][0],
                     stop.get(format)
                 ];
             });
-            // it's NaN if gradient colors on a column chart
-        }
-        else if (rgba && isNumber(rgba[0])) {
+
+        // it's NaN if gradient colors on a column chart
+        } else if (rgba && isNumber(rgba[0])) {
             if (format === 'rgb' || (!format && rgba[3] === 1)) {
                 ret = 'rgb(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ')';
-            }
-            else if (format === 'a') {
-                ret = rgba[3];
-            }
-            else {
+            } else if (format === 'a') {
+                ret = rgba[3] as any;
+            } else {
                 ret = 'rgba(' + rgba.join(',') + ')';
             }
-        }
-        else {
+        } else {
             ret = input;
         }
-        return ret;
+        return ret as any;
     },
+
     /**
      * Brighten the color instance.
      *
@@ -184,16 +261,22 @@ H.Color.prototype = {
      * @return {Highcharts.Color}
      *         This color with modifications.
      */
-    brighten: function (alpha) {
-        var i, rgba = this.rgba;
+    brighten: function (
+        this: Highcharts.Color,
+        alpha: number
+    ): Highcharts.Color {
+        var i,
+            rgba = this.rgba;
+
         if (this.stops) {
             this.stops.forEach(function (stop) {
                 stop.brighten(alpha);
             });
-        }
-        else if (isNumber(alpha) && alpha !== 0) {
+
+        } else if (isNumber(alpha) && alpha !== 0) {
             for (i = 0; i < 3; i++) {
                 rgba[i] += pInt(alpha * 255);
+
                 if (rgba[i] < 0) {
                     rgba[i] = 0;
                 }
@@ -204,6 +287,7 @@ H.Color.prototype = {
         }
         return this;
     },
+
     /**
      * Set the color's opacity to a given alpha value.
      *
@@ -215,10 +299,14 @@ H.Color.prototype = {
      * @return {Highcharts.Color}
      *         Color with modifications.
      */
-    setOpacity: function (alpha) {
+    setOpacity: function (
+        this: Highcharts.Color,
+        alpha: number
+    ): Highcharts.Color {
         this.rgba[3] = alpha;
         return this;
     },
+
     /**
      * Return an intermediate color between two colors.
      *
@@ -234,16 +322,24 @@ H.Color.prototype = {
      * @return {Highcharts.ColorString}
      *         The intermediate color in rgba notation.
      */
-    tweenTo: function (to, pos) {
+    tweenTo: function (
+        this: Highcharts.Color,
+        to: Highcharts.Color,
+        pos: number
+    ): Highcharts.ColorString {
         // Check for has alpha, because rgba colors perform worse due to lack of
         // support in WebKit.
-        var fromRgba = this.rgba, toRgba = to.rgba, hasAlpha, ret;
+        var fromRgba = this.rgba,
+            toRgba = to.rgba,
+            hasAlpha,
+            ret: Highcharts.ColorString;
+
         // Unsupported color, return to-color (#3920, #7034)
         if (!toRgba.length || !fromRgba || !fromRgba.length) {
-            ret = to.input || 'none';
-            // Interpolate
-        }
-        else {
+            ret = to.input as any || 'none';
+
+        // Interpolate
+        } else {
             hasAlpha = (toRgba[3] !== 1 || fromRgba[3] !== 1);
             ret = (hasAlpha ? 'rgba(' : 'rgb(') +
                 Math.round(toRgba[0] + (fromRgba[0] - toRgba[0]) * (1 - pos)) +
@@ -251,15 +347,20 @@ H.Color.prototype = {
                 Math.round(toRgba[1] + (fromRgba[1] - toRgba[1]) * (1 - pos)) +
                 ',' +
                 Math.round(toRgba[2] + (fromRgba[2] - toRgba[2]) * (1 - pos)) +
-                (hasAlpha ?
-                    (',' +
-                        (toRgba[3] + (fromRgba[3] - toRgba[3]) * (1 - pos))) :
-                    '') +
+                (
+                    hasAlpha ?
+                        (
+                            ',' +
+                            (toRgba[3] + (fromRgba[3] - toRgba[3]) * (1 - pos))
+                        ) :
+                        ''
+                ) +
                 ')';
         }
         return ret;
     }
-};
+} as any;
+
 /**
  * Creates a color instance out of a color string.
  *
@@ -272,6 +373,6 @@ H.Color.prototype = {
  * @return {Highcharts.Color}
  *         Color instance
  */
-H.color = function (input) {
+H.color = function (input: Highcharts.ColorString): Highcharts.Color {
     return new H.Color(input);
 };
