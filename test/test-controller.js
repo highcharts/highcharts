@@ -96,6 +96,41 @@ var TestController = /** @class */ (function () {
         }
         return points;
     };
+    /**
+     * Edge and IE are unable to get elementFromPoint when the group has a
+     * clip path. It reports the first underlying element with no clip path.
+     */
+    TestController.prototype.setUpMSWorkaround = function () {
+        var clipPaths = {
+            elements: [],
+            values: []
+        };
+        if (/(Trident|Edge)/.test(window.navigator.userAgent)) {
+            [].slice
+                .call(document.querySelectorAll('[clip-path],[CLIP-PATH]'))
+                .forEach(function (elemCP) {
+                clipPaths.elements.push(elemCP);
+                clipPaths.values.push(elemCP.getAttribute('clip-path'));
+                elemCP.removeAttribute('clip-path');
+            });
+        }
+        return clipPaths;
+    };
+    /**
+     * Undo the workaround
+     *
+     * @param clipPaths
+     *        The clip paths that were returned from the `setUpMSWorkaround`
+     *        function
+     */
+    TestController.prototype.tearDownMSWorkaround = function (clipPaths) {
+        // Reset clip paths for Edge and IE
+        if (clipPaths) {
+            clipPaths.elements.forEach(function (elemCP, i) {
+                elemCP.setAttribute('clip-path', clipPaths.values[i]);
+            });
+        }
+    };
     /* *
      *
      *  Functions
@@ -126,32 +161,6 @@ var TestController = /** @class */ (function () {
         this.mouseDown(chartX, chartY, extra, debug);
         this.mouseUp(chartX, chartY, extra, debug);
         this.triggerEvent('click', chartX, chartY, extra, debug);
-    };
-    TestController.prototype.setUpMSWorkaround = function () {
-        var clipPaths = {
-            elements: [],
-            values: []
-        };
-        // Edge and IE are unable to get elementFromPoint when the group has a
-        // clip path. It reports the first underlying element with no clip path.
-        if (/(Trident|Edge)/.test(window.navigator.userAgent)) {
-            [].slice
-                .call(document.querySelectorAll('[clip-path],[CLIP-PATH]'))
-                .forEach(function (elemCP) {
-                clipPaths.elements.push(elemCP);
-                clipPaths.values.push(elemCP.getAttribute('clip-path'));
-                elemCP.removeAttribute('clip-path');
-            });
-        }
-        return clipPaths;
-    };
-    TestController.prototype.tearDownMSWorkaround = function (clipPaths) {
-        // Reset clip paths for Edge and IE
-        if (clipPaths) {
-            clipPaths.elements.forEach(function (elemCP, i) {
-                elemCP.setAttribute('clip-path', clipPaths.values[i]);
-            });
-        }
     };
     /**
      * Get the element from a point on the chart.

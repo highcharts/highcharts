@@ -19,6 +19,10 @@ interface TestControllerTouchPositions extends Array<TestControllerTouchPosition
     [index: number]: TestControllerTouchPosition;
     item?: (index: number) => TestControllerTouchPosition;
 }
+interface ClipPaths {
+    elements: Array<HighchartsElement>;
+    values: Array<string>;
+}
 /**
  * The test controller makes it easy to emulate mouse and touch stuff on the
  * chart.
@@ -64,6 +68,19 @@ declare class TestController {
     private positionY;
     private relatedTarget;
     /**
+     * Edge and IE are unable to get elementFromPoint when the group has a
+     * clip path. It reports the first underlying element with no clip path.
+     */
+    private setUpMSWorkaround;
+    /**
+     * Undo the workaround
+     *
+     * @param clipPaths
+     *        The clip paths that were returned from the `setUpMSWorkaround`
+     *        function
+     */
+    private tearDownMSWorkaround;
+    /**
      * Simulates a mouse click.
      *
      * @param chartX
@@ -90,7 +107,7 @@ declare class TestController {
      * @param chartY
      *        Y relative to the chart.
      */
-    elementFromPoint(chartX?: number, chartY?: number): (HighchartsElement | null);
+    elementFromPoint(chartX?: number, chartY?: number, useMSWorkaround?: boolean): (HighchartsElement | null);
     /**
      * Get the current position of the cursor.
      */
