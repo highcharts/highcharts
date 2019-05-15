@@ -3035,7 +3035,7 @@ extend((
             // Delete size caches when the text changes
             delete this.bBox;
             delete this.textPxLength;
-            
+
             this.textStr = value;
             if (this.added) {
                 this.renderer.buildText(this);
