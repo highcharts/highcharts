@@ -386,16 +386,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *        Whether to redraw the chart.
      *
      * @param {boolean} [oneToOne=false]
-     *        When `true`, the `series`, `xAxis` and `yAxis` collections will
-     *        be updated one to one, and items will be either added or removed
-     *        to match the new updated options. For example, if the chart has
-     *        two series and we call `chart.update` with a configuration
-     *        containing three series, one will be added. If we call
-     *        `chart.update` with one series, one will be removed. Setting an
-     *        empty `series` array will remove all series, but leaving out the
-     *        `series` property will leave all series untouched. If the series
-     *        have id's, the new series options will be matched by id, and the
-     *        remaining ones removed.
+     *        When `true`, the `series`, `xAxis`, `yAxis` and `annotations`
+     *        collections will be updated one to one, and items will be either
+     *        added or removed to match the new updated options. For example,
+     *        if the chart has two series and we call `chart.update` with a
+     *        configuration containing three series, one will be added. If we
+     *        call `chart.update` with one series, one will be removed. Setting
+     *        an empty `series` array will remove all series, but leaving out
+     *        the`series` property will leave all series untouched. If the
+     *        series have id's, the new series options will be matched by id,
+     *        and the remaining ones removed.
      *
      * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
      *        Whether to apply animation, and optionally animation
@@ -572,6 +572,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                                 .touched = true;
                         } else if (coll === 'xAxis' || coll === 'yAxis') {
                             chart.addAxis(newOptions, coll === 'xAxis', false)
+                                .touched = true;
+                        } else if (coll === 'annotations') {
+                            chart.addAnnotation(newOptions, false)
                                 .touched = true;
                         }
                     }
