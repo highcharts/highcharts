@@ -308,11 +308,11 @@ Highcharts.Point.prototype = {
     },
 
     /**
-     * Transform number or array configs into objects. Used internally to unify
-     * the different configuration formats for points. For example, a simple
-     * number `10` in a line series will be transformed to `{ y: 10 }`, and an
-     * array config like `[1, 10]` in a scatter series will be transformed to
-     * `{ x: 1, y: 10 }`.
+     * Transform number or array configs into objects. Also called for object
+     * configs. Used internally to unify the different configuration formats for
+     * points. For example, a simple number `10` in a line series will be
+     * transformed to `{ y: 10 }`, and an array config like `[1, 10]` in a
+     * scatter series will be transformed to `{ x: 1, y: 10 }`.
      *
      * @function Highcharts.Point#optionsToObject
      *

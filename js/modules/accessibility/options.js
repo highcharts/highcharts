@@ -63,7 +63,7 @@ var options = {
          * @type  {boolean|number}
          * @since 5.0.0
          */
-        pointDescriptionThreshold: 500, // set to false to disable
+        pointDescriptionThreshold: 200, // set to false to disable
 
         /**
          * Whether or not to add a shortcut button in the screen reader
