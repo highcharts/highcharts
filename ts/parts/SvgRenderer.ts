@@ -1176,7 +1176,7 @@ extend((
 
                         if (stop[1].indexOf('rgba') === 0) {
                             colorObject = H.color(stop[1]);
-                            stopColor = colorObject.get('rgb');
+                            stopColor = colorObject.get('rgb') as any;
                             stopOpacity = colorObject.get('a');
                         } else {
                             stopColor = stop[1];
@@ -3227,7 +3227,7 @@ extend((
         if (typeof value === 'string') {
             element.setAttribute(key, value);
         } else if (value) {
-            this.complexColor(value, key, element);
+            this.complexColor(value as any, key, element);
         }
     },
     /**
@@ -4469,7 +4469,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     getContrast: function (
         rgba: Highcharts.ColorString
     ): Highcharts.ColorString {
-        rgba = color(rgba).rgba;
+        rgba = color(rgba).rgba as any;
 
         // The threshold may be discussed. Here's a proposal for adding
         // different weight to the color channels (#6216)
@@ -6163,7 +6163,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         } else {
             wrapper.strokeSetter =
             wrapper.fillSetter =
-            wrapper.rSetter = function (value: number, key: string): void {
+            wrapper.rSetter = function (
+                value: any,
+                key: string
+            ): void {
                 if (key !== 'r') {
                     if (key === 'fill' && value) {
                         needsBox = true;

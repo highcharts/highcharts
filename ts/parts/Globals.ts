@@ -28,8 +28,6 @@ declare global {
     function parseFloat (value: (number|string)): number;
     namespace Highcharts {
         type Chart = any; // @todo
-        type Color = any; // @todo
-        type ColorString = string; // @todo
         type Point = any; // @todo
         type Series = any; // @todo
         type Time = any; // @todo
