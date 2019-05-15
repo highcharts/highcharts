@@ -2682,14 +2682,11 @@ H.Series = H.seriesType(
          * Set the series options by merging from the options tree. Called
          * internally on initializing and updating series. This function will
          * not redraw the series. For API usage, use {@link Series#update}.
-         *
+         * @private
          * @function Highcharts.Series#setOptions
-         *
-         * @param {Highcharts.SeriesOptionsType} itemOptions
-         *        The series options.
-         *
+         * @param {Highcharts.SeriesOptionsType} itemOptions - The series
+         * options.
          * @return {Highcharts.SeriesOptionsType}
-         *
          * @fires Highcharts.Series#event:afterSetOptions
          */
         setOptions: function (itemOptions) {
