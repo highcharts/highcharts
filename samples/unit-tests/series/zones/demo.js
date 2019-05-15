@@ -179,3 +179,29 @@ QUnit.test('Adding and removing zones', function (assert) {
         'Series line is hidden after adding zones back (#10569).'
     );
 });
+
+QUnit.test('#9198 setData and zones', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            height: 500,
+            width: 800
+        },
+        yAxis: {
+            min: -3,
+            max: 3
+        },
+        series: [{
+            type: 'area',
+            negativeColor: 'green',
+            data: []
+        }]
+    });
+
+    chart.series[0].setData([4, 3, 4, -3, -3, 10]);
+
+    assert.strictEqual(
+        chart.series[0]['zone-graph-1'].attr('clip-path') !== 0,
+        true,
+        'Negative color is applied on the line and area.'
+    );
+});
