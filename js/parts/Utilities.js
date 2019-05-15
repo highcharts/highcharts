@@ -1146,7 +1146,7 @@ H.extendClass = function (parent, members) {
  * @param {number} number
  *        The input string or number.
  *
- * @param {number} length
+ * @param {number} [length]
  *        The desired string length.
  *
  * @param {string} [padder=0]

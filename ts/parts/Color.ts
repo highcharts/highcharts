@@ -75,7 +75,7 @@ var isNumber = H.isNumber,
 H.Color = function (
     this: Highcharts.Color,
     input: (Highcharts.ColorString|Highcharts.GradientColorObject)
-) {
+): any {
     // Backwards compatibility, allow instanciation without new
     if (!(this instanceof H.Color)) {
         return new H.Color(input);
@@ -90,7 +90,7 @@ H.Color.prototype = {
     parsers: [{
         // RGBA color
         regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/, // eslint-disable-line security/detect-unsafe-regex
-        parse: function (result: RegExpExecArray) {
+        parse: function (result: RegExpExecArray): Highcharts.ColorRGBA {
             return [
                 pInt(result[1]),
                 pInt(result[2]),
@@ -102,7 +102,7 @@ H.Color.prototype = {
         // RGB color
         regex:
             /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
-        parse: function (result: RegExpExecArray) {
+        parse: function (result: RegExpExecArray): Highcharts.ColorRGBA {
             return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
         }
     }],
@@ -228,7 +228,10 @@ H.Color.prototype = {
         if (this.stops) {
             ret = merge(input);
             (ret as any).stops = [].concat((ret as any).stops);
-            this.stops.forEach(function (stop, i) {
+            this.stops.forEach(function (
+                stop: Highcharts.Color,
+                i: number
+            ): void {
                 (ret as any).stops[i] = [
                     (ret as any).stops[i][0],
                     stop.get(format)
@@ -269,7 +272,7 @@ H.Color.prototype = {
             rgba = this.rgba;
 
         if (this.stops) {
-            this.stops.forEach(function (stop) {
+            this.stops.forEach(function (stop: Highcharts.Color): void {
                 stop.brighten(alpha);
             });
 
