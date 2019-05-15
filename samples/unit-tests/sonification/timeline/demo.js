@@ -132,7 +132,6 @@ QUnit.test('Instrument.play/onEnd is being called correctly', function (assert) 
 
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
-        done();
         TestUtilities.lolexUninstall(clock);
     }
 });
