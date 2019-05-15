@@ -109,5 +109,5 @@ function jsDocNamespace() {
 
 Gulp.task(
     'jsdoc-namespace',
-    Gulp.series('scripts-ts', 'scripts-js', jsDocNamespace)
+    Gulp.series(jsDocNamespace)
 );
