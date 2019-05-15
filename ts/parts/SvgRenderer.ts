@@ -3032,9 +3032,10 @@ extend((
         value: string
     ): void {
         if (value !== this.textStr) {
-            // Delete bBox memo when the text changes
+            // Delete size caches when the text changes
             delete this.bBox;
-
+            delete this.textPxLength;
+            
             this.textStr = value;
             if (this.added) {
                 this.renderer.buildText(this);

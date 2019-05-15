@@ -443,6 +443,48 @@ QUnit.test('Label ellipsis and expanding', function (assert) {
     );
 });
 
+QUnit.test('Label ellipsis and resetting categories', assert => {
+
+    const chart = new Highcharts.chart('container', {
+        chart: {
+            width: 600,
+            height: 400
+        },
+        xAxis: {
+            type: 'category',
+            uniqueNames: false
+        },
+        series: [{
+            data: [
+                ['a1', 1],
+                ['a2', 1],
+                ['a3', 1],
+                ['a4', 2]
+            ]
+        }]
+    });
+
+    chart.series[0].setData([
+        ['The quick brown fox jumps over the lazy dog', 1],
+        ['The quick brown fox jumps over the lazy dog', 1],
+        ['The quick brown fox jumps over the lazy dog', 1],
+        ['The quick brown fox jumps over the lazy dog', 1],
+        ['The quick brown fox jumps over the lazy dog', 1],
+        ['The quick brown fox jumps over the lazy dog', 1],
+        ['The quick brown fox jumps over the lazy dog', 1],
+        ['The quick brown fox jumps over the lazy dog', 1],
+        ['The quick brown fox jumps over the lazy dog', 1],
+        ['The quick brown fox jumps over the lazy dog', 1],
+        ['The quick brown fox jumps over the lazy dog', 1],
+        ['The quick brown fox jumps over the lazy dog', 1]
+    ]);
+
+    assert.ok(
+        chart.plotHeight > 100,
+        'The plot area should not be collapsed (#10715)'
+    );
+});
+
 QUnit.test('Correct float (#6085)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

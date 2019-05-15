@@ -192,6 +192,8 @@ H.Tick.prototype = {
             }
 
             label.attr({ text: str });
+
+            label.textPxLength = label.getBBox().width;
         }
     },
 
