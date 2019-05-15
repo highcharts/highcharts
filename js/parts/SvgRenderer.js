@@ -118,62 +118,6 @@ import H from './Globals.js';
 * @type {number}
 */
 /**
- * Gradient options instead of a solid color.
- *
- * @example
- * // Linear gradient used as a color option
- * color: {
- *     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
- *         stops: [
- *             [0, '#003399'], // start
- *             [0.5, '#ffffff'], // middle
- *             [1, '#3366AA'] // end
- *         ]
- *     }
- * }
- *
- * @interface Highcharts.GradientColorObject
- */ /**
-* Holds an object that defines the start position and the end position relative
-* to the shape.
-* @name Highcharts.GradientColorObject#linearGradient
-* @type {Highcharts.LinearGradientColorObject|undefined}
-*/ /**
-* Holds an object that defines the center position and the radius.
-* @name Highcharts.GradientColorObject#radialGradient
-* @type {Highcharts.RadialGradientColorObject|undefined}
-*/ /**
-* The first item in each tuple is the position in the gradient, where 0 is the
-* start of the gradient and 1 is the end of the gradient. Multiple stops can be
-* applied. The second item is the color for each stop. This color can also be
-* given in the rgba format.
-* @name Highcharts.GradientColorObject#stops
-* @type {Array<Array<number,Highcharts.ColorString>>|undefined}
-*/
-/**
- * Defines the start position and the end position for a gradient relative
- * to the shape. Start position (x1, y1) and end position (x2, y2) are relative
- * to the shape, where 0 means top/left and 1 is bottom/right.
- *
- * @interface Highcharts.LinearGradientColorObject
- */ /**
-* Start horizontal position of the gradient. Float ranges 0-1.
-* @name Highcharts.LinearGradientColorObject#x1
-* @type {number}
-*/ /**
-* End horizontal position of the gradient. Float ranges 0-1.
-* @name Highcharts.LinearGradientColorObject#x2
-* @type {number}
-*/ /**
-* Start vertical position of the gradient. Float ranges 0-1.
-* @name Highcharts.LinearGradientColorObject#y1
-* @type {number}
-*/ /**
-* End vertical position of the gradient. Float ranges 0-1.
-* @name Highcharts.LinearGradientColorObject#y2
-* @type {number}
-*/
-/**
  * An object containing `x` and `y` properties for the position of an element.
  *
  * @interface Highcharts.PositionObject
@@ -184,23 +128,6 @@ import H from './Globals.js';
 */ /**
 * Y position of the element.
 * @name Highcharts.PositionObject#y
-* @type {number}
-*/
-/**
- * Defines the center position and the radius for a gradient.
- *
- * @interface Highcharts.RadialGradientColorObject
- */ /**
-* Center horizontal position relative to the shape. Float ranges 0-1.
-* @name Highcharts.RadialGradientColorObject#cx
-* @type {number}
-*/ /**
-* Center vertical position relative to the shape. Float ranges 0-1.
-* @name Highcharts.RadialGradientColorObject#cy
-* @type {number}
-*/ /**
-* Radius relative to the shape. Float ranges 0-1.
-* @name Highcharts.RadialGradientColorObject#r
 * @type {number}
 */
 /**
