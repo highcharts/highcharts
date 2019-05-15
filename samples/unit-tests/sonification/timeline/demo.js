@@ -1,4 +1,10 @@
 QUnit.test('Instrument.play/onEnd is being called correctly', function (assert) {
+
+    if (navigator.userAgent.indexOf('Trident') !== -1) {
+        assert.ok(true, 'IE not supported');
+        return;
+    }
+
     var done = assert.async(),
         clock = TestUtilities.lolexInstall();
 
@@ -126,6 +132,7 @@ QUnit.test('Instrument.play/onEnd is being called correctly', function (assert) 
 
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
+        done();
         TestUtilities.lolexUninstall(clock);
     }
 });

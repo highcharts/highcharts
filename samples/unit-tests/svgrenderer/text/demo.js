@@ -77,7 +77,10 @@ QUnit.test('Text word wrap with markup', function (assert) {
 
     // For some reason Edge gets the BBox width wrong, but the text looks
     // correct
-    if (navigator.userAgent.indexOf('Edge') === -1) {
+    if (
+        navigator.userAgent.indexOf('Edge') === -1 &&
+        navigator.userAgent.indexOf('Trident') === -1
+    ) {
         assert.ok(
             text.getBBox().width <= 100,
             'The text node width should be less than 100'
