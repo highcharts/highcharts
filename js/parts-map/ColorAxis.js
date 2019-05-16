@@ -591,7 +591,10 @@ extend(ColorAxis.prototype, {
      * Build options to keep layout params on init and update.
      *
      * @private
-     * @function Highcharts.ColorAxis#setTickPositions
+     * 
+     * @param {Object} options
+     * @param {Object} userOptions
+     *
      */
     buildOptions: function (options, userOptions) {
         var legend = this.options.legend,
