@@ -715,15 +715,21 @@ seriesType(
          */
         seriesBox: function () {
             var series = this,
+                chart = series.chart,
                 data = series.data,
                 max = Math.max,
                 min = Math.min,
                 radius,
                 // bBox = [xMin, xMax, yMin, yMax]
-                bBox = [Infinity, -Infinity, Infinity, -Infinity];
+                bBox = [
+                    chart.plotLeft,
+                    chart.plotLeft + chart.plotWidth,
+                    chart.plotTop,
+                    chart.plotTop + chart.plotHeight
+                ];
 
             data.forEach(function (p) {
-                if (p.plotX && p.plotY && p.marker.radius) {
+                if (defined(p.plotX) && defined(p.plotY) && p.marker.radius) {
                     radius = p.marker.radius;
                     bBox[0] = min(bBox[0], p.plotX - radius);
                     bBox[1] = max(bBox[1], p.plotX + radius);
@@ -731,9 +737,6 @@ seriesType(
                     bBox[3] = max(bBox[3], p.plotY + radius);
                 }
             });
-
-            bBox.width = bBox[1] - bBox[0];
-            bBox.height = bBox[3] - bBox[2];
             return H.isNumber(bBox.width / bBox.height) ? bBox : null;
         },
         /**
