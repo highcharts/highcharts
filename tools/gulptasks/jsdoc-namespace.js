@@ -28,31 +28,6 @@ const TARGET_DIRECTORIES = [
 
 /* *
  *
- *  Functions
- *
- * */
-
-/**
- * Checks necessary code files.
- *
- * @return {Promise<void>}
- *         Promise to keep
- */
-function checkCode() {
-
-    const fs = require('fs');
-
-    if (fs.existsSync('code/highcharts.src.js')) {
-        return Promise.resolve();
-    }
-
-    return new Promise(resolve => {
-        gulp.series('scripts-ts', 'scripts-js')(resolve);
-    });
-}
-
-/* *
- *
  *  Tasks
  *
  * */
@@ -131,4 +106,4 @@ function jsDocNamespace() {
     });
 }
 
-gulp.task('jsdoc-namespace', gulp.series(checkCode, jsDocNamespace));
+gulp.task('jsdoc-namespace', gulp.series('scripts', jsDocNamespace));
