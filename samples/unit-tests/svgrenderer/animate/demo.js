@@ -118,7 +118,7 @@ QUnit.test('Path animation', function (assert) {
         }, 1700);
 
         setTimeout(function () {
-            console.log('M 200 120 L 700 120', path.attr('d'));
+            // console.log('M 200 120 L 700 120', path.attr('d'));
             assert.notEqual(
                 path.attr('d'),
                 'M 200 120 L 700 120',
