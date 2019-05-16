@@ -4,6 +4,7 @@ js/parts/MSPointer.js
 js/parts/Pointer.js
 js/parts/SvgRenderer.js
 js/parts/Time.js
+js/parts/TouchPointer.js
 js/parts/Utilities.js
 samples/data/**/*.js
 samples/highcharts/common-js/**/*.js

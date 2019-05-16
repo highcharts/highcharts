@@ -1626,7 +1626,7 @@ Highcharts.Pointer.prototype = {
                 H.unbindDocumentTouchEnd = addEvent(
                     ownerDoc,
                     'touchend',
-                    pointer.onDocumentTouchEnd
+                    pointer.onDocumentTouchEnd as any
                 );
             }
         }
