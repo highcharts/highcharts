@@ -491,15 +491,11 @@ extend(ColorAxis.prototype, {
         this.coll = 'colorAxis';
 
         // Build the options
-        options = merge(this.defaultColorAxisOptions, {
-            side: horiz ? 2 : 1,
-            reversed: !horiz
-        }, userOptions, {
-            opposite: !horiz,
-            showEmpty: false,
-            title: null,
-            visible: chart.options.legend.enabled
-        });
+        options = this.buildOptions.call(
+            chart,
+            this.defaultColorAxisOptions,
+            userOptions
+        );
 
         Axis.prototype.init.call(this, chart, options);
 
@@ -591,7 +587,26 @@ extend(ColorAxis.prototype, {
             stop.color = color(stop[1]);
         });
     },
+    /**
+     * Build options to keep layout params on init and update.
+     *
+     * @private
+     * @function Highcharts.ColorAxis#setTickPositions
+     */
+    buildOptions: function (options, userOptions) {
+        var legend = this.options.legend,
+            horiz = legend.layout !== 'vertical';
 
+        return merge(options, {
+            side: horiz ? 2 : 1,
+            reversed: !horiz
+        }, userOptions, {
+            opposite: !horiz,
+            showEmpty: false,
+            title: null,
+            visible: legend.enabled
+        });
+    },
     /**
      * Extend the setOptions method to process extreme colors and color
      * stops.
@@ -916,7 +931,8 @@ extend(ColorAxis.prototype, {
 
     update: function (newOptions, redraw) {
         var chart = this.chart,
-            legend = chart.legend;
+            legend = chart.legend,
+            updatedOptions = this.buildOptions.call(chart, {}, newOptions);
 
         this.series.forEach(function (series) {
             // Needed for Axis.update when choropleth colors change
@@ -936,9 +952,9 @@ extend(ColorAxis.prototype, {
 
         // Keep the options structure updated for export. Unlike xAxis and
         // yAxis, the colorAxis is not an array. (#3207)
-        chart.options[this.coll] = merge(this.userOptions, newOptions);
+        chart.options[this.coll] = merge(this.userOptions, updatedOptions);
 
-        Axis.prototype.update.call(this, newOptions, redraw);
+        Axis.prototype.update.call(this, updatedOptions, redraw);
         if (this.legendItem) {
             this.setLegendColor();
             legend.colorizeItem(this, true);
