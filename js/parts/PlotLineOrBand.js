@@ -583,7 +583,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     /**
      * Flag to decide if plotLine should be rendered across all panes.
      *
-     * @sample {highstock} highcharts/xaxis/plotlines-acrosspane/
+     * @sample {highstock} stock/xaxis/plotlines-acrosspane/
      *         Plot lines on different panes
      *
      * @since     7.1.2
