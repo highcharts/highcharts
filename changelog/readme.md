@@ -1,6 +1,6 @@
 ## Writing content for the changelog
 The changelog is generated from PR descriptions. The following rules apply:
-* All PRs that should go into the changelog must be tagged with either 
+* All PRs that should go into the changelog must be labeled with either 
 `Changelog: Feature` or `Changelog: Bugfix`. Everything else is ignored.
 * Tag the PR with `Product: Highstock`, `Product: Highmaps` etc. for specific
 products. PRs with no product tags go into the Highcharts changelog.
