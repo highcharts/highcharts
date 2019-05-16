@@ -12,6 +12,10 @@
 
 import Highcharts from './Globals.js';
 
+/**
+ * Internal types
+ * @private
+ */
 declare global {
     namespace Highcharts {
         interface PointerAxisCoordinateObject {
