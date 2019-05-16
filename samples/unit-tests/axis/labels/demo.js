@@ -835,3 +835,251 @@ QUnit.test('Correction for X axis labels (#9238)', function (assert) {
     });
 
 });
+
+// Highcharts 7.1.0, Issue #10635
+QUnit.test('Solidgauge two data labels auto alignment (#10635)', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'solidgauge'
+            },
+            title: {
+                text: ''
+            },
+            pane: {
+                startAngle: 0,
+                endAngle: 90,
+                background: {
+                    innerRadius: '50%',
+                    outerRadius: '100%',
+                    shape: 'arc'
+                }
+            },
+            yAxis: {
+                min: 0,
+                max: 100,
+                lineWidth: 2,
+                minorTicks: false,
+                tickWidth: 2,
+                tickAmount: 2,
+                labels: {
+                    distance: '75%',
+                    align: 'auto',
+                    style: {
+                        fontSize: "20px"
+                    }
+                }
+            },
+            series: [{
+                name: 'Product',
+                innerRadius: '50%',
+                radius: '100%',
+                dataLabels: {
+                    enabled: false
+                },
+                data: [55]
+            }]
+        }),
+        startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label,
+        endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+
+    assert.deepEqual(
+        [
+            'end',
+            -startLabel.getBBox().height * 0.15,
+            0,
+            'middle',
+            0,
+            startLabel.getBBox().height - startLabel.getBBox().height * 0.3
+        ],
+        [
+            startLabel.element.getAttribute("text-anchor"),
+            startLabel.translateX,
+            startLabel.translateY,
+            endLabel.element.getAttribute("text-anchor"),
+            endLabel.translateX,
+            endLabel.translateY
+        ],
+        'Labels are aligned correctly.'
+    );
+
+    chart.update({
+        pane: {
+            startAngle: 90,
+            endAngle: 180
+        }
+    });
+
+    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
+    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+
+    assert.deepEqual(
+        [
+            'middle',
+            0,
+            -startLabel.getBBox().height * 0.25 - startLabel.getBBox().height * 0.3,
+            'end',
+            -startLabel.getBBox().height * 0.15,
+            0
+        ],
+        [
+            startLabel.element.getAttribute("text-anchor"),
+            startLabel.translateX,
+            startLabel.translateY,
+            endLabel.element.getAttribute("text-anchor"),
+            endLabel.translateX,
+            endLabel.translateY
+        ],
+        'Labels are aligned correctly.'
+    );
+
+    chart.update({
+        pane: {
+            startAngle: 180,
+            endAngle: 270
+        }
+    });
+
+    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
+    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+
+    assert.deepEqual(
+        [
+            'start',
+            startLabel.getBBox().height * 0.15,
+            0,
+            'middle',
+            0,
+            -startLabel.getBBox().height * 0.25 - startLabel.getBBox().height * 0.3
+        ],
+        [
+            startLabel.element.getAttribute("text-anchor"),
+            startLabel.translateX,
+            startLabel.translateY,
+            endLabel.element.getAttribute("text-anchor"),
+            endLabel.translateX,
+            endLabel.translateY
+        ],
+        'Labels are aligned correctly.'
+    );
+
+    chart.update({
+        pane: {
+            startAngle: 270,
+            endAngle: 360
+        }
+    });
+
+    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
+    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+
+    assert.deepEqual(
+        [
+            'middle',
+            0,
+            startLabel.getBBox().height - startLabel.getBBox().height * 0.3,
+            'start',
+            startLabel.getBBox().height * 0.15,
+            0
+        ],
+        [
+            startLabel.element.getAttribute("text-anchor"),
+            startLabel.translateX,
+            startLabel.translateY,
+            endLabel.element.getAttribute("text-anchor"),
+            endLabel.translateX,
+            endLabel.translateY
+        ],
+        'Labels are aligned correctly.'
+    );
+
+    chart.update({
+        pane: {
+            startAngle: -130,
+            endAngle: 130
+        }
+    });
+
+    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
+    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+
+    assert.deepEqual(
+        [
+            'start',
+            0,
+            startLabel.getBBox().height - startLabel.getBBox().height * 0.3,
+            'end',
+            0,
+            startLabel.getBBox().height - startLabel.getBBox().height * 0.3
+        ],
+        [
+            startLabel.element.getAttribute("text-anchor"),
+            startLabel.translateX,
+            startLabel.translateY,
+            endLabel.element.getAttribute("text-anchor"),
+            endLabel.translateX,
+            endLabel.translateY
+        ],
+        'Labels are aligned correctly.'
+    );
+
+    chart.update({
+        pane: {
+            startAngle: -30,
+            endAngle: 30
+        }
+    });
+
+    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
+    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+
+    assert.deepEqual(
+        [
+            'end',
+            0,
+            startLabel.getBBox().height * 0.75 - startLabel.getBBox().height * 0.3,
+            'start',
+            0,
+            startLabel.getBBox().height * 0.75 - startLabel.getBBox().height * 0.3
+        ],
+        [
+            startLabel.element.getAttribute("text-anchor"),
+            startLabel.translateX,
+            startLabel.translateY,
+            endLabel.element.getAttribute("text-anchor"),
+            endLabel.translateX,
+            endLabel.translateY
+        ],
+        'Labels are aligned correctly.'
+    );
+
+    chart.update({
+        pane: {
+            startAngle: -10,
+            endAngle: 10
+        }
+    });
+
+    startLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[0]].label;
+    endLabel = chart.yAxis[0].ticks[chart.yAxis[0].tickPositions[1]].label;
+
+    assert.deepEqual(
+        [
+            'end',
+            -startLabel.getBBox().height * 0.15,
+            0,
+            'start',
+            startLabel.getBBox().height * 0.15,
+            0
+        ],
+        [
+            startLabel.element.getAttribute("text-anchor"),
+            startLabel.translateX,
+            startLabel.translateY,
+            endLabel.element.getAttribute("text-anchor"),
+            endLabel.translateX,
+            endLabel.translateY
+        ],
+        'Labels are aligned correctly.'
+    );
+});

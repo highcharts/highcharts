@@ -2653,9 +2653,15 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * also depends on the `labels.x` setting.
              *
              * Angular gauges and solid gauges defaults to `"center"`.
+             * Solid gauges with two labels have additional option `"auto"`
+             * for automatic horizontal and vertical alignment.
+             *
+             * @see [yAxis.labels.distance](#yAxis.labels.distance)
              *
              * @sample {highcharts} highcharts/yaxis/labels-align-left/
              *         Left
+             * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
+             *         Solid gauge labels auto aligned
              *
              * @type       {Highcharts.AlignValue}
              * @default    {highcharts|highmaps} right
