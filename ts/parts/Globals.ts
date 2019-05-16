@@ -27,11 +27,16 @@ declare global {
     const win: Window; // @todo: UMD variable
     function parseFloat (value: (number|string)): number;
     namespace Highcharts {
+        type Axis = any; // @todo
         type Chart = any; // @todo
+        type Options = any; // @todo
         type Point = any; // @todo
         type Series = any; // @todo
+        type SeriesPlotBoxObject = any; // @todo
+        type Tooltip = any; // @todo
         const Point: any; // @todo
         const Series: any; // @todo
+        const Tooltip: any; // @todo
         const SVG_NS: string;
         const addEventListenerPolyfill: any; // @todo
         const charts: Array<Chart>;
