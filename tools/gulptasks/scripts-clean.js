@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
-const Path = require('path');
+const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -22,7 +22,7 @@ const FILES_TO_KEEP = [
     ['modules', 'readme.md'],
     ['readme.txt']
 ].map(
-    filePath => Path.join(TARGET_DIRECTORY, ...filePath)
+    filePath => path.join(TARGET_DIRECTORY, ...filePath)
 );
 
 /* *
@@ -39,15 +39,15 @@ const FILES_TO_KEEP = [
  */
 function task() {
 
-    const FSLib = require('./lib/fs');
-    const LogLib = require('./lib/log');
+    const fs = require('./lib/fs');
+    const log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
-        const filesToDelete = FSLib
+        const filesToDelete = fs
             .getFilePaths(TARGET_DIRECTORY, true)
             .filter(filePath => !FILES_TO_KEEP.includes(filePath));
-        const directoriesToDelete = FSLib
+        const directoriesToDelete = fs
             .getDirectoryPaths(TARGET_DIRECTORY, true)
             .filter(directoryPath => !FILES_TO_KEEP.some(
                 filterPath => filterPath.startsWith(directoryPath)
@@ -55,12 +55,12 @@ function task() {
 
         try {
 
-            LogLib.message('Cleaning', TARGET_DIRECTORY, '...');
+            log.message('Cleaning', TARGET_DIRECTORY, '...');
 
-            filesToDelete.forEach(FSLib.deleteFile);
-            directoriesToDelete.forEach(FSLib.deleteDirectory);
+            filesToDelete.forEach(fs.deleteFile);
+            directoriesToDelete.forEach(fs.deleteDirectory);
 
-            LogLib.success('Cleaned', TARGET_DIRECTORY);
+            log.success('Cleaned', TARGET_DIRECTORY);
 
             resolve();
         } catch (catchedError) {
@@ -69,4 +69,4 @@ function task() {
     });
 }
 
-Gulp.task('scripts-clean', task);
+gulp.task('scripts-clean', task);

@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
-const Path = require('path');
+const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -11,19 +11,19 @@ const Path = require('path');
  *
  * */
 
-const BASE = Path.join(__dirname, '..', '..');
+const BASE = path.join(__dirname, '..', '..');
 
-const CODE_DIRECTORY = Path.join(BASE, 'code');
+const CODE_DIRECTORY = path.join(BASE, 'code');
 
-const CONFIGURATION_FILE = Path.join(
+const CONFIGURATION_FILE = path.join(
     BASE, 'node_modules', '_gulptasks_test.json'
 );
 
-const JS_DIRECTORY = Path.join(BASE, 'js');
+const JS_DIRECTORY = path.join(BASE, 'js');
 
-const KARMA_CONFIG_FILE = Path.join(BASE, 'test', 'karma-conf.js');
+const KARMA_CONFIG_FILE = path.join(BASE, 'test', 'karma-conf.js');
 
-const TESTS_DIRECTORY = Path.join(BASE, 'samples', 'unit-tests');
+const TESTS_DIRECTORY = path.join(BASE, 'samples', 'unit-tests');
 
 /* *
  *
@@ -39,29 +39,29 @@ const TESTS_DIRECTORY = Path.join(BASE, 'samples', 'unit-tests');
  */
 function checkJSWrap() {
 
-    const FS = require('fs');
-    const Glob = require('glob');
-    const LogLib = require('./lib/log');
-    const YAML = require('js-yaml');
+    const fs = require('fs');
+    const glob = require('glob');
+    const log = require('./lib/log');
+    const yaml = require('js-yaml');
 
     let errors = 0;
 
-    Glob.sync(
+    glob.sync(
         process.cwd() + '/samples/+(highcharts|stock|maps|gantt)/**/demo.html'
     ).forEach(f => {
 
         const detailsFile = f.replace(/\.html$/, '.details');
 
         try {
-            const details = YAML.safeLoad(
-                FS.readFileSync(detailsFile, 'utf-8')
+            const details = yaml.safeLoad(
+                fs.readFileSync(detailsFile, 'utf-8')
             );
             if (details.js_wrap !== 'b') {
-                LogLib.failure('js_wrap not found:', detailsFile);
+                log.failure('js_wrap not found:', detailsFile);
                 errors++;
             }
         } catch (e) {
-            LogLib.failure('File not found:', detailsFile);
+            log.failure('File not found:', detailsFile);
             errors++;
         }
     });
@@ -96,7 +96,7 @@ function checkSamplesConsistency() {
         ({ product, ignore = [] }) => {
             const index = FS
                 .readFileSync(
-                    Path.join('samples', product, 'demo', 'index.htm')
+                    path.join('samples', product, 'demo', 'index.htm')
                 )
                 .toString()
                 // Remove comments from the html in index
@@ -350,4 +350,4 @@ Available arguments for 'gulp test':
     });
 }
 
-Gulp.task('test', Gulp.series('scripts', test));
+gulp.task('test', gulp.series('scripts', test));

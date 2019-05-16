@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
-const Path = require('path');
+const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -27,7 +27,7 @@ const MIMES = {
     xml: 'application/xml'
 };
 
-const SOURCE_PATH = Path.join(__dirname, '..', '..', 'build', 'api');
+const SOURCE_PATH = path.join(__dirname, '..', '..', 'build', 'api');
 
 /* *
  *
@@ -60,13 +60,13 @@ function response200(response, data, ext) {
  * @param {ServerResponse} response
  *        HTTP response
  *
- * @param {string} path
+ * @param {string} p
  *        Redirect path
  *
  * @return {void}
  */
-function response302(response, path) {
-    response.writeHead(302, { Location: path });
+function response302(response, p) {
+    response.writeHead(302, { Location: p });
     response.end();
 }
 
@@ -76,16 +76,16 @@ function response302(response, path) {
  * @param {ServerResponse} response
  *        HTTP response
  *
- * @param {string} path
+ * @param {string} p
  *        Missing path
  *
  * @return {void}
  */
-function response404(response, path) {
+function response404(response, p) {
 
-    const LogLib = require('./lib/log');
+    const log = require('./lib/log');
 
-    LogLib.failure('404', path);
+    log.failure('404', p);
 
     response.writeHead(404);
     response.end('Ooops, the requested file is 404', 'utf-8');
@@ -105,48 +105,48 @@ function response404(response, path) {
  */
 function jsDocServer() {
 
-    const FS = require('fs');
-    const HTTP = require('http');
-    const LogLib = require('./lib/log');
-    const URL = require('url');
+    const fs = require('fs');
+    const http = require('http');
+    const log = require('./lib/log');
+    const url = require('url');
 
     return new Promise(resolve => {
 
         const port = 9005;
 
-        HTTP
+        http
             .createServer((request, response) => {
 
                 // eslint-disable-next-line node/no-deprecated-api
-                let path = URL.parse(request.url, true).pathname;
+                let p = url.parse(request.url, true).pathname;
 
-                if (path === '/highcharts' || path === '/' || path === '') {
+                if (p === '/highcharts' || p === '/' || p === '') {
                     response302(response, '/highcharts/');
                     return;
                 }
-                if (path === '/highstock') {
+                if (p === '/highstock') {
                     response302(response, '/highstock/');
                     return;
                 }
-                if (path === '/highmaps') {
+                if (p === '/highmaps') {
                     response302(response, '/highmaps/');
                     return;
                 }
                 if (request.method !== 'GET') {
-                    response404(response, path);
+                    response404(response, p);
                     return;
                 }
 
-                let file = Path.basename(path);
+                let file = path.basename(p);
 
-                if (path[path.length - 1] === '/') {
+                if (p[p.length - 1] === '/') {
                     file = 'index.html';
                 } else {
-                    file = Path.basename(path);
-                    path = Path.dirname(path) + '/';
+                    file = path.basename(p);
+                    p = path.dirname(p) + '/';
                 }
 
-                let ext = Path.extname(file).substr(1);
+                let ext = path.extname(file).substr(1);
 
                 if (!MIMES[ext]) {
                     ext = 'html';
@@ -155,12 +155,12 @@ function jsDocServer() {
 
                 // console.log(sourcePath + path + file);
 
-                FS
+                fs
                     .readFile(
-                        SOURCE_PATH + path + file,
+                        SOURCE_PATH + p + file,
                         (error, data) => {
                             if (error) {
-                                response404(response, (path + file));
+                                response404(response, (p + file));
                             } else {
                                 response200(response, data, ext);
                             }
@@ -169,7 +169,7 @@ function jsDocServer() {
             })
             .listen(port);
 
-        LogLib.warn(
+        log.warn(
             'API documentation server running on http://localhost:' + port
         );
 
@@ -177,4 +177,4 @@ function jsDocServer() {
     });
 }
 
-Gulp.task('jsdoc-server', jsDocServer);
+gulp.task('jsdoc-server', jsDocServer);

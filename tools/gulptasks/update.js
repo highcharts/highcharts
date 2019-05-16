@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
-const Path = require('path');
+const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -11,7 +11,7 @@ const Path = require('path');
  *
  * */
 
-const CONFIGURATION_FILE = Path.join('node_modules', '_gulptasks_update.json');
+const CONFIGURATION_FILE = path.join('node_modules', '_gulptasks_update.json');
 
 /* *
  *
@@ -27,9 +27,9 @@ const CONFIGURATION_FILE = Path.join('node_modules', '_gulptasks_update.json');
  */
 function task() {
 
-    const FS = require('fs');
-    const LogLib = require('./lib/log');
-    const ProcessLib = require('./lib/process');
+    const fs = require('fs');
+    const log = require('./lib/log');
+    const process = require('./lib/process');
 
     return new Promise((resolve, reject) => {
 
@@ -40,9 +40,9 @@ function task() {
             lastCheck: 0
         };
 
-        if (FS.existsSync(CONFIGURATION_FILE)) {
+        if (fs.existsSync(CONFIGURATION_FILE)) {
             configuration = JSON.parse(
-                FS.readFileSync(CONFIGURATION_FILE).toString()
+                fs.readFileSync(CONFIGURATION_FILE).toString()
             );
         }
 
@@ -66,23 +66,23 @@ function task() {
 
         if (configuration.lastCheck > minimumTime) {
 
-            LogLib.message('Skipping package validation');
+            log.message('Skipping package validation');
 
             resolve();
 
             return;
         }
 
-        LogLib.message('Validating packages...');
+        log.message('Validating packages...');
 
-        ProcessLib.exec('npm i')
+        process.exec('npm i')
             .then(() => {
 
                 configuration.lastCheck = now;
 
-                LogLib.success('Validated packages');
+                log.success('Validated packages');
 
-                FS.writeFileSync(
+                fs.writeFileSync(
                     CONFIGURATION_FILE, JSON.stringify(configuration)
                 );
             })
@@ -91,4 +91,4 @@ function task() {
     });
 }
 
-Gulp.task('update', task);
+gulp.task('update', task);

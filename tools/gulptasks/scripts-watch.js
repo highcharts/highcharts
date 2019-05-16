@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -31,14 +31,14 @@ const WATCH_GLOBS = [
 function task() {
 
     const argv = require('yargs').argv;
-    const FsLib = require('./lib/fs');
-    const LogLib = require('./lib/log');
-    const ProcessLib = require('./lib/process');
+    const fs = require('./lib/fs');
+    const log = require('./lib/log');
+    const process = require('./lib/process');
 
-    if (ProcessLib.isRunning('scripts-watch')) {
-        LogLib.warn('Running watch process detected. Skipping task...');
+    if (process.isRunning('scripts-watch')) {
+        log.warn('Running watch process detected. Skipping task...');
         if (argv.force) {
-            ProcessLib.isRunning('scripts-watch', false, true);
+            process.isRunning('scripts-watch', false, true);
         } else {
             return Promise.resolve();
         }
@@ -52,12 +52,12 @@ function task() {
         let jsHash,
             tsHash;
 
-        Gulp
+        gulp
             .watch(WATCH_GLOBS, done => {
 
                 const buildTasks = [];
-                const newJsHash = FsLib.getDirectoryHash('js', true);
-                const newTsHash = FsLib.getDirectoryHash('ts', true);
+                const newJsHash = fs.getDirectoryHash('js', true);
+                const newTsHash = fs.getDirectoryHash('ts', true);
 
                 if (newTsHash !== tsHash) {
                     tsHash = newTsHash;
@@ -70,21 +70,21 @@ function task() {
                 }
 
                 if (buildTasks.length === 0) {
-                    LogLib.success('No significant changes found.');
+                    log.success('No significant changes found.');
                     done();
                     return;
                 }
 
-                Gulp.series(...buildTasks)(done);
+                gulp.series(...buildTasks)(done);
             })
-            .on('add', filePath => LogLib.warn('Modified', filePath))
-            .on('change', filePath => LogLib.warn('Modified', filePath))
-            .on('unlink', filePath => LogLib.warn('Modified', filePath))
-            .on('error', LogLib.failure);
+            .on('add', filePath => log.warn('Modified', filePath))
+            .on('change', filePath => log.warn('Modified', filePath))
+            .on('unlink', filePath => log.warn('Modified', filePath))
+            .on('error', log.failure);
 
-        LogLib.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
+        log.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
 
-        ProcessLib.isRunning('scripts-watch', true);
+        process.isRunning('scripts-watch', true);
 
         resolve();
     });
@@ -93,7 +93,7 @@ function task() {
 require('./scripts-js.js');
 require('./scripts-ts.js');
 
-Gulp.task(
+gulp.task(
     'scripts-watch',
-    Gulp.series('scripts-ts', 'scripts-css', 'scripts-js', task)
+    gulp.series('scripts-ts', 'scripts-css', 'scripts-js', task)
 );

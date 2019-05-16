@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -13,4 +13,4 @@ const Gulp = require('gulp');
 require('./lint-js');
 require('./update');
 
-Gulp.task('lint', Gulp.series('update', 'lint-js'));
+gulp.task('lint', gulp.series('update', 'lint-js'));

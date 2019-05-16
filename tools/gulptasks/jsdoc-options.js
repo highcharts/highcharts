@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
-const Path = require('path');
+const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -23,7 +23,7 @@ const SOURCE_GLOBS = [
     glob => SOURCE_DIRECTORY + '/' + glob
 );
 
-const TARGET_DIRECTORY = Path.join('build', 'api');
+const TARGET_DIRECTORY = path.join('build', 'api');
 
 const TREE_FILE = 'tree.json';
 
@@ -41,23 +41,23 @@ const TREE_FILE = 'tree.json';
  */
 function createApiDocumentation() {
 
-    const apiDocs = require('highcharts-documentation-generators').ApiDocs;
-    const FS = require('fs');
-    const LogLib = require('./lib/log');
+    const apidocs = require('highcharts-documentation-generators').ApiDocs;
+    const fs = require('fs');
+    const log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
-        LogLib.message('Generating', TARGET_DIRECTORY + '...');
+        log.message('Generating', TARGET_DIRECTORY + '...');
 
-        const sourceJSON = JSON.parse(FS.readFileSync(TREE_FILE));
+        const sourceJSON = JSON.parse(fs.readFileSync(TREE_FILE));
 
-        apiDocs(sourceJSON, TARGET_DIRECTORY, true, error => {
+        apidocs(sourceJSON, TARGET_DIRECTORY, true, error => {
 
             if (error) {
-                LogLib.failure(error);
+                log.failure(error);
                 reject(error);
             } else {
-                LogLib.success('Created', TARGET_DIRECTORY);
+                log.success('Created', TARGET_DIRECTORY);
                 resolve();
             }
         });
@@ -72,32 +72,32 @@ function createApiDocumentation() {
  */
 function createTreeJson() {
 
-    const gulpJSDoc = require('gulp-jsdoc3');
-    const LogLib = require('./lib/log');
+    const jsdoc = require('gulp-jsdoc3');
+    const log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
         const jsDocConfig = {
             plugins: [
-                Path.join(
+                path.join(
                     'node_modules', 'highcharts-documentation-generators',
                     'jsdoc', 'plugins', 'highcharts.jsdoc'
                 )
             ]
         };
 
-        LogLib.success('Generating', TREE_FILE + '...');
+        log.success('Generating', TREE_FILE + '...');
 
-        Gulp
+        gulp
             .src(SOURCE_GLOBS, { read: false })
-            .pipe(gulpJSDoc(
+            .pipe(jsdoc(
                 jsDocConfig,
                 error => {
                     if (error) {
-                        LogLib.failure(error);
+                        log.failure(error);
                         reject(error);
                     } else {
-                        LogLib.success('Created', TREE_FILE);
+                        log.success('Created', TREE_FILE);
                         resolve();
                     }
                 }
@@ -113,15 +113,15 @@ function createTreeJson() {
  */
 function testTreeJson() {
 
-    const FS = require('fs');
+    const fs = require('fs');
 
     return new Promise(resolve => {
 
-        if (!FS.existsSync(TREE_FILE)) {
+        if (!fs.existsSync(TREE_FILE)) {
             throw new Error(TREE_FILE + ' file not found.');
         }
 
-        const treeJson = JSON.parse(FS.readFileSync(TREE_FILE, 'utf8'));
+        const treeJson = JSON.parse(fs.readFileSync(TREE_FILE, 'utf8'));
 
         if (Object.keys(treeJson.plotOptions.children).length < 66) {
             throw new Error(
@@ -159,4 +159,4 @@ function jsDocOptions() {
     });
 }
 
-Gulp.task('jsdoc-options', jsDocOptions);
+gulp.task('jsdoc-options', jsDocOptions);

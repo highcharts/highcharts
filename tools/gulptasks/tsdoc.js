@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
-const Path = require('path');
+const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -14,12 +14,12 @@ const Path = require('path');
 const SOURCE_CONFIGS = [
     'tsconfig-bullet.json'
 ].map(
-    fileName => Path.join('ts', 'masters-not-in-use-yet', fileName)
+    fileName => path.join('ts', 'masters-not-in-use-yet', fileName)
 );
 
 const TARGET_JSON = 'tree-typescript.json';
 
-const TARGET_DIRECTORY = Path.join('build', 'api');
+const TARGET_DIRECTORY = path.join('build', 'api');
 
 /* *
  *
@@ -33,18 +33,18 @@ const TARGET_DIRECTORY = Path.join('build', 'api');
  */
 function task() {
 
-    const Generators = require('highcharts-documentation-generators');
-    const LogLib = require('./lib/log');
+    const generators = require('highcharts-documentation-generators');
+    const log = require('./lib/log');
 
     return new Promise(resolve => {
 
-        LogLib.message('Generating', TARGET_DIRECTORY + '...');
+        log.message('Generating', TARGET_DIRECTORY + '...');
 
-        Generators.TypeDoc
+        generators.TypeDoc
             .task(SOURCE_CONFIGS[0], TARGET_DIRECTORY, TARGET_JSON)
-            .then(() => LogLib.success('Created', TARGET_DIRECTORY))
+            .then(() => log.success('Created', TARGET_DIRECTORY))
             .then(resolve);
     });
 }
 
-Gulp.task('tsdoc', Gulp.series('clean-api', task));
+gulp.task('tsdoc', gulp.series('clean-api', task));

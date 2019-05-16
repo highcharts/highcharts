@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
-const Path = require('path');
+const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -13,7 +13,7 @@ const Path = require('path');
 
 const CODE_DIRECTORY = 'code';
 
-const CONFIGURATION_FILE = Path.join('node_modules', '_gulptasks_scripts.json');
+const CONFIGURATION_FILE = path.join('node_modules', '_gulptasks_scripts.json');
 
 const CSS_DIRECTORY = 'css';
 
@@ -34,21 +34,21 @@ const TS_DIRECTORY = 'ts';
  */
 function saveRun() {
 
-    const FS = require('fs');
-    const FSLib = require('./lib/fs');
-    const StringLib = require('./lib/string');
+    const fs = require('fs');
+    const fslib = require('./lib/fs');
+    const stringlib = require('./lib/string');
 
-    const latestCodeHash = FSLib.getDirectoryHash(
-        CODE_DIRECTORY, true, StringLib.removeComments
+    const latestCodeHash = fslib.getDirectoryHash(
+        CODE_DIRECTORY, true, stringlib.removeComments
     );
-    const latestCSSHash = FSLib.getDirectoryHash(
-        CSS_DIRECTORY, true, StringLib.removeComments
+    const latestCSSHash = fslib.getDirectoryHash(
+        CSS_DIRECTORY, true, stringlib.removeComments
     );
-    const latestGFXHash = FSLib.getDirectoryHash(GFX_DIRECTORY);
-    const latestJSHash = FSLib.getDirectoryHash(
-        JS_DIRECTORY, true, StringLib.removeComments
+    const latestGFXHash = fslib.getDirectoryHash(GFX_DIRECTORY);
+    const latestJSHash = fslib.getDirectoryHash(
+        JS_DIRECTORY, true, stringlib.removeComments
     );
-    const latestTSHash = FSLib.getDirectoryHash(TS_DIRECTORY, true);
+    const latestTSHash = fslib.getDirectoryHash(TS_DIRECTORY, true);
 
     const configuration = {
         latestCodeHash,
@@ -58,7 +58,7 @@ function saveRun() {
         latestTSHash
     };
 
-    FS.writeFileSync(CONFIGURATION_FILE, JSON.stringify(configuration));
+    fs.writeFileSync(CONFIGURATION_FILE, JSON.stringify(configuration));
 }
 
 /**
@@ -69,10 +69,10 @@ function saveRun() {
  */
 function shouldRun() {
 
-    const FS = require('fs');
-    const FSLib = require('./lib/fs');
-    const LogLib = require('./lib/log');
-    const StringLib = require('./lib/string');
+    const fs = require('fs');
+    const fslib = require('./lib/fs');
+    const log = require('./lib/log');
+    const stringlib = require('./lib/string');
 
     let configuration = {
         latestCodeHash: '',
@@ -82,23 +82,23 @@ function shouldRun() {
         latestTSHash: ''
     };
 
-    if (FS.existsSync(CONFIGURATION_FILE)) {
+    if (fs.existsSync(CONFIGURATION_FILE)) {
         configuration = JSON.parse(
-            FS.readFileSync(CONFIGURATION_FILE).toString()
+            fs.readFileSync(CONFIGURATION_FILE).toString()
         );
     }
 
-    const latestCodeHash = FSLib.getDirectoryHash(
-        CODE_DIRECTORY, true, StringLib.removeComments
+    const latestCodeHash = fslib.getDirectoryHash(
+        CODE_DIRECTORY, true, stringlib.removeComments
     );
-    const latestCSSHash = FSLib.getDirectoryHash(
-        CSS_DIRECTORY, true, StringLib.removeComments
+    const latestCSSHash = fslib.getDirectoryHash(
+        CSS_DIRECTORY, true, stringlib.removeComments
     );
-    const latestGFXHash = FSLib.getDirectoryHash(GFX_DIRECTORY);
-    const latestJSHash = FSLib.getDirectoryHash(
-        JS_DIRECTORY, true, StringLib.removeComments
+    const latestGFXHash = fslib.getDirectoryHash(GFX_DIRECTORY);
+    const latestJSHash = fslib.getDirectoryHash(
+        JS_DIRECTORY, true, stringlib.removeComments
     );
-    const latestTSHash = FSLib.getDirectoryHash(TS_DIRECTORY, true);
+    const latestTSHash = fslib.getDirectoryHash(TS_DIRECTORY, true);
 
     if (latestCodeHash === configuration.latestCodeHash &&
         latestCSSHash === configuration.latestCSSHash &&
@@ -107,7 +107,7 @@ function shouldRun() {
         latestTSHash === configuration.latestTSHash
     ) {
 
-        LogLib.success(
+        log.success(
             '✓ Source code has not been modified' +
             ' since the last successful run.'
         );
@@ -131,13 +131,13 @@ function shouldRun() {
 function task() {
 
     const argv = require('yargs').argv;
-    const LogLib = require('./lib/log');
-    const ProcessLib = require('./lib/process');
+    const log = require('./lib/log');
+    const process = require('./lib/process');
 
-    if (ProcessLib.isRunning('scripts-watch')) {
-        LogLib.warn('Running watch process detected. Skipping task...');
+    if (process.isRunning('scripts-watch')) {
+        log.warn('Running watch process detected. Skipping task...');
         if (argv.force) {
-            ProcessLib.isRunning('scripts-watch', false, true);
+            process.isRunning('scripts-watch', false, true);
         } else {
             return Promise.resolve();
         }
@@ -147,15 +147,15 @@ function task() {
 
         if (shouldRun() ||
             argv.force ||
-            ProcessLib.isRunning('scripts_incomplete')
+            process.isRunning('scripts_incomplete')
         ) {
 
-            ProcessLib.isRunning('scripts_incomplete', true, true);
+            process.isRunning('scripts_incomplete', true, true);
 
-            Gulp.series('scripts-ts', 'scripts-css', 'scripts-js')(
+            gulp.series('scripts-ts', 'scripts-css', 'scripts-js')(
                 () => {
 
-                    ProcessLib.isRunning('scripts_incomplete', false, true);
+                    process.isRunning('scripts_incomplete', false, true);
 
                     saveRun();
 
@@ -164,7 +164,7 @@ function task() {
             );
         } else {
 
-            LogLib.message(
+            log.message(
                 'Hint: Run the `scripts-watch` task to watch the js directory.'
             );
 
@@ -173,4 +173,4 @@ function task() {
     });
 }
 
-Gulp.task('scripts', task);
+gulp.task('scripts', task);

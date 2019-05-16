@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -27,12 +27,12 @@ const Gulp = require('gulp');
 function task() {
 
     const argv = require('yargs').argv;
-    const Build = require('../build.js');
-    const LogLib = require('./lib/log');
+    const build = require('../build.js');
+    const log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
-        const BuildScripts = Build.getBuildScripts({
+        const BuildScripts = build.getBuildScripts({
             debug: (argv.d || argv.debug || false),
             files: (
                 (argv.file) ?
@@ -42,14 +42,14 @@ function task() {
             type: (argv.type || null)
         });
 
-        LogLib.message('Generating code...');
+        log.message('Generating code...');
 
         BuildScripts
             .fnFirstBuild()
-            .then(() => LogLib.success('Created code'))
+            .then(() => log.success('Created code'))
             .then(resolve)
             .catch(reject);
     });
 }
 
-Gulp.task('scripts-js', task);
+gulp.task('scripts-js', task);
