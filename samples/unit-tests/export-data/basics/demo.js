@@ -198,7 +198,7 @@ QUnit.test("Numeric", function (assert) {
 
 
 QUnit.test("Pie chart", function (assert) {
-    $('#container').highcharts({
+    var chart = Highcharts.chart('container', {
         series: [{
             data: [
                 ['', 1], // #7404, missing name
@@ -215,11 +215,24 @@ QUnit.test("Pie chart", function (assert) {
         '"Oranges",3';
 
     assert.equal(
-        $('#container').highcharts().getCSV(),
+        chart.getCSV(),
         csv,
         "Pie chart"
     );
-    $('#container').highcharts().destroy();
+
+    chart.series[0].setData([['p1', 1], ['p1', 2]]);
+
+    csv = '"Category","Series 1"\n' +
+        '"p1",1\n' +
+        '"p1",2';
+
+    assert.equal(
+        chart.getCSV(),
+        csv,
+        "Pie chart/sunburst with the same names (#10737)."
+    );
+
+    chart.destroy();
 });
 
 

@@ -422,13 +422,6 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                 key = point.x;
                 name = series.data[pIdx] && series.data[pIdx].name;
 
-                if (xTaken) {
-                    if (xTaken[key]) {
-                        key += '|' + pIdx;
-                    }
-                    xTaken[key] = true;
-                }
-
                 j = 0;
 
                 // Pies, funnels, geo maps etc. use point name in X row
@@ -436,6 +429,12 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                     key = name;
                 }
 
+                if (xTaken) {
+                    if (xTaken[key]) {
+                        key += '|' + pIdx;
+                    }
+                    xTaken[key] = true;
+                }
 
                 if (!rows[key]) {
                     // Generate the row
