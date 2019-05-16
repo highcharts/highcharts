@@ -42,6 +42,10 @@ require('./jsdoc-options');
 gulp.task(
     'jsdoc',
     gulp.series(
-        'jsdoc-clean', 'jsdoc-classes', 'jsdoc-namespace', 'jsdoc-options', jsDoc
+        'jsdoc-clean',
+        'jsdoc-classes',
+        'jsdoc-namespace',
+        'jsdoc-options',
+        jsDoc
     )
 );
