@@ -249,6 +249,10 @@ wrap(
             this[prop] = this.chart.columnGroup;
             this.chart.columnGroup.attr(this.getPlotBox());
             this[prop].survive = true;
+            if (prop === 'group' || prop === 'markerGroup') {
+                arguments[3] = 'visible';
+                // For 3D column group and markerGroup should be visible
+            }
         }
         return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
@@ -266,7 +270,8 @@ wrap(
         if (series.chart.is3d()) {
             series.data.forEach(function (point) {
                 point.visible = point.options.visible = vis =
-                    vis === undefined ? !point.visible : vis;
+                    vis === undefined ?
+                        !pick(series.visible, point.visible) : vis;
                 pointVis = vis ? 'visible' : 'hidden';
                 series.options.data[series.data.indexOf(point)] =
                     point.options;
