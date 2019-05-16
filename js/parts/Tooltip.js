@@ -530,6 +530,8 @@ H.Tooltip.prototype = {
      * @param {Array<Highchart.Points>} points
      *
      * @param {global.Event} [mouseEvent]
+     *
+     * @return {Array<number,number>}
      */
     getAnchor: function (points, mouseEvent) {
         var ret,
