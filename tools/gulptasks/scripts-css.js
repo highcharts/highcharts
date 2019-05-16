@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -33,21 +33,21 @@ const TARGET_DIRECTORY = 'code';
  */
 function task() {
 
-    const FS = require('fs');
-    const FSLib = require('./lib/fs');
-    const LogLib = require('./lib/log');
-    const mkDirP = require('mkdirp');
-    const Path = require('path');
-    const SASS = require('node-sass');
+    const fs = require('fs');
+    const fslib = require('./lib/fs');
+    const log = require('./lib/log');
+    const mkdir = require('mkdirp');
+    const path = require('path');
+    const sass = require('node-sass');
 
     return new Promise(resolve => {
 
-        LogLib.message('Generating css ...');
+        log.message('Generating css ...');
 
         COPY_DIRECTORIES.forEach(
-            copyPath => FSLib.copyAllFiles(
+            copyPath => fslib.copyAllFiles(
                 copyPath,
-                Path.join(TARGET_DIRECTORY, copyPath),
+                path.join(TARGET_DIRECTORY, copyPath),
                 true,
                 sourcePath => !sourcePath.endsWith('.scss')
             )
@@ -55,30 +55,30 @@ function task() {
 
         let targetPath;
 
-        FSLib
+        fslib
             .getFilePaths(SOURCE_DIRECTORY, true)
             .filter(sourcePath => sourcePath.endsWith('.scss'))
             .forEach(sourcePath => {
 
-                targetPath = Path.join(
+                targetPath = path.join(
                     TARGET_DIRECTORY, sourcePath.replace('.scss', '.css')
                 );
 
-                mkDirP.sync(Path.dirname(targetPath));
+                mkdir.sync(path.dirname(targetPath));
 
-                FS.writeFileSync(
+                fs.writeFileSync(
                     targetPath,
-                    SASS.renderSync({
+                    sass.renderSync({
                         file: sourcePath,
                         outputStyle: 'expanded'
                     }).css
                 );
             });
 
-        LogLib.success('Created CSS');
+        log.success('Created CSS');
 
         resolve();
     });
 }
 
-Gulp.task('scripts-css', task);
+gulp.task('scripts-css', task);

@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -18,14 +18,14 @@ const Gulp = require('gulp');
  */
 function jsDoc() {
 
-    const LogLib = require('./lib/log');
+    const log = require('./lib/log');
 
     return new Promise(resolve => {
 
-        LogLib.success('Created API documentation');
+        log.success('Created API documentation');
 
         if (!process.argv.includes('jsdoc-watch')) {
-            LogLib.message(
+            log.message(
                 'Hint: Run the `jsdoc-watch` task to start the JSDoc server.'
             );
         }
@@ -39,9 +39,9 @@ require('./jsdoc-classes');
 require('./jsdoc-namespace');
 require('./jsdoc-options');
 
-Gulp.task(
+gulp.task(
     'jsdoc',
-    Gulp.series(
+    gulp.series(
         'jsdoc-clean', 'jsdoc-classes', 'jsdoc-namespace', 'jsdoc-options', jsDoc
     )
 );

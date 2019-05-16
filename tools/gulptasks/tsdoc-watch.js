@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -27,23 +27,23 @@ const SOURCE_GLOBS = [
  */
 function task() {
 
-    const LogLib = require('./lib/log');
+    const log = require('./lib/log');
 
     return new Promise(resolve => {
 
         require('./tsdoc.js');
 
-        const watchProcess = Gulp.watch(SOURCE_GLOBS, Gulp.task('tsdoc'));
+        const watchProcess = gulp.watch(SOURCE_GLOBS, gulp.task('tsdoc'));
 
         watchProcess.on(
             'change',
-            filePath => LogLib.warn('Modified', filePath)
+            filePath => log.warn('Modified', filePath)
         );
 
-        LogLib.warn('Watching', SOURCE_GLOBS[0] + '...');
+        log.warn('Watching', SOURCE_GLOBS[0] + '...');
 
         resolve();
     });
 }
 
-Gulp.task('tsdoc-watch', Gulp.series('tsdoc', task));
+gulp.task('tsdoc-watch', gulp.series('tsdoc', task));

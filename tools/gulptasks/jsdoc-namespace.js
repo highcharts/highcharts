@@ -2,8 +2,8 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
-const Path = require('path');
+const gulp = require('gulp');
+const path = require('path');
 
 /* *
  *
@@ -11,11 +11,11 @@ const Path = require('path');
  *
  * */
 
-const LINT_DIRECTORY = Path.join('test', 'typescript-lint');
+const LINT_DIRECTORY = path.join('test', 'typescript-lint');
 
 const TREE_FILE = 'tree-namespace.json';
 
-const TSCONFIG_FILE = Path.join(LINT_DIRECTORY, 'tsconfig.json');
+const TSCONFIG_FILE = path.join(LINT_DIRECTORY, 'tsconfig.json');
 
 const TARGET_DIRECTORIES = [
     'gantt',
@@ -23,7 +23,7 @@ const TARGET_DIRECTORIES = [
     'highstock',
     'highmaps'
 ].map(
-    directoryName => Path.join('build', 'api', directoryName)
+    directoryName => path.join('build', 'api', directoryName)
 );
 
 /* *
@@ -40,14 +40,14 @@ const TARGET_DIRECTORIES = [
  */
 function checkCode() {
 
-    const FS = require('fs');
+    const fs = require('fs');
 
-    if (FS.existsSync('code/highcharts.src.js')) {
+    if (fs.existsSync('code/highcharts.src.js')) {
         return Promise.resolve();
     }
 
     return new Promise(resolve => {
-        Gulp.series('scripts-ts', 'scripts-js')(resolve);
+        gulp.series('scripts-ts', 'scripts-js')(resolve);
     });
 }
 
@@ -66,17 +66,17 @@ function checkCode() {
  */
 function jsDocNamespace() {
 
-    const FileSystem = require('../filesystem');
-    const FS = require('fs');
-    const jsdoc3 = require('gulp-jsdoc3');
-    const LogLib = require('./lib/log');
+    const fsys = require('../filesystem');
+    const fs = require('fs');
+    const jsdoc = require('gulp-jsdoc3');
+    const log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
         const codeFiles = JSON
-            .parse(FS.readFileSync(TSCONFIG_FILE)).files
-            .map(file => Path.normalize(
-                Path.join(Path.dirname(TSCONFIG_FILE), file)
+            .parse(fs.readFileSync(TSCONFIG_FILE)).files
+            .map(file => path.normalize(
+                path.join(path.dirname(TSCONFIG_FILE), file)
             ))
             .filter(file => (
                 file.indexOf('global.d.ts') === -1 &&
@@ -89,7 +89,7 @@ function jsDocNamespace() {
         const gulpOptions = [codeFiles, { read: false }],
             jsdoc3Options = {
                 plugins: [
-                    Path.join(
+                    path.join(
                         'node_modules', 'highcharts-documentation-generators',
                         'jsdoc', 'plugins', 'highcharts.namespace'
                     )
@@ -101,11 +101,11 @@ function jsDocNamespace() {
             return;
         }
 
-        LogLib.message('Generating', TREE_FILE + '...');
+        log.message('Generating', TREE_FILE + '...');
 
-        Gulp
+        gulp
             .src(...gulpOptions)
-            .pipe(jsdoc3(jsdoc3Options, error => {
+            .pipe(jsdoc(jsdoc3Options, error => {
 
                 if (error) {
                     reject(error);
@@ -115,20 +115,20 @@ function jsDocNamespace() {
                 Promise
                     .all(
                         TARGET_DIRECTORIES.map(
-                            targetDirectory => FileSystem.copyFile(
+                            targetDirectory => fsys.copyFile(
                                 TREE_FILE,
-                                Path.join(
+                                path.join(
                                     targetDirectory,
-                                    Path.basename(TREE_FILE)
+                                    path.basename(TREE_FILE)
                                 )
                             )
                         )
                     )
-                    .then(() => LogLib.success('Created', TREE_FILE))
+                    .then(() => log.success('Created', TREE_FILE))
                     .then(resolve)
                     .catch(resolve);
             }));
     });
 }
 
-Gulp.task('jsdoc-namespace', Gulp.series(checkCode, jsDocNamespace));
+gulp.task('jsdoc-namespace', gulp.series(checkCode, jsDocNamespace));

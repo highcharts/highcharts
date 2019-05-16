@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -26,9 +26,9 @@ const SOURCE_DIRECTORY = 'code';
  */
 function task() {
 
-    const Compile = require('../compile');
-    const FSLib = require('./lib/fs');
-    const LogLib = require('./lib/log');
+    const compile = require('../compile');
+    const fs = require('./lib/fs');
+    const log = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
@@ -36,7 +36,7 @@ function task() {
         const files = (
             (argv.files) ?
                 argv.files.split(',') :
-                FSLib
+                fs
                     .getFilePaths(SOURCE_DIRECTORY, true)
                     .filter(path => (
                         path.endsWith('.src.js') &&
@@ -45,14 +45,14 @@ function task() {
                     .map(path => path.substr(SOURCE_DIRECTORY.length + 1))
         );
 
-        LogLib.message('Compiling', SOURCE_DIRECTORY + '...');
+        log.message('Compiling', SOURCE_DIRECTORY + '...');
 
-        Compile
+        compile
             .compile(files, (SOURCE_DIRECTORY + '/'))
-            .then(() => LogLib.success('Compiled', SOURCE_DIRECTORY))
+            .then(() => log.success('Compiled', SOURCE_DIRECTORY))
             .then(resolve)
             .catch(reject);
     });
 }
 
-Gulp.task('scripts-compile', task);
+gulp.task('scripts-compile', task);
