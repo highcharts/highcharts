@@ -566,17 +566,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     }
 
                     // If oneToOne and no matching item is found, add one
-                    if (!item && oneToOne) {
-                        if (coll === 'series') {
-                            chart.addSeries(newOptions, false)
-                                .touched = true;
-                        } else if (coll === 'xAxis' || coll === 'yAxis') {
-                            chart.addAxis(newOptions, coll === 'xAxis', false)
-                                .touched = true;
-                        } else if (coll === 'annotations') {
-                            chart.addAnnotation(newOptions, false)
-                                .touched = true;
-                        }
+                    if (!item && oneToOne && chart.collectionsWithInit[coll]) {
+                        chart.collectionsWithInit[coll][0].apply(
+                            chart,
+                            // [newOptions, ...extraArguments, redraw=false]
+                            [
+                                newOptions
+                            ].concat(
+                                // Not all initializers require extra args
+                                chart.collectionsWithInit[coll][1] || []
+                            ).concat([
+                                false
+                            ])
+                        ).touched = true;
                     }
 
                 });
@@ -670,6 +672,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 
 });
+
+/**
+ * These collections (arrays) implement `Chart.addSomethig` method used in
+ * chart.update() to create new object in the collection. Equivalent for
+ * deleting is resolved by simple `Somethig.remove()`.
+ *
+ * Note: We need to define these references after initializers are bound to
+ * chart's prototype.
+ */
+Chart.prototype.collectionsWithInit = {
+    // collectionName: [ initializingMethod, [extraArguments] ]
+    xAxis: [Chart.prototype.addAxis, [true]],
+    yAxis: [Chart.prototype.addAxis, [false]],
+    series: [Chart.prototype.addSeries]
+};
 
 // extend the Point prototype for dynamic methods
 extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {

@@ -253,7 +253,8 @@ Chart.prototype.matchResponsiveRule = function (rule, matches) {
  */
 Chart.prototype.currentOptions = function (options) {
 
-    var ret = {};
+    var chart = this,
+        ret = {};
 
     /**
      * Recurse over a set of options and its current values,
@@ -265,7 +266,7 @@ Chart.prototype.currentOptions = function (options) {
         H.objectEach(options, function (val, key) {
             if (
                 !depth &&
-                ['series', 'xAxis', 'yAxis', 'annotations'].indexOf(key) > -1
+                chart.collectionsWithUpdate.indexOf(key) > -1
             ) {
                 val = splat(val);
 
