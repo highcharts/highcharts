@@ -3037,6 +3037,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              *
              * @sample {highcharts} highcharts/yaxis/stacklabels-enabled/
              *         Enabled stack total labels
+             * @sample {highcharts} highcharts/yaxis/stacklabels-enabled-waterfall/
+             *         Enabled stack labels in waterfall chart
              *
              * @since   2.1.5
              * @product highcharts
