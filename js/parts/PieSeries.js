@@ -336,6 +336,27 @@ seriesType(
         },
 
         /**
+         * The chart is represented as an empty circle if total sum of all
+         * points values is 0. Use properties like `stroke`,
+         * `'stroke-width'` & `fill` to maniupulate its look.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
+         *         Empty pie styled
+         *
+         * @type      {Highcharts.SVGAttributes}
+         * @default {stroke: '#aaa', 'stroke-width': 1, fill: 'none'}
+         * @private
+         */
+        emptySeries: {
+            /** @ignore-option */
+            stroke: '#aaa',
+            /** @ignore-option */
+            'stroke-width': 1,
+            /** @ignore-option */
+            fill: 'none'
+        },
+
+        /**
          * The end angle of the pie in degrees where 0 is top and 90 is right.
          * Defaults to `startAngle` plus 360.
          *
@@ -871,12 +892,64 @@ seriesType(
         },
 
         /**
-         * @private
-         * @deprecated
-         * @name Highcharts.seriesTypes.pie#drawGraph
-         * @type {null}
+         * @function Highcharts.seriesTypes.pie#drawGraph
+         *
+         * Called internally to draw auxiliary graph in pie-like series in
+         * situtation when the default graph is not sufficient enough to present
+         * the data well. Auxiliary graph is saved in the same object as
+         * regular graph.
          */
-        drawGraph: null,
+        drawGraph: function () {
+            var auxiliaryGraphExists = this.graph &&
+              this.graph.isAuxiliary;
+
+            // Draw auxiliary graph if there're no visible points
+            if (this.total === 0) {
+                // auxiliary graph doesn't exist yet
+                if (!auxiliaryGraphExists) {
+                    this.renderAuxiliaryGraph();
+                }
+            } else if (auxiliaryGraphExists) {
+                this.destroyAuxiliaryGraph();
+            }
+        },
+
+        /**
+         * Draw empty circle if pie's total (visible) value is 0.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.pie#renderAuxiliaryGraph
+         */
+        renderAuxiliaryGraph: function () {
+            var centerX = this.center[0],
+                centerY = this.center[1],
+                graphicOptions = merge(this.options.emptySeries, {
+                    cx: centerX,
+                    cy: centerY,
+                    r: this.center[2] / 2 - this.options.dataLabels.distance
+                });
+
+            this.graph = this.chart.renderer.circle(centerX,
+                centerY, 0)
+                .addClass('highcharts-graph')
+                .add(this.group);
+
+            this.graph.isAuxiliary = true;
+            this.graph.animate(graphicOptions);
+        },
+
+        /**
+         * Destroy the auxiliary graph object.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.pie#destroyAuxiliaryGraph
+         */
+        destroyAuxiliaryGraph: function () {
+            if (this.graph) {
+                this.graph.destroy();
+                delete this.graph;
+            }
+        },
 
         /**
          * Draw the data points
