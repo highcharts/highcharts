@@ -707,6 +707,7 @@ Chart.prototype.drawSeriesLabels = function () {
             points = series.interpolatedPoints,
             onArea = pick(labelOptions.onArea, !!series.area),
             label = series.labelBySeries,
+            isNew = !label,
             minFontSize = labelOptions.minFontSize,
             maxFontSize = labelOptions.maxFontSize,
             dataExtremes,
@@ -775,8 +776,7 @@ Chart.prototype.drawSeriesLabels = function () {
                         'stroke-width': 1,
                         zIndex: 3
                     })
-                    .add()
-                    .animate({ opacity: 1 }, { duration: 200 });
+                    .add();
             }
 
             bBox = label.getBBox();
@@ -936,7 +936,18 @@ Chart.prototype.drawSeriesLabels = function () {
                             anchorY: best.connectorPoint &&
                                 best.connectorPoint.plotY + paneTop
                         }))
-                        .animate(anim);
+                        .animate(
+                            anim,
+                            isNew ?
+                                // Default initial animation to a fraction of
+                                // the series animation (#9396)
+                                H.animObject(
+                                    series.options.animation
+                                ).duration * 0.2 :
+                                // On updating, default to the general chart
+                                // animation
+                                chart.renderer.globalAnimation
+                        );
 
                     // Record closest point to stick to for sync redraw
                     series.options.kdNow = true;
@@ -975,10 +986,7 @@ Chart.prototype.drawSeriesLabels = function () {
 function drawLabels(e) {
 
     var chart = this,
-        delay = Math.max(
-            H.animObject(chart.renderer.globalAnimation).duration,
-            250
-        );
+        delay = H.animObject(chart.renderer.globalAnimation).duration;
 
     chart.labelSeries = [];
     chart.labelSeriesMaxSum = 0;
