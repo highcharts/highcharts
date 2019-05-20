@@ -2707,14 +2707,12 @@ H.Series = H.seriesType(
             // use copy to prevent undetected changes (#9762)
             this.userOptions = seriesUserOptions;
 
-            // General series options take precedence over type options because
-            // otherwise, default type options like column.animation would be
-            // overwritten by the general option. But issues have been raised
-            // here (#3881), and the solution may be to distinguish between
-            // default option and userOptions like in the tooltip below.
             options = merge(
                 typeOptions,
                 plotOptions.series,
+                // #3881, chart instance plotOptions[type] should trump
+                // plotOptions.series
+                userOptions.plotOptions && userOptions.plotOptions[this.type],
                 seriesUserOptions
             );
 
