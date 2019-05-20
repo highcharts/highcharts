@@ -56,9 +56,9 @@ declare global {
         interface Dictionary<T> {
             [key: string]: T;
         }
-        interface EventCallbackFunction<T> {
-            (this: T, eventArguments: Dictionary<any>): void;
-            order?: number;
+        interface EventObject {
+            fn: Function;
+            order: number;
         }
         interface EventOptionsObject {
             order?: number;
@@ -109,7 +109,7 @@ declare global {
         function addEvent<T>(
             el: T,
             type: string,
-            fn: EventCallbackFunction<T>,
+            fn: Function,
             options?: EventOptionsObject
         ): Function;
         function animate(
@@ -227,7 +227,7 @@ declare global {
         function removeEvent<T> (
             el: T,
             type?: string,
-            fn?: EventCallbackFunction<T>
+            fn?: Function
         ): void
         function seriesType(
             type: string,
@@ -434,7 +434,7 @@ declare global {
  * The function callback to execute when the event is fired. The `this` context
  * contains the instance, that fired the event.
  *
- * @callback Highcharts.EventCallbackFunction<T>
+ * @callback Function
  *
  * @param {T} this
  *
@@ -2681,7 +2681,7 @@ H.objectEach({
  * @param {string} type
  *        The event type.
  *
- * @param {Highcharts.EventCallbackFunction<T>} fn
+ * @param {Function} fn
  *        The function callback to execute when the event is fired.
  *
  * @param {Highcharts.EventOptionsObject} [options]
@@ -2693,8 +2693,8 @@ H.objectEach({
 H.addEvent = function<T> (
     el: T,
     type: string,
-    fn: Highcharts.EventCallbackFunction<T>,
-    options?: Highcharts.EventOptionsObject
+    fn: Function,
+    options: Highcharts.EventOptionsObject = {}
 ): Function {
     /* eslint-enable valid-jsdoc */
     var events,
@@ -2730,18 +2730,18 @@ H.addEvent = function<T> (
         events[type] = [];
     }
 
-    events[type].push(fn);
+    const eventObject = {
+        fn,
+        order: typeof options.order === 'number' ? options.order : Infinity
+    };
+    events[type].push(eventObject);
 
     // Order the calls
-    fn.order = options && H.isNumber(options.order) ?
-        options.order as number :
-        Number.MAX_VALUE;
-
     events[type].sort(function (
-        a: Highcharts.EventCallbackFunction<T>,
-        b: Highcharts.EventCallbackFunction<T>
+        a: Highcharts.EventObject,
+        b: Highcharts.EventObject
     ): number {
-        return (a.order as number) - (b.order as number);
+        return a.order - b.order;
     });
 
     // Return a function that can be called to remove this event.
@@ -2763,7 +2763,7 @@ H.addEvent = function<T> (
  *        The type of events to remove. If undefined, all events are removed
  *        from the element.
  *
- * @param {Highcharts.EventCallbackFunction<T>} [fn]
+ * @param {Highcharts.EventObject} [fn]
  *        The specific callback to remove. If undefined, all events that match
  *        the element and optionally the type are removed.
  *
@@ -2772,7 +2772,7 @@ H.addEvent = function<T> (
 H.removeEvent = function<T> (
     el: T,
     type?: string,
-    fn?: Highcharts.EventCallbackFunction<T>
+    fn?: Function
 ): void {
     /* eslint-enable valid-jsdoc */
 
@@ -2782,12 +2782,12 @@ H.removeEvent = function<T> (
     /**
      * @private
      * @param {string} type - event type
-     * @param {Highcharts.EventCallbackFunction<T>} fn - callback
+     * @param {Function} fn - callback
      * @return {void}
      */
     function removeOneEvent(
         type: string,
-        fn: Highcharts.EventCallbackFunction<T>
+        fn: Function
     ): void {
         var removeEventListener = (
             (el as any).removeEventListener || H.removeEventListenerPolyfill
@@ -2822,7 +2822,7 @@ H.removeEvent = function<T> (
             if (eventCollection[n]) {
                 len = eventCollection[n].length;
                 while (len--) {
-                    removeOneEvent(n, eventCollection[n][len]);
+                    removeOneEvent(n, eventCollection[n][len].fn);
                 }
             }
         });
@@ -2833,13 +2833,16 @@ H.removeEvent = function<T> (
 
         if (eventCollection) {
             if (type) {
-                events = eventCollection[type] || [];
+                events = (
+                    eventCollection[type] || []
+                ) as Highcharts.EventObject[];
+
                 if (fn) {
-                    index = events.indexOf(fn);
-                    if (index > -1) {
-                        events.splice(index, 1);
-                        eventCollection[type] = events;
-                    }
+                    eventCollection[type] = events.filter(
+                        function (obj): boolean {
+                            return fn !== obj.fn;
+                        }
+                    );
                     removeOneEvent(type, fn);
 
                 } else {
@@ -2904,44 +2907,57 @@ H.fireEvent = function (
 
     } else {
 
-        ['protoEvents', 'hcEvents'].forEach(function (coll: string): void {
+        if (!(eventArguments as any).target) {
+            // We're running a custom event
 
-            if (el[coll]) {
-                events = el[coll][type] || [];
-                len = events.length;
+            H.extend(eventArguments as any, {
+                // Attach a simple preventDefault function to skip
+                // default handler if called. The built-in
+                // defaultPrevented property is not overwritable (#5112)
+                preventDefault: function (): void {
+                    (eventArguments as any).defaultPrevented = true;
+                },
+                // Setting target to native events fails with clicking
+                // the zoom-out button in Chrome.
+                target: el,
+                // If the type is not set, we're running a custom event
+                // (#2297). If it is set, we're running a browser event,
+                // and setting it will cause en error in IE8 (#2465).
+                type: type
+            });
+        }
 
-                if (!(eventArguments as any).target) {
-                    // We're running a custom event
+        const fireInOrder = (
+            protoEvents: Highcharts.EventObject[] = [],
+            hcEvents: Highcharts.EventObject[] = []
+        ): void => {
+            let iA = 0;
+            let iB = 0;
+            const length = protoEvents.length + hcEvents.length;
 
-                    H.extend(eventArguments as any, {
-                        // Attach a simple preventDefault function to skip
-                        // default handler if called. The built-in
-                        // defaultPrevented property is not overwritable (#5112)
-                        preventDefault: function (): void {
-                            (eventArguments as any).defaultPrevented = true;
-                        },
-                        // Setting target to native events fails with clicking
-                        // the zoom-out button in Chrome.
-                        target: el,
-                        // If the type is not set, we're running a custom event
-                        // (#2297). If it is set, we're running a browser event,
-                        // and setting it will cause en error in IE8 (#2465).
-                        type: type
-                    });
-                }
+            for (i = 0; i < length; i++) {
+                const obj = (
+                    !protoEvents[iA] ?
+                        hcEvents[iB++] :
+                        !hcEvents[iB] ?
+                            protoEvents[iA++] :
+                            protoEvents[iA].order <= hcEvents[iB].order ?
+                                protoEvents[iA++] :
+                                hcEvents[iB++]
+                );
 
-
-                for (i = 0; i < len; i++) {
-                    fn = events[i];
-
-                    // If the event handler return false, prevent the default
-                    // handler from executing
-                    if (fn && fn.call(el, eventArguments) === false) {
-                        (eventArguments as any).preventDefault();
-                    }
+                // If the event handler return false, prevent the default
+                // handler from executing
+                if (obj.fn.call(el, eventArguments as any) === false) {
+                    (eventArguments as any).preventDefault();
                 }
             }
-        });
+        };
+
+        fireInOrder(
+            el.protoEvents && el.protoEvents[type],
+            el.hcEvents && el.hcEvents[type]
+        );
     }
 
     // Run the default if not prevented
