@@ -40,6 +40,7 @@
         "object-shorthand": 0,
         "prefer-rest-params": 0,
         "@typescript-eslint/array-type": 0,
+        "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,
         "@typescript-eslint/no-namespace": 0,
         "@typescript-eslint/no-object-literal-type-assertion": 0,

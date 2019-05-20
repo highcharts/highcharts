@@ -1755,8 +1755,8 @@ H.formatSingle = function (
             val = H.numberFormat(
                 val,
                 decimals,
-                lang.decimalPoint,
-                format.indexOf(',') > -1 ? lang.thousandsSep : ''
+                (lang as any).decimalPoint,
+                format.indexOf(',') > -1 ? (lang as any).thousandsSep : ''
             );
         }
     } else {
@@ -2279,8 +2279,8 @@ H.numberFormat = function (
     thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
 
     // Language
-    decimalPoint = H.pick(decimalPoint, lang.decimalPoint);
-    thousandsSep = H.pick(thousandsSep, lang.thousandsSep);
+    decimalPoint = H.pick(decimalPoint, (lang as any).decimalPoint);
+    thousandsSep = H.pick(thousandsSep, (lang as any).thousandsSep);
 
     // Start building the return
     ret = number < 0 ? '-' : '';
@@ -3069,8 +3069,8 @@ H.seriesType = function (
         seriesTypes = H.seriesTypes;
 
     // Merge the options
-    defaultOptions.plotOptions[type] = H.merge(
-        defaultOptions.plotOptions[parent],
+    (defaultOptions.plotOptions as any)[type] = H.merge(
+        (defaultOptions.plotOptions as any)[parent],
         options
     );
 

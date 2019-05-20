@@ -46,7 +46,7 @@ declare global {
         class Time {
             public constructor(options: TimeOptions);
             public Date: DateConstructor;
-            private defaultOptions: object;
+            public defaultOptions: TimeOptions;
             public options: TimeOptions;
             public timezoneOffset?: number;
             public useUTC: boolean;
@@ -622,7 +622,7 @@ Highcharts.Time.prototype = {
         capitalize?: boolean
     ): string {
         if (!H.defined(timestamp) || isNaN(timestamp as any)) {
-            return H.defaultOptions.lang.invalidDate || '';
+            return (H.defaultOptions.lang as any).invalidDate || '';
         }
         format = H.pick(format, '%Y-%m-%d %H:%M:%S');
 
@@ -635,8 +635,8 @@ Highcharts.Time.prototype = {
             month = this.get('Month', date),
             fullYear = this.get('FullYear', date),
             lang = H.defaultOptions.lang,
-            langWeekdays = lang.weekdays,
-            shortWeekdays = lang.shortWeekdays,
+            langWeekdays = (lang as any).weekdays,
+            shortWeekdays = (lang as any).shortWeekdays,
             pad = H.pad,
 
             // List all format keys. Custom formats can be added from the
@@ -662,9 +662,9 @@ Highcharts.Time.prototype = {
 
                     // Month
                     // Short month, like 'Jan'
-                    b: lang.shortMonths[month],
+                    b: (lang as any).shortMonths[month],
                     // Long month, like 'January'
-                    B: lang.months[month],
+                    B: (lang as any).months[month],
                     // Two digit month number, 01 through 12
                     m: pad(month + 1),
                     // Month number, 1 through 12 (#8150)

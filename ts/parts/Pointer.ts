@@ -275,7 +275,8 @@ Highcharts.Pointer.prototype = {
 
         // Do we need to handle click on a touch device?
         this.runChartClick =
-            options.chart.events && !!options.chart.events.click;
+            (options.chart as any).events &&
+            !!(options.chart as any).events.click;
 
         this.pinchDown = [];
         this.lastValidTouch = {};
@@ -288,7 +289,9 @@ Highcharts.Pointer.prototype = {
              * @type {Highcharts.Tooltip}
              */
             chart.tooltip = new Tooltip(chart, options.tooltip);
-            this.followTouchMove = pick(options.tooltip.followTouchMove, true);
+            this.followTouchMove = pick(
+                (options.tooltip as any).followTouchMove, true
+            );
         }
 
         this.setDOMEvents();

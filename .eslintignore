@@ -1,6 +1,7 @@
 js/parts/Color.js
 js/parts/Globals.js
 js/parts/MSPointer.js
+js/parts/Options.js
 js/parts/Pointer.js
 js/parts/SvgRenderer.js
 js/parts/Time.js

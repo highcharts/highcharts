@@ -29,11 +29,16 @@ declare global {
     namespace Highcharts {
         type Axis = any; // @todo
         type Chart = any; // @todo
-        type Options = any; // @todo
+        type LabelFormatterCallbackFunction = any; // @todo
+        type PatternObject = any; // @todo
         type Point = any; // @todo
         type Series = any; // @todo
+        type SeriesOptionsType = any; // @todo
         type SeriesPlotBoxObject = any; // @todo
         type Tooltip = any; // @todo
+        type TooltipFormatterCallbackFunction = any; // @todo
+        type TooltipPositionerCallbackFunction = any; // @todo
+        type TooltipShapeValue = any; // @todo
         const Point: any; // @todo
         const Series: any; // @todo
         const Tooltip: any; // @todo
@@ -42,7 +47,6 @@ declare global {
         const charts: Array<Chart>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;
         const deg2rad: number;
-        const defaultOptions: any; // @todo
         const doc: Document;
         const hasBidiBug: boolean;
         const hasTouch: boolean;
@@ -50,6 +54,7 @@ declare global {
         const isFirefox: boolean;
         const isMS: boolean;
         const isSafari: boolean;
+        const isTouchDevice: boolean;
         const isWebKit: boolean;
         const noop: Function;
         const removeEventListenerPolyfill: any; // @todo
@@ -57,7 +62,6 @@ declare global {
         const win: Window;
         const seriesTypes: Dictionary<typeof Series>;
         const svg: boolean;
-        const time: typeof Highcharts.Time; // @todo
         function color(...args: Array<any>): any; // @todo
         function getOptions(): any; // @todo
     }
