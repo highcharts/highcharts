@@ -30,7 +30,7 @@ declare global {
         interface AlignObject {
             align?: AlignValue;
             alignByTranslate?: boolean;
-            verticalAlign?: AlignValue;
+            verticalAlign?: VerticalAlignValue;
             x?: number;
             y?: number;
         }
