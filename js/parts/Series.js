@@ -2399,7 +2399,9 @@ H.Series = H.seriesType(
                         // the event already exists.
                         !series.hcEvents ||
                         !series.hcEvents[eventType] ||
-                        series.hcEvents[eventType].indexOf(event) === -1
+                        !series.hcEvents[eventType].some(function (obj) {
+                            return obj.fn === event;
+                        })
                     )
                 ) {
                     addEvent(series, eventType, event);

@@ -178,7 +178,7 @@ import H from './Globals.js';
  * The function callback to execute when the event is fired. The `this` context
  * contains the instance, that fired the event.
  *
- * @callback Highcharts.EventCallbackFunction<T>
+ * @callback Function
  *
  * @param {T} this
  *
@@ -2035,7 +2035,7 @@ H.objectEach({
  * @param {string} type
  *        The event type.
  *
- * @param {Highcharts.EventCallbackFunction<T>} fn
+ * @param {Function} fn
  *        The function callback to execute when the event is fired.
  *
  * @param {Highcharts.EventOptionsObject} [options]
@@ -2045,6 +2045,7 @@ H.objectEach({
  *         A callback function to remove the added event.
  */
 H.addEvent = function (el, type, fn, options) {
+    if (options === void 0) { options = {}; }
     /* eslint-enable valid-jsdoc */
     var events, addEventListener = (el.addEventListener || H.addEventListenerPolyfill);
     // If we're setting events directly on the constructor, use a separate
@@ -2071,11 +2072,12 @@ H.addEvent = function (el, type, fn, options) {
     if (!events[type]) {
         events[type] = [];
     }
-    events[type].push(fn);
+    var eventObject = {
+        fn: fn,
+        order: typeof options.order === 'number' ? options.order : Infinity
+    };
+    events[type].push(eventObject);
     // Order the calls
-    fn.order = options && H.isNumber(options.order) ?
-        options.order :
-        Number.MAX_VALUE;
     events[type].sort(function (a, b) {
         return a.order - b.order;
     });
@@ -2097,7 +2099,7 @@ H.addEvent = function (el, type, fn, options) {
  *        The type of events to remove. If undefined, all events are removed
  *        from the element.
  *
- * @param {Highcharts.EventCallbackFunction<T>} [fn]
+ * @param {Highcharts.EventObject} [fn]
  *        The specific callback to remove. If undefined, all events that match
  *        the element and optionally the type are removed.
  *
@@ -2109,7 +2111,7 @@ H.removeEvent = function (el, type, fn) {
     /**
      * @private
      * @param {string} type - event type
-     * @param {Highcharts.EventCallbackFunction<T>} fn - callback
+     * @param {Function} fn - callback
      * @return {void}
      */
     function removeOneEvent(type, fn) {
@@ -2139,7 +2141,7 @@ H.removeEvent = function (el, type, fn) {
             if (eventCollection[n]) {
                 len = eventCollection[n].length;
                 while (len--) {
-                    removeOneEvent(n, eventCollection[n][len]);
+                    removeOneEvent(n, eventCollection[n][len].fn);
                 }
             }
         });
@@ -2148,13 +2150,11 @@ H.removeEvent = function (el, type, fn) {
         var eventCollection = el[coll];
         if (eventCollection) {
             if (type) {
-                events = eventCollection[type] || [];
+                events = (eventCollection[type] || []);
                 if (fn) {
-                    index = events.indexOf(fn);
-                    if (index > -1) {
-                        events.splice(index, 1);
-                        eventCollection[type] = events;
-                    }
+                    eventCollection[type] = events.filter(function (obj) {
+                        return fn !== obj.fn;
+                    });
                     removeOneEvent(type, fn);
                 }
                 else {
@@ -2206,38 +2206,46 @@ H.fireEvent = function (el, type, eventArguments, defaultFunction) {
         }
     }
     else {
-        ['protoEvents', 'hcEvents'].forEach(function (coll) {
-            if (el[coll]) {
-                events = el[coll][type] || [];
-                len = events.length;
-                if (!eventArguments.target) {
-                    // We're running a custom event
-                    H.extend(eventArguments, {
-                        // Attach a simple preventDefault function to skip
-                        // default handler if called. The built-in
-                        // defaultPrevented property is not overwritable (#5112)
-                        preventDefault: function () {
-                            eventArguments.defaultPrevented = true;
-                        },
-                        // Setting target to native events fails with clicking
-                        // the zoom-out button in Chrome.
-                        target: el,
-                        // If the type is not set, we're running a custom event
-                        // (#2297). If it is set, we're running a browser event,
-                        // and setting it will cause en error in IE8 (#2465).
-                        type: type
-                    });
-                }
-                for (i = 0; i < len; i++) {
-                    fn = events[i];
-                    // If the event handler return false, prevent the default
-                    // handler from executing
-                    if (fn && fn.call(el, eventArguments) === false) {
-                        eventArguments.preventDefault();
-                    }
+        if (!eventArguments.target) {
+            // We're running a custom event
+            H.extend(eventArguments, {
+                // Attach a simple preventDefault function to skip
+                // default handler if called. The built-in
+                // defaultPrevented property is not overwritable (#5112)
+                preventDefault: function () {
+                    eventArguments.defaultPrevented = true;
+                },
+                // Setting target to native events fails with clicking
+                // the zoom-out button in Chrome.
+                target: el,
+                // If the type is not set, we're running a custom event
+                // (#2297). If it is set, we're running a browser event,
+                // and setting it will cause en error in IE8 (#2465).
+                type: type
+            });
+        }
+        var fireInOrder = function (protoEvents, hcEvents) {
+            if (protoEvents === void 0) { protoEvents = []; }
+            if (hcEvents === void 0) { hcEvents = []; }
+            var iA = 0;
+            var iB = 0;
+            var length = protoEvents.length + hcEvents.length;
+            for (i = 0; i < length; i++) {
+                var obj = (!protoEvents[iA] ?
+                    hcEvents[iB++] :
+                    !hcEvents[iB] ?
+                        protoEvents[iA++] :
+                        protoEvents[iA].order <= hcEvents[iB].order ?
+                            protoEvents[iA++] :
+                            hcEvents[iB++]);
+                // If the event handler return false, prevent the default
+                // handler from executing
+                if (obj.fn.call(el, eventArguments) === false) {
+                    eventArguments.preventDefault();
                 }
             }
-        });
+        };
+        fireInOrder(el.protoEvents && el.protoEvents[type], el.hcEvents && el.hcEvents[type]);
     }
     // Run the default if not prevented
     if (defaultFunction && !eventArguments.defaultPrevented) {
