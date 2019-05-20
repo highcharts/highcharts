@@ -946,7 +946,7 @@ var sunburstSeries = {
         // #10669 - verify if all nodes have unique ids
         series.data.forEach(function (child) {
             if (nodeIds.indexOf(child.id) > -1) {
-                H.error('The id of node is not unique.');
+                H.error(31, false, series.chart);
             }
             // push id of current point
             nodeIds.push(child.id);
