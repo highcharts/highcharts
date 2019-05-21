@@ -85,8 +85,8 @@
 		"text": "<h1>Invalid instrument</h1><p>This happens when you try to use a sonification instrument that is not valid. If you are using a predefined instrument, make sure your spelling is correct.</p>"
 	},
 	"31": {
-		"title": "An id one of nodes is not unique",
-		"text": "<h1>An id one of nodes is not unique.</h1><p>This error occurs when using the same ids for two or more nodes.</p>"
+		"title": "Non-unique point or node id",
+		"text": "<h1>Non-unique point or node id</h1><p>This error occurs when using the same <code>id</code> for two or more points or nodes.</p>"
 	},
 	"meta": {
 		"files": [
