@@ -20,6 +20,10 @@ declare global {
     interface Math {
         easeInOutSine(pos: number): number;
     }
+    interface EventObject<T> {
+        fn: Highcharts.EventCallbackFunction<T>;
+        order: number
+    }
     namespace Highcharts {
         type CursorValue = (
             'alias'|'all-scroll'|'auto'|'cell'|'col-resize'|'context-menu'|
@@ -56,9 +60,8 @@ declare global {
         interface Dictionary<T> {
             [key: string]: T;
         }
-        interface EventObject {
-            fn: Function;
-            order: number;
+        interface EventCallbackFunction<T> {
+            (this: T, eventArguments: Dictionary<any>): (void | boolean);
         }
         interface EventOptionsObject {
             order?: number;
@@ -109,7 +112,7 @@ declare global {
         function addEvent<T>(
             el: T,
             type: string,
-            fn: Function,
+            fn: EventCallbackFunction<T>,
             options?: EventOptionsObject
         ): Function;
         function animate(
@@ -227,7 +230,7 @@ declare global {
         function removeEvent<T> (
             el: T,
             type?: string,
-            fn?: Function
+            fn?: EventCallbackFunction<T>
         ): void
         function seriesType(
             type: string,
@@ -434,7 +437,7 @@ declare global {
  * The function callback to execute when the event is fired. The `this` context
  * contains the instance, that fired the event.
  *
- * @callback Function
+ * @callback Highcharts.EventCallbackFunction<T>
  *
  * @param {T} this
  *
@@ -2681,7 +2684,7 @@ H.objectEach({
  * @param {string} type
  *        The event type.
  *
- * @param {Function} fn
+ * @param {Highcharts.EventCallbackFunction<T>} fn
  *        The function callback to execute when the event is fired.
  *
  * @param {Highcharts.EventOptionsObject} [options]
@@ -2693,7 +2696,7 @@ H.objectEach({
 H.addEvent = function<T> (
     el: T,
     type: string,
-    fn: Function,
+    fn: Highcharts.EventCallbackFunction<T>,
     options: Highcharts.EventOptionsObject = {}
 ): Function {
     /* eslint-enable valid-jsdoc */
@@ -2738,8 +2741,8 @@ H.addEvent = function<T> (
 
     // Order the calls
     events[type].sort(function (
-        a: Highcharts.EventObject,
-        b: Highcharts.EventObject
+        a: EventObject<T>,
+        b: EventObject<T>
     ): number {
         return a.order - b.order;
     });
@@ -2763,7 +2766,7 @@ H.addEvent = function<T> (
  *        The type of events to remove. If undefined, all events are removed
  *        from the element.
  *
- * @param {Highcharts.EventObject} [fn]
+ * @param {Highcharts.EventCallbackFunction<T>} [fn]
  *        The specific callback to remove. If undefined, all events that match
  *        the element and optionally the type are removed.
  *
@@ -2772,7 +2775,7 @@ H.addEvent = function<T> (
 H.removeEvent = function<T> (
     el: T,
     type?: string,
-    fn?: Function
+    fn?: Highcharts.EventCallbackFunction<T>
 ): void {
     /* eslint-enable valid-jsdoc */
 
@@ -2782,12 +2785,12 @@ H.removeEvent = function<T> (
     /**
      * @private
      * @param {string} type - event type
-     * @param {Function} fn - callback
+     * @param {Highcharts.EventCallbackFunction<T>} fn - callback
      * @return {void}
      */
     function removeOneEvent(
         type: string,
-        fn: Function
+        fn: Highcharts.EventCallbackFunction<T>
     ): void {
         var removeEventListener = (
             (el as any).removeEventListener || H.removeEventListenerPolyfill
@@ -2835,7 +2838,7 @@ H.removeEvent = function<T> (
             if (type) {
                 events = (
                     eventCollection[type] || []
-                ) as Highcharts.EventObject[];
+                ) as EventObject<T>[];
 
                 if (fn) {
                     eventCollection[type] = events.filter(
@@ -2928,8 +2931,8 @@ H.fireEvent = function (
         }
 
         const fireInOrder = (
-            protoEvents: Highcharts.EventObject[] = [],
-            hcEvents: Highcharts.EventObject[] = []
+            protoEvents: EventObject<any>[] = [],
+            hcEvents: EventObject<any>[] = []
         ): void => {
             let iA = 0;
             let iB = 0;
