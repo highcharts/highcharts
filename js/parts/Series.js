@@ -4730,6 +4730,26 @@ H.Series = H.seriesType(
 
                 } else if (graphPath.length) { // #1487
 
+                    /**
+                     * SVG element of area-based charts. Can be used for styling
+                     * purposes. If zones are configured, this element will be
+                     * hidden and replaced by multiple zone areas, accessible
+                     * via `series['zone-area-x']` (where x is a number,
+                     * starting with 0).
+                     *
+                     * @name Highcharts.Series#area
+                     * @type {Highcharts.SVGElement|undefined}
+                     */
+                    /**
+                     * SVG element of line-based charts. Can be used for styling
+                     * purposes. If zones are configured, this element will be
+                     * hidden and replaced by multiple zone lines, accessible
+                     * via `series['zone-graph-x']` (where x is a number,
+                     * starting with 0).
+                     *
+                     * @name Highcharts.Series#graph
+                     * @type {Highcharts.SVGElement|undefined}
+                     */
                     series[graphKey] = graph = series.chart.renderer
                         .path(graphPath)
                         .addClass(prop[1])
