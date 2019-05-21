@@ -1012,12 +1012,13 @@ H.clearTimeout = function (id) {
         clearTimeout(id);
     }
 };
+/* eslint-disable valid-jsdoc */
 /**
  * Utility function to extend an object with the members of another.
  *
  * @function Highcharts.extend<T>
  *
- * @param {T|undefined} a
+ * @param {T} a
  *        The object to be extended.
  *
  * @param {object} b
@@ -1027,6 +1028,7 @@ H.clearTimeout = function (id) {
  *         Object a, the original object.
  */
 H.extend = function (a, b) {
+    /* eslint-enable valid-jsdoc */
     var n;
     if (!a) {
         a = {};
