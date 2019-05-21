@@ -28,7 +28,7 @@
     "test": "npx gulp test --force --speak",
     "testall": "npx gulp test --browsers all --force --speak",
     "preci-test": "npm run ts-compile:test",
-    "ci-test": "npx gulp scripts && cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --browsers Mac.Safari,Mac.Firefox,Win.Edge",
+    "ci-test": "npx gulp scripts && cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --browsers Mac.Safari,Mac.Firefox",
     "prebuild": "rimraf build/ code/",
     "build": "npx gulp dist",
     "jsdoc": "npx gulp jsdoc --watch",
