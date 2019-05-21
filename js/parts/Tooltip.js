@@ -1048,8 +1048,9 @@ H.Tooltip.prototype = {
                             chart.chartWidth +
                             (
                                 // Scrollable plot area
-                                chart.scrollablePixels ?
-                                    chart.scrollablePixels - chart.marginRight :
+                                chart.scrollablePixelsX ?
+                                    chart.scrollablePixelsX -
+                                        chart.marginRight :
                                     0
                             ) -
                             boxWidth
