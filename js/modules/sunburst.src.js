@@ -887,7 +887,7 @@ var sunburstSeries = {
             nodeTop,
             tree,
             values,
-            nodeIds = [];
+            nodeIds = {};
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
         // Call prototype function
@@ -945,15 +945,15 @@ var sunburstSeries = {
 
         // #10669 - verify if all nodes have unique ids
         series.data.forEach(function (child) {
-            if (nodeIds.indexOf(child.id) > -1) {
+            if (nodeIds[child.id]) {
                 H.error(31, false, series.chart);
             }
-            // push id of current point
-            nodeIds.push(child.id);
+            // map
+            nodeIds[child.id] = true;
         });
 
-        // remove array
-        nodeIds.length = 0;
+        // reset object
+        nodeIds = {};
     },
 
     // Animate the slices in. Similar to the animation of polar charts.
