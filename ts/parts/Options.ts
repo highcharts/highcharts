@@ -2231,12 +2231,19 @@ H.defaultOptions = {
 
     /**
      * HTML labels that can be positioned anywhere in the chart area.
+     *
+     * This option is deprecated since v7.1.2. Instead, use
+     * [annotations](#annotations) that supports labels.
+     *
+     * @deprecated
+     * @product   highcharts highstock
      */
     labels: {
 
         /**
          * An HTML label that can be positioned anywhere in the chart area.
          *
+         * @deprecated
          * @type      {Array<*>}
          * @apioption labels.items
          */
@@ -2244,6 +2251,7 @@ H.defaultOptions = {
         /**
          * Inner HTML or text for the label.
          *
+         * @deprecated
          * @type      {string}
          * @apioption labels.items.html
          */
@@ -2257,6 +2265,7 @@ H.defaultOptions = {
          *     top: '100px'
          * }</pre>
          *
+         * @deprecated
          * @type      {Highcharts.CSSObject}
          * @apioption labels.items.style
          */
@@ -2264,16 +2273,17 @@ H.defaultOptions = {
         /**
          * Shared CSS styles for all labels.
          *
+         * @deprecated
          * @type    {Highcharts.CSSObject}
          * @default {"color": "#333333", "position": "absolute"}
          */
         style: {
             /**
-             * @ignore
+             * @ignore-option
              */
             position: 'absolute',
             /**
-             * @ignore
+             * @ignore-option
              */
             color: '${palette.neutralColor80}'
         }
