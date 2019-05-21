@@ -22,7 +22,7 @@ declare global {
     }
     interface EventObject<T> {
         fn: Highcharts.EventCallbackFunction<T>;
-        order: number
+        order: number;
     }
     namespace Highcharts {
         type CursorValue = (
