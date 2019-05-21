@@ -28,17 +28,53 @@ declare global {
     function parseFloat (value: (number|string)): number;
     namespace Highcharts {
         type Axis = any; // @todo
-        type Chart = any; // @todo
+        type AxisOptions = any; // @todo
         type LabelFormatterCallbackFunction = any; // @todo
+        type Legend = any; // @todo
         type PatternObject = any; // @todo
         type Point = any; // @todo
         type Series = any; // @todo
+        type SeriesOptions = any; // @todo
         type SeriesOptionsType = any; // @todo
         type SeriesPlotBoxObject = any; // @todo
         type Tooltip = any; // @todo
         type TooltipFormatterCallbackFunction = any; // @todo
         type TooltipPositionerCallbackFunction = any; // @todo
         type TooltipShapeValue = any; // @todo
+        interface Chart {
+            [key: string]: any;
+            hoverPoint?: any; // @todo
+            hoverPoints?: any; // @todo
+            hoverSeries?: any; // @todo
+            inverted?: any; // @todo
+            isPrinting?: any; // @todo
+            mapCredits?: any; // @todo
+            marginBottom?: any; // @todo
+            marginRight?: any; // @todo
+            openMenu?: any; // @todo
+            runTrackerClick?: any; // @todo
+            scroller?: any; // @todo
+            tooltip?: any; // @todo
+            getStacks: Function; // @todo
+            isReadyToRender: Function; // @todo
+            pan: Function; // @todo
+            setResponsive: Function; // @todo
+            zoom: Function; // @todo
+        }
+        interface ChartOptions {
+            forExport?: any; // @todo
+            renderer?: any; // @todo
+            skipClone?: any; // @todo
+        }
+        interface Options {
+            exporting?: any; // @todo
+            isStock?: boolean; // @todo
+            series?: (Array<Dictionary<SeriesOptions>>); // @todo
+            xAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
+            yAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
+        }
+        const Axis: any; // @todo
+        const Legend: any; // @todo
         const Point: any; // @todo
         const Series: any; // @todo
         const Tooltip: any; // @todo
@@ -56,6 +92,7 @@ declare global {
         const isSafari: boolean;
         const isTouchDevice: boolean;
         const isWebKit: boolean;
+        const marginNames: Array<string>;
         const noop: Function;
         const removeEventListenerPolyfill: any; // @todo
         const symbolSizes: Dictionary<SizeObject>;

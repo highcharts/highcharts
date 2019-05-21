@@ -154,11 +154,14 @@ declare global {
             ): SVGElement;
             public applyTextOutline(textOutline: string): void;
             public attr(
+                hash: string
+            ): (number|string)
+            public attr(
                 hash?: (string|SVGAttributes),
                 val?: string,
                 complete?: Function,
                 continueAnimation?: boolean
-            ): (number|string|SVGElement)
+            ): SVGElement;
             public clip(clipRect?: ClipRectElement): SVGElement;
             public complexColor(
                 color: GradientColorObject,
@@ -194,7 +197,6 @@ declare global {
             public hide(): SVGElement;
             public init(renderer: SVGRenderer, nodeName: string): void;
             public invert(inverted: boolean): SVGElement
-            public isHidden(): boolean
             public matrixSetter(value: any, key: string): void;
             public on(eventType: string, handler: Function): SVGElement;
             public opacitySetter(
@@ -330,6 +332,8 @@ declare global {
             public createElement(nodeName: string): SVGElement;
             public crispLine(points: SVGPathArray, width: number): SVGPathArray;
             public definition(def: SVGDefinitionObject): SVGElement;
+            /** @deprecated */
+            public draw(): void;
             public g(name: string): SVGElement;
             public getContrast(rgba: ColorString): ColorString;
             public getRadialAttr(
@@ -358,6 +362,7 @@ declare global {
                 allowHTML?: boolean,
                 styledMode?: boolean
             ): void;
+            public isHidden(): boolean
             public label(
                 str: string,
                 x: number,
@@ -415,6 +420,7 @@ declare global {
                 getString: Function
             ): boolean;
         }
+        let Renderer: SVGRenderer;
     }
 }
 
@@ -1001,6 +1007,7 @@ extend((
      * @return {void}
      */
     complexColor: function (
+        this: Highcharts.SVGElement,
         color: Highcharts.GradientColorObject,
         prop: string,
         elem: Highcharts.SVGDOMElement
@@ -1275,6 +1282,12 @@ extend((
     ],
 
     /**
+     * @function Highcharts.SVGElement#attr
+     *
+     * @param {string} hash
+     *
+     * @return {Highcharts.SVGElement}
+     *//**
      * Apply native and custom attributes to the SVG elements.
      *
      * In order to set the rotation center for rotation, set x and y to 0 and
@@ -1324,7 +1337,7 @@ extend((
      *        step. Otherwise, calling `.attr` for an attribute will stop
      *        animation for that attribute.
      *
-     * @return {number|string|Highcharts.SVGElement}
+     * @return {Highcharts.SVGElement}
      *         If used as a setter, it returns the current
      *         {@link Highcharts.SVGElement} so the calls can be chained. If
      *         used as a getter, the current value of the attribute is returned.
@@ -2221,7 +2234,7 @@ extend((
         rot?: number
     ): Highcharts.BBoxObject {
         var wrapper = this,
-            bBox, // = wrapper.bBox,
+            bBox: any, // = wrapper.bBox,
             renderer = wrapper.renderer,
             width,
             height,
@@ -2306,7 +2319,7 @@ extend((
                     bBox = (element as any).getBBox ?
                         // SVG: use extend because IE9 is not allowed to change
                         // width and height in case of rotation (below)
-                        extend({}, (element as any).getBBox()) : {
+                        extend({} as any, (element as any).getBBox()) : {
 
                             // Legacy IE in export mode
                             width: (element as any).offsetWidth,
@@ -2325,7 +2338,7 @@ extend((
                 // other condition is for Opera that returns a width of
                 // -Infinity on hidden elements.
                 if (!bBox || bBox.width < 0) {
-                    bBox = { width: 0, height: 0 };
+                    bBox = { width: 0, height: 0 } as any;
                 }
 
 
@@ -3703,7 +3716,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @return {boolean}
      *         True if it is hidden.
      */
-    isHidden: function (): boolean { // #608
+    isHidden: function (
+        this: Highcharts.SVGRenderer
+    ): boolean { // #608
         return !this.boxWrapper.getBBox().width;
     },
 
@@ -3714,21 +3729,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @return {null}
      */
-    destroy: function (): null {
+    destroy: function (
+        this: Highcharts.SVGRenderer
+    ): null {
         var renderer = this,
             rendererDefs = renderer.defs;
 
-        renderer.box = null;
-        renderer.boxWrapper = renderer.boxWrapper.destroy();
+        renderer.box = null as any;
+        renderer.boxWrapper = renderer.boxWrapper.destroy() as any;
 
         // Call destroy on all gradient elements
         destroyObjectProperties(renderer.gradients || {});
-        renderer.gradients = null;
+        renderer.gradients = null as any;
 
         // Defs are null in VMLRenderer
         // Otherwise, destroy them here.
         if (rendererDefs) {
-            renderer.defs = rendererDefs.destroy();
+            renderer.defs = rendererDefs.destroy() as any;
         }
 
         // Remove sub pixel fix handler (#982)
@@ -3736,7 +3753,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             renderer.unSubPixelFix();
         }
 
-        renderer.alignedObjects = null;
+        renderer.alignedObjects = null as any;
 
         return null;
     },
@@ -4560,13 +4577,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 );
 
             if (!styledMode) {
-                (label
+                label
                     .attr([
                         normalState,
                         hoverState,
                         pressedState,
                         disabledState
-                    ][state || 0]) as any)
+                    ][state || 0])
                     .css([
                         normalStyle,
                         hoverStyle,
@@ -4771,6 +4788,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *         The generated wrapper element.
      */
     arc: function (
+        this: Highcharts.SVGRenderer,
         x?: (number|Highcharts.SVGAttributes),
         y?: number,
         r?: number,
@@ -4782,7 +4800,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             options: Highcharts.SVGAttributes;
 
         if (isObject(x)) {
-            options = x as any;
+            options = x as Highcharts.SVGAttributes;
             y = options.y;
             r = options.r;
             innerR = options.innerR;
@@ -4799,7 +4817,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
         // Arcs are defined as symbols for the ability to set
         // attributes in attr and animate
-        arc = this.symbol('arc', x, y, r, r, options);
+        arc = this.symbol(
+            'arc',
+            x as number,
+            y,
+            r,
+            r,
+            options as Highcharts.SymbolOptionsObject
+        );
         arc.r = r; // #959
         return arc;
     },
@@ -6234,4 +6259,4 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
 
 // general renderer
-(H as any).Renderer = SVGRenderer;
+H.Renderer = SVGRenderer;

@@ -1015,15 +1015,15 @@ H.clearTimeout = function (id) {
 /**
  * Utility function to extend an object with the members of another.
  *
- * @function Highcharts.extend
+ * @function Highcharts.extend<T>
  *
- * @param {Highcharts.Dictionary<*>} a
+ * @param {T|undefined} a
  *        The object to be extended.
  *
- * @param {Highcharts.Dictionary<*>} b
+ * @param {object} b
  *        The object to add to the first one.
  *
- * @return {Highcharts.Dictionary<*>}
+ * @return {T}
  *         Object a, the original object.
  */
 H.extend = function (a, b) {
