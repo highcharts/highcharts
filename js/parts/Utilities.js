@@ -178,7 +178,7 @@ import H from './Globals.js';
  * The function callback to execute when the event is fired. The `this` context
  * contains the instance, that fired the event.
  *
- * @callback Function
+ * @callback Highcharts.EventCallbackFunction<T>
  *
  * @param {T} this
  *
@@ -2035,7 +2035,7 @@ H.objectEach({
  * @param {string} type
  *        The event type.
  *
- * @param {Function} fn
+ * @param {Highcharts.EventCallbackFunction<T>} fn
  *        The function callback to execute when the event is fired.
  *
  * @param {Highcharts.EventOptionsObject} [options]
@@ -2099,7 +2099,7 @@ H.addEvent = function (el, type, fn, options) {
  *        The type of events to remove. If undefined, all events are removed
  *        from the element.
  *
- * @param {Highcharts.EventObject} [fn]
+ * @param {Highcharts.EventCallbackFunction<T>} [fn]
  *        The specific callback to remove. If undefined, all events that match
  *        the element and optionally the type are removed.
  *
@@ -2111,7 +2111,7 @@ H.removeEvent = function (el, type, fn) {
     /**
      * @private
      * @param {string} type - event type
-     * @param {Function} fn - callback
+     * @param {Highcharts.EventCallbackFunction<T>} fn - callback
      * @return {void}
      */
     function removeOneEvent(type, fn) {
