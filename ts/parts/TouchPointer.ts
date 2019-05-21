@@ -153,7 +153,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
             XY = horiz ? 'X' : 'Y',
             sChartXY = 'chart' + XY,
             wh = horiz ? 'width' : 'height',
-            plotLeftTop = chart['plot' + (horiz ? 'Left' : 'Top')],
+            plotLeftTop = (chart as any)['plot' + (horiz ? 'Left' : 'Top')],
             selectionWH: any,
             selectionXY,
             clipXY: any,
@@ -177,8 +177,9 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
                 }
 
                 clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
-                selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] /
-                    scale;
+                selectionWH = (chart as any)[
+                    'plot' + (horiz ? 'Width' : 'Height')
+                ] / scale;
             };
 
         // Set the scale, first pass
@@ -342,7 +343,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
                 self.selectionMarker = selectionMarker = extend({
                     destroy: noop,
                     touch: true
-                }, chart.plotBox);
+                }, chart.plotBox as any);
             }
 
             self.pinchTranslate(

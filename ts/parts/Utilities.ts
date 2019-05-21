@@ -155,10 +155,7 @@ declare global {
             stop?: boolean,
             chart?: Chart
         ): void;
-        function extend(
-            a: Dictionary<any>,
-            b: Dictionary<any>
-        ): Dictionary<any>;
+        function extend<T>(a: T, b: object): T;
         function extendClass(
             parent: any,
             members: Dictionary<any>
@@ -1447,31 +1444,30 @@ H.clearTimeout = function (id: number): void {
     }
 };
 
+/* eslint-disable valid-jsdoc */
 /**
  * Utility function to extend an object with the members of another.
  *
- * @function Highcharts.extend
+ * @function Highcharts.extend<T>
  *
- * @param {Highcharts.Dictionary<*>} a
+ * @param {T} a
  *        The object to be extended.
  *
- * @param {Highcharts.Dictionary<*>} b
+ * @param {object} b
  *        The object to add to the first one.
  *
- * @return {Highcharts.Dictionary<*>}
+ * @return {T}
  *         Object a, the original object.
  */
-H.extend = function (
-    a: Highcharts.Dictionary<any>,
-    b: Highcharts.Dictionary<any>
-): Highcharts.Dictionary<any> {
+H.extend = function<T> (a: T, b: object): T {
+    /* eslint-enable valid-jsdoc */
     var n;
 
     if (!a) {
-        a = {};
+        a = {} as any;
     }
     for (n in b) { // eslint-disable-line guard-for-in
-        a[n] = b[n];
+        (a as any)[n] = (b as any)[n];
     }
     return a;
 };
@@ -2153,7 +2149,7 @@ H.setAnimation = function (
 ): void {
     chart.renderer.globalAnimation = H.pick(
         animation,
-        chart.options.chart.animation,
+        (chart.options.chart as any).animation,
         true
     );
 };

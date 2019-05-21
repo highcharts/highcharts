@@ -76,8 +76,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
                         Math.abs(touch0Start - touch1Start);
             }
             clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
-            selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] /
-                scale;
+            selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] / scale;
         };
         // Set the scale, first pass
         setScale();

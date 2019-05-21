@@ -18,6 +18,12 @@ import Highcharts from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface Chart {
+            cancelClick?: boolean;
+            mouseDownX?: number;
+            mouseDownY?: number;
+            mouseIsDown?: (boolean|string);
+        }
         interface PointerAxisCoordinateObject {
             axis: Axis;
             value: number;
@@ -314,7 +320,7 @@ Highcharts.Pointer.prototype = {
         e: Event
     ): void {
         var chart = this.chart,
-            options = chart.options.chart,
+            options = chart.options.chart as Highcharts.ChartOptions,
             zoomType = options.zoomType || '',
             inverted = chart.inverted,
             zoomX,
@@ -1016,7 +1022,7 @@ Highcharts.Pointer.prototype = {
         });
 
         // Clip
-        chart.clipRect.attr(clip || chart.clipBox);
+        (chart.clipRect as any).attr(clip || chart.clipBox);
     },
 
     /**
@@ -1059,7 +1065,7 @@ Highcharts.Pointer.prototype = {
     ): void {
 
         var chart = this.chart,
-            chartOptions = chart.options.chart,
+            chartOptions = chart.options.chart as Highcharts.ChartOptions,
             chartX = e.chartX,
             chartY = e.chartY,
             zoomHor = this.zoomHor,
@@ -1163,7 +1169,7 @@ Highcharts.Pointer.prototype = {
 
             // panning
             if (clickedInside && !selectionMarker && chartOptions.panning) {
-                chart.pan(e, chartOptions.panning);
+                (chart.pan as any)(e, chartOptions.panning);
             }
         }
     },
@@ -1254,7 +1260,7 @@ Highcharts.Pointer.prototype = {
                         'selection',
                         selectionData,
                         function (args: object): void {
-                            chart.zoom(
+                            (chart.zoom as any)(
                                 extend(
                                     args,
                                     hasPinched ?
@@ -1281,7 +1287,7 @@ Highcharts.Pointer.prototype = {
         // Reset all. Check isNumber because it may be destroyed on mouse up
         // (#877)
         if (chart && isNumber(chart.index)) {
-            css(chart.container, { cursor: chart._cursor });
+            css(chart.container, { cursor: chart._cursor as any });
             chart.cancelClick = this.hasDragged > 10; // #370
             chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
             this.pinchDown = [];
@@ -1589,18 +1595,14 @@ Highcharts.Pointer.prototype = {
             container = pointer.chart.container,
             ownerDoc = container.ownerDocument;
 
-        container.onmousedown = function (
-            e: Highcharts.PointerEventObject
-        ): void {
-            pointer.onContainerMouseDown(e);
+        container.onmousedown = function (e: MouseEvent): void {
+            pointer.onContainerMouseDown(e as any);
         };
-        container.onmousemove = function (
-            e: Highcharts.PointerEventObject
-        ): void {
-            pointer.onContainerMouseMove(e);
+        container.onmousemove = function (e: MouseEvent): void {
+            pointer.onContainerMouseMove(e as any);
         };
-        container.onclick = function (e: Highcharts.PointerEventObject): void {
-            pointer.onContainerClick(e);
+        container.onclick = function (e: MouseEvent): void {
+            pointer.onContainerClick(e as any);
         };
         this.unbindContainerMouseLeave = addEvent(
             container,
@@ -1615,15 +1617,11 @@ Highcharts.Pointer.prototype = {
             );
         }
         if (H.hasTouch) {
-            container.ontouchstart = function (
-                e: Highcharts.PointerEventObject
-            ): void {
-                (pointer as any).onContainerTouchStart(e);
+            container.ontouchstart = function (e: TouchEvent): void {
+                pointer.onContainerTouchStart(e as any);
             };
-            container.ontouchmove = function (
-                e: Highcharts.PointerEventObject
-            ): void {
-                (pointer as any).onContainerTouchMove(e);
+            container.ontouchmove = function (e: TouchEvent): void {
+                pointer.onContainerTouchMove(e as any);
             };
             if (!H.unbindDocumentTouchEnd) {
                 H.unbindDocumentTouchEnd = addEvent(

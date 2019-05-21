@@ -981,7 +981,7 @@ Highcharts.Time.prototype = {
 
 
         // record information on the chosen unit - for dynamic label formatter
-        tickPositions.info = extend(normalizedInterval, {
+        tickPositions.info = extend(normalizedInterval as any, {
             higherRanks: higherRanks,
             totalRange: interval * count
         }) as Highcharts.TimeTicksInfoObject;
