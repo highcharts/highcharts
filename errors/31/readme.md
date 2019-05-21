@@ -1,3 +1,3 @@
-# An id one of nodes is not unique
+# Non-unique point or node id
 
-This error occurs when using the same ids for two or more nodes.
+This error occurs when using the same `id` for two or more points or nodes.
