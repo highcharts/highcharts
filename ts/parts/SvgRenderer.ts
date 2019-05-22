@@ -222,7 +222,7 @@ declare global {
                 textPathOptions: object
             ): SVGElement;
             public shadow(
-                shadowOptions: (boolean|ShadowOptionsObject),
+                shadowOptions?: (boolean|ShadowOptionsObject),
                 group?: SVGElement,
                 cutOff?: boolean
             ): SVGElement;
@@ -393,7 +393,7 @@ declare global {
             public setSize(
                 width: number,
                 height: number,
-                animate: (boolean|AnimationOptionsObject)
+                animate?: (boolean|AnimationOptionsObject)
             ): void;
             public setStyle(style: CSSObject): void;
             public symbol(
@@ -2641,7 +2641,7 @@ extend((
      *
      * @function Highcharts.SVGElement#shadow
      *
-     * @param {boolean|Highcharts.ShadowOptionsObject} shadowOptions
+     * @param {boolean|Highcharts.ShadowOptionsObject} [shadowOptions]
      *        The shadow options. If `true`, the default options are applied. If
      *        `false`, the current shadow will be removed.
      *
@@ -2659,7 +2659,7 @@ extend((
      */
     shadow: function (
         this: Highcharts.SVGElement,
-        shadowOptions: (boolean|Highcharts.ShadowOptionsObject),
+        shadowOptions?: (boolean|Highcharts.ShadowOptionsObject),
         group?: Highcharts.SVGElement,
         cutOff?: boolean
     ): Highcharts.SVGElement {
@@ -4944,7 +4944,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         this: Highcharts.SVGRenderer,
         width: number,
         height: number,
-        animate: (boolean|Highcharts.AnimationOptionsObject)
+        animate?: (boolean|Highcharts.AnimationOptionsObject)
     ): void {
         var renderer = this,
             alignedObjects = renderer.alignedObjects,

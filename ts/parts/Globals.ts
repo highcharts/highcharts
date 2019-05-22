@@ -42,7 +42,6 @@ declare global {
         type TooltipPositionerCallbackFunction = any; // @todo
         type TooltipShapeValue = any; // @todo
         interface Chart {
-            [key: string]: any;
             hoverPoint?: any; // @todo
             hoverPoints?: any; // @todo
             hoverSeries?: any; // @todo
@@ -69,7 +68,6 @@ declare global {
         interface Options {
             exporting?: any; // @todo
             isStock?: boolean; // @todo
-            series?: (Array<Dictionary<SeriesOptions>>); // @todo
             xAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
             yAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
         }
@@ -80,7 +78,7 @@ declare global {
         const Tooltip: any; // @todo
         const SVG_NS: string;
         const addEventListenerPolyfill: any; // @todo
-        const charts: Array<Chart>;
+        const charts: Array<Chart|undefined>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;
         const deg2rad: number;
         const doc: Document;
@@ -164,7 +162,7 @@ var H: GlobalHighcharts = {
      * a chart is destroyed, the array item becomes `undefined`.
      *
      * @name Highcharts.charts
-     * @type {Array<Highcharts.Chart>}
+     * @type {Array<Highcharts.Chart|undefined>}
      */
     charts: [],
 

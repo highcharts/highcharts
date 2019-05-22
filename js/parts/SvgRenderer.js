@@ -1737,7 +1737,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @function Highcharts.SVGElement#shadow
      *
-     * @param {boolean|Highcharts.ShadowOptionsObject} shadowOptions
+     * @param {boolean|Highcharts.ShadowOptionsObject} [shadowOptions]
      *        The shadow options. If `true`, the default options are applied. If
      *        `false`, the current shadow will be removed.
      *

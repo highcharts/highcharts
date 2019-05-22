@@ -53,7 +53,7 @@ var H = {
      * a chart is destroyed, the array item becomes `undefined`.
      *
      * @name Highcharts.charts
-     * @type {Array<Highcharts.Chart>}
+     * @type {Array<Highcharts.Chart|undefined>}
      */
     charts: [],
     /**
