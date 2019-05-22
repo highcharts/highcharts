@@ -229,10 +229,12 @@ H.Tooltip.prototype = {
          * not be too complicated to implement.
          */
         this.outside = (
-            options.outside ||
-            chart.scrollablePixelsX ||
-            chart.scrollablePixelsY
-        ) && !this.split;
+            pick(
+                options.outside,
+                Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
+            ) &&
+            !this.split
+        );
     },
 
     /**

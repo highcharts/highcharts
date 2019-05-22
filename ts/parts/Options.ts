@@ -3368,11 +3368,14 @@ H.defaultOptions = {
          * overlaid on the page, allowing the tooltip to be aligned inside the
          * page itself.
          *
+         * Defaults to `true` if `chart.scrollablePlotArea` is activated,
+         * otherwise `false`.
+         *
          * @sample highcharts/tooltip/outside
          *         Small charts with tooltips outside
          *
-         * @type      {boolean}
-         * @default   false
+         * @type      {boolean|undefined}
+         * @default   undefined
          * @since     6.1.1
          * @apioption tooltip.outside
          */
