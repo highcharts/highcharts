@@ -1,4 +1,4 @@
-$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/us-counties-unemployment.json', function (data) {
+$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@c116b6fa6948448/samples/data/us-counties-unemployment.json', function (data) {
 
     /**
      * Data parsed from http://www.bls.gov/lau/#tables
@@ -25,72 +25,76 @@ $.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data
         mapPoint.name = mapPoint.name + ', ' + mapPoint.properties['hc-key'].substr(3, 2);
     });
 
+    document.getElementById('container').innerHTML = 'Rendering map...';
+
     // Create the map
-    Highcharts.mapChart('container', {
-        chart: {
-            borderWidth: 1,
-            marginRight: 20 // for the legend
-        },
-
-        title: {
-            text: 'US Counties unemployment rates, April 2015'
-        },
-
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            floating: true,
-            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)'
-        },
-
-        mapNavigation: {
-            enabled: true
-        },
-
-        colorAxis: {
-            min: 0,
-            max: 25,
-            tickInterval: 5,
-            stops: [[0, '#F1EEF6'], [0.65, '#900037'], [1, '#500007']],
-            labels: {
-                format: '{value}%'
-            }
-        },
-
-        plotOptions: {
-            mapline: {
-                showInLegend: false,
-                enableMouseTracking: false
-            }
-        },
-
-        series: [{
-            mapData: countiesMap,
-            data: data,
-            joinBy: ['hc-key', 'code'],
-            name: 'Unemployment rate',
-            tooltip: {
-                valueSuffix: '%'
+    setTimeout(function () { // Otherwise innerHTML doesn't update
+        Highcharts.mapChart('container', {
+            chart: {
+                borderWidth: 1,
+                marginRight: 20 // for the legend
             },
-            borderWidth: 0.5,
-            states: {
-                hover: {
-                    color: '#a4edba'
+
+            title: {
+                text: 'US Counties unemployment rates, April 2015'
+            },
+
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)'
+            },
+
+            mapNavigation: {
+                enabled: true
+            },
+
+            colorAxis: {
+                min: 0,
+                max: 25,
+                tickInterval: 5,
+                stops: [[0, '#F1EEF6'], [0.65, '#900037'], [1, '#500007']],
+                labels: {
+                    format: '{value}%'
                 }
             },
-            shadow: false
-        }, {
-            type: 'mapline',
-            name: 'State borders',
-            data: borderLines,
-            color: 'white',
-            shadow: false
-        }, {
-            type: 'mapline',
-            name: 'Separator',
-            data: separatorLines,
-            color: 'gray',
-            shadow: false
-        }]
-    });
+
+            plotOptions: {
+                mapline: {
+                    showInLegend: false,
+                    enableMouseTracking: false
+                }
+            },
+
+            series: [{
+                mapData: countiesMap,
+                data: data,
+                joinBy: ['hc-key', 'code'],
+                name: 'Unemployment rate',
+                tooltip: {
+                    valueSuffix: '%'
+                },
+                borderWidth: 0.5,
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                shadow: false
+            }, {
+                type: 'mapline',
+                name: 'State borders',
+                data: borderLines,
+                color: 'white',
+                shadow: false
+            }, {
+                type: 'mapline',
+                name: 'Separator',
+                data: separatorLines,
+                color: 'gray',
+                shadow: false
+            }]
+        });
+    }, 0);
 });
