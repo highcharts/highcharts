@@ -33,10 +33,12 @@ var addEvent = H.addEvent,
  * vertical scrolling, depending on whether the `minWidth` or `minHeight`
  * option is set.
  *
- * @sample {highcharts} highcharts/chart/scrollable-plotarea
+ * @sample highcharts/chart/scrollable-plotarea
  *         Scrollable plot area
- * @sample {highcharts} highcharts/chart/scrollable-plotarea-vertical
+ * @sample highcharts/chart/scrollable-plotarea-vertical
  *         Vertically scrollable plot area
+ * @sample {gantt} highcharts/chart/scrollable-plotarea-vertical
+ *         Gantt chart with vertically scrollable plot area
  *
  * @since     6.1.0
  * @product   highcharts gantt
@@ -412,7 +414,9 @@ Chart.prototype.applyFixed = function () {
         d = ['M', 0, 0];
     }
 
-    this.scrollableMask.attr({
-        d: d
-    });
+    if (this.redrawTrigger !== 'adjustHeight') {
+        this.scrollableMask.attr({
+            d: d
+        });
+    }
 };
