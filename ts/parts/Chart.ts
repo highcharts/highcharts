@@ -25,14 +25,14 @@ declare global {
             series?: Dictionary<SeriesOptions>;
         }
         interface SubtitleObject extends SVGElement {
-            update: (titleOptions: SubtitleOptions, redraw?: boolean) => void;
+            update(titleOptions: SubtitleOptions, redraw?: boolean): void;
         }
         interface SVGRenderer {
             plotBox?: BBoxObject;
             spacingBox?: BBoxObject;
         }
         interface TitleObject extends SVGElement {
-            update: (titleOptions: TitleOptions, redraw?: boolean) => void;
+            update(titleOptions: TitleOptions, redraw?: boolean): void;
         }
         class Chart {
             public constructor();

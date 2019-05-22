@@ -254,6 +254,11 @@ declare global {
         ): void;
     }
 }
+
+/**
+ * Internal event type
+ * @private
+ */
 interface EventObject<T> {
     fn: Highcharts.EventCallbackFunction<T>;
     order: number;
