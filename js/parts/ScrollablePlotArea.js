@@ -75,7 +75,8 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
         scrollableMinHeight =
             scrollablePlotArea && scrollablePlotArea.minHeight,
         scrollablePixelsX,
-        scrollablePixelsY;
+        scrollablePixelsY,
+        corrections;
 
     if (!this.renderer.forExport) {
 
@@ -89,6 +90,10 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
             if (scrollablePixelsX) {
                 this.plotWidth += scrollablePixelsX;
                 this.clipBox.width += scrollablePixelsX;
+                corrections = {
+                    // Corrections for right side
+                    1: { name: 'right', value: scrollablePixelsX }
+                };
             }
 
         // Currently we can only do either X or Y
@@ -104,24 +109,33 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
                 } else {
                     this.clipBox.height += scrollablePixelsY;
                 }
+                corrections = {
+                    2: { name: 'bottom', value: scrollablePixelsY }
+                };
             }
         }
 
-        if ((scrollablePixelsX || scrollablePixelsY) && !e.skipAxes) {
+        if (corrections && !e.skipAxes) {
             this.axes.forEach(function (axis) {
-                if (axis.side === 1) {
+                // For right and bottom axes, only fix the plot line length
+                if (corrections[axis.side]) {
                     // Get the plot lines right in getPlotLinePath,
                     // temporarily set it to the adjusted plot width.
                     axis.getPlotLinePath = function () {
-                        var right = this.right,
+                        var marginName = corrections[axis.side].name,
+                            correctionValue = corrections[axis.side].value,
+                            // axis.right or axis.bottom
+                            margin = this[marginName],
                             path;
 
-                        this.right = right - axis.chart.scrollablePixelsX;
+                        // Temporarily adjust
+                        this[marginName] = margin - correctionValue;
                         path = H.Axis.prototype.getPlotLinePath.apply(
                             this,
                             arguments
                         );
-                        this.right = right;
+                        // Reset
+                        this[marginName] = margin;
                         return path;
                     };
 

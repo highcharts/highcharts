@@ -23,7 +23,8 @@ Highcharts.chart('container', {
         title: {
             text: 'Votes',
             align: 'high'
-        }
+        },
+        showLastLabel: false
     },
     plotOptions: {
         bar: {
