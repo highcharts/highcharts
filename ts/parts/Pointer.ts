@@ -1335,7 +1335,7 @@ Highcharts.Pointer.prototype = {
         e: Highcharts.PointerEventObject
     ): void {
         if (charts[H.hoverChartIndex as any]) {
-            charts[H.hoverChartIndex as any].pointer.drop(e);
+            (charts[H.hoverChartIndex as any] as any).pointer.drop(e);
         }
     },
 
@@ -1417,7 +1417,7 @@ Highcharts.Pointer.prototype = {
         if (
             !defined(H.hoverChartIndex) ||
             !charts[H.hoverChartIndex as any] ||
-            !charts[H.hoverChartIndex as any].mouseIsDown
+            !(charts[H.hoverChartIndex as any] as any).mouseIsDown
         ) {
             H.hoverChartIndex = chart.index;
         }

@@ -85,7 +85,7 @@ if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
                 ) && charts[H.hoverChartIndex as any]
             ) {
                 func(e);
-                p = charts[H.hoverChartIndex as any].pointer;
+                p = (charts[H.hoverChartIndex as any] as any).pointer;
                 p[method]({
                     type: wktype,
                     target: e.currentTarget,

@@ -20,10 +20,6 @@ declare global {
     interface Math {
         easeInOutSine(pos: number): number;
     }
-    interface EventObject<T> {
-        fn: Highcharts.EventCallbackFunction<T>;
-        order: number;
-    }
     namespace Highcharts {
         type CursorValue = (
             'alias'|'all-scroll'|'auto'|'cell'|'col-resize'|'context-menu'|
@@ -61,7 +57,7 @@ declare global {
             [key: string]: T;
         }
         interface EventCallbackFunction<T> {
-            (this: T, eventArguments: Dictionary<any>): (void | boolean);
+            (this: T, eventArguments: (Dictionary<any>|Event)): (boolean|void);
         }
         interface EventOptionsObject {
             order?: number;
@@ -112,7 +108,7 @@ declare global {
         function addEvent<T>(
             el: T,
             type: string,
-            fn: EventCallbackFunction<T>,
+            fn: (EventCallbackFunction<T>|Function),
             options?: EventOptionsObject
         ): Function;
         function animate(
@@ -121,7 +117,7 @@ declare global {
             opt?: AnimationOptionsObject
         ): void;
         function animObject(
-            animation: (boolean|AnimationOptionsObject)
+            animation?: (boolean|AnimationOptionsObject)
         ): AnimationOptionsObject;
         function arrayMax(data: Array<any>): number;
         function arrayMin(data: Array<any>): number;
@@ -161,11 +157,11 @@ declare global {
             members: Dictionary<any>
         ): any;
         function find(arr: Array<any>, fn: Function): any;
-        function fireEvent(
-            el: any,
+        function fireEvent<T>(
+            el: T,
             type: string,
-            eventArguments?: Dictionary<any>,
-            defaultFunction?: Function
+            eventArguments?: (Dictionary<any>|Event),
+            defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
         function format(str: string, ctx: any, time: Time): string;
         function formatSingle(format: string, val: any, time: Time): string;
@@ -227,7 +223,7 @@ declare global {
         function removeEvent<T> (
             el: T,
             type?: string,
-            fn?: EventCallbackFunction<T>
+            fn?: (EventCallbackFunction<T>|Function)
         ): void
         function seriesType(
             type: string,
@@ -237,7 +233,7 @@ declare global {
             pointProps?: any
         ): Series;
         function setAnimation(
-            animation: (boolean|AnimationOptionsObject),
+            animation: (boolean|AnimationOptionsObject|undefined),
             chart: Chart
         ): void
         /** @deprecated */
@@ -247,7 +243,7 @@ declare global {
         function stop(el: SVGElement, prop?: string): void;
         function syncTimeout(
             fn: Function,
-            delay: number,
+            delay?: number,
             context?: any
         ): (number|undefined);
         function uniqueKey(): string;
@@ -257,6 +253,10 @@ declare global {
             func: WrapProceedFunction
         ): void;
     }
+}
+interface EventObject<T> {
+    fn: Highcharts.EventCallbackFunction<T>;
+    order: number;
 }
 
 /**
@@ -438,8 +438,10 @@ declare global {
  *
  * @param {T} this
  *
- * @param {Highcharts.Dictionary<*>} [eventArguments]
+ * @param {Highcharts.Dictionary<*>|Event} [eventArguments]
  *        Event arguments.
+ *
+ * @return {boolean|void}
  */
 
 /**
@@ -1405,7 +1407,7 @@ H.splat = function (obj: any): Array<any> {
  * @param {Function} fn
  *        The function callback.
  *
- * @param {number} delay
+ * @param {number} [delay]
  *        Delay in milliseconds.
  *
  * @param {*} [context]
@@ -1417,7 +1419,7 @@ H.splat = function (obj: any): Array<any> {
  */
 H.syncTimeout = function (
     fn: Function,
-    delay: number,
+    delay?: number,
     context?: any
 ): (number|undefined) {
     if (delay) {
@@ -2131,7 +2133,7 @@ H.correctFloat = function (num: number, prec: number): number {
  *
  * @function Highcharts.setAnimation
  *
- * @param {boolean|Highcharts.AnimationOptionsObject} animation
+ * @param {boolean|Highcharts.AnimationOptionsObject|undefined} animation
  *        The animation object.
  *
  * @param {Highcharts.Chart} chart
@@ -2144,7 +2146,7 @@ H.correctFloat = function (num: number, prec: number): number {
  * so it should be moved to the SVGRenderer.
  */
 H.setAnimation = function (
-    animation: boolean|Highcharts.AnimationOptionsObject,
+    animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
     chart: Highcharts.Chart
 ): void {
     chart.renderer.globalAnimation = H.pick(
@@ -2160,7 +2162,7 @@ H.setAnimation = function (
  *
  * @function Highcharts.animObject
  *
- * @param {boolean|Highcharts.AnimationOptionsObject} animation
+ * @param {boolean|Highcharts.AnimationOptionsObject} [animation=0]
  *        An animation setting. Can be an object with duration, complete and
  *        easing properties, or a boolean to enable or disable.
  *
@@ -2168,7 +2170,7 @@ H.setAnimation = function (
  *         An object with at least a duration property.
  */
 H.animObject = function (
-    animation: (boolean|Highcharts.AnimationOptionsObject)
+    animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
     return H.isObject(animation) ?
         H.merge(animation as Highcharts.AnimationOptionsObject) as any :
@@ -2680,7 +2682,7 @@ H.objectEach({
  * @param {string} type
  *        The event type.
  *
- * @param {Highcharts.EventCallbackFunction<T>} fn
+ * @param {Highcharts.EventCallbackFunction<T>|Function} fn
  *        The function callback to execute when the event is fired.
  *
  * @param {Highcharts.EventOptionsObject} [options]
@@ -2692,11 +2694,11 @@ H.objectEach({
 H.addEvent = function<T> (
     el: T,
     type: string,
-    fn: Highcharts.EventCallbackFunction<T>,
+    fn: (Highcharts.EventCallbackFunction<T>|Function),
     options: Highcharts.EventOptionsObject = {}
 ): Function {
     /* eslint-enable valid-jsdoc */
-    var events,
+    var events: Highcharts.Dictionary<Array<any>>,
         addEventListener = (
             (el as any).addEventListener || H.addEventListenerPolyfill
         );
@@ -2771,7 +2773,7 @@ H.addEvent = function<T> (
 H.removeEvent = function<T> (
     el: T,
     type?: string,
-    fn?: Highcharts.EventCallbackFunction<T>
+    fn?: (Highcharts.EventCallbackFunction<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
 
@@ -2786,7 +2788,7 @@ H.removeEvent = function<T> (
      */
     function removeOneEvent(
         type: string,
-        fn: Highcharts.EventCallbackFunction<T>
+        fn: (Highcharts.EventCallbackFunction<T>|Function)
     ): void {
         var removeEventListener = (
             (el as any).removeEventListener || H.removeEventListenerPolyfill
@@ -2856,34 +2858,36 @@ H.removeEvent = function<T> (
     });
 };
 
+/* eslint-disable valid-jsdoc */
 /**
  * Fire an event that was registered with {@link Highcharts#addEvent}.
  *
- * @function Highcharts.fireEvent
+ * @function Highcharts.fireEvent<T>
  *
- * @param {*} el
+ * @param {T} el
  *        The object to fire the event on. It can be a {@link HTMLDOMElement},
  *        an {@link SVGElement} or any other object.
  *
  * @param {string} type
  *        The type of event.
  *
- * @param {Highcharts.Dictionary<*>} [eventArguments]
+ * @param {Highcharts.Dictionary<*>|Event} [eventArguments]
  *        Custom event arguments that are passed on as an argument to the event
  *        handler.
  *
- * @param {Function} [defaultFunction]
+ * @param {Highcharts.EventCallbackFunction<T>|Function} [defaultFunction]
  *        The default function to execute if the other listeners haven't
  *        returned false.
  *
  * @return {void}
  */
-H.fireEvent = function (
-    el: any,
+H.fireEvent = function<T> (
+    el: T,
     type: string,
-    eventArguments?: Highcharts.Dictionary<any>,
-    defaultFunction?: Function
+    eventArguments?: (Highcharts.Dictionary<any>|Event),
+    defaultFunction?: (Highcharts.EventCallbackFunction<T>|Function)
 ): void {
+    /* eslint-enable valid-jsdoc */
     var e,
         events,
         len,
@@ -2892,16 +2896,18 @@ H.fireEvent = function (
 
     eventArguments = eventArguments || {};
 
-    if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
+    if (doc.createEvent &&
+        ((el as any).dispatchEvent || (el as any).fireEvent)
+    ) {
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
 
         H.extend(e, eventArguments);
 
-        if (el.dispatchEvent) {
-            el.dispatchEvent(e);
+        if ((el as any).dispatchEvent) {
+            (el as any).dispatchEvent(e);
         } else {
-            el.fireEvent(type, e);
+            (el as any).fireEvent(type, e);
         }
 
     } else {
@@ -2954,8 +2960,8 @@ H.fireEvent = function (
         };
 
         fireInOrder(
-            el.protoEvents && el.protoEvents[type],
-            el.hcEvents && el.hcEvents[type]
+            (el as any).protoEvents && (el as any).protoEvents[type],
+            (el as any).hcEvents && (el as any).hcEvents[type]
         );
     }
 
