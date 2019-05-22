@@ -278,8 +278,8 @@ Chart.prototype.applyFixed = function () {
 
         this.fixedRenderer = fixedRenderer = new H.Renderer(
             this.fixedDiv,
-            0,
-            0
+            this.chartWidth,
+            this.chartHeight
         );
 
         // Mask
@@ -298,13 +298,15 @@ Chart.prototype.applyFixed = function () {
         this.moveFixedElements();
 
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
-    }
 
-    // Set the size of the fixed renderer to the visible width
-    this.fixedRenderer.setSize(
-        this.chartWidth,
-        this.chartHeight
-    );
+    } else {
+
+        // Set the size of the fixed renderer to the visible width
+        this.fixedRenderer.setSize(
+            this.chartWidth,
+            this.chartHeight
+        );
+    }
 
     // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + (this.scrollablePixelsX || 0);
