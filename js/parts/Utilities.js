@@ -182,8 +182,10 @@ import H from './Globals.js';
  *
  * @param {T} this
  *
- * @param {Highcharts.Dictionary<*>} [eventArguments]
+ * @param {Highcharts.Dictionary<*>|Event} [eventArguments]
  *        Event arguments.
+ *
+ * @return {boolean|void}
  */
 /**
  * The event options for adding function callback.
@@ -979,7 +981,7 @@ H.splat = function (obj) {
  * @param {Function} fn
  *        The function callback.
  *
- * @param {number} delay
+ * @param {number} [delay]
  *        Delay in milliseconds.
  *
  * @param {*} [context]
@@ -1571,7 +1573,7 @@ H.correctFloat = function (num, prec) {
  *
  * @function Highcharts.setAnimation
  *
- * @param {boolean|Highcharts.AnimationOptionsObject} animation
+ * @param {boolean|Highcharts.AnimationOptionsObject|undefined} animation
  *        The animation object.
  *
  * @param {Highcharts.Chart} chart
@@ -1592,7 +1594,7 @@ H.setAnimation = function (animation, chart) {
  *
  * @function Highcharts.animObject
  *
- * @param {boolean|Highcharts.AnimationOptionsObject} animation
+ * @param {boolean|Highcharts.AnimationOptionsObject} [animation=0]
  *        An animation setting. Can be an object with duration, complete and
  *        easing properties, or a boolean to enable or disable.
  *
@@ -2037,7 +2039,7 @@ H.objectEach({
  * @param {string} type
  *        The event type.
  *
- * @param {Highcharts.EventCallbackFunction<T>} fn
+ * @param {Highcharts.EventCallbackFunction<T>|Function} fn
  *        The function callback to execute when the event is fired.
  *
  * @param {Highcharts.EventOptionsObject} [options]
@@ -2171,32 +2173,35 @@ H.removeEvent = function (el, type, fn) {
         }
     });
 };
+/* eslint-disable valid-jsdoc */
 /**
  * Fire an event that was registered with {@link Highcharts#addEvent}.
  *
- * @function Highcharts.fireEvent
+ * @function Highcharts.fireEvent<T>
  *
- * @param {*} el
+ * @param {T} el
  *        The object to fire the event on. It can be a {@link HTMLDOMElement},
  *        an {@link SVGElement} or any other object.
  *
  * @param {string} type
  *        The type of event.
  *
- * @param {Highcharts.Dictionary<*>} [eventArguments]
+ * @param {Highcharts.Dictionary<*>|Event} [eventArguments]
  *        Custom event arguments that are passed on as an argument to the event
  *        handler.
  *
- * @param {Function} [defaultFunction]
+ * @param {Highcharts.EventCallbackFunction<T>|Function} [defaultFunction]
  *        The default function to execute if the other listeners haven't
  *        returned false.
  *
  * @return {void}
  */
 H.fireEvent = function (el, type, eventArguments, defaultFunction) {
+    /* eslint-enable valid-jsdoc */
     var e, events, len, i, fn;
     eventArguments = eventArguments || {};
-    if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
+    if (doc.createEvent &&
+        (el.dispatchEvent || el.fireEvent)) {
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
         H.extend(e, eventArguments);

@@ -482,7 +482,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
         e: Highcharts.PointerEventObject
     ): void {
         if (charts[H.hoverChartIndex as any]) {
-            charts[H.hoverChartIndex as any].pointer.drop(e);
+            (charts[H.hoverChartIndex as any] as any).pointer.drop(e);
         }
     }
 
