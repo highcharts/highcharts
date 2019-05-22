@@ -434,9 +434,9 @@ Highcharts.Pointer.prototype = {
         shared: boolean,
         e: Highcharts.PointerEventObject
     ): (Highcharts.Point|undefined) {
-        var closest: Highcharts.Point,
+        var closest: (Highcharts.Point|undefined),
             sort = function (
-                p1: (Highcharts.Point|undefined),
+                p1: Highcharts.Point,
                 p2: Highcharts.Point
             ): number {
                 var isCloserX = p1.distX - p2.distX,
@@ -478,7 +478,7 @@ Highcharts.Pointer.prototype = {
                 // Check that we actually found a point on the series.
                 isObject(point, true) &&
                 // Use the new point if it is closer.
-                (!isObject(closest, true) || (sort(closest, point) > 0))
+                (!isObject(closest, true) || (sort(closest as any, point) > 0))
             ) {
                 closest = point;
             }
@@ -609,7 +609,7 @@ Highcharts.Pointer.prototype = {
         // Use existing hovered point or find the one closest to coordinates.
         hoverPoint = useExisting ?
             existingHoverPoint :
-            this.findNearestKDPoint(searchSeries, shared, e);
+            this.findNearestKDPoint(searchSeries, shared, e) as any;
 
         // Assign hover series
         hoverSeries = hoverPoint && hoverPoint.series;

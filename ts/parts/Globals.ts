@@ -32,7 +32,8 @@ declare global {
         type LabelFormatterCallbackFunction = any; // @todo
         type Legend = any; // @todo
         type PatternObject = any; // @todo
-        type Point = any; // @todo
+        type PlotSeriesZonesOptions = any; // @todo
+        type PointLabelObject = any; // @todo
         type Series = any; // @todo
         type SeriesOptions = any; // @todo
         type SeriesOptionsType = any; // @todo
@@ -71,9 +72,22 @@ declare global {
             xAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
             yAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
         }
+        interface Point {
+            dataLabel?: any; // @todo
+            dataLabels?: any; // @todo
+            dist?: any; // @todo
+            distX?: any; // @todo
+            graphic?: any; // @todo
+            group?: any; // @todo
+            legendItem?: any; // @todo
+            negative?: any; // @todo
+            selected?: any; // @todo
+            zone?: any; // @todo
+            onMouseOut: Function; // @todo
+            setState: Function; // @todo
+        }
         const Axis: any; // @todo
         const Legend: any; // @todo
-        const Point: any; // @todo
         const Series: any; // @todo
         const Tooltip: any; // @todo
         const SVG_NS: string;
