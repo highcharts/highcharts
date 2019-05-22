@@ -240,6 +240,7 @@ declare global {
             colors?: Array<ColorString>;
             defs?: any;
             global?: GlobalOptions;
+            /** @deprecated */
             labels?: LabelsOptions;
             lang?: LangOptions;
             legend?: LegendOptions;
@@ -2233,7 +2234,7 @@ H.defaultOptions = {
      * HTML labels that can be positioned anywhere in the chart area.
      *
      * This option is deprecated since v7.1.2. Instead, use
-     * [annotations](#annotations) that supports labels.
+     * [annotations](#annotations) that support labels.
      *
      * @deprecated
      * @product   highcharts highstock
