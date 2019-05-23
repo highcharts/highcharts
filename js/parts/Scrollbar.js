@@ -1113,11 +1113,12 @@ if (!H.Scrollbar) {
                 isNaN(scrollMin) ||
                 isNaN(scrollMax) ||
                 !defined(axis.min) ||
-                !defined(axis.max)
+                !defined(axis.max) ||
+                axis.min === axis.max // #10733
             ) {
-                // default action: when there is not extremes on the axis, but
-                // scrollbar exists, make it full size
-                scrollbar.setRange(0, 0);
+                // default action: when extremes are the same or there is not
+                // extremes on the axis, but scrollbar exists, make it full size
+                scrollbar.setRange(0, 1);
             } else {
                 from = (axis.min - scrollMin) / (scrollMax - scrollMin);
                 to = (axis.max - scrollMin) / (scrollMax - scrollMin);
