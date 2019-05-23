@@ -62,6 +62,9 @@ addEvent(Axis, 'afterRender', function () {
 });
 
 /**
+ * Calls StackItem.prototype.render function that creates and renders stack
+ * total label for each waterfall stack item.
+ *
  * @private
  * @function Highcharts.Axis#renderWaterfallStackTotals
  */
@@ -72,10 +75,12 @@ Axis.prototype.renderWaterfallStackTotals = function () {
         dummyStackItem = new StackItem(
             yAxis,
             yAxis.options.stackLabels,
-            undefined,
+            false,
             0,
             undefined
         );
+
+    yAxis.dummyStackItem = dummyStackItem;
 
     // Render each waterfall stack total
     objectEach(waterfallStacks, function (type) {
@@ -91,6 +96,7 @@ Axis.prototype.renderWaterfallStackTotals = function () {
             delete dummyStackItem.label;
         });
     });
+    dummyStackItem.total = null;
 };
 
 /**
@@ -270,6 +276,13 @@ seriesType('waterfall', 'column', {
                             actualStackX.stackState[actualStackX.stateIndex--];
 
                         y = pointY >= 0 ? total : total - pointY;
+                        if (actualStackX.hasOwnProperty('absolutePos')) {
+                            delete actualStackX.absolutePos;
+                        }
+
+                        if (actualStackX.hasOwnProperty('absoluteNeg')) {
+                            delete actualStackX.absoluteNeg;
+                        }
                     } else {
                         if (pointY >= 0) {
                             total = actualStackX.threshold +
@@ -284,22 +297,22 @@ seriesType('waterfall', 'column', {
                             actualStackX.negTotal -= pointY;
                             y = total - pointY;
                         }
-                    }
 
-                    if (actualStackX.hasOwnProperty('absolutePos')) {
-                        if (stacking === 'normal' && !actualStackX.posTotal) {
-                            actualStackX.posTotal = actualStackX.absolutePos;
+                        if (!actualStackX.posTotal) {
+                            if (actualStackX.hasOwnProperty('absolutePos')) {
+                                actualStackX.posTotal =
+                                    actualStackX.absolutePos;
+                                delete actualStackX.absolutePos;
+                            }
                         }
 
-                        delete actualStackX.absolutePos;
-                    }
-
-                    if (actualStackX.hasOwnProperty('absoluteNeg')) {
-                        if (stacking === 'normal' && !actualStackX.negTotal) {
-                            actualStackX.negTotal = actualStackX.absoluteNeg;
+                        if (!actualStackX.negTotal) {
+                            if (actualStackX.hasOwnProperty('absoluteNeg')) {
+                                actualStackX.negTotal =
+                                    actualStackX.absoluteNeg;
+                                delete actualStackX.absoluteNeg;
+                            }
                         }
-
-                        delete actualStackX.absoluteNeg;
                     }
 
                     if (!point.isSum) {
@@ -325,21 +338,17 @@ seriesType('waterfall', 'column', {
                         yAxis.translate(hPos, 0, 1, 0, 1));
                 }
 
-                dummyStackItem = new StackItem(
-                    yAxis,
-                    yAxis.options.stackLabels,
-                    false,
-                    i,
-                    undefined
-                );
-
-                dummyStackItem.label = actualStack[i].label;
-                dummyStackItem.setOffset(
-                    series.pointXOffset || 0,
-                    series.barW || 0,
-                    series.stackedYNeg[i],
-                    series.stackedYPos[i]
-                );
+                dummyStackItem = yAxis.dummyStackItem;
+                if (dummyStackItem) {
+                    dummyStackItem.x = i;
+                    dummyStackItem.label = actualStack[i].label;
+                    dummyStackItem.setOffset(
+                        series.pointXOffset || 0,
+                        series.barW || 0,
+                        series.stackedYNeg[i],
+                        series.stackedYPos[i]
+                    );
+                }
             } else {
                 // up points
                 y = Math.max(previousY, previousY + pointY) + range[0];
@@ -633,7 +642,7 @@ seriesType('waterfall', 'column', {
                 actualStackX.stackState[0] = firstS;
                 statesLen = actualStackX.stackState.length;
             } else {
-                for (; sInx < statesLen; sInx++) {
+                for (sInx; sInx < statesLen; sInx++) {
                     actualStackX.stackState[sInx] += sOff;
                 }
             }
