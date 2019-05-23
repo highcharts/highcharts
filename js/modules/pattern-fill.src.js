@@ -21,7 +21,7 @@
  * is 32px. Note that automatic resizing of image patterns to fill a bounding
  * box dynamically is only supported for patterns with an automatically
  * calculated ID.
- * @name Highcharts.PatternOptionsObject#with
+ * @name Highcharts.PatternOptionsObject#width
  * @type {number}
  *//**
  * Analogous to pattern.width.
