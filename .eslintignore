@@ -1,6 +1,7 @@
 js/parts/Chart.js
 js/parts/Color.js
 js/parts/Globals.js
+js/parts/Html.js
 js/parts/Legend.js
 js/parts/MSPointer.js
 js/parts/Options.js

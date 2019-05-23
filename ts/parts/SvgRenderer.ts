@@ -130,8 +130,9 @@ declare global {
             public constructor();
             [key: string]: any;
             public element: (HTMLDOMElement|SVGDOMElement);
-            public parentGroup: SVGElement;
+            public parentGroup?: SVGElement;
             public renderer: SVGRenderer;
+            public shadows?: Array<(HTMLDOMElement|SVGDOMElement)>;
             public _defaultGetter(key: string): (number|string);
             public _defaultSetter(
                 value: string,
@@ -343,7 +344,7 @@ declare global {
             public getStyle(style: CSSObject): CSSObject;
             public fontMetrics(
                 fontSize?: (number|string),
-                elem?: (SVGElement|SVGDOMElement)
+                elem?: (HTMLDOMElement|SVGElement|SVGDOMElement)
             ): FontMetricsObject;
             public image(
                 src: string,
@@ -1475,16 +1476,19 @@ extend((
         setter: Function
     ): void {
         var shadows = this.shadows,
-            i = shadows.length;
+            i = (shadows as any).length;
 
         while (i--) {
             setter.call(
-                shadows[i],
+                (shadows as any)[i],
                 key === 'height' ?
-                    Math.max(value - (shadows[i].cutHeight || 0), 0) :
+                    Math.max(
+                        value - (((shadows as any)[i] as any).cutHeight || 0),
+                        0
+                    ) :
                     key === 'd' ? this.d : value,
                 key,
-                shadows[i]
+                (shadows as any)[i]
             );
         }
     },
@@ -2665,7 +2669,7 @@ extend((
     ): Highcharts.SVGElement {
         var shadows = [],
             i,
-            shadow,
+            shadow: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
             element = this.element,
             strokeWidth,
             shadowWidth,
@@ -2708,7 +2712,7 @@ extend((
                         'height',
                         Math.max(attr(shadow, 'height') - strokeWidth, 0)
                     );
-                    shadow.cutHeight = strokeWidth;
+                    (shadow as any).cutHeight = strokeWidth;
                 }
 
                 if (group) {
@@ -2739,7 +2743,7 @@ extend((
     ): void {
         (this.shadows || []).forEach(function (
             this: Highcharts.SVGElement,
-            shadow: Highcharts.SVGDOMElement
+            shadow: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
         ): void {
             this.safeRemoveChild(shadow);
         }, this);
