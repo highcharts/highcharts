@@ -24,8 +24,49 @@ var addEvent = H.addEvent,
     merge = H.merge,
     pick = H.pick,
     wrap = H.wrap,
+    Chart = H.Chart,
     Axis = H.Axis,
     Tick = H.Tick;
+
+var applyGridOptions = function applyGridOptions(axis) {
+    var options = axis.options,
+        gridOptions = options && isObject(options.grid) ? options.grid : {},
+        // TODO: Consider using cell margins defined in % of font size?
+        // 25 is optimal height for default fontSize (11px)
+        // 25 / 11 ≈ 2.28
+        fontSizeToCellHeightRatio = 25 / 11,
+        fontSize = options.labels.style.fontSize,
+        fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
+
+    // Center-align by default
+    if (!options.labels) {
+        options.labels = {};
+    }
+    options.labels.align = pick(options.labels.align, 'center');
+
+    // @todo: Check against tickLabelPlacement between/on etc
+
+    /* Prevents adding the last tick label if the axis is not a category
+       axis.
+       Since numeric labels are normally placed at starts and ends of a
+       range of value, and this module makes the label point at the value,
+       an "extra" label would appear. */
+    if (!axis.categories) {
+        options.showLastLabel = false;
+    }
+
+    // Make tick marks taller, creating cell walls of a grid. Use cellHeight
+    // axis option if set
+    if (axis.horiz) {
+        options.tickLength = gridOptions.cellHeight ||
+                fontMetrics.h * fontSizeToCellHeightRatio;
+    }
+
+    // Prevents rotation of labels when squished, as rotating them would not
+    // help.
+    axis.labelRotation = 0;
+    options.labels.rotation = 0;
+};
 
 /**
  * Set grid options for the axis labels. Requires Highcharts Gantt.
@@ -839,63 +880,117 @@ addEvent(
                 }
             }
 
+            (axis.columns || []).forEach(function (column) {
+                column.render();
+            });
         }
     }
 );
 
-// Wraps axis init to draw cell walls on vertical axes.
-addEvent(Axis, 'init', function (e) {
+// Handle columns and getOffset
+var onGridAxisAfterGetOffset = function onGridAxisAfterGetOffset() {
+    (this.columns || []).forEach(function (column) {
+        column.getOffset();
+    });
+};
+
+var onGridAxisAfterInit = function onGridAxisAfterInit() {
     var axis = this,
         chart = axis.chart,
-        userOptions = e.userOptions,
+        userOptions = axis.userOptions,
+        options = axis.options,
+        gridOptions = options && isObject(options.grid) ? options.grid : {};
+
+    if (gridOptions.enabled) {
+        applyGridOptions(axis);
+    }
+
+    if (gridOptions.columns) {
+        var columns = axis.columns = [],
+            columnIndex = axis.columnIndex = 0;
+
+        // Handle columns, each column is a grid axis
+        while (++columnIndex < gridOptions.columns.length) {
+            var columnOptions = merge(
+                userOptions,
+                gridOptions.columns[
+                    gridOptions.columns.length - columnIndex - 1
+                ],
+                {
+                    linkedTo: 0,
+                    // Force to behave like category axis
+                    type: 'category'
+                }
+            );
+
+            delete columnOptions.grid.columns; // Prevent recursion
+
+            var column = new Axis(axis.chart, columnOptions, true);
+            column.isColumn = true;
+            column.columnIndex = columnIndex;
+
+            // Remove column axis from chart axes array, and place it
+            // in the columns array.
+            H.erase(chart.axes, column);
+            H.erase(chart[axis.coll], column);
+            columns.push(column);
+
+            // TODO: wrap the axis instead
+            wrap(column, 'labelFormatter', function (proceed) {
+                var axis = this.axis,
+                    tickPos = axis.tickPositions,
+                    value = this.value,
+                    series = (axis.isLinked ? axis.linkedParent : axis)
+                        .series[0],
+                    isFirst = value === tickPos[0],
+                    isLast = value === tickPos[tickPos.length - 1],
+                    point = H.find(series.options.data, function (p) {
+                        return p[axis.isXAxis ? 'x' : 'y'] === value;
+                    });
+
+                // Make additional properties available for the
+                // formatter
+                this.isFirst = isFirst;
+                this.isLast = isLast;
+                this.point = point;
+
+                // Call original labelFormatter
+                return proceed.call(this);
+            });
+        }
+    }
+};
+
+var onGridAxisAfterSetChartSize = function onGridAxisAfterSetChartSize() {
+    this.axes.forEach(function (axis) {
+        (axis.columns || []).forEach(function (column) {
+            column.setAxisSize();
+            column.setAxisTranslation();
+        });
+    });
+};
+
+// Handle columns and setScale
+var onGridAxisAfterSetScale = function onGridAxisAfterSetScale() {
+    (this.columns || []).forEach(function (column) {
+        column.setScale();
+    });
+};
+
+var onGridAxisDestroy = function onGridAxisDestroy(e) {
+    (this.columns || []).forEach(function (column) {
+        column.destroy(e.keepEvents);
+    });
+};
+
+// Wraps axis init to draw cell walls on vertical axes.
+var onGridAxisInit = function onGridAxisInit(e) {
+    var userOptions = e.userOptions,
         gridOptions = (
             (userOptions && isObject(userOptions.grid)) ?
                 userOptions.grid :
                 {}
-        ),
-        columnOptions,
-        column,
-        columnIndex,
-        i;
-
-    function applyGridOptions() {
-        var options = axis.options,
-            // TODO: Consider using cell margins defined in % of font size?
-            // 25 is optimal height for default fontSize (11px)
-            // 25 / 11 ≈ 2.28
-            fontSizeToCellHeightRatio = 25 / 11,
-            fontSize = options.labels.style.fontSize,
-            fontMetrics = axis.chart.renderer.fontMetrics(fontSize);
-
-        // Center-align by default
-        if (!options.labels) {
-            options.labels = {};
-        }
-        options.labels.align = pick(options.labels.align, 'center');
-
-        // @todo: Check against tickLabelPlacement between/on etc
-
-        /* Prevents adding the last tick label if the axis is not a category
-           axis.
-           Since numeric labels are normally placed at starts and ends of a
-           range of value, and this module makes the label point at the value,
-           an "extra" label would appear. */
-        if (!axis.categories) {
-            options.showLastLabel = false;
-        }
-
-        // Make tick marks taller, creating cell walls of a grid. Use cellHeight
-        // axis option if set
-        if (axis.horiz) {
-            options.tickLength = gridOptions.cellHeight ||
-                    fontMetrics.h * fontSizeToCellHeightRatio;
-        }
-
-        // Prevents rotation of labels when squished, as rotating them would not
-        // help.
-        axis.labelRotation = 0;
-        options.labels.rotation = 0;
-    }
+        );
 
     if (gridOptions.enabled) {
         if (defined(gridOptions.borderColor)) {
@@ -903,55 +998,27 @@ addEvent(Axis, 'init', function (e) {
                 userOptions.lineColor = gridOptions.borderColor;
         }
 
-        // Handle columns, each column is a grid axis
-        if (isArray(gridOptions.columns)) {
-            columnIndex = 0;
-            i = gridOptions.columns.length;
-            while (i--) {
-                columnOptions = merge(
-                    userOptions,
-                    gridOptions.columns[i],
-                    {
-                        // Force to behave like category axis
-                        type: 'category'
-                    }
-                );
-
-                delete columnOptions.grid.columns; // Prevent recursion
-
-                column = new Axis(axis.chart, columnOptions);
-                column.isColumn = true;
-                column.columnIndex = columnIndex;
-
-                wrap(column, 'labelFormatter', function (proceed) {
-                    var axis = this.axis,
-                        tickPos = axis.tickPositions,
-                        value = this.value,
-                        series = axis.series[0],
-                        isFirst = value === tickPos[0],
-                        isLast = value === tickPos[tickPos.length - 1],
-                        point = H.find(series.options.data, function (p) {
-                            return p[axis.isXAxis ? 'x' : 'y'] === value;
-                        });
-
-                    // Make additional properties available for the formatter
-                    this.isFirst = isFirst;
-                    this.isLast = isLast;
-                    this.point = point;
-
-                    // Call original labelFormatter
-                    return proceed.call(this);
-                });
-
-                columnIndex++;
-            }
-            // This axis should not be shown, instead the column axes take over
-            addEvent(this, 'afterInit', function () {
-                H.erase(chart.axes, this);
-                H.erase(chart[axis.coll], this);
-            });
-        } else {
-            addEvent(this, 'afterInit', applyGridOptions);
+        // Add column options to the "master" axis
+        if (gridOptions.columns) {
+            merge(
+                true,
+                userOptions,
+                gridOptions.columns[gridOptions.columns.length - 1]
+            );
         }
     }
+};
+
+var axisEvents = {
+    afterGetOffset: onGridAxisAfterGetOffset,
+    afterInit: onGridAxisAfterInit,
+    afterSetScale: onGridAxisAfterSetScale,
+    destroy: onGridAxisDestroy,
+    init: onGridAxisInit
+};
+
+// Add event handlers
+Object.keys(axisEvents).forEach(function (event) {
+    addEvent(Axis, event, axisEvents[event]);
 });
+addEvent(Chart, 'afterSetChartSize', onGridAxisAfterSetChartSize);

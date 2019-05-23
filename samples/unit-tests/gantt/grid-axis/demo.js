@@ -1458,11 +1458,12 @@ QUnit.test('startOnTick and endOnTick', function (assert) {
 });
 
 QUnit.test('Chart.update', assert => {
+    const getColumn = format => ({ labels: { format } });
     const chart = Highcharts.chart('container', {
         yAxis: {
             grid: {
                 enabled: true,
-                columns: [{}, {}]
+                columns: [getColumn('Column 1'), getColumn('Column 2')]
             },
             type: 'category'
         },
@@ -1471,6 +1472,11 @@ QUnit.test('Chart.update', assert => {
         }]
     });
     const { yAxis: [axis] } = chart;
+    const getYAxisLabels = () => Array.from(
+        document.querySelectorAll('.highcharts-yaxis-labels > text > tspan')
+    )
+        .map((text => text.innerHTML))
+        .reverse();
 
     assert.strictEqual(
         chart.yAxis.length,
@@ -1478,10 +1484,20 @@ QUnit.test('Chart.update', assert => {
         'should have only one yAxis'
     );
 
+    assert.deepEqual(
+        getYAxisLabels(),
+        ['Column 1', 'Column 2'],
+        'should have two labels after init.'
+    );
+
     chart.update({
         yAxis: {
             grid: {
-                columns: [{ title: 'columns 1' }, { title: 'columns 2' }]
+                columns: [
+                    getColumn('Updated 1'),
+                    getColumn('Updated 2'),
+                    getColumn('New 3')
+                ]
             }
         }
     }, true, true, true);
@@ -1497,5 +1513,11 @@ QUnit.test('Chart.update', assert => {
         axis === chart.yAxis[0],
         true,
         'should not destroy the axis even if oneToOne is true. #9269'
+    );
+
+    assert.deepEqual(
+        getYAxisLabels(),
+        ['Updated 1', 'Updated 2', 'New 3'],
+        'should still have two updated labels and a new one after update.'
     );
 });
