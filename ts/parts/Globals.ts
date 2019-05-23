@@ -30,11 +30,9 @@ declare global {
         type Axis = any; // @todo
         type AxisOptions = any; // @todo
         type LabelFormatterCallbackFunction = any; // @todo
-        type Legend = any; // @todo
         type PatternObject = any; // @todo
         type PlotSeriesZonesOptions = any; // @todo
         type PointLabelObject = any; // @todo
-        type Series = any; // @todo
         type SeriesOptions = any; // @todo
         type SeriesOptionsType = any; // @todo
         type SeriesPlotBoxObject = any; // @todo
@@ -72,6 +70,10 @@ declare global {
             xAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
             yAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
         }
+        interface Legend {
+            createCheckboxForItem: Function; // @todo
+            setItemEvents: Function; // @todo
+        }
         interface Point {
             dataLabel?: any; // @todo
             dataLabels?: any; // @todo
@@ -79,15 +81,61 @@ declare global {
             distX?: any; // @todo
             graphic?: any; // @todo
             group?: any; // @todo
-            legendItem?: any; // @todo
             negative?: any; // @todo
             selected?: any; // @todo
             zone?: any; // @todo
             onMouseOut: Function; // @todo
             setState: Function; // @todo
         }
+        interface Series {
+            _hasPointLabels?: any; // @todo
+            _hasPointMarkers?: any; // @todo
+            autoIncrement?: any; // @todo
+            chart?: any; // @todo
+            color?: any; // @todo
+            colorCounter?: any; // @todo
+            colorIndex?: any; // @todo
+            data?: any; // @todo
+            dataLabelsGroup?: any; // @todo
+            directTouch?: any; // @todo
+            group?: any; // @todo
+            hasGroupedData?: any; // @todo
+            index?: any; // @todo
+            isCartesian?: any; // @todo
+            isDirty?: any; // @todo
+            isDirtyData?: any; // @todo
+            linkedParent?: any; // @todo
+            linkedSeries?: any; // @todo
+            markerGroup?: any; // @todo
+            name?: any; // @todo
+            navigatorSeries?: any; // @todo
+            noSharedTooltip?: any; // @todo
+            options?: any; // @todo
+            pointArrayMap?: any; // @todo
+            points?: any; // @todo
+            pointValKey?: any; // @todo
+            redraw?: any; // @todo
+            selected?: any; // @todo
+            stickyTracking?: any; // @todo
+            symbol?: any; // @todo
+            tooltipOptions?: any; // @todo
+            updateTotals?: any; // @todo
+            visible?: any; // @todo
+            xAxis?: any; // @todo
+            yAxis?: any; // @todo
+            zoneAxis?: any; // @todo
+            zones?: any; // @todo
+            getName: Function; // @todo
+            getPlotBox: Function; // @todo
+            getPoint: Function; // @todo
+            destroy: Function; // @todo
+            pointAttribs: Function; // @todo
+            render: Function; // @todo
+            searchPoint: Function; // @todo
+            setState: Function; // @todo
+            translate: Function; // @todo
+        }
         const Axis: any; // @todo
-        const Legend: any; // @todo
         const Series: any; // @todo
         const Tooltip: any; // @todo
         const SVG_NS: string;
@@ -111,8 +159,7 @@ declare global {
         const win: Window;
         const seriesTypes: Dictionary<typeof Series>;
         const svg: boolean;
-        function color(...args: Array<any>): any; // @todo
-        function getOptions(): any; // @todo
+        function distribute(...args: Array<any>): any; // @todo
     }
     type GlobalHighcharts = typeof Highcharts;
 }

@@ -600,7 +600,7 @@ Highcharts.Pointer.prototype = {
             // Which series to look in for the hover point
             searchSeries = notSticky ?
                 // Only search on hovered series if it has stickyTracking false
-                [hoverSeries] :
+                [hoverSeries as any] :
                 // Filter what series to look in.
                 series.filter(function (s: Highcharts.Series): boolean {
                     return filter(s) && s.stickyTracking;
@@ -819,7 +819,7 @@ Highcharts.Pointer.prototype = {
                 point = !snap ?
                     undefined :
                     H.find(points, function (p: Highcharts.Point): boolean {
-                        return p.series[axis.coll] === axis;
+                        return (p.series as any)[axis.coll] === axis;
                     });
 
             // Axis has snapping crosshairs, and one of the hover points belongs
