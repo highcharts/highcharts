@@ -23,7 +23,7 @@ declare global {
         }
         class Point {
             public constructor();
-            [key: string]: any;
+            [property: string]: any;
             public color: (ColorString|GradientColorObject|PatternObject);
             public colorIndex: number;
             public formatPrefix: string;
@@ -33,8 +33,11 @@ declare global {
                 ColorString|GradientColorObject|PatternObject
             );
             public options: Dictionary<any>;
+            public percentage?: number;
             public series: Series;
             public state?: string;
+            public total?: number;
+            public visible: boolean;
             public x: (number|null);
             public y: number;
             public applyOptions(
