@@ -196,6 +196,20 @@ colorAxisMethods = {
  */
 var solidGaugeOptions = {
     /**
+     * The inner radius for points in a solid gauge. Can be given as a number
+     * (pixels) or percentage string.
+     *
+     * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
+     *         Individual radius and innerRadius
+     *
+     * @type      {number|string}
+     * @default   60
+     * @since     4.1.6
+     * @product   highcharts
+     * @apioption plotOptions.solidgauge.innerRadius
+     */
+
+    /**
      * Whether the strokes of the solid gauge should be `round` or `square`.
      *
      * @sample {highcharts} highcharts/demo/gauge-activity/
@@ -220,6 +234,20 @@ var solidGaugeOptions = {
      * @since     3.0.10
      * @product   highcharts
      * @apioption plotOptions.solidgauge.overshoot
+     */
+
+    /**
+     * The outer radius for points in a solid gauge. Can be given as a number
+     * (pixels) or percentage string.
+     *
+     * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
+     *         Individual radius and innerRadius
+     *
+     * @type      {number|string}
+     * @default   100
+     * @since     4.1.6
+     * @product   highcharts
+     * @apioption plotOptions.solidgauge.radius
      */
 
     /**
