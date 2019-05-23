@@ -112,7 +112,7 @@ declare global {
             options?: EventOptionsObject
         ): Function;
         function animate(
-            el: (HTMLElement|SVGElement),
+            el: (HTMLDOMElement|SVGElement),
             params: (CSSObject|SVGAttributes),
             opt?: AnimationOptionsObject
         ): void;

@@ -23,6 +23,7 @@ declare global {
     }
     interface Window {
         Image: typeof Image;
+        opera?: any;
     }
     const win: Window; // @todo: UMD variable
     function parseFloat (value: (number|string)): number;
@@ -134,6 +135,9 @@ declare global {
             searchPoint: Function; // @todo
             setState: Function; // @todo
             translate: Function; // @todo
+        }
+        interface SVGRenderer {
+            invertChild: Function; // @todo
         }
         const Axis: any; // @todo
         const Series: any; // @todo
