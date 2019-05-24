@@ -485,6 +485,18 @@ var onBeforeRender = function (e) {
                 removeFoundExtremesEvent,
                 uniqueNames = options.uniqueNames,
                 numberOfSeries = 0,
+                isDirtyData,
+                data,
+                treeGrid;
+            // Check whether any of series is rendering for the first time,
+            // or its data is dirty, and only then update. #10570, #10580
+            axis.series.forEach(function (series) {
+                isDirtyData = isDirtyData ||
+                    !series.hasRendered ||
+                    series.isDirtyData;
+            });
+
+            if (isDirtyData) {
                 // Concatenate data from all series assigned to this axis.
                 data = axis.series.reduce(function (arr, s) {
                     if (s.visible) {
@@ -504,7 +516,7 @@ var onBeforeRender = function (e) {
                         }
                     }
                     return arr;
-                }, []),
+                }, []);
                 // setScale is fired after all the series is initialized,
                 // which is an ideal time to update the axis.categories.
                 treeGrid = getTreeGridFromData(
@@ -513,49 +525,51 @@ var onBeforeRender = function (e) {
                     (uniqueNames === true) ? numberOfSeries : 1
                 );
 
-            // Assign values to the axis.
-            axis.categories = treeGrid.categories;
-            axis.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
-            axis.hasNames = true;
-            axis.tree = treeGrid.tree;
+                // Assign values to the axis.
+                axis.categories = treeGrid.categories;
+                axis.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
+                axis.hasNames = true;
+                axis.tree = treeGrid.tree;
 
-            // Update yData now that we have calculated the y values
-            axis.series.forEach(function (series) {
-                var data = series.options.data.map(function (d) {
-                    return isObject(d) ? merge(d) : d;
+                // Update yData now that we have calculated the y values
+                axis.series.forEach(function (series) {
+                    var data = series.options.data.map(function (d) {
+                        return isObject(d) ? merge(d) : d;
+                    });
+
+                    // Avoid destroying points when series is not visible
+                    if (series.visible) {
+                        series.setData(data, false);
+                    }
                 });
 
-                // Avoid destroying points when series is not visible
-                if (series.visible) {
-                    series.setData(data, false);
-                }
-            });
+                // Calculate the label options for each level in the tree.
+                axis.mapOptionsToLevel = getLevelOptions({
+                    defaults: labelOptions,
+                    from: 1,
+                    levels: labelOptions.levels,
+                    to: axis.tree.height
+                });
 
-            // Calculate the label options for each level in the tree.
-            axis.mapOptionsToLevel = getLevelOptions({
-                defaults: labelOptions,
-                from: 1,
-                levels: labelOptions.levels,
-                to: axis.tree.height
-            });
+                // Collapse all the nodes belonging to a point where collapsed
+                // equals true. Only do this on init.
+                // Can be called from beforeRender, if getBreakFromNode removes
+                // its dependency on axis.max.
+                if (e.type === 'beforeRender') {
+                    removeFoundExtremesEvent =
+                        H.addEvent(axis, 'foundExtremes', function () {
+                            treeGrid.collapsedNodes.forEach(function (node) {
+                                var breaks = collapse(axis, node);
 
-            // Collapse all the nodes belonging to a point where collapsed
-            // equals true. Only do this on init.
-            // Can be called from beforeRender, if getBreakFromNode removes
-            // its dependency on axis.max.
-            if (e.type === 'beforeRender') {
-                removeFoundExtremesEvent =
-                    H.addEvent(axis, 'foundExtremes', function () {
-                        treeGrid.collapsedNodes.forEach(function (node) {
-                            var breaks = collapse(axis, node);
-
-                            axis.setBreaks(breaks, false);
+                                axis.setBreaks(breaks, false);
+                            });
+                            removeFoundExtremesEvent();
                         });
-                        removeFoundExtremesEvent();
-                    });
+                }
             }
         });
 };
+
 
 override(GridAxis.prototype, {
     init: function (proceed, chart, userOptions) {

@@ -256,7 +256,7 @@ QUnit.test('Series.setVisible', assert => {
     );
     assert.strictEqual(
         series3.points[0].y,
-        1,
+        2,
         'should have "Point 3" y-value equal 1  when "Series 2" is hidden.'
     );
     assert.strictEqual(
@@ -266,7 +266,7 @@ QUnit.test('Series.setVisible', assert => {
     );
     assert.deepEqual(
         [axis.min, axis.max],
-        [0, 1],
+        [0, 2],
         'should have axis [min, max] equal [0, 1]  when "Series 2" is hidden.'
     );
 
