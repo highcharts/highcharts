@@ -1236,9 +1236,10 @@ RangeSelector.prototype = {
                 // Update also when no `change` event is triggered, like when
                 // clicking inside the SVG (#4710)
                 updateExtremes();
-                rangeSelector.hideInput(name);
-                input.blur(); // #4606
             }
+
+            rangeSelector.hideInput(name);
+            input.blur(); // #4606
         };
 
         // handle changes in the input boxes
