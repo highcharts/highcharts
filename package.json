@@ -25,7 +25,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "npx gulp test --force --speak",
+    "test": "gulp test --force --speak",
     "testall": "npx gulp test --browsers all --force --speak",
     "preci-test": "npm run ts-compile:test",
     "ci-test": "npx gulp scripts && cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --browsers Mac.Safari,Mac.Firefox",
@@ -94,7 +94,7 @@
     "lolex": "^2.7.5",
     "marked": "^0.6.2",
     "mkdirp": "^0.5.1",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "pixelmatch": "^4.0.2",
     "plugin-error": "^1.0.1",
     "png-js": "^0.1.1",
