@@ -1,65 +1,66 @@
 QUnit.test('Test algorithm on data updates.', function (assert) {
 
     var chart = Highcharts.stockChart('container', {
-        yAxis: [{
-            height: '50%'
-        }, {
-            top: '60%',
-            height: '40%'
-        }],
-        series: [{
-            id: 'main',
-            data: [
-                459.99,
-                448.85,
-                446.06,
-                450.81,
-                442.8,
-                448.97,
-                444.57,
-                441.4,
-                430.47,
-                420.05,
-                431.14,
-                425.66,
-                430.58,
-                431.72,
-                437.87,
-                428.43,
-                428.35,
-                432.5,
-                443.66,
-                455.72,
-                454.49,
-                452.08,
-                452.73,
-                461.91,
-                463.58,
-                461.14,
-                452.08,
-                442.66,
-                428.91,
-                429.79,
-                431.99,
-                427.72,
-                423.2,
-                426.21,
-                426.98,
-                435.69,
-                434.338
-            ]
-        }, {
-            yAxis: 1,
-            type: 'macd',
-            linkedTo: 'main',
-            params: {
-                shortPeriod: 12,
-                longPeriod: 26,
-                signalPeriod: 9,
-                period: 26
-            }
-        }]
-    });
+            yAxis: [{
+                height: '50%'
+            }, {
+                top: '60%',
+                height: '40%'
+            }],
+            series: [{
+                id: 'main',
+                data: [
+                    459.99,
+                    448.85,
+                    446.06,
+                    450.81,
+                    442.8,
+                    448.97,
+                    444.57,
+                    441.4,
+                    430.47,
+                    420.05,
+                    431.14,
+                    425.66,
+                    430.58,
+                    431.72,
+                    437.87,
+                    428.43,
+                    428.35,
+                    432.5,
+                    443.66,
+                    455.72,
+                    454.49,
+                    452.08,
+                    452.73,
+                    461.91,
+                    463.58,
+                    461.14,
+                    452.08,
+                    442.66,
+                    428.91,
+                    429.79,
+                    431.99,
+                    427.72,
+                    423.2,
+                    426.21,
+                    426.98,
+                    435.69,
+                    434.338
+                ]
+            }, {
+                yAxis: 1,
+                type: 'macd',
+                linkedTo: 'main',
+                params: {
+                    shortPeriod: 12,
+                    longPeriod: 26,
+                    signalPeriod: 9,
+                    period: 26
+                }
+            }]
+        }),
+        lastPoint;
 
 
     assert.strictEqual(
@@ -93,6 +94,29 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         chart.series[0].points.length,
         chart.series[1].points.length + chart.series[1].options.params.period - 1,
         'After addPoint number of MACD points is correct'
+    );
+
+    chart.series[0].update({ cropThreshold: 3 });
+    chart.series[1].update({ cropThreshold: 3 });
+    chart.xAxis[0].setExtremes(30);
+
+    lastPoint = chart.series[0].points[chart.series[0].points.length - 1];
+    lastPoint.update({ y: 434.31 });
+
+    assert.strictEqual(
+        chart.series[1].MACDData.some(function (elem) {
+            return !Highcharts.isNumber(elem) || !Highcharts.defined(elem);
+        }),
+        false,
+        'MACDData should an array of numbers (#10774).'
+    );
+
+    assert.strictEqual(
+        chart.series[1].signalData.some(function (elem) {
+            return Highcharts.isArray(elem);
+        }),
+        false,
+        'signalData should not be an array of arrays (#10774).'
     );
 
     chart.series[1].update({
