@@ -33,10 +33,12 @@ Highcharts.chart('container', {
         innerRadius: '50%',
         radius: '100%',
         dataLabels: {
+            borderWidth: 0,
             verticalAlign: 'bottom',
             style: {
                 fontSize: '30px'
-            }
+            },
+            y: 13
         },
         data: [63]
     }]
