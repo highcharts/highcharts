@@ -16,13 +16,13 @@ const gulp = require('gulp');
  */
 function task() {
 
-    const process = require('./lib/process');
+    const processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
 
-        process
+        processLib
             .exec('npx tsc --project ts')
-            .then(() => resolve())
+            .then(resolve)
             .catch(reject);
     });
 }

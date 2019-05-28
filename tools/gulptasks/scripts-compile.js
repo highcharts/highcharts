@@ -26,9 +26,9 @@ const SOURCE_DIRECTORY = 'code';
  */
 function task() {
 
-    const compile = require('../compile');
-    const fs = require('./lib/fs');
-    const log = require('./lib/log');
+    const compileTool = require('../compile');
+    const fsLib = require('./lib/fs');
+    const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
@@ -36,7 +36,7 @@ function task() {
         const files = (
             (argv.files) ?
                 argv.files.split(',') :
-                fs
+                fsLib
                     .getFilePaths(SOURCE_DIRECTORY, true)
                     .filter(path => (
                         path.endsWith('.src.js') &&
@@ -45,11 +45,11 @@ function task() {
                     .map(path => path.substr(SOURCE_DIRECTORY.length + 1))
         );
 
-        log.message('Compiling', SOURCE_DIRECTORY + '...');
+        logLib.message('Compiling', SOURCE_DIRECTORY + '...');
 
-        compile
+        compileTool
             .compile(files, (SOURCE_DIRECTORY + '/'))
-            .then(() => log.success('Compiled', SOURCE_DIRECTORY))
+            .then(() => logLib.success('Compiled', SOURCE_DIRECTORY))
             .then(resolve)
             .catch(reject);
     });
