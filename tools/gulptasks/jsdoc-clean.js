@@ -20,16 +20,10 @@ function jsdDocClean() {
 
     const fsLib = require('./lib/fs');
 
-    return new Promise((resolve, reject) => {
+    return new Promise(done => {
 
-        try {
-            if (!fsLib.deleteDirectory('build/api', true)) {
-                throw new Error('Directory could not be deleted: build/api');
-            }
-            resolve();
-        } catch (catchedError) {
-            reject(catchedError);
-        }
+        fsLib.deleteDirectory('build/api', true);
+        done();
     });
 }
 

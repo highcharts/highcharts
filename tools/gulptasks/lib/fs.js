@@ -104,29 +104,24 @@ function copyFile(fileSourcePath, fileTargetPath) {
  * @param {boolean} [includeEntries]
  *        Set to true to remove containing entries as well
  *
- * @return {boolean}
- *         True if deleted
+ * @return {void}
+ *
+ * @throws {Error}
  */
 function deleteDirectory(directoryPath, includeEntries) {
 
-    try {
-
-        if (!FS.existsSync(directoryPath)) {
-            return true;
-        }
-
-        if (includeEntries) {
-            getDirectoryPaths(directoryPath).forEach(deleteDirectory);
-            getFilePaths(directoryPath).forEach(deleteFile);
-        }
-
-        FS.rmdirSync(directoryPath);
-
-        return true;
-    } catch (error) {
-
-        return false;
+    if (!FS.existsSync(directoryPath)) {
+        return;
     }
+
+    if (includeEntries) {
+        getDirectoryPaths(directoryPath).forEach(
+            path => deleteDirectory(path, true)
+        );
+        getFilePaths(directoryPath).forEach(path => deleteFile(path, true));
+    }
+
+    FS.rmdirSync(directoryPath);
 }
 
 /**
@@ -135,24 +130,17 @@ function deleteDirectory(directoryPath, includeEntries) {
  * @param {string} filePath
  *        File path
  *
- * @return {boolean}
- *         True if deleted
+ * @return {void}
+ *
+ * @throws {Error}
  */
 function deleteFile(filePath) {
 
-    try {
-
-        if (!FS.existsSync(filePath)) {
-            return true;
-        }
-
-        FS.unlinkSync(filePath);
-
-        return true;
-    } catch (error) {
-
-        return false;
+    if (!FS.existsSync(filePath)) {
+        return;
     }
+
+    FS.unlinkSync(filePath);
 }
 
 /**
