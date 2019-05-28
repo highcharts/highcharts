@@ -2707,18 +2707,24 @@ H.Series = H.seriesType(
                 chartOptions = chart.options,
                 plotOptions = chartOptions.plotOptions,
                 userOptions = chart.userOptions || {},
-                userPlotOptions = userOptions.plotOptions || {},
-                typeOptions = plotOptions[this.type],
                 seriesUserOptions = merge(itemOptions),
                 options,
                 zones,
                 zone,
-                styledMode = chart.styledMode;
+                styledMode = chart.styledMode,
+                e = {
+                    plotOptions: plotOptions,
+                    userOptions: seriesUserOptions
+                };
 
-            fireEvent(this, 'setOptions', { userOptions: seriesUserOptions });
+            fireEvent(this, 'setOptions', e);
+
+            // These may be modified by the event
+            var userPlotOptions = userOptions.plotOptions || {},
+                typeOptions = e.plotOptions[this.type];
 
             // use copy to prevent undetected changes (#9762)
-            this.userOptions = seriesUserOptions;
+            this.userOptions = e.userOptions;
 
             options = merge(
                 typeOptions,

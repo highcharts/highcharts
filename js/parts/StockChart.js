@@ -160,20 +160,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
         disableStartOnTick = navigatorEnabled ? {
             startOnTick: false,
             endOnTick: false
-        } : null,
-
-        lineOptions = {
-
-            marker: {
-                enabled: false,
-                radius: 2
-            }
-            // gapSize: 0
-        },
-        columnOptions = {
-            shadow: false,
-            borderWidth: 0
-        };
+        } : null;
 
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (xAxisOptions, i) {
@@ -263,19 +250,6 @@ H.StockChart = H.stockChart = function (a, b, c) {
             },
             legend: {
                 enabled: false
-            },
-
-            plotOptions: {
-                line: lineOptions,
-                spline: lineOptions,
-                area: lineOptions,
-                areaspline: lineOptions,
-                arearange: lineOptions,
-                areasplinerange: lineOptions,
-                column: columnOptions,
-                columnrange: columnOptions,
-                candlestick: columnOptions,
-                ohlc: columnOptions
             }
 
         },
@@ -293,6 +267,37 @@ H.StockChart = H.stockChart = function (a, b, c) {
         new Chart(a, options, c) :
         new Chart(options, b);
 };
+
+// Handle som Stock-specific series defaults, override the plotOptions before
+// series options are handled.
+addEvent(Series, 'setOptions', function (e) {
+    var overrides;
+    if (this.chart.options.isStock) {
+
+        if (
+            this instanceof H.seriesTypes.line &&
+            !(this instanceof H.seriesTypes.scatter)
+        ) {
+            overrides = {
+                marker: {
+                    enabled: false,
+                    radius: 2
+                }
+            };
+        } else if (this instanceof H.seriesTypes.column) {
+            overrides = {
+                borderWidth: 0,
+                shadow: false
+            };
+        }
+        if (overrides) {
+            e.plotOptions[this.type] = merge(
+                e.plotOptions[this.type],
+                overrides
+            );
+        }
+    }
+});
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
