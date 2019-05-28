@@ -19,11 +19,17 @@ const gulp = require('gulp');
 function distClean() {
 
     const fsLib = require('./lib/fs');
+    const logLib = require('./lib/log');
 
-    return new Promise(done => {
+    return new Promise((resolve, reject) => {
 
-        fsLib.deleteDirectory('build/dist', true);
-        done();
+        try {
+            fsLib.deleteDirectory('build/dist', true);
+            resolve();
+        } catch (catchedError) {
+            logLib.failure(catchedError);
+            reject(catchedError);
+        }
     });
 }
 
