@@ -1136,8 +1136,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             options = merge(chart.options, chartOptions);
 
         // Use userOptions to make the options chain in series right (#3881)
-        if (chart.userOptions.plotOptions) {
-            options.plotOptions = chart.userOptions.plotOptions;
+        if (chart.userOptions.plotOptions || chartOptions.plotOptions) {
+            options.plotOptions = merge(
+                chart.userOptions.plotOptions,
+                chartOptions.plotOptions
+            );
         }
 
         // create a sandbox where a new chart will be generated
