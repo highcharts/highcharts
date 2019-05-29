@@ -24,7 +24,6 @@ var dateFormat = H.dateFormat,
     pick = H.pick,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    stop = H.stop,
     Series = H.Series,
     parent = seriesTypes.xrange;
 
@@ -184,7 +183,6 @@ seriesType('gantt', 'xrange'
                     );
 
                     if (graphic) {
-                        stop(graphic);
                         graphic[verb]({
                             d: diamondShape
                         });
@@ -255,8 +253,15 @@ seriesType('gantt', 'xrange'
         },
         isValid: function () {
             return (
-                typeof this.start === 'number' &&
-                (typeof this.end === 'number' || this.milestone)
+                (
+                    typeof this.start === 'number' ||
+                    typeof this.x === 'number'
+                ) &&
+                (
+                    typeof this.end === 'number' ||
+                    typeof this.x2 === 'number' ||
+                    this.milestone
+                )
             );
         }
     }));
