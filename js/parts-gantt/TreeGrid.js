@@ -485,18 +485,19 @@ var onBeforeRender = function (e) {
                 removeFoundExtremesEvent,
                 uniqueNames = options.uniqueNames,
                 numberOfSeries = 0,
-                isDirtyData,
+                isDirty,
                 data,
                 treeGrid;
             // Check whether any of series is rendering for the first time,
-            // or its data is dirty, and only then update. #10570, #10580
-            axis.series.forEach(function (series) {
-                isDirtyData = isDirtyData ||
-                    !series.hasRendered ||
-                    series.isDirtyData;
+            // visibility has changed, or its data is dirty,
+            // and only then update. #10570, #10580
+            isDirty = axis.series.some(function (series) {
+                return !series.hasRendered ||
+                    series.isDirtyData ||
+                    series.isDirty;
             });
 
-            if (isDirtyData) {
+            if (isDirty) {
                 // Concatenate data from all series assigned to this axis.
                 data = axis.series.reduce(function (arr, s) {
                     if (s.visible) {
