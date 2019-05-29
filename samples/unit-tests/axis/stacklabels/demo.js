@@ -20,7 +20,6 @@ QUnit.test('Stack labels on non-data axis', function (assert) {
         }]
     });
 
-
     assert.strictEqual(
         chart.container.querySelector('.highcharts-stack-labels text')
             .getAttribute('y'),
@@ -62,51 +61,40 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         }]
     });
 
-    var stackLabels,
-        firstStackLabel,
-        lastStackLabel;
-
-    stackLabels =  chart.yAxis[0].stackTotalGroup.element.childNodes;
-    firstStackLabel = stackLabels[0];
-    lastStackLabel = stackLabels[stackLabels.length - 1];
+    var stacks = chart.yAxis[0].stacks,
+        firstStackLabelBBox = stacks.column[0].label.element.getBBox(),
+        lastStackLabelBBox = stacks.column[3].label.element.getBBox();
 
     assert.strictEqual(
-        chart.isInsidePlot(parseFloat(firstStackLabel.getAttribute('x')) -
-        firstStackLabel.getBBox().width / 2,
-        parseFloat(firstStackLabel.getAttribute('y')) -
-        firstStackLabel.getBBox().height / 2),
+        firstStackLabelBBox.x >= 0,
         true,
-        'Stack label is inside plot area'
+        'Stack label should be inside plot area'
     );
-
     assert.strictEqual(
-        chart.isInsidePlot(parseFloat(lastStackLabel.getAttribute('x')) +
-        lastStackLabel.getBBox().width / 2,
-        parseFloat(lastStackLabel.getAttribute('y')) -
-        lastStackLabel.getBBox().height / 2),
+        lastStackLabelBBox.x + lastStackLabelBBox.width <= chart.plotWidth,
         true,
-        'Stack label is inside plot area'
+        'Stack label should be inside plot area'
     );
 
     chart.update({
         yAxis: {
             stackLabels: {
-                overflow: 'hidden'
+                overflow: 'allow'
             }
         }
     });
-    stackLabels =  chart.yAxis[0].stackTotalGroup.element.childNodes;
-    firstStackLabel = stackLabels[0];
-    lastStackLabel = stackLabels[stackLabels.length - 1];
+    stacks = chart.yAxis[0].stacks;
+    var firstStackLabel = stacks.column[0].label,
+        lastStackLabel = stacks.column[3].label;
 
     assert.strictEqual(
-        firstStackLabel.getAttribute('visibility'),
+        firstStackLabel.visibility,
         'hidden',
         'Stack label should be hidden'
     );
 
     assert.strictEqual(
-        lastStackLabel.getAttribute('visibility'),
+        lastStackLabel.visibility,
         'hidden',
         'Stack label should be hidden'
     );
@@ -120,26 +108,20 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         }
     });
 
-    stackLabels =  chart.yAxis[0].stackTotalGroup.element.childNodes;
-    firstStackLabel = stackLabels[0];
-    lastStackLabel = stackLabels[stackLabels.length - 1];
+    stacks = chart.yAxis[0].stacks;
+    firstStackLabelBBox = stacks.column[0].label.element.getBBox();
+    lastStackLabelBBox = stacks.column[3].label.element.getBBox();
 
     assert.strictEqual(
-        chart.isInsidePlot(parseFloat(firstStackLabel.getAttribute('x')) -
-        firstStackLabel.getBBox().width / 2,
-        parseFloat(firstStackLabel.getAttribute('y')) -
-        firstStackLabel.getBBox().height / 2),
+        firstStackLabelBBox.x >= 0,
         false,
-        'Stack label is outside plot area'
+        'Stack label should be outside plot area'
     );
 
     assert.strictEqual(
-        chart.isInsidePlot(parseFloat(lastStackLabel.getAttribute('x')) +
-        lastStackLabel.getBBox().width / 2,
-        parseFloat(lastStackLabel.getAttribute('y')) -
-        lastStackLabel.getBBox().height / 2),
+        lastStackLabelBBox.x + lastStackLabelBBox.width <= chart.plotWidth,
         false,
-        'Stack label is outside plot area'
+        'Stack label should be outside plot area'
     );
 
     chart.update({
@@ -147,26 +129,21 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
             inverted: true
         }
     });
-    stackLabels =  chart.yAxis[0].stackTotalGroup.element.childNodes;
-    firstStackLabel = stackLabels[0];
-    lastStackLabel = stackLabels[stackLabels.length - 1];
+
+    stacks = chart.yAxis[0].stacks;
+    firstStackLabelBBox = stacks.column[0].label.element.getBBox();
+    lastStackLabelBBox = stacks.column[3].label.element.getBBox();
 
     assert.strictEqual(
-        chart.isInsidePlot(parseFloat(firstStackLabel.getAttribute('x')) +
-        firstStackLabel.getBBox().width,
-        parseFloat(firstStackLabel.getAttribute('y')) -
-        firstStackLabel.getBBox().height),
+        firstStackLabelBBox.x >= 0,
         true,
-        'Stack label is inside plot area'
+        'Stack label should be inside plot area'
     );
 
     assert.strictEqual(
-        chart.isInsidePlot(parseFloat(lastStackLabel.getAttribute('x')) +
-        lastStackLabel.getBBox().width,
-        parseFloat(lastStackLabel.getAttribute('y')) -
-        lastStackLabel.getBBox().height),
+        lastStackLabelBBox.x + lastStackLabelBBox.width <= chart.plotWidth,
         false,
-        'Stack label is outside plot area'
+        'Stack label should outside plot area'
     );
     chart.update({
         yAxis: {
@@ -176,18 +153,18 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
             }
         }
     });
-    stackLabels =  chart.yAxis[0].stackTotalGroup.element.childNodes;
-    firstStackLabel = stackLabels[0];
-    lastStackLabel = stackLabels[stackLabels.length - 1];
+    stacks = chart.yAxis[0].stacks;
+    firstStackLabel = stacks.column[0].label;
+    lastStackLabel = stacks.column[3].label;
 
     assert.strictEqual(
-        firstStackLabel.getAttribute('visibility'),
+        firstStackLabel.visibility,
         'visible',
         'Stack label should be visible'
     );
 
     assert.strictEqual(
-        lastStackLabel.getAttribute('visibility'),
+        lastStackLabel.visibility,
         'hidden',
         'Stack label should be hidden'
     );
@@ -201,25 +178,19 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         }
     });
 
-    stackLabels =  chart.yAxis[0].stackTotalGroup.element.childNodes;
-    firstStackLabel = stackLabels[0];
-    lastStackLabel = stackLabels[stackLabels.length - 1];
+    stacks = chart.yAxis[0].stacks;
+    firstStackLabelBBox = stacks.column[0].label.element.getBBox();
+    lastStackLabelBBox = stacks.column[3].label.element.getBBox();
 
     assert.strictEqual(
-        chart.isInsidePlot(parseFloat(firstStackLabel.getAttribute('x')) +
-        firstStackLabel.getBBox().width,
-        parseFloat(firstStackLabel.getAttribute('y')) -
-        firstStackLabel.getBBox().height),
+        firstStackLabelBBox.x >= 0,
         true,
-        'Stack label is inside plot area'
+        'Stack label should be inside plot area'
     );
 
     assert.strictEqual(
-        chart.isInsidePlot(parseFloat(lastStackLabel.getAttribute('x')) +
-        lastStackLabel.getBBox().width,
-        parseFloat(lastStackLabel.getAttribute('y')) -
-        lastStackLabel.getBBox().height),
+        lastStackLabelBBox.x + lastStackLabelBBox.width <= chart.plotWidth,
         true,
-        'Stack label is inside plot area'
+        'Stack label should be inside plot area'
     );
 });
