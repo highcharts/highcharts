@@ -221,6 +221,9 @@ Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
 
             // Find width and height of tick
             tickHeight = label.getBBox ? label.getBBox().height : 0;
+            if (label.textStr && !isNumber(label.textPxLength)) {
+                label.textPxLength = label.getBBox().width;
+            }
             tickWidth = isNumber(label.textPxLength) ? label.textPxLength : 0;
 
             // Update the result if width and/or height are larger
