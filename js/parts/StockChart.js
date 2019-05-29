@@ -271,23 +271,30 @@ H.StockChart = H.stockChart = function (a, b, c) {
 // Handle som Stock-specific series defaults, override the plotOptions before
 // series options are handled.
 addEvent(Series, 'setOptions', function (e) {
-    var overrides;
+    var series = this,
+        overrides;
+
+    function is(type) {
+        return H.seriesTypes[type] && series instanceof H.seriesTypes[type];
+    }
     if (this.chart.options.isStock) {
 
-        if (
-            this instanceof H.seriesTypes.line &&
-            !(this instanceof H.seriesTypes.scatter)
+        if (is('column')) {
+            overrides = {
+                borderWidth: 0,
+                shadow: false
+            };
+
+        } else if (
+            is('line') &&
+            !is('scatter') &&
+            !is('sma')
         ) {
             overrides = {
                 marker: {
                     enabled: false,
                     radius: 2
                 }
-            };
-        } else if (this instanceof H.seriesTypes.column) {
-            overrides = {
-                borderWidth: 0,
-                shadow: false
             };
         }
         if (overrides) {
