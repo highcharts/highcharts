@@ -206,20 +206,14 @@ H.StackItem.prototype = {
                 h,
                 axis
             ),
-            label = stackItem.label,
-            alignAttr;
+            label = stackItem.label;
 
         if (label && stackBox) {
             // Align the label to the box
             label.align(stackItem.alignOptions, null, stackBox);
+            label.show();
 
-            // Set visibility (#678)
-            alignAttr = label.alignAttr;
-            label[
-                stackItem.options.crop === false || chart.isInsidePlot(
-                    alignAttr.x,
-                    alignAttr.y
-                ) ? 'show' : 'hide'](true);
+            stackItem.justifyStackLabel(label, axis);
         }
     },
 
@@ -262,6 +256,54 @@ H.StackItem.prototype = {
             width: inverted ? h : xWidth,
             height: inverted ? xWidth : h
         };
+    },
+
+    /**
+     * Sets labels position alluding to overflow and crop options.
+     *
+     * @private
+     * @function Highcarts.StackItem#justifyStackLabel
+     *
+     * @param {Highcharts.stackItem.label} label
+     *
+     * @param {Highcharts.Axis} axis
+     *
+     * @param {Highcharts.StackItem} stackItem
+     */
+
+    justifyStackLabel: function (label, axis) {
+        var alignAttr = label.alignAttr,
+            chart = axis.chart,
+            options = this.options,
+            isJustify = pick(options.overflow, 'justify') === 'justify',
+            bBox = label.getBBox(),
+            isHoriz = axis.horiz,
+            boxOffsetX = isHoriz ? bBox.width : bBox.width / 2,
+            boxOffsetY = isHoriz ? bBox.height : bBox.height / 2,
+            obj = {};
+
+        // Off left & right
+        if (alignAttr.x - boxOffsetX < 0) {
+            obj.x = boxOffsetX;
+        } else if (alignAttr.x + boxOffsetX > chart.plotWidth) {
+            obj.x = chart.plotWidth - boxOffsetX;
+        }
+
+        // Off top & bottom
+        if (alignAttr.y - boxOffsetY < 0) {
+            obj.y = boxOffsetY;
+        } else if (alignAttr.y - boxOffsetY > chart.plotHeight) {
+            obj.y = chart.plotHeight;
+        }
+
+        // Check overflow and crop
+        if (obj.x || obj.y) {
+            if (isJustify) {
+                label.attr(obj);
+            } else if (pick(options.crop, true)) {
+                label.hide();
+            }
+        }
     }
 };
 
