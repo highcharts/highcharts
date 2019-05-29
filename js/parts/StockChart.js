@@ -279,17 +279,13 @@ addEvent(Series, 'setOptions', function (e) {
     }
     if (this.chart.options.isStock) {
 
-        if (is('column')) {
+        if (is('column') || is('columnrange')) {
             overrides = {
                 borderWidth: 0,
                 shadow: false
             };
 
-        } else if (
-            is('line') &&
-            !is('scatter') &&
-            !is('sma')
-        ) {
+        } else if (is('line') && !is('scatter') && !is('sma')) {
             overrides = {
                 marker: {
                     enabled: false,
