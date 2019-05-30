@@ -649,14 +649,18 @@ seriesType(
             var series = this,
                 dataLabels = [];
             Series.prototype.render.apply(this, arguments);
-            series.data.forEach(function (point) {
-                if (H.isArray(point.dataLabels)) {
-                    point.dataLabels.forEach(function (dataLabel) {
-                        dataLabels.push(dataLabel);
-                    });
-                }
-            });
-            series.chart.hideOverlappingLabels(dataLabels);
+            // #10823 - dataLabels should stay visible
+            // when enabled allowOverlap.
+            if (!series.options.dataLabels.allowOverlap) {
+                series.data.forEach(function (point) {
+                    if (H.isArray(point.dataLabels)) {
+                        point.dataLabels.forEach(function (dataLabel) {
+                            dataLabels.push(dataLabel);
+                        });
+                    }
+                });
+                series.chart.hideOverlappingLabels(dataLabels);
+            }
         },
         // Needed because of z-indexing issue if point is added in series.group
         setVisible: function () {
