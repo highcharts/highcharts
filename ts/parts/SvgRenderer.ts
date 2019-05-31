@@ -89,7 +89,7 @@ declare global {
             fill?: ColorString;
             inverted?: boolean;
             matrix?: Array<number>;
-            rotation?: string;
+            rotation?: number;
             rotationOriginX?: number;
             rotationOriginY?: number;
             scaleX?: number;
@@ -376,7 +376,7 @@ declare global {
                 className?: string
             ): SVGElement;
             public path(attribs: SVGAttributes): SVGElement;
-            public path(path: SVGPathArray): SVGElement;
+            public path(path?: SVGPathArray): SVGElement;
             public rect(attribs: SVGAttributes): SVGElement;
             public rect(
                 x?: number,
@@ -651,7 +651,7 @@ declare global {
  * @type {Array<number>|undefined}
  *//**
  * @name Highcharts.SVGAttributes#rotation
- * @type {string|undefined}
+ * @type {number|undefined}
  *//**
  * @name Highcharts.SVGAttributes#rotationOriginX
  * @type {number|undefined}
@@ -4690,7 +4690,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     path: function (
         this: Highcharts.SVGRenderer,
-        path: (Highcharts.SVGAttributes|Highcharts.SVGPathArray)
+        path?: (Highcharts.SVGAttributes|Highcharts.SVGPathArray)
     ): Highcharts.SVGElement {
         var attribs = (this.styledMode ? {} : {
             fill: 'none'
@@ -4699,7 +4699,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         if (isArray(path)) {
             attribs.d = path as any;
         } else if (isObject(path)) { // attributes
-            extend(attribs, path);
+            extend(attribs, path as any);
         }
         return this.createElement('path').attr(attribs) as any;
     },

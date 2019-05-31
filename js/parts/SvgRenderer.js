@@ -226,7 +226,7 @@ import H from './Globals.js';
 * @type {Array<number>|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#rotation
-* @type {string|undefined}
+* @type {number|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#rotationOriginX
 * @type {number|undefined}

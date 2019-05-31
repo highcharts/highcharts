@@ -307,22 +307,25 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
                         min = axis.toPixels(
                             Math.min(
                                 pick(axis.options.min, axis.dataMin),
-                                axis.dataMin
+                                axis.dataMin as any
                             )
                         ),
                         max = axis.toPixels(
                             Math.max(
                                 pick(axis.options.max, axis.dataMax),
-                                axis.dataMax
+                                axis.dataMax as any
                             )
                         ),
                         absMin = Math.min(min, max),
                         absMax = Math.max(min, max);
 
                     // Store the bounds for use in the touchmove handler
-                    bounds.min = Math.min(axis.pos, absMin - minPixelPadding);
+                    bounds.min = Math.min(
+                        axis.pos as any,
+                        absMin - minPixelPadding
+                    );
                     bounds.max = Math.max(
-                        axis.pos + axis.len,
+                        (axis.pos as any) + axis.len,
                         absMax + minPixelPadding
                     );
                 }
