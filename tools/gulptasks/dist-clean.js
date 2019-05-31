@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -18,15 +18,19 @@ const Gulp = require('gulp');
  */
 function distClean() {
 
-    const ProcessLib = require('./lib/process');
+    const fsLib = require('./lib/fs');
+    const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
-        ProcessLib
-            .exec('rm -rf build/dist')
-            .then(() => resolve())
-            .catch(reject);
+        try {
+            fsLib.deleteDirectory('build/dist', true);
+            resolve();
+        } catch (catchedError) {
+            logLib.failure(catchedError);
+            reject(catchedError);
+        }
     });
 }
 
-Gulp.task('dist-clean', distClean);
+gulp.task('dist-clean', distClean);

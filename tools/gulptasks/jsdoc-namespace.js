@@ -41,10 +41,10 @@ const TARGET_DIRECTORIES = [
  */
 function jsDocNamespace() {
 
-    const fsys = require('../filesystem');
     const fs = require('fs');
+    const fsLib = require('./lib/fs');
     const jsdoc = require('gulp-jsdoc3');
-    const log = require('./lib/log');
+    const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
@@ -64,7 +64,7 @@ function jsDocNamespace() {
         const gulpOptions = [codeFiles, { read: false }],
             jsdoc3Options = {
                 plugins: [
-                    path.join(
+                    path.posix.join(
                         'node_modules', 'highcharts-documentation-generators',
                         'jsdoc', 'plugins', 'highcharts.namespace'
                     )
@@ -76,7 +76,7 @@ function jsDocNamespace() {
             return;
         }
 
-        log.message('Generating', TREE_FILE + '...');
+        logLib.message('Generating', TREE_FILE + '...');
 
         gulp
             .src(...gulpOptions)
@@ -90,16 +90,19 @@ function jsDocNamespace() {
                 Promise
                     .all(
                         TARGET_DIRECTORIES.map(
-                            targetDirectory => fsys.copyFile(
-                                TREE_FILE,
-                                path.join(
-                                    targetDirectory,
-                                    path.basename(TREE_FILE)
-                                )
-                            )
+                            targetDirectory => new Promise(done => {
+                                fsLib.copyFile(
+                                    TREE_FILE,
+                                    path.join(
+                                        targetDirectory,
+                                        path.basename(TREE_FILE)
+                                    )
+                                );
+                                done();
+                            })
                         )
                     )
-                    .then(() => log.success('Created', TREE_FILE))
+                    .then(() => logLib.success('Created', TREE_FILE))
                     .then(resolve)
                     .catch(resolve);
             }));

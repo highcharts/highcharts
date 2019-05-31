@@ -27,12 +27,12 @@ const gulp = require('gulp');
 function task() {
 
     const argv = require('yargs').argv;
-    const build = require('../build.js');
-    const log = require('./lib/log');
+    const buildTool = require('../build');
+    const logLib = require('./lib/log');
 
     return new Promise((resolve, reject) => {
 
-        const BuildScripts = build.getBuildScripts({
+        const BuildScripts = buildTool.getBuildScripts({
             debug: (argv.d || argv.debug || false),
             files: (
                 (argv.file) ?
@@ -42,11 +42,11 @@ function task() {
             type: (argv.type || null)
         });
 
-        log.message('Generating code...');
+        logLib.message('Generating code...');
 
         BuildScripts
             .fnFirstBuild()
-            .then(() => log.success('Created code'))
+            .then(() => logLib.success('Created code'))
             .then(resolve)
             .catch(reject);
     });
