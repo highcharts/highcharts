@@ -12,7 +12,7 @@ Highcharts.chart('container', {
         categories: ['0', '1', '2', '1. Intermediate Sum', '4', '5',  '2. Intermediate Sum', '7', 'Sum']
     },
     yAxis: {
-        tickInterval: 10,
+        tickPixelInterval: 30,
         stackLabels: {
             enabled: true,
             crop: false

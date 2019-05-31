@@ -28,8 +28,8 @@ const CONFIGURATION_FILE = path.join('node_modules', '_gulptasks_update.json');
 function task() {
 
     const fs = require('fs');
-    const log = require('./lib/log');
-    const process = require('./lib/process');
+    const logLib = require('./lib/log');
+    const processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
 
@@ -66,21 +66,21 @@ function task() {
 
         if (configuration.lastCheck > minimumTime) {
 
-            log.message('Skipping package validation');
+            logLib.message('Skipping package validation');
 
             resolve();
 
             return;
         }
 
-        log.message('Validating packages...');
+        logLib.message('Validating packages...');
 
-        process.exec('npm i')
+        processLib.exec('npm i')
             .then(() => {
 
                 configuration.lastCheck = now;
 
-                log.success('Validated packages');
+                logLib.success('Validated packages');
 
                 fs.writeFileSync(
                     CONFIGURATION_FILE, JSON.stringify(configuration)

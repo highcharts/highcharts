@@ -41,7 +41,7 @@ function checkJSWrap() {
 
     const fs = require('fs');
     const glob = require('glob');
-    const log = require('./lib/log');
+    const logLib = require('./lib/log');
     const yaml = require('js-yaml');
 
     let errors = 0;
@@ -57,11 +57,11 @@ function checkJSWrap() {
                 fs.readFileSync(detailsFile, 'utf-8')
             );
             if (details.js_wrap !== 'b') {
-                log.failure('js_wrap not found:', detailsFile);
+                logLib.failure('js_wrap not found:', detailsFile);
                 errors++;
             }
         } catch (e) {
-            log.failure('File not found:', detailsFile);
+            logLib.failure('File not found:', detailsFile);
             errors++;
         }
     });

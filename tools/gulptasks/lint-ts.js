@@ -26,16 +26,16 @@ const SOURCE_GLOB = '**/*.ts';
  */
 function task() {
 
-    const log = require('./lib/log');
-    const process = require('./lib/process');
+    const logLib = require('./lib/log');
+    const processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
 
-        log.message('Linting [', SOURCE_GLOB, ']...');
+        logLib.message('Linting [', SOURCE_GLOB, ']...');
 
-        process
+        processLib
             .exec('cd ts && npx eslint ' + SOURCE_GLOB)
-            .then(() => log.success('Finished linting'))
+            .then(() => logLib.success('Finished linting'))
             .then(resolve)
             .catch(reject);
     });

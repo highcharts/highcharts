@@ -281,6 +281,10 @@ QUnit.test('Check input format', function (assert) {
 
 QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
     var chart = new Highcharts.StockChart('container', {
+            chart: {
+                width: 650
+            },
+            title: false,
             xAxis: {
                 min: Date.UTC(2007, 8, 5),
                 max: Date.UTC(2007, 8, 25)

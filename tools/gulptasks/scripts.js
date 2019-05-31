@@ -131,13 +131,13 @@ function shouldRun() {
 function task() {
 
     const argv = require('yargs').argv;
-    const log = require('./lib/log');
-    const process = require('./lib/process');
+    const logLib = require('./lib/log');
+    const processLib = require('./lib/process');
 
-    if (process.isRunning('scripts-watch')) {
-        log.warn('Running watch process detected. Skipping task...');
+    if (processLib.isRunning('scripts-watch')) {
+        logLib.warn('Running watch process detected. Skipping task...');
         if (argv.force) {
-            process.isRunning('scripts-watch', false, true);
+            processLib.isRunning('scripts-watch', false, true);
         } else {
             return Promise.resolve();
         }
@@ -147,15 +147,15 @@ function task() {
 
         if (shouldRun() ||
             argv.force ||
-            process.isRunning('scripts_incomplete')
+            processLib.isRunning('scripts_incomplete')
         ) {
 
-            process.isRunning('scripts_incomplete', true, true);
+            processLib.isRunning('scripts_incomplete', true, true);
 
             gulp.series('scripts-ts', 'scripts-css', 'scripts-js')(
                 () => {
 
-                    process.isRunning('scripts_incomplete', false, true);
+                    processLib.isRunning('scripts_incomplete', false, true);
 
                     saveRun();
 
@@ -164,7 +164,7 @@ function task() {
             );
         } else {
 
-            log.message(
+            logLib.message(
                 'Hint: Run the `scripts-watch` task to watch the js directory.'
             );
 

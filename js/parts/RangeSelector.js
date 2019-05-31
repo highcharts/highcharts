@@ -1232,12 +1232,13 @@ RangeSelector.prototype = {
         };
         // Hide away the input box
         input.onblur = function () {
+            // update extermes only when inputs are active
             if (input === H.doc.activeElement) { // Only when focused
                 // Update also when no `change` event is triggered, like when
                 // clicking inside the SVG (#4710)
                 updateExtremes();
             }
-
+            // #10404 - move hide and blur outside focus
             rangeSelector.hideInput(name);
             input.blur(); // #4606
         };
