@@ -815,7 +815,7 @@ Highcharts.Pointer.prototype = {
         chart.axes.forEach(function drawAxisCrosshair(
             axis: Highcharts.Axis
         ): void {
-            var snap = pick(axis.crosshair.snap, true),
+            var snap = pick((axis.crosshair as any).snap, true),
                 point = !snap ?
                     undefined :
                     H.find(points, function (p: Highcharts.Point): boolean {
@@ -945,7 +945,7 @@ Highcharts.Pointer.prototype = {
                     hoverPoint.setState(hoverPoint.state, true);
                     chart.axes.forEach(function (axis: Highcharts.Axis): void {
                         if (axis.crosshair) {
-                            axis.drawCrosshair(null, hoverPoint);
+                            axis.drawCrosshair(null as any, hoverPoint);
                         }
                     });
                 }

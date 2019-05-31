@@ -38,7 +38,7 @@ declare global {
             public constructor();
             public _cursor?: (CursorValue|null);
             public axes: Array<Axis>;
-            public axisOffset?: Array<number>;
+            public axisOffset: Array<number>;
             public bounds: Dictionary<Dictionary<number>>;
             public callback: ChartCallbackFunction;
             public callbacks: Array<ChartCallbackFunction>;
@@ -912,12 +912,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         fireEvent(this, 'getAxes');
 
         // make sure the options are arrays and add some members
-        xAxisOptions.forEach(function (axis: Highcharts.Axis, i: number): void {
+        xAxisOptions.forEach(function (axis: any, i: number): void {
             axis.index = i;
             axis.isX = true;
         });
 
-        yAxisOptions.forEach(function (axis: Highcharts.Axis, i: number): void {
+        yAxisOptions.forEach(function (axis: any, i: number): void {
             axis.index = i;
         });
 
@@ -2278,7 +2278,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             if (
                 axis.horiz &&
                 axis.visible &&
-                axis.options.labels.enabled &&
+                (axis.options.labels as any).enabled &&
                 axis.series.length
             ) {
                 // 21 is the most common correction for X axis labels
@@ -2464,7 +2464,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Destroy axes
         i = axes.length;
         while (i--) {
-            axes[i] = axes[i].destroy();
+            axes[i] = axes[i].destroy() as any;
         }
 
         // Destroy scroller & scroller series before destroying base series

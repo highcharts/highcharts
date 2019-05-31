@@ -127,7 +127,7 @@ declare global {
             value?: (number|string)
         ): any;
         function clearTimeout(id: number): void;
-        function correctFloat(num: number, prec: number): number;
+        function correctFloat(num: number, prec?: number): number;
         function createElement(
             tag: string,
             attribs?: HTMLAttributes,
@@ -200,7 +200,7 @@ declare global {
             multiples?: Array<any>,
             magnitude?: number,
             allowDecimals?: boolean,
-            hasTickAmount?: number
+            hasTickAmount?: boolean
         ): number;
         function numberFormat(
             number: number,
@@ -1905,7 +1905,7 @@ H.normalizeTickInterval = function (
     multiples?: Array<any>,
     magnitude?: number,
     allowDecimals?: boolean,
-    hasTickAmount?: number
+    hasTickAmount?: boolean
 ): number {
     var normalized,
         i,
@@ -2130,7 +2130,7 @@ H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
  * @return {number}
  *         The corrected float number.
  */
-H.correctFloat = function (num: number, prec: number): number {
+H.correctFloat = function (num: number, prec?: number): number {
     return parseFloat(
         num.toPrecision(prec || 14)
     );
