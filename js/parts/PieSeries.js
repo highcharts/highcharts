@@ -213,7 +213,7 @@ seriesType(
      * @extends      plotOptions.line
      * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
      *               cropThreshold, dashStyle, findNearestPointBy,
-     *               getExtremesFromAll, label, lineWidth, marker,
+     *               getExtremesFromAll, label, marker,
      *               negativeColor, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointStart, softThreshold, stacking, step,
      *               threshold, turboThreshold, zoneAxis, zones
@@ -337,21 +337,20 @@ seriesType(
 
         /**
          * The chart is represented as an empty circle if total sum of all
-         * points values is 0. Use properties like `stroke`,
-         * `'stroke-width'` & `fill` to maniupulate its look.
+         * points values is 0. Use properties like `stroke` and `fill` to
+         * maniupulate its look. [pie.lineWidth](#plotOptions.pie.lineWidth)
+         * property defines the thickness of the circle.
          *
          * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
          *         Empty pie styled
          *
          * @type      {Highcharts.SVGAttributes}
-         * @default {stroke: '#aaa', 'stroke-width': 1, fill: 'none'}
+         * @default {stroke: '#aaa', fill: 'none'}
          * @private
          */
         emptySeries: {
             /** @ignore-option */
             stroke: '#aaa',
-            /** @ignore-option */
-            'stroke-width': 1,
             /** @ignore-option */
             fill: 'none'
         },
@@ -424,6 +423,20 @@ seriesType(
          * @private
          */
         legendType: 'point',
+
+        /**
+         * Pixel thickness of a circle that represents an empty series
+         * ([pie.emptySeries](#plotOptions.pie.emptySeries)).
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
+         *         Empty pie styled
+         *
+         * @product highcharts
+         * @default 2
+         * @type {number}
+         *
+         */
+        lineWidth: 2,
 
         /**
          * @ignore-option
@@ -900,56 +913,37 @@ seriesType(
          * regular graph.
          */
         drawGraph: function () {
-            var auxiliaryGraphExists = this.graph &&
-              this.graph.isAuxiliary;
+            var centerX,
+                centerY,
+                options = this.options,
+                graphicOptions;
 
-            // Draw auxiliary graph if there're no visible points
+
+            // Draw auxiliary graph if there're no visible points.
             if (this.total === 0) {
-                // auxiliary graph doesn't exist yet
-                if (!auxiliaryGraphExists) {
-                    this.renderAuxiliaryGraph();
-                }
-            } else if (auxiliaryGraphExists) {
-                this.destroyAuxiliaryGraph();
-            }
-        },
-
-        /**
-         * Draw empty circle if pie's total (visible) value is 0.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.pie#renderAuxiliaryGraph
-         */
-        renderAuxiliaryGraph: function () {
-            var centerX = this.center[0],
-                centerY = this.center[1],
-                graphicOptions = merge(this.options.emptySeries, {
+                centerX = this.center[0];
+                centerY = this.center[1];
+                graphicOptions = merge(options.emptySeries, {
+                    'stroke-width': options.lineWidth,
                     cx: centerX,
                     cy: centerY,
-                    r: this.center[2] / 2 - this.options.dataLabels.distance
+                    r: this.center[2] / 2 - options.dataLabels.distance
                 });
 
-            this.graph = this.chart.renderer.circle(centerX,
-                centerY, 0)
-                .addClass('highcharts-graph')
-                .add(this.group);
+                if (!this.graph) { // Auxiliary graph doesn't exist yet.
+                    this.graph = this.chart.renderer.circle(centerX,
+                        centerY, 0)
+                        .addClass('highcharts-graph')
+                        .add(this.group);
+                }
+                this.graph.animate(graphicOptions);
 
-            this.graph.isAuxiliary = true;
-            this.graph.animate(graphicOptions);
-        },
 
-        /**
-         * Destroy the auxiliary graph object.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.pie#destroyAuxiliaryGraph
-         */
-        destroyAuxiliaryGraph: function () {
-            if (this.graph) {
-                this.graph.destroy();
-                delete this.graph;
+            } else if (this.graph) { // Destroy the graph object.
+                this.graph = this.graph.destroy();
             }
         },
+
 
         /**
          * Draw the data points

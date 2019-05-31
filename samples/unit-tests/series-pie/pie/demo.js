@@ -68,8 +68,7 @@ QUnit.test('Update to negative (#7113) + Empty pie look (#5526)', function (asse
 
     // Issue #5526
     assert.ok(
-        Highcharts.defined(chart.series[0].graph) &&
-        chart.series[0].graph.isAuxiliary,
+        Highcharts.defined(chart.series[0].graph),
         'Empty pie graphic is created.'
     );
 });

@@ -19,9 +19,9 @@ Highcharts.chart('container', {
             y: 0,
             name: 'Point 3.'
         }],
+        lineWidth: 5,
         emptySeries: {
-            stroke: '#c0ffee',
-            'stroke-width': 10
+            stroke: '#c0ffee'
         }
     }]
 });
