@@ -220,13 +220,16 @@ module.exports = function (config) {
         browsers = Object.keys(browserStackBrowsers);
     }
 
-    if (argv.split) {
+    if (argv.splitbrowsers) {
         // Sharding / splitting tests across multiple browser instances
-        const numberOfInstances = !isNaN(argv.split) ? argv.split : 2;
+        if (argv.browsers) {
+            console.log(`Note: --browsers has been added as a cli argument and will override karma-sharding browser config.`)
+        }
+        const browserCount = !isNaN(argv.browsercount) ? argv.browsercount : 2;
         frameworks = [...frameworks, 'sharding'];
         // create a duplicate of the added browsers ${numberOfInstances} times.
-        browsers = browsers.reduce((browserInstances, current) => {
-            for (let i = 0; i < numberOfInstances; i++) {
+        browsers = argv.splitbrowsers.split(',').reduce((browserInstances, current) => {
+            for (let i = 0; i < browserCount; i++) {
                 browserInstances.push(current);
             }
             return browserInstances;
