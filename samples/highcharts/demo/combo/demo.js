@@ -11,7 +11,12 @@ Highcharts.chart('container', {
             style: {
                 left: '50px',
                 top: '18px',
-                color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                color: ( // theme
+                    Highcharts.defaultOptions &&
+                    Highcharts.defaultOptions.title &&
+                    Highcharts.defaultOptions.title.style &&
+                    Highcharts.defaultOptions.title.style.color
+                ) || 'black'
             }
         }]
     },

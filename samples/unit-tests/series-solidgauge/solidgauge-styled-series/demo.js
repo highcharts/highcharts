@@ -19,7 +19,11 @@ QUnit.test('Solid gauge styled series color (#6350)', function (assert) {
             startAngle: -90,
             endAngle: 90,
             background: {
-                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+                backgroundColor: ( // theme
+                    Highcharts.defaultOptions &&
+                    Highcharts.defaultOptions.pane &&
+                    Highcharts.defaultOptions.pane.backgroundColor
+                ) || '#EEE',
                 innerRadius: '60%',
                 outerRadius: '100%',
                 shape: 'arc'

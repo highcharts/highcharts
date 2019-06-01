@@ -93,7 +93,11 @@ Highcharts.chart('container', {
         x: 100,
         y: 70,
         floating: true,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
+        backgroundColor: ( // theme
+            Highcharts.defaultOptions &&
+            Highcharts.defaultOptions.legend &&
+            Highcharts.defaultOptions.legend.backgroundColor
+        ) || '#FFFFFF',
         borderWidth: 1
     },
     plotOptions: {
