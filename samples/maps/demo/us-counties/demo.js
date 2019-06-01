@@ -54,9 +54,10 @@ $.getJSON(
                     layout: 'vertical',
                     align: 'right',
                     floating: true,
-                    backgroundColor: (
-                        Highcharts.theme &&
-                        Highcharts.theme.legendBackgroundColor
+                    backgroundColor: ( // theme
+                        Highcharts.defaultOptions &&
+                        Highcharts.defaultOptions.legend &&
+                        Highcharts.defaultOptions.legend.backgroundColor
                     ) || 'rgba(255, 255, 255, 0.85)'
                 },
 

@@ -17,7 +17,12 @@ Highcharts.chart('container', {
             enabled: true,
             style: {
                 fontWeight: 'bold',
-                color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                color: ( // theme
+                    Highcharts.defaultOptions &&
+                    Highcharts.defaultOptions.title &&
+                    Highcharts.defaultOptions.title.style &&
+                    Highcharts.defaultOptions.title.style.color
+                ) || 'gray'
             }
         }
     },
@@ -27,7 +32,11 @@ Highcharts.chart('container', {
         verticalAlign: 'top',
         y: 25,
         floating: true,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+        backgroundColor: (
+            Highcharts.defaultOptions &&
+            Highcharts.defaultOptions.legend &&
+            Highcharts.defaultOptions.legend.backgroundColor
+        ) || 'white',
         borderColor: '#CCC',
         borderWidth: 1,
         shadow: false

@@ -114,7 +114,11 @@ Highcharts.chart('container', {
         verticalAlign: 'top',
         y: 100,
         floating: true,
-        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+        backgroundColor: ( // theme
+            Highcharts.defaultOptions &&
+            Highcharts.defaultOptions.legend &&
+            Highcharts.defaultOptions.legend.backgroundColor
+        ) || '#FFFFFF'
     },
     series: [{
         name: 'Rainfall',
