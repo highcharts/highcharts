@@ -2813,7 +2813,6 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              * @product highcharts
              */
             enabled: false,
-            /* eslint-disable valid-jsdoc */
             /**
              * Whether to hide stack labels that are outside the plot area.
              * By default, the stack label is moved
@@ -2821,12 +2820,11 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              * [overflow](/highcharts/#yAxis/stackLabels/overflow)
              * option.
              *
-             * @type    {boolean|undefined}
-             * @since   7.1.2
+             * @type  {boolean}
+             * @since 7.1.2
              */
-
             crop: true,
-
+            /* eslint-disable valid-jsdoc */
             /**
              * Callback JavaScript function to format the label. The value is
              * given by `this.total`.
@@ -2853,11 +2851,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              * @sample highcharts/yaxis/stacklabel-overflow/
              *         Stack labels flows outside the plot area.
              *
-             * @type {Highcharts.DataLabelsOverflowValue|undefined}
+             * @type  {Highcharts.DataLabelsOverflowValue}
              * @since 7.1.2
              */
             overflow: 'justify',
-
             /**
              * CSS styles for the label.
              *
