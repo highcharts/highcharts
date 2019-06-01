@@ -113,7 +113,12 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
             );
             if (scrollablePixelsX) {
                 this.plotWidth += scrollablePixelsX;
-                this.clipBox.width += scrollablePixelsX;
+                if (this.inverted) {
+                    this.clipBox.height += scrollablePixelsX;
+                } else {
+                    this.clipBox.width += scrollablePixelsX;
+                }
+
                 corrections = {
                     // Corrections for right side
                     1: { name: 'right', value: scrollablePixelsX }

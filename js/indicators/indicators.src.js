@@ -250,10 +250,12 @@ seriesType(
                         );
 
                         for (i = 0; i < croppedData.xData.length; i++) {
+                            // (#10774)
                             croppedDataValues.push([
-                                croppedData.xData[i],
-                                croppedData.yData[i]
-                            ]);
+                                croppedData.xData[i]
+                            ].concat(
+                                H.splat(croppedData.yData[i])
+                            ));
                         }
 
                         oldFirstPointIndex = processedData.xData.indexOf(

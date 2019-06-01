@@ -821,17 +821,19 @@ seriesType(
                 // Add class names
                 series.points.forEach(function (point) {
                     if (point.graphic) {
+                        var className = '';
                         if (point.name) {
-                            point.graphic.addClass(
+                            className +=
                                 'highcharts-name-' +
-                                point.name.replace(/ /g, '-').toLowerCase()
-                            );
+                                point.name.replace(/ /g, '-').toLowerCase();
                         }
                         if (point.properties && point.properties['hc-key']) {
-                            point.graphic.addClass(
-                                'highcharts-key-' +
-                                point.properties['hc-key'].toLowerCase()
-                            );
+                            className +=
+                                ' highcharts-key-' +
+                                point.properties['hc-key'].toLowerCase();
+                        }
+                        if (className) {
+                            point.graphic.addClass(className);
                         }
 
                         // In styled mode, apply point colors by CSS

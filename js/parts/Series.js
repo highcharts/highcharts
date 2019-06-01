@@ -2133,18 +2133,26 @@ H.Series = H.seriesType(
             /**
              * The opposite state of a hover for series.
              *
-             * @sample {highcharts} highcharts/demo/windbarb-series/
-             *         Disabled inactive state
+             * @sample highcharts/plotoptions/series-inactive-opacity
+             *         Disabled inactive state by setting opacity
              */
             inactive: {
+                /**
+                 * The animation for entering the inactive state.
+                 *
+                 * @type    {boolean|Highcharts.AnimationOptionsObject}
+                 */
                 animation: {
                     duration: 50
                 },
                 /**
-                 * Opacity of series elements (dataLabels, line, area).
+                 * Opacity of series elements (dataLabels, line, area). Set to 1
+                 * to disable inactive state.
                  *
                  * @apioption plotOptions.series.states.inactive.opacity
                  * @type {number}
+                 * @sample highcharts/plotoptions/series-inactive-opacity
+                 *         Disabled inactive state
                  */
                 opacity: 0.2
             }
@@ -2699,18 +2707,24 @@ H.Series = H.seriesType(
                 chartOptions = chart.options,
                 plotOptions = chartOptions.plotOptions,
                 userOptions = chart.userOptions || {},
-                userPlotOptions = userOptions.plotOptions || {},
-                typeOptions = plotOptions[this.type],
                 seriesUserOptions = merge(itemOptions),
                 options,
                 zones,
                 zone,
-                styledMode = chart.styledMode;
+                styledMode = chart.styledMode,
+                e = {
+                    plotOptions: plotOptions,
+                    userOptions: seriesUserOptions
+                };
 
-            fireEvent(this, 'setOptions', { userOptions: seriesUserOptions });
+            fireEvent(this, 'setOptions', e);
+
+            // These may be modified by the event
+            var userPlotOptions = userOptions.plotOptions || {},
+                typeOptions = e.plotOptions[this.type];
 
             // use copy to prevent undetected changes (#9762)
-            this.userOptions = seriesUserOptions;
+            this.userOptions = e.userOptions;
 
             options = merge(
                 typeOptions,

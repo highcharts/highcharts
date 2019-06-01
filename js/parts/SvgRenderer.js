@@ -226,7 +226,7 @@ import H from './Globals.js';
 * @type {Array<number>|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#rotation
-* @type {string|undefined}
+* @type {number|undefined}
 */ /**
 * @name Highcharts.SVGAttributes#rotationOriginX
 * @type {number|undefined}
@@ -2313,12 +2313,21 @@ SVGElement.prototype['stroke-widthSetter'] =
  * @param {number} height
  *        The height of the SVG.
  *
+ * @param {Highcharts.CSSObject} [style]
+ *        The box style, if not in styleMode
+ *
  * @param {boolean} [forExport=false]
  *        Whether the rendered content is intended for export.
  *
  * @param {boolean} [allowHTML=true]
  *        Whether the renderer is allowed to include HTML text, which will be
  *        projected on top of the SVG.
+ *
+ * @param {boolean} [styledMode=false]
+ *        Whether the renderer belongs to a chart that is in styled mode.
+ *        If it does, it will avoid setting presentational attributes in
+ *        some cases, but not when set explicitly through `.attr` and `.css`
+ *        etc.
  */
 SVGRenderer = H.SVGRenderer = function () {
     this.init.apply(this, arguments);

@@ -31,14 +31,14 @@ const WATCH_GLOBS = [
 function task() {
 
     const argv = require('yargs').argv;
-    const fs = require('./lib/fs');
-    const log = require('./lib/log');
-    const process = require('./lib/process');
+    const fsLib = require('./lib/fs');
+    const logLib = require('./lib/log');
+    const processLib = require('./lib/process');
 
-    if (process.isRunning('scripts-watch')) {
-        log.warn('Running watch process detected. Skipping task...');
+    if (processLib.isRunning('scripts-watch')) {
+        logLib.warn('Running watch process detected. Skipping task...');
         if (argv.force) {
-            process.isRunning('scripts-watch', false, true);
+            processLib.isRunning('scripts-watch', false, true);
         } else {
             return Promise.resolve();
         }
@@ -56,8 +56,8 @@ function task() {
             .watch(WATCH_GLOBS, done => {
 
                 const buildTasks = [];
-                const newJsHash = fs.getDirectoryHash('js', true);
-                const newTsHash = fs.getDirectoryHash('ts', true);
+                const newJsHash = fsLib.getDirectoryHash('js', true);
+                const newTsHash = fsLib.getDirectoryHash('ts', true);
 
                 if (newTsHash !== tsHash) {
                     tsHash = newTsHash;
@@ -70,21 +70,21 @@ function task() {
                 }
 
                 if (buildTasks.length === 0) {
-                    log.success('No significant changes found.');
+                    logLib.success('No significant changes found.');
                     done();
                     return;
                 }
 
                 gulp.series(...buildTasks)(done);
             })
-            .on('add', filePath => log.warn('Modified', filePath))
-            .on('change', filePath => log.warn('Modified', filePath))
-            .on('unlink', filePath => log.warn('Modified', filePath))
-            .on('error', log.failure);
+            .on('add', filePath => logLib.warn('Modified', filePath))
+            .on('change', filePath => logLib.warn('Modified', filePath))
+            .on('unlink', filePath => logLib.warn('Modified', filePath))
+            .on('error', logLib.failure);
 
-        log.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
+        logLib.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
 
-        process.isRunning('scripts-watch', true);
+        processLib.isRunning('scripts-watch', true);
 
         resolve();
     });

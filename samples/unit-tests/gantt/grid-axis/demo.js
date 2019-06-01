@@ -1456,3 +1456,68 @@ QUnit.test('startOnTick and endOnTick', function (assert) {
         'Start on tick, the last tick should be midnight'
     );
 });
+
+QUnit.test('Chart.update', assert => {
+    const getColumn = format => ({ labels: { format } });
+    const chart = Highcharts.chart('container', {
+        yAxis: {
+            grid: {
+                enabled: true,
+                columns: [getColumn('Column 1'), getColumn('Column 2')]
+            },
+            type: 'category'
+        },
+        series: [{
+            data: [{ x: 0, x2: 100000, y: 0 }]
+        }]
+    });
+    const { yAxis: [axis] } = chart;
+    const getYAxisLabels = () => Array.from(
+        document.querySelectorAll('.highcharts-yaxis-labels > text > tspan')
+    )
+        .map((text => text.innerHTML))
+        .reverse();
+
+    assert.strictEqual(
+        chart.yAxis.length,
+        1,
+        'should have only one yAxis'
+    );
+
+    assert.deepEqual(
+        getYAxisLabels(),
+        ['Column 1', 'Column 2'],
+        'should have two labels after init.'
+    );
+
+    chart.update({
+        yAxis: {
+            grid: {
+                columns: [
+                    getColumn('Updated 1'),
+                    getColumn('Updated 2'),
+                    getColumn('New 3')
+                ]
+            }
+        }
+    }, true, true, true);
+
+    assert.strictEqual(
+        chart.yAxis.length,
+        1,
+        'should still have one yAxis after update'
+    );
+
+    // TODO: it would be better to have an event for Axis.remove to listen for.
+    assert.strictEqual(
+        axis === chart.yAxis[0],
+        true,
+        'should not destroy the axis even if oneToOne is true. #9269'
+    );
+
+    assert.deepEqual(
+        getYAxisLabels(),
+        ['Updated 1', 'Updated 2', 'New 3'],
+        'should still have two updated labels and a new one after update.'
+    );
+});

@@ -240,6 +240,7 @@ declare global {
             colors?: Array<ColorString>;
             defs?: any;
             global?: GlobalOptions;
+            /** @deprecated */
             labels?: LabelsOptions;
             lang?: LangOptions;
             legend?: LegendOptions;
@@ -2234,7 +2235,7 @@ H.defaultOptions = {
      * HTML labels that can be positioned anywhere in the chart area.
      *
      * This option is deprecated since v7.1.2. Instead, use
-     * [annotations](#annotations) that supports labels.
+     * [annotations](#annotations) that support labels.
      *
      * @deprecated
      * @product   highcharts highstock
@@ -3369,11 +3370,14 @@ H.defaultOptions = {
          * overlaid on the page, allowing the tooltip to be aligned inside the
          * page itself.
          *
+         * Defaults to `true` if `chart.scrollablePlotArea` is activated,
+         * otherwise `false`.
+         *
          * @sample highcharts/tooltip/outside
          *         Small charts with tooltips outside
          *
-         * @type      {boolean}
-         * @default   false
+         * @type      {boolean|undefined}
+         * @default   undefined
          * @since     6.1.1
          * @apioption tooltip.outside
          */

@@ -886,7 +886,8 @@ var sunburstSeries = {
             nodeRoot = mapIdToNode && mapIdToNode[rootId],
             nodeTop,
             tree,
-            values;
+            values,
+            nodeIds = {};
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
         // Call prototype function
@@ -941,6 +942,18 @@ var sunburstSeries = {
         this.setShapeArgs(nodeTop, values, mapOptionsToLevel);
         // Set mapOptionsToLevel on series for use in drawPoints.
         series.mapOptionsToLevel = mapOptionsToLevel;
+
+        // #10669 - verify if all nodes have unique ids
+        series.data.forEach(function (child) {
+            if (nodeIds[child.id]) {
+                H.error(31, false, series.chart);
+            }
+            // map
+            nodeIds[child.id] = true;
+        });
+
+        // reset object
+        nodeIds = {};
     },
 
     // Animate the slices in. Similar to the animation of polar charts.

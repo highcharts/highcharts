@@ -89,7 +89,7 @@ declare global {
             fill?: ColorString;
             inverted?: boolean;
             matrix?: Array<number>;
-            rotation?: string;
+            rotation?: number;
             rotationOriginX?: number;
             rotationOriginY?: number;
             scaleX?: number;
@@ -130,8 +130,9 @@ declare global {
             public constructor();
             [key: string]: any;
             public element: (HTMLDOMElement|SVGDOMElement);
-            public parentGroup: SVGElement;
+            public parentGroup?: SVGElement;
             public renderer: SVGRenderer;
+            public shadows?: Array<(HTMLDOMElement|SVGDOMElement)>;
             public _defaultGetter(key: string): (number|string);
             public _defaultSetter(
                 value: string,
@@ -226,7 +227,7 @@ declare global {
                 group?: SVGElement,
                 cutOff?: boolean
             ): SVGElement;
-            public show(inherit: boolean): SVGElement;
+            public show(inherit?: boolean): SVGElement;
             public strokeSetter(
                 value: (number|string),
                 key: string,
@@ -264,14 +265,14 @@ declare global {
                 key: string,
                 element: SVGDOMElement
             ): void;
-            public zIndexSetter(value: string, key: string): boolean;
+            public zIndexSetter(value?: string, key?: string): boolean;
         }
         class SVGRenderer {
             public constructor(
                 container: HTMLDOMElement,
                 width: number,
                 height: number,
-                style: CSSObject,
+                style?: CSSObject,
                 forExport?: boolean,
                 allowHTML?: boolean,
                 styledMode?: boolean
@@ -334,7 +335,7 @@ declare global {
             public definition(def: SVGDefinitionObject): SVGElement;
             /** @deprecated */
             public draw(): void;
-            public g(name: string): SVGElement;
+            public g(name?: string): SVGElement;
             public getContrast(rgba: ColorString): ColorString;
             public getRadialAttr(
                 radialReference: Array<number>,
@@ -343,7 +344,7 @@ declare global {
             public getStyle(style: CSSObject): CSSObject;
             public fontMetrics(
                 fontSize?: (number|string),
-                elem?: (SVGElement|SVGDOMElement)
+                elem?: (HTMLDOMElement|SVGElement|SVGDOMElement)
             ): FontMetricsObject;
             public image(
                 src: string,
@@ -357,7 +358,7 @@ declare global {
                 container: HTMLDOMElement,
                 width: number,
                 height: number,
-                style: CSSObject,
+                style?: CSSObject,
                 forExport?: boolean,
                 allowHTML?: boolean,
                 styledMode?: boolean
@@ -375,7 +376,7 @@ declare global {
                 className?: string
             ): SVGElement;
             public path(attribs: SVGAttributes): SVGElement;
-            public path(path: SVGPathArray): SVGElement;
+            public path(path?: SVGPathArray): SVGElement;
             public rect(attribs: SVGAttributes): SVGElement;
             public rect(
                 x?: number,
@@ -650,7 +651,7 @@ declare global {
  * @type {Array<number>|undefined}
  *//**
  * @name Highcharts.SVGAttributes#rotation
- * @type {string|undefined}
+ * @type {number|undefined}
  *//**
  * @name Highcharts.SVGAttributes#rotationOriginX
  * @type {number|undefined}
@@ -1475,16 +1476,19 @@ extend((
         setter: Function
     ): void {
         var shadows = this.shadows,
-            i = shadows.length;
+            i = (shadows as any).length;
 
         while (i--) {
             setter.call(
-                shadows[i],
+                (shadows as any)[i],
                 key === 'height' ?
-                    Math.max(value - (shadows[i].cutHeight || 0), 0) :
+                    Math.max(
+                        value - (((shadows as any)[i] as any).cutHeight || 0),
+                        0
+                    ) :
                     key === 'd' ? this.d : value,
                 key,
-                shadows[i]
+                (shadows as any)[i]
             );
         }
     },
@@ -2417,7 +2421,7 @@ extend((
      */
     show: function (
         this: Highcharts.SVGElement,
-        inherit: boolean
+        inherit?: boolean
     ): Highcharts.SVGElement {
         return this.attr(
             { visibility: inherit ? 'inherit' : 'visible' }
@@ -2665,7 +2669,7 @@ extend((
     ): Highcharts.SVGElement {
         var shadows = [],
             i,
-            shadow,
+            shadow: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
             element = this.element,
             strokeWidth,
             shadowWidth,
@@ -2708,7 +2712,7 @@ extend((
                         'height',
                         Math.max(attr(shadow, 'height') - strokeWidth, 0)
                     );
-                    shadow.cutHeight = strokeWidth;
+                    (shadow as any).cutHeight = strokeWidth;
                 }
 
                 if (group) {
@@ -2739,7 +2743,7 @@ extend((
     ): void {
         (this.shadows || []).forEach(function (
             this: Highcharts.SVGElement,
-            shadow: Highcharts.SVGDOMElement
+            shadow: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
         ): void {
             this.safeRemoveChild(shadow);
         }, this);
@@ -3204,8 +3208,8 @@ extend((
      */
     zIndexSetter: function (
         this: Highcharts.SVGElement,
-        value: string,
-        key: string
+        value?: string,
+        key?: string
     ): boolean {
         var renderer = this.renderer,
             parentGroup = this.parentGroup,
@@ -3223,18 +3227,18 @@ extend((
 
         if (defined(value)) {
             // So we can read it for other elements in the group
-            element.setAttribute('data-z-index', value);
+            element.setAttribute('data-z-index', (value as any));
 
-            (value as any) = +value;
-            if ((this as any)[key] === value) {
+            (value as any) = +(value as any);
+            if ((this as any)[key as any] === value) {
                 // Only update when needed (#3865)
                 run = false;
             }
-        } else if (defined((this as any)[key])) {
+        } else if (defined((this as any)[key as any])) {
             element.removeAttribute('data-z-index');
         }
 
-        (this as any)[key] = value;
+        (this as any)[key as any] = value;
 
         // Insert according to this and other elements' zIndex. Before .add() is
         // called, nothing is done. Then on add, or by later calls to
@@ -3407,12 +3411,21 @@ SVGElement.prototype.strokeSetter = function (
  * @param {number} height
  *        The height of the SVG.
  *
+ * @param {Highcharts.CSSObject} [style]
+ *        The box style, if not in styleMode
+ *
  * @param {boolean} [forExport=false]
  *        Whether the rendered content is intended for export.
  *
  * @param {boolean} [allowHTML=true]
  *        Whether the renderer is allowed to include HTML text, which will be
  *        projected on top of the SVG.
+ *
+ * @param {boolean} [styledMode=false]
+ *        Whether the renderer belongs to a chart that is in styled mode.
+ *        If it does, it will avoid setting presentational attributes in
+ *        some cases, but not when set explicitly through `.attr` and `.css`
+ *        etc.
  */
 SVGRenderer = H.SVGRenderer = function (
     this: Highcharts.SVGRenderer
@@ -3469,7 +3482,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         container: Highcharts.HTMLDOMElement,
         width: number,
         height: number,
-        style: Highcharts.CSSObject,
+        style?: Highcharts.CSSObject,
         forExport?: boolean,
         allowHTML?: boolean,
         styledMode?: boolean
@@ -3486,7 +3499,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             }) as any;
 
         if (!styledMode) {
-            boxWrapper.css(this.getStyle(style));
+            boxWrapper.css(this.getStyle(style as any));
         }
 
         element = boxWrapper.element;
@@ -4677,7 +4690,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     path: function (
         this: Highcharts.SVGRenderer,
-        path: (Highcharts.SVGAttributes|Highcharts.SVGPathArray)
+        path?: (Highcharts.SVGAttributes|Highcharts.SVGPathArray)
     ): Highcharts.SVGElement {
         var attribs = (this.styledMode ? {} : {
             fill: 'none'
@@ -4686,7 +4699,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         if (isArray(path)) {
             attribs.d = path as any;
         } else if (isObject(path)) { // attributes
-            extend(attribs, path);
+            extend(attribs, path as any);
         }
         return this.createElement('path').attr(attribs) as any;
     },
@@ -4987,7 +5000,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     g: function (
         this: Highcharts.SVGRenderer,
-        name: string
+        name?: string
     ): Highcharts.SVGElement {
         var elem = this.createElement('g');
 

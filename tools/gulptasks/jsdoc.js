@@ -18,14 +18,14 @@ const gulp = require('gulp');
  */
 function jsDoc() {
 
-    const log = require('./lib/log');
+    const logLib = require('./lib/log');
 
     return new Promise(resolve => {
 
-        log.success('Created API documentation');
+        logLib.success('Created API documentation');
 
         if (!process.argv.includes('jsdoc-watch')) {
-            log.message(
+            logLib.message(
                 'Hint: Run the `jsdoc-watch` task to start the JSDoc server.'
             );
         }

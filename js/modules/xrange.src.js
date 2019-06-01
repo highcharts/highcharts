@@ -452,7 +452,7 @@ seriesType('xrange', 'column'
                 cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
                 pointState = point.state,
                 stateOpts = seriesOpts.states[pointState || 'normal'] || {},
-                attrOrAnim = pointState === undefined ? 'attr' : 'animate',
+                pointStateVerb = pointState === undefined ? 'attr' : verb,
                 pointAttr = series.pointAttribs(point, pointState),
                 animation = pick(
                     series.chart.options.chart.animation,
@@ -482,7 +482,7 @@ seriesType('xrange', 'column'
                         point.graphicOverlay[verb](
                             merge(partShapeArgs)
                         );
-                        point.clipRect.animate(
+                        point.clipRect[verb](
                             merge(clipRectArgs)
                         );
 
@@ -505,8 +505,11 @@ seriesType('xrange', 'column'
 
                 // Presentational
                 if (!series.chart.styledMode) {
-                    point.graphicOriginal
-                        .animate(pointAttr, animation)
+                    point
+                        .graphicOriginal[verb](
+                            pointAttr,
+                            animation
+                        )
                         .shadow(seriesOpts.shadow, null, cutOff);
 
                     if (partShapeArgs) {
@@ -528,7 +531,11 @@ seriesType('xrange', 'column'
                         );
 
                         pointAttr.fill = fill;
-                        point.graphicOverlay[attrOrAnim](pointAttr, animation)
+                        point
+                            .graphicOverlay[pointStateVerb](
+                                pointAttr,
+                                animation
+                            )
                             .shadow(seriesOpts.shadow, null, cutOff);
                     }
                 }

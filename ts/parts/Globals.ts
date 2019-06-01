@@ -23,25 +23,52 @@ declare global {
     }
     interface Window {
         Image: typeof Image;
+        opera?: any;
     }
     const win: Window; // @todo: UMD variable
     function parseFloat (value: (number|string)): number;
     namespace Highcharts {
-        type Axis = any; // @todo
-        type AxisOptions = any; // @todo
         type LabelFormatterCallbackFunction = any; // @todo
-        type Legend = any; // @todo
+        type OptionsOverflowValue = ('allow'|'justify');
+        type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
         type PatternObject = any; // @todo
+        type PlotLineOrBand = any; // @todo
         type PlotSeriesZonesOptions = any; // @todo
         type PointLabelObject = any; // @todo
-        type Series = any; // @todo
         type SeriesOptions = any; // @todo
         type SeriesOptionsType = any; // @todo
         type SeriesPlotBoxObject = any; // @todo
+        type StackItemObject = any; // @todo
+        type Tick = any; // @todo
         type Tooltip = any; // @todo
         type TooltipFormatterCallbackFunction = any; // @todo
         type TooltipPositionerCallbackFunction = any; // @todo
         type TooltipShapeValue = any; // @todo
+        type XAxisPlotBandsOptions = any; // @todo
+        type XAxisPlotLinesOptions = any; // @todo
+        type XAxisScrollbarOptions = any; // @todo
+        type YAxisStackLabelsOptions = any; // @todo
+        interface Axis {
+            extKey?: any; // @todo
+            id?: any; // @todo
+            oldStacks?: any; // @todo
+            ordinalPositions?: any; // @todo
+            sector?: any; // @todo
+            stacks?: any; // @todo
+            usePercentage?: any; // @todo
+            addPlotBandOrLine: Function; // @todo
+            beforePadding: Function; // @todo
+            beforeSetTickPositions: Function; // @todo
+            buildStacks: Function; // @todo
+            cleanStacks: Function; // @todo
+            getLogTickPositions: Function; // @todo
+            getMaxLabelDimensions: Function; // @todo
+            getTimeTicks: Function; // @todo
+            normalizeTimeTickInterval: Function; // @todo
+            postProcessTickInterval: Function; // @todo
+            renderStackTotals: Function; // @todo
+            resetStacks: Function; // @todo
+        }
         interface Chart {
             hoverPoint?: any; // @todo
             hoverPoints?: any; // @todo
@@ -52,6 +79,7 @@ declare global {
             marginBottom?: any; // @todo
             marginRight?: any; // @todo
             openMenu?: any; // @todo
+            polar?: any; // @todo
             runTrackerClick?: any; // @todo
             scroller?: any; // @todo
             tooltip?: any; // @todo
@@ -72,6 +100,10 @@ declare global {
             xAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
             yAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
         }
+        interface Legend {
+            createCheckboxForItem: Function; // @todo
+            setItemEvents: Function; // @todo
+        }
         interface Point {
             dataLabel?: any; // @todo
             dataLabels?: any; // @todo
@@ -79,16 +111,79 @@ declare global {
             distX?: any; // @todo
             graphic?: any; // @todo
             group?: any; // @todo
-            legendItem?: any; // @todo
             negative?: any; // @todo
             selected?: any; // @todo
             zone?: any; // @todo
             onMouseOut: Function; // @todo
             setState: Function; // @todo
         }
-        const Axis: any; // @todo
-        const Legend: any; // @todo
+        interface Series {
+            _hasPointLabels?: any; // @todo
+            _hasPointMarkers?: any; // @todo
+            autoIncrement?: any; // @todo
+            chart?: any; // @todo
+            closestPointRange?: number; // @todo
+            color?: any; // @todo
+            colorCounter?: any; // @todo
+            colorIndex?: any; // @todo
+            data?: any; // @todo
+            dataMax?: any; // @todo
+            dataMin?: any; // @todo
+            dataLabelsGroup?: any; // @todo
+            directTouch?: any; // @todo
+            group?: any; // @todo
+            hasGroupedData?: any; // @todo
+            id?: any; // @todo
+            index?: any; // @todo
+            isCartesian?: any; // @todo
+            isDirty?: any; // @todo
+            isDirtyData?: any; // @todo
+            kdTree?: any; // @todo
+            linkedParent?: any; // @todo
+            linkedSeries?: any; // @todo
+            markerGroup?: any; // @todo
+            name?: any; // @todo
+            navigatorSeries?: any; // @todo
+            noSharedTooltip?: any; // @todo
+            options?: any; // @todo
+            pointArrayMap?: any; // @todo
+            points?: any; // @todo
+            pointValKey?: any; // @todo
+            redraw?: any; // @todo
+            requireSorting?: any; // @todo
+            selected?: any; // @todo
+            stickyTracking?: any; // @todo
+            symbol?: any; // @todo
+            tooltipOptions?: any; // @todo
+            updateTotals?: any; // @todo
+            visible?: any; // @todo
+            xAxis?: any; // @todo
+            xData?: any; // @todo
+            xIncrement?: any; // @todo
+            yAxis?: any; // @todo
+            zoneAxis?: any; // @todo
+            zones?: any; // @todo
+            destroy: Function; // @todo
+            generatePoints: Function; // @todo
+            getExtremes: Function; // @todo
+            getXExtremes: Function; // @todo
+            getName: Function; // @todo
+            getPlotBox: Function; // @todo
+            getPoint: Function; // @todo
+            hasData: Function; // @todo
+            pointAttribs: Function; // @todo
+            processData: Function; // @todo
+            render: Function; // @todo
+            searchPoint: Function; // @todo
+            setState: Function; // @todo
+            translate: Function; // @todo
+        }
+        interface SVGRenderer {
+            invertChild: Function; // @todo
+        }
+        const PlotLineOrBand: any; // @todo
         const Series: any; // @todo
+        const Tick: any; // @todo
         const Tooltip: any; // @todo
         const SVG_NS: string;
         const addEventListenerPolyfill: any; // @todo
@@ -111,8 +206,7 @@ declare global {
         const win: Window;
         const seriesTypes: Dictionary<typeof Series>;
         const svg: boolean;
-        function color(...args: Array<any>): any; // @todo
-        function getOptions(): any; // @todo
+        function distribute(...args: Array<any>): any; // @todo
     }
     type GlobalHighcharts = typeof Highcharts;
 }

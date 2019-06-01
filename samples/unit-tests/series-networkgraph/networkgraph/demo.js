@@ -146,4 +146,11 @@ QUnit.test('Network Graph', function (assert) {
         'Node survived `setData()` (#10625)'
     );
 
+    // Addition for bug #10741
+    chart.setSize(30, 90);
+    assert.strictEqual(
+        rSeries.data[0].plotX / rSeries.data[0].plotX,
+        1,
+        'points are visible on small resolutions'
+    );
 });

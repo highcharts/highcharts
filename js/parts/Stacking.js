@@ -181,20 +181,25 @@ H.StackItem.prototype = {
      * @param {number} xOffset
      *
      * @param {number} xWidth
+     *
+     * @param {number} boxBottom
+     *
+     * @param {number} boxTop
      */
-    setOffset: function (xOffset, xWidth) {
+    setOffset: function (xOffset, xWidth, boxBottom, boxTop) {
         var stackItem = this,
             axis = stackItem.axis,
             chart = axis.chart,
             // stack value translated mapped to chart coordinates
             y = axis.translate(
-                axis.usePercentage ? 100 : stackItem.total,
+                axis.usePercentage ? 100 : (boxTop ? boxTop :
+                    stackItem.total),
                 0,
                 0,
                 0,
                 1
             ),
-            yZero = axis.translate(0), // stack origin
+            yZero = axis.translate(boxBottom ? boxBottom : 0), // stack origin
             h = defined(y) && Math.abs(y - yZero), // stack height
             x = chart.xAxis[0].translate(stackItem.x) + xOffset, // x position
             stackBox = defined(y) && stackItem.getStackBox(

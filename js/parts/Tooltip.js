@@ -228,8 +228,13 @@ H.Tooltip.prototype = {
          * Split tooltip does not support outside in the first iteration. Should
          * not be too complicated to implement.
          */
-        this.outside = options.outside && !this.split;
-
+        this.outside = (
+            pick(
+                options.outside,
+                Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
+            ) &&
+            !this.split
+        );
     },
 
     /**
@@ -331,7 +336,8 @@ H.Tooltip.prototype = {
                 H.css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents: options.style && options.style.pointerEvents
+                    pointerEvents: options.style && options.style.pointerEvents,
+                    zIndex: 3
                 });
                 H.doc.body.appendChild(container);
 

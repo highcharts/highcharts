@@ -21,15 +21,15 @@ declare global {
         interface ChartCallbackFunction {
             (this: Chart, chart: Chart): void;
         }
+        interface ChartRenderer extends SVGRenderer {
+            plotBox: BBoxObject;
+            spacingBox: BBoxObject;
+        }
         interface Options {
             series?: Dictionary<SeriesOptions>;
         }
         interface SubtitleObject extends SVGElement {
             update(titleOptions: SubtitleOptions, redraw?: boolean): void;
-        }
-        interface SVGRenderer {
-            plotBox?: BBoxObject;
-            spacingBox?: BBoxObject;
         }
         interface TitleObject extends SVGElement {
             update(titleOptions: TitleOptions, redraw?: boolean): void;
@@ -38,7 +38,7 @@ declare global {
             public constructor();
             public _cursor?: (CursorValue|null);
             public axes: Array<Axis>;
-            public axisOffset?: Array<number>;
+            public axisOffset: Array<number>;
             public bounds: Dictionary<Dictionary<number>>;
             public callback: ChartCallbackFunction;
             public callbacks: Array<ChartCallbackFunction>;
@@ -69,7 +69,7 @@ declare global {
             public plotBGImage?: SVGElement;
             public plotBorder?: SVGElement;
             public plotBorderWidth?: number;
-            public plotBox?: BBoxObject;
+            public plotBox: BBoxObject;
             public plotHeight: number;
             public plotLeft: number;
             public plotSizeX?: number;
@@ -79,18 +79,18 @@ declare global {
             public pointCount: number;
             public pointer: Pointer;
             public reflowTimeout?: number;
-            public renderer: SVGRenderer;
+            public renderer: ChartRenderer;
             public renderTo: HTMLDOMElement;
             public series: Array<Series>;
             public seriesGroup?: SVGElement;
             public spacing: Array<number>;
-            public spacingBox?: BBoxObject;
+            public spacingBox: BBoxObject;
             public styledMode?: boolean;
             public subtitle?: SVGElement;
             public symbolCounter: number;
             public time: Time;
             public title?: SVGElement;
-            public titleOffset?: number;
+            public titleOffset: number;
             public unbindReflow?: Function;
             public userOptions: Options;
             public xAxis: Array<Axis>;
@@ -912,12 +912,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         fireEvent(this, 'getAxes');
 
         // make sure the options are arrays and add some members
-        xAxisOptions.forEach(function (axis: Highcharts.Axis, i: number): void {
+        xAxisOptions.forEach(function (axis: any, i: number): void {
             axis.index = i;
             axis.isX = true;
         });
 
-        yAxisOptions.forEach(function (axis: Highcharts.Axis, i: number): void {
+        yAxisOptions.forEach(function (axis: any, i: number): void {
             axis.index = i;
         });
 
@@ -2260,7 +2260,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @name Highcharts.Chart#legend
          * @type {Highcharts.Legend}
          */
-        chart.legend = new Legend(chart, options.legend);
+        chart.legend = new Legend(chart, options.legend as any);
 
         // Get stacks
         if (chart.getStacks) {
@@ -2278,7 +2278,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             if (
                 axis.horiz &&
                 axis.visible &&
-                axis.options.labels.enabled &&
+                (axis.options.labels as any).enabled &&
                 axis.series.length
             ) {
                 // 21 is the most common correction for X axis labels
@@ -2464,7 +2464,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Destroy axes
         i = axes.length;
         while (i--) {
-            axes[i] = axes[i].destroy();
+            axes[i] = axes[i].destroy() as any;
         }
 
         // Destroy scroller & scroller series before destroying base series

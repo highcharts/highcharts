@@ -112,7 +112,7 @@ declare global {
             options?: EventOptionsObject
         ): Function;
         function animate(
-            el: (HTMLElement|SVGElement),
+            el: (HTMLDOMElement|SVGElement),
             params: (CSSObject|SVGAttributes),
             opt?: AnimationOptionsObject
         ): void;
@@ -127,7 +127,7 @@ declare global {
             value?: (number|string)
         ): any;
         function clearTimeout(id: number): void;
-        function correctFloat(num: number, prec: number): number;
+        function correctFloat(num: number, prec?: number): number;
         function createElement(
             tag: string,
             attribs?: HTMLAttributes,
@@ -189,14 +189,18 @@ declare global {
         function keys(obj: any): Array<string>;
         /** @deprecated */
         function map(arr: Array<any>, fn: Function): Array<any>;
-        function merge<T>(extend: boolean, a: T, ...n: Array<object>): T;
-        function merge<T>(a: T, ...n: Array<object>): T;
+        function merge<T>(
+            extend: boolean,
+            a: T,
+            ...n: Array<object|undefined>
+        ): T;
+        function merge<T>(a: T, ...n: Array<object|undefined>): T;
         function normalizeTickInterval(
             interval: number,
             multiples?: Array<any>,
             magnitude?: number,
             allowDecimals?: boolean,
-            hasTickAmount?: number
+            hasTickAmount?: boolean
         ): number;
         function numberFormat(
             number: number,
@@ -1108,7 +1112,7 @@ H.Fx.prototype = {
  *        The first object to extend. When only this is given, the function
  *        returns a deep copy.
  *
- * @param {Array<object>} [...n]
+ * @param {Array<object|undefined>} [...n]
  *        An object to merge into the previous one.
  *
  * @return {T}
@@ -1125,7 +1129,7 @@ H.Fx.prototype = {
  *        The first object to extend. When only this is given, the function
  *        returns a deep copy.
  *
- * @param {Array<object>} [...n]
+ * @param {Array<object|undefined>} [...n]
  *        An object to merge into the previous one.
  *
  * @return {T}
@@ -1901,7 +1905,7 @@ H.normalizeTickInterval = function (
     multiples?: Array<any>,
     magnitude?: number,
     allowDecimals?: boolean,
-    hasTickAmount?: number
+    hasTickAmount?: boolean
 ): number {
     var normalized,
         i,
@@ -2126,7 +2130,7 @@ H.discardElement = function (element: Highcharts.HTMLDOMElement): void {
  * @return {number}
  *         The corrected float number.
  */
-H.correctFloat = function (num: number, prec: number): number {
+H.correctFloat = function (num: number, prec?: number): number {
     return parseFloat(
         num.toPrecision(prec || 14)
     );

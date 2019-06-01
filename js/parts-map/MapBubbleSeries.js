@@ -177,7 +177,8 @@ if (seriesTypes.bubble) {
             // Return the map area identified by the dataJoinBy option
             getMapData: seriesTypes.map.prototype.getMapData,
             getBox: seriesTypes.map.prototype.getBox,
-            setData: seriesTypes.map.prototype.setData
+            setData: seriesTypes.map.prototype.setData,
+            setOptions: seriesTypes.map.prototype.setOptions
 
             // Point class
         }, {
