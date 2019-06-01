@@ -3596,7 +3596,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * To display stack labels outside the plot area,
              * set `crop` to `false` and `overflow` to `"allow"`.
              *
-             * @sample highcharts/yaxis/stacklabel-overflow/
+             * @sample highcharts/yaxis/stacklabels-overflow/
              *         Stack labels flows outside the plot area.
              *
              * @type  {Highcharts.DataLabelsOverflowValue}
