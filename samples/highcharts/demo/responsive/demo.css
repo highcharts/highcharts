@@ -2,4 +2,10 @@
 	height: 300px;
 	min-width: 310px;
 	max-width: 800px;
+    margin: 0 auto;
+}
+#button-bar {
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
 }
