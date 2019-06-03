@@ -146,6 +146,9 @@ import H from './Globals.js';
  * @typedef {"high"|"low"|"middle"} Highcharts.AxisTitleAlignValue
  */
 /**
+ * @typedef {Highcharts.XAxisTitleOptions|Highcharts.YAxisTitleOptions|Highcharts.ZAxisTitleOptions} Highcharts.AxisTitleOptions
+ */
+/**
  * @typedef {"linear"|"logarithmic"|"datetime"|"category"|"treegrid"} Highcharts.AxisTypeValue
  */
 /**

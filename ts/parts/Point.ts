@@ -18,9 +18,6 @@ import Highcharts from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Point {
-            isValid(): boolean;
-        }
         class Point {
             public constructor();
             [property: string]: any;
