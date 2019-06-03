@@ -709,6 +709,7 @@ var wordCloudSeries = {
     animate: Series.prototype.animate,
     animateDrilldown: noop,
     animateDrillupFrom: noop,
+    setClip: noop,
     bindAxes: function () {
         var wordcloudAxis = {
             endOnTick: false,
