@@ -923,7 +923,7 @@ var onGridAxisAfterInit = function onGridAxisAfterInit() {
                     .series[0],
                 isFirst = value === tickPos[0],
                 isLast = value === tickPos[tickPos.length - 1],
-                point = H.find(series.options.data, function (p) {
+                point = series && H.find(series.options.data, function (p) {
                     return p[axis.isXAxis ? 'x' : 'y'] === value;
                 });
 
