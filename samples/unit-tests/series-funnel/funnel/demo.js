@@ -14,7 +14,7 @@ QUnit.test('Visible funnel items', function (assert) {
                 dataLabels: {
                     enabled: true,
                     format: '<b>{point.name}</b> ({point.y:,.0f})',
-                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
+                    color: 'black',
                     softConnector: true
                 },
                 neckWidth: '30%',

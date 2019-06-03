@@ -45,11 +45,7 @@ $(function () {
                 y: 100,
                 floating: true,
                 borderWidth: 1,
-                backgroundColor: ( // theme
-                    Highcharts.defaultOptions &&
-                    Highcharts.defaultOptions.legend &&
-                    Highcharts.defaultOptions.legend.backgroundColor
-                ) || '#FFFFFF',
+                backgroundColor: '#FFFFFF',
                 shadow: true
             },
             credits: {
