@@ -32,7 +32,7 @@ Highcharts.chart('container', {
         verticalAlign: 'top',
         y: 25,
         floating: true,
-        backgroundColor: (
+        backgroundColor: ( // theme
             Highcharts.defaultOptions &&
             Highcharts.defaultOptions.legend &&
             Highcharts.defaultOptions.legend.backgroundColor

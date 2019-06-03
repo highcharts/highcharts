@@ -12,11 +12,7 @@ var gaugeOptions = {
         startAngle: -90,
         endAngle: 90,
         background: {
-            backgroundColor: ( // theme
-                Highcharts.defaultOptions &&
-                Highcharts.defaultOptions.legend &&
-                Highcharts.defaultOptions.legend.backgroundColor
-            ) || '#EEE',
+            backgroundColor: '#EEE',
             innerRadius: '60%',
             outerRadius: '100%',
             shape: 'arc'

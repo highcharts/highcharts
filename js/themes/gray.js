@@ -92,6 +92,11 @@ Highcharts.theme = {
         },
         itemHiddenStyle: {
             color: '#333'
+        },
+        title: {
+            style: {
+                color: '#E0E0E0'
+            }
         }
     },
     labels: {
