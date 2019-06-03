@@ -91,6 +91,7 @@ declare global {
             public time: Time;
             public title?: SVGElement;
             public titleOffset: number;
+            public titleOffsetBottom: number;
             public unbindReflow?: Function;
             public userOptions: Options;
             public xAxis: Array<Axis>;
@@ -1146,6 +1147,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         redraw?: boolean
     ): void {
         var titleOffset = 0,
+            titleOffsetBottom = 0,
             requiresDirtyBox,
             renderer = this.renderer,
             spacingBox = this.spacingBox as Highcharts.BBoxObject;
@@ -1160,7 +1162,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 offset = key === 'title' ? -3 :
                     // Floating subtitle (#6574)
                     titleOptions.verticalAlign ? 0 : titleOffset + 2,
-                titleSize;
+                bottomAlign = (
+                    key === 'subtitle' &&
+                    titleOptions.verticalAlign === 'bottom'
+                ),
+                titleSize,
+                height;
 
             if (title) {
 
@@ -1172,23 +1179,39 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     .css({
                         width: (titleOptions.width ||
                             spacingBox.width + titleOptions.widthAdjust) + 'px'
-                    })
-                    .align(extend({
-                        y: offset + titleSize
-                    }, titleOptions), false, 'spacingBox');
+                    });
+
+                // Skip the cache for HTML (#3481)
+                height = title.getBBox(titleOptions.useHTML).height;
+
+                title.align(extend({
+                    y: bottomAlign ? 0 : offset + titleSize,
+                    height
+                }, titleOptions), false, 'spacingBox');
 
                 if (!titleOptions.floating && !titleOptions.verticalAlign) {
                     titleOffset = Math.ceil(
                         titleOffset +
-                        // Skip the cache for HTML (#3481)
-                        title.getBBox(titleOptions.useHTML).height
+                        height
                     );
+                }
+                if (
+                    key === 'subtitle' &&
+                    titleOptions.verticalAlign === 'bottom'
+                ) {
+                    titleOffsetBottom = height;
                 }
             }
         }, this);
 
-        requiresDirtyBox = this.titleOffset !== titleOffset;
-        this.titleOffset = titleOffset; // used in getMargins
+        requiresDirtyBox = (
+            this.titleOffset !== titleOffset ||
+            this.titleOffsetBottom !== titleOffsetBottom
+        );
+
+        // Used in getMargins
+        this.titleOffset = titleOffset;
+        this.titleOffsetBottom = titleOffsetBottom;
 
         if (!this.isDirtyBox && requiresDirtyBox) {
             this.isDirtyBox = this.isDirtyLegend = requiresDirtyBox;
@@ -1511,24 +1534,25 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @fires Highcharts.Chart#event:getMargins
      */
     getMargins: function (this: Highcharts.Chart, skipAxes?: boolean): void {
-        var chart = this,
-            spacing = chart.spacing,
-            margin = chart.margin,
-            titleOffset = chart.titleOffset;
+        const { spacing, margin, titleOffset, titleOffsetBottom } = this;
 
-        chart.resetMargins();
+        this.resetMargins();
 
         // Adjust for title and subtitle
         if (titleOffset && !defined(margin[0])) {
-            chart.plotTop = Math.max(
-                chart.plotTop,
-                titleOffset + (chart.options.title as any).margin + spacing[0]
+            this.plotTop = Math.max(
+                this.plotTop,
+                titleOffset + (this.options.title as any).margin + spacing[0]
             );
         }
 
+        if (titleOffsetBottom && !margin[2]) {
+            this.marginBottom += titleOffsetBottom;
+        }
+
         // Adjust for legend
-        if (chart.legend && chart.legend.display) {
-            chart.legend.adjustMargins(margin, spacing);
+        if (this.legend && this.legend.display) {
+            this.legend.adjustMargins(margin, spacing);
         }
 
         fireEvent(this, 'getMargins');
