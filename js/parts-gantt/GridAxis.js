@@ -161,7 +161,7 @@ Axis.prototype.isOuterAxis = function () {
         lastIndex = 0;
 
     chart[axis.coll].forEach(function (otherAxis, index) {
-        if (otherAxis.side === axis.side && !otherAxis.isInteral) {
+        if (otherAxis.side === axis.side && !otherAxis.options.isInternal) {
             lastIndex = index;
             if (otherAxis === parentAxis) {
                 // Get the index of the axis in question
