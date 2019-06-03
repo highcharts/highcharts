@@ -739,7 +739,7 @@ QUnit.test('Horizontal axis tick labels centered', function (assert) {
     });
 
     axes = Highcharts.grep(chart.xAxis, function (axis) {
-        return !axis.isNavigatorAxis();
+        return !axis.options.isInternal;
     });
 
     Highcharts.each(axes, function (axis) {
