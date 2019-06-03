@@ -1041,7 +1041,6 @@ Series.prototype.alignDataLabel = function (
         rotCorr, // rotation correction
         // Math.round for rounding errors (#2683), alignTo to allow column
         // labels (#2700)
-        crop = pick(options.crop, true),
         visible =
             this.visible &&
             (
@@ -1080,13 +1079,6 @@ Series.prototype.alignDataLabel = function (
             width: bBox.width,
             height: bBox.height
         });
-
-        // #10245 - datalabels were hidden when small columns
-        if (visible && !crop && H.defined(point.y)) {
-            alignTo.height = point.y > 0 ?
-                Math.abs(alignTo.height) :
-                -alignTo.height;
-        }
 
         // Allow a hook for changing alignment in the last moment, then do the
         // alignment
@@ -1140,7 +1132,7 @@ Series.prototype.alignDataLabel = function (
             );
 
         // Now check that the data label is within the plot area
-        } else if (crop) {
+        } else if (pick(options.crop, true)) {
             visible =
                 chart.isInsidePlot(
                     alignAttr.x,
