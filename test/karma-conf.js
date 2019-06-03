@@ -591,6 +591,9 @@ module.exports = function (config) {
             name: `circle-ci-karma-highcharts-${randomString}`,
             localIdentifier: randomString, // to avoid instances interfering with each other.
             video: false,
+            retryLimit: 1,
+            timeout: 5 * 60,
+            captureTimeout: 4 * 60 // default 60
         };
         options.customLaunchers = browserStackBrowsers;
         options.logLevel = config.LOG_INFO;
@@ -601,7 +604,6 @@ module.exports = function (config) {
         options.browserDisconnectTimeout = 20000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
-        options.captureTimeout = 4 * 60 * 1000; // default 60000
 
         console.log(
             'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +
