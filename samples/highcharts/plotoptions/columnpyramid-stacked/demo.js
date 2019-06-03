@@ -27,11 +27,7 @@ Highcharts.chart('container', {
         verticalAlign: 'top',
         y: 25,
         floating: true,
-        backgroundColor: ( // theme
-            Highcharts.defaultOptions &&
-            Highcharts.defaultOptions.legend &&
-            Highcharts.defaultOptions.legend.backgroundColor
-        ) || 'white',
+        backgroundColor: 'white',
         borderColor: '#CCC',
         borderWidth: 1,
         shadow: false
@@ -45,7 +41,7 @@ Highcharts.chart('container', {
             stacking: 'normal',
             dataLabels: {
                 enabled: true,
-                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                color: 'white'
             }
         }
     },

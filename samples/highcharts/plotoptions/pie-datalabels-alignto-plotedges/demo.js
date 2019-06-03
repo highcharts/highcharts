@@ -21,7 +21,7 @@ Highcharts.chart('container', {
                 alignTo: 'plotEdges',
                 format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                 style: {
-                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    color: 'black'
                 }
             }
         }

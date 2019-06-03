@@ -50,7 +50,13 @@ Highcharts.chart('container', {
             stacking: 'normal',
             dataLabels: {
                 enabled: true,
-                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                color: ( // theme
+                    Highcharts.defaultOptions &&
+                    Highcharts.defaultOptions.plotOptions &&
+                    Highcharts.defaultOptions.plotOptions.series &&
+                    Highcharts.defaultOptions.plotOptions.series.dataLabels &&
+                    Highcharts.defaultOptions.plotOptions.series.dataLabels.color
+                ) || 'white'
             }
         }
     },
