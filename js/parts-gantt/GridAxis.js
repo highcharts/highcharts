@@ -184,6 +184,13 @@ Axis.prototype.isOuterAxis = function () {
             }
         }
     });
+
+    if (isOuter && isNumber(axis.columnIndex)) {
+        var columns = axis.linkedParent && axis.linkedParent.columns ||
+            axis.columns;
+        isOuter = columns.length === axis.columnIndex;
+    }
+
     // There were either no other axes on the same side,
     // or the other axes were not farther from the chart
     return isOuter;
@@ -906,6 +913,29 @@ var onGridAxisAfterInit = function onGridAxisAfterInit() {
 
     if (gridOptions.enabled) {
         applyGridOptions(axis);
+
+        // TODO: wrap the axis instead
+        wrap(axis, 'labelFormatter', function (proceed) {
+            var axis = this.axis,
+                tickPos = axis.tickPositions,
+                value = this.value,
+                series = (axis.isLinked ? axis.linkedParent : axis)
+                    .series[0],
+                isFirst = value === tickPos[0],
+                isLast = value === tickPos[tickPos.length - 1],
+                point = H.find(series.options.data, function (p) {
+                    return p[axis.isXAxis ? 'x' : 'y'] === value;
+                });
+
+            // Make additional properties available for the
+            // formatter
+            this.isFirst = isFirst;
+            this.isLast = isLast;
+            this.point = point;
+
+            // Call original labelFormatter
+            return proceed.call(this);
+        });
     }
 
     if (gridOptions.columns) {
@@ -937,29 +967,6 @@ var onGridAxisAfterInit = function onGridAxisAfterInit() {
             H.erase(chart.axes, column);
             H.erase(chart[axis.coll], column);
             columns.push(column);
-
-            // TODO: wrap the axis instead
-            wrap(column, 'labelFormatter', function (proceed) {
-                var axis = this.axis,
-                    tickPos = axis.tickPositions,
-                    value = this.value,
-                    series = (axis.isLinked ? axis.linkedParent : axis)
-                        .series[0],
-                    isFirst = value === tickPos[0],
-                    isLast = value === tickPos[tickPos.length - 1],
-                    point = H.find(series.options.data, function (p) {
-                        return p[axis.isXAxis ? 'x' : 'y'] === value;
-                    });
-
-                // Make additional properties available for the
-                // formatter
-                this.isFirst = isFirst;
-                this.isLast = isLast;
-                this.point = point;
-
-                // Call original labelFormatter
-                return proceed.call(this);
-            });
         }
     }
 };
@@ -995,26 +1002,33 @@ var onGridAxisInit = function onGridAxisInit(e) {
                 {}
         );
 
-    if (gridOptions.enabled) {
-        if (defined(gridOptions.borderColor)) {
-            userOptions.tickColor =
-                userOptions.lineColor = gridOptions.borderColor;
-        }
-
-        // Add column options to the "master" axis
-        if (gridOptions.columns) {
-            merge(
-                true,
-                userOptions,
-                gridOptions.columns[gridOptions.columns.length - 1]
-            );
-        }
+    if (gridOptions.enabled && defined(gridOptions.borderColor)) {
+        userOptions.tickColor = userOptions.lineColor = gridOptions.borderColor;
     }
 };
+
+var onGridAxisAfterSetOptions = function onGridAxisAfterSetOptions(e) {
+    var axis = this,
+        userOptions = e.userOptions,
+        gridOptions = (
+            (userOptions && isObject(userOptions.grid)) ?
+                userOptions.grid :
+                {}
+        ),
+        columns = gridOptions.columns;
+
+    // Add column options to the parent axis.
+    // Children has their column options set on init in onGridAxisAfterInit.
+    if (gridOptions.enabled && columns) {
+        merge(true, axis.options, columns[columns.length - 1]);
+    }
+};
+
 
 var axisEvents = {
     afterGetOffset: onGridAxisAfterGetOffset,
     afterInit: onGridAxisAfterInit,
+    afterSetOptions: onGridAxisAfterSetOptions,
     afterSetScale: onGridAxisAfterSetScale,
     destroy: onGridAxisDestroy,
     init: onGridAxisInit
