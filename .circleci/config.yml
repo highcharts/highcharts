@@ -194,7 +194,7 @@ workflows:
           requires:
             - build_dependencies
           browsers: "Win.Edge"
-          browsercount: 3
+          browsercount: 2
       - hold_for_approval:
           type: approval
           filters:
