@@ -47,11 +47,7 @@ var chart = Highcharts.chart('container', {
         y: 50,
         floating: true,
         borderWidth: 1,
-        backgroundColor: ( // theme
-            Highcharts.defaultOptions &&
-            Highcharts.defaultOptions.legend &&
-            Highcharts.defaultOptions.legend.backgroundColor
-        ) || '#FFFFFF'
+        backgroundColor: '#FFFFFF'
     },
     xAxis: {
         categories: [

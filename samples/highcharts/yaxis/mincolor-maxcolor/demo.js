@@ -72,9 +72,11 @@ $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
         name: 'Speed',
         data: [30],
         dataLabels: {
-            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-                ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-                   '<span style="font-size:12px;color:silver">km/h</span></div>'
+            format:
+                '<div style="text-align:center">' +
+                '<span style="font-size:25px;color:black">{y}</span><br/>' +
+                '<span style="font-size:12px;color:silver">km/h</span>' +
+                '</div>'
         },
         tooltip: {
             valueSuffix: ' km/h'
