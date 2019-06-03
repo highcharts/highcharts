@@ -713,7 +713,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 chart[name] = chart.renderer.text(chartTitleOptions.text, 0, 0, chartTitleOptions.useHTML)
                     .attr({
                     align: chartTitleOptions.align,
-                    class: 'highcharts-' + name,
+                    'class': 'highcharts-' + name,
                     zIndex: chartTitleOptions.zIndex || 4
                 })
                     .add();

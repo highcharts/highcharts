@@ -1545,7 +1545,7 @@ Highcharts.Legend.prototype = {
             });
             [this.up, this.upTracker].forEach(function (elem): void {
                 (elem as any).attr({
-                    class: currentPage === 1 ?
+                    'class': currentPage === 1 ?
                         'highcharts-legend-nav-inactive' :
                         'highcharts-legend-nav-active'
                 });
@@ -1560,7 +1560,7 @@ Highcharts.Legend.prototype = {
                 (elem as any).attr({
                     // adjust to text width
                     x: 18 + (this.pager as any).getBBox().width,
-                    class: currentPage === pageCount ?
+                    'class': currentPage === pageCount ?
                         'highcharts-legend-nav-inactive' :
                         'highcharts-legend-nav-active'
                 });

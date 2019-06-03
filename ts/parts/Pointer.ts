@@ -1133,7 +1133,7 @@ Highcharts.Pointer.prototype = {
                             0
                         )
                             .attr({
-                                class: 'highcharts-selection-marker',
+                                'class': 'highcharts-selection-marker',
                                 zIndex: 7
                             })
                             .add();

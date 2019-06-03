@@ -746,7 +746,7 @@ Highcharts.Pointer.prototype = {
                     this.selectionMarker = selectionMarker =
                         chart.renderer.rect(plotLeft, plotTop, zoomHor ? 1 : plotWidth, zoomVert ? 1 : plotHeight, 0)
                             .attr({
-                            class: 'highcharts-selection-marker',
+                            'class': 'highcharts-selection-marker',
                             zIndex: 7
                         })
                             .add();

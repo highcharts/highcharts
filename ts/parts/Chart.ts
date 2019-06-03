@@ -1104,7 +1104,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 )
                     .attr({
                         align: chartTitleOptions.align,
-                        class: 'highcharts-' + name,
+                        'class': 'highcharts-' + name,
                         zIndex: (chartTitleOptions as any).zIndex || 4
                     })
                     .add();

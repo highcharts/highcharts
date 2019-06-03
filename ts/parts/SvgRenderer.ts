@@ -1233,7 +1233,7 @@ extend((
                 // Create the clone and apply outline properties
                 clone = tspan.cloneNode(1 as any);
                 attr(clone, {
-                    class: 'highcharts-text-outline',
+                    'class': 'highcharts-text-outline',
                     fill: color,
                     stroke: color,
                     'stroke-width': strokeWidth,
@@ -3495,7 +3495,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         boxWrapper = renderer.createElement('svg')
             .attr({
                 version: '1.1',
-                class: 'highcharts-root'
+                'class': 'highcharts-root'
             }) as any;
 
         if (!styledMode) {
@@ -5005,7 +5005,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var elem = this.createElement('g');
 
         return name ?
-            elem.attr({ class: 'highcharts-' + name }) as any :
+            elem.attr({ 'class': 'highcharts-' + name }) as any :
             elem;
     },
 
