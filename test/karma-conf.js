@@ -165,7 +165,8 @@ const browserStackBrowsers = {
         browser: 'edge',
         browser_version: '43.0',
         os: 'Windows',
-        os_version: '10'
+        os_version: '10',
+        'browserstack.selenium_version' : '3.14.0'
     },
     'Win.Firefox': {
         base: 'BrowserStack',
@@ -592,8 +593,6 @@ module.exports = function (config) {
             localIdentifier: randomString, // to avoid instances interfering with each other.
             video: false,
             retryLimit: 1,
-            timeout: 5 * 60,
-            captureTimeout: 4 * 60 // default 60
         };
         options.customLaunchers = browserStackBrowsers;
         options.logLevel = config.LOG_INFO;
@@ -601,9 +600,19 @@ module.exports = function (config) {
 
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         options.concurrency = 1;
-        options.browserDisconnectTimeout = 20000; // default 2000
+        options.browserDisconnectTimeout = 30000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
+        options.browserSocketTimeout = 20000;
+
+        options.plugins = [
+            'karma-browserstack-launcher',
+            'karma-qunit',
+            'karma-sharding',
+            'karma-generic-preprocessor'
+        ];
+
+        options.reporters = ['progress'];
 
         console.log(
             'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +
