@@ -252,10 +252,25 @@ Highcharts.theme = {
     },
 
     // special colors for some of the
+    /**
+     * @deprecated
+     */
     legendBackgroundColor: 'rgba(0, 0, 0, 0.5)',
+    /**
+     * @deprecated
+     */
     background2: 'rgb(35, 35, 70)',
+    /**
+     * @deprecated
+     */
     dataLabelsColor: '#444',
+    /**
+     * @deprecated
+     */
     textColor: '#C0C0C0',
+    /**
+     * @deprecated
+     */
     maskColor: 'rgba(255,255,255,0.3)'
 };
 

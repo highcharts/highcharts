@@ -19,7 +19,13 @@ Highcharts.chart('container', {
                 enabled: true,
                 format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                 style: {
-                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    color: ( // theme
+                        Highcharts.defaultOptions &&
+                        Highcharts.defaultOptions.plotOptions &&
+                        Highcharts.defaultOptions.plotOptions.series &&
+                        Highcharts.defaultOptions.plotOptions.series.dataLabels &&
+                        Highcharts.defaultOptions.plotOptions.series.dataLabels.color
+                    ) || 'black'
                 }
             }
         }

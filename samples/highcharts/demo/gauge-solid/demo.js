@@ -74,9 +74,17 @@ var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptio
         name: 'Speed',
         data: [80],
         dataLabels: {
-            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-                ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' +
-                   '<span style="font-size:12px;color:silver">km/h</span></div>'
+            format:
+                '<div style="text-align:center">' +
+                '<span style="font-size:25px;color:' + (( // theme
+                    Highcharts.defaultOptions &&
+                    Highcharts.defaultOptions.plotOptions &&
+                    Highcharts.defaultOptions.plotOptions.series &&
+                    Highcharts.defaultOptions.plotOptions.series.dataLabels &&
+                    Highcharts.defaultOptions.plotOptions.series.dataLabels.color
+                ) || 'black') + '">{y}</span><br/>' +
+                '<span style="font-size:12px;color:silver">km/h</span>' +
+                '</div>'
         },
         tooltip: {
             valueSuffix: ' km/h'
@@ -99,9 +107,19 @@ var chartRpm = Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, 
         name: 'RPM',
         data: [1],
         dataLabels: {
-            format: '<div style="text-align:center"><span style="font-size:25px;color:' +
-                ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y:.1f}</span><br/>' +
-                   '<span style="font-size:12px;color:silver">* 1000 / min</span></div>'
+            format:
+                '<div style="text-align:center">' +
+                '<span style="font-size:25px;color:' + (( // theme
+                    Highcharts.defaultOptions &&
+                    Highcharts.defaultOptions.plotOptions &&
+                    Highcharts.defaultOptions.plotOptions.series &&
+                    Highcharts.defaultOptions.plotOptions.series.dataLabels &&
+                    Highcharts.defaultOptions.plotOptions.series.dataLabels.color
+                ) || 'black') + '">{y:.1f}</span><br/>' +
+                '<span style="font-size:12px;color:silver">' +
+                '* 1000 / min' +
+                '</span>' +
+                '</div>'
         },
         tooltip: {
             valueSuffix: ' revolutions/min'

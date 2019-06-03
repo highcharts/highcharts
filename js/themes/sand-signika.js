@@ -52,7 +52,13 @@ Highcharts.theme = {
     tooltip: {
         borderWidth: 0
     },
+    labels: {
+        style: {
+            color: '#6e6e70'
+        }
+    },
     legend: {
+        backgroundColor: '#E0E0E8',
         itemStyle: {
             fontWeight: 'bold',
             fontSize: '13px'
@@ -107,6 +113,9 @@ Highcharts.theme = {
     },
 
     // General
+    /**
+     * @deprecated
+     */
     background2: '#E0E0E8'
 
 };
