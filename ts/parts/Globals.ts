@@ -91,11 +91,13 @@ declare global {
         }
         interface ChartOptions {
             forExport?: any; // @todo
+            reflow?: any; // @todo
             renderer?: any; // @todo
             skipClone?: any; // @todo
         }
         interface Options {
             exporting?: any; // @todo
+            isResponsiveOptions?: boolean; // @todo
             isStock?: boolean; // @todo
             xAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
             yAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
@@ -131,10 +133,15 @@ declare global {
             dataMin?: any; // @todo
             dataLabelsGroup?: any; // @todo
             directTouch?: any; // @todo
+            finishedAnimating?: any; // @todo
+            fixedBox?: any; // @todo
             group?: any; // @todo
+            hasCartesianSeries?: any; // @todo
+            hasDerivedData?: any; // @todo
             hasGroupedData?: any; // @todo
             id?: any; // @todo
             index?: any; // @todo
+            initialType?: any; // @todo
             isCartesian?: any; // @todo
             isDirty?: any; // @todo
             isDirtyData?: any; // @todo
@@ -146,6 +153,7 @@ declare global {
             navigatorSeries?: any; // @todo
             noSharedTooltip?: any; // @todo
             options?: any; // @todo
+            parallelArrays?: any; // @todo
             pointArrayMap?: any; // @todo
             points?: any; // @todo
             pointValKey?: any; // @todo
@@ -155,7 +163,9 @@ declare global {
             stickyTracking?: any; // @todo
             symbol?: any; // @todo
             tooltipOptions?: any; // @todo
+            type?: any; // @todo
             updateTotals?: any; // @todo
+            userOptions?: any; // @todo
             visible?: any; // @todo
             xAxis?: any; // @todo
             xData?: any; // @todo
@@ -171,12 +181,16 @@ declare global {
             getPlotBox: Function; // @todo
             getPoint: Function; // @todo
             hasData: Function; // @todo
+            init: Function; // @todo
             pointAttribs: Function; // @todo
+            pointClass: Function; // @todo
             processData: Function; // @todo
             render: Function; // @todo
             searchPoint: Function; // @todo
+            setData: Function; // @todo
             setState: Function; // @todo
             translate: Function; // @todo
+            updateParallelArrays: Function; // @todo
         }
         interface SVGRenderer {
             invertChild: Function; // @todo

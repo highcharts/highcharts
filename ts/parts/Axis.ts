@@ -30,6 +30,7 @@ declare global {
         type AxisTickmarkPlacementValue = ('between'|'on');
         type AxisTickPositionValue = ('inside'|'outside');
         type AxisTitleAlignValue = ('high'|'low'|'middle');
+        type AxisTitleOptions = XAxisTitleOptions;
         type AxisTypeValue = (
             'linear'|'logarithmic'|'datetime'|'category'|'treegrid'
         );
@@ -675,6 +676,10 @@ declare global {
 
 /**
  * @typedef {"high"|"low"|"middle"} Highcharts.AxisTitleAlignValue
+ */
+
+/**
+ * @typedef {Highcharts.XAxisTitleOptions|Highcharts.YAxisTitleOptions|Highcharts.ZAxisTitleOptions} Highcharts.AxisTitleOptions
  */
 
 /**
