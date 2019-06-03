@@ -110,6 +110,7 @@ Highcharts.theme = {
         }
     },
     legend: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         itemStyle: {
             color: '#E0E0E3'
         },
@@ -118,6 +119,11 @@ Highcharts.theme = {
         },
         itemHiddenStyle: {
             color: '#606063'
+        },
+        title: {
+            style: {
+                color: '#C0C0C0'
+            }
         }
     },
     credits: {
