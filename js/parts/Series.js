@@ -2133,7 +2133,7 @@ H.Series = H.seriesType(
             /**
              * The opposite state of a hover for series.
              *
-             * @sample highcharts/plotoptions/series-inactive-opacity
+             * @sample highcharts/plotoptions/series-states-inactive-opacity
              *         Disabled inactive state by setting opacity
              */
             inactive: {
@@ -2151,7 +2151,7 @@ H.Series = H.seriesType(
                  *
                  * @apioption plotOptions.series.states.inactive.opacity
                  * @type {number}
-                 * @sample highcharts/plotoptions/series-inactive-opacity
+                 * @sample highcharts/plotoptions/series-states-inactive-opacity
                  *         Disabled inactive state
                  */
                 opacity: 0.2

@@ -591,7 +591,7 @@ extend(ColorAxis.prototype, {
      * Build options to keep layout params on init and update.
      *
      * @private
-     * 
+     *
      * @param {Object} options
      * @param {Object} userOptions
      *
