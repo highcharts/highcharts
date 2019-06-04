@@ -163,7 +163,7 @@ const browserStackBrowsers = {
     'Win.Edge': {
         base: 'BrowserStack',
         browser: 'edge',
-        browser_version: '43.0',
+        browser_version: 'insider preview',
         os: 'Windows',
         os_version: '10',
         'browserstack.selenium_version' : '3.14.0'
@@ -597,27 +597,12 @@ module.exports = function (config) {
         options.customLaunchers = browserStackBrowsers;
         options.logLevel = config.LOG_INFO;
 
-
         // to avoid DISCONNECTED messages when connecting to BrowserStack
         options.concurrency = 1;
         options.browserDisconnectTimeout = 30000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
         options.browserSocketTimeout = 20000;
-
-        options.plugins = [
-            'karma-browserstack-launcher',
-            'karma-qunit',
-            'karma-sharding',
-            'karma-generic-preprocessor'
-        ];
-
-        options.reporters = ['progress'];
-
-        if (browsers.some(browser => /(Edge)/.test(browser))) {
-            // fallback to polling for Edge browsers as websockets disconnects a lot.
-            options.transports = ['polling'];
-        }
 
         console.log(
             'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +
