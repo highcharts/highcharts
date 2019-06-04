@@ -18,8 +18,6 @@ Highcharts.chart('container', {
             style: {
                 fontWeight: 'bold',
                 color: ( // theme
-                    Highcharts.defaultOptions &&
-                    Highcharts.defaultOptions.title &&
                     Highcharts.defaultOptions.title.style &&
                     Highcharts.defaultOptions.title.style.color
                 ) || 'gray'
@@ -32,11 +30,8 @@ Highcharts.chart('container', {
         verticalAlign: 'top',
         y: 25,
         floating: true,
-        backgroundColor: ( // theme
-            Highcharts.defaultOptions &&
-            Highcharts.defaultOptions.legend &&
-            Highcharts.defaultOptions.legend.backgroundColor
-        ) || 'white',
+        backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || 'white',
         borderColor: '#CCC',
         borderWidth: 1,
         shadow: false
@@ -49,14 +44,7 @@ Highcharts.chart('container', {
         column: {
             stacking: 'normal',
             dataLabels: {
-                enabled: true,
-                color: ( // theme
-                    Highcharts.defaultOptions &&
-                    Highcharts.defaultOptions.plotOptions &&
-                    Highcharts.defaultOptions.plotOptions.series &&
-                    Highcharts.defaultOptions.plotOptions.series.dataLabels &&
-                    Highcharts.defaultOptions.plotOptions.series.dataLabels.color
-                ) || 'white'
+                enabled: true
             }
         }
     },

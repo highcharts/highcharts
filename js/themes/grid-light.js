@@ -74,14 +74,7 @@ Highcharts.theme = {
         candlestick: {
             lineColor: '#404048'
         }
-    },
-
-
-    // General
-    /**
-     * @deprecated
-     */
-    background2: '#F0F0EA'
+    }
 
 };
 

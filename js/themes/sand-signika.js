@@ -110,13 +110,7 @@ Highcharts.theme = {
     },
     scrollbar: {
         trackBorderColor: '#C0C0C8'
-    },
-
-    // General
-    /**
-     * @deprecated
-     */
-    background2: '#E0E0E8'
+    }
 
 };
 

@@ -93,7 +93,10 @@ Highcharts.theme = {
     plotOptions: {
         series: {
             dataLabels: {
-                color: '#F0F0F3'
+                color: '#F0F0F3',
+                style: {
+                    fontSize: '13px'
+                }
             },
             marker: {
                 lineColor: '#333'
@@ -215,33 +218,7 @@ Highcharts.theme = {
         rifleColor: '#FFF',
         trackBackgroundColor: '#404043',
         trackBorderColor: '#404043'
-    },
-
-    // special colors for some of the
-    /**
-     * @deprecated
-     */
-    legendBackgroundColor: 'rgba(0, 0, 0, 0.5)',
-    /**
-     * @deprecated
-     */
-    background2: '#505053',
-    /**
-     * @deprecated
-     */
-    dataLabelsColor: '#B0B0B3',
-    /**
-     * @deprecated
-     */
-    textColor: '#C0C0C0',
-    /**
-     * @deprecated
-     */
-    contrastTextColor: '#F0F0F3',
-    /**
-     * @deprecated
-     */
-    maskColor: 'rgba(255,255,255,0.3)'
+    }
 };
 
 // Apply the theme
