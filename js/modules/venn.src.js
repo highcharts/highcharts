@@ -38,6 +38,7 @@ var color = H.Color,
     isNumber = H.isNumber,
     isObject = H.isObject,
     isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles,
+    isPointInsideCircle = geometryCircles.isPointInsideCircle,
     isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles,
     isString = H.isString,
     merge = H.merge,
@@ -314,8 +315,12 @@ var getLabelPosition = function getLabelPosition(internal, external) {
  */
 var getLabelWidth = function getLabelWidth(pos, internal, external) {
     var radius = internal.reduce(function (min, circle) {
-        return Math.min(circle.r, min);
-    }, Infinity);
+            return Math.min(circle.r, min);
+        }, Infinity),
+        // Filter out external circles that are completely overlapping.
+        filteredExternals = external.filter(function (circle) {
+            return !isPointInsideCircle(pos, circle);
+        });
 
     var findDistance = function (maxDistance, direction) {
         return bisect(function (x) {
@@ -325,7 +330,7 @@ var getLabelWidth = function getLabelWidth(pos, internal, external) {
                 },
                 isValid = (
                     isPointInsideAllCircles(testPos, internal) &&
-                    isPointOutsideAllCircles(testPos, external)
+                    isPointOutsideAllCircles(testPos, filteredExternals)
                 );
 
             // If the position is valid, then we want to move towards the max
@@ -334,10 +339,8 @@ var getLabelWidth = function getLabelWidth(pos, internal, external) {
         }, 0, maxDistance);
     };
 
-    var left = findDistance(radius, -1);
-    var right = findDistance(radius, 1);
-
-    return Math.min(left, right) * 2;
+    // Find the smallest distance of left and right.
+    return Math.min(findDistance(radius, -1), findDistance(radius, 1)) * 2;
 };
 
 /**
