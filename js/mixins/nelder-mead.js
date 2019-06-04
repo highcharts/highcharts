@@ -1,3 +1,18 @@
+var getCentroid = function (simplex) {
+    var arr = simplex.slice(0, -1),
+        length = arr.length,
+        result = [],
+        sum = function (data, point) {
+            data.sum += point[data.i];
+            return data;
+        };
+
+    for (var i = 0; i < length; i++) {
+        result[i] = arr.reduce(sum, { sum: 0, i: i }).sum / length;
+    }
+    return result;
+};
+
 /**
  * Finds an optimal position for a given point.
  * @private
@@ -58,21 +73,6 @@ var nelderMead = function nelderMead(fn, initial) {
             p.fx = fn(p);
             return p;
         });
-    };
-
-    var getCentroid = function (simplex) {
-        var arr = simplex.slice(0, -1),
-            length = arr.length,
-            result = [],
-            sum = function (data, point) {
-                data.sum += point[data.i];
-                return data;
-            };
-
-        for (var i = 0; i < length; i++) {
-            result[i] = simplex.reduce(sum, { sum: 0, i: i }).sum / length;
-        }
-        return result;
     };
 
     var getPoint = function (centroid, worst, a, b) {
@@ -137,6 +137,7 @@ var nelderMead = function nelderMead(fn, initial) {
 };
 
 var content = {
+    getCentroid: getCentroid,
     nelderMead: nelderMead
 };
 
