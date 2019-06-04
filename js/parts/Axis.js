@@ -1782,8 +1782,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              * Deprecated. Set the `text` to `null` to disable the title.
              *
              * @deprecated
-             * @type      {string}
-             * @default   middle
+             * @type      {boolean}
+             * @default   true
              * @product   highcharts
              * @apioption xAxis.title.enabled
              */
