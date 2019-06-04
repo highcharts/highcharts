@@ -788,6 +788,8 @@ var vennOptions = {
         /** @ignore-option */
         enabled: true,
         /** @ignore-option */
+        verticalAlign: 'middle',
+        /** @ignore-option */
         formatter: function () {
             return this.point.name;
         }
