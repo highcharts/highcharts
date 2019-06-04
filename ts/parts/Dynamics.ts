@@ -906,10 +906,10 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                     }
                 }
                 if (options && (options as any).dataLabels && point.dataLabel) {
-                    point.dataLabel = point.dataLabel.destroy(); // #2468
+                    point.dataLabel = point.dataLabel.destroy() as any; // #2468
                 }
                 if (point.connector) {
-                    point.connector = point.connector.destroy(); // #7243
+                    point.connector = point.connector.destroy() as any; // #7243
                 }
             }
 
