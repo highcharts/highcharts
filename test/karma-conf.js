@@ -603,6 +603,20 @@ module.exports = function (config) {
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
         options.browserSocketTimeout = 20000;
 
+        options.plugins = [
+            'karma-browserstack-launcher',
+            'karma-qunit',
+            'karma-sharding',
+            'karma-generic-preprocessor'
+        ];
+
+        options.reporters = ['progress'];
+
+        if (browsers.some(browser => /(Edge)/.test(browser))) {
+            // fallback to polling for Edge browsers as websockets disconnects a lot.
+            options.transports = ['polling'];
+        }
+
         console.log(
             'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +
             `Any other test runs must complete before this test run will start. Current Browserstack concurrency rate is ${options.concurrency}..`
