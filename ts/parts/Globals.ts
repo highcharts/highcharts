@@ -107,8 +107,6 @@ declare global {
             setItemEvents: Function; // @todo
         }
         interface Point {
-            dataLabel?: any; // @todo
-            dataLabels?: any; // @todo
             dist?: any; // @todo
             distX?: any; // @todo
             graphic?: any; // @todo
@@ -123,6 +121,7 @@ declare global {
             _hasPointLabels?: any; // @todo
             _hasPointMarkers?: any; // @todo
             autoIncrement?: any; // @todo
+            center?: any; // @todo
             chart?: any; // @todo
             closestPointRange?: number; // @todo
             color?: any; // @todo
@@ -135,10 +134,12 @@ declare global {
             directTouch?: any; // @todo
             finishedAnimating?: any; // @todo
             fixedBox?: any; // @todo
+            forceDL?: any; // @todo
             group?: any; // @todo
             hasCartesianSeries?: any; // @todo
             hasDerivedData?: any; // @todo
             hasGroupedData?: any; // @todo
+            hasRendered?: any; // @todo
             id?: any; // @todo
             index?: any; // @todo
             initialType?: any; // @todo
@@ -149,6 +150,7 @@ declare global {
             linkedParent?: any; // @todo
             linkedSeries?: any; // @todo
             markerGroup?: any; // @todo
+            maxLabelDistance?: any; // @todo
             name?: any; // @todo
             navigatorSeries?: any; // @todo
             noSharedTooltip?: any; // @todo
@@ -163,6 +165,7 @@ declare global {
             stickyTracking?: any; // @todo
             symbol?: any; // @todo
             tooltipOptions?: any; // @todo
+            translatedThreshold?: any; // @todo
             type?: any; // @todo
             updateTotals?: any; // @todo
             userOptions?: any; // @todo
@@ -180,8 +183,10 @@ declare global {
             getName: Function; // @todo
             getPlotBox: Function; // @todo
             getPoint: Function; // @todo
+            getX: Function; // @todo
             hasData: Function; // @todo
             init: Function; // @todo
+            plotGroup: Function; // @todo
             pointAttribs: Function; // @todo
             pointClass: Function; // @todo
             processData: Function; // @todo
@@ -189,6 +194,7 @@ declare global {
             searchPoint: Function; // @todo
             setData: Function; // @todo
             setState: Function; // @todo
+            sortByAngle: Function; // @todo
             translate: Function; // @todo
             updateParallelArrays: Function; // @todo
         }

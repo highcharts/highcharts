@@ -22,7 +22,7 @@
         ],
         "consistent-return": 0,
         "func-style": 0,
-        "indent": ["error", 4, { "FunctionExpression": { "parameters": 1 }}],
+        "indent": 0,
         "max-len": [
             "error",
             {
@@ -41,6 +41,7 @@
         "prefer-rest-params": 0,
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
         "@typescript-eslint/array-type": 0,
+        "@typescript-eslint/indent": ["error", 4, { "FunctionExpression": { "parameters": 1 }}],
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,
         "@typescript-eslint/no-namespace": 0,
