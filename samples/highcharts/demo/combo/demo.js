@@ -12,8 +12,6 @@ Highcharts.chart('container', {
                 left: '50px',
                 top: '18px',
                 color: ( // theme
-                    Highcharts.defaultOptions &&
-                    Highcharts.defaultOptions.title &&
                     Highcharts.defaultOptions.title.style &&
                     Highcharts.defaultOptions.title.style.color
                 ) || 'black'

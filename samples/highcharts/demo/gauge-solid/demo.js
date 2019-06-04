@@ -12,11 +12,8 @@ var gaugeOptions = {
         startAngle: -90,
         endAngle: 90,
         background: {
-            backgroundColor: ( // theme
-                Highcharts.defaultOptions &&
-                Highcharts.defaultOptions.legend &&
-                Highcharts.defaultOptions.legend.backgroundColor
-            ) || '#EEE',
+            backgroundColor:
+                Highcharts.defaultOptions.legend.backgroundColor || '#EEE',
             innerRadius: '60%',
             outerRadius: '100%',
             shape: 'arc'
@@ -76,14 +73,8 @@ var chartSpeed = Highcharts.chart('container-speed', Highcharts.merge(gaugeOptio
         dataLabels: {
             format:
                 '<div style="text-align:center">' +
-                '<span style="font-size:25px;color:' + (( // theme
-                    Highcharts.defaultOptions &&
-                    Highcharts.defaultOptions.plotOptions &&
-                    Highcharts.defaultOptions.plotOptions.series &&
-                    Highcharts.defaultOptions.plotOptions.series.dataLabels &&
-                    Highcharts.defaultOptions.plotOptions.series.dataLabels.color
-                ) || 'black') + '">{y}</span><br/>' +
-                '<span style="font-size:12px;color:silver">km/h</span>' +
+                '<span style="font-size:25px">{y}</span><br/>' +
+                '<span style="font-size:12px;opacity:0.4">km/h</span>' +
                 '</div>'
         },
         tooltip: {
@@ -109,14 +100,8 @@ var chartRpm = Highcharts.chart('container-rpm', Highcharts.merge(gaugeOptions, 
         dataLabels: {
             format:
                 '<div style="text-align:center">' +
-                '<span style="font-size:25px;color:' + (( // theme
-                    Highcharts.defaultOptions &&
-                    Highcharts.defaultOptions.plotOptions &&
-                    Highcharts.defaultOptions.plotOptions.series &&
-                    Highcharts.defaultOptions.plotOptions.series.dataLabels &&
-                    Highcharts.defaultOptions.plotOptions.series.dataLabels.color
-                ) || 'black') + '">{y:.1f}</span><br/>' +
-                '<span style="font-size:12px;color:silver">' +
+                '<span style="font-size:25px">{y:.1f}</span><br/>' +
+                '<span style="font-size:12px;opacity:0.4">' +
                 '* 1000 / min' +
                 '</span>' +
                 '</div>'

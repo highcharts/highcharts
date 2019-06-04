@@ -265,29 +265,7 @@ Highcharts.theme = {
             ]
         },
         trackBorderColor: '#666'
-    },
-
-    // special colors for some of the demo examples
-    /**
-     * @deprecated
-     */
-    legendBackgroundColor: 'rgba(48, 48, 48, 0.8)',
-    /**
-     * @deprecated
-     */
-    background2: 'rgb(70, 70, 70)',
-    /**
-     * @deprecated
-     */
-    dataLabelsColor: '#444',
-    /**
-     * @deprecated
-     */
-    textColor: '#E0E0E0',
-    /**
-     * @deprecated
-     */
-    maskColor: 'rgba(255, 255, 255, 0.3)'
+    }
 };
 
 // Apply the theme

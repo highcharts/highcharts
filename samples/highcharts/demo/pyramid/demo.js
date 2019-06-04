@@ -11,13 +11,6 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b> ({point.y:,.0f})',
-                color: ( // theme
-                    Highcharts.defaultOptions &&
-                    Highcharts.defaultOptions.plotOptions &&
-                    Highcharts.defaultOptions.plotOptions.series &&
-                    Highcharts.defaultOptions.plotOptions.series.dataLabels &&
-                    Highcharts.defaultOptions.plotOptions.series.dataLabels.color
-                ) || 'black',
                 softConnector: true
             },
             center: ['40%', '50%'],
