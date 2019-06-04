@@ -971,9 +971,11 @@ var vennSeries = {
         addOverlapToSets: addOverlapToSets,
         geometry: geometry,
         geometryCircles: geometryCircles,
+        getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
+        nelderMead: NelderMeadModule,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }

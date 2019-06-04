@@ -668,3 +668,39 @@ QUnit.test('sortByTotalOverlap', function (assert) {
         'should return 0 when a is equal to b.'
     );
 });
+
+QUnit.module('nelder-mead', () => {
+    const vennUtils = Highcharts.seriesTypes.venn.prototype.utils;
+    const NelderMeadModule = vennUtils.nelderMead;
+
+    QUnit.test('getCentroid', assert => {
+        const { getCentroid } = NelderMeadModule;
+        assert.deepEqual(
+            getCentroid([
+                [184.16021264966827, 99.75],
+                [184.16021264966827, 95],
+                [193.3682232821517, 95]
+            ]),
+            [184.16021264966827, 97.375],
+            'should calculate the center point between all the coordinates, except the last'
+        );
+    });
+
+    QUnit.test('nelderMead', assert => {
+        const { nelderMead } = NelderMeadModule;
+        const { getMarginFromCircles } = vennUtils;
+        const internal = [{ r: 160, x: 184.16021264966827, y: 175 }];
+        const external = [{ r: 160, x: 415.8397873503318, y: 175 }];
+        const fn = ([x, y]) => -(
+            getMarginFromCircles({ x, y }, internal, external)
+        );
+        assert.deepEqual(
+            nelderMead(
+                fn,
+                [184.16021264966827, 95]
+            ),
+            [140.0000000000064, 174.99997672224276],
+            'should something'
+        );
+    });
+});
