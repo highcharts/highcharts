@@ -166,7 +166,6 @@ const browserStackBrowsers = {
         browser_version: 'insider preview',
         os: 'Windows',
         os_version: '10',
-        'browserstack.selenium_version' : '3.14.0'
     },
     'Win.Firefox': {
         base: 'BrowserStack',
