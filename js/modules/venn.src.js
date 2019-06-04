@@ -301,14 +301,54 @@ var getLabelPosition = function getLabelPosition(internal, external) {
 };
 
 /**
- * Calulates data label positions for a list of relations.
+ * Finds the available width for a label, by taking the label position and
+ * finding the largest distance, which is inside all internal circles, and
+ * outside all external circles.
+ *
+ * @private
+ * @todo Add unit tests
+ * @param {object} pos The x and y coordinate of the label.
+ * @param {Array<object>} internal Internal circles.
+ * @param {Array<object>} external External circles.
+ * @return {number} Returns available width for the label.
+ */
+var getLabelWidth = function getLabelWidth(pos, internal, external) {
+    var radius = internal.reduce(function (min, circle) {
+        return Math.min(circle.r, min);
+    }, Infinity);
+
+    var findDistance = function (maxDistance, direction) {
+        return bisect(function (x) {
+            var testPos = {
+                    x: pos.x + (direction * x),
+                    y: pos.y
+                },
+                isValid = (
+                    isPointInsideAllCircles(testPos, internal) &&
+                    isPointOutsideAllCircles(testPos, external)
+                );
+
+            // If the position is valid, then we want to move towards the max
+            // distance. If not, then we want to  away from the max distance.
+            return -(maxDistance - x) + (isValid ? 0 : Number.MAX_VALUE);
+        }, 0, maxDistance);
+    };
+
+    var left = findDistance(radius, -1);
+    var right = findDistance(radius, 1);
+
+    return Math.min(left, right) * 2;
+};
+
+/**
+ * Calulates data label values for a list of relations.
  * @private
  * @todo add unit tests
  * @todo NOTE: may be better suited as a part of the layout function.
  * @param {Array<object>} relations The list of relations.
- * @return {object} Returns a map from id to the data label position.
+ * @return {object} Returns a map from id to the data label values.
  */
-var getLabelPositions = function getLabelPositions(relations) {
+var getLabelValues = function getLabelValues(relations) {
     var singleSets = relations.filter(isSet);
 
     return relations.reduce(function (map, relation) {
@@ -328,13 +368,19 @@ var getLabelPositions = function getLabelPositions(relations) {
                 }, {
                     internal: [],
                     external: []
-                });
+                }),
+                // Calulate the label position.
+                position = getLabelPosition(
+                    data.internal,
+                    data.external
+                ),
+                // Calculate the label width
+                width = getLabelWidth(position, data.internal, data.external);
 
-            // Calulate the label position.
-            map[id] = getLabelPosition(
-                data.internal,
-                data.external
-            );
+            map[id] = {
+                position: position,
+                width: width
+            };
         }
         return map;
     }, {});
@@ -785,7 +831,7 @@ var vennSeries = {
         var mapOfIdToShape = layout(relations);
 
         // Calculate positions of each data label
-        var mapOfIdToLabelPosition = getLabelPositions(relations);
+        var mapOfIdToLabelValues = getLabelValues(relations);
 
         // Calculate the scale, and center of the plot area.
         var field = Object.keys(mapOfIdToShape)
@@ -808,7 +854,9 @@ var vennSeries = {
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
                 shapeArgs,
-                dataLabelPosition = mapOfIdToLabelPosition[id];
+                dataLabelValues = mapOfIdToLabelValues[id] || {},
+                dataLabelWidth = dataLabelValues.width,
+                dataLabelPosition = dataLabelValues.position;
 
             if (shape) {
                 if (shape.r) {
@@ -845,6 +893,10 @@ var vennSeries = {
                 } else {
                     dataLabelPosition = {};
                 }
+
+                if (isNumber(dataLabelWidth)) {
+                    dataLabelWidth *= scale;
+                }
             }
 
             point.shapeArgs = shapeArgs;
@@ -853,6 +905,15 @@ var vennSeries = {
             if (dataLabelPosition && shapeArgs) {
                 point.plotX = dataLabelPosition.x;
                 point.plotY = dataLabelPosition.y;
+            }
+
+            // Add width for the data label
+            if (dataLabelWidth && shapeArgs) {
+                point.dlOptions = {
+                    style: {
+                        width: dataLabelWidth
+                    }
+                };
             }
 
             // Set name for usage in tooltip and in data label.
