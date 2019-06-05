@@ -612,8 +612,6 @@ override(GridAxis.prototype, {
                         * Specify the level which the options within this object
                         * applies to.
                         *
-                        * @sample {gantt} gantt/treegrid-axis/labels-levels
-                        *
                         * @type      {number}
                         * @product   gantt
                         * @apioption yAxis.labels.levels.level
