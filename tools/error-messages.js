@@ -38,7 +38,7 @@ const htmlEscapeTable = {
     }
 };
 const parseMarkdownBlockCode = /(?:^|\r\n|\n|\r)```(\w*)([\s\S]+?)[\n\r]+```/;
-const parseMarkdownCode = /`(\w(?:[^`]|\s)*?)`/;
+const parseMarkdownCode = /`([^`\s](?:[^`]|\s)*?)`/;
 const parseMarkdownHeadline = /(?:^|\r\n|\n|\r)(#{1,5})([^\n\r]*)\1?/;
 const parseMarkdownFormat = /(?:^| )(\*{1,3})(\w(?:[^\*]| )*?)\1/;
 const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
