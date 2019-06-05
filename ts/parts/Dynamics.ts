@@ -1429,18 +1429,19 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             if (seriesOptions.visible === false) {
                 kinds.graphic = 1;
                 kinds.dataLabel = 1;
-            } else {
+            } else if (!series._hasPointLabels) {
+                const { marker, dataLabels } = seriesOptions;
                 if (
-                    seriesOptions.marker &&
-                    seriesOptions.marker.enabled === false &&
-                    !series._hasPointMarkers
+                    marker && (
+                        marker.enabled === false ||
+                        'symbol' in marker // #10870
+                    )
                 ) {
                     kinds.graphic = 1;
                 }
                 if (
-                    seriesOptions.dataLabels &&
-                    seriesOptions.dataLabels.enabled === false &&
-                    !series._hasPointLabels
+                    dataLabels &&
+                    dataLabels.enabled === false
                 ) {
                     kinds.dataLabel = 1;
                 }
