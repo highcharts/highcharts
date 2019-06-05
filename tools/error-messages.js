@@ -37,14 +37,14 @@ const htmlEscapeTable = {
         replacement: '&gt;'
     }
 };
-const parseMarkdownBlockCode = /(?:^|\n|\n\r|\r\n)```(\w*)([\s\S]+?)[\n\r]+```/;
+const parseMarkdownBlockCode = /(?:^|\r\n|\n|\r)```(\w*)([\s\S]+?)[\n\r]+```/;
 const parseMarkdownCode = /`(\w(?:[^`]|\s)*?)`/;
-const parseMarkdownHeadline = /(?:^|\n|\n\r|\r\n)(#{1,5})([^\n\r]*)\1?/;
+const parseMarkdownHeadline = /(?:^|\r\n|\n|\r)(#{1,5})([^\n\r]*)\1?/;
 const parseMarkdownFormat = /(?:^| )(\*{1,3})(\w(?:[^\*]| )*?)\1/;
 const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
 const parseMarkdownList =
-    /(?:^|\n|\n\r|\r\n)[\t ]*[\-\+\*][\t ]+([\s\S]*?)(?=(?:\n|\n\r|\r\n)+|$)/;
-const parseMarkdownParagraphs = / {2,}(?:\n|\n\r|\r\n)| ?(?:\n|\n\r|\r\n){2,}/;
+    /(?:^|\r\n|\n|\r)[\t ]*[\-\+\*][\t ]+([\s\S]*?)(?=(?:\r\n|\n|\r)+|$)/;
+const parseMarkdownParagraphs = / {2,}(?:\r\n|\n|\r)| ?(?:\r\n|\n|\r){2,}/;
 const parseBlockCodePlaceholder = /<<<>>>/;
 const parseListSpaces = /<\/li><\/ul><p>\s*?<\/p><ul><li>/;
 const parseParagraphSpaces = /<p><\/p>/;
