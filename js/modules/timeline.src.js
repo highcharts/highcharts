@@ -257,6 +257,17 @@ seriesType('timeline', 'line',
                     }
                 });
             });
+            addEvent(series.chart, 'afterHideOverlappingLabels', function () {
+                series.points.forEach(function (p) {
+                    if (
+                        p.connector &&
+                        p.dataLabel &&
+                        p.dataLabel.oldOpacity !== p.dataLabel.newOpacity
+                    ) {
+                        p.alignConnector();
+                    }
+                });
+            });
         },
         alignDataLabel: function (point, dataLabel) {
             var series = this,
@@ -615,7 +626,9 @@ seriesType('timeline', 'line',
                 connector.attr({
                     stroke: dlOptions.connectorColor || point.color,
                     'stroke-width': dlOptions.connectorWidth,
-                    opacity: point.dataLabel.opacity
+                    opacity: dl[
+                        defined(dl.newOpacity) ? 'newOpacity' : 'opacity'
+                    ]
                 });
             }
         }
