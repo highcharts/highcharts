@@ -66,7 +66,6 @@ H.ajax = function (attr) {
             headers: {}
         }, attr),
         headers = {
-            json: 'application/json',
             xml: 'application/xml',
             text: 'text/plain',
             octet: 'application/octet-stream'
@@ -86,10 +85,12 @@ H.ajax = function (attr) {
     }
 
     r.open(options.type.toUpperCase(), options.url, true);
-    r.setRequestHeader(
-        'Content-Type',
-        headers[options.dataType] || headers.text
-    );
+    if (headers[options.dataType]) {
+        r.setRequestHeader(
+            'Content-Type',
+            headers[options.dataType]
+        );
+    }
 
     H.objectEach(options.headers, function (val, key) {
         r.setRequestHeader(key, val);
@@ -120,4 +121,23 @@ H.ajax = function (attr) {
     } catch (e) {}
 
     r.send(options.data || true);
+};
+
+/**
+ * Get a JSON resource over XHR, a shorthand for `Highcharts.ajax` with
+ * `dataType: 'json'`.
+ *
+ * @function Highcharts.getJSON
+ *
+ * @param {string} url
+ *        The URL to load.
+ * @param {function} success
+ *        The success callback. For error handling, use the `Highcharts.ajax`
+ *        function instead.
+ */
+H.getJSON = function (url, success) {
+    H.ajax({
+        url: url,
+        success: success
+    });
 };
