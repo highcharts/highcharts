@@ -169,4 +169,37 @@ QUnit.test('Timeline: General tests.', function (assert) {
         connector['stroke-width'] === undefined,
         "Connector is hidden when the data label is not visible on init."
     );
+
+    chart.update({
+        series: [{
+            dataLabels: {
+                allowOverlap: false
+            },
+            data: [{
+                x: Date.UTC(1951, 5, 22),
+                label: 'First long data label with some description'
+            }, {
+                x: Date.UTC(1957, 9, 4),
+                label: 'Second long data label with some description'
+            }, {
+                x: Date.UTC(1959, 0, 4),
+                label: 'Third long data label with some description'
+            }, {
+                x: Date.UTC(1961, 0, 4),
+                label: 'Fourth long data label with some description'
+            }]
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(Date.UTC(1958, 11, 31), Date.UTC(1961, 0, 4));
+
+    point = timeline.points[3];
+    dataLabel = point.dataLabel;
+    connector = point.connector;
+
+    assert.strictEqual(
+        dataLabel.opacity,
+        connector.opacity,
+        "Connector is visible together with data label, after setting extremes."
+    );
 });
