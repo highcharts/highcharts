@@ -1028,15 +1028,15 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 kinds.graphic = 1;
                 kinds.dataLabel = 1;
             }
-            else {
-                if (seriesOptions.marker &&
-                    seriesOptions.marker.enabled === false &&
-                    !series._hasPointMarkers) {
+            else if (!series._hasPointLabels) {
+                var marker = seriesOptions.marker, dataLabels = seriesOptions.dataLabels;
+                if (marker && (marker.enabled === false ||
+                    'symbol' in marker // #10870
+                )) {
                     kinds.graphic = 1;
                 }
-                if (seriesOptions.dataLabels &&
-                    seriesOptions.dataLabels.enabled === false &&
-                    !series._hasPointLabels) {
+                if (dataLabels &&
+                    dataLabels.enabled === false) {
                     kinds.dataLabel = 1;
                 }
             }

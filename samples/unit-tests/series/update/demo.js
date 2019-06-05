@@ -97,6 +97,23 @@ QUnit.test('Series.update', function (assert) {
         'Markers changed'
     );
 
+    // Symbols (#10870)
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.symbolName,
+        'circle',
+        'The symbol should be default before updating'
+    );
+    chart.series[0].update({
+        marker: {
+            symbol: 'square'
+        }
+    });
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.symbolName,
+        'square',
+        'The symbol name should update for all markers (#10870'
+    );
+
     // Color
     assert.strictEqual(
         chart.series[0].graph.element.getAttribute('stroke'),
@@ -144,7 +161,7 @@ QUnit.test('Series.update', function (assert) {
     );
     assert.strictEqual(
         chart.series[0].points[0].graphic.symbolName,
-        'circle',
+        'square',
         'Line point'
     );
 
