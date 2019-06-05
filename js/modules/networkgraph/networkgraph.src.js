@@ -538,7 +538,13 @@ seriesType(
             var attribs = Series.prototype.markerAttribs
                 .call(this, point, state);
 
-            attribs.x = point.plotX - (attribs.width / 2 || 0);
+            // series.render() is called before initial positions are set:
+            if (!defined(point.plotY)) {
+                attribs.y = 0;
+            }
+
+            attribs.x = (point.plotX || 0) - (attribs.width / 2 || 0);
+
             return attribs;
         },
 
