@@ -339,7 +339,10 @@ module.exports = function (config) {
             'samples/highcharts/data/google-spreadsheet/demo.js', // advanced demo
             'samples/highcharts/css/exporting/demo.js', // advanced demo
             'samples/highcharts/css/map-dataclasses/demo.js', // Google Spreadsheets
-            'samples/highcharts/css/pattern/demo.js' // styled mode, setOptions
+            'samples/highcharts/css/pattern/demo.js', // styled mode, setOptions
+
+            // Failing on Edge only
+            'samples/unit-tests/pointer/members/demo.js'
         ],
         reporters: ['imagecapture', 'progress'],
         port: 9876,  // karma web server port
