@@ -469,11 +469,17 @@ seriesType('sankey', 'column',
                         // Hanging layout for organization chart
                         if (fromNode.options.layout === 'hanging') {
                             node.hangsFrom = fromNode;
-                            node.column += fromNode.linksFrom.findIndex(
-                                function (link) {
-                                    return link.toNode === node;
+                            i = -1; // Reuse existing variable i
+                            fromNode.linksFrom.find(
+                                function (link, index) {
+                                    var found = link.toNode === node;
+                                    if (found) {
+                                        i = index;
+                                    }
+                                    return found;
                                 }
                             );
+                            node.column += i;
                         }
                     }
                 }
