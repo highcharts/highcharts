@@ -10,7 +10,7 @@
  */
 
 const fs = require('fs');
-const path = require('path');
+const path = require('path').posix;
 
 /* *
  *
@@ -19,7 +19,6 @@ const path = require('path');
  * */
 
 const blockCodePlaceholder = '<<<>>>';
-const docletNamePrefix = 'Highcharts.Chart#event:error';
 const htmlEscapeTable = {
     '&': {
         regExp: /&/,
@@ -38,13 +37,14 @@ const htmlEscapeTable = {
         replacement: '&gt;'
     }
 };
-const parseMarkdownBlockCode = /(?:^|\n)```(\w*)([\s\S]+?)\n```/;
+const parseMarkdownBlockCode = /(?:^|\n|\n\r|\r\n)```(\w*)([\s\S]+?)[\n\r]+```/;
 const parseMarkdownCode = /`(\w(?:[^`]|\s)*?)`/;
-const parseMarkdownHeadline = /(?:^|\n)(#{1,5})([^\n\r]*)\1?/;
-const parseMarkdownFormat = /(?:^|\s)(\*{1,3})(\w(?:[^\*]|\s)*?)\1/;
+const parseMarkdownHeadline = /(?:^|\n|\n\r|\r\n)(#{1,5})([^\n\r]*)\1?/;
+const parseMarkdownFormat = /(?:^| )(\*{1,3})(\w(?:[^\*]| )*?)\1/;
 const parseMarkdownLink = /\[([^\]]+?)\]\(((?:[^\)]|\s)+?)\)/;
-const parseMarkdownList = /(?:^|\n)[\-\+\*] ([\s\S]*?)(?=\n\n|$)/;
-const parseMarkdownParagraphs = /\s{2,}/;
+const parseMarkdownList =
+    /(?:^|\n|\n\r|\r\n)[\t ]*[\-\+\*][\t ]+([\s\S]*?)(?=(?:\n|\n\r|\r\n)+|$)/;
+const parseMarkdownParagraphs = / {2,}(?:\n|\n\r|\r\n)| ?(?:\n|\n\r|\r\n){2,}/;
 const parseBlockCodePlaceholder = /<<<>>>/;
 const parseListSpaces = /<\/li><\/ul><p>\s*?<\/p><ul><li>/;
 const parseParagraphSpaces = /<p><\/p>/;
@@ -281,7 +281,7 @@ function parseErrorsDirectory (directoryPath) {
  */
 function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
 
-    if (fs.existsSync(jsonPath)) {
+    if (1 == 0 && fs.existsSync(jsonPath)) {
         const oldErrorsJson = require(jsonPath);
         const same = Object
             .keys(oldErrorsJson)
