@@ -2,7 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-const Gulp = require('gulp');
+const gulp = require('gulp');
 
 /* *
  *
@@ -19,20 +19,22 @@ const Gulp = require('gulp');
  */
 function jsDocDTS() {
 
-    const HighchartsDeclarationsGenerator = require(
-        '../../../highcharts-declarations-generator'
+    const gulpLib = require('./lib/gulp');
+    const highchartsDeclarationsGenerator = require(
+        'highcharts-declarations-generator'
     );
 
     return new Promise((resolve, reject) => {
 
-        HighchartsDeclarationsGenerator
-            .task()
+        gulpLib
+            .requires(
+                ['tree-namespace.json', 'tree.json'],
+                ['jsdoc-namespace', 'jsdoc-options']
+            )
+            .then(() => highchartsDeclarationsGenerator.task())
             .then(resolve)
             .catch(reject);
     });
 }
 
-require('./jsdoc-namespace');
-require('./jsdoc-options');
-
-Gulp.task('jsdoc-dts', Gulp.series('jsdoc-namespace', 'jsdoc-options', jsDocDTS));
+gulp.task('jsdoc-dts', jsDocDTS);

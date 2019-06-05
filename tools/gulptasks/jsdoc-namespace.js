@@ -43,6 +43,7 @@ function jsDocNamespace() {
 
     const fs = require('fs');
     const fsLib = require('./lib/fs');
+    const gulpLib = require('./lib/gulp');
     const jsdoc = require('gulp-jsdoc3');
     const logLib = require('./lib/log');
 
@@ -76,20 +77,19 @@ function jsDocNamespace() {
             return;
         }
 
-        logLib.message('Generating', TREE_FILE + '...');
+        gulpLib
+            .requires(['code/highcharts.src.js'], ['scripts'])
+            .then(() => logLib.message('Generating', TREE_FILE + '...'))
+            .then(() => gulp.src(...gulpOptions).pipe(
+                jsdoc(jsdoc3Options, error => {
 
-        gulp
-            .src(...gulpOptions)
-            .pipe(jsdoc(jsdoc3Options, error => {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
 
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                Promise
-                    .all(
-                        TARGET_DIRECTORIES.map(
+                    Promise
+                        .all(TARGET_DIRECTORIES.map(
                             targetDirectory => new Promise(done => {
                                 fsLib.copyFile(
                                     TREE_FILE,
@@ -100,13 +100,14 @@ function jsDocNamespace() {
                                 );
                                 done();
                             })
-                        )
-                    )
-                    .then(() => logLib.success('Created', TREE_FILE))
-                    .then(resolve)
-                    .catch(resolve);
-            }));
+                        ))
+                        .then(() => logLib.success('Created', TREE_FILE))
+                        .then(resolve)
+                        .catch(reject);
+                })
+            ))
+            .catch(reject);
     });
 }
 
-gulp.task('jsdoc-namespace', gulp.series('scripts', jsDocNamespace));
+gulp.task('jsdoc-namespace', jsDocNamespace);
