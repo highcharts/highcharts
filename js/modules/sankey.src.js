@@ -114,6 +114,7 @@ var getLevelOptions = mixinTreeSeries.getLevelOptions;
 
 
 var defined = H.defined,
+    find = H.find,
     isObject = H.isObject,
     merge = H.merge,
     seriesType = H.seriesType,
@@ -470,7 +471,8 @@ seriesType('sankey', 'column',
                         if (fromNode.options.layout === 'hanging') {
                             node.hangsFrom = fromNode;
                             i = -1; // Reuse existing variable i
-                            fromNode.linksFrom.find(
+                            find(
+                                fromNode.linksFrom,
                                 function (link, index) {
                                     var found = link.toNode === node;
                                     if (found) {
