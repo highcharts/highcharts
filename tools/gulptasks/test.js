@@ -181,10 +181,10 @@ function saveRun() {
  */
 function shouldRun() {
 
-    const FS = require('fs');
-    const FSLib = require('./lib/fs');
-    const LogLib = require('./lib/log');
-    const StringLib = require('./lib/string');
+    const fs = require('fs');
+    const fsLib = require('./lib/fs');
+    const logLib = require('./lib/log');
+    const stringLib = require('./lib/string');
 
     let configuration = {
         latestCodeHash: '',
@@ -192,27 +192,27 @@ function shouldRun() {
         latestTestsHash: ''
     };
 
-    if (FS.existsSync(CONFIGURATION_FILE)) {
+    if (fs.existsSync(CONFIGURATION_FILE)) {
         configuration = JSON.parse(
-            FS.readFileSync(CONFIGURATION_FILE).toString()
+            fs.readFileSync(CONFIGURATION_FILE).toString()
         );
     }
 
-    const latestCodeHash = FSLib.getDirectoryHash(
-        CODE_DIRECTORY, true, StringLib.removeComments
+    const latestCodeHash = fsLib.getDirectoryHash(
+        CODE_DIRECTORY, true, stringLib.removeComments
     );
-    const latestJsHash = FSLib.getDirectoryHash(
-        JS_DIRECTORY, true, StringLib.removeComments
+    const latestJsHash = fsLib.getDirectoryHash(
+        JS_DIRECTORY, true, stringLib.removeComments
     );
-    const latestTestsHash = FSLib.getDirectoryHash(
-        TESTS_DIRECTORY, true, StringLib.removeComments
+    const latestTestsHash = fsLib.getDirectoryHash(
+        TESTS_DIRECTORY, true, stringLib.removeComments
     );
 
     if (latestCodeHash === configuration.latestCodeHash &&
         latestJsHash !== configuration.latestJsHash
     ) {
 
-        LogLib.failure(
+        logLib.failure(
             '✖ The files have not been built' +
             ' since the last source code changes.' +
             ' Run `npx gulp` and try again.'
@@ -225,7 +225,7 @@ function shouldRun() {
         latestTestsHash === configuration.latestTestsHash
     ) {
 
-        LogLib.success(
+        logLib.success(
             '✓ Source code and unit tests have been not modified' +
             ' since the last successful test run.'
         );

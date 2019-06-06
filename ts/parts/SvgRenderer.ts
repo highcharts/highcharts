@@ -4091,6 +4091,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     }
                 }
             };
+        const regexMatchBreaks = /<br.*?>/g;
 
         // The buildText code is quite heavy, so if we're not changing something
         // that affects the text, skip it (#6113).
@@ -4120,7 +4121,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             !textOutline &&
             !ellipsis &&
             !width &&
-            textStr.indexOf(' ') === -1
+            (
+                textStr.indexOf(' ') === -1 ||
+                (noWrap && !regexMatchBreaks.test(textStr))
+            )
         ) {
             textNode.appendChild(doc.createTextNode(unescapeEntities(textStr)));
 
@@ -4158,7 +4162,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 lines = (lines as any)
                     .replace(/<a/g, '<span')
                     .replace(/<\/(b|strong|i|em|a)>/g, '</span>')
-                    .split(/<br.*?>/g);
+                    .split(regexMatchBreaks);
 
             } else {
                 lines = [textStr];

@@ -696,7 +696,9 @@ var wordCloudOptions = {
         /** @ignore-option */
         fontFamily: 'sans-serif',
         /** @ignore-option */
-        fontWeight: '900'
+        fontWeight: '900',
+        /** @ignore-option */
+        whiteSpace: 'nowrap'
     },
     tooltip: {
         followPointer: true,
