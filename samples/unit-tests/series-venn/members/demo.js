@@ -682,7 +682,7 @@ QUnit.module('nelder-mead', () => {
                 [193.3682232821517, 95]
             ]),
             [184.16021264966827, 97.375],
-            'should calculate the center point between all the coordinates, except the last'
+            'Should calculate the center point between all the coordinates, except the last'
         );
     });
 
@@ -700,7 +700,7 @@ QUnit.module('nelder-mead', () => {
                 [184.16021264966827, 95]
             ),
             [140.0000000000064, 174.99997672224276],
-            'should something'
+            'Should optimize position into the one with the best margin.'
         );
     });
 });
