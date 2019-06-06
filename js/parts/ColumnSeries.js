@@ -833,9 +833,11 @@ seriesType(
             if (point && this.zones.length) {
                 zone = point.getZone();
                 // When zones are present, don't use point.color (#4267).
-                // Changed order (#6527)
+                // Changed order (#6527), added support for colorAxis (#10670)
                 fill = (
-                    point.options.color || (zone && zone.color) || this.color
+                    point.options.color ||
+                    (zone && (zone.color || point.nonZonedColor)) ||
+                    this.color
                 );
 
                 if (zone) {
