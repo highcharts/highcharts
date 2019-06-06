@@ -34,16 +34,11 @@ declare global {
         type PatternObject = any; // @todo
         type PlotLineOrBand = any; // @todo
         type PlotSeriesZonesOptions = any; // @todo
-        type PointLabelObject = any; // @todo
         type SeriesOptions = any; // @todo
         type SeriesOptionsType = any; // @todo
         type SeriesPlotBoxObject = any; // @todo
         type StackItemObject = any; // @todo
         type Tick = any; // @todo
-        type Tooltip = any; // @todo
-        type TooltipFormatterCallbackFunction = any; // @todo
-        type TooltipPositionerCallbackFunction = any; // @todo
-        type TooltipShapeValue = any; // @todo
         type XAxisPlotBandsOptions = any; // @todo
         type XAxisPlotLinesOptions = any; // @todo
         type XAxisScrollbarOptions = any; // @todo
@@ -81,6 +76,8 @@ declare global {
             openMenu?: any; // @todo
             polar?: any; // @todo
             runTrackerClick?: any; // @todo
+            scrollablePixelsX?: any; // @todo
+            scrollablePixelsY?: any; // @todo
             scroller?: any; // @todo
             tooltip?: any; // @todo
             getStacks: Function; // @todo
@@ -113,6 +110,7 @@ declare global {
             group?: any; // @todo
             negative?: any; // @todo
             selected?: any; // @todo
+            tooltipDateKeys?: any; // @todo
             zone?: any; // @todo
             onMouseOut: Function; // @todo
             setState: Function; // @todo
@@ -204,7 +202,6 @@ declare global {
         const PlotLineOrBand: any; // @todo
         const Series: any; // @todo
         const Tick: any; // @todo
-        const Tooltip: any; // @todo
         const SVG_NS: string;
         const addEventListenerPolyfill: any; // @todo
         const charts: Array<Chart|undefined>;

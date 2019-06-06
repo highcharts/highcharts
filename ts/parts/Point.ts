@@ -18,6 +18,17 @@ import Highcharts from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface PointLabelObject {
+            x: string;
+            y: number;
+            color: ColorString;
+            colorIndex: number;
+            key: string;
+            series: Series;
+            point: Point;
+            percentage?: number;
+            total: number;
+        }
         class Point {
             public constructor();
             [property: string]: any;

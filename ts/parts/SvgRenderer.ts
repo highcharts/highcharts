@@ -16,6 +16,7 @@ declare global {
     namespace Highcharts {
         type AlignValue = ('center'|'left'|'right');
         type ClipRectElement = SVGElement;
+        type Renderer = SVGRenderer;
         type SVGDOMElement = GlobalSVGElement;
         type SVGPathArray = (Array<number|SVGPathCommand>);
         type SVGPathCommand = (
@@ -333,6 +334,7 @@ declare global {
             public createElement(nodeName: string): SVGElement;
             public crispLine(points: SVGPathArray, width: number): SVGPathArray;
             public definition(def: SVGDefinitionObject): SVGElement;
+            public destroy(): null;
             /** @deprecated */
             public draw(): void;
             public g(name?: string): SVGElement;
@@ -421,7 +423,7 @@ declare global {
                 getString: Function
             ): boolean;
         }
-        let Renderer: SVGRenderer;
+        let Renderer: typeof SVGRenderer;
     }
 }
 
@@ -2556,9 +2558,7 @@ extend((
      *
      * @return {void}
      */
-    destroy: function (
-        this: Highcharts.SVGElement
-    ): void {
+    destroy: function (this: Highcharts.SVGElement): void {
         var wrapper = this,
             element = wrapper.element || {},
             renderer = wrapper.renderer,
@@ -3742,9 +3742,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @return {null}
      */
-    destroy: function (
-        this: Highcharts.SVGRenderer
-    ): null {
+    destroy: function (this: Highcharts.SVGRenderer): null {
         var renderer = this,
             rendererDefs = renderer.defs;
 

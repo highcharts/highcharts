@@ -521,8 +521,8 @@ Highcharts.Time.prototype = {
      * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
      * an object.
      * @private
-     * @param  {object|string} f - General format description
-     * @return {object} - The object definition
+     * @param {string|Array<T>|Highcharts.Dictionary<T>} f - General format description
+     * @return {Highcharts.Dictionary<T>} - The object definition
      */
     resolveDTLFormat: function (f) {
         if (!H.isObject(f, true)) {

@@ -294,7 +294,7 @@ Highcharts.Pointer.prototype = {
              * @name Highcharts.Chart#tooltip
              * @type {Highcharts.Tooltip}
              */
-            chart.tooltip = new Tooltip(chart, options.tooltip);
+            chart.tooltip = new Tooltip(chart, options.tooltip as any);
             this.followTouchMove = pick(
                 (options.tooltip as any).followTouchMove, true
             );

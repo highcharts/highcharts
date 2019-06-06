@@ -73,7 +73,9 @@ declare global {
                 minutes?: number,
                 seconds?: number
             ): number;
-            public resolveDTLFormat(f: (object|string)): object;
+            public resolveDTLFormat<T>(
+                f: (string|Array<T>|Dictionary<T>)
+            ): Dictionary<T>;
             public set(
                 unit: string,
                 date: Date,
@@ -729,19 +731,19 @@ Highcharts.Time.prototype = {
      * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
      * an object.
      * @private
-     * @param  {object|string} f - General format description
-     * @return {object} - The object definition
+     * @param {string|Array<T>|Highcharts.Dictionary<T>} f - General format description
+     * @return {Highcharts.Dictionary<T>} - The object definition
      */
-    resolveDTLFormat: function (
+    resolveDTLFormat: function<T> (
         this: Highcharts.Time,
-        f: (string|object)
-    ): object {
+        f: (string|Array<T>|Highcharts.Dictionary<T>)
+    ): Highcharts.Dictionary<T> {
         if (!H.isObject(f, true)) {
             f = H.splat(f);
             return {
-                main: (f as any)[0],
-                from: (f as any)[1],
-                to: (f as any)[2]
+                main: f[0],
+                from: f[1],
+                to: f[2]
             };
         }
         return f as any;
