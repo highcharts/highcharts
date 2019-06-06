@@ -158,13 +158,16 @@ H.StackItem.prototype = {
         } else {
             this.label =
                 chart.renderer.text(str, null, null, options.useHTML)
-                    .css(options.style)
                     .attr({
                         align: this.textAlign,
                         rotation: options.rotation,
                         visibility: 'hidden' // hidden until setOffset is called
                     })
                     .add(group); // add to the labels-group
+
+            if (!chart.styledMode) {
+                this.label.css(options.style);
+            }
         }
 
         // Rank it higher than data labels (#8742)
