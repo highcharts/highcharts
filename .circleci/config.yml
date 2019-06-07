@@ -187,7 +187,7 @@ workflows:
       - test_browsers:
           name: "test-Mac.Firefox"
           requires:
-            - build_dependencies
+            - "test-Mac.Safari"
           browsers: "Mac.Firefox"
       - hold_for_approval:
           type: approval
