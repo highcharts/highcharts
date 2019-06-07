@@ -189,12 +189,6 @@ workflows:
           requires:
             - build_dependencies
           browsers: "Mac.Firefox"
-      - test_browsers:
-          name: "test-Win.Edge"
-          requires:
-            - build_dependencies
-          browsers: "Win.Edge"
-          browsercount: 2
       - hold_for_approval:
           type: approval
           filters:
