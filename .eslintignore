@@ -6,6 +6,7 @@ js/parts/Dynamics.js
 js/parts/Globals.js
 js/parts/Html.js
 js/parts/Legend.js
+js/parts/LogarithmicAxis.js
 js/parts/MSPointer.js
 js/parts/Options.js
 js/parts/Point.js

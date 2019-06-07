@@ -56,7 +56,6 @@ declare global {
             beforeSetTickPositions: Function; // @todo
             buildStacks: Function; // @todo
             cleanStacks: Function; // @todo
-            getLogTickPositions: Function; // @todo
             getMaxLabelDimensions: Function; // @todo
             getTimeTicks: Function; // @todo
             normalizeTimeTickInterval: Function; // @todo
