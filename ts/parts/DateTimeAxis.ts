@@ -7,11 +7,42 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
 import H from './Globals.js';
+
+declare global {
+    namespace Highcharts {
+        interface Axis {
+            getTimeTicks(
+                normalizedInterval: DateTimeAxisNormalizedObject,
+                min: number,
+                max: number,
+                startOfWeek: number
+            ): TimeTicksObject;
+            normalizeTimeTickInterval(
+                tickInterval: number,
+                unitsOption?: Array<[string, (Array<number>|null)]>
+            ): DateTimeAxisNormalizedObject;
+        }
+        interface DateTimeAxisNormalizedObject {
+            count: number;
+            unitName: string;
+            unitRange: number;
+        }
+    }
+}
+
 import './Utilities.js';
-var Axis = H.Axis, getMagnitude = H.getMagnitude, normalizeTickInterval = H.normalizeTickInterval, timeUnits = H.timeUnits;
+
+var Axis = H.Axis,
+    getMagnitude = H.getMagnitude,
+    normalizeTickInterval = H.normalizeTickInterval,
+    timeUnits = H.timeUnits;
+
 /* eslint-disable valid-jsdoc */
+
 /**
  * Set the tick positions to a time unit that makes sense, for example
  * on the first of each month or on every Monday. Return an array
@@ -34,9 +65,14 @@ var Axis = H.Axis, getMagnitude = H.getMagnitude, normalizeTickInterval = H.norm
  *
  * @return {Highcharts.TimeTicksObject}
  */
-Axis.prototype.getTimeTicks = function () {
-    return this.chart.time.getTimeTicks.apply(this.chart.time, arguments);
+Axis.prototype.getTimeTicks = function (
+    this: Highcharts.Axis
+): Highcharts.TimeTicksObject {
+    return this.chart.time.getTimeTicks.apply(
+        this.chart.time, arguments as any
+    );
 };
+
 /**
  * Get a normalized tick interval for dates. Returns a configuration object with
  * unit range (interval), count and name. Used to prepare data for getTimeTicks.
@@ -51,9 +87,13 @@ Axis.prototype.getTimeTicks = function () {
  * @param {Array<Array<string,(Array<number>|null)>>} [unitsOption]
  * @return {Highcharts.DateTimeAxisNormalizedObject}
  */
-Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
+Axis.prototype.normalizeTimeTickInterval = function (
+    this: Highcharts.Axis,
+    tickInterval: number,
+    unitsOption?: Array<[string, (Array<number>|null)]>
+): Highcharts.DateTimeAxisNormalizedObject {
     var units = unitsOption || [[
-            'millisecond',
+            'millisecond', // unit name
             [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
         ], [
             'second',
@@ -76,33 +116,50 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
         ], [
             'year',
             null
-        ]], unit = units[units.length - 1], // default unit is years
-    interval = timeUnits[unit[0]], multiples = unit[1], count, i;
+        ]] as Array<[string, (Array<number>|null)]>,
+        unit = units[units.length - 1], // default unit is years
+        interval = timeUnits[unit[0]],
+        multiples = unit[1],
+        count,
+        i;
+
     // loop through the units to find the one that best fits the tickInterval
     for (i = 0; i < units.length; i++) {
         unit = units[i];
         interval = timeUnits[unit[0]];
         multiples = unit[1];
+
+
         if (units[i + 1]) {
             // lessThan is in the middle between the highest multiple and the
             // next unit.
-            var lessThan = (interval *
-                multiples[multiples.length - 1] +
-                timeUnits[units[i + 1][0]]) / 2;
+            var lessThan = (
+                interval *
+                (multiples as any)[(multiples as any).length - 1] +
+                timeUnits[units[i + 1][0]]
+            ) / 2;
+
             // break and keep the current unit
             if (tickInterval <= lessThan) {
                 break;
             }
         }
     }
+
     // prevent 2.5 years intervals, though 25, 250 etc. are allowed
     if (interval === timeUnits.year && tickInterval < 5 * interval) {
         multiples = [1, 2, 5];
     }
+
     // get the count
-    count = normalizeTickInterval(tickInterval / interval, multiples, unit[0] === 'year' ?
-        Math.max(getMagnitude(tickInterval / interval), 1) : // #1913, #2360
-        1);
+    count = normalizeTickInterval(
+        tickInterval / interval,
+        multiples as any,
+        unit[0] === 'year' ?
+            Math.max(getMagnitude(tickInterval / interval), 1) : // #1913, #2360
+            1
+    );
+
     return {
         unitRange: interval,
         count: count,

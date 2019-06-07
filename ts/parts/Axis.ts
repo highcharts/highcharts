@@ -4535,7 +4535,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         axis.normalizeTimeTickInterval(minorTickInterval),
                         min,
                         max,
-                        options.startOfWeek
+                        options.startOfWeek as any
                     )
                 );
             } else {
@@ -5305,7 +5305,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 H.error(19, false, this.chart);
 
             } else if (this.isDatetimeAxis) {
-                tickPositions = this.getTimeTicks(
+                tickPositions = (this.getTimeTicks as any)(
                     this.normalizeTimeTickInterval(
                         this.tickInterval,
                         options.units
