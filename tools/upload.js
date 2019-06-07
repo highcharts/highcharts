@@ -60,7 +60,8 @@ const uploadFiles = params => {
         bucket,
         callback,
         onError = Promise.reject,
-        files
+        files,
+        s3Params = {}
     } = params;
     const errors = [];
     let result;
@@ -83,7 +84,7 @@ const uploadFiles = params => {
                 const fileType = from.split('.').pop();
                 const fileMime = mimeType[fileType];
                 if (content && content.length > 0) {
-                    filePromise = storage.push(cdn, to, content, fileMime)
+                    filePromise = storage.push(cdn, to, content, fileMime, s3Params)
                         .then(() => isFunction(callback) && callback(from, to))
                         .catch(err => {
                             const error = {
