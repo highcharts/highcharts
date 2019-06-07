@@ -241,7 +241,7 @@ H.Tick.prototype = {
      * @param {number} tickPos
      * @param {number} tickmarkOffset
      * @param {boolean} [old]
-     * @return {Highcharts.PositionObject>}
+     * @return {Highcharts.PositionObject}
      * @fires Highcharts.Tick#event:afterGetPosition
      */
     getPosition: function (horiz, tickPos, tickmarkOffset, old) {
