@@ -390,7 +390,6 @@ declare global {
             public labelRotation?: number;
             public left: number;
             public len: number;
-            public lin2val: Function;
             public linkedParent?: Axis;
             public max: (null|number);
             public maxLabelDimensions?: SizeObject;
@@ -448,7 +447,6 @@ declare global {
             public userMin?: number;
             public userMinRange?: number;
             public userOptions: AxisOptions;
-            public val2lin?: Function;
             public visible: boolean;
             public width: number;
             public zoomEnabled: boolean;

@@ -29,6 +29,7 @@ declare global {
     function parseFloat (value: (number|string)): number;
     namespace Highcharts {
         type LabelFormatterCallbackFunction = any; // @todo
+        type Navigator = any; // @todo
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
         type PatternObject = any; // @todo
@@ -48,24 +49,23 @@ declare global {
             labelLeft?: any; // @todo
             labelRight?: any; // @todo
             oldStacks?: any; // @todo
-            ordinalPositions?: any; // @todo
             sector?: any; // @todo
             stacks?: any; // @todo
             usePercentage?: any; // @todo
             addPlotBandOrLine: Function; // @todo
             beforePadding: Function; // @todo
-            beforeSetTickPositions: Function; // @todo
             buildStacks: Function; // @todo
             cleanStacks: Function; // @todo
             getMaxLabelDimensions: Function; // @todo
-            postProcessTickInterval: Function; // @todo
             renderStackTotals: Function; // @todo
             resetStacks: Function; // @todo
+            toFixedRange: Function; // @todo
         }
         interface AxisLabelsFormatterContextObject {
             tickPositionInfo?: any; // @todo
         }
         interface Chart {
+            fixedRange?: any; // @todo
             hoverPoint?: any; // @todo
             hoverPoints?: any; // @todo
             hoverSeries?: any; // @todo
@@ -74,6 +74,7 @@ declare global {
             mapCredits?: any; // @todo
             marginBottom?: any; // @todo
             marginRight?: any; // @todo
+            navigator?: Navigator; // @todo
             openMenu?: any; // @todo
             polar?: any; // @todo
             runTrackerClick?: any; // @todo
@@ -126,6 +127,7 @@ declare global {
             color?: any; // @todo
             colorCounter?: any; // @todo
             colorIndex?: any; // @todo
+            currentDataGrouping?: any; // @todo
             data?: any; // @todo
             dataMax?: any; // @todo
             dataMin?: any; // @todo
@@ -145,6 +147,7 @@ declare global {
             isCartesian?: any; // @todo
             isDirty?: any; // @todo
             isDirtyData?: any; // @todo
+            isSeriesBoosting?: any; // @todo
             kdTree?: any; // @todo
             linkedParent?: any; // @todo
             linkedSeries?: any; // @todo
@@ -158,11 +161,13 @@ declare global {
             pointArrayMap?: any; // @todo
             points?: any; // @todo
             pointValKey?: any; // @todo
+            processedXData?: any; // @todo
             redraw?: any; // @todo
             requireSorting?: any; // @todo
             selected?: any; // @todo
             stickyTracking?: any; // @todo
             symbol?: any; // @todo
+            takeOrdinalPosition?: any; // @todo
             tooltipOptions?: any; // @todo
             translatedThreshold?: any; // @todo
             type?: any; // @todo
