@@ -4461,8 +4461,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
     getExtremes: function () {
         var axis = this, isLog = axis.isLog;
         return {
-            min: isLog ? correctFloat(axis.lin2log(axis.min)) : axis.min,
-            max: isLog ? correctFloat(axis.lin2log(axis.max)) : axis.max,
+            min: isLog ?
+                correctFloat(axis.lin2log(axis.min)) :
+                axis.min,
+            max: isLog ?
+                correctFloat(axis.lin2log(axis.max)) :
+                axis.max,
             dataMin: axis.dataMin,
             dataMax: axis.dataMax,
             userMin: axis.userMin,

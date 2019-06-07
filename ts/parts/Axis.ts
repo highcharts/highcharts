@@ -391,9 +391,7 @@ declare global {
             public left: number;
             public len: number;
             public lin2val: Function;
-            public lin2log: Function;
             public linkedParent?: Axis;
-            public log2lin: Function;
             public max: (null|number);
             public maxLabelDimensions?: SizeObject;
             public maxLabelLength: number;
@@ -4631,7 +4629,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // If space is available, stay within the data range
             if (spaceAvailable) {
                 minArgs[2] = axis.isLog ?
-                    axis.log2lin(axis.dataMin) :
+                    axis.log2lin(axis.dataMin as any) :
                     axis.dataMin;
             }
             min = arrayMax(minArgs);
@@ -4643,7 +4641,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
                 maxArgs[2] = axis.isLog ?
-                    axis.log2lin(axis.dataMax) :
+                    axis.log2lin(axis.dataMax as any) :
                     axis.dataMax;
             }
 
@@ -5011,8 +5009,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(axis.log2lin(axis.min), 15);
-            axis.max = correctFloat(axis.log2lin(axis.max), 15);
+            axis.min = correctFloat(axis.log2lin(axis.min as any), 15);
+            axis.max = correctFloat(axis.log2lin(axis.max as any), 15);
         }
 
         // handle zoomed range
@@ -5320,8 +5318,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             } else if (this.isLog) {
                 tickPositions = this.getLogTickPositions(
                     this.tickInterval,
-                    this.min,
-                    this.max
+                    this.min as any,
+                    this.max as any
                 );
             } else {
                 tickPositions = this.getLinearTickPositions(
@@ -5880,8 +5878,12 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             isLog = axis.isLog;
 
         return {
-            min: isLog ? correctFloat(axis.lin2log(axis.min)) : axis.min as any,
-            max: isLog ? correctFloat(axis.lin2log(axis.max)) : axis.max as any,
+            min: isLog ?
+                correctFloat(axis.lin2log(axis.min as any)) :
+                axis.min as any,
+            max: isLog ?
+                correctFloat(axis.lin2log(axis.max as any)) :
+                axis.max as any,
             dataMin: axis.dataMin as any,
             dataMax: axis.dataMax as any,
             userMin: axis.userMin as any,
@@ -5908,8 +5910,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     ): (number|undefined) {
         var axis = this,
             isLog = axis.isLog,
-            realMin = isLog ? axis.lin2log(axis.min) : axis.min,
-            realMax = isLog ? axis.lin2log(axis.max) : axis.max;
+            realMin = isLog ? axis.lin2log(axis.min as any) : axis.min as any,
+            realMax = isLog ? axis.lin2log(axis.max as any) : axis.max as any;
 
         if (threshold === null || threshold === -Infinity) {
             threshold = realMin;
