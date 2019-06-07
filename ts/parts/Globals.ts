@@ -58,8 +58,6 @@ declare global {
             cleanStacks: Function; // @todo
             getLogTickPositions: Function; // @todo
             getMaxLabelDimensions: Function; // @todo
-            getTimeTicks: Function; // @todo
-            normalizeTimeTickInterval: Function; // @todo
             postProcessTickInterval: Function; // @todo
             renderStackTotals: Function; // @todo
             resetStacks: Function; // @todo
