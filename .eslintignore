@@ -10,6 +10,7 @@ js/parts/Legend.js
 js/parts/LogarithmicAxis.js
 js/parts/MSPointer.js
 js/parts/Options.js
+js/parts/OrdinalAxis.js
 js/parts/Point.js
 js/parts/Pointer.js
 js/parts/SvgRenderer.js
