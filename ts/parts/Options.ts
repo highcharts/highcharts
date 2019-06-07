@@ -284,6 +284,7 @@ declare global {
             borderColor?: ColorString;
             borderRadius?: number;
             borderWidth?: number;
+            className?: string;
             changeDecimals?: number;
             /** @deprecated */
             crosshairs?: any;
@@ -3203,6 +3204,14 @@ H.defaultOptions = {
          *
          * @type      {Highcharts.ColorString}
          * @apioption tooltip.borderColor
+         */
+
+        /**
+         * A CSS class name to apply to the tooltip's container div,
+         * allowing unique CSS styling for each chart.
+         *
+         * @type      {string}
+         * @apioption tooltip.className
          */
 
         /**
