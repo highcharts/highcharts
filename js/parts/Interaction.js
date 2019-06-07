@@ -689,6 +689,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
         selected = pick(selected, !point.selected);
 
+        this.selectedStaging = selected;
+
         // fire the event with the default handler
         point.firePointEvent(
             selected ? 'select' : 'unselect',
@@ -736,6 +738,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 }
             }
         );
+
+        delete this.selectedStaging;
     },
 
     /**
