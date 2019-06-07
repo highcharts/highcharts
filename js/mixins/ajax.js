@@ -66,6 +66,7 @@ H.ajax = function (attr) {
             headers: {}
         }, attr),
         headers = {
+            json: 'application/json',
             xml: 'application/xml',
             text: 'text/plain',
             octet: 'application/octet-stream'
@@ -85,10 +86,10 @@ H.ajax = function (attr) {
     }
 
     r.open(options.type.toUpperCase(), options.url, true);
-    if (headers[options.dataType]) {
+    if (!options.headers['Content-Type']) {
         r.setRequestHeader(
             'Content-Type',
-            headers[options.dataType]
+            headers[options.dataType] || headers.text
         );
     }
 
@@ -124,8 +125,7 @@ H.ajax = function (attr) {
 };
 
 /**
- * Get a JSON resource over XHR, a shorthand for `Highcharts.ajax` with
- * `dataType: 'json'`.
+ * Get a JSON resource over XHR, also supporting CORS without preflight.
  *
  * @function Highcharts.getJSON
  *
@@ -138,6 +138,12 @@ H.ajax = function (attr) {
 H.getJSON = function (url, success) {
     H.ajax({
         url: url,
-        success: success
+        success: success,
+        dataType: 'json',
+        headers: {
+            // Override the Content-Type to avoid preflight problems with CORS
+            // in the Highcharts demos
+            'Content-Type': 'text/plain'
+        }
     });
 };
