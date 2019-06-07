@@ -525,7 +525,7 @@ Highcharts.Time.prototype = {
      * @return {Highcharts.Dictionary<T>} - The object definition
      */
     resolveDTLFormat: function (f) {
-        if (!H.isObject(f, true)) {
+        if (!H.isObject(f, true)) { // check for string or array
             f = H.splat(f);
             return {
                 main: f[0],

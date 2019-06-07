@@ -38,7 +38,6 @@ declare global {
         type SeriesOptionsType = any; // @todo
         type SeriesPlotBoxObject = any; // @todo
         type StackItemObject = any; // @todo
-        type Tick = any; // @todo
         type XAxisPlotBandsOptions = any; // @todo
         type XAxisPlotLinesOptions = any; // @todo
         type XAxisScrollbarOptions = any; // @todo
@@ -46,6 +45,8 @@ declare global {
         interface Axis {
             extKey?: any; // @todo
             id?: any; // @todo
+            labelLeft?: any; // @todo
+            labelRight?: any; // @todo
             oldStacks?: any; // @todo
             ordinalPositions?: any; // @todo
             sector?: any; // @todo
@@ -63,6 +64,9 @@ declare global {
             postProcessTickInterval: Function; // @todo
             renderStackTotals: Function; // @todo
             resetStacks: Function; // @todo
+        }
+        interface AxisLabelsFormatterContextObject {
+            tickPositionInfo?: any; // @todo
         }
         interface Chart {
             hoverPoint?: any; // @todo
@@ -199,9 +203,11 @@ declare global {
         interface SVGRenderer {
             invertChild: Function; // @todo
         }
+        interface Tick {
+            slotWidth?: any; // @todo
+        }
         const PlotLineOrBand: any; // @todo
         const Series: any; // @todo
-        const Tick: any; // @todo
         const SVG_NS: string;
         const addEventListenerPolyfill: any; // @todo
         const charts: Array<Chart|undefined>;

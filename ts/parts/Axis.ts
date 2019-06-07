@@ -347,7 +347,7 @@ declare global {
             public axisTitle?: SVGElement;
             public axisTitleMargin?: number;
             public bottom: number;
-            public categories: boolean;
+            public categories: (boolean|Array<string>);
             public chart: Chart;
             public closestPointRange: number;
             public coll: AxisCollValue;
@@ -6186,8 +6186,8 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         }
 
         // Get the longest label length
-        tickPositions.forEach(function (tick: number): void {
-            tick = ticks[tick];
+        tickPositions.forEach(function (tick: (number|Highcharts.Tick)): void {
+            tick = ticks[tick as any];
             if (
                 tick &&
                 (tick as any).label &&
@@ -6317,7 +6317,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     !css.width &&
                     !widthOption
                 ) {
-                    label.css({ width: null });
+                    label.css({ width: null as any });
                 }
 
                 delete label.specificTextOverflow;
@@ -6801,10 +6801,10 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         // Render new ticks in old position
         if (slideInTicks && minorTicks[pos].isNew) {
-            minorTicks[pos].render(null, true);
+            minorTicks[pos].render(null as any, true);
         }
 
-        minorTicks[pos].render(null, false, 1);
+        minorTicks[pos].render(null as any, false, 1);
     },
 
     /**
@@ -6913,7 +6913,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 // grid line at the left edge of the X axis.
                 if (tickmarkOffset && (axis.min === 0 || axis.single)) {
                     if (!ticks[-1]) {
-                        ticks[-1] = new Tick(axis, -1, null, true);
+                        ticks[-1] = new Tick(axis, -1, null as any, true);
                     }
                     ticks[-1].render(-1);
                 }
@@ -6973,7 +6973,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             )
         ): void {
             var i,
-                forDestruction = [] as Array<string>,
+                forDestruction = [] as Array<number>,
                 delay = animation.duration,
                 destroyInactiveItems = function (): void {
                     i = forDestruction.length;
@@ -6998,9 +6998,9 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             ): void {
                 if (!tick.isActive) {
                     // Render to zero opacity
-                    tick.render(pos, false, 0);
+                    tick.render(pos as any, false, 0);
                     tick.isActive = false;
-                    forDestruction.push(pos);
+                    forDestruction.push(pos as any);
                 }
             });
 

@@ -11,6 +11,7 @@ js/parts/Options.js
 js/parts/Point.js
 js/parts/Pointer.js
 js/parts/SvgRenderer.js
+js/parts/Tick.js
 js/parts/Time.js
 js/parts/Tooltip.js
 js/parts/TouchPointer.js

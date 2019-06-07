@@ -738,7 +738,7 @@ Highcharts.Time.prototype = {
         this: Highcharts.Time,
         f: (string|Array<T>|Highcharts.Dictionary<T>)
     ): Highcharts.Dictionary<T> {
-        if (!H.isObject(f, true)) {
+        if (!H.isObject(f, true)) { // check for string or array
             f = H.splat(f);
             return {
                 main: f[0],
