@@ -435,13 +435,13 @@ radialAxisMixin = {
         // Spokes
         if (axis.isCircular) {
             a = (typeof innerRadius === 'string') ?
-                +innerRadius.split('').slice(0, -1).join('') / 100 : (
+                H.relativeLength(innerRadius, 1) : (
                     innerRadius /
                     Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
                 );
 
             b = (typeof outerRadius === 'string') ?
-                +outerRadius.split('').slice(0, -1).join('') / 100 : (
+                H.relativeLength(outerRadius, 1) : (
                     outerRadius /
                     Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
                 );
