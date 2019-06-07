@@ -307,7 +307,6 @@ var getLabelPosition = function getLabelPosition(internal, external) {
  * outside all external circles.
  *
  * @private
- * @todo Add unit tests
  * @param {object} pos The x and y coordinate of the label.
  * @param {Array<object>} internal Internal circles.
  * @param {Array<object>} external External circles.
@@ -340,7 +339,9 @@ var getLabelWidth = function getLabelWidth(pos, internal, external) {
     };
 
     // Find the smallest distance of left and right.
-    return Math.min(findDistance(radius, -1), findDistance(radius, 1)) * 2;
+    return Math.round(
+        Math.min(findDistance(radius, -1), findDistance(radius, 1)) * 2
+    );
 };
 
 /**
@@ -1037,6 +1038,7 @@ var vennSeries = {
         addOverlapToSets: addOverlapToSets,
         geometry: geometry,
         geometryCircles: geometryCircles,
+        getLabelWidth: getLabelWidth,
         getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         layoutGreedyVenn: layoutGreedyVenn,
