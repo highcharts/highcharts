@@ -12,6 +12,10 @@
 
 import H from './Globals.js';
 
+/**
+ * Internal types
+ * @private
+ */
 declare global {
     namespace Highcharts {
         type AlignValue = ('center'|'left'|'right');
