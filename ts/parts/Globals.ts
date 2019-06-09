@@ -34,6 +34,7 @@ declare global {
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
         type PatternObject = any; // @todo
         type PlotLineOrBand = any; // @todo
+        type PlotSeriesOptions = any; // @todo
         type PlotSeriesZonesOptions = any; // @todo
         type SeriesOptions = any; // @todo
         type SeriesOptionsType = any; // @todo
@@ -94,16 +95,16 @@ declare global {
             renderer?: any; // @todo
             skipClone?: any; // @todo
         }
+        interface Legend {
+            createCheckboxForItem: Function; // @todo
+            setItemEvents: Function; // @todo
+        }
         interface Options {
             exporting?: any; // @todo
             isResponsiveOptions?: boolean; // @todo
             isStock?: boolean; // @todo
             xAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
             yAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
-        }
-        interface Legend {
-            createCheckboxForItem: Function; // @todo
-            setItemEvents: Function; // @todo
         }
         interface Point {
             dist?: any; // @todo
@@ -120,6 +121,7 @@ declare global {
         interface Series {
             _hasPointLabels?: any; // @todo
             _hasPointMarkers?: any; // @todo
+            allowDG?: any; // @todo
             autoIncrement?: any; // @todo
             center?: any; // @todo
             chart?: any; // @todo
@@ -135,11 +137,14 @@ declare global {
             directTouch?: any; // @todo
             finishedAnimating?: any; // @todo
             fixedBox?: any; // @todo
+            forceCrop?: any; // @todo
             forceDL?: any; // @todo
             group?: any; // @todo
+            groupPixelWidth?: any; // @todo
             hasCartesianSeries?: any; // @todo
             hasDerivedData?: any; // @todo
             hasGroupedData?: any; // @todo
+            hasProcessed?: any; // @todo
             hasRendered?: any; // @todo
             id?: any; // @todo
             index?: any; // @todo
@@ -162,6 +167,7 @@ declare global {
             points?: any; // @todo
             pointValKey?: any; // @todo
             processedXData?: any; // @todo
+            processedYData?: any; // @todo
             redraw?: any; // @todo
             requireSorting?: any; // @todo
             selected?: any; // @todo
@@ -172,16 +178,16 @@ declare global {
             translatedThreshold?: any; // @todo
             type?: any; // @todo
             updateTotals?: any; // @todo
+            useCommonDataGrouping?: any; // @todo
             userOptions?: any; // @todo
             visible?: any; // @todo
             xAxis?: any; // @todo
-            xData?: any; // @todo
             xIncrement?: any; // @todo
             yAxis?: any; // @todo
             zoneAxis?: any; // @todo
             zones?: any; // @todo
+            cropData: Function; // @todo
             destroy: Function; // @todo
-            generatePoints: Function; // @todo
             getExtremes: Function; // @todo
             getXExtremes: Function; // @todo
             getName: Function; // @todo
