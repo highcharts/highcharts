@@ -365,6 +365,33 @@ QUnit.test('Data groupind and extremes change', function (assert) {
         min,
         'User defined minimum is applied on a chart (#8335).'
     );
+
+    chart.xAxis[0].update({
+        min: null,
+        minPadding: 0.1
+    });
+
+    chart.series[0].setData([
+        [
+            26179200000,
+            0
+        ], [
+            28771200000,
+            1
+        ], [
+            1285804800000,
+            479
+        ], [
+            1288483200000,
+            480
+        ]
+    ]);
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().min < chart.series[0].points[0].x,
+        true,
+        'minPadding should decrease xAxis.min even when points are grouped (#10932).'
+    );
 });
 
 QUnit.test('Data groupind, keys and turboThreshold', function (assert) {
