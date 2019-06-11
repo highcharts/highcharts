@@ -50,6 +50,7 @@
     "@types/jquery": "^3.3.29",
     "@types/qunit": "^2.5.4",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
+    "@typescript-eslint/parser": "^1.10.2",
     "acorn": "^6.1.1",
     "aws-sdk": "^2.432.0",
     "babel-plugin-transform-es2015-arrow-functions": "^6.8.0",
