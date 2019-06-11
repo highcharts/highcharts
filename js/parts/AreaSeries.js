@@ -333,7 +333,9 @@ seriesType(
                 plotX,
                 stacks = yAxis.stacks[this.stackKey],
                 threshold = options.threshold,
-                translatedThreshold = yAxis.getThreshold(options.threshold),
+                translatedThreshold = Math.round( // #10909
+                    yAxis.getThreshold(options.threshold)
+                ),
                 isNull,
                 yBottom,
                 connectNulls = H.pick( // #10574
