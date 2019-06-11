@@ -48,3 +48,53 @@ QUnit.test('zIndex. #10490', assert => {
         'should order the point graphics by its number of sets in the relation'
     );
 });
+
+QUnit.module('Options', () => {
+    QUnit.test('states[<state>].halo', assert => {
+        const chart = Highcharts.chart('container', {
+            series: [{
+                type: 'venn'
+            }]
+        });
+        const { series: [series] } = chart;
+        const states = ['hover', 'inactive', 'normal', 'select'];
+        let { userOptions, options } = series;
+
+        // Test default behaviour
+        states.forEach(state => {
+            assert.strictEqual(
+                options.states[state].halo,
+                false,
+                `Should have states.${state}.halo equal false by default.`
+            );
+        });
+
+
+        // Update the series options
+        const halo = { size: 20 };
+        const statesOptions = states.reduce(
+            (obj, key) => {
+                obj[key] = { halo };
+                return obj;
+            },
+            {}
+        );
+        series.update({ states: statesOptions });
+        ({ userOptions, options } = series);
+
+        states.forEach(state => {
+            assert.strictEqual(
+                typeof userOptions.states[state].halo,
+                'object',
+                `Should have userOptions.states.${state}.halo type of "object".`
+            );
+        });
+        states.forEach(state => {
+            assert.strictEqual(
+                options.states[state].halo,
+                false,
+                `Should have options.states.${state}.halo ignore userOptions and equal false.`
+            );
+        });
+    });
+});

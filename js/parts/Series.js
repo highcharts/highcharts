@@ -2122,7 +2122,6 @@ H.Series = H.seriesType(
              *
              * @extends   plotOptions.series.states.hover
              * @excluding brightness
-             * @product   highmaps
              */
             select: {
                 animation: {

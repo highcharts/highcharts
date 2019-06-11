@@ -24,7 +24,8 @@ var nelderMead = NelderMeadModule.nelderMead;
 import H from '../parts/Globals.js';
 import '../parts/Series.js';
 
-var color = H.Color,
+var addEvent = H.addEvent,
+    color = H.Color,
     extend = H.extend,
     getAreaOfCircle = geometryCircles.getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles =
@@ -42,7 +43,8 @@ var color = H.Color,
     isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles,
     isString = H.isString,
     merge = H.merge,
-    seriesType = H.seriesType;
+    seriesType = H.seriesType,
+    seriesTypes = H.seriesTypes;
 
 var objectValues = function objectValues(obj) {
     return Object.keys(obj).map(function (x) {
@@ -802,11 +804,16 @@ var vennOptions = {
     opacity: 0.75,
     showInLegend: false,
     states: {
+        /**
+         * @excluding halo
+         */
         hover: {
             opacity: 1,
-            halo: false,
             borderColor: '${palette.neutralColor80}'
         },
+        /**
+         * @excluding halo
+         */
         select: {
             color: '${palette.neutralColor20}',
             borderColor: '${palette.neutralColor100}',
@@ -1132,6 +1139,16 @@ var vennPoint = {
  */
 
 /**
+ * @excluding halo
+ * @apioption series.venn.states.hover
+ */
+
+/**
+ * @excluding halo
+ * @apioption series.venn.states.select
+ */
+
+/**
  * @private
  * @class
  * @name Highcharts.seriesTypes.venn
@@ -1139,3 +1156,16 @@ var vennPoint = {
  * @augments Highcharts.Series
  */
 seriesType('venn', 'scatter', vennOptions, vennSeries, vennPoint);
+
+// Modify final series options.
+addEvent(seriesTypes.venn, 'afterSetOptions', function (e) {
+    var options = e.options,
+        states = options.states;
+
+    if (this instanceof seriesTypes.venn) {
+        // Explicitly disable all halo options.
+        Object.keys(states).forEach(function (state) {
+            states[state].halo = false;
+        });
+    }
+});
