@@ -4075,7 +4075,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
                     // Get dataMin and dataMax for X axes
                     if (axis.isXAxis) {
-                        xData = series.xData;
+                        xData = series.xData as any;
                         if (xData.length) {
                             xExtremes = series.getXExtremes(xData);
                             // If xData contains values which is not numbers,
@@ -4591,7 +4591,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
                 axis.series.forEach(function (series: Highcharts.Series): void {
-                    xData = series.xData;
+                    xData = series.xData as any;
                     loopLength = series.xIncrement ? 1 : xData.length - 1;
                     for (i = loopLength; i > 0; i--) {
                         distance = xData[i] - xData[i - 1];
@@ -4763,7 +4763,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     // processData will crop the points to axis.max, and the
                     // names array will be too short (#5857).
                     axis.max = Math.max(
-                        (axis.max as any), series.xData.length - 1
+                        (axis.max as any), (series.xData as any).length - 1
                     );
 
                     series.processData();
@@ -4784,7 +4784,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         x = axis.nameToX(point);
                         if (x !== undefined && x !== point.x) {
                             point.x = x;
-                            series.xData[i] = x;
+                            (series.xData as any)[i] = x;
                         }
                     }
                 });

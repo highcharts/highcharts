@@ -713,12 +713,12 @@ extend(Axis.prototype, /** @lends Axis.prototype */ {
             axis.series.forEach(function (series: Highcharts.Series): void {
                 fakeSeries = {
                     xAxis: fakeAxis,
-                    xData: series.xData.slice(),
+                    xData: (series.xData as any).slice(),
                     chart: chart,
                     destroyGroupedData: noop
                 } as any;
 
-                fakeSeries.xData = fakeSeries.xData.concat(
+                fakeSeries.xData = (fakeSeries.xData as any).concat(
                     axis.getOverscrollPositions()
                 );
 

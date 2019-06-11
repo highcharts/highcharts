@@ -1055,7 +1055,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             names = xAxis && xAxis.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
             point,
-            xData = series.xData,
+            xData = series.xData as any,
             isInTheMiddle,
             i,
             x;
@@ -1389,7 +1389,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 // when updating from blank (#7933)
                 oldOptions.pointStart,
                 // when updating after addPoint
-                series.xData[0]
+                (series.xData as any)[0]
             )
         }, (!keepPoints && { data: series.options.data }) as any, options);
 
