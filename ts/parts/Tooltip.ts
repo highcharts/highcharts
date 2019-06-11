@@ -1307,7 +1307,7 @@ H.Tooltip.prototype = {
         }
 
         // Distribute and put in place
-        H.distribute(boxes, chart.plotHeight + headerHeight);
+        (H.distribute as any)(boxes, chart.plotHeight + headerHeight);
         boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
             var point = box.point,
                 series = point.series;

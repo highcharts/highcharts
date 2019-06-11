@@ -15,6 +15,7 @@ js/parts/Options.js
 js/parts/OrdinalAxis.js
 js/parts/Point.js
 js/parts/Pointer.js
+js/parts/Scrollbar.js
 js/parts/SvgRenderer.js
 js/parts/Tick.js
 js/parts/Time.js

@@ -555,7 +555,9 @@ H.distribute = function (boxes, len, maxDistance) {
         overlapping = false;
         while (i--) {
             // Overlap
-            if (i > 0 && boxes[i - 1].pos + boxes[i - 1].size > boxes[i].pos) {
+            if (i > 0 &&
+                boxes[i - 1].pos + boxes[i - 1].size >
+                    boxes[i].pos) {
                 // Add this size to the previous box
                 boxes[i - 1].size += boxes[i].size;
                 boxes[i - 1].targets = boxes[i - 1]

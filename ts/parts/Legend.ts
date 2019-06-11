@@ -1108,7 +1108,7 @@ Highcharts.Legend.prototype = {
                 });
             }
         }, this);
-        H.distribute(boxes, chart.plotHeight);
+        (H.distribute as any)(boxes, chart.plotHeight);
         boxes.forEach(function (box): void {
             box.item._legendItemPos[1] =
                 chart.plotTop - chart.spacing[0] + box.pos;

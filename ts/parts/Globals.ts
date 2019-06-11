@@ -35,8 +35,6 @@ declare global {
         type PlotLineOrBand = any; // @todo
         type PlotSeriesOptions = any; // @todo
         type PlotSeriesZonesOptions = any; // @todo
-        type Scrollbar = any; // @todo
-        type ScrollbarOptions = any; // @todo
         type SeriesOptions = any; // @todo
         type SeriesOptionsType = any; // @todo
         type SeriesPlotBoxObject = any; // @todo
@@ -109,7 +107,6 @@ declare global {
             isResponsiveOptions?: boolean; // @todo
             isStock?: boolean; // @todo
             rangeSelector?: any; // @todo
-            scrollbar?: any; // @todo
         }
         interface Point {
             dist?: any; // @todo
@@ -220,7 +217,6 @@ declare global {
             slotWidth?: any; // @todo
         }
         const PlotLineOrBand: any; // @todo
-        const Scrollbar: any; // @todo
         const Series: any; // @todo
         const SVG_NS: string;
         const addEventListenerPolyfill: any; // @todo
@@ -243,7 +239,6 @@ declare global {
         const win: Window;
         const seriesTypes: Dictionary<typeof Series>;
         const svg: boolean;
-        function distribute(...args: Array<any>): any; // @todo
     }
     type GlobalHighcharts = typeof Highcharts;
 }
