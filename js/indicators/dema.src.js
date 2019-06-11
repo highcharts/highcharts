@@ -28,7 +28,7 @@ H.seriesType(
     'dema',
     'ema',
     /**
-     * Normalized average true range indicator (NATR). This series requires
+     * Double exponential moving average (DEMA) indicator. This series requires
      * `linkedTo` option to be set and should be loaded after the
      * `stock/indicators/indicators.js` and `stock/indicators/ema.js`.
      *
