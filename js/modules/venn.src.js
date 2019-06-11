@@ -798,6 +798,11 @@ var vennOptions = {
             return this.point.name;
         }
     },
+    /**
+     * @ignore-option
+     * @private
+     */
+    inactiveOtherPoints: true,
     marker: false,
     opacity: 0.75,
     showInLegend: false,
