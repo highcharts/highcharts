@@ -103,10 +103,10 @@ declare global {
             public range: number;
             public rendered: boolean;
             public reversedExtremes?: boolean;
-            public scrollbar: Scrollbar;
-            public scrollbarEnabled: boolean;
-            public scrollbarHeight: number;
-            public scrollbarOptions: ScrollbarOptions;
+            public scrollbar?: Scrollbar;
+            public scrollbarEnabled?: boolean;
+            public scrollbarHeight?: number;
+            public scrollbarOptions?: ScrollbarOptions;
             public series?: Array<Series>;
             public shades: Array<SVGElement>;
             public size: number;
@@ -894,7 +894,7 @@ Navigator.prototype = {
             outlineHeight = navigator.outlineHeight,
             scrollbarHeight = navigator.scrollbarHeight,
             navigatorSize = navigator.size,
-            left = navigator.left - scrollbarHeight,
+            left = navigator.left - (scrollbarHeight as any),
             navigatorTop = navigator.top,
             verticalMin,
             path;
@@ -907,7 +907,8 @@ Navigator.prototype = {
             path = [
                 'M',
                 left + outlineHeight,
-                navigatorTop - scrollbarHeight - outlineCorrection, // top edge
+                // top edge
+                navigatorTop - (scrollbarHeight as any) - outlineCorrection,
                 'L',
                 left + outlineHeight,
                 verticalMin, // top right of zoomed range
@@ -922,7 +923,8 @@ Navigator.prototype = {
                 zoomedMax, // bottom right of z.r.
                 'L',
                 left + outlineHeight,
-                navigatorTop + navigatorSize + scrollbarHeight // bottom edge
+                // bottom edge
+                navigatorTop + navigatorSize + (scrollbarHeight as any)
             ].concat(maskInside ? [
                 'M',
                 left + outlineHeight,
@@ -932,8 +934,8 @@ Navigator.prototype = {
                 zoomedMax + halfOutline // upper right of z.r.
             ] : []);
         } else {
-            zoomedMin += left + scrollbarHeight - outlineCorrection;
-            zoomedMax += left + scrollbarHeight - outlineCorrection;
+            zoomedMin += left + (scrollbarHeight as any) - outlineCorrection;
+            zoomedMax += left + (scrollbarHeight as any) - outlineCorrection;
             navigatorTop += halfOutline;
 
             path = [
@@ -953,7 +955,7 @@ Navigator.prototype = {
                 zoomedMax,
                 navigatorTop, // upper right of z.r.
                 'L',
-                left + navigatorSize + scrollbarHeight * 2,
+                left + navigatorSize + (scrollbarHeight as any) * 2,
                 navigatorTop // right
             ].concat(maskInside ? [
                 'M',
@@ -1232,19 +1234,20 @@ Navigator.prototype = {
         navigator.left = pick(
             xAxis.left,
             // in case of scrollbar only, without navigator
-            chart.plotLeft + scrollbarHeight + (inverted ? chart.plotWidth : 0)
+            chart.plotLeft + (scrollbarHeight as any) +
+            (inverted ? chart.plotWidth : 0)
         );
 
         navigator.size = zoomedMax = navigatorSize = pick(
             xAxis.len,
             (inverted ? chart.plotHeight : chart.plotWidth) -
-                2 * scrollbarHeight
+            2 * (scrollbarHeight as any)
         );
 
         if (inverted) {
             navigatorWidth = scrollbarHeight;
         } else {
-            navigatorWidth = navigatorSize + 2 * scrollbarHeight;
+            navigatorWidth = navigatorSize + 2 * (scrollbarHeight as any);
         }
 
         // Get the pixel position of the handles
@@ -1313,26 +1316,27 @@ Navigator.prototype = {
 
         if (navigator.scrollbar) {
             if (inverted) {
-                scrollbarTop = navigator.top - scrollbarHeight;
-                scrollbarLeft = navigator.left - scrollbarHeight +
+                scrollbarTop = navigator.top - (scrollbarHeight as any);
+                scrollbarLeft = navigator.left - (scrollbarHeight as any) +
                     (navigatorEnabled || !scrollbarXAxis.opposite ? 0 :
                         // Multiple axes has offsets:
                         (scrollbarXAxis.titleOffset || 0) +
                         // Self margin from the axis.title
                         (scrollbarXAxis.axisTitleMargin as any)
                     );
-                scrollbarHeight = navigatorSize + 2 * scrollbarHeight;
+                scrollbarHeight = navigatorSize + 2 * (scrollbarHeight as any);
             } else {
-                scrollbarTop = navigator.top +
-                    (navigatorEnabled ? navigator.height : -scrollbarHeight);
-                scrollbarLeft = navigator.left - scrollbarHeight;
+                scrollbarTop = navigator.top + (navigatorEnabled ?
+                    navigator.height :
+                    -(scrollbarHeight as any));
+                scrollbarLeft = navigator.left - (scrollbarHeight as any);
             }
             // Reposition scrollbar
             navigator.scrollbar.position(
                 scrollbarLeft,
                 scrollbarTop,
                 navigatorWidth,
-                scrollbarHeight
+                scrollbarHeight as any
             );
             // Keep scale 0-1
             navigator.scrollbar.setRange(
@@ -1812,9 +1816,11 @@ Navigator.prototype = {
                 chartOptions.navigator as Highcharts.NavigatorOptions,
             navigatorEnabled = navigatorOptions.enabled,
             scrollbarOptions = chartOptions.scrollbar,
-            scrollbarEnabled = scrollbarOptions.enabled,
+            scrollbarEnabled = (scrollbarOptions as any).enabled,
             height = navigatorEnabled ? navigatorOptions.height : 0,
-            scrollbarHeight = scrollbarEnabled ? scrollbarOptions.height : 0;
+            scrollbarHeight = scrollbarEnabled ?
+                (scrollbarOptions as any).height :
+                0;
 
         this.handles = [];
         this.shades = [];
@@ -1956,13 +1962,13 @@ Navigator.prototype = {
 
 
         // Initialize the scrollbar
-        if (chart.options.scrollbar.enabled) {
+        if ((chart.options.scrollbar as any).enabled) {
             chart.scrollbar = navigator.scrollbar = new Scrollbar(
                 chart.renderer,
-                merge(chart.options.scrollbar, {
+                merge(chart.options.scrollbar as Highcharts.ScrollbarOptions, {
                     margin: navigator.navigatorEnabled ? 0 : 10,
                     vertical: chart.inverted
-                }),
+                } as Highcharts.ScrollbarOptions),
                 chart
             );
             addEvent(navigator.scrollbar, 'changed', function (
@@ -1970,14 +1976,13 @@ Navigator.prototype = {
                 e: Highcharts.PointerEventObject
             ): void {
                 var range = navigator.size,
-                    to = range * this.to,
-                    from = range * this.from;
+                    to = range * (this.to as any),
+                    from = range * (this.from as any);
 
-                navigator.hasDragged = navigator.scrollbar.hasDragged;
+                navigator.hasDragged = (navigator.scrollbar as any).hasDragged;
                 navigator.render(0, 0, from, to);
 
-                if (
-                    chart.options.scrollbar.liveRedraw ||
+                if ((chart.options.scrollbar as any).liveRedraw ||
                     ((e as any).DOMType !== 'mousemove' &&
                     (e as any).DOMType !== 'touchmove')
                 ) {
@@ -2713,15 +2718,16 @@ if (!H.Navigator) {
             // Compute the top position
             if (this.inverted) {
                 navigator.left = navigator.opposite ?
-                    this.chartWidth - scrollbarHeight - navigator.height :
-                    this.spacing[3] + scrollbarHeight;
-                navigator.top = this.plotTop + scrollbarHeight;
+                    this.chartWidth - (scrollbarHeight as any) -
+                    navigator.height :
+                    this.spacing[3] + (scrollbarHeight as any);
+                navigator.top = this.plotTop + (scrollbarHeight as any);
             } else {
-                navigator.left = this.plotLeft + scrollbarHeight;
+                navigator.left = this.plotLeft + (scrollbarHeight as any);
                 navigator.top = (navigator.navigatorOptions.top as any) ||
                     this.chartHeight -
                     navigator.height -
-                    scrollbarHeight -
+                    (scrollbarHeight as any) -
                     this.spacing[2] -
                     (
                         this.rangeSelector && this.extraBottomMargin ?

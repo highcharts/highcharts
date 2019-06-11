@@ -598,6 +598,7 @@ Navigator.prototype = {
             path = [
                 'M',
                 left + outlineHeight,
+                // top edge
                 navigatorTop - scrollbarHeight - outlineCorrection,
                 'L',
                 left + outlineHeight,
@@ -613,7 +614,8 @@ Navigator.prototype = {
                 zoomedMax,
                 'L',
                 left + outlineHeight,
-                navigatorTop + navigatorSize + scrollbarHeight // bottom edge
+                // bottom edge
+                navigatorTop + navigatorSize + scrollbarHeight
             ].concat(maskInside ? [
                 'M',
                 left + outlineHeight,
@@ -846,7 +848,8 @@ Navigator.prototype = {
         }
         navigator.left = pick(xAxis.left, 
         // in case of scrollbar only, without navigator
-        chart.plotLeft + scrollbarHeight + (inverted ? chart.plotWidth : 0));
+        chart.plotLeft + scrollbarHeight +
+            (inverted ? chart.plotWidth : 0));
         navigator.size = zoomedMax = navigatorSize = pick(xAxis.len, (inverted ? chart.plotHeight : chart.plotWidth) -
             2 * scrollbarHeight);
         if (inverted) {
@@ -916,8 +919,9 @@ Navigator.prototype = {
                 scrollbarHeight = navigatorSize + 2 * scrollbarHeight;
             }
             else {
-                scrollbarTop = navigator.top +
-                    (navigatorEnabled ? navigator.height : -scrollbarHeight);
+                scrollbarTop = navigator.top + (navigatorEnabled ?
+                    navigator.height :
+                    -scrollbarHeight);
                 scrollbarLeft = navigator.left - scrollbarHeight;
             }
             // Reposition scrollbar
@@ -1241,7 +1245,9 @@ Navigator.prototype = {
      * @param {Highcharts.Chart} chart
      */
     init: function (chart) {
-        var chartOptions = chart.options, navigatorOptions = chartOptions.navigator, navigatorEnabled = navigatorOptions.enabled, scrollbarOptions = chartOptions.scrollbar, scrollbarEnabled = scrollbarOptions.enabled, height = navigatorEnabled ? navigatorOptions.height : 0, scrollbarHeight = scrollbarEnabled ? scrollbarOptions.height : 0;
+        var chartOptions = chart.options, navigatorOptions = chartOptions.navigator, navigatorEnabled = navigatorOptions.enabled, scrollbarOptions = chartOptions.scrollbar, scrollbarEnabled = scrollbarOptions.enabled, height = navigatorEnabled ? navigatorOptions.height : 0, scrollbarHeight = scrollbarEnabled ?
+            scrollbarOptions.height :
+            0;
         this.handles = [];
         this.shades = [];
         this.chart = chart;
@@ -1845,7 +1851,8 @@ if (!H.Navigator) {
             // Compute the top position
             if (this.inverted) {
                 navigator.left = navigator.opposite ?
-                    this.chartWidth - scrollbarHeight - navigator.height :
+                    this.chartWidth - scrollbarHeight -
+                        navigator.height :
                     this.spacing[3] + scrollbarHeight;
                 navigator.top = this.plotTop + scrollbarHeight;
             }

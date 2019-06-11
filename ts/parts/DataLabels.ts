@@ -25,17 +25,11 @@ declare global {
         }
         interface DataLabelsBoxObject {
             align?: number;
-            pos: number;
+            pos?: number;
             rank?: number;
             size: number;
             target: number;
-            targets: Array<number>;
-        }
-        interface DataLabelsDistributeBoxObject {
-            pos?: number;
-            rank: number;
-            size: number;
-            target: number;
+            targets?: Array<number>;
         }
         interface DataLabelsFilterOptionsObject {
             operator: DataLabelsFilterOperatorValue;
@@ -90,7 +84,7 @@ declare global {
         interface Point {
             dataLabel: SVGElement;
             dataLabels: Array<SVGElement>;
-            distributeBox?: DataLabelsDistributeBoxObject;
+            distributeBox?: DataLabelsBoxObject;
         }
         interface Series {
             dataLabelPositioners: SeriesDataLabelPositionersObject;
@@ -733,8 +727,8 @@ H.distribute = function (
             box = boxes[i];
             // Composite box, average of targets
             target = (
-                Math.min.apply(0, box.targets) +
-                Math.max.apply(0, box.targets)
+                Math.min.apply(0, box.targets as any) +
+                Math.max.apply(0, box.targets as any)
             ) / 2;
             box.pos = Math.min(
                 Math.max(0, target - box.size * (box.align as any)),
@@ -747,16 +741,19 @@ H.distribute = function (
         overlapping = false;
         while (i--) {
             // Overlap
-            if (i > 0 && boxes[i - 1].pos + boxes[i - 1].size > boxes[i].pos) {
+            if (i > 0 &&
+                (boxes[i - 1].pos as any) + boxes[i - 1].size >
+                (boxes[i].pos as any)
+            ) {
                 // Add this size to the previous box
                 boxes[i - 1].size += boxes[i].size;
-                boxes[i - 1].targets = boxes[i - 1]
-                    .targets
+                boxes[i - 1].targets = (boxes[i - 1]
+                    .targets as any)
                     .concat(boxes[i].targets);
                 boxes[i - 1].align = 0.5;
 
                 // Overlapping right, push left
-                if (boxes[i - 1].pos + boxes[i - 1].size > len) {
+                if ((boxes[i - 1].pos as any) + boxes[i - 1].size > len) {
                     boxes[i - 1].pos = len - boxes[i - 1].size;
                 }
                 boxes.splice(i, 1); // Remove this item
@@ -777,15 +774,15 @@ H.distribute = function (
     ): (boolean|undefined) {
         var posInCompositeBox = 0;
 
-        if (box.targets.some(function (): (boolean|undefined) {
-            origBoxes[i].pos = box.pos + posInCompositeBox;
+        if ((box.targets as any).some(function (): (boolean|undefined) {
+            origBoxes[i].pos = (box.pos as any) + posInCompositeBox;
 
             // If the distance between the position and the target exceeds
             // maxDistance, abort the loop and decrease the length in increments
             // of 10% to recursively reduce the  number of visible boxes by
             // rank. Once all boxes are within the maxDistance, we're good.
             if (
-                Math.abs(origBoxes[i].pos - origBoxes[i].target) >
+                Math.abs((origBoxes[i].pos as any) - origBoxes[i].target) >
                 maxDistance
             ) {
                 // Reset the positions that are already set
@@ -1637,7 +1634,7 @@ if (seriesTypes.pie) {
                 bottom,
                 length = points.length,
                 positions =
-                    [] as Array<Highcharts.DataLabelsDistributeBoxObject>,
+                    [] as Array<Highcharts.DataLabelsBoxObject>,
                 naturalY,
                 sideOverflow,
                 size: any,
