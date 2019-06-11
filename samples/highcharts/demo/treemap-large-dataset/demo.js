@@ -1,4 +1,4 @@
-$.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-mortality.json', function (data) {
+Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-mortality.json', function (data) {
 
     var points = [],
         regionP,

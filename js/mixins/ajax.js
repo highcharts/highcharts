@@ -86,10 +86,12 @@ H.ajax = function (attr) {
     }
 
     r.open(options.type.toUpperCase(), options.url, true);
-    r.setRequestHeader(
-        'Content-Type',
-        headers[options.dataType] || headers.text
-    );
+    if (!options.headers['Content-Type']) {
+        r.setRequestHeader(
+            'Content-Type',
+            headers[options.dataType] || headers.text
+        );
+    }
 
     H.objectEach(options.headers, function (val, key) {
         r.setRequestHeader(key, val);
@@ -120,4 +122,28 @@ H.ajax = function (attr) {
     } catch (e) {}
 
     r.send(options.data || true);
+};
+
+/**
+ * Get a JSON resource over XHR, also supporting CORS without preflight.
+ *
+ * @function Highcharts.getJSON
+ *
+ * @param {string} url
+ *        The URL to load.
+ * @param {function} success
+ *        The success callback. For error handling, use the `Highcharts.ajax`
+ *        function instead.
+ */
+H.getJSON = function (url, success) {
+    H.ajax({
+        url: url,
+        success: success,
+        dataType: 'json',
+        headers: {
+            // Override the Content-Type to avoid preflight problems with CORS
+            // in the Highcharts demos
+            'Content-Type': 'text/plain'
+        }
+    });
 };

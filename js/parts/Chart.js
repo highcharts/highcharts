@@ -616,7 +616,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // points outside the visible range (#6445). For grouped data,
             // inspect the generated series.points.
             points = points.concat((serie[serie.hasGroupedData ? 'points' : 'data'] || []).filter(function (point) {
-                return point.selected;
+                return pick(point.selectedStaging, point.selected);
             }));
         });
         return points;
