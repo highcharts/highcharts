@@ -645,3 +645,56 @@ QUnit.test('Falsy default', assert => {
         'Legend items should be removed as per default showInLegend'
     );
 });
+
+QUnit.test('Responsive spacing options', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'pie',
+            borderWidth: 1,
+            plotBorderWidth: 1,
+            width: 600
+        },
+        series: [{
+            data: [
+                ['Apples', 40],
+                ['Oranges', 60]
+            ]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    minWidth: 321
+                },
+                chartOptions: {
+                    chart: {
+                        spacing: [10, 10, 25, 10]
+                    }
+                }
+            },
+            {
+                condition: {
+                    maxWidth: 320
+                },
+                chartOptions: {
+                    chart: {
+                        spacing: [18, 0, 0, 0]
+                    }
+                }
+            }]
+        }
+    });
+
+    assert.deepEqual(
+        chart.spacing,
+        [10, 10, 25, 10],
+        'The initial spacing should correpond to responsive option'
+    );
+
+    chart.setSize(300);
+
+    assert.deepEqual(
+        chart.spacing,
+        [18, 0, 0, 0],
+        'The updated spacing should correpond to responsive option'
+    );
+});
