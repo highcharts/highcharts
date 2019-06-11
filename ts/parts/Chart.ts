@@ -960,7 +960,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             points = points.concat(
                 (serie[serie.hasGroupedData ? 'points' : 'data'] || []).filter(
                     function (point: Highcharts.Point): boolean {
-                        return point.selected;
+                        return pick(point.selectedStaging, point.selected);
                     }
                 )
             );
