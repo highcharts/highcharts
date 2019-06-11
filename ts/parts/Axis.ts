@@ -85,6 +85,10 @@ declare global {
             userMax: number;
             userMin: number;
         }
+        interface Options {
+            xAxis?: (XAxisOptions|Array<XAxisOptions>);
+            yAxis?: (YAxisOptions|Array<YAxisOptions>);
+        }
         interface XAxisAccessibilityOptions {
             description?: string;
             enabled?: boolean;
@@ -226,11 +230,11 @@ declare global {
             lineWidth?: number;
             linkedTo?: number;
             margin?: number;
-            max?: (number|null);
+            max?: (null|number);
             maxPadding?: number;
             maxRange?: number;
             maxZoom?: number;
-            min?: (number|null);
+            min?: (null|number);
             minorGridLineColor?: ColorString;
             minorGridLineDashStyle?: DashStyleValue;
             minorGridLineWidth?: number;

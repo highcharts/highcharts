@@ -78,6 +78,10 @@ declare global {
             prop?: string;
             stopped?: boolean;
         }
+        interface RangeObject {
+            max: number;
+            min: number;
+        }
         interface WrapProceedFunction {
             (...args: Array<any>): any;
         }

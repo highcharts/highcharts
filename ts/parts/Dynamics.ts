@@ -54,6 +54,11 @@ declare global {
                 animation?: (boolean|AnimationOptionsObject)
             ): void;
         }
+        interface ChartAfterUpdateEventObject {
+            animation: (boolean|AnimationOptionsObject);
+            options: Options;
+            redraw: boolean;
+        }
         interface Point {
             remove(
                 redraw?: boolean,
