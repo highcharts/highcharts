@@ -547,6 +547,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             newWidth,
             newHeight,
             runSetSize,
+            isResponsiveOptions = options.isResponsiveOptions,
             itemsForRemoval = [] as Array<string>;
 
         fireEvent(chart, 'update', { options: options });
@@ -554,7 +555,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // If there are responsive rules in action, undo the responsive rules
         // before we apply the updated options and replay the responsive rules
         // on top from the chart.redraw function (#9617).
-        if (!options.isResponsiveOptions) {
+        if (!isResponsiveOptions) {
             chart.setResponsive(false, true);
         }
 
@@ -606,7 +607,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     chart.isDirtyBox = true;
                 }
                 // Chart setSize
-                if (chart.propsRequireReflow.indexOf(key) !== -1) {
+                if (
+                    !isResponsiveOptions &&
+                    chart.propsRequireReflow.indexOf(key) !== -1
+                ) {
                     runSetSize = true;
                 }
             });
