@@ -43,8 +43,8 @@ declare global {
             public callback: ChartCallbackFunction;
             public callbacks: Array<ChartCallbackFunction>;
             public chartBackground?: SVGElement;
-            public chartHeight?: number;
-            public chartWidth?: number;
+            public chartHeight: number;
+            public chartWidth: number;
             public clipBox?: BBoxObject;
             public clipOffset?: Array<number>;
             public clipRect?: SVGElement;

@@ -1051,7 +1051,7 @@ addEvent(Axis as any, 'afterSetScale', function (this: Highcharts.Axis): void {
     if (axis.horiz && !axis.isDirty) {
         axis.isDirty = axis.isOrdinal &&
             axis.chart.navigator &&
-            !axis.chart.navigator.adaptToUpdatedData;
+            !(axis.chart.navigator as any).adaptToUpdatedData;
     }
 });
 /* ************************************************************************** *

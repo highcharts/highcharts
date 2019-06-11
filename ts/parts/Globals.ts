@@ -29,13 +29,14 @@ declare global {
     function parseFloat (value: (number|string)): number;
     namespace Highcharts {
         type LabelFormatterCallbackFunction = any; // @todo
-        type Navigator = any; // @todo
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
         type PatternObject = any; // @todo
         type PlotLineOrBand = any; // @todo
         type PlotSeriesOptions = any; // @todo
         type PlotSeriesZonesOptions = any; // @todo
+        type Scrollbar = any; // @todo
+        type ScrollbarOptions = any; // @todo
         type SeriesOptions = any; // @todo
         type SeriesOptionsType = any; // @todo
         type SeriesPlotBoxObject = any; // @todo
@@ -66,11 +67,13 @@ declare global {
             tickPositionInfo?: any; // @todo
         }
         interface Chart {
+            extraBottomMargin?: any; // @todo
             fixedRange?: any; // @todo
             hoverPoint?: any; // @todo
             hoverPoints?: any; // @todo
             hoverSeries?: any; // @todo
             inverted?: any; // @todo
+            isBoosting?: any; // @todo
             isPrinting?: any; // @todo
             mapCredits?: any; // @todo
             marginBottom?: any; // @todo
@@ -78,9 +81,11 @@ declare global {
             navigator?: Navigator; // @todo
             openMenu?: any; // @todo
             polar?: any; // @todo
+            rangeSelector?: any; // @todo
             runTrackerClick?: any; // @todo
             scrollablePixelsX?: any; // @todo
             scrollablePixelsY?: any; // @todo
+            scrollbar?: any; // @todo
             scroller?: any; // @todo
             tooltip?: any; // @todo
             getStacks: Function; // @todo
@@ -103,8 +108,8 @@ declare global {
             exporting?: any; // @todo
             isResponsiveOptions?: boolean; // @todo
             isStock?: boolean; // @todo
-            xAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
-            yAxis?: (Array<Dictionary<any>>|Dictionary<any>); // @todo
+            rangeSelector?: any; // @todo
+            scrollbar?: any; // @todo
         }
         interface Point {
             dist?: any; // @todo
@@ -159,7 +164,6 @@ declare global {
             markerGroup?: any; // @todo
             maxLabelDistance?: any; // @todo
             name?: any; // @todo
-            navigatorSeries?: any; // @todo
             noSharedTooltip?: any; // @todo
             options?: any; // @todo
             parallelArrays?: any; // @todo
@@ -204,6 +208,7 @@ declare global {
             searchPoint: Function; // @todo
             setData: Function; // @todo
             setState: Function; // @todo
+            setVisible: Function; // @todo
             sortByAngle: Function; // @todo
             translate: Function; // @todo
             updateParallelArrays: Function; // @todo
@@ -215,6 +220,7 @@ declare global {
             slotWidth?: any; // @todo
         }
         const PlotLineOrBand: any; // @todo
+        const Scrollbar: any; // @todo
         const Series: any; // @todo
         const SVG_NS: string;
         const addEventListenerPolyfill: any; // @todo
