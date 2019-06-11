@@ -166,9 +166,9 @@ QUnit.test('getLabelWidth', assert => {
     const external = [];
 
     assert.strictEqual(
-        getLabelWidth({ x: 0, y: 0 }, internal, external),
+        Math.round(getLabelWidth({ x: 0, y: 0 }, internal, external)),
         200,
-        'Should return width of 200 when distance to closest internal circle border is 100.'
+        'Should return width of approximately 200 when distance to closest internal circle border is 100.'
     );
 
     // Add another internal circle that is completely overlapped by the other
@@ -176,9 +176,9 @@ QUnit.test('getLabelWidth', assert => {
     internal.push({ x: 0, y: 0, r: 50 });
 
     assert.strictEqual(
-        getLabelWidth({ x: 0, y: 0 }, internal, external),
+        Math.round(getLabelWidth({ x: 0, y: 0 }, internal, external)),
         100,
-        'Should return width of 100 when distance to closest internal circle border is 50.'
+        'Should return width of approximately 100 when distance to closest internal circle border is 50.'
     );
 
     // Add an external circle that overlaps on the right side of the smallest
@@ -186,15 +186,15 @@ QUnit.test('getLabelWidth', assert => {
     external.push({ x: 60, y: 0, r: 20 });
 
     assert.strictEqual(
-        getLabelWidth({ x: -10, y: 0 }, internal, external),
+        Math.round(getLabelWidth({ x: -10, y: 0 }, internal, external)),
         80,
-        'Should return width of 80 when distance to closest internal circle border is 40.'
+        'Should return width of approximately 80 when distance to closest internal circle border is 40.'
     );
 
     assert.strictEqual(
-        getLabelWidth({ x: 10, y: 0 }, internal, external),
+        Math.round(getLabelWidth({ x: 10, y: 0 }, internal, external)),
         60,
-        'Should return width of 60 when distance to closest external circle border is 30.'
+        'Should return width of approximately 60 when distance to closest external circle border is 30.'
     );
 });
 

@@ -339,9 +339,7 @@ var getLabelWidth = function getLabelWidth(pos, internal, external) {
     };
 
     // Find the smallest distance of left and right.
-    return Math.round(
-        Math.min(findDistance(radius, -1), findDistance(radius, 1)) * 2
-    );
+    return Math.min(findDistance(radius, -1), findDistance(radius, 1)) * 2;
 };
 
 /**
@@ -901,7 +899,7 @@ var vennSeries = {
                 }
 
                 if (isNumber(dataLabelWidth)) {
-                    dataLabelWidth *= scale;
+                    dataLabelWidth = Math.round(dataLabelWidth * scale);
                 }
             }
 
