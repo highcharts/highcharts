@@ -30,8 +30,9 @@ function requires(globPatterns, taskNames) {
 
     return new Promise((resolve, reject) => {
         try {
-            if (globPatterns.some(globPattern =>
-                glob(globPattern, { allowEmpty: true }).length === 0)
+            if (globPatterns.length === 0 ||
+                globPatterns.some(globPattern =>
+                    glob(globPattern, { allowEmpty: true }).length === 0)
             ) {
                 taskNames.forEach(taskName => require('../' + taskName));
                 gulp.series(...taskNames)(resolve);

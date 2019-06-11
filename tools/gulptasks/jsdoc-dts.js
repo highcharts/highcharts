@@ -27,10 +27,7 @@ function jsDocDTS() {
     return new Promise((resolve, reject) => {
 
         gulpLib
-            .requires(
-                ['tree-namespace.json', 'tree.json'],
-                ['jsdoc-namespace', 'jsdoc-options']
-            )
+            .requires([], ['jsdoc-namespace', 'jsdoc-options'])
             .then(() => highchartsDeclarationsGenerator.task())
             .then(resolve)
             .catch(reject);
