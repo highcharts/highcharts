@@ -458,7 +458,7 @@ H.Tooltip.prototype = {
             styledMode = this.chart.styledMode,
             options = this.options,
             className: string = 'tooltip' +
-                defined(options.className) ? ' ' + options.className : '',
+                (defined(options.className) ? ' ' + options.className : ''),
             container: Highcharts.HTMLDOMElement,
             set: Highcharts.Dictionary<Function>;
 
