@@ -447,7 +447,7 @@ seriesProto.processData = function () {
             // Make sure the X axis extends to show the first group (#2533)
             // But only for visible series (#5493, #6393)
             if (defined(groupedXData[0]) &&
-                groupedXData[0] < xAxis.dataMin &&
+                groupedXData[0] < xAxis.min &&
                 visible) {
                 if ((!defined(xAxis.options.min) &&
                     xAxis.min <= xAxis.dataMin) ||
