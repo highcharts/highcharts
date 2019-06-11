@@ -115,8 +115,10 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
                 this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
                     this.clipBox.height += scrollablePixelsX;
+                    this.plotBox.height += scrollablePixelsX;
                 } else {
                     this.clipBox.width += scrollablePixelsX;
+                    this.plotBox.width += scrollablePixelsX;
                 }
 
                 corrections = {
@@ -135,8 +137,10 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
                 this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
                     this.clipBox.width += scrollablePixelsY;
+                    this.plotBox.width += scrollablePixelsY;
                 } else {
                     this.clipBox.height += scrollablePixelsY;
+                    this.plotBox.height += scrollablePixelsY;
                 }
                 corrections = {
                     2: { name: 'bottom', value: scrollablePixelsY }
