@@ -292,7 +292,7 @@ H.Tooltip.prototype = {
      */
     getLabel: function () {
         var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = 'tooltip' +
-            defined(options.className) ? ' ' + options.className : '', container, set;
+            (defined(options.className) ? ' ' + options.className : ''), container, set;
         if (!this.label) {
             if (this.outside) {
                 this.container = container = H.doc.createElement('div');
