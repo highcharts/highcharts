@@ -160,7 +160,7 @@ declare global {
             parent: any,
             members: Dictionary<any>
         ): any;
-        function find(arr: Array<any>, fn: Function): any;
+        function find<T>(arr: Array<T>, fn: Function): (T|undefined);
         function fireEvent<T>(
             el: T,
             type: string,
@@ -2435,28 +2435,30 @@ H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
     return arr.indexOf(item, fromIndex);
 };
 
+/* eslint-disable valid-jsdoc */
 /**
  * Return the value of the first element in the array that satisfies the
  * provided testing function.
  *
- * @function Highcharts.find
+ * @function Highcharts.find<T>
  *
- * @param {Array<*>} arr
+ * @param {Array<T>} arr
  *        The array to test.
  *
  * @param {Function} callback
  *        The callback function. The function receives the item as the first
  *        argument. Return `true` if this item satisfies the condition.
  *
- * @return {*}
+ * @return {T|undefined}
  *         The value of the element.
  */
 H.find = Array.prototype.find ?
-    function (arr: Array<any>, callback: Function): any {
+    /* eslint-enable valid-jsdoc */
+    function<T> (arr: Array<T>, callback: Function): (T|undefined) {
         return arr.find(callback as any);
     } :
     // Legacy implementation. PhantomJS, IE <= 11 etc. #7223.
-    function (arr: Array<any>, callback: Function): any {
+    function<T> (arr: Array<T>, callback: Function): (T|undefined) {
         var i,
             length = arr.length;
 

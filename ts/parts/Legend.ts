@@ -1074,7 +1074,7 @@ Highcharts.Legend.prototype = {
         this.allItems.forEach(function (
             item: (Highcharts.Point|Highcharts.Series)
         ): void {
-            var lastPoint,
+            var lastPoint: (Highcharts.Point|undefined),
                 height,
                 useFirstPoint = alignLeft,
                 target,

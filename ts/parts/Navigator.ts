@@ -2072,9 +2072,11 @@ Navigator.prototype = {
             chart.options && (chart.options.navigator as any).baseSeries ||
             (chart.series.length ?
                 // Find the first non-navigator series (#8430)
-                H.find(chart.series, function (s: Highcharts.Series): boolean {
+                (H.find(chart.series, function (s: Highcharts.Series): boolean {
                     return !s.options.isInternal;
-                }).index : 0)
+                }) as any).index :
+                0
+            )
         );
 
         // Iterate through series and add the ones that should be shown in

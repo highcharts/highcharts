@@ -647,7 +647,7 @@ Highcharts.Pointer.prototype = {
                         if (s.chart.isBoosting) {
                             point = s.getPoint(point);
                         }
-                        hoverPoints.push(point);
+                        hoverPoints.push(point as Highcharts.Point);
                     }
                 });
             } else {
