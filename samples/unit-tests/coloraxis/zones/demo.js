@@ -32,11 +32,11 @@ QUnit.test(
         point.setState('');
 
         assert.strictEqual(
-            point.graphic.attr('fill'),
+            point.graphic.attr('fill').replace(/\ /g, ''),
             chart.colorAxis[0].toColor(
                 point.value,
                 point
-            ),
+            ).replace(/\ /g, ''),
             'Fill from colorAxis should be used when no color specified in zone (#10670).'
         );
     }
