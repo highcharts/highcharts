@@ -233,20 +233,20 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.series[1].dataLabelsGroup.element.querySelectorAll(
-                'g.highcharts-label[visibility="hidden"]'
-            ).length,
-            6,
+            chart.series[1].points.every(
+                point => point.dataLabel.attr('translateY') < 0
+            ),
+            true,
             'All six labels of the second series should be hidden.'
         );
 
         chart.series[0].hide();
 
         assert.strictEqual(
-            chart.series[1].dataLabelsGroup.element.querySelectorAll(
-                'g.highcharts-label[visibility="hidden"]'
-            ).length,
-            0,
+            chart.series[1].points.every(
+                point => point.dataLabel.attr('translateY') >= 0
+            ),
+            true,
             'All six labels of the second series should be visible.'
         );
 

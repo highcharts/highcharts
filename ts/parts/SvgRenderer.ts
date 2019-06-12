@@ -2435,16 +2435,30 @@ extend((
     },
 
     /**
-     * Hide the element, equivalent to setting the `visibility` attribute to
+     * Hide the element, similar to setting the `visibility` attribute to
      * `hidden`.
      *
      * @function Highcharts.SVGElement#hide
      *
+     * @param {boolean} [hideByTranslation=false]
+     *        The flag to determine if element should be hidden by moving out
+     *        of the viewport. Used for example for dataLabels.
+     *
      * @return {Highcharts.SVGElement}
      *         Returns the SVGElement for chaining.
      */
-    hide: function (this: Highcharts.SVGElement): Highcharts.SVGElement {
-        return this.attr({ visibility: 'hidden' }) as any;
+    hide: function (
+        this: Highcharts.SVGElement,
+        hideByTranslation?: boolean
+    ): Highcharts.SVGElement {
+
+        if (hideByTranslation) {
+            this.attr({ y: -9999 });
+        } else {
+            this.attr({ visibility: 'hidden' });
+        }
+
+        return this as any;
     },
 
     /**
