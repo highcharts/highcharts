@@ -200,7 +200,7 @@ declare global {
             public getBBox(reload?: boolean, rot?: number): BBoxObject;
             public getStyle(prop: string): string;
             public hasClass(className: string): boolean;
-            public hide(): SVGElement;
+            public hide(hideByTranslation?: boolean): SVGElement;
             public init(renderer: SVGRenderer, nodeName: string): void;
             public invert(inverted: boolean): SVGElement
             public matrixSetter(value: any, key: string): void;
