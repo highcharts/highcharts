@@ -464,13 +464,13 @@ seriesType('xrange', 'column'
 
                 // Original graphic
                 if (graphic) { // update
-                    point.graphicOriginal[verb](shapeArgs);
+                    graphic.rect[verb](shapeArgs);
                 } else {
                     point.graphic = graphic = renderer.g('point')
                         .addClass(point.getClassName())
                         .add(point.group || series.group);
 
-                    point.graphicOriginal = renderer[type](merge(shapeArgs))
+                    graphic.rect = renderer[type](merge(shapeArgs))
                         .addClass(point.getClassName())
                         .addClass('highcharts-partfill-original')
                         .add(graphic);
@@ -478,35 +478,35 @@ seriesType('xrange', 'column'
 
                 // Partial fill graphic
                 if (partShapeArgs) {
-                    if (point.graphicOverlay) {
-                        point.graphicOverlay[verb](
+                    if (graphic.partRect) {
+                        graphic.partRect[verb](
                             merge(partShapeArgs)
                         );
-                        point.clipRect[verb](
+                        graphic.partialClipRect[verb](
                             merge(clipRectArgs)
                         );
 
                     } else {
 
-                        point.clipRect = renderer.clipRect(
+                        graphic.partialClipRect = renderer.clipRect(
                             clipRectArgs.x,
                             clipRectArgs.y,
                             clipRectArgs.width,
                             clipRectArgs.height
                         );
 
-                        point.graphicOverlay = renderer[type](partShapeArgs)
+                        graphic.partRect = renderer[type](partShapeArgs)
                             .addClass('highcharts-partfill-overlay')
                             .add(graphic)
-                            .clip(point.clipRect);
+                            .clip(graphic.partialClipRect);
                     }
                 }
 
 
                 // Presentational
                 if (!series.chart.styledMode) {
-                    point
-                        .graphicOriginal[verb](
+                    graphic
+                        .rect[verb](
                             pointAttr,
                             animation
                         )
@@ -531,8 +531,8 @@ seriesType('xrange', 'column'
                         );
 
                         pointAttr.fill = fill;
-                        point
-                            .graphicOverlay[pointStateVerb](
+                        graphic
+                            .partRect[pointStateVerb](
                                 pointAttr,
                                 animation
                             )
