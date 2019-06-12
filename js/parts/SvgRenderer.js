@@ -1722,6 +1722,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             erase(renderer.alignedObjects, wrapper);
         }
         objectEach(wrapper, function (val, key) {
+            // Destroy child elements of a group
+            if (wrapper[key] &&
+                wrapper[key].parentGroup === wrapper &&
+                wrapper[key].destroy) {
+                wrapper[key].destroy();
+            }
+            // Delete all properties
             delete wrapper[key];
         });
     },

@@ -2633,6 +2633,17 @@ extend((
         }
 
         objectEach(wrapper, function (val: unknown, key: string): void {
+
+            // Destroy child elements of a group
+            if (
+                wrapper[key] &&
+                wrapper[key].parentGroup === wrapper &&
+                wrapper[key].destroy
+            ) {
+                wrapper[key].destroy();
+            }
+
+            // Delete all properties
             delete wrapper[key];
         });
     },
