@@ -491,11 +491,15 @@ var onBeforeRender = function (e) {
             // Check whether any of series is rendering for the first time,
             // visibility has changed, or its data is dirty,
             // and only then update. #10570, #10580
-            isDirty = axis.series.some(function (series) {
-                return !series.hasRendered ||
-                    series.isDirtyData ||
-                    series.isDirty;
-            });
+            // Also check if mapOfPosToGridNode exists. #10887
+            isDirty = (
+                !axis.mapOfPosToGridNode ||
+                axis.series.some(function (series) {
+                    return !series.hasRendered ||
+                        series.isDirtyData ||
+                        series.isDirty;
+                })
+            );
 
             if (isDirty) {
                 // Concatenate data from all series assigned to this axis.

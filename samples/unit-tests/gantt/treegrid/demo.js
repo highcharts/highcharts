@@ -156,6 +156,64 @@ QUnit.test('Tree.getNode', function (assert) {
     );
 });
 
+QUnit.test('Axis.update', assert => {
+    const { getStyle } = Highcharts;
+    const { yAxis: [axis] } = Highcharts.chart('container', {
+        series: [{
+            data: [{
+                name: 'Point 1',
+                y: 1
+            }]
+        }],
+        yAxis: {
+            type: 'treegrid',
+            labels: {
+                style: {
+                    color: '#000000'
+                }
+            }
+        }
+    });
+    let { ticks: { 0: { label: { element } } } } = axis;
+
+
+    assert.deepEqual(
+        axis.tickPositions,
+        [0],
+        'Should have tickPositions equal [0] after render.'
+    );
+    assert.strictEqual(
+        getStyle(element, 'color', false),
+        'rgb(0, 0, 0)',
+        'Should have color equal rgb(0, 0, 0) after render.'
+    );
+
+
+    // Update the axis
+    axis.update({
+        labels: {
+            style: {
+                color: '#ff0000'
+            }
+        }
+    });
+
+    // Update reference to label element
+    ({ ticks: { 0: { label: { element } } } } = axis);
+
+
+    assert.deepEqual(
+        axis.tickPositions,
+        [0],
+        'Should still have tickPositions equal [0] after update.'
+    );
+    assert.strictEqual(
+        getStyle(element, 'color', false),
+        'rgb(255, 0, 0)',
+        'Should have color equal rgb(255, 0, 0) after update.'
+    );
+});
+
 QUnit.test('Chart.addSeries', assert => {
     const chart = Highcharts.chart('container', {
         yAxis: [{
