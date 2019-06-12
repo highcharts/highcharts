@@ -11,9 +11,9 @@ const gulp = require('gulp');
  * */
 
 const WATCH_GLOBS = [
-    'js/!(adapters|builds)/**/*.js',
+    'js/**/*.js',
     'ts/**/*.json',
-    'ts/!(adapters|builds)/**/*.ts'
+    'ts/**/*.ts'
 ];
 
 /* *
