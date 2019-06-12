@@ -14,6 +14,7 @@ js/parts/MSPointer.js
 js/parts/Navigator.js
 js/parts/Options.js
 js/parts/OrdinalAxis.js
+js/parts/PlotLineOrBand.js
 js/parts/Point.js
 js/parts/Pointer.js
 js/parts/Responsive.js
