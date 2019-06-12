@@ -226,6 +226,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                     } else {
                         complete = function () {
                             label.hide(true);
+                            label.placed = false; // avoid animation from top
                         };
                     }
 
