@@ -88,19 +88,13 @@ declare global {
             tooltip?: any; // @todo
             getStacks: Function; // @todo
             isReadyToRender: Function; // @todo
-            pan: Function; // @todo
             setResponsive: Function; // @todo
-            zoom: Function; // @todo
         }
         interface ChartOptions {
             forExport?: any; // @todo
             reflow?: any; // @todo
             renderer?: any; // @todo
             skipClone?: any; // @todo
-        }
-        interface Legend {
-            createCheckboxForItem: Function; // @todo
-            setItemEvents: Function; // @todo
         }
         interface Options {
             exporting?: any; // @todo
@@ -117,16 +111,15 @@ declare global {
             selected?: any; // @todo
             tooltipDateKeys?: any; // @todo
             zone?: any; // @todo
-            onMouseOut: Function; // @todo
-            setState: Function; // @todo
         }
         interface Series {
             _hasPointLabels?: any; // @todo
             _hasPointMarkers?: any; // @todo
             allowDG?: any; // @todo
+            areaPath?: any; // @todo
             autoIncrement?: any; // @todo
             center?: any; // @todo
-            chart?: any; // @todo
+            chart: Chart; // @todo
             closestPointRange?: number; // @todo
             color?: any; // @todo
             colorCounter?: any; // @todo
@@ -141,6 +134,8 @@ declare global {
             fixedBox?: any; // @todo
             forceCrop?: any; // @todo
             forceDL?: any; // @todo
+            graph?: any; // @todo
+            graphPath?: any; // @todo
             group?: any; // @todo
             groupPixelWidth?: any; // @todo
             hasCartesianSeries?: any; // @todo
@@ -156,8 +151,10 @@ declare global {
             isDirtyData?: any; // @todo
             isSeriesBoosting?: any; // @todo
             kdTree?: any; // @todo
+            labelBySeries?: any; // @todo
             linkedParent?: any; // @todo
             linkedSeries?: any; // @todo
+            marker?: any; // @todo
             markerGroup?: any; // @todo
             maxLabelDistance?: any; // @todo
             name?: any; // @todo
@@ -176,15 +173,16 @@ declare global {
             symbol?: any; // @todo
             takeOrdinalPosition?: any; // @todo
             tooltipOptions?: any; // @todo
+            trackerGroups?: any; // @todo
             translatedThreshold?: any; // @todo
             type?: any; // @todo
             updateTotals?: any; // @todo
             useCommonDataGrouping?: any; // @todo
             userOptions?: any; // @todo
             visible?: any; // @todo
-            xAxis?: any; // @todo
+            xAxis: Axis; // @todo
             xIncrement?: any; // @todo
-            yAxis?: any; // @todo
+            yAxis: Axis; // @todo
             zoneAxis?: any; // @todo
             zones?: any; // @todo
             cropData: Function; // @todo
@@ -197,6 +195,7 @@ declare global {
             getX: Function; // @todo
             hasData: Function; // @todo
             init: Function; // @todo
+            markerAttribs: Function; // @todo
             plotGroup: Function; // @todo
             pointAttribs: Function; // @todo
             pointClass: Function; // @todo
@@ -204,8 +203,6 @@ declare global {
             render: Function; // @todo
             searchPoint: Function; // @todo
             setData: Function; // @todo
-            setState: Function; // @todo
-            setVisible: Function; // @todo
             sortByAngle: Function; // @todo
             translate: Function; // @todo
             updateParallelArrays: Function; // @todo

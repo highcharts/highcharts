@@ -2488,7 +2488,7 @@ Navigator.prototype = {
         // maximum. If the current axis minimum falls outside the new updated
         // dataset, we must adjust.
         navigator.stickToMin = isNumber(baseSeries.xAxis.min) &&
-            (baseSeries.xAxis.min <= xDataMin) &&
+            ((baseSeries.xAxis.min as any) <= xDataMin) &&
             (!this.chart.fixedRange || !navigator.stickToMax);
 
         // Set the navigator series data to the new data of the base series
@@ -2531,7 +2531,7 @@ Navigator.prototype = {
                         ); // #5709
 
                     if (xAxis) {
-                        navigator.render(xAxis.min, xAxis.max);
+                        navigator.render(xAxis.min as any, xAxis.max as any);
                     }
                 }
             ),

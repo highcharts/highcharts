@@ -112,13 +112,17 @@ declare global {
             textContent?: string;
         }
         interface SymbolDictionary {
-            [key: string]: (Function|undefined);
-            arc?: Function;
-            callout?: Function;
-            circle?: Function;
-            diamond?: Function;
-            square?: Function;
-            triangle?: Function;
+            [key: string]: (SymbolFunction<SVGElement|SVGPathArray>|undefined);
+            arc: SymbolFunction<SVGPathArray>;
+            callout: SymbolFunction<SVGPathArray>;
+            circle: SymbolFunction<SVGElement>;
+            diamond: SymbolFunction<SVGPathArray>;
+            square: SymbolFunction<SVGPathArray>;
+            triangle: SymbolFunction<SVGPathArray>;
+            'triangle-down': SymbolFunction<SVGPathArray>;
+        }
+        interface SymbolFunction<T> {
+            (...args: Array<any>): T;
         }
         interface SymbolOptionsObject {
             anchorX?: number;
@@ -381,7 +385,7 @@ declare global {
                 baseline?: boolean,
                 className?: string
             ): SVGElement;
-            public path(attribs: SVGAttributes): SVGElement;
+            public path(attribs?: SVGAttributes): SVGElement;
             public path(path?: SVGPathArray): SVGElement;
             public rect(attribs: SVGAttributes): SVGElement;
             public rect(
@@ -395,7 +399,7 @@ declare global {
             public rotCorr(
                 baseline: number,
                 rotation: number,
-                alterY: boolean
+                alterY?: boolean
             ): PositionObject;
             public setSize(
                 width: number,
@@ -4748,7 +4752,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     ): Highcharts.SVGElement {
         var attribs = (
                 isObject(x) ?
-                    x :
+                    x as Highcharts.SVGAttributes :
                     x === undefined ? {} : { x: x, y: y, r: r }
             ),
             wrapper = this.createElement('circle');
@@ -4762,7 +4766,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             element.setAttribute('c' + key, value);
         };
 
-        return wrapper.attr(attribs as any) as any;
+        return wrapper.attr(attribs);
     },
 
     /**
@@ -5157,26 +5161,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             obj: any,
             imageRegex = /^url\((.*?)\)$/,
             isImage = imageRegex.test(symbol),
-            sym = !isImage && (this.symbols[symbol] ? symbol : 'circle'),
-
-
+            sym = (!isImage && (this.symbols[symbol] ? symbol : 'circle')),
             // get the symbol definition function
-            symbolFn = sym && this.symbols[sym],
-
+            symbolFn = (sym && this.symbols[sym]),
             // check if there's a path defined for this symbol
-            path = defined(x) && symbolFn && symbolFn.call(
+            path = (defined(x) && symbolFn && symbolFn.call(
                 this.symbols,
                 Math.round(x as any),
                 Math.round(y as any),
                 width,
                 height,
                 options
-            ),
+            )),
             imageSrc: string,
             centerImage: Function;
 
         if (symbolFn) {
-            obj = this.path(path);
+            obj = this.path(path as any);
 
             if (!ren.styledMode) {
                 obj.attr('fill', 'none');
@@ -5804,14 +5805,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @param {number} rotation
      *
-     * @param {boolean} alterY
+     * @param {boolean} [alterY]
      *
      * @param {Highcharts.PositionObject}
      */
     rotCorr: function (
         baseline: number,
         rotation: number,
-        alterY: boolean
+        alterY?: boolean
     ): Highcharts.PositionObject {
         var y = baseline;
 

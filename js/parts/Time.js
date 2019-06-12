@@ -50,10 +50,10 @@ import Highcharts from './Globals.js';
 /**
  * Time ticks.
  *
- * @interface Highcharts.TimeTicksObject
+ * @interface Highcharts.TimeTicksArray
  * @augments Array<number>
  */ /**
-* @name Highcharts.TimeTicksObject#info
+* @name Highcharts.TimeTicksArray#info
 * @type {Highcharts.TimeTicksInfoObject}
 */
 var H = Highcharts, defined = H.defined, extend = H.extend, merge = H.merge, pick = H.pick, timeUnits = H.timeUnits, win = H.win;
@@ -553,7 +553,7 @@ Highcharts.Time.prototype = {
      *
      * @param {number} [startOfWeek=1]
      *
-     * @return {Highcharts.TimeTicksObject}
+     * @return {Highcharts.TimeTicksArray}
      */
     getTimeTicks: function (normalizedInterval, min, max, startOfWeek) {
         var time = this, Date = time.Date, tickPositions = [], i, higherRanks = {}, minYear, // used in months and years as a basis for Date.UTC()

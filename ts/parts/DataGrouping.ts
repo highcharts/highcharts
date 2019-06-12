@@ -105,6 +105,9 @@ declare global {
                 approximation: (string|Function)
             ): DataGroupingResultObject;
         }
+        interface TimeTicksInfoObject {
+            gapSize?: number;
+        }
         let approximations: DataGroupingApproximationsDictionary;
         let dataGrouping: DataGroupingFunctionsObject;
         let defaultDataGroupingUnits: Array<[string, (Array<number>|null)]>;
@@ -607,7 +610,9 @@ seriesProto.processData = function (this: Highcharts.Series): void {
         dataGroupingOptions = options.dataGrouping,
         groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
             pick(dataGroupingOptions.enabled, chart.options.isStock),
-        visible = series.visible || !chart.options.chart.ignoreHiddenSeries,
+        visible = (
+            series.visible || !(chart.options.chart as any).ignoreHiddenSeries
+        ),
         hasGroupedData,
         skip,
         lastDataGrouping = this.currentDataGrouping,
@@ -668,7 +673,7 @@ seriesProto.processData = function (this: Highcharts.Series): void {
                     xAxis.getGroupIntervalFactor(xMin, xMax, series)
                 ) || 1,
                 interval =
-                    (groupPixelWidth * (xMax - xMin) / plotSizeX) *
+                    (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
                     groupIntervalFactor,
                 groupPositions = xAxis.getTimeTicks(
                     xAxis.normalizeTimeTickInterval(
@@ -678,9 +683,9 @@ seriesProto.processData = function (this: Highcharts.Series): void {
                     // Processed data may extend beyond axis (#4907)
                     Math.min(xMin, processedXData[0]),
                     Math.max(xMax, processedXData[processedXData.length - 1]),
-                    xAxis.options.startOfWeek,
+                    xAxis.options.startOfWeek as any,
                     processedXData,
-                    series.closestPointRange
+                    series.closestPointRange as any
                 ),
                 groupedData = seriesProto.groupData.apply(
                     series,
@@ -731,13 +736,13 @@ seriesProto.processData = function (this: Highcharts.Series): void {
             // But only for visible series (#5493, #6393)
             if (
                 defined(groupedXData[0]) &&
-                groupedXData[0] < xAxis.min &&
+                groupedXData[0] < (xAxis.min as any) &&
                 visible
             ) {
                 if (
                     (
                         !defined(xAxis.options.min) &&
-                        xAxis.min <= xAxis.dataMin
+                        (xAxis.min as any) <= (xAxis.dataMin as any)
                     ) ||
                     xAxis.min === xAxis.dataMin
                 ) {
@@ -913,7 +918,7 @@ addEvent(Series, 'afterSetOptions', function (
 
     var options = e.options,
         type = this.type,
-        plotOptions = this.chart.options.plotOptions,
+        plotOptions = this.chart.options.plotOptions as Highcharts.PlotOptions,
         defaultOptions = defaultPlotOptions[type].dataGrouping,
         // External series, for example technical indicators should also
         // inherit commonOptions which are not available outside this module

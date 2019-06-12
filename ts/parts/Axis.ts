@@ -4675,7 +4675,7 @@ H.extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             this.series.forEach(function (series: Highcharts.Series): void {
                 var seriesClosest = series.closestPointRange,
                     visible = series.visible ||
-                        !series.chart.options.chart.ignoreHiddenSeries;
+                        !(series.chart.options.chart as any).ignoreHiddenSeries;
 
                 if (
                     !series.noSharedTooltip &&

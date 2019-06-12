@@ -452,7 +452,8 @@ Highcharts.Legend.prototype = {
         if (!li) { // generate it once, later move it
             // Generate the group box, a group to hold the symbol and text. Text
             // is to be appended in Legend class.
-            item.legendGroup = renderer.g('legend-item')
+            item.legendGroup = renderer
+                .g('legend-item')
                 .addClass('highcharts-' + series.type + '-series ' +
                 'highcharts-color-' + item.colorIndex +
                 (itemClassName ? ' ' + itemClassName : '') +
