@@ -3593,11 +3593,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @return {Highcharts.SVGElement}
      */
     symbol: function (symbol, x, y, width, height, options) {
-        var ren = this, obj, imageRegex = /^url\((.*?)\)$/, isImage = imageRegex.test(symbol), sym = !isImage && (this.symbols[symbol] ? symbol : 'circle'), 
+        var ren = this, obj, imageRegex = /^url\((.*?)\)$/, isImage = imageRegex.test(symbol), sym = (!isImage && (this.symbols[symbol] ? symbol : 'circle')), 
         // get the symbol definition function
-        symbolFn = sym && this.symbols[sym], 
+        symbolFn = (sym && this.symbols[sym]), 
         // check if there's a path defined for this symbol
-        path = defined(x) && symbolFn && symbolFn.call(this.symbols, Math.round(x), Math.round(y), width, height, options), imageSrc, centerImage;
+        path = (defined(x) && symbolFn && symbolFn.call(this.symbols, Math.round(x), Math.round(y), width, height, options)), imageSrc, centerImage;
         if (symbolFn) {
             obj = this.path(path);
             if (!ren.styledMode) {
@@ -4020,7 +4020,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *
      * @param {number} rotation
      *
-     * @param {boolean} alterY
+     * @param {boolean} [alterY]
      *
      * @param {Highcharts.PositionObject}
      */

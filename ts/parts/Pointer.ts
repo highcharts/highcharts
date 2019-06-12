@@ -50,6 +50,11 @@ declare global {
             max: number;
             min: number;
         }
+        interface SelectEventObject {
+            originalEvent: Event;
+            xAxis: Array<SelectDataObject>;
+            yAxis: Array<SelectDataObject>;
+        }
         class Pointer {
             public constructor(chart: Chart, options: Options);
             [key: string]: any;
@@ -531,8 +536,8 @@ Highcharts.Pointer.prototype = {
 
         if (xAxis && yAxis) {
             return inverted ? {
-                chartX: xAxis.len + xAxis.pos - plotX,
-                chartY: yAxis.len + yAxis.pos - point.plotY
+                chartX: xAxis.len + (xAxis.pos as any) - plotX,
+                chartY: yAxis.len + (yAxis.pos as any) - point.plotY
             } : {
                 chartX: plotX + xAxis.pos,
                 chartY: point.plotY + yAxis.pos
@@ -934,10 +939,12 @@ Highcharts.Pointer.prototype = {
                         point.setState(point.state, true);
                         if (point.series.isCartesian) {
                             if (point.series.xAxis.crosshair) {
-                                point.series.xAxis.drawCrosshair(null, point);
+                                point.series.xAxis
+                                    .drawCrosshair(null as any, point);
                             }
                             if (point.series.yAxis.crosshair) {
-                                point.series.yAxis.drawCrosshair(null, point);
+                                point.series.yAxis
+                                    .drawCrosshair(null as any, point);
                             }
                         }
                     });

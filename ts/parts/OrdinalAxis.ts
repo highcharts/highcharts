@@ -42,10 +42,13 @@ declare global {
                 positions: Array<number>,
                 closestDistance: number,
                 findHigherRanks?: boolean
-            ): Array<number>;
+            ): TimeTicksArray;
             lin2val(val: number, fromIndex?: boolean): number;
             postProcessTickInterval(tickInterval: number): number;
             val2lin(val: number, toIndex?: boolean): number;
+        }
+        interface TimeTicksInfoObject {
+            segmentStarts?: Array<number>;
         }
         interface XAxisOptions {
             keepOrdinalPadding?: boolean;
@@ -103,7 +106,7 @@ Axis.prototype.getTimeTicks = function (
     positions: Array<number>,
     closestDistance: number,
     findHigherRanks?: boolean
-): Highcharts.TimeTicksObject {
+): Highcharts.TimeTicksArray {
 
     var start = 0,
         end,
@@ -113,7 +116,7 @@ Axis.prototype.getTimeTicks = function (
         info,
         posLength,
         outsideMax,
-        groupPositions = ([] as any) as Highcharts.TimeTicksObject,
+        groupPositions = ([] as any) as Highcharts.TimeTicksArray,
         lastGroupPosition = -Number.MAX_VALUE,
         tickPixelIntervalOption = this.options.tickPixelInterval,
         time = this.chart.time,

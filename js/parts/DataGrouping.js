@@ -379,7 +379,7 @@ seriesProto.groupData = groupData;
 // range, with data grouping logic.
 seriesProto.processData = function () {
     var series = this, chart = series.chart, options = series.options, dataGroupingOptions = options.dataGrouping, groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
-        pick(dataGroupingOptions.enabled, chart.options.isStock), visible = series.visible || !chart.options.chart.ignoreHiddenSeries, hasGroupedData, skip, lastDataGrouping = this.currentDataGrouping, currentDataGrouping, croppedData, revertRequireSorting = false;
+        pick(dataGroupingOptions.enabled, chart.options.isStock), visible = (series.visible || !chart.options.chart.ignoreHiddenSeries), hasGroupedData, skip, lastDataGrouping = this.currentDataGrouping, currentDataGrouping, croppedData, revertRequireSorting = false;
     // Run base method
     series.forceCrop = groupingEnabled; // #334
     series.groupPixelWidth = null; // #2110

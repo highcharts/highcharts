@@ -503,10 +503,10 @@ Highcharts.Point.prototype = {
      * @param {string} eventType
      *        Type of the event.
      *
-     * @param {Highcharts.Dictionary<any>|Event} eventArgs
+     * @param {Highcharts.Dictionary<any>|Event} [eventArgs]
      *        Additional event arguments.
      *
-     * @param {Highcharts.EventCallbackFunction<Highcharts.Point>|Function} defaultFunction
+     * @param {Highcharts.EventCallbackFunction<Highcharts.Point>|Function} [defaultFunction]
      *        Default event handler.
      *
      * @fires Highcharts.Point#event:*

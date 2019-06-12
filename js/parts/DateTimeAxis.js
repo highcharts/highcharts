@@ -32,7 +32,7 @@ var Axis = H.Axis, getMagnitude = H.getMagnitude, normalizeTickInterval = H.norm
  *
  * @param {number} startOfWeek
  *
- * @return {Highcharts.TimeTicksObject}
+ * @return {Highcharts.TimeTicksArray}
  */
 Axis.prototype.getTimeTicks = function () {
     return this.chart.time.getTimeTicks.apply(this.chart.time, arguments);

@@ -1320,7 +1320,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             newType = (
                 options.type ||
                 oldOptions.type ||
-                chart.options.chart.type
+                (chart.options.chart as any).type
             ),
             keepPoints = !(
                 // Indicators, histograms etc recalculate the data. It should be

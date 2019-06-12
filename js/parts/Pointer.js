@@ -606,10 +606,12 @@ Highcharts.Pointer.prototype = {
                         point.setState(point.state, true);
                         if (point.series.isCartesian) {
                             if (point.series.xAxis.crosshair) {
-                                point.series.xAxis.drawCrosshair(null, point);
+                                point.series.xAxis
+                                    .drawCrosshair(null, point);
                             }
                             if (point.series.yAxis.crosshair) {
-                                point.series.yAxis.drawCrosshair(null, point);
+                                point.series.yAxis
+                                    .drawCrosshair(null, point);
                             }
                         }
                     });

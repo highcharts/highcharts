@@ -40,7 +40,7 @@ declare global {
             higherRanks: Array<string>;
             totalRange: number;
         }
-        interface TimeTicksObject extends Array<number> {
+        interface TimeTicksArray extends Array<number> {
             info: TimeTicksInfoObject;
         }
         class Time {
@@ -63,7 +63,7 @@ declare global {
                 min?: number,
                 max?: number,
                 startOfWeek?: number
-            ): Highcharts.TimeTicksObject;
+            ): Highcharts.TimeTicksArray;
             public getTimezoneOffset(timestamp: (number|Date)): number;
             public makeTime(
                 year: number,
@@ -131,10 +131,10 @@ declare global {
 /**
  * Time ticks.
  *
- * @interface Highcharts.TimeTicksObject
+ * @interface Highcharts.TimeTicksArray
  * @augments Array<number>
  *//**
- * @name Highcharts.TimeTicksObject#info
+ * @name Highcharts.TimeTicksArray#info
  * @type {Highcharts.TimeTicksInfoObject}
  */
 
@@ -767,7 +767,7 @@ Highcharts.Time.prototype = {
      *
      * @param {number} [startOfWeek=1]
      *
-     * @return {Highcharts.TimeTicksObject}
+     * @return {Highcharts.TimeTicksArray}
      */
     getTimeTicks: function (
         this: Highcharts.Time,
@@ -775,10 +775,10 @@ Highcharts.Time.prototype = {
         min?: number,
         max?: number,
         startOfWeek?: number
-    ): Highcharts.TimeTicksObject {
+    ): Highcharts.TimeTicksArray {
         var time = this,
             Date = time.Date,
-            tickPositions = ([] as any) as Highcharts.TimeTicksObject,
+            tickPositions = ([] as any) as Highcharts.TimeTicksArray,
             i,
             higherRanks = {} as Highcharts.Dictionary<string>,
             minYear: any, // used in months and years as a basis for Date.UTC()

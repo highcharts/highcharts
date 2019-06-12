@@ -55,6 +55,11 @@ declare global {
             public destroy(): void;
             public destroyElements(kinds?: Dictionary<number>): void;
             public getClassName(): string;
+            public firePointEvent(
+                eventType: string,
+                eventArgs?: (Dictionary<any>|Event),
+                defaultFunction?: (EventCallbackFunction<Point>|Function)
+            ): void;
             public getLabelConfig(): PointLabelObject;
             public getZone(): PlotSeriesZonesOptions;
             public init(
@@ -708,10 +713,10 @@ Highcharts.Point.prototype = {
      * @param {string} eventType
      *        Type of the event.
      *
-     * @param {Highcharts.Dictionary<any>|Event} eventArgs
+     * @param {Highcharts.Dictionary<any>|Event} [eventArgs]
      *        Additional event arguments.
      *
-     * @param {Highcharts.EventCallbackFunction<Highcharts.Point>|Function} defaultFunction
+     * @param {Highcharts.EventCallbackFunction<Highcharts.Point>|Function} [defaultFunction]
      *        Default event handler.
      *
      * @fires Highcharts.Point#event:*
@@ -719,8 +724,8 @@ Highcharts.Point.prototype = {
     firePointEvent: function (
         this: Highcharts.Point,
         eventType: string,
-        eventArgs: (Highcharts.Dictionary<any>|Event),
-        defaultFunction: (
+        eventArgs?: (Highcharts.Dictionary<any>|Event),
+        defaultFunction?: (
             Highcharts.EventCallbackFunction<Highcharts.Point>|Function
         )
     ): void {
@@ -747,7 +752,7 @@ Highcharts.Point.prototype = {
                 // for Opera.
                 if (point.select) { // #2911
                     point.select(
-                        null,
+                        null as any,
                         event.ctrlKey || event.metaKey || event.shiftKey
                     );
                 }

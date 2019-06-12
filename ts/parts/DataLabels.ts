@@ -1130,11 +1130,11 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                                 labelText,
                                 0,
                                 -9999,
-                                labelOptions.shape,
-                                null,
-                                null,
+                                labelOptions.shape as any,
+                                null as any,
+                                null as any,
                                 labelOptions.useHTML,
-                                null,
+                                null as any,
                                 'data-label'
                             );
 

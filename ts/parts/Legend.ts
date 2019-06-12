@@ -19,6 +19,7 @@ import Highcharts from './Globals.js';
 declare global {
     namespace Highcharts {
         interface LegendCheckBoxElement extends HTMLDOMElement {
+            checked?: boolean;
             x: number;
             y: number;
         }
@@ -748,7 +749,8 @@ Highcharts.Legend.prototype = {
 
             // Generate the group box, a group to hold the symbol and text. Text
             // is to be appended in Legend class.
-            item.legendGroup = renderer.g('legend-item')
+            item.legendGroup = renderer
+                .g('legend-item')
                 .addClass(
                     'highcharts-' + series.type + '-series ' +
                     'highcharts-color-' + item.colorIndex +
