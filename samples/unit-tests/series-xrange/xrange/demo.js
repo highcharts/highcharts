@@ -204,6 +204,44 @@ QUnit.test('X-Range', function (assert) {
     );
 });
 
+QUnit.test('Partial fill reversed', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange'
+        },
+        xAxis: {
+            type: 'datetime'
+        },
+        series: [{
+            data: [{
+                x: Date.UTC(2019, 0, 1),
+                x2: Date.UTC(2019, 0, 2),
+                y: 1,
+                partialFill: 0.5
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic.rect.attr('x'),
+        chart.series[0].points[0].graphic.partialClipRect.attr('x'),
+        'Partial fill should be aligned left'
+    );
+
+    chart.xAxis[0].update({
+        reversed: true
+    });
+
+    assert.close(
+        chart.series[0].points[0].graphic.rect.attr('x') +
+        chart.series[0].points[0].graphic.rect.attr('width'),
+        chart.series[0].points[0].graphic.partialClipRect.attr('x') +
+        chart.series[0].points[0].graphic.partialClipRect.attr('width'),
+        1,
+        'Partial fill should be aligned left'
+    );
+});
+
 QUnit.test('X-range data labels', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
