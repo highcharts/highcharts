@@ -253,8 +253,6 @@ declare global {
             ordinal?: boolean;
             overscroll?: number;
             pane?: number;
-            plotBands?: Array<XAxisPlotBandsOptions>;
-            plotLines?: Array<XAxisPlotLinesOptions>;
             range?: number;
             reversed?: boolean;
             reversedStacks?: boolean;

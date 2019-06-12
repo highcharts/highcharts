@@ -32,15 +32,12 @@ declare global {
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
         type PatternObject = any; // @todo
-        type PlotLineOrBand = any; // @todo
         type PlotSeriesOptions = any; // @todo
         type PlotSeriesZonesOptions = any; // @todo
         type SeriesOptions = any; // @todo
         type SeriesOptionsType = any; // @todo
         type SeriesPlotBoxObject = any; // @todo
         type StackItemObject = any; // @todo
-        type XAxisPlotBandsOptions = any; // @todo
-        type XAxisPlotLinesOptions = any; // @todo
         type XAxisScrollbarOptions = any; // @todo
         type YAxisStackLabelsOptions = any; // @todo
         interface Axis {
@@ -52,7 +49,6 @@ declare global {
             sector?: any; // @todo
             stacks?: any; // @todo
             usePercentage?: any; // @todo
-            addPlotBandOrLine: Function; // @todo
             beforePadding: Function; // @todo
             buildStacks: Function; // @todo
             cleanStacks: Function; // @todo
@@ -212,7 +208,6 @@ declare global {
         interface Tick {
             slotWidth?: any; // @todo
         }
-        const PlotLineOrBand: any; // @todo
         const Series: any; // @todo
         const SVG_NS: string;
         const addEventListenerPolyfill: any; // @todo
