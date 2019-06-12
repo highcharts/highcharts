@@ -297,7 +297,8 @@ seriesType('xrange', 'column'
                 pointHeight = Math.round(metrics.width),
                 dlLeft,
                 dlRight,
-                dlWidth;
+                dlWidth,
+                clipRectWidth;
 
             if (minPointLength) {
                 widthDifference = minPointLength - length;
@@ -398,16 +399,17 @@ seriesType('xrange', 'column'
                     height: shapeArgs.height,
                     r: series.options.borderRadius
                 };
+
+                clipRectWidth = Math.max(
+                    Math.round(length * partialFill + point.plotX - plotX),
+                    0
+                );
                 point.clipRectArgs = {
-                    x: shapeArgs.x,
+                    x: xAxis.reversed ? // #10717
+                        shapeArgs.x + length - clipRectWidth :
+                        shapeArgs.x,
                     y: shapeArgs.y,
-                    width: Math.max(
-                        Math.round(
-                            length * partialFill +
-                        (point.plotX - plotX)
-                        ),
-                        0
-                    ),
+                    width: clipRectWidth,
                     height: shapeArgs.height
                 };
             }
